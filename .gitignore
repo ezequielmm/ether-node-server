@@ -37,3 +37,4 @@ lerna-debug.log*
 # Env files
 .env
 .env.backup
+*.env
