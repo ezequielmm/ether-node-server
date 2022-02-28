@@ -1,20 +1,26 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { CharacterClass } from './entities/character-class.entity';
+import { character_classes, Prisma } from '@prisma/client';
+import { PrismaService } from 'src/prisma.service';
 
 @Injectable()
 export class CharacterClassService {
-    constructor(
-        @InjectRepository(CharacterClass)
-        private repository: Repository<CharacterClass>,
-    ) {}
+    constructor(private prisma: PrismaService) {}
 
-    async findAll_V1() {
-        return await this.repository.find();
+    /**
+     * Get a single character class
+     * @version 1
+     * @param characterClassWhereUniqueInput
+     * @returns character_classes | null
+     */
+    async getCharacterClass_V1(
+        characterClassWhereUniqueInput: Prisma.character_classesWhereUniqueInput,
+    ): Promise<character_classes | null> {
+        return await this.prisma.character_classes.findUnique({
+            where: characterClassWhereUniqueInput,
+        });
     }
 
-    async findOne_V1(id: string) {
-        return await this.repository.findOneOrFail(id);
+    async getAllCharacterClassess_V1(): Promise<character_classes[]> {
+        return await this.prisma.character_classes.findMany();
     }
 }
