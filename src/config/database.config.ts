@@ -1,7 +1,7 @@
 import * as path from 'path';
 
 const baseDir = path.join(__dirname, '../');
-const entitiesPath = `${baseDir}database/entities/*.entity{.ts,.js}`;
+const entitiesPath = `${baseDir}*/**/*.entity{.ts,.js}`;
 const migrationPath = `${baseDir}database/migrations/*{.ts,.js}`;
 
 export default {
@@ -16,6 +16,6 @@ export default {
     migrationsRun: process.env.DB_RUN_MIGRATIONS === 'true',
     cli: {
         migrationsDir: 'src/database/migrations',
-        entitiesDir: 'src/database/entities',
+        entitiesDir: 'src/**',
     },
 };

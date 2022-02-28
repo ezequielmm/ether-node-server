@@ -45,14 +45,11 @@ class ConfigService {
     private validateInput(envConfig: IEnvConfigInterface): IEnvConfigInterface {
         const envVarsSchema: Joi.ObjectSchema = Joi.object({
             NODE_ENV: Joi.string().valid('dev', 'prod').default('dev'),
-            HTTP_PORT: Joi.number().required(),
         }).unknown(true);
 
         const { error, value: validatedEnvConfig } =
             envVarsSchema.validate(envConfig);
-        if (error) {
-            throw new Error(`Config validation error: ${error.message}`);
-        }
+        if (error) throw new Error(`Config validation error: ${error.message}`);
         return validatedEnvConfig;
     }
 }

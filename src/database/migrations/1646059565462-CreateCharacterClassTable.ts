@@ -23,6 +23,16 @@ export class CreateCharacterClassTable1646059565462
                         length: '255',
                         isNullable: false,
                     },
+                    {
+                        name: 'created_at',
+                        type: 'datetime',
+                        default: 'now()',
+                    },
+                    {
+                        name: 'updated_at',
+                        type: 'datetime',
+                        default: 'now()',
+                    },
                 ],
             }),
         );

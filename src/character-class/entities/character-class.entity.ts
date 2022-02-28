@@ -1,8 +1,8 @@
 import { IsString, MaxLength, MinLength } from 'class-validator';
 import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
-@Entity()
-export class UserEntity extends BaseEntity {
+@Entity({ name: 'character_classes' })
+export class CharacterClass extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: string;
 
