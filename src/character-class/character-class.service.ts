@@ -13,14 +13,16 @@ export class CharacterClassService {
      * @returns character_classes | null
      */
     async getCharacterClass_V1(
-        characterClassWhereUniqueInput: Prisma.character_classesWhereUniqueInput,
+        data: Prisma.character_classesFindUniqueArgs,
     ): Promise<character_classes | null> {
-        return await this.prisma.character_classes.findUnique({
-            where: characterClassWhereUniqueInput,
-        });
+        return await this.prisma.character_classes.findUnique(data);
     }
 
-    async getAllCharacterClassess_V1(): Promise<character_classes[]> {
+    /**
+     * Get all character classes
+     * @version 1
+     */
+    async getAllCharacterClasses_V1(): Promise<character_classes[]> {
         return await this.prisma.character_classes.findMany();
     }
 }
