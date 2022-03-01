@@ -12,14 +12,14 @@ export class CharacterClassController {
         return await this.service.getAllCharacterClasses_V1();
     }
 
-    @Version('2')
+    @Version('1')
     @Get(':id')
-    async getCharacterClass(
+    async getCharacterClass_V1(
         @Param('id') id: string,
     ): Promise<character_classes> {
-        const dto: Prisma.character_classesFindUniqueArgs = {
-            where: { id: id },
+        const data: Prisma.character_classesFindUniqueArgs = {
+            where: { id },
         };
-        return await this.service.getCharacterClass_V1(dto);
+        return await this.service.getCharacterClass_V1(data);
     }
 }

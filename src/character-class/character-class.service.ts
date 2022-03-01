@@ -9,8 +9,8 @@ export class CharacterClassService {
     /**
      * Get a single character class
      * @version 1
-     * @param characterClassWhereUniqueInput
-     * @returns character_classes | null
+     * @param character_classesFindUniqueArgs
+     * @returns character_class | null
      */
     async getCharacterClass_V1(
         data: Prisma.character_classesFindUniqueArgs,
