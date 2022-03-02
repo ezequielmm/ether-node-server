@@ -1,17 +1,16 @@
 import { Injectable } from '@nestjs/common';
-import { Enemy } from '@prisma/client';
+import { Prisma, Room } from '@prisma/client';
 import { PrismaService } from 'src/prisma.service';
 
 @Injectable()
-export class EnemyService {
+export class RoomService {
     constructor(private prisma: PrismaService) {}
 
     /**
      * Get all the enemies
      * @version 1
-     * @returns enemy[]
      */
-    async getAllCharacters_V1(): Promise<Enemy[]> {
-        return await this.prisma.enemy.findMany();
+    async getRoomByPlayerId_V1(where: Prisma.RoomWhereInput): Promise<Room[]> {
+        return await this.prisma.room.findMany({ where });
     }
 }

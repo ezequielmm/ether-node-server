@@ -5,6 +5,7 @@ import { CharacterModule } from './character/character.module';
 import { EnemyModule } from './enemy/enemy.module';
 import { PrismaModule } from './prisma.module';
 import { ProfileModule } from './profile/profile.module';
+import { RoomModule } from './room/room.module';
 
 @Module({
     imports: [
@@ -14,6 +15,7 @@ import { ProfileModule } from './profile/profile.module';
         ProfileModule,
         CardModule,
         EnemyModule,
+        RoomModule,
     ],
     controllers: [],
     providers: [],
