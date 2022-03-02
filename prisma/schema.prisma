@@ -10,38 +10,100 @@ datasource db {
     url      = env("DATABASE_URL")
 }
 
-model character_classes {
-    id         String       @id @default(uuid())
-    name       String       @unique @db.VarChar(255)
-    created_at DateTime     @default(now())
-    updated_at DateTime     @default(now())
-    characters characters[]
-    cards      cards[]
+model CharacterClass {
+    id         String      @id @default(uuid())
+    name       String      @unique @db.VarChar(255)
+    created_at DateTime    @default(now())
+    updated_at DateTime    @default(now())
+    characters Character[]
+    cards      Card[]
+
+    @@map("character_classes")
 }
 
-model characters {
-    id             String            @id @default(uuid())
-    name           String            @unique @db.VarChar(255)
+model Character {
+    id             String         @id @default(uuid())
+    name           String         @unique @db.VarChar(255)
     class_id       String
-    created_at     DateTime          @default(now())
-    updated_at     DateTime          @default(now())
-    characterClass character_classes @relation(fields: [class_id], references: [id])
+    created_at     DateTime       @default(now())
+    updated_at     DateTime       @default(now())
+    characterClass CharacterClass @relation(fields: [class_id], references: [id])
+
+    @@map("characters")
 }
 
-model cards {
-    id                 String   @id @default(uuid())
-    name               String   @db.VarChar(250)
-    description        String   @db.VarChar(250)
+model Card {
+    id                 String       @id @default(uuid())
+    name               String       @unique @db.VarChar(250)
+    description        String       @db.VarChar(250)
     character_class_id String
-    code               String   @db.VarChar(255)
-    rarity             String   @db.VarChar(255)
-    cost               Int      @default(0)
-    type               String   @db.VarChar(255)
-    keyword            String   @db.VarChar(255)
-    coin_cost          Int      @default(0)
-    status             String   @db.VarChar(255)
-    created_at         DateTime @default(now())
-    updated_at         DateTime @default(now())
+    code               String       @unique @db.VarChar(255)
+    rarity             CardRarity
+    cost               Int          @default(0)
+    type               CardType
+    keyword            CardKeywords
+    coin_cost          Int          @default(0)
+    status             CardStatus
+    created_at         DateTime     @default(now())
+    updated_at         DateTime     @default(now())
 
-    character_classes character_classes? @relation(fields: [character_class_id], references: [id])
+    character_classes CharacterClass? @relation(fields: [character_class_id], references: [id])
+
+    @@map("cards")
+}
+
+model Enemy {
+    id         String        @id @default(uuid())
+    name       String        @unique @db.VarChar(200)
+    type       EnemyType?
+    category   EnemyCategory @default(basic)
+    life       Int           @default(0)
+    min_attack Int           @default(0)
+    max_attach Int           @default(0)
+    act_id     Int?
+
+    @@map("enemies")
+}
+
+enum CardRarity {
+    common
+    uncommon
+    special
+    rare
+    basic
+}
+
+enum CardType {
+    attack
+    skill
+    power
+    status
+    curse
+}
+
+enum CardKeywords {
+    exhaust
+    innate
+    ethereal
+    retain
+    unaplayable
+}
+
+enum CardStatus {
+    active
+    inactive
+}
+
+enum EnemyType {
+    beast
+    fey
+    undead
+    clockwork
+    eldritch
+}
+
+enum EnemyCategory {
+    basic
+    elite
+    boss
 }

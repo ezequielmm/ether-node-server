@@ -2,11 +2,16 @@ import { ValidationPipe, VersioningType } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
+import { TransformDataResource } from './interceptors/TransformDataResource.interceptor';
 
 async function bootstrap() {
     const app = await NestFactory.create(AppModule);
 
+    // Enable Validation
     app.useGlobalPipes(new ValidationPipe());
+
+    // Add Resource Interceptor
+    app.useGlobalInterceptors(new TransformDataResource());
 
     // Enable Versioning
     app.enableVersioning({
