@@ -1,5 +1,6 @@
 import { Prisma, PrismaClient } from '@prisma/client';
 import { faker } from '@faker-js/faker';
+import { generateRandomNumber } from '../src/utils';
 
 const prisma = new PrismaClient();
 
@@ -17,10 +18,10 @@ const characterClassesData: Prisma.character_classesCreateInput[] = [
                 description: faker.lorem.lines(3),
                 code: faker.random.alphaNumeric(10),
                 rarity: 'Common',
-                cost: faker.random.number(100),
+                cost: generateRandomNumber(1, 100),
                 type: 'Ghost',
                 keyword: 'tags',
-                coin_cost: faker.random.number(100),
+                coin_cost: generateRandomNumber(1, 100),
                 status: 'active',
             },
         },
@@ -35,12 +36,23 @@ const characterClassesData: Prisma.character_classesCreateInput[] = [
     },
 ];
 
+const enemiesData: Prisma.enemiesCreateInput[] = [
+    {
+        name: `${faker.name.firstName()} ${faker.name.lastName()}`,
+        type: 'beast',
+        category: 'basic',
+    },
+];
+
 async function main() {
     console.log('Start Seeding...');
     for (const data of characterClassesData) {
         await prisma.character_classes.create({
             data,
         });
+    }
+    for (const data of enemiesData) {
+        await prisma.enemies.create({ data });
     }
     console.log(`Seeding finished.`);
 }

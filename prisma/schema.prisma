@@ -30,7 +30,7 @@ model characters {
 
 model cards {
     id                 String   @id @default(uuid())
-    name               String   @db.VarChar(250)
+    name               String   @unique @db.VarChar(250)
     description        String   @db.VarChar(250)
     character_class_id String
     code               String   @db.VarChar(255)
@@ -44,4 +44,29 @@ model cards {
     updated_at         DateTime @default(now())
 
     character_classes character_classes? @relation(fields: [character_class_id], references: [id])
+}
+
+model enemies {
+    id         String        @id @default(uuid())
+    name       String        @unique @db.VarChar(200)
+    type       EnemyType?
+    category   EnemyCategory @default(basic)
+    life       Int           @default(0)
+    min_attack Int           @default(0)
+    max_attach Int           @default(0)
+    act_id     Int?
+}
+
+enum EnemyType {
+    beast
+    fey
+    undead
+    clockwork
+    eldritch
+}
+
+enum EnemyCategory {
+    basic
+    elite
+    boss
 }
