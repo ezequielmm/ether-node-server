@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { CardKeywords, CardRarity, CardStatus, CardType } from '@prisma/client';
 import {
     IsNotEmpty,
     IsNumber,
@@ -26,7 +27,7 @@ export class CreateCardDto {
     character_class_id: string;
 
     @ApiProperty()
-    rarity: string;
+    rarity: CardRarity;
 
     @IsNumber()
     @IsNotEmpty()
@@ -37,13 +38,13 @@ export class CreateCardDto {
     @ApiProperty()
     @MinLength(1)
     @MaxLength(255)
-    type: string;
+    type: CardType;
 
     @IsNotEmpty()
     @ApiProperty()
     @MinLength(1)
     @MaxLength(255)
-    keyword: string;
+    keyword: CardKeywords;
 
     @IsNotEmpty()
     @IsNumber()
@@ -54,5 +55,5 @@ export class CreateCardDto {
     @ApiProperty()
     @MinLength(1)
     @MaxLength(255)
-    status: string;
+    status: CardStatus;
 }
