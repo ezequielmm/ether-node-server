@@ -65,6 +65,14 @@ model Enemy {
     @@map("enemies")
 }
 
+model Room {
+    id        String     @id @default(uuid())
+    player_id String     @db.VarChar(191)
+    status    RoomStatus
+
+    @@map("rooms")
+}
+
 enum CardRarity {
     common
     uncommon
@@ -106,4 +114,10 @@ enum EnemyCategory {
     basic
     elite
     boss
+}
+
+enum RoomStatus {
+    in_progress
+    canceled
+    finished
 }
