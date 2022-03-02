@@ -10,25 +10,29 @@ datasource db {
     url      = env("DATABASE_URL")
 }
 
-model character_classes {
-    id         String       @id @default(uuid())
-    name       String       @unique @db.VarChar(255)
-    created_at DateTime     @default(now())
-    updated_at DateTime     @default(now())
-    characters characters[]
-    cards      cards[]
+model CharacterClass {
+    id         String      @id @default(uuid())
+    name       String      @unique @db.VarChar(255)
+    created_at DateTime    @default(now())
+    updated_at DateTime    @default(now())
+    characters Character[]
+    cards      Card[]
+
+    @@map("character_classes")
 }
 
-model characters {
-    id             String            @id @default(uuid())
-    name           String            @unique @db.VarChar(255)
+model Character {
+    id             String         @id @default(uuid())
+    name           String         @unique @db.VarChar(255)
     class_id       String
-    created_at     DateTime          @default(now())
-    updated_at     DateTime          @default(now())
-    characterClass character_classes @relation(fields: [class_id], references: [id])
+    created_at     DateTime       @default(now())
+    updated_at     DateTime       @default(now())
+    characterClass CharacterClass @relation(fields: [class_id], references: [id])
+
+    @@map("characters")
 }
 
-model cards {
+model Card {
     id                 String   @id @default(uuid())
     name               String   @unique @db.VarChar(250)
     description        String   @db.VarChar(250)
@@ -43,10 +47,12 @@ model cards {
     created_at         DateTime @default(now())
     updated_at         DateTime @default(now())
 
-    character_classes character_classes? @relation(fields: [character_class_id], references: [id])
+    character_classes CharacterClass? @relation(fields: [character_class_id], references: [id])
+
+    @@map("cards")
 }
 
-model enemies {
+model Enemy {
     id         String        @id @default(uuid())
     name       String        @unique @db.VarChar(200)
     type       EnemyType?
@@ -55,6 +61,8 @@ model enemies {
     min_attack Int           @default(0)
     max_attach Int           @default(0)
     act_id     Int?
+
+    @@map("enemies")
 }
 
 enum EnemyType {

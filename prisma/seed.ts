@@ -4,7 +4,7 @@ import { generateRandomNumber } from '../src/utils';
 
 const prisma = new PrismaClient();
 
-const characterClassesData: Prisma.character_classesCreateInput[] = [
+const characterClassesData: Prisma.CharacterClassCreateInput[] = [
     {
         name: faker.name.jobArea(),
         characters: {
@@ -36,7 +36,7 @@ const characterClassesData: Prisma.character_classesCreateInput[] = [
     },
 ];
 
-const enemiesData: Prisma.enemiesCreateInput[] = [
+const enemiesData: Prisma.EnemyCreateInput[] = [
     {
         name: `${faker.name.firstName()} ${faker.name.lastName()}`,
         type: 'beast',
@@ -47,12 +47,12 @@ const enemiesData: Prisma.enemiesCreateInput[] = [
 async function main() {
     console.log('Start Seeding...');
     for (const data of characterClassesData) {
-        await prisma.character_classes.create({
+        await prisma.characterClass.create({
             data,
         });
     }
     for (const data of enemiesData) {
-        await prisma.enemies.create({ data });
+        await prisma.enemy.create({ data });
     }
     console.log(`Seeding finished.`);
 }

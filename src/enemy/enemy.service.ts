@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { enemies } from '@prisma/client';
+import { Enemy } from '@prisma/client';
 import { PrismaService } from 'src/prisma.service';
 
 @Injectable()
@@ -12,7 +12,7 @@ export class EnemyService {
      * @param characterWhereUniqueInput
      * @returns character | null
      */
-    async getAllCharacters_V1(): Promise<enemies[]> {
-        return await this.prisma.enemies.findMany();
+    async getAllCharacters_V1(): Promise<Enemy[]> {
+        return await this.prisma.enemy.findMany();
     }
 }

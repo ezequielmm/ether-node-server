@@ -1,5 +1,5 @@
 import { Controller, Get, Version } from '@nestjs/common';
-import { enemies } from '@prisma/client';
+import { Enemy } from '@prisma/client';
 import { EnemyService } from './enemy.service';
 
 @Controller('enemies')
@@ -8,7 +8,7 @@ export class EnemyController {
 
     @Version('1')
     @Get('/')
-    async getAllCharacters_V1(): Promise<enemies[]> {
+    async getAllCharacters_V1(): Promise<Enemy[]> {
         return await this.service.getAllCharacters_V1();
     }
 }
