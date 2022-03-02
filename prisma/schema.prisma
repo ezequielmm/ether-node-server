@@ -33,19 +33,19 @@ model Character {
 }
 
 model Card {
-    id                 String   @id @default(uuid())
-    name               String   @unique @db.VarChar(250)
-    description        String   @db.VarChar(250)
+    id                 String       @id @default(uuid())
+    name               String       @unique @db.VarChar(250)
+    description        String       @db.VarChar(250)
     character_class_id String
-    code               String   @db.VarChar(255)
-    rarity             String   @db.VarChar(255)
-    cost               Int      @default(0)
-    type               String   @db.VarChar(255)
-    keyword            String   @db.VarChar(255)
-    coin_cost          Int      @default(0)
-    status             String   @db.VarChar(255)
-    created_at         DateTime @default(now())
-    updated_at         DateTime @default(now())
+    code               String       @unique @db.VarChar(255)
+    rarity             CardRarity
+    cost               Int          @default(0)
+    type               CardType
+    keyword            CardKeywords
+    coin_cost          Int          @default(0)
+    status             CardStatus
+    created_at         DateTime     @default(now())
+    updated_at         DateTime     @default(now())
 
     character_classes CharacterClass? @relation(fields: [character_class_id], references: [id])
 
@@ -63,6 +63,35 @@ model Enemy {
     act_id     Int?
 
     @@map("enemies")
+}
+
+enum CardRarity {
+    common
+    uncommon
+    special
+    rare
+    basic
+}
+
+enum CardType {
+    attack
+    skill
+    power
+    status
+    curse
+}
+
+enum CardKeywords {
+    exhaust
+    innate
+    ethereal
+    retain
+    unaplayable
+}
+
+enum CardStatus {
+    active
+    inactive
 }
 
 enum EnemyType {
