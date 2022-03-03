@@ -44,15 +44,31 @@ const enemiesData: Prisma.EnemyCreateInput[] = [
     },
 ];
 
+const roomsData: Prisma.RoomCreateManyInput[] = [
+    {
+        player_id: faker.datatype.uuid(),
+        status: 'finished',
+    },
+    {
+        player_id: faker.datatype.uuid(),
+        status: 'canceled',
+    },
+    {
+        player_id: faker.datatype.uuid(),
+        status: 'in_progress',
+    },
+];
+
 async function main() {
     console.log('Start Seeding...');
     for (const data of characterClassesData) {
-        await prisma.characterClass.create({
-            data,
-        });
+        await prisma.characterClass.create({ data });
     }
     for (const data of enemiesData) {
         await prisma.enemy.create({ data });
+    }
+    for (const data of roomsData) {
+        await prisma.room.create({ data });
     }
     console.log(`Seeding finished.`);
 }
@@ -62,6 +78,4 @@ main()
         console.error(e);
         process.exit(1);
     })
-    .finally(async () => {
-        await prisma.$disconnect();
-    });
+    .finally(async () => await prisma.$disconnect());

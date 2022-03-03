@@ -9,8 +9,7 @@ export class EnemyService {
     /**
      * Get all the enemies
      * @version 1
-     * @param characterWhereUniqueInput
-     * @returns character | null
+     * @returns enemy[]
      */
     async getAllCharacters_V1(): Promise<Enemy[]> {
         return await this.prisma.enemy.findMany();
