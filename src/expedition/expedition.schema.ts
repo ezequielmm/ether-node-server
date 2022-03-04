@@ -1,10 +1,14 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { randomUUID } from 'crypto';
 import { Document } from 'mongoose';
 
 export type ExpeditionDocument = Expedition & Document;
 
 @Schema()
 export class Expedition {
+    @Prop({ default: randomUUID(), required: false })
+    _id: string;
+
     @Prop()
     player_id: string;
 
