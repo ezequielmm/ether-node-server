@@ -7,7 +7,7 @@ export class EnemyController {
     constructor(private readonly service: EnemyService) {}
 
     @Version('1')
-    @Get('/')
+    @Get()
     async getAllCharacters_V1(): Promise<Enemy[]> {
         return await this.service.getAllCharacters_V1();
     }
