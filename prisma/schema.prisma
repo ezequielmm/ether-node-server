@@ -21,12 +21,17 @@ model CharacterClass {
 }
 
 model Character {
-    id         String   @id @default(uuid())
-    name       String   @unique @db.VarChar(255)
-    class_id   String
-    created_at DateTime @default(now())
+    id             String   @id @default(uuid())
+    name           String   @unique @db.VarChar(250)
+    description    String?  @db.Text()
+    class_id       String
+    initial_health Int      @default(0)
+    initial_gold   Int      @default(0)
+    cardpool_id    String
+    created_at     DateTime @default(now())
 
     characterClass CharacterClass @relation(fields: [class_id], references: [id])
+    cardpool       CardPool       @relation(fields: [cardpool_id], references: [id])
 
     @@map("characters")
 }
@@ -96,6 +101,15 @@ model NodeEnemy {
     enemy Enemy @relation(fields: [enemy_id], references: [id])
 
     @@map("node_enemies")
+}
+
+model CardPool {
+    id         String      @id @default(uuid())
+    name       String      @unique @db.VarChar(250)
+    created_at DateTime    @default(now())
+    Character  Character[]
+
+    @@map("cardpools")
 }
 
 enum CardRarity {
