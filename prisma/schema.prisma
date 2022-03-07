@@ -73,6 +73,15 @@ model Room {
     @@map("rooms")
 }
 
+model Node {
+    id          String   @id @default(uuid())
+    name        String   @unique @db.VarChar(50)
+    description String?  @db.Text()
+    type        NodeType
+
+    @@map("nodes")
+}
+
 enum CardRarity {
     common
     uncommon
@@ -120,4 +129,13 @@ enum RoomStatus {
     in_progress
     canceled
     finished
+}
+
+enum NodeType {
+    combat
+    royal_house
+    encounter
+    merchant
+    treasure
+    camp
 }

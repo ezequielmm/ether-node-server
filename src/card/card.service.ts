@@ -11,7 +11,7 @@ export class CardService {
     /**
      * Get a single card
      * @version 1
-     * @param cardsFindUniqueArgs
+     * @param data
      * @returns card | null
      */
     async getCard_V1(data: Prisma.CardFindUniqueArgs): Promise<Card | null> {
