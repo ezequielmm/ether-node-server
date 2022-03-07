@@ -5,7 +5,6 @@ import { CharacterClassModule } from './character-class/character-class.module';
 import { CharacterModule } from './character/character.module';
 import { EnemyModule } from './enemy/enemy.module';
 import { ExpeditionModule } from './expedition/expedition.module';
-import { NodeModule } from './node/node.module';
 import { PrismaModule } from './prisma.module';
 import { ProfileModule } from './profile/profile.module';
 import { RoomModule } from './room/room.module';
@@ -21,7 +20,6 @@ import { RoomModule } from './room/room.module';
         EnemyModule,
         RoomModule,
         ExpeditionModule,
-        NodeModule,
     ],
     controllers: [],
     providers: [],

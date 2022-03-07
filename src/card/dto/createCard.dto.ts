@@ -7,6 +7,7 @@ import {
     MaxLength,
     MinLength,
 } from 'class-validator';
+import { CharacterClassExists } from 'src/validators/characterClassExists.rule';
 
 export class CreateCardDto {
     @IsNotEmpty()
@@ -23,6 +24,7 @@ export class CreateCardDto {
 
     @IsNotEmpty()
     @IsUUID()
+    @CharacterClassExists()
     @ApiProperty()
     character_class_id: string;
 
