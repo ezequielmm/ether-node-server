@@ -20,10 +20,10 @@ export class ExpeditionService {
     }
 
     async playerHasAnExpedition(player_id: string): Promise<boolean> {
-        const expeditionExists = await this.model
+        const itemExists = await this.model
             .findOne({ player_id, status: 'in_progress' })
             .select('_id')
             .lean();
-        return expeditionExists ? false : true;
+        return itemExists ? false : true;
     }
 }

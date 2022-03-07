@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsUUID, Validate } from 'class-validator';
-import { ExpeditionExistsRule } from '../validators/expeditionExists.rule';
+import { IsNotEmpty, IsUUID } from 'class-validator';
+import { ExpeditionExists } from '../../validators/expeditionExists.rule';
 
 export class CreateExpeditionDto {
     readonly _id: string;
@@ -8,7 +8,7 @@ export class CreateExpeditionDto {
     @ApiProperty()
     @IsNotEmpty()
     @IsUUID()
-    @Validate(ExpeditionExistsRule)
+    @ExpeditionExists()
     readonly player_id: string;
 
     @ApiProperty()

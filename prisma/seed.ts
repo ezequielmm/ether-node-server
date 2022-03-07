@@ -59,6 +59,24 @@ const roomsData: Prisma.RoomCreateManyInput[] = [
     },
 ];
 
+const nodesData: Prisma.NodeCreateManyInput[] = [
+    {
+        name: faker.name.jobArea(),
+        description: faker.random.words(3),
+        type: 'camp',
+    },
+    {
+        name: faker.name.jobArea(),
+        description: faker.random.words(3),
+        type: 'encounter',
+    },
+    {
+        name: faker.name.jobArea(),
+        description: faker.random.words(3),
+        type: 'merchant',
+    },
+];
+
 async function main() {
     console.log('Start Seeding...');
     for (const data of characterClassesData) {
@@ -69,6 +87,9 @@ async function main() {
     }
     for (const data of roomsData) {
         await prisma.room.create({ data });
+    }
+    for (const data of nodesData) {
+        await prisma.node.create({ data });
     }
     console.log(`Seeding finished.`);
 }

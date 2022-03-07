@@ -25,4 +25,11 @@ export class CharacterClassService {
     async getAllCharacterClasses_V1(): Promise<CharacterClass[]> {
         return await this.prisma.characterClass.findMany();
     }
+
+    async characterClassExists(id: string): Promise<boolean> {
+        const itemExists = await this.prisma.characterClass.findUnique({
+            where: { id },
+        });
+        return itemExists ? true : false;
+    }
 }

@@ -3,6 +3,8 @@ import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { useContainer } from 'class-validator';
 import { AppModule } from './app.module';
+import { CardModule } from './card/card.module';
+import { CharacterClassModule } from './character-class/character-class.module';
 import { ExpeditionModule } from './expedition/expedition.module';
 import { TransformDataResource } from './interceptors/TransformDataResource.interceptor';
 
@@ -14,6 +16,8 @@ async function bootstrap() {
 
     // Add custom validation modules
     useContainer(app.select(ExpeditionModule), { fallbackOnErrors: true });
+    useContainer(app.select(CharacterClassModule), { fallbackOnErrors: true });
+    useContainer(app.select(CardModule), { fallbackOnErrors: true });
 
     // Add Resource Interceptor
     app.useGlobalInterceptors(new TransformDataResource());
