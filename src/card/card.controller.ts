@@ -18,7 +18,7 @@ export class CardController {
     constructor(private readonly service: CardService) {}
 
     @Version('1')
-    @Get('/')
+    @Get()
     async getCards_V1(): Promise<Card[]> {
         return await this.service.getCards_V1();
     }
@@ -33,13 +33,13 @@ export class CardController {
     }
 
     @Version('1')
-    @Post('/')
+    @Post()
     async createCard_V1(@Body() createCardDto: CreateCardDto): Promise<Card> {
         return this.service.createCard_V1(createCardDto);
     }
 
     @Version('1')
-    @Put('/:id')
+    @Put(':id')
     async updateCard_V1(
         @Param('id', ParseUUIDPipe) id: string,
         @Body() updateCardDto: UpdateCardDto,
