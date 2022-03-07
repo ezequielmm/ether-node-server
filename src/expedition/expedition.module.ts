@@ -3,6 +3,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { ExpeditionController } from './expedition.controller';
 import { Expedition, ExpeditionSchema } from './expedition.schema';
 import { ExpeditionService } from './expedition.service';
+import { ExpeditionExistsRule } from './validators/expeditionExists.rule';
 
 @Module({
     imports: [
@@ -11,6 +12,6 @@ import { ExpeditionService } from './expedition.service';
         ]),
     ],
     controllers: [ExpeditionController],
-    providers: [ExpeditionService],
+    providers: [ExpeditionService, ExpeditionExistsRule],
 })
 export class ExpeditionModule {}
