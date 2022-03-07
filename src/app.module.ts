@@ -6,6 +6,7 @@ import { EnemyModule } from './enemy/enemy.module';
 import { PrismaModule } from './prisma.module';
 import { ProfileModule } from './profile/profile.module';
 import { RoomModule } from './room/room.module';
+import { LoginModule } from './login/login.module';
 
 @Module({
     imports: [
@@ -16,6 +17,7 @@ import { RoomModule } from './room/room.module';
         CardModule,
         EnemyModule,
         RoomModule,
+        LoginModule
     ],
     controllers: [],
     providers: [],

@@ -73,6 +73,13 @@ model Room {
     @@map("rooms")
 }
 
+model Profile {
+    email    String @unique @db.VarChar(255)
+    password String @unique @db.VarChar(255)
+
+    @@map("profiles")
+}
+
 enum CardRarity {
     common
     uncommon
