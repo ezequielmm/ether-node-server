@@ -41,4 +41,18 @@ export class CardService {
     async updateCard_V1(id: string, data: UpdateCardDto): Promise<Card> {
         return this.prisma.card.update({ where: { id }, data });
     }
+
+    async checkIfNameExists(name: string): Promise<boolean> {
+        const itemExists = await this.prisma.card.findUnique({
+            where: { name },
+        });
+        return itemExists ? false : true;
+    }
+
+    async checkIfCodeExists(code: string): Promise<boolean> {
+        const itemExists = await this.prisma.card.findUnique({
+            where: { code },
+        });
+        return itemExists ? false : true;
+    }
 }
