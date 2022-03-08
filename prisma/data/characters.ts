@@ -1,9 +1,11 @@
 import { Prisma } from '@prisma/client';
 import { cardpools } from './cardpools';
+import { v4 as uuidv4 } from 'uuid';
+import { faker } from '@faker-js/faker';
 
 export const characters: Prisma.CharacterCreateManyInput = {
-    id: 'b648138d-e2ba-42e7-a0f4-90f8690bbd38',
-    name: 'Dark Knight',
+    id: uuidv4(),
+    name: faker.name.jobTitle(),
     description: 'Lorem ipsum',
     class: 'knight',
     initial_health: 78,

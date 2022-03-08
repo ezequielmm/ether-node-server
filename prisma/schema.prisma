@@ -35,18 +35,18 @@ model Character {
 }
 
 model Card {
-    id                 String             @id @default(uuid())
-    name               String             @unique @db.VarChar(250)
-    description        String             @db.VarChar(250)
+    id                 String          @id @default(uuid())
+    name               String          @unique @db.VarChar(250)
+    description        String          @db.VarChar(250)
     character_class_id String
-    code               String             @unique @db.VarChar(255)
-    rarity             CardRarityEnumEnum
-    cost               Int                @default(0)
+    code               String          @unique @db.VarChar(255)
+    rarity             CardRarityEnum
+    cost               Int             @default(0)
     type               CardTypeEnum
     keyword            CardKeywordEnum
-    coin_cost          Int                @default(0)
-    status             CardStatusEnumEnum
-    created_at         DateTime           @default(now())
+    coin_cost          Int             @default(0)
+    status             CardStatusEnum
+    created_at         DateTime        @default(now())
 
     character_classes CharacterClass? @relation(fields: [character_class_id], references: [id])
 
@@ -111,7 +111,7 @@ model CardPool {
     @@map("cardpools")
 }
 
-enum CardRarityEnumEnum {
+enum CardRarityEnum {
     common
     uncommon
     special
@@ -135,7 +135,7 @@ enum CardKeywordEnum {
     unaplayable
 }
 
-enum CardStatusEnumEnum {
+enum CardStatusEnum {
     active
     inactive
 }
