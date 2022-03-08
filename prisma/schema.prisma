@@ -11,44 +11,42 @@ datasource db {
 }
 
 model CharacterClass {
-    id         String      @id @default(uuid())
-    name       String      @unique @db.VarChar(255)
-    created_at DateTime    @default(now())
-    characters Character[]
+    id         String   @id @default(uuid())
+    name       String   @unique @db.VarChar(255)
+    created_at DateTime @default(now())
     cards      Card[]
 
     @@map("character_classes")
 }
 
 model Character {
-    id             String   @id @default(uuid())
-    name           String   @unique @db.VarChar(250)
-    description    String?  @db.Text()
-    class_id       String
-    initial_health Int      @default(0)
-    initial_gold   Int      @default(0)
+    id             String             @id @default(uuid())
+    name           String             @unique @db.VarChar(250)
+    description    String?            @db.Text()
+    class          CharacterClassEnum
+    initial_health Int                @default(0)
+    initial_gold   Int                @default(0)
     cardpool_id    String
-    created_at     DateTime @default(now())
+    created_at     DateTime           @default(now())
 
-    characterClass CharacterClass @relation(fields: [class_id], references: [id])
-    cardpool       CardPool       @relation(fields: [cardpool_id], references: [id])
+    cardpool CardPool @relation(fields: [cardpool_id], references: [id])
 
     @@map("characters")
 }
 
 model Card {
-    id                 String       @id @default(uuid())
-    name               String       @unique @db.VarChar(250)
-    description        String       @db.VarChar(250)
+    id                 String             @id @default(uuid())
+    name               String             @unique @db.VarChar(250)
+    description        String             @db.VarChar(250)
     character_class_id String
-    code               String       @unique @db.VarChar(255)
-    rarity             CardRarity
-    cost               Int          @default(0)
-    type               CardType
-    keyword            CardKeywords
-    coin_cost          Int          @default(0)
-    status             CardStatus
-    created_at         DateTime     @default(now())
+    code               String             @unique @db.VarChar(255)
+    rarity             CardRarityEnumEnum
+    cost               Int                @default(0)
+    type               CardTypeEnum
+    keyword            CardKeywordEnum
+    coin_cost          Int                @default(0)
+    status             CardStatusEnumEnum
+    created_at         DateTime           @default(now())
 
     character_classes CharacterClass? @relation(fields: [character_class_id], references: [id])
 
@@ -56,35 +54,35 @@ model Card {
 }
 
 model Enemy {
-    id         String        @id @default(uuid())
-    name       String        @unique @db.VarChar(200)
-    type       EnemyType?
-    category   EnemyCategory @default(basic)
-    life       Int           @default(0)
-    min_attack Int           @default(0)
-    max_attach Int           @default(0)
+    id         String            @id @default(uuid())
+    name       String            @unique @db.VarChar(200)
+    type       EnemyTypeEnum?
+    category   EnemyCategoryEnum @default(basic)
+    life       Int               @default(0)
+    min_attack Int               @default(0)
+    max_attach Int               @default(0)
     act_id     Int?
-    created_at DateTime      @default(now())
+    created_at DateTime          @default(now())
     NodeEnemy  NodeEnemy[]
 
     @@map("enemies")
 }
 
 model Room {
-    id         String     @id @default(uuid())
-    player_id  String     @db.VarChar(191)
-    status     RoomStatus
-    created_at DateTime   @default(now())
+    id         String         @id @default(uuid())
+    player_id  String         @db.VarChar(191)
+    status     RoomStatusEnum
+    created_at DateTime       @default(now())
 
     @@map("rooms")
 }
 
 model Node {
-    id          String      @id @default(uuid())
-    name        String      @unique @db.VarChar(50)
-    description String?     @db.Text()
-    created_at  DateTime    @default(now())
-    type        NodeType
+    id          String       @id @default(uuid())
+    name        String       @unique @db.VarChar(50)
+    description String?      @db.Text()
+    created_at  DateTime     @default(now())
+    type        NodeTypeEnum
     NodeEnemy   NodeEnemy[]
 
     @@map("nodes")
@@ -104,15 +102,16 @@ model NodeEnemy {
 }
 
 model CardPool {
-    id         String      @id @default(uuid())
-    name       String      @unique @db.VarChar(250)
-    created_at DateTime    @default(now())
+    id         String                 @id @default(uuid())
+    name       String                 @unique @db.VarChar(250)
+    visibility CardpoolVisibilityEnum
+    created_at DateTime               @default(now())
     Character  Character[]
 
     @@map("cardpools")
 }
 
-enum CardRarity {
+enum CardRarityEnumEnum {
     common
     uncommon
     special
@@ -120,7 +119,7 @@ enum CardRarity {
     basic
 }
 
-enum CardType {
+enum CardTypeEnum {
     attack
     skill
     power
@@ -128,7 +127,7 @@ enum CardType {
     curse
 }
 
-enum CardKeywords {
+enum CardKeywordEnum {
     exhaust
     innate
     ethereal
@@ -136,12 +135,12 @@ enum CardKeywords {
     unaplayable
 }
 
-enum CardStatus {
+enum CardStatusEnumEnum {
     active
     inactive
 }
 
-enum EnemyType {
+enum EnemyTypeEnum {
     beast
     fey
     undead
@@ -149,23 +148,33 @@ enum EnemyType {
     eldritch
 }
 
-enum EnemyCategory {
+enum EnemyCategoryEnum {
     basic
     elite
     boss
 }
 
-enum RoomStatus {
+enum RoomStatusEnum {
     in_progress
     canceled
     finished
 }
 
-enum NodeType {
+enum NodeTypeEnum {
     combat
     royal_house
     encounter
     merchant
     treasure
     camp
+}
+
+enum CharacterClassEnum {
+    knight
+    rogue
+}
+
+enum CardpoolVisibilityEnum {
+    visible
+    hidden
 }
