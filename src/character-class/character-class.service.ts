@@ -12,9 +12,10 @@ export class CharacterClassService {
      * @param character_classesFindUniqueArgs
      * @returns character_class | null
      */
-    async getCharacterClass_V1(
-        data: Prisma.CharacterClassFindUniqueArgs,
-    ): Promise<CharacterClass | null> {
+    async getCharacterClass_V1(id: string): Promise<CharacterClass | null> {
+        const data: Prisma.CharacterClassFindUniqueArgs = {
+            where: { id },
+        };
         return await this.prisma.characterClass.findUnique(data);
     }
 
