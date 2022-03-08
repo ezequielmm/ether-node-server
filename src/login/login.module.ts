@@ -3,13 +3,12 @@ import { PrismaModule } from 'src/prisma.module';
 import { LoginController } from './login.controller';
 import { LoginService } from './login.service';
 import { JwtModule } from '@nestjs/jwt';
-import { jwtConstants } from '../constants';
 import { env } from 'process';
 
 @Module({
     imports: [PrismaModule,JwtModule.register({
-        secret: jwtConstants.secret,
-        signOptions: {expiresIn: `${env.TOKEN_REFRESH_TIME||54000}s`}
+      secret: process.env.TOKEN_SECRET_KEY,
+      signOptions: {expiresIn: `${process.env.AUTH_TOKEN_DURATION||30}d`}
       })],
     controllers: [LoginController],
     providers: [LoginService],

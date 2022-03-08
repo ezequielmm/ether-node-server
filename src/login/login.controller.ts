@@ -1,4 +1,4 @@
-import { Controller, Post, Version,Body,Res } from '@nestjs/common';
+import { Controller, Post, Version,Body,Res,Headers } from '@nestjs/common';
 import { Response } from 'express';
 import { LoginService } from './login.service';
 import { LoginDto } from '../login/dto/login.dto';
@@ -23,9 +23,9 @@ export class LoginController {
 
     @Version('1')
     @Post('token/refresh')
-    async refreshToken_V1(@Body() data: LoginDto,@Res() response: Response){
+    async refreshToken_V1(@Headers('Authorization') token: string,@Body() data: LoginDto,@Res() response: Response){
         try {
-            const refreshedToken =await this.service.refreshToken_V1(data); 
+            const refreshedToken =await this.service.refreshToken_V1(data,token); 
             if(!refreshedToken)   {
                 return response.status(401).json({statusCode:401,message:'Un-authorized',data:{}});
             }   
