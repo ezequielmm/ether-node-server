@@ -1,5 +1,10 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { CardKeywords, CardRarity, CardStatus, CardType } from '@prisma/client';
+import {
+    CardKeywordEnum,
+    CardRarityEnum,
+    CardStatusEnum,
+    CardTypeEnum,
+} from '@prisma/client';
 import {
     IsEnum,
     IsNotEmpty,
@@ -34,9 +39,9 @@ export class CreateCardDto {
     character_class_id: string;
 
     @IsNotEmpty()
-    @IsEnum(CardRarity)
-    @ApiProperty({ enum: CardRarity })
-    rarity: CardRarity;
+    @IsEnum(CardRarityEnum)
+    @ApiProperty({ enum: CardRarityEnum })
+    rarity: CardRarityEnum;
 
     @IsNumber()
     @IsNotEmpty()
@@ -44,14 +49,14 @@ export class CreateCardDto {
     cost: number;
 
     @IsNotEmpty()
-    @IsEnum(CardType)
-    @ApiProperty({ enum: CardType })
-    type: CardType;
+    @IsEnum(CardTypeEnum)
+    @ApiProperty({ enum: CardTypeEnum })
+    type: CardTypeEnum;
 
     @IsNotEmpty()
-    @IsEnum(CardKeywords)
-    @ApiProperty({ enum: CardKeywords })
-    keyword: CardKeywords;
+    @IsEnum(CardKeywordEnum)
+    @ApiProperty({ enum: CardKeywordEnum })
+    keyword: CardKeywordEnum;
 
     @IsNotEmpty()
     @IsNumber()
@@ -59,7 +64,7 @@ export class CreateCardDto {
     coin_cost: number;
 
     @IsNotEmpty()
-    @IsEnum(CardStatus)
-    @ApiProperty({ enum: CardStatus })
-    status: CardStatus;
+    @IsEnum(CardStatusEnum)
+    @ApiProperty({ enum: CardStatusEnum })
+    status: CardStatusEnum;
 }

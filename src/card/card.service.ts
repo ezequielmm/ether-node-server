@@ -14,7 +14,10 @@ export class CardService {
      * @param data
      * @returns card | null
      */
-    async getCard_V1(data: Prisma.CardFindUniqueArgs): Promise<Card | null> {
+    async getCard_V1(id: string): Promise<Card | null> {
+        const data: Prisma.CardFindUniqueArgs = {
+            where: { id },
+        };
         return await this.prisma.card.findUnique(data);
     }
 
