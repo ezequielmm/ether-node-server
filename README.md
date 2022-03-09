@@ -20,4 +20,4 @@ After we modify the file, we run `npx prisma db migrate --name "the_specified_mo
 
 To run the included seeders, we run `npm run seed`
 
-This project has Swagger Docs included for quick test and references under the `api/docs` route.
+This project has Swagger Docs included for quick test and references under the `/api` route.
