@@ -17,7 +17,7 @@ import { LoginModule } from './login/login.module';
         CardModule,
         EnemyModule,
         RoomModule,
-        LoginModule
+        LoginModule,
     ],
     controllers: [],
     providers: [],

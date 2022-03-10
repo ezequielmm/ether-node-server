@@ -3,6 +3,7 @@ import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import { TransformDataResource } from './interceptors/TransformDataResource.interceptor';
+import { LocalAuthGuard } from './login/local-auth.guard';
 
 async function bootstrap() {
     const app = await NestFactory.create(AppModule);
@@ -12,6 +13,9 @@ async function bootstrap() {
 
     // Add Resource Interceptor
     app.useGlobalInterceptors(new TransformDataResource());
+
+    // Enable Guards
+    // app.useGlobalGuards(new LocalAuthGuard());
 
     // Enable Versioning
     app.enableVersioning({

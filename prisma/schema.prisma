@@ -1,130 +1,130 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
-    provider = "prisma-client-js"
+  provider = "prisma-client-js"
 }
 
 datasource db {
-    provider = "mysql"
-    url      = env("DATABASE_URL")
+  provider = "mysql"
+  url      = env("DATABASE_URL")
 }
 
 model CharacterClass {
-    id         String      @id @default(uuid())
-    name       String      @unique @db.VarChar(255)
-    created_at DateTime    @default(now())
-    updated_at DateTime    @default(now())
-    characters Character[]
-    cards      Card[]
+  id         String      @id @default(uuid())
+  name       String      @unique @db.VarChar(255)
+  created_at DateTime    @default(now())
+  updated_at DateTime    @default(now())
+  cards      Card[]
+  characters Character[]
 
-    @@map("character_classes")
+  @@map("character_classes")
 }
 
 model Character {
-    id             String         @id @default(uuid())
-    name           String         @unique @db.VarChar(255)
-    class_id       String
-    created_at     DateTime       @default(now())
-    updated_at     DateTime       @default(now())
-    characterClass CharacterClass @relation(fields: [class_id], references: [id])
+  id             String         @id @default(uuid())
+  name           String         @unique @db.VarChar(255)
+  class_id       String
+  created_at     DateTime       @default(now())
+  updated_at     DateTime       @default(now())
+  characterClass CharacterClass @relation(fields: [class_id], references: [id])
 
-    @@map("characters")
+  @@index([class_id], map: "characters_class_id_fkey")
+  @@map("characters")
 }
 
 model Card {
-    id                 String       @id @default(uuid())
-    name               String       @unique @db.VarChar(250)
-    description        String       @db.VarChar(250)
-    character_class_id String
-    code               String       @unique @db.VarChar(255)
-    rarity             CardRarity
-    cost               Int          @default(0)
-    type               CardType
-    keyword            CardKeywords
-    coin_cost          Int          @default(0)
-    status             CardStatus
-    created_at         DateTime     @default(now())
-    updated_at         DateTime     @default(now())
+  id                 String         @id @default(uuid())
+  name               String         @unique @db.VarChar(250)
+  description        String         @db.VarChar(250)
+  character_class_id String
+  code               String         @unique @db.VarChar(255)
+  rarity             CardRarity
+  cost               Int            @default(0)
+  type               CardType
+  keyword            CardKeywords
+  coin_cost          Int            @default(0)
+  status             CardStatus
+  created_at         DateTime       @default(now())
+  updated_at         DateTime       @default(now())
+  character_classes  CharacterClass @relation(fields: [character_class_id], references: [id])
 
-    character_classes CharacterClass? @relation(fields: [character_class_id], references: [id])
-
-    @@map("cards")
+  @@index([character_class_id], map: "cards_character_class_id_fkey")
+  @@map("cards")
 }
 
 model Enemy {
-    id         String        @id @default(uuid())
-    name       String        @unique @db.VarChar(200)
-    type       EnemyType?
-    category   EnemyCategory @default(basic)
-    life       Int           @default(0)
-    min_attack Int           @default(0)
-    max_attach Int           @default(0)
-    act_id     Int?
+  id         String        @id @default(uuid())
+  name       String        @unique @db.VarChar(200)
+  type       EnemyType?
+  category   EnemyCategory @default(basic)
+  life       Int           @default(0)
+  min_attack Int           @default(0)
+  max_attach Int           @default(0)
+  act_id     Int?
 
-    @@map("enemies")
+  @@map("enemies")
 }
 
 model Room {
-    id        String     @id @default(uuid())
-    player_id String     @db.VarChar(191)
-    status    RoomStatus
+  id        String     @id @default(uuid())
+  player_id String
+  status    RoomStatus
 
-    @@map("rooms")
+  @@map("rooms")
 }
 
 model Profile {
-    email    String @unique @db.VarChar(255)
-    password String @unique @db.VarChar(255)
+  id       String @id @default(uuid())
+  email    String @unique @db.VarChar(255)
+  password String @unique @db.VarChar(255)
+  refresh_token String? @db.Text
 
-    @@map("profiles")
+  @@map("profiles")
 }
 
 enum CardRarity {
-    common
-    uncommon
-    special
-    rare
-    basic
+  common
+  uncommon
+  special
+  rare
+  basic
 }
 
 enum CardType {
-    attack
-    skill
-    power
-    status
-    curse
+  attack
+  skill
+  power
+  status
+  curse
 }
 
 enum CardKeywords {
-    exhaust
-    innate
-    ethereal
-    retain
-    unaplayable
+  exhaust
+  innate
+  ethereal
+  retain
+  unaplayable
 }
 
 enum CardStatus {
-    active
-    inactive
+  active
+  inactive
 }
 
 enum EnemyType {
-    beast
-    fey
-    undead
-    clockwork
-    eldritch
+  beast
+  fey
+  undead
+  clockwork
+  eldritch
 }
 
 enum EnemyCategory {
-    basic
-    elite
-    boss
+  basic
+  elite
+  boss
 }
 
 enum RoomStatus {
-    in_progress
-    canceled
-    finished
+  in_progress
+  canceled
+  finished
 }
