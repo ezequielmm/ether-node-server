@@ -36,7 +36,7 @@ export class LoginController {
     @HttpCode(HttpStatus.OK)
     @Public()
     @UseGuards(RefreshTokenGuard)
-    @Post('token/refresh')
+    @Get('token/refresh')
     async refreshToken_V1(
         @GetCurrentUserId() userId: string,
         @GetCurrentUser('refreshToken') refreshToken: string,
