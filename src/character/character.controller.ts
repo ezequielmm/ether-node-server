@@ -1,5 +1,5 @@
 import { Controller, Get, Param, ParseUUIDPipe, Version } from '@nestjs/common';
-import { Character, Prisma } from '@prisma/client';
+import { Character } from '@prisma/client';
 import { CharacterService } from './character.service';
 
 @Controller('characters')
@@ -17,9 +17,6 @@ export class CharacterController {
     async getCharacter_V1(
         @Param('id', ParseUUIDPipe) id: string,
     ): Promise<Character> {
-        const data: Prisma.CharacterFindUniqueArgs = {
-            where: { id },
-        };
-        return await this.service.getCharacter_V1(data);
+        return await this.service.getCharacter_V1(id);
     }
 }

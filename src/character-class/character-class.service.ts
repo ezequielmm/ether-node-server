@@ -12,9 +12,10 @@ export class CharacterClassService {
      * @param character_classesFindUniqueArgs
      * @returns character_class | null
      */
-    async getCharacterClass_V1(
-        data: Prisma.CharacterClassFindUniqueArgs,
-    ): Promise<CharacterClass | null> {
+    async getCharacterClass_V1(id: string): Promise<CharacterClass | null> {
+        const data: Prisma.CharacterClassFindUniqueArgs = {
+            where: { id },
+        };
         return await this.prisma.characterClass.findUnique(data);
     }
 
@@ -24,5 +25,12 @@ export class CharacterClassService {
      */
     async getAllCharacterClasses_V1(): Promise<CharacterClass[]> {
         return await this.prisma.characterClass.findMany();
+    }
+
+    async characterClassExists(id: string): Promise<boolean> {
+        const itemExists = await this.prisma.characterClass.findUnique({
+            where: { id },
+        });
+        return itemExists ? true : false;
     }
 }

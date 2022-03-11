@@ -8,67 +8,70 @@ datasource db {
 }
 
 model CharacterClass {
-  id         String      @id @default(uuid())
-  name       String      @unique @db.VarChar(255)
-  created_at DateTime    @default(now())
-  updated_at DateTime    @default(now())
-  cards      Card[]
-  characters Character[]
+    id         String   @id @default(uuid())
+    name       String   @unique @db.VarChar(255)
+    created_at DateTime @default(now())
+    cards      Card[]
 
-  @@map("character_classes")
+    @@map("character_classes")
 }
 
 model Character {
-  id             String         @id @default(uuid())
-  name           String         @unique @db.VarChar(255)
-  class_id       String
-  created_at     DateTime       @default(now())
-  updated_at     DateTime       @default(now())
-  characterClass CharacterClass @relation(fields: [class_id], references: [id])
+    id             String             @id @default(uuid())
+    name           String             @unique @db.VarChar(250)
+    description    String?            @db.Text()
+    class          CharacterClassEnum
+    initial_health Int                @default(0)
+    initial_gold   Int                @default(0)
+    cardpool_id    String
+    created_at     DateTime           @default(now())
 
-  @@index([class_id], map: "characters_class_id_fkey")
-  @@map("characters")
+    cardpool CardPool @relation(fields: [cardpool_id], references: [id])
+
+    @@map("characters")
 }
 
 model Card {
-  id                 String         @id @default(uuid())
-  name               String         @unique @db.VarChar(250)
-  description        String         @db.VarChar(250)
-  character_class_id String
-  code               String         @unique @db.VarChar(255)
-  rarity             CardRarity
-  cost               Int            @default(0)
-  type               CardType
-  keyword            CardKeywords
-  coin_cost          Int            @default(0)
-  status             CardStatus
-  created_at         DateTime       @default(now())
-  updated_at         DateTime       @default(now())
-  character_classes  CharacterClass @relation(fields: [character_class_id], references: [id])
+    id                 String          @id @default(uuid())
+    name               String          @unique @db.VarChar(250)
+    description        String          @db.VarChar(250)
+    character_class_id String
+    code               String          @unique @db.VarChar(255)
+    rarity             CardRarityEnum
+    cost               Int             @default(0)
+    type               CardTypeEnum
+    keyword            CardKeywordEnum
+    coin_cost          Int             @default(0)
+    status             CardStatusEnum
+    created_at         DateTime        @default(now())
 
-  @@index([character_class_id], map: "cards_character_class_id_fkey")
-  @@map("cards")
+    character_classes CharacterClass? @relation(fields: [character_class_id], references: [id])
+
+    @@map("cards")
 }
 
 model Enemy {
-  id         String        @id @default(uuid())
-  name       String        @unique @db.VarChar(200)
-  type       EnemyType?
-  category   EnemyCategory @default(basic)
-  life       Int           @default(0)
-  min_attack Int           @default(0)
-  max_attach Int           @default(0)
-  act_id     Int?
+    id         String            @id @default(uuid())
+    name       String            @unique @db.VarChar(200)
+    type       EnemyTypeEnum?
+    category   EnemyCategoryEnum @default(basic)
+    life       Int               @default(0)
+    min_attack Int               @default(0)
+    max_attach Int               @default(0)
+    act_id     Int?
+    created_at DateTime          @default(now())
+    NodeEnemy  NodeEnemy[]
 
-  @@map("enemies")
+    @@map("enemies")
 }
 
 model Room {
-  id        String     @id @default(uuid())
-  player_id String
-  status    RoomStatus
+    id         String         @id @default(uuid())
+    player_id  String         @db.VarChar(191)
+    status     RoomStatusEnum
+    created_at DateTime       @default(now())
 
-  @@map("rooms")
+    @@map("rooms")
 }
 
 model Profile {
@@ -77,54 +80,108 @@ model Profile {
   password String @unique @db.VarChar(255)
   refresh_token String? @db.Text
 
+
   @@map("profiles")
 }
 
-enum CardRarity {
-  common
-  uncommon
-  special
-  rare
-  basic
+model Node {
+    id          String       @id @default(uuid())
+    name        String       @unique @db.VarChar(50)
+    description String?      @db.Text()
+    created_at  DateTime     @default(now())
+    type        NodeTypeEnum
+    NodeEnemy   NodeEnemy[]
+
+    @@map("nodes")
 }
 
-enum CardType {
-  attack
-  skill
-  power
-  status
-  curse
+model NodeEnemy {
+    id         String   @id @default(uuid())
+    node_id    String
+    enemy_id   String
+    quantity   Int      @default(1) @db.SmallInt()
+    created_at DateTime @default(now())
+
+    node  Node  @relation(fields: [node_id], references: [id])
+    enemy Enemy @relation(fields: [enemy_id], references: [id])
+
+    @@map("node_enemies")
 }
 
-enum CardKeywords {
-  exhaust
-  innate
-  ethereal
-  retain
-  unaplayable
+model CardPool {
+    id         String                 @id @default(uuid())
+    name       String                 @unique @db.VarChar(250)
+    visibility CardpoolVisibilityEnum
+    created_at DateTime               @default(now())
+    Character  Character[]
+
+    @@map("cardpools")
 }
 
-enum CardStatus {
-  active
-  inactive
+enum CardRarityEnum {
+    common
+    uncommon
+    special
+    rare
+    basic
 }
 
-enum EnemyType {
-  beast
-  fey
-  undead
-  clockwork
-  eldritch
+enum CardTypeEnum {
+    attack
+    skill
+    power
+    status
+    curse
 }
 
-enum EnemyCategory {
-  basic
-  elite
-  boss
+enum CardKeywordEnum {
+    exhaust
+    innate
+    ethereal
+    retain
+    unaplayable
 }
 
-enum RoomStatus {
-  in_progress
-  canceled
-  finished
+enum CardStatusEnum {
+    active
+    inactive
+}
+
+enum EnemyTypeEnum {
+    beast
+    fey
+    undead
+    clockwork
+    eldritch
+}
+
+enum EnemyCategoryEnum {
+    basic
+    elite
+    boss
+}
+
+enum RoomStatusEnum {
+    in_progress
+    canceled
+    finished
+}
+
+enum NodeTypeEnum {
+    combat
+    royal_house
+    encounter
+    merchant
+    treasure
+    camp
+}
+
+enum CharacterClassEnum {
+    knight
+    rogue
+}
+
+enum CardpoolVisibilityEnum {
+    visible
+    hidden
 }
