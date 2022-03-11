@@ -26,10 +26,10 @@ export class LoginController {
     @Version('1')
     @Public()
     @HttpCode(HttpStatus.OK)
-    @UseGuards(LocalAuthGuard)
+    // @UseGuards(LocalAuthGuard)
     @Post('/login')
-    async login_V1(@Request() req) {
-        return this.service.login_V1(req.user);
+    async login_V1(@Body() body: LoginDto) {
+        return this.service.login_V1(body);
     }
 
     @Version('1')

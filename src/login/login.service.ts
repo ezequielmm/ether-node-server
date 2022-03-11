@@ -18,8 +18,24 @@ export class LoginService {
      * @returns userProfile, token
      */
     async login_V1(data: LoginDto) {
-        const tokens = await this.getTokens(data.id, data.email);
-        await this.setCurrentRefreshToken(tokens.refresh_token, data.id);
+        const user = await this.prisma.profile.findUnique({
+            where: { email: data.email },
+        });
+
+        if (!user) throw new ForbiddenException('Unauthorized User');
+
+        // We need to implement register user route
+        // Intentionally commented out because we have not implemented register user route
+        // const passwordMatches = await argon.verify(
+        //     user.password,
+        //     data.password,
+        // );
+
+        if (!(user.password === data.password))
+            throw new ForbiddenException('Unauthorized User');
+
+        const tokens = await this.getTokens(user.id, user.email);
+        await this.setCurrentRefreshToken(tokens.refresh_token, user.id);
         return {
             ...tokens,
             profile: data,
