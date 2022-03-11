@@ -8,7 +8,7 @@ import {
     Put,
     Version,
 } from '@nestjs/common';
-import { Card, Prisma } from '@prisma/client';
+import { Card } from '@prisma/client';
 import { CardService } from './card.service';
 import { CreateCardDto } from './dto/createCard.dto';
 import { UpdateCardDto } from './dto/updateCard.dto';
@@ -18,7 +18,7 @@ export class CardController {
     constructor(private readonly service: CardService) {}
 
     @Version('1')
-    @Get('/')
+    @Get()
     async getCards_V1(): Promise<Card[]> {
         return await this.service.getCards_V1();
     }
@@ -26,20 +26,17 @@ export class CardController {
     @Version('1')
     @Get(':id')
     async getCard_V1(@Param('id', ParseUUIDPipe) id: string): Promise<Card> {
-        const data: Prisma.CardFindUniqueArgs = {
-            where: { id },
-        };
-        return await this.service.getCard_V1(data);
+        return await this.service.getCard_V1(id);
     }
 
     @Version('1')
-    @Post('/')
+    @Post()
     async createCard_V1(@Body() createCardDto: CreateCardDto): Promise<Card> {
         return this.service.createCard_V1(createCardDto);
     }
 
     @Version('1')
-    @Put('/:id')
+    @Put(':id')
     async updateCard_V1(
         @Param('id', ParseUUIDPipe) id: string,
         @Body() updateCardDto: UpdateCardDto,

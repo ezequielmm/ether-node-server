@@ -12,9 +12,13 @@ export class CharacterService {
      * @param characterWhereUniqueInput
      * @returns character | null
      */
-    async getCharacter_V1(
-        data: Prisma.CharacterFindUniqueArgs,
-    ): Promise<Character | null> {
+    async getCharacter_V1(id: string): Promise<Character | null> {
+        const data: Prisma.CharacterFindUniqueArgs = {
+            where: { id },
+            include: {
+                cardpool: true,
+            },
+        };
         return await this.prisma.character.findUnique(data);
     }
 
@@ -23,6 +27,8 @@ export class CharacterService {
      * @version 1
      */
     async getAllCharacters_V1(): Promise<Character[]> {
-        return await this.prisma.character.findMany();
+        return await this.prisma.character.findMany({
+            include: { cardpool: true },
+        });
     }
 }

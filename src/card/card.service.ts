@@ -11,10 +11,13 @@ export class CardService {
     /**
      * Get a single card
      * @version 1
-     * @param cardsFindUniqueArgs
+     * @param data
      * @returns card | null
      */
-    async getCard_V1(data: Prisma.CardFindUniqueArgs): Promise<Card | null> {
+    async getCard_V1(id: string): Promise<Card | null> {
+        const data: Prisma.CardFindUniqueArgs = {
+            where: { id },
+        };
         return await this.prisma.card.findUnique(data);
     }
 
@@ -40,5 +43,19 @@ export class CardService {
      */
     async updateCard_V1(id: string, data: UpdateCardDto): Promise<Card> {
         return this.prisma.card.update({ where: { id }, data });
+    }
+
+    async checkIfNameExists(name: string): Promise<boolean> {
+        const itemExists = await this.prisma.card.findUnique({
+            where: { name },
+        });
+        return itemExists ? false : true;
+    }
+
+    async checkIfCodeExists(code: string): Promise<boolean> {
+        const itemExists = await this.prisma.card.findUnique({
+            where: { code },
+        });
+        return itemExists ? false : true;
     }
 }

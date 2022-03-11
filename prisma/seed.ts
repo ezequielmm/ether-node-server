@@ -1,75 +1,55 @@
-import { Prisma, PrismaClient } from '@prisma/client';
-import { faker } from '@faker-js/faker';
-import { generateRandomNumber } from '../src/utils';
+import { PrismaClient } from '@prisma/client';
+import { cardpools } from './data/cardpools';
+import { cards } from './data/cards';
+import { characterClasses } from './data/characterClasses';
+import { characters } from './data/characters';
+import { rooms } from './data/rooms';
 
 const prisma = new PrismaClient();
 
-const characterClassesData: Prisma.CharacterClassCreateInput[] = [
-    {
-        name: faker.name.jobArea(),
-        characters: {
-            create: {
-                name: `${faker.name.firstName()} ${faker.name.lastName()}`,
-            },
-        },
-        cards: {
-            create: {
-                name: `${faker.name.firstName()} ${faker.name.lastName()}`,
-                description: faker.lorem.lines(3),
-                code: faker.random.alphaNumeric(10),
-                rarity: 'common',
-                cost: generateRandomNumber(1, 100),
-                type: 'attack',
-                keyword: 'exhaust',
-                coin_cost: generateRandomNumber(1, 100),
-                status: 'active',
-            },
-        },
-    },
-    {
-        name: faker.name.jobArea(),
-        characters: {
-            create: {
-                name: `${faker.name.firstName()} ${faker.name.lastName()}`,
-            },
-        },
-    },
-];
-
-const enemiesData: Prisma.EnemyCreateInput[] = [
-    {
-        name: `${faker.name.firstName()} ${faker.name.lastName()}`,
-        type: 'beast',
-        category: 'basic',
-    },
-];
-
-const roomsData: Prisma.RoomCreateManyInput[] = [
-    {
-        player_id: faker.datatype.uuid(),
-        status: 'finished',
-    },
-    {
-        player_id: faker.datatype.uuid(),
-        status: 'canceled',
-    },
-    {
-        player_id: faker.datatype.uuid(),
-        status: 'in_progress',
-    },
-];
-
 async function main() {
     console.log('Start Seeding...');
-    for (const data of characterClassesData) {
-        await prisma.characterClass.create({ data });
-    }
-    for (const data of enemiesData) {
-        await prisma.enemy.create({ data });
-    }
-    for (const data of roomsData) {
-        await prisma.room.create({ data });
-    }
+
+    //#region  Delete previous data
+    // Disable Foreign key constraints
+    await prisma.$queryRaw`SET FOREIGN_KEY_CHECKS=0;`;
+
+    await prisma.cardPool.deleteMany();
+    console.log('Deleted records in cardpools table');
+
+    await prisma.character.deleteMany();
+    console.log('Deleted records in characters table');
+
+    await prisma.characterClass.deleteMany();
+    console.log('Deleted records in character classes table');
+
+    await prisma.card.deleteMany();
+    console.log('Deleted records in cards table');
+
+    await prisma.room.deleteMany();
+    console.log('Deleted records in rooms table');
+
+    // Enable Foreign key constraints
+    await prisma.$queryRaw`SET FOREIGN_KEY_CHECKS=1;`;
+    //#endregion End Delete previous data
+
+    //#region Insert Data
+    await prisma.cardPool.create({ data: cardpools });
+    console.log('Added cardpools data');
+
+    await prisma.character.createMany({ data: characters });
+    console.log('Added characters data');
+
+    await prisma.characterClass.createMany({ data: characterClasses });
+    console.log('Added character classes data');
+
+    await prisma.card.createMany({ data: cards });
+    console.log('Added cards data');
+
+    await prisma.room.createMany({ data: rooms });
+    console.log('Added rooms data');
+    //#endregion End Insert Data
+
     console.log(`Seeding finished.`);
 }
 
