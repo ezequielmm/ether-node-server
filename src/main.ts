@@ -32,6 +32,9 @@ async function bootstrap() {
         .setTitle('KOTE Gameplay Service')
         .setDescription('API routes')
         .setVersion('1.0')
+        .addBearerAuth()
+        .addServer(process.env.GATEWAY_URL, 'Gateway URL')
+        .addServer('http://localhost:3000', 'Local Server')
         .build();
 
     const document = SwaggerModule.createDocument(app, config);
