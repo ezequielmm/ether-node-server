@@ -1,7 +1,9 @@
 import { Controller, Get, Param, ParseUUIDPipe, Version } from '@nestjs/common';
+import { ApiBearerAuth } from '@nestjs/swagger';
 import { CharacterClass } from '@prisma/client';
 import { CharacterClassService } from './character-class.service';
 
+@ApiBearerAuth()
 @Controller('characters/classes')
 export class CharacterClassController {
     constructor(private readonly service: CharacterClassService) {}
