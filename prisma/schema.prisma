@@ -14,7 +14,6 @@ model CharacterClass {
     id         String   @id @default(uuid())
     name       String   @unique @db.VarChar(255)
     created_at DateTime @default(now())
-    cards      Card[]
 
     @@map("character_classes")
 }
@@ -35,20 +34,21 @@ model Character {
 }
 
 model Card {
-    id                 String          @id @default(uuid())
-    name               String          @unique @db.VarChar(250)
-    description        String          @db.VarChar(250)
-    character_class_id String
-    code               String          @unique @db.VarChar(255)
-    rarity             CardRarityEnum
-    cost               Int             @default(0)
-    type               CardTypeEnum
-    keyword            CardKeywordEnum
-    coin_cost          Int             @default(0)
-    status             CardStatusEnum
-    created_at         DateTime        @default(now())
+    id          String         @id @default(uuid())
+    name        String         @unique @db.VarChar(250)
+    description String         @db.VarChar(250)
+    class       CardClassEnum?
+    code        String         @db.VarChar(255)
+    rarity      CardRarityEnum
+    energy      Int?           @db.SmallInt
+    type        CardTypeEnum   @default(attack)
+    coins_min   Int?           @db.Int
+    coins_max   Int?           @db.Int
+    active      Boolean        @default(true)
+    cardpool_id String?
+    created_at  DateTime       @default(now())
 
-    character_classes CharacterClass? @relation(fields: [character_class_id], references: [id])
+    cardpool CardPool? @relation(fields: [cardpool_id], references: [id])
 
     @@map("cards")
 }
@@ -104,9 +104,11 @@ model NodeEnemy {
 model CardPool {
     id         String                 @id @default(uuid())
     name       String                 @unique @db.VarChar(250)
-    visibility CardpoolVisibilityEnum
+    visibility CardpoolVisibilityEnum @default(visible)
     created_at DateTime               @default(now())
-    Character  Character[]
+
+    Character Character[]
+    Card      Card[]
 
     @@map("cardpools")
 }
@@ -138,6 +140,10 @@ enum CardKeywordEnum {
 enum CardStatusEnum {
     active
     inactive
+}
+
+enum CardClassEnum {
+    knight
 }
 
 enum EnemyTypeEnum {

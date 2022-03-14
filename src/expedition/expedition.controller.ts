@@ -28,6 +28,6 @@ export class ExpeditionController {
     async getExpeditionsByPlayerId_V1(
         @Param('id', ParseUUIDPipe) id: string,
     ): Promise<Expedition[]> {
-        return await this.service.getExpeditionByPlayerId_V1(id);
+        return await this.service.getExpeditionById_V1(id);
     }
 }
