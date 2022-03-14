@@ -31,4 +31,14 @@ export class CharacterService {
             include: { cardpool: true },
         });
     }
+
+    /**
+     * Returns character selection
+     * @param data
+     * @returns character selection
+     */
+
+    async createCharacterSelection_V1(data) {
+        return data;
+    }
 }

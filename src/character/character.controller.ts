@@ -1,6 +1,7 @@
 import { Controller, Get, Param, ParseUUIDPipe, Version } from '@nestjs/common';
 import { Character } from '@prisma/client';
 import { CharacterService } from './character.service';
+import { CreateCharacterDto } from './dto/createCharacter.dto';
 
 @Controller('characters')
 export class CharacterController {
@@ -18,5 +19,9 @@ export class CharacterController {
         @Param('id', ParseUUIDPipe) id: string,
     ): Promise<Character> {
         return await this.service.getCharacter_V1(id);
+    }
+
+    async createCharacterSelection_V1(data: CreateCharacterDto) {
+        return data;
     }
 }
