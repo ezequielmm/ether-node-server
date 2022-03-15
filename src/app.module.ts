@@ -9,6 +9,7 @@ import { ExpeditionModule } from './expedition/expedition.module';
 import { PrismaModule } from './prisma.module';
 import { ProfileModule } from './profile/profile.module';
 import { RoomModule } from './room/room.module';
+import { SocketModule } from './socket/socket.module';
 
 @Module({
     imports: [
@@ -21,6 +22,7 @@ import { RoomModule } from './room/room.module';
         EnemyModule,
         RoomModule,
         ExpeditionModule,
+        SocketModule,
     ],
     controllers: [AppController],
     providers: [],
