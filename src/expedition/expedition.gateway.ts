@@ -13,28 +13,28 @@ import { Server, Socket } from 'socket.io';
     cors: {
         origin: '*',
     },
+    namespace: '/v1/socket/expeditions',
 })
-export class SocketGateway
+export class ExpeditionGateway
     implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
 {
     @WebSocketServer() server: Server;
-    private logger: Logger = new Logger('SocketGateway');
+    private logger: Logger = new Logger('ExpeditionGateway');
 
     afterInit() {
-        this.logger.log(`Socket server initiated`);
-    }
-
-    handleConnection({ id }: Socket) {
-        this.logger.log(`Client connected: ${id}`);
+        this.logger.log(`Socket initiated on port`);
     }
 
     handleDisconnect({ id }: Socket) {
         this.logger.log(`Client disconnected: ${id}`);
     }
 
-    @SubscribeMessage('msgToServer')
-    handleMessage({ id }: Socket, payload: string): void {
-        console.log(`${id}: ${payload}`);
-        this.server.emit('msgToClient', payload);
+    handleConnection({ id }: Socket) {
+        this.logger.log(`Client connected: ${id}`);
+    }
+
+    @SubscribeMessage('joinExpedition')
+    handleJoinExpedition(client: Socket, room: string) {
+        client.join(room);
     }
 }
