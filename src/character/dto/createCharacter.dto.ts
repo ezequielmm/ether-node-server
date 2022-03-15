@@ -9,12 +9,14 @@ import {
     MaxLength,
     MinLength,
 } from 'class-validator';
+import { UniqueNameOnCharactersTable } from 'src/validators/uniqueNameOnCharactersTable.rule';
 
 export class CreateCharacterDto {
     @IsString()
     @IsNotEmpty()
     @MinLength(1)
     @MaxLength(250)
+    @UniqueNameOnCharactersTable()
     @ApiProperty()
     name: string;
 
@@ -36,5 +38,6 @@ export class CreateCharacterDto {
 
     @IsNotEmpty()
     @IsUUID()
+    @ApiProperty()
     cardpool_id: string;
 }

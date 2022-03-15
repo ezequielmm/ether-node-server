@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { Character, Prisma } from '@prisma/client';
 import { PrismaService } from 'src/prisma.service';
+import { v4 as uuidv4 } from 'uuid';
+import { UpdateCharacterDto } from './dto/updateCharacter.dto';
 
 @Injectable()
 export class CharacterService {
@@ -38,7 +40,29 @@ export class CharacterService {
      * @returns character selection
      */
 
-    async createCharacterSelection_V1(data) {
-        return data;
+    async selectCharacter_V1(data) {
+        // Sending example response
+        // TODO: Update this to return the character
+        return {
+            id: uuidv4(),
+            ...data,
+        };
+    }
+
+    async updateCharacter_V1(id: string, data: UpdateCharacterDto) {
+        // Sending example response
+        // TODO: Update this to return the updated character
+        return {
+            id: uuidv4(),
+            ...data,
+        };
+    }
+
+    async checkIfNameExists(name: string): Promise<boolean> {
+        const data: Prisma.CharacterFindManyArgs = {
+            where: { name },
+        };
+        const characters = await this.prisma.character.findMany(data);
+        return characters.length === 0;
     }
 }
