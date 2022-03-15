@@ -9,13 +9,15 @@ import {
     Query,
     Version,
 } from '@nestjs/common';
-import { ApiQuery } from '@nestjs/swagger';
+import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CardPool, CardpoolVisibilityEnum } from '@prisma/client';
 import { CardPoolFiltersInterface } from 'src/interfaces/CardPoolFiltersInterface';
 import { CardPoolService } from './cardpool.service';
+import { CardPoolDto } from './dto/cardPool.dto';
 import { CreateCardPoolDto } from './dto/createCardPool.dto';
 import { UpdateCardPoolDto } from './dto/updateCardPool.dto';
 
+@ApiTags('Cardpool')
 @Controller('cardpools')
 export class CardPoolController {
     constructor(private readonly service: CardPoolService) {}
@@ -38,6 +40,10 @@ export class CardPoolController {
         enum: CardpoolVisibilityEnum,
         description: 'Visibility of the cardpool',
     })
+    @ApiOperation({
+        summary: 'Get all cardpools',
+    })
+    @ApiResponse({ status: 200, type: [CardPoolDto] })
     @Get()
     async getCardPools_V1(
         @Query() filters: CardPoolFiltersInterface,
@@ -46,6 +52,10 @@ export class CardPoolController {
     }
 
     @Version('1')
+    @ApiOperation({
+        summary: 'Get single cardpool',
+    })
+    @ApiResponse({ status: 200, type: CardPoolDto })
     @Get(':id')
     async getCardPool_V1(
         @Param('id', ParseUUIDPipe) id: string,
@@ -54,6 +64,10 @@ export class CardPoolController {
     }
 
     @Version('1')
+    @ApiResponse({ status: 201, type: CardPoolDto })
+    @ApiOperation({
+        summary: 'Create a cardpool',
+    })
     @Post()
     async createCardPool_V1(
         @Body() createCardPoolDto: CreateCardPoolDto,
@@ -62,6 +76,9 @@ export class CardPoolController {
     }
 
     @Version('1')
+    @ApiOperation({
+        summary: 'Update an existing cardpool',
+    })
     @Put(':id')
     async updateCardPool_V1(
         @Param('id', ParseUUIDPipe) id: string,
