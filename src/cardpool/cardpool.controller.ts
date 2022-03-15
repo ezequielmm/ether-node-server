@@ -6,9 +6,12 @@ import {
     ParseUUIDPipe,
     Post,
     Put,
+    Query,
     Version,
 } from '@nestjs/common';
-import { CardPool } from '@prisma/client';
+import { ApiQuery } from '@nestjs/swagger';
+import { CardPool, CardpoolVisibilityEnum } from '@prisma/client';
+import { CardPoolFiltersInterface } from 'src/interfaces/CardPoolFiltersInterface';
 import { CardPoolService } from './cardpool.service';
 import { CreateCardPoolDto } from './dto/createCardPool.dto';
 import { UpdateCardPoolDto } from './dto/updateCardPool.dto';
@@ -18,9 +21,28 @@ export class CardPoolController {
     constructor(private readonly service: CardPoolService) {}
 
     @Version('1')
+    @ApiQuery({
+        name: 'name',
+        required: false,
+        type: String,
+        description: 'Name of the cardpool',
+    })
+    @ApiQuery({
+        name: 'id',
+        required: false,
+        type: String,
+        description: 'ID of the cardpool',
+    })
+    @ApiQuery({
+        name: 'visibility',
+        enum: CardpoolVisibilityEnum,
+        description: 'Visibility of the cardpool',
+    })
     @Get()
-    async getCardPools_V1(): Promise<CardPool[]> {
-        return await this.service.getCardPools_V1();
+    async getCardPools_V1(
+        @Query() filters: CardPoolFiltersInterface,
+    ): Promise<CardPool[]> {
+        return await this.service.getCardPools_V1(filters);
     }
 
     @Version('1')

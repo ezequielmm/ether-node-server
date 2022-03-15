@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { CardPool, Prisma } from '@prisma/client';
+import { CardPoolFiltersInterface } from 'src/interfaces/CardPoolFiltersInterface';
 import { PrismaService } from 'src/prisma.service';
 
 @Injectable()
@@ -26,8 +27,14 @@ export class CardPoolService {
      * returns CardPool[]
      */
 
-    async getCardPools_V1(): Promise<CardPool[]> {
-        return await this.prisma.cardPool.findMany();
+    async getCardPools_V1(
+        filters: CardPoolFiltersInterface,
+    ): Promise<CardPool[]> {
+        return await this.prisma.cardPool.findMany({
+            where: {
+                ...filters,
+            },
+        });
     }
 
     /**
