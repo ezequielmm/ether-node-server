@@ -79,6 +79,7 @@ export class CardPoolController {
     @ApiOperation({
         summary: 'Update an existing cardpool',
     })
+    @ApiResponse({ status: 200, type: CardPoolDto })
     @Put(':id')
     async updateCardPool_V1(
         @Param('id', ParseUUIDPipe) id: string,
