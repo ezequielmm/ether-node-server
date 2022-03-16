@@ -3,7 +3,10 @@ import { cardpools } from './data/cardpools';
 import { cards } from './data/cards';
 import { characterClasses } from './data/characterClasses';
 import { characters } from './data/characters';
+import { nodes } from './data/nodes';
 import { rooms } from './data/rooms';
+import { enemies } from './data/enemies';
+import { nodeEnemies } from './data/nodeEnemies';
 
 const prisma = new PrismaClient();
 
@@ -29,6 +32,15 @@ async function main() {
     await prisma.room.deleteMany();
     console.log('Deleted records in rooms table');
 
+    await prisma.enemy.deleteMany();
+    console.log('Deleted records in enemies table');
+
+    await prisma.node.deleteMany();
+    console.log('Deleted records in nodes table');
+
+    await prisma.nodeEnemy.deleteMany();
+    console.log('Deleted records in node_enemies table');
+
     // Enable Foreign key constraints
     await prisma.$queryRaw`SET FOREIGN_KEY_CHECKS=1;`;
     //#endregion End Delete previous data
@@ -48,6 +60,15 @@ async function main() {
 
     await prisma.room.createMany({ data: rooms });
     console.log('Added rooms data');
+
+    await prisma.enemy.createMany({ data: enemies });
+    console.log('Added enemies data');
+
+    await prisma.node.createMany({ data: nodes });
+    console.log('Added nodes data');
+
+    await prisma.nodeEnemy.createMany({ data: nodeEnemies });
+    console.log('Added node enemies data');
     //#endregion End Insert Data
 
     console.log(`Seeding finished.`);

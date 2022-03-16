@@ -11,8 +11,10 @@ export class CardService {
      * Get all cards
      * @version 1
      */
-    async getCards_V1(query: FilterCards): Promise<Card[]> {
-        const { cardpool_id, card_class } = query;
+    async getCards_V1({
+        cardpool_id,
+        card_class,
+    }: FilterCards): Promise<Card[]> {
         const data: Prisma.CardFindManyArgs = {
             where: {
                 active: true,

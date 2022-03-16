@@ -60,7 +60,7 @@ model Enemy {
     category   EnemyCategoryEnum @default(basic)
     life       Int               @default(0)
     min_attack Int               @default(0)
-    max_attach Int               @default(0)
+    max_attack Int               @default(0)
     act_id     Int?
     created_at DateTime          @default(now())
     NodeEnemy  NodeEnemy[]
