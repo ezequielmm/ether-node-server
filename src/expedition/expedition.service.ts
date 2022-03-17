@@ -38,6 +38,10 @@ export class ExpeditionService {
         }
     }
 
+    async getExpeditionById(id: string): Promise<Expedition> {
+        return await this.model.findById(id).select('-__v').exec();
+    }
+
     async getExpeditionByPlayerId(player_id: string): Promise<Expedition> {
         return await this.model.findOne({ player_id }).select('-__v').exec();
     }
