@@ -111,6 +111,15 @@ model CardPool {
     @@map("cardpools")
 }
 
+model Trinket {
+    id         String  @id @default(uuid())
+    name       String  @unique @db.VarChar(250)
+    rarity     TrinketRarityEnum
+    coin_cost  Int
+    effect     String   @db.VarChar(250)
+    trigger    String   @db.VarChar(250)
+}
+
 enum CardRarityEnum {
     common
     uncommon
@@ -177,4 +186,10 @@ enum CharacterClassEnum {
 enum CardpoolVisibilityEnum {
     visible
     hidden
+}
+
+enum TrinketRarityEnum {
+    common
+    uncommon
+    rare
 }
