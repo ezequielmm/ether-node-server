@@ -111,6 +111,18 @@ model CardPool {
     @@map("cardpools")
 }
 
+model Player {
+    id           String @id @default(uuid())
+    royal_house  String @unique @db.VarChar(50)
+    class        CharacterClassEnum
+    current_act  String @db.VarChar(50)
+    current_node String @db.VarChar(50)
+    exprience    String @db.VarChar(50)
+    fief         String @db.VarChar(50)
+    coins        Int
+    status       String @db.VarChar(50)
+}
+
 enum CardRarityEnum {
     common
     uncommon
