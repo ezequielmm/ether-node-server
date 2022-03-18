@@ -8,7 +8,7 @@ export class ProfileController {
 
     @Version('1')
     @Get('/')
-    getProfile_V1(): Profile {
-        return this.service.getProfile_V1();
+    async getProfile_V1(): Promise<Profile> {
+        return await this.service.getProfile_V1();
     }
 }

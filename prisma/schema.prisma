@@ -117,7 +117,7 @@ model Player {
     class        CharacterClassEnum
     current_act  Int
     current_node Int
-    exprience    Int   @default(0)
+    experience    Int   @default(0)
     fief         Int   @default(0)
     coins        Int   @default(0)
     status       String @db.VarChar(50)
