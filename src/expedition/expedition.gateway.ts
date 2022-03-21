@@ -62,7 +62,7 @@ export class ExpeditionGateway
         }
     }
 
-    @SubscribeMessage('leaveExpedition')
+    @SubscribeMessage('cancelExpedition')
     async handleLeaveExpedition(
         client: Socket,
         payload: { player_id: string; expedition_id: string },
@@ -75,8 +75,8 @@ export class ExpeditionGateway
             )
         ) {
             client.leave(expedition_id);
-            this.server.to(expedition_id).emit('leftExpedition', {
-                status: 'room_left',
+            this.server.to(expedition_id).emit('cancelExpedition', {
+                status: 'room_cancel',
                 expedition_id,
             });
             this.handleDisconnect(client);
