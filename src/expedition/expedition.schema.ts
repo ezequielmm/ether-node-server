@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { randomUUID } from 'crypto';
-import { Document } from 'mongoose';
+import { Document, Types, SchemaTypes } from 'mongoose';
 
 export type ExpeditionDocument = Expedition & Document;
 
@@ -29,6 +29,9 @@ export class Expedition {
 
     @Prop()
     status: string;
+
+    @Prop({ default: [] })
+    trinkets: [string];
 }
 
 export const ExpeditionSchema = SchemaFactory.createForClass(Expedition);

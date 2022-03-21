@@ -29,4 +29,8 @@ export class CreateExpeditionDto {
     @ApiProperty()
     @IsNotEmpty()
     readonly status: string;
+
+    @IsUUID('4', { each: true })
+    @ApiProperty()
+    readonly trinkets: [string];
 }
