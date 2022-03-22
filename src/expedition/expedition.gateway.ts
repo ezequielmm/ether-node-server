@@ -61,4 +61,39 @@ export class ExpeditionGateway
             });
         }
     }
+    @SubscribeMessage('CombatStatus')
+    async getCombatStatus(
+        client: Socket,
+        payload: {
+            expedition_id: string;
+            player_id: string;
+            combat_id: string;
+        },
+    ): Promise<void> {
+        const { expedition_id, player_id, combat_id } = payload;
+        if (
+            await this.service.expeditionBelongsToPlayer(
+                player_id,
+                expedition_id,
+            )
+        ) {
+            // TODO: check if combat belongs to player once combat definition is defined
+
+            const combat = {
+                status: 'in_progress',
+                combat_id,
+            };
+
+            this.server.to(expedition_id).emit('CombatStatus', {
+                status: 'combat_status',
+                expedition_id,
+                combat,
+            });
+        } else {
+            this.server.emit('unknownExpedition', {
+                status: 'unknown_room',
+                expedition_id,
+            });
+        }
+    }
 }
