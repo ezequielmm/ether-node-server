@@ -8,7 +8,10 @@ import { ExpeditionGateway } from './expedition.gateway';
 @Module({
     imports: [
         MongooseModule.forFeature([
-            { name: Expedition.name, schema: ExpeditionSchema },
+            {
+                name: Expedition.name,
+                schema: ExpeditionSchema,
+            },
         ]),
     ],
     controllers: [ExpeditionController],

@@ -19,20 +19,17 @@ export class Expedition {
     @Prop()
     readonly player_id: string;
 
-    @Prop()
-    readonly deck: string;
+    @Prop({ type: Object, default: [] })
+    readonly deck: object;
 
-    @Prop()
-    readonly map: string;
+    @Prop({ type: Object, default: {} })
+    readonly map: object;
 
-    @Prop()
-    readonly nodes: string;
+    @Prop({ type: Object, default: {} })
+    readonly player_state: object;
 
-    @Prop()
-    readonly player_state: string;
-
-    @Prop()
-    readonly current_state: string;
+    @Prop({ type: Object, default: {} })
+    readonly current_state: object;
 
     @Prop()
     readonly status: ExpeditionStatus;
