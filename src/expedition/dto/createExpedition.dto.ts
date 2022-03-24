@@ -6,4 +6,9 @@ export class CreateExpeditionDto {
     @IsNotEmpty()
     @IsUUID()
     readonly player_id: string;
+
+    @ApiProperty({ name: 'character_id' })
+    @IsNotEmpty()
+    @IsUUID()
+    readonly character_id: string;
 }

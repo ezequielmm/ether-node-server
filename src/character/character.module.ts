@@ -8,5 +8,6 @@ import { CharacterService } from './character.service';
     imports: [PrismaModule],
     controllers: [CharacterController],
     providers: [CharacterService, UniqueNameOnCharactersTableRule],
+    exports: [CharacterService],
 })
 export class CharacterModule {}

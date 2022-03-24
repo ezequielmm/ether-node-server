@@ -33,6 +33,9 @@ export class Expedition {
 
     @Prop()
     readonly status: ExpeditionStatus;
+
+    @Prop()
+    readonly character_id: string;
 }
 
 export const ExpeditionSchema = SchemaFactory.createForClass(Expedition);
