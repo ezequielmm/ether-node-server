@@ -16,18 +16,18 @@ export class ExpeditionController {
     constructor(private readonly service: ExpeditionService) {}
 
     @Version('1')
-    @Post()
+    @Get(':id')
+    async getExpedition_V1(
+        @Param('id', ParseUUIDPipe) id: string,
+    ): Promise<Expedition> {
+        return await this.service.getExpeditionById(id);
+    }
+
+    @Version('1')
+    @Post('/')
     async createExpedition_V1(
         @Body() data: CreateExpeditionDto,
     ): Promise<Expedition> {
         return await this.service.createExpedition_V1(data);
-    }
-
-    @Version('1')
-    @Get(':id')
-    async getExpeditionsByPlayerId_V1(
-        @Param('id', ParseUUIDPipe) id: string,
-    ): Promise<Expedition[]> {
-        return await this.service.getExpeditionByPlayerId_V1(id);
     }
 }
