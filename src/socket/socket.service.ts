@@ -1,9 +1,22 @@
 import { Injectable } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
-import { map } from 'rxjs/operators';
-import { firstValueFrom, Observable } from 'rxjs';
+import { firstValueFrom } from 'rxjs';
 import { AxiosResponse } from 'axios';
-import { Profile } from 'src/interfaces/ProfileInterface';
+
+interface Profile {
+    data: {
+        id: string;
+        name: string;
+        email: string;
+        wallets: [];
+        coins: number;
+        fief: number;
+        experience: number;
+        level: number;
+        act: number;
+        act_map: string;
+    };
+}
 
 @Injectable()
 export class SocketService {

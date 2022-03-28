@@ -6,7 +6,7 @@ import {
     WebSocketServer,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
-import { Profile } from 'src/interfaces/ProfileInterface';
+import { ExpeditionService } from 'src/expedition/expedition.service';
 import { SocketService } from './socket.service';
 
 @WebSocketGateway({
@@ -19,14 +19,33 @@ export class SocketGateway implements OnGatewayInit, OnGatewayConnection {
     @WebSocketServer() server: Server;
     private logger: Logger = new Logger('ExpeditionGateway');
 
-    constructor(private readonly socketService: SocketService) {}
+    constructor(
+        private readonly socketService: SocketService,
+        private readonly expeditionService: ExpeditionService,
+    ) {}
 
     afterInit() {
         this.logger.log(`Socket initiated`);
     }
 
-    handleConnection(client: Socket) {
+    async handleConnection(client: Socket): Promise<unknown> {
         this.logger.log(`Client connected: ${client.id}`);
         const { authorization } = client.handshake.headers;
+        const { request, data } = await this.socketService.getUser(
+            authorization,
+        );
+        const { res } = request;
+        const { statusCode } = res;
+
+        if (statusCode !== 200) return client.disconnect();
+
+        const { data: profile } = data;
+
+        const status =
+            await this.expeditionService.getExpeditionStatusByPlayedId(
+                profile.id,
+            );
+
+        client.emit('expeditionStatus', { status });
     }
 }
