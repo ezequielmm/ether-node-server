@@ -33,7 +33,9 @@ export class SocketGateway
         this.logger.log(`Socket initiated`);
     }
 
-    async handleConnection(@ConnectedSocket() client: Socket): Promise<any> {
+    async handleConnection(
+        @ConnectedSocket() client: Socket,
+    ): Promise<unknown> {
         this.logger.log(`Client connected: ${client.id}`);
         const { authorization } = client.handshake.headers;
         const { request, data } = await this.socketService.getUser(
@@ -51,9 +53,8 @@ export class SocketGateway
                 profile.id,
             );
 
-        client.emit('ReceiveExpeditionStatus', { status, client: client.id });
-
-        return { status, client: client.id };
+        const response = { status, client: client.id };
+        client.emit('ReceiveExpeditionStatus', JSON.stringify(response));
     }
 
     handleDisconnect(client: Socket) {
