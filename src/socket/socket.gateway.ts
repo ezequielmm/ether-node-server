@@ -1,7 +1,9 @@
 import { Logger } from '@nestjs/common';
 import {
     OnGatewayConnection,
+    OnGatewayDisconnect,
     OnGatewayInit,
+    SubscribeMessage,
     WebSocketGateway,
     WebSocketServer,
 } from '@nestjs/websockets';
@@ -9,13 +11,15 @@ import { Server, Socket } from 'socket.io';
 import { ExpeditionService } from 'src/expedition/expedition.service';
 import { SocketService } from './socket.service';
 
-@WebSocketGateway({
+@WebSocketGateway(7777, {
     cors: {
         origin: '*',
     },
     namespace: '/socket',
 })
-export class SocketGateway implements OnGatewayInit, OnGatewayConnection {
+export class SocketGateway
+    implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
+{
     @WebSocketServer() server: Server;
     private logger: Logger = new Logger('ExpeditionGateway');
 
@@ -37,7 +41,7 @@ export class SocketGateway implements OnGatewayInit, OnGatewayConnection {
         const { res } = request;
         const { statusCode } = res;
 
-        if (statusCode !== 200) return client.disconnect();
+        if (parseInt(statusCode) !== 200) return client.disconnect(true);
 
         const { data: profile } = data;
 
@@ -46,6 +50,17 @@ export class SocketGateway implements OnGatewayInit, OnGatewayConnection {
                 profile.id,
             );
 
-        client.emit('expeditionStatus', { status });
+        client.emit('ReceiveExpeditionStatus', { status });
+    }
+
+    handleDisconnect(client: Socket) {
+        this.logger.log(`Client disconnected: ${client.id}`);
+    }
+
+    @SubscribeMessage('SendExpeditionStatus')
+    handleSendExpeditionStatus(socket: Server): void {
+        socket.emit('ReceiveExpeditionStatus', {
+            data: 'test',
+        });
     }
 }
