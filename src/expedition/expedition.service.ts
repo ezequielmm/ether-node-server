@@ -67,4 +67,13 @@ export class ExpeditionService {
             .lean();
         return itemExists === null ? false : true;
     }
+
+    async getExpeditionStatusByPlayedId(
+        playerId: string,
+    ): Promise<{ status: string }> {
+        return await this.model
+            .findOne({ player_id: playerId })
+            .select('status')
+            .lean();
+    }
 }
