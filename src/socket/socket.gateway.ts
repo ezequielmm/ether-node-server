@@ -4,7 +4,6 @@ import {
     OnGatewayConnection,
     OnGatewayDisconnect,
     OnGatewayInit,
-    SubscribeMessage,
     WebSocketGateway,
     WebSocketServer,
 } from '@nestjs/websockets';
@@ -57,14 +56,7 @@ export class SocketGateway
         client.emit('ReceiveExpeditionStatus', JSON.stringify(response));
     }
 
-    handleDisconnect(client: Socket) {
+    async handleDisconnect(@ConnectedSocket() client: Socket): Promise<void> {
         this.logger.log(`Client disconnected: ${client.id}`);
-    }
-
-    @SubscribeMessage('SendExpeditionStatus')
-    handleSendExpeditionStatus(socket: Server): void {
-        socket.emit('ReceiveExpeditionStatus', {
-            data: 'test',
-        });
     }
 }
