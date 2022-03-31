@@ -1,5 +1,14 @@
-import { Body, Controller, Post, Version } from '@nestjs/common';
-import { CreateExpeditionDto } from './dto/createExpedition.dto';
+import {
+    Body,
+    Controller,
+    Param,
+    ParseUUIDPipe,
+    Patch,
+    Post,
+    Version,
+} from '@nestjs/common';
+import { CancelExpeditionDto } from './dto/cancelExpedition.dto';
+import { GetExpeditionStatus } from './dto/getExpeditionStatus.dto';
 import { Expedition } from './expedition.schema';
 import { ExpeditionService } from './expedition.service';
 
@@ -8,10 +17,23 @@ export class ExpeditionController {
     constructor(private readonly service: ExpeditionService) {}
 
     @Version('1')
-    @Post('/')
-    async createExpedition_V1(
-        @Body() data: CreateExpeditionDto,
+    @Post('/status')
+    async getExpeditionStatus(
+        @Body() data: GetExpeditionStatus,
+    ): Promise<{ hasExpedition: boolean }> {
+        const { player_id } = data;
+        const hasExpedition: boolean = await this.service.playerHasAnExpedition(
+            player_id,
+        );
+        return { hasExpedition };
+    }
+
+    @Version('1')
+    @Patch('/cancel/:id')
+    async cancelExpedition_V1(
+        @Body() data: CancelExpeditionDto,
+        @Param('id', ParseUUIDPipe) id: string,
     ): Promise<Expedition> {
-        return await this.service.createExpedition_V1(data);
+        return await this.service.cancelExpedition_V1(id, data.player_id);
     }
 }

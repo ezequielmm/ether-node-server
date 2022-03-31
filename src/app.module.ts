@@ -4,12 +4,14 @@ import { AppController } from './app.controller';
 import { CardModule } from './card/card.module';
 import { CharacterClassModule } from './character-class/character-class.module';
 import { CharacterModule } from './character/character.module';
+import { DeckModule } from './deck/deck.module';
 import { EnemyModule } from './enemy/enemy.module';
 import { ExpeditionModule } from './expedition/expedition.module';
 import { PrismaModule } from './prisma.module';
 import { ProfileModule } from './profile/profile.module';
 import { RoomModule } from './room/room.module';
 import { TrinketModule } from './trinket/trinket.module';
+import { SocketModule } from './socket/socket.module';
 
 @Module({
     imports: [
@@ -23,6 +25,8 @@ import { TrinketModule } from './trinket/trinket.module';
         RoomModule,
         ExpeditionModule,
         TrinketModule,
+        DeckModule,
+        SocketModule,
     ],
     controllers: [AppController],
     providers: [],

@@ -61,4 +61,30 @@ export class ExpeditionGateway
             });
         }
     }
+
+    @SubscribeMessage('cancelExpedition')
+    async handleLeaveExpedition(
+        client: Socket,
+        payload: { player_id: string; expedition_id: string },
+    ): Promise<void> {
+        const { expedition_id, player_id } = payload;
+        if (
+            await this.service.expeditionBelongsToPlayer(
+                player_id,
+                expedition_id,
+            )
+        ) {
+            client.leave(expedition_id);
+            this.server.to(expedition_id).emit('cancelExpedition', {
+                status: 'room_cancel',
+                expedition_id,
+            });
+            this.handleDisconnect(client);
+        } else {
+            this.server.emit('unknownExpedition', {
+                status: 'unknown_room',
+                expedition_id,
+            });
+        }
+    }
 }

@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsUUID } from 'class-validator';
+import { IsEmpty, IsNotEmpty, IsUUID } from 'class-validator';
 
 export class CreateExpeditionDto {
     @ApiProperty({ name: 'player_id' })
@@ -28,5 +28,10 @@ export class CreateExpeditionDto {
 
     @IsUUID('4', { each: true })
     @ApiProperty()
-    readonly trinkets: [string];
+    readonly trinkets?: [];
+
+    @ApiProperty({ name: 'character_id' })
+    @IsEmpty()
+    @IsUUID()
+    readonly character_id?: string;
 }

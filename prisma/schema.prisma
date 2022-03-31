@@ -47,8 +47,10 @@ model Card {
     active      Boolean        @default(true)
     cardpool_id String?
     created_at  DateTime       @default(now())
+    deckId      String?
 
     cardpool CardPool? @relation(fields: [cardpool_id], references: [id])
+    deck     Deck?     @relation(fields: [deckId], references: [id])
 
     @@map("cards")
 }
@@ -114,12 +116,20 @@ model CardPool {
 }
 
 model Trinket {
-    id         String  @id @default(uuid())
-    name       String  @unique @db.VarChar(250)
-    rarity     TrinketRarityEnum
-    coin_cost  Int
-    effect     String   @db.VarChar(250)
-    trigger    String   @db.VarChar(250)
+    id        String            @id @default(uuid())
+    name      String            @unique @db.VarChar(250)
+    rarity    TrinketRarityEnum
+    coin_cost Int
+    effect    String            @db.VarChar(250)
+    trigger   String            @db.VarChar(250)
+}
+
+model Deck {
+    id           String @id @default(uuid())
+    character_id String @db.VarChar(191)
+    cards        Card[]
+
+    @@map("decks")
 }
 
 enum CardRarityEnum {
