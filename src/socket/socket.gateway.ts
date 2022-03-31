@@ -1,6 +1,5 @@
 import { Logger } from '@nestjs/common';
 import {
-    ConnectedSocket,
     OnGatewayConnection,
     OnGatewayDisconnect,
     OnGatewayInit,
@@ -28,9 +27,7 @@ export class SocketGateway
         this.logger.log(`Socket initiated`);
     }
 
-    async handleConnection(
-        @ConnectedSocket() client: Socket,
-    ): Promise<unknown> {
+    async handleConnection(client: Socket): Promise<unknown> {
         this.logger.log(`Client connected: ${client.id}`);
         const { authorization } = client.handshake.headers;
         const { request } = await this.socketService.getUser(authorization);
@@ -40,7 +37,7 @@ export class SocketGateway
         if (parseInt(statusCode) !== 200) return client.disconnect(true);
     }
 
-    handleDisconnect(@ConnectedSocket() client: Socket) {
+    handleDisconnect(client: Socket) {
         this.logger.log(`Client disconnected: ${client.id}`);
     }
 }
