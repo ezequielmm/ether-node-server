@@ -10,5 +10,5 @@ export class CreateExpeditionDto {
     @ApiProperty({ name: 'character_id' })
     @IsEmpty()
     @IsUUID()
-    readonly character_id: string;
+    readonly character_id?: string;
 }
