@@ -5,14 +5,14 @@ import {
     ValidatorConstraint,
     ValidatorConstraintInterface,
 } from 'class-validator';
-import { CardService } from 'src/card/card.service';
+import { CardPoolService } from 'src/cardpool/cardpool.service';
 
-@ValidatorConstraint({ name: 'UniqueNameOnCardsTable', async: true })
+@ValidatorConstraint({ name: 'UniqueNameOnCardPoolsTable', async: true })
 @Injectable()
-export class UniqueNameOnCardsTableRule
+export class UniqueNameOnCardPoolsTableRule
     implements ValidatorConstraintInterface
 {
-    constructor(private service: CardService) {}
+    constructor(private service: CardPoolService) {}
 
     async validate(name: string): Promise<boolean> {
         return await this.service.checkIfNameExists(name);
@@ -23,14 +23,16 @@ export class UniqueNameOnCardsTableRule
     }
 }
 
-export function UniqueNameOnCardsTable(validatorOptions?: ValidationOptions) {
+export function UniqueNameOnCardPoolsTable(
+    validatorOptions?: ValidationOptions,
+) {
     return function (object: any, propertyName: string) {
         registerDecorator({
-            name: 'UniqueNameOnCardsTable',
+            name: 'UniqueNameOnCardPoolsTable',
             target: object.constructor,
             propertyName: propertyName,
             options: validatorOptions,
-            validator: UniqueNameOnCardsTableRule,
+            validator: UniqueNameOnCardPoolsTableRule,
         });
     };
 }
