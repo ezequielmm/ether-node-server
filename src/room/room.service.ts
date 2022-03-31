@@ -11,8 +11,7 @@ export class RoomService {
      * Get all the enemies
      * @version 1
      */
-    async getRoomByPlayerId_V1(data: FilterRoomsDto): Promise<Room[]> {
-        const { player_id } = data;
+    async getRoomByPlayerId_V1({ player_id }: FilterRoomsDto): Promise<Room[]> {
         return await this.prisma.room.findMany({ where: { player_id } });
     }
 }
