@@ -10,6 +10,7 @@ import { ExpeditionModule } from './expedition/expedition.module';
 import { PrismaModule } from './prisma.module';
 import { ProfileModule } from './profile/profile.module';
 import { RoomModule } from './room/room.module';
+import { TrinketModule } from './trinket/trinket.module';
 import { SocketModule } from './socket/socket.module';
 
 @Module({
@@ -23,6 +24,7 @@ import { SocketModule } from './socket/socket.module';
         EnemyModule,
         RoomModule,
         ExpeditionModule,
+        TrinketModule,
         DeckModule,
         SocketModule,
     ],

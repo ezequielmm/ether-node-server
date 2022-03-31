@@ -31,6 +31,9 @@ export class Expedition {
     @Prop({ type: Object, default: {} })
     readonly current_state: object;
 
+    @Prop({ default: [] })
+    trinkets?: [];
+
     @Prop()
     readonly status: ExpeditionStatus;
 
