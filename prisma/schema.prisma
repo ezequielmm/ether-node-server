@@ -47,8 +47,10 @@ model Card {
     active      Boolean        @default(true)
     cardpool_id String?
     created_at  DateTime       @default(now())
+    deckId      String?
 
     cardpool CardPool? @relation(fields: [cardpool_id], references: [id])
+    deck     Deck?     @relation(fields: [deckId], references: [id])
 
     @@map("cards")
 }
@@ -111,6 +113,14 @@ model CardPool {
     Card      Card[]
 
     @@map("cardpools")
+}
+
+model Deck {
+    id           String @id @default(uuid())
+    character_id String @db.VarChar(191)
+    cards        Card[]
+
+    @@map("decks")
 }
 
 enum CardRarityEnum {

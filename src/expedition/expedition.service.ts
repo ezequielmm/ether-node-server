@@ -1,41 +1,58 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { CreateExpeditionDto } from './dto/createExpedition.dto';
+import { CharacterService } from '../character/character.service';
 import {
     Expedition,
     ExpeditionDocument,
     ExpeditionStatus,
 } from './expedition.schema';
 import { v4 as uuidv4 } from 'uuid';
+import { map } from './mapGenerator';
+import { UpdateExpeditionStatus } from 'src/interfaces/UpdateExpeditionStatus.interface';
 
 @Injectable()
 export class ExpeditionService {
     constructor(
         @InjectModel(Expedition.name)
         private model: Model<ExpeditionDocument>,
+        private characterService: CharacterService,
     ) {}
 
     async createExpedition_V1(
         expedition: CreateExpeditionDto,
     ): Promise<Expedition> {
-        const { player_id } = expedition;
+        const { player_id, character_id } = expedition;
+
+        const character = await this.characterService.getCharacter_V1(
+            character_id,
+        );
+
+        if (!character) {
+            throw new NotFoundException('Character not found.');
+        }
+
         if (await this.playerHasAnExpedition(player_id)) {
             return await this.getExpeditionByPlayerId(player_id);
         } else {
             const data: Expedition = {
-                ...expedition,
+                player_id,
+                character_id,
                 _id: uuidv4(),
-                deck: '',
-                map: '',
-                nodes: '',
-                player_state: '',
-                current_state: '',
+                deck: [{ card_instances: null }],
+                map: map,
+                player_state: {},
+                current_state: {},
                 status: ExpeditionStatus.InProgress,
             };
             const newExpedition = new this.model(data);
             return newExpedition.save();
         }
+    }
+
+    async getExpeditionById(id: string): Promise<Expedition> {
+        return await this.model.findById(id).select('-__v').exec();
     }
 
     async getExpeditionByPlayerId(player_id: string): Promise<Expedition> {
@@ -44,7 +61,7 @@ export class ExpeditionService {
 
     async playerHasAnExpedition(player_id: string): Promise<boolean> {
         const itemExists = await this.model
-            .findOne({ player_id, status: 'in_progress' })
+            .findOne({ player_id, status: ExpeditionStatus.InProgress })
             .select('_id')
             .lean();
         return itemExists === null ? false : true;
@@ -62,5 +79,25 @@ export class ExpeditionService {
             .select('_id')
             .lean();
         return itemExists === null ? false : true;
+    }
+
+    async getExpeditionStatusByPlayedId(
+        playerId: string,
+    ): Promise<{ status: string }> {
+        return await this.model
+            .findOne({ player_id: playerId })
+            .select('status')
+            .lean();
+    }
+
+    async updateActiveExpeditionByPlayerId(
+        player_id: string,
+        payload: UpdateExpeditionStatus,
+    ): Promise<Expedition> {
+        return this.model.findOneAndUpdate(
+            { player_id, status: ExpeditionStatus.InProgress },
+            payload,
+            { new: true },
+        );
     }
 }
