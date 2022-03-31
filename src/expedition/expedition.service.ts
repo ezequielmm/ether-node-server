@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+    ForbiddenException,
+    Injectable,
+    NotFoundException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { CreateExpeditionDto } from './dto/createExpedition.dto';
@@ -79,6 +83,29 @@ export class ExpeditionService {
             .select('_id')
             .lean();
         return itemExists === null ? false : true;
+    }
+
+    async cancelExpedition_V1(
+        expedition_id: string,
+        player_id: string,
+    ): Promise<Expedition> {
+        const expedition = await this.model.findById(expedition_id);
+        if (!expedition) {
+            throw new NotFoundException(
+                `Expedition with id ${expedition_id} not found`,
+            );
+        }
+        const isOwner = await this.expeditionBelongsToPlayer(
+            player_id,
+            expedition_id,
+        );
+        if (!isOwner) {
+            throw new ForbiddenException(
+                `Player with id ${player_id} is not the owner of expedition ${expedition_id}`,
+            );
+        }
+
+        return await expedition.save();
     }
 
     async getExpeditionStatusByPlayedId(

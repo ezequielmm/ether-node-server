@@ -34,7 +34,7 @@ export class Expedition {
     @Prop()
     readonly status: ExpeditionStatus;
 
-    @Prop()
+    @Prop({ type: String, default: null })
     readonly character_id: string;
 }
 
