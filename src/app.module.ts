@@ -11,6 +11,9 @@ import { ExpeditionModule } from './expedition/expedition.module';
 import { PrismaModule } from './prisma.module';
 import { ProfileModule } from './profile/profile.module';
 import { RoomModule } from './room/room.module';
+import { LoginModule } from './login/login.module';
+import { APP_GUARD } from '@nestjs/core';
+import { AccessTokenGuard } from './common/guards';
 import { TrinketModule } from './trinket/trinket.module';
 import { SocketModule } from './socket/socket.module';
 
@@ -29,8 +32,14 @@ import { SocketModule } from './socket/socket.module';
         TrinketModule,
         DeckModule,
         SocketModule,
+        LoginModule,
     ],
     controllers: [AppController],
-    providers: [],
+    providers: [
+        {
+            provide: APP_GUARD,
+            useClass: AccessTokenGuard,
+        },
+    ],
 })
 export class AppModule {}

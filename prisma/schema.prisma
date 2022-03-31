@@ -1,13 +1,10 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
-    provider = "prisma-client-js"
+  provider = "prisma-client-js"
 }
 
 datasource db {
-    provider = "mysql"
-    url      = env("DATABASE_URL")
+  provider = "mysql"
+  url      = env("DATABASE_URL")
 }
 
 model CharacterClass {
@@ -77,6 +74,16 @@ model Room {
     created_at DateTime       @default(now())
 
     @@map("rooms")
+}
+
+model Profile {
+  id       String @id @default(uuid())
+  email    String @unique @db.VarChar(255)
+  password String @unique @db.VarChar(255)
+  refresh_token String? @db.Text
+
+
+  @@map("profiles")
 }
 
 model Node {
