@@ -4,31 +4,41 @@ import { Document } from 'mongoose';
 
 export type ExpeditionDocument = Expedition & Document;
 
+export enum ExpeditionStatus {
+    InProgress = 'in_progress',
+    Victory = 'victory',
+    Defeated = 'defeated',
+    Canceled = 'canceled',
+}
+
 @Schema()
 export class Expedition {
     @Prop({ default: randomUUID(), required: false })
-    _id: string;
+    readonly _id: string;
 
     @Prop()
-    player_id: string;
+    readonly player_id: string;
+
+    @Prop({ type: Object, default: [] })
+    readonly deck: object;
+
+    @Prop({ type: Object, default: {} })
+    readonly map: object;
+
+    @Prop({ type: Object, default: {} })
+    readonly player_state: object;
+
+    @Prop({ type: Object, default: {} })
+    readonly current_state: object;
+
+    @Prop({ default: [] })
+    trinkets?: [];
 
     @Prop()
-    deck: string;
+    readonly status: ExpeditionStatus;
 
-    @Prop()
-    map: string;
-
-    @Prop()
-    nodes: string;
-
-    @Prop()
-    player_state: string;
-
-    @Prop()
-    current_state: string;
-
-    @Prop()
-    status: string;
+    @Prop({ type: String, default: null })
+    readonly character_id: string;
 }
 
 export const ExpeditionSchema = SchemaFactory.createForClass(Expedition);
