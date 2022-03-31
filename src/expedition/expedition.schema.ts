@@ -19,23 +19,23 @@ export class Expedition {
     @Prop()
     readonly player_id: string;
 
-    @Prop()
-    readonly deck: string;
+    @Prop({ type: Object, default: [] })
+    readonly deck: object;
+
+    @Prop({ type: Object, default: {} })
+    readonly map: object;
+
+    @Prop({ type: Object, default: {} })
+    readonly player_state: object;
+
+    @Prop({ type: Object, default: {} })
+    readonly current_state: object;
 
     @Prop()
-    readonly map: string;
+    readonly status: ExpeditionStatus;
 
-    @Prop()
-    readonly nodes: string;
-
-    @Prop()
-    readonly player_state: string;
-
-    @Prop()
-    readonly current_state: string;
-
-    @Prop()
-    status: ExpeditionStatus;
+    @Prop({ type: String, default: null })
+    readonly character_id: string;
 }
 
 export const ExpeditionSchema = SchemaFactory.createForClass(Expedition);
