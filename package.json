@@ -22,7 +22,8 @@
         "test:cov": "jest --coverage",
         "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
         "test:e2e": "jest --config ./test/jest-e2e.json",
-        "seed": "npx prisma db seed"
+        "seed": "npx prisma db seed",
+        "migrate": "npx prisma db push"
     },
     "dependencies": {
         "@nestjs/axios": "^0.0.7",

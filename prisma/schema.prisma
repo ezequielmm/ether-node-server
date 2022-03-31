@@ -115,6 +115,20 @@ model CardPool {
     @@map("cardpools")
 }
 
+model Player {
+    id           String             @id @default(uuid())
+    royal_house  String             @unique @db.VarChar(50)
+    class        CharacterClassEnum
+    current_act  Int
+    current_node Int
+    experience   Int                @default(0)
+    fief         Int                @default(0)
+    coins        Int                @default(0)
+    status       String             @db.VarChar(50)
+
+    @@map("player")
+}
+
 model Trinket {
     id        String            @id @default(uuid())
     name      String            @unique @db.VarChar(250)
