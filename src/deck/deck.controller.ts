@@ -1,5 +1,4 @@
-import { Controller, Param, ParseUUIDPipe, Version } from '@nestjs/common';
-import { Get } from '@nestjs/common/decorators/http/request-mapping.decorator';
+import { Controller, Get, Param, ParseUUIDPipe, Version } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { Deck } from '@prisma/client';
 import { DeckService } from './deck.service';
