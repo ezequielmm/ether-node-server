@@ -11,7 +11,6 @@ model CharacterClass {
     id         String   @id @default(uuid())
     name       String   @unique @db.VarChar(255)
     created_at DateTime @default(now())
-    cards      Card[]
 
     @@map("character_classes")
 }
@@ -32,20 +31,23 @@ model Character {
 }
 
 model Card {
-    id                 String          @id @default(uuid())
-    name               String          @unique @db.VarChar(250)
-    description        String          @db.VarChar(250)
-    character_class_id String
-    code               String          @unique @db.VarChar(255)
-    rarity             CardRarityEnum
-    cost               Int             @default(0)
-    type               CardTypeEnum
-    keyword            CardKeywordEnum
-    coin_cost          Int             @default(0)
-    status             CardStatusEnum
-    created_at         DateTime        @default(now())
+    id          String         @id @default(uuid())
+    name        String         @unique @db.VarChar(250)
+    description String         @db.VarChar(250)
+    class       CardClassEnum?
+    code        String         @db.VarChar(255)
+    rarity      CardRarityEnum
+    energy      Int?           @db.SmallInt
+    type        CardTypeEnum   @default(attack)
+    coins_min   Int?           @db.Int
+    coins_max   Int?           @db.Int
+    active      Boolean        @default(true)
+    cardpool_id String?
+    created_at  DateTime       @default(now())
+    deckId      String?
 
-    character_classes CharacterClass? @relation(fields: [character_class_id], references: [id])
+    cardpool CardPool? @relation(fields: [cardpool_id], references: [id])
+    deck     Deck?     @relation(fields: [deckId], references: [id])
 
     @@map("cards")
 }
@@ -57,7 +59,7 @@ model Enemy {
     category   EnemyCategoryEnum @default(basic)
     life       Int               @default(0)
     min_attack Int               @default(0)
-    max_attach Int               @default(0)
+    max_attack Int               @default(0)
     act_id     Int?
     created_at DateTime          @default(now())
     NodeEnemy  NodeEnemy[]
@@ -111,11 +113,44 @@ model NodeEnemy {
 model CardPool {
     id         String                 @id @default(uuid())
     name       String                 @unique @db.VarChar(250)
-    visibility CardpoolVisibilityEnum
+    visibility CardpoolVisibilityEnum @default(visible)
     created_at DateTime               @default(now())
-    Character  Character[]
+
+    Character Character[]
+    Card      Card[]
 
     @@map("cardpools")
+}
+
+model Player {
+    id           String             @id @default(uuid())
+    royal_house  String             @unique @db.VarChar(50)
+    class        CharacterClassEnum
+    current_act  Int
+    current_node Int
+    experience   Int                @default(0)
+    fief         Int                @default(0)
+    coins        Int                @default(0)
+    status       String             @db.VarChar(50)
+
+    @@map("player")
+}
+
+model Trinket {
+    id        String            @id @default(uuid())
+    name      String            @unique @db.VarChar(250)
+    rarity    TrinketRarityEnum
+    coin_cost Int
+    effect    String            @db.VarChar(250)
+    trigger   String            @db.VarChar(250)
+}
+
+model Deck {
+    id           String @id @default(uuid())
+    character_id String @db.VarChar(191)
+    cards        Card[]
+
+    @@map("decks")
 }
 
 enum CardRarityEnum {
@@ -145,6 +180,10 @@ enum CardKeywordEnum {
 enum CardStatusEnum {
     active
     inactive
+}
+
+enum CardClassEnum {
+    knight
 }
 
 enum EnemyTypeEnum {
@@ -184,4 +223,10 @@ enum CharacterClassEnum {
 enum CardpoolVisibilityEnum {
     visible
     hidden
+}
+
+enum TrinketRarityEnum {
+    common
+    uncommon
+    rare
 }
