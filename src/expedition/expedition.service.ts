@@ -10,6 +10,7 @@ import {
 } from './expedition.schema';
 import { v4 as uuidv4 } from 'uuid';
 import { map } from './mapGenerator';
+import { UpdateExpeditionStatus } from 'src/interfaces/UpdateExpeditionStatus.interface';
 
 @Injectable()
 export class ExpeditionService {
@@ -60,7 +61,7 @@ export class ExpeditionService {
 
     async playerHasAnExpedition(player_id: string): Promise<boolean> {
         const itemExists = await this.model
-            .findOne({ player_id, status: 'in_progress' })
+            .findOne({ player_id, status: ExpeditionStatus.InProgress })
             .select('_id')
             .lean();
         return itemExists === null ? false : true;
@@ -78,5 +79,25 @@ export class ExpeditionService {
             .select('_id')
             .lean();
         return itemExists === null ? false : true;
+    }
+
+    async getExpeditionStatusByPlayedId(
+        playerId: string,
+    ): Promise<{ status: string }> {
+        return await this.model
+            .findOne({ player_id: playerId })
+            .select('status')
+            .lean();
+    }
+
+    async updateActiveExpeditionByPlayerId(
+        player_id: string,
+        payload: UpdateExpeditionStatus,
+    ): Promise<Expedition> {
+        return this.model.findOneAndUpdate(
+            { player_id, status: ExpeditionStatus.InProgress },
+            payload,
+            { new: true },
+        );
     }
 }
