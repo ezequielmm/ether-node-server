@@ -8,23 +8,23 @@ export class CreateExpeditionDto {
     readonly player_id: string;
 
     @ApiProperty()
-    readonly deck: string;
+    readonly deck?: string;
 
     @ApiProperty()
-    readonly map: string;
+    readonly map?: string;
 
     @ApiProperty()
-    readonly nodes: string;
+    readonly nodes?: string;
 
     @ApiProperty()
-    readonly player_state: string;
+    readonly player_state?: string;
 
     @ApiProperty()
-    readonly current_state: string;
+    readonly current_state?: string;
 
     @ApiProperty()
     @IsNotEmpty()
-    readonly status: string;
+    readonly status?: string;
 
     @IsUUID('4', { each: true })
     @ApiProperty()

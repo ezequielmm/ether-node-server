@@ -6,7 +6,6 @@ import {
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { CreateExpeditionDto } from './dto/createExpedition.dto';
-import { CharacterService } from '../character/character.service';
 import {
     Expedition,
     ExpeditionDocument,
@@ -21,21 +20,12 @@ export class ExpeditionService {
     constructor(
         @InjectModel(Expedition.name)
         private model: Model<ExpeditionDocument>,
-        private characterService: CharacterService,
     ) {}
 
     async createExpedition_V1(
         expedition: CreateExpeditionDto,
     ): Promise<Expedition> {
         const { player_id, character_id } = expedition;
-
-        const character = await this.characterService.getCharacter_V1(
-            character_id,
-        );
-
-        if (!character) {
-            throw new NotFoundException('Character not found.');
-        }
 
         if (await this.playerHasAnExpedition(player_id)) {
             return await this.getExpeditionByPlayerId(player_id);
