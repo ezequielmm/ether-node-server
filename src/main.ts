@@ -25,14 +25,16 @@ async function bootstrap() {
         type: VersioningType.URI,
     });
 
+    const localUrl = process.env.LOCAL_URL || 'http://localhost:3000';
+
     // Enable Swagger for API docs
     const config = new DocumentBuilder()
         .setTitle('KOTE Gameplay Service')
         .setDescription('API routes')
         .setVersion('1.0')
         .addBearerAuth()
+        .addServer(localUrl, 'Local Server')
         .addServer(process.env.GATEWAY_URL, 'Gateway URL')
-        .addServer('http://localhost:3000', 'Local Server')
         .build();
 
     const document = SwaggerModule.createDocument(app, config);

@@ -19,7 +19,7 @@ export class SocketGateway
     implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
 {
     @WebSocketServer() server: Server;
-    private logger: Logger = new Logger('ExpeditionGateway');
+    private logger: Logger = new Logger(SocketGateway.name);
 
     constructor(private readonly socketService: SocketService) {}
 
@@ -28,13 +28,18 @@ export class SocketGateway
     }
 
     async handleConnection(client: Socket): Promise<unknown> {
-        this.logger.log(`Client connected: ${client.id}`);
+        this.logger.log(`Client attempting a connection: ${client.id}`);
         const { authorization } = client.handshake.headers;
         const { request } = await this.socketService.getUser(authorization);
         const { res } = request;
         const { statusCode } = res;
 
-        if (parseInt(statusCode) !== 200) return client.disconnect(true);
+        if (parseInt(statusCode) !== 200) {
+            this.logger.log(`Client has an invalid auth token: ${client.id}`);
+            return client.disconnect(true);
+        }
+
+        this.logger.log(`Client connected: ${client.id}`);
     }
 
     handleDisconnect(client: Socket) {

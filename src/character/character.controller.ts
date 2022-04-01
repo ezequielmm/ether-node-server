@@ -1,48 +1,30 @@
-import {
-    Controller,
-    Get,
-    Param,
-    ParseUUIDPipe,
-    Version,
-    Post,
-    Body,
-    Put,
-} from '@nestjs/common';
+import { Controller, Get, Param, ParseUUIDPipe, Version } from '@nestjs/common';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Character } from '@prisma/client';
 import { CharacterService } from './character.service';
-import { CreateCharacterDto } from './dto/createCharacter.dto';
-import { UpdateCharacterDto } from './dto/updateCharacter.dto';
 
+@ApiTags('Characters')
 @Controller('characters')
 export class CharacterController {
     constructor(private readonly service: CharacterService) {}
 
     @Version('1')
+    @ApiOperation({
+        summary: 'Get all characters',
+    })
     @Get('/')
     async getCharacters_V1(): Promise<Character[]> {
         return await this.service.getAllCharacters_V1();
     }
 
     @Version('1')
+    @ApiOperation({
+        summary: 'Get a single character by its ID',
+    })
     @Get(':id')
     async getCharacter_V1(
         @Param('id', ParseUUIDPipe) id: string,
     ): Promise<Character> {
         return await this.service.getCharacter_V1(id);
-    }
-
-    @Version('1')
-    @Post('/')
-    async selectCharacter_V1(@Body() CreateCharacterDto: CreateCharacterDto) {
-        return this.service.selectCharacter_V1(CreateCharacterDto);
-    }
-
-    @Version('1')
-    @Put(':id')
-    async updateCharacter_V1(
-        @Param('id', ParseUUIDPipe) id: string,
-        @Body() updateCharacterDto: UpdateCharacterDto,
-    ) {
-        return this.service.updateCharacter_V1(id, updateCharacterDto);
     }
 }
