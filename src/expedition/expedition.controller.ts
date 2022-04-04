@@ -1,10 +1,10 @@
 import {
     Body,
     Controller,
+    Get,
     Param,
     ParseUUIDPipe,
     Patch,
-    Post,
     Version,
 } from '@nestjs/common';
 import { CancelExpeditionDto } from './dto/cancelExpedition.dto';
@@ -17,7 +17,7 @@ export class ExpeditionController {
     constructor(private readonly service: ExpeditionService) {}
 
     @Version('1')
-    @Post('/status')
+    @Get('/status')
     async getExpeditionStatus(
         @Body() data: GetExpeditionStatus,
     ): Promise<{ hasExpedition: boolean }> {
