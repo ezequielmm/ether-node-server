@@ -52,6 +52,7 @@ export class SocketGateway
 
             this.logger.log(`Client connected: ${client.id}`);
         } catch (e) {
+            this.logger.log(e.message);
             this.logger.log(`Client has an invalid auth token: ${client.id}`);
             return client.disconnect(true);
         }
