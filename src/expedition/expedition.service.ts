@@ -19,7 +19,7 @@ import { UpdateExpeditionStatus } from 'src/interfaces/UpdateExpeditionStatus.in
 export class ExpeditionService {
     constructor(
         @InjectModel(Expedition.name)
-        private model: Model<ExpeditionDocument>,
+        private readonly model: Model<ExpeditionDocument>,
     ) {}
 
     async createExpedition_V1(

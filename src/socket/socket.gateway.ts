@@ -12,6 +12,7 @@ import { ExpeditionStatus } from 'src/expedition/expedition.schema';
 import { ExpeditionService } from 'src/expedition/expedition.service';
 import { CheckCombatStatus } from 'src/interfaces/combatStatus.interface';
 import { CreateExpedition } from 'src/interfaces/CreateExpedition.interface';
+import { SocketClientService } from 'src/socketClient/socketClient.service';
 import { SocketService } from './socket.service';
 
 @WebSocketGateway(7777, {
@@ -29,6 +30,7 @@ export class SocketGateway
     constructor(
         private readonly socketService: SocketService,
         private readonly expeditionService: ExpeditionService,
+        private readonly socketClientService: SocketClientService,
     ) {}
 
     afterInit() {
@@ -38,19 +40,25 @@ export class SocketGateway
     async handleConnection(client: Socket): Promise<unknown> {
         this.logger.log(`Client attempting a connection: ${client.id}`);
         const { authorization } = client.handshake.headers;
-        const { request } = await this.socketService.getUser(authorization);
-        const { res } = request;
-        const { statusCode } = res;
 
-        if (parseInt(statusCode) !== 200) {
+        try {
+            const { data } = await this.socketService.getUser(authorization);
+            const { id } = data.data;
+
+            await this.socketClientService.create({
+                player_id: id,
+                client_id: client.id,
+            });
+
+            this.logger.log(`Client connected: ${client.id}`);
+        } catch (e) {
             this.logger.log(`Client has an invalid auth token: ${client.id}`);
             return client.disconnect(true);
         }
-
-        this.logger.log(`Client connected: ${client.id}`);
     }
 
-    handleDisconnect(client: Socket) {
+    async handleDisconnect(client: Socket) {
+        await this.socketClientService.delete(client.id);
         this.logger.log(`Client disconnected: ${client.id}`);
     }
 

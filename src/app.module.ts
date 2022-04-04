@@ -16,6 +16,7 @@ import { APP_GUARD } from '@nestjs/core';
 import { AccessTokenGuard } from './common/guards';
 import { TrinketModule } from './trinket/trinket.module';
 import { SocketModule } from './socket/socket.module';
+import { SocketClientModule } from './socketClient/socketClient.module';
 
 @Module({
     imports: [
@@ -33,6 +34,7 @@ import { SocketModule } from './socket/socket.module';
         DeckModule,
         SocketModule,
         LoginModule,
+        SocketClientModule,
     ],
     controllers: [AppController],
     providers: [
