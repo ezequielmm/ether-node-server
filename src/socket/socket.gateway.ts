@@ -116,7 +116,7 @@ export class SocketGateway
                 combat_id,
             };
 
-            this.server.to(expedition_id).emit('CombatStatus', {
+            client.emit('CombatStatus', {
                 status: 'combat_status',
                 expedition_id,
                 combat,
