@@ -1,4 +1,4 @@
 export interface ExpeditionStatus {
-    hasExpedition: boolean;
-    message: string;
+    hasExpedition?: boolean;
+    message?: string;
 }
