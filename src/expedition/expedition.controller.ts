@@ -116,7 +116,7 @@ export class ExpeditionController {
 
             return response
                 .status(HttpStatus.CREATED)
-                .send({ expeditionCreated: true });
+                .send({ data: { expeditionCreated: true } });
         } catch (e) {
             throw new HttpException(e.message, HttpStatus.UNPROCESSABLE_ENTITY);
         }
