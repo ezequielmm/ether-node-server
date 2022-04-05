@@ -46,7 +46,11 @@ export class ExpeditionController {
     async getExpeditionStatus(
         @Headers() headers: HeadersData,
     ): Promise<ExpeditionStatus> {
-        const { authorization } = headers;
+        let authorization = headers.authorization;
+
+        authorization = authorization.startsWith('Bearer')
+            ? authorization.replace('Bearer', '').trim()
+            : authorization;
 
         if (!authorization)
             throw new HttpException('Invalid Token', HttpStatus.UNAUTHORIZED);
