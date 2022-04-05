@@ -8,7 +8,7 @@ import {
     Version,
     Headers,
     Logger,
-    Res,
+    HttpException,
     HttpStatus,
 } from '@nestjs/common';
 import {
@@ -48,21 +48,20 @@ export class ExpeditionController {
     })
     async getExpeditionStatus(
         @Headers() headers: HeadersData,
-        @Res() response,
     ): Promise<ExpeditionStatus> {
         const { authorization } = headers;
+
+        if (!authorization)
+            throw new HttpException('Invalid Token', HttpStatus.UNAUTHORIZED);
 
         try {
             const { data } = await this.socketService.getUser(authorization);
             const { id: player_id } = data.data;
             const hasExpedition: boolean =
                 await this.service.playerHasAnExpedition(player_id);
-            return { hasExpedition, message: '' };
+            return { hasExpedition };
         } catch (e) {
-            this.logger.log(e.message);
-            return response
-                .status(HttpStatus.UNAUTHORIZED)
-                .send({ hasExpedition: false, message: e.message });
+            throw new HttpException(e.message, HttpStatus.UNAUTHORIZED);
         }
     }
 
