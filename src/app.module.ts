@@ -10,7 +10,6 @@ import { EnemyModule } from './enemy/enemy.module';
 import { ExpeditionModule } from './expedition/expedition.module';
 import { PrismaModule } from './prisma.module';
 import { ProfileModule } from './profile/profile.module';
-import { RoomModule } from './room/room.module';
 import { TrinketModule } from './trinket/trinket.module';
 import { SocketModule } from './socket/socket.module';
 import { SocketClientModule } from './socketClient/socketClient.module';
@@ -24,7 +23,6 @@ import { SocketClientModule } from './socketClient/socketClient.module';
         ProfileModule,
         CardModule,
         EnemyModule,
-        RoomModule,
         ExpeditionModule,
         CardPoolModule,
         TrinketModule,

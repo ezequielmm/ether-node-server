@@ -1,4 +1,4 @@
-export interface ExpeditionStatus {
+export interface ExpeditionStatusInterface {
     hasExpedition?: boolean;
     message?: string;
 }

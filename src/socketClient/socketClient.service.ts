@@ -13,7 +13,11 @@ export class SocketClientService {
 
     async create(payload: CreatSocketClientDto): Promise<SocketClient> {
         const createdSocketClient = new this.model(payload);
-        return createdSocketClient.save();
+        return await createdSocketClient.save();
+    }
+
+    async clearClients(): Promise<void> {
+        await this.model.deleteMany();
     }
 
     async getByClientId(client_id: string): Promise<{ player_id: string }> {

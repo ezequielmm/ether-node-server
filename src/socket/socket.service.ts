@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { firstValueFrom } from 'rxjs';
 import { AxiosResponse } from 'axios';
+import { Socket } from 'socket.io';
 
 interface Profile {
     data: {
@@ -37,5 +38,9 @@ export class SocketService {
                 },
             ),
         );
+    }
+
+    sendErrorMessage(message: string, client: Socket): void {
+        client.emit('ErrorMessage', { message });
     }
 }

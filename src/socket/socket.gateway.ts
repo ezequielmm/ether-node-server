@@ -31,8 +31,9 @@ export class SocketGateway
         private readonly socketClientService: SocketClientService,
     ) {}
 
-    afterInit() {
+    async afterInit() {
         this.logger.log(`Socket initiated`);
+        await this.socketClientService.clearClients();
     }
 
     async handleConnection(client: Socket): Promise<unknown> {
@@ -72,16 +73,9 @@ export class SocketGateway
             { status: ExpeditionStatus.Canceled },
         );
 
-        const { _id: expeditionId, map } =
-            await this.expeditionService.createExpedition_V1({
-                player_id,
-            });
-
-        client.rooms.add(expeditionId);
-
-        this.logger.log(
-            `Client ${client.id} was added to expedition ${expeditionId}`,
-        );
+        const { map } = await this.expeditionService.createExpedition_V1({
+            player_id,
+        });
 
         client.emit('ExpeditionStarted', JSON.stringify(map));
     }
@@ -92,15 +86,16 @@ export class SocketGateway
             client.id,
         );
 
-        const { _id: expeditionId, map } =
-            await this.expeditionService.getExpeditionByPlayerId(player_id);
+        try {
+            const { map } =
+                await this.expeditionService.getExpeditionByPlayerId(player_id);
 
-        client.rooms.add(expeditionId);
-
-        this.logger.log(
-            `Client ${client.id} was added to expedition ${expeditionId}`,
-        );
-
-        client.emit('ExpeditionStarted', JSON.stringify(map));
+            client.emit('ExpeditionStarted', JSON.stringify(map));
+        } catch (e) {
+            this.socketService.sendErrorMessage(
+                'There is no expedition for this player',
+                client,
+            );
+        }
     }
 }
