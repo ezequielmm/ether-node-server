@@ -1,4 +1,4 @@
-import { Player } from '@prisma/client';
+import { Player } from './Player.interface';
 
 export interface Profile {
     id: string;

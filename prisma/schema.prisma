@@ -1,10 +1,10 @@
 generator client {
-  provider = "prisma-client-js"
+    provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "mysql"
-  url      = env("DATABASE_URL")
+    provider = "mysql"
+    url      = env("DATABASE_URL")
 }
 
 model CharacterClass {
@@ -76,16 +76,6 @@ model Room {
     @@map("rooms")
 }
 
-model Profile {
-  id       String @id @default(uuid())
-  email    String @unique @db.VarChar(255)
-  password String @unique @db.VarChar(255)
-  refresh_token String? @db.Text
-
-
-  @@map("profiles")
-}
-
 model Node {
     id          String       @id @default(uuid())
     name        String       @unique @db.VarChar(50)
@@ -122,20 +112,6 @@ model CardPool {
     @@map("cardpools")
 }
 
-model Player {
-    id           String             @id @default(uuid())
-    royal_house  String             @unique @db.VarChar(50)
-    class        CharacterClassEnum
-    current_act  Int
-    current_node Int
-    experience   Int                @default(0)
-    fief         Int                @default(0)
-    coins        Int                @default(0)
-    status       String             @db.VarChar(50)
-
-    @@map("player")
-}
-
 model Trinket {
     id        String            @id @default(uuid())
     name      String            @unique @db.VarChar(250)
@@ -143,6 +119,8 @@ model Trinket {
     coin_cost Int
     effect    String            @db.VarChar(250)
     trigger   String            @db.VarChar(250)
+
+    @@map("trinkets")
 }
 
 model Deck {
