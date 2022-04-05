@@ -48,6 +48,9 @@ export class ExpeditionController {
     ): Promise<ExpeditionStatus> {
         let authorization = headers.authorization;
 
+        if (!authorization)
+            throw new HttpException('Invalid Token', HttpStatus.UNAUTHORIZED);
+
         authorization = authorization.startsWith('Bearer')
             ? authorization.replace('Bearer', '').trim()
             : authorization;
