@@ -23,6 +23,10 @@ export class SocketService {
     constructor(private readonly http: HttpService) {}
 
     async getUser(token: string): Promise<AxiosResponse<Profile>> {
+        token = token.startsWith('Bearer')
+            ? token.replace('Bearer', '').trim()
+            : token;
+
         return firstValueFrom(
             this.http.get(
                 'https://gateway.kote.robotseamonster.com/gsrv/v1/profile',

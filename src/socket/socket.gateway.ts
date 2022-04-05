@@ -10,8 +10,6 @@ import {
 import { Server, Socket } from 'socket.io';
 import { ExpeditionStatus } from 'src/expedition/expedition.schema';
 import { ExpeditionService } from 'src/expedition/expedition.service';
-import { CheckCombatStatus } from 'src/interfaces/combatStatus.interface';
-import { CreateExpedition } from 'src/interfaces/CreateExpedition.interface';
 import { SocketClientService } from 'src/socketClient/socketClient.service';
 import { SocketService } from './socket.service';
 
@@ -64,10 +62,10 @@ export class SocketGateway
     }
 
     @SubscribeMessage('CreateExpedition')
-    async handleCreateExpedition(client: Socket, data: string): Promise<void> {
-        const payload: CreateExpedition = JSON.parse(data);
-
-        const { player_id } = payload;
+    async handleCreateExpedition(client: Socket): Promise<void> {
+        const { player_id } = await this.socketClientService.getByClientId(
+            client.id,
+        );
 
         await this.expeditionService.updateActiveExpeditionByPlayerId(
             player_id,
@@ -89,12 +87,10 @@ export class SocketGateway
     }
 
     @SubscribeMessage('ContinueExpedition')
-    async handleContinueExpedition(
-        client: Socket,
-        data: string,
-    ): Promise<void> {
-        const payload: CreateExpedition = JSON.parse(data);
-        const { player_id } = payload;
+    async handleContinueExpedition(client: Socket): Promise<void> {
+        const { player_id } = await this.socketClientService.getByClientId(
+            client.id,
+        );
 
         const { _id: expeditionId, map } =
             await this.expeditionService.getExpeditionByPlayerId(player_id);
@@ -106,35 +102,5 @@ export class SocketGateway
         );
 
         client.emit('ExpeditionStarted', JSON.stringify(map));
-    }
-
-    @SubscribeMessage('CheckCombatStatus')
-    async handleCheckCombatStatus(client: Socket, data: string): Promise<void> {
-        const payload: CheckCombatStatus = JSON.parse(data);
-        const { expedition_id, player_id, combat_id } = payload;
-
-        if (
-            await this.expeditionService.expeditionBelongsToPlayer(
-                player_id,
-                expedition_id,
-            )
-        ) {
-            // TODO: check if combat belongs to player once combat definition is defined
-            const combat = {
-                status: 'in_progress',
-                combat_id,
-            };
-
-            client.emit('CombatStatus', {
-                status: 'combat_status',
-                expedition_id,
-                combat,
-            });
-        } else {
-            client.emit('unknownExpedition', {
-                status: 'unknown_room',
-                expedition_id,
-            });
-        }
     }
 }

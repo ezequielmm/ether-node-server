@@ -80,20 +80,21 @@ export class ExpeditionService {
         player_id: string,
     ): Promise<Expedition> {
         const expedition = await this.model.findById(expedition_id);
-        if (!expedition) {
+
+        if (!expedition)
             throw new NotFoundException(
                 `Expedition with id ${expedition_id} not found`,
             );
-        }
+
         const isOwner = await this.expeditionBelongsToPlayer(
             player_id,
             expedition_id,
         );
-        if (!isOwner) {
+
+        if (!isOwner)
             throw new ForbiddenException(
                 `Player with id ${player_id} is not the owner of expedition ${expedition_id}`,
             );
-        }
 
         return await expedition.save();
     }

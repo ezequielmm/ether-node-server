@@ -7,7 +7,6 @@ import {
     Patch,
     Version,
     Headers,
-    Logger,
     HttpException,
     HttpStatus,
 } from '@nestjs/common';
@@ -28,8 +27,6 @@ import { ExpeditionService } from './expedition.service';
 @ApiTags('Expeditions')
 @Controller('expeditions')
 export class ExpeditionController {
-    private readonly logger: Logger = new Logger(ExpeditionController.name);
-
     constructor(
         private readonly service: ExpeditionService,
         private readonly socketService: SocketService,
