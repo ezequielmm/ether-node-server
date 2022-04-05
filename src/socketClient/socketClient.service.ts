@@ -16,7 +16,14 @@ export class SocketClientService {
         return createdSocketClient.save();
     }
 
+    async getByClientId(client_id: string): Promise<{ player_id: string }> {
+        return await this.model
+            .findOne({ client_id })
+            .select('player_id')
+            .lean();
+    }
+
     async delete(client_id: string): Promise<void> {
-        return this.model.findOneAndDelete({ client_id });
+        return await this.model.findOneAndDelete({ client_id });
     }
 }
