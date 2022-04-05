@@ -1,6 +1,7 @@
 import { HttpModule } from '@nestjs/axios';
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
+import { CharacterService } from 'src/character/character.service';
 import { PrismaModule } from 'src/prisma.module';
 import { SocketService } from 'src/socket/socket.service';
 import { ExpeditionController } from './expedition.controller';
@@ -19,6 +20,6 @@ import { ExpeditionService } from './expedition.service';
         ]),
     ],
     controllers: [ExpeditionController],
-    providers: [ExpeditionService, SocketService],
+    providers: [ExpeditionService, SocketService, CharacterService],
 })
 export class ExpeditionModule {}

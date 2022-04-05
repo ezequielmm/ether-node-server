@@ -1,36 +1,27 @@
-import { ApiProperty } from '@nestjs/swagger';
 import { IsEmpty, IsNotEmpty, IsUUID } from 'class-validator';
+import { ExpeditionStatus } from '../expedition.schema';
 
 export class CreateExpeditionDto {
-    @ApiProperty({ name: 'player_id' })
     @IsNotEmpty()
     @IsUUID()
     readonly player_id: string;
 
-    @ApiProperty()
-    readonly deck?: string;
+    readonly deck?: object;
 
-    @ApiProperty()
-    readonly map?: string;
+    readonly map?: object;
 
-    @ApiProperty()
-    readonly nodes?: string;
+    readonly nodes?: object;
 
-    @ApiProperty()
-    readonly player_state?: string;
+    readonly player_state?: object;
 
-    @ApiProperty()
-    readonly current_state?: string;
+    readonly current_state?: object;
 
-    @ApiProperty()
     @IsNotEmpty()
-    readonly status?: string;
+    readonly status?: ExpeditionStatus;
 
     @IsUUID('4', { each: true })
-    @ApiProperty()
     readonly trinkets?: [];
 
-    @ApiProperty({ name: 'character_id' })
     @IsEmpty()
     @IsUUID()
     readonly character_id?: string;

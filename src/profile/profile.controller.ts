@@ -1,8 +1,9 @@
 import { Controller, Get, Version } from '@nestjs/common';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Profile } from 'src/interfaces/Profile.interface';
 import { ProfileService } from './profile.service';
 
+@ApiBearerAuth()
 @ApiTags('Profile')
 @Controller('profile')
 export class ProfileController {

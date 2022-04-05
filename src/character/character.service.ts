@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Character, Prisma } from '@prisma/client';
+import { Character, CharacterClassEnum, Prisma } from '@prisma/client';
 import { PrismaService } from 'src/prisma.service';
 
 @Injectable()
@@ -37,5 +37,11 @@ export class CharacterService {
         };
         const characters = await this.prisma.character.findMany(data);
         return characters.length === 0;
+    }
+
+    async getCharacterByClass(): Promise<Character> {
+        return await this.prisma.character.findFirst({
+            where: { class: CharacterClassEnum.knight },
+        });
     }
 }

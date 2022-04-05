@@ -1,27 +1,22 @@
 import {
-    Body,
     Controller,
     Get,
-    Param,
-    ParseUUIDPipe,
-    Patch,
     Version,
     Headers,
     HttpException,
     HttpStatus,
+    Post,
+    Res,
 } from '@nestjs/common';
-import {
-    ApiBearerAuth,
-    ApiOperation,
-    ApiResponse,
-    ApiTags,
-} from '@nestjs/swagger';
-import { ExpeditionStatus } from 'src/interfaces/ExpeditionStatus.interface';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { CharacterService } from 'src/character/character.service';
+import { ExpeditionStatusInterface } from 'src/interfaces/ExpeditionStatus.interface';
 import { HeadersData } from 'src/interfaces/HeadersData.interface';
 import { SocketService } from 'src/socket/socket.service';
-import { CancelExpeditionDto } from './dto/cancelExpedition.dto';
-import { Expedition } from './expedition.schema';
+import { Expedition, ExpeditionStatus } from './expedition.schema';
 import { ExpeditionService } from './expedition.service';
+import { v4 as uuidv4 } from 'uuid';
+import { map } from './mapGenerator';
 
 @ApiBearerAuth()
 @ApiTags('Expeditions')
@@ -30,6 +25,7 @@ export class ExpeditionController {
     constructor(
         private readonly service: ExpeditionService,
         private readonly socketService: SocketService,
+        private readonly characterService: CharacterService,
     ) {}
 
     @Version('1')
@@ -37,15 +33,9 @@ export class ExpeditionController {
     @ApiOperation({
         summary: 'Get if the user has an expedition in progress or not',
     })
-    @ApiResponse({
-        status: 200,
-    })
-    @ApiResponse({
-        status: 422,
-    })
     async getExpeditionStatus(
         @Headers() headers: HeadersData,
-    ): Promise<ExpeditionStatus> {
+    ): Promise<ExpeditionStatusInterface> {
         let authorization = headers.authorization;
 
         if (!authorization)
@@ -69,12 +59,66 @@ export class ExpeditionController {
         }
     }
 
+    @ApiOperation({
+        summary: `Creates a new expedition with status 'draft'`,
+    })
     @Version('1')
-    @Patch('/cancel/:id')
-    async cancelExpedition_V1(
-        @Body() data: CancelExpeditionDto,
-        @Param('id', ParseUUIDPipe) id: string,
-    ): Promise<Expedition> {
-        return await this.service.cancelExpedition_V1(id, data.player_id);
+    @Post('/')
+    async createExpedition(
+        @Headers() headers: HeadersData,
+        @Res() response,
+    ): Promise<{ expeditionCreated: boolean }> {
+        let authorization = headers.authorization;
+
+        if (!authorization)
+            throw new HttpException('Invalid Token', HttpStatus.UNAUTHORIZED);
+
+        authorization = authorization.startsWith('Bearer')
+            ? authorization.replace('Bearer', '').trim()
+            : authorization;
+
+        if (!authorization)
+            throw new HttpException('Invalid Token', HttpStatus.UNAUTHORIZED);
+
+        try {
+            const { data } = await this.socketService.getUser(authorization);
+            const { id: player_id } = data.data;
+
+            if (!(await this.service.playerHasAPendingExpedition(player_id))) {
+                const character =
+                    await this.characterService.getCharacterByClass();
+
+                const expedition: Expedition = {
+                    player_id,
+                    _id: uuidv4(),
+                    deck: {},
+                    map,
+                    player_state: {
+                        className: character.class,
+                        hp_max: character.initial_health,
+                        hp_current: character.initial_health,
+                        gold: character.initial_gold,
+                        potions: {
+                            1: null,
+                            2: null,
+                            3: null,
+                        },
+                        trinkets: [],
+                        deck: [],
+                        private: {},
+                    },
+                    current_state: {},
+                    status: ExpeditionStatus.Draft,
+                };
+
+                await this.service.createExpedition_V1(expedition);
+            }
+
+            return response
+                .status(HttpStatus.CREATED)
+                .send({ expeditionCreated: true });
+        } catch (e) {
+            throw new HttpException(e.message, HttpStatus.UNPROCESSABLE_ENTITY);
+        }
     }
 }

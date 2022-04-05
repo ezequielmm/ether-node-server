@@ -1,6 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { randomUUID } from 'crypto';
 import { Document } from 'mongoose';
+import { ExpeditionPlayerState } from 'src/interfaces/ExpeditionPlayerState.interface';
 
 export type ExpeditionDocument = Expedition & Document;
 
@@ -9,6 +10,7 @@ export enum ExpeditionStatus {
     Victory = 'victory',
     Defeated = 'defeated',
     Canceled = 'canceled',
+    Draft = 'draft',
 }
 
 @Schema()
@@ -26,7 +28,7 @@ export class Expedition {
     readonly map: object;
 
     @Prop({ type: Object, default: {} })
-    readonly player_state: object;
+    readonly player_state: ExpeditionPlayerState;
 
     @Prop({ type: Object, default: {} })
     readonly current_state: object;
@@ -34,11 +36,8 @@ export class Expedition {
     @Prop({ default: [] })
     trinkets?: [];
 
-    @Prop()
+    @Prop({ default: ExpeditionStatus.Draft })
     readonly status: ExpeditionStatus;
-
-    @Prop({ type: String, default: null })
-    readonly character_id: string;
 }
 
 export const ExpeditionSchema = SchemaFactory.createForClass(Expedition);

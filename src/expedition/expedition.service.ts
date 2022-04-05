@@ -25,20 +25,19 @@ export class ExpeditionService {
     async createExpedition_V1(
         expedition: CreateExpeditionDto,
     ): Promise<Expedition> {
-        const { player_id, character_id } = expedition;
+        const { player_id, status, player_state } = expedition;
 
         if (await this.playerHasAnExpedition(player_id)) {
             return await this.getExpeditionByPlayerId(player_id);
         } else {
             const data: Expedition = {
                 player_id,
-                character_id,
                 _id: uuidv4(),
                 deck: [{ card_instances: null }],
                 map: map,
-                player_state: {},
+                player_state,
                 current_state: {},
-                status: ExpeditionStatus.InProgress,
+                status,
             };
             const newExpedition = new this.model(data);
             return newExpedition.save();
@@ -56,6 +55,14 @@ export class ExpeditionService {
     async playerHasAnExpedition(player_id: string): Promise<boolean> {
         const itemExists = await this.model
             .findOne({ player_id, status: ExpeditionStatus.InProgress })
+            .select('_id')
+            .lean();
+        return itemExists === null ? false : true;
+    }
+
+    async playerHasAPendingExpedition(player_id: string): Promise<boolean> {
+        const itemExists = await this.model
+            .findOne({ player_id, status: ExpeditionStatus.Draft })
             .select('_id')
             .lean();
         return itemExists === null ? false : true;
