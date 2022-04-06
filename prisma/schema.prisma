@@ -16,14 +16,14 @@ model CharacterClass {
 }
 
 model Character {
-    id             String             @id @default(uuid())
-    name           String             @unique @db.VarChar(250)
-    description    String?            @db.Text()
-    class          CharacterClassEnum @default(knight)
-    initial_health Int                @default(0)
-    initial_gold   Int                @default(0)
-    cardpool_id    String
-    created_at     DateTime           @default(now())
+    id              String             @id @default(uuid())
+    name            String             @unique @db.VarChar(250)
+    description     String?            @db.Text()
+    character_class CharacterClassEnum @default(knight)
+    initial_health  Int                @default(0)
+    initial_gold    Int                @default(0)
+    cardpool_id     String
+    created_at      DateTime           @default(now())
 
     cardpool CardPool @relation(fields: [cardpool_id], references: [id])
 
@@ -34,7 +34,7 @@ model Card {
     id          String         @id @default(uuid())
     name        String         @unique @db.VarChar(250)
     description String         @db.VarChar(250)
-    class       CardClassEnum?
+    card_class  CardClassEnum?
     code        String         @db.VarChar(255)
     rarity      CardRarityEnum
     energy      Int?           @db.SmallInt

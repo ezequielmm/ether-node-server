@@ -9,7 +9,7 @@ export const cards: Prisma.CardCreateManyInput = {
     name: faker.name.jobTitle(),
     description: faker.lorem.words(20),
     rarity: 'common',
-    class: 'knight',
+    card_class: 'knight',
     type: 'attack',
     coins_max: 0,
     coins_min: 0,
