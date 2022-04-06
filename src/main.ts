@@ -1,7 +1,9 @@
 import { ValidationPipe, VersioningType } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { useContainer } from 'class-validator';
 import { AppModule } from './app.module';
+import { CardPoolModule } from './cardPool/cardPool.module';
 import { TransformDataResource } from './interceptors/TransformDataResource.interceptor';
 
 async function bootstrap() {
@@ -12,6 +14,9 @@ async function bootstrap() {
 
     // Add Resource Interceptor
     app.useGlobalInterceptors(new TransformDataResource());
+
+    // Add custom validation modules
+    useContainer(app.select(CardPoolModule), { fallbackOnErrors: true });
 
     // Enable Versioning
     app.enableVersioning({

@@ -5,6 +5,7 @@ import { Model } from 'mongoose';
 import { ExpeditionDocument } from 'src/types/expeditionDocument.type';
 import { CreateExpeditionDto } from './dto/createExpedition.dto';
 import { ExpeditionStatusEnum } from 'src/enums/expeditionStatus.enum';
+import { UpdateExpeditionDto } from './dto/updateExpedition.dto';
 
 @Injectable()
 export class ExpeditionService {
@@ -27,6 +28,15 @@ export class ExpeditionService {
             .select('_id')
             .lean();
         return itemExists === null ? false : true;
+    }
+
+    async updateExpeditionByPlayerId(
+        player_id: string,
+        payload: UpdateExpeditionDto,
+    ): Promise<Expedition> {
+        return await this.expedition.findOneAndUpdate({ player_id }, payload, {
+            new: true,
+        });
     }
 
     composeErrorMessage(message: string, statusCode: HttpStatus): void {

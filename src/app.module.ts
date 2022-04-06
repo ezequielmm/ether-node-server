@@ -7,6 +7,8 @@ import { CardPoolModule } from './cardPool/cardPool.module';
 import { CharacterModule } from './character/character.module';
 import { CharacterClassModule } from './characterClass/characterClass.module';
 import { ExpeditionModule } from './expedition/expedition.module';
+import { SocketModule } from './socket/socket.module';
+import { SocketClientModule } from './socketClient/socketClient.module';
 import { TrinketModule } from './trinket/trinket.module';
 
 @Module({
@@ -19,6 +21,8 @@ import { TrinketModule } from './trinket/trinket.module';
         TrinketModule,
         AuthGatewayModule,
         ExpeditionModule,
+        SocketClientModule,
+        SocketModule,
     ],
     controllers: [AppController],
 })
