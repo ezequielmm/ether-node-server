@@ -11,19 +11,19 @@ export class Expedition {
     @Prop({ required: true })
     readonly player_id: string;
 
-    @Prop({ default: [], required: false })
-    readonly deck: object;
+    @Prop({ type: Object, default: {}, required: false })
+    readonly deck?: object;
 
-    @Prop({ default: {}, required: false })
-    readonly map: object;
+    @Prop({ type: Object, default: {}, required: false })
+    readonly map?: object;
 
-    @Prop({ required: true })
+    @Prop({ type: Object, required: true })
     readonly player_state: PlayerStateInterface;
 
-    @Prop({ default: {}, required: false })
-    readonly current_state: object;
+    @Prop({ type: Object, default: {}, required: false })
+    readonly current_state?: object;
 
-    @Prop({ default: [], required: false })
+    @Prop({ type: Array, default: [], required: false })
     readonly trinkets?: [];
 
     @Prop({ default: ExpeditionStatusEnum.Draft, required: false })
