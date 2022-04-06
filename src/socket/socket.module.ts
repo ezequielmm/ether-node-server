@@ -1,8 +1,6 @@
 import { Module } from '@nestjs/common';
 import { HttpModule } from '@nestjs/axios';
 import { SocketGateway } from './socket.gateway';
-import { SocketService } from './socket.service';
-import { ExpeditionService } from 'src/expedition/expedition.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import { SocketClientService } from 'src/socketClient/socketClient.service';
 import { Expedition, ExpeditionSchema } from 'src/expedition/expedition.schema';
@@ -10,6 +8,9 @@ import {
     SocketClient,
     SocketClientSchema,
 } from 'src/socketClient/socketClient.schema';
+import { SocketService } from './socket.service';
+import { AuthGatewayService } from 'src/authGateway/authGateway.service';
+import { ExpeditionService } from 'src/expedition/expedition.service';
 
 @Module({
     imports: [
@@ -28,8 +29,9 @@ import {
     providers: [
         SocketGateway,
         SocketService,
-        ExpeditionService,
+        AuthGatewayService,
         SocketClientService,
+        ExpeditionService,
     ],
 })
 export class SocketModule {}

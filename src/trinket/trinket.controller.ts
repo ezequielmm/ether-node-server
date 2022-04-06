@@ -1,22 +1,25 @@
 import { Controller, Get, Param, ParseUUIDPipe, Version } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { Trinket } from '@prisma/client';
 import { TrinketService } from './trinket.service';
 
-@Controller('trinkets')
+@ApiBearerAuth()
 @ApiTags('Trinket')
+@Controller('trinkets')
 export class TrinketController {
     constructor(private readonly trinketService: TrinketService) {}
 
     @Version('1')
-    @Get('/')
-    async getTrinkets(): Promise<Trinket[]> {
+    @Get()
+    async handleGetTrinkets(): Promise<Trinket[]> {
         return await this.trinketService.getTrinkets();
     }
 
     @Version('1')
     @Get(':id')
-    async getTrinket(@Param('id', ParseUUIDPipe) id: string): Promise<Trinket> {
+    async handleGetTrinket(
+        @Param('id', ParseUUIDPipe) id: string,
+    ): Promise<Trinket> {
         return await this.trinketService.getTrinket(id);
     }
 }

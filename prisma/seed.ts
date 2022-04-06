@@ -4,9 +4,9 @@ import { cards } from './data/cards';
 import { characterClasses } from './data/characterClasses';
 import { characters } from './data/characters';
 import { nodes } from './data/nodes';
-import { rooms } from './data/rooms';
 import { enemies } from './data/enemies';
 import { nodeEnemies } from './data/nodeEnemies';
+import { trinkets } from './data/trinkets';
 
 const prisma = new PrismaClient();
 
@@ -29,9 +29,6 @@ async function main() {
     await prisma.card.deleteMany();
     console.log('Deleted records in cards table');
 
-    await prisma.room.deleteMany();
-    console.log('Deleted records in rooms table');
-
     await prisma.enemy.deleteMany();
     console.log('Deleted records in enemies table');
 
@@ -40,6 +37,9 @@ async function main() {
 
     await prisma.nodeEnemy.deleteMany();
     console.log('Deleted records in node_enemies table');
+
+    await prisma.trinket.deleteMany();
+    console.log('Deleted records in trinkets table');
 
     // Enable Foreign key constraints
     await prisma.$queryRaw`SET FOREIGN_KEY_CHECKS=1;`;
@@ -58,9 +58,6 @@ async function main() {
     await prisma.card.createMany({ data: cards });
     console.log('Added cards data');
 
-    await prisma.room.createMany({ data: rooms });
-    console.log('Added rooms data');
-
     await prisma.enemy.createMany({ data: enemies });
     console.log('Added enemies data');
 
@@ -69,6 +66,9 @@ async function main() {
 
     await prisma.nodeEnemy.createMany({ data: nodeEnemies });
     console.log('Added node enemies data');
+
+    await prisma.trinket.createMany({ data: trinkets });
+    console.log('Added trinkets data');
     //#endregion End Insert Data
 
     console.log(`Seeding finished.`);

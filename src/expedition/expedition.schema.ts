@@ -1,43 +1,33 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { randomUUID } from 'crypto';
-import { Document } from 'mongoose';
-import { ExpeditionPlayerState } from 'src/interfaces/ExpeditionPlayerState.interface';
-
-export type ExpeditionDocument = Expedition & Document;
-
-export enum ExpeditionStatus {
-    InProgress = 'in_progress',
-    Victory = 'victory',
-    Defeated = 'defeated',
-    Canceled = 'canceled',
-    Draft = 'draft',
-}
+import { ExpeditionStatusEnum } from 'src/enums/expeditionStatus.enum';
+import { PlayerStateInterface } from 'src/interfaces/playerState.interface';
 
 @Schema()
 export class Expedition {
     @Prop({ default: randomUUID(), required: false })
     readonly _id: string;
 
-    @Prop()
+    @Prop({ required: true })
     readonly player_id: string;
 
-    @Prop({ type: Object, default: [] })
-    readonly deck: object;
+    @Prop({ type: Object, default: {}, required: false })
+    readonly deck?: object;
 
-    @Prop({ type: Object, default: {} })
-    readonly map: object;
+    @Prop({ type: Object, default: {}, required: false })
+    readonly map?: object;
 
-    @Prop({ type: Object, default: {} })
-    readonly player_state: ExpeditionPlayerState;
+    @Prop({ type: Object, required: true })
+    readonly player_state: PlayerStateInterface;
 
-    @Prop({ type: Object, default: {} })
-    readonly current_state: object;
+    @Prop({ type: Object, default: {}, required: false })
+    readonly current_state?: object;
 
-    @Prop({ default: [] })
-    trinkets?: [];
+    @Prop({ type: Array, default: [], required: false })
+    readonly trinkets?: [];
 
-    @Prop({ default: ExpeditionStatus.Draft })
-    readonly status: ExpeditionStatus;
+    @Prop({ default: ExpeditionStatusEnum.Draft, required: false })
+    readonly status: ExpeditionStatusEnum;
 }
 
 export const ExpeditionSchema = SchemaFactory.createForClass(Expedition);

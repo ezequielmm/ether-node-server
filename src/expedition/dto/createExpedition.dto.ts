@@ -1,28 +1,12 @@
-import { IsEmpty, IsNotEmpty, IsUUID } from 'class-validator';
-import { ExpeditionStatus } from '../expedition.schema';
+import { ExpeditionStatusEnum } from 'src/enums/expeditionStatus.enum';
+import { PlayerStateInterface } from 'src/interfaces/playerState.interface';
 
 export class CreateExpeditionDto {
-    @IsNotEmpty()
-    @IsUUID()
     readonly player_id: string;
-
     readonly deck?: object;
-
-    readonly map?: object;
-
     readonly nodes?: object;
-
-    readonly player_state?: object;
-
+    readonly player_state?: PlayerStateInterface;
     readonly current_state?: object;
-
-    @IsNotEmpty()
-    readonly status?: ExpeditionStatus;
-
-    @IsUUID('4', { each: true })
+    readonly status?: ExpeditionStatusEnum;
     readonly trinkets?: [];
-
-    @IsEmpty()
-    @IsUUID()
-    readonly character_id?: string;
 }

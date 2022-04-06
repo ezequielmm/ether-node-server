@@ -1,33 +1,37 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
+import { SocketClient } from './socketClient.schema';
 import { Model } from 'mongoose';
-import { CreatSocketClientDto } from './dto/createSocketclient.dto';
-import { SocketClient, SocketClientDocument } from './socketClient.schema';
+import { SocketClientDocument } from 'src/types/socketDocument.type';
+import { CreateSocketClientDto } from './dto/createSocketClient.dto';
+import { SocketClientPlayerIdInterface } from 'src/interfaces/socketClientPlayerId.interface';
 
 @Injectable()
 export class SocketClientService {
     constructor(
         @InjectModel(SocketClient.name)
-        private readonly model: Model<SocketClientDocument>,
+        private readonly socketClient: Model<SocketClientDocument>,
     ) {}
 
-    async create(payload: CreatSocketClientDto): Promise<SocketClient> {
-        const createdSocketClient = new this.model(payload);
+    async create(payload: CreateSocketClientDto): Promise<SocketClient> {
+        const createdSocketClient = new this.socketClient(payload);
         return await createdSocketClient.save();
     }
 
     async clearClients(): Promise<void> {
-        await this.model.deleteMany();
+        await this.socketClient.deleteMany({});
     }
 
-    async getByClientId(client_id: string): Promise<{ player_id: string }> {
-        return await this.model
+    async getSocketClientPlayerIdByClientId(
+        client_id: string,
+    ): Promise<SocketClientPlayerIdInterface> {
+        return await this.socketClient
             .findOne({ client_id })
             .select('player_id')
             .lean();
     }
 
     async delete(client_id: string): Promise<void> {
-        return await this.model.findOneAndDelete({ client_id });
+        return await this.socketClient.findOneAndDelete({ client_id });
     }
 }

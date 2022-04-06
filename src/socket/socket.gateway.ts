@@ -3,15 +3,14 @@ import {
     OnGatewayConnection,
     OnGatewayDisconnect,
     OnGatewayInit,
-    SubscribeMessage,
     WebSocketGateway,
     WebSocketServer,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
-import { ExpeditionStatus } from 'src/expedition/expedition.schema';
+import { AuthGatewayService } from 'src/authGateway/authGateway.service';
+import { ExpeditionStatusEnum } from 'src/enums/expeditionStatus.enum';
 import { ExpeditionService } from 'src/expedition/expedition.service';
 import { SocketClientService } from 'src/socketClient/socketClient.service';
-import { SocketService } from './socket.service';
 
 @WebSocketGateway(7777, {
     cors: {
@@ -26,22 +25,23 @@ export class SocketGateway
     private readonly logger: Logger = new Logger(SocketGateway.name);
 
     constructor(
-        private readonly socketService: SocketService,
-        private readonly expeditionService: ExpeditionService,
+        private readonly authGatewayService: AuthGatewayService,
         private readonly socketClientService: SocketClientService,
+        private readonly expeditionService: ExpeditionService,
     ) {}
 
     async afterInit() {
-        this.logger.log(`Socket initiated`);
-        await this.socketClientService.clearClients();
+        this.socketClientService.clearClients();
+        this.logger.log(`Socket Initiated`);
     }
 
-    async handleConnection(client: Socket): Promise<unknown> {
+    async handleConnection(client: Socket) {
         this.logger.log(`Client attempting a connection: ${client.id}`);
         const { authorization } = client.handshake.headers;
-
         try {
-            const { data } = await this.socketService.getUser(authorization);
+            const { data } = await this.authGatewayService.getUser(
+                authorization,
+            );
             const { id } = data.data;
 
             await this.socketClientService.create({
@@ -50,6 +50,13 @@ export class SocketGateway
             });
 
             this.logger.log(`Client connected: ${client.id}`);
+
+            const { map } =
+                await this.expeditionService.updateExpeditionByPlayerId(id, {
+                    status: ExpeditionStatusEnum.InProgress,
+                });
+
+            client.emit('ExpeditionMap', JSON.stringify(map));
         } catch (e) {
             this.logger.log(e.message);
             this.logger.log(`Client has an invalid auth token: ${client.id}`);
@@ -60,42 +67,5 @@ export class SocketGateway
     async handleDisconnect(client: Socket) {
         await this.socketClientService.delete(client.id);
         this.logger.log(`Client disconnected: ${client.id}`);
-    }
-
-    @SubscribeMessage('CreateExpedition')
-    async handleCreateExpedition(client: Socket): Promise<void> {
-        const { player_id } = await this.socketClientService.getByClientId(
-            client.id,
-        );
-
-        await this.expeditionService.updateActiveExpeditionByPlayerId(
-            player_id,
-            { status: ExpeditionStatus.Canceled },
-        );
-
-        const { map } = await this.expeditionService.createExpedition_V1({
-            player_id,
-        });
-
-        client.emit('ExpeditionStarted', JSON.stringify(map));
-    }
-
-    @SubscribeMessage('ContinueExpedition')
-    async handleContinueExpedition(client: Socket): Promise<void> {
-        const { player_id } = await this.socketClientService.getByClientId(
-            client.id,
-        );
-
-        try {
-            const { map } =
-                await this.expeditionService.getExpeditionByPlayerId(player_id);
-
-            client.emit('ExpeditionStarted', JSON.stringify(map));
-        } catch (e) {
-            this.socketService.sendErrorMessage(
-                'There is no expedition for this player',
-                client,
-            );
-        }
     }
 }

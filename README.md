@@ -4,13 +4,13 @@ This documentation will serve as a starting point to install and run the service
 
 for local development is recommended to have installed:
 
--   Node 16 or higher
--   Mongo DB (can be dockerized)
--   MySQL 5.7 or higher (can be dockerized)
+- Node 16 or higher
+- Mongo DB (can be dockerized)
+- MySQL 5.7 or higher (can be dockerized)
 
 To install we just need to run `npm run install`
 
-Then we run `cp .env.example .env` to create the `.env` file. Next, we replace the our dabatase values and 
+Then we run `cp .env.example .env` to create the `.env` file. Next, we replace the our dabatase values and
 
 To create the MySQL data schema we run `npx prisma db push`
 
