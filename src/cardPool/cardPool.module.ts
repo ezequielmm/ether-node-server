@@ -7,6 +7,5 @@ import { CardPoolService } from './cardPool.service';
 @Module({
     controllers: [CardPoolController],
     providers: [PrismaService, CardPoolService, UniqueNameOnCardPoolsTableRule],
-    exports: [CardPoolService],
 })
 export class CardPoolModule {}
