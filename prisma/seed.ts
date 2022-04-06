@@ -6,6 +6,7 @@ import { characters } from './data/characters';
 import { nodes } from './data/nodes';
 import { enemies } from './data/enemies';
 import { nodeEnemies } from './data/nodeEnemies';
+import { trinkets } from './data/trinkets';
 
 const prisma = new PrismaClient();
 
@@ -37,6 +38,9 @@ async function main() {
     await prisma.nodeEnemy.deleteMany();
     console.log('Deleted records in node_enemies table');
 
+    await prisma.trinket.deleteMany();
+    console.log('Deleted records in trinkets table');
+
     // Enable Foreign key constraints
     await prisma.$queryRaw`SET FOREIGN_KEY_CHECKS=1;`;
     //#endregion End Delete previous data
@@ -62,6 +66,9 @@ async function main() {
 
     await prisma.nodeEnemy.createMany({ data: nodeEnemies });
     console.log('Added node enemies data');
+
+    await prisma.trinket.createMany({ data: trinkets });
+    console.log('Added trinkets data');
     //#endregion End Insert Data
 
     console.log(`Seeding finished.`);
