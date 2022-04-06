@@ -7,6 +7,7 @@ import { CardPoolModule } from './cardPool/cardPool.module';
 import { CharacterModule } from './character/character.module';
 import { CharacterClassModule } from './characterClass/characterClass.module';
 import { ExpeditionModule } from './expedition/expedition.module';
+import { ProfileModule } from './profile/profile.module';
 import { SocketModule } from './socket/socket.module';
 import { SocketClientModule } from './socketClient/socketClient.module';
 import { TrinketModule } from './trinket/trinket.module';
@@ -23,6 +24,7 @@ import { TrinketModule } from './trinket/trinket.module';
         ExpeditionModule,
         SocketClientModule,
         SocketModule,
+        ProfileModule,
     ],
     controllers: [AppController],
 })
