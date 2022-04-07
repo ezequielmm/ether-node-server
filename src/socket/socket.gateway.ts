@@ -3,6 +3,7 @@ import {
     OnGatewayConnection,
     OnGatewayDisconnect,
     OnGatewayInit,
+    SubscribeMessage,
     WebSocketGateway,
     WebSocketServer,
 } from '@nestjs/websockets';
@@ -38,6 +39,12 @@ export class SocketGateway
     async handleConnection(client: Socket) {
         this.logger.log(`Client attempting a connection: ${client.id}`);
         const { authorization } = client.handshake.headers;
+
+        if (!authorization) {
+            this.logger.log(`Client has an invalid auth token: ${client.id}`);
+            client.disconnect(true);
+        }
+
         try {
             const { data } = await this.authGatewayService.getUser(
                 authorization,
@@ -51,21 +58,27 @@ export class SocketGateway
 
             this.logger.log(`Client connected: ${client.id}`);
 
-            const { map } =
+            const { map, player_state } =
                 await this.expeditionService.updateExpeditionByPlayerId(id, {
                     status: ExpeditionStatusEnum.InProgress,
                 });
 
             client.emit('ExpeditionMap', JSON.stringify(map));
+            client.emit('PlayerState', JSON.stringify(player_state));
         } catch (e) {
             this.logger.log(e.message);
             this.logger.log(`Client has an invalid auth token: ${client.id}`);
-            return client.disconnect(true);
+            client.disconnect(true);
         }
     }
 
     async handleDisconnect(client: Socket) {
         await this.socketClientService.delete(client.id);
         this.logger.log(`Client disconnected: ${client.id}`);
+    }
+
+    @SubscribeMessage('NodeSelected')
+    async handleNodeSelected(client: Socket, data: string): Promise<void> {
+        console.log(data);
     }
 }
