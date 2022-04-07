@@ -1,4 +1,4 @@
 export interface ExpeditionMapInterface {
-    act: number;
-    rows: [];
+    current_act: number;
+    current_node: number;
 }

@@ -9,7 +9,6 @@ import {
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { AuthGatewayService } from 'src/authGateway/authGateway.service';
-import { ExpeditionStatusEnum } from 'src/enums/expeditionStatus.enum';
 import { ExpeditionService } from 'src/expedition/expedition.service';
 import { SocketClientService } from 'src/socketClient/socketClient.service';
 
@@ -31,12 +30,12 @@ export class SocketGateway
         private readonly expeditionService: ExpeditionService,
     ) {}
 
-    async afterInit() {
+    async afterInit(): Promise<void> {
         this.socketClientService.clearClients();
         this.logger.log(`Socket Initiated`);
     }
 
-    async handleConnection(client: Socket) {
+    async handleConnection(client: Socket): Promise<void> {
         this.logger.log(`Client attempting a connection: ${client.id}`);
         const { authorization } = client.handshake.headers;
 
@@ -59,9 +58,7 @@ export class SocketGateway
             this.logger.log(`Client connected: ${client.id}`);
 
             const { map, player_state } =
-                await this.expeditionService.updateExpeditionByPlayerId(id, {
-                    status: ExpeditionStatusEnum.InProgress,
-                });
+                await this.expeditionService.getExpeditionByPlayerId(id);
 
             client.emit('ExpeditionMap', JSON.stringify(map));
             client.emit('PlayerState', JSON.stringify(player_state));
@@ -72,7 +69,7 @@ export class SocketGateway
         }
     }
 
-    async handleDisconnect(client: Socket) {
+    async handleDisconnect(client: Socket): Promise<void> {
         await this.socketClientService.delete(client.id);
         this.logger.log(`Client disconnected: ${client.id}`);
     }

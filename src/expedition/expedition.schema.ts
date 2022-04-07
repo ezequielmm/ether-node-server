@@ -1,6 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { randomUUID } from 'crypto';
 import { ExpeditionStatusEnum } from 'src/enums/expeditionStatus.enum';
+import { ExpeditionCurrentNodeInterface } from 'src/interfaces/expeditionCurrentNode.interface';
 import { PlayerStateInterface } from 'src/interfaces/playerState.interface';
 
 @Schema()
@@ -20,8 +21,8 @@ export class Expedition {
     @Prop({ type: Object, required: true })
     readonly player_state: PlayerStateInterface;
 
-    @Prop({ type: Object, default: {}, required: false })
-    readonly current_state?: object;
+    @Prop({ type: Object, required: false })
+    readonly current_node?: ExpeditionCurrentNodeInterface;
 
     @Prop({ type: Array, default: [], required: false })
     readonly trinkets?: [];

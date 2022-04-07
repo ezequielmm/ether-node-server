@@ -76,7 +76,7 @@ export class ExpeditionController {
 
     //#region creates a new expedition in Draft status
     @ApiOperation({
-        summary: `Creates a new expedition with status 'draft'`,
+        summary: `Creates a new expedition for the player`,
     })
     @Post()
     async handleCreateExpedition(
@@ -107,12 +107,13 @@ export class ExpeditionController {
             );
             const { id: player_id } = data.data;
 
-            if (
-                !(await this.expeditionService.playerHasAnExpedition(
+            const expeditionExists =
+                await this.expeditionService.playerHasAnExpedition(
                     player_id,
                     ExpeditionStatusEnum.Draft,
-                ))
-            ) {
+                );
+
+            if (!expeditionExists) {
                 const character =
                     await this.characterService.getCharacterByClass();
 
@@ -135,8 +136,8 @@ export class ExpeditionController {
                         deck: [],
                         private_data: {},
                     },
-                    current_state: {},
-                    status: ExpeditionStatusEnum.Draft,
+                    current_node: null,
+                    status: ExpeditionStatusEnum.InProgress,
                 };
 
                 await this.expeditionService.createExpedition(expedition);
