@@ -23,10 +23,7 @@ export class ExpeditionService {
         player_id: string,
         status: ExpeditionStatusEnum,
     ): Promise<boolean> {
-        const itemExists = await this.expedition
-            .findOne({ player_id, status })
-            .select('_id')
-            .lean();
+        const itemExists = await this.expedition.exists({ player_id, status });
         return itemExists === null ? false : true;
     }
 
