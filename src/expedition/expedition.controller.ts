@@ -16,7 +16,6 @@ import { ExpeditionStatusInterface } from 'src/interfaces/expeditionStatus.inter
 import { HeadersData } from 'src/interfaces/headersData.interface';
 import { Expedition } from './expedition.schema';
 import { ExpeditionService } from './expedition.service';
-import { v4 as uuidv4 } from 'uuid';
 
 @ApiBearerAuth()
 @ApiTags('Expeditions')
@@ -119,7 +118,6 @@ export class ExpeditionController {
 
                 const expedition: Expedition = {
                     player_id,
-                    _id: uuidv4(),
                     deck: {},
                     map,
                     player_state: {

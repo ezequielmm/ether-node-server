@@ -1,14 +1,10 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { randomUUID } from 'crypto';
 import { ExpeditionStatusEnum } from 'src/enums/expeditionStatus.enum';
 import { ExpeditionCurrentNodeInterface } from 'src/interfaces/expeditionCurrentNode.interface';
 import { PlayerStateInterface } from 'src/interfaces/playerState.interface';
 
 @Schema()
 export class Expedition {
-    @Prop({ default: randomUUID(), required: false })
-    readonly _id: string;
-
     @Prop({ required: true })
     readonly player_id: string;
 
