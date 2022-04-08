@@ -90,7 +90,7 @@ export class SocketGateway
     }
 
     @SubscribeMessage('NodeSelected')
-    async handleNodeSelected(client: Socket): Promise<object> {
+    async handleNodeSelected(client: Socket, node_id: number): Promise<string> {
         const { player_id } =
             await this.socketClientService.getSocketClientPlayerIdByClientId(
                 client.id,
@@ -100,8 +100,13 @@ export class SocketGateway
             player_state: {
                 deck: { cards },
             },
-        } = await this.expeditionService.getExpeditionByPlayerId(player_id);
+        } = await this.expeditionService.updateExpeditionByPlayerId(player_id, {
+            current_node: {
+                node_id,
+                completed: false,
+            },
+        });
 
-        return { data: cards };
+        return JSON.stringify({ data: cards });
     }
 }

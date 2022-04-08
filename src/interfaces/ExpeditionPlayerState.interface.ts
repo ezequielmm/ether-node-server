@@ -1,6 +1,6 @@
 import { ExpeditionDeckInterface } from './expeditionDeck.interface';
 
-export interface PlayerStateInterface {
+export interface ExpeditionPlayerStateInterface {
     readonly class_name: string;
     readonly hp_max: number;
     readonly hp_current: number;
