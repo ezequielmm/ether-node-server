@@ -7,8 +7,10 @@ import {
     Res,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { CardClassEnum } from '@prisma/client';
 import { map } from 'prisma/data/map';
 import { AuthGatewayService } from 'src/authGateway/authGateway.service';
+import { CardService } from 'src/card/card.service';
 import { CharacterService } from 'src/character/character.service';
 import { ExpeditionStatusEnum } from 'src/enums/expeditionStatus.enum';
 import { ExpeditionCreatedInterface } from 'src/interfaces/expeditionCreated.interface';
@@ -25,6 +27,7 @@ export class ExpeditionController {
         private readonly expeditionService: ExpeditionService,
         private readonly authGatewayService: AuthGatewayService,
         private readonly characterService: CharacterService,
+        private readonly cardService: CardService,
     ) {}
 
     //#region Get Expedition status by player id
@@ -115,6 +118,10 @@ export class ExpeditionController {
             if (!expeditionExists) {
                 const character =
                     await this.characterService.getCharacterByClass();
+
+                const cards = await this.cardService.getCards({
+                    card_class: CardClassEnum.knight,
+                });
 
                 const expedition: Expedition = {
                     player_id,

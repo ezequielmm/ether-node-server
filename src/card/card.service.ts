@@ -7,7 +7,7 @@ import { GetCardsDto } from './dto/getCards.dto';
 export class CardService {
     constructor(private readonly prisma: PrismaService) {}
 
-    async getCards(payload: GetCardsDto): Promise<Card[]> {
+    async getCards(payload?: GetCardsDto): Promise<Card[]> {
         return await this.prisma.card.findMany({
             where: { ...payload },
             include: { cardpool: true },
