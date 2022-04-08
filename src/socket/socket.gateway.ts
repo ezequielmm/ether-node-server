@@ -89,8 +89,9 @@ export class SocketGateway
     }
 
     @SubscribeMessage('NodeSelected')
-    async handleNodeSelected(client: Socket, node_id: string): Promise<void> {
+    async handleNodeSelected(client: Socket, node_id: string): Promise<string> {
         client.emit('NodeSelected', node_id);
         this.logger.log(`Node id: ${node_id}`);
+        return `Node id: ${node_id}`;
     }
 }
