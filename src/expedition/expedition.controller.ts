@@ -73,7 +73,7 @@ export class ExpeditionController {
     }
     //#endregion Get Expedition status by player id
 
-    //#region creates a new expedition in Draft status
+    //#region creates a new expedition
     @ApiOperation({
         summary: `Creates a new expedition for the player`,
     })

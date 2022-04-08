@@ -23,7 +23,7 @@ export class Expedition {
     @Prop({ type: Array, default: [], required: false })
     readonly trinkets?: [];
 
-    @Prop({ default: ExpeditionStatusEnum.Draft, required: false })
+    @Prop({ default: ExpeditionStatusEnum.InProgress, required: false })
     readonly status: ExpeditionStatusEnum;
 }
 
