@@ -121,7 +121,7 @@ export class ExpeditionController {
                     deck: {},
                     map,
                     player_state: {
-                        className: character.character_class,
+                        class_name: character.character_class,
                         hp_max: character.initial_health,
                         hp_current: character.initial_health,
                         gold: character.initial_gold,
@@ -131,7 +131,7 @@ export class ExpeditionController {
                             3: null,
                         },
                         trinkets: [],
-                        deck: [],
+                        deck: null,
                         private_data: {},
                     },
                     current_node: null,

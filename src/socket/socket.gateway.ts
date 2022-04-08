@@ -74,8 +74,22 @@ export class SocketGateway
         this.logger.log(`Client disconnected: ${client.id}`);
     }
 
+    @SubscribeMessage('SyncExpedition')
+    async handleSyncExpedition(client: Socket): Promise<void> {
+        const { player_id } =
+            await this.socketClientService.getSocketClientPlayerIdByClientId(
+                client.id,
+            );
+
+        const { map, player_state } =
+            await this.expeditionService.getExpeditionByPlayerId(player_id);
+
+        client.emit('ExpeditionMap', JSON.stringify(map));
+        client.emit('PlayerState', JSON.stringify(player_state));
+    }
+
     @SubscribeMessage('NodeSelected')
-    async handleNodeSelected(client: Socket, data: string): Promise<void> {
-        console.log(data);
+    async handleNodeSelected(client: Socket, node_id: string): Promise<void> {
+        this.logger.log(`node id: ${node_id}`);
     }
 }
