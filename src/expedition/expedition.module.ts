@@ -2,6 +2,7 @@ import { HttpModule } from '@nestjs/axios';
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { AuthGatewayService } from 'src/authGateway/authGateway.service';
+import { CardService } from 'src/card/card.service';
 import { CharacterService } from 'src/character/character.service';
 import { PrismaService } from 'src/prisma.service';
 import { ExpeditionController } from './expedition.controller';
@@ -24,6 +25,7 @@ import { ExpeditionService } from './expedition.service';
         AuthGatewayService,
         CharacterService,
         ExpeditionService,
+        CardService,
     ],
 })
 export class ExpeditionModule {}
