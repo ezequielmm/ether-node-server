@@ -45,10 +45,11 @@ export class SocketGateway
         }
 
         try {
-            const { data } = await this.authGatewayService.getUser(
-                authorization,
-            );
-            const { id } = data.data;
+            const {
+                data: {
+                    data: { id },
+                },
+            } = await this.authGatewayService.getUser(authorization);
 
             await this.socketClientService.create({
                 player_id: id,
@@ -89,9 +90,23 @@ export class SocketGateway
     }
 
     @SubscribeMessage('NodeSelected')
-    async handleNodeSelected(client: Socket, node_id: string): Promise<string> {
-        client.emit('NodeSelected', node_id);
-        this.logger.log(`Node id: ${node_id}`);
-        return `Node id: ${node_id}`;
+    async handleNodeSelected(client: Socket, node_id: number): Promise<string> {
+        const { player_id } =
+            await this.socketClientService.getSocketClientPlayerIdByClientId(
+                client.id,
+            );
+
+        const {
+            player_state: {
+                deck: { cards },
+            },
+        } = await this.expeditionService.updateExpeditionByPlayerId(player_id, {
+            current_node: {
+                node_id,
+                completed: false,
+            },
+        });
+
+        return JSON.stringify({ data: cards });
     }
 }

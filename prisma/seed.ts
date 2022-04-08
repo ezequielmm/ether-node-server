@@ -55,7 +55,7 @@ async function main() {
     await prisma.characterClass.createMany({ data: characterClasses });
     console.log('Added character classes data');
 
-    await prisma.card.createMany({ data: cards });
+    await prisma.card.createMany(cards);
     console.log('Added cards data');
 
     await prisma.enemy.createMany({ data: enemies });

@@ -1,11 +1,12 @@
 import { ExpeditionStatusEnum } from 'src/enums/expeditionStatus.enum';
-import { PlayerStateInterface } from 'src/interfaces/playerState.interface';
+import { ExpeditionCurrentNodeInterface } from 'src/interfaces/expeditionCurrentNode.interface';
+import { ExpeditionPlayerStateInterface } from 'src/interfaces/ExpeditionPlayerState.interface';
 
 export class UpdateExpeditionDto {
     readonly deck?: object;
-    readonly nodes?: object;
-    readonly player_state?: PlayerStateInterface;
-    readonly current_state?: object;
-    readonly status?: ExpeditionStatusEnum;
+    readonly map?: object;
+    readonly player_state?: ExpeditionPlayerStateInterface;
+    readonly current_node?: ExpeditionCurrentNodeInterface;
     readonly trinkets?: [];
+    readonly status?: ExpeditionStatusEnum;
 }
