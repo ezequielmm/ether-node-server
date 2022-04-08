@@ -1,10 +1,12 @@
+import { ExpeditionDeckInterface } from './expeditionDeck.interface';
+
 export interface PlayerStateInterface {
-    readonly className: string;
+    readonly class_name: string;
     readonly hp_max: number;
     readonly hp_current: number;
     readonly gold: number;
     readonly potions?: object;
     readonly trinkets?: [];
-    readonly deck?: [];
+    readonly deck?: ExpeditionDeckInterface;
     readonly private_data?: object;
 }

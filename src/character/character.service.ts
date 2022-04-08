@@ -19,9 +19,11 @@ export class CharacterService {
         });
     }
 
-    async getCharacterByClass(): Promise<Character> {
+    async getCharacterByClass(
+        character_class: CharacterClassEnum = CharacterClassEnum.knight,
+    ): Promise<Character> {
         return await this.prisma.character.findFirst({
-            where: { character_class: CharacterClassEnum.knight },
+            where: { character_class },
         });
     }
 }

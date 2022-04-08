@@ -39,6 +39,10 @@ export class ExpeditionService {
         });
     }
 
+    async getExpeditionByPlayerId(player_id: string): Promise<Expedition> {
+        return await this.expedition.findOne({ player_id }).lean();
+    }
+
     composeErrorMessage(message: string, statusCode: HttpStatus): void {
         throw new HttpException(
             {

@@ -16,7 +16,6 @@ import { ExpeditionStatusInterface } from 'src/interfaces/expeditionStatus.inter
 import { HeadersData } from 'src/interfaces/headersData.interface';
 import { Expedition } from './expedition.schema';
 import { ExpeditionService } from './expedition.service';
-import { v4 as uuidv4 } from 'uuid';
 
 @ApiBearerAuth()
 @ApiTags('Expeditions')
@@ -74,9 +73,9 @@ export class ExpeditionController {
     }
     //#endregion Get Expedition status by player id
 
-    //#region creates a new expedition in Draft status
+    //#region creates a new expedition
     @ApiOperation({
-        summary: `Creates a new expedition with status 'draft'`,
+        summary: `Creates a new expedition for the player`,
     })
     @Post()
     async handleCreateExpedition(
@@ -107,22 +106,22 @@ export class ExpeditionController {
             );
             const { id: player_id } = data.data;
 
-            if (
-                !(await this.expeditionService.playerHasAnExpedition(
+            const expeditionExists =
+                await this.expeditionService.playerHasAnExpedition(
                     player_id,
                     ExpeditionStatusEnum.Draft,
-                ))
-            ) {
+                );
+
+            if (!expeditionExists) {
                 const character =
                     await this.characterService.getCharacterByClass();
 
                 const expedition: Expedition = {
                     player_id,
-                    _id: uuidv4(),
                     deck: {},
                     map,
                     player_state: {
-                        className: character.character_class,
+                        class_name: character.character_class,
                         hp_max: character.initial_health,
                         hp_current: character.initial_health,
                         gold: character.initial_gold,
@@ -132,11 +131,11 @@ export class ExpeditionController {
                             3: null,
                         },
                         trinkets: [],
-                        deck: [],
+                        deck: null,
                         private_data: {},
                     },
-                    current_state: {},
-                    status: ExpeditionStatusEnum.Draft,
+                    current_node: null,
+                    status: ExpeditionStatusEnum.InProgress,
                 };
 
                 await this.expeditionService.createExpedition(expedition);
