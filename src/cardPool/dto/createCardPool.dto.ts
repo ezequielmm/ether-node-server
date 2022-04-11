@@ -14,6 +14,7 @@ export class CreateCardPoolDto {
     @ApiProperty({
         description: 'Cardpool Visibility',
         enum: CardpoolVisibilityEnum,
+        default: CardpoolVisibilityEnum.visible,
     })
     @IsNotEmpty()
     @IsEnum(CardpoolVisibilityEnum)

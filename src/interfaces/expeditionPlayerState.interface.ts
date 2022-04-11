@@ -1,4 +1,4 @@
-import { ExpeditionDeckInterface } from './expeditionDeck.interface';
+import { ExpeditionPlayerStateDeckInterface } from './expeditionPlayerStateDeck.interface';
 
 export interface ExpeditionPlayerStateInterface {
     readonly class_name: string;
@@ -7,6 +7,6 @@ export interface ExpeditionPlayerStateInterface {
     readonly gold: number;
     readonly potions?: object;
     readonly trinkets?: [];
-    readonly deck?: ExpeditionDeckInterface;
+    readonly deck?: ExpeditionPlayerStateDeckInterface;
     readonly private_data?: object;
 }

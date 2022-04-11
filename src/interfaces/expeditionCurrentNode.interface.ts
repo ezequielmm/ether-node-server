@@ -1,5 +1,5 @@
 export interface ExpeditionCurrentNodeInterface {
-    node_id: number;
-    completed: boolean;
-    state?: object;
+    readonly node_id: number;
+    readonly completed: boolean;
+    readonly state?: object;
 }

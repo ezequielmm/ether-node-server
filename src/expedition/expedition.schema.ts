@@ -1,15 +1,16 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { ExpeditionStatusEnum } from 'src/enums/expeditionStatus.enum';
 import { ExpeditionCurrentNodeInterface } from 'src/interfaces/expeditionCurrentNode.interface';
-import { ExpeditionPlayerStateInterface } from 'src/interfaces/ExpeditionPlayerState.interface';
+import { ExpeditionDeckInterface } from 'src/interfaces/expeditionDeck.interface';
+import { ExpeditionPlayerStateInterface } from 'src/interfaces/expeditionPlayerState.interface';
 
 @Schema()
 export class Expedition {
     @Prop({ required: true })
     readonly player_id: string;
 
-    @Prop({ type: Object, default: {}, required: false })
-    readonly deck?: object;
+    @Prop({ type: Object, required: false })
+    readonly deck?: ExpeditionDeckInterface;
 
     @Prop({ type: Object, default: {}, required: false })
     readonly map?: object;
