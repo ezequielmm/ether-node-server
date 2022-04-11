@@ -119,13 +119,24 @@ export class ExpeditionController {
                 const character =
                     await this.characterService.getCharacterByClass();
 
-                const cards = await this.cardService.getCards({
+                const cardsFromDB = await this.cardService.getCards({
                     card_class: CardClassEnum.knight,
                 });
 
+                const cards = cardsFromDB.map((card) => ({
+                    name: card.name,
+                    id: card.id,
+                    description: card.description,
+                    rarity: card.rarity,
+                    energy: card.energy,
+                    type: card.type,
+                    coin_min: card.coins_min,
+                    coin_max: card.coins_max,
+                }));
+
                 const expedition: Expedition = {
                     player_id,
-                    deck: {},
+                    deck: { cards },
                     map,
                     player_state: {
                         class_name: character.character_class,
@@ -138,18 +149,7 @@ export class ExpeditionController {
                             3: null,
                         },
                         trinkets: [],
-                        deck: {
-                            cards: cards.map((card) => ({
-                                name: card.name,
-                                id: card.id,
-                                description: card.description,
-                                rarity: card.rarity,
-                                energy: card.energy,
-                                type: card.type,
-                                coin_min: card.coins_min,
-                                coin_max: card.coins_max,
-                            })),
-                        },
+                        deck: { cards },
                         private_data: {},
                     },
                     current_node: null,
