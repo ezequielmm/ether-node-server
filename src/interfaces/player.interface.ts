@@ -1,13 +1,13 @@
 import { CharacterClassEnum } from '@prisma/client';
 
 export interface PlayerInterface {
-    id: string;
-    royal_house: string;
-    class: CharacterClassEnum;
-    current_act: number;
-    current_node: number;
-    experience: number;
-    fief: number;
-    coins: number;
-    status: string;
+    readonly id: string;
+    readonly royal_house: string;
+    readonly class: CharacterClassEnum;
+    readonly current_act: number;
+    readonly current_node: number;
+    readonly experience: number;
+    readonly fief: number;
+    readonly coins: number;
+    readonly status: string;
 }

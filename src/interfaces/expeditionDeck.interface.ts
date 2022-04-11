@@ -1,5 +1,5 @@
 import { ExpeditionDeckCardInterface } from './expeditionDeckCard.interface';
 
 export interface ExpeditionDeckInterface {
-    cards: ExpeditionDeckCardInterface[];
+    readonly cards: ExpeditionDeckCardInterface[];
 }

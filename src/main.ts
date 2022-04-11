@@ -5,6 +5,7 @@ import { useContainer } from 'class-validator';
 import { AppModule } from './app.module';
 import { CardPoolModule } from './cardPool/cardPool.module';
 import { TransformDataResource } from './interceptors/TransformDataResource.interceptor';
+import * as compression from 'compression';
 
 async function bootstrap() {
     const app = await NestFactory.create(AppModule);
@@ -38,6 +39,9 @@ async function bootstrap() {
 
     const document = SwaggerModule.createDocument(app, config);
     SwaggerModule.setup('api', app, document);
+
+    // Enable GZIP Compresion
+    app.use(compression());
 
     await app.listen(3000);
 }

@@ -1,10 +1,10 @@
 import { PlayerInterface } from './player.interface';
 
 export interface ProfileInterface {
-    id: string;
-    name: string;
-    email: string;
-    wallets: [];
-    act_map: string;
-    player: PlayerInterface;
+    readonly id: string;
+    readonly name: string;
+    readonly email: string;
+    readonly wallets: [];
+    readonly act_map: string;
+    readonly player: PlayerInterface;
 }
