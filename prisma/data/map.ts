@@ -9,7 +9,6 @@ export const map: ExpeditionMapInterface[] = [
         type: ExpeditionMapNodeTypeEnum.Combat,
         exits: [3, 4],
         enter: null,
-        private_data: {},
     },
     {
         act: 0,
@@ -18,7 +17,6 @@ export const map: ExpeditionMapInterface[] = [
         type: ExpeditionMapNodeTypeEnum.Combat,
         exits: [4],
         enter: null,
-        private_data: {},
     },
     {
         act: 0,
@@ -27,7 +25,6 @@ export const map: ExpeditionMapInterface[] = [
         type: ExpeditionMapNodeTypeEnum.Combat,
         exits: [5],
         enter: [1],
-        private_data: {},
     },
     {
         act: 0,
@@ -36,16 +33,14 @@ export const map: ExpeditionMapInterface[] = [
         type: ExpeditionMapNodeTypeEnum.Combat,
         exits: [5],
         enter: [1, 2],
-        private_data: {},
     },
     {
         act: 0,
-        step: 1,
+        step: 2,
         id: 5,
-        type: ExpeditionMapNodeTypeEnum.Portal,
+        type: ExpeditionMapNodeTypeEnum.Combat,
         exits: [6, 7, 8],
         enter: [3, 4],
-        private_data: {},
     },
     {
         act: 1,
@@ -54,7 +49,6 @@ export const map: ExpeditionMapInterface[] = [
         type: ExpeditionMapNodeTypeEnum.Combat,
         exits: [],
         enter: [5],
-        private_data: {},
     },
     {
         act: 1,
@@ -63,7 +57,6 @@ export const map: ExpeditionMapInterface[] = [
         type: ExpeditionMapNodeTypeEnum.Combat,
         exits: [],
         enter: [5],
-        private_data: {},
     },
     {
         act: 1,
@@ -72,6 +65,5 @@ export const map: ExpeditionMapInterface[] = [
         type: ExpeditionMapNodeTypeEnum.Combat,
         exits: [],
         enter: [5],
-        private_data: {},
     },
 ];
