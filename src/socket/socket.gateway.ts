@@ -35,6 +35,7 @@ export class SocketGateway
         this.logger.log(`Socket Initiated`);
     }
 
+    //#region handleConnection
     async handleConnection(client: Socket): Promise<void> {
         this.logger.log(`Client attempting a connection: ${client.id}`);
         const { authorization } = client.handshake.headers;
@@ -69,12 +70,16 @@ export class SocketGateway
             client.disconnect(true);
         }
     }
+    //#endregion
 
+    //#region handleDisconnect
     async handleDisconnect(client: Socket): Promise<void> {
         await this.socketClientService.delete(client.id);
         this.logger.log(`Client disconnected: ${client.id}`);
     }
+    //#endregion
 
+    //#region handleSyncExpedition
     @SubscribeMessage('SyncExpedition')
     async handleSyncExpedition(client: Socket): Promise<void> {
         const { player_id } =
@@ -88,7 +93,9 @@ export class SocketGateway
         client.emit('ExpeditionMap', JSON.stringify({ data: map }));
         client.emit('PlayerState', JSON.stringify({ data: player_state }));
     }
+    //#endregion
 
+    //#region handleNodeSelected
     @SubscribeMessage('NodeSelected')
     async handleNodeSelected(client: Socket, node_id: number): Promise<string> {
         const { player_id } =
@@ -133,4 +140,12 @@ export class SocketGateway
 
         return JSON.stringify({ data: current_node });
     }
+    //#endregion
+
+    //#region handleCardPlayed
+    /*@SubscribeMessage('CardPlayer')
+    async handleCardPlayed(client: Socket, payload: string): Promise<string> {
+
+    }*/
+    //#endregion
 }

@@ -16,7 +16,6 @@ import { ExpeditionStatusEnum } from 'src/enums/expeditionStatus.enum';
 import { ExpeditionCreatedInterface } from 'src/interfaces/expeditionCreated.interface';
 import { ExpeditionStatusInterface } from 'src/interfaces/expeditionStatus.interface';
 import { HeadersData } from 'src/interfaces/headersData.interface';
-import { Expedition } from './expedition.schema';
 import { ExpeditionService } from './expedition.service';
 
 @ApiBearerAuth()
@@ -123,7 +122,7 @@ export class ExpeditionController {
                     card_class: CardClassEnum.knight,
                 });
 
-                const expedition: Expedition = {
+                await this.expeditionService.createExpedition({
                     player_id,
                     map,
                     player_state: {
@@ -151,9 +150,7 @@ export class ExpeditionController {
                         },
                         created_at: new Date(),
                     },
-                };
-
-                await this.expeditionService.createExpedition(expedition);
+                });
             } else {
                 return response
                     .status(HttpStatus.CREATED)
