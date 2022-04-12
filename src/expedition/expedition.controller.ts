@@ -128,8 +128,15 @@ export class ExpeditionController {
                     map,
                     player_state: {
                         character_class: character.character_class,
-                        gold_coins_default: character.initial_gold,
-                        gold_coins_current_state: character.initial_gold,
+                        hp_max: character.initial_health,
+                        hp_current: character.initial_health,
+                        gold: character.initial_gold,
+                        trinkets: [],
+                        potions: {
+                            1: null,
+                            2: null,
+                            3: null,
+                        },
                         deck: {
                             cards: cards.map((card) => ({
                                 name: card.name,
