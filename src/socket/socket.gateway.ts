@@ -61,8 +61,8 @@ export class SocketGateway
             const { map, player_state } =
                 await this.expeditionService.getExpeditionByPlayerId(id);
 
-            client.emit('ExpeditionMap', JSON.stringify(map));
-            client.emit('PlayerState', JSON.stringify(player_state));
+            client.emit('ExpeditionMap', JSON.stringify({ data: map }));
+            client.emit('PlayerState', JSON.stringify({ data: player_state }));
         } catch (e) {
             this.logger.log(e.message);
             this.logger.log(`Client has an invalid auth token: ${client.id}`);
@@ -85,8 +85,8 @@ export class SocketGateway
         const { map, player_state } =
             await this.expeditionService.getExpeditionByPlayerId(player_id);
 
-        client.emit('ExpeditionMap', JSON.stringify(map));
-        client.emit('PlayerState', JSON.stringify(player_state));
+        client.emit('ExpeditionMap', JSON.stringify({ data: map }));
+        client.emit('PlayerState', JSON.stringify({ data: player_state }));
     }
 
     @SubscribeMessage('NodeSelected')
@@ -101,7 +101,10 @@ export class SocketGateway
             node_id,
         );
 
-        if (!node) return JSON.stringify({ message: 'Invalid Node Provided' });
+        if (!node)
+            return JSON.stringify({
+                data: { message: 'Invalid Node Provided' },
+            });
 
         const cards = await this.expeditionService.getCardsByPlayerId(
             player_id,
@@ -128,6 +131,6 @@ export class SocketGateway
                 },
             });
 
-        return JSON.stringify(current_node);
+        return JSON.stringify({ data: current_node });
     }
 }
