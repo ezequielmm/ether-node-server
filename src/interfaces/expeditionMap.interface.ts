@@ -1,4 +1,11 @@
+import { ExpeditionMapNodeTypeEnum } from 'src/enums/expeditionMapNodeType.enum';
+
 export interface ExpeditionMapInterface {
-    current_act: number;
-    current_node: number;
+    act: number;
+    step: number;
+    id: number;
+    type: ExpeditionMapNodeTypeEnum;
+    exits?: number[];
+    enter?: number[];
+    private_data?: object;
 }

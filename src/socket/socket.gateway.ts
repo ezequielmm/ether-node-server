@@ -96,17 +96,38 @@ export class SocketGateway
                 client.id,
             );
 
-        const {
-            player_state: {
-                deck: { cards },
-            },
-        } = await this.expeditionService.updateExpeditionByPlayerId(player_id, {
-            current_node: {
-                node_id,
-                completed: false,
-            },
-        });
+        const node = await this.expeditionService.getExpeditionMapNodeById(
+            player_id,
+            node_id,
+        );
 
-        return JSON.stringify({ data: cards });
+        if (!node) return JSON.stringify({ message: 'Invalid Node Provided' });
+
+        const cards = await this.expeditionService.getCardsByPlayerId(
+            player_id,
+        );
+
+        const { current_node } =
+            await this.expeditionService.updateExpeditionByPlayerId(player_id, {
+                current_node: {
+                    node_id,
+                    completed: false,
+                    node_type: node.type,
+                    data: {
+                        round: 1,
+                        action: 0,
+                        player: {
+                            energy: 3,
+                            energy_max: 3,
+                            hand_size: 5,
+                            cards: {
+                                draw: cards,
+                            },
+                        },
+                    },
+                },
+            });
+
+        return JSON.stringify(current_node);
     }
 }

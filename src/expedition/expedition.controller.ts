@@ -119,41 +119,31 @@ export class ExpeditionController {
                 const character =
                     await this.characterService.getCharacterByClass();
 
-                const cardsFromDB = await this.cardService.getCards({
+                const cards = await this.cardService.getCards({
                     card_class: CardClassEnum.knight,
                 });
 
-                const cards = cardsFromDB.map((card) => ({
-                    name: card.name,
-                    id: card.id,
-                    description: card.description,
-                    rarity: card.rarity,
-                    energy: card.energy,
-                    type: card.type,
-                    coin_min: card.coins_min,
-                    coin_max: card.coins_max,
-                }));
-
                 const expedition: Expedition = {
                     player_id,
-                    deck: { cards },
                     map,
                     player_state: {
-                        class_name: character.character_class,
-                        hp_max: character.initial_health,
-                        hp_current: character.initial_health,
-                        gold: character.initial_gold,
-                        potions: {
-                            1: null,
-                            2: null,
-                            3: null,
+                        character_class: character.character_class,
+                        gold_coins_default: character.initial_gold,
+                        gold_coins_current_state: character.initial_gold,
+                        deck: {
+                            cards: cards.map((card) => ({
+                                name: card.name,
+                                id: card.id,
+                                description: card.description,
+                                rarity: card.rarity,
+                                energy: card.energy,
+                                type: card.type,
+                                coin_min: card.coins_min,
+                                coin_max: card.coins_max,
+                            })),
                         },
-                        trinkets: [],
-                        deck: { cards },
-                        private_data: {},
+                        created_at: new Date(),
                     },
-                    current_node: null,
-                    status: ExpeditionStatusEnum.InProgress,
                 };
 
                 await this.expeditionService.createExpedition(expedition);
