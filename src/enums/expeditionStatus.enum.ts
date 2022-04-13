@@ -3,5 +3,4 @@ export enum ExpeditionStatusEnum {
     Victory = 'victory',
     Defeated = 'defeated',
     Canceled = 'canceled',
-    Draft = 'draft',
 }

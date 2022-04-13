@@ -10,6 +10,7 @@ import {
 import { Server, Socket } from 'socket.io';
 import { AuthGatewayService } from 'src/authGateway/authGateway.service';
 import { ExpeditionService } from 'src/expedition/expedition.service';
+import { CardPlayedInterface } from 'src/interfaces/cardPlayed.interface';
 import { SocketClientService } from 'src/socketClient/socketClient.service';
 
 @WebSocketGateway(7777, {
@@ -31,7 +32,7 @@ export class SocketGateway
     ) {}
 
     async afterInit(): Promise<void> {
-        this.socketClientService.clearClients();
+        await this.socketClientService.clearClients();
         this.logger.log(`Socket Initiated`);
     }
 
@@ -103,6 +104,9 @@ export class SocketGateway
                 client.id,
             );
 
+        // Check later the validation and check if the player can move to the next node
+        // And make sure that the current node is completed
+
         const node = await this.expeditionService.getExpeditionMapNodeById(
             player_id,
             node_id,
@@ -116,6 +120,8 @@ export class SocketGateway
         const cards = await this.expeditionService.getCardsByPlayerId(
             player_id,
         );
+
+        const handCards = cards.sort(() => 0.5 - Math.random()).slice(0, 5);
 
         const { current_node } =
             await this.expeditionService.updateExpeditionByPlayerId(player_id, {
@@ -132,6 +138,7 @@ export class SocketGateway
                             hand_size: 5,
                             cards: {
                                 draw: cards,
+                                hand: handCards,
                             },
                         },
                     },
@@ -143,9 +150,26 @@ export class SocketGateway
     //#endregion
 
     //#region handleCardPlayed
-    /*@SubscribeMessage('CardPlayer')
+    @SubscribeMessage('CardPlayed')
     async handleCardPlayed(client: Socket, payload: string): Promise<string> {
+        const { player_id } =
+            await this.socketClientService.getSocketClientPlayerIdByClientId(
+                client.id,
+            );
 
-    }*/
+        const { card_id }: CardPlayedInterface = JSON.parse(payload);
+
+        const cardExists = await this.expeditionService.cardExistsOnPlayerHand(
+            player_id,
+            card_id,
+        );
+
+        if (!cardExists)
+            return JSON.stringify({
+                data: { message: 'Card played is not valid' },
+            });
+
+        return card_id;
+    }
     //#endregion
 }

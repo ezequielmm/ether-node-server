@@ -8,6 +8,7 @@ import { ExpeditionStatusEnum } from 'src/enums/expeditionStatus.enum';
 import { UpdateExpeditionDto } from './dto/updateExpedition.dto';
 import { ExpeditionMapInterface } from 'src/interfaces/expeditionMap.interface';
 import { ExpeditionPlayerStateDeckCardInterface } from 'src/interfaces/expeditionPlayerStateDeckCard.interface';
+import { ExpeditionCurrentNodeInterface } from 'src/interfaces/expeditionCurrentNode.interface';
 
 @Injectable()
 export class ExpeditionService {
@@ -72,6 +73,27 @@ export class ExpeditionService {
             .lean();
 
         return cards;
+    }
+
+    async getCurrentNodeByPlayerId(
+        player_id: string,
+    ): Promise<ExpeditionCurrentNodeInterface> {
+        const { current_node } = await this.expedition
+            .findOne({ player_id })
+            .select('current_node')
+            .lean();
+        return current_node;
+    }
+
+    async cardExistsOnPlayerHand(
+        player_id: string,
+        card_id: string,
+    ): Promise<boolean> {
+        const itemExists = await this.expedition.exists({
+            player_id,
+            'current_node.data.player.cards.hand.id': card_id,
+        });
+        return itemExists === null ? false : true;
     }
 
     composeErrorMessage(message: string, statusCode: HttpStatus): void {
