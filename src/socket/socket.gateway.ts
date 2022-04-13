@@ -32,7 +32,7 @@ export class SocketGateway
     ) {}
 
     async afterInit(): Promise<void> {
-        this.socketClientService.clearClients();
+        await this.socketClientService.clearClients();
         this.logger.log(`Socket Initiated`);
     }
 
