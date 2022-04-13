@@ -6,9 +6,23 @@ import { AppModule } from './app.module';
 import { CardPoolModule } from './cardPool/cardPool.module';
 import { TransformDataResource } from './interceptors/TransformDataResource.interceptor';
 import * as compression from 'compression';
+import { existsSync, readFileSync } from 'fs';
 
 async function bootstrap() {
-    const app = await NestFactory.create(AppModule);
+    const certFilePath = process.env.SSL_CERT_PATH;
+    const keyFilePath = process.env.SSL_KEY_PATH;
+    const options: any = {};
+
+    if (certFilePath && keyFilePath) {
+        if (existsSync(certFilePath) && existsSync(keyFilePath)) {
+            options.httpsOptions = {
+                cert: readFileSync(certFilePath),
+                key: readFileSync(keyFilePath),
+            };
+        }
+    }
+
+    const app = await NestFactory.create(AppModule, options);
 
     //Enable Validation
     app.useGlobalPipes(new ValidationPipe());
