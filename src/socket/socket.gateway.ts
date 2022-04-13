@@ -103,6 +103,9 @@ export class SocketGateway
                 client.id,
             );
 
+        // Check later the validation and check if the player can move to the next node
+        // And make sure that the current node is completed
+
         const node = await this.expeditionService.getExpeditionMapNodeById(
             player_id,
             node_id,
@@ -140,12 +143,5 @@ export class SocketGateway
 
         return JSON.stringify({ data: current_node });
     }
-    //#endregion
-
-    //#region handleCardPlayed
-    /*@SubscribeMessage('CardPlayer')
-    async handleCardPlayed(client: Socket, payload: string): Promise<string> {
-
-    }*/
     //#endregion
 }

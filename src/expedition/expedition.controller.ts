@@ -111,7 +111,7 @@ export class ExpeditionController {
             const expeditionExists =
                 await this.expeditionService.playerHasAnExpedition(
                     player_id,
-                    ExpeditionStatusEnum.Draft,
+                    ExpeditionStatusEnum.InProgress,
                 );
 
             if (!expeditionExists) {
