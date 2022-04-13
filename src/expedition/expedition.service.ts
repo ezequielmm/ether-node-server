@@ -85,6 +85,17 @@ export class ExpeditionService {
         return current_node;
     }
 
+    async cardExistsOnPlayerHand(
+        player_id: string,
+        card_id: string,
+    ): Promise<boolean> {
+        const itemExists = await this.expedition.exists({
+            player_id,
+            'current_node.data.player.cards.hand.id': card_id,
+        });
+        return itemExists === null ? false : true;
+    }
+
     composeErrorMessage(message: string, statusCode: HttpStatus): void {
         throw new HttpException(
             {

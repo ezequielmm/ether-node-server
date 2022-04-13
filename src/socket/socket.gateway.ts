@@ -10,6 +10,7 @@ import {
 import { Server, Socket } from 'socket.io';
 import { AuthGatewayService } from 'src/authGateway/authGateway.service';
 import { ExpeditionService } from 'src/expedition/expedition.service';
+import { CardPlayedInterface } from 'src/interfaces/cardPlayed.interface';
 import { SocketClientService } from 'src/socketClient/socketClient.service';
 
 @WebSocketGateway(7777, {
@@ -120,6 +121,8 @@ export class SocketGateway
             player_id,
         );
 
+        const handCards = cards.sort(() => 0.5 - Math.random()).slice(0, 5);
+
         const { current_node } =
             await this.expeditionService.updateExpeditionByPlayerId(player_id, {
                 current_node: {
@@ -135,6 +138,7 @@ export class SocketGateway
                             hand_size: 5,
                             cards: {
                                 draw: cards,
+                                hand: handCards,
                             },
                         },
                     },
@@ -142,6 +146,30 @@ export class SocketGateway
             });
 
         return JSON.stringify({ data: current_node });
+    }
+    //#endregion
+
+    //#region handleCardPlayed
+    @SubscribeMessage('CardPlayed')
+    async handleCardPlayed(client: Socket, payload: string): Promise<string> {
+        const { player_id } =
+            await this.socketClientService.getSocketClientPlayerIdByClientId(
+                client.id,
+            );
+
+        const { card_id }: CardPlayedInterface = JSON.parse(payload);
+
+        const cardExists = await this.expeditionService.cardExistsOnPlayerHand(
+            player_id,
+            card_id,
+        );
+
+        if (!cardExists)
+            return JSON.stringify({
+                data: { message: 'Card played is not valid' },
+            });
+
+        return card_id;
     }
     //#endregion
 }
