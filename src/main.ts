@@ -7,6 +7,8 @@ import { CardPoolModule } from './cardPool/cardPool.module';
 import { TransformDataResource } from './interceptors/TransformDataResource.interceptor';
 import * as compression from 'compression';
 import { existsSync, readFileSync } from 'fs';
+import express from 'express';
+import https from 'https';
 
 async function bootstrap() {
     const certFilePath = process.env.SSL_CERT_PATH;
@@ -57,6 +59,12 @@ async function bootstrap() {
     // Enable GZIP Compression
     app.use(compression());
 
-    await app.listen(3000);
+    if (certFilePath && keyFilePath) {
+        await app.init();
+        const server = express();
+        https.createServer(options, server).listen(3000);
+    } else {
+        await app.listen(3000);
+    }
 }
 bootstrap();
