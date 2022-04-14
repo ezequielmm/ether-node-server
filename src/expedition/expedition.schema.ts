@@ -7,13 +7,13 @@ import { ExpeditionPlayerStateInterface } from 'src/interfaces/expeditionPlayerS
 @Schema()
 export class Expedition {
     @Prop({ type: String, required: true })
-    readonly player_id: string;
+    readonly player_id?: string;
 
     @Prop({ type: Array, required: false })
     readonly map?: ExpeditionMapInterface[];
 
     @Prop({ type: Object, required: true })
-    readonly player_state: ExpeditionPlayerStateInterface;
+    readonly player_state?: ExpeditionPlayerStateInterface;
 
     @Prop({ type: Object, required: false })
     readonly current_node?: ExpeditionCurrentNodeInterface;

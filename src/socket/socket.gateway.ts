@@ -169,7 +169,24 @@ export class SocketGateway
                 data: { message: 'Card played is not valid' },
             });
 
-        return card_id;
+        const {
+            data: {
+                player: { energy },
+            },
+        } = await this.expeditionService.getCurrentNodeByPlayerId(player_id);
+
+        if (energy === 0)
+            return JSON.stringify({
+                data: { message: 'Not enough energy left' },
+            });
+
+        const { current_node } =
+            await this.expeditionService.moveCardFromPlayerHandToDiscard(
+                player_id,
+                card_id,
+            );
+
+        return JSON.stringify({ current_node });
     }
     //#endregion
 }

@@ -96,6 +96,27 @@ export class ExpeditionService {
         return itemExists === null ? false : true;
     }
 
+    async moveCardFromPlayerHandToDiscard(
+        player_id: string,
+        card_id: string,
+    ): Promise<Expedition> {
+        const currentNode = await this.getCurrentNodeByPlayerId(player_id);
+        return await this.expedition.findOneAndUpdate(
+            { player_id },
+            {
+                $pull: {
+                    'current_node.data.player.cards.hand': { id: card_id },
+                },
+                $push: {
+                    'current_node.data.player.cards.discard':
+                        currentNode.data.player.cards.hand.filter((card) => {
+                            return card.id === card_id;
+                        }),
+                },
+            },
+        );
+    }
+
     composeErrorMessage(message: string, statusCode: HttpStatus): void {
         throw new HttpException(
             {
