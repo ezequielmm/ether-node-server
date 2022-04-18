@@ -11,6 +11,8 @@ import {
 import { SocketService } from './socket.service';
 import { AuthGatewayService } from 'src/authGateway/authGateway.service';
 import { ExpeditionService } from 'src/expedition/expedition.service';
+import { CardService } from 'src/card/card.service';
+import { PrismaService } from 'src/prisma.service';
 
 @Module({
     imports: [
@@ -27,11 +29,13 @@ import { ExpeditionService } from 'src/expedition/expedition.service';
         ]),
     ],
     providers: [
+        PrismaService,
         SocketGateway,
         SocketService,
         AuthGatewayService,
         SocketClientService,
         ExpeditionService,
+        CardService,
     ],
 })
 export class SocketModule {}

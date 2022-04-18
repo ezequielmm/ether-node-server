@@ -9,6 +9,7 @@ import {
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { AuthGatewayService } from 'src/authGateway/authGateway.service';
+import { CardService } from 'src/card/card.service';
 import { ExpeditionService } from 'src/expedition/expedition.service';
 import { CardPlayedInterface } from 'src/interfaces/cardPlayed.interface';
 import { SocketClientService } from 'src/socketClient/socketClient.service';
@@ -28,6 +29,7 @@ export class SocketGateway
         private readonly authGatewayService: AuthGatewayService,
         private readonly socketClientService: SocketClientService,
         private readonly expeditionService: ExpeditionService,
+        private readonly cardService: CardService,
     ) {}
 
     async afterInit(): Promise<void> {
@@ -158,6 +160,8 @@ export class SocketGateway
 
         const { card_id }: CardPlayedInterface = JSON.parse(payload);
 
+        // First make sure card exists on player's hand pile
+
         const cardExists = await this.expeditionService.cardExistsOnPlayerHand(
             player_id,
             card_id,
@@ -168,21 +172,33 @@ export class SocketGateway
                 data: { message: 'Card played is not valid' },
             });
 
+        // Then, we query the card info to get its energy cost
+        const { energy: cardEnergy } = await this.cardService.getCard(card_id);
+
+        // Then, we get the actual energy amount from the current state
+
         const {
             data: {
-                player: { energy },
+                player: { energy: playerEnergy },
             },
         } = await this.expeditionService.getCurrentNodeByPlayerId(player_id);
 
-        if (energy === 0)
+        if (cardEnergy > playerEnergy || playerEnergy === 0)
             return JSON.stringify({
                 data: { message: 'Not enough energy left' },
             });
 
+        await this.expeditionService.moveCardFromPlayerHandToDiscard(
+            player_id,
+            card_id,
+        );
+
+        const newEnergyAmount = playerEnergy - cardEnergy;
+
         const { current_node } =
-            await this.expeditionService.moveCardFromPlayerHandToDiscard(
+            await this.expeditionService.updatePlayerEnergy(
                 player_id,
-                card_id,
+                newEnergyAmount,
             );
 
         return JSON.stringify({ current_node });

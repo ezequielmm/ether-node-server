@@ -117,6 +117,17 @@ export class ExpeditionService {
         );
     }
 
+    async updatePlayerEnergy(
+        player_id: string,
+        newEnergyAmount: number,
+    ): Promise<Expedition> {
+        return await this.expedition.findOneAndUpdate(
+            { player_id },
+            { 'current_node.data.player.energy': newEnergyAmount },
+            { new: true },
+        );
+    }
+
     composeErrorMessage(message: string, statusCode: HttpStatus): void {
         throw new HttpException(
             {
