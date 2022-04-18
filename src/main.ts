@@ -1,4 +1,8 @@
-import { ValidationPipe, VersioningType } from '@nestjs/common';
+import {
+    INestApplication,
+    ValidationPipe,
+    VersioningType,
+} from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { useContainer } from 'class-validator';
@@ -14,6 +18,7 @@ async function bootstrap() {
     const certFilePath = process.env.SSL_CERT_PATH;
     const keyFilePath = process.env.SSL_KEY_PATH;
     let httpsOptions: HttpsOptions = {};
+    let app: INestApplication;
 
     if (certFilePath && keyFilePath) {
         if (existsSync(certFilePath) && existsSync(keyFilePath)) {
@@ -21,10 +26,11 @@ async function bootstrap() {
                 cert: readFileSync(certFilePath),
                 key: readFileSync(keyFilePath),
             };
+            app = await NestFactory.create(AppModule, { httpsOptions });
         }
+    } else {
+        app = await NestFactory.create(AppModule);
     }
-
-    const app = await NestFactory.create(AppModule, { httpsOptions });
 
     app.useWebSocketAdapter(new IoAdapter(app));
 

@@ -13,4 +13,8 @@ export class CardService {
             include: { cardpool: true },
         });
     }
+
+    async getCard(id: string): Promise<Card> {
+        return await this.prisma.card.findUnique({ where: { id } });
+    }
 }
