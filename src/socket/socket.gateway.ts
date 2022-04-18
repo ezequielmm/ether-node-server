@@ -13,7 +13,7 @@ import { ExpeditionService } from 'src/expedition/expedition.service';
 import { CardPlayedInterface } from 'src/interfaces/cardPlayed.interface';
 import { SocketClientService } from 'src/socketClient/socketClient.service';
 
-@WebSocketGateway(7777, {
+@WebSocketGateway({
     cors: {
         origin: '*',
     },
