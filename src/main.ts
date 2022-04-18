@@ -7,22 +7,26 @@ import { CardPoolModule } from './cardPool/cardPool.module';
 import { TransformDataResource } from './interceptors/TransformDataResource.interceptor';
 import * as compression from 'compression';
 import { existsSync, readFileSync } from 'fs';
+import { HttpsOptions } from '@nestjs/common/interfaces/external/https-options.interface';
+import { IoAdapter } from '@nestjs/platform-socket.io';
 
 async function bootstrap() {
     const certFilePath = process.env.SSL_CERT_PATH;
     const keyFilePath = process.env.SSL_KEY_PATH;
-    const options: any = {};
+    let httpsOptions: HttpsOptions = {};
 
     if (certFilePath && keyFilePath) {
         if (existsSync(certFilePath) && existsSync(keyFilePath)) {
-            options.httpsOptions = {
+            httpsOptions = {
                 cert: readFileSync(certFilePath),
                 key: readFileSync(keyFilePath),
             };
         }
     }
 
-    const app = await NestFactory.create(AppModule, options);
+    const app = await NestFactory.create(AppModule, { httpsOptions });
+
+    app.useWebSocketAdapter(new IoAdapter(app));
 
     //Enable Validation
     app.useGlobalPipes(new ValidationPipe());

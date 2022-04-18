@@ -17,7 +17,6 @@ import { SocketClientService } from 'src/socketClient/socketClient.service';
     cors: {
         origin: '*',
     },
-    namespace: '/socket',
 })
 export class SocketGateway
     implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
