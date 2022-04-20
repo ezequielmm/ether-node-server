@@ -137,6 +137,21 @@ export class ExpeditionService {
         );
     }
 
+    async moveAllCardsToDiscardPile(client_id: string): Promise<Expedition> {
+        const currentNode = await this.getCurrentNodeByClientId(client_id);
+
+        return this.expedition.findOneAndUpdate(
+            { client_id },
+            {
+                'current_node.data.player.cards.hand': [],
+                $push: {
+                    'current_node.data.player.cards.discard':
+                        currentNode.data.player.cards.hand,
+                },
+            },
+        );
+    }
+
     async updatePlayerEnergy(
         client_id: string,
         newEnergyAmount: number,

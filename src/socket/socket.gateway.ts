@@ -47,7 +47,7 @@ export class SocketGateway
         try {
             const {
                 data: {
-                    data: { id: player_id },
+                    data: { id: player_id, name },
                 },
             } = await this.authGatewayService.getUser(authorization);
 
@@ -60,7 +60,10 @@ export class SocketGateway
                 );
 
             client.emit('ExpeditionMap', JSON.stringify({ data: map }));
-            client.emit('PlayerState', JSON.stringify({ data: player_state }));
+            client.emit(
+                'PlayerState',
+                JSON.stringify({ data: { ...player_state, name } }),
+            );
 
             this.logger.log(`Client connected: ${client.id}`);
         } catch (e) {
@@ -183,6 +186,27 @@ export class SocketGateway
             );
 
         return JSON.stringify({ current_node });
+    }
+    //#endregion
+
+    //#region handleEndTurn
+    @SubscribeMessage('EndTurn')
+    async handleEndTurn(client: Socket): Promise<string> {
+        const {
+            current_node: {
+                data: {
+                    player: { energy_max },
+                },
+            },
+        } = await this.expeditionService.moveAllCardsToDiscardPile(client.id);
+
+        const { current_node } =
+            await this.expeditionService.updatePlayerEnergy(
+                client.id,
+                energy_max,
+            );
+
+        return JSON.stringify({ data: { current_node } });
     }
     //#endregion
 }
