@@ -130,4 +130,10 @@ export class SocketGateway
 
         return JSON.stringify({ data: current_node });
     }
+    //#endregion
+
+    //#region handleCardPlayed
+    @SubscribeMessage('CardPlayed')
+    async handleCardPlayed(client: Socket): Promise<void> {}
+    //#endregion
 }
