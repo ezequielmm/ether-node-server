@@ -1,11 +1,19 @@
-import { Controller, Get, Param, ParseUUIDPipe } from '@nestjs/common';
+import {
+    Controller,
+    Get,
+    Param,
+    ParseUUIDPipe,
+    UseGuards,
+} from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Trinket } from '@prisma/client';
+import { AuthGuard } from 'src/guards/auth.guard';
 import { TrinketService } from './trinket.service';
 
 @ApiBearerAuth()
 @ApiTags('Trinkets')
 @Controller('trinkets')
+@UseGuards(new AuthGuard())
 export class TrinketController {
     constructor(private readonly trinketService: TrinketService) {}
 

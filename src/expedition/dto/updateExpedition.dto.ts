@@ -3,7 +3,8 @@ import { ExpeditionCurrentNodeInterface } from 'src/interfaces/expeditionCurrent
 import { ExpeditionMapInterface } from 'src/interfaces/expeditionMap.interface';
 import { ExpeditionPlayerStateInterface } from 'src/interfaces/expeditionPlayerState.interface';
 
-export class UpdateExpeditionDto {
+export class UpdateExpeditionDTO {
+    readonly client_id?: string;
     readonly map?: ExpeditionMapInterface[];
     readonly player_state?: ExpeditionPlayerStateInterface;
     readonly current_node?: ExpeditionCurrentNodeInterface;

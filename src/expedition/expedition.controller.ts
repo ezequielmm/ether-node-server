@@ -2,9 +2,11 @@ import {
     Controller,
     Get,
     Headers,
+    HttpException,
     HttpStatus,
     Post,
     Res,
+    UseGuards,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { CardClassEnum } from '@prisma/client';
@@ -13,6 +15,7 @@ import { AuthGatewayService } from 'src/authGateway/authGateway.service';
 import { CardService } from 'src/card/card.service';
 import { CharacterService } from 'src/character/character.service';
 import { ExpeditionStatusEnum } from 'src/enums/expeditionStatus.enum';
+import { AuthGuard } from 'src/guards/auth.guard';
 import { ExpeditionCreatedInterface } from 'src/interfaces/expeditionCreated.interface';
 import { ExpeditionStatusInterface } from 'src/interfaces/expeditionStatus.interface';
 import { HeadersData } from 'src/interfaces/headersData.interface';
@@ -21,12 +24,13 @@ import { ExpeditionService } from './expedition.service';
 @ApiBearerAuth()
 @ApiTags('Expeditions')
 @Controller('expeditions')
+@UseGuards(new AuthGuard())
 export class ExpeditionController {
     constructor(
-        private readonly expeditionService: ExpeditionService,
         private readonly authGatewayService: AuthGatewayService,
         private readonly characterService: CharacterService,
         private readonly cardService: CardService,
+        private readonly expeditionService: ExpeditionService,
     ) {}
 
     //#region Get Expedition status by player id
@@ -37,23 +41,7 @@ export class ExpeditionController {
     async handleGetExpeditionStatus(
         @Headers() headers: HeadersData,
     ): Promise<ExpeditionStatusInterface> {
-        let authorization = headers.authorization;
-
-        if (!authorization)
-            this.expeditionService.composeErrorMessage(
-                'Invalid Token',
-                HttpStatus.UNAUTHORIZED,
-            );
-
-        authorization = authorization.startsWith('Bearer')
-            ? authorization.replace('Bearer', '').trim()
-            : authorization;
-
-        if (!authorization)
-            this.expeditionService.composeErrorMessage(
-                'Invalid Token',
-                HttpStatus.UNAUTHORIZED,
-            );
+        const { authorization } = headers;
 
         try {
             const { data } = await this.authGatewayService.getUser(
@@ -67,10 +55,7 @@ export class ExpeditionController {
                 );
             return { hasExpedition };
         } catch (e) {
-            this.expeditionService.composeErrorMessage(
-                e.message,
-                HttpStatus.UNAUTHORIZED,
-            );
+            this.throwError(e.message, HttpStatus.UNAUTHORIZED);
         }
     }
     //#endregion Get Expedition status by player id
@@ -84,23 +69,7 @@ export class ExpeditionController {
         @Headers() headers: HeadersData,
         @Res() response,
     ): Promise<ExpeditionCreatedInterface> {
-        let authorization = headers.authorization;
-
-        if (!authorization)
-            this.expeditionService.composeErrorMessage(
-                'Invalid Token',
-                HttpStatus.UNAUTHORIZED,
-            );
-
-        authorization = authorization.startsWith('Bearer')
-            ? authorization.replace('Bearer', '').trim()
-            : authorization;
-
-        if (!authorization)
-            this.expeditionService.composeErrorMessage(
-                'Invalid Token',
-                HttpStatus.UNAUTHORIZED,
-            );
+        const { authorization } = headers;
 
         try {
             const { data } = await this.authGatewayService.getUser(
@@ -115,14 +84,14 @@ export class ExpeditionController {
                 );
 
             if (!expeditionExists) {
-                const character =
-                    await this.characterService.getCharacterByClass();
-
                 const cards = await this.cardService.getCards({
                     card_class: CardClassEnum.knight,
                 });
 
-                await this.expeditionService.createExpedition({
+                const character =
+                    await this.characterService.getCharacterByClass();
+
+                await this.expeditionService.create({
                     player_id,
                     map,
                     player_state: {
@@ -130,7 +99,6 @@ export class ExpeditionController {
                         hp_max: character.initial_health,
                         hp_current: character.initial_health,
                         gold: character.initial_gold,
-                        trinkets: [],
                         potions: {
                             1: null,
                             2: null,
@@ -138,8 +106,8 @@ export class ExpeditionController {
                         },
                         deck: {
                             cards: cards.map((card) => ({
-                                name: card.name,
                                 id: card.id,
+                                name: card.name,
                                 description: card.description,
                                 rarity: card.rarity,
                                 energy: card.energy,
@@ -151,21 +119,32 @@ export class ExpeditionController {
                         created_at: new Date(),
                     },
                 });
-            } else {
+
                 return response
                     .status(HttpStatus.CREATED)
-                    .send({ data: { expeditionCreated: false } });
+                    .send({ data: { expeditionCreated: true } });
+            } else {
+                return response.status(HttpStatus.CREATED).send({
+                    data: {
+                        message: 'Player has an expedition in progress',
+                    },
+                });
             }
-
-            return response
-                .status(HttpStatus.CREATED)
-                .send({ data: { expeditionCreated: true } });
         } catch (e) {
-            this.expeditionService.composeErrorMessage(
-                e.message,
-                HttpStatus.UNPROCESSABLE_ENTITY,
-            );
+            this.throwError(e.message, HttpStatus.UNAUTHORIZED);
         }
     }
     //#endregion creates a new expedition in Draft status
+
+    private throwError(message: string, statusCode: HttpStatus): void {
+        throw new HttpException(
+            {
+                data: {
+                    message,
+                    status: statusCode,
+                },
+            },
+            statusCode,
+        );
+    }
 }
