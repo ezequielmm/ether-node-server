@@ -10,6 +10,8 @@ import {
 import { Server, Socket } from 'socket.io';
 import { AuthGatewayService } from 'src/authGateway/authGateway.service';
 import { ExpeditionService } from 'src/expedition/expedition.service';
+import { CardPlayedInterface } from '../interfaces/cardPlayed.interface';
+import { CardService } from '../card/card.service';
 
 @WebSocketGateway({
     cors: {
@@ -25,6 +27,7 @@ export class SocketGateway
     constructor(
         private readonly authGatewayService: AuthGatewayService,
         private readonly expeditionService: ExpeditionService,
+        private readonly cardService: CardService,
     ) {}
 
     async afterInit(): Promise<void> {
@@ -134,6 +137,52 @@ export class SocketGateway
 
     //#region handleCardPlayed
     @SubscribeMessage('CardPlayed')
-    async handleCardPlayed(client: Socket): Promise<void> {}
+    async handleCardPlayed(client: Socket, payload: string): Promise<string> {
+        const { card_id }: CardPlayedInterface = JSON.parse(payload);
+
+        const cardExists = await this.expeditionService.cardExistsOnPlayerHand(
+            client.id,
+            card_id,
+        );
+
+        // First make sure card exists on player's hand pile
+
+        if (!cardExists)
+            return JSON.stringify({
+                data: { message: 'Card played is not valid' },
+            });
+
+        // Then, we query the card info to get its energy cost
+        const { energy: cardEnergy } = await this.cardService.getCard(card_id);
+
+        // Then, we get the actual energy amount from the current state
+        const {
+            data: {
+                player: { energy: playerEnergy },
+            },
+        } = await this.expeditionService.getCurrentNodeByClientId(client.id);
+
+        // Then we make sure that the energy cost for the card is lower that the
+        // available energy for the player
+        if (cardEnergy > playerEnergy || playerEnergy === 0)
+            return JSON.stringify({
+                data: { message: 'Not enough energy left' },
+            });
+
+        await this.expeditionService.moveCardFromPlayerHandToDiscardPile(
+            client.id,
+            card_id,
+        );
+
+        const newEnergyAmount = playerEnergy - cardEnergy;
+
+        const { current_node } =
+            await this.expeditionService.updatePlayerEnergy(
+                client.id,
+                newEnergyAmount,
+            );
+
+        return JSON.stringify({ current_node });
+    }
     //#endregion
 }

@@ -8,6 +8,7 @@ import { CreateExpeditionDTO } from './dto/createExpedition.dto';
 import { UpdateExpeditionDTO } from './dto/updateExpedition.dto';
 import { ExpeditionMapInterface } from '../interfaces/expeditionMap.interface';
 import { ExpeditionPlayerStateDeckCardInterface } from '../interfaces/expeditionPlayerStateDeckCard.interface';
+import { ExpeditionCurrentNodeInterface } from '../interfaces/expeditionCurrentNode.interface';
 
 @Injectable()
 export class ExpeditionService {
@@ -91,5 +92,59 @@ export class ExpeditionService {
             .lean();
 
         return cards;
+    }
+
+    async cardExistsOnPlayerHand(
+        client_id: string,
+        card_id: string,
+    ): Promise<boolean> {
+        const itemExists = await this.expedition.exists({
+            client_id,
+            'current_node.data.player.cards.hand.id': card_id,
+        });
+        return itemExists !== null;
+    }
+
+    async getCurrentNodeByClientId(
+        client_id: string,
+    ): Promise<ExpeditionCurrentNodeInterface> {
+        const { current_node } = await this.expedition
+            .findOne({ client_id })
+            .select('current_node')
+            .lean();
+        return current_node;
+    }
+
+    async moveCardFromPlayerHandToDiscardPile(
+        client_id: string,
+        card_id: string,
+    ): Promise<Expedition> {
+        const currentNode = await this.getCurrentNodeByClientId(client_id);
+
+        return this.expedition.findOneAndUpdate(
+            { client_id },
+            {
+                $pull: {
+                    'current_node.data.player.cards.hand': { id: card_id },
+                },
+                $push: {
+                    'current_node.data.player.cards.discard':
+                        currentNode.data.player.cards.hand.filter((card) => {
+                            return card.id === card_id;
+                        }),
+                },
+            },
+        );
+    }
+
+    async updatePlayerEnergy(
+        client_id: string,
+        newEnergyAmount: number,
+    ): Promise<Expedition> {
+        return this.expedition.findOneAndUpdate(
+            { client_id },
+            { 'current_node.data.player.energy': newEnergyAmount },
+            { new: true },
+        );
     }
 }
