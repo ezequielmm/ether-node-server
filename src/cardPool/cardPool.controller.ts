@@ -7,6 +7,7 @@ import {
     Patch,
     Post,
     Query,
+    UseGuards,
 } from '@nestjs/common';
 import {
     ApiBearerAuth,
@@ -16,6 +17,7 @@ import {
     ApiTags,
 } from '@nestjs/swagger';
 import { CardPool, CardpoolVisibilityEnum } from '@prisma/client';
+import { AuthGuard } from 'src/guards/auth.guard';
 import { CardPoolService } from './cardPool.service';
 import { CreateCardPoolDto } from './dto/createCardPool.dto';
 import { GetCardPoolsDto } from './dto/getCardPools.dto';
@@ -24,6 +26,7 @@ import { UpdateCardPoolDto } from './dto/updateCardPool.dto';
 @ApiBearerAuth()
 @ApiTags('CardPools')
 @Controller('cardpools')
+@UseGuards(new AuthGuard())
 export class CardPoolController {
     constructor(private readonly service: CardPoolService) {}
 

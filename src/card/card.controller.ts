@@ -1,4 +1,4 @@
-import { Controller, Get, Query } from '@nestjs/common';
+import { Controller, Get, Query, UseGuards } from '@nestjs/common';
 import {
     ApiBearerAuth,
     ApiOperation,
@@ -6,12 +6,14 @@ import {
     ApiTags,
 } from '@nestjs/swagger';
 import { Card } from '@prisma/client';
+import { AuthGuard } from 'src/guards/auth.guard';
 import { CardService } from './card.service';
 import { GetCardsDto } from './dto/getCards.dto';
 
 @ApiBearerAuth()
 @ApiTags('Cards')
 @Controller('cards')
+@UseGuards(new AuthGuard())
 export class CardController {
     constructor(private readonly service: CardService) {}
 

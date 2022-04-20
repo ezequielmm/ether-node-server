@@ -24,8 +24,8 @@ import { ExpeditionService } from './expedition.service';
         PrismaService,
         AuthGatewayService,
         CharacterService,
-        ExpeditionService,
         CardService,
+        ExpeditionService,
     ],
 })
 export class ExpeditionModule {}

@@ -9,7 +9,6 @@ import { CharacterClassModule } from './characterClass/characterClass.module';
 import { ExpeditionModule } from './expedition/expedition.module';
 import { ProfileModule } from './profile/profile.module';
 import { SocketModule } from './socket/socket.module';
-import { SocketClientModule } from './socketClient/socketClient.module';
 import { TrinketModule } from './trinket/trinket.module';
 
 @Module({
@@ -22,7 +21,6 @@ import { TrinketModule } from './trinket/trinket.module';
         TrinketModule,
         AuthGatewayModule,
         ExpeditionModule,
-        SocketClientModule,
         SocketModule,
         ProfileModule,
     ],

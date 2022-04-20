@@ -6,22 +6,24 @@ import { ExpeditionPlayerStateInterface } from 'src/interfaces/expeditionPlayerS
 
 @Schema()
 export class Expedition {
-    @Prop({ type: String, required: true })
+    @Prop({ type: String })
+    readonly client_id?: string;
+
+    @Prop({ type: String })
     readonly player_id?: string;
 
-    @Prop({ type: Array, required: false })
+    @Prop({ type: Array })
     readonly map?: ExpeditionMapInterface[];
 
-    @Prop({ type: Object, required: true })
+    @Prop({ type: Object })
     readonly player_state?: ExpeditionPlayerStateInterface;
 
-    @Prop({ type: Object, required: false })
+    @Prop({ type: Object })
     readonly current_node?: ExpeditionCurrentNodeInterface;
 
     @Prop({
         type: String,
         default: ExpeditionStatusEnum.InProgress,
-        required: false,
     })
     readonly status?: ExpeditionStatusEnum;
 }
