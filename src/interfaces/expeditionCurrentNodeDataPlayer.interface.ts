@@ -2,9 +2,9 @@ import { ExpeditionCurrentNodeDataPlayerStatusEnum } from 'src/enums/expeditionC
 import { ExpeditionPlayerStateDeckCardInterface } from './expeditionPlayerStateDeckCard.interface';
 
 export interface ExpeditionCurrentNodeDataPlayerInterface {
-    energy: number;
-    energy_max: number;
-    hand_size: number;
+    energy?: number;
+    energy_max?: number;
+    hand_size?: number;
     cards?: {
         hand?: ExpeditionPlayerStateDeckCardInterface[];
         draw?: ExpeditionPlayerStateDeckCardInterface[];
