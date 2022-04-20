@@ -86,4 +86,48 @@ export class SocketGateway
         client.emit('PlayerState', JSON.stringify({ data: player_state }));
     }
     //#endregion
+
+    //#region handleNodeSelected
+    @SubscribeMessage('NodeSelected')
+    async handleNodeSelected(client: Socket, node_id: number): Promise<string> {
+        const { id: client_id } = client;
+
+        const node = await this.expeditionService.getExpeditionMapNodeById(
+            client_id,
+            node_id,
+        );
+
+        const cards = await this.expeditionService.getCardsByClientId(
+            client_id,
+        );
+
+        const handCards = cards.sort(() => 0.5 - Math.random()).slice(0, 5);
+
+        const { current_node } =
+            await this.expeditionService.updateExpeditionInProgressByClientId(
+                client_id,
+                {
+                    current_node: {
+                        node_id,
+                        completed: false,
+                        node_type: node.type,
+                        data: {
+                            round: 0,
+                            action: 0,
+                            player: {
+                                energy: 3,
+                                energy_max: 5,
+                                hand_size: 5,
+                                cards: {
+                                    draw: cards,
+                                    hand: handCards,
+                                },
+                            },
+                        },
+                    },
+                },
+            );
+
+        return JSON.stringify({ data: current_node });
+    }
 }

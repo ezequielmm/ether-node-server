@@ -6,6 +6,8 @@ import { ExpeditionDocument } from 'src/types/expeditionDocument.type';
 import { ExpeditionStatusEnum } from 'src/enums/expeditionStatus.enum';
 import { CreateExpeditionDTO } from './dto/createExpedition.dto';
 import { UpdateExpeditionDTO } from './dto/updateExpedition.dto';
+import { ExpeditionMapInterface } from '../interfaces/expeditionMap.interface';
+import { ExpeditionPlayerStateDeckCardInterface } from '../interfaces/expeditionPlayerStateDeckCard.interface';
 
 @Injectable()
 export class ExpeditionService {
@@ -23,7 +25,7 @@ export class ExpeditionService {
         player_id: string,
         data: UpdateExpeditionDTO,
     ): Promise<Expedition> {
-        return await this.expedition.findOneAndUpdate(
+        return this.expedition.findOneAndUpdate(
             {
                 player_id,
                 status: ExpeditionStatusEnum.InProgress,
@@ -36,7 +38,7 @@ export class ExpeditionService {
         client_id: string,
         data: UpdateExpeditionDTO,
     ): Promise<Expedition> {
-        return await this.expedition.findOneAndUpdate(
+        return this.expedition.findOneAndUpdate(
             {
                 client_id,
                 status: ExpeditionStatusEnum.InProgress,
@@ -56,6 +58,38 @@ export class ExpeditionService {
     async getActiveExpeditionByClientId(
         client_id: string,
     ): Promise<Expedition> {
-        return await this.expedition.findOne({ client_id }).lean();
+        return this.expedition.findOne({ client_id });
+    }
+
+    async getExpeditionMapNodeById(
+        client_id: string,
+        node_id: number,
+    ): Promise<ExpeditionMapInterface> {
+        const map = await this.expedition
+            .findOne({
+                client_id,
+                'map.id': node_id,
+            })
+            .select('map')
+            .lean();
+
+        if (!map.map) return null;
+
+        return map.map.filter((node) => node.id === node_id)[0];
+    }
+
+    async getCardsByClientId(
+        client_id: string,
+    ): Promise<ExpeditionPlayerStateDeckCardInterface[]> {
+        const {
+            player_state: {
+                deck: { cards },
+            },
+        } = await this.expedition
+            .findOne({ client_id })
+            .select('player_state.deck')
+            .lean();
+
+        return cards;
     }
 }
