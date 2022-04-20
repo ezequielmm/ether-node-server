@@ -8,6 +8,8 @@ import {
     UseGuards,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { CardClassEnum } from '@prisma/client';
+import { map } from 'prisma/data/map';
 import { AuthGatewayService } from 'src/authGateway/authGateway.service';
 import { CardService } from 'src/card/card.service';
 import { CharacterService } from 'src/character/character.service';
@@ -51,7 +53,12 @@ export class ExpeditionController {
                     ExpeditionStatusEnum.InProgress,
                 );
             return { hasExpedition };
-        } catch (e) {}
+        } catch (e) {
+            this.expeditionService.throwError(
+                e.message,
+                HttpStatus.UNAUTHORIZED,
+            );
+        }
     }
     //#endregion Get Expedition status by player id
 
@@ -79,16 +86,58 @@ export class ExpeditionController {
                 );
 
             if (!expeditionExists) {
-            } else {
+                const cards = await this.cardService.getCards({
+                    card_class: CardClassEnum.knight,
+                });
+
+                const character =
+                    await this.characterService.getCharacterByClass();
+
+                await this.expeditionService.create({
+                    player_id,
+                    map,
+                    player_state: {
+                        character_class: character.character_class,
+                        hp_max: character.initial_health,
+                        hp_current: character.initial_health,
+                        gold: character.initial_gold,
+                        potions: {
+                            1: null,
+                            2: null,
+                            3: null,
+                        },
+                        deck: {
+                            cards: cards.map((card) => ({
+                                id: card.id,
+                                name: card.name,
+                                description: card.description,
+                                rarity: card.rarity,
+                                energy: card.energy,
+                                type: card.type,
+                                coin_min: card.coins_min,
+                                coin_max: card.coins_max,
+                            })),
+                        },
+                        created_at: new Date(),
+                    },
+                });
+
                 return response
                     .status(HttpStatus.CREATED)
-                    .send({ data: { expeditionCreated: false } });
+                    .send({ data: { expeditionCreated: true } });
+            } else {
+                return response.status(HttpStatus.CREATED).send({
+                    data: {
+                        message: 'Player has an expedition in progress',
+                    },
+                });
             }
-
-            return response
-                .status(HttpStatus.CREATED)
-                .send({ data: { expeditionCreated: true } });
-        } catch (e) {}
+        } catch (e) {
+            this.expeditionService.throwError(
+                e.message,
+                HttpStatus.UNAUTHORIZED,
+            );
+        }
     }
     //#endregion creates a new expedition in Draft status
 }
