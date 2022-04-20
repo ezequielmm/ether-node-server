@@ -2,6 +2,7 @@ import {
     Controller,
     Get,
     Headers,
+    HttpException,
     HttpStatus,
     Post,
     Res,
@@ -54,10 +55,7 @@ export class ExpeditionController {
                 );
             return { hasExpedition };
         } catch (e) {
-            this.expeditionService.throwError(
-                e.message,
-                HttpStatus.UNAUTHORIZED,
-            );
+            this.throwError(e.message, HttpStatus.UNAUTHORIZED);
         }
     }
     //#endregion Get Expedition status by player id
@@ -133,11 +131,20 @@ export class ExpeditionController {
                 });
             }
         } catch (e) {
-            this.expeditionService.throwError(
-                e.message,
-                HttpStatus.UNAUTHORIZED,
-            );
+            this.throwError(e.message, HttpStatus.UNAUTHORIZED);
         }
     }
     //#endregion creates a new expedition in Draft status
+
+    private throwError(message: string, statusCode: HttpStatus): void {
+        throw new HttpException(
+            {
+                data: {
+                    message,
+                    status: statusCode,
+                },
+            },
+            statusCode,
+        );
+    }
 }

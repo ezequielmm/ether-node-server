@@ -3,6 +3,7 @@ import {
     OnGatewayConnection,
     OnGatewayDisconnect,
     OnGatewayInit,
+    SubscribeMessage,
     WebSocketGateway,
     WebSocketServer,
 } from '@nestjs/websockets';
@@ -43,9 +44,20 @@ export class SocketGateway
         try {
             const {
                 data: {
-                    data: { id },
+                    data: { id: player_id },
                 },
             } = await this.authGatewayService.getUser(authorization);
+
+            const { map, player_state } =
+                await this.expeditionService.updateExpeditionInProgressByPlayerId(
+                    player_id,
+                    {
+                        client_id: client.id,
+                    },
+                );
+
+            client.emit('ExpeditionMap', JSON.stringify({ data: map }));
+            client.emit('PlayerState', JSON.stringify({ data: player_state }));
 
             this.logger.log(`Client connected: ${client.id}`);
         } catch (e) {
@@ -59,6 +71,19 @@ export class SocketGateway
     //#region handleDisconnect
     async handleDisconnect(client: Socket): Promise<void> {
         this.logger.log(`Client disconnected: ${client.id}`);
+    }
+    //#endregion
+
+    //#region handleSyncExpedition
+    @SubscribeMessage('SyncExpedition')
+    async handleSyncExpedition(client: Socket): Promise<void> {
+        const { map, player_state } =
+            await this.expeditionService.getActiveExpeditionByClientId(
+                client.id,
+            );
+
+        client.emit('ExpeditionMap', JSON.stringify({ data: map }));
+        client.emit('PlayerState', JSON.stringify({ data: player_state }));
     }
     //#endregion
 }
