@@ -32,6 +32,7 @@ export class ExpeditionService {
                 status: ExpeditionStatusEnum.InProgress,
             },
             data,
+            { new: true },
         );
     }
 
@@ -45,6 +46,7 @@ export class ExpeditionService {
                 status: ExpeditionStatusEnum.InProgress,
             },
             data,
+            { new: true },
         );
     }
 
