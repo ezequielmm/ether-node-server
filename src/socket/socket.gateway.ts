@@ -47,7 +47,7 @@ export class SocketGateway
         try {
             const {
                 data: {
-                    data: { id: player_id, name: player_name },
+                    data: { id: player_id },
                 },
             } = await this.authGatewayService.getUser(authorization);
 
@@ -62,7 +62,7 @@ export class SocketGateway
             client.emit('ExpeditionMap', JSON.stringify({ data: map }));
             client.emit(
                 'PlayerState',
-                JSON.stringify({ data: { player_name, ...player_state } }),
+                JSON.stringify({ data: { player_state } }),
             );
 
             this.logger.log(`Client connected: ${client.id}`);
