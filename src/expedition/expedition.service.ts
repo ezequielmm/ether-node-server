@@ -52,14 +52,16 @@ export class ExpeditionService {
         player_id: string,
         status: ExpeditionStatusEnum,
     ): Promise<boolean> {
-        const itemExists = await this.expedition.exists({ player_id, status });
+        const itemExists = await this.expedition
+            .exists({ player_id, status })
+            .lean();
         return itemExists !== null;
     }
 
     async getActiveExpeditionByClientId(
         client_id: string,
     ): Promise<Expedition> {
-        return this.expedition.findOne({ client_id });
+        return this.expedition.findOne({ client_id }).lean();
     }
 
     async getExpeditionMapNodeById(
@@ -98,10 +100,12 @@ export class ExpeditionService {
         client_id: string,
         card_id: string,
     ): Promise<boolean> {
-        const itemExists = await this.expedition.exists({
-            client_id,
-            'current_node.data.player.cards.hand.id': card_id,
-        });
+        const itemExists = await this.expedition
+            .exists({
+                client_id,
+                'current_node.data.player.cards.hand.id': card_id,
+            })
+            .lean();
         return itemExists !== null;
     }
 
