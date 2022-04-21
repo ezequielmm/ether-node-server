@@ -94,22 +94,20 @@ export class SocketGateway
     //#region handleNodeSelected
     @SubscribeMessage('NodeSelected')
     async handleNodeSelected(client: Socket, node_id: number): Promise<string> {
-        const { id: client_id } = client;
-
         const node = await this.expeditionService.getExpeditionMapNodeById(
-            client_id,
+            client.id,
             node_id,
         );
 
         const cards = await this.expeditionService.getCardsByClientId(
-            client_id,
+            client.id,
         );
 
         const handCards = cards.sort(() => 0.5 - Math.random()).slice(0, 5);
 
         const { current_node } =
             await this.expeditionService.updateExpeditionInProgressByClientId(
-                client_id,
+                client.id,
                 {
                     current_node: {
                         node_id,
