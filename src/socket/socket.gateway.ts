@@ -5,9 +5,8 @@ import {
     OnGatewayInit,
     SubscribeMessage,
     WebSocketGateway,
-    WebSocketServer,
 } from '@nestjs/websockets';
-import { Server, Socket } from 'socket.io';
+import { Socket } from 'socket.io';
 import { AuthGatewayService } from 'src/authGateway/authGateway.service';
 import { ExpeditionService } from 'src/expedition/expedition.service';
 import { CardPlayedInterface } from '../interfaces/cardPlayed.interface';
@@ -21,7 +20,6 @@ import { CardService } from '../card/card.service';
 export class SocketGateway
     implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
 {
-    @WebSocketServer() server: Server;
     private readonly logger: Logger = new Logger(SocketGateway.name);
 
     constructor(
