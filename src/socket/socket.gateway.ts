@@ -181,7 +181,7 @@ export class SocketGateway
                 newEnergyAmount,
             );
 
-        return JSON.stringify({ current_node });
+        return JSON.stringify({ data: { current_node } });
     }
     //#endregion
 

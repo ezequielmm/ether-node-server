@@ -168,4 +168,18 @@ export class ExpeditionService {
             { new: true },
         );
     }
+
+    async updatePlayerTurnInformationByClientId(
+        client_id: string,
+        round: number,
+        action: number,
+    ): Promise<Expedition> {
+        return this.expedition.findOneAndUpdate(
+            { client_id },
+            {
+                'current_node.data.round': round,
+                'current_node.data.action': action,
+            },
+        );
+    }
 }
