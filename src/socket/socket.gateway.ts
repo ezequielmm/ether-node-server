@@ -5,9 +5,8 @@ import {
     OnGatewayInit,
     SubscribeMessage,
     WebSocketGateway,
-    WebSocketServer,
 } from '@nestjs/websockets';
-import { Server, Socket } from 'socket.io';
+import { Socket } from 'socket.io';
 import { AuthGatewayService } from 'src/authGateway/authGateway.service';
 import { ExpeditionService } from 'src/expedition/expedition.service';
 import { CardPlayedInterface } from '../interfaces/cardPlayed.interface';
@@ -21,7 +20,6 @@ import { CardService } from '../card/card.service';
 export class SocketGateway
     implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
 {
-    @WebSocketServer() server: Server;
     private readonly logger: Logger = new Logger(SocketGateway.name);
 
     constructor(
@@ -47,7 +45,7 @@ export class SocketGateway
         try {
             const {
                 data: {
-                    data: { id: player_id, name: player_name },
+                    data: { id: player_id },
                 },
             } = await this.authGatewayService.getUser(authorization);
 
@@ -62,7 +60,7 @@ export class SocketGateway
             client.emit('ExpeditionMap', JSON.stringify({ data: map }));
             client.emit(
                 'PlayerState',
-                JSON.stringify({ data: { player_name, ...player_state } }),
+                JSON.stringify({ data: { player_state } }),
             );
 
             this.logger.log(`Client connected: ${client.id}`);
@@ -96,22 +94,20 @@ export class SocketGateway
     //#region handleNodeSelected
     @SubscribeMessage('NodeSelected')
     async handleNodeSelected(client: Socket, node_id: number): Promise<string> {
-        const { id: client_id } = client;
-
         const node = await this.expeditionService.getExpeditionMapNodeById(
-            client_id,
+            client.id,
             node_id,
         );
 
         const cards = await this.expeditionService.getCardsByClientId(
-            client_id,
+            client.id,
         );
 
         const handCards = cards.sort(() => 0.5 - Math.random()).slice(0, 5);
 
         const { current_node } =
             await this.expeditionService.updateExpeditionInProgressByClientId(
-                client_id,
+                client.id,
                 {
                     current_node: {
                         node_id,
@@ -185,7 +181,7 @@ export class SocketGateway
                 newEnergyAmount,
             );
 
-        return JSON.stringify({ current_node });
+        return JSON.stringify({ data: { current_node } });
     }
     //#endregion
 

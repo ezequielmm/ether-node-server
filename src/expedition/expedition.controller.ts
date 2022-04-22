@@ -75,7 +75,7 @@ export class ExpeditionController {
             const { data } = await this.authGatewayService.getUser(
                 authorization,
             );
-            const { id: player_id } = data.data;
+            const { id: player_id, name: player_name } = data.data;
 
             const expeditionExists =
                 await this.expeditionService.playerHasAnExpedition(
@@ -95,6 +95,7 @@ export class ExpeditionController {
                     player_id,
                     map,
                     player_state: {
+                        player_name,
                         character_class: character.character_class,
                         hp_max: character.initial_health,
                         hp_current: character.initial_health,
