@@ -1,4 +1,4 @@
-import { Controller, Get, VERSION_NEUTRAL } from '@nestjs/common';
+import { Controller, Get, Redirect, VERSION_NEUTRAL } from '@nestjs/common';
 import { ApiExcludeEndpoint } from '@nestjs/swagger';
 
 @Controller({
@@ -7,6 +7,7 @@ import { ApiExcludeEndpoint } from '@nestjs/swagger';
 export class AppController {
     @Get('/')
     @ApiExcludeEndpoint()
+    @Redirect('/api')
     handleIndex() {
         return { app: 'KOTE' };
     }

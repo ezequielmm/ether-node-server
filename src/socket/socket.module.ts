@@ -7,6 +7,7 @@ import { AuthGatewayService } from 'src/authGateway/authGateway.service';
 import { CardService } from 'src/card/card.service';
 import { PrismaService } from 'src/prisma.service';
 import { ExpeditionService } from 'src/expedition/expedition.service';
+import { SocketService } from './socket.service';
 
 @Module({
     imports: [
@@ -24,6 +25,7 @@ import { ExpeditionService } from 'src/expedition/expedition.service';
         AuthGatewayService,
         ExpeditionService,
         CardService,
+        SocketService,
     ],
 })
 export class SocketModule {}
