@@ -90,12 +90,21 @@ export class SocketGateway
 
         client.emit('ExpeditionMap', JSON.stringify({ data: map }));
         client.emit('PlayerState', JSON.stringify({ data: player_state }));
+
+        this.logger.log(
+            `Sending message "ExpeditionMap" to client ${client.id}`,
+        );
+        this.logger.log(`Sending message "PlayerState" to client ${client.id}`);
     }
     //#endregion
 
     //#region handleNodeSelected
     @SubscribeMessage('NodeSelected')
     async handleNodeSelected(client: Socket, node_id: number): Promise<string> {
+        this.logger.log(
+            `Client ${client.id} trigger message "NodeSelected": ${node_id}`,
+        );
+
         const node = await this.expeditionService.getExpeditionMapNodeById(
             client.id,
             node_id,
@@ -146,6 +155,10 @@ export class SocketGateway
     async handleCardPlayed(client: Socket, payload: string): Promise<string> {
         const { card_id }: CardPlayedInterface = JSON.parse(payload);
 
+        this.logger.log(
+            `Client ${client.id} trigger message "CardPlayed": ${payload}`,
+        );
+
         const cardExists = await this.expeditionService.cardExistsOnPlayerHand(
             client.id,
             card_id,
@@ -195,6 +208,8 @@ export class SocketGateway
     //#region handleEndTurn
     @SubscribeMessage('EndTurn')
     async handleEndTurn(client: Socket): Promise<string> {
+        this.logger.log(`Client ${client.id} trigger message "EndTurn"`);
+
         const {
             current_node: {
                 data: {
