@@ -11,6 +11,7 @@ import { AuthGatewayService } from 'src/authGateway/authGateway.service';
 import { ExpeditionService } from 'src/expedition/expedition.service';
 import { CardPlayedInterface } from '../interfaces/cardPlayed.interface';
 import { CardService } from '../card/card.service';
+import { SocketService } from './socket.service';
 
 @WebSocketGateway({
     cors: {
@@ -26,6 +27,7 @@ export class SocketGateway
         private readonly authGatewayService: AuthGatewayService,
         private readonly expeditionService: ExpeditionService,
         private readonly cardService: CardService,
+        private readonly socketService: SocketService,
     ) {}
 
     async afterInit(): Promise<void> {
@@ -105,6 +107,11 @@ export class SocketGateway
 
         const handCards = cards.sort(() => 0.5 - Math.random()).slice(0, 5);
 
+        const drawCards = this.socketService.removeHandCardsFromDrawPile(
+            cards,
+            handCards,
+        );
+
         const { current_node } =
             await this.expeditionService.updateExpeditionInProgressByClientId(
                 client.id,
@@ -121,7 +128,7 @@ export class SocketGateway
                                 energy_max: 5,
                                 hand_size: 5,
                                 cards: {
-                                    draw: cards,
+                                    draw: drawCards,
                                     hand: handCards,
                                 },
                             },
