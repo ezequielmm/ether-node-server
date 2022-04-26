@@ -3,7 +3,7 @@
  * @param token The bearer token to validate
  * @return boolean
  */
-import { HttpStatus } from '@nestjs/common';
+import { HttpException, HttpStatus } from '@nestjs/common';
 
 export function isValidAuthToken(token: string): boolean {
     if (!token) return false;
@@ -23,4 +23,9 @@ export function isValidAuthToken(token: string): boolean {
 export function throwHttpException(
     message: string,
     statusCode: HttpStatus,
-): void {}
+): void {
+    throw new HttpException(
+        { data: { message, status: statusCode } },
+        statusCode,
+    );
+}
