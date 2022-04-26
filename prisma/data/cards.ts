@@ -1,5 +1,5 @@
 import { Card, CardClassEnum, CardRarityEnum, Prisma } from '@prisma/client';
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuid } from 'uuid';
 import { faker } from '@faker-js/faker';
 import { cardpools } from './cardpools';
 
@@ -21,7 +21,7 @@ const cardCount = 15;
 
 for (let i = 1; i <= cardCount; i++) {
     items.push({
-        id: uuidv4(),
+        id: uuid(),
         code: 'knight_attack',
         name: faker.name.firstName(),
         description: faker.lorem.words(20),

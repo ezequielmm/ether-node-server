@@ -1,5 +1,17 @@
-import { ExpeditionMapNodeTypeEnum } from 'src/enums/expeditionMapNodeType.enum';
-import { ExpeditionMapInterface } from 'src/interfaces/expeditionMap.interface';
+enum ExpeditionMapNodeTypeEnum {
+    Combat = 'combat',
+    Portal = 'portal',
+}
+
+interface ExpeditionMapInterface {
+    act: number;
+    step: number;
+    id: number;
+    type: ExpeditionMapNodeTypeEnum;
+    exits?: number[];
+    enter?: number[];
+    private_data?: object;
+}
 
 export const map: ExpeditionMapInterface[] = [
     {

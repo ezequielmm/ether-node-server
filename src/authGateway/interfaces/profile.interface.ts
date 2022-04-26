@@ -1,4 +1,4 @@
-export interface ProfileGatewayInterface {
+export interface IProfile {
     readonly data: {
         readonly id: string;
         readonly name: string;
