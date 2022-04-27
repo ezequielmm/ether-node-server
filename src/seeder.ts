@@ -4,6 +4,11 @@ import { ConfigurationModule } from './config/configuration.module';
 import { ConfigurationService } from './config/configuration.service';
 import { Card, CardSchema } from './components/card/card.schema';
 import { CardSeeder } from './components/card/card.seeder';
+import { CharacterSeeder } from './components/character/character.seeder';
+import {
+    Character,
+    CharacterSchema,
+} from './components/character/character.schema';
 
 seeder({
     imports: [
@@ -19,6 +24,9 @@ seeder({
                 return options;
             },
         }),
-        MongooseModule.forFeature([{ name: Card.name, schema: CardSchema }]),
+        MongooseModule.forFeature([
+            { name: Card.name, schema: CardSchema },
+            { name: Character.name, schema: CharacterSchema },
+        ]),
     ],
-}).run([CardSeeder]);
+}).run([CardSeeder, CharacterSeeder]);
