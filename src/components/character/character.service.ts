@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Character, CharacterDocument } from './character.schema';
+import { GetCharacterDTO } from './dto';
 
 @Injectable()
 export class CharacterService {
@@ -11,6 +12,10 @@ export class CharacterService {
     ) {}
 
     async findAll(): Promise<CharacterDocument[]> {
-        return this.character.find().exec();
+        return this.character.find().lean();
+    }
+
+    async findOne(payload: GetCharacterDTO): Promise<CharacterDocument> {
+        return this.character.findOne(payload).lean();
     }
 }

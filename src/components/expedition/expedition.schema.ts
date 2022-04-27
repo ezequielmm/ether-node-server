@@ -22,7 +22,7 @@ export class Expedition {
     @Prop({ type: Object })
     readonly current_node: object;
 
-    @Prop()
+    @Prop({ default: ExpeditionStatusEnum.InProgress })
     readonly status: ExpeditionStatusEnum;
 }
 

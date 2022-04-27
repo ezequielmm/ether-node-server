@@ -11,6 +11,6 @@ export class TrinketService {
     ) {}
 
     async findAll(): Promise<TrinketDocument[]> {
-        return this.trinket.find().exec();
+        return this.trinket.find().lean();
     }
 }

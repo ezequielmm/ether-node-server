@@ -7,6 +7,7 @@ import { AuthGatewayModule } from '../authGateway/authGateway.module';
 import { CharacterModule } from '../components/character/character.module';
 import { TrinketModule } from '../components/trinket/trinket.module';
 import { ExpeditionModule } from '../components/expedition/expedition.module';
+import { CardModule } from '../components/card/card.module';
 
 @Module({
     imports: [
@@ -14,6 +15,7 @@ import { ExpeditionModule } from '../components/expedition/expedition.module';
         CharacterModule,
         TrinketModule,
         ExpeditionModule,
+        CardModule,
     ],
     controllers: [
         ProfileController,

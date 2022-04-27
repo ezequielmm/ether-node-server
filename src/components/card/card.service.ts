@@ -10,6 +10,6 @@ export class CardService {
     ) {}
 
     async findAll(): Promise<Card[]> {
-        return this.card.find().exec();
+        return this.card.find().lean();
     }
 }

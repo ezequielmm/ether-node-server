@@ -3,6 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Expedition, ExpeditionDocument } from './expedition.schema';
 import { ExpeditionStatusEnum } from './enums';
+import { CreateExpeditionDTO } from './dto';
 
 @Injectable()
 export class ExpeditionService {
@@ -16,5 +17,9 @@ export class ExpeditionService {
             .exists({ player_id, status: ExpeditionStatusEnum.InProgress })
             .lean();
         return itemExists !== null;
+    }
+
+    async create(payload: CreateExpeditionDTO): Promise<ExpeditionDocument> {
+        return await this.expedition.create(payload);
     }
 }
