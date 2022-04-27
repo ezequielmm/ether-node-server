@@ -9,6 +9,8 @@ import {
     Character,
     CharacterSchema,
 } from './components/character/character.schema';
+import { TrinketSeeder } from './components/trinket/trinket.seeder';
+import { Trinket, TrinketSchema } from './components/trinket/trinket.schema';
 
 seeder({
     imports: [
@@ -27,6 +29,7 @@ seeder({
         MongooseModule.forFeature([
             { name: Card.name, schema: CardSchema },
             { name: Character.name, schema: CharacterSchema },
+            { name: Trinket.name, schema: TrinketSchema },
         ]),
     ],
-}).run([CardSeeder, CharacterSeeder]);
+}).run([CardSeeder, CharacterSeeder, TrinketSeeder]);
