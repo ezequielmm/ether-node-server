@@ -30,6 +30,7 @@ export class Trinket {
     readonly effect: string;
 
     @Factory('attack')
+    @Prop()
     readonly trigger: string;
 }
 

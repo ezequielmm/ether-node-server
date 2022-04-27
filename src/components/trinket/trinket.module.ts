@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Trinket, TrinketSchema } from './trinket.schema';
+import { TrinketService } from './trinket.service';
 
 @Module({
     imports: [
@@ -11,5 +12,7 @@ import { Trinket, TrinketSchema } from './trinket.schema';
             },
         ]),
     ],
+    providers: [TrinketService],
+    exports: [TrinketService],
 })
 export class TrinketModule {}

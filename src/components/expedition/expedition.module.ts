@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Expedition, ExpeditionSchema } from './expedition.schema';
+import { ExpeditionService } from './expedition.service';
 
 @Module({
     imports: [
@@ -11,5 +12,7 @@ import { Expedition, ExpeditionSchema } from './expedition.schema';
             },
         ]),
     ],
+    providers: [ExpeditionService],
+    exports: [ExpeditionService],
 })
 export class ExpeditionModule {}

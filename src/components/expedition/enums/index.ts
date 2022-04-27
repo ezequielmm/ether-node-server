@@ -4,3 +4,8 @@ export enum ExpeditionStatusEnum {
     Defeated = 'defeated',
     Canceled = 'canceled',
 }
+
+export enum ExpeditionMapNodeTypeEnum {
+    Combat = 'combat',
+    Portal = 'portal',
+}

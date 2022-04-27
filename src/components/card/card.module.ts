@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Card, CardSchema } from './card.schema';
+import { CardService } from './card.service';
 
 @Module({
     imports: [
@@ -11,5 +12,7 @@ import { Card, CardSchema } from './card.schema';
             },
         ]),
     ],
+    providers: [CardService],
+    exports: [CardService],
 })
 export class CardModule {}

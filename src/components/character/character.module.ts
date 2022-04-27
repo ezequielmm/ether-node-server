@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Character, CharacterSchema } from './character.schema';
+import { CharacterService } from './character.service';
 
 @Module({
     imports: [
@@ -11,5 +12,7 @@ import { Character, CharacterSchema } from './character.schema';
             },
         ]),
     ],
+    providers: [CharacterService],
+    exports: [CharacterService],
 })
 export class CharacterModule {}

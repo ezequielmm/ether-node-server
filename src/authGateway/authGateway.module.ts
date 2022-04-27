@@ -5,5 +5,6 @@ import { AuthGatewayService } from './authGateway.service.';
 @Module({
     imports: [HttpModule],
     providers: [AuthGatewayService],
+    exports: [AuthGatewayService],
 })
 export class AuthGatewayModule {}
