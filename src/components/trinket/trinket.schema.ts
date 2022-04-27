@@ -11,26 +11,26 @@ export type TrinketDocument = Trinket & Document;
 export class Trinket {
     @Factory((faker: Faker) => faker.name.findName())
     @Prop()
-    name: string;
+    readonly name: string;
 
     @Factory(() => {
         return getRandomEnumValue(TrinketRarityEnum);
     })
     @Prop()
-    rarity: string;
+    readonly rarity: string;
 
     @Factory(() => {
         return getRandomBetween(50, 100);
     })
     @Prop()
-    coin_cost: number;
+    readonly coin_cost: number;
 
     @Factory('move')
     @Prop()
-    effect: string;
+    readonly effect: string;
 
     @Factory('attack')
-    trigger: string;
+    readonly trigger: string;
 }
 
 export const TrinketSchema = SchemaFactory.createForClass(Trinket);

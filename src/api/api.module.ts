@@ -9,6 +9,7 @@ import {
 } from '../components/character/character.schema';
 import { Trinket, TrinketSchema } from '../components/trinket/trinket.schema';
 import { TrinketController } from './trinket.controller';
+import { AuthGatewayService } from '../authGateway/authGateway.service.';
 
 @Module({
     imports: [
@@ -16,6 +17,7 @@ import { TrinketController } from './trinket.controller';
             { name: Character.name, schema: CharacterSchema },
             { name: Trinket.name, schema: TrinketSchema },
         ]),
+        AuthGatewayService,
     ],
     controllers: [
         ProfileController,
