@@ -2,28 +2,28 @@ import { ExpeditionMapNodeTypeEnum } from '../enums';
 import { CardRarityEnum, CardTypeEnum } from '../../card/enums';
 
 export interface IExpeditionMap {
-    act: number;
-    step: number;
-    id: number;
-    type: ExpeditionMapNodeTypeEnum;
-    exits: number[];
-    enter: number[];
-    private_data?: any;
+    readonly act: number;
+    readonly step: number;
+    readonly id: number;
+    readonly type: ExpeditionMapNodeTypeEnum;
+    readonly exits: number[];
+    readonly enter: number[];
+    readonly private_data?: any;
 }
 
 export interface IExpeditionPlayerState {
-    player_name: string;
-    character_class: string;
-    hp_max: number;
-    hp_current: number;
-    gold: number;
-    potions: any;
-    trinkets?: [];
-    deck: {
-        cards: IExpeditionPlayerStateDeckCard[];
+    readonly player_name: string;
+    readonly character_class: string;
+    readonly hp_max: number;
+    readonly hp_current: number;
+    readonly gold: number;
+    readonly potions: any;
+    readonly trinkets?: [];
+    readonly deck: {
+        readonly cards: IExpeditionPlayerStateDeckCard[];
     };
-    created_at: Date;
-    stopped_at?: Date;
+    readonly created_at: Date;
+    readonly stopped_at?: Date;
 }
 
 export interface IExpeditionPlayerStateDeckCard {
