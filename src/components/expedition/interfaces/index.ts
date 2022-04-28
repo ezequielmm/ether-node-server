@@ -8,7 +8,7 @@ export interface IExpeditionMap {
     type: ExpeditionMapNodeTypeEnum;
     exits: number[];
     enter: number[];
-    private_data: any;
+    private_data?: any;
 }
 
 export interface IExpeditionPlayerState {
@@ -18,12 +18,12 @@ export interface IExpeditionPlayerState {
     hp_current: number;
     gold: number;
     potions: any;
-    trinkets: [];
+    trinkets?: [];
     deck: {
         cards: IExpeditionPlayerStateDeckCard[];
     };
     created_at: Date;
-    stopped_at: Date;
+    stopped_at?: Date;
 }
 
 export interface IExpeditionPlayerStateDeckCard {

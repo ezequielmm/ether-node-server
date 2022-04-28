@@ -9,7 +9,7 @@ export class CardService {
         @InjectModel(Card.name) private readonly card: Model<CardDocument>,
     ) {}
 
-    async findAll(): Promise<Card[]> {
+    async findAll(): Promise<CardDocument[]> {
         return this.card.find().lean();
     }
 }
