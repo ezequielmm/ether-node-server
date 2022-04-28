@@ -3,7 +3,7 @@ import { Document } from 'mongoose';
 import { EnemyCategoryEnum, EnemyTypeEnum } from './enums';
 import { Factory } from 'nestjs-seeder';
 import { Faker } from '@faker-js/faker';
-import { getRandomBetween, getRandomEnumValue } from '../../utils';
+import { getRandomBetween, getRandomEnumValue } from '../../../utils';
 
 export type EnemyDocument = Enemy & Document;
 

@@ -2,17 +2,20 @@ import { seeder } from 'nestjs-seeder';
 import { MongooseModule, MongooseModuleOptions } from '@nestjs/mongoose';
 import { ConfigurationModule } from './config/configuration.module';
 import { ConfigurationService } from './config/configuration.service';
-import { Card, CardSchema } from './components/card/card.schema';
-import { CardSeeder } from './components/card/card.seeder';
-import { CharacterSeeder } from './components/character/character.seeder';
+import { Card, CardSchema } from './game/components/card/card.schema';
+import { CardSeeder } from './game/components/card/card.seeder';
+import { CharacterSeeder } from './game/components/character/character.seeder';
 import {
     Character,
     CharacterSchema,
-} from './components/character/character.schema';
-import { TrinketSeeder } from './components/trinket/trinket.seeder';
-import { Trinket, TrinketSchema } from './components/trinket/trinket.schema';
-import { Enemy, EnemySchema } from './components/enemy/enemy.schema';
-import { EnemySeeder } from './components/enemy/enemy.seeder';
+} from './game/components/character/character.schema';
+import { TrinketSeeder } from './game/components/trinket/trinket.seeder';
+import {
+    Trinket,
+    TrinketSchema,
+} from './game/components/trinket/trinket.schema';
+import { Enemy, EnemySchema } from './game/components/enemy/enemy.schema';
+import { EnemySeeder } from './game/components/enemy/enemy.seeder';
 
 seeder({
     imports: [

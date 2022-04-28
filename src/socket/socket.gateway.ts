@@ -8,7 +8,7 @@ import { Logger } from '@nestjs/common';
 import { Socket } from 'socket.io';
 import { isValidAuthToken } from '../utils';
 import { AuthGatewayService } from '../authGateway/authGateway.service.';
-import { ExpeditionService } from '../components/expedition/expedition.service';
+import { ExpeditionService } from '../game/expedition/expedition.service';
 
 @WebSocketGateway({
     cors: {

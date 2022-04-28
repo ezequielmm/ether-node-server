@@ -2,7 +2,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 import { Factory } from 'nestjs-seeder';
 import { Faker } from '@faker-js/faker';
-import { getRandomBetween, getRandomEnumValue } from '../../utils';
+import { getRandomBetween, getRandomEnumValue } from '../../../utils';
 import { TrinketRarityEnum } from './enums';
 
 export type TrinketDocument = Trinket & Document;

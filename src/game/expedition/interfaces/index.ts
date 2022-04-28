@@ -1,5 +1,5 @@
 import { ExpeditionMapNodeTypeEnum } from '../enums';
-import { CardRarityEnum, CardTypeEnum } from '../../card/enums';
+import { CardRarityEnum, CardTypeEnum } from '../../components/card/enums';
 
 export interface IExpeditionMap {
     readonly act: number;

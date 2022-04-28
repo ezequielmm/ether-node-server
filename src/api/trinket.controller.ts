@@ -1,7 +1,7 @@
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Controller, UseGuards, Get } from '@nestjs/common';
 import { AuthGuard } from '../guards/auth.guard';
-import { TrinketService } from '../components/trinket/trinket.service';
+import { TrinketService } from '../game/components/trinket/trinket.service';
 
 @ApiBearerAuth()
 @ApiTags('Trinket')

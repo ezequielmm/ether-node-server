@@ -1,7 +1,7 @@
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Controller, Get, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '../guards/auth.guard';
-import { CharacterService } from '../components/character/character.service';
+import { CharacterService } from '../game/components/character/character.service';
 
 @ApiBearerAuth()
 @ApiTags('Characters')
