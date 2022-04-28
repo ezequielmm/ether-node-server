@@ -4,11 +4,13 @@ import { ApiModule } from './api/api.module';
 import { ConfigurationModule } from './config/configuration.module';
 import { MongooseModule, MongooseModuleOptions } from '@nestjs/mongoose';
 import { ConfigurationService } from './config/configuration.service';
+import { SocketModule } from './socket/socket.module';
 
 @Module({
     imports: [
         ApiModule,
         ConfigurationModule,
+        SocketModule,
         MongooseModule.forRootAsync({
             imports: [ConfigurationModule],
             inject: [ConfigurationService],

@@ -3,7 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Expedition, ExpeditionDocument } from './expedition.schema';
 import { ExpeditionMapNodeTypeEnum, ExpeditionStatusEnum } from './enums';
-import { CreateExpeditionDTO } from './dto';
+import { CreateExpeditionDTO, UpdateSocketClientDTO } from './dto';
 import { IExpeditionMap } from './interfaces';
 
 @Injectable()
@@ -92,5 +92,19 @@ export class ExpeditionService {
                 enter: [5],
             },
         ];
+    }
+
+    async updateClientId(
+        payload: UpdateSocketClientDTO,
+    ): Promise<ExpeditionDocument> {
+        const { client_id, player_id } = payload;
+        return this.expedition.findOneAndUpdate(
+            {
+                player_id,
+                status: ExpeditionStatusEnum.InProgress,
+            },
+            { client_id },
+            { new: true },
+        );
     }
 }
