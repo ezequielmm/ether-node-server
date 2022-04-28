@@ -102,12 +102,11 @@ export class ExpeditionService {
         client_id: string,
         card_id: string,
     ): Promise<boolean> {
-        const itemExists = await this.expedition
-            .exists({
-                client_id,
-                'current_node.data.player.cards.hand.id': card_id,
-            })
-            .lean();
+        const itemExists = await this.expedition.exists({
+            client_id,
+            'current_node.data.player.cards.hand.id': card_id,
+        });
+        console.log(itemExists);
         return itemExists !== null;
     }
 
@@ -137,9 +136,10 @@ export class ExpeditionService {
                     'current_node.data.player.cards.discard':
                         currentNode.data.player.cards.hand.filter((card) => {
                             return card.id === card_id;
-                        }),
+                        })[0],
                 },
             },
+            { new: true },
         );
     }
 
