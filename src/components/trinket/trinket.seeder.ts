@@ -2,13 +2,13 @@ import { Injectable } from '@nestjs/common';
 import { DataFactory, Seeder } from 'nestjs-seeder';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { Trinket } from './trinket.schema';
+import { Trinket, TrinketDocument } from './trinket.schema';
 
 @Injectable()
 export class TrinketSeeder implements Seeder {
     constructor(
         @InjectModel(Trinket.name)
-        private readonly trinket: Model<Trinket>,
+        private readonly trinket: Model<TrinketDocument>,
     ) {}
 
     async seed(): Promise<any> {

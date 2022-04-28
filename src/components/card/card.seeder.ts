@@ -1,12 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { DataFactory, Seeder } from 'nestjs-seeder';
-import { Card } from './card.schema';
+import { Card, CardDocument } from './card.schema';
 import { Model } from 'mongoose';
 
 @Injectable()
 export class CardSeeder implements Seeder {
-    constructor(@InjectModel(Card.name) private readonly card: Model<Card>) {}
+    constructor(
+        @InjectModel(Card.name) private readonly card: Model<CardDocument>,
+    ) {}
 
     async seed(): Promise<any> {
         const cards = DataFactory.createForClass(Card).generate(15);

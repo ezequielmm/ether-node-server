@@ -11,6 +11,8 @@ import {
 } from './components/character/character.schema';
 import { TrinketSeeder } from './components/trinket/trinket.seeder';
 import { Trinket, TrinketSchema } from './components/trinket/trinket.schema';
+import { Enemy, EnemySchema } from './components/enemy/enemy.schema';
+import { EnemySeeder } from './components/enemy/enemy.seeder';
 
 seeder({
     imports: [
@@ -30,6 +32,7 @@ seeder({
             { name: Card.name, schema: CardSchema },
             { name: Character.name, schema: CharacterSchema },
             { name: Trinket.name, schema: TrinketSchema },
+            { name: Enemy.name, schema: EnemySchema },
         ]),
     ],
-}).run([CardSeeder, CharacterSeeder, TrinketSeeder]);
+}).run([CardSeeder, CharacterSeeder, TrinketSeeder, EnemySeeder]);
