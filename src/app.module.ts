@@ -1,28 +1,28 @@
 import { Module } from '@nestjs/common';
-import { MongooseModule } from '@nestjs/mongoose';
 import { AppController } from './app.controller';
-import { AuthGatewayModule } from './authGateway/authGateway.module';
-import { CardModule } from './card/card.module';
-import { CardPoolModule } from './cardPool/cardPool.module';
-import { CharacterModule } from './character/character.module';
-import { CharacterClassModule } from './characterClass/characterClass.module';
-import { ExpeditionModule } from './expedition/expedition.module';
-import { ProfileModule } from './profile/profile.module';
+import { ApiModule } from './api/api.module';
+import { ConfigurationModule } from './config/configuration.module';
+import { MongooseModule, MongooseModuleOptions } from '@nestjs/mongoose';
+import { ConfigurationService } from './config/configuration.service';
 import { SocketModule } from './socket/socket.module';
-import { TrinketModule } from './trinket/trinket.module';
 
 @Module({
     imports: [
-        MongooseModule.forRoot(process.env.MONGODB_URL),
-        CardModule,
-        CardPoolModule,
-        CharacterClassModule,
-        CharacterModule,
-        TrinketModule,
-        AuthGatewayModule,
-        ExpeditionModule,
+        ApiModule,
+        ConfigurationModule,
         SocketModule,
-        ProfileModule,
+        MongooseModule.forRootAsync({
+            imports: [ConfigurationModule],
+            inject: [ConfigurationService],
+            useFactory: (configurationService: ConfigurationService) => {
+                const options: MongooseModuleOptions = {
+                    uri: configurationService.connectionString,
+                    useNewUrlParser: true,
+                    useUnifiedTopology: true,
+                };
+                return options;
+            },
+        }),
     ],
     controllers: [AppController],
 })
