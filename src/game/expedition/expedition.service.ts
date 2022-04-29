@@ -171,9 +171,7 @@ export class ExpeditionService {
         const itemExists = await this.expedition.exists({
             client_id,
             status: ExpeditionStatusEnum.InProgress,
-            'current_node.data.player.cards.hand.id': new Types.ObjectId(
-                card_id,
-            ),
+            'current_node.data.player.cards.hand.id': card_id,
         });
         return itemExists !== null;
     }
@@ -200,7 +198,7 @@ export class ExpeditionService {
             {
                 $pull: {
                     'current_node.data.player.cards.hand': {
-                        id: new Types.ObjectId(card_id),
+                        id: card_id,
                     },
                 },
                 $push: {

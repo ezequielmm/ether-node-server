@@ -1,7 +1,11 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 import { ExpeditionStatusEnum } from './enums';
-import { IExpeditionMap, IExpeditionPlayerState } from './interfaces';
+import {
+    IExpeditionCurrentNode,
+    IExpeditionMap,
+    IExpeditionPlayerState,
+} from './interfaces';
 
 export type ExpeditionDocument = Expedition & Document;
 
@@ -20,7 +24,7 @@ export class Expedition {
     readonly player_state: IExpeditionPlayerState;
 
     @Prop({ type: Object })
-    readonly current_node: object;
+    readonly current_node: IExpeditionCurrentNode;
 
     @Prop({ default: ExpeditionStatusEnum.InProgress })
     readonly status: ExpeditionStatusEnum;

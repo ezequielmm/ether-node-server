@@ -111,7 +111,7 @@ export class ExpeditionController {
                         },
                         deck: {
                             cards: cards.map((card) => ({
-                                id: card._id,
+                                id: card._id.toString(),
                                 name: card.name,
                                 description: card.description,
                                 rarity: card.rarity,
