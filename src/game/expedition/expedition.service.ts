@@ -17,13 +17,14 @@ import {
     IExpeditionMap,
     IExpeditionPlayerStateDeckCard,
 } from './interfaces';
-import { Types } from 'mongoose';
+import { CardService } from '../components/card/card.service';
 
 @Injectable()
 export class ExpeditionService {
     constructor(
         @InjectModel(Expedition.name)
         private readonly expedition: Model<ExpeditionDocument>,
+        private readonly cardService: CardService,
     ) {}
 
     async playerHasExpeditionInProgress(player_id: string): Promise<boolean> {
@@ -219,6 +220,55 @@ export class ExpeditionService {
         return this.expedition.findOneAndUpdate(
             { client_id, status: ExpeditionStatusEnum.InProgress },
             { 'current_node.data.player.energy': energy },
+            { new: true },
+        );
+    }
+
+    async moveAllCardsToDiscardPile(
+        client_id: string,
+    ): Promise<ExpeditionDocument> {
+        const currentNode = await this.getCurrentNodeByClientId(client_id);
+
+        const discardPile = currentNode.data.player.cards.discard;
+        const handPile = currentNode.data.player.cards.hand;
+
+        return this.expedition.findOneAndUpdate(
+            { client_id, status: ExpeditionStatusEnum.InProgress },
+            {
+                'current_node.data.player.cards.hand': [],
+                'current_node.data.player.cards.discard': [
+                    ...discardPile,
+                    ...handPile,
+                ],
+            },
+            { new: true },
+        );
+    }
+
+    async moveCardsFromDrawToHandPile(
+        client_id: string,
+    ): Promise<ExpeditionDocument> {
+        const {
+            data: {
+                player: {
+                    cards: { draw: drawPile },
+                },
+            },
+        } = await this.getCurrentNodeByClientId(client_id);
+
+        const handPile = drawPile.sort(() => 0.5 - Math.random()).slice(0, 5);
+
+        const drawCards = this.cardService.removeHandCardsFromDrawPile(
+            drawPile,
+            handPile,
+        );
+
+        return this.expedition.findOneAndUpdate(
+            { client_id, status: ExpeditionStatusEnum.InProgress },
+            {
+                'current_node.data.player.cards.draw': drawCards,
+                'current_node.data.player.cards.hand': handPile,
+            },
             { new: true },
         );
     }
