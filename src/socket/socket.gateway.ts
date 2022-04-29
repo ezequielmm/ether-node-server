@@ -188,4 +188,27 @@ export class SocketGateway
 
         return JSON.stringify({ data: current_node });
     }
+
+    @SubscribeMessage('EndTurn')
+    async handleEndTurn(client: Socket): Promise<string> {
+        this.logger.log(`Client ${client.id} trigger message "EndTurn"`);
+
+        await this.expeditionService.moveAllCardsToDiscardPile(client.id);
+
+        const {
+            current_node: {
+                data: {
+                    player: { energy_max },
+                },
+            },
+        } = await this.expeditionService.moveCardsFromDrawToHandPile(client.id);
+
+        const { current_node } =
+            await this.expeditionService.updatePlayerEnergy({
+                client_id: client.id,
+                energy: energy_max,
+            });
+
+        return JSON.stringify({ data: current_node });
+    }
 }
