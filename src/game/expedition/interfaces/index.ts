@@ -1,4 +1,7 @@
-import { ExpeditionMapNodeTypeEnum } from '../enums';
+import {
+    ExpeditionCurrentNodeDataPlayerStatusEnum,
+    ExpeditionMapNodeTypeEnum,
+} from '../enums';
 import { CardRarityEnum, CardTypeEnum } from '../../components/card/enums';
 
 export interface IExpeditionMap {
@@ -35,4 +38,30 @@ export interface IExpeditionPlayerStateDeckCard {
     readonly type: CardTypeEnum;
     readonly coin_min: number;
     readonly coin_max: number;
+}
+
+export interface IExpeditionCurrentNode {
+    readonly node_id?: number;
+    readonly node_type?: string;
+    readonly data?: IExpeditionCurrentNodeData;
+    readonly completed?: boolean;
+}
+
+export interface IExpeditionCurrentNodeData {
+    readonly round?: number;
+    readonly action?: number;
+    readonly player?: IExpeditionCurrentNodeDataPlayer;
+}
+
+export interface IExpeditionCurrentNodeDataPlayer {
+    readonly energy?: number;
+    readonly energy_max?: number;
+    readonly hand_size?: number;
+    readonly cards?: {
+        hand?: IExpeditionPlayerStateDeckCard[];
+        draw?: IExpeditionPlayerStateDeckCard[];
+        discard?: IExpeditionPlayerStateDeckCard[];
+        exhausted?: IExpeditionPlayerStateDeckCard[];
+    };
+    status?: ExpeditionCurrentNodeDataPlayerStatusEnum;
 }

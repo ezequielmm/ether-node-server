@@ -9,3 +9,8 @@ export enum ExpeditionMapNodeTypeEnum {
     Combat = 'combat',
     Portal = 'portal',
 }
+
+export enum ExpeditionCurrentNodeDataPlayerStatusEnum {
+    Idle = 'idle',
+    Injured = 'injured',
+}
