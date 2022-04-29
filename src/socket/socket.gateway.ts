@@ -57,7 +57,10 @@ export class SocketGateway
                 });
 
             client.emit('ExpeditionMap', JSON.stringify({ data: map }));
-            client.emit('PlayerState', JSON.stringify({ data: player_state }));
+            client.emit(
+                'PlayerState',
+                JSON.stringify({ data: { player_state } }),
+            );
             this.logger.log(`Client connected: ${client.id}`);
         } catch (e) {
             this.logger.log(e.message);
@@ -78,7 +81,7 @@ export class SocketGateway
         });
 
         client.emit('ExpeditionMap', JSON.stringify({ data: map }));
-        client.emit('PlayerState', JSON.stringify({ data: player_state }));
+        client.emit('PlayerState', JSON.stringify({ data: { player_state } }));
 
         this.logger.log(
             `Sending message "ExpeditionMap" to client ${client.id}`,
