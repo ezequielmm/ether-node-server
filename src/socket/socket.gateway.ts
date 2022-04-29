@@ -130,7 +130,7 @@ export class SocketGateway
             },
         );
 
-        return JSON.stringify({ data: { current_node } });
+        return JSON.stringify({ data: current_node });
     }
 
     @SubscribeMessage('CardPlayed')
