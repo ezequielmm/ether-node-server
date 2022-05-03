@@ -1,8 +1,6 @@
-export type ActivityParametersType = {
-    [key: string]: any;
-};
+import { StateDeltaType } from './types';
 
-export type StateDeltaType = {
+export type ActivityParametersType = {
     [key: string]: any;
 };
 
@@ -12,6 +10,6 @@ export class Activity {
         public elementId: string | number,
         public activityKey: string,
         public activityParameters: ActivityParametersType,
-        public stateDelta: StateDeltaType,
+        public stateDelta: StateDeltaType[],
     ) {}
 }

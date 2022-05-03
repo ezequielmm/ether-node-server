@@ -1,5 +1,5 @@
 import { Activity } from '../elements/prototypes/Activity';
-import { ActivityStep } from './ActivityStep';
+import { ActivityStep } from './activityStep';
 
 describe('ActivityStep', () => {
     describe('addActivity', () => {
@@ -10,7 +10,13 @@ describe('ActivityStep', () => {
                 1,
                 'damageReceived',
                 { value: 5 },
-                { 'enemy.1.hp_current': 42 },
+                [
+                    {
+                        mod: 'add',
+                        key: 'enemy.1.hp_current',
+                        val: 5,
+                    },
+                ],
             );
 
             activityStep.addActivity(activity);
@@ -27,21 +33,39 @@ describe('ActivityStep', () => {
                 1,
                 'damageReceived',
                 { value: 5 },
-                { 'enemy.1.hp_current': 42 },
+                [
+                    {
+                        mod: 'add',
+                        key: 'enemy.1.hp_current',
+                        val: 5,
+                    },
+                ],
             );
             const activity2 = new Activity(
                 'ElementTypeB',
                 2,
                 'damageReceived',
                 { value: 5 },
-                { 'enemy.1.hp_current': 42 },
+                [
+                    {
+                        mod: 'add',
+                        key: 'enemy.1.hp_current',
+                        val: 5,
+                    },
+                ],
             );
             const activity3 = new Activity(
                 'ElementTypeA',
                 3,
                 'damageReceived',
                 { value: 5 },
-                { 'enemy.1.hp_current': 42 },
+                [
+                    {
+                        mod: 'add',
+                        key: 'enemy.1.hp_current',
+                        val: 5,
+                    },
+                ],
             );
 
             activityStep.addActivity(activity);
@@ -63,21 +87,39 @@ describe('ActivityStep', () => {
                 1,
                 'damageReceived',
                 { value: 5 },
-                { 'enemy.1.hp_current': 42 },
+                [
+                    {
+                        mod: 'add',
+                        key: 'enemy.1.hp_current',
+                        val: 5,
+                    },
+                ],
             );
             const activity2 = new Activity(
                 'ElementTypeB',
                 5,
                 'damageReceived',
                 { value: 5 },
-                { 'enemy.1.hp_current': 42 },
+                [
+                    {
+                        mod: 'add',
+                        key: 'enemy.1.hp_current',
+                        val: 5,
+                    },
+                ],
             );
             const activity3 = new Activity(
                 'ElementTypeA',
                 2,
                 'damageReceived',
                 { value: 5 },
-                { 'enemy.1.hp_current': 42 },
+                [
+                    {
+                        mod: 'add',
+                        key: 'enemy.1.hp_current',
+                        val: 5,
+                    },
+                ],
             );
 
             activityStep.addActivity(activity);
@@ -99,28 +141,52 @@ describe('ActivityStep', () => {
                 1,
                 'damageReceived',
                 { value: 5 },
-                { 'enemy.1.hp_current': 42 },
+                [
+                    {
+                        mod: 'add',
+                        key: 'enemy.1.hp_current',
+                        val: 5,
+                    },
+                ],
             );
             const activity2 = new Activity(
                 'ElementTypeB',
                 5,
                 'damageReceived',
                 { value: 5 },
-                { 'enemy.1.hp_current': 42 },
+                [
+                    {
+                        mod: 'add',
+                        key: 'enemy.1.hp_current',
+                        val: 5,
+                    },
+                ],
             );
             const activity3 = new Activity(
                 'ElementTypeA',
                 2,
                 'damageReceived',
                 { value: 5 },
-                { 'enemy.1.hp_current': 42 },
+                [
+                    {
+                        mod: 'add',
+                        key: 'enemy.1.hp_current',
+                        val: 5,
+                    },
+                ],
             );
             const activity4 = new Activity(
                 'ElementTypeA',
                 1,
                 'damageReceived',
                 { value: 5 },
-                { 'enemy.1.hp_current': 42 },
+                [
+                    {
+                        mod: 'add',
+                        key: 'enemy.1.hp_current',
+                        val: 5,
+                    },
+                ],
             );
 
             activityStep.addActivity(activity);

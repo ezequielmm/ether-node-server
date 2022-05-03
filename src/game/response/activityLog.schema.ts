@@ -1,6 +1,7 @@
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Activity } from '../elements/prototypes/Activity';
 import { ActivityBlock } from './ActivityBlock';
-import { ActivityStep } from './ActivityStep';
+import { ActivityStep } from './activityStep';
 
 export type BlockOptions = {
     placement?: string;
@@ -23,8 +24,12 @@ export type SerializeType = {
     activityLog: Activity[][];
 };
 
+export type ActivityLogDocument = ActivityLog & Document;
+
+@Schema()
 export class ActivityLog {
-    blocks: ActivityBlock[];
+    @Prop()
+    public blocks: ActivityBlock[];
 
     constructor() {
         this.blocks = [];
@@ -143,3 +148,5 @@ export class ActivityLog {
         this.blocks = [];
     }
 }
+
+export const ActivityLogSchema = SchemaFactory.createForClass(ActivityLog);

@@ -1,8 +1,8 @@
 import { Activity } from '../elements/prototypes/Activity';
-import { ActivityStep } from './ActivityStep';
+import { ActivityStep } from './activityStep';
 
 export class ActivityBlock {
-    public name: string;
+    public readonly name: string;
     public steps: ActivityStep[];
 
     constructor(name: string) {

@@ -1,30 +1,30 @@
-import { ActivityLog } from './ActivityLog';
+import { ActivityLog } from './activityLog.schema';
 import { ActivityBlock } from './ActivityBlock';
-import { ActivityStep } from './ActivityStep';
+import { ActivityStep } from './activityStep';
 import { Activity } from '../elements/prototypes/Activity';
 
 const activities: Activity[] = [
-    new Activity(
-        'ElementType',
-        1,
-        'damageReceived',
-        { value: 5 },
-        { 'enemy.1.hp_current': 42 },
-    ),
-    new Activity(
-        'ElementType',
-        1,
-        'damageReceived',
-        { value: 7 },
-        { 'enemy.1.hp_current': 34 },
-    ),
-    new Activity(
-        'ElementType',
-        1,
-        'damageReceived',
-        { value: 3 },
-        { 'enemy.1.hp_current': 2 },
-    ),
+    new Activity('ElementType', 1, 'damageReceived', { value: 5 }, [
+        {
+            mod: 'add',
+            key: 'enemy.1.hp_current',
+            val: 5,
+        },
+    ]),
+    new Activity('ElementType', 1, 'damageReceived', { value: 7 }, [
+        {
+            mod: 'add',
+            key: 'enemy.1.hp_current',
+            val: 5,
+        },
+    ]),
+    new Activity('ElementType', 1, 'damageReceived', { value: 3 }, [
+        {
+            mod: 'add',
+            key: 'enemy.1.hp_current',
+            val: 5,
+        },
+    ]),
 ];
 
 describe('ActivityLog', () => {
