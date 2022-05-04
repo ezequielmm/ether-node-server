@@ -237,7 +237,7 @@ export class ExpeditionService {
             {
                 'current_node.data.player.cards.hand': [],
                 'current_node.data.player.cards.discard': [
-                    ...discardPile,
+                    ...(discardPile !== undefined ? discardPile : []),
                     ...handPile,
                 ],
             },
