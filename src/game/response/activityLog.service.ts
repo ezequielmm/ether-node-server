@@ -1,38 +1,46 @@
-import { ActivityLog, ActivityLogDocument } from './activityLog.schema';
+import { ActivityLog } from './activityLog';
 import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
 
 @Injectable()
 export class ActivityLogService {
-    constructor(
-        @InjectModel(ActivityLog.name)
-        private readonly activityLog: Model<ActivityLogDocument>,
-    ) {}
+    private activityLogCollection: {
+        [key: string]: ActivityLog;
+    };
 
-    async findAll(): Promise<ActivityLog[]> {
-        return this.activityLog.find().lean();
+    constructor() {
+        this.activityLogCollection = {};
     }
 
-    async findOne(id: string): Promise<ActivityLog> {
-        return this.activityLog.findById(id).lean();
+    /**
+     * Returns the activity log for the given client,
+     * or creates a new one if it doesn't exist.
+     *
+     * @param clientId WebSocket client id
+     * @param clear If activity log exists, clean it
+     * @returns ActivityLog instance
+     */
+    public findOneOrCreateActivityLog(
+        clientId: string,
+        clear = false,
+    ): ActivityLog {
+        let activityLog = this.activityLogCollection[clientId];
+
+        if (!activityLog) {
+            activityLog = new ActivityLog();
+            this.activityLogCollection[clientId] = activityLog;
+        } else if (clear) {
+            activityLog.clear();
+        }
+
+        return activityLog;
     }
 
-    async create(activityLog: ActivityLogDocument): Promise<ActivityLog> {
-        return this.activityLog.create(activityLog);
-    }
-
-    async update(id: string, activityLog: ActivityLog): Promise<ActivityLog> {
-        return this.activityLog
-            .findByIdAndUpdate(id, activityLog, { new: true })
-            .lean();
-    }
-
-    async delete(id: string): Promise<ActivityLog> {
-        return this.activityLog.findByIdAndDelete(id).lean();
-    }
-
-    async deleteMany(ids: string[]): Promise<ActivityLog[]> {
-        return this.activityLog.deleteMany({ _id: { $in: ids } }).lean();
+    /**
+     * Clear all the activity logs, useful for testing.
+     *
+     * @returns void
+     */
+    public clearAll(): void {
+        this.activityLogCollection = {};
     }
 }

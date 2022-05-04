@@ -1,4 +1,4 @@
-import { ActivityLog } from './activityLog.schema';
+import { ActivityLog } from './activityLog';
 import { ActivityBlock } from './activityBlock';
 import { ActivityStep } from './activityStep';
 import { Activity } from '../elements/prototypes/activity';
