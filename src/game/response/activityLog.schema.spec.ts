@@ -1,7 +1,7 @@
 import { ActivityLog } from './activityLog.schema';
-import { ActivityBlock } from './ActivityBlock';
+import { ActivityBlock } from './activityBlock';
 import { ActivityStep } from './activityStep';
-import { Activity } from '../elements/prototypes/Activity';
+import { Activity } from '../elements/prototypes/activity';
 
 const activities: Activity[] = [
     new Activity('ElementType', 1, 'damageReceived', { value: 5 }, [

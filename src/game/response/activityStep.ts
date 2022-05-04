@@ -1,4 +1,4 @@
-import { Activity } from '../elements/prototypes/Activity';
+import { Activity } from '../elements/prototypes/activity';
 
 export type ElementType = {
     elementId: number | string;

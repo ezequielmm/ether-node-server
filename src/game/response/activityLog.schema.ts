@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Activity } from '../elements/prototypes/Activity';
-import { ActivityBlock } from './ActivityBlock';
+import { Activity } from '../elements/prototypes/activity';
+import { ActivityBlock } from './activityBlock';
 import { ActivityStep } from './activityStep';
 
 export type BlockOptions = {
