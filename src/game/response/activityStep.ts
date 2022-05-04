@@ -1,8 +1,8 @@
 import { Activity } from '../elements/prototypes/activity';
 
 export type ElementType = {
-    elementId: number | string;
-    elementType: string;
+    element_id: number | string;
+    element_type: string;
 };
 
 export class ActivityStep {
@@ -22,22 +22,24 @@ export class ActivityStep {
     ): Activity[] {
         return this.activities.filter((activity) => {
             return (
-                activity.elementType === elementType &&
-                (elementId === null || activity.elementId === elementId)
+                activity.element_type === elementType &&
+                (elementId === null || activity.element_id === elementId)
             );
         });
     }
 
     getElements(): ElementType[] {
         // Get ids and remove duplicates using Set
-        const ids = new Set(this.activities.map(({ elementId }) => elementId));
+        const ids = new Set(
+            this.activities.map(({ element_id: elementId }) => elementId),
+        );
 
         return Array.from(ids).map((id) => {
             return {
-                elementId: id,
-                elementType: this.activities.find(
-                    (activity) => activity.elementId === id,
-                ).elementType,
+                element_id: id,
+                element_type: this.activities.find(
+                    (activity) => activity.element_id === id,
+                ).element_type,
             };
         });
     }

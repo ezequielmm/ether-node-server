@@ -4,10 +4,10 @@ import { ActivityStep } from './activityStep';
 
 export type BlockOptions = {
     placement?: string;
-    blockRef?: string;
+    block_ref?: string;
     merge?: {
         enabled?: boolean;
-        mergeSteps?: boolean;
+        merge_steps?: boolean;
     };
 };
 
@@ -15,12 +15,12 @@ const defaultBlockOptions: BlockOptions = {
     placement: 'append',
     merge: {
         enabled: false,
-        mergeSteps: false,
+        merge_steps: false,
     },
 };
 
 export type SerializeType = {
-    activityLog: Activity[][];
+    activity_log: Activity[][];
 };
 
 export class ActivityLog {
@@ -46,7 +46,7 @@ export class ActivityLog {
             if (
                 (options.placement === 'before' ||
                     options.placement === 'after') &&
-                !options.blockRef
+                !options.block_ref
             ) {
                 options.placement = 'append';
             }
@@ -55,7 +55,7 @@ export class ActivityLog {
                 case 'before':
                     this.blocks.splice(
                         this.blocks.indexOf(
-                            this.findBlockByName(options.blockRef),
+                            this.findBlockByName(options.block_ref),
                         ),
                         0,
                         block,
@@ -64,7 +64,7 @@ export class ActivityLog {
                 case 'after':
                     this.blocks.splice(
                         this.blocks.indexOf(
-                            this.findBlockByName(options.blockRef),
+                            this.findBlockByName(options.block_ref),
                         ) + 1,
                         0,
                         block,
@@ -83,7 +83,7 @@ export class ActivityLog {
                 throw `Block ${block.name} already exists, and merge is disabled.`;
             }
 
-            if (!options.merge?.mergeSteps) {
+            if (!options.merge?.merge_steps) {
                 block.steps.forEach((step) => {
                     oldBlock.addStep(step);
                 });
@@ -133,7 +133,7 @@ export class ActivityLog {
 
     serialize(): SerializeType {
         return {
-            activityLog: this.blocks.flatMap((block) =>
+            activity_log: this.blocks.flatMap((block) =>
                 block.steps.map((step) => step.activities),
             ),
         };

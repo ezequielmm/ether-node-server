@@ -92,7 +92,7 @@ describe('ActivityLog', () => {
             activityLog.addBlock(activityBlock3);
             activityLog.addBlock(activityBlock2, {
                 placement: 'before',
-                blockRef: 'test1',
+                block_ref: 'test1',
             });
             expect(activityLog.blocks.length).toBe(3);
             expect(activityLog.blocks[0]).toBe(activityBlock2);
@@ -109,7 +109,7 @@ describe('ActivityLog', () => {
             activityLog.addBlock(activityBlock3);
             activityLog.addBlock(activityBlock2, {
                 placement: 'after',
-                blockRef: 'test1',
+                block_ref: 'test1',
             });
             expect(activityLog.blocks.length).toBe(3);
             expect(activityLog.blocks[0]).toBe(activityBlock1);
@@ -157,7 +157,7 @@ describe('ActivityLog', () => {
             activityLog.addBlock(activityBlock2, {
                 merge: {
                     enabled: true,
-                    mergeSteps: true,
+                    merge_steps: true,
                 },
             });
 
@@ -250,7 +250,7 @@ describe('ActivityLog', () => {
             const serialized = activityLog.serialize();
 
             expect(serialized).toStrictEqual({
-                activityLog: [[activities[0], activities[1]], [activities[2]]],
+                activity_log: [[activities[0], activities[1]], [activities[2]]],
             });
         });
     });

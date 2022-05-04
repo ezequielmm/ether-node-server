@@ -196,16 +196,16 @@ describe('ActivityStep', () => {
 
             expect(activityStep.getElements()).toEqual([
                 {
-                    elementType: 'ElementTypeA',
-                    elementId: 1,
+                    element_type: 'ElementTypeA',
+                    element_id: 1,
                 },
                 {
-                    elementType: 'ElementTypeB',
-                    elementId: 5,
+                    element_type: 'ElementTypeB',
+                    element_id: 5,
                 },
                 {
-                    elementType: 'ElementTypeA',
-                    elementId: 2,
+                    element_type: 'ElementTypeA',
+                    element_id: 2,
                 },
             ]);
         });
