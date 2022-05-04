@@ -195,18 +195,12 @@ export class SocketGateway
 
         await this.expeditionService.moveAllCardsToDiscardPile(client.id);
 
-        const {
-            current_node: {
-                data: {
-                    player: { energy_max },
-                },
-            },
-        } = await this.expeditionService.moveCardsFromDrawToHandPile(client.id);
+        await this.expeditionService.moveCardsFromDrawToHandPile(client.id);
 
         const { current_node } =
             await this.expeditionService.updatePlayerEnergy({
                 client_id: client.id,
-                energy: energy_max,
+                energy: 3,
             });
 
         return JSON.stringify({ data: current_node });
