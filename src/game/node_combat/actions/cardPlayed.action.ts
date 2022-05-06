@@ -1,10 +1,14 @@
 import { ExpeditionService } from '../../expedition/expedition.service';
 import { CardService } from '../../components/card/card.service';
 import { Socket } from 'socket.io';
+import { Injectable } from '@nestjs/common';
 
+@Injectable()
 export class CardPlayedAction {
-    private readonly expeditionService: ExpeditionService;
-    private readonly cardService: CardService;
+    constructor(
+        private readonly expeditionService: ExpeditionService,
+        private readonly cardService: CardService,
+    ) {}
 
     async handle(client: Socket, card_id: string): Promise<string> {
         const cardExists = await this.expeditionService.cardExistsOnPlayerHand({

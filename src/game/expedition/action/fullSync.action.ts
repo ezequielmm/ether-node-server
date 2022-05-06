@@ -1,9 +1,11 @@
 import { Socket } from 'socket.io';
 import { ExpeditionService } from '../expedition.service';
 import { ExpeditionStatusEnum } from '../enums';
+import { Injectable } from '@nestjs/common';
 
+@Injectable()
 export class FullSyncAction {
-    private readonly expeditionService: ExpeditionService;
+    constructor(private readonly expeditionService: ExpeditionService) {}
 
     async handle(client: Socket): Promise<void> {
         const { map, player_state } = await this.expeditionService.findOne({

@@ -1,8 +1,10 @@
 import { ExpeditionService } from '../../expedition/expedition.service';
 import { Socket } from 'socket.io';
+import { Injectable } from '@nestjs/common';
 
+@Injectable()
 export class EndTurnAction {
-    private readonly expeditionService: ExpeditionService;
+    constructor(private readonly expeditionService: ExpeditionService) {}
 
     async handle(client: Socket): Promise<string> {
         await this.expeditionService.moveAllCardsToDiscardPile(client.id);

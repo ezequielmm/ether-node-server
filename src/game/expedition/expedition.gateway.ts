@@ -12,12 +12,15 @@ import { NodeSelectedAction } from './action/nodeSelected.action';
 export class ExpeditionGateway {
     private readonly logger: Logger = new Logger(ExpeditionGateway.name);
 
+    constructor(
+        private readonly fullSyncAction: FullSyncAction,
+        private readonly nodeSelectedAction: NodeSelectedAction,
+    ) {}
+
     @SubscribeMessage('SyncExpedition')
     async handleSyncExpedition(client: Socket): Promise<void> {
         this.logger.log(`Client ${client.id} trigger message "SyncExpedition"`);
-        await new FullSyncAction().handle(client);
-        this.logger.log(`Sending "ExpeditionMap" to client ${client.id}`);
-        this.logger.log(`Sending "PlayerState" to client ${client.id}`);
+        await this.fullSyncAction.handle(client);
     }
 
     @SubscribeMessage('NodeSelected')
@@ -26,6 +29,6 @@ export class ExpeditionGateway {
             `Client ${client.id} trigger message "NodeSelected": ${node_id}`,
         );
 
-        return await new NodeSelectedAction().handle(client, node_id);
+        return await this.nodeSelectedAction.handle(client, node_id);
     }
 }

@@ -2,10 +2,14 @@ import { ExpeditionService } from '../expedition.service';
 import { CardService } from '../../components/card/card.service';
 import { Socket } from 'socket.io';
 import { ExpeditionStatusEnum } from '../enums';
+import { Injectable } from '@nestjs/common';
 
+@Injectable()
 export class NodeSelectedAction {
-    private readonly expeditionService: ExpeditionService;
-    private readonly cardService: CardService;
+    constructor(
+        private readonly expeditionService: ExpeditionService,
+        private readonly cardService: CardService,
+    ) {}
 
     async handle(client: Socket, node_id: number): Promise<string> {
         const node = await this.expeditionService.getExpeditionMapNode(

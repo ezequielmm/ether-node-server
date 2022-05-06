@@ -9,7 +9,6 @@ import { Socket } from 'socket.io';
 import { isValidAuthToken } from '../utils';
 import { AuthGatewayService } from '../authGateway/authGateway.service.';
 import { ExpeditionService } from '../game/expedition/expedition.service';
-import { CardService } from '../game/components/card/card.service';
 import { FullSyncAction } from '../game/expedition/action/fullSync.action';
 
 @WebSocketGateway({
@@ -25,7 +24,7 @@ export class SocketGateway
     constructor(
         private readonly authGatewayService: AuthGatewayService,
         private readonly expeditionService: ExpeditionService,
-        private readonly cardService: CardService,
+        private readonly fullSyncAction: FullSyncAction,
     ) {}
 
     afterInit(): void {
@@ -53,7 +52,7 @@ export class SocketGateway
                 client_id: client.id,
             });
 
-            await new FullSyncAction().handle(client);
+            await this.fullSyncAction.handle(client);
 
             this.logger.log(`Client connected: ${client.id}`);
         } catch (e) {

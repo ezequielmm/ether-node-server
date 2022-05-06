@@ -13,11 +13,16 @@ import { CardPlayedAction } from './actions/cardPlayed.action';
 export class CombatGateway {
     private readonly logger: Logger = new Logger(CombatGateway.name);
 
+    constructor(
+        private readonly endTurnAction: EndTurnAction,
+        private readonly cardPlayedAction: CardPlayedAction,
+    ) {}
+
     @SubscribeMessage('EndTurn')
     async handleEndTurn(client: Socket): Promise<string> {
         this.logger.log(`Client ${client.id} trigger message "EndTurn"`);
 
-        return await new EndTurnAction().handle(client);
+        return await this.endTurnAction.handle(client);
     }
 
     @SubscribeMessage('CardPlayed')
@@ -28,6 +33,6 @@ export class CombatGateway {
 
         const { card_id }: CardPlayedInterface = JSON.parse(payload);
 
-        return await new CardPlayedAction().handle(client, card_id);
+        return await this.cardPlayedAction.handle(client, card_id);
     }
 }
