@@ -13,7 +13,9 @@ export class ExpeditionGateway {
 
     @SubscribeMessage('SyncExpedition')
     async handleSyncExpedition(client: Socket): Promise<void> {
+        this.logger.log(`Client ${client.id} trigger message "SyncExpedition"`);
         await new FullSyncAction().handle(client);
-        this.logger.log(`Sending "SyncExpedition" to client ${client.id}`);
+        this.logger.log(`Sending "ExpeditionMap" to client ${client.id}`);
+        this.logger.log(`Sending "PlayerState" to client ${client.id}`);
     }
 }

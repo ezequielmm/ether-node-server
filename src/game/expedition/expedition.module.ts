@@ -4,7 +4,6 @@ import { Expedition, ExpeditionSchema } from './expedition.schema';
 import { ExpeditionService } from './expedition.service';
 import { ExpeditionGateway } from './expedition.gateway';
 import { CardModule } from '../components/card/card.module';
-import { FullSyncAction } from './action/fullSync.action';
 
 @Module({
     imports: [
@@ -16,7 +15,7 @@ import { FullSyncAction } from './action/fullSync.action';
         ]),
         CardModule,
     ],
-    providers: [ExpeditionService, ExpeditionGateway, FullSyncAction],
+    providers: [ExpeditionService, ExpeditionGateway],
     exports: [ExpeditionService],
 })
 export class ExpeditionModule {}
