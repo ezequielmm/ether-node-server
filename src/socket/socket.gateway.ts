@@ -13,6 +13,7 @@ import { ExpeditionService } from '../game/expedition/expedition.service';
 import { ExpeditionStatusEnum } from '../game/expedition/enums';
 import { CardService } from '../game/components/card/card.service';
 import { CardPlayedInterface } from './interfaces';
+import { FullSyncAction } from '../game/expedition/action/fullSync.action';
 
 @WebSocketGateway({
     cors: {
@@ -50,17 +51,13 @@ export class SocketGateway
                 },
             } = await this.authGatewayService.getUser(authorization);
 
-            const { map, player_state } =
-                await this.expeditionService.updateClientId({
-                    player_id,
-                    client_id: client.id,
-                });
+            await this.expeditionService.updateClientId({
+                player_id,
+                client_id: client.id,
+            });
 
-            client.emit('ExpeditionMap', JSON.stringify({ data: map }));
-            client.emit(
-                'PlayerState',
-                JSON.stringify({ data: { player_state } }),
-            );
+            await new FullSyncAction().handle(client);
+
             this.logger.log(`Client connected: ${client.id}`);
         } catch (e) {
             this.logger.log(e.message);
@@ -71,22 +68,6 @@ export class SocketGateway
 
     handleDisconnect(client: Socket): void {
         this.logger.log(`Client disconnected: ${client.id}`);
-    }
-
-    @SubscribeMessage('SyncExpedition')
-    async handleSyncExpedition(client: Socket): Promise<void> {
-        const { map, player_state } = await this.expeditionService.findOne({
-            client_id: client.id,
-            status: ExpeditionStatusEnum.InProgress,
-        });
-
-        client.emit('ExpeditionMap', JSON.stringify({ data: map }));
-        client.emit('PlayerState', JSON.stringify({ data: { player_state } }));
-
-        this.logger.log(
-            `Sending message "ExpeditionMap" to client ${client.id}`,
-        );
-        this.logger.log(`Sending message "PlayerState" to client ${client.id}`);
     }
 
     @SubscribeMessage('NodeSelected')
