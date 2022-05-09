@@ -245,16 +245,51 @@ export class ExpeditionService {
         );
     }
 
-    async moveCardsFromDrawToHandPile(
+    async moveDiscardPileToDrawPile(
         client_id: string,
     ): Promise<ExpeditionDocument> {
+        const currentNode = await this.getCurrentNodeByClientId(client_id);
+
         const {
             data: {
                 player: {
-                    cards: { draw: drawPile },
+                    cards: {
+                        discard: discardPile,
+                        hand: handPile,
+                        draw: originalDrawPile,
+                    },
                 },
             },
-        } = await this.getCurrentNodeByClientId(client_id);
+        } = currentNode;
+
+        return this.expedition.findOneAndUpdate(
+            { client_id, status: ExpeditionStatusEnum.InProgress },
+            {
+                'current_node.data.player.cards.discard': [],
+                'current_node.data.player.cards.draw': [
+                    ...handPile,
+                    ...discardPile,
+                    ...originalDrawPile,
+                ],
+            },
+            { new: true },
+        );
+    }
+
+    async moveCardsFromDrawToHandPile(
+        client_id: string,
+    ): Promise<ExpeditionDocument> {
+        const currentNode = await this.getCurrentNodeByClientId(client_id);
+
+        let drawPile = currentNode.data.player.cards.draw;
+
+        if (drawPile.length < 5) {
+            const newCurrentNode = await this.moveDiscardPileToDrawPile(
+                client_id,
+            );
+
+            drawPile = newCurrentNode.current_node.data.player.cards.draw;
+        }
 
         const handPile = drawPile.sort(() => 0.5 - Math.random()).slice(0, 5);
 
