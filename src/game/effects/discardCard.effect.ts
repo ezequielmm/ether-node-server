@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ExpeditionService } from '../expedition/expedition.service';
-import { IBaseEffect } from './baseEffect';
+import { IBaseEffect } from './interfaces/baseEffect';
 import { DiscardCardDTO } from './dto';
 
 @Injectable()
