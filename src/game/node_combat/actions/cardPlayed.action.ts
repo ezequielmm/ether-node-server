@@ -42,7 +42,7 @@ export class CardPlayedAction {
                 data: { message: 'Not enough energy left' },
             });
 
-        await this.discardCardEffect.handle(client.id, card_id);
+        await this.discardCardEffect.handle({ client_id: client.id, card_id });
 
         const newEnergyAmount = playerEnergy - cardEnergy;
 

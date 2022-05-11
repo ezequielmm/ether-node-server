@@ -13,9 +13,9 @@ export class EndTurnAction {
     ) {}
 
     async handle(client: Socket): Promise<string> {
-        await this.discardAllCards.handle(client.id);
+        await this.discardAllCards.handle({ client_id: client.id });
 
-        await this.drawCardEffect.handle(client.id);
+        await this.drawCardEffect.handle({ client_id: client.id });
 
         const { current_node } =
             await this.expeditionService.updatePlayerEnergy({
