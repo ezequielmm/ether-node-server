@@ -1,6 +1,6 @@
 import { SerializeType } from './../../response/activityLog';
 
-export interface Response {
+export interface ActionResponse {
     name: string;
     activities: SerializeType;
     stateDelta: any;

@@ -29,8 +29,7 @@ export class EventManagerService {
 
         counter.increase();
         const eventUtils: EventUtils = {
-            activityLog:
-                this.activityLogService.findOneOrCreateActivityLog(key),
+            activityLog: this.activityLogService.findOneByClientId(key),
             emitInContext: (e, ...a) => this.emit(key, e, ...a),
         };
 
