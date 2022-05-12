@@ -19,10 +19,57 @@ class MapGenerator {
         this.newActMap = new Map();
         this.map = new Map();
         this.nextStep = new Map();
+        this.createAct0();
     }
 
     get currentMap() {
         return [...this.map.values()];
+    }
+
+    private createAct0(): void {
+        const act0 = new Map();
+        act0.set(1, {
+            act: 0,
+            step: 0,
+            id: 1,
+            type: 'royalhouse_a',
+            exits: [5],
+            enter: null,
+        });
+        act0.set(2, {
+            act: 0,
+            step: 0,
+            id: 2,
+            type: 'royalhouse_b',
+            exits: [5],
+            enter: null,
+        });
+        act0.set(3, {
+            act: 0,
+            step: 0,
+            id: 3,
+            type: 'royalhouse_c',
+            exits: [5],
+            enter: null,
+        });
+        act0.set(4, {
+            act: 0,
+            step: 0,
+            id: 4,
+            type: 'royalhouse_d',
+            exits: [5],
+            enter: null,
+        });
+        act0.set(5, {
+            act: 0,
+            step: 1,
+            id: 5,
+            type: 'portal',
+            exits: [],
+            enter: [1, 2, 3, 4, 5],
+        });
+        this.previousNodeId = 6;
+        this.map = new Map(...[act0]);
     }
 
     public addAct(actNumber: number, actConfigAlternatives: any): void {
