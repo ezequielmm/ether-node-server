@@ -2,12 +2,14 @@ import { ExpeditionService } from '../../expedition/expedition.service';
 import { CardService } from '../../components/card/card.service';
 import { Socket } from 'socket.io';
 import { Injectable } from '@nestjs/common';
+import { DiscardCardEffect } from 'src/game/effects/discardCard.effect';
 
 @Injectable()
 export class CardPlayedAction {
     constructor(
         private readonly expeditionService: ExpeditionService,
         private readonly cardService: CardService,
+        private readonly discardCardEffect: DiscardCardEffect,
     ) {}
 
     async handle(client: Socket, card_id: string): Promise<string> {
@@ -40,10 +42,7 @@ export class CardPlayedAction {
                 data: { message: 'Not enough energy left' },
             });
 
-        await this.expeditionService.moveCardFromPlayerHandToDiscardPile({
-            client_id: client.id,
-            card_id,
-        });
+        await this.discardCardEffect.handle({ client_id: client.id, card_id });
 
         const newEnergyAmount = playerEnergy - cardEnergy;
 
