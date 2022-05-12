@@ -215,12 +215,13 @@ export class ExpeditionService {
 
     async moveCardsFromDrawToHandPile(
         client_id: string,
+        cards_to_take = 5,
     ): Promise<ExpeditionDocument> {
         const currentNode = await this.getCurrentNodeByClientId(client_id);
 
         let drawPile = currentNode.data.player.cards.draw;
 
-        if (drawPile.length < 5) {
+        if (drawPile.length < cards_to_take) {
             const newCurrentNode = await this.moveDiscardPileToDrawPile(
                 client_id,
             );
@@ -228,7 +229,9 @@ export class ExpeditionService {
             drawPile = newCurrentNode.current_node.data.player.cards.draw;
         }
 
-        const handPile = drawPile.sort(() => 0.5 - Math.random()).slice(0, 5);
+        const handPile = drawPile
+            .sort(() => 0.5 - Math.random())
+            .slice(0, cards_to_take);
 
         const drawCards = this.cardService.removeHandCardsFromDrawPile(
             drawPile,
