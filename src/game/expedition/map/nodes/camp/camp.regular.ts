@@ -1,4 +1,4 @@
-import Camp from "./camp";
+import Camp from './camp';
 
 class CampRegular extends Camp {}
 
