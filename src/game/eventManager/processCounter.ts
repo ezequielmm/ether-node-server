@@ -11,7 +11,7 @@ export class ProccessCounter {
     }
 
     public decrease(): number {
-        this.count;
+        this.count--;
         if (this.callBack) {
             this.callBack(this.count);
         }

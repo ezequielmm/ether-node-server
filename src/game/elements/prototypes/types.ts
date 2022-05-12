@@ -1,26 +1,29 @@
 type BaseStateDeltaType = {
     mod: 'add' | 'ins' | 'rem' | 'mov' | string;
-    key: string;
     val: any;
 };
 
 export type AddStateDeltaType = BaseStateDeltaType & {
     mod: 'add';
+    key: string;
     val: number;
 };
 
 export type SubStateDeltaType = BaseStateDeltaType & {
     mod: 'sub';
+    key: string;
     val: number;
 };
 
 export type InsertStateDeltaType = BaseStateDeltaType & {
     mod: 'ins';
+    key: string;
     pos: 'append' | 'prepend';
 };
 
 export type RemoveStateDeltaType = BaseStateDeltaType & {
     mod: 'rem';
+    key: string;
     prop: string;
 };
 

@@ -10,7 +10,7 @@ export class Action {
     ) {}
 
     public async log(entity: any, activity: Activity): Promise<void> {
-        this.gameManagerService.logActivity(this.clientId, entity, activity);
+        this.gameManagerService.logActivity(this.clientId, activity);
     }
 
     public async end(): Promise<ActionResponse> {

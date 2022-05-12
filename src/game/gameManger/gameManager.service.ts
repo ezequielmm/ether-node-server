@@ -1,3 +1,4 @@
+import { StateManagerService } from './../stateManager/stateManager.service';
 import { EventManagerService } from './../eventManager/eventManager.service';
 import { ActionResponse } from './interfaces/index';
 import { ActivityLogService } from './../response/activityLog.service';
@@ -10,12 +11,14 @@ export class GameManagerService {
     constructor(
         private readonly activityLogService: ActivityLogService,
         private readonly eventManagerService: EventManagerService,
+        private readonly stateManagerService: StateManagerService,
     ) {}
 
-    public startAction(clientId: string, name: string): Action {
+    public async startAction(clientId: string, name: string): Promise<Action> {
         const activityLog = this.activityLogService.findOneByClientId(clientId);
         activityLog.clear();
-        // TODO: Take snapshot of current state
+
+        await this.stateManagerService.snapshot(clientId);
 
         return new Action(clientId, name, this);
     }
@@ -28,8 +31,8 @@ export class GameManagerService {
         if (this.eventManagerService.isProcessing(clientId)) {
             await this.eventManagerService.wait(clientId);
         }
-        // TODO: Get diff between snapshot and current state
-        const stateDelta = {};
+
+        const stateDelta = this.stateManagerService.getDiff(clientId);
         const activities = activityLog.serialize();
 
         return {
@@ -39,15 +42,12 @@ export class GameManagerService {
         };
     }
 
-    public logActivity(
-        clientId: string,
-        entity: any,
-        activity: Activity,
-    ): void {
+    public logActivity(clientId: string, activity: Activity): void {
         const activityLog = this.activityLogService.findOneByClientId(clientId);
-        // Random string id
         const id = Math.random().toString(36).substring(2, 15);
         activityLog.addActivity(id, activity);
-        // TODO: Apply activity to entity
+        for (const stateDelta of activity.state_delta) {
+            this.stateManagerService.modify(clientId, stateDelta);
+        }
     }
 }
