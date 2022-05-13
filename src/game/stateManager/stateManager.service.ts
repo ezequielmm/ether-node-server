@@ -1,7 +1,7 @@
 import { StateDeltaType } from './../elements/prototypes/types';
 import { Injectable } from '@nestjs/common';
 import { Diff, diff } from 'deep-diff';
-import { cloneDeep, get, set } from 'lodash';
+import { cloneDeep, get, set, isEqual } from 'lodash';
 import { ExpeditionService } from '../expedition/expedition.service';
 interface CurrentStateType {
     [clientId: string]: any;
@@ -107,28 +107,21 @@ export class StateManagerService {
                 set(state.current, stateDelta.key, modification.current);
                 break;
             case 'rem':
-                if (stateDelta.prop) {
-                    modification.current = get(
-                        modification.current,
-                        stateDelta.key,
-                    ).filter(
-                        (item: any) => item[stateDelta.prop] !== stateDelta.val,
-                    );
-                } else {
-                    modification.current = get(
-                        modification.current,
-                        stateDelta.key,
-                    ).filter((item: any) => item !== stateDelta.val);
-                }
+                modification.current = modification.current.filter(
+                    (item: any) =>
+                        stateDelta.prop
+                            ? item[stateDelta.prop] != stateDelta.val
+                            : !isEqual(item, stateDelta.val),
+                );
                 set(state.current, stateDelta.key, modification.current);
                 break;
 
             case 'mov':
-                const source = get(modification.current, stateDelta.source);
-                const itemsToMove = source.filter(
-                    (item: any) =>
-                        (stateDelta.prop ? item[stateDelta.prop] : item) ==
-                        stateDelta.val,
+                const source = modification.current.source;
+                const itemsToMove = source.filter((item: any) =>
+                    stateDelta.prop
+                        ? item[stateDelta.prop] == stateDelta.val
+                        : isEqual(item, stateDelta.val),
                 );
                 modification.current.source = source.filter(
                     (item: any) => itemsToMove.indexOf(item) === -1,

@@ -24,13 +24,13 @@ export type InsertStateDeltaType = BaseStateDeltaType & {
 export type RemoveStateDeltaType = BaseStateDeltaType & {
     mod: 'rem';
     key: string;
-    prop: string;
+    prop?: string;
 };
 
 export type MoveStateDeltaType = BaseStateDeltaType & {
     mod: 'mov';
     pos: 'append' | 'prepend';
-    prop: string;
+    prop?: string;
     source: string;
     target: string;
 };

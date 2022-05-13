@@ -1,9 +1,7 @@
-import { ExpeditionModule } from './../expedition/expedition.module';
 import { Test } from '@nestjs/testing';
 import { ExpeditionStatusEnum } from '../expedition/enums';
 import { StateManagerService } from './stateManager.service';
 import { ExpeditionService } from '../expedition/expedition.service';
-import exp from 'constants';
 
 describe('StateManagerService', () => {
     let service: StateManagerService;
@@ -19,7 +17,10 @@ describe('StateManagerService', () => {
         player_state: {
             hp_current: 100,
         },
-        current_node: {},
+        current_node: {
+            a: [0, 1, 2],
+            b: [0, 1, 2],
+        },
         status: ExpeditionStatusEnum.InProgress,
     };
     const mockExpeditionService: any = {
@@ -162,7 +163,6 @@ describe('StateManagerService', () => {
                 value: 'test',
             },
         });
-        const diff = service.getDiff('test');
 
         expect(service.stateCollection).toEqual({
             test: {
@@ -176,13 +176,163 @@ describe('StateManagerService', () => {
                 previous: mockExpedition,
             },
         });
-        expect(diff).toEqual([
-            {
-                kind: 'A',
-                path: ['map'],
-                index: 1,
-                item: { kind: 'N', rhs: { key: 'test', value: 'test' } },
+    });
+
+    it('should modify state (Ins:prepend)', async () => {
+        await service.snapshot('test');
+
+        expect(service.stateCollection).toEqual({
+            test: {
+                current: mockExpedition,
+                previous: mockExpedition,
             },
-        ]);
+        });
+
+        await service.modify('test', {
+            key: 'map',
+            mod: 'ins',
+            pos: 'prepend',
+            val: {
+                key: 'test',
+                value: 'test',
+            },
+        });
+
+        expect(service.stateCollection).toEqual({
+            test: {
+                current: {
+                    ...mockExpedition,
+                    map: [
+                        { key: 'test', value: 'test' },
+                        ...mockExpedition.map,
+                    ],
+                },
+                previous: mockExpedition,
+            },
+        });
+    });
+
+    it('should modify state (Rem:by prop)', async () => {
+        await service.snapshot('test');
+
+        expect(service.stateCollection).toEqual({
+            test: {
+                current: mockExpedition,
+                previous: mockExpedition,
+            },
+        });
+
+        await service.modify('test', {
+            key: 'map',
+            mod: 'rem',
+            prop: 'id',
+            val: 'test',
+        });
+
+        expect(service.stateCollection).toEqual({
+            test: {
+                current: {
+                    ...mockExpedition,
+                    map: [],
+                },
+                previous: mockExpedition,
+            },
+        });
+    });
+
+    it('should modify state (Rem:by val)', async () => {
+        await service.snapshot('test');
+
+        expect(service.stateCollection).toEqual({
+            test: {
+                current: mockExpedition,
+                previous: mockExpedition,
+            },
+        });
+
+        await service.modify('test', {
+            key: 'map',
+            mod: 'rem',
+            val: {
+                id: 'test',
+                name: 'test',
+            },
+        });
+
+        expect(service.stateCollection).toEqual({
+            test: {
+                current: {
+                    ...mockExpedition,
+                    map: [],
+                },
+                previous: mockExpedition,
+            },
+        });
+    });
+
+    it('should modify state (Mov:append)', async () => {
+        await service.snapshot('test');
+
+        expect(service.stateCollection).toEqual({
+            test: {
+                current: mockExpedition,
+                previous: mockExpedition,
+            },
+        });
+
+        await service.modify('test', {
+            source: 'current_node.a',
+            target: 'current_node.b',
+            mod: 'mov',
+            val: 2,
+            pos: 'append',
+        });
+
+        expect(service.stateCollection).toEqual({
+            test: {
+                current: {
+                    ...mockExpedition,
+                    current_node: {
+                        ...mockExpedition.current_node,
+                        a: [0, 1],
+                        b: [0, 1, 2, 2],
+                    },
+                },
+                previous: mockExpedition,
+            },
+        });
+    });
+
+    it('should modify state (Mov:prepend)', async () => {
+        await service.snapshot('test');
+
+        expect(service.stateCollection).toEqual({
+            test: {
+                current: mockExpedition,
+                previous: mockExpedition,
+            },
+        });
+
+        await service.modify('test', {
+            source: 'current_node.a',
+            target: 'current_node.b',
+            mod: 'mov',
+            val: 2,
+            pos: 'prepend',
+        });
+
+        expect(service.stateCollection).toEqual({
+            test: {
+                current: {
+                    ...mockExpedition,
+                    current_node: {
+                        ...mockExpedition.current_node,
+                        a: [0, 1],
+                        b: [2, 0, 1, 2],
+                    },
+                },
+                previous: mockExpedition,
+            },
+        });
     });
 });
