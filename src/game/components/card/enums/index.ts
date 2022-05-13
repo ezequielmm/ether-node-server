@@ -23,6 +23,14 @@ export enum CardClassEnum {
 export enum CardTargetedEnum {
     Enemy = 'enemy',
     Player = 'player',
-    Ally = 'ally',
+    None = 'none',
+}
+
+export enum CardKeywordEnum {
+    Exhaust = 'exhaust',
+    Innate = 'innate',
+    Fade = 'fade',
+    Retain = 'retain',
+    Unplayable = 'unplayable',
     None = 'none',
 }

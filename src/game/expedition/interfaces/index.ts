@@ -2,7 +2,7 @@ import {
     ExpeditionCurrentNodeDataPlayerStatusEnum,
     ExpeditionMapNodeTypeEnum,
 } from '../enums';
-import { CardRarityEnum, CardTypeEnum } from '../../components/card/enums';
+import { Card } from 'src/game/components/card/card.schema';
 
 export interface IExpeditionMap {
     readonly act: number;
@@ -29,15 +29,8 @@ export interface IExpeditionPlayerState {
     readonly stopped_at?: Date;
 }
 
-export interface IExpeditionPlayerStateDeckCard {
+export interface IExpeditionPlayerStateDeckCard extends Card {
     readonly id: string;
-    readonly name: string;
-    readonly description: string;
-    readonly rarity: CardRarityEnum;
-    readonly energy: number;
-    readonly type: CardTypeEnum;
-    readonly coin_min: number;
-    readonly coin_max: number;
 }
 
 export interface IExpeditionCurrentNode {

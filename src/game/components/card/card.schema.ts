@@ -1,5 +1,10 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { CardRarityEnum, CardTargetedEnum, CardTypeEnum } from './enums';
+import {
+    CardKeywordEnum,
+    CardRarityEnum,
+    CardTargetedEnum,
+    CardTypeEnum,
+} from './enums';
 import { Document } from 'mongoose';
 import { Factory } from 'nestjs-seeder';
 import { Faker } from '@faker-js/faker';
@@ -23,7 +28,7 @@ export class Card {
         return getRandomEnumValue(CardTypeEnum);
     })
     @Prop()
-    readonly type: CardTypeEnum;
+    readonly card_type: CardTypeEnum;
 
     @Factory('knight')
     @Prop()
@@ -45,11 +50,25 @@ export class Card {
     @Prop()
     readonly targeted: CardTargetedEnum;
 
+    @Factory(() => {
+        return {
+            damage: {
+                base: getRandomBetween(8, 20),
+            },
+        };
+    })
+    @Prop({ type: Object })
     readonly properties: {
         readonly damage: {
             readonly base: number;
         };
     };
+
+    @Factory(() => {
+        return getRandomEnumValue(CardKeywordEnum);
+    })
+    @Prop()
+    readonly keywords: CardKeywordEnum;
 }
 
 export const CardSchema = SchemaFactory.createForClass(Card);
