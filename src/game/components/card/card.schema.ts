@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { CardClassEnum, CardRarityEnum, CardTypeEnum } from './enums';
+import { CardRarityEnum, CardTargetedEnum, CardTypeEnum } from './enums';
 import { Document } from 'mongoose';
 import { Factory } from 'nestjs-seeder';
 import { Faker } from '@faker-js/faker';
@@ -13,14 +13,6 @@ export class Card {
     @Prop()
     readonly name: string;
 
-    @Factory((faker: Faker) => faker.lorem.words(10))
-    @Prop()
-    readonly description: string;
-
-    @Factory('knight_attack')
-    @Prop()
-    readonly code: string;
-
     @Factory(() => {
         return getRandomEnumValue(CardRarityEnum);
     })
@@ -28,36 +20,36 @@ export class Card {
     readonly rarity: CardRarityEnum;
 
     @Factory(() => {
+        return getRandomEnumValue(CardTypeEnum);
+    })
+    @Prop()
+    readonly type: CardTypeEnum;
+
+    @Factory('knight')
+    @Prop()
+    readonly pool: string;
+
+    @Factory(() => {
         return getRandomBetween(1, 3);
     })
     @Prop()
     readonly energy: number;
 
-    @Factory(() => {
-        return getRandomEnumValue(CardTypeEnum);
-    })
+    @Factory('Deal $prop.damage.current$ damage to target')
     @Prop()
-    readonly card_type: CardTypeEnum;
+    readonly description: string;
 
     @Factory(() => {
-        return getRandomBetween(1, 200);
+        return getRandomEnumValue(CardTargetedEnum);
     })
     @Prop()
-    readonly coin_min: number;
+    readonly targeted: CardTargetedEnum;
 
-    @Factory(() => {
-        return getRandomBetween(1, 200);
-    })
-    @Prop()
-    readonly coin_max: number;
-
-    @Factory(true)
-    @Prop()
-    readonly active: boolean;
-
-    @Factory(CardClassEnum.Knight)
-    @Prop()
-    readonly card_class: CardClassEnum;
+    readonly properties: {
+        readonly damage: {
+            readonly base: number;
+        };
+    };
 }
 
 export const CardSchema = SchemaFactory.createForClass(Card);
