@@ -19,10 +19,7 @@ export class ActivityLogService {
      * @param clear If activity log exists, clean it
      * @returns ActivityLog instance
      */
-    public findOneOrCreateActivityLog(
-        clientId: string,
-        clear = false,
-    ): ActivityLog {
+    public findOneByClientId(clientId: string, clear = false): ActivityLog {
         let activityLog = this.activityLogCollection[clientId];
 
         if (!activityLog) {
