@@ -6,6 +6,6 @@ import { EventManagerService } from './eventManager.service';
 @Module({
     imports: [EventEmitterModule.forRoot(), ActivityLogModule],
     providers: [EventManagerService],
-    exports: [EventManagerModule],
+    exports: [EventManagerService],
 })
 export class EventManagerModule {}
