@@ -34,3 +34,15 @@ export enum CardKeywordEnum {
     Unplayable = 'unplayable',
     None = 'none',
 }
+
+export enum CardEnergyEnum {
+    All = '-1',
+    None = '0',
+    One = '1',
+    Two = '2',
+    Three = '3',
+}
+
+export enum CardPlayErrorMessages {
+    NoEnergyLeft = 'Not enough energy left',
+}

@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import {
+    CardEnergyEnum,
     CardKeywordEnum,
     CardRarityEnum,
     CardTargetedEnum,
@@ -35,10 +36,10 @@ export class Card {
     pool: string;
 
     @Factory(() => {
-        return getRandomBetween(1, 3);
+        return getRandomEnumValue(CardEnergyEnum);
     })
     @Prop()
-    energy: number;
+    energy: string;
 
     @Factory('Deal $prop.damage.current$ damage to target')
     @Prop()
