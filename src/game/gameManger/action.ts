@@ -9,7 +9,7 @@ export class Action {
         private readonly gameManagerService: GameManagerService,
     ) {}
 
-    public async log(entity: any, activity: Activity): Promise<void> {
+    public async log(activity: Activity): Promise<void> {
         this.gameManagerService.logActivity(this.clientId, activity);
     }
 
