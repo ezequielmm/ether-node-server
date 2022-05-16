@@ -11,37 +11,37 @@ export type EnemyDocument = Enemy & Document;
 export class Enemy {
     @Factory((faker: Faker) => faker.name.findName())
     @Prop()
-    readonly name: string;
+    name: string;
 
     @Factory(() => {
         return getRandomEnumValue(EnemyTypeEnum);
     })
     @Prop()
-    readonly enemy_type: EnemyTypeEnum;
+    enemy_type: EnemyTypeEnum;
 
     @Factory(() => {
         return getRandomEnumValue(EnemyCategoryEnum);
     })
     @Prop()
-    readonly enemy_category: EnemyCategoryEnum;
+    enemy_category: EnemyCategoryEnum;
 
     @Factory(() => {
         return getRandomBetween(20, 100);
     })
     @Prop()
-    readonly life: number;
+    life: number;
 
     @Factory(() => {
         return getRandomBetween(20, 100);
     })
     @Prop()
-    readonly min_attack: number;
+    min_attack: number;
 
     @Factory(() => {
         return getRandomBetween(20, 100);
     })
     @Prop()
-    readonly max_attack: number;
+    max_attack: number;
 }
 
 export const EnemySchema = SchemaFactory.createForClass(Enemy);

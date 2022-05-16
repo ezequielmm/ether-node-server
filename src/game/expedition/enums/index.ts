@@ -14,3 +14,15 @@ export enum ExpeditionCurrentNodeDataPlayerStatusEnum {
     Idle = 'idle',
     Injured = 'injured',
 }
+
+export enum NodeTypeEnum {
+    Combat = 'combat',
+    CombatBoss = 'combat_boss',
+    CombatElite = 'combat_elite',
+    CombatStandard = 'combat_standard',
+    Camp = 'camp',
+    CampHouse = 'camp_house',
+    CampRegular = 'camp_regular',
+    Encounter = 'encounter',
+    Merchant = 'merchant',
+}

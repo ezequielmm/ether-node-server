@@ -9,7 +9,7 @@ export type PotionDocument = Potion & Document;
 export class Potion {
     @Factory((faker: Faker) => faker.name.findName())
     @Prop()
-    readonly name: string;
+    name: string;
 }
 
 export const PotionSchema = SchemaFactory.createForClass(Potion);
