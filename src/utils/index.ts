@@ -19,10 +19,12 @@ export function isValidAuthToken(token: string): boolean {
  * @return value
  */
 export function getRandomEnumValue<T>(anEnum: T): T[keyof T] {
-    const enumValues = Object.keys(anEnum) as Array<keyof T>;
+    const enumValues = Object.keys(anEnum)
+        .map((n) => Number.parseInt(n))
+        .filter((n) => !Number.isNaN(n)) as unknown as T[keyof T][];
     const randomIndex = Math.floor(Math.random() * enumValues.length);
-    const randomEnumKey = enumValues[randomIndex];
-    return anEnum[randomEnumKey];
+    const randomEnumValue = enumValues[randomIndex];
+    return randomEnumValue;
 }
 
 /**
