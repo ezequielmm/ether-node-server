@@ -16,39 +16,39 @@ export type CardDocument = Card & Document;
 export class Card {
     @Factory((faker: Faker) => faker.name.findName())
     @Prop()
-    readonly name: string;
+    name: string;
 
     @Factory(() => {
         return getRandomEnumValue(CardRarityEnum);
     })
     @Prop()
-    readonly rarity: CardRarityEnum;
+    rarity: CardRarityEnum;
 
     @Factory(() => {
         return getRandomEnumValue(CardTypeEnum);
     })
     @Prop()
-    readonly card_type: CardTypeEnum;
+    card_type: CardTypeEnum;
 
     @Factory('knight')
     @Prop()
-    readonly pool: string;
+    pool: string;
 
     @Factory(() => {
         return getRandomBetween(1, 3);
     })
     @Prop()
-    readonly energy: number;
+    energy: number;
 
     @Factory('Deal $prop.damage.current$ damage to target')
     @Prop()
-    readonly description: string;
+    description: string;
 
     @Factory(() => {
         return getRandomEnumValue(CardTargetedEnum);
     })
     @Prop()
-    readonly targeted: CardTargetedEnum;
+    targeted: CardTargetedEnum;
 
     @Factory(() => {
         return {
@@ -58,9 +58,9 @@ export class Card {
         };
     })
     @Prop({ type: Object })
-    readonly properties: {
-        readonly damage: {
-            readonly base: number;
+    properties: {
+        damage: {
+            base: number;
         };
     };
 
@@ -68,7 +68,7 @@ export class Card {
         return getRandomEnumValue(CardKeywordEnum);
     })
     @Prop()
-    readonly keywords: CardKeywordEnum;
+    keywords: CardKeywordEnum;
 }
 
 export const CardSchema = SchemaFactory.createForClass(Card);

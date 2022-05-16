@@ -10,23 +10,23 @@ export type CharacterDocument = Character & Document;
 export class Character {
     @Factory((faker: Faker) => faker.name.findName())
     @Prop()
-    readonly name: string;
+    name: string;
 
     @Factory((faker: Faker) => faker.lorem.words(10))
     @Prop()
-    readonly description: string;
+    description: string;
 
     @Factory(78)
     @Prop()
-    readonly initial_health: number;
+    initial_health: number;
 
     @Factory(120)
     @Prop()
-    readonly initial_gold: number;
+    initial_gold: number;
 
     @Factory(CharacterClassEnum.Knight)
     @Prop()
-    readonly character_class: CharacterClassEnum;
+    character_class: CharacterClassEnum;
 }
 
 export const CharacterSchema = SchemaFactory.createForClass(Character);
