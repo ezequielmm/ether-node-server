@@ -77,7 +77,9 @@ export class ExpeditionService {
 
         if (!map) return null;
 
-        return map.filter((node) => node.id === node_id)[0];
+        const item = map.filter((node) => node.id === node_id)[0];
+
+        return item;
     }
 
     async getDeckCards(
