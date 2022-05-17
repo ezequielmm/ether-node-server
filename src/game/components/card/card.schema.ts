@@ -35,7 +35,7 @@ export class Card {
     pool: string;
 
     @Factory(() => {
-        return getRandomBetween(1, 3);
+        return getRandomBetween(-1, 3);
     })
     @Prop()
     energy: number;
