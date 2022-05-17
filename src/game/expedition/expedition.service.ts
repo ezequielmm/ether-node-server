@@ -43,9 +43,9 @@ export class ExpeditionService {
 
     getMap(): IExpeditionNode[] {
         const map: IExpeditionNode[] = getTestMap();
-        console.log(map);
-        return [...map];
+        return map;
     }
+
     // getMap(): IExpeditionMap[] {
     //     const map: IExpeditionMap[] = getTestMap();
     //     return [...map];
@@ -73,7 +73,6 @@ export class ExpeditionService {
         client_id: string,
         node_id: number,
     ): Promise<IExpeditionMap> {
-        console.log('getExpeditionMapNode');
         const { map } = await this.expedition
             .findOne({
                 client_id,
@@ -84,7 +83,9 @@ export class ExpeditionService {
 
         if (!map) return null;
 
-        return map.filter((node) => node.id === node_id)[0];
+        const item = map.filter((node) => node.id === node_id)[0];
+
+        return item;
     }
 
     async getDeckCards(
@@ -222,12 +223,13 @@ export class ExpeditionService {
 
     async moveCardsFromDrawToHandPile(
         client_id: string,
+        cards_to_take = 5,
     ): Promise<ExpeditionDocument> {
         const currentNode = await this.getCurrentNodeByClientId(client_id);
 
         let drawPile = currentNode.data.player.cards.draw;
 
-        if (drawPile.length < 5) {
+        if (drawPile.length < cards_to_take) {
             const newCurrentNode = await this.moveDiscardPileToDrawPile(
                 client_id,
             );
@@ -235,7 +237,9 @@ export class ExpeditionService {
             drawPile = newCurrentNode.current_node.data.player.cards.draw;
         }
 
-        const handPile = drawPile.sort(() => 0.5 - Math.random()).slice(0, 5);
+        const handPile = drawPile
+            .sort(() => 0.5 - Math.random())
+            .slice(0, cards_to_take);
 
         const drawCards = this.cardService.removeHandCardsFromDrawPile(
             drawPile,
