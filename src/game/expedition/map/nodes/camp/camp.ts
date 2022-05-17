@@ -1,11 +1,8 @@
 import Node from '../node';
 
-class Camp extends Node {
-    constructor() {
-        super();
-        if (new.target === Camp) {
-            throw TypeError('Cannot create instance of Camp class');
-        }
+abstract class Camp extends Node {
+    constructor(id: number, act: number, step: number, type: string, private_data: any) {
+        super(id, act, step, type, private_data);
     }
 }
 

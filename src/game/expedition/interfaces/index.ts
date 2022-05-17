@@ -3,6 +3,24 @@ import {
     ExpeditionMapNodeTypeEnum,
 } from '../enums';
 import { Card } from 'src/game/components/card/card.schema';
+import ExpeditionMap from '../map/map/expeditionMap';
+
+export interface IExpeditionNode {
+    id: number;
+    act: number;
+    step: number;
+    type: string;
+    exits: Array<number>;
+    enter: Array<number>;
+    status: string;
+    private_data: any;
+    state?: any;
+    expeditionMap?: ExpeditionMap;
+    openExitsNodes(): void;
+    updateStatus(staus: string): void;
+    complete(): void;
+    selected(): void;
+}
 
 export interface IExpeditionMap {
     readonly act: number;

@@ -1,4 +1,5 @@
 import {
+    IExpeditionNode,
     IExpeditionCurrentNode,
     IExpeditionMap,
     IExpeditionPlayerState,
@@ -7,7 +8,8 @@ import { ExpeditionStatusEnum } from '../enums';
 
 export class CreateExpeditionDTO {
     readonly player_id: string;
-    readonly map: IExpeditionMap[];
+    readonly map: IExpeditionNode[];
+    // readonly map: IExpeditionMap[];
     readonly player_state: IExpeditionPlayerState;
 }
 

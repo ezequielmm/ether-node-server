@@ -1,29 +1,24 @@
 import Node from '../node';
 
 class Encounter extends Node {
-    minEncounterId: number;
-    maxEncounterId: number;
-    defaultSceneId: number;
-    constructor() {
-        super();
+    private minEncounterId: number;
+    private maxEncounterId: number;
+    private defaultSceneId: number;
+    constructor(id: number, act: number, step: number, type: string, private_data: any) {
+        super(id, act, step, type, private_data);
         this.minEncounterId = 0;
         this.maxEncounterId = 24;
         this.defaultSceneId = 0;
     }
 
     private calcEncounterId(): number {
-        return Math.floor(
-            Math.random() * (this.maxEncounterId - this.minEncounterId) +
-                this.minEncounterId,
-        );
+        return Math.floor(Math.random() * (this.maxEncounterId - this.minEncounterId) + this.minEncounterId);
     }
 
-    public stateInitialize(config: any): any {
-        this.baseState.encounte_id = this.calcEncounterId();
-        this.baseState.scene_id = config.scene_id
-            ? config.scene_id
-            : this.defaultSceneId;
-        return this.baseState;
+    public stateInitialize(config: any): object {
+        this.state.encounte_id = this.calcEncounterId();
+        this.state.scene_id = config.scene_id ? config.scene_id : this.defaultSceneId;
+        return this.state;
     }
 }
 

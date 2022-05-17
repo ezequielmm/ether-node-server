@@ -1,16 +1,20 @@
 import Act from '../act/act';
-// const nodeFactory = require('../nodes');
+import Node from '../nodes/node';
+import nodeFactory from '../nodes/index';
+import { actCconfigAlternatives } from '../act/act.config';
 
-class MapGenerator {
-    previousNodeId: number;
-    previousStepNodes: number;
-    previousActMap: Map<any, any>;
-    newActMap: Map<any, any>;
-    map: Map<any, any>;
-    nextStep: Map<any, any>;
-    currentStepNumber!: number;
-    currentAct!: Act;
-    currentNode: any;
+class ExpeditionMap {
+    public activeNode: Node;
+    private previousNodeId: number;
+    private previousStepNodes: number;
+    private currentNode: Node;
+    private map: Map<number, Node>;
+    private nextStep: Map<number, Node>;
+    private newActMap: Map<number, Node>;
+    private previousActMap: Map<number, Node>;
+    private currentStepnumber?: number;
+    private currentActNumber: number;
+    private currentAct?: Act;
 
     constructor() {
         this.previousNodeId = 1;
@@ -19,91 +23,106 @@ class MapGenerator {
         this.newActMap = new Map();
         this.map = new Map();
         this.nextStep = new Map();
-        this.createAct0();
     }
 
-    get currentMap() {
-        return [...this.map.values()];
+    get getMap() {
+        const map = [...this.map.values()];
+        return map;
+    }
+
+    get fullCurrentMap() {
+        return this.map;
+    }
+
+    public initMap() {
+        this.createAct0();
+        this.initAct(0);
+    }
+
+    public disableAllNodes() {
+        this.map.forEach((node) => {
+            if (node.status !== 'disabled' && node.status !== 'completed') {
+                node.updateStatus('disabled');
+            }
+        });
+    }
+
+    private initAct(actNumber: number) {
+        this.map.forEach((node) => {
+            if (node.act === actNumber && node.step === 0)
+                node.updateStatus('available');
+        });
     }
 
     private createAct0(): void {
         const act0 = new Map();
-        act0.set(1, {
-            act: 0,
-            step: 0,
-            id: 1,
-            type: 'royalhouse_a',
-            exits: [5],
-            enter: null,
-        });
-        act0.set(2, {
-            act: 0,
-            step: 0,
-            id: 2,
-            type: 'royalhouse_b',
-            exits: [5],
-            enter: null,
-        });
-        act0.set(3, {
-            act: 0,
-            step: 0,
-            id: 3,
-            type: 'royalhouse_c',
-            exits: [5],
-            enter: null,
-        });
-        act0.set(4, {
-            act: 0,
-            step: 0,
-            id: 4,
-            type: 'royalhouse_d',
-            exits: [5],
-            enter: null,
-        });
-        act0.set(5, {
-            act: 0,
-            step: 1,
-            id: 5,
-            type: 'portal',
-            exits: [],
-            enter: [1, 2, 3, 4, 5],
-        });
+        const royalA = nodeFactory(1, 0, 0, 'royalhouse_a', {});
+        const royalB = nodeFactory(2, 0, 0, 'royalhouse_b', {});
+        const royalC = nodeFactory(3, 0, 0, 'royalhouse_c', {});
+        const royalD = nodeFactory(4, 0, 0, 'royalhouse_d', {});
+        const portal = nodeFactory(5, 0, 1, 'portal', {});
+        royalA.exits.push(5);
+        royalB.exits.push(5);
+        royalC.exits.push(5);
+        royalD.exits.push(5);
+        portal.enter.push(1, 2, 3, 4);
+        act0.set(1, royalA);
+        act0.set(2, royalB);
+        act0.set(3, royalC);
+        act0.set(4, royalD);
+        act0.set(5, portal);
         this.previousNodeId = 6;
         this.map = new Map(...[act0]);
+        royalA.expeditionMap = this;
+        royalB.expeditionMap = this;
+        royalC.expeditionMap = this;
+        royalD.expeditionMap = this;
+        this.currentActNumber = 0;
+        this.embbedMapToNodes();
     }
 
-    public addAct(actNumber: number, actConfigAlternatives: any): void {
-        // Clear currentStepNumber, nextStepNumber and newActMap to initial values.
+    private embbedMapToNodes() {
+        this.map.forEach((node) => {
+            node.expeditionMap = this;
+        });
+    }
+    public extendMap() {
+        this.currentActNumber += 1;
+        const config = actCconfigAlternatives;
+        this.addAct(this.currentActNumber, config);
+        this.initAct(this.currentActNumber);
+    }
+    private addAct(actnumber: number, actConfigAlternatives: any): void {
+        // Clear currentStepnumber, nextStepnumber and newActMap to initial values.
         this.newActMap.clear();
-        this.currentStepNumber = 0;
-        this.currentAct = new Act(actNumber, actConfigAlternatives);
-        for (let step = 0; step < this.currentAct.stepsTotal; step += 1) {
+        this.currentStepnumber = 0;
+        this.currentAct = new Act(actnumber, actConfigAlternatives);
+        for (let step = 0; step <= this.currentAct.stepsTotal; step += 1) {
             const nodesToGenerate = this.nodesToGenerate();
             this.addNodes(step, nodesToGenerate);
         }
         this.createConnections();
         // Merge new ActMap with previous existentMap.
         this.map = new Map([...this.map, ...this.newActMap]);
+        this.embbedMapToNodes();
     }
 
     private addNodes(step: number, nodesToGenerate: number) {
         for (
-            let nodeNumber = 0;
-            nodeNumber < nodesToGenerate;
-            nodeNumber += 1
+            let nodenumber = 0;
+            nodenumber < nodesToGenerate;
+            nodenumber += 1
         ) {
             const nodeId = this.previousNodeId;
             this.previousNodeId += 1;
             const nodeProperties = this.currentAct.createNode(step);
-            const node = {
-                act: this.currentAct.actNumber,
+            const node = nodeFactory(
+                nodeId,
+                this.currentAct.actnumber,
                 step,
-                id: nodeId,
-                type: nodeProperties.type,
-                exits: [],
-                enter: null,
-                private_data: { ...nodeProperties.config },
-            };
+                nodeProperties.type,
+                nodeProperties.config,
+            );
             this.newActMap.set(nodeId, node);
         }
     }
@@ -111,20 +130,20 @@ class MapGenerator {
     private nodesToGenerate() {
         const min = this.currentAct.minNodesPerStep;
         const max = this.currentAct.maxNodesPerStep;
-        function calculateNumberOfNodes(): number {
+        function calculatenumberOfNodes(): number {
             return Math.floor(Math.random() * (max - min + 1) + min);
         }
         let nodesToGenerate: number;
         // this IF may be redundant, is here just to obbey the requested condition
         if (max - min > 1) {
-            nodesToGenerate = calculateNumberOfNodes();
+            nodesToGenerate = calculatenumberOfNodes();
             while (this.previousStepNodes === nodesToGenerate) {
-                nodesToGenerate = calculateNumberOfNodes();
+                nodesToGenerate = calculatenumberOfNodes();
             }
             this.previousStepNodes = nodesToGenerate;
             return nodesToGenerate;
         }
-        nodesToGenerate = calculateNumberOfNodes();
+        nodesToGenerate = calculatenumberOfNodes();
         return nodesToGenerate;
     }
 
@@ -233,4 +252,4 @@ class MapGenerator {
     }
 }
 
-export default MapGenerator;
+export default ExpeditionMap;

@@ -1,65 +1,85 @@
-import Combat from './combat/combat';
 import CombatBoss from './combat/combat.boss';
 import CombatElite from './combat/combat.elite';
 import CombatStandard from './combat/combat.standard';
 
-import Camp from './camp/camp';
 import CampHouse from './camp/camp.house';
 import CampRegular from './camp/camp.regular';
 
 import Encounter from './encounter/encounter';
 import Merchant from './merchant/merchant';
+import Portal from './portal/portal';
 
-function nodeFactory(nodeOptions: { type: string; config: any }) {
-    const { type, config } = nodeOptions;
+import RoyalHouse from './royal_house/royal_house';
+import RoyalHouseA from './royal_house/royal_house_a';
+import RoyalHouseB from './royal_house/royal_house_b';
+import RoyalHouseC from './royal_house/royal_house_c';
+import RoyalHouseD from './royal_house/royal_house_d';
+
+import Empty from './empty/empty';
+
+function nodeFactory(
+    id: number,
+    act: number,
+    step: number,
+    type: string,
+    private_data: any,
+):
+    | CombatBoss
+    | CombatElite
+    | CombatStandard
+    | CampHouse
+    | CampRegular
+    | Encounter
+    | Merchant
+    | Portal
+    | RoyalHouse
+    | RoyalHouseA
+    | RoyalHouseB
+    | RoyalHouseC
+    | RoyalHouseD
+    | Empty {
     switch (type) {
-        case 'combat': {
-            const combat = new Combat();
-            combat.stateInitialize(config);
-            return combat;
-        }
         case 'combat_boss': {
-            const combatBoss = new CombatBoss();
-            combatBoss.stateInitialize(config);
-            return combatBoss;
+            return new CombatBoss(id, act, step, type, private_data);
         }
         case 'combat_elite': {
-            const combatElite = new CombatElite();
-            combatElite.stateInitialize(config);
-            return combatElite;
+            return new CombatElite(id, act, step, type, private_data);
         }
         case 'combat_standard': {
-            const combatStandard = new CombatStandard();
-            combatStandard.stateInitialize(config);
-            return combatStandard;
-        }
-        case 'camp': {
-            const camp = new Camp();
-            camp.stateInitialize(config);
-            return camp;
+            return new CombatStandard(id, act, step, type, private_data);
         }
         case 'camp_house': {
-            const campHouse = new CampHouse();
-            campHouse.stateInitialize();
-            return campHouse;
+            return new CampHouse(id, act, step, type, private_data);
         }
         case 'camp_regular': {
-            const campRegular = new CampRegular();
-            campRegular.stateInitialize(config);
-            return campRegular;
+            return new CampRegular(id, act, step, type, private_data);
         }
         case 'encounter': {
-            const encounter = new Encounter();
-            encounter.stateInitialize(config);
-            return encounter;
+            return new Encounter(id, act, step, type, private_data);
         }
         case 'merchant': {
-            const merchant = new Merchant();
-            merchant.stateInitialize();
-            return merchant;
+            return new Merchant(id, act, step, type, private_data);
+        }
+        case 'portal': {
+            return new Portal(id, act, step, type, private_data);
+        }
+        case 'royal_house': {
+            return new RoyalHouse(id, act, step, type, private_data);
+        }
+        case 'royal_house_a': {
+            return new RoyalHouseA(id, act, step, type, private_data);
+        }
+        case 'royal_house_b': {
+            return new RoyalHouseB(id, act, step, type, private_data);
+        }
+        case 'royal_house_d': {
+            return new RoyalHouseC(id, act, step, type, private_data);
+        }
+        case 'royal_house_c': {
+            return new RoyalHouseD(id, act, step, type, private_data);
         }
         default:
-            return 'something';
+            return new Empty(id, act, step, type, private_data);
     }
 }
 

@@ -1,18 +1,14 @@
 import Node from '../node';
 
-class Combat extends Node {
-    constructor() {
-        super();
-        if (new.target === Combat) {
-            throw TypeError('Cannot create instance of Combat class');
-        }
+abstract class Combat extends Node {
+    constructor(id: number, act: number, step: number, type: string, private_data: any) {
+        super(id, act, step, type, private_data);
     }
 
     public stateInitialize(config: any): any {
-        const enemy =
-            config.enemies[Math.floor(Math.random() * config.enemies.length)];
-        this.baseState.enemy = enemy;
-        return this.baseState;
+        const enemy = config.enemies[Math.floor(Math.random() * config.enemies.length)];
+        this.state.enemy = enemy;
+        return this.state;
     }
 }
 
