@@ -9,22 +9,21 @@ import { AppModule } from './app.module';
 import { TransformDataResource } from './interceptors/TransformDataResource.interceptor';
 import * as compression from 'compression';
 import { existsSync, readFileSync } from 'fs';
-import { HttpsOptions } from '@nestjs/common/interfaces/external/https-options.interface';
 import { IoAdapter } from '@nestjs/platform-socket.io';
 
 async function bootstrap() {
     const certFilePath = process.env.SSL_CERT_PATH;
     const keyFilePath = process.env.SSL_KEY_PATH;
-    let httpsOptions: HttpsOptions = {};
     let app: INestApplication;
 
     if (certFilePath && keyFilePath) {
         if (existsSync(certFilePath) && existsSync(keyFilePath)) {
-            httpsOptions = {
-                cert: readFileSync(certFilePath),
-                key: readFileSync(keyFilePath),
-            };
-            app = await NestFactory.create(AppModule, { httpsOptions });
+            app = await NestFactory.create(AppModule, {
+                httpsOptions: {
+                    cert: readFileSync(certFilePath),
+                    key: readFileSync(keyFilePath),
+                },
+            });
         }
     } else {
         app = await NestFactory.create(AppModule);

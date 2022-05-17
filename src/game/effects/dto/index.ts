@@ -11,3 +11,7 @@ export interface DiscardCardDTO extends BaseEffectDTO {
 export interface DrawCardEffectDTO extends BaseEffectDTO {
     readonly cards_to_take?: number;
 }
+
+export interface UpdatePlayerEnergy extends BaseEffectDTO {
+    readonly energy: number;
+}
