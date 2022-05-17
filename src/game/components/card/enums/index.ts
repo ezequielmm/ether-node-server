@@ -36,11 +36,11 @@ export enum CardKeywordEnum {
 }
 
 export enum CardEnergyEnum {
-    All = '-1',
-    None = '0',
-    One = '1',
-    Two = '2',
-    Three = '3',
+    All = -1,
+    None = 0,
+    One = 1,
+    Two = 2,
+    Three = 3,
 }
 
 export enum CardPlayErrorMessages {

@@ -62,7 +62,7 @@ export class CardPlayedAction {
     }
 
     private canPlayerPlayCard(
-        cardEnergyAmount: string,
+        cardEnergyAmount: number,
         playerEnergy: number,
     ): {
         canPlayCard: boolean;
@@ -89,7 +89,7 @@ export class CardPlayedAction {
 
         // If the card energy cost is higher than the player's available energy or the
         // player energy is 0 the player can't play the card
-        if (parseInt(cardEnergyAmount) > playerEnergy || playerEnergy === 0) {
+        if (cardEnergyAmount > playerEnergy || playerEnergy === 0) {
             return {
                 canPlayCard: false,
                 newEnergyAmount: playerEnergy,
@@ -98,10 +98,10 @@ export class CardPlayedAction {
         }
 
         // If the card energy cost is lower or equal than the player's available energy
-        if (parseInt(cardEnergyAmount) <= playerEnergy) {
+        if (cardEnergyAmount <= playerEnergy) {
             return {
                 canPlayCard: true,
-                newEnergyAmount: playerEnergy - parseInt(cardEnergyAmount),
+                newEnergyAmount: playerEnergy - cardEnergyAmount,
             };
         }
     }

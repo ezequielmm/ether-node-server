@@ -9,7 +9,11 @@ import {
 import { Document } from 'mongoose';
 import { Factory } from 'nestjs-seeder';
 import { Faker } from '@faker-js/faker';
-import { getRandomBetween, getRandomEnumValue } from 'src/utils';
+import {
+    getRandomBetween,
+    getRandomEnumValue,
+    getRandomNumericEnumValue,
+} from 'src/utils';
 
 export type CardDocument = Card & Document;
 
@@ -36,10 +40,10 @@ export class Card {
     pool: string;
 
     @Factory(() => {
-        return getRandomEnumValue(CardEnergyEnum);
+        return getRandomNumericEnumValue(CardEnergyEnum);
     })
     @Prop()
-    energy: string;
+    energy: CardEnergyEnum;
 
     @Factory('Deal $prop.damage.current$ damage to target')
     @Prop()
