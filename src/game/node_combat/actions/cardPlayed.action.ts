@@ -3,6 +3,8 @@ import { CardService } from '../../components/card/card.service';
 import { Socket } from 'socket.io';
 import { Injectable } from '@nestjs/common';
 import { DiscardCardEffect } from 'src/game/effects/discardCard.effect';
+import { GameManagerService } from 'src/game/gameManger/gameManager.service';
+import { Activity } from 'src/game/elements/prototypes/activity';
 
 @Injectable()
 export class CardPlayedAction {
@@ -10,9 +12,15 @@ export class CardPlayedAction {
         private readonly expeditionService: ExpeditionService,
         private readonly cardService: CardService,
         private readonly discardCardEffect: DiscardCardEffect,
+        private readonly gameManagerService: GameManagerService,
     ) {}
 
     async handle(client: Socket, card_id: string): Promise<string> {
+        const action = await this.gameManagerService.startAction(
+            client.id,
+            'cardPlayed',
+        );
+
         const cardExists = await this.expeditionService.cardExistsOnPlayerHand({
             client_id: client.id,
             card_id,
@@ -51,6 +59,16 @@ export class CardPlayedAction {
                 client_id: client.id,
                 energy: newEnergyAmount,
             });
+
+        action.log(
+            new Activity('energy', undefined, 'decrease', undefined, [
+                {
+                    mod: 'sub',
+                    key: 'node.data.player.energy_current',
+                    val: cardEnergy,
+                },
+            ]),
+        );
 
         return JSON.stringify({ data: current_node });
     }
