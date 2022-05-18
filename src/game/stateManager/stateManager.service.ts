@@ -81,6 +81,10 @@ export class StateManagerService {
         };
 
         switch (stateDelta.mod) {
+            case 'set':
+                modification.current = stateDelta.val;
+                set(state.current, stateDelta.key, stateDelta.val);
+                break;
             case 'add':
                 modification.current = stateDelta.val + modification.current;
                 set(state.current, stateDelta.key, modification.current);

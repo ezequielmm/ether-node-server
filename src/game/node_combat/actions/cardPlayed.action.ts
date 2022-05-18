@@ -54,11 +54,10 @@ export class CardPlayedAction {
 
         const newEnergyAmount = playerEnergy - cardEnergy;
 
-        const { current_node } =
-            await this.expeditionService.updatePlayerEnergy({
-                client_id: client.id,
-                energy: newEnergyAmount,
-            });
+        await this.expeditionService.updatePlayerEnergy({
+            client_id: client.id,
+            energy: newEnergyAmount,
+        });
 
         action.log(
             new Activity('energy', undefined, 'decrease', undefined, [
@@ -70,6 +69,6 @@ export class CardPlayedAction {
             ]),
         );
 
-        return JSON.stringify({ data: current_node });
+        return JSON.stringify(await action.end());
     }
 }
