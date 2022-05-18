@@ -42,12 +42,15 @@ export class GameManagerService {
         };
     }
 
-    public logActivity(clientId: string, activity: Activity): void {
+    public async logActivity(
+        clientId: string,
+        activity: Activity,
+    ): Promise<void> {
         const activityLog = this.activityLogService.findOneByClientId(clientId);
         const id = Math.random().toString(36).substring(2, 15);
         activityLog.addActivity(id, activity);
         for (const stateDelta of activity.state_delta) {
-            this.stateManagerService.modify(clientId, stateDelta);
+            await this.stateManagerService.modify(clientId, stateDelta);
         }
     }
 }
