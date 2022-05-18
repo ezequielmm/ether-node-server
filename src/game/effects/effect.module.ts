@@ -4,10 +4,21 @@ import { ExpeditionModule } from '../expedition/expedition.module';
 import { DiscardAllCards } from './discardAllCards.effect';
 import { DiscardCardEffect } from './discardCard.effect';
 import { DrawCardEffect } from './drawCard.effect';
+import { UpdatePlayerEnergyEffect } from './updatePlayerEnergy.effect';
 
 @Module({
     imports: [forwardRef(() => ExpeditionModule), GameManagerModule],
-    providers: [DiscardCardEffect, DrawCardEffect, DiscardAllCards],
-    exports: [DiscardCardEffect, DrawCardEffect, DiscardAllCards],
+    providers: [
+        DiscardCardEffect,
+        DrawCardEffect,
+        DiscardAllCards,
+        UpdatePlayerEnergyEffect,
+    ],
+    exports: [
+        DiscardCardEffect,
+        DrawCardEffect,
+        DiscardAllCards,
+        UpdatePlayerEnergyEffect,
+    ],
 })
 export class EffectModule {}

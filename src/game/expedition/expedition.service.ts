@@ -7,6 +7,7 @@ import {
     CardExistsDTO,
     CreateExpeditionDTO,
     GetExpeditionDTO,
+    TakeCardFromDrawPileDTO,
     UpdateExpeditionDTO,
     UpdateExpeditionFilterDTO,
     UpdatePlayerEnergyDTO,
@@ -216,9 +217,10 @@ export class ExpeditionService {
     }
 
     async moveCardsFromDrawToHandPile(
-        client_id: string,
-        cards_to_take = 5,
+        payload: TakeCardFromDrawPileDTO,
     ): Promise<ExpeditionDocument> {
+        const { client_id, cards_to_take } = payload;
+
         const currentNode = await this.getCurrentNodeByClientId(client_id);
 
         let drawPile = currentNode.data.player.cards.draw;

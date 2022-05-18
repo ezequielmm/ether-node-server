@@ -15,12 +15,9 @@ export class DrawCardEffect implements IBaseEffect {
     async handle(payload: DrawCardEffectDTO): Promise<void> {
         const { client_id, cards_to_take } = payload;
         const expedition =
-            await this.expeditionService.moveCardsFromDrawToHandPile(
-                client_id,
-                cards_to_take,
-            );
+            await this.expeditionService.moveCardsFromDrawToHandPile(payload);
 
-        this.gameManagerService.logActivity(
+        await this.gameManagerService.logActivity(
             client_id,
             new Activity(
                 'cards',

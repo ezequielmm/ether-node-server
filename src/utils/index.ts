@@ -26,6 +26,20 @@ export function getRandomEnumValue<T>(anEnum: T): T[keyof T] {
 }
 
 /**
+ * Get a random numeric value from an Enum
+ * @param anEnum the enum to get the value
+ * @return value
+ */
+export function getRandomNumericEnumValue<T>(anEnum: T): T[keyof T] {
+    const enumValues = Object.keys(anEnum)
+        .map((n) => Number.parseInt(n))
+        .filter((n) => !Number.isNaN(n)) as unknown as T[keyof T][];
+    const randomIndex = Math.floor(Math.random() * enumValues.length);
+    const randomEnumValue = enumValues[randomIndex];
+    return randomEnumValue;
+}
+
+/**
  * Get a random value between a range
  * @param min The starting value
  * @param max The ending value (this is included)

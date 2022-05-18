@@ -14,10 +14,11 @@ export class DiscardCardEffect implements IBaseEffect {
 
     async handle(payload: DiscardCardDTO): Promise<void> {
         const { client_id, card_id } = payload;
-        await this.expeditionService.moveCardFromPlayerHandToDiscardPile({
-            client_id,
-            card_id,
-        });
+
+        await this.expeditionService.moveCardFromPlayerHandToDiscardPile(
+            payload,
+        );
+
         await this.gameManagerService.logActivity(
             client_id,
             new Activity('card', card_id, 'discard', undefined, [
