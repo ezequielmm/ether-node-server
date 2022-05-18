@@ -15,7 +15,10 @@ export class EndTurnAction {
     async handle(client: Socket): Promise<string> {
         await this.discardAllCards.handle({ client_id: client.id });
 
-        await this.drawCardEffect.handle({ client_id: client.id });
+        await this.drawCardEffect.handle({
+            client_id: client.id,
+            cards_to_take: 5,
+        });
 
         const current_node = await this.updatePlayerEnergyEffect.handle({
             client_id: client.id,
