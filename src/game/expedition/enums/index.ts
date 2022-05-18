@@ -26,3 +26,10 @@ export enum NodeTypeEnum {
     Encounter = 'encounter',
     Merchant = 'merchant',
 }
+
+export enum CardDestinationEnum {
+    Hand = 'hand',
+    Discard = 'discard',
+    DrawRandom = 'drawRandom',
+    DrawTop = 'drawTop',
+}

@@ -3,7 +3,7 @@ import {
     IExpeditionMap,
     IExpeditionPlayerState,
 } from '../interfaces';
-import { ExpeditionStatusEnum } from '../enums';
+import { CardDestinationEnum, ExpeditionStatusEnum } from '../enums';
 
 export class CreateExpeditionDTO {
     readonly player_id: string;
@@ -44,4 +44,10 @@ export class CardExistsDTO {
 export class UpdatePlayerEnergyDTO {
     readonly client_id: string;
     readonly energy: number;
+}
+
+export class AddCardToPileDTO {
+    readonly client_id: string;
+    readonly card_id: string;
+    readonly destination: CardDestinationEnum;
 }
