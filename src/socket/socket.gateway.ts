@@ -47,16 +47,29 @@ export class SocketGateway
                 },
             } = await this.authGatewayService.getUser(authorization);
 
-            await this.expeditionService.updateClientId({
-                player_id,
-                client_id: client.id,
-            });
+            const expeditionExists =
+                await this.expeditionService.playerHasExpeditionInProgress(
+                    player_id,
+                );
 
-            await this.fullSyncAction.handle(client);
+            if (expeditionExists) {
+                await this.expeditionService.updateClientId({
+                    player_id,
+                    client_id: client.id,
+                });
 
-            this.logger.log(`Client connected: ${client.id}`);
+                await this.fullSyncAction.handle(client);
+
+                this.logger.log(`Client connected: ${client.id}`);
+            } else {
+                this.logger.log(
+                    `There is no expedition in progress for this player: ${client.id}`,
+                );
+                client.disconnect(true);
+            }
         } catch (e) {
             this.logger.log(e.message);
+            this.logger.log(e.stack);
             this.logger.log(`Client has an invalid auth token: ${client.id}`);
             client.disconnect(true);
         }

@@ -1,5 +1,10 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { CardClassEnum, CardRarityEnum, CardTypeEnum } from './enums';
+import {
+    CardKeywordEnum,
+    CardRarityEnum,
+    CardTargetedEnum,
+    CardTypeEnum,
+} from './enums';
 import { Document } from 'mongoose';
 import { Factory } from 'nestjs-seeder';
 import { Faker } from '@faker-js/faker';
@@ -11,53 +16,59 @@ export type CardDocument = Card & Document;
 export class Card {
     @Factory((faker: Faker) => faker.name.findName())
     @Prop()
-    readonly name: string;
-
-    @Factory((faker: Faker) => faker.lorem.words(10))
-    @Prop()
-    readonly description: string;
-
-    @Factory('knight_attack')
-    @Prop()
-    readonly code: string;
+    name: string;
 
     @Factory(() => {
         return getRandomEnumValue(CardRarityEnum);
     })
     @Prop()
-    readonly rarity: CardRarityEnum;
-
-    @Factory(() => {
-        return getRandomBetween(1, 3);
-    })
-    @Prop()
-    readonly energy: number;
+    rarity: CardRarityEnum;
 
     @Factory(() => {
         return getRandomEnumValue(CardTypeEnum);
     })
     @Prop()
-    readonly card_type: CardTypeEnum;
+    card_type: CardTypeEnum;
+
+    @Factory('knight')
+    @Prop()
+    pool: string;
 
     @Factory(() => {
-        return getRandomBetween(1, 200);
+        return getRandomBetween(-1, 3);
     })
     @Prop()
-    readonly coin_min: number;
+    energy: number;
+
+    @Factory('Deal $prop.damage.current$ damage to target')
+    @Prop()
+    description: string;
 
     @Factory(() => {
-        return getRandomBetween(1, 200);
+        return getRandomEnumValue(CardTargetedEnum);
     })
     @Prop()
-    readonly coin_max: number;
+    targeted: CardTargetedEnum;
 
-    @Factory(true)
-    @Prop()
-    readonly active: boolean;
+    @Factory(() => {
+        return {
+            damage: {
+                base: getRandomBetween(8, 20),
+            },
+        };
+    })
+    @Prop({ type: Object })
+    properties: {
+        damage: {
+            base: number;
+        };
+    };
 
-    @Factory(CardClassEnum.Knight)
+    @Factory(() => {
+        return getRandomEnumValue(CardKeywordEnum);
+    })
     @Prop()
-    readonly card_class: CardClassEnum;
+    keywords: CardKeywordEnum;
 }
 
 export const CardSchema = SchemaFactory.createForClass(Card);

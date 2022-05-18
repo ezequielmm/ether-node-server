@@ -12,6 +12,6 @@ import { EffectModule } from 'src/game/effects/effect.module';
         EffectModule,
     ],
     providers: [CardPlayedAction, EndTurnAction],
-    exports: [CardPlayedAction, EndTurnAction],
+    exports: [CardPlayedAction, EndTurnAction, ExpeditionModule],
 })
 export class CombatActionModule {}

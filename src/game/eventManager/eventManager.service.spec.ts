@@ -27,7 +27,7 @@ describe('EventManagerService', () => {
         const spy = jest.spyOn(eventEmitter, 'emitAsync');
         await eventManagerService.emit(key, event, ...args);
         expect(spy).toHaveBeenCalledWith(event, ...args, {
-            activityLog: acitvityLogService.findOneOrCreateActivityLog(key),
+            activityLog: acitvityLogService.findOneByClientId(key),
             emitInContext: expect.any(Function),
         });
     });
