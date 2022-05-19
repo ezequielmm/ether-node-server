@@ -1,11 +1,19 @@
+import { ExpeditionMapNodeTypeEnum } from 'src/game/expedition/enums';
 import Camp from './camp';
 
 class CampHouse extends Camp {
     minHouseId: number;
     maxHouseId: number;
+    private_data: any;
 
-    constructor() {
-        super();
+    constructor(
+        id: number,
+        act: number,
+        step: number,
+        type: ExpeditionMapNodeTypeEnum,
+        private_data: any,
+    ) {
+        super(id, act, step, type, private_data);
         this.minHouseId = 0;
         this.maxHouseId = 3;
     }
@@ -18,8 +26,8 @@ class CampHouse extends Camp {
     }
 
     public stateInitialize(): any {
-        this.baseState.house_id = this.calculateHouseId();
-        return this.baseState;
+        this.state.house_id = this.calculateHouseId();
+        return this.state;
     }
 }
 

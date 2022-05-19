@@ -1,7 +1,7 @@
 import { ExpeditionMapNodeTypeEnum } from 'src/game/expedition/enums';
-import Combat from './combat';
+import Node from '../node';
 
-class CombatStandard extends Combat {
+class RoyalHouseA extends Node {
     constructor(
         id: number,
         act: number,
@@ -12,4 +12,5 @@ class CombatStandard extends Combat {
         super(id, act, step, type, private_data);
     }
 }
-export default CombatStandard;
+
+export default RoyalHouseA;

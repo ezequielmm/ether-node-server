@@ -4,6 +4,7 @@ import {
     Headers,
     HttpException,
     HttpStatus,
+    Logger,
     Post,
     Res,
     UseGuards,
@@ -27,6 +28,8 @@ export class ExpeditionController {
         private readonly cardService: CardService,
         private readonly characterService: CharacterService,
     ) {}
+
+    private readonly logger: Logger = new Logger(ExpeditionController.name);
 
     //#region Get Expedition status by player id
     @ApiOperation({
@@ -52,6 +55,7 @@ export class ExpeditionController {
 
             return { hasExpedition };
         } catch (e) {
+            this.logger.error(e.stack);
             throw new HttpException(
                 {
                     status: HttpStatus.UNAUTHORIZED,
@@ -138,6 +142,7 @@ export class ExpeditionController {
                 });
             }
         } catch (e) {
+            this.logger.error(e.stack);
             throw new HttpException(
                 {
                     status: HttpStatus.UNAUTHORIZED,

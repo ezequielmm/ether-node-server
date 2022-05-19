@@ -1,8 +1,31 @@
 import {
     ExpeditionCurrentNodeDataPlayerStatusEnum,
+    ExpeditionMapNodeStatusEnum,
     ExpeditionMapNodeTypeEnum,
 } from '../enums';
 import { Card } from 'src/game/components/card/card.schema';
+import ExpeditionMap from '../map/map/expeditionMap';
+
+export interface IExpeditionNode {
+    readonly id: number;
+    readonly act: number;
+    readonly step: number;
+    readonly isActive: boolean;
+    readonly isDisable: boolean;
+    readonly isAvailable: boolean;
+    readonly isComplete: boolean;
+    readonly type: ExpeditionMapNodeTypeEnum;
+    readonly status: ExpeditionMapNodeStatusEnum;
+    readonly exits: Array<number>;
+    readonly enter: Array<number>;
+    state?: any;
+    setActive(): void;
+    setDisable(): void;
+    setAvailable(): void;
+    setComplete(): void;
+    select(expeditionMap: ExpeditionMap): void;
+    complete(expeditionMap: ExpeditionMap): void;
+}
 
 export interface IExpeditionMap {
     readonly act: number;

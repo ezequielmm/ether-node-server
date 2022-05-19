@@ -4,17 +4,17 @@ import { actDefaults } from './act.config';
 
 class Act {
     actConfig: any;
-    actNumber: number;
-    stepsTotal: any;
+    actnumber: number;
+    stepsTotal: number;
     minNodesPerStep: number;
     maxNodesPerStep: number;
     minExitPerNode: number;
     maxExitPerNode: number;
     stepDefault: any;
     stepConfig: any;
-    constructor(actNumber: number, actConfigOptions: any) {
-        this.actConfig = this.chooseActConfig(actNumber, actConfigOptions);
-        this.actNumber = actNumber;
+    constructor(actnumber: number, actConfigOptions: any) {
+        this.actConfig = this.chooseActConfig(actnumber, actConfigOptions);
+        this.actnumber = actnumber;
         this.stepsTotal = this.actConfig.steps
             ? this.actConfig.steps
             : actDefaults.stepsTotal;
@@ -34,9 +34,9 @@ class Act {
         this.stepConfig = this.actConfig.step_config;
     }
 
-    private chooseActConfig(actNumber: number, actConfigOptions: any) {
+    private chooseActConfig(actnumber: number, actConfigOptions: any) {
         const matchingActConfigs = actConfigOptions.filter(
-            (option: { act: number }) => option.act === actNumber,
+            (option: { act: number }) => option.act === actnumber,
         );
         const selectActConfigIndex = Math.floor(
             Math.random() * matchingActConfigs.length,
@@ -84,9 +84,9 @@ class Act {
         return this.chooseNode(stepOptions);
     }
 
-    createStep(stepNumber: number, stepConfig: any) {
+    createStep(stepnumber: number, stepConfig: any) {
         const step: any = {};
-        step.stepNumber = stepNumber;
+        step.stepnumber = stepnumber;
         const nodes = stepConfig?.nodes
             ? stepConfig.nodes
             : this.stepDefault.nodes;
