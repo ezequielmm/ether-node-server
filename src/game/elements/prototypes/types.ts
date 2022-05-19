@@ -3,6 +3,11 @@ type BaseStateDeltaType = {
     val: any;
 };
 
+export type SetStateDeltaType = BaseStateDeltaType & {
+    mod: 'set';
+    key: string;
+};
+
 export type AddStateDeltaType = BaseStateDeltaType & {
     mod: 'add';
     key: string;
@@ -36,6 +41,7 @@ export type MoveStateDeltaType = BaseStateDeltaType & {
 };
 
 export type StateDeltaType =
+    | SetStateDeltaType
     | AddStateDeltaType
     | SubStateDeltaType
     | InsertStateDeltaType

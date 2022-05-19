@@ -64,6 +64,46 @@ describe('StateManagerService', () => {
         spyOnCreateState.mockClear();
     });
 
+    it('should modify state (Set)', async () => {
+        await service.snapshot('test');
+
+        expect(service.stateCollection).toEqual({
+            test: {
+                current: mockExpedition,
+                previous: mockExpedition,
+            },
+        });
+
+        await service.modify('test', {
+            key: 'player_state.hp_current',
+            mod: 'set',
+            val: 10,
+        });
+        const diff = service.getDiff('test');
+
+        expect(service.stateCollection).toEqual({
+            test: {
+                current: {
+                    ...mockExpedition,
+                    player_state: {
+                        ...mockExpedition.player_state,
+                        hp_current: 10,
+                    },
+                },
+                previous: mockExpedition,
+            },
+        });
+
+        expect(diff).toEqual([
+            {
+                kind: 'E',
+                path: ['player_state', 'hp_current'],
+                lhs: 100,
+                rhs: 10,
+            },
+        ]);
+    });
+
     it('should modify state (Add)', async () => {
         await service.snapshot('test');
 
