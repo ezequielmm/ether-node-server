@@ -47,3 +47,8 @@ export class UpdatePlayerEnergyDTO {
     readonly client_id: string;
     readonly energy: number;
 }
+
+export class TakeCardFromDrawPileDTO {
+    readonly client_id: string;
+    readonly cards_to_take?: number;
+}

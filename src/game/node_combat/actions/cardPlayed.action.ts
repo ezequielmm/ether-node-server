@@ -7,6 +7,7 @@ import {
     CardEnergyEnum,
     CardPlayErrorMessages,
 } from 'src/game/components/card/enums';
+import { UpdatePlayerEnergyEffect } from 'src/game/effects/updatePlayerEnergy.effect';
 
 @Injectable()
 export class CardPlayedAction {
@@ -14,6 +15,7 @@ export class CardPlayedAction {
         private readonly expeditionService: ExpeditionService,
         private readonly cardService: CardService,
         private readonly discardCardEffect: DiscardCardEffect,
+        private readonly updatePlayerEnergyEffect: UpdatePlayerEnergyEffect,
     ) {}
 
     async handle(client: Socket, card_id: string): Promise<string> {
@@ -52,11 +54,10 @@ export class CardPlayedAction {
             card_id,
         });
 
-        const { current_node } =
-            await this.expeditionService.updatePlayerEnergy({
-                client_id: client.id,
-                energy: newEnergyAmount,
-            });
+        const current_node = await this.updatePlayerEnergyEffect.handle({
+            client_id: client.id,
+            energy: newEnergyAmount,
+        });
 
         return JSON.stringify({ data: current_node });
     }

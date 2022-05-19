@@ -8,10 +8,6 @@ export class DrawCardEffect implements IBaseEffect {
     constructor(private readonly expeditionService: ExpeditionService) {}
 
     async handle(payload: DrawCardEffectDTO): Promise<void> {
-        const { client_id, cards_to_take } = payload;
-        await this.expeditionService.moveCardsFromDrawToHandPile(
-            client_id,
-            cards_to_take,
-        );
+        await this.expeditionService.moveCardsFromDrawToHandPile(payload);
     }
 }
