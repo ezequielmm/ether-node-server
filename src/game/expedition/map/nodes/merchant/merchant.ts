@@ -1,3 +1,4 @@
+import { ExpeditionMapNodeTypeEnum } from 'src/game/expedition/enums';
 import Node from '../node';
 
 function calcRandom(min: number, max: number): number {
@@ -5,11 +6,17 @@ function calcRandom(min: number, max: number): number {
 }
 
 class Merchant extends Node {
-    constructor() {
-        super();
+    constructor(
+        id: number,
+        act: number,
+        step: number,
+        type: ExpeditionMapNodeTypeEnum,
+        private_data: any,
+    ) {
+        super(id, act, step, type, private_data);
     }
-    public stateInitialize() {
-        this.baseState = {
+    public stateInitialize(): any {
+        this.state = {
             card_1: {
                 card_id: calcRandom(0, 50),
                 cost: calcRandom(60, 120),
@@ -23,7 +30,7 @@ class Merchant extends Node {
                 cost: calcRandom(100, 160),
             },
         };
-        return this.baseState;
+        return this.state;
     }
 }
 

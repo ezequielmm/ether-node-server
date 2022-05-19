@@ -1,7 +1,8 @@
 import { ExpeditionMapNodeTypeEnum } from 'src/game/expedition/enums';
+import ExpeditionMap from '../../map/expeditionMap';
 import Node from '../node';
 
-abstract class Combat extends Node {
+class Portal extends Node {
     constructor(
         id: number,
         act: number,
@@ -12,12 +13,11 @@ abstract class Combat extends Node {
         super(id, act, step, type, private_data);
     }
 
-    public stateInitialize(config: any): any {
-        const enemy =
-            config.enemies[Math.floor(Math.random() * config.enemies.length)];
-        this.state.enemy = enemy;
-        return this.state;
+    complete(expeditionMap: ExpeditionMap): void {
+        expeditionMap.disableAllNodes();
+        this.complete(expeditionMap);
+        expeditionMap.extendMap();
     }
 }
 
-export default Combat;
+export default Portal;

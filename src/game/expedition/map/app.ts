@@ -1,8 +1,7 @@
-import MapGenerator from './mapGenerator/mapGenerator';
-import { actCconfigAlternatives } from './act/act.config';
+import ExpeditionMap from './map/expeditionMap';
 
 export function getTestMap() {
-    const map = new MapGenerator();
-    map.addAct(1, actCconfigAlternatives);
-    return map.currentMap;
+    const map = new ExpeditionMap();
+    map.initMap();
+    return map;
 }
