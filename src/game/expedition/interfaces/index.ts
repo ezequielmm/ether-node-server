@@ -15,9 +15,11 @@ export interface IExpeditionNode {
     readonly isAvailable: boolean;
     readonly isComplete: boolean;
     readonly type: ExpeditionMapNodeTypeEnum;
+    readonly subType: ExpeditionMapNodeTypeEnum;
     readonly status: ExpeditionMapNodeStatusEnum;
     readonly exits: Array<number>;
     readonly enter: Array<number>;
+    readonly private_data: any;
     state?: any;
     setActive(): void;
     setDisable(): void;

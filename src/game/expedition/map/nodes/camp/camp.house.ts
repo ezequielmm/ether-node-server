@@ -11,9 +11,10 @@ class CampHouse extends Camp {
         act: number,
         step: number,
         type: ExpeditionMapNodeTypeEnum,
+        subType: ExpeditionMapNodeTypeEnum,
         private_data: any,
     ) {
-        super(id, act, step, type, private_data);
+        super(id, act, step, type, subType, private_data);
         this.minHouseId = 0;
         this.maxHouseId = 3;
     }

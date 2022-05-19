@@ -19,7 +19,7 @@ import {
     IExpeditionPlayerStateDeckCard,
 } from './interfaces';
 import { CardService } from '../components/card/card.service';
-import { getTestMap } from './map/app';
+import { generateMap, restoreMap } from './map/app';
 
 @Injectable()
 export class ExpeditionService {
@@ -42,7 +42,7 @@ export class ExpeditionService {
     }
 
     getMap(): IExpeditionNode[] {
-        const map = getTestMap();
+        const map = generateMap();
         console.log(map.fullCurrentMap);
         return map.getMap;
     }
@@ -82,6 +82,10 @@ export class ExpeditionService {
             .select('map')
             .lean();
         if (!map) return null;
+        console.log({ map });
+        console.log('+++++++++++++++++++');
+        const restoredMap = restoreMap(map);
+        console.log({ restoredMap });
         const item = map.filter((node) => node.id === node_id)[0];
         return item;
     }

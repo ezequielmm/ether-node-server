@@ -2,12 +2,13 @@ import Act from '../act/act';
 import Node from '../nodes/node';
 import nodeFactory from '../nodes/index';
 import { actCconfigAlternatives } from '../act/act.config';
+import { IExpeditionNode } from '../../interfaces';
 import { ExpeditionMapNodeTypeEnum } from '../../enums';
 
 class ExpeditionMap {
-    public activeNode: Node;
     private previousNodeId: number;
     private previousStepNodes: number;
+    public activeNode: Node;
     private currentNode: Node;
     private map: Map<number, Node>;
     private nextStep: Map<number, Node>;
@@ -17,15 +18,25 @@ class ExpeditionMap {
     private currentActNumber: number;
     private currentAct?: Act;
 
-    constructor() {
-        this.previousNodeId = 1;
-        this.previousStepNodes = 0;
+    public restoreMapFromArray(map: IExpeditionNode[]): void {
+        this.previousNodeId = map.length;
         this.previousActMap = new Map();
         this.newActMap = new Map();
         this.map = new Map();
         this.nextStep = new Map();
-    }
+        map.forEach((node: IExpeditionNode) => {
+            const nodeObj = nodeFactory(
+                node.id,
+                node.act,
+                node.step,
+                node.type,
+                node.subType,
+                node.private_data,
+            );
 
+            this.map.set(node.id, nodeObj);
+        });
+    }
     get getMap() {
         const map = [...this.map.values()];
         return map;
@@ -36,6 +47,12 @@ class ExpeditionMap {
     }
 
     public initMap() {
+        this.previousNodeId = 1;
+        this.previousStepNodes = 0;
+        this.previousActMap = new Map();
+        this.newActMap = new Map();
+        this.map = new Map();
+        this.nextStep = new Map();
         this.createAct0();
         this.initAct(0);
     }
@@ -60,6 +77,7 @@ class ExpeditionMap {
             1,
             0,
             0,
+            ExpeditionMapNodeTypeEnum.RoyalHouse,
             ExpeditionMapNodeTypeEnum.RoyalHouseA,
             {},
         );
@@ -67,6 +85,7 @@ class ExpeditionMap {
             2,
             0,
             0,
+            ExpeditionMapNodeTypeEnum.RoyalHouse,
             ExpeditionMapNodeTypeEnum.RoyalHouseB,
             {},
         );
@@ -74,6 +93,7 @@ class ExpeditionMap {
             3,
             0,
             0,
+            ExpeditionMapNodeTypeEnum.RoyalHouse,
             ExpeditionMapNodeTypeEnum.RoyalHouseC,
             {},
         );
@@ -81,6 +101,7 @@ class ExpeditionMap {
             4,
             0,
             0,
+            ExpeditionMapNodeTypeEnum.RoyalHouse,
             ExpeditionMapNodeTypeEnum.RoyalHouseD,
             {},
         );
@@ -89,12 +110,23 @@ class ExpeditionMap {
             0,
             1,
             ExpeditionMapNodeTypeEnum.Portal,
+            ExpeditionMapNodeTypeEnum.Portal,
             {},
         );
         royalA.exits.push(5);
         royalB.exits.push(5);
         royalC.exits.push(5);
         royalD.exits.push(5);
+        royalA.type = ExpeditionMapNodeTypeEnum.RoyalHouse;
+        royalB.type = ExpeditionMapNodeTypeEnum.RoyalHouse;
+        royalC.type = ExpeditionMapNodeTypeEnum.RoyalHouse;
+        royalD.type = ExpeditionMapNodeTypeEnum.RoyalHouse;
+        portal.type = ExpeditionMapNodeTypeEnum.Portal;
+        royalA.subType = ExpeditionMapNodeTypeEnum.RoyalHouseA;
+        royalB.subType = ExpeditionMapNodeTypeEnum.RoyalHouseB;
+        royalC.subType = ExpeditionMapNodeTypeEnum.RoyalHouseC;
+        royalD.subType = ExpeditionMapNodeTypeEnum.RoyalHouseD;
+        portal.subType = ExpeditionMapNodeTypeEnum.Portal;
         portal.enter.push(1, 2, 3, 4);
         act0.set(1, royalA);
         act0.set(2, royalB);
@@ -104,6 +136,11 @@ class ExpeditionMap {
         this.previousNodeId = 6;
         this.map = new Map(...[act0]);
         this.currentActNumber = 0;
+        console.log(royalA);
+        console.log(royalB);
+        console.log(royalC);
+        console.log(royalD);
+        console.log(portal);
         this.embbedMapToNodes();
     }
 
@@ -147,6 +184,7 @@ class ExpeditionMap {
                 this.currentAct.actnumber,
                 step,
                 nodeProperties.type,
+                nodeProperties.subType,
                 nodeProperties.config,
             );
             this.newActMap.set(nodeId, node);
