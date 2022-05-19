@@ -5,6 +5,7 @@ import {
     IExpeditionPlayerState,
 } from '../interfaces';
 import { ExpeditionStatusEnum } from '../enums';
+import { CardDestinationEnum } from 'src/game/effects/enums';
 
 export class CreateExpeditionDTO {
     readonly player_id: string;
@@ -51,4 +52,10 @@ export class UpdatePlayerEnergyDTO {
 export class TakeCardFromDrawPileDTO {
     readonly client_id: string;
     readonly cards_to_take?: number;
+}
+
+export class AddCardToPileDTO {
+    readonly client_id: string;
+    readonly card_id: string;
+    readonly destination: CardDestinationEnum;
 }
