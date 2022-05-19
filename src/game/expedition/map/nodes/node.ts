@@ -10,6 +10,7 @@ class Node implements IExpeditionNode {
     act: number;
     step: number;
     type: ExpeditionMapNodeTypeEnum;
+    subType: ExpeditionMapNodeTypeEnum;
     status: ExpeditionMapNodeStatusEnum;
     exits: Array<number>;
     enter: Array<number>;
@@ -20,12 +21,14 @@ class Node implements IExpeditionNode {
         act: number,
         step: number,
         type: ExpeditionMapNodeTypeEnum,
+        subType: ExpeditionMapNodeTypeEnum,
         private_data: any,
     ) {
         this.id = id;
         this.act = act;
         this.step = step;
         this.type = type;
+        this.type = subType;
         this.exits = [];
         this.enter = [];
         this.status = ExpeditionMapNodeStatusEnum.Disabled;

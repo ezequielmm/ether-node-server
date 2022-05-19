@@ -8,9 +8,10 @@ class Portal extends Node {
         act: number,
         step: number,
         type: ExpeditionMapNodeTypeEnum,
+        subType: ExpeditionMapNodeTypeEnum,
         private_data: any,
     ) {
-        super(id, act, step, type, private_data);
+        super(id, act, step, type, subType, private_data);
     }
 
     complete(expeditionMap: ExpeditionMap): void {

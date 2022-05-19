@@ -17,6 +17,7 @@ export enum ExpeditionMapNodeTypeEnum {
     CombatBoss = 'combat_boss',
     CombatElite = 'combat_elite',
     CombatStandard = 'combat_standard',
+    Camp = 'camp',
     CampHouse = 'camp_house',
     CampRegular = 'camp_regular',
     Portal = 'portal',
