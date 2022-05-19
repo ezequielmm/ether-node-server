@@ -42,8 +42,9 @@ export class ExpeditionService {
     }
 
     getMap(): IExpeditionNode[] {
-        const map: IExpeditionNode[] = getTestMap();
-        return map;
+        const map = getTestMap();
+        console.log(map.fullCurrentMap);
+        return map.getMap;
     }
 
     // getMap(): IExpeditionMap[] {
@@ -80,11 +81,8 @@ export class ExpeditionService {
             })
             .select('map')
             .lean();
-
         if (!map) return null;
-
         const item = map.filter((node) => node.id === node_id)[0];
-
         return item;
     }
 

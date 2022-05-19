@@ -1,3 +1,4 @@
+import { ExpeditionMapNodeTypeEnum } from 'src/game/expedition/enums';
 import Node from '../node';
 
 function calcRandom(min: number, max: number): number {
@@ -5,7 +6,13 @@ function calcRandom(min: number, max: number): number {
 }
 
 class Merchant extends Node {
-    constructor(id: number, act: number, step: number, type: string, private_data: any) {
+    constructor(
+        id: number,
+        act: number,
+        step: number,
+        type: ExpeditionMapNodeTypeEnum,
+        private_data: any,
+    ) {
         super(id, act, step, type, private_data);
     }
     public stateInitialize(): any {

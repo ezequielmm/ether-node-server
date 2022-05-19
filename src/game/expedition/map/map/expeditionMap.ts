@@ -2,6 +2,7 @@ import Act from '../act/act';
 import Node from '../nodes/node';
 import nodeFactory from '../nodes/index';
 import { actCconfigAlternatives } from '../act/act.config';
+import { ExpeditionMapNodeTypeEnum } from '../../enums';
 
 class ExpeditionMap {
     public activeNode: Node;
@@ -42,25 +43,54 @@ class ExpeditionMap {
     public disableAllNodes() {
         this.map.forEach((node) => {
             if (node.status !== 'disabled' && node.status !== 'completed') {
-                node.updateStatus('disabled');
+                node.setDisable();
             }
         });
     }
 
     private initAct(actNumber: number) {
         this.map.forEach((node) => {
-            if (node.act === actNumber && node.step === 0)
-                node.updateStatus('available');
+            if (node.act === actNumber && node.step === 0) node.setAvailable();
         });
     }
 
     private createAct0(): void {
         const act0 = new Map();
-        const royalA = nodeFactory(1, 0, 0, 'royalhouse_a', {});
-        const royalB = nodeFactory(2, 0, 0, 'royalhouse_b', {});
-        const royalC = nodeFactory(3, 0, 0, 'royalhouse_c', {});
-        const royalD = nodeFactory(4, 0, 0, 'royalhouse_d', {});
-        const portal = nodeFactory(5, 0, 1, 'portal', {});
+        const royalA = nodeFactory(
+            1,
+            0,
+            0,
+            ExpeditionMapNodeTypeEnum.RoyalHouseA,
+            {},
+        );
+        const royalB = nodeFactory(
+            2,
+            0,
+            0,
+            ExpeditionMapNodeTypeEnum.RoyalHouseB,
+            {},
+        );
+        const royalC = nodeFactory(
+            3,
+            0,
+            0,
+            ExpeditionMapNodeTypeEnum.RoyalHouseC,
+            {},
+        );
+        const royalD = nodeFactory(
+            4,
+            0,
+            0,
+            ExpeditionMapNodeTypeEnum.RoyalHouseD,
+            {},
+        );
+        const portal = nodeFactory(
+            5,
+            0,
+            1,
+            ExpeditionMapNodeTypeEnum.Portal,
+            {},
+        );
         royalA.exits.push(5);
         royalB.exits.push(5);
         royalC.exits.push(5);
@@ -73,17 +103,13 @@ class ExpeditionMap {
         act0.set(5, portal);
         this.previousNodeId = 6;
         this.map = new Map(...[act0]);
-        royalA.expeditionMap = this;
-        royalB.expeditionMap = this;
-        royalC.expeditionMap = this;
-        royalD.expeditionMap = this;
         this.currentActNumber = 0;
         this.embbedMapToNodes();
     }
 
     private embbedMapToNodes() {
         this.map.forEach((node) => {
-            node.expeditionMap = this;
+            // node.expeditionMap = this;
         });
     }
     public extendMap() {

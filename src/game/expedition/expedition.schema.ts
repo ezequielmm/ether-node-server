@@ -2,6 +2,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 import { ExpeditionStatusEnum } from './enums';
 import {
+    IExpeditionNode,
     IExpeditionCurrentNode,
     IExpeditionMap,
     IExpeditionPlayerState,
@@ -18,8 +19,8 @@ export class Expedition {
     readonly player_id: string;
 
     @Prop()
-    readonly map: IExpeditionMap[];
-
+    readonly map: IExpeditionNode[];
+    // readonly map: IExpeditionMap[];
     @Prop({ type: Object })
     readonly player_state: IExpeditionPlayerState;
 

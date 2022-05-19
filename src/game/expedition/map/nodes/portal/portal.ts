@@ -1,14 +1,22 @@
+import { ExpeditionMapNodeTypeEnum } from 'src/game/expedition/enums';
+import ExpeditionMap from '../../map/expeditionMap';
 import Node from '../node';
 
 class Portal extends Node {
-    constructor(id: number, act: number, step: number, type: string, private_data: any) {
+    constructor(
+        id: number,
+        act: number,
+        step: number,
+        type: ExpeditionMapNodeTypeEnum,
+        private_data: any,
+    ) {
         super(id, act, step, type, private_data);
     }
 
-    complete(): void {
-        this.expeditionMap.disableAllNodes();
-        this.updateStatus('completed');
-        this.expeditionMap.extendMap();
+    complete(expeditionMap: ExpeditionMap): void {
+        expeditionMap.disableAllNodes();
+        this.complete(expeditionMap);
+        expeditionMap.extendMap();
     }
 }
 

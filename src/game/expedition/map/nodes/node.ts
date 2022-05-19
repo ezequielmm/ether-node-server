@@ -1,21 +1,25 @@
 import ExpeditionMap from '../map/expeditionMap';
 import { IExpeditionNode } from '../../interfaces';
+import {
+    ExpeditionMapNodeStatusEnum,
+    ExpeditionMapNodeTypeEnum,
+} from '../../enums';
+
 class Node implements IExpeditionNode {
     id: number;
     act: number;
     step: number;
-    type: string;
+    type: ExpeditionMapNodeTypeEnum;
+    status: ExpeditionMapNodeStatusEnum;
     exits: Array<number>;
     enter: Array<number>;
-    status: string;
     state: any;
     private_data: any;
-    private _expeditionMap?: ExpeditionMap;
     constructor(
         id: number,
         act: number,
         step: number,
-        type: string,
+        type: ExpeditionMapNodeTypeEnum,
         private_data: any,
     ) {
         this.id = id;
@@ -24,36 +28,48 @@ class Node implements IExpeditionNode {
         this.type = type;
         this.exits = [];
         this.enter = [];
-        this.status = 'disabled';
+        this.status = ExpeditionMapNodeStatusEnum.Disabled;
         this.private_data = private_data;
     }
-    public get expeditionMap(): ExpeditionMap {
-        return this._expeditionMap;
-    }
-    public set expeditionMap(value: ExpeditionMap) {
-        this._expeditionMap = value;
-    }
 
-    openExitsNodes(): void {
+    public get isActive(): boolean {
+        return this.status === ExpeditionMapNodeStatusEnum.Active;
+    }
+    public get isDisable(): boolean {
+        return this.status === ExpeditionMapNodeStatusEnum.Disabled;
+    }
+    public get isAvailable(): boolean {
+        return this.status === ExpeditionMapNodeStatusEnum.Available;
+    }
+    public get isComplete(): boolean {
+        return this.status === ExpeditionMapNodeStatusEnum.Completed;
+    }
+    public setActive(): void {
+        this.status = ExpeditionMapNodeStatusEnum.Active;
+    }
+    public setDisable(): void {
+        this.status = ExpeditionMapNodeStatusEnum.Disabled;
+    }
+    public setAvailable(): void {
+        this.status = ExpeditionMapNodeStatusEnum.Available;
+    }
+    public setComplete(): void {
+        this.status = ExpeditionMapNodeStatusEnum.Completed;
+    }
+    public select(expeditionMap: ExpeditionMap): void {
+        this.setActive();
+        expeditionMap.activeNode = this;
+        this.complete(expeditionMap);
+    }
+    public complete(expeditionMap: ExpeditionMap): void {
+        expeditionMap.disableAllNodes();
+        this.setComplete();
+        this.openExitsNodes(expeditionMap);
+    }
+    private openExitsNodes(expeditionMap: ExpeditionMap): void {
         this.exits.forEach((exit) => {
-            this.expeditionMap.fullCurrentMap
-                .get(exit)
-                .updateStatus('available');
+            expeditionMap.fullCurrentMap.get(exit).setActive();
         });
-    }
-    updateStatus(status: string): string {
-        this.status = status;
-        return status;
-    }
-    complete(): void {
-        this.expeditionMap.disableAllNodes();
-        this.updateStatus('completed');
-        this.openExitsNodes();
-    }
-    selected(): void {
-        this.updateStatus('active');
-        this.expeditionMap.activeNode = this;
-        this.complete();
     }
 }
 

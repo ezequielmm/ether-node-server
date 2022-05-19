@@ -1,7 +1,14 @@
+import { ExpeditionMapNodeTypeEnum } from 'src/game/expedition/enums';
 import Node from '../node';
 
 abstract class Camp extends Node {
-    constructor(id: number, act: number, step: number, type: string, private_data: any) {
+    constructor(
+        id: number,
+        act: number,
+        step: number,
+        type: ExpeditionMapNodeTypeEnum,
+        private_data: any,
+    ) {
         super(id, act, step, type, private_data);
     }
 }
