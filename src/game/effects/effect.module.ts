@@ -1,3 +1,4 @@
+import { GameManagerModule } from './../gameManger/gameManager.module';
 import { forwardRef, Module } from '@nestjs/common';
 import { ExpeditionModule } from '../expedition/expedition.module';
 import { DiscardAllCards } from './discardAllCards.effect';
@@ -6,7 +7,7 @@ import { DrawCardEffect } from './drawCard.effect';
 import { UpdatePlayerEnergyEffect } from './updatePlayerEnergy.effect';
 
 @Module({
-    imports: [forwardRef(() => ExpeditionModule)],
+    imports: [forwardRef(() => ExpeditionModule), GameManagerModule],
     providers: [
         DiscardCardEffect,
         DrawCardEffect,

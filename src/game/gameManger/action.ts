@@ -1,5 +1,5 @@
 import { Activity } from '../elements/prototypes/activity';
-import { ActionResponse } from './interfaces/index';
+import { ActionResponse, LogActivityOptions } from './interfaces/index';
 import { GameManagerService } from './gameManager.service';
 
 export class Action {
@@ -9,8 +9,15 @@ export class Action {
         private readonly gameManagerService: GameManagerService,
     ) {}
 
-    public async log(activity: Activity): Promise<void> {
-        this.gameManagerService.logActivity(this.clientId, activity);
+    public async log(
+        activity: Activity,
+        options: LogActivityOptions = {},
+    ): Promise<void> {
+        return this.gameManagerService.logActivity(
+            this.clientId,
+            activity,
+            options,
+        );
     }
 
     public async end(): Promise<ActionResponse> {

@@ -1,3 +1,4 @@
+import { GameManagerModule } from './../../gameManger/gameManager.module';
 import { forwardRef, Module } from '@nestjs/common';
 import { ExpeditionModule } from '../../expedition/expedition.module';
 import { CardModule } from '../../components/card/card.module';
@@ -10,6 +11,7 @@ import { EffectModule } from 'src/game/effects/effect.module';
         forwardRef(() => ExpeditionModule),
         forwardRef(() => CardModule),
         EffectModule,
+        GameManagerModule,
     ],
     providers: [CardPlayedAction, EndTurnAction],
     exports: [CardPlayedAction, EndTurnAction, ExpeditionModule],
