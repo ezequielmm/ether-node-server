@@ -75,6 +75,9 @@ export class CardPlayedAction {
                     val: newEnergyAmount,
                 },
             ]),
+            {
+                blockName: 'cardPlayed',
+            },
         );
 
         return JSON.stringify(await action.end());

@@ -31,6 +31,9 @@ export class DiscardCardEffect implements IBaseEffect {
                     pos: 'append',
                 },
             ]),
+            {
+                blockName: 'cardPlayed',
+            },
         );
     }
 }

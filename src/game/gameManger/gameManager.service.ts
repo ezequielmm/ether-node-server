@@ -1,10 +1,11 @@
 import { StateManagerService } from './../stateManager/stateManager.service';
 import { EventManagerService } from './../eventManager/eventManager.service';
-import { ActionResponse } from './interfaces/index';
+import { ActionResponse, LogActivityOptions } from './interfaces/index';
 import { ActivityLogService } from './../response/activityLog.service';
 import { Injectable } from '@nestjs/common';
 import { Action } from './action';
 import { Activity } from '../elements/prototypes/activity';
+import * as _ from 'lodash';
 
 @Injectable()
 export class GameManagerService {
@@ -45,10 +46,14 @@ export class GameManagerService {
     public async logActivity(
         clientId: string,
         activity: Activity,
+        options: LogActivityOptions = {},
     ): Promise<void> {
         const activityLog = this.activityLogService.findOneByClientId(clientId);
-        const id = Math.random().toString(36).substring(2, 15);
-        activityLog.addActivity(id, activity);
+        const blockName = options.blockName || _.uniqueId('block-');
+
+        activityLog.addActivity(blockName, activity);
+
+        // Apply state delta to expedition state
         for (const stateDelta of activity.state_delta) {
             await this.stateManagerService.modify(clientId, stateDelta);
         }

@@ -5,3 +5,7 @@ export interface ActionResponse {
     activities: SerializeType;
     stateDelta: any;
 }
+
+export interface LogActivityOptions {
+    blockName?: string;
+}
