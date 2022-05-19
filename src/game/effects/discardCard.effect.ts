@@ -24,9 +24,9 @@ export class DiscardCardEffect implements IBaseEffect {
             new Activity('card', card_id, 'discard', undefined, [
                 {
                     mod: 'mov',
-                    source: 'node.data.player.cards.hand',
-                    target: 'node.data.player.cards.discard_pile',
-                    prop: 'guid',
+                    source: 'current_node.data.player.cards.hand',
+                    target: 'current_node.data.player.cards.discard',
+                    prop: 'id',
                     val: card_id,
                     pos: 'append',
                 },

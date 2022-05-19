@@ -29,12 +29,12 @@ export class DrawCardEffect implements IBaseEffect {
                 [
                     {
                         mod: 'set',
-                        key: 'node.data.player.cards.hand',
+                        key: 'current_node.data.player.cards.hand',
                         val: expedition.current_node.data.player.cards.hand,
                     },
                     {
                         mod: 'set',
-                        key: 'node.data.player.cards.draw',
+                        key: 'current_node.data.player.cards.draw',
                         val: expedition.current_node.data.player.cards.draw,
                     },
                 ],

@@ -71,7 +71,7 @@ export class CardPlayedAction {
             new Activity('energy', undefined, 'decrease', undefined, [
                 {
                     mod: 'set',
-                    key: 'node.data.player.energy_current',
+                    key: 'current_node.data.player.energy',
                     val: newEnergyAmount,
                 },
             ]),
