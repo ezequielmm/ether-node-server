@@ -125,6 +125,7 @@ export class ExpeditionController {
                                 targeted: card.targeted,
                                 properties: card.properties,
                                 keywords: card.keywords,
+                                is_temporary: false,
                             })),
                         },
                         created_at: new Date(),

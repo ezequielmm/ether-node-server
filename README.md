@@ -11,6 +11,10 @@ To install we just need to run `npm run install`
 
 Then we run `cp .env.example .env` to create the `.env` file. Next, we replace the our dabatase values and
 
+To generate the default database run `npm run seed` (This won't affect the expedition colletion)
+
+To refresh the database run `npm run seed:refresh`
+
 This project has Swagger Docs included for quick test and references under the `/api` route.
 
 To start the project in dev mode we run `npm run start:dev` and leave the console open in the background

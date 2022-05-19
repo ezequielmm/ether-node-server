@@ -2,8 +2,9 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Expedition, ExpeditionDocument } from './expedition.schema';
-import { ExpeditionStatusEnum } from './enums';
+import { CardDestinationEnum, ExpeditionStatusEnum } from './enums';
 import {
+    AddCardToPileDTO,
     CardExistsDTO,
     CreateExpeditionDTO,
     GetExpeditionDTO,
@@ -254,5 +255,47 @@ export class ExpeditionService {
             },
             { new: true },
         );
+    }
+
+    async addCardToPile(payload: AddCardToPileDTO): Promise<void> {
+        const { client_id, destination, card_id } = payload;
+
+        const expedition = await this.expedition.findOne({
+            client_id,
+            status: ExpeditionStatusEnum.InProgress,
+        });
+
+        const card = await this.cardService.findById(card_id);
+
+        const newCard = {
+            id: card._id.toString(),
+            name: card.name,
+            description: card.description,
+            rarity: card.rarity,
+            energy: card.energy,
+            card_type: card.card_type,
+            pool: card.pool,
+            targeted: card.targeted,
+            properties: card.properties,
+            keywords: card.keywords,
+            is_temporary: true,
+        };
+
+        switch (destination) {
+            case CardDestinationEnum.Discard:
+                expedition.current_node.data.player.cards.discard.push(newCard);
+                break;
+            case CardDestinationEnum.Hand:
+                expedition.current_node.data.player.cards.hand.push(newCard);
+                break;
+            case CardDestinationEnum.DrawRandom:
+                expedition.current_node.data.player.cards.draw.push(newCard);
+                break;
+            case CardDestinationEnum.DrawTop:
+                expedition.current_node.data.player.cards.draw.unshift(newCard);
+                break;
+        }
+
+        expedition.save();
     }
 }
