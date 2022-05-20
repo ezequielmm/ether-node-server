@@ -24,6 +24,7 @@ class ExpeditionMap {
         this.newActMap = new Map();
         this.map = new Map();
         this.nextStep = new Map();
+        this.currentActNumber = map[map.length - 1].act;
         map.forEach((node: IExpeditionNode) => {
             const nodeObj = nodeFactory(
                 node.id,
@@ -59,7 +60,7 @@ class ExpeditionMap {
 
     public disableAllNodes() {
         this.map.forEach((node) => {
-            if (node.status !== 'disabled' && node.status !== 'completed') {
+            if (node.isDisable && node.isComplete) {
                 node.setDisable();
             }
         });
@@ -117,16 +118,6 @@ class ExpeditionMap {
         royalB.exits.push(5);
         royalC.exits.push(5);
         royalD.exits.push(5);
-        royalA.type = ExpeditionMapNodeTypeEnum.RoyalHouse;
-        royalB.type = ExpeditionMapNodeTypeEnum.RoyalHouse;
-        royalC.type = ExpeditionMapNodeTypeEnum.RoyalHouse;
-        royalD.type = ExpeditionMapNodeTypeEnum.RoyalHouse;
-        portal.type = ExpeditionMapNodeTypeEnum.Portal;
-        royalA.subType = ExpeditionMapNodeTypeEnum.RoyalHouseA;
-        royalB.subType = ExpeditionMapNodeTypeEnum.RoyalHouseB;
-        royalC.subType = ExpeditionMapNodeTypeEnum.RoyalHouseC;
-        royalD.subType = ExpeditionMapNodeTypeEnum.RoyalHouseD;
-        portal.subType = ExpeditionMapNodeTypeEnum.Portal;
         portal.enter.push(1, 2, 3, 4);
         act0.set(1, royalA);
         act0.set(2, royalB);
@@ -136,11 +127,6 @@ class ExpeditionMap {
         this.previousNodeId = 6;
         this.map = new Map(...[act0]);
         this.currentActNumber = 0;
-        console.log(royalA);
-        console.log(royalB);
-        console.log(royalC);
-        console.log(royalD);
-        console.log(portal);
         this.embbedMapToNodes();
     }
 
@@ -179,6 +165,7 @@ class ExpeditionMap {
             const nodeId = this.previousNodeId;
             this.previousNodeId += 1;
             const nodeProperties = this.currentAct.createNode(step);
+            console.log({ nodeProperties });
             const node = nodeFactory(
                 nodeId,
                 this.currentAct.actnumber,
@@ -188,6 +175,13 @@ class ExpeditionMap {
                 nodeProperties.config,
             );
             this.newActMap.set(nodeId, node);
+            if (
+                nodeProperties.subType ===
+                    ExpeditionMapNodeTypeEnum.CombatBoss ||
+                nodeProperties.subType === ExpeditionMapNodeTypeEnum.Portal
+            ) {
+                break;
+            }
         }
     }
 

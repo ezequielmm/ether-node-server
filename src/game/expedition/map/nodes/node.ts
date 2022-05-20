@@ -6,16 +6,16 @@ import {
 } from '../../enums';
 
 class Node implements IExpeditionNode {
-    id: number;
-    act: number;
-    step: number;
-    type: ExpeditionMapNodeTypeEnum;
-    subType: ExpeditionMapNodeTypeEnum;
-    status: ExpeditionMapNodeStatusEnum;
-    exits: Array<number>;
-    enter: Array<number>;
-    state: any;
-    private_data: any;
+    public id: number;
+    public act: number;
+    public step: number;
+    public type: ExpeditionMapNodeTypeEnum;
+    public subType: ExpeditionMapNodeTypeEnum;
+    public status: ExpeditionMapNodeStatusEnum;
+    public exits: Array<number>;
+    public enter: Array<number>;
+    public state: any;
+    public private_data: any;
     constructor(
         id: number,
         act: number,
@@ -28,7 +28,7 @@ class Node implements IExpeditionNode {
         this.act = act;
         this.step = step;
         this.type = type;
-        this.type = subType;
+        this.subType = subType;
         this.exits = [];
         this.enter = [];
         this.status = ExpeditionMapNodeStatusEnum.Disabled;
