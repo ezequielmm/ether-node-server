@@ -60,18 +60,19 @@ class Node implements IExpeditionNode {
         this.status = ExpeditionMapNodeStatusEnum.Completed;
     }
     public select(expeditionMap: ExpeditionMap): void {
-        this.setActive();
-        expeditionMap.activeNode = this;
-        this.complete(expeditionMap);
+        if (this.isAvailable) {
+            this.setActive();
+            expeditionMap.activeNode = this;
+        }
     }
     public complete(expeditionMap: ExpeditionMap): void {
         expeditionMap.disableAllNodes();
         this.setComplete();
         this.openExitsNodes(expeditionMap);
     }
-    private openExitsNodes(expeditionMap: ExpeditionMap): void {
+    protected openExitsNodes(expeditionMap: ExpeditionMap): void {
         this.exits.forEach((exit) => {
-            expeditionMap.fullCurrentMap.get(exit).setActive();
+            expeditionMap.fullCurrentMap.get(exit).setAvailable();
         });
     }
 }

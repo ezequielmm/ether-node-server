@@ -34,6 +34,7 @@ export interface IExpeditionMap {
     readonly step: number;
     readonly id: number;
     readonly type: ExpeditionMapNodeTypeEnum;
+    readonly subType: ExpeditionMapNodeTypeEnum;
     readonly exits: number[];
     readonly enter: number[];
     readonly private_data?: any;

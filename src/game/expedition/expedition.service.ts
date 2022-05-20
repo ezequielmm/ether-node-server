@@ -82,12 +82,14 @@ export class ExpeditionService {
             .select('map')
             .lean();
         if (!map) return null;
-        console.log({ map });
-        console.log('+++++++++++++++++++');
-        const restoredMap = restoreMap(map);
-        console.log({ restoredMap });
-        const item = map.filter((node) => node.id === node_id)[0];
-        return item;
+
+        const expeditionMap = restoreMap(map);
+        const selectedNode = expeditionMap.fullCurrentMap.get(node_id);
+
+        selectedNode.select(expeditionMap);
+        selectedNode.complete(expeditionMap);
+
+        return selectedNode;
     }
 
     async getDeckCards(

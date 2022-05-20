@@ -19,7 +19,7 @@ class ExpeditionMap {
     private currentAct?: Act;
 
     public restoreMapFromArray(map: IExpeditionNode[]): void {
-        this.previousNodeId = map.length;
+        this.previousNodeId = map.length + 1;
         this.previousActMap = new Map();
         this.newActMap = new Map();
         this.map = new Map();
@@ -34,8 +34,10 @@ class ExpeditionMap {
                 node.subType,
                 node.private_data,
             );
-
+            nodeObj.exits = node.exits;
+            nodeObj.enter = node.enter;
             this.map.set(node.id, nodeObj);
+            this.initAct(this.currentActNumber);
         });
     }
     get getMap() {
@@ -60,7 +62,7 @@ class ExpeditionMap {
 
     public disableAllNodes() {
         this.map.forEach((node) => {
-            if (node.isDisable && node.isComplete) {
+            if (!node.isDisable && !node.isComplete) {
                 node.setDisable();
             }
         });
@@ -165,7 +167,6 @@ class ExpeditionMap {
             const nodeId = this.previousNodeId;
             this.previousNodeId += 1;
             const nodeProperties = this.currentAct.createNode(step);
-            console.log({ nodeProperties });
             const node = nodeFactory(
                 nodeId,
                 this.currentAct.actnumber,
@@ -234,7 +235,6 @@ class ExpeditionMap {
             }
             // Check if nodes belong to different steps
         } else if (originNode.step !== targetNode.step) {
-            // console.log('originNode.step !== targetNode.step');
             const previousNodes = [...this.newActMap.values()].filter(
                 (node) =>
                     node.step === originNode.step && node.id < originNode.id,

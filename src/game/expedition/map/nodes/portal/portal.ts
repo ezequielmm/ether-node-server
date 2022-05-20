@@ -16,8 +16,12 @@ class Portal extends Node {
 
     complete(expeditionMap: ExpeditionMap): void {
         expeditionMap.disableAllNodes();
-        this.complete(expeditionMap);
+        this.setComplete();
         expeditionMap.extendMap();
+        this.exits = expeditionMap.getMap
+            .filter((node) => node.act === this.act + 1 && node.step === 0)
+            .map((node) => node.id);
+        this.openExitsNodes(expeditionMap);
     }
 }
 
