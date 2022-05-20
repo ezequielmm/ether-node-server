@@ -33,6 +33,10 @@ export class CombatGateway {
 
         const { card_id }: CardPlayedInterface = JSON.parse(payload);
 
-        return await this.cardPlayedAction.handle(client, card_id);
+        try {
+            return await this.cardPlayedAction.handle(client, card_id);
+        } catch (e) {
+            this.logger.error(e.trace);
+        }
     }
 }
