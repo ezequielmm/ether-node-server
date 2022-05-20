@@ -48,12 +48,6 @@ export class ExpeditionService {
         console.log(map.fullCurrentMap);
         return map.getMap;
     }
-
-    // getMap(): IExpeditionMap[] {
-    //     const map: IExpeditionMap[] = getTestMap();
-    //     return [...map];
-    // }
-
     async updateClientId(
         payload: UpdateSocketClientDTO,
     ): Promise<ExpeditionDocument> {
@@ -90,6 +84,7 @@ export class ExpeditionService {
 
         selectedNode.select(expeditionMap);
         selectedNode.complete(expeditionMap);
+        console.log(expeditionMap.getMap);
 
         return selectedNode;
     }

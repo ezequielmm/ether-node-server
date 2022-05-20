@@ -216,23 +216,23 @@ class ExpeditionMap {
         let valid = false;
         // If nodes belong to same step, they must be adjacent
         if (originNode.step === targetNode.step) {
-            // two nodes from the same Step are adjacent if their id is subsequent
-            const nodesDifference = Math.abs(originNode.id - targetNode.id);
-            if (nodesDifference === 1) {
-                // if target node has no enters from origin node return valid
-                if (targetNode.enter !== null) {
-                    if (
-                        targetNode.enter.every(
-                            (enter: any) => enter !== originNode.id,
-                        ) &&
-                        targetNode.exits.every(
-                            (exit: any) => exit !== originNode.id,
-                        )
-                    ) {
-                        valid = true;
-                    }
-                }
-            }
+            // // two nodes from the same Step are adjacent if their id is subsequent
+            // const nodesDifference = Math.abs(originNode.id - targetNode.id);
+            // if (nodesDifference === 1) {
+            //     // if target node has no enters from origin node return valid
+            //     if (targetNode.enter !== null) {
+            //         if (
+            //             targetNode.enter.every(
+            //                 (enter: any) => enter !== originNode.id,
+            //             ) &&
+            //             targetNode.exits.every(
+            //                 (exit: any) => exit !== originNode.id,
+            //             )
+            //         ) {
+            //             valid = true;
+            //         }
+            //     }
+            // }
             // Check if nodes belong to different steps
         } else if (originNode.step !== targetNode.step) {
             const previousNodes = [...this.newActMap.values()].filter(
