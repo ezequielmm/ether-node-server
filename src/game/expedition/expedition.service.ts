@@ -84,7 +84,10 @@ export class ExpeditionService {
 
         selectedNode.select(expeditionMap);
         selectedNode.complete(expeditionMap);
-        console.log(expeditionMap.getMap);
+        await this.update(
+            { status: ExpeditionStatusEnum.InProgress, client_id },
+            { map: expeditionMap.getMap },
+        );
 
         return selectedNode;
     }
