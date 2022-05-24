@@ -1,15 +1,17 @@
 import { SubscribeMessage, WebSocketGateway } from '@nestjs/websockets';
-import { Logger } from '@nestjs/common';
+import { Logger, UseFilters } from '@nestjs/common';
 import { Socket } from 'socket.io';
 import { EndTurnAction } from './actions/endTurn.action';
 import { CardPlayedInterface } from '../../socket/interfaces';
 import { CardPlayedAction } from './actions/cardPlayed.action';
+import { CustomExceptionFilter } from 'src/socket/customException.filter';
 
 @WebSocketGateway({
     cors: {
         origin: '*',
     },
 })
+@UseFilters(CustomExceptionFilter)
 export class CombatGateway {
     private readonly logger: Logger = new Logger(CombatGateway.name);
 
@@ -33,10 +35,6 @@ export class CombatGateway {
 
         const { card_id }: CardPlayedInterface = JSON.parse(payload);
 
-        try {
-            return await this.cardPlayedAction.handle(client, card_id);
-        } catch (e) {
-            this.logger.error(e.trace);
-        }
+        return await this.cardPlayedAction.handle(client, card_id);
     }
 }
