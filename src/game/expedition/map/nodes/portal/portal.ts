@@ -13,7 +13,10 @@ class Portal extends Node {
     ) {
         super(id, act, step, type, subType, private_data);
     }
-
+    public select(expeditionMap: ExpeditionMap): void {
+        if (this.isAvailable) {
+        }
+    }
     complete(expeditionMap: ExpeditionMap): void {
         expeditionMap.disableAllNodes();
         this.setComplete();
