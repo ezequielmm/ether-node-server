@@ -62,7 +62,7 @@ class ExpeditionMap {
 
     public disableAllNodes() {
         this.map.forEach((node) => {
-            if (!node.isDisable && !node.isComplete) {
+            if (!node.isDisable || !node.isComplete) {
                 node.setDisable();
             }
         });
@@ -234,7 +234,7 @@ class ExpeditionMap {
     private defineConnection(exitsAmount: number, step: number) {
         const exits = new Set();
         // Select a List of nodes innext step as candidates for connections
-        1; // Valid candidates should to the next step and must not be the current node itself
+        // Valid candidates should to the next step and must not be the current node itself
         const candidateNodes = [...this.newActMap.values()].filter(
             (node) => node.step === step + 1 && node.id !== this.currentNode.id,
         );
@@ -251,6 +251,7 @@ class ExpeditionMap {
                 candidateNodes.splice(candidateIndex, 1);
                 if (this.validConnection(this.currentNode, candidateNode)) {
                     exits.add(candidateNode.id);
+                    this.currentNode.exits.push(candidateNode.id);
                     this.newActMap
                         .get(candidateNode.id)
                         .enter.push(this.currentNode.id);

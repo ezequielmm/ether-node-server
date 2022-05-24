@@ -17,7 +17,7 @@ class Portal extends Node {
         if (this.isAvailable) {
         }
     }
-    complete(expeditionMap: ExpeditionMap): void {
+    public complete(expeditionMap: ExpeditionMap): void {
         expeditionMap.disableAllNodes();
         this.setComplete();
         expeditionMap.extendMap();
