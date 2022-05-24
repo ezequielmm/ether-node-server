@@ -68,12 +68,6 @@ class ExpeditionMap {
         });
     }
 
-    private initAct(actNumber: number) {
-        this.map.forEach((node) => {
-            if (node.act === actNumber && node.step === 0) node.setAvailable();
-        });
-    }
-
     private createAct0(): void {
         const act0 = new Map();
         const royalA = nodeFactory(
@@ -129,20 +123,23 @@ class ExpeditionMap {
         this.previousNodeId = 6;
         this.map = new Map(...[act0]);
         this.currentActNumber = 0;
-        this.embbedMapToNodes();
     }
 
-    private embbedMapToNodes() {
-        this.map.forEach((node) => {
-            // node.expeditionMap = this;
-        });
-    }
     public extendMap() {
         this.currentActNumber += 1;
         const config = actCconfigAlternatives;
         this.addAct(this.currentActNumber, config);
         this.initAct(this.currentActNumber);
     }
+
+    private initAct(actNumber: number) {
+        this.map.forEach((node) => {
+            if (node.act === actNumber && node.step === 0) {
+                node.setAvailable();
+            }
+        });
+    }
+
     private addAct(actnumber: number, actConfigAlternatives: any): void {
         // Clear currentStepnumber, nextStepnumber and newActMap to initial values.
         this.newActMap.clear();
@@ -153,17 +150,16 @@ class ExpeditionMap {
             this.addNodes(step, nodesToGenerate);
         }
         this.createConnections();
+        this.MergeCurrentAndNewMap();
+    }
+
+    private MergeCurrentAndNewMap() {
         // Merge new ActMap with previous existentMap.
         this.map = new Map([...this.map, ...this.newActMap]);
-        this.embbedMapToNodes();
     }
 
     private addNodes(step: number, nodesToGenerate: number) {
-        for (
-            let nodenumber = 0;
-            nodenumber < nodesToGenerate;
-            nodenumber += 1
-        ) {
+        for (let count = 0; count < nodesToGenerate; count += 1) {
             const nodeId = this.previousNodeId;
             this.previousNodeId += 1;
             const nodeProperties = this.currentAct.createNode(step);
@@ -176,6 +172,7 @@ class ExpeditionMap {
                 nodeProperties.config,
             );
             this.newActMap.set(nodeId, node);
+            // Only one Boss or Portal per step.
             if (
                 nodeProperties.subType ===
                     ExpeditionMapNodeTypeEnum.CombatBoss ||
@@ -214,60 +211,32 @@ class ExpeditionMap {
 
     private validConnection(originNode: any, targetNode: any): boolean {
         let valid = false;
-        // If nodes belong to same step, they must be adjacent
-        if (originNode.step === targetNode.step) {
-            // // two nodes from the same Step are adjacent if their id is subsequent
-            // const nodesDifference = Math.abs(originNode.id - targetNode.id);
-            // if (nodesDifference === 1) {
-            //     // if target node has no enters from origin node return valid
-            //     if (targetNode.enter !== null) {
-            //         if (
-            //             targetNode.enter.every(
-            //                 (enter: any) => enter !== originNode.id,
-            //             ) &&
-            //             targetNode.exits.every(
-            //                 (exit: any) => exit !== originNode.id,
-            //             )
-            //         ) {
-            //             valid = true;
-            //         }
-            //     }
-            // }
-            // Check if nodes belong to different steps
-        } else if (originNode.step !== targetNode.step) {
-            const previousNodes = [...this.newActMap.values()].filter(
-                (node) =>
-                    node.step === originNode.step && node.id < originNode.id,
-            );
-            if (previousNodes.length === 0) {
-                valid = true;
-            } else {
-                for (let index = 0; index < previousNodes.length; index += 1) {
-                    const node = previousNodes[index];
-                    if (
-                        node.exits.every(
-                            (exit: number) => exit <= targetNode.id,
-                        )
-                    ) {
-                        valid = true;
-                    } else {
-                        valid = false;
-                        break;
-                    }
+        const previousNodes = [...this.newActMap.values()].filter(
+            (node) => node.step === originNode.step && node.id < originNode.id,
+        );
+        if (previousNodes.length === 0) {
+            valid = true;
+        } else {
+            for (let index = 0; index < previousNodes.length; index += 1) {
+                const node = previousNodes[index];
+                if (node.exits.every((exit: number) => exit <= targetNode.id)) {
+                    valid = true;
+                } else {
+                    valid = false;
+                    break;
                 }
             }
         }
+
         return valid;
     }
 
-    private defineConnections(exitsAmount: number, step: number) {
+    private defineConnection(exitsAmount: number, step: number) {
         const exits = new Set();
-        // Select a List of nodes in the current and next step as candidates for connections
-        // Valid candidates should belong to same step or the next step and must not be the current node itself
+        // Select a List of nodes innext step as candidates for connections
+        1; // Valid candidates should to the next step and must not be the current node itself
         const candidateNodes = [...this.newActMap.values()].filter(
-            (node) =>
-                (node.step === step || node.step === step + 1) &&
-                node.id !== this.currentNode.id,
+            (node) => node.step === step + 1 && node.id !== this.currentNode.id,
         );
         if (candidateNodes.length > 0) {
             // Loop until reaching the set amount of exits or getting out of candidates
@@ -282,12 +251,6 @@ class ExpeditionMap {
                 candidateNodes.splice(candidateIndex, 1);
                 if (this.validConnection(this.currentNode, candidateNode)) {
                     exits.add(candidateNode.id);
-                    this.currentNode.exits.push(candidateNode.id);
-                    const currentNodeEnters = this.newActMap.get(
-                        candidateNode.id,
-                    ).enter;
-                    if (currentNodeEnters === null)
-                        this.newActMap.get(candidateNode.id).enter = [];
                     this.newActMap
                         .get(candidateNode.id)
                         .enter.push(this.currentNode.id);
@@ -303,7 +266,7 @@ class ExpeditionMap {
                 if (node.step === step) {
                     this.currentNode = node;
                     const exitsAmount = this.calcExitsAmount();
-                    this.defineConnections(exitsAmount, step);
+                    this.defineConnection(exitsAmount, step);
                 }
             });
         }
