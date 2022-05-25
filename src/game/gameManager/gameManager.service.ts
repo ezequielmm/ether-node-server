@@ -1,6 +1,10 @@
 import { StateManagerService } from './../stateManager/stateManager.service';
 import { EventManagerService } from './../eventManager/eventManager.service';
-import { ActionResponse, LogActivityOptions } from './interfaces/index';
+import {
+    ActionError,
+    ActionResponse,
+    LogActivityOptions,
+} from './interfaces/index';
 import { ActivityLogService } from './../response/activityLog.service';
 import { Injectable } from '@nestjs/common';
 import { Action } from './action';
@@ -9,6 +13,8 @@ import * as _ from 'lodash';
 
 @Injectable()
 export class GameManagerService {
+    private readonly lastActionByClientId = new Map<string, Action>();
+
     constructor(
         private readonly activityLogService: ActivityLogService,
         private readonly eventManagerService: EventManagerService,
@@ -21,12 +27,16 @@ export class GameManagerService {
 
         await this.stateManagerService.snapshot(clientId);
 
-        return new Action(clientId, name, this);
+        const action = new Action(clientId, name, this);
+        this.lastActionByClientId.set(clientId, action);
+
+        return action;
     }
 
     public async endAction(
         clientId: string,
         name: string,
+        error?: ActionError,
     ): Promise<ActionResponse> {
         const activityLog = this.activityLogService.findOneByClientId(clientId);
         if (this.eventManagerService.isProcessing(clientId)) {
@@ -40,7 +50,12 @@ export class GameManagerService {
             name,
             activities,
             stateDelta,
+            error,
         };
+    }
+
+    public getLastActionByClientId(clientId: string): Action {
+        return this.lastActionByClientId.get(clientId);
     }
 
     public async logActivity(
