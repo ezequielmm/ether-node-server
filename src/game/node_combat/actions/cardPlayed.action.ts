@@ -1,4 +1,4 @@
-import { GameManagerService } from 'src/game/gameManger/gameManager.service';
+import { GameManagerService } from 'src/game/gameManager/gameManager.service';
 import { ExpeditionService } from '../../expedition/expedition.service';
 import { CardService } from '../../components/card/card.service';
 import { Socket } from 'socket.io';

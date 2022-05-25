@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { ExpeditionService } from '../expedition/expedition.service';
 import { IBaseEffect } from './interfaces/baseEffect';
 import { DiscardCardDTO } from './dto';
-import { GameManagerService } from '../gameManger/gameManager.service';
+import { GameManagerService } from '../gameManager/gameManager.service';
 import { Activity } from '../elements/prototypes/activity';
 
 @Injectable()
