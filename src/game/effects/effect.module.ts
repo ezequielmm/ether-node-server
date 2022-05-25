@@ -1,4 +1,4 @@
-import { GameManagerModule } from './../gameManger/gameManager.module';
+import { GameManagerModule } from './../gameManager/gameManager.module';
 import { forwardRef, Module } from '@nestjs/common';
 import { ExpeditionModule } from '../expedition/expedition.module';
 import { AddCardEffect } from './addCard.effect';
