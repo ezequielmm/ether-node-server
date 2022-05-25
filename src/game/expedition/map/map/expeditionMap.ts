@@ -36,8 +36,8 @@ class ExpeditionMap {
             );
             nodeObj.exits = node.exits;
             nodeObj.enter = node.enter;
+            nodeObj.status = node.status;
             this.map.set(node.id, nodeObj);
-            this.initAct(this.currentActNumber);
         });
     }
     get getMap() {
@@ -62,9 +62,7 @@ class ExpeditionMap {
 
     public disableAllNodes() {
         this.map.forEach((node) => {
-            if (!node.isDisable && !node.isComplete) {
-                node.setDisable();
-            }
+            if (!node.isComplete) node.setDisable();
         });
     }
 
@@ -227,34 +225,45 @@ class ExpeditionMap {
                 }
             }
         }
-
         return valid;
     }
 
     private defineConnection(exitsAmount: number, step: number) {
-        const exits = new Set();
+        const exits = [];
         // Select a List of nodes innext step as candidates for connections
-        1; // Valid candidates should to the next step and must not be the current node itself
+        // Valid candidates should to the next step and must not be the current node itself
         const candidateNodes = [...this.newActMap.values()].filter(
-            (node) => node.step === step + 1 && node.id !== this.currentNode.id,
+            (node) => node.step === step + 1,
         );
         if (candidateNodes.length > 0) {
             // Loop until reaching the set amount of exits or getting out of candidates
-            while (exits.size < exitsAmount && candidateNodes.length > 0) {
-                const candidateIndex = Math.floor(
-                    Math.random() * candidateNodes.length,
-                );
-                const candidateNode = this.newActMap.get(
-                    candidateNodes[candidateIndex].id,
-                );
+            while (exits.length < exitsAmount && candidateNodes.length > 0) {
                 // remove the evaluated node from the list of candidates to avoid trying to use the same one over and over
-                candidateNodes.splice(candidateIndex, 1);
-                if (this.validConnection(this.currentNode, candidateNode)) {
-                    exits.add(candidateNode.id);
+                if (this.validConnection(this.currentNode, candidateNodes[0])) {
+                    exits.push(candidateNodes[0].id);
+                    this.currentNode.exits.push(candidateNodes[0].id);
                     this.newActMap
-                        .get(candidateNode.id)
+                        .get(candidateNodes[0].id)
                         .enter.push(this.currentNode.id);
                 }
+                candidateNodes.shift();
+            }
+            // Check if current node has no enters, and create a connection to a previous node if so
+            if (
+                this.currentNode.step > 0 &&
+                this.currentNode.enter.length === 0
+            ) {
+                const previousStepLastNode = [...this.newActMap.values()]
+                    .filter(
+                        (node) =>
+                            node.step === this.currentNode.step - 1 &&
+                            node.act === this.currentNode.act,
+                    )
+                    .splice(-1)[0];
+                this.newActMap
+                    .get(previousStepLastNode.id)
+                    .exits.push(this.currentNode.id);
+                this.currentNode.enter.push(previousStepLastNode.id);
             }
         }
         return exits;
