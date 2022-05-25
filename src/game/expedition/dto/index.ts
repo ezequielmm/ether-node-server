@@ -1,7 +1,7 @@
 import {
     IExpeditionNode,
     IExpeditionCurrentNode,
-    IExpeditionMap,
+    // IExpeditionMap,
     IExpeditionPlayerState,
 } from '../interfaces';
 import { ExpeditionStatusEnum } from '../enums';

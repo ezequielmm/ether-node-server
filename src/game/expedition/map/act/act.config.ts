@@ -11,7 +11,7 @@ export const actCconfigAlternatives = [
         steps: 13,
         minNodesPerStep: 2,
         maxNodesPerStep: 4,
-        minExitPerNode: 2,
+        minExitPerNode: 1,
         maxExitPerNode: 3,
         step_defaults: {
             nodes: [2, 6],

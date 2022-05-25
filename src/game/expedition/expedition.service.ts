@@ -45,7 +45,6 @@ export class ExpeditionService {
 
     getMap(): IExpeditionNode[] {
         const map = generateMap();
-        console.log(map.fullCurrentMap);
         return map.getMap;
     }
     async updateClientId(
@@ -78,18 +77,19 @@ export class ExpeditionService {
             .select('map')
             .lean();
         if (!map) return null;
-
         const expeditionMap = restoreMap(map);
         const selectedNode = expeditionMap.fullCurrentMap.get(node_id);
 
-        selectedNode.select(expeditionMap);
-        selectedNode.complete(expeditionMap);
+        if (selectedNode.isAvailable) {
+            selectedNode.select(expeditionMap);
+            selectedNode.complete(expeditionMap);
 
-        await this.update(
-            { status: ExpeditionStatusEnum.InProgress, client_id },
-            { map: expeditionMap.getMap },
-        );
-
+            await this.update(
+                { status: ExpeditionStatusEnum.InProgress, client_id },
+                { map: expeditionMap.getMap },
+            );
+        }
+        // TODO: add error if selected node is disabled
         return selectedNode;
     }
 
