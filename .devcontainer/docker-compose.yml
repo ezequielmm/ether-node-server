@@ -1,0 +1,67 @@
+# version: "3.8"
+
+volumes:
+  kote-mysql-data:
+  kote-mongodb-data:
+
+networks:
+  kote-dev-net:
+
+services:
+  app:
+    container_name: "rsmg-kote-dev"
+    build: 
+      context: .
+      dockerfile: Dockerfile
+      args:
+        # Update 'VARIANT' to pick an LTS version of Node.js: 16, 14, 12.
+        # Append -bullseye or -buster to pin to an OS version.
+        # Use -bullseye variants on local arm64/Apple Silicon.
+        VARIANT: 16-bullseye
+
+    volumes:
+      - ..:/workspace:cached
+   
+    command: sleep infinity
+
+    depends_on:
+      - mongodb
+      - mysql
+
+    networks:
+      kote-dev-net: {}
+   
+  mongodb:
+    container_name: "rsmg-kote-dev-mongodb"
+    image: mongo:latest
+    restart: unless-stopped
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=kote
+      - MONGO_INITDB_DATABASE=kote
+    volumes:
+      - kote-mongodb-data:/data/db
+  
+    networks:
+      kote-dev-net: {}
+
+    ports:
+      - 27017:27017
+
+  mysql:
+    container_name: "rsmg-kote-dev-mysql"
+    image: mysql:latest
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=kote
+      - MYSQL_DATABASE=kote
+      - MYSQL_USER=local
+      - MYSQL_PASSWORD=local
+    volumes:
+      - kote-mysql-data:/var/lib/mysql
+    
+    networks:
+      kote-dev-net: {}
+
+    ports:
+      - 3306:3306

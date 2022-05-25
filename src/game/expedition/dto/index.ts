@@ -33,7 +33,8 @@ export class UpdateExpeditionFilterDTO {
 }
 
 export class UpdateExpeditionDTO {
-    readonly map?: IExpeditionMap[];
+    readonly map?: IExpeditionNode[];
+    // readonly map?: IExpeditionMap[];
     readonly player_state?: IExpeditionPlayerState;
     readonly current_node?: IExpeditionCurrentNode;
     readonly status?: ExpeditionStatusEnum;
