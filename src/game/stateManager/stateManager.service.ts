@@ -67,15 +67,15 @@ export class StateManagerService {
             previous:
                 stateDelta.mod == 'mov'
                     ? {
-                          source: get(state.current, stateDelta.source),
-                          target: get(state.current, stateDelta.target),
+                          source: get(state.current, stateDelta.source, []),
+                          target: get(state.current, stateDelta.target, []),
                       }
                     : get(state.current, stateDelta.key),
             current:
                 stateDelta.mod == 'mov'
                     ? {
-                          source: get(state.current, stateDelta.source),
-                          target: get(state.current, stateDelta.target),
+                          source: get(state.current, stateDelta.source, []),
+                          target: get(state.current, stateDelta.target, []),
                       }
                     : get(state.current, stateDelta.key),
         };

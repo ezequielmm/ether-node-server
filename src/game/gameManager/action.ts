@@ -1,5 +1,9 @@
 import { Activity } from '../elements/prototypes/activity';
-import { ActionResponse, LogActivityOptions } from './interfaces/index';
+import {
+    ActionError,
+    ActionResponse,
+    LogActivityOptions,
+} from './interfaces/index';
 import { GameManagerService } from './gameManager.service';
 
 export class Action {
@@ -20,7 +24,11 @@ export class Action {
         );
     }
 
-    public async end(): Promise<ActionResponse> {
-        return this.gameManagerService.endAction(this.clientId, this.name);
+    public async end(error?: ActionError): Promise<ActionResponse> {
+        return this.gameManagerService.endAction(
+            this.clientId,
+            this.name,
+            error,
+        );
     }
 }
