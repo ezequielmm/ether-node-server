@@ -2,7 +2,7 @@ import { Socket } from 'socket.io';
 import { ExpeditionService } from '../expedition.service';
 import { ExpeditionStatusEnum } from '../enums';
 import { Injectable } from '@nestjs/common';
-import { GameManagerService } from 'src/game/gameManger/gameManager.service';
+import { GameManagerService } from 'src/game/gameManager/gameManager.service';
 import { Activity } from 'src/game/elements/prototypes/activity';
 import { CustomException, ErrorBehavior } from 'src/socket/custom.exception';
 
