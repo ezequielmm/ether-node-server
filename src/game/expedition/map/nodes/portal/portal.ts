@@ -26,6 +26,12 @@ class Portal extends Node {
             .map((node) => node.id);
         this.openExitsNodes(expeditionMap);
     }
+    protected openExitsNodes(expeditionMap: ExpeditionMap): void {
+        this.exits.forEach((exit) => {
+            expeditionMap.fullCurrentMap.get(exit).setAvailable();
+            expeditionMap.fullCurrentMap.get(exit).enter.push(this.id);
+        });
+    }
 }
 
 export default Portal;
