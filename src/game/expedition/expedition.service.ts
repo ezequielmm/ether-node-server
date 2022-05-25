@@ -77,7 +77,6 @@ export class ExpeditionService {
             .select('map')
             .lean();
         if (!map) return null;
-
         const expeditionMap = restoreMap(map);
         const selectedNode = expeditionMap.fullCurrentMap.get(node_id);
 

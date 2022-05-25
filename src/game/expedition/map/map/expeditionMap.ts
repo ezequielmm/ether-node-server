@@ -36,8 +36,8 @@ class ExpeditionMap {
             );
             nodeObj.exits = node.exits;
             nodeObj.enter = node.enter;
+            nodeObj.status = node.status;
             this.map.set(node.id, nodeObj);
-            this.initAct(this.currentActNumber);
         });
     }
     get getMap() {
@@ -62,9 +62,7 @@ class ExpeditionMap {
 
     public disableAllNodes() {
         this.map.forEach((node) => {
-            if (!node.isDisable || !node.isComplete) {
-                node.setDisable();
-            }
+            if (!node.isComplete) node.setDisable();
         });
     }
 
@@ -256,6 +254,12 @@ class ExpeditionMap {
                         .get(candidateNode.id)
                         .enter.push(this.currentNode.id);
                 }
+            }
+            if (
+                this.currentNode.step > 0 &&
+                this.currentNode.enter.length === 0
+            ) {
+                console.log(`Node ${this.currentNode.id} has no Enters.`);
             }
         }
         return exits;
