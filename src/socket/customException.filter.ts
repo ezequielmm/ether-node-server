@@ -16,12 +16,19 @@ export class CustomExceptionFilter extends BaseWsExceptionFilter {
     async catch(exception: unknown, host: ArgumentsHost) {
         if (!this.isWsRequest(host)) {
             super.catch(exception, host);
+            return;
         }
 
         const client = host.switchToWs().getClient<Socket>();
         const action = this.gameManagerService.getLastActionByClientId(
             client.id,
         );
+
+        if (!action) {
+            this.logger.warn('Game manager not implemented yet');
+            super.catch(exception, host);
+            return;
+        }
 
         let error: ActionError;
 
@@ -45,8 +52,10 @@ export class CustomExceptionFilter extends BaseWsExceptionFilter {
         this.logger.warn({
             error,
             exception,
-            clientId: action.clientId,
-            actionName: action.name,
+            action: {
+                clientId: action?.clientId,
+                name: action?.name,
+            },
         });
 
         const response = await action.end(error);

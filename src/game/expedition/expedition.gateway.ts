@@ -20,9 +20,9 @@ export class ExpeditionGateway {
     ) {}
 
     @SubscribeMessage('SyncExpedition')
-    async handleSyncExpedition(client: Socket): Promise<void> {
+    async handleSyncExpedition(client: Socket): Promise<string> {
         this.logger.log(`Client ${client.id} trigger message "SyncExpedition"`);
-        await this.fullSyncAction.handle(client);
+        return this.fullSyncAction.handle(client);
     }
 
     @SubscribeMessage('NodeSelected')
