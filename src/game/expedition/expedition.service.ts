@@ -45,7 +45,6 @@ export class ExpeditionService {
 
     getMap(): IExpeditionNode[] {
         const map = generateMap();
-        console.log(map.fullCurrentMap);
         return map.getMap;
     }
     async updateClientId(
@@ -85,7 +84,6 @@ export class ExpeditionService {
         if (selectedNode.isAvailable) {
             selectedNode.select(expeditionMap);
             selectedNode.complete(expeditionMap);
-            console.log(expeditionMap.getMap);
 
             await this.update(
                 { status: ExpeditionStatusEnum.InProgress, client_id },
