@@ -17,31 +17,37 @@ export class Enemy {
         return getRandomEnumValue(EnemyTypeEnum);
     })
     @Prop()
-    enemy_type: EnemyTypeEnum;
+    type: EnemyTypeEnum;
 
     @Factory(() => {
         return getRandomEnumValue(EnemyCategoryEnum);
     })
     @Prop()
-    enemy_category: EnemyCategoryEnum;
+    category: EnemyCategoryEnum;
 
     @Factory(() => {
         return getRandomBetween(20, 100);
     })
     @Prop()
-    life: number;
+    hitPoints: number;
 
     @Factory(() => {
         return getRandomBetween(20, 100);
     })
     @Prop()
-    min_attack: number;
+    minAttack: number;
 
     @Factory(() => {
         return getRandomBetween(20, 100);
     })
     @Prop()
-    max_attack: number;
+    maxAttack: number;
+
+    @Factory(() => {
+        return getRandomBetween(20, 100);
+    })
+    @Prop()
+    description: string;
 }
 
 export const EnemySchema = SchemaFactory.createForClass(Enemy);
