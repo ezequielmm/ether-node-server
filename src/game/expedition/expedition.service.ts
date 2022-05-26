@@ -43,6 +43,21 @@ export class ExpeditionService {
         return await this.expedition.create(payload);
     }
 
+    async cancel(player_id: string): Promise<boolean> {
+        const exists = await this.playerHasExpeditionInProgress(player_id);
+
+        if (!exists) {
+            return false;
+        }
+
+        await this.expedition.updateOne(
+            { player_id, status: ExpeditionStatusEnum.InProgress },
+            { status: ExpeditionStatusEnum.Canceled },
+        );
+
+        return true;
+    }
+
     getMap(): IExpeditionNode[] {
         const map = generateMap();
         return map.getMap;
