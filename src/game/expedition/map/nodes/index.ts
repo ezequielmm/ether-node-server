@@ -19,6 +19,10 @@ import RoyalHouseB from './royal_house/royal_house_b';
 import RoyalHouseC from './royal_house/royal_house_c';
 import RoyalHouseD from './royal_house/royal_house_d';
 
+import Event from './event/event';
+
+import Treasure from './treasure/treasure';
+
 import Empty from './empty/empty';
 
 function nodeFactory(
@@ -95,6 +99,12 @@ function nodeFactory(
         }
         case ExpeditionMapNodeTypeEnum.RoyalHouseD: {
             return new RoyalHouseD(id, act, step, type, subType, private_data);
+        }
+        case ExpeditionMapNodeTypeEnum.Event: {
+            return new Event(id, act, step, type, subType, private_data);
+        }
+        case ExpeditionMapNodeTypeEnum.Treasure: {
+            return new Treasure(id, act, step, type, subType, private_data);
         }
         default:
             return new Empty(id, act, step, type, subType, private_data);
