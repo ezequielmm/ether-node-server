@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
-import { EnemyCategoryEnum, EnemyTypeEnum } from './enums';
+import { EnemyCategoryEnum, EnemyTypeEnum, EnemySizeEnum } from './enums';
 import { Factory } from 'nestjs-seeder';
 import { Faker } from '@faker-js/faker';
 import { getRandomBetween, getRandomEnumValue } from '../../../utils';
@@ -43,11 +43,15 @@ export class Enemy {
     @Prop()
     maxAttack: number;
 
-    @Factory(() => {
-        return getRandomBetween(20, 100);
-    })
+    @Factory((faker: Faker) => faker.random.words(5))
     @Prop()
     description: string;
+
+    @Factory(() => {
+        return getRandomEnumValue(EnemySizeEnum);
+    })
+    @Prop()
+    size: EnemySizeEnum;
 }
 
 export const EnemySchema = SchemaFactory.createForClass(Enemy);
