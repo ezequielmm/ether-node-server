@@ -11,3 +11,12 @@ export enum EnemyCategoryEnum {
     Elite = 'elite',
     Boss = 'boss',
 }
+
+export enum EnemySizeEnum {
+    Tiny = 'Tiny',
+    Small = 'Small',
+    Medium = 'Medium',
+    MediumWide = 'Medium-Wide',
+    Large = 'Large',
+    Giant = 'Giant',
+}
