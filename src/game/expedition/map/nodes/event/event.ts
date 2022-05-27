@@ -1,7 +1,7 @@
-import { ExpeditionMapNodeTypeEnum } from 'src/game/expedition/enums';
-import RoyalHouse from './royal_house';
+import { ExpeditionMapNodeTypeEnum } from '../../../enums';
+import Node from '../node';
 
-class RoyalHouseC extends RoyalHouse {
+class Event extends Node {
     constructor(
         id: number,
         act: number,
@@ -14,4 +14,4 @@ class RoyalHouseC extends RoyalHouse {
     }
 }
 
-export default RoyalHouseC;
+export default Event;
