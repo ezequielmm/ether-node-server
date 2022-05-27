@@ -15,12 +15,14 @@ class Portal extends Node {
     }
     public select(expeditionMap: ExpeditionMap): void {
         if (this.isAvailable) {
+            expeditionMap.disableAllNodes();
+            this.complete(expeditionMap);
         }
     }
     public complete(expeditionMap: ExpeditionMap): void {
-        expeditionMap.disableAllNodes();
         this.setComplete();
         expeditionMap.extendMap();
+        // Create exits for this to all nodes in the step 0 of the generated Act.
         this.exits = expeditionMap.getMap
             .filter((node) => node.act === this.act + 1 && node.step === 0)
             .map((node) => node.id);

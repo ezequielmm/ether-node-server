@@ -1,7 +1,7 @@
 import { ExpeditionMapNodeTypeEnum } from 'src/game/expedition/enums';
-import Node from '../node';
+import RoyalHouse from './royal_house';
 
-class RoyalHouseA extends Node {
+class RoyalHouseA extends RoyalHouse {
     constructor(
         id: number,
         act: number,

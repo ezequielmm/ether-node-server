@@ -132,18 +132,16 @@ export const actCconfigAlternatives = [
                 nodes: 2,
                 node_options: [
                     {
-                        type: 'camp',
-                        subType: 'camp_regular',
+                        type: 'event',
+                        subType: 'event',
                         chance: 80,
                         config: {},
                     },
                     {
-                        type: 'camp',
-                        subType: 'camp_house',
+                        type: 'event',
+                        subType: 'event',
                         chance: 20,
-                        config: {
-                            house: [1, 2, 3, 4],
-                        },
+                        config: {},
                     },
                 ],
             },
@@ -151,18 +149,16 @@ export const actCconfigAlternatives = [
                 nodes: [3, 4],
                 node_options: [
                     {
-                        type: 'camp',
-                        subType: 'camp_regular',
+                        type: 'treasure',
+                        subType: 'treasure',
                         chance: 30,
                         config: {},
                     },
                     {
-                        type: 'camp',
-                        subType: 'camp_house',
+                        type: 'treasure',
+                        subType: 'treasure',
                         chance: 70,
-                        config: {
-                            house: [1, 2, 3, 4],
-                        },
+                        config: {},
                     },
                 ],
             },

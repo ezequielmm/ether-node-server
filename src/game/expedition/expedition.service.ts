@@ -43,6 +43,21 @@ export class ExpeditionService {
         return await this.expedition.create(payload);
     }
 
+    async cancel(player_id: string): Promise<boolean> {
+        const exists = await this.playerHasExpeditionInProgress(player_id);
+
+        if (!exists) {
+            return false;
+        }
+
+        await this.expedition.updateOne(
+            { player_id, status: ExpeditionStatusEnum.InProgress },
+            { status: ExpeditionStatusEnum.Canceled },
+        );
+
+        return true;
+    }
+
     getMap(): IExpeditionNode[] {
         const map = generateMap();
         return map.getMap;
@@ -82,15 +97,16 @@ export class ExpeditionService {
 
         if (selectedNode.isAvailable) {
             selectedNode.select(expeditionMap);
-            selectedNode.complete(expeditionMap);
 
             await this.update(
                 { status: ExpeditionStatusEnum.InProgress, client_id },
                 { map: expeditionMap.getMap },
             );
+            return selectedNode;
+        } else {
+            // TODO: add error if selected node is disabled
+            return null;
         }
-        // TODO: add error if selected node is disabled
-        return selectedNode;
     }
 
     async getDeckCards(

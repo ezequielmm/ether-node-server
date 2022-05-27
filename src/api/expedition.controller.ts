@@ -6,6 +6,7 @@ import {
     HttpStatus,
     Logger,
     Post,
+    Put,
     Res,
     UseGuards,
 } from '@nestjs/common';
@@ -154,4 +155,53 @@ export class ExpeditionController {
         }
     }
     //#endregion
+
+    // #region Cancel expedition
+    @ApiOperation({
+        summary: `Cancel the expedition`,
+    })
+    @Put('/cancel')
+    async handleCancelExpedition(
+        @Headers() headers,
+        @Res() response,
+    ): Promise<{ cancelledExpedition: boolean }> {
+        const { authorization } = headers;
+
+        try {
+            const {
+                data: {
+                    data: { id: player_id },
+                },
+            } = await this.authGatewayService.getUser(authorization);
+
+            const hasExpedition =
+                await this.expeditionService.playerHasExpeditionInProgress(
+                    player_id,
+                );
+
+            if (hasExpedition) {
+                await this.expeditionService.cancel(player_id);
+
+                return response
+                    .status(HttpStatus.OK)
+                    .send({ data: { expeditionCancelled: true } });
+            } else {
+                return response.status(HttpStatus.OK).send({
+                    data: {
+                        message: 'Player has no expedition in progress',
+                    },
+                });
+            }
+        } catch (e) {
+            this.logger.error(e.stack);
+            throw new HttpException(
+                {
+                    status: HttpStatus.UNAUTHORIZED,
+                    error: e.message,
+                },
+                HttpStatus.UNAUTHORIZED,
+            );
+        }
+    }
+    // #endregion
 }

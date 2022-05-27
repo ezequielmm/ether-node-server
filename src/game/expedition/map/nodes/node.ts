@@ -61,12 +61,12 @@ class Node implements IExpeditionNode {
     }
     public select(expeditionMap: ExpeditionMap): void {
         if (this.isAvailable) {
+            expeditionMap.disableAllNodes();
             this.setActive();
             expeditionMap.activeNode = this;
         }
     }
     public complete(expeditionMap: ExpeditionMap): void {
-        expeditionMap.disableAllNodes();
         this.setComplete();
         this.openExitsNodes(expeditionMap);
     }
