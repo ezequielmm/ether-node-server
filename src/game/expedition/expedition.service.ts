@@ -87,9 +87,11 @@ export class ExpeditionService {
                 { status: ExpeditionStatusEnum.InProgress, client_id },
                 { map: expeditionMap.getMap },
             );
+            return selectedNode;
+        } else {
+            // TODO: add error if selected node is disabled
+            return null;
         }
-        // TODO: add error if selected node is disabled
-        return selectedNode;
     }
 
     async getDeckCards(

@@ -29,8 +29,8 @@ export enum ExpeditionMapNodeTypeEnum {
     RoyalHouseC = 'royal_house_c',
     RoyalHouseD = 'royal_house_d',
     Empty = 'empty',
-    Event = 'Event',
-    Treasure = 'Treasure',
+    Event = 'event',
+    Treasure = 'treasure',
 }
 
 export enum ExpeditionCurrentNodeDataPlayerStatusEnum {
