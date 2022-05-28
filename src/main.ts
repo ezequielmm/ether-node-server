@@ -11,10 +11,10 @@ import * as compression from 'compression';
 import { existsSync, readFileSync } from 'fs';
 import { IoAdapter } from '@nestjs/platform-socket.io';
 
+let app: INestApplication;
 async function bootstrap() {
     const certFilePath = process.env.SSL_CERT_PATH;
     const keyFilePath = process.env.SSL_KEY_PATH;
-    let app: INestApplication;
 
     if (certFilePath && keyFilePath) {
         if (existsSync(certFilePath) && existsSync(keyFilePath)) {
@@ -64,3 +64,7 @@ async function bootstrap() {
     await app.listen(3000);
 }
 bootstrap();
+
+export function getApp(): INestApplication {
+    return app;
+}

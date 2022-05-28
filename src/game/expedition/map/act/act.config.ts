@@ -132,14 +132,14 @@ export const actCconfigAlternatives = [
                 nodes: 2,
                 node_options: [
                     {
-                        type: 'event',
-                        subType: 'event',
+                        type: 'merchant',
+                        subType: 'merchant',
                         chance: 80,
                         config: {},
                     },
                     {
-                        type: 'event',
-                        subType: 'event',
+                        type: 'merchant',
+                        subType: 'merchant',
                         chance: 20,
                         config: {},
                     },
