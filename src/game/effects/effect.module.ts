@@ -6,6 +6,7 @@ import { DiscardAllCards } from './discardAllCards.effect';
 import { DiscardCardEffect } from './discardCard.effect';
 import { DrawCardEffect } from './drawCard.effect';
 import { UpdatePlayerEnergyEffect } from './updatePlayerEnergy.effect';
+import { ModifyHPMaxEffect } from './modifyHPMax.effect';
 
 @Module({
     imports: [forwardRef(() => ExpeditionModule), GameManagerModule],
@@ -15,6 +16,7 @@ import { UpdatePlayerEnergyEffect } from './updatePlayerEnergy.effect';
         DiscardAllCards,
         UpdatePlayerEnergyEffect,
         AddCardEffect,
+        ModifyHPMaxEffect,
     ],
     exports: [
         DiscardCardEffect,
@@ -22,6 +24,7 @@ import { UpdatePlayerEnergyEffect } from './updatePlayerEnergy.effect';
         DiscardAllCards,
         UpdatePlayerEnergyEffect,
         AddCardEffect,
+        ModifyHPMaxEffect,
     ],
 })
 export class EffectModule {}

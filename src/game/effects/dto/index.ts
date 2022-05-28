@@ -22,3 +22,7 @@ export interface AddCardToPileDTO extends BaseEffectDTO {
     readonly card_id: string;
     readonly destination: CardDestinationEnum;
 }
+
+export interface ModifyHPMaxDTO extends BaseEffectDTO {
+    readonly hp_value: number;
+}
