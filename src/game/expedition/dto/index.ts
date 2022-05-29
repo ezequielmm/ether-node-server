@@ -1,7 +1,6 @@
 import {
     IExpeditionNode,
     IExpeditionCurrentNode,
-    // IExpeditionMap,
     IExpeditionPlayerState,
 } from '../interfaces';
 import { ExpeditionStatusEnum } from '../enums';
@@ -10,7 +9,6 @@ import { CardDestinationEnum } from 'src/game/effects/enums';
 export class CreateExpeditionDTO {
     readonly player_id: string;
     readonly map: IExpeditionNode[];
-    // readonly map: IExpeditionMap[];
     readonly player_state: IExpeditionPlayerState;
 }
 
@@ -59,4 +57,10 @@ export class AddCardToPileDTO {
     readonly client_id: string;
     readonly card_id: string;
     readonly destination: CardDestinationEnum;
+    readonly is_temporary: boolean;
+}
+
+export class ModifyHPMaxDTO {
+    readonly client_id: string;
+    readonly hp_value: number;
 }

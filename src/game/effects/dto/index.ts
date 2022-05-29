@@ -21,6 +21,7 @@ export interface UpdatePlayerEnergyDTO extends BaseEffectDTO {
 export interface AddCardToPileDTO extends BaseEffectDTO {
     readonly card_id: string;
     readonly destination: CardDestinationEnum;
+    readonly is_temporary: boolean;
 }
 
 export interface ModifyHPMaxDTO extends BaseEffectDTO {
