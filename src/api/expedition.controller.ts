@@ -6,7 +6,6 @@ import {
     HttpStatus,
     Logger,
     Post,
-    Put,
     Res,
     UseGuards,
 } from '@nestjs/common';
@@ -160,7 +159,7 @@ export class ExpeditionController {
     @ApiOperation({
         summary: `Cancel the expedition`,
     })
-    @Put('/cancel')
+    @Post('/cancel')
     async handleCancelExpedition(
         @Headers() headers,
         @Res() response,
