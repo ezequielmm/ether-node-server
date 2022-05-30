@@ -27,3 +27,5 @@ export interface AddCardToPileDTO extends BaseEffectDTO {
 export interface ModifyHPMaxDTO extends BaseEffectDTO {
     readonly hp_value: number;
 }
+
+export type TurnChangeDTO = BaseEffectDTO;

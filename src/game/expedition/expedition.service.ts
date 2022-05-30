@@ -14,6 +14,7 @@ import {
     UpdatePlayerEnergyDTO,
     UpdateSocketClientDTO,
     ModifyHPMaxDTO,
+    TurnChangeDTO,
 } from './dto';
 import {
     IExpeditionNode,
@@ -355,6 +356,27 @@ export class ExpeditionService {
             {
                 'player_state.hp_current': newHpValue,
                 'player_state.hp_max': hp_value,
+            },
+            { new: true },
+        );
+    }
+
+    async turnChange(payload: TurnChangeDTO): Promise<void> {
+        const { client_id } = payload;
+
+        const {
+            data: { round },
+        } = await this.getCurrentNodeByClientId(client_id);
+
+        const newRound = round + 1;
+
+        return await this.expedition.findOneAndUpdate(
+            {
+                client_id,
+                status: ExpeditionStatusEnum.InProgress,
+            },
+            {
+                'current_node.data.round': newRound,
             },
             { new: true },
         );

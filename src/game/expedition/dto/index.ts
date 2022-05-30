@@ -64,3 +64,7 @@ export class ModifyHPMaxDTO {
     readonly client_id: string;
     readonly hp_value: number;
 }
+
+export class TurnChangeDTO {
+    readonly client_id: string;
+}

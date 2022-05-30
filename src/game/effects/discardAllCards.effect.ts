@@ -4,7 +4,7 @@ import { IBaseEffect } from './interfaces/baseEffect';
 import { DiscardAllCardsDTO } from './dto';
 
 @Injectable()
-export class DiscardAllCards implements IBaseEffect {
+export class DiscardAllCardsEffect implements IBaseEffect {
     constructor(private readonly expeditionService: ExpeditionService) {}
 
     async handle(payload: DiscardAllCardsDTO): Promise<void> {
