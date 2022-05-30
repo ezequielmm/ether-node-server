@@ -4,7 +4,7 @@ import { Expedition, ExpeditionSchema } from './expedition.schema';
 import { ExpeditionService } from './expedition.service';
 import { ExpeditionGateway } from './expedition.gateway';
 import { CardModule } from '../components/card/card.module';
-import { ExpeditionActionModule } from './action/expedition.action.module';
+import { ExpeditionActionModule } from './actions/expedition.action.module';
 
 @Module({
     imports: [

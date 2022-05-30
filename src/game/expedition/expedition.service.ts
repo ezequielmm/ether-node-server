@@ -13,6 +13,8 @@ import {
     UpdateExpeditionFilterDTO,
     UpdatePlayerEnergyDTO,
     UpdateSocketClientDTO,
+    ModifyHPMaxDTO,
+    TurnChangeDTO,
 } from './dto';
 import {
     IExpeditionNode,
@@ -179,6 +181,32 @@ export class ExpeditionService {
         );
     }
 
+    async moveCardFromPlayerHandToExhaustPile(
+        payload: CardExistsDTO,
+    ): Promise<ExpeditionDocument> {
+        const { client_id, card_id } = payload;
+
+        const current_node = await this.getCurrentNodeByClientId(client_id);
+
+        return this.expedition.findOneAndUpdate(
+            { client_id, status: ExpeditionStatusEnum.InProgress },
+            {
+                $pull: {
+                    'current_node.data.player.cards.hand': {
+                        id: card_id,
+                    },
+                },
+                $push: {
+                    'current_node.data.player.cards.exhaust':
+                        current_node.data.player.cards.hand.filter((card) => {
+                            return card.id === card_id;
+                        })[0],
+                },
+            },
+            { new: true },
+        );
+    }
+
     async updatePlayerEnergy(
         payload: UpdatePlayerEnergyDTO,
     ): Promise<Expedition> {
@@ -278,13 +306,10 @@ export class ExpeditionService {
         );
     }
 
-    async addCardToPile(payload: AddCardToPileDTO): Promise<void> {
-        const { client_id, destination, card_id } = payload;
-
-        const expedition = await this.expedition.findOne({
-            client_id,
-            status: ExpeditionStatusEnum.InProgress,
-        });
+    async addCardToPile(
+        payload: AddCardToPileDTO,
+    ): Promise<ExpeditionDocument> {
+        const { client_id, destination, card_id, is_temporary } = payload;
 
         const card = await this.cardService.findById(card_id);
 
@@ -299,24 +324,87 @@ export class ExpeditionService {
             targeted: card.targeted,
             properties: card.properties,
             keywords: card.keywords,
-            is_temporary: true,
+            is_temporary,
         };
+
+        let newDestination = '';
 
         switch (destination) {
             case CardDestinationEnum.Discard:
-                expedition.current_node.data.player.cards.discard.push(newCard);
+                newDestination = 'current_node.data.player.cards.discard';
                 break;
             case CardDestinationEnum.Hand:
-                expedition.current_node.data.player.cards.hand.push(newCard);
+                newDestination = 'current_node.data.player.cards.hand';
                 break;
             case CardDestinationEnum.DrawRandom:
-                expedition.current_node.data.player.cards.draw.push(newCard);
+                newDestination = 'current_node.data.player.cards.draw';
                 break;
             case CardDestinationEnum.DrawTop:
-                expedition.current_node.data.player.cards.draw.unshift(newCard);
+                newDestination = 'current_node.data.player.cards.draw';
                 break;
         }
 
-        expedition.save();
+        return await this.expedition.findOneAndUpdate(
+            {
+                client_id,
+                status: ExpeditionStatusEnum.InProgress,
+            },
+            {
+                $push: {
+                    [newDestination]: newCard,
+                },
+            },
+            { new: true },
+        );
+    }
+
+    async modifyHPMaxValue(
+        payload: ModifyHPMaxDTO,
+    ): Promise<ExpeditionDocument> {
+        const { client_id, hp_value } = payload;
+
+        const {
+            player_state: { hp_current },
+        } = await this.expedition
+            .findOne({
+                client_id,
+                status: ExpeditionStatusEnum.InProgress,
+            })
+            .lean();
+
+        const newHpValue = Math.min(hp_current, hp_value);
+
+        return await this.expedition.findOneAndUpdate(
+            {
+                client_id,
+                status: ExpeditionStatusEnum.InProgress,
+            },
+            {
+                'player_state.hp_current': newHpValue,
+                'player_state.hp_max': hp_value,
+            },
+            { new: true },
+        );
+    }
+
+    async turnChange(payload: TurnChangeDTO): Promise<void> {
+        const { client_id } = payload;
+
+        const {
+            data: { round },
+        } = await this.getCurrentNodeByClientId(client_id);
+
+        const newRound = round + 1;
+
+        return await this.expedition.findOneAndUpdate(
+            {
+                client_id,
+                status: ExpeditionStatusEnum.InProgress,
+            },
+            {
+                'current_node.data.round': newRound,
+            },
+            { new: true },
+        );
     }
 }
