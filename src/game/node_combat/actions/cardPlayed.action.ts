@@ -6,10 +6,12 @@ import { Injectable } from '@nestjs/common';
 import { DiscardCardEffect } from 'src/game/effects/discardCard.effect';
 import {
     CardEnergyEnum,
+    CardKeywordEnum,
     CardPlayErrorMessages,
 } from 'src/game/components/card/enums';
 import { UpdatePlayerEnergyEffect } from 'src/game/effects/updatePlayerEnergy.effect';
 import { Activity } from 'src/game/elements/prototypes/activity';
+import { ExhaustCardEffect } from 'src/game/effects/exhaustCard.effect';
 
 @Injectable()
 export class CardPlayedAction {
@@ -18,6 +20,7 @@ export class CardPlayedAction {
         private readonly cardService: CardService,
         private readonly discardCardEffect: DiscardCardEffect,
         private readonly updatePlayerEnergyEffect: UpdatePlayerEnergyEffect,
+        private readonly exhaustCardEffect: ExhaustCardEffect,
         private readonly gameManagerService: GameManagerService,
     ) {}
 
@@ -40,7 +43,14 @@ export class CardPlayedAction {
             });
 
         // Then, we query the card info to get its energy cost
-        const { energy: cardEnergy } = await this.cardService.findById(card_id);
+        const { energy: cardEnergy, keywords } =
+            await this.cardService.findById(card_id);
+
+        if (keywords.includes(CardKeywordEnum.Unplayable)) {
+            return JSON.stringify({
+                data: { message: CardPlayErrorMessages.UnplayableCard },
+            });
+        }
 
         // Then, we get the actual energy amount from the current state
         const {
@@ -57,10 +67,17 @@ export class CardPlayedAction {
                 data: { message },
             });
 
-        await this.discardCardEffect.handle({
-            client_id: client.id,
-            card_id,
-        });
+        if (keywords.includes(CardKeywordEnum.Exhaust)) {
+            await this.exhaustCardEffect.handle({
+                client_id: client.id,
+                card_id,
+            });
+        } else {
+            await this.discardCardEffect.handle({
+                client_id: client.id,
+                card_id,
+            });
+        }
 
         await this.updatePlayerEnergyEffect.handle({
             client_id: client.id,

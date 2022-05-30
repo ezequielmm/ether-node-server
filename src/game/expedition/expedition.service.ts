@@ -181,6 +181,32 @@ export class ExpeditionService {
         );
     }
 
+    async moveCardFromPlayerHandToExhaustPile(
+        payload: CardExistsDTO,
+    ): Promise<ExpeditionDocument> {
+        const { client_id, card_id } = payload;
+
+        const current_node = await this.getCurrentNodeByClientId(client_id);
+
+        return this.expedition.findOneAndUpdate(
+            { client_id, status: ExpeditionStatusEnum.InProgress },
+            {
+                $pull: {
+                    'current_node.data.player.cards.hand': {
+                        id: card_id,
+                    },
+                },
+                $push: {
+                    'current_node.data.player.cards.exhaust':
+                        current_node.data.player.cards.hand.filter((card) => {
+                            return card.id === card_id;
+                        })[0],
+                },
+            },
+            { new: true },
+        );
+    }
+
     async updatePlayerEnergy(
         payload: UpdatePlayerEnergyDTO,
     ): Promise<Expedition> {

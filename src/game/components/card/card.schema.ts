@@ -68,7 +68,7 @@ export class Card {
         return getRandomEnumValue(CardKeywordEnum);
     })
     @Prop()
-    keywords: CardKeywordEnum;
+    keywords: CardKeywordEnum[];
 }
 
 export const CardSchema = SchemaFactory.createForClass(Card);

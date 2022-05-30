@@ -10,6 +10,8 @@ export interface DiscardCardDTO extends BaseEffectDTO {
     readonly card_id: string;
 }
 
+export type ExhaustCardDTO = DiscardCardDTO;
+
 export interface DrawCardEffectDTO extends BaseEffectDTO {
     readonly cards_to_take?: number;
 }
