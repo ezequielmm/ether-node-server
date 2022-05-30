@@ -9,17 +9,17 @@ export enum EnemyTypeEnum {
 }
 
 export enum EnemyCategoryEnum {
-    Minion = 'Minion',
+    Minion = 'minion',
     Basic = 'basic',
     Elite = 'elite',
     Boss = 'boss',
 }
 
 export enum EnemySizeEnum {
-    Tiny = 'Tiny',
-    Small = 'Small',
-    Medium = 'Medium',
-    MediumWide = 'Medium-Wide',
-    Large = 'Large',
-    Giant = 'Giant',
+    Tiny = 'tiny',
+    Small = 'small',
+    Medium = 'medium',
+    MediumWide = 'medium-mide',
+    Large = 'marge',
+    Giant = 'giant',
 }
