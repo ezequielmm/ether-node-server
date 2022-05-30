@@ -9,47 +9,35 @@ export type EnemyDocument = Enemy & Document;
 
 @Schema()
 export class Enemy {
-    @Factory((faker: Faker) => faker.name.findName())
+    // @Factory(() => faker.name.findName())
     @Prop()
     name: string;
 
-    @Factory(() => {
-        return getRandomEnumValue(EnemyTypeEnum);
-    })
+    // @Factory(() => getRandomEnumValue(EnemyTypeEnum))
     @Prop()
     type: EnemyTypeEnum;
 
-    @Factory(() => {
-        return getRandomEnumValue(EnemyCategoryEnum);
-    })
+    // @Factory(() => getRandomEnumValue(EnemyCategoryEnum))
     @Prop()
     category: EnemyCategoryEnum;
 
-    @Factory(() => {
-        return getRandomBetween(20, 100);
-    })
+    // @Factory(() => getRandomBetween(20, 100))
     @Prop()
     hitPoints: number;
 
-    @Factory(() => {
-        return getRandomBetween(20, 100);
-    })
+    // @Factory(() => getRandomBetween(20, 100))
     @Prop()
     minAttack: number;
 
-    @Factory(() => {
-        return getRandomBetween(20, 100);
-    })
+    // @Factory(() => getRandomBetween(20, 100))
     @Prop()
     maxAttack: number;
 
-    @Factory((faker: Faker) => faker.random.words(5))
+    // @Factory((faker: Faker) => faker.random.words(5))
     @Prop()
     description: string;
 
-    @Factory(() => {
-        return getRandomEnumValue(EnemySizeEnum);
-    })
+    // @Factory(() => getRandomEnumValue(EnemySizeEnum))
     @Prop()
     size: EnemySizeEnum;
 }
