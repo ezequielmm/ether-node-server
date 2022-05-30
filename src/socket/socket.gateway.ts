@@ -9,7 +9,7 @@ import { Socket } from 'socket.io';
 import { isValidAuthToken } from '../utils';
 import { AuthGatewayService } from '../authGateway/authGateway.service.';
 import { ExpeditionService } from '../game/expedition/expedition.service';
-import { FullSyncAction } from '../game/expedition/action/fullSync.action';
+import { FullSyncAction } from '../game/expedition/actions/fullSync.action';
 
 @WebSocketGateway({
     cors: {

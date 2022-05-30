@@ -4,7 +4,6 @@ import { ExpeditionStatusEnum } from './enums';
 import {
     IExpeditionNode,
     IExpeditionCurrentNode,
-    IExpeditionMap,
     IExpeditionPlayerState,
 } from './interfaces';
 
@@ -13,22 +12,22 @@ export type ExpeditionDocument = Expedition & Document;
 @Schema()
 export class Expedition {
     @Prop()
-    readonly client_id: string;
+    client_id: string;
 
     @Prop()
-    readonly player_id: string;
+    player_id: string;
 
     @Prop()
-    readonly map: IExpeditionNode[];
-    // readonly map: IExpeditionMap[];
-    @Prop({ type: Object })
-    readonly player_state: IExpeditionPlayerState;
+    map: IExpeditionNode[];
 
     @Prop({ type: Object })
-    readonly current_node: IExpeditionCurrentNode;
+    player_state: IExpeditionPlayerState;
+
+    @Prop({ type: Object })
+    current_node: IExpeditionCurrentNode;
 
     @Prop({ default: ExpeditionStatusEnum.InProgress })
-    readonly status: ExpeditionStatusEnum;
+    status: ExpeditionStatusEnum;
 }
 
 export const ExpeditionSchema = SchemaFactory.createForClass(Expedition);
