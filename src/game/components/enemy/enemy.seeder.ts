@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { DataFactory, Seeder } from 'nestjs-seeder';
+import { Seeder } from 'nestjs-seeder';
 import { InjectModel } from '@nestjs/mongoose';
 import { Enemy, EnemyDocument } from './enemy.schema';
 import { Model } from 'mongoose';
