@@ -1,51 +1,38 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
-import { EnemyCategoryEnum, EnemyTypeEnum } from './enums';
-import { Factory } from 'nestjs-seeder';
-import { Faker } from '@faker-js/faker';
-import { getRandomBetween, getRandomEnumValue } from '../../../utils';
+import { EnemyCategoryEnum, EnemyTypeEnum, EnemySizeEnum } from './enums';
 
 export type EnemyDocument = Enemy & Document;
 
 @Schema()
 export class Enemy {
-    @Factory((faker: Faker) => faker.name.findName())
     @Prop()
     name: string;
 
-    @Factory(() => {
-        return getRandomEnumValue(EnemyTypeEnum);
-    })
     @Prop()
     type: EnemyTypeEnum;
 
-    @Factory(() => {
-        return getRandomEnumValue(EnemyCategoryEnum);
-    })
     @Prop()
     category: EnemyCategoryEnum;
 
-    @Factory(() => {
-        return getRandomBetween(20, 100);
-    })
+    @Prop()
+    size: EnemySizeEnum;
+
     @Prop()
     hitPoints: number;
 
-    @Factory(() => {
-        return getRandomBetween(20, 100);
-    })
     @Prop()
-    minAttack: number;
+    attackMin: number;
 
-    @Factory(() => {
-        return getRandomBetween(20, 100);
-    })
     @Prop()
-    maxAttack: number;
+    attackMax: number;
 
-    @Factory(() => {
-        return getRandomBetween(20, 100);
-    })
+    @Prop()
+    hpMin: number;
+
+    @Prop()
+    hpMax: number;
+
     @Prop()
     description: string;
 }

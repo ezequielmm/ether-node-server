@@ -1,4 +1,6 @@
 export enum EnemyTypeEnum {
+    Spirit = 'spirit',
+    Plant = 'plant',
     Beast = 'beast',
     Fey = 'fey',
     Undead = 'undead',
@@ -7,7 +9,17 @@ export enum EnemyTypeEnum {
 }
 
 export enum EnemyCategoryEnum {
+    Minion = 'minion',
     Basic = 'basic',
     Elite = 'elite',
     Boss = 'boss',
+}
+
+export enum EnemySizeEnum {
+    Tiny = 'tiny',
+    Small = 'small',
+    Medium = 'medium',
+    MediumWide = 'medium-mide',
+    Large = 'marge',
+    Giant = 'giant',
 }
