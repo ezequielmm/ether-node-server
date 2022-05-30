@@ -1,9 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 import { EnemyCategoryEnum, EnemyTypeEnum, EnemySizeEnum } from './enums';
-// import { Factory } from 'nestjs-seeder';
-// import { Faker } from '@faker-js/faker';
-// import { getRandomBetween, getRandomEnumValue } from '../../../utils';
 
 export type EnemyDocument = Enemy & Document;
 
