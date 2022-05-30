@@ -76,6 +76,7 @@ export interface IExpeditionCurrentNodeDataPlayer {
     energy?: number;
     energy_max?: number;
     hand_size?: number;
+    defense?: number;
     cards: {
         hand?: IExpeditionPlayerStateDeckCard[];
         draw?: IExpeditionPlayerStateDeckCard[];

@@ -42,4 +42,25 @@ export const Cards: Card[] = [
             },
         },
     },
+    {
+        name: 'Counter',
+        rarity: CardRarityEnum.Starter,
+        card_type: CardTypeEnum.Attack,
+        pool: 'knight',
+        energy: 1,
+        description: 'Deal 4 Damage, Gain 4 Defense',
+        targeted: CardTargetedEnum.Enemy,
+        keywords: [],
+        properties: {
+            effects: {
+                damage: {
+                    base: 4,
+                },
+                defense: {
+                    base: 4,
+                },
+            },
+            statuses: {},
+        },
+    },
 ];
