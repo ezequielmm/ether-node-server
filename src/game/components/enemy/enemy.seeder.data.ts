@@ -1,8 +1,10 @@
 import { EnemyTypeEnum, EnemyCategoryEnum, EnemySizeEnum } from './enums/index';
+import { IEnemyData } from './interfaces';
 
-export const data = [
+export const data: IEnemyData[] = [
     {
         name: 'Sporemonger',
+        act: 1,
         type: EnemyTypeEnum.Plant,
         class: EnemyCategoryEnum.Basic,
         size: EnemySizeEnum.Small,
@@ -15,6 +17,7 @@ export const data = [
     },
     {
         name: 'BarkCharger',
+        act: 1,
         type: EnemyTypeEnum.Beast,
         class: EnemyCategoryEnum.Basic,
         size: EnemySizeEnum.Small,
@@ -26,6 +29,7 @@ export const data = [
     },
     {
         name: 'GroundMoth',
+        act: 1,
         type: EnemyTypeEnum.Beast,
         class: EnemyCategoryEnum.Basic,
         size: EnemySizeEnum.Medium,
@@ -38,6 +42,7 @@ export const data = [
     },
     {
         name: 'SwampGoblin1',
+        act: 1,
         type: EnemyTypeEnum.Fey,
         class: EnemyCategoryEnum.Basic,
         size: EnemySizeEnum.Medium,
@@ -50,6 +55,7 @@ export const data = [
     },
     {
         name: 'SwampGoblin2',
+        act: 1,
         type: EnemyTypeEnum.Fey,
         class: EnemyCategoryEnum.Basic,
         size: EnemySizeEnum.Medium,
@@ -62,6 +68,7 @@ export const data = [
     },
     {
         name: 'Trapelican',
+        act: 1,
         type: EnemyTypeEnum.Plant,
         class: EnemyCategoryEnum.Basic,
         size: EnemySizeEnum.Small,
@@ -74,6 +81,7 @@ export const data = [
     },
     {
         name: 'MimicFrog1',
+        act: 1,
         type: EnemyTypeEnum.Plant,
         class: EnemyCategoryEnum.Basic,
         size: EnemySizeEnum.Small,
@@ -86,6 +94,7 @@ export const data = [
     },
     {
         name: 'MimicFrog2',
+        act: 1,
         type: EnemyTypeEnum.Plant,
         class: EnemyCategoryEnum.Basic,
         size: EnemySizeEnum.Small,
@@ -98,6 +107,7 @@ export const data = [
     },
     {
         name: 'StingFae1',
+        act: 1,
         type: EnemyTypeEnum.Fey,
         class: EnemyCategoryEnum.Basic,
         size: EnemySizeEnum.Small,
@@ -109,6 +119,7 @@ export const data = [
     },
     {
         name: 'StingFae2',
+        act: 1,
         type: EnemyTypeEnum.Fey,
         class: EnemyCategoryEnum.Basic,
         size: EnemySizeEnum.Small,
@@ -120,6 +131,7 @@ export const data = [
     },
     {
         name: 'ThornWolf',
+        act: 1,
         type: EnemyTypeEnum.Plant,
         class: EnemyCategoryEnum.Elite,
         size: EnemySizeEnum.Large,
@@ -132,6 +144,7 @@ export const data = [
     },
     {
         name: 'ThornWolf_Pup',
+        act: 1,
         type: EnemyTypeEnum.Plant,
         class: EnemyCategoryEnum.Minion,
         size: EnemySizeEnum.Medium,
@@ -143,6 +156,7 @@ export const data = [
     },
     {
         name: 'QueenOrchid',
+        act: 1,
         type: EnemyTypeEnum.Plant,
         class: EnemyCategoryEnum.Elite,
         size: EnemySizeEnum.Large,
@@ -155,6 +169,7 @@ export const data = [
     },
     {
         name: 'AncientOne',
+        act: 1,
         type: EnemyTypeEnum.Spirit,
         class: EnemyCategoryEnum.Elite,
         size: EnemySizeEnum.Large,
@@ -167,6 +182,7 @@ export const data = [
     },
     {
         name: 'FungalBrute',
+        act: 1,
         type: EnemyTypeEnum.Plant,
         class: EnemyCategoryEnum.Boss,
         size: EnemySizeEnum.Giant,
@@ -179,6 +195,7 @@ export const data = [
     },
     {
         name: 'Treant',
+        act: 1,
         type: EnemyTypeEnum.Plant,
         class: EnemyCategoryEnum.Boss,
         size: EnemySizeEnum.Giant,
