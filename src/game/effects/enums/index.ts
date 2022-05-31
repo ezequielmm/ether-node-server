@@ -8,4 +8,5 @@ export enum CardDestinationEnum {
 export enum EffectsEnum {
     Damage = 'damage',
     Defense = 'defense',
+    DrawCard = 'drawCard',
 }

@@ -21,6 +21,24 @@ export const Cards: Card[] = [
         },
     },
     {
+        name: 'Defend',
+        rarity: CardRarityEnum.Starter,
+        card_type: CardTypeEnum.Defend,
+        pool: 'knight',
+        energy: 1,
+        description: 'Gain 5 Defense',
+        targeted: CardTargetedEnum.Player,
+        keywords: [],
+        properties: {
+            effects: {
+                defense: {
+                    base: 5,
+                },
+            },
+            statuses: {},
+        },
+    },
+    {
         name: 'Brace',
         rarity: CardRarityEnum.Starter,
         card_type: CardTypeEnum.Defend,
@@ -58,6 +76,100 @@ export const Cards: Card[] = [
                 },
                 defense: {
                     base: 4,
+                },
+            },
+            statuses: {},
+        },
+    },
+    {
+        name: 'First Move',
+        rarity: CardRarityEnum.Starter,
+        card_type: CardTypeEnum.Skill,
+        pool: 'knight',
+        energy: 1,
+        description: 'Gain 2 Energy',
+        targeted: CardTargetedEnum.Player,
+        keywords: [],
+        properties: {
+            effects: {
+                energy: {
+                    base: 2,
+                },
+            },
+            statuses: {},
+        },
+    },
+    {
+        name: 'Keg Chug',
+        rarity: CardRarityEnum.Commom,
+        card_type: CardTypeEnum.Skill,
+        pool: 'knight',
+        energy: 1,
+        description: 'Draw 2 cards',
+        targeted: CardTargetedEnum.Player,
+        keywords: [],
+        properties: {
+            effects: {
+                energy: {
+                    base: 2,
+                },
+            },
+            statuses: {},
+        },
+    },
+    {
+        name: 'Parry',
+        rarity: CardRarityEnum.Commom,
+        card_type: CardTypeEnum.Defend,
+        pool: 'knight',
+        energy: 1,
+        description: 'Gain 5 Defense, Gain 2 Fortitude',
+        targeted: CardTargetedEnum.Player,
+        keywords: [],
+        properties: {
+            effects: {
+                defense: {
+                    base: 5,
+                },
+            },
+            statuses: {
+                fortitude: {
+                    base: 2,
+                },
+            },
+        },
+    },
+    {
+        name: 'Bulk Up',
+        rarity: CardRarityEnum.Commom,
+        card_type: CardTypeEnum.Power,
+        pool: 'knight',
+        energy: 2,
+        description: 'Gain 2 Resolve',
+        targeted: CardTargetedEnum.Player,
+        keywords: [],
+        properties: {
+            effects: {},
+            statuses: {
+                resolve: {
+                    base: 2,
+                },
+            },
+        },
+    },
+    {
+        name: 'Anticipate',
+        rarity: CardRarityEnum.Commom,
+        card_type: CardTypeEnum.Defend,
+        pool: 'knight',
+        energy: 2,
+        description: 'Gain 8 Defense. Defense carries over to next turn.',
+        targeted: CardTargetedEnum.Player,
+        keywords: [],
+        properties: {
+            effects: {
+                defense: {
+                    base: 8,
                 },
             },
             statuses: {},

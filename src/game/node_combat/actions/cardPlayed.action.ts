@@ -14,6 +14,7 @@ import { Activity } from 'src/game/elements/prototypes/activity';
 import { ExhaustCardEffect } from 'src/game/effects/exhaustCard.effect';
 import { EffectsEnum } from 'src/game/effects/enums';
 import { DefenseEffect } from 'src/game/effects/defense.effect';
+import { DrawCardEffect } from 'src/game/effects/drawCard.effect';
 
 @Injectable()
 export class CardPlayedAction {
@@ -25,6 +26,7 @@ export class CardPlayedAction {
         private readonly exhaustCardEffect: ExhaustCardEffect,
         private readonly gameManagerService: GameManagerService,
         private readonly defenseEffect: DefenseEffect,
+        private readonly drawCardEffect: DrawCardEffect,
     ) {}
 
     async handle(client: Socket, card_id: string): Promise<string> {
@@ -65,6 +67,16 @@ export class CardPlayedAction {
             this.defenseEffect.handle({
                 client_id: client.id,
                 value: base,
+            });
+        }
+
+        if (EffectsEnum.DrawCard in properties.effects) {
+            const {
+                drawCard: { base },
+            } = properties.effects;
+            this.drawCardEffect.handle({
+                client_id: client.id,
+                cards_to_take: base,
             });
         }
 

@@ -4,12 +4,11 @@ import { ItemType } from './types';
 
 @Injectable()
 export class StatusManagerService {
-    item: ItemType;
+    private item: ItemType;
 
-    constructor(
-        private readonly expeditionService: ExpeditionService,
-        item: ItemType,
-    ) {
+    constructor(private readonly expeditionService: ExpeditionService) {}
+
+    initialize(item: ItemType) {
         this.item = item;
     }
 }

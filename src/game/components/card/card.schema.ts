@@ -41,9 +41,18 @@ export class Card {
             defense?: {
                 base: number;
             };
+            energy?: {
+                base: number;
+            };
+            drawCard?: {
+                base: number;
+            };
         };
         statuses: {
             resolve?: {
+                base: number;
+            };
+            fortitude?: {
                 base: number;
             };
         };
@@ -51,6 +60,11 @@ export class Card {
 
     @Prop()
     keywords: CardKeywordEnum[];
+
+    @Prop({ type: Object })
+    merchant_info?: {
+        coin_cost: number[];
+    };
 }
 
 export const CardSchema = SchemaFactory.createForClass(Card);
