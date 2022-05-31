@@ -13,7 +13,7 @@ import { UpdatePlayerEnergyEffect } from 'src/game/effects/updatePlayerEnergy.ef
 import { Activity } from 'src/game/elements/prototypes/activity';
 import { ExhaustCardEffect } from 'src/game/effects/exhaustCard.effect';
 import { EffectsEnum } from 'src/game/effects/enums';
-import { DamageEffect } from 'src/game/effects/damage.effect';
+import { DefenseEffect } from 'src/game/effects/defense.effect';
 
 @Injectable()
 export class CardPlayedAction {
@@ -24,7 +24,7 @@ export class CardPlayedAction {
         private readonly updatePlayerEnergyEffect: UpdatePlayerEnergyEffect,
         private readonly exhaustCardEffect: ExhaustCardEffect,
         private readonly gameManagerService: GameManagerService,
-        private readonly damageEffect: DamageEffect,
+        private readonly defenseEffect: DefenseEffect,
     ) {}
 
     async handle(client: Socket, card_id: string): Promise<string> {
@@ -58,11 +58,14 @@ export class CardPlayedAction {
             });
         }
 
-        if (EffectsEnum.Damage in properties) {
-            this.damageEffect.handle();
-        }
-
-        if (EffectsEnum.Defense in properties) {
+        if (EffectsEnum.Defense in properties.effects) {
+            const {
+                defense: { base },
+            } = properties.effects;
+            this.defenseEffect.handle({
+                client_id: client.id,
+                value: base,
+            });
         }
 
         // Then, we get the actual energy amount from the current state

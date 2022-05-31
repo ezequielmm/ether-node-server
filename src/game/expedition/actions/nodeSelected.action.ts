@@ -40,6 +40,7 @@ export class NodeSelectedAction {
                             energy: 3,
                             energy_max: 5,
                             hand_size: 5,
+                            defense: 0,
                             cards: {
                                 draw: drawCards,
                                 hand: handCards,
