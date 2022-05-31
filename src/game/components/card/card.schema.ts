@@ -55,6 +55,9 @@ export class Card {
             fortitude?: {
                 base: number;
             };
+            distraught?: {
+                base: number;
+            };
         };
     };
 

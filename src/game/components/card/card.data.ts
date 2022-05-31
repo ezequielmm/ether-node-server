@@ -175,4 +175,26 @@ export const Cards: Card[] = [
             statuses: {},
         },
     },
+    {
+        name: 'Bankhand',
+        rarity: CardRarityEnum.Commom,
+        card_type: CardTypeEnum.Defend,
+        pool: 'knight',
+        energy: 2,
+        description: 'Deal 10 damage. Inflict 1 Distraught.',
+        targeted: CardTargetedEnum.Enemy,
+        keywords: [],
+        properties: {
+            effects: {
+                damage: {
+                    base: 10,
+                },
+            },
+            statuses: {
+                distraught: {
+                    base: 1,
+                },
+            },
+        },
+    },
 ];
