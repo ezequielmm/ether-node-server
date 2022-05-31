@@ -15,6 +15,7 @@ export const Cards: Card[] = [
             effects: {
                 damage: {
                     base: 5,
+                    current: 5,
                 },
             },
             statuses: {},
@@ -33,6 +34,7 @@ export const Cards: Card[] = [
             effects: {
                 defense: {
                     base: 5,
+                    current: 5,
                 },
             },
             statuses: {},
@@ -51,11 +53,13 @@ export const Cards: Card[] = [
             effects: {
                 defense: {
                     base: 8,
+                    current: 8,
                 },
             },
             statuses: {
                 resolve: {
                     base: 1,
+                    current: 1,
                 },
             },
         },
@@ -73,9 +77,11 @@ export const Cards: Card[] = [
             effects: {
                 damage: {
                     base: 4,
+                    current: 4,
                 },
                 defense: {
                     base: 4,
+                    current: 4,
                 },
             },
             statuses: {},
@@ -94,6 +100,7 @@ export const Cards: Card[] = [
             effects: {
                 energy: {
                     base: 2,
+                    current: 2,
                 },
             },
             statuses: {},
@@ -112,6 +119,7 @@ export const Cards: Card[] = [
             effects: {
                 energy: {
                     base: 2,
+                    current: 2,
                 },
             },
             statuses: {},
@@ -130,11 +138,13 @@ export const Cards: Card[] = [
             effects: {
                 defense: {
                     base: 5,
+                    current: 5,
                 },
             },
             statuses: {
                 fortitude: {
                     base: 2,
+                    current: 2,
                 },
             },
         },
@@ -153,6 +163,7 @@ export const Cards: Card[] = [
             statuses: {
                 resolve: {
                     base: 2,
+                    current: 2,
                 },
             },
         },
@@ -170,6 +181,7 @@ export const Cards: Card[] = [
             effects: {
                 defense: {
                     base: 8,
+                    current: 8,
                 },
             },
             statuses: {},
@@ -188,11 +200,13 @@ export const Cards: Card[] = [
             effects: {
                 damage: {
                     base: 10,
+                    current: 10,
                 },
             },
             statuses: {
                 distraught: {
                     base: 1,
+                    current: 1,
                 },
             },
         },

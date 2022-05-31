@@ -37,26 +37,33 @@ export class Card {
         effects: {
             damage?: {
                 base: number;
+                current: number;
             };
             defense?: {
                 base: number;
+                current: number;
             };
             energy?: {
                 base: number;
+                current: number;
             };
             drawCard?: {
                 base: number;
+                current: number;
             };
         };
         statuses: {
             resolve?: {
                 base: number;
+                current: number;
             };
             fortitude?: {
                 base: number;
+                current: number;
             };
             distraught?: {
                 base: number;
+                current: number;
             };
         };
     };
