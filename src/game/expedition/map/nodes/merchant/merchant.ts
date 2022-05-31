@@ -44,6 +44,7 @@ class Merchant extends Node {
         this.state = {
             cards: await this.getRandomCards(),
             trinkets: await this.getRandomsTrinkets(),
+            potions: await this.getRandomsPotions(),
         };
 
         return this.state;
