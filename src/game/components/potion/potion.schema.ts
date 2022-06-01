@@ -1,7 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 import { Factory } from 'nestjs-seeder';
-import { Faker } from '@faker-js/faker';
 import { PotionRarityEnum } from './enums';
 import { getRandomEnumValue } from 'src/utils';
 
@@ -9,16 +8,14 @@ export type PotionDocument = Potion & Document;
 
 @Schema()
 export class Potion {
-    @Prop((faker: Faker) => faker.name.firstName())
+    @Prop(() => 'potion')
     name: string;
 
-    @Factory((faker: Faker) => faker.datatype.boolean())
+    @Prop(() => true)
     @Prop()
     usable: boolean;
 
-    @Factory(() => {
-        return getRandomEnumValue(PotionRarityEnum);
-    })
+    @Factory(() => getRandomEnumValue(PotionRarityEnum))
     @Prop()
     rarity: PotionRarityEnum;
 
@@ -26,9 +23,21 @@ export class Potion {
     @Prop()
     description: string;
 
-    @Factory('Deal $prop.damage.current$ damage to target')
-    @Prop()
-    effect: any;
+    @Factory(() => {
+        return {
+            properties: {
+                effects: {},
+            },
+        };
+    })
+    @Prop({ type: Object })
+    properties: {
+        effects: {
+            resolve?: {
+                base: number;
+            };
+        };
+    };
 }
 
 export const PotionSchema = SchemaFactory.createForClass(Potion);
