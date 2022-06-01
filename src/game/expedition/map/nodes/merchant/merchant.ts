@@ -16,7 +16,7 @@ class Merchant extends Node {
     ) {
         super(id, act, step, type, subType, private_data);
     }
-    public stateInitialize(): any {
+    protected initialize(): any {
         this.state = {
             card_1: {
                 card_id: calcRandom(0, 50),

@@ -26,10 +26,10 @@ class Encounter extends Node {
         );
     }
 
-    public stateInitialize(config: any): object {
+    protected initialize(): object {
         this.state.encounte_id = this.calcEncounterId();
-        this.state.scene_id = config.scene_id
-            ? config.scene_id
+        this.state.scene_id = this.private_data.scene_id
+            ? this.private_data.scene_id
             : this.defaultSceneId;
         return this.state;
     }

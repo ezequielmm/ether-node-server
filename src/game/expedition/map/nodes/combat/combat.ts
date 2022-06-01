@@ -13,10 +13,11 @@ class Combat extends Node {
         super(id, act, step, type, subType, private_data);
     }
 
-    public stateInitialize(config: any): any {
-        const enemy =
-            config.enemies[Math.floor(Math.random() * config.enemies.length)];
-        this.state.enemy = enemy;
+    protected initialize(): any {
+        this.state.enemy =
+            this.private_data.enemies[
+                Math.floor(Math.random() * this.private_data.enemies.length)
+            ];
         return this.state;
     }
 }
