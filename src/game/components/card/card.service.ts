@@ -3,6 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Card, CardDocument } from './card.schema';
 import { Model } from 'mongoose';
 import { IExpeditionPlayerStateDeckCard } from '../../expedition/interfaces';
+import { CardTypeEnum } from './enums';
 
 @Injectable()
 export class CardService {
@@ -12,6 +13,10 @@ export class CardService {
 
     async findAll(): Promise<CardDocument[]> {
         return this.card.find().lean();
+    }
+
+    async findByType(type: CardTypeEnum): Promise<CardDocument[]> {
+        return this.card.find({ card_type: type }).lean();
     }
 
     removeHandCardsFromDrawPile(
