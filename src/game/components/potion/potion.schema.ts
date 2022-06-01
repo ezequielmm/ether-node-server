@@ -9,8 +9,7 @@ export type PotionDocument = Potion & Document;
 
 @Schema()
 export class Potion {
-    @Factory((faker: Faker) => faker.name.findName())
-    @Prop()
+    @Prop((faker: Faker) => faker.name.firstName())
     name: string;
 
     @Factory((faker: Faker) => faker.datatype.boolean())
