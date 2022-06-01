@@ -4,15 +4,23 @@ import { Socket } from 'socket.io';
 import { ExpeditionStatusEnum } from '../enums';
 import { Injectable } from '@nestjs/common';
 import { restoreMap } from '../map/app';
+import { GameManagerService } from 'src/game/gameManager/gameManager.service';
+import { Activity } from 'src/game/elements/prototypes/activity';
 
 @Injectable()
 export class NodeSelectedAction {
     constructor(
         private readonly expeditionService: ExpeditionService,
         private readonly cardService: CardService,
+        private readonly gameManagerService: GameManagerService,
     ) {}
 
     async handle(client: Socket, node_id: number): Promise<string> {
+        const action = await this.gameManagerService.startAction(
+            client.id,
+            'nodeSelected',
+        );
+
         const node = await this.expeditionService.getExpeditionMapNode(
             client.id,
             node_id,
@@ -69,7 +77,19 @@ export class NodeSelectedAction {
                 },
             );
 
-            return JSON.stringify({ data: current_node });
+            await action.log(
+                new Activity('current_node', node_id, 'node-selected', {}, [
+                    {
+                        mod: 'set',
+                        key: 'current_node',
+                        val: current_node,
+                    },
+                ]),
+            );
+
+            const response = await action.end();
+
+            return JSON.stringify(response);
         } else {
             // TODO throw Error: 'Selected node is not available'
             return JSON.stringify({ data: '' });
