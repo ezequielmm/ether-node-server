@@ -108,7 +108,7 @@ export const Cards: Card[] = [
     },
     {
         name: 'Keg Chug',
-        rarity: CardRarityEnum.Commom,
+        rarity: CardRarityEnum.Common,
         card_type: CardTypeEnum.Skill,
         pool: 'knight',
         energy: 1,
@@ -127,7 +127,7 @@ export const Cards: Card[] = [
     },
     {
         name: 'Parry',
-        rarity: CardRarityEnum.Commom,
+        rarity: CardRarityEnum.Common,
         card_type: CardTypeEnum.Defend,
         pool: 'knight',
         energy: 1,
@@ -151,7 +151,7 @@ export const Cards: Card[] = [
     },
     {
         name: 'Bulk Up',
-        rarity: CardRarityEnum.Commom,
+        rarity: CardRarityEnum.Common,
         card_type: CardTypeEnum.Power,
         pool: 'knight',
         energy: 2,
@@ -170,7 +170,7 @@ export const Cards: Card[] = [
     },
     {
         name: 'Anticipate',
-        rarity: CardRarityEnum.Commom,
+        rarity: CardRarityEnum.Common,
         card_type: CardTypeEnum.Defend,
         pool: 'knight',
         energy: 2,
@@ -189,7 +189,7 @@ export const Cards: Card[] = [
     },
     {
         name: 'Bankhand',
-        rarity: CardRarityEnum.Commom,
+        rarity: CardRarityEnum.Common,
         card_type: CardTypeEnum.Defend,
         pool: 'knight',
         energy: 2,

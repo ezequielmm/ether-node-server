@@ -6,6 +6,7 @@ import { ItemType } from './types';
 export class StatusManagerService {
     private item: ItemType;
     private isInitialized: boolean;
+    private pipeline: [];
 
     constructor(private readonly expeditionService: ExpeditionService) {
         this.isInitialized = false;
@@ -14,6 +15,7 @@ export class StatusManagerService {
     initialize(item: ItemType) {
         this.item = item;
         this.isInitialized = true;
+        this.pipeline = [];
     }
 
     process() {
