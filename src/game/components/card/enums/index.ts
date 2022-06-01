@@ -1,6 +1,6 @@
 export enum CardRarityEnum {
     Starter = 'starter',
-    Commom = 'common',
+    Common = 'common',
     Uncommon = 'uncommon',
     Rare = 'rare',
     Legendary = 'legendary',
