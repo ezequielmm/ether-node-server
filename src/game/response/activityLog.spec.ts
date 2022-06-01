@@ -250,7 +250,10 @@ describe('ActivityLog', () => {
             const serialized = activityLog.serialize();
 
             expect(serialized).toStrictEqual({
-                activity_log: [[activities[0], activities[1]], [activities[2]]],
+                activity_log: [
+                    { activities: [activities[0], activities[1]] },
+                    { activities: [activities[2]] },
+                ],
             });
         });
     });
