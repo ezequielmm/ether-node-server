@@ -34,6 +34,7 @@ export class NodeSelectedAction {
             const expeditionMap = restoreMap(map);
             const selectedNode = expeditionMap.fullCurrentMap.get(node_id);
             selectedNode.select(expeditionMap);
+
             await this.expeditionService.update(
                 {
                     status: ExpeditionStatusEnum.InProgress,
@@ -94,7 +95,7 @@ export class NodeSelectedAction {
         } else {
             throw new CustomException(
                 'Selected node is not available',
-                ErrorBehavior.ReturnToMainMenu,
+                ErrorBehavior.None,
             );
         }
     }
