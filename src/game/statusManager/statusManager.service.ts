@@ -16,7 +16,7 @@ export class StatusManagerService {
         this.isInitialized = true;
     }
 
-    async process() {
+    process() {
         if (!this.isInitialized) {
             throw new ServiceUnavailableException(
                 `The state manager is not initialized.`,
