@@ -17,16 +17,14 @@ export class NodeSelectedAction {
             client.id,
             node_id,
         );
+
         if (node.isAvailable) {
             const map = await this.expeditionService.getExpeditionMap(
                 client.id,
             );
-
             const expeditionMap = restoreMap(map);
             const selectedNode = expeditionMap.fullCurrentMap.get(node_id);
-
             selectedNode.select(expeditionMap);
-
             await this.expeditionService.update(
                 {
                     status: ExpeditionStatusEnum.InProgress,
@@ -74,12 +72,7 @@ export class NodeSelectedAction {
             return JSON.stringify({ data: current_node });
         } else {
             // TODO throw Error: 'Selected node is not available'
-            return JSON.stringify({
-                data: {
-                    status: 'error',
-                    message: `selected node: ${node_id} is not available`,
-                },
-            });
+            return JSON.stringify({ data: '' });
         }
     }
 }

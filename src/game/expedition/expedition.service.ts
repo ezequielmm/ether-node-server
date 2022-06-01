@@ -41,7 +41,6 @@ export class ExpeditionService {
     }
 
     async create(payload: CreateExpeditionDTO): Promise<ExpeditionDocument> {
-        console.log('create');
         return await this.expedition.create(payload);
     }
 
@@ -61,7 +60,6 @@ export class ExpeditionService {
     }
 
     getMap(): IExpeditionNode[] {
-        console.log('getMap');
         const map = generateMap();
         return map.getMap;
     }
@@ -96,12 +94,7 @@ export class ExpeditionService {
             .select('map')
             .lean();
         if (!map) return null;
-        const expeditionMap = restoreMap(map);
-        const selectedNode = expeditionMap.fullCurrentMap.get(node_id);
-
-        selectedNode.select(expeditionMap);
-
-        return selectedNode;
+        return restoreMap(map).fullCurrentMap.get(node_id);
     }
 
     async getExpeditionMap(client_id: string): Promise<IExpeditionNode[]> {
@@ -111,8 +104,7 @@ export class ExpeditionService {
             .lean();
         // TODO: throw error if there is no expedition
         if (!map) return null;
-        const expeditionMap = restoreMap(map);
-        return expeditionMap.getMap;
+        return restoreMap(map).getMap;
     }
 
     async getDeckCards(

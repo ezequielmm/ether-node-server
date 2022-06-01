@@ -11,7 +11,7 @@ class Node implements IExpeditionNode {
     public step: number;
     public type: ExpeditionMapNodeTypeEnum;
     public subType: ExpeditionMapNodeTypeEnum;
-    private _status: ExpeditionMapNodeStatusEnum;
+    public status: ExpeditionMapNodeStatusEnum;
     public exits: Array<number>;
     public enter: Array<number>;
     public state: any;
@@ -34,12 +34,7 @@ class Node implements IExpeditionNode {
         this.status = ExpeditionMapNodeStatusEnum.Disabled;
         this.private_data = private_data;
     }
-    get status() {
-        return this.status;
-    }
-    set status(status: ExpeditionMapNodeStatusEnum) {
-        this._status = status;
-    }
+
     public get isActive(): boolean {
         return this.status === ExpeditionMapNodeStatusEnum.Active;
     }
@@ -68,7 +63,7 @@ class Node implements IExpeditionNode {
         expeditionMap.disableAllNodes();
         this.setActive();
         expeditionMap.activeNode = this;
-        this.initialize();
+        this.stateInitialize();
     }
     public complete(expeditionMap: ExpeditionMap): void {
         this.setComplete();
@@ -80,8 +75,8 @@ class Node implements IExpeditionNode {
         });
     }
 
-    protected initialize() {
-        //TODO: Initialize node
+    protected stateInitialize() {
+        // TODO: add initialization
     }
 }
 

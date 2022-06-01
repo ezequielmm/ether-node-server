@@ -13,11 +13,8 @@ class Combat extends Node {
         super(id, act, step, type, subType, private_data);
     }
 
-    protected initialize(): any {
-        this.state.enemy =
-            this.private_data.enemies[
-                Math.floor(Math.random() * this.private_data.enemies.length)
-            ];
+    protected stateInitialize(): any {
+        this.state = this.private_data.enemies;
         return this.state;
     }
 }

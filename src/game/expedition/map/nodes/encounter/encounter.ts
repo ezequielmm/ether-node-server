@@ -26,7 +26,7 @@ class Encounter extends Node {
         );
     }
 
-    protected initialize(): object {
+    protected stateInitialize(): object {
         this.state.encounte_id = this.calcEncounterId();
         this.state.scene_id = this.private_data.scene_id
             ? this.private_data.scene_id
