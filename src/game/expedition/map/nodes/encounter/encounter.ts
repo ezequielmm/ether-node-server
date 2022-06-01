@@ -1,4 +1,5 @@
 import { ExpeditionMapNodeTypeEnum } from 'src/game/expedition/enums';
+import ExpeditionMap from '../../map/expeditionMap';
 import Node from '../node';
 
 class Encounter extends Node {
@@ -17,6 +18,12 @@ class Encounter extends Node {
         this.minEncounterId = 0;
         this.maxEncounterId = 24;
         this.defaultSceneId = 0;
+    }
+    public select(expeditionMap: ExpeditionMap): void {
+        expeditionMap.disableAllNodes();
+        this.setActive();
+        expeditionMap.activeNode = this;
+        this.stateInitialize();
     }
 
     private calcEncounterId(): number {
