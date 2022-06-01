@@ -15,10 +15,8 @@ class RoyalHouse extends Node {
     }
 
     public select(expeditionMap: ExpeditionMap): void {
-        if (this.isAvailable) {
-            expeditionMap.disableAllNodes();
-            this.complete(expeditionMap);
-        }
+        expeditionMap.disableAllNodes();
+        this.complete(expeditionMap);
     }
 }
 

@@ -14,11 +14,10 @@ class Portal extends Node {
         super(id, act, step, type, subType, private_data);
     }
     public select(expeditionMap: ExpeditionMap): void {
-        if (this.isAvailable) {
-            expeditionMap.disableAllNodes();
-            this.complete(expeditionMap);
-        }
+        expeditionMap.disableAllNodes();
+        this.complete(expeditionMap);
     }
+
     public complete(expeditionMap: ExpeditionMap): void {
         this.setComplete();
         expeditionMap.extendMap();
@@ -27,7 +26,9 @@ class Portal extends Node {
             .filter((node) => node.act === this.act + 1 && node.step === 0)
             .map((node) => node.id);
         this.openExitsNodes(expeditionMap);
+        // TODO: Trigger 'MapExtended' event
     }
+
     protected openExitsNodes(expeditionMap: ExpeditionMap): void {
         this.exits.forEach((exit) => {
             expeditionMap.fullCurrentMap.get(exit).setAvailable();

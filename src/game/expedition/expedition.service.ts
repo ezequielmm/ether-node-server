@@ -19,7 +19,6 @@ import {
 import {
     IExpeditionNode,
     IExpeditionCurrentNode,
-    IExpeditionMap,
     IExpeditionPlayerStateDeckCard,
 } from './interfaces';
 import { CardService } from '../components/card/card.service';
@@ -64,6 +63,7 @@ export class ExpeditionService {
         const map = generateMap();
         return map.getMap;
     }
+
     async updateClientId(
         payload: UpdateSocketClientDTO,
     ): Promise<ExpeditionDocument> {
@@ -85,7 +85,7 @@ export class ExpeditionService {
     async getExpeditionMapNode(
         client_id: string,
         node_id: number,
-    ): Promise<IExpeditionMap> {
+    ): Promise<IExpeditionNode> {
         const { map } = await this.expedition
             .findOne({
                 client_id,
@@ -94,21 +94,17 @@ export class ExpeditionService {
             .select('map')
             .lean();
         if (!map) return null;
-        const expeditionMap = restoreMap(map);
-        const selectedNode = expeditionMap.fullCurrentMap.get(node_id);
+        return restoreMap(map).fullCurrentMap.get(node_id);
+    }
 
-        if (selectedNode.isAvailable) {
-            selectedNode.select(expeditionMap);
-
-            await this.update(
-                { status: ExpeditionStatusEnum.InProgress, client_id },
-                { map: expeditionMap.getMap },
-            );
-            return selectedNode;
-        } else {
-            // TODO: add error if selected node is disabled
-            return null;
-        }
+    async getExpeditionMap(client_id: string): Promise<IExpeditionNode[]> {
+        const { map } = await this.expedition
+            .findOne({ client_id })
+            .select('map')
+            .lean();
+        // TODO: throw error if there is no expedition
+        if (!map) return null;
+        return restoreMap(map).getMap;
     }
 
     async getDeckCards(

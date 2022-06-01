@@ -33,6 +33,7 @@ class Node implements IExpeditionNode {
         this.enter = [];
         this.status = ExpeditionMapNodeStatusEnum.Disabled;
         this.private_data = private_data;
+        this.state = {};
     }
 
     public get isActive(): boolean {
@@ -60,11 +61,10 @@ class Node implements IExpeditionNode {
         this.status = ExpeditionMapNodeStatusEnum.Completed;
     }
     public select(expeditionMap: ExpeditionMap): void {
-        if (this.isAvailable) {
-            expeditionMap.disableAllNodes();
-            this.setActive();
-            expeditionMap.activeNode = this;
-        }
+        expeditionMap.disableAllNodes();
+        this.setActive();
+        expeditionMap.activeNode = this;
+        this.stateInitialize();
     }
     public complete(expeditionMap: ExpeditionMap): void {
         this.setComplete();
@@ -74,6 +74,10 @@ class Node implements IExpeditionNode {
         this.exits.forEach((exit) => {
             expeditionMap.fullCurrentMap.get(exit).setAvailable();
         });
+    }
+
+    protected stateInitialize() {
+        // TODO: add initialization
     }
 }
 
