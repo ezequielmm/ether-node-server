@@ -16,6 +16,8 @@ import {
 } from './game/components/trinket/trinket.schema';
 import { Enemy, EnemySchema } from './game/components/enemy/enemy.schema';
 import { EnemySeeder } from './game/components/enemy/enemy.seeder';
+import { PotionSeeder } from './game/components/potion/potion.seeder';
+import { Potion, PotionSchema } from './game/components/potion/potion.schema';
 
 seeder({
     imports: [
@@ -35,7 +37,8 @@ seeder({
             { name: Card.name, schema: CardSchema },
             { name: Character.name, schema: CharacterSchema },
             { name: Trinket.name, schema: TrinketSchema },
+            { name: Potion.name, schema: PotionSchema },
             { name: Enemy.name, schema: EnemySchema },
         ]),
     ],
-}).run([CardSeeder, CharacterSeeder, TrinketSeeder, EnemySeeder]);
+}).run([CardSeeder, CharacterSeeder, TrinketSeeder, PotionSeeder, EnemySeeder]);
