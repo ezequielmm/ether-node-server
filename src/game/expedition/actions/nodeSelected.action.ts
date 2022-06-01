@@ -6,6 +6,7 @@ import { Injectable } from '@nestjs/common';
 import { restoreMap } from '../map/app';
 import { GameManagerService } from 'src/game/gameManager/gameManager.service';
 import { Activity } from 'src/game/elements/prototypes/activity';
+import { CustomException, ErrorBehavior } from 'src/socket/custom.exception';
 
 @Injectable()
 export class NodeSelectedAction {
@@ -91,8 +92,10 @@ export class NodeSelectedAction {
 
             return JSON.stringify(response);
         } else {
-            // TODO throw Error: 'Selected node is not available'
-            return JSON.stringify({ data: '' });
+            throw new CustomException(
+                'Selected node is not available',
+                ErrorBehavior.ReturnToMainMenu,
+            );
         }
     }
 }
