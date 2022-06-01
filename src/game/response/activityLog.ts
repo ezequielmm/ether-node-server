@@ -20,7 +20,7 @@ const defaultBlockOptions: BlockOptions = {
 };
 
 export type SerializeType = {
-    activity_log: Activity[][];
+    activity_log: { activities: Activity[] }[];
 };
 
 export class ActivityLog {
@@ -134,7 +134,7 @@ export class ActivityLog {
     serialize(): SerializeType {
         return {
             activity_log: this.blocks.flatMap((block) =>
-                block.steps.map((step) => step.activities),
+                block.steps.map((step) => ({ activities: step.activities })),
             ),
         };
     }
