@@ -95,7 +95,7 @@ export class NodeSelectedAction {
         } else {
             throw new CustomException(
                 'Selected node is not available',
-                ErrorBehavior.ReturnToMainMenu,
+                ErrorBehavior.None,
             );
         }
     }

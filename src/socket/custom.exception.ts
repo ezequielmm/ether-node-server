@@ -4,6 +4,7 @@ export enum ErrorBehavior {
     ApplyDiff = 'applyDiff',
     FullSync = 'fullSync',
     ReturnToMainMenu = 'returnToMainMenu',
+    None = 'none',
 }
 
 export class CustomException extends WsException {
