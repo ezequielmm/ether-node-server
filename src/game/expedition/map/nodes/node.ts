@@ -33,6 +33,7 @@ class Node implements IExpeditionNode {
         this.enter = [];
         this.status = ExpeditionMapNodeStatusEnum.Disabled;
         this.private_data = private_data;
+        this.state = {};
     }
 
     public get isActive(): boolean {
