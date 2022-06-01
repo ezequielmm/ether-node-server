@@ -20,7 +20,7 @@ export class DrawCardEffect implements IBaseEffect {
         await this.gameManagerService.logActivity(
             client_id,
             new Activity(
-                'cards',
+                'card',
                 undefined,
                 'move-from-draw-to-hand',
                 {

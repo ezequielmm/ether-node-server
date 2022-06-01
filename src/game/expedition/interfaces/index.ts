@@ -4,7 +4,6 @@ import {
     ExpeditionMapNodeTypeEnum,
 } from '../enums';
 import { Card } from 'src/game/components/card/card.schema';
-import ExpeditionMap from '../map/map/expeditionMap';
 
 export interface IExpeditionNode {
     readonly id: number;
@@ -21,22 +20,6 @@ export interface IExpeditionNode {
     readonly enter: Array<number>;
     readonly private_data: any;
     state?: any;
-    setActive(): void;
-    setDisable(): void;
-    setAvailable(): void;
-    setComplete(): void;
-    select(expeditionMap: ExpeditionMap): void;
-    complete(expeditionMap: ExpeditionMap): void;
-}
-
-export interface IExpeditionMap {
-    act: number;
-    step: number;
-    id: number;
-    type: ExpeditionMapNodeTypeEnum;
-    exits: number[];
-    enter: number[];
-    private_data?: any;
 }
 
 export interface IExpeditionPlayerState {
@@ -61,7 +44,7 @@ export interface IExpeditionPlayerStateDeckCard extends Card {
 
 export interface IExpeditionCurrentNode {
     node_id?: number;
-    node_type?: string;
+    node_type?: ExpeditionMapNodeTypeEnum;
     data?: IExpeditionCurrentNodeData;
     completed?: boolean;
 }
