@@ -387,7 +387,7 @@ export class ExpeditionService {
         );
     }
 
-    async turnChange(payload: TurnChangeDTO): Promise<void> {
+    async turnChange(payload: TurnChangeDTO): Promise<ExpeditionDocument> {
         const { client_id } = payload;
 
         const {
