@@ -10,6 +10,7 @@ import { Injectable } from '@nestjs/common';
 import { Action } from './action';
 import { Activity } from '../elements/prototypes/activity';
 import * as _ from 'lodash';
+import { ErrorBehavior } from 'src/socket/custom.exception';
 
 @Injectable()
 export class GameManagerService {
@@ -46,12 +47,17 @@ export class GameManagerService {
         const stateDelta = this.stateManagerService.getDiff(clientId);
         const activities = activityLog.serialize();
 
-        return {
+        const response: ActionResponse = {
             name,
             activities,
-            stateDelta,
             error,
         };
+
+        if (error && error.behavior === ErrorBehavior.ApplyDiff) {
+            response.stateDelta = stateDelta;
+        }
+
+        return response;
     }
 
     public getLastActionByClientId(clientId: string): Action {
