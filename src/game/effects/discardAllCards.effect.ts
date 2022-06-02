@@ -24,11 +24,13 @@ export class DiscardAllCardsEffect implements IBaseEffect {
                     mod: 'set',
                     key: 'current_node.data.player.cards.hand',
                     val: expedition.current_node.data.player.cards.hand,
+                    val_type: 'card:array',
                 },
                 {
                     mod: 'set',
                     key: 'current_node.data.player.cards.discard',
                     val: expedition.current_node.data.player.cards.discard,
+                    val_type: 'card:array',
                 },
             ]),
         );

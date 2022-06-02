@@ -39,6 +39,7 @@ export class FullSyncAction {
                     mod: 'set',
                     key: 'map',
                     val: map,
+                    val_type: 'map',
                 },
             ]),
             {
@@ -52,6 +53,7 @@ export class FullSyncAction {
                     mod: 'set',
                     key: 'player_state',
                     val: player_state,
+                    val_type: 'player_state',
                 },
             ]),
             {
