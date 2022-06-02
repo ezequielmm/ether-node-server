@@ -7,6 +7,7 @@ import { restoreMap } from '../map/app';
 import { GameManagerService } from 'src/game/gameManager/gameManager.service';
 import { Activity } from 'src/game/elements/prototypes/activity';
 import { CustomException, ErrorBehavior } from 'src/socket/custom.exception';
+import { IExpeditionCurrentNode } from '../interfaces';
 
 @Injectable()
 export class NodeSelectedAction {
@@ -49,7 +50,7 @@ export class NodeSelectedAction {
                 (node) => node.search('combat') !== -1,
             );
 
-            let currentNode = {};
+            let currentNode: IExpeditionCurrentNode = {};
 
             if (combatNodes.includes(node.type)) {
                 const cards = await this.expeditionService.getDeckCards(
@@ -88,13 +89,6 @@ export class NodeSelectedAction {
                     node_id,
                     completed: true,
                     node_type: node.type,
-                    data: {
-                        round: 0,
-                        action: 0,
-                        player: {
-                            cards: {},
-                        },
-                    },
                 };
             }
 
