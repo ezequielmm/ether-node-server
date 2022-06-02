@@ -24,7 +24,14 @@ export class CombatGateway {
     async handleEndTurn(client: Socket): Promise<string> {
         this.logger.log(`Client ${client.id} trigger message "EndTurn"`);
 
-        return await this.endTurnAction.handle(client);
+        try {
+            return await this.endTurnAction.handle(client);
+        } catch (e) {
+            this.logger.error(e.trace);
+            client.emit('ErrorMessage', {
+                message: 'An error has ocurred ending the turn',
+            });
+        }
     }
 
     @SubscribeMessage('CardPlayed')
@@ -35,6 +42,13 @@ export class CombatGateway {
 
         const { card_id }: CardPlayedInterface = JSON.parse(payload);
 
-        return await this.cardPlayedAction.handle(client, card_id);
+        try {
+            return await this.cardPlayedAction.handle(client, card_id);
+        } catch (e) {
+            this.logger.error(e.trace);
+            client.emit('ErrorMessage', {
+                message: 'An error has ocurred playing a card',
+            });
+        }
     }
 }
