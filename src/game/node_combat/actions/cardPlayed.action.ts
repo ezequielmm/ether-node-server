@@ -12,9 +12,7 @@ import {
 import { UpdatePlayerEnergyEffect } from 'src/game/effects/updatePlayerEnergy.effect';
 import { Activity } from 'src/game/elements/prototypes/activity';
 import { ExhaustCardEffect } from 'src/game/effects/exhaustCard.effect';
-import { EffectsEnum } from 'src/game/effects/enums';
-import { DefenseEffect } from 'src/game/effects/defense.effect';
-import { DrawCardEffect } from 'src/game/effects/drawCard.effect';
+import { EffectService } from 'src/game/effects/effect.service';
 
 @Injectable()
 export class CardPlayedAction {
@@ -25,8 +23,7 @@ export class CardPlayedAction {
         private readonly updatePlayerEnergyEffect: UpdatePlayerEnergyEffect,
         private readonly exhaustCardEffect: ExhaustCardEffect,
         private readonly gameManagerService: GameManagerService,
-        private readonly defenseEffect: DefenseEffect,
-        private readonly drawCardEffect: DrawCardEffect,
+        private readonly effectService: EffectService,
     ) {}
 
     async handle(client: Socket, card_id: string): Promise<string> {
@@ -60,25 +57,10 @@ export class CardPlayedAction {
             });
         }
 
-        if (EffectsEnum.Defense in properties.effects) {
-            const {
-                defense: { base },
-            } = properties.effects;
-            this.defenseEffect.handle({
-                client_id: client.id,
-                value: base,
-            });
-        }
-
-        if (EffectsEnum.DrawCard in properties.effects) {
-            const {
-                drawCard: { base },
-            } = properties.effects;
-            this.drawCardEffect.handle({
-                client_id: client.id,
-                cards_to_take: base,
-            });
-        }
+        this.effectService.process({
+            effects: properties.effects,
+            client_id: client.id,
+        });
 
         // Then, we get the actual energy amount from the current state
         const {

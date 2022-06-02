@@ -11,6 +11,7 @@ import { TurnChangeEffect } from './turnChange.effect';
 import { ExhaustCardEffect } from './exhaustCard.effect';
 import { DamageEffect } from './damage.effect';
 import { DefenseEffect } from './defense.effect';
+import { EffectService } from './effect.service';
 
 @Module({
     imports: [forwardRef(() => ExpeditionModule), GameManagerModule],
@@ -25,6 +26,7 @@ import { DefenseEffect } from './defense.effect';
         ExhaustCardEffect,
         DamageEffect,
         DefenseEffect,
+        EffectService,
     ],
     exports: [
         DiscardCardEffect,
@@ -37,6 +39,7 @@ import { DefenseEffect } from './defense.effect';
         ExhaustCardEffect,
         DamageEffect,
         DefenseEffect,
+        EffectService,
     ],
 })
 export class EffectModule {}

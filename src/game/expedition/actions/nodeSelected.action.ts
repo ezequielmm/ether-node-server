@@ -1,7 +1,7 @@
 import { ExpeditionService } from '../expedition.service';
 import { CardService } from '../../components/card/card.service';
 import { Socket } from 'socket.io';
-import { ExpeditionStatusEnum } from '../enums';
+import { ExpeditionMapNodeTypeEnum, ExpeditionStatusEnum } from '../enums';
 import { Injectable } from '@nestjs/common';
 import { restoreMap } from '../map/app';
 import { GameManagerService } from 'src/game/gameManager/gameManager.service';
@@ -31,6 +31,7 @@ export class NodeSelectedAction {
             const map = await this.expeditionService.getExpeditionMap(
                 client.id,
             );
+
             const expeditionMap = restoreMap(map);
             const selectedNode = expeditionMap.fullCurrentMap.get(node_id);
             selectedNode.select(expeditionMap);
@@ -43,14 +44,59 @@ export class NodeSelectedAction {
                 { map: expeditionMap.getMap },
             );
 
-            const cards = await this.expeditionService.getDeckCards(client.id);
-
-            const handCards = cards.sort(() => 0.5 - Math.random()).slice(0, 5);
-
-            const drawCards = this.cardService.removeHandCardsFromDrawPile(
-                cards,
-                handCards,
+            const nodeTypes = Object.values(ExpeditionMapNodeTypeEnum);
+            const combatNodes = nodeTypes.filter(
+                (node) => node.search('combat') !== -1,
             );
+
+            let currentNode = {};
+
+            if (combatNodes.includes(node.type)) {
+                const cards = await this.expeditionService.getDeckCards(
+                    client.id,
+                );
+
+                const handCards = cards
+                    .sort(() => 0.5 - Math.random())
+                    .slice(0, 5);
+
+                const drawCards = this.cardService.removeHandCardsFromDrawPile(
+                    cards,
+                    handCards,
+                );
+
+                currentNode = {
+                    node_id,
+                    completed: node.isComplete,
+                    node_type: node.type,
+                    data: {
+                        round: 0,
+                        action: 0,
+                        player: {
+                            energy: 3,
+                            energy_max: 5,
+                            hand_size: 5,
+                            cards: {
+                                draw: drawCards,
+                                hand: handCards,
+                            },
+                        },
+                    },
+                };
+            } else {
+                currentNode = {
+                    node_id,
+                    completed: true,
+                    node_type: node.type,
+                    data: {
+                        round: 0,
+                        action: 0,
+                        player: {
+                            cards: {},
+                        },
+                    },
+                };
+            }
 
             const { current_node } = await this.expeditionService.update(
                 {
@@ -58,24 +104,7 @@ export class NodeSelectedAction {
                     status: ExpeditionStatusEnum.InProgress,
                 },
                 {
-                    current_node: {
-                        node_id,
-                        completed: node.isComplete,
-                        node_type: node.type,
-                        data: {
-                            round: 0,
-                            action: 0,
-                            player: {
-                                energy: 3,
-                                energy_max: 5,
-                                hand_size: 5,
-                                cards: {
-                                    draw: drawCards,
-                                    hand: handCards,
-                                },
-                            },
-                        },
-                    },
+                    current_node: currentNode,
                 },
             );
 
