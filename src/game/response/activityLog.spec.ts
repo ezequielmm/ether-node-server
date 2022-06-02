@@ -249,12 +249,10 @@ describe('ActivityLog', () => {
 
             const serialized = activityLog.serialize();
 
-            expect(serialized).toStrictEqual({
-                activity_log: [
-                    { activities: [activities[0], activities[1]] },
-                    { activities: [activities[2]] },
-                ],
-            });
+            expect(serialized).toStrictEqual([
+                { step: [activities[0], activities[1]] },
+                { step: [activities[2]] },
+            ]);
         });
     });
 
