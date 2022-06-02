@@ -4,3 +4,9 @@ export enum CardDestinationEnum {
     DrawRandom = 'drawRandom',
     DrawTop = 'drawTop',
 }
+
+export enum EffectsEnum {
+    Damage = 'damage',
+    Defense = 'defense',
+    DrawCard = 'drawCard',
+}

@@ -68,3 +68,8 @@ export class ModifyHPMaxDTO {
 export class TurnChangeDTO {
     readonly client_id: string;
 }
+
+export class SetPlayerDefense {
+    readonly client_id: string;
+    readonly value: number;
+}

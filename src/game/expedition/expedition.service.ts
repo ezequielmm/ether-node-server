@@ -15,6 +15,7 @@ import {
     UpdateSocketClientDTO,
     ModifyHPMaxDTO,
     TurnChangeDTO,
+    SetPlayerDefense,
 } from './dto';
 import {
     IExpeditionNode,
@@ -400,6 +401,29 @@ export class ExpeditionService {
             {
                 'current_node.data.round': newRound,
             },
+            { new: true },
+        );
+    }
+
+    async setPlayerDefense(
+        payload: SetPlayerDefense,
+    ): Promise<ExpeditionDocument> {
+        const { client_id, value } = payload;
+
+        const {
+            data: {
+                player: { defense },
+            },
+        } = await this.getCurrentNodeByClientId(client_id);
+
+        const newDefenseValue = defense + value;
+
+        return await this.expedition.findOneAndUpdate(
+            {
+                client_id,
+                status: ExpeditionStatusEnum.InProgress,
+            },
+            { 'current_node.data.player.defense': newDefenseValue },
             { new: true },
         );
     }

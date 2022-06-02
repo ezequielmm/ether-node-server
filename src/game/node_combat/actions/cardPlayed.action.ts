@@ -12,6 +12,7 @@ import {
 import { UpdatePlayerEnergyEffect } from 'src/game/effects/updatePlayerEnergy.effect';
 import { Activity } from 'src/game/elements/prototypes/activity';
 import { ExhaustCardEffect } from 'src/game/effects/exhaustCard.effect';
+import { EffectService } from 'src/game/effects/effect.service';
 
 @Injectable()
 export class CardPlayedAction {
@@ -22,6 +23,7 @@ export class CardPlayedAction {
         private readonly updatePlayerEnergyEffect: UpdatePlayerEnergyEffect,
         private readonly exhaustCardEffect: ExhaustCardEffect,
         private readonly gameManagerService: GameManagerService,
+        private readonly effectService: EffectService,
     ) {}
 
     async handle(client: Socket, card_id: string): Promise<string> {
@@ -43,14 +45,22 @@ export class CardPlayedAction {
             });
 
         // Then, we query the card info to get its energy cost
-        const { energy: cardEnergy, keywords } =
-            await this.cardService.findById(card_id);
+        const {
+            energy: cardEnergy,
+            keywords,
+            properties,
+        } = await this.cardService.findById(card_id);
 
         if (keywords.includes(CardKeywordEnum.Unplayable)) {
             return JSON.stringify({
                 data: { message: CardPlayErrorMessages.UnplayableCard },
             });
         }
+
+        this.effectService.process({
+            effects: properties.effects,
+            client_id: client.id,
+        });
 
         // Then, we get the actual energy amount from the current state
         const {
