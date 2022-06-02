@@ -1,6 +1,7 @@
 type BaseStateDeltaType = {
     mod: 'add' | 'ins' | 'rem' | 'mov' | string;
     val: any;
+    val_type?: string;
 };
 
 export type SetStateDeltaType = BaseStateDeltaType & {
