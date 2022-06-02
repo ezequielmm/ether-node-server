@@ -8,7 +8,7 @@ export interface ActionError {
 export interface ActionResponse {
     name: string;
     activities: SerializeType;
-    stateDelta: any;
+    stateDelta?: any;
     error?: ActionError;
 }
 
