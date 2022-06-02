@@ -9,6 +9,9 @@ import { UpdatePlayerEnergyEffect } from './updatePlayerEnergy.effect';
 import { ModifyHPMaxEffect } from './modifyHPMax.effect';
 import { TurnChangeEffect } from './turnChange.effect';
 import { ExhaustCardEffect } from './exhaustCard.effect';
+import { DamageEffect } from './damage.effect';
+import { DefenseEffect } from './defense.effect';
+import { EffectService } from './effect.service';
 
 @Module({
     imports: [forwardRef(() => ExpeditionModule), GameManagerModule],
@@ -21,6 +24,9 @@ import { ExhaustCardEffect } from './exhaustCard.effect';
         ModifyHPMaxEffect,
         TurnChangeEffect,
         ExhaustCardEffect,
+        DamageEffect,
+        DefenseEffect,
+        EffectService,
     ],
     exports: [
         DiscardCardEffect,
@@ -31,6 +37,9 @@ import { ExhaustCardEffect } from './exhaustCard.effect';
         ModifyHPMaxEffect,
         TurnChangeEffect,
         ExhaustCardEffect,
+        DamageEffect,
+        DefenseEffect,
+        EffectService,
     ],
 })
 export class EffectModule {}

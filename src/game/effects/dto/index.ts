@@ -31,3 +31,7 @@ export interface ModifyHPMaxDTO extends BaseEffectDTO {
 }
 
 export type TurnChangeDTO = BaseEffectDTO;
+
+export interface DefenseDTO extends BaseEffectDTO {
+    value: number;
+}
