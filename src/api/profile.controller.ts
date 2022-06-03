@@ -33,7 +33,7 @@ export class ProfileController {
                 },
             } = await this.authGatewayService.getUser(authorization);
 
-            return { id, name };
+            return { id, name, fief: 0 };
         } catch (e) {
             this.logger.error(e.stack);
             throw new HttpException(
