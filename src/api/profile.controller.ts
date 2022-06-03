@@ -1,5 +1,14 @@
-import { Controller, Get, UseGuards } from '@nestjs/common';
+import {
+    Controller,
+    Get,
+    Headers,
+    HttpException,
+    HttpStatus,
+    Logger,
+    UseGuards,
+} from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { AuthGatewayService } from 'src/authGateway/authGateway.service.';
 import { AuthGuard } from '../guards/auth.guard';
 
 @ApiBearerAuth()
@@ -7,28 +16,33 @@ import { AuthGuard } from '../guards/auth.guard';
 @Controller('profile')
 @UseGuards(new AuthGuard())
 export class ProfileController {
+    private readonly logger: Logger = new Logger(ProfileController.name);
+
+    constructor(private readonly authGatewayService: AuthGatewayService) {}
+
     @ApiOperation({
         summary: 'Get user profile',
     })
     @Get()
-    handleGetProfile() {
-        return {
-            id: '9f3ce210-5edc-4d2c-a33e-19630b101578',
-            name: 'John Doe',
-            email: 'john@gmail.com',
-            wallets: [],
-            act_map: '5f97e1e4-b534-4624-89b0-b4a2da9ca416',
-            player: {
-                id: '9f3ce210-5edc-4d2c-a33e-19630b101578',
-                royal_house: '5f97e1e4-b534-4624-89b0-b4a2da9ca416',
-                class: 'knight',
-                current_act: 1,
-                current_node: 1,
-                experience: 1500,
-                fief: 10,
-                coins: 100,
-                status: 'active',
-            },
-        };
+    async handleGetProfile(@Headers() headers) {
+        const { authorization } = headers;
+        try {
+            const {
+                data: {
+                    data: { id, name },
+                },
+            } = await this.authGatewayService.getUser(authorization);
+
+            return { id, name };
+        } catch (e) {
+            this.logger.error(e.stack);
+            throw new HttpException(
+                {
+                    status: HttpStatus.UNAUTHORIZED,
+                    error: e.message,
+                },
+                HttpStatus.UNAUTHORIZED,
+            );
+        }
     }
 }

@@ -24,7 +24,7 @@ export class AuthGatewayService {
                 'https://gateway.kote.robotseamonster.com/gsrv/v1/profile',
                 {
                     headers: {
-                        Authorization: `Bearer ${token}`,
+                        Authorization: `Bearer ${token.replace('Bearer ', '')}`,
                     },
                 },
             ),
