@@ -19,15 +19,14 @@ export class AuthGatewayService {
                 HttpStatus.UNAUTHORIZED,
             );
 
+        const profileUrl = process.env.GET_PROFILE_URL;
+
         return firstValueFrom(
-            this.http.get(
-                'https://gateway.kote.robotseamonster.com/gsrv/v1/profile',
-                {
-                    headers: {
-                        Authorization: `Bearer ${token.replace('Bearer ', '')}`,
-                    },
+            this.http.get(profileUrl, {
+                headers: {
+                    Authorization: `Bearer ${token.replace('Bearer ', '')}`,
                 },
-            ),
+            }),
         );
     }
 }
