@@ -108,6 +108,7 @@ export class NodeSelectedAction {
                         mod: 'set',
                         key: 'current_node',
                         val: current_node,
+                        val_type: 'node',
                     },
                 ]),
             );

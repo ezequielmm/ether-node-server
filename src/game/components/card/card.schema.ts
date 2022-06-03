@@ -65,6 +65,18 @@ export class Card {
                 base: number;
                 current: number;
             };
+            turtling?: {
+                base: number;
+                current: number;
+            };
+            burn?: {
+                base: number;
+                current: number;
+            };
+            confusion?: {
+                base: number;
+                current: number;
+            };
         };
     };
 
