@@ -6,6 +6,7 @@ import { IExpeditionNode } from '../../interfaces';
 import { ExpeditionMapNodeTypeEnum } from '../../enums';
 
 class ExpeditionMap {
+    public readonly clientId?: string;
     private previousNodeId: number;
     private previousStepNodes: number;
     public activeNode: Node;
@@ -17,6 +18,10 @@ class ExpeditionMap {
     private currentStepnumber?: number;
     private currentActNumber: number;
     private currentAct?: Act;
+
+    constructor(clientId?: string) {
+        this.clientId = clientId;
+    }
 
     public restoreMapFromArray(map: IExpeditionNode[]): void {
         this.previousNodeId = map.length + 1;

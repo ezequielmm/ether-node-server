@@ -14,9 +14,10 @@ class RoyalHouse extends Node {
         super(id, act, step, type, subType, private_data);
     }
 
-    public select(expeditionMap: ExpeditionMap): void {
+    public async select(expeditionMap: ExpeditionMap): Promise<void> {
         expeditionMap.disableAllNodes();
-        this.complete(expeditionMap);
+        await this.logSelected(expeditionMap.clientId);
+        await this.complete(expeditionMap);
     }
 }
 

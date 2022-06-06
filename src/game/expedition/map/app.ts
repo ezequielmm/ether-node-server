@@ -1,14 +1,17 @@
 import { IExpeditionNode } from '../interfaces';
 import ExpeditionMap from './map/expeditionMap';
 
-export function generateMap() {
-    const map = new ExpeditionMap();
+export function generateMap(clientId?: string) {
+    const map = new ExpeditionMap(clientId);
     map.initMap();
     return map;
 }
 
-export function restoreMap(arrayMap: IExpeditionNode[]): ExpeditionMap {
-    const map = new ExpeditionMap();
+export function restoreMap(
+    arrayMap: IExpeditionNode[],
+    clientId?: string,
+): ExpeditionMap {
+    const map = new ExpeditionMap(clientId);
     map.restoreMapFromArray(arrayMap);
     return map;
 }
