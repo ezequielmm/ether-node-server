@@ -5,7 +5,6 @@ import {
     ExpeditionMapNodeTypeEnum,
 } from '../../enums';
 import { getApp } from 'src/main';
-import { INestApplication } from '@nestjs/common';
 import { Activity } from 'src/game/elements/prototypes/activity';
 
 class Node implements IExpeditionNode {
