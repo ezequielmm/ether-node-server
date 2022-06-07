@@ -40,7 +40,7 @@ export class SocketGateway
             client.disconnect(true);
         }
 
-        try {
+        /*try {
             const {
                 data: {
                     data: { id: player_id },
@@ -72,7 +72,7 @@ export class SocketGateway
             this.logger.log(e.stack);
             this.logger.log(`Client has an invalid auth token: ${client.id}`);
             client.disconnect(true);
-        }
+        }*/
     }
 
     handleDisconnect(client: Socket): void {

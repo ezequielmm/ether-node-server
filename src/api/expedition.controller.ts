@@ -42,7 +42,7 @@ export class ExpeditionController {
         const { authorization } = headers;
 
         try {
-            const {
+            /*const {
                 data: {
                     data: { id: player_id },
                 },
@@ -53,7 +53,9 @@ export class ExpeditionController {
                     player_id,
                 );
 
-            return { hasExpedition };
+            return { hasExpedition };*/
+
+            return { hasExpedition: false };
         } catch (e) {
             this.logger.error(e.stack);
             throw new HttpException(
@@ -79,7 +81,7 @@ export class ExpeditionController {
         const { authorization } = headers;
 
         try {
-            const {
+            /*const {
                 data: {
                     data: { id: player_id, name: player_name },
                 },
@@ -142,6 +144,9 @@ export class ExpeditionController {
                     },
                 });
             }
+            */
+
+            return { createdExpedition: false };
         } catch (e) {
             this.logger.error(e.stack);
             throw new HttpException(
@@ -163,11 +168,11 @@ export class ExpeditionController {
     async handleCancelExpedition(
         @Headers() headers,
         @Res() response,
-    ): Promise<{ cancelledExpedition: boolean }> {
+    ): Promise<{ canceledExpedition: boolean }> {
         const { authorization } = headers;
 
         try {
-            const {
+            /*const {
                 data: {
                     data: { id: player_id },
                 },
@@ -190,7 +195,8 @@ export class ExpeditionController {
                         message: 'Player has no expedition in progress',
                     },
                 });
-            }
+            }*/
+            return { canceledExpedition: true };
         } catch (e) {
             this.logger.error(e.stack);
             throw new HttpException(

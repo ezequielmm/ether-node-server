@@ -6,13 +6,16 @@ export type ProfileDocument = Profile & Document;
 @Schema()
 export class Profile {
     @Prop()
-    _id: number;
+    auth_service_id: number;
 
     @Prop()
     name: string;
 
     @Prop()
     email: string;
+
+    @Prop()
+    username?: string;
 }
 
 export const ProfileSchema = SchemaFactory.createForClass(Profile);
