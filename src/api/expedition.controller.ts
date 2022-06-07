@@ -11,11 +11,11 @@ import {
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '../guards/auth.guard';
-import { AuthGatewayService } from '../authGateway/authGateway.service.';
 import { ExpeditionService } from '../game/expedition/expedition.service';
 import { CardService } from '../game/components/card/card.service';
 import { CharacterService } from '../game/components/character/character.service';
 import { CharacterClassEnum } from '../game/components/character/enums';
+import { AuthGatewayService } from 'src/authGateway/authGateway.service';
 
 @ApiBearerAuth()
 @ApiTags('Expedition')

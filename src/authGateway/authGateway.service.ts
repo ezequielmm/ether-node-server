@@ -24,7 +24,7 @@ export class AuthGatewayService {
         return firstValueFrom(
             this.http.get(profileUrl, {
                 headers: {
-                    Authorization: `Bearer ${token.replace('Bearer ', '')}`,
+                    Authorization: `Bearer ${token}`,
                 },
             }),
         );
