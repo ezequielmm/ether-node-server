@@ -7,32 +7,31 @@ import { ExpeditionStatusEnum } from '../enums';
 import { CardDestinationEnum } from 'src/game/effects/enums';
 
 export class CreateExpeditionDTO {
-    readonly player_id: string;
+    readonly player_id: number;
     readonly map: IExpeditionNode[];
     readonly player_state: IExpeditionPlayerState;
 }
 
 export class UpdateSocketClientDTO {
-    readonly player_id: string;
+    readonly player_id: number;
     readonly client_id: string;
 }
 
 export class GetExpeditionDTO {
     readonly _id?: string;
-    readonly player_id?: string;
+    readonly player_id?: number;
     readonly client_id?: string;
     readonly status?: ExpeditionStatusEnum;
 }
 
 export class UpdateExpeditionFilterDTO {
-    readonly player_id?: string;
+    readonly player_id?: number;
     readonly client_id?: string;
     readonly status: ExpeditionStatusEnum;
 }
 
 export class UpdateExpeditionDTO {
     readonly map?: IExpeditionNode[];
-    // readonly map?: IExpeditionMap[];
     readonly player_state?: IExpeditionPlayerState;
     readonly current_node?: IExpeditionCurrentNode;
     readonly status?: ExpeditionStatusEnum;

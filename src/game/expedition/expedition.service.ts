@@ -33,7 +33,7 @@ export class ExpeditionService {
         private readonly cardService: CardService,
     ) {}
 
-    async playerHasExpeditionInProgress(player_id: string): Promise<boolean> {
+    async playerHasExpeditionInProgress(player_id: number): Promise<boolean> {
         const itemExists = await this.expedition.exists({
             player_id,
             status: ExpeditionStatusEnum.InProgress,
@@ -45,7 +45,7 @@ export class ExpeditionService {
         return await this.expedition.create(payload);
     }
 
-    async cancel(player_id: string): Promise<boolean> {
+    async cancel(player_id: number): Promise<boolean> {
         const exists = await this.playerHasExpeditionInProgress(player_id);
 
         if (!exists) {

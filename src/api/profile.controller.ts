@@ -8,7 +8,8 @@ import {
     UseGuards,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { AuthGatewayService } from 'src/authGateway/authGateway.service.';
+import { AuthGatewayService } from 'src/authGateway/authGateway.service';
+import { IProfile } from 'src/authGateway/interfaces/profile.interface';
 import { AuthGuard } from '../guards/auth.guard';
 
 @ApiBearerAuth()
@@ -24,16 +25,14 @@ export class ProfileController {
         summary: 'Get user profile',
     })
     @Get()
-    async handleGetProfile(@Headers() headers) {
-        const { authorization } = headers;
+    async handleGetProfile(@Headers() headers): Promise<IProfile> {
+        const { authorization: token } = headers;
         try {
             const {
-                data: {
-                    data: { id, name },
-                },
-            } = await this.authGatewayService.getUser(authorization);
+                data: { data },
+            } = await this.authGatewayService.getUser(token);
 
-            return { id, name, fief: 0 };
+            return data;
         } catch (e) {
             this.logger.error(e.stack);
             throw new HttpException(

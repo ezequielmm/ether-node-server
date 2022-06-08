@@ -15,7 +15,7 @@ export class Expedition {
     client_id: string;
 
     @Prop()
-    player_id: string;
+    player_id: number;
 
     @Prop()
     map: IExpeditionNode[];
