@@ -5,3 +5,5 @@ export interface IAuthProfile {
         readonly email: string;
     };
 }
+
+export type IProfile = IAuthProfile['data'];

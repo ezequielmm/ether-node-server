@@ -8,7 +8,6 @@ import { CharacterModule } from '../game/components/character/character.module';
 import { TrinketModule } from '../game/components/trinket/trinket.module';
 import { ExpeditionModule } from '../game/expedition/expedition.module';
 import { CardModule } from '../game/components/card/card.module';
-import { ProfileModule } from 'src/authGateway/profile/profile.module';
 
 @Module({
     imports: [
@@ -17,7 +16,6 @@ import { ProfileModule } from 'src/authGateway/profile/profile.module';
         TrinketModule,
         ExpeditionModule,
         CardModule,
-        ProfileModule,
     ],
     controllers: [
         ProfileController,
