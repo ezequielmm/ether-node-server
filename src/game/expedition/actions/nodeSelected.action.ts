@@ -1,6 +1,6 @@
 import { ExpeditionService } from '../expedition.service';
 import { Socket } from 'socket.io';
-import { ExpeditionStatusEnum } from '../enums';
+import { ExpeditionMapNodeTypeEnum, ExpeditionStatusEnum } from '../enums';
 import { Injectable } from '@nestjs/common';
 import { restoreMap } from '../map/app';
 import { GameManagerService } from 'src/game/gameManager/gameManager.service';
