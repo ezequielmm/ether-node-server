@@ -1,0 +1,30 @@
+import { Injectable } from '@nestjs/common';
+
+export enum SWARMessageType {
+    MapUpdate = 'map_update',
+    CombatUpdate = 'combat_update',
+    PlayerStateUpdate = 'player_state_update',
+}
+
+export enum SWARAction {
+    ActivatePortal = 'activate_portal',
+    ExtendMap = 'extend_map',
+    BeginCombat = 'begin_combat',
+    ShowMap = 'show_map',
+    UpdatePlayerState = 'update_player_state',
+}
+
+interface SWARPayload {
+    message_type: SWARMessageType;
+    action: SWARAction;
+    data: any;
+}
+
+type SWARResponse = SWARPayload;
+
+@Injectable()
+export class StandardResponseService {
+    createResponse(payload: SWARPayload): SWARResponse {
+        return payload;
+    }
+}
