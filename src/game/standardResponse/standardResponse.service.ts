@@ -20,11 +20,17 @@ interface SWARPayload {
     data: any;
 }
 
-type SWARResponse = SWARPayload;
+interface SWARResponse {
+    data: {
+        message_type: SWARMessageType;
+        action: SWARAction;
+        data: any;
+    };
+}
 
 @Injectable()
 export class StandardResponseService {
     createResponse(payload: SWARPayload): SWARResponse {
-        return payload;
+        return { data: payload };
     }
 }
