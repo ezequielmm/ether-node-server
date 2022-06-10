@@ -3,25 +3,23 @@ import { Socket } from 'socket.io';
 import { ExpeditionMapNodeTypeEnum, ExpeditionStatusEnum } from '../enums';
 import { Injectable } from '@nestjs/common';
 import { restoreMap } from '../map/app';
-import { GameManagerService } from 'src/game/gameManager/gameManager.service';
-import { Activity } from 'src/game/elements/prototypes/activity';
 import { CustomException, ErrorBehavior } from 'src/socket/custom.exception';
 import { CurrentNodeGenerator } from './currentNode.generator';
+import {
+    StandardResponseService,
+    SWARAction,
+    SWARMessageType,
+} from 'src/game/standardResponse/standardResponse.service';
 
 @Injectable()
 export class NodeSelectedAction {
     constructor(
         private readonly expeditionService: ExpeditionService,
-        private readonly gameManagerService: GameManagerService,
         private readonly currentNodeGenerator: CurrentNodeGenerator,
+        private readonly standardResponseService: StandardResponseService,
     ) {}
 
     async handle(client: Socket, node_id: number): Promise<string> {
-        const action = await this.gameManagerService.startAction(
-            client.id,
-            'nodeSelected',
-        );
-
         const node = await this.expeditionService.getExpeditionMapNode(
             client.id,
             node_id,
@@ -50,7 +48,7 @@ export class NodeSelectedAction {
                     client.id,
                 );
 
-            const { current_node } = await this.expeditionService.update(
+            const { map: newMap } = await this.expeditionService.update(
                 {
                     client_id: client.id,
                     status: ExpeditionStatusEnum.InProgress,
@@ -60,59 +58,35 @@ export class NodeSelectedAction {
                 },
             );
 
-            await action.log(
-                new Activity('current_node', node_id, 'node-selected', {}, [
-                    {
-                        mod: 'set',
-                        key: 'current_node',
-                        val: current_node,
-                        val_type: 'node',
-                    },
-                ]),
-            );
+            let response = {};
 
-            const updateMapAction = await this.gameManagerService.startAction(
-                client.id,
-                'map-updated',
-            );
-            await updateMapAction.log(
-                new Activity('map', undefined, 'map-updated', {}, [
-                    {
-                        mod: 'set',
-                        key: 'map',
-                        val: expeditionMap.getMap,
-                        val_type: 'map',
-                    },
-                ]),
-            );
-            client.emit(
-                'ExpeditionMap',
-                JSON.stringify(await updateMapAction.end()),
-            );
-
-            if (node.type === ExpeditionMapNodeTypeEnum.Portal) {
-                const extendMapAction =
-                    await this.gameManagerService.startAction(
-                        client.id,
-                        'map-extended',
-                    );
-                await extendMapAction.log(
-                    new Activity('map', undefined, 'map-extended', {}, [
-                        {
-                            mod: 'set',
-                            key: 'map',
-                            val: expeditionMap.getMap,
-                            val_type: 'map',
-                        },
-                    ]),
-                );
-                client.emit(
-                    'ExpeditionMap',
-                    JSON.stringify(await extendMapAction.end()),
-                );
+            switch (node.type) {
+                case ExpeditionMapNodeTypeEnum.Portal:
+                    response = this.standardResponseService.createResponse({
+                        message_type: SWARMessageType.MapUpdate,
+                        action: SWARAction.ExtendMap,
+                        data: newMap,
+                    });
+                    break;
+                case ExpeditionMapNodeTypeEnum.RoyalHouse:
+                case ExpeditionMapNodeTypeEnum.RoyalHouseA:
+                case ExpeditionMapNodeTypeEnum.RoyalHouseB:
+                case ExpeditionMapNodeTypeEnum.RoyalHouseC:
+                case ExpeditionMapNodeTypeEnum.RoyalHouseD:
+                    response = this.standardResponseService.createResponse({
+                        message_type: SWARMessageType.MapUpdate,
+                        action: SWARAction.ActivatePortal,
+                        data: newMap,
+                    });
+                    break;
+                default:
+                    response = this.standardResponseService.createResponse({
+                        message_type: SWARMessageType.MapUpdate,
+                        action: SWARAction.ShowMap,
+                        data: newMap,
+                    });
+                    break;
             }
-
-            const response = await action.end();
 
             return JSON.stringify(response);
         } else {
