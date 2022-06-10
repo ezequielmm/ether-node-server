@@ -33,20 +33,24 @@ export class FullSyncAction {
 
         client.emit(
             'ExpeditionMap',
-            this.standardResponseService.createResponse({
-                message_type: SWARMessageType.MapUpdate,
-                action: SWARAction.ShowMap,
-                data: map,
-            }),
+            JSON.stringify(
+                this.standardResponseService.createResponse({
+                    message_type: SWARMessageType.MapUpdate,
+                    action: SWARAction.ShowMap,
+                    data: map,
+                }),
+            ),
         );
 
         client.emit(
             'PlayerState',
-            this.standardResponseService.createResponse({
-                message_type: SWARMessageType.PlayerStateUpdate,
-                action: SWARAction.UpdatePlayerState,
-                data: player_state,
-            }),
+            JSON.stringify(
+                this.standardResponseService.createResponse({
+                    message_type: SWARMessageType.PlayerStateUpdate,
+                    action: SWARAction.UpdatePlayerState,
+                    data: player_state,
+                }),
+            ),
         );
     }
 }
