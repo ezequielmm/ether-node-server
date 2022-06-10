@@ -5,6 +5,11 @@ import { CardModule } from '../../components/card/card.module';
 import { CardPlayedAction } from './cardPlayed.action';
 import { EndTurnAction } from './endTurn.action';
 import { EffectModule } from 'src/game/effects/effect.module';
+import { DiscardCardAction } from './discardCard.action';
+import { DiscardAllCardsAction } from './discardAllCards.action';
+import { ExhaustCardAction } from './exhaustCard.action';
+import { TurnChangeAction } from './turnChange.action';
+import { UpdatePlayerEnergyAction } from './updatePlayerEnergy.action';
 
 @Module({
     imports: [
@@ -13,7 +18,23 @@ import { EffectModule } from 'src/game/effects/effect.module';
         EffectModule,
         GameManagerModule,
     ],
-    providers: [CardPlayedAction, EndTurnAction],
-    exports: [CardPlayedAction, EndTurnAction],
+    providers: [
+        CardPlayedAction,
+        EndTurnAction,
+        DiscardCardAction,
+        DiscardAllCardsAction,
+        ExhaustCardAction,
+        TurnChangeAction,
+        UpdatePlayerEnergyAction,
+    ],
+    exports: [
+        CardPlayedAction,
+        EndTurnAction,
+        DiscardCardAction,
+        DiscardAllCardsAction,
+        ExhaustCardAction,
+        TurnChangeAction,
+        UpdatePlayerEnergyAction,
+    ],
 })
 export class CombatActionModule {}
