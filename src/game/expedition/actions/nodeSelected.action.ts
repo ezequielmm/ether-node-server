@@ -1,6 +1,6 @@
 import { ExpeditionService } from '../expedition.service';
 import { Socket } from 'socket.io';
-import { ExpeditionStatusEnum } from '../enums';
+import { ExpeditionMapNodeTypeEnum, ExpeditionStatusEnum } from '../enums';
 import { Injectable } from '@nestjs/common';
 import { restoreMap } from '../map/app';
 import { GameManagerService } from 'src/game/gameManager/gameManager.service';
@@ -70,6 +70,47 @@ export class NodeSelectedAction {
                     },
                 ]),
             );
+
+            const updateMapAction = await this.gameManagerService.startAction(
+                client.id,
+                'map-updated',
+            );
+            await updateMapAction.log(
+                new Activity('map', undefined, 'map-updated', {}, [
+                    {
+                        mod: 'set',
+                        key: 'map',
+                        val: expeditionMap.getMap,
+                        val_type: 'map',
+                    },
+                ]),
+            );
+            client.emit(
+                'ExpeditionMap',
+                JSON.stringify(await updateMapAction.end()),
+            );
+
+            if (node.type === ExpeditionMapNodeTypeEnum.Portal) {
+                const extendMapAction =
+                    await this.gameManagerService.startAction(
+                        client.id,
+                        'map-extended',
+                    );
+                await extendMapAction.log(
+                    new Activity('map', undefined, 'map-extended', {}, [
+                        {
+                            mod: 'set',
+                            key: 'map',
+                            val: expeditionMap.getMap,
+                            val_type: 'map',
+                        },
+                    ]),
+                );
+                client.emit(
+                    'ExpeditionMap',
+                    JSON.stringify(await extendMapAction.end()),
+                );
+            }
 
             const response = await action.end();
 
