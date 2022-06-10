@@ -1,20 +1,19 @@
 import { ExpeditionService } from '../expedition.service';
-import { CardService } from '../../components/card/card.service';
 import { Socket } from 'socket.io';
-import { ExpeditionMapNodeTypeEnum, ExpeditionStatusEnum } from '../enums';
+import { ExpeditionStatusEnum } from '../enums';
 import { Injectable } from '@nestjs/common';
 import { restoreMap } from '../map/app';
 import { GameManagerService } from 'src/game/gameManager/gameManager.service';
 import { Activity } from 'src/game/elements/prototypes/activity';
 import { CustomException, ErrorBehavior } from 'src/socket/custom.exception';
-import { IExpeditionCurrentNode } from '../interfaces';
+import { CurrentNodeGenerator } from './currentNode.generator';
 
 @Injectable()
 export class NodeSelectedAction {
     constructor(
         private readonly expeditionService: ExpeditionService,
-        private readonly cardService: CardService,
         private readonly gameManagerService: GameManagerService,
+        private readonly currentNodeGenerator: CurrentNodeGenerator,
     ) {}
 
     async handle(client: Socket, node_id: number): Promise<string> {
@@ -45,52 +44,11 @@ export class NodeSelectedAction {
                 { map: expeditionMap.getMap },
             );
 
-            const nodeTypes = Object.values(ExpeditionMapNodeTypeEnum);
-            const combatNodes = nodeTypes.filter(
-                (node) => node.search('combat') !== -1,
-            );
-
-            let currentNode: IExpeditionCurrentNode = {};
-
-            if (combatNodes.includes(node.type)) {
-                const cards = await this.expeditionService.getDeckCards(
+            const currentNode =
+                await this.currentNodeGenerator.getCurrentNodeData(
+                    node,
                     client.id,
                 );
-
-                const handCards = cards
-                    .sort(() => 0.5 - Math.random())
-                    .slice(0, 5);
-
-                const drawCards = this.cardService.removeHandCardsFromDrawPile(
-                    cards,
-                    handCards,
-                );
-
-                currentNode = {
-                    node_id,
-                    completed: node.isComplete,
-                    node_type: node.type,
-                    data: {
-                        round: 0,
-                        action: 0,
-                        player: {
-                            energy: 3,
-                            energy_max: 5,
-                            hand_size: 5,
-                            cards: {
-                                draw: drawCards,
-                                hand: handCards,
-                            },
-                        },
-                    },
-                };
-            } else {
-                currentNode = {
-                    node_id,
-                    completed: true,
-                    node_type: node.type,
-                };
-            }
 
             const { current_node } = await this.expeditionService.update(
                 {
