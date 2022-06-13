@@ -12,6 +12,7 @@ export enum SWARAction {
     BeginCombat = 'begin_combat',
     ShowMap = 'show_map',
     UpdatePlayerState = 'update_player_state',
+    MapUpdate = 'map_update',
 }
 
 interface SWARPayload {
