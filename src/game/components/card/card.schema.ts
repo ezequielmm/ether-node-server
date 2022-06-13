@@ -77,6 +77,10 @@ export class Card {
                 base: number;
                 current: number;
             };
+            regeneration?: {
+                base: number;
+                current: number;
+            };
         };
     };
 
