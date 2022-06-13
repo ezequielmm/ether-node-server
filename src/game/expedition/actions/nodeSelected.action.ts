@@ -1,7 +1,7 @@
 import { ExpeditionService } from '../expedition.service';
 import { Socket } from 'socket.io';
 import { ExpeditionMapNodeTypeEnum, ExpeditionStatusEnum } from '../enums';
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { restoreMap } from '../map/app';
 import { CustomException, ErrorBehavior } from 'src/socket/custom.exception';
 import { CurrentNodeGenerator } from './currentNode.generator';
@@ -13,6 +13,8 @@ import {
 
 @Injectable()
 export class NodeSelectedAction {
+    private readonly logger: Logger = new Logger(NodeSelectedAction.name);
+
     constructor(
         private readonly expeditionService: ExpeditionService,
         private readonly currentNodeGenerator: CurrentNodeGenerator,
@@ -89,6 +91,11 @@ export class NodeSelectedAction {
                         action: SWARAction.ShowMap,
                         data: newMap,
                     });
+
+                    this.logger.log(
+                        `Sent message InitCombat to client ${client.id}`,
+                    );
+
                     client.emit(
                         'InitCombat',
                         JSON.stringify(
