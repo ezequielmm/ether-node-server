@@ -48,15 +48,16 @@ export class NodeSelectedAction {
                     client.id,
                 );
 
-            const { map: newMap } = await this.expeditionService.update(
-                {
-                    client_id: client.id,
-                    status: ExpeditionStatusEnum.InProgress,
-                },
-                {
-                    current_node: currentNode,
-                },
-            );
+            const { map: newMap, current_node } =
+                await this.expeditionService.update(
+                    {
+                        client_id: client.id,
+                        status: ExpeditionStatusEnum.InProgress,
+                    },
+                    {
+                        current_node: currentNode,
+                    },
+                );
 
             let response = {};
 
@@ -78,6 +79,26 @@ export class NodeSelectedAction {
                         action: SWARAction.ActivatePortal,
                         data: newMap,
                     });
+                    break;
+                case ExpeditionMapNodeTypeEnum.Combat:
+                case ExpeditionMapNodeTypeEnum.CombatBoss:
+                case ExpeditionMapNodeTypeEnum.CombatElite:
+                case ExpeditionMapNodeTypeEnum.CombatStandard:
+                    response = this.standardResponseService.createResponse({
+                        message_type: SWARMessageType.MapUpdate,
+                        action: SWARAction.ShowMap,
+                        data: newMap,
+                    });
+                    client.emit(
+                        'InitCombat',
+                        JSON.stringify(
+                            this.standardResponseService.createResponse({
+                                message_type: SWARMessageType.CombatUpdate,
+                                action: SWARAction.BeginCombat,
+                                data: current_node,
+                            }),
+                        ),
+                    );
                     break;
                 default:
                     response = this.standardResponseService.createResponse({
