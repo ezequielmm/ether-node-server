@@ -88,7 +88,7 @@ export class NodeSelectedAction {
                 case ExpeditionMapNodeTypeEnum.CombatStandard:
                     response = this.standardResponseService.createResponse({
                         message_type: SWARMessageType.MapUpdate,
-                        action: SWARAction.ShowMap,
+                        action: SWARAction.MapUpdate,
                         data: newMap,
                     });
 
