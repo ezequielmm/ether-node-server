@@ -3,7 +3,6 @@ import { Socket } from 'socket.io';
 import { ExpeditionMapNodeTypeEnum, ExpeditionStatusEnum } from '../enums';
 import { Injectable, Logger } from '@nestjs/common';
 import { restoreMap } from '../map/app';
-import { CustomException, ErrorBehavior } from 'src/socket/custom.exception';
 import { CurrentNodeGenerator } from './currentNode.generator';
 import {
     StandardResponseService,
@@ -118,10 +117,30 @@ export class NodeSelectedAction {
 
             return JSON.stringify(response);
         } else {
-            throw new CustomException(
-                'Selected node is not available',
-                ErrorBehavior.None,
+            const nodeTypes = Object.values(ExpeditionMapNodeTypeEnum);
+            const combatNodes = nodeTypes.filter(
+                (node) => node.search('combat') !== -1,
             );
+
+            if (combatNodes.includes(node.type)) {
+                const current_node =
+                    await this.expeditionService.getCurrentNodeByClientId(
+                        client.id,
+                    );
+
+                client.emit(
+                    'InitCombat',
+                    JSON.stringify(
+                        this.standardResponseService.createResponse({
+                            message_type: SWARMessageType.CombatUpdate,
+                            action: SWARAction.BeginCombat,
+                            data: current_node,
+                        }),
+                    ),
+                );
+            }
+
+            this.logger.error('Selected node is not available');
         }
     }
 }
