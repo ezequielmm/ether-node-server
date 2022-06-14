@@ -6,6 +6,8 @@ import { CardPlayedInterface } from '../../socket/interfaces';
 import { CardPlayedAction } from './actions/cardPlayed.action';
 import { CustomExceptionFilter } from 'src/socket/customException.filter';
 import { GetEnergyAction } from './actions/getEnergy.action';
+import { GetPlayerHealthAction } from './actions/getPlayerHealth.action';
+import { GetCardPilesAction } from './actions/getCardPiles.action';
 
 @WebSocketGateway({
     cors: {
@@ -20,6 +22,8 @@ export class CombatGateway {
         private readonly endTurnAction: EndTurnAction,
         private readonly cardPlayedAction: CardPlayedAction,
         private readonly getEnergyAction: GetEnergyAction,
+        private readonly getPlayerHealthAction: GetPlayerHealthAction,
+        private readonly getCardPilesAction: GetCardPilesAction,
     ) {}
 
     @SubscribeMessage('EndTurn')
@@ -63,7 +67,37 @@ export class CombatGateway {
         } catch (e) {
             this.logger.error(e.trace);
             client.emit('ErrorMessage', {
-                message: 'An error has ocurred getting the energy',
+                message: 'An error has ocurred getting the card energy',
+            });
+        }
+    }
+
+    @SubscribeMessage('GetPlayerHealth')
+    async handleGetPlayerHealth(client: Socket): Promise<number[]> {
+        this.logger.log(
+            `Client ${client.id} trigger message "GetPlayerHealth"`,
+        );
+
+        try {
+            return await this.getPlayerHealthAction.handle(client);
+        } catch (e) {
+            this.logger.error(e.trace);
+            client.emit('ErrorMessage', {
+                message: 'An error has ocurred getting the player health',
+            });
+        }
+    }
+
+    @SubscribeMessage('GetCardPiles')
+    async handleGetDrawPile(client: Socket): Promise<string> {
+        this.logger.log(`Client ${client.id} trigger message "GetDrawPile"`);
+
+        try {
+            return await this.getCardPilesAction.handle(client);
+        } catch (e) {
+            this.logger.error(e.trace);
+            client.emit('ErrorMessage', {
+                message: 'An error has ocurred getting the card piles',
             });
         }
     }

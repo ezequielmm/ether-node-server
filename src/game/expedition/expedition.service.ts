@@ -16,11 +16,13 @@ import {
     ModifyHPMaxDTO,
     TurnChangeDTO,
     SetPlayerDefense,
+    GetPlayerState,
 } from './dto';
 import {
     IExpeditionNode,
     IExpeditionCurrentNode,
     IExpeditionPlayerStateDeckCard,
+    IExpeditionPlayerState,
 } from './interfaces';
 import { CardService } from '../components/card/card.service';
 import { generateMap, restoreMap } from './map/app';
@@ -426,5 +428,15 @@ export class ExpeditionService {
             { 'current_node.data.player.defense': newDefenseValue },
             { new: true },
         );
+    }
+
+    async getPlayerStateByClientId(
+        payload: GetPlayerState,
+    ): Promise<IExpeditionPlayerState> {
+        const { client_id } = payload;
+
+        return await this.expedition
+            .findOne({ client_id, status: ExpeditionStatusEnum.InProgress })
+            .lean();
     }
 }

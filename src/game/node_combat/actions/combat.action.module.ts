@@ -11,6 +11,8 @@ import { ExhaustCardAction } from './exhaustCard.action';
 import { TurnChangeAction } from './turnChange.action';
 import { UpdatePlayerEnergyAction } from './updatePlayerEnergy.action';
 import { GetEnergyAction } from './getEnergy.action';
+import { GetPlayerHealthAction } from './getPlayerHealth.action';
+import { GetCardPilesAction } from './getCardPiles.action';
 
 @Module({
     imports: [
@@ -28,6 +30,8 @@ import { GetEnergyAction } from './getEnergy.action';
         TurnChangeAction,
         UpdatePlayerEnergyAction,
         GetEnergyAction,
+        GetPlayerHealthAction,
+        GetCardPilesAction,
     ],
     exports: [
         CardPlayedAction,
@@ -38,6 +42,8 @@ import { GetEnergyAction } from './getEnergy.action';
         TurnChangeAction,
         UpdatePlayerEnergyAction,
         GetEnergyAction,
+        GetPlayerHealthAction,
+        GetCardPilesAction,
     ],
 })
 export class CombatActionModule {}
