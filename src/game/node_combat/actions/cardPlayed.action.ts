@@ -10,6 +10,7 @@ import {
 } from 'src/game/components/card/enums';
 import { Activity } from 'src/game/elements/prototypes/activity';
 import { EffectService } from 'src/game/effects/effect.service';
+import { StatusPipelineService } from 'src/game/status-pipeline/status-pipeline.service';
 import { ExhaustCardAction } from './exhaustCard.action';
 import { DiscardCardAction } from './discardCard.action';
 import { UpdatePlayerEnergyAction } from './updatePlayerEnergy.action';
@@ -24,7 +25,8 @@ export class CardPlayedAction {
         private readonly exhaustCardAction: ExhaustCardAction,
         private readonly discardCardAction: DiscardCardAction,
         private readonly updatePlayerEnergyAction: UpdatePlayerEnergyAction,
-    ) {}
+        private readonly statusService: StatusPipelineService,
+    ) { }
 
     async handle(client: Socket, card_id: string): Promise<string> {
         const action = await this.gameManagerService.startAction(
@@ -60,6 +62,11 @@ export class CardPlayedAction {
         this.effectService.process({
             effects: properties.effects,
             client_id: client.id,
+        });
+
+        this.statusService.process({
+            client_id: client.id,
+            statuses: properties.statuses,
         });
 
         // Then, we get the actual energy amount from the current state

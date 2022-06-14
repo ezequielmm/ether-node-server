@@ -65,11 +65,171 @@ export class Card {
                 base: number;
                 current: number;
             };
+            resist?: {
+                base: number;
+                current: number;
+            };
+            spikes?: {
+                base: number;
+                current: number;
+            };
+            dodge?: {
+                base: number;
+                current: number;
+            };
+            force_field?: {
+                base: number;
+                current: number;
+            };
+            intercept?: {
+                base: number;
+                current: number;
+            };
+            heralding?: {
+                base: number;
+                current: number;
+            };
+            taste_of_blood?: {
+                base: number;
+                current: number;
+            };
+            resolve_expires?: {
+                base: number;
+                current: number;
+            };
+            energize?: {
+                base: number;
+                current: number;
+            };
+            bolstered?: {
+                base: number;
+                current: number;
+            };
+            anticipating?: {
+                base: number;
+                current: number;
+            };
+            siphoning?: {
+                base: number;
+                current: number;
+            };
+            double_down?: {
+                base: number;
+                current: number;
+            };
+            imbued?: {
+                base: number;
+                current: number;
+            };
+            trinity?: {
+                base: number;
+                current: number;
+            };
+            trinity_upgraded?: {
+                base: number;
+                current: number;
+            };
+            enflamed?: {
+                base: number;
+                current: number;
+            };
+            gifted?: {
+                base: number;
+                current: number;
+            };
+            finely_edged?: {
+                base: number;
+                current: number;
+            };
+            finely_edged_plus?: {
+                base: number;
+                current: number;
+            };
+            armored_up?: {
+                base: number;
+                current: number;
+            };
+            armored_up_plus?: {
+                base: number;
+                current: number;
+            };
+            dew_drop?: {
+                base: number;
+                current: number;
+            };
+            fatigue: {
+                base: number;
+                current: number;
+            };
+            praying?: {
+                base: number;
+                current: number;
+            };
+            adept?: {
+                base: number;
+                current: number;
+            };
+            enraged?: {
+                base: number;
+                current: number;
+            };
+            herald_delayed?: {
+                base: number;
+                current: number;
+            };
             turtling?: {
                 base: number;
                 current: number;
             };
             burn?: {
+                base: number;
+                current: number;
+            };
+            confused?: {
+                base: number;
+                current: number;
+            };
+            stunned?: {
+                base: number;
+                current: number;
+            };
+            drained?: {
+                base: number;
+                current: number;
+            };
+            feeble?: {
+                base: number;
+                current: number;
+            };
+            summoned?: {
+                base: number;
+                current: number;
+            };
+            clearheaded?: {
+                base: number;
+                current: number;
+            };
+            trapped?: {
+                base: number;
+                current: number;
+            };
+            blighted?: {
+                base: number;
+                current: number;
+            };
+            mimic?: {
+                base: number;
+                current: number;
+            };
+            mossy?: {
+                base: number;
+                current: number;
+            };
+            squishy?: {
+                base: number;
+                current: number;
+            };
+            blinded?: {
                 base: number;
                 current: number;
             };
