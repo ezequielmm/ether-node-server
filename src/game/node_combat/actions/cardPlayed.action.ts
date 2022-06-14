@@ -1,4 +1,3 @@
-import { GameManagerService } from 'src/game/gameManager/gameManager.service';
 import { ExpeditionService } from '../../expedition/expedition.service';
 import { CardService } from '../../components/card/card.service';
 import { Socket } from 'socket.io';
@@ -8,7 +7,6 @@ import {
     CardKeywordEnum,
     CardPlayErrorMessages,
 } from 'src/game/components/card/enums';
-import { Activity } from 'src/game/elements/prototypes/activity';
 import { EffectService } from 'src/game/effects/effect.service';
 import { ExhaustCardAction } from './exhaustCard.action';
 import { DiscardCardAction } from './discardCard.action';
@@ -19,7 +17,6 @@ export class CardPlayedAction {
     constructor(
         private readonly expeditionService: ExpeditionService,
         private readonly cardService: CardService,
-        private readonly gameManagerService: GameManagerService,
         private readonly effectService: EffectService,
         private readonly exhaustCardAction: ExhaustCardAction,
         private readonly discardCardAction: DiscardCardAction,
@@ -27,18 +24,12 @@ export class CardPlayedAction {
     ) {}
 
     async handle(client: Socket, card_id: string): Promise<string> {
-        const action = await this.gameManagerService.startAction(
-            client.id,
-            'cardPlayed',
-        );
-
         const cardExists = await this.expeditionService.cardExistsOnPlayerHand({
             client_id: client.id,
             card_id,
         });
 
         // First make sure card exists on player's hand pile
-
         if (!cardExists)
             return JSON.stringify({
                 data: { message: 'Card played is not valid' },
@@ -94,20 +85,7 @@ export class CardPlayedAction {
             energy: newEnergyAmount,
         });
 
-        action.log(
-            new Activity('energy', undefined, 'decrease', undefined, [
-                {
-                    mod: 'set',
-                    key: 'current_node.data.player.energy',
-                    val: newEnergyAmount,
-                },
-            ]),
-            {
-                blockName: 'cardPlayed',
-            },
-        );
-
-        return JSON.stringify(await action.end());
+        return JSON.stringify({});
     }
 
     private canPlayerPlayCard(
