@@ -15,6 +15,6 @@ export class GetCardPilesAction {
             },
         } = await this.expeditionService.getCurrentNodeByClientId(client.id);
 
-        return JSON.stringify({ hand, draw, discard, exhausted });
+        return JSON.stringify({ data: { hand, draw, discard, exhausted } });
     }
 }

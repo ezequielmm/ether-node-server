@@ -13,6 +13,7 @@ import { UpdatePlayerEnergyAction } from './updatePlayerEnergy.action';
 import { GetEnergyAction } from './getEnergy.action';
 import { GetPlayerHealthAction } from './getPlayerHealth.action';
 import { GetCardPilesAction } from './getCardPiles.action';
+import { StatusPipelineModule } from 'src/game/status-pipeline/status-pipeline.module';
 
 @Module({
     imports: [
@@ -20,6 +21,7 @@ import { GetCardPilesAction } from './getCardPiles.action';
         forwardRef(() => CardModule),
         EffectModule,
         GameManagerModule,
+        StatusPipelineModule,
     ],
     providers: [
         CardPlayedAction,

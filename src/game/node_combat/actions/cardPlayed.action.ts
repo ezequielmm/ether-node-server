@@ -23,7 +23,7 @@ export class CardPlayedAction {
         private readonly discardCardAction: DiscardCardAction,
         private readonly updatePlayerEnergyAction: UpdatePlayerEnergyAction,
         private readonly statusService: StatusPipelineService,
-    ) { }
+    ) {}
 
     async handle(client: Socket, card_id: string): Promise<string> {
         const cardExists = await this.expeditionService.cardExistsOnPlayerHand({

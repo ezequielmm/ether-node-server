@@ -157,7 +157,7 @@ export class Card {
                 base: number;
                 current: number;
             };
-            fatigue: {
+            fatigue?: {
                 base: number;
                 current: number;
             };
