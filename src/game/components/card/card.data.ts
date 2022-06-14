@@ -465,4 +465,66 @@ export const Cards: Card[] = [
             statuses: {},
         },
     },
+    {
+        name: 'Armor Up',
+        rarity: CardRarityEnum.Special,
+        card_type: CardTypeEnum.Skill,
+        pool: 'knight',
+        energy: 0,
+        description: 'Gain 5 Defense. Exhaust.',
+        targeted: CardTargetedEnum.Player,
+        keywords: [CardKeywordEnum.Exhaust],
+        properties: {
+            effects: {
+                defense: {
+                    base: 5,
+                    current: 5,
+                },
+            },
+            statuses: {},
+        },
+    },
+    {
+        name: 'Backhand',
+        rarity: CardRarityEnum.Common,
+        card_type: CardTypeEnum.Attack,
+        pool: 'knight',
+        energy: 2,
+        description: 'Deal 10 damage. Inflict 1 Distraught.',
+        targeted: CardTargetedEnum.Enemy,
+        keywords: [],
+        properties: {
+            effects: {
+                damage: {
+                    base: 10,
+                    current: 10,
+                },
+            },
+            statuses: {
+                regeneration: {
+                    base: 1,
+                    current: 1,
+                },
+            },
+        },
+    },
+    {
+        name: 'Quick to Adapt',
+        rarity: CardRarityEnum.Common,
+        card_type: CardTypeEnum.Defend,
+        pool: 'knight',
+        energy: 1,
+        description: 'Gain 4 defense for each enemy.',
+        targeted: CardTargetedEnum.Player,
+        keywords: [],
+        properties: {
+            effects: {
+                defense: {
+                    base: 4,
+                    current: 4,
+                },
+            },
+            statuses: {},
+        },
+    },
 ];
