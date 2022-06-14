@@ -72,3 +72,7 @@ export class SetPlayerDefense {
     readonly client_id: string;
     readonly value: number;
 }
+
+export class GetPlayerState {
+    readonly client_id: string;
+}
