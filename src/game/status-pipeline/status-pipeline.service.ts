@@ -3,7 +3,11 @@ import { Card } from '../components/card/card.schema';
 
 @Injectable()
 export class StatusPipelineService {
-    process(payload: { statuses: any; client_id: string }): void {
-        const { statuses, client_id } = payload;
+    process(payload: {
+        card_id: string;
+        statuses: any;
+        client_id: string;
+    }): void {
+        const { statuses, client_id, card_id } = payload;
     }
 }
