@@ -22,11 +22,7 @@ interface SWARPayload {
 }
 
 interface SWARResponse {
-    data: {
-        message_type: SWARMessageType;
-        action: SWARAction;
-        data: any;
-    };
+    data: SWARPayload;
 }
 
 @Injectable()
