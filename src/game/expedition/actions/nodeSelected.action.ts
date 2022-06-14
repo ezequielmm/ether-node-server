@@ -138,9 +138,9 @@ export class NodeSelectedAction {
                         }),
                     ),
                 );
+            } else {
+                this.logger.error('Selected node is not available');
             }
-
-            this.logger.error('Selected node is not available');
         }
     }
 }
