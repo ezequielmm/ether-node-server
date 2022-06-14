@@ -55,7 +55,7 @@ export class CombatGateway {
     }
 
     @SubscribeMessage('GetEnergy')
-    async handleGetEvent(client: Socket): Promise<string> {
+    async handleGetEvent(client: Socket): Promise<number[]> {
         this.logger.log(`Client ${client.id} trigger message "GetEnergy"`);
 
         try {

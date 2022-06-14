@@ -6,13 +6,13 @@ import { ExpeditionService } from 'src/game/expedition/expedition.service';
 export class GetEnergyAction {
     constructor(private readonly expeditionService: ExpeditionService) {}
 
-    async handle(client: Socket): Promise<string> {
+    async handle(client: Socket): Promise<number[]> {
         const {
             data: {
                 player: { energy, energy_max },
             },
         } = await this.expeditionService.getCurrentNodeByClientId(client.id);
 
-        return JSON.stringify({ energy, energy_max });
+        return [energy, energy_max];
     }
 }
