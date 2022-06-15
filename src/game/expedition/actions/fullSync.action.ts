@@ -48,7 +48,7 @@ export class FullSyncAction {
                 this.standardResponseService.createResponse({
                     message_type: SWARMessageType.PlayerStateUpdate,
                     action: SWARAction.UpdatePlayerState,
-                    data: player_state,
+                    data: { player_state },
                 }),
             ),
         );
