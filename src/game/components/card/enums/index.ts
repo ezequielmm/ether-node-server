@@ -43,4 +43,5 @@ export enum CardEnergyEnum {
 export enum CardPlayErrorMessages {
     NoEnergyLeft = 'Not enough energy left',
     UnplayableCard = 'This card is unplayable',
+    InvalidCard = 'This card is invalid',
 }

@@ -41,7 +41,7 @@ export class CombatGateway {
     }
 
     @SubscribeMessage('CardPlayed')
-    async handleCardPlayed(client: Socket, payload: string): Promise<string> {
+    async handleCardPlayed(client: Socket, payload: string): Promise<void> {
         this.logger.log(
             `Client ${client.id} trigger message "CardPlayed": ${payload}`,
         );
@@ -49,7 +49,7 @@ export class CombatGateway {
         const { card_id }: CardPlayedInterface = JSON.parse(payload);
 
         try {
-            return await this.cardPlayedAction.handle(client, card_id);
+            await this.cardPlayedAction.handle(client, card_id);
         } catch (e) {
             this.logger.error(e.trace);
             client.emit('ErrorMessage', {
