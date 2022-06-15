@@ -13,7 +13,6 @@ import { EffectService } from 'src/game/effects/effect.service';
 import { ExhaustCardAction } from './exhaustCard.action';
 import { DiscardCardAction } from './discardCard.action';
 import { UpdatePlayerEnergyAction } from './updatePlayerEnergy.action';
-import { JsonEffect } from 'src/game/effects/interfaces/baseEffect';
 
 @Injectable()
 export class CardPlayedAction {
@@ -58,17 +57,7 @@ export class CardPlayedAction {
             });
         }
 
-        // TEMPORARY: We need to remove this line when we have the real card effects
-        const jsonEffects: JsonEffect[] = Object.keys(properties.effects)
-            .filter((effect) => properties.effects[effect])
-            .map((key) => {
-                return {
-                    name: key,
-                    args: properties.effects[key],
-                };
-            });
-
-        this.effectService.process(client.id, jsonEffects);
+        this.effectService.process(client.id, properties.effects);
 
         // Then, we get the actual energy amount from the current state
         const {

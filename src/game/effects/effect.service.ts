@@ -54,7 +54,7 @@ export class EffectService {
     private isEffectProvider(provider: InstanceWrapper<any>) {
         return (
             provider.instance &&
-            'handle' in provider.instance &&
+            typeof provider.instance?.handle == 'function' &&
             this.getEffectNameMetadata(provider.metatype)
         );
     }

@@ -17,12 +17,7 @@ export const Cards: Card[] = [
         targeted: CardTargetedEnum.Enemy,
         keywords: [],
         properties: {
-            effects: {
-                damage: {
-                    base: 5,
-                    current: 5,
-                },
-            },
+            effects: [{ name: 'damage', args: { base: 5, value: 5 } }],
             statuses: {},
         },
     },
@@ -36,12 +31,7 @@ export const Cards: Card[] = [
         targeted: CardTargetedEnum.Player,
         keywords: [],
         properties: {
-            effects: {
-                defense: {
-                    base: 5,
-                    current: 5,
-                },
-            },
+            effects: [{ name: 'defense', args: { base: 5, value: 5 } }],
             statuses: {},
         },
     },
@@ -55,12 +45,7 @@ export const Cards: Card[] = [
         targeted: CardTargetedEnum.Player,
         keywords: [],
         properties: {
-            effects: {
-                defense: {
-                    base: 8,
-                    current: 8,
-                },
-            },
+            effects: [{ name: 'defense', args: { base: 8, value: 8 } }],
             statuses: {
                 resolve: {
                     base: 1,
@@ -79,16 +64,10 @@ export const Cards: Card[] = [
         targeted: CardTargetedEnum.Enemy,
         keywords: [],
         properties: {
-            effects: {
-                damage: {
-                    base: 4,
-                    current: 4,
-                },
-                defense: {
-                    base: 4,
-                    current: 4,
-                },
-            },
+            effects: [
+                { name: 'damage', args: { base: 4, value: 4 } },
+                { name: 'defense', args: { base: 4, value: 4 } },
+            ],
             statuses: {},
         },
     },
@@ -102,12 +81,7 @@ export const Cards: Card[] = [
         targeted: CardTargetedEnum.Player,
         keywords: [],
         properties: {
-            effects: {
-                energy: {
-                    base: 2,
-                    current: 2,
-                },
-            },
+            effects: [{ name: 'energy', args: { base: 2, value: 2 } }],
             statuses: {},
         },
     },
@@ -121,12 +95,7 @@ export const Cards: Card[] = [
         targeted: CardTargetedEnum.Player,
         keywords: [],
         properties: {
-            effects: {
-                energy: {
-                    base: 2,
-                    current: 2,
-                },
-            },
+            effects: [{ name: 'energy', args: { base: 2, value: 2 } }],
             statuses: {},
         },
     },
@@ -140,12 +109,7 @@ export const Cards: Card[] = [
         targeted: CardTargetedEnum.Player,
         keywords: [],
         properties: {
-            effects: {
-                defense: {
-                    base: 5,
-                    current: 5,
-                },
-            },
+            effects: [{ name: 'defense', args: { base: 5, value: 5 } }],
             statuses: {
                 fortitude: {
                     base: 2,
@@ -164,7 +128,7 @@ export const Cards: Card[] = [
         targeted: CardTargetedEnum.Player,
         keywords: [],
         properties: {
-            effects: {},
+            effects: [],
             statuses: {
                 resolve: {
                     base: 2,
@@ -183,12 +147,7 @@ export const Cards: Card[] = [
         targeted: CardTargetedEnum.Player,
         keywords: [],
         properties: {
-            effects: {
-                defense: {
-                    base: 8,
-                    current: 8,
-                },
-            },
+            effects: [{ name: 'defense', args: { base: 8, value: 8 } }],
             statuses: {},
         },
     },
@@ -202,12 +161,7 @@ export const Cards: Card[] = [
         targeted: CardTargetedEnum.Enemy,
         keywords: [],
         properties: {
-            effects: {
-                damage: {
-                    base: 10,
-                    current: 10,
-                },
-            },
+            effects: [{ name: 'damage', args: { base: 10, value: 10 } }],
             statuses: {
                 distraught: {
                     base: 1,
@@ -226,12 +180,7 @@ export const Cards: Card[] = [
         targeted: CardTargetedEnum.Player,
         keywords: [],
         properties: {
-            effects: {
-                energy: {
-                    base: 2,
-                    current: 2,
-                },
-            },
+            effects: [{ name: 'energy', args: { base: 2, value: 2 } }],
             statuses: {},
         },
     },
@@ -245,12 +194,7 @@ export const Cards: Card[] = [
         targeted: CardTargetedEnum.Enemy,
         keywords: [],
         properties: {
-            effects: {
-                damage: {
-                    base: 1,
-                    current: 1,
-                },
-            },
+            effects: [{ name: 'damage', args: { base: 1, value: 1 } }],
             statuses: {},
         },
         merchant_info: {
@@ -267,16 +211,10 @@ export const Cards: Card[] = [
         targeted: CardTargetedEnum.Enemy,
         keywords: [],
         properties: {
-            effects: {
-                damage: {
-                    base: 4,
-                    current: 4,
-                },
-                drawCard: {
-                    base: 1,
-                    current: 1,
-                },
-            },
+            effects: [
+                { name: 'damage', args: { base: 4, value: 4 } },
+                { name: 'drawCard', args: { base: 1, value: 1 } },
+            ],
             statuses: {},
         },
         merchant_info: {
@@ -293,7 +231,7 @@ export const Cards: Card[] = [
         targeted: CardTargetedEnum.Player,
         keywords: [],
         properties: {
-            effects: {},
+            effects: [],
             statuses: {
                 turtling: {
                     base: 1,
@@ -315,7 +253,7 @@ export const Cards: Card[] = [
         targeted: CardTargetedEnum.Enemy,
         keywords: [CardKeywordEnum.Exhaust],
         properties: {
-            effects: {},
+            effects: [],
             statuses: {
                 burn: {
                     base: 2,
@@ -334,12 +272,7 @@ export const Cards: Card[] = [
         targeted: CardTargetedEnum.Enemy,
         keywords: [],
         properties: {
-            effects: {
-                damage: {
-                    base: 6,
-                    current: 6,
-                },
-            },
+            effects: [{ name: 'damage', args: { base: 6, value: 6 } }],
             statuses: {},
         },
     },
@@ -354,12 +287,7 @@ export const Cards: Card[] = [
         targeted: CardTargetedEnum.Player,
         keywords: [],
         properties: {
-            effects: {
-                defense: {
-                    base: 2,
-                    current: 2,
-                },
-            },
+            effects: [{ name: 'defense', args: { base: 2, value: 2 } }],
             statuses: {},
         },
     },
@@ -374,7 +302,7 @@ export const Cards: Card[] = [
         targeted: CardTargetedEnum.Player,
         keywords: [],
         properties: {
-            effects: {},
+            effects: [],
             statuses: {
                 resolve: {
                     base: 1,
@@ -397,7 +325,7 @@ export const Cards: Card[] = [
         targeted: CardTargetedEnum.Enemy,
         keywords: [],
         properties: {
-            effects: {},
+            effects: [],
             statuses: {
                 confusion: {
                     base: 1,
@@ -417,12 +345,7 @@ export const Cards: Card[] = [
         targeted: CardTargetedEnum.Enemy,
         keywords: [],
         properties: {
-            effects: {
-                damage: {
-                    base: 6,
-                    current: 6,
-                },
-            },
+            effects: [{ name: 'damage', args: { base: 6, value: 6 } }],
             statuses: {},
         },
     },
@@ -436,7 +359,7 @@ export const Cards: Card[] = [
         targeted: CardTargetedEnum.Enemy,
         keywords: [],
         properties: {
-            effects: {},
+            effects: [],
             statuses: {
                 burn: {
                     base: 2,
@@ -456,12 +379,7 @@ export const Cards: Card[] = [
         targeted: CardTargetedEnum.Enemy,
         keywords: [],
         properties: {
-            effects: {
-                drawCard: {
-                    base: 2,
-                    current: 2,
-                },
-            },
+            effects: [{ name: 'drawCard', args: { base: 2, value: 2 } }],
             statuses: {},
         },
     },
@@ -475,12 +393,7 @@ export const Cards: Card[] = [
         targeted: CardTargetedEnum.Player,
         keywords: [CardKeywordEnum.Exhaust],
         properties: {
-            effects: {
-                defense: {
-                    base: 5,
-                    current: 5,
-                },
-            },
+            effects: [{ name: 'defense', args: { base: 5, value: 5 } }],
             statuses: {},
         },
     },
@@ -494,12 +407,7 @@ export const Cards: Card[] = [
         targeted: CardTargetedEnum.Enemy,
         keywords: [],
         properties: {
-            effects: {
-                damage: {
-                    base: 10,
-                    current: 10,
-                },
-            },
+            effects: [{ name: 'damage', args: { base: 10, value: 10 } }],
             statuses: {
                 regeneration: {
                     base: 1,
@@ -518,12 +426,7 @@ export const Cards: Card[] = [
         targeted: CardTargetedEnum.Player,
         keywords: [],
         properties: {
-            effects: {
-                defense: {
-                    base: 4,
-                    current: 4,
-                },
-            },
+            effects: [{ name: 'defense', args: { base: 4, value: 4 } }],
             statuses: {},
         },
     },
