@@ -8,7 +8,7 @@ export const actDefaults = {
 export const actCconfigAlternatives = [
     {
         act: 1,
-        steps: 13,
+        steps: 12,
         minNodesPerStep: 2,
         maxNodesPerStep: 4,
         minExitPerNode: 1,
@@ -41,15 +41,40 @@ export const actCconfigAlternatives = [
         step_config: {
             0: {
                 nodes: [3, 5],
-            },
-            2: {
-                nodes: 3,
                 node_options: [
                     {
-                        type: 'camp',
-                        subType: 'camp_regular',
-                        chance: 100,
-                        config: {},
+                        type: 'combat',
+                        subType: 'combat_standard',
+                        chance: 40,
+                        config: {
+                            enemies: ['enemy1', 'enemy2', 'enemy3', 'enemy4'],
+                        },
+                    },
+                ],
+            },
+            1: {
+                nodes: [3, 5],
+                node_options: [
+                    {
+                        type: 'combat',
+                        subType: 'combat_standard',
+                        chance: 40,
+                        config: {
+                            enemies: ['enemy1', 'enemy2', 'enemy3', 'enemy4'],
+                        },
+                    },
+                ],
+            },
+            2: {
+                nodes: [3, 5],
+                node_options: [
+                    {
+                        type: 'combat',
+                        subType: 'combat_standard',
+                        chance: 40,
+                        config: {
+                            enemies: ['enemy1', 'enemy2', 'enemy3', 'enemy4'],
+                        },
                     },
                 ],
             },
@@ -178,17 +203,6 @@ export const actCconfigAlternatives = [
                     },
                 ],
             },
-            13: {
-                nodes: 1,
-                node_options: [
-                    {
-                        type: 'portal',
-                        subType: 'portal',
-                        chance: 100,
-                        config: {},
-                    },
-                ],
-            },
         },
     },
     {
@@ -224,6 +238,45 @@ export const actCconfigAlternatives = [
             ],
         },
         step_config: {
+            0: {
+                nodes: [3, 5],
+                node_options: [
+                    {
+                        type: 'combat',
+                        subType: 'combat_standard',
+                        chance: 40,
+                        config: {
+                            enemies: ['enemy1', 'enemy2', 'enemy3', 'enemy4'],
+                        },
+                    },
+                ],
+            },
+            1: {
+                nodes: [3, 5],
+                node_options: [
+                    {
+                        type: 'combat',
+                        subType: 'combat_standard',
+                        chance: 40,
+                        config: {
+                            enemies: ['enemy1', 'enemy2', 'enemy3', 'enemy4'],
+                        },
+                    },
+                ],
+            },
+            2: {
+                nodes: [3, 5],
+                node_options: [
+                    {
+                        type: 'combat',
+                        subType: 'combat_standard',
+                        chance: 40,
+                        config: {
+                            enemies: ['enemy1', 'enemy2', 'enemy3', 'enemy4'],
+                        },
+                    },
+                ],
+            },
             12: {
                 nodes: 1,
                 node_options: [
@@ -237,17 +290,6 @@ export const actCconfigAlternatives = [
                         map_data: {
                             icon: 'combat_boss_act1boss1',
                         },
-                    },
-                ],
-            },
-            13: {
-                nodes: 1,
-                node_options: [
-                    {
-                        type: 'portal',
-                        subType: 'portal',
-                        chance: 100,
-                        config: {},
                     },
                 ],
             },
