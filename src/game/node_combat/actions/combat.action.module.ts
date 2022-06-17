@@ -14,6 +14,8 @@ import { GetEnergyAction } from './getEnergy.action';
 import { GetPlayerHealthAction } from './getPlayerHealth.action';
 import { GetCardPilesAction } from './getCardPiles.action';
 import { StatusPipelineModule } from 'src/game/status-pipeline/status-pipeline.module';
+import { StandardResponseModule } from 'src/game/standardResponse/standardResponse.module';
+import { CardKeywordPipelineModule } from 'src/game/cardKeywordPipeline/cardKeywordPipeline.module';
 
 @Module({
     imports: [
@@ -22,6 +24,8 @@ import { StatusPipelineModule } from 'src/game/status-pipeline/status-pipeline.m
         EffectModule,
         GameManagerModule,
         StatusPipelineModule,
+        StandardResponseModule,
+        CardKeywordPipelineModule,
     ],
     providers: [
         CardPlayedAction,

@@ -4,14 +4,18 @@ import { Socket } from 'socket.io';
 import { Injectable } from '@nestjs/common';
 import {
     CardEnergyEnum,
-    CardKeywordEnum,
     CardPlayErrorMessages,
 } from 'src/game/components/card/enums';
 import { EffectService } from 'src/game/effects/effect.service';
-import { StatusPipelineService } from 'src/game/status-pipeline/status-pipeline.service';
 import { ExhaustCardAction } from './exhaustCard.action';
 import { DiscardCardAction } from './discardCard.action';
 import { UpdatePlayerEnergyAction } from './updatePlayerEnergy.action';
+import {
+    StandardResponseService,
+    SWARAction,
+    SWARMessageType,
+} from 'src/game/standardResponse/standardResponse.service';
+import { CardKeywordPipelineService } from 'src/game/cardKeywordPipeline/cardKeywordPipeline.service';
 
 @Injectable()
 export class CardPlayedAction {
@@ -22,20 +26,29 @@ export class CardPlayedAction {
         private readonly exhaustCardAction: ExhaustCardAction,
         private readonly discardCardAction: DiscardCardAction,
         private readonly updatePlayerEnergyAction: UpdatePlayerEnergyAction,
-        private readonly statusService: StatusPipelineService,
+        private readonly standardResponseService: StandardResponseService,
+        private readonly cardkeywordPipelineService: CardKeywordPipelineService,
     ) {}
 
-    async handle(client: Socket, card_id: string): Promise<string> {
+    async handle(client: Socket, card_id: string): Promise<void> {
         const cardExists = await this.expeditionService.cardExistsOnPlayerHand({
             client_id: client.id,
             card_id,
         });
 
         // First make sure card exists on player's hand pile
-        if (!cardExists)
-            return JSON.stringify({
-                data: { message: 'Card played is not valid' },
-            });
+        if (!cardExists) {
+            client.emit(
+                'ErrorMessage',
+                JSON.stringify(
+                    this.standardResponseService.createResponse({
+                        message_type: SWARMessageType.Error,
+                        action: SWARAction.InvalidCard,
+                        data: null,
+                    }),
+                ),
+            );
+        }
 
         // Then, we query the card info to get its energy cost
         const {
@@ -44,10 +57,20 @@ export class CardPlayedAction {
             properties,
         } = await this.cardService.findById(card_id);
 
-        if (keywords.includes(CardKeywordEnum.Unplayable)) {
-            return JSON.stringify({
-                data: { message: CardPlayErrorMessages.UnplayableCard },
-            });
+        const { unplayable, exhaust, retain } =
+            this.cardkeywordPipelineService.process(keywords);
+
+        if (unplayable) {
+            client.emit(
+                'ErrorMessage',
+                JSON.stringify(
+                    this.standardResponseService.createResponse({
+                        message_type: SWARMessageType.Error,
+                        action: SWARAction.UnplayableCard,
+                        data: null,
+                    }),
+                ),
+            );
         }
 
         this.effectService.process({
@@ -62,20 +85,30 @@ export class CardPlayedAction {
             },
         } = await this.expeditionService.getCurrentNodeByClientId(client.id);
 
-        const { canPlayCard, newEnergyAmount, message } =
-            this.canPlayerPlayCard(cardEnergy, playerEnergy);
+        const { canPlayCard, newEnergyAmount } = this.canPlayerPlayCard(
+            cardEnergy,
+            playerEnergy,
+        );
 
-        if (!canPlayCard)
-            return JSON.stringify({
-                data: { message },
-            });
+        if (!canPlayCard) {
+            client.emit(
+                'ErrorMessage',
+                JSON.stringify(
+                    this.standardResponseService.createResponse({
+                        message_type: SWARMessageType.Error,
+                        action: SWARAction.UnplayableCard,
+                        data: null,
+                    }),
+                ),
+            );
+        }
 
-        if (keywords.includes(CardKeywordEnum.Exhaust)) {
+        if (exhaust) {
             await this.exhaustCardAction.handle({
                 client_id: client.id,
                 card_id,
             });
-        } else {
+        } else if (!retain) {
             await this.discardCardAction.handle({
                 client_id: client.id,
                 card_id,
@@ -86,8 +119,6 @@ export class CardPlayedAction {
             client_id: client.id,
             energy: newEnergyAmount,
         });
-
-        return JSON.stringify({});
     }
 
     private canPlayerPlayCard(
@@ -100,7 +131,7 @@ export class CardPlayedAction {
     } {
         // First we verify if the card has a 0 cost and the player has 0 energy.
         // if this is true, we allow the use of this card
-        if (cardEnergyAmount === CardEnergyEnum.None && playerEnergy === 0) {
+        if (cardEnergyAmount === CardEnergyEnum.None) {
             return {
                 canPlayCard: true,
                 newEnergyAmount: playerEnergy,
