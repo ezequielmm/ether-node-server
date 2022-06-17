@@ -44,7 +44,7 @@ export class ExpeditionGateway {
         } catch (e) {
             this.logger.error(e.trace);
             client.emit('ErrorMessage', {
-                message: 'An error has ocurred selecting a node',
+                message: `${client.id} error has ocurred selecting the node ${node_id}`,
             });
         }
     }
