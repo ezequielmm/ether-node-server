@@ -73,10 +73,7 @@ export class CardPlayedAction {
             );
         }
 
-        this.effectService.process({
-            effects: properties.effects,
-            client_id: client.id,
-        });
+        this.effectService.process(client.id, properties.effects);
 
         // Then, we get the actual energy amount from the current state
         const {

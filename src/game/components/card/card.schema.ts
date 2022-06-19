@@ -6,6 +6,7 @@ import {
     CardTypeEnum,
 } from './enums';
 import { Document } from 'mongoose';
+import { JsonEffect } from 'src/game/effects/interfaces/baseEffect';
 
 export type CardDocument = Card & Document;
 
@@ -34,24 +35,7 @@ export class Card {
 
     @Prop({ type: Object })
     properties: {
-        effects: {
-            damage?: {
-                base: number;
-                current: number;
-            };
-            defense?: {
-                base: number;
-                current: number;
-            };
-            energy?: {
-                base: number;
-                current: number;
-            };
-            drawCard?: {
-                base: number;
-                current: number;
-            };
-        };
+        effects: JsonEffect[];
         statuses: {
             resolve?: {
                 base: number;
