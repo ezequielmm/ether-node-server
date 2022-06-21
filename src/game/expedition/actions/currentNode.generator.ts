@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { CardService } from 'src/game/components/card/card.service';
+import { SettingsService } from 'src/game/settings/settings.service';
 import { ExpeditionMapNodeTypeEnum } from '../enums';
 import { ExpeditionService } from '../expedition.service';
 import { IExpeditionCurrentNode, IExpeditionNode } from '../interfaces';
@@ -12,6 +13,7 @@ export class CurrentNodeGenerator {
     constructor(
         private readonly expeditionService: ExpeditionService,
         private readonly cardService: CardService,
+        private readonly settingsService: SettingsService,
     ) {}
 
     async getCurrentNodeData(
@@ -40,6 +42,7 @@ export class CurrentNodeGenerator {
     }
 
     private async getCombatCurrentNode(): Promise<IExpeditionCurrentNode> {
+        const settings = await this.settingsService.getSettings();
         const cards = await this.expeditionService.getDeckCards(this.clientId);
 
         const handCards = cards.sort(() => 0.5 - Math.random()).slice(0, 5);
@@ -57,8 +60,8 @@ export class CurrentNodeGenerator {
                 round: 0,
                 action: 0,
                 player: {
-                    energy: 3,
-                    energy_max: 5,
+                    energy: settings.player.energy.initial,
+                    energy_max: settings.player.energy.max,
                     hand_size: 5,
                     cards: {
                         draw: drawCards,
