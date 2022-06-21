@@ -43,9 +43,12 @@ export class CurrentNodeGenerator {
 
     private async getCombatCurrentNode(): Promise<IExpeditionCurrentNode> {
         const settings = await this.settingsService.getSettings();
+        const handSize = settings.player.handSize;
         const cards = await this.expeditionService.getDeckCards(this.clientId);
 
-        const handCards = cards.sort(() => 0.5 - Math.random()).slice(0, 5);
+        const handCards = cards
+            .sort(() => 0.5 - Math.random())
+            .slice(0, handSize);
 
         const drawCards = this.cardService.removeHandCardsFromDrawPile(
             cards,
@@ -62,7 +65,7 @@ export class CurrentNodeGenerator {
                 player: {
                     energy: settings.player.energy.initial,
                     energy_max: settings.player.energy.max,
-                    hand_size: 5,
+                    hand_size: handSize,
                     cards: {
                         draw: drawCards,
                         hand: handCards,

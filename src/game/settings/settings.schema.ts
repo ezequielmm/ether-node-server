@@ -7,18 +7,18 @@ export type SettingsDocument = Settings & Document;
 export class Settings {
     @Prop({ type: Object })
     @Factory({
-        player: {
-            energy: {
-                initial: 3,
-                max: 3,
-            },
+        energy: {
+            initial: 3,
+            max: 3,
         },
+        handSize: 5,
     })
     player: {
         energy: {
             initial: number;
             max: number;
         };
+        handSize: number;
     };
 }
 

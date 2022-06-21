@@ -11,7 +11,7 @@ export class SettingsService {
     ) {}
 
     async getSettings(): Promise<Settings> {
-        const settings = await this.settings.findOne();
+        const settings = await this.settings.findOne().lean();
         if (!settings) {
             this.logger.error('No settings found');
             throw new Error('No settings found');
