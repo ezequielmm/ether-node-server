@@ -76,3 +76,8 @@ export class SetPlayerDefense {
 export class GetPlayerState {
     readonly client_id: string;
 }
+
+export class UpdatePlayerHpDTO {
+    readonly client_id: string;
+    readonly hp: number;
+}

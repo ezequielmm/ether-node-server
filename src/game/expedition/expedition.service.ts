@@ -17,6 +17,7 @@ import {
     TurnChangeDTO,
     SetPlayerDefense,
     GetPlayerState,
+    UpdatePlayerHpDTO,
 } from './dto';
 import {
     IExpeditionNode,
@@ -320,7 +321,6 @@ export class ExpeditionService {
             energy: card.energy,
             card_type: card.card_type,
             pool: card.pool,
-            targeted: card.targeted,
             properties: card.properties,
             keywords: card.keywords,
             is_temporary,
@@ -435,8 +435,34 @@ export class ExpeditionService {
     ): Promise<IExpeditionPlayerState> {
         const { client_id } = payload;
 
-        return await this.expedition
+        const playerState = await this.expedition
             .findOne({ client_id, status: ExpeditionStatusEnum.InProgress })
+            .select('player_state')
             .lean();
+
+        if (!playerState) {
+            throw new Error('Player state not found');
+        }
+
+        return playerState.player_state;
+    }
+
+    async updatePlayerHp(payload: UpdatePlayerHpDTO): Promise<void> {
+        // Update player hp
+        const response = await this.expedition.updateOne(
+            {
+                client_id: payload.client_id,
+                status: ExpeditionStatusEnum.InProgress,
+            },
+            {
+                $set: {
+                    'player_state.hp_current': payload.hp,
+                },
+            },
+        );
+
+        if (response.modifiedCount === 0) {
+            throw new Error('Player state not found');
+        }
     }
 }

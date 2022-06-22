@@ -1,10 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import {
-    CardKeywordEnum,
-    CardRarityEnum,
-    CardTargetedEnum,
-    CardTypeEnum,
-} from './enums';
+import { CardKeywordEnum, CardRarityEnum, CardTypeEnum } from './enums';
 import { Document } from 'mongoose';
 import { JsonEffect } from 'src/game/effects/interfaces/baseEffect';
 
@@ -12,6 +7,9 @@ export type CardDocument = Card & Document;
 
 @Schema()
 export class Card {
+    @Prop({ unique: true })
+    card_id: number;
+
     @Prop()
     name: string;
 
@@ -29,9 +27,6 @@ export class Card {
 
     @Prop()
     description: string;
-
-    @Prop()
-    targeted: CardTargetedEnum;
 
     @Prop({ type: Object })
     properties: {

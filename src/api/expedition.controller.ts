@@ -115,6 +115,7 @@ export class ExpeditionController {
                         },
                         deck: {
                             cards: cards.map((card) => ({
+                                card_id: card.card_id,
                                 id: card._id.toString(),
                                 name: card.name,
                                 description: card.description,
@@ -122,7 +123,6 @@ export class ExpeditionController {
                                 energy: card.energy,
                                 card_type: card.card_type,
                                 pool: card.pool,
-                                targeted: card.targeted,
                                 properties: card.properties,
                                 keywords: card.keywords,
                                 is_temporary: false,
