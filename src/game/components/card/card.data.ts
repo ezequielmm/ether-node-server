@@ -48,4 +48,64 @@ export const Cards: Card[] = [
             statuses: {},
         },
     },
+    {
+        card_id: 13,
+        name: 'Lunge',
+        rarity: CardRarityEnum.Common,
+        card_type: CardTypeEnum.Attack,
+        pool: 'knight',
+        energy: 1,
+        description: 'Deal 4 damage twice\nDraw 1 card',
+        keywords: [],
+        properties: {
+            effects: [
+                {
+                    name: 'damage',
+                    args: {
+                        base: 4,
+                        value: 4,
+                        targeted: CardTargetedEnum.Enemy,
+                        times: 2,
+                    },
+                },
+                {
+                    name: 'drawCard',
+                    args: {
+                        cards_to_take: 1,
+                    },
+                },
+            ],
+            statuses: {},
+        },
+    },
+    {
+        card_id: 14,
+        name: 'Lunge+',
+        rarity: CardRarityEnum.Common,
+        card_type: CardTypeEnum.Attack,
+        pool: 'knight',
+        energy: 1,
+        description: 'Deal 4 damage twice\nDraw 2 card',
+        keywords: [],
+        properties: {
+            effects: [
+                {
+                    name: 'damage',
+                    args: {
+                        base: 4,
+                        value: 4,
+                        targeted: CardTargetedEnum.Enemy,
+                        times: 2,
+                    },
+                },
+                {
+                    name: 'drawCard',
+                    args: {
+                        cards_to_take: 2,
+                    },
+                },
+            ],
+            statuses: {},
+        },
+    },
 ];
