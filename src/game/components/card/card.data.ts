@@ -1,3 +1,4 @@
+import { EffectName } from 'src/game/effects/interfaces/baseEffect';
 import { Card } from './card.schema';
 import { CardRarityEnum, CardTargetedEnum, CardTypeEnum } from './enums';
 
@@ -14,7 +15,7 @@ export const Cards: Card[] = [
         properties: {
             effects: [
                 {
-                    name: 'damage',
+                    name: EffectName.Damage,
                     args: {
                         base: 5,
                         value: 5,
@@ -37,7 +38,7 @@ export const Cards: Card[] = [
         properties: {
             effects: [
                 {
-                    name: 'damage',
+                    name: EffectName.Damage,
                     args: {
                         base: 8,
                         value: 8,
