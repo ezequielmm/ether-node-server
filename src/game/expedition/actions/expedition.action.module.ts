@@ -4,7 +4,7 @@ import { FullSyncAction } from './fullSync.action';
 import { NodeSelectedAction } from './nodeSelected.action';
 import { CardModule } from '../../components/card/card.module';
 import { CurrentNodeGenerator } from './currentNode.generator';
-import { SettingsModule } from 'src/game/settings/settings.module';
+import { SettingsModule } from 'src/game/components/settings/settings.module';
 
 @Module({
     imports: [

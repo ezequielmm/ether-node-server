@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { CardService } from 'src/game/components/card/card.service';
-import { SettingsService } from 'src/game/settings/settings.service';
+import { SettingsService } from 'src/game/components/settings/settings.service';
 import { ExpeditionMapNodeTypeEnum } from '../enums';
 import { ExpeditionService } from '../../components/expedition/expedition.service';
 import { IExpeditionCurrentNode, IExpeditionNode } from '../interfaces';
