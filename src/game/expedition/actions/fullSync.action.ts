@@ -2,23 +2,21 @@ import { Socket } from 'socket.io';
 import { ExpeditionService } from '../expedition.service';
 import { ExpeditionStatusEnum } from '../enums';
 import { Injectable } from '@nestjs/common';
-import { GameManagerService } from 'src/game/gameManager/gameManager.service';
-import { Activity } from 'src/game/elements/prototypes/activity';
 import { CustomException, ErrorBehavior } from 'src/socket/custom.exception';
+import {
+    StandardResponseService,
+    SWARAction,
+    SWARMessageType,
+} from 'src/game/standardResponse/standardResponse.service';
 
 @Injectable()
 export class FullSyncAction {
     constructor(
         private readonly expeditionService: ExpeditionService,
-        private readonly gameManagerService: GameManagerService,
+        private readonly standardResponseService: StandardResponseService,
     ) {}
 
-    async handle(client: Socket): Promise<string> {
-        const action = await this.gameManagerService.startAction(
-            client.id,
-            'fullSync',
-        );
-
+    async handle(client: Socket): Promise<void> {
         const expedition = await this.expeditionService.findOne({
             client_id: client.id,
             status: ExpeditionStatusEnum.InProgress,
@@ -33,38 +31,26 @@ export class FullSyncAction {
 
         const { map, player_state } = expedition;
 
-        action.log(
-            new Activity('map', undefined, 'sync', undefined, [
-                {
-                    mod: 'set',
-                    key: 'map',
-                    val: map,
-                    val_type: 'map',
-                },
-            ]),
-            {
-                blockName: 'expeditionMap',
-            },
+        client.emit(
+            'ExpeditionMap',
+            JSON.stringify(
+                this.standardResponseService.createResponse({
+                    message_type: SWARMessageType.MapUpdate,
+                    action: SWARAction.ShowMap,
+                    data: map,
+                }),
+            ),
         );
 
-        action.log(
-            new Activity('player_state', undefined, 'sync', undefined, [
-                {
-                    mod: 'set',
-                    key: 'player_state',
-                    val: player_state,
-                    val_type: 'player_state',
-                },
-            ]),
-            {
-                blockName: 'playerState',
-            },
+        client.emit(
+            'PlayerState',
+            JSON.stringify(
+                this.standardResponseService.createResponse({
+                    message_type: SWARMessageType.PlayerStateUpdate,
+                    action: SWARAction.UpdatePlayerState,
+                    data: { player_state },
+                }),
+            ),
         );
-
-        client.emit('ExpeditionMap', JSON.stringify({ data: map }));
-
-        client.emit('PlayerState', JSON.stringify({ data: { player_state } }));
-
-        return JSON.stringify(await action.end());
     }
 }

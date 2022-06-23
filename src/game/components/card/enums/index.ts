@@ -22,6 +22,8 @@ export enum CardClassEnum {
 
 export enum CardTargetedEnum {
     Enemy = 'enemy',
+    RandomEnemy = 'random_enemy',
+    AllEnemies = 'all_enemies',
     Player = 'player',
     None = 'none',
 }
@@ -43,4 +45,5 @@ export enum CardEnergyEnum {
 export enum CardPlayErrorMessages {
     NoEnergyLeft = 'Not enough energy left',
     UnplayableCard = 'This card is unplayable',
+    InvalidCard = 'This card is invalid',
 }

@@ -56,3 +56,9 @@ export enum CardDestinationEnum {
     DrawRandom = 'drawRandom',
     DrawTop = 'drawTop',
 }
+
+export enum EnemyGroupTypeEnum {
+    standard = 'Standard',
+    elite = 'Elite',
+    Boss = 'Boss',
+}

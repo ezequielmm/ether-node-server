@@ -1,48 +1,54 @@
-import { GameManagerService } from 'src/game/gameManager/gameManager.service';
 import { ExpeditionService } from '../../expedition/expedition.service';
 import { CardService } from '../../components/card/card.service';
 import { Socket } from 'socket.io';
 import { Injectable } from '@nestjs/common';
-import { DiscardCardEffect } from 'src/game/effects/discardCard.effect';
 import {
     CardEnergyEnum,
-    CardKeywordEnum,
     CardPlayErrorMessages,
 } from 'src/game/components/card/enums';
-import { UpdatePlayerEnergyEffect } from 'src/game/effects/updatePlayerEnergy.effect';
-import { Activity } from 'src/game/elements/prototypes/activity';
-import { ExhaustCardEffect } from 'src/game/effects/exhaustCard.effect';
 import { EffectService } from 'src/game/effects/effect.service';
+import { ExhaustCardAction } from './exhaustCard.action';
+import { DiscardCardAction } from './discardCard.action';
+import { UpdatePlayerEnergyAction } from './updatePlayerEnergy.action';
+import {
+    StandardResponseService,
+    SWARAction,
+    SWARMessageType,
+} from 'src/game/standardResponse/standardResponse.service';
+import { CardKeywordPipelineService } from 'src/game/cardKeywordPipeline/cardKeywordPipeline.service';
 
 @Injectable()
 export class CardPlayedAction {
     constructor(
         private readonly expeditionService: ExpeditionService,
         private readonly cardService: CardService,
-        private readonly discardCardEffect: DiscardCardEffect,
-        private readonly updatePlayerEnergyEffect: UpdatePlayerEnergyEffect,
-        private readonly exhaustCardEffect: ExhaustCardEffect,
-        private readonly gameManagerService: GameManagerService,
         private readonly effectService: EffectService,
+        private readonly exhaustCardAction: ExhaustCardAction,
+        private readonly discardCardAction: DiscardCardAction,
+        private readonly updatePlayerEnergyAction: UpdatePlayerEnergyAction,
+        private readonly standardResponseService: StandardResponseService,
+        private readonly cardkeywordPipelineService: CardKeywordPipelineService,
     ) {}
 
-    async handle(client: Socket, card_id: string): Promise<string> {
-        const action = await this.gameManagerService.startAction(
-            client.id,
-            'cardPlayed',
-        );
-
+    async handle(client: Socket, card_id: string): Promise<void> {
         const cardExists = await this.expeditionService.cardExistsOnPlayerHand({
             client_id: client.id,
             card_id,
         });
 
         // First make sure card exists on player's hand pile
-
-        if (!cardExists)
-            return JSON.stringify({
-                data: { message: 'Card played is not valid' },
-            });
+        if (!cardExists) {
+            client.emit(
+                'ErrorMessage',
+                JSON.stringify(
+                    this.standardResponseService.createResponse({
+                        message_type: SWARMessageType.Error,
+                        action: SWARAction.InvalidCard,
+                        data: null,
+                    }),
+                ),
+            );
+        }
 
         // Then, we query the card info to get its energy cost
         const {
@@ -51,16 +57,23 @@ export class CardPlayedAction {
             properties,
         } = await this.cardService.findById(card_id);
 
-        if (keywords.includes(CardKeywordEnum.Unplayable)) {
-            return JSON.stringify({
-                data: { message: CardPlayErrorMessages.UnplayableCard },
-            });
+        const { unplayable, exhaust, retain } =
+            this.cardkeywordPipelineService.process(keywords);
+
+        if (unplayable) {
+            client.emit(
+                'ErrorMessage',
+                JSON.stringify(
+                    this.standardResponseService.createResponse({
+                        message_type: SWARMessageType.Error,
+                        action: SWARAction.UnplayableCard,
+                        data: null,
+                    }),
+                ),
+            );
         }
 
-        this.effectService.process({
-            effects: properties.effects,
-            client_id: client.id,
-        });
+        this.effectService.process(client.id, properties.effects);
 
         // Then, we get the actual energy amount from the current state
         const {
@@ -69,45 +82,40 @@ export class CardPlayedAction {
             },
         } = await this.expeditionService.getCurrentNodeByClientId(client.id);
 
-        const { canPlayCard, newEnergyAmount, message } =
-            this.canPlayerPlayCard(cardEnergy, playerEnergy);
+        const { canPlayCard, newEnergyAmount } = this.canPlayerPlayCard(
+            cardEnergy,
+            playerEnergy,
+        );
 
-        if (!canPlayCard)
-            return JSON.stringify({
-                data: { message },
-            });
+        if (!canPlayCard) {
+            client.emit(
+                'ErrorMessage',
+                JSON.stringify(
+                    this.standardResponseService.createResponse({
+                        message_type: SWARMessageType.Error,
+                        action: SWARAction.UnplayableCard,
+                        data: null,
+                    }),
+                ),
+            );
+        }
 
-        if (keywords.includes(CardKeywordEnum.Exhaust)) {
-            await this.exhaustCardEffect.handle({
+        if (exhaust) {
+            await this.exhaustCardAction.handle({
                 client_id: client.id,
                 card_id,
             });
-        } else {
-            await this.discardCardEffect.handle({
+        } else if (!retain) {
+            await this.discardCardAction.handle({
                 client_id: client.id,
                 card_id,
             });
         }
 
-        await this.updatePlayerEnergyEffect.handle({
+        await this.updatePlayerEnergyAction.handle({
             client_id: client.id,
             energy: newEnergyAmount,
         });
-
-        action.log(
-            new Activity('energy', undefined, 'decrease', undefined, [
-                {
-                    mod: 'set',
-                    key: 'current_node.data.player.energy',
-                    val: newEnergyAmount,
-                },
-            ]),
-            {
-                blockName: 'cardPlayed',
-            },
-        );
-
-        return JSON.stringify(await action.end());
     }
 
     private canPlayerPlayCard(
@@ -120,7 +128,7 @@ export class CardPlayedAction {
     } {
         // First we verify if the card has a 0 cost and the player has 0 energy.
         // if this is true, we allow the use of this card
-        if (cardEnergyAmount === CardEnergyEnum.None && playerEnergy === 0) {
+        if (cardEnergyAmount === CardEnergyEnum.None) {
             return {
                 canPlayCard: true,
                 newEnergyAmount: playerEnergy,

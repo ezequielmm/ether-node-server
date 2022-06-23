@@ -11,11 +11,11 @@ import {
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '../guards/auth.guard';
-import { AuthGatewayService } from '../authGateway/authGateway.service.';
 import { ExpeditionService } from '../game/expedition/expedition.service';
 import { CardService } from '../game/components/card/card.service';
 import { CharacterService } from '../game/components/character/character.service';
 import { CharacterClassEnum } from '../game/components/character/enums';
+import { AuthGatewayService } from 'src/authGateway/authGateway.service';
 
 @ApiBearerAuth()
 @ApiTags('Expedition')
@@ -115,6 +115,7 @@ export class ExpeditionController {
                         },
                         deck: {
                             cards: cards.map((card) => ({
+                                card_id: card.card_id,
                                 id: card._id.toString(),
                                 name: card.name,
                                 description: card.description,
@@ -122,7 +123,6 @@ export class ExpeditionController {
                                 energy: card.energy,
                                 card_type: card.card_type,
                                 pool: card.pool,
-                                targeted: card.targeted,
                                 properties: card.properties,
                                 keywords: card.keywords,
                                 is_temporary: false,
@@ -163,7 +163,7 @@ export class ExpeditionController {
     async handleCancelExpedition(
         @Headers() headers,
         @Res() response,
-    ): Promise<{ cancelledExpedition: boolean }> {
+    ): Promise<{ canceledExpedition: boolean }> {
         const { authorization } = headers;
 
         try {

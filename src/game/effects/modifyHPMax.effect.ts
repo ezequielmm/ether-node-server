@@ -1,8 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { ExpeditionService } from '../expedition/expedition.service';
+import { Effect } from './decorators/effect.decorator';
 import { ModifyHPMaxDTO } from './dto';
 import { IBaseEffect } from './interfaces/baseEffect';
 
+@Effect('modifyHPMax')
 @Injectable()
 export class ModifyHPMaxEffect implements IBaseEffect {
     constructor(private readonly expeditionService: ExpeditionService) {}

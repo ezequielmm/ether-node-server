@@ -5,6 +5,17 @@ import { CardModule } from '../../components/card/card.module';
 import { CardPlayedAction } from './cardPlayed.action';
 import { EndTurnAction } from './endTurn.action';
 import { EffectModule } from 'src/game/effects/effect.module';
+import { DiscardCardAction } from './discardCard.action';
+import { DiscardAllCardsAction } from './discardAllCards.action';
+import { ExhaustCardAction } from './exhaustCard.action';
+import { TurnChangeAction } from './turnChange.action';
+import { UpdatePlayerEnergyAction } from './updatePlayerEnergy.action';
+import { GetEnergyAction } from './getEnergy.action';
+import { GetPlayerHealthAction } from './getPlayerHealth.action';
+import { GetCardPilesAction } from './getCardPiles.action';
+import { StatusPipelineModule } from 'src/game/status-pipeline/status-pipeline.module';
+import { StandardResponseModule } from 'src/game/standardResponse/standardResponse.module';
+import { CardKeywordPipelineModule } from 'src/game/cardKeywordPipeline/cardKeywordPipeline.module';
 
 @Module({
     imports: [
@@ -12,8 +23,33 @@ import { EffectModule } from 'src/game/effects/effect.module';
         forwardRef(() => CardModule),
         EffectModule,
         GameManagerModule,
+        StatusPipelineModule,
+        StandardResponseModule,
+        CardKeywordPipelineModule,
     ],
-    providers: [CardPlayedAction, EndTurnAction],
-    exports: [CardPlayedAction, EndTurnAction],
+    providers: [
+        CardPlayedAction,
+        EndTurnAction,
+        DiscardCardAction,
+        DiscardAllCardsAction,
+        ExhaustCardAction,
+        TurnChangeAction,
+        UpdatePlayerEnergyAction,
+        GetEnergyAction,
+        GetPlayerHealthAction,
+        GetCardPilesAction,
+    ],
+    exports: [
+        CardPlayedAction,
+        EndTurnAction,
+        DiscardCardAction,
+        DiscardAllCardsAction,
+        ExhaustCardAction,
+        TurnChangeAction,
+        UpdatePlayerEnergyAction,
+        GetEnergyAction,
+        GetPlayerHealthAction,
+        GetCardPilesAction,
+    ],
 })
 export class CombatActionModule {}

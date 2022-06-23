@@ -16,11 +16,14 @@ import {
     ModifyHPMaxDTO,
     TurnChangeDTO,
     SetPlayerDefense,
+    GetPlayerState,
+    UpdatePlayerHpDTO,
 } from './dto';
 import {
     IExpeditionNode,
     IExpeditionCurrentNode,
     IExpeditionPlayerStateDeckCard,
+    IExpeditionPlayerState,
 } from './interfaces';
 import { CardService } from '../components/card/card.service';
 import { generateMap, restoreMap } from './map/app';
@@ -33,7 +36,7 @@ export class ExpeditionService {
         private readonly cardService: CardService,
     ) {}
 
-    async playerHasExpeditionInProgress(player_id: string): Promise<boolean> {
+    async playerHasExpeditionInProgress(player_id: number): Promise<boolean> {
         const itemExists = await this.expedition.exists({
             player_id,
             status: ExpeditionStatusEnum.InProgress,
@@ -45,7 +48,7 @@ export class ExpeditionService {
         return await this.expedition.create(payload);
     }
 
-    async cancel(player_id: string): Promise<boolean> {
+    async cancel(player_id: number): Promise<boolean> {
         const exists = await this.playerHasExpeditionInProgress(player_id);
 
         if (!exists) {
@@ -318,7 +321,6 @@ export class ExpeditionService {
             energy: card.energy,
             card_type: card.card_type,
             pool: card.pool,
-            targeted: card.targeted,
             properties: card.properties,
             keywords: card.keywords,
             is_temporary,
@@ -426,5 +428,41 @@ export class ExpeditionService {
             { 'current_node.data.player.defense': newDefenseValue },
             { new: true },
         );
+    }
+
+    async getPlayerStateByClientId(
+        payload: GetPlayerState,
+    ): Promise<IExpeditionPlayerState> {
+        const { client_id } = payload;
+
+        const playerState = await this.expedition
+            .findOne({ client_id, status: ExpeditionStatusEnum.InProgress })
+            .select('player_state')
+            .lean();
+
+        if (!playerState) {
+            throw new Error('Player state not found');
+        }
+
+        return playerState.player_state;
+    }
+
+    async updatePlayerHp(payload: UpdatePlayerHpDTO): Promise<void> {
+        // Update player hp
+        const response = await this.expedition.updateOne(
+            {
+                client_id: payload.client_id,
+                status: ExpeditionStatusEnum.InProgress,
+            },
+            {
+                $set: {
+                    'player_state.hp_current': payload.hp,
+                },
+            },
+        );
+
+        if (response.modifiedCount === 0) {
+            throw new Error('Player state not found');
+        }
     }
 }

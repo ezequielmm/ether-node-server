@@ -1,3 +1,4 @@
+import { CardTargetedEnum } from 'src/game/components/card/enums';
 import { CardDestinationEnum } from '../enums';
 
 export interface BaseEffectDTO {
@@ -34,4 +35,11 @@ export type TurnChangeDTO = BaseEffectDTO;
 
 export interface DefenseDTO extends BaseEffectDTO {
     value: number;
+}
+
+export interface DamageDTO extends BaseEffectDTO {
+    value: number;
+    times?: number;
+    targeted: CardTargetedEnum;
+    targeted_id?: string;
 }

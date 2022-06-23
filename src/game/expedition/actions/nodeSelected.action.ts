@@ -1,28 +1,26 @@
 import { ExpeditionService } from '../expedition.service';
-import { CardService } from '../../components/card/card.service';
 import { Socket } from 'socket.io';
 import { ExpeditionMapNodeTypeEnum, ExpeditionStatusEnum } from '../enums';
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { restoreMap } from '../map/app';
-import { GameManagerService } from 'src/game/gameManager/gameManager.service';
-import { Activity } from 'src/game/elements/prototypes/activity';
-import { CustomException, ErrorBehavior } from 'src/socket/custom.exception';
-import { IExpeditionCurrentNode } from '../interfaces';
+import { CurrentNodeGenerator } from './currentNode.generator';
+import {
+    StandardResponseService,
+    SWARAction,
+    SWARMessageType,
+} from 'src/game/standardResponse/standardResponse.service';
 
 @Injectable()
 export class NodeSelectedAction {
+    private readonly logger: Logger = new Logger(NodeSelectedAction.name);
+
     constructor(
         private readonly expeditionService: ExpeditionService,
-        private readonly cardService: CardService,
-        private readonly gameManagerService: GameManagerService,
+        private readonly currentNodeGenerator: CurrentNodeGenerator,
+        private readonly standardResponseService: StandardResponseService,
     ) {}
 
     async handle(client: Socket, node_id: number): Promise<string> {
-        const action = await this.gameManagerService.startAction(
-            client.id,
-            'nodeSelected',
-        );
-
         const node = await this.expeditionService.getExpeditionMapNode(
             client.id,
             node_id,
@@ -45,82 +43,104 @@ export class NodeSelectedAction {
                 { map: expeditionMap.getMap },
             );
 
+            const currentNode =
+                await this.currentNodeGenerator.getCurrentNodeData(
+                    node,
+                    client.id,
+                );
+
+            const { map: newMap, current_node } =
+                await this.expeditionService.update(
+                    {
+                        client_id: client.id,
+                        status: ExpeditionStatusEnum.InProgress,
+                    },
+                    {
+                        current_node: currentNode,
+                    },
+                );
+
+            let response = {};
+
+            switch (node.type) {
+                case ExpeditionMapNodeTypeEnum.Portal:
+                    response = this.standardResponseService.createResponse({
+                        message_type: SWARMessageType.MapUpdate,
+                        action: SWARAction.ExtendMap,
+                        data: newMap,
+                    });
+                    break;
+                case ExpeditionMapNodeTypeEnum.RoyalHouse:
+                case ExpeditionMapNodeTypeEnum.RoyalHouseA:
+                case ExpeditionMapNodeTypeEnum.RoyalHouseB:
+                case ExpeditionMapNodeTypeEnum.RoyalHouseC:
+                case ExpeditionMapNodeTypeEnum.RoyalHouseD:
+                    response = this.standardResponseService.createResponse({
+                        message_type: SWARMessageType.MapUpdate,
+                        action: SWARAction.ActivatePortal,
+                        data: newMap,
+                    });
+                    break;
+                case ExpeditionMapNodeTypeEnum.Combat:
+                case ExpeditionMapNodeTypeEnum.CombatBoss:
+                case ExpeditionMapNodeTypeEnum.CombatElite:
+                case ExpeditionMapNodeTypeEnum.CombatStandard:
+                    response = this.standardResponseService.createResponse({
+                        message_type: SWARMessageType.MapUpdate,
+                        action: SWARAction.MapUpdate,
+                        data: newMap,
+                    });
+
+                    this.logger.log(
+                        `Sent message InitCombat to client ${client.id}`,
+                    );
+
+                    client.emit(
+                        'InitCombat',
+                        JSON.stringify(
+                            this.standardResponseService.createResponse({
+                                message_type: SWARMessageType.CombatUpdate,
+                                action: SWARAction.BeginCombat,
+                                data: current_node,
+                            }),
+                        ),
+                    );
+                    break;
+                default:
+                    response = this.standardResponseService.createResponse({
+                        message_type: SWARMessageType.MapUpdate,
+                        action: SWARAction.ShowMap,
+                        data: newMap,
+                    });
+                    break;
+            }
+
+            return JSON.stringify(response);
+        } else {
             const nodeTypes = Object.values(ExpeditionMapNodeTypeEnum);
             const combatNodes = nodeTypes.filter(
                 (node) => node.search('combat') !== -1,
             );
 
-            let currentNode: IExpeditionCurrentNode = {};
-
             if (combatNodes.includes(node.type)) {
-                const cards = await this.expeditionService.getDeckCards(
-                    client.id,
+                const current_node =
+                    await this.expeditionService.getCurrentNodeByClientId(
+                        client.id,
+                    );
+
+                client.emit(
+                    'InitCombat',
+                    JSON.stringify(
+                        this.standardResponseService.createResponse({
+                            message_type: SWARMessageType.CombatUpdate,
+                            action: SWARAction.BeginCombat,
+                            data: current_node,
+                        }),
+                    ),
                 );
-
-                const handCards = cards
-                    .sort(() => 0.5 - Math.random())
-                    .slice(0, 5);
-
-                const drawCards = this.cardService.removeHandCardsFromDrawPile(
-                    cards,
-                    handCards,
-                );
-
-                currentNode = {
-                    node_id,
-                    completed: node.isComplete,
-                    node_type: node.type,
-                    data: {
-                        round: 0,
-                        action: 0,
-                        player: {
-                            energy: 3,
-                            energy_max: 5,
-                            hand_size: 5,
-                            cards: {
-                                draw: drawCards,
-                                hand: handCards,
-                            },
-                        },
-                    },
-                };
             } else {
-                currentNode = {
-                    node_id,
-                    completed: true,
-                    node_type: node.type,
-                };
+                this.logger.error('Selected node is not available');
             }
-
-            const { current_node } = await this.expeditionService.update(
-                {
-                    client_id: client.id,
-                    status: ExpeditionStatusEnum.InProgress,
-                },
-                {
-                    current_node: currentNode,
-                },
-            );
-
-            await action.log(
-                new Activity('current_node', node_id, 'node-selected', {}, [
-                    {
-                        mod: 'set',
-                        key: 'current_node',
-                        val: current_node,
-                        val_type: 'node',
-                    },
-                ]),
-            );
-
-            const response = await action.end();
-
-            return JSON.stringify(response);
-        } else {
-            throw new CustomException(
-                'Selected node is not available',
-                ErrorBehavior.None,
-            );
         }
     }
 }

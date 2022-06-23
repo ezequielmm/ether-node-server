@@ -1,14 +1,9 @@
-export interface IProfile {
+export interface IAuthProfile {
     readonly data: {
-        readonly id: string;
+        readonly id: number;
         readonly name: string;
         readonly email: string;
-        readonly wallets: [];
-        readonly coins: number;
-        readonly fief: number;
-        readonly experience: number;
-        readonly level: number;
-        readonly act: number;
-        readonly act_map: string;
     };
 }
+
+export type IProfile = IAuthProfile['data'];

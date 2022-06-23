@@ -18,6 +18,13 @@ import { Enemy, EnemySchema } from './game/components/enemy/enemy.schema';
 import { EnemySeeder } from './game/components/enemy/enemy.seeder';
 import { PotionSeeder } from './game/components/potion/potion.seeder';
 import { Potion, PotionSchema } from './game/components/potion/potion.schema';
+import { EnemyGroupSeeder } from './game/expedition/enemy_groups/enemyGroups.seeder';
+import {
+    EnemyGroup,
+    EnemyGroupSchema,
+} from './game/expedition/enemy_groups/enemyGroups.schema';
+import { Settings, SettingsSchema } from './game/settings/settings.schema';
+import { SettingsSeeder } from './game/settings/settings.seeder';
 
 seeder({
     imports: [
@@ -39,6 +46,16 @@ seeder({
             { name: Trinket.name, schema: TrinketSchema },
             { name: Potion.name, schema: PotionSchema },
             { name: Enemy.name, schema: EnemySchema },
+            { name: EnemyGroup.name, schema: EnemyGroupSchema },
+            { name: Settings.name, schema: SettingsSchema },
         ]),
     ],
-}).run([CardSeeder, CharacterSeeder, TrinketSeeder, PotionSeeder, EnemySeeder]);
+}).run([
+    CardSeeder,
+    CharacterSeeder,
+    TrinketSeeder,
+    PotionSeeder,
+    EnemySeeder,
+    EnemyGroupSeeder,
+    SettingsSeeder,
+]);

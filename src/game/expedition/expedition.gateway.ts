@@ -20,11 +20,11 @@ export class ExpeditionGateway {
     ) {}
 
     @SubscribeMessage('SyncExpedition')
-    async handleSyncExpedition(client: Socket): Promise<string> {
+    async handleSyncExpedition(client: Socket): Promise<void> {
         this.logger.log(`Client ${client.id} trigger message "SyncExpedition"`);
 
         try {
-            return await this.fullSyncAction.handle(client);
+            await this.fullSyncAction.handle(client);
         } catch (e) {
             this.logger.error(e.trace);
             client.emit('ErrorMessage', {
@@ -44,7 +44,7 @@ export class ExpeditionGateway {
         } catch (e) {
             this.logger.error(e.trace);
             client.emit('ErrorMessage', {
-                message: 'An error has ocurred selecting a node',
+                message: `${client.id} error has ocurred selecting the node ${node_id}`,
             });
         }
     }
