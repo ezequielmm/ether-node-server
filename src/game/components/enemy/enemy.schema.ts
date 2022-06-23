@@ -6,6 +6,9 @@ export type EnemyDocument = Enemy & Document;
 
 @Schema()
 export class Enemy {
+    @Prop({ unique: true })
+    enemyId: number;
+
     @Prop()
     name: string;
 
@@ -19,7 +22,7 @@ export class Enemy {
     size: EnemySizeEnum;
 
     @Prop()
-    hitPoints: number;
+    hitPoints?: number;
 
     @Prop()
     attackMin: number;
@@ -32,6 +35,9 @@ export class Enemy {
 
     @Prop()
     hpMax: number;
+
+    @Prop()
+    life: number;
 
     @Prop()
     description: string;

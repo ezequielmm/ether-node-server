@@ -71,6 +71,9 @@ export class CurrentNodeGenerator {
                         hand: handCards,
                     },
                 },
+                enemies: this.node.private_data.enemies.map((id) => ({
+                    id,
+                })),
             },
         };
     }

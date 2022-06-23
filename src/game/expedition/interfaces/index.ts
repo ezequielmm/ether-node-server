@@ -53,6 +53,7 @@ export interface IExpeditionCurrentNodeData {
     round?: number;
     action?: number;
     player?: IExpeditionCurrentNodeDataPlayer;
+    enemies?: IExpeditionCurrentNodeDataEnemy[];
 }
 
 export interface IExpeditionCurrentNodeDataPlayer {
@@ -67,4 +68,9 @@ export interface IExpeditionCurrentNodeDataPlayer {
         exhausted?: IExpeditionPlayerStateDeckCard[];
     };
     status?: ExpeditionCurrentNodeDataPlayerStatusEnum;
+}
+
+export interface IExpeditionCurrentNodeDataEnemy {
+    id: string;
+    defense?: number;
 }
