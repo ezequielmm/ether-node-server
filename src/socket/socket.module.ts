@@ -4,16 +4,18 @@ import { ExpeditionModule } from '../game/components/expedition/expedition.modul
 import { SocketGateway } from './socket.gateway';
 import { CardModule } from '../game/components/card/card.module';
 import { ExpeditionActionModule } from '../game/expedition/actions/expedition.action.module';
-import { CombatModule } from '../game/node_combat/combat.module';
+import { CombatActionModule } from 'src/game/node_combat/actions/combat.action.module';
+import { CombatGateway } from './combat.gateway';
+import { ExpeditionGateway } from './expedition.gateway';
 
 @Module({
     imports: [
         AuthGatewayModule,
         ExpeditionModule,
-        CombatModule,
         CardModule,
         ExpeditionActionModule,
+        CombatActionModule,
     ],
-    providers: [SocketGateway],
+    providers: [SocketGateway, CombatGateway, ExpeditionGateway],
 })
 export class SocketModule {}
