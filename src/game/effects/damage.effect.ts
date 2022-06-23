@@ -3,9 +3,9 @@ import { CardTargetedEnum } from '../components/card/enums';
 import { ExpeditionService } from '../components/expedition/expedition.service';
 import { Effect } from './decorators/effect.decorator';
 import { DamageDTO } from './dto';
-import { IBaseEffect } from './interfaces/baseEffect';
+import { EffectName, IBaseEffect } from './interfaces/baseEffect';
 
-@Effect('damage')
+@Effect(EffectName.Damage)
 @Injectable()
 export class DamageEffect implements IBaseEffect {
     constructor(private readonly expeditionService: ExpeditionService) {}

@@ -2,9 +2,9 @@ import { Injectable } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import { Effect } from './decorators/effect.decorator';
 import { EffectService } from './effect.service';
-import { IBaseEffect, JsonEffect } from './interfaces/baseEffect';
+import { EffectName, IBaseEffect, JsonEffect } from './interfaces/baseEffect';
 
-@Effect('effectA')
+@Effect(EffectName.Damage)
 @Injectable()
 class EffectA implements IBaseEffect {
     public payload: any;
@@ -13,7 +13,7 @@ class EffectA implements IBaseEffect {
     }
 }
 
-@Effect('effectB')
+@Effect(EffectName.Defense)
 @Injectable()
 class EffectB implements IBaseEffect {
     public payload: any;
@@ -48,13 +48,13 @@ describe('EffectService', () => {
         const client_id = 'test';
         const effects: JsonEffect[] = [
             {
-                name: 'effectA',
+                name: EffectName.Damage,
                 args: {
                     value: 'testA',
                 },
             },
             {
-                name: 'effectB',
+                name: EffectName.Defense,
                 args: {
                     value: 'testB',
                 },

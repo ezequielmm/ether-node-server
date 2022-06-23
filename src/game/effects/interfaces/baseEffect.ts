@@ -9,6 +9,8 @@ export enum EffectName {
     Defense = 'defense',
     Energy = 'energy',
     DrawCard = 'drawCard',
+    AddCard = 'addCard',
+    ModifyHPMax = 'modifyHPMax',
 }
 
 export interface JsonEffect {
