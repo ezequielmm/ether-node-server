@@ -98,7 +98,7 @@ export class ExpeditionService {
             .select('map')
             .lean();
         if (!map) return null;
-        return restoreMap(map).fullCurrentMap.get(node_id);
+        return restoreMap(map, client_id).fullCurrentMap.get(node_id);
     }
 
     async getExpeditionMap(client_id: string): Promise<IExpeditionNode[]> {
@@ -108,7 +108,7 @@ export class ExpeditionService {
             .lean();
         // TODO: throw error if there is no expedition
         if (!map) return null;
-        return restoreMap(map).getMap;
+        return restoreMap(map, client_id).getMap;
     }
 
     async getDeckCards(

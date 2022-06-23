@@ -19,11 +19,12 @@ class Encounter extends Node {
         this.maxEncounterId = 24;
         this.defaultSceneId = 0;
     }
-    public select(expeditionMap: ExpeditionMap): void {
+    public async select(expeditionMap: ExpeditionMap): Promise<void> {
         expeditionMap.disableAllNodes();
         this.setActive();
         expeditionMap.activeNode = this;
         this.stateInitialize();
+        await this.logSelected(expeditionMap.clientId);
     }
 
     private calcEncounterId(): number {

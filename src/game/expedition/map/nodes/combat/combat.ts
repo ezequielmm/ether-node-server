@@ -13,12 +13,14 @@ class Combat extends Node {
     ) {
         super(id, act, step, type, subType, private_data);
     }
-    public select(expeditionMap: ExpeditionMap): void {
+
+    public async select(expeditionMap: ExpeditionMap): Promise<void> {
         expeditionMap.disableAllNodes();
         this.setActive();
         expeditionMap.activeNode = this;
         this.stateInitialize();
     }
+
     protected stateInitialize(): any {
         this.state = this.private_data.enemies;
         return this.state;

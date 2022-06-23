@@ -13,12 +13,13 @@ class Portal extends Node {
     ) {
         super(id, act, step, type, subType, private_data);
     }
-    public select(expeditionMap: ExpeditionMap): void {
+    public async select(expeditionMap: ExpeditionMap): Promise<void> {
         expeditionMap.disableAllNodes();
-        this.complete(expeditionMap);
+        await this.logSelected(expeditionMap.clientId);
+        await this.complete(expeditionMap);
     }
 
-    public complete(expeditionMap: ExpeditionMap): void {
+    public async complete(expeditionMap: ExpeditionMap): Promise<void> {
         this.setComplete();
         expeditionMap.extendMap();
         // Create exits for this to all nodes in the step 0 of the generated Act.
@@ -27,6 +28,7 @@ class Portal extends Node {
             .map((node) => node.id);
         this.openExitsNodes(expeditionMap);
         // TODO: Trigger 'MapExtended' event
+        await this.logCompleted(expeditionMap.clientId);
     }
 
     protected openExitsNodes(expeditionMap: ExpeditionMap): void {

@@ -4,6 +4,8 @@ import {
     ExpeditionMapNodeStatusEnum,
     ExpeditionMapNodeTypeEnum,
 } from '../../enums';
+import { getApp } from 'src/main';
+import { Activity } from 'src/game/elements/prototypes/activity';
 
 class Node implements IExpeditionNode {
     public id: number;
@@ -39,38 +41,91 @@ class Node implements IExpeditionNode {
     public get isActive(): boolean {
         return this.status === ExpeditionMapNodeStatusEnum.Active;
     }
+
     public get isDisable(): boolean {
         return this.status === ExpeditionMapNodeStatusEnum.Disabled;
     }
+
     public get isAvailable(): boolean {
         return this.status === ExpeditionMapNodeStatusEnum.Available;
     }
+
     public get isComplete(): boolean {
         return this.status === ExpeditionMapNodeStatusEnum.Completed;
     }
+
     public setActive(): void {
         this.status = ExpeditionMapNodeStatusEnum.Active;
     }
+
     public setDisable(): void {
         this.status = ExpeditionMapNodeStatusEnum.Disabled;
     }
+
     public setAvailable(): void {
         this.status = ExpeditionMapNodeStatusEnum.Available;
     }
+
     public setComplete(): void {
         this.status = ExpeditionMapNodeStatusEnum.Completed;
     }
-    public select(expeditionMap: ExpeditionMap): void {
+
+    protected async logSelected(clientId: string): Promise<void> {
+        if (clientId)
+            await getApp()
+                .get('GameManagerService')
+                .logActivity(
+                    clientId,
+                    new Activity('current_node', this.id, 'node-selected', {}, [
+                        {
+                            mod: 'set',
+                            key: 'current_node',
+                            val: this,
+                            val_type: 'node',
+                        },
+                    ]),
+                );
+    }
+
+    protected async logCompleted(clientId: string): Promise<void> {
+        // Log the completed node
+        if (clientId)
+            getApp()
+                .get('GameManagerService')
+                .logActivity(
+                    clientId,
+                    new Activity(
+                        'current_node',
+                        this.id,
+                        'node-completed',
+                        {},
+                        [
+                            {
+                                mod: 'set',
+                                key: 'current_node',
+                                val: this,
+                                val_type: 'node',
+                            },
+                        ],
+                    ),
+                );
+    }
+
+    public async select(expeditionMap: ExpeditionMap): Promise<void> {
         expeditionMap.disableAllNodes();
         this.setActive();
         expeditionMap.activeNode = this;
         this.complete(expeditionMap);
         this.stateInitialize();
+        await this.logSelected(expeditionMap.clientId);
     }
-    public complete(expeditionMap: ExpeditionMap): void {
+
+    public async complete(expeditionMap: ExpeditionMap): Promise<void> {
         this.setComplete();
         this.openExitsNodes(expeditionMap);
+        await this.logCompleted(expeditionMap.clientId);
     }
+
     protected openExitsNodes(expeditionMap: ExpeditionMap): void {
         this.exits.forEach((exit) => {
             expeditionMap.fullCurrentMap.get(exit).setAvailable();
