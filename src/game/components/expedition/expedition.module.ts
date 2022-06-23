@@ -1,10 +1,8 @@
-import { forwardRef, Module } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Expedition, ExpeditionSchema } from './expedition.schema';
 import { ExpeditionService } from './expedition.service';
-import { ExpeditionGateway } from '../../../socket/expedition.gateway';
 import { CardModule } from '../card/card.module';
-import { ExpeditionActionModule } from '../../expedition/actions/expedition.action.module';
 
 @Module({
     imports: [
@@ -15,9 +13,8 @@ import { ExpeditionActionModule } from '../../expedition/actions/expedition.acti
             },
         ]),
         CardModule,
-        forwardRef(() => ExpeditionActionModule),
     ],
-    providers: [ExpeditionService, ExpeditionGateway],
+    providers: [ExpeditionService],
     exports: [ExpeditionService],
 })
 export class ExpeditionModule {}
