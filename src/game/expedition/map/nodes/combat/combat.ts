@@ -14,7 +14,7 @@ class Combat extends Node {
         super(id, act, step, type, subType, private_data);
     }
 
-    public async select(expeditionMap: ExpeditionMap): Promise<void> {
+    public select(expeditionMap: ExpeditionMap): void {
         expeditionMap.disableAllNodes();
         this.setActive();
         expeditionMap.activeNode = this;
