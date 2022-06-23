@@ -2,7 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Expedition, ExpeditionDocument } from './expedition.schema';
-import { CardDestinationEnum, ExpeditionStatusEnum } from './enums';
+import {
+    CardDestinationEnum,
+    ExpeditionStatusEnum,
+} from '../../expedition/enums';
 import {
     AddCardToPileDTO,
     CardExistsDTO,
@@ -18,15 +21,15 @@ import {
     SetPlayerDefense,
     GetPlayerState,
     UpdatePlayerHpDTO,
-} from './dto';
+} from '../../expedition/dto';
 import {
     IExpeditionNode,
     IExpeditionCurrentNode,
     IExpeditionPlayerStateDeckCard,
     IExpeditionPlayerState,
-} from './interfaces';
-import { CardService } from '../components/card/card.service';
-import { generateMap, restoreMap } from './map/app';
+} from '../../expedition/interfaces';
+import { CardService } from '../card/card.service';
+import { generateMap, restoreMap } from '../../expedition/map/app';
 
 @Injectable()
 export class ExpeditionService {

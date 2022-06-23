@@ -1,4 +1,4 @@
-import { ExpeditionService } from '../../expedition/expedition.service';
+import { ExpeditionService } from '../../components/expedition/expedition.service';
 import { CardService } from '../../components/card/card.service';
 import { Socket } from 'socket.io';
 import { Injectable } from '@nestjs/common';
@@ -11,11 +11,11 @@ import { ExhaustCardAction } from './exhaustCard.action';
 import { DiscardCardAction } from './discardCard.action';
 import { UpdatePlayerEnergyAction } from './updatePlayerEnergy.action';
 import {
-    StandardResponseService,
+    StandardResponse,
     SWARAction,
     SWARMessageType,
-} from 'src/game/standardResponse/standardResponse.service';
-import { CardKeywordPipelineService } from 'src/game/cardKeywordPipeline/cardKeywordPipeline.service';
+} from 'src/game/standardResponse/standardResponse';
+import { CardKeywordPipeline } from 'src/game/cardKeywordPipeline/cardKeywordPipeline';
 
 @Injectable()
 export class CardPlayedAction {
@@ -26,8 +26,6 @@ export class CardPlayedAction {
         private readonly exhaustCardAction: ExhaustCardAction,
         private readonly discardCardAction: DiscardCardAction,
         private readonly updatePlayerEnergyAction: UpdatePlayerEnergyAction,
-        private readonly standardResponseService: StandardResponseService,
-        private readonly cardkeywordPipelineService: CardKeywordPipelineService,
     ) {}
 
     async handle(client: Socket, card_id: string): Promise<void> {
@@ -41,7 +39,7 @@ export class CardPlayedAction {
             client.emit(
                 'ErrorMessage',
                 JSON.stringify(
-                    this.standardResponseService.createResponse({
+                    StandardResponse.createResponse({
                         message_type: SWARMessageType.Error,
                         action: SWARAction.InvalidCard,
                         data: null,
@@ -58,13 +56,13 @@ export class CardPlayedAction {
         } = await this.cardService.findById(card_id);
 
         const { unplayable, exhaust, retain } =
-            this.cardkeywordPipelineService.process(keywords);
+            CardKeywordPipeline.process(keywords);
 
         if (unplayable) {
             client.emit(
                 'ErrorMessage',
                 JSON.stringify(
-                    this.standardResponseService.createResponse({
+                    StandardResponse.createResponse({
                         message_type: SWARMessageType.Error,
                         action: SWARAction.UnplayableCard,
                         data: null,
@@ -91,7 +89,7 @@ export class CardPlayedAction {
             client.emit(
                 'ErrorMessage',
                 JSON.stringify(
-                    this.standardResponseService.createResponse({
+                    StandardResponse.createResponse({
                         message_type: SWARMessageType.Error,
                         action: SWARAction.UnplayableCard,
                         data: null,

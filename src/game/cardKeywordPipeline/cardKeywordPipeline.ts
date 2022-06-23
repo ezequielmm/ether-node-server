@@ -1,4 +1,3 @@
-import { Injectable } from '@nestjs/common';
 import { CardKeywordEnum } from '../components/card/enums';
 
 interface PipelineReturn {
@@ -7,9 +6,8 @@ interface PipelineReturn {
     retain: boolean;
 }
 
-@Injectable()
-export class CardKeywordPipelineService {
-    process(keywords: CardKeywordEnum[]): PipelineReturn {
+export class CardKeywordPipeline {
+    static process(keywords: CardKeywordEnum[]): PipelineReturn {
         const response: PipelineReturn = {
             unplayable: false,
             exhaust: false,

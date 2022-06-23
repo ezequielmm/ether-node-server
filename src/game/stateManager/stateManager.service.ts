@@ -2,7 +2,7 @@ import { StateDeltaType } from './../elements/prototypes/types';
 import { Injectable } from '@nestjs/common';
 import { Diff, diff } from 'deep-diff';
 import { cloneDeep, get, set, isEqual } from 'lodash';
-import { ExpeditionService } from '../expedition/expedition.service';
+import { ExpeditionService } from '../components/expedition/expedition.service';
 interface CurrentStateType {
     [clientId: string]: any;
 }

@@ -1,11 +1,11 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
-import { ExpeditionStatusEnum } from './enums';
+import { ExpeditionStatusEnum } from '../../expedition/enums';
 import {
     IExpeditionNode,
     IExpeditionCurrentNode,
     IExpeditionPlayerState,
-} from './interfaces';
+} from '../../expedition/interfaces';
 
 export type ExpeditionDocument = Expedition & Document;
 

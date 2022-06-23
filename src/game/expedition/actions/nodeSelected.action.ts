@@ -1,14 +1,14 @@
-import { ExpeditionService } from '../expedition.service';
+import { ExpeditionService } from '../../components/expedition/expedition.service';
 import { Socket } from 'socket.io';
 import { ExpeditionMapNodeTypeEnum, ExpeditionStatusEnum } from '../enums';
 import { Injectable, Logger } from '@nestjs/common';
 import { restoreMap } from '../map/app';
 import { CurrentNodeGenerator } from './currentNode.generator';
 import {
-    StandardResponseService,
+    StandardResponse,
     SWARAction,
     SWARMessageType,
-} from 'src/game/standardResponse/standardResponse.service';
+} from 'src/game/standardResponse/standardResponse';
 
 @Injectable()
 export class NodeSelectedAction {
@@ -17,7 +17,6 @@ export class NodeSelectedAction {
     constructor(
         private readonly expeditionService: ExpeditionService,
         private readonly currentNodeGenerator: CurrentNodeGenerator,
-        private readonly standardResponseService: StandardResponseService,
     ) {}
 
     async handle(client: Socket, node_id: number): Promise<string> {
@@ -64,7 +63,7 @@ export class NodeSelectedAction {
 
             switch (node.type) {
                 case ExpeditionMapNodeTypeEnum.Portal:
-                    response = this.standardResponseService.createResponse({
+                    response = StandardResponse.createResponse({
                         message_type: SWARMessageType.MapUpdate,
                         action: SWARAction.ExtendMap,
                         data: newMap,
@@ -75,7 +74,7 @@ export class NodeSelectedAction {
                 case ExpeditionMapNodeTypeEnum.RoyalHouseB:
                 case ExpeditionMapNodeTypeEnum.RoyalHouseC:
                 case ExpeditionMapNodeTypeEnum.RoyalHouseD:
-                    response = this.standardResponseService.createResponse({
+                    response = StandardResponse.createResponse({
                         message_type: SWARMessageType.MapUpdate,
                         action: SWARAction.ActivatePortal,
                         data: newMap,
@@ -85,7 +84,7 @@ export class NodeSelectedAction {
                 case ExpeditionMapNodeTypeEnum.CombatBoss:
                 case ExpeditionMapNodeTypeEnum.CombatElite:
                 case ExpeditionMapNodeTypeEnum.CombatStandard:
-                    response = this.standardResponseService.createResponse({
+                    response = StandardResponse.createResponse({
                         message_type: SWARMessageType.MapUpdate,
                         action: SWARAction.MapUpdate,
                         data: newMap,
@@ -98,7 +97,7 @@ export class NodeSelectedAction {
                     client.emit(
                         'InitCombat',
                         JSON.stringify(
-                            this.standardResponseService.createResponse({
+                            StandardResponse.createResponse({
                                 message_type: SWARMessageType.CombatUpdate,
                                 action: SWARAction.BeginCombat,
                                 data: current_node,
@@ -107,7 +106,7 @@ export class NodeSelectedAction {
                     );
                     break;
                 default:
-                    response = this.standardResponseService.createResponse({
+                    response = StandardResponse.createResponse({
                         message_type: SWARMessageType.MapUpdate,
                         action: SWARAction.ShowMap,
                         data: newMap,
@@ -131,7 +130,7 @@ export class NodeSelectedAction {
                 client.emit(
                     'InitCombat',
                     JSON.stringify(
-                        this.standardResponseService.createResponse({
+                        StandardResponse.createResponse({
                             message_type: SWARMessageType.CombatUpdate,
                             action: SWARAction.BeginCombat,
                             data: current_node,

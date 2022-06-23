@@ -1,6 +1,6 @@
 import { Test } from '@nestjs/testing';
 import { CardTargetedEnum } from '../components/card/enums';
-import { ExpeditionService } from '../expedition/expedition.service';
+import { ExpeditionService } from '../components/expedition/expedition.service';
 import { DamageEffect } from './damage.effect';
 
 describe('DamageEffect', () => {

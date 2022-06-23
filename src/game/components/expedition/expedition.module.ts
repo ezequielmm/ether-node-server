@@ -2,9 +2,9 @@ import { forwardRef, Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Expedition, ExpeditionSchema } from './expedition.schema';
 import { ExpeditionService } from './expedition.service';
-import { ExpeditionGateway } from './expedition.gateway';
-import { CardModule } from '../components/card/card.module';
-import { ExpeditionActionModule } from './actions/expedition.action.module';
+import { ExpeditionGateway } from '../../../socket/expedition.gateway';
+import { CardModule } from '../card/card.module';
+import { ExpeditionActionModule } from '../../expedition/actions/expedition.action.module';
 
 @Module({
     imports: [

@@ -1,20 +1,17 @@
 import { Socket } from 'socket.io';
-import { ExpeditionService } from '../expedition.service';
+import { ExpeditionService } from '../../components/expedition/expedition.service';
 import { ExpeditionStatusEnum } from '../enums';
 import { Injectable } from '@nestjs/common';
 import { CustomException, ErrorBehavior } from 'src/socket/custom.exception';
 import {
-    StandardResponseService,
+    StandardResponse,
     SWARAction,
     SWARMessageType,
-} from 'src/game/standardResponse/standardResponse.service';
+} from 'src/game/standardResponse/standardResponse';
 
 @Injectable()
 export class FullSyncAction {
-    constructor(
-        private readonly expeditionService: ExpeditionService,
-        private readonly standardResponseService: StandardResponseService,
-    ) {}
+    constructor(private readonly expeditionService: ExpeditionService) {}
 
     async handle(client: Socket): Promise<void> {
         const expedition = await this.expeditionService.findOne({
@@ -34,7 +31,7 @@ export class FullSyncAction {
         client.emit(
             'ExpeditionMap',
             JSON.stringify(
-                this.standardResponseService.createResponse({
+                StandardResponse.createResponse({
                     message_type: SWARMessageType.MapUpdate,
                     action: SWARAction.ShowMap,
                     data: map,
@@ -45,7 +42,7 @@ export class FullSyncAction {
         client.emit(
             'PlayerState',
             JSON.stringify(
-                this.standardResponseService.createResponse({
+                StandardResponse.createResponse({
                     message_type: SWARMessageType.PlayerStateUpdate,
                     action: SWARAction.UpdatePlayerState,
                     data: { player_state },

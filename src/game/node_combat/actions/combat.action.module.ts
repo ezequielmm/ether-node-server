@@ -1,6 +1,6 @@
 import { GameManagerModule } from './../../gameManager/gameManager.module';
 import { forwardRef, Module } from '@nestjs/common';
-import { ExpeditionModule } from '../../expedition/expedition.module';
+import { ExpeditionModule } from '../../components/expedition/expedition.module';
 import { CardModule } from '../../components/card/card.module';
 import { CardPlayedAction } from './cardPlayed.action';
 import { EndTurnAction } from './endTurn.action';
@@ -14,8 +14,6 @@ import { GetEnergyAction } from './getEnergy.action';
 import { GetPlayerHealthAction } from './getPlayerHealth.action';
 import { GetCardPilesAction } from './getCardPiles.action';
 import { StatusPipelineModule } from 'src/game/status-pipeline/status-pipeline.module';
-import { StandardResponseModule } from 'src/game/standardResponse/standardResponse.module';
-import { CardKeywordPipelineModule } from 'src/game/cardKeywordPipeline/cardKeywordPipeline.module';
 
 @Module({
     imports: [
@@ -24,8 +22,6 @@ import { CardKeywordPipelineModule } from 'src/game/cardKeywordPipeline/cardKeyw
         EffectModule,
         GameManagerModule,
         StatusPipelineModule,
-        StandardResponseModule,
-        CardKeywordPipelineModule,
     ],
     providers: [
         CardPlayedAction,
