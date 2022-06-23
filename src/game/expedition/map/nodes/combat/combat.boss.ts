@@ -14,7 +14,7 @@ class CombatBoss extends Combat {
     ) {
         super(id, act, step, type, subType, private_data);
     }
-    public complete(expeditionMap: ExpeditionMap): void {
+    public async complete(expeditionMap: ExpeditionMap): Promise<void> {
         this.setComplete();
         const portalId: number = expeditionMap.fullCurrentMap.size + 1;
         const portal = nodeFactory(
