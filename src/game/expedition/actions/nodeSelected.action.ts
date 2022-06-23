@@ -9,6 +9,7 @@ import {
     SWARAction,
     SWARMessageType,
 } from 'src/game/standardResponse/standardResponse';
+import { InitCombatProcess } from 'src/game/node_combat/process/initCombat.process';
 
 @Injectable()
 export class NodeSelectedAction {
@@ -17,6 +18,7 @@ export class NodeSelectedAction {
     constructor(
         private readonly expeditionService: ExpeditionService,
         private readonly currentNodeGenerator: CurrentNodeGenerator,
+        private readonly initCombatProcess: InitCombatProcess,
     ) {}
 
     async handle(client: Socket, node_id: number): Promise<string> {
@@ -48,16 +50,15 @@ export class NodeSelectedAction {
                     client.id,
                 );
 
-            const { map: newMap, current_node } =
-                await this.expeditionService.update(
-                    {
-                        client_id: client.id,
-                        status: ExpeditionStatusEnum.InProgress,
-                    },
-                    {
-                        current_node: currentNode,
-                    },
-                );
+            const { map: newMap } = await this.expeditionService.update(
+                {
+                    client_id: client.id,
+                    status: ExpeditionStatusEnum.InProgress,
+                },
+                {
+                    current_node: currentNode,
+                },
+            );
 
             let response = {};
 
@@ -94,16 +95,8 @@ export class NodeSelectedAction {
                         `Sent message InitCombat to client ${client.id}`,
                     );
 
-                    client.emit(
-                        'InitCombat',
-                        JSON.stringify(
-                            StandardResponse.createResponse({
-                                message_type: SWARMessageType.CombatUpdate,
-                                action: SWARAction.BeginCombat,
-                                data: current_node,
-                            }),
-                        ),
-                    );
+                    await this.initCombatProcess.process(client);
+
                     break;
                 default:
                     response = StandardResponse.createResponse({
@@ -122,21 +115,11 @@ export class NodeSelectedAction {
             );
 
             if (combatNodes.includes(node.type)) {
-                const current_node =
-                    await this.expeditionService.getCurrentNodeByClientId(
-                        client.id,
-                    );
-
-                client.emit(
-                    'InitCombat',
-                    JSON.stringify(
-                        StandardResponse.createResponse({
-                            message_type: SWARMessageType.CombatUpdate,
-                            action: SWARAction.BeginCombat,
-                            data: current_node,
-                        }),
-                    ),
+                this.logger.log(
+                    `Sent message InitCombat to client ${client.id}`,
                 );
+
+                await this.initCombatProcess.process(client);
             } else {
                 this.logger.error('Selected node is not available');
             }
