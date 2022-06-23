@@ -61,7 +61,7 @@ export const Cards: Card[] = [
         properties: {
             effects: [
                 {
-                    name: 'damage',
+                    name: EffectName.Damage,
                     args: {
                         base: 4,
                         value: 4,
@@ -70,7 +70,7 @@ export const Cards: Card[] = [
                     },
                 },
                 {
-                    name: 'drawCard',
+                    name: EffectName.DrawCard,
                     args: {
                         cards_to_take: 1,
                     },
@@ -91,7 +91,7 @@ export const Cards: Card[] = [
         properties: {
             effects: [
                 {
-                    name: 'damage',
+                    name: EffectName.Damage,
                     args: {
                         base: 4,
                         value: 4,
@@ -100,7 +100,7 @@ export const Cards: Card[] = [
                     },
                 },
                 {
-                    name: 'drawCard',
+                    name: EffectName.DrawCard,
                     args: {
                         cards_to_take: 2,
                     },
