@@ -4,7 +4,14 @@ export interface IBaseEffect {
     handle: (...args: BaseEffectDTO[]) => Promise<any>;
 }
 
+export enum EffectName {
+    Damage = 'damage',
+    Defense = 'defense',
+    Energy = 'energy',
+    DrawCard = 'drawCard',
+}
+
 export interface JsonEffect {
-    name: string;
+    name: EffectName;
     args: object;
 }
