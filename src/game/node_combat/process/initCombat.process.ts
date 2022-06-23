@@ -7,18 +7,22 @@ import {
     SWARAction,
 } from 'src/game/standardResponse/standardResponse';
 import { TurnChangeAction } from '../actions/turnChange.action';
+import { SendEnemyIntentProcess } from './sendEnemyIntent.process';
 
 @Injectable()
 export class InitCombatProcess {
     constructor(
         private readonly expeditionService: ExpeditionService,
         private readonly turnChangeAction: TurnChangeAction,
+        private readonly sendEnemyIntentProcess: SendEnemyIntentProcess,
     ) {}
 
     async process(client: Socket): Promise<void> {
         const { current_node } = await this.turnChangeAction.handle({
             client_id: client.id,
         });
+
+        this.sendEnemyIntentProcess.process(client);
 
         client.emit(
             'InitCombat',
