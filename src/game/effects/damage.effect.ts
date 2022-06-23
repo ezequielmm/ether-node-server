@@ -48,8 +48,8 @@ export class DamageEffect implements IBaseEffect {
                 client_id: clientId,
             });
 
-        // Calculate damage
-        const trueDamage = (player.defense || 0) - damage;
+        // Calculate true damage
+        const trueDamage = damage - (player.defense || 0);
 
         // If damage is less or equal to 0, trigger damage negated event
         if (trueDamage <= 0) {
