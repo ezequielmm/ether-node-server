@@ -1,7 +1,7 @@
 import { Test } from '@nestjs/testing';
 import { ExpeditionStatusEnum } from '../expedition/enums';
 import { StateManagerService } from './stateManager.service';
-import { ExpeditionService } from '../expedition/expedition.service';
+import { ExpeditionService } from '../components/expedition/expedition.service';
 
 describe('StateManagerService', () => {
     let service: StateManagerService;

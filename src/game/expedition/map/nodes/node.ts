@@ -4,8 +4,6 @@ import {
     ExpeditionMapNodeStatusEnum,
     ExpeditionMapNodeTypeEnum,
 } from '../../enums';
-import { getApp } from 'src/main';
-import { Activity } from 'src/game/elements/prototypes/activity';
 
 class Node implements IExpeditionNode {
     public id: number;
@@ -70,60 +68,17 @@ class Node implements IExpeditionNode {
         this.status = ExpeditionMapNodeStatusEnum.Completed;
     }
 
-    protected async logSelected(clientId: string): Promise<void> {
-        if (clientId)
-            await getApp()
-                .get('GameManagerService')
-                .logActivity(
-                    clientId,
-                    new Activity('current_node', this.id, 'node-selected', {}, [
-                        {
-                            mod: 'set',
-                            key: 'current_node',
-                            val: this,
-                            val_type: 'node',
-                        },
-                    ]),
-                );
-    }
-
-    protected async logCompleted(clientId: string): Promise<void> {
-        // Log the completed node
-        if (clientId)
-            getApp()
-                .get('GameManagerService')
-                .logActivity(
-                    clientId,
-                    new Activity(
-                        'current_node',
-                        this.id,
-                        'node-completed',
-                        {},
-                        [
-                            {
-                                mod: 'set',
-                                key: 'current_node',
-                                val: this,
-                                val_type: 'node',
-                            },
-                        ],
-                    ),
-                );
-    }
-
-    public async select(expeditionMap: ExpeditionMap): Promise<void> {
+    public select(expeditionMap: ExpeditionMap): void {
         expeditionMap.disableAllNodes();
         this.setActive();
         expeditionMap.activeNode = this;
         this.complete(expeditionMap);
         this.stateInitialize();
-        await this.logSelected(expeditionMap.clientId);
     }
 
-    public async complete(expeditionMap: ExpeditionMap): Promise<void> {
+    public complete(expeditionMap: ExpeditionMap): void {
         this.setComplete();
         this.openExitsNodes(expeditionMap);
-        await this.logCompleted(expeditionMap.clientId);
     }
 
     protected openExitsNodes(expeditionMap: ExpeditionMap): void {

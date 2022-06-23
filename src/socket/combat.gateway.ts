@@ -1,13 +1,13 @@
 import { SubscribeMessage, WebSocketGateway } from '@nestjs/websockets';
 import { Logger, UseFilters } from '@nestjs/common';
 import { Socket } from 'socket.io';
-import { EndTurnAction } from './actions/endTurn.action';
-import { CardPlayedInterface } from '../../socket/interfaces';
-import { CardPlayedAction } from './actions/cardPlayed.action';
+import { EndTurnAction } from '../game/node_combat/actions/endTurn.action';
+import { CardPlayedInterface } from './interfaces';
+import { CardPlayedAction } from '../game/node_combat/actions/cardPlayed.action';
 import { CustomExceptionFilter } from 'src/socket/customException.filter';
-import { GetEnergyAction } from './actions/getEnergy.action';
-import { GetPlayerHealthAction } from './actions/getPlayerHealth.action';
-import { GetCardPilesAction } from './actions/getCardPiles.action';
+import { GetEnergyAction } from '../game/node_combat/actions/getEnergy.action';
+import { GetPlayerHealthAction } from '../game/node_combat/actions/getPlayerHealth.action';
+import { GetCardPilesAction } from '../game/node_combat/actions/getCardPiles.action';
 
 @WebSocketGateway({
     cors: {

@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { ExpeditionService } from 'src/game/expedition/expedition.service';
+import { ExpeditionService } from 'src/game/components/expedition/expedition.service';
 
 interface DiscardCardDTO {
     readonly client_id: string;

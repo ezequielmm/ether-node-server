@@ -5,6 +5,11 @@ import { DiscardAllCardsAction } from './discardAllCards.action';
 import { DrawCardEffect } from 'src/game/effects/drawCard.effect';
 import { UpdatePlayerEnergyAction } from './updatePlayerEnergy.action';
 import { TurnChangeAction } from './turnChange.action';
+import {
+    StandardResponse,
+    SWARAction,
+    SWARMessageType,
+} from 'src/game/standardResponse/standardResponse';
 
 @Injectable()
 export class EndTurnAction {
@@ -17,11 +22,6 @@ export class EndTurnAction {
     ) {}
 
     async handle(client: Socket): Promise<string> {
-        const action = await this.gameManagerService.startAction(
-            client.id,
-            'endTurn',
-        );
-
         await this.discardAllCardsAction.handle({ client_id: client.id });
 
         await this.drawCardEffect.handle({
@@ -36,7 +36,11 @@ export class EndTurnAction {
 
         await this.turnChangeAction.handle({ client_id: client.id });
 
-        const response = await action.end();
+        const response = StandardResponse.createResponse({
+            message_type: SWARMessageType.CombatUpdate,
+            action: SWARAction.EndTurn,
+            data: null,
+        });
 
         return JSON.stringify(response);
     }

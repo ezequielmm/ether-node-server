@@ -11,7 +11,7 @@ import {
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '../guards/auth.guard';
-import { ExpeditionService } from '../game/expedition/expedition.service';
+import { ExpeditionService } from '../game/components/expedition/expedition.service';
 import { CardService } from '../game/components/card/card.service';
 import { CharacterService } from '../game/components/character/character.service';
 import { CharacterClassEnum } from '../game/components/character/enums';

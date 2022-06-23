@@ -7,7 +7,7 @@ import {
 import { Logger } from '@nestjs/common';
 import { Socket } from 'socket.io';
 import { isValidAuthToken } from '../utils';
-import { ExpeditionService } from '../game/expedition/expedition.service';
+import { ExpeditionService } from '../game/components/expedition/expedition.service';
 import { FullSyncAction } from '../game/expedition/actions/fullSync.action';
 import { AuthGatewayService } from 'src/authGateway/authGateway.service';
 

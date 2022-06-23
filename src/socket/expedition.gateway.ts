@@ -1,8 +1,8 @@
 import { SubscribeMessage, WebSocketGateway } from '@nestjs/websockets';
 import { Logger, UseFilters } from '@nestjs/common';
 import { Socket } from 'socket.io';
-import { FullSyncAction } from './actions/fullSync.action';
-import { NodeSelectedAction } from './actions/nodeSelected.action';
+import { FullSyncAction } from '../game/expedition/actions/fullSync.action';
+import { NodeSelectedAction } from '../game/expedition/actions/nodeSelected.action';
 import { CustomExceptionFilter } from 'src/socket/customException.filter';
 
 @WebSocketGateway({

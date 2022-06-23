@@ -23,8 +23,8 @@ import {
     EnemyGroup,
     EnemyGroupSchema,
 } from './game/expedition/enemy_groups/enemyGroups.schema';
-import { Settings, SettingsSchema } from './game/settings/settings.schema';
-import { SettingsSeeder } from './game/settings/settings.seeder';
+import { Settings, SettingsSchema } from './game/components/settings/settings.schema';
+import { SettingsSeeder } from './game/components/settings/settings.seeder';
 
 seeder({
     imports: [
