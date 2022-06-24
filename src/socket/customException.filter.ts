@@ -62,9 +62,8 @@ export class CustomExceptionFilter extends BaseWsExceptionFilter {
 
         const callback = host.getArgByIndex(2);
 
-        if (callback && typeof callback === 'function') {
+        if (callback && typeof callback === 'function')
             callback(JSON.stringify(response));
-        }
     }
 
     private isWsRequest(host: ArgumentsHost): boolean {

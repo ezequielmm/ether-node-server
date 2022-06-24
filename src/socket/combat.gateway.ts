@@ -46,10 +46,10 @@ export class CombatGateway {
             `Client ${client.id} trigger message "CardPlayed": ${payload}`,
         );
 
-        const { card_id }: CardPlayedInterface = JSON.parse(payload);
+        const { card_id, target }: CardPlayedInterface = JSON.parse(payload);
 
         try {
-            await this.cardPlayedAction.handle(client, card_id);
+            await this.cardPlayedAction.handle({ client, card_id, target });
         } catch (e) {
             this.logger.error(e.trace);
             client.emit('ErrorMessage', {
