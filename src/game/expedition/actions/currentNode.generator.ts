@@ -65,8 +65,14 @@ export class CurrentNodeGenerator {
 
                 return {
                     id: _id.toString(),
-                    ...rest,
                     defense: 0,
+                    name: rest.name,
+                    enemyId: rest.enemyId,
+                    type: rest.type,
+                    category: rest.category,
+                    size: rest.size,
+                    hpMin: rest.hpMin,
+                    hpMax: rest.hpMax,
                 };
             }),
         );
@@ -85,6 +91,8 @@ export class CurrentNodeGenerator {
                     cards: {
                         draw: drawCards,
                         hand: handCards,
+                        exhausted: [],
+                        discard: [],
                     },
                 },
                 enemies,
