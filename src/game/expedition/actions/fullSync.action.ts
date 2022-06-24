@@ -1,7 +1,7 @@
 import { Socket } from 'socket.io';
 import { ExpeditionService } from '../../components/expedition/expedition.service';
 import { ExpeditionMapNodeTypeEnum, ExpeditionStatusEnum } from '../enums';
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { CustomException, ErrorBehavior } from 'src/socket/custom.exception';
 import {
     StandardResponse,
@@ -13,6 +13,8 @@ import { isEven } from 'src/utils';
 
 @Injectable()
 export class FullSyncAction {
+    private readonly logger: Logger = new Logger(FullSyncAction.name);
+
     constructor(
         private readonly expeditionService: ExpeditionService,
         private readonly sendEnemyIntentProcess: SendEnemyIntentProcess,
@@ -33,6 +35,8 @@ export class FullSyncAction {
 
         const { map, player_state, current_node } = expedition;
 
+        this.logger.log(`Sent message ExpeditionMap to client ${client.id}`);
+
         client.emit(
             'ExpeditionMap',
             JSON.stringify(
@@ -43,6 +47,8 @@ export class FullSyncAction {
                 }),
             ),
         );
+
+        this.logger.log(`Sent message PlayerState to client ${client.id}`);
 
         client.emit(
             'PlayerState',
@@ -56,18 +62,17 @@ export class FullSyncAction {
         );
 
         if (current_node !== undefined) {
-            const {
-                node_type,
-                data: { round },
-            } = current_node;
+            const { node_type, data } = current_node;
 
-            const nodeTypes = Object.values(ExpeditionMapNodeTypeEnum);
-            const combatNodes = nodeTypes.filter(
-                (node) => node.search('combat') !== -1,
-            );
+            if (data !== undefined) {
+                const nodeTypes = Object.values(ExpeditionMapNodeTypeEnum);
+                const combatNodes = nodeTypes.filter(
+                    (node) => node.search('combat') !== -1,
+                );
 
-            if (combatNodes.includes(node_type) && !isEven(round))
-                this.sendEnemyIntentProcess.process(client);
+                if (combatNodes.includes(node_type) && !isEven(data.round))
+                    this.sendEnemyIntentProcess.process(client);
+            }
         }
     }
 }

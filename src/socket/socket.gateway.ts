@@ -62,7 +62,7 @@ export class SocketGateway
 
                 this.logger.log(`Client connected: ${client.id}`);
             } else {
-                this.logger.log(
+                this.logger.error(
                     `There is no expedition in progress for this player: ${client.id}`,
                 );
                 client.disconnect(true);

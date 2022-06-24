@@ -21,7 +21,7 @@ export const actCconfigAlternatives = [
                     subType: 'combat_standard',
                     chance: 80,
                     config: {
-                        enemies: ['enemy1', 'enemy2', 'enemy3', 'enemy4'],
+                        enemies: [9, 2, 1, 7],
                     },
                 },
                 {
@@ -47,7 +47,7 @@ export const actCconfigAlternatives = [
                         subType: 'combat_standard',
                         chance: 40,
                         config: {
-                            enemies: ['enemy1', 'enemy2', 'enemy3', 'enemy4'],
+                            enemies: [9, 2, 1, 7],
                         },
                     },
                 ],
@@ -60,7 +60,7 @@ export const actCconfigAlternatives = [
                         subType: 'combat_standard',
                         chance: 40,
                         config: {
-                            enemies: ['enemy1', 'enemy2', 'enemy3', 'enemy4'],
+                            enemies: [9, 2, 1, 7],
                         },
                     },
                 ],
@@ -73,7 +73,7 @@ export const actCconfigAlternatives = [
                         subType: 'combat_standard',
                         chance: 40,
                         config: {
-                            enemies: ['enemy1', 'enemy2', 'enemy3', 'enemy4'],
+                            enemies: [9, 2, 1, 7],
                         },
                     },
                 ],
@@ -86,7 +86,7 @@ export const actCconfigAlternatives = [
                         subType: 'combat_standard',
                         chance: 40,
                         config: {
-                            enemies: ['enemy1', 'enemy2', 'enemy3', 'enemy4'],
+                            enemies: [9, 2, 1, 7],
                         },
                     },
                     {
@@ -107,7 +107,7 @@ export const actCconfigAlternatives = [
                         subType: 'combat_standard',
                         chance: 70,
                         config: {
-                            enemies: ['enemy1', 'enemy2', 'enemy3', 'enemy4'],
+                            enemies: [9, 2, 1, 7],
                         },
                     },
                     {
@@ -128,7 +128,7 @@ export const actCconfigAlternatives = [
                         subType: 'combat_standard',
                         chance: 30,
                         config: {
-                            enemies: ['enemy1', 'enemy2', 'enemy3', 'enemy4'],
+                            enemies: [9, 2, 1, 7],
                         },
                     },
                     {
@@ -220,7 +220,7 @@ export const actCconfigAlternatives = [
                     subType: 'combat_standard',
                     chance: 80,
                     config: {
-                        enemies: ['enemy1', 'enemy2', 'enemy3', 'enemy4'],
+                        enemies: [9, 2, 1, 7],
                     },
                 },
                 {
@@ -246,7 +246,7 @@ export const actCconfigAlternatives = [
                         subType: 'combat_standard',
                         chance: 40,
                         config: {
-                            enemies: ['enemy1', 'enemy2', 'enemy3', 'enemy4'],
+                            enemies: [9, 2, 1, 7],
                         },
                     },
                 ],
@@ -259,7 +259,7 @@ export const actCconfigAlternatives = [
                         subType: 'combat_standard',
                         chance: 40,
                         config: {
-                            enemies: ['enemy1', 'enemy2', 'enemy3', 'enemy4'],
+                            enemies: [9, 2, 1, 7],
                         },
                     },
                 ],
@@ -272,7 +272,7 @@ export const actCconfigAlternatives = [
                         subType: 'combat_standard',
                         chance: 40,
                         config: {
-                            enemies: ['enemy1', 'enemy2', 'enemy3', 'enemy4'],
+                            enemies: [9, 2, 1, 7],
                         },
                     },
                 ],
