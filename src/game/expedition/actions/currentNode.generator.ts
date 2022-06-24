@@ -4,6 +4,7 @@ import { SettingsService } from 'src/game/components/settings/settings.service';
 import { ExpeditionMapNodeTypeEnum } from '../enums';
 import { ExpeditionService } from '../../components/expedition/expedition.service';
 import { IExpeditionCurrentNode, IExpeditionNode } from '../interfaces';
+import { EnemyService } from 'src/game/components/enemy/enemy.service';
 
 @Injectable()
 export class CurrentNodeGenerator {
@@ -14,6 +15,7 @@ export class CurrentNodeGenerator {
         private readonly expeditionService: ExpeditionService,
         private readonly cardService: CardService,
         private readonly settingsService: SettingsService,
+        private readonly enemyService: EnemyService,
     ) {}
 
     async getCurrentNodeData(
@@ -55,6 +57,13 @@ export class CurrentNodeGenerator {
             handCards,
         );
 
+        const enemies = await Promise.all(
+            this.node.private_data.enemies.map(async (enemyId) => ({
+                ...(await this.enemyService.findByCustomId(enemyId)),
+                defense: 0,
+            })),
+        );
+
         return {
             node_id: this.node.id,
             completed: this.node.isComplete,
@@ -71,9 +80,7 @@ export class CurrentNodeGenerator {
                         hand: handCards,
                     },
                 },
-                enemies: this.node.private_data.enemies.map((id) => ({
-                    id,
-                })),
+                enemies,
             },
         };
     }

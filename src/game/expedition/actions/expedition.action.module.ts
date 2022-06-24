@@ -6,6 +6,7 @@ import { CardModule } from '../../components/card/card.module';
 import { CurrentNodeGenerator } from './currentNode.generator';
 import { SettingsModule } from 'src/game/components/settings/settings.module';
 import { CombatProcessModule } from 'src/game/node_combat/process/combatProcess.module';
+import { EnemyModule } from 'src/game/components/enemy/enemy.module';
 
 @Module({
     imports: [
@@ -13,6 +14,7 @@ import { CombatProcessModule } from 'src/game/node_combat/process/combatProcess.
         forwardRef(() => CardModule),
         SettingsModule,
         CombatProcessModule,
+        EnemyModule,
     ],
     providers: [FullSyncAction, NodeSelectedAction, CurrentNodeGenerator],
     exports: [FullSyncAction, NodeSelectedAction],
