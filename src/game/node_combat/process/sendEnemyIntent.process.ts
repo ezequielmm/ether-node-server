@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { Socket } from 'socket.io';
 import {
     StandardResponse,
@@ -24,6 +24,8 @@ interface EnemyIntent {
 
 @Injectable()
 export class SendEnemyIntentProcess {
+    private readonly logger: Logger = new Logger(SendEnemyIntentProcess.name);
+
     process(client: Socket): void {
         const data: EnemyIntent[] = [
             {
@@ -36,6 +38,8 @@ export class SendEnemyIntentProcess {
                 id: 9,
             },
         ];
+
+        this.logger.log(`Sent message EnemiesIntents to client ${client.id}`);
 
         client.emit(
             'EnemiesIntents',
