@@ -53,6 +53,6 @@ export function getRandomBetween(min: number, max: number): number {
 /**
  * Checks is input is odd or even number
  */
-export function isOdd(input: number): boolean {
+export function isEven(input: number): boolean {
     return input % 2 === 0;
 }

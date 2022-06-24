@@ -1,6 +1,6 @@
 import { Socket } from 'socket.io';
 import { ExpeditionService } from '../../components/expedition/expedition.service';
-import { ExpeditionStatusEnum } from '../enums';
+import { ExpeditionMapNodeTypeEnum, ExpeditionStatusEnum } from '../enums';
 import { Injectable } from '@nestjs/common';
 import { CustomException, ErrorBehavior } from 'src/socket/custom.exception';
 import {
@@ -8,10 +8,15 @@ import {
     SWARAction,
     SWARMessageType,
 } from 'src/game/standardResponse/standardResponse';
+import { SendEnemyIntentProcess } from 'src/game/node_combat/process/sendEnemyIntent.process';
+import { isEven } from 'src/utils';
 
 @Injectable()
 export class FullSyncAction {
-    constructor(private readonly expeditionService: ExpeditionService) {}
+    constructor(
+        private readonly expeditionService: ExpeditionService,
+        private readonly sendEnemyIntentProcess: SendEnemyIntentProcess,
+    ) {}
 
     async handle(client: Socket): Promise<void> {
         const expedition = await this.expeditionService.findOne({
@@ -26,7 +31,7 @@ export class FullSyncAction {
             );
         }
 
-        const { map, player_state } = expedition;
+        const { map, player_state, current_node } = expedition;
 
         client.emit(
             'ExpeditionMap',
@@ -49,5 +54,18 @@ export class FullSyncAction {
                 }),
             ),
         );
+
+        const {
+            node_type,
+            data: { round },
+        } = current_node;
+
+        const nodeTypes = Object.values(ExpeditionMapNodeTypeEnum);
+        const combatNodes = nodeTypes.filter(
+            (node) => node.search('combat') !== -1,
+        );
+
+        if (combatNodes.includes(node_type) && !isEven(round))
+            this.sendEnemyIntentProcess.process(client);
     }
 }

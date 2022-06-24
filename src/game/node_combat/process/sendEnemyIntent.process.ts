@@ -1,5 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { Socket } from 'socket.io';
+import {
+    StandardResponse,
+    SWARAction,
+    SWARMessageType,
+} from 'src/game/standardResponse/standardResponse';
 
 enum EnemyIntentName {
     Attacking = 'attacking',
@@ -32,7 +37,16 @@ export class SendEnemyIntentProcess {
             },
         ];
 
-        client.emit('EnemiesIntents', data);
+        client.emit(
+            'EnemiesIntents',
+            JSON.stringify(
+                StandardResponse.createResponse({
+                    message_type: SWARMessageType.EnemiesIntents,
+                    action: SWARAction.UpdateEnemyIntents,
+                    data,
+                }),
+            ),
+        );
     }
 
     private descriptionGenerator(
