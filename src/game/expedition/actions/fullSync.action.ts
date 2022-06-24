@@ -55,17 +55,19 @@ export class FullSyncAction {
             ),
         );
 
-        const {
-            node_type,
-            data: { round },
-        } = current_node;
+        if (current_node !== undefined) {
+            const {
+                node_type,
+                data: { round },
+            } = current_node;
 
-        const nodeTypes = Object.values(ExpeditionMapNodeTypeEnum);
-        const combatNodes = nodeTypes.filter(
-            (node) => node.search('combat') !== -1,
-        );
+            const nodeTypes = Object.values(ExpeditionMapNodeTypeEnum);
+            const combatNodes = nodeTypes.filter(
+                (node) => node.search('combat') !== -1,
+            );
 
-        if (combatNodes.includes(node_type) && !isEven(round))
-            this.sendEnemyIntentProcess.process(client);
+            if (combatNodes.includes(node_type) && !isEven(round))
+                this.sendEnemyIntentProcess.process(client);
+        }
     }
 }
