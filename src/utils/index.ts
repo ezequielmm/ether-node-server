@@ -49,3 +49,10 @@ export function getRandomBetween(min: number, max: number): number {
     max = max + 1;
     return Math.floor(Math.random() * (max - min)) + min;
 }
+
+/**
+ * Checks is input is odd or even number
+ */
+export function isEven(input: number): boolean {
+    return input % 2 === 0;
+}

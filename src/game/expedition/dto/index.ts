@@ -39,7 +39,7 @@ export class UpdateExpeditionDTO {
 
 export class CardExistsDTO {
     readonly client_id: string;
-    readonly card_id: string;
+    readonly card_id: string | number;
 }
 
 export class UpdatePlayerEnergyDTO {

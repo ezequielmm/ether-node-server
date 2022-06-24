@@ -140,10 +140,16 @@ export class ExpeditionService {
 
     async cardExistsOnPlayerHand(payload: CardExistsDTO): Promise<boolean> {
         const { card_id, client_id } = payload;
+
+        const field =
+            typeof card_id === 'string'
+                ? 'current_node.data.player.cards.hand.id'
+                : 'current_node.data.player.cards.hand.card_id';
+
         const itemExists = await this.expedition.exists({
             client_id,
             status: ExpeditionStatusEnum.InProgress,
-            'current_node.data.player.cards.hand.id': card_id,
+            [field]: card_id,
         });
         return itemExists !== null;
     }
