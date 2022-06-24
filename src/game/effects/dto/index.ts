@@ -3,6 +3,7 @@ import { CardDestinationEnum } from '../enums';
 
 export interface BaseEffectDTO {
     readonly client_id: string;
+    readonly targeted?: CardTargetedEnum;
 }
 
 export type DiscardAllCardsDTO = BaseEffectDTO;
