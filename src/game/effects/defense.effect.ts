@@ -2,9 +2,9 @@ import { Injectable } from '@nestjs/common';
 import { ExpeditionService } from '../components/expedition/expedition.service';
 import { Effect } from './decorators/effect.decorator';
 import { DefenseDTO } from './dto';
-import { IBaseEffect } from './interfaces/baseEffect';
+import { EffectName, IBaseEffect } from './interfaces/baseEffect';
 
-@Effect('defense')
+@Effect(EffectName.Defense)
 @Injectable()
 export class DefenseEffect implements IBaseEffect {
     constructor(private readonly expeditionService: ExpeditionService) {}
