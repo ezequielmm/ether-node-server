@@ -6,6 +6,7 @@ import {
     SWARMessageType,
     SWARAction,
 } from 'src/game/standardResponse/standardResponse';
+import { isEven } from 'src/utils';
 import { TurnChangeAction } from '../actions/turnChange.action';
 import { SendEnemyIntentProcess } from './sendEnemyIntent.process';
 
@@ -22,7 +23,11 @@ export class InitCombatProcess {
             client_id: client.id,
         });
 
-        this.sendEnemyIntentProcess.process(client);
+        const {
+            data: { round },
+        } = current_node;
+
+        if (!isEven(round)) this.sendEnemyIntentProcess.process(client);
 
         client.emit(
             'InitCombat',
