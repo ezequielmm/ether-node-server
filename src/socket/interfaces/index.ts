@@ -1,4 +1,4 @@
 export interface CardPlayedInterface {
-    card_id: string;
-    target?: string;
+    card_id: string | number;
+    target: string[];
 }
