@@ -10,11 +10,15 @@ export class GetCardPilesAction {
         const {
             data: {
                 player: {
+                    energy,
+                    energy_max,
                     cards: { exhausted, draw, discard, hand },
                 },
             },
         } = await this.expeditionService.getCurrentNodeByClientId(client.id);
 
-        return JSON.stringify({ data: { hand, draw, discard, exhausted } });
+        return JSON.stringify({
+            data: { hand, draw, discard, exhausted, energy, energy_max },
+        });
     }
 }
