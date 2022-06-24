@@ -9,7 +9,7 @@ export class EnemyService {
         @InjectModel(Enemy.name) private readonly enemy: Model<EnemyDocument>,
     ) {}
 
-    public async findByCustomId(enemyId: string): Promise<Enemy> {
+    public async findByCustomId(enemyId: string): Promise<EnemyDocument> {
         return this.enemy.findOne({ enemyId }).lean();
     }
 }

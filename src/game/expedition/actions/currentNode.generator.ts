@@ -58,10 +58,17 @@ export class CurrentNodeGenerator {
         );
 
         const enemies = await Promise.all(
-            this.node.private_data.enemies.map(async (enemyId) => ({
-                ...(await this.enemyService.findByCustomId(enemyId)),
-                defense: 0,
-            })),
+            this.node.private_data.enemies.map(async (enemyId) => {
+                const { _id, ...rest } = await this.enemyService.findByCustomId(
+                    enemyId,
+                );
+
+                return {
+                    id: _id.toString(),
+                    ...rest,
+                    defense: 0,
+                };
+            }),
         );
 
         return {
