@@ -81,7 +81,7 @@ export class SocketGateway
     }
 
     @SubscribeMessage('GetData')
-    async handleGetData(data: string): Promise<void> {
+    async handleGetData(client: Socket, data: string): Promise<void> {
         console.log(data);
     }
 }
