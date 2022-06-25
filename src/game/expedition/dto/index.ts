@@ -42,6 +42,11 @@ export class CardExistsDTO {
     readonly card_id: string | number;
 }
 
+export class GetPlayerHandDTO {
+    readonly client_id: string;
+    readonly card_id: string | number;
+}
+
 export class UpdatePlayerEnergyDTO {
     readonly client_id: string;
     readonly energy: number;

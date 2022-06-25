@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { Socket } from 'socket.io';
-import { ExpeditionService } from 'src/game/components/expedition/expedition.service';
 import {
     StandardResponse,
     SWARMessageType,
@@ -13,19 +12,18 @@ import { SendEnemyIntentProcess } from './sendEnemyIntent.process';
 @Injectable()
 export class InitCombatProcess {
     constructor(
-        private readonly expeditionService: ExpeditionService,
         private readonly turnChangeAction: TurnChangeAction,
         private readonly sendEnemyIntentProcess: SendEnemyIntentProcess,
     ) {}
 
     async process(client: Socket): Promise<void> {
-        const { current_node } = await this.turnChangeAction.handle({
+        const {
+            current_node: {
+                data: { round },
+            },
+        } = await this.turnChangeAction.handle({
             client_id: client.id,
         });
-
-        const {
-            data: { round },
-        } = current_node;
 
         if (!isEven(round)) this.sendEnemyIntentProcess.process(client);
 
@@ -35,7 +33,7 @@ export class InitCombatProcess {
                 StandardResponse.createResponse({
                     message_type: SWARMessageType.CombatUpdate,
                     action: SWARAction.BeginCombat,
-                    data: current_node,
+                    data: null,
                 }),
             ),
         );

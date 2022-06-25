@@ -2,6 +2,7 @@ import {
     OnGatewayConnection,
     OnGatewayDisconnect,
     OnGatewayInit,
+    SubscribeMessage,
     WebSocketGateway,
 } from '@nestjs/websockets';
 import { Logger } from '@nestjs/common';
@@ -77,5 +78,10 @@ export class SocketGateway
 
     handleDisconnect(client: Socket): void {
         this.logger.log(`Client disconnected: ${client.id}`);
+    }
+
+    @SubscribeMessage('GetData')
+    async handleGetData(data: string): Promise<void> {
+        console.log(data);
     }
 }

@@ -30,7 +30,7 @@ export class CardPlayedAction {
     ) {}
 
     async handle(payload: CardPlayedDTO): Promise<void> {
-        const { client, card_id, target } = payload;
+        const { client, card_id } = payload;
 
         const cardExists = await this.expeditionService.cardExistsOnPlayerHand({
             client_id: client.id,
@@ -51,6 +51,6 @@ export class CardPlayedAction {
             );
         }
 
-        // if the card exists, it gets its information from teh ahnd pile
+        // if the card exists, it gets its information from the hand pile
     }
 }
