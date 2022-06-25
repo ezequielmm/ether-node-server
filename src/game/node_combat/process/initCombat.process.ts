@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { Socket } from 'socket.io';
-import { ExpeditionService } from 'src/game/components/expedition/expedition.service';
 import {
     StandardResponse,
     SWARMessageType,
