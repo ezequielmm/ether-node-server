@@ -21,6 +21,7 @@ import {
     SetPlayerDefense,
     GetPlayerState,
     UpdatePlayerHpDTO,
+    GetPlayerHandDTO,
 } from '../../expedition/dto';
 import {
     IExpeditionNode,
@@ -152,6 +153,28 @@ export class ExpeditionService {
             [field]: card_id,
         });
         return itemExists !== null;
+    }
+
+    async getCardFromPlayerHand(
+        payload: GetPlayerHandDTO,
+    ): Promise<IExpeditionPlayerStateDeckCard> {
+        const { client_id, card_id } = payload;
+
+        const {
+            data: {
+                player: {
+                    cards: { hand },
+                },
+            },
+        } = await this.getCurrentNodeByClientId(client_id);
+
+        const handCard = hand.filter((card) => {
+            return typeof card_id === 'string'
+                ? card.id === card_id
+                : card.card_id === card_id;
+        });
+
+        return handCard.slice(0, 1).shift();
     }
 
     async getCurrentNodeByClientId(
