@@ -1,12 +1,22 @@
 import { Injectable } from '@nestjs/common';
 import { Socket } from 'socket.io';
 import { ExpeditionService } from 'src/game/components/expedition/expedition.service';
+import { IExpeditionPlayerStateDeckCard } from 'src/game/expedition/interfaces';
+
+export interface GetCardPilesResponse {
+    hand: IExpeditionPlayerStateDeckCard[];
+    draw: IExpeditionPlayerStateDeckCard[];
+    discard: IExpeditionPlayerStateDeckCard[];
+    exhausted: IExpeditionPlayerStateDeckCard[];
+    energy: number;
+    energy_max: number;
+}
 
 @Injectable()
 export class GetCardPilesAction {
     constructor(private readonly expeditionService: ExpeditionService) {}
 
-    async handle(client: Socket): Promise<string> {
+    async handle(client: Socket): Promise<GetCardPilesResponse> {
         const {
             data: {
                 player: {
@@ -17,8 +27,6 @@ export class GetCardPilesAction {
             },
         } = await this.expeditionService.getCurrentNodeByClientId(client.id);
 
-        return JSON.stringify({
-            data: { hand, draw, discard, exhausted, energy, energy_max },
-        });
+        return { draw, discard, energy, energy_max, exhausted, hand };
     }
 }
