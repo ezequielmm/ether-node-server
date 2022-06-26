@@ -11,9 +11,10 @@ import { ExhaustCardAction } from './exhaustCard.action';
 import { TurnChangeAction } from './turnChange.action';
 import { UpdatePlayerEnergyAction } from './updatePlayerEnergy.action';
 import { GetEnergyAction } from './getEnergy.action';
-import { GetPlayerHealthAction } from './getPlayerHealth.action';
 import { GetCardPilesAction } from './getCardPiles.action';
 import { StatusPipelineModule } from 'src/game/status-pipeline/status-pipeline.module';
+import { GetEnemiesAction } from './getEnemies.action';
+import { GetPlayerInfoAction } from './getPlayerInfo.action';
 
 @Module({
     imports: [
@@ -32,8 +33,9 @@ import { StatusPipelineModule } from 'src/game/status-pipeline/status-pipeline.m
         TurnChangeAction,
         UpdatePlayerEnergyAction,
         GetEnergyAction,
-        GetPlayerHealthAction,
         GetCardPilesAction,
+        GetEnemiesAction,
+        GetPlayerInfoAction,
     ],
     exports: [
         CardPlayedAction,
@@ -44,8 +46,9 @@ import { StatusPipelineModule } from 'src/game/status-pipeline/status-pipeline.m
         TurnChangeAction,
         UpdatePlayerEnergyAction,
         GetEnergyAction,
-        GetPlayerHealthAction,
         GetCardPilesAction,
+        GetEnemiesAction,
+        GetPlayerInfoAction,
     ],
 })
 export class CombatActionModule {}

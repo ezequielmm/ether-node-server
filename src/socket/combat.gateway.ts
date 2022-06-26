@@ -6,13 +6,14 @@ import { CardPlayedInterface } from './interfaces';
 import { CardPlayedAction } from '../game/node_combat/actions/cardPlayed.action';
 import { CustomExceptionFilter } from 'src/socket/customException.filter';
 import { GetEnergyAction } from '../game/node_combat/actions/getEnergy.action';
-import { GetPlayerHealthAction } from '../game/node_combat/actions/getPlayerHealth.action';
 import { GetCardPilesAction } from '../game/node_combat/actions/getCardPiles.action';
 import { DataWSRequestTypesEnum } from './enums';
 import {
     StandardResponse,
     SWARMessageType,
 } from 'src/game/standardResponse/standardResponse';
+import { GetEnemiesAction } from 'src/game/node_combat/actions/getEnemies.action';
+import { GetPlayerInfoAction } from 'src/game/node_combat/actions/getPlayerInfo.action';
 
 @WebSocketGateway({
     cors: {
@@ -27,8 +28,9 @@ export class CombatGateway {
         private readonly endTurnAction: EndTurnAction,
         private readonly cardPlayedAction: CardPlayedAction,
         private readonly getEnergyAction: GetEnergyAction,
-        private readonly getPlayerHealthAction: GetPlayerHealthAction,
         private readonly getCardPilesAction: GetCardPilesAction,
+        private readonly getEnemiesAction: GetEnemiesAction,
+        private readonly getPlayerInfoAction: GetPlayerInfoAction,
     ) {}
 
     @SubscribeMessage('EndTurn')
@@ -63,50 +65,6 @@ export class CombatGateway {
         }
     }
 
-    /*@SubscribeMessage('GetEnergy')
-    async handleGetEvent(client: Socket): Promise<number[]> {
-        this.logger.log(`Client ${client.id} trigger message "GetEnergy"`);
-
-        try {
-            return await this.getEnergyAction.handle(client);
-        } catch (e) {
-            this.logger.error(e.trace);
-            client.emit('ErrorMessage', {
-                message: 'An error has ocurred getting the card energy',
-            });
-        }
-    }
-
-    @SubscribeMessage('GetPlayerHealth')
-    async handleGetPlayerHealth(client: Socket): Promise<number[]> {
-        this.logger.log(
-            `Client ${client.id} trigger message "GetPlayerHealth"`,
-        );
-
-        try {
-            return await this.getPlayerHealthAction.handle(client);
-        } catch (e) {
-            this.logger.error(e.trace);
-            client.emit('ErrorMessage', {
-                message: 'An error has ocurred getting the player health',
-            });
-        }
-    }
-
-    @SubscribeMessage('GetCardPiles')
-    async handleGetDrawPile(client: Socket): Promise<string> {
-        this.logger.log(`Client ${client.id} trigger message "GetCardPiles"`);
-
-        try {
-            return await this.getCardPilesAction.handle(client);
-        } catch (e) {
-            this.logger.error(e.trace);
-            client.emit('ErrorMessage', {
-                message: 'An error has ocurred getting the card piles',
-            });
-        }
-    }*/
-
     @SubscribeMessage('GetData')
     async handleGetData(client: Socket, types: string): Promise<string> {
         this.logger.log(
@@ -123,6 +81,13 @@ export class CombatGateway {
             case DataWSRequestTypesEnum.CardsPiles:
                 data = await this.getCardPilesAction.handle(client);
                 break;
+
+            case DataWSRequestTypesEnum.Enemies:
+                data = await this.getEnemiesAction.handle(client);
+                break;
+
+            case DataWSRequestTypesEnum.Players:
+                data = await this.getPlayerInfoAction.handle(client);
         }
 
         return JSON.stringify(

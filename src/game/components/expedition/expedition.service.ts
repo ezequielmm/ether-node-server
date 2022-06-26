@@ -22,12 +22,14 @@ import {
     GetPlayerState,
     UpdatePlayerHpDTO,
     GetPlayerHandDTO,
+    GetCombatEnemiesDTO,
 } from '../../expedition/dto';
 import {
     IExpeditionNode,
     IExpeditionCurrentNode,
     IExpeditionPlayerStateDeckCard,
     IExpeditionPlayerState,
+    IExpeditionCurrentNodeDataEnemy,
 } from '../../expedition/interfaces';
 import { CardService } from '../card/card.service';
 import { generateMap, restoreMap } from '../../expedition/map/app';
@@ -496,5 +498,15 @@ export class ExpeditionService {
         if (response.modifiedCount === 0) {
             throw new Error('Player state not found');
         }
+    }
+
+    async getCombatEnemies(
+        payload: GetCombatEnemiesDTO,
+    ): Promise<IExpeditionCurrentNodeDataEnemy[]> {
+        const { client_id } = payload;
+        const {
+            data: { enemies },
+        } = await this.getCurrentNodeByClientId(client_id);
+        return enemies;
     }
 }
