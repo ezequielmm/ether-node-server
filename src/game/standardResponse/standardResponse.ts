@@ -6,7 +6,7 @@ export enum SWARMessageType {
     UnplayableCard = 'unplayable_card',
     Error = 'error',
     EnemiesIntents = 'enemy_intents',
-    GenericData = 'GenericData',
+    GenericData = 'generic_data',
 }
 
 export enum SWARAction {
