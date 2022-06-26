@@ -8,6 +8,11 @@ import { CustomExceptionFilter } from 'src/socket/customException.filter';
 import { GetEnergyAction } from '../game/node_combat/actions/getEnergy.action';
 import { GetPlayerHealthAction } from '../game/node_combat/actions/getPlayerHealth.action';
 import { GetCardPilesAction } from '../game/node_combat/actions/getCardPiles.action';
+import { DataWSRequestTypesEnum } from './enums';
+import {
+    StandardResponse,
+    SWARMessageType,
+} from 'src/game/standardResponse/standardResponse';
 
 @WebSocketGateway({
     cors: {
@@ -58,7 +63,7 @@ export class CombatGateway {
         }
     }
 
-    @SubscribeMessage('GetEnergy')
+    /*@SubscribeMessage('GetEnergy')
     async handleGetEvent(client: Socket): Promise<number[]> {
         this.logger.log(`Client ${client.id} trigger message "GetEnergy"`);
 
@@ -90,7 +95,7 @@ export class CombatGateway {
 
     @SubscribeMessage('GetCardPiles')
     async handleGetDrawPile(client: Socket): Promise<string> {
-        this.logger.log(`Client ${client.id} trigger message "GetDrawPile"`);
+        this.logger.log(`Client ${client.id} trigger message "GetCardPiles"`);
 
         try {
             return await this.getCardPilesAction.handle(client);
@@ -99,6 +104,26 @@ export class CombatGateway {
             client.emit('ErrorMessage', {
                 message: 'An error has ocurred getting the card piles',
             });
+        }
+    }*/
+
+    @SubscribeMessage('GetData')
+    async handleGetData(client: Socket, types: string): Promise<string> {
+        this.logger.log(
+            `Client ${client.id} trigger message "GetData": ${types}`,
+        );
+
+        switch (types) {
+            case DataWSRequestTypesEnum.Energy:
+                const data = await this.getEnergyAction.handle(client);
+
+                return JSON.stringify(
+                    StandardResponse.createResponse({
+                        message_type: SWARMessageType.GenericData,
+                        action: types,
+                        data,
+                    }),
+                );
         }
     }
 }
