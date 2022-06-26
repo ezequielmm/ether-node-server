@@ -86,3 +86,7 @@ export class UpdatePlayerHpDTO {
     readonly client_id: string;
     readonly hp: number;
 }
+
+export class GetCombatEnemiesDTO {
+    readonly client_id: string;
+}
