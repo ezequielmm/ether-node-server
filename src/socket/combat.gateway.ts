@@ -113,17 +113,24 @@ export class CombatGateway {
             `Client ${client.id} trigger message "GetData": ${types}`,
         );
 
+        let data = null;
+
         switch (types) {
             case DataWSRequestTypesEnum.Energy:
-                const data = await this.getEnergyAction.handle(client);
+                data = await this.getEnergyAction.handle(client);
+                break;
 
-                return JSON.stringify(
-                    StandardResponse.createResponse({
-                        message_type: SWARMessageType.GenericData,
-                        action: types,
-                        data,
-                    }),
-                );
+            case DataWSRequestTypesEnum.CardsPiles:
+                data = await this.getCardPilesAction.handle(client);
+                break;
         }
+
+        return JSON.stringify(
+            StandardResponse.createResponse({
+                message_type: SWARMessageType.GenericData,
+                action: types,
+                data,
+            }),
+        );
     }
 }
