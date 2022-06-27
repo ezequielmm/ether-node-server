@@ -485,7 +485,7 @@ export class ExpeditionService {
 
     async updatePlayerHp(payload: UpdatePlayerHpDTO): Promise<void> {
         // Update player hp
-        const response = await this.expedition.updateOne(
+        const { modifiedCount } = await this.expedition.updateOne(
             {
                 client_id: payload.client_id,
                 status: ExpeditionStatusEnum.InProgress,
@@ -497,9 +497,7 @@ export class ExpeditionService {
             },
         );
 
-        if (response.modifiedCount === 0) {
-            throw new Error('Player state not found');
-        }
+        if (modifiedCount === 0) throw new Error('Player state not found');
     }
 
     async updateEnemyHp(payload: UpdateEnemyHpDTO): Promise<void> {
@@ -510,7 +508,7 @@ export class ExpeditionService {
                 ? 'current_node.data.enemies.id'
                 : 'current_node.data.enemies.enemyId';
 
-        const response = await this.expedition.updateOne(
+        const { modifiedCount } = await this.expedition.updateOne(
             {
                 client_id: client_id,
                 status: ExpeditionStatusEnum.InProgress,
@@ -523,9 +521,7 @@ export class ExpeditionService {
             },
         );
 
-        if (response.modifiedCount === 0) {
-            throw new Error('Enemy not found');
-        }
+        if (modifiedCount === 0) throw new Error('Enemy not found');
     }
 
     async getCombatEnemies(
