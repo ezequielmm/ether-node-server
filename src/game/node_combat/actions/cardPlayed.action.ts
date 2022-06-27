@@ -11,6 +11,8 @@ import {
     CardPlayErrorMessages,
 } from 'src/game/components/card/enums';
 import { UpdatePlayerEnergyAction } from './updatePlayerEnergy.action';
+import { DiscardCardAction } from './discardCard.action';
+import { EffectService } from 'src/game/effects/effect.service';
 
 export interface CardPlayedDTO {
     readonly client: Socket;
@@ -23,6 +25,8 @@ export class CardPlayedAction {
     constructor(
         private readonly expeditionService: ExpeditionService,
         private readonly updatePlayerEnergyAction: UpdatePlayerEnergyAction,
+        private readonly discardCardAction: DiscardCardAction,
+        private readonly effectService: EffectService,
     ) {}
 
     async handle(payload: CardPlayedDTO): Promise<void> {
@@ -67,11 +71,13 @@ export class CardPlayedAction {
 
         // If everything goes right, we get the card information from
         // the player hand pile
-        const { energy: cardEnergyCost } =
-            await this.expeditionService.getCardFromPlayerHand({
-                client_id: client.id,
-                card_id,
-            });
+        const {
+            energy: cardEnergyCost,
+            properties: { effects },
+        } = await this.expeditionService.getCardFromPlayerHand({
+            client_id: client.id,
+            card_id,
+        });
 
         // We get the current energy amount available from the current node
         const {
@@ -87,7 +93,7 @@ export class CardPlayedAction {
 
         if (!canPlayCard) {
             client.emit(
-                'ErrorMessages',
+                'ErrorMessage',
                 JSON.stringify(
                     StandardResponse.createResponse({
                         message_type: SWARMessageType.Error,
@@ -101,6 +107,17 @@ export class CardPlayedAction {
                 client_id: client.id,
                 energy: newEnergyAmount,
             });
+
+            client.emit(
+                'PutData',
+                JSON.stringify(
+                    StandardResponse.createResponse({
+                        message_type: SWARMessageType.EnemyAttacked,
+                        action: SWARAction.UpdateEnergy,
+                        data: newEnergyAmount,
+                    }),
+                ),
+            );
         }
     }
 
@@ -127,7 +144,7 @@ export class CardPlayedAction {
 
         // If the card energy cost is higher than the player's available energy or the
         // player energy is 0 the player can't play the card
-        if (cardEnergyCost > availableEnergy || availableEnergy > 0)
+        if (cardEnergyCost > availableEnergy || availableEnergy === 0)
             return {
                 canPlayCard: false,
                 newEnergyAmount: availableEnergy,

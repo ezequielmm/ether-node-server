@@ -7,6 +7,7 @@ export enum SWARMessageType {
     Error = 'error',
     EnemiesIntents = 'enemy_intents',
     GenericData = 'generic_data',
+    EnemyAttacked = 'enemy_attacked',
 }
 
 export enum SWARAction {
@@ -24,6 +25,7 @@ export enum SWARAction {
     UpdateEnemyIntents = 'update_enemy_intents',
     InvalidEnemy = 'invalid_enemy',
     InsufficientEnergy = 'insufficient_energy',
+    UpdateEnergy = 'update_energy',
 }
 
 interface SWARPayload {
