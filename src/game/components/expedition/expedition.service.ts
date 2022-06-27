@@ -23,6 +23,7 @@ import {
     UpdatePlayerHpDTO,
     GetPlayerHandDTO,
     GetCombatEnemiesDTO,
+    CheckIfEnemyExistsDTO,
 } from '../../expedition/dto';
 import {
     IExpeditionNode,
@@ -508,5 +509,23 @@ export class ExpeditionService {
             data: { enemies },
         } = await this.getCurrentNodeByClientId(client_id);
         return enemies;
+    }
+
+    async enemyExistsOnCurrentNode(
+        payload: CheckIfEnemyExistsDTO,
+    ): Promise<boolean> {
+        const { enemy_id, client_id } = payload;
+
+        const field =
+            typeof enemy_id === 'string'
+                ? 'current_node.data.enemies.id'
+                : 'current_node.data.enemies.enemyId';
+
+        const itemExists = await this.expedition.exists({
+            client_id,
+            status: ExpeditionStatusEnum.InProgress,
+            [field]: enemy_id,
+        });
+        return itemExists !== null;
     }
 }

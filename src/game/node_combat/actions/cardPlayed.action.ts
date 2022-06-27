@@ -1,11 +1,6 @@
 import { ExpeditionService } from '../../components/expedition/expedition.service';
-import { CardService } from '../../components/card/card.service';
 import { Socket } from 'socket.io';
 import { Injectable } from '@nestjs/common';
-import { EffectService } from 'src/game/effects/effect.service';
-import { ExhaustCardAction } from './exhaustCard.action';
-import { DiscardCardAction } from './discardCard.action';
-import { UpdatePlayerEnergyAction } from './updatePlayerEnergy.action';
 import {
     StandardResponse,
     SWARAction,
@@ -15,30 +10,23 @@ import {
 export interface CardPlayedDTO {
     readonly client: Socket;
     readonly card_id: string | number;
-    readonly target: string[] | number[];
+    readonly target: string | number;
 }
 
 @Injectable()
 export class CardPlayedAction {
-    constructor(
-        private readonly expeditionService: ExpeditionService,
-        private readonly cardService: CardService,
-        private readonly effectService: EffectService,
-        private readonly exhaustCardAction: ExhaustCardAction,
-        private readonly discardCardAction: DiscardCardAction,
-        private readonly updatePlayerEnergyAction: UpdatePlayerEnergyAction,
-    ) {}
+    constructor(private readonly expeditionService: ExpeditionService) {}
 
     async handle(payload: CardPlayedDTO): Promise<void> {
-        const { client, card_id } = payload;
+        const { client, card_id, target } = payload;
 
+        // First make sure card exists on player's hand pile
         const cardExists = await this.expeditionService.cardExistsOnPlayerHand({
             client_id: client.id,
             card_id,
         });
 
-        // First make sure card exists on player's hand pile
-        if (!cardExists) {
+        if (!cardExists)
             client.emit(
                 'ErrorMessage',
                 JSON.stringify(
@@ -49,8 +37,35 @@ export class CardPlayedAction {
                     }),
                 ),
             );
-        }
 
-        // if the card exists, it gets its information from the hand pile
+        // Next we validate that the enemy provided is valid
+        const enemyExists =
+            await this.expeditionService.enemyExistsOnCurrentNode({
+                client_id: client.id,
+                enemy_id: target,
+            });
+
+        if (!enemyExists)
+            client.emit(
+                'ErrorMessage',
+                JSON.stringify(
+                    StandardResponse.createResponse({
+                        message_type: SWARMessageType.Error,
+                        action: SWARAction.InvalidEnemy,
+                        data: null,
+                    }),
+                ),
+            );
+
+        // If everything goes right, we get the card information from
+        // the player hand pile
+        const {
+            properties: { effects },
+        } = await this.expeditionService.getCardFromPlayerHand({
+            client_id: client.id,
+            card_id,
+        });
+
+        // We verify the card effect and check its effects
     }
 }
