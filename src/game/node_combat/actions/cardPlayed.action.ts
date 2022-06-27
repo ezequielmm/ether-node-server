@@ -106,7 +106,6 @@ export class CardPlayedAction {
                             }),
                         ),
                     );
-                    return;
                 } else {
                     await this.updatePlayerEnergyAction.handle({
                         client_id: client.id,
