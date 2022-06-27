@@ -23,6 +23,7 @@ export enum SWARAction {
     UnplayableCard = 'unplayable_card',
     UpdateEnemyIntents = 'update_enemy_intents',
     InvalidEnemy = 'invalid_enemy',
+    InsufficientEnergy = 'insufficient_energy',
 }
 
 interface SWARPayload {

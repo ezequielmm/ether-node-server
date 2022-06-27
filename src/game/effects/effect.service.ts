@@ -19,9 +19,7 @@ export class EffectService {
     private getEffectByName(name: string): IBaseEffect {
         const effect = this.getAllEffectProviders().get(name);
 
-        if (effect === undefined) {
-            throw new Error(`Effect ${name} not found`);
-        }
+        if (effect === undefined) throw new Error(`Effect ${name} not found`);
 
         return effect;
     }
@@ -39,9 +37,8 @@ export class EffectService {
                         provider.metatype,
                     );
 
-                    if (effects.has(effectName)) {
+                    if (effects.has(effectName))
                         throw new Error(`Effect ${effectName} already exists`);
-                    }
 
                     effects.set(effectName, provider.instance as IBaseEffect);
                 }

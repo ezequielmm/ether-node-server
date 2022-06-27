@@ -6,6 +6,11 @@ import {
     SWARAction,
     SWARMessageType,
 } from 'src/game/standardResponse/standardResponse';
+import {
+    CardEnergyEnum,
+    CardPlayErrorMessages,
+} from 'src/game/components/card/enums';
+import { UpdatePlayerEnergyAction } from './updatePlayerEnergy.action';
 
 export interface CardPlayedDTO {
     readonly client: Socket;
@@ -15,7 +20,10 @@ export interface CardPlayedDTO {
 
 @Injectable()
 export class CardPlayedAction {
-    constructor(private readonly expeditionService: ExpeditionService) {}
+    constructor(
+        private readonly expeditionService: ExpeditionService,
+        private readonly updatePlayerEnergyAction: UpdatePlayerEnergyAction,
+    ) {}
 
     async handle(payload: CardPlayedDTO): Promise<void> {
         const { client, card_id, target } = payload;
@@ -59,13 +67,78 @@ export class CardPlayedAction {
 
         // If everything goes right, we get the card information from
         // the player hand pile
-        const {
-            properties: { effects },
-        } = await this.expeditionService.getCardFromPlayerHand({
-            client_id: client.id,
-            card_id,
-        });
+        const { energy: cardEnergyCost } =
+            await this.expeditionService.getCardFromPlayerHand({
+                client_id: client.id,
+                card_id,
+            });
 
-        // We verify the card effect and check its effects
+        // We get the current energy amount available from the current node
+        const {
+            data: {
+                player: { energy: availableEnergy },
+            },
+        } = await this.expeditionService.getCurrentNodeByClientId(client.id);
+
+        // Next we make sure that the card can be played and the user has
+        // enough energy
+        const { canPlayCard, newEnergyAmount, message } =
+            this.canPlayerPlayCard(cardEnergyCost, availableEnergy);
+
+        if (!canPlayCard) {
+            client.emit(
+                'ErrorMessages',
+                JSON.stringify(
+                    StandardResponse.createResponse({
+                        message_type: SWARMessageType.Error,
+                        action: SWARAction.InsufficientEnergy,
+                        data: message,
+                    }),
+                ),
+            );
+        } else {
+            await this.updatePlayerEnergyAction.handle({
+                client_id: client.id,
+                energy: newEnergyAmount,
+            });
+        }
+    }
+
+    private canPlayerPlayCard(
+        cardEnergyCost: number,
+        availableEnergy: number,
+    ): { canPlayCard: boolean; newEnergyAmount: number; message?: string } {
+        // First we verify if the card has a 0 cost
+        // if this is true, we allow the use of this card no matter the energy
+        // the player has available
+        if (cardEnergyCost === CardEnergyEnum.None)
+            return {
+                canPlayCard: true,
+                newEnergyAmount: availableEnergy,
+            };
+
+        // If the card has a cost of -1, this means that the card will use all the available
+        // energy that the player has, also the player energy needs to be more than 0
+        if (cardEnergyCost === CardEnergyEnum.All && availableEnergy > 0)
+            return {
+                canPlayCard: true,
+                newEnergyAmount: 0,
+            };
+
+        // If the card energy cost is higher than the player's available energy or the
+        // player energy is 0 the player can't play the card
+        if (cardEnergyCost > availableEnergy || availableEnergy > 0)
+            return {
+                canPlayCard: false,
+                newEnergyAmount: availableEnergy,
+                message: CardPlayErrorMessages.NoEnergyLeft,
+            };
+
+        // If the card energy cost is lower or equal than the player's available energy
+        if (cardEnergyCost <= availableEnergy)
+            return {
+                canPlayCard: true,
+                newEnergyAmount: availableEnergy - cardEnergyCost,
+            };
     }
 }
