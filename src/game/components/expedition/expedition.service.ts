@@ -503,14 +503,22 @@ export class ExpeditionService {
     }
 
     async updateEnemyHp(payload: UpdateEnemyHpDTO): Promise<void> {
+        const { client_id, hp, enemy_id } = payload;
+
+        const field =
+            typeof enemy_id === 'string'
+                ? 'current_node.data.enemies.id'
+                : 'current_node.data.enemies.enemyId';
+
         const response = await this.expedition.updateOne(
             {
-                client_id: payload.client_id,
+                client_id: client_id,
                 status: ExpeditionStatusEnum.InProgress,
+                [field]: enemy_id,
             },
             {
                 $set: {
-                    'player_state.hp_current': payload.hp,
+                    'current_node.data.enemies.$.hpMin': hp,
                 },
             },
         );

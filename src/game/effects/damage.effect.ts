@@ -106,5 +106,12 @@ export class DamageEffect implements IBaseEffect {
             // TODO: Trigger death effect event
             return;
         }
+
+        // update enemy health
+        await this.expeditionService.updateEnemyHp({
+            client_id: clientId,
+            enemy_id: target,
+            hp: newHp,
+        });
     }
 }
