@@ -10,9 +10,17 @@ export class EffectService {
 
     constructor(private readonly modulesContainer: ModulesContainer) {}
 
-    async process(client_id: string, effects: JsonEffect[]): Promise<void> {
+    async process(
+        client_id: string,
+        effects: JsonEffect[],
+        targeted_id?: string | number,
+    ): Promise<void> {
         for (const { name, args } of effects) {
-            await this.getEffectByName(name).handle({ ...args, client_id });
+            await this.getEffectByName(name).handle({
+                ...args,
+                client_id,
+                targeted_id,
+            });
         }
     }
 

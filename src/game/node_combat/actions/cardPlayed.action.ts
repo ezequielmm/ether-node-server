@@ -108,13 +108,23 @@ export class CardPlayedAction {
                 energy: newEnergyAmount,
             });
 
+            await this.effectService.process(client.id, effects, target);
+
+            const {
+                data: {
+                    player: { energy, energy_max },
+                },
+            } = await this.expeditionService.getCurrentNodeByClientId(
+                client.id,
+            );
+
             client.emit(
                 'PutData',
                 JSON.stringify(
                     StandardResponse.createResponse({
                         message_type: SWARMessageType.EnemyAttacked,
                         action: SWARAction.UpdateEnergy,
-                        data: newEnergyAmount,
+                        data: [energy, energy_max],
                     }),
                 ),
             );

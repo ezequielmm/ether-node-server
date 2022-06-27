@@ -91,6 +91,12 @@ export class UpdatePlayerHpDTO {
     readonly hp: number;
 }
 
+export class UpdateEnemyHpDTO {
+    readonly client_id: string;
+    readonly enemy_id: string | number;
+    readonly hp: number;
+}
+
 export class GetCombatEnemiesDTO {
     readonly client_id: string;
 }

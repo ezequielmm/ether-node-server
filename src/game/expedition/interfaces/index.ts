@@ -4,6 +4,11 @@ import {
     ExpeditionMapNodeTypeEnum,
 } from '../enums';
 import { Card } from 'src/game/components/card/card.schema';
+import {
+    EnemyCategoryEnum,
+    EnemySizeEnum,
+    EnemyTypeEnum,
+} from 'src/game/components/enemy/enums';
 
 export interface IExpeditionNode {
     readonly id: number;
@@ -72,5 +77,12 @@ export interface IExpeditionCurrentNodeDataPlayer {
 
 export interface IExpeditionCurrentNodeDataEnemy {
     id: string;
-    defense?: number;
+    defense: number;
+    enemyId: number;
+    name: string;
+    type: EnemyTypeEnum;
+    category: EnemyCategoryEnum;
+    size: EnemySizeEnum;
+    hpMin: 9;
+    hpMax: 12;
 }
