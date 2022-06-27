@@ -32,15 +32,13 @@ export class CardPlayedAction {
     async handle(payload: CardPlayedDTO): Promise<void> {
         const { client, card_id, target } = payload;
 
-        console.log(payload);
-
         // First make sure card exists on player's hand pile
         const cardExists = await this.expeditionService.cardExistsOnPlayerHand({
             client_id: client.id,
             card_id,
         });
 
-        if (!cardExists)
+        if (!cardExists) {
             client.emit(
                 'ErrorMessage',
                 JSON.stringify(
@@ -51,6 +49,8 @@ export class CardPlayedAction {
                     }),
                 ),
             );
+            return;
+        }
 
         // Next we validate that the enemy provided is valid
         const enemyExists =
@@ -59,7 +59,7 @@ export class CardPlayedAction {
                 enemy_id: target,
             });
 
-        if (!enemyExists)
+        if (!enemyExists) {
             client.emit(
                 'ErrorMessage',
                 JSON.stringify(
@@ -70,6 +70,8 @@ export class CardPlayedAction {
                     }),
                 ),
             );
+            return;
+        }
 
         // If everything goes right, we get the card information from
         // the player hand pile
@@ -104,6 +106,7 @@ export class CardPlayedAction {
                     }),
                 ),
             );
+            return;
         } else {
             await this.updatePlayerEnergyAction.handle({
                 client_id: client.id,
