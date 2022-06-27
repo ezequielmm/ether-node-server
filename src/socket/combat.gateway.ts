@@ -1,10 +1,9 @@
 import { SubscribeMessage, WebSocketGateway } from '@nestjs/websockets';
-import { Logger, UseFilters } from '@nestjs/common';
+import { Logger } from '@nestjs/common';
 import { Socket } from 'socket.io';
 import { EndTurnAction } from '../game/node_combat/actions/endTurn.action';
 import { CardPlayedInterface } from './interfaces';
 import { CardPlayedAction } from '../game/node_combat/actions/cardPlayed.action';
-import { CustomExceptionFilter } from 'src/socket/customException.filter';
 import { GetEnergyAction } from '../game/node_combat/actions/getEnergy.action';
 import { GetCardPilesAction } from '../game/node_combat/actions/getCardPiles.action';
 import { DataWSRequestTypesEnum } from './enums';
@@ -20,7 +19,6 @@ import { GetPlayerInfoAction } from 'src/game/node_combat/actions/getPlayerInfo.
         origin: '*',
     },
 })
-@UseFilters(CustomExceptionFilter)
 export class CombatGateway {
     private readonly logger: Logger = new Logger(CombatGateway.name);
 
@@ -55,15 +53,7 @@ export class CombatGateway {
 
         const { card_id, target }: CardPlayedInterface = JSON.parse(payload);
 
-        try {
-            await this.cardPlayedAction.handle({ client, card_id, target });
-        } catch (e) {
-            this.logger.error(e.trace);
-            this.logger.error(e.message);
-            client.emit('ErrorMessage', {
-                message: 'An error has ocurred playing a card',
-            });
-        }
+        await this.cardPlayedAction.handle({ client, card_id, target });
     }
 
     @SubscribeMessage('GetData')
