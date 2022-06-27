@@ -13,6 +13,7 @@ import {
 import { UpdatePlayerEnergyAction } from './updatePlayerEnergy.action';
 import { DiscardCardAction } from './discardCard.action';
 import { EffectService } from 'src/game/effects/effect.service';
+import { WsException } from '@nestjs/websockets';
 
 export interface CardPlayedDTO {
     readonly client: Socket;
@@ -51,6 +52,13 @@ export class CardPlayedAction {
                     }),
                 ),
             );
+            throw new WsException(
+                StandardResponse.createResponse({
+                    message_type: SWARMessageType.Error,
+                    action: SWARAction.InvalidCard,
+                    data: null,
+                }),
+            );
         } else {
             // Next we validate that the enemy provided is valid
             const enemyExists =
@@ -69,6 +77,13 @@ export class CardPlayedAction {
                             data: null,
                         }),
                     ),
+                );
+                throw new WsException(
+                    StandardResponse.createResponse({
+                        message_type: SWARMessageType.Error,
+                        action: SWARAction.InvalidEnemy,
+                        data: null,
+                    }),
                 );
             } else {
                 // If everything goes right, we get the card information from
@@ -105,6 +120,13 @@ export class CardPlayedAction {
                                 data: message,
                             }),
                         ),
+                    );
+                    throw new WsException(
+                        StandardResponse.createResponse({
+                            message_type: SWARMessageType.Error,
+                            action: SWARAction.InsufficientEnergy,
+                            data: message,
+                        }),
                     );
                 } else {
                     await this.updatePlayerEnergyAction.handle({

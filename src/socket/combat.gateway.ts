@@ -59,6 +59,7 @@ export class CombatGateway {
             await this.cardPlayedAction.handle({ client, card_id, target });
         } catch (e) {
             this.logger.error(e.trace);
+            this.logger.error(e.message);
             client.emit('ErrorMessage', {
                 message: 'An error has ocurred playing a card',
             });
