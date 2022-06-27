@@ -32,6 +32,8 @@ export class CardPlayedAction {
     async handle(payload: CardPlayedDTO): Promise<void> {
         const { client, card_id, target } = payload;
 
+        console.log(payload);
+
         // First make sure card exists on player's hand pile
         const cardExists = await this.expeditionService.cardExistsOnPlayerHand({
             client_id: client.id,
@@ -110,9 +112,15 @@ export class CardPlayedAction {
 
             await this.effectService.process(client.id, effects, target);
 
+            await this.discardCardAction.handle({
+                client_id: client.id,
+                card_id,
+            });
+
             const {
                 data: {
                     player: { energy, energy_max },
+                    enemies,
                 },
             } = await this.expeditionService.getCurrentNodeByClientId(
                 client.id,
@@ -125,6 +133,30 @@ export class CardPlayedAction {
                         message_type: SWARMessageType.EnemyAttacked,
                         action: SWARAction.UpdateEnergy,
                         data: [energy, energy_max],
+                    }),
+                ),
+            );
+
+            client.emit(
+                'PutData',
+                JSON.stringify(
+                    StandardResponse.createResponse({
+                        message_type: SWARMessageType.EnemyAttacked,
+                        action: SWARAction.MoveCard,
+                        data: [
+                            { source: 'hand', destination: 'discard', card_id },
+                        ],
+                    }),
+                ),
+            );
+
+            client.emit(
+                'PutData',
+                JSON.stringify(
+                    StandardResponse.createResponse({
+                        message_type: SWARMessageType.EnemyAttacked,
+                        action: SWARAction.UpdateEnemy,
+                        data: enemies,
                     }),
                 ),
             );
