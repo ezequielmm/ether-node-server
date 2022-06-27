@@ -24,6 +24,7 @@ import {
     GetPlayerHandDTO,
     GetCombatEnemiesDTO,
     CheckIfEnemyExistsDTO,
+    UpdateEnemyHpDTO,
 } from '../../expedition/dto';
 import {
     IExpeditionNode,
@@ -498,6 +499,24 @@ export class ExpeditionService {
 
         if (response.modifiedCount === 0) {
             throw new Error('Player state not found');
+        }
+    }
+
+    async updateEnemyHp(payload: UpdateEnemyHpDTO): Promise<void> {
+        const response = await this.expedition.updateOne(
+            {
+                client_id: payload.client_id,
+                status: ExpeditionStatusEnum.InProgress,
+            },
+            {
+                $set: {
+                    'player_state.hp_current': payload.hp,
+                },
+            },
+        );
+
+        if (response.modifiedCount === 0) {
+            throw new Error('Enemy not found');
         }
     }
 
