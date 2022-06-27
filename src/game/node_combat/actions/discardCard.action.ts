@@ -3,7 +3,7 @@ import { ExpeditionService } from 'src/game/components/expedition/expedition.ser
 
 interface DiscardCardDTO {
     readonly client_id: string;
-    readonly card_id: string;
+    readonly card_id: string | number;
 }
 
 @Injectable()
