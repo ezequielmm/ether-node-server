@@ -1,6 +1,6 @@
 import { ExpeditionService } from '../../components/expedition/expedition.service';
 import { Socket } from 'socket.io';
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import {
     StandardResponse,
     SWARAction,
@@ -22,6 +22,8 @@ export interface CardPlayedDTO {
 
 @Injectable()
 export class CardPlayedAction {
+    private readonly logger: Logger = new Logger(CardPlayedAction.name);
+
     constructor(
         private readonly expeditionService: ExpeditionService,
         private readonly updatePlayerEnergyAction: UpdatePlayerEnergyAction,
@@ -129,6 +131,10 @@ export class CardPlayedAction {
                 client.id,
             );
 
+            this.logger.log(
+                `Sent message PutData to client ${client.id}: ${SWARAction.UpdateEnergy}`,
+            );
+
             client.emit(
                 'PutData',
                 JSON.stringify(
@@ -138,6 +144,10 @@ export class CardPlayedAction {
                         data: [energy, energy_max],
                     }),
                 ),
+            );
+
+            this.logger.log(
+                `Sent message PutData to client ${client.id}: ${SWARAction.MoveCard}`,
             );
 
             client.emit(
@@ -151,6 +161,10 @@ export class CardPlayedAction {
                         ],
                     }),
                 ),
+            );
+
+            this.logger.log(
+                `Sent message PutData to client ${client.id}: ${SWARAction.UpdateEnemy}`,
             );
 
             client.emit(
