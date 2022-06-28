@@ -16,7 +16,7 @@ export interface IExpeditionNode {
     readonly type: ExpeditionMapNodeTypeEnum;
     readonly subType: ExpeditionMapNodeTypeEnum;
     readonly status: ExpeditionMapNodeStatusEnum;
-    readonly exits: number[];
+    readonly exits: Array<number>;
     readonly enter: number[];
     readonly private_data: any;
     state?: any;
@@ -33,4 +33,8 @@ export interface IExpeditionCurrentNodeDataEnemy extends EnemyDocument {
 
 export interface IExpeditionStatusResponse {
     readonly hasExpedition: boolean;
+}
+
+export interface IExpeditionCreatedResponse {
+    readonly createdExpedition: boolean;
 }
