@@ -93,6 +93,7 @@ export class DamageEffect implements IBaseEffect {
 
         // Calculate new hp
         const newHp = Math.max(0, hpMin - trueDamage);
+        console.log({ newHp });
 
         // If new hp is less or equal than 0,  trigger death event
         // TODO: Trigger death effect event

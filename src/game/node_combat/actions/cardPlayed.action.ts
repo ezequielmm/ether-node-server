@@ -110,6 +110,7 @@ export class CardPlayedAction {
                 const { canPlayCard, newEnergyAmount, message } =
                     this.canPlayerPlayCard(cardEnergyCost, availableEnergy);
 
+                // next we inform the player that is not possible to play the card
                 if (!canPlayCard) {
                     client.emit(
                         'ErrorMessage',
@@ -129,6 +130,8 @@ export class CardPlayedAction {
                         }),
                     );
                 } else {
+                    // if the card can be played, we update the energy, apply the effects
+                    // and move the card to the desired pile
                     try {
                         await this.updatePlayerEnergyAction.handle({
                             client_id: client.id,
