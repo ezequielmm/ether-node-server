@@ -129,21 +129,31 @@ export class CardPlayedAction {
                         }),
                     );
                 } else {
-                    await this.updatePlayerEnergyAction.handle({
-                        client_id: client.id,
-                        energy: newEnergyAmount,
-                    });
+                    try {
+                        await this.updatePlayerEnergyAction.handle({
+                            client_id: client.id,
+                            energy: newEnergyAmount,
+                        });
+                    } catch (e) {
+                        this.logger.error(e.message);
+                        this.logger.error(e.trace);
+                    }
 
-                    await this.effectService.process(
-                        client.id,
-                        effects,
-                        target,
-                    );
+                    try {
+                        await this.effectService.process(
+                            client.id,
+                            effects,
+                            target,
+                        );
+                    } catch (e) {
+                        this.logger.error(e.message);
+                        this.logger.error(e.trace);
+                    }
 
-                    await this.discardCardAction.handle({
+                    /*await this.discardCardAction.handle({
                         client_id: client.id,
                         card_id,
-                    });
+                    });*/
 
                     const {
                         data: {

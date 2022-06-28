@@ -58,11 +58,7 @@ export class DamageEffect implements IBaseEffect {
         // Calculate new hp
         const newHp = hp_current - trueDamage;
 
-        // If new hp is less or equal than 0,  trigger death event
-        if (newHp <= 0) {
-            // TODO: Trigger death effect event
-            return;
-        }
+        // TODO: If new hp is less or equal than 0,  trigger death event
 
         // Update player hp
         await this.expeditionService.updatePlayerHp({
@@ -93,19 +89,13 @@ export class DamageEffect implements IBaseEffect {
         const trueDamage = damage - (defense || 0);
 
         // If damage is less or equal to 0, trigger damage negated event
-        if (trueDamage <= 0) {
-            // TODO: Trigger damage negated event
-            return;
-        }
+        // TODO: Trigger damage negated event
 
         // Calculate new hp
-        const newHp = hpMin - trueDamage;
+        const newHp = Math.max(0, hpMin - trueDamage);
 
         // If new hp is less or equal than 0,  trigger death event
-        if (newHp <= 0) {
-            // TODO: Trigger death effect event
-            return;
-        }
+        // TODO: Trigger death effect event
 
         // update enemy health
         await this.expeditionService.updateEnemyHp({
