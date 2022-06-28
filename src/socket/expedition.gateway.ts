@@ -1,14 +1,12 @@
 import { SubscribeMessage, WebSocketGateway } from '@nestjs/websockets';
-import { Logger, UseFilters } from '@nestjs/common';
+import { Logger } from '@nestjs/common';
 import { Socket } from 'socket.io';
-import { CustomExceptionFilter } from 'src/socket/customException.filter';
 
 @WebSocketGateway({
     cors: {
         origin: '*',
     },
 })
-@UseFilters(CustomExceptionFilter)
 export class ExpeditionGateway {
     private readonly logger: Logger = new Logger(ExpeditionGateway.name);
 

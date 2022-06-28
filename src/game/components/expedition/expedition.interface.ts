@@ -30,3 +30,7 @@ export interface IExpeditionPlayerStateDeckCard extends CardDocument {
 export interface IExpeditionCurrentNodeDataEnemy extends EnemyDocument {
     effects: [];
 }
+
+export interface IExpeditionStatusResponse {
+    readonly hasExpedition: boolean;
+}

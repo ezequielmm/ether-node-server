@@ -1,4 +1,7 @@
+import { CardId } from 'src/game/components/card/card.type';
+import { TargetId } from 'src/game/effects/effects.types';
+
 export interface CardPlayedInterface {
-    card_id: string | number;
-    target: string | number;
+    cardId: CardId;
+    target: TargetId;
 }

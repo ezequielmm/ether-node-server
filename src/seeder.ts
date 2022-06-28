@@ -23,7 +23,10 @@ import {
     EnemyGroup,
     EnemyGroupSchema,
 } from './game/components/enemyGroups/enemyGroups.schema';
-import { Settings, SettingsSchema } from './game/components/settings/settings.schema';
+import {
+    Settings,
+    SettingsSchema,
+} from './game/components/settings/settings.schema';
 import { SettingsSeeder } from './game/components/settings/settings.seeder';
 
 seeder({
