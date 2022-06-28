@@ -11,23 +11,21 @@ export class DamageEffect implements IBaseEffect {
     constructor(private readonly expeditionService: ExpeditionService) {}
 
     async handle(payload: DamageDTO): Promise<void> {
-        const { client_id, times, value, targeted, targeted_id } = payload;
+        const { client_id, times, calculated_value, targeted, targeted_id } =
+            payload;
         console.log(payload);
         // TODO: Triger damage attempted event
 
-        for (let i = 0; i < Math.max(times, 1); i++) {
+        for (let i = 0; i < (times || 1); i++) {
             // Check targeted type
-            switch (targeted) {
-                case CardTargetedEnum.Player:
-                    await this.applyDamageToPlayer(client_id, value);
-                    break;
-                case CardTargetedEnum.Enemy:
-                    await this.applyDamageToEnemy(
-                        client_id,
-                        value,
-                        targeted_id,
-                    );
-                    break;
+            if (targeted === CardTargetedEnum.Player) {
+                await this.applyDamageToPlayer(client_id, calculated_value);
+            } else if (targeted === CardTargetedEnum.Enemy) {
+                await this.applyDamageToEnemy(
+                    client_id,
+                    calculated_value,
+                    targeted_id,
+                );
             }
         }
     }

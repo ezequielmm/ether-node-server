@@ -39,7 +39,7 @@ export interface DefenseDTO extends BaseEffectDTO {
 }
 
 export interface DamageDTO extends BaseEffectDTO {
-    value: number;
+    calculated_value: number;
     times?: number;
     targeted: CardTargetedEnum;
     targeted_id?: string;
