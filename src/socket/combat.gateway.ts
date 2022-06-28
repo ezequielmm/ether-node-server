@@ -32,11 +32,11 @@ export class CombatGateway {
     ) {}
 
     @SubscribeMessage('EndTurn')
-    async handleEndTurn(client: Socket): Promise<string> {
+    async handleEndTurn(client: Socket): Promise<void> {
         this.logger.log(`Client ${client.id} trigger message "EndTurn"`);
 
         try {
-            return await this.endTurnAction.handle(client);
+            await this.endTurnAction.handle(client);
         } catch (e) {
             this.logger.error(e.trace);
             client.emit('ErrorMessage', {

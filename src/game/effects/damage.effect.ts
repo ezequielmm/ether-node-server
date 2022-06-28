@@ -17,14 +17,17 @@ export class DamageEffect implements IBaseEffect {
 
         for (let i = 0; i < (times || 1); i++) {
             // Check targeted type
-            if (targeted === CardTargetedEnum.Player) {
-                await this.applyDamageToPlayer(client_id, calculated_value);
-            } else if (targeted === CardTargetedEnum.Enemy) {
-                await this.applyDamageToEnemy(
-                    client_id,
-                    calculated_value,
-                    targeted_id,
-                );
+            switch (targeted) {
+                case CardTargetedEnum.Player:
+                    await this.applyDamageToPlayer(client_id, calculated_value);
+                    break;
+                case CardTargetedEnum.Enemy:
+                    await this.applyDamageToEnemy(
+                        client_id,
+                        calculated_value,
+                        targeted_id,
+                    );
+                    break;
             }
         }
     }
@@ -93,7 +96,7 @@ export class DamageEffect implements IBaseEffect {
         // Calculate new hp
         const newHp = Math.max(0, hpMin - trueDamage);
 
-        // If new hp is less or equal than 0,  trigger death event
+        // If new hp is less or equal than 0, trigger death event
         // TODO: Trigger death effect event
 
         // update enemy health
