@@ -12,20 +12,22 @@ export class DamageEffect implements IBaseEffect {
 
     async handle(payload: DamageDTO): Promise<void> {
         const { client_id, times, value, targeted, targeted_id } = payload;
+        console.log(payload);
         // TODO: Triger damage attempted event
 
-        for (let i = 0; i < (times || 1); i++) {
+        for (let i = 0; i < Math.max(times, 1); i++) {
             // Check targeted type
-            if (targeted === CardTargetedEnum.Player) {
-                await this.applyDamageToPlayer(client_id, value);
-            } else if (targeted === CardTargetedEnum.Enemy) {
-                await this.applyDamageToEnemy(client_id, value, targeted_id);
-            } else if (targeted === CardTargetedEnum.AllEnemies) {
-                // TODO: Find all enemies and apply damage
-            } else if (targeted === CardTargetedEnum.RandomEnemy) {
-                // TODO: Find random enemy and apply damage
-            } else if (targeted === CardTargetedEnum.None) {
-                // TODO: ???
+            switch (targeted) {
+                case CardTargetedEnum.Player:
+                    await this.applyDamageToPlayer(client_id, value);
+                    break;
+                case CardTargetedEnum.Enemy:
+                    await this.applyDamageToEnemy(
+                        client_id,
+                        value,
+                        targeted_id,
+                    );
+                    break;
             }
         }
     }
