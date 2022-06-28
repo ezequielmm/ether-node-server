@@ -153,10 +153,10 @@ export class CardPlayedAction {
                         this.logger.error(e.trace);
                     }
 
-                    /*await this.discardCardAction.handle({
+                    await this.discardCardAction.handle({
                         client_id: client.id,
                         card_id,
-                    });*/
+                    });
 
                     const {
                         data: {
