@@ -8,8 +8,8 @@ import {
     UseGuards,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { IProfile } from 'src/authGateway/authGateway.interface';
 import { AuthGatewayService } from 'src/authGateway/authGateway.service';
-import { IProfile } from 'src/authGateway/interfaces/profile.interface';
 import { AuthGuard } from '../guards/auth.guard';
 
 @ApiBearerAuth()

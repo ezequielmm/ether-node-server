@@ -3,7 +3,7 @@ import { Document } from 'mongoose';
 import { Factory } from 'nestjs-seeder';
 import { Faker } from '@faker-js/faker';
 import { getRandomBetween, getRandomEnumValue } from '../../../utils';
-import { TrinketRarityEnum } from './enums';
+import { TrinketRarityEnum } from './trinket.enum';
 
 export type TrinketDocument = Trinket & Document;
 
@@ -23,15 +23,11 @@ export class Trinket {
         return getRandomBetween(50, 100);
     })
     @Prop()
-    coin_cost: number;
+    coinCost: number;
 
-    @Factory('move')
+    @Factory([])
     @Prop()
-    effect: string;
-
-    @Factory('attack')
-    @Prop()
-    trigger: string;
+    effects: [];
 }
 
 export const TrinketSchema = SchemaFactory.createForClass(Trinket);

@@ -2,7 +2,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 import { Factory } from 'nestjs-seeder';
 import { Faker } from '@faker-js/faker';
-import { CharacterClassEnum } from './enums';
+import { CharacterClassEnum } from './character.enum';
 
 export type CharacterDocument = Character & Document;
 
@@ -18,15 +18,15 @@ export class Character {
 
     @Factory(78)
     @Prop()
-    initial_health: number;
+    initialHealth: number;
 
     @Factory(120)
     @Prop()
-    initial_gold: number;
+    initialGold: number;
 
     @Factory(CharacterClassEnum.Knight)
     @Prop()
-    character_class: CharacterClassEnum;
+    characterClass: CharacterClassEnum;
 }
 
 export const CharacterSchema = SchemaFactory.createForClass(Character);

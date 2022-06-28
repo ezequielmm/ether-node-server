@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Enemy, EnemyDocument } from './enemy.schema';
 import { Model } from 'mongoose';
+import { EnemyId } from './enemy.type';
 
 @Injectable()
 export class EnemyService {
@@ -9,7 +10,9 @@ export class EnemyService {
         @InjectModel(Enemy.name) private readonly enemy: Model<EnemyDocument>,
     ) {}
 
-    public async findByCustomId(enemyId: string): Promise<EnemyDocument> {
-        return this.enemy.findOne({ enemyId }).lean();
+    public async findById(enemyId: EnemyId): Promise<EnemyDocument> {
+        return typeof enemyId === 'string'
+            ? this.enemy.findById(enemyId).lean()
+            : this.enemy.findOne({ enemyId }).lean();
     }
 }

@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
-import { EnemyCategoryEnum, EnemyTypeEnum, EnemySizeEnum } from './enums';
+import { EnemyTypeEnum, EnemyCategoryEnum, EnemySizeEnum } from './enemy.enum';
 
 export type EnemyDocument = Enemy & Document;
 
@@ -22,22 +22,10 @@ export class Enemy {
     size: EnemySizeEnum;
 
     @Prop()
-    hitPoints?: number;
-
-    @Prop()
-    attackMin: number;
-
-    @Prop()
-    attackMax: number;
-
-    @Prop()
-    hpMin: number;
-
-    @Prop()
     hpMax: number;
 
     @Prop()
-    life: number;
+    hpCurrent: number;
 
     @Prop()
     description: string;

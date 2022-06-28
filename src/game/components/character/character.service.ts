@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Character, CharacterDocument } from './character.schema';
-import { GetCharacterDTO } from './dto';
+import { GetCharacterDTO } from './character.dto';
 
 @Injectable()
 export class CharacterService {

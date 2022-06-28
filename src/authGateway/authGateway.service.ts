@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
-import { IAuthProfile } from './interfaces/profile.interface';
 import { firstValueFrom } from 'rxjs';
 import { AxiosResponse } from 'axios';
+import { IAuthProfile } from './authGateway.interface';
 
 @Injectable()
 export class AuthGatewayService {

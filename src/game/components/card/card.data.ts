@@ -1,13 +1,13 @@
-import { EffectName } from 'src/game/effects/interfaces/baseEffect';
+import { EffectName } from 'src/game/effects/effects.enum';
+import { CardRarityEnum, CardTypeEnum, CardTargetedEnum } from './card.enum';
 import { Card } from './card.schema';
-import { CardRarityEnum, CardTargetedEnum, CardTypeEnum } from './enums';
 
 export const Cards: Card[] = [
     {
-        card_id: 1,
+        cardId: 1,
         name: 'Attack',
         rarity: CardRarityEnum.Starter,
-        card_type: CardTypeEnum.Attack,
+        cardType: CardTypeEnum.Attack,
         pool: 'knight',
         energy: 1,
         description: 'Deal 5 Damage',
@@ -20,17 +20,18 @@ export const Cards: Card[] = [
                         base_value: 5,
                         calculated_value: 5,
                         targeted: CardTargetedEnum.Enemy,
+                        times: 1,
                     },
                 },
             ],
-            statuses: {},
+            statuses: [],
         },
     },
     {
-        card_id: 2,
+        cardId: 2,
         name: 'Attack+',
         rarity: CardRarityEnum.Starter,
-        card_type: CardTypeEnum.Attack,
+        cardType: CardTypeEnum.Attack,
         pool: 'knight',
         energy: 1,
         description: 'Deal 8 Damage',
@@ -43,17 +44,18 @@ export const Cards: Card[] = [
                         base_value: 8,
                         calculated_value: 8,
                         targeted: CardTargetedEnum.Enemy,
+                        times: 1,
                     },
                 },
             ],
-            statuses: {},
+            statuses: [],
         },
     },
     {
-        card_id: 13,
+        cardId: 13,
         name: 'Lunge',
         rarity: CardRarityEnum.Common,
-        card_type: CardTypeEnum.Attack,
+        cardType: CardTypeEnum.Attack,
         pool: 'knight',
         energy: 1,
         description: 'Deal 4 damage twice\nDraw 1 card',
@@ -72,18 +74,21 @@ export const Cards: Card[] = [
                 {
                     name: EffectName.DrawCard,
                     args: {
-                        cards_to_take: 1,
+                        base_value: 2,
+                        calculated_value: 2,
+                        targeted: CardTargetedEnum.Player,
+                        times: 1,
                     },
                 },
             ],
-            statuses: {},
+            statuses: [],
         },
     },
     {
-        card_id: 14,
+        cardId: 14,
         name: 'Lunge+',
         rarity: CardRarityEnum.Common,
-        card_type: CardTypeEnum.Attack,
+        cardType: CardTypeEnum.Attack,
         pool: 'knight',
         energy: 1,
         description: 'Deal 4 damage twice\nDraw 2 card',
@@ -102,11 +107,14 @@ export const Cards: Card[] = [
                 {
                     name: EffectName.DrawCard,
                     args: {
-                        cards_to_take: 2,
+                        base_value: 3,
+                        calculated_value: 3,
+                        targeted: CardTargetedEnum.Player,
+                        times: 1,
                     },
                 },
             ],
-            statuses: {},
+            statuses: [],
         },
     },
 ];
