@@ -83,6 +83,6 @@ export interface IExpeditionCurrentNodeDataEnemy {
     type: EnemyTypeEnum;
     category: EnemyCategoryEnum;
     size: EnemySizeEnum;
-    hpMin: 9;
-    hpMax: 12;
+    hpMin: number;
+    hpMax: number;
 }
