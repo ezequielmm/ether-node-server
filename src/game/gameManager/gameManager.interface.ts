@@ -1,5 +1,5 @@
 import { ErrorBehavior } from 'src/socket/custom.exception';
-import { SerializeType } from './../../response/activityLog';
+import { SerializeType } from '../response/activityLog';
 
 export interface ActionError {
     message?: string;

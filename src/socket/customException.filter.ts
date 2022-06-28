@@ -1,6 +1,8 @@
 import { Catch, ArgumentsHost, Logger } from '@nestjs/common';
 import { BaseWsExceptionFilter } from '@nestjs/websockets';
 import { Socket } from 'socket.io';
+import { ActionError } from 'src/game/gameManager/gameManager.interface';
+import { GameManagerService } from 'src/game/gameManager/gameManager.service';
 import { CustomException, ErrorBehavior } from './custom.exception';
 
 @Catch()
