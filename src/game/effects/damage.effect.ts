@@ -13,7 +13,6 @@ export class DamageEffect implements IBaseEffect {
     async handle(payload: DamageDTO): Promise<void> {
         const { client_id, times, calculated_value, targeted, targeted_id } =
             payload;
-        console.log(payload);
         // TODO: Triger damage attempted event
 
         for (let i = 0; i < (times || 1); i++) {
@@ -86,14 +85,13 @@ export class DamageEffect implements IBaseEffect {
         })[0];
 
         // Calculate true damage
-        const trueDamage = damage - (defense || 0);
+        const trueDamage = damage - Math.max(defense, 0);
 
         // If damage is less or equal to 0, trigger damage negated event
         // TODO: Trigger damage negated event
 
         // Calculate new hp
         const newHp = Math.max(0, hpMin - trueDamage);
-        console.log({ newHp, hpMin, trueDamage, damage, defense });
 
         // If new hp is less or equal than 0,  trigger death event
         // TODO: Trigger death effect event
