@@ -7,6 +7,9 @@ import {
     SWARMessageType,
 } from 'src/game/standardResponse/standardResponse';
 import { GetEnergyAction } from 'src/game/action/getEnergy.action';
+import { GetCardPilesAction } from 'src/game/action/getCardPiles.action';
+import { GetEnemiesAction } from 'src/game/action/getEnemies.action';
+import { GetPlayerInfoAction } from 'src/game/action/getPlayerInfo.action';
 
 @WebSocketGateway({
     cors: {
@@ -16,7 +19,12 @@ import { GetEnergyAction } from 'src/game/action/getEnergy.action';
 export class CombatGateway {
     private readonly logger: Logger = new Logger(CombatGateway.name);
 
-    constructor(private readonly getEnergyAction: GetEnergyAction) {}
+    constructor(
+        private readonly getEnergyAction: GetEnergyAction,
+        private readonly getCardPilesAction: GetCardPilesAction,
+        private readonly getEnemiesAction: GetEnemiesAction,
+        private readonly getPlayerInfoAction: GetPlayerInfoAction,
+    ) {}
 
     @SubscribeMessage('EndTurn')
     async handleEndTurn(client: Socket): Promise<void> {
@@ -46,15 +54,15 @@ export class CombatGateway {
                     break;
 
                 case DataWSRequestTypesEnum.CardsPiles:
-                    data = 'CardsPiles';
+                    data = await this.getCardPilesAction.handle(client.id);
                     break;
 
                 case DataWSRequestTypesEnum.Enemies:
-                    data = 'Enemies';
+                    data = await this.getEnemiesAction.handle(client.id);
                     break;
 
                 case DataWSRequestTypesEnum.Players:
-                    data = 'Players';
+                    data = await this.getPlayerInfoAction.handle(client.id);
                     break;
             }
 
