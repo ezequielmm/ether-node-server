@@ -1,9 +1,10 @@
 import { Card } from '../card/card.schema';
-import { EnemyDocument } from '../enemy/enemy.schema';
+import { Enemy } from '../enemy/enemy.schema';
 import {
     ExpeditionMapNodeTypeEnum,
     ExpeditionMapNodeStatusEnum,
 } from './expedition.enum';
+import { Expedition } from './expedition.schema';
 
 export interface IExpeditionNode {
     readonly id: number;
@@ -16,7 +17,7 @@ export interface IExpeditionNode {
     readonly type: ExpeditionMapNodeTypeEnum;
     readonly subType: ExpeditionMapNodeTypeEnum;
     readonly status: ExpeditionMapNodeStatusEnum;
-    readonly exits: Array<number>;
+    readonly exits: number[];
     readonly enter: number[];
     readonly private_data: any;
     state?: any;
@@ -27,7 +28,7 @@ export interface IExpeditionPlayerStateDeckCard extends Card {
     isTemporary: boolean;
 }
 
-export interface IExpeditionCurrentNodeDataEnemy extends EnemyDocument {
+export interface IExpeditionCurrentNodeDataEnemy extends Enemy {
     effects: [];
 }
 
@@ -38,3 +39,5 @@ export interface IExpeditionStatusResponse {
 export interface IExpeditionCreatedResponse {
     readonly createdExpedition: boolean;
 }
+
+export type IExpeditionCurrentNode = Expedition['currentNode'];

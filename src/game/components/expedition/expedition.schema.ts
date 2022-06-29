@@ -39,15 +39,15 @@ export class Expedition {
 
     @Prop({ type: Object })
     currentNode?: {
-        node_id: number;
-        node_type: ExpeditionMapNodeTypeEnum;
+        nodeId: number;
+        nodeType: ExpeditionMapNodeTypeEnum;
         completed: boolean;
         data?: {
             round: number;
             player: {
                 energy: number;
-                energy_max?: number;
-                hand_size: number;
+                energyMax?: number;
+                handSize: number;
                 defense: number;
                 cards: {
                     hand: IExpeditionPlayerStateDeckCard[];

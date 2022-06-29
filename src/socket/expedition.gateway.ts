@@ -1,6 +1,7 @@
 import { SubscribeMessage, WebSocketGateway } from '@nestjs/websockets';
 import { Logger } from '@nestjs/common';
 import { Socket } from 'socket.io';
+import { NodeSelectedProcess } from 'src/game/process/nodeSelected.process';
 
 @WebSocketGateway({
     cors: {
@@ -9,6 +10,8 @@ import { Socket } from 'socket.io';
 })
 export class ExpeditionGateway {
     private readonly logger: Logger = new Logger(ExpeditionGateway.name);
+
+    constructor(private readonly nodeSelectedProcess: NodeSelectedProcess) {}
 
     @SubscribeMessage('SyncExpedition')
     async handleSyncExpedition(client: Socket): Promise<void> {
@@ -21,8 +24,14 @@ export class ExpeditionGateway {
             `Client ${client.id} trigger message "NodeSelected": ${node_id}`,
         );
 
-        console.log(node_id);
-
-        return '';
+        try {
+            return await this.nodeSelectedProcess.handle(client, node_id);
+        } catch (e) {
+            this.logger.error(e.message);
+            this.logger.error(e.trace);
+            client.emit('ErrorMessage', {
+                message: `${client.id} error has ocurred selecting the node ${node_id}`,
+            });
+        }
     }
 }
