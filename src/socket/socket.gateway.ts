@@ -66,6 +66,10 @@ export class SocketGateway
                 this.logger.error(
                     `There is no expedition in progress for this player: ${client.id}`,
                 );
+                await this.expeditionService.updateClientId({
+                    clientId: null,
+                    playerId,
+                });
                 client.disconnect(true);
             }
         } catch (e) {
