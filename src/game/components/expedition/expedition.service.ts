@@ -10,6 +10,7 @@ import {
     GetExpeditionMapDTO,
     GetExpeditionMapNodeDTO,
     playerHasAnExpeditionDTO,
+    SetCombatTurnDTO,
     UpdateClientIdDTO,
     UpdateExpeditionDTO,
 } from './expedition.dto';
@@ -41,11 +42,10 @@ export class ExpeditionService {
     }
 
     async update(payload: UpdateExpeditionDTO): Promise<ExpeditionDocument> {
-        const { clientId, playerId } = payload;
+        const { clientId } = payload;
         return await this.expedition.findOneAndUpdate(
             {
                 clientId,
-                playerId,
             },
             payload,
             { new: true },
@@ -78,14 +78,10 @@ export class ExpeditionService {
         const { clientId, nodeId } = payload;
 
         const { map } = await this.expedition
-            .findOne({
-                clientId,
-                'map.id': nodeId,
-            })
+            .findOne({ clientId })
             .select('map')
             .lean();
 
-        //TODO: throw error if there is no expedition
         if (!map) return null;
         return restoreMap(map, clientId).fullCurrentMap.get(nodeId);
     }
@@ -114,5 +110,23 @@ export class ExpeditionService {
             .lean();
 
         return cards;
+    }
+
+    async setCombatTurn(
+        payload: SetCombatTurnDTO,
+    ): Promise<ExpeditionDocument> {
+        const { clientId, newRound } = payload;
+        return await this.expedition.findOneAndUpdate(
+            {
+                clientId,
+                status: ExpeditionStatusEnum.InProgress,
+            },
+            {
+                $set: {
+                    'currentNode.data.round': newRound,
+                },
+            },
+            { new: true },
+        );
     }
 }

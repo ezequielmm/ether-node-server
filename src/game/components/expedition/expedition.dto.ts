@@ -17,3 +17,7 @@ export type GetDeckCardsDTO = BaseDTO;
 export interface GetExpeditionMapNodeDTO extends BaseDTO {
     nodeId: number;
 }
+
+export interface SetCombatTurnDTO extends BaseDTO {
+    newRound: number;
+}

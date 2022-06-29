@@ -9,6 +9,7 @@ import {
     SWARAction,
 } from '../standardResponse/standardResponse';
 import { CurrentNodeGeneratorProcess } from './currentNodeGenerator.process';
+import { InitCombatProcess } from './initCombat.process';
 
 @Injectable()
 export class NodeSelectedProcess {
@@ -17,6 +18,7 @@ export class NodeSelectedProcess {
     constructor(
         private readonly expeditionService: ExpeditionService,
         private readonly currentNodeGeneratorProcess: CurrentNodeGeneratorProcess,
+        private readonly initCombatProcess: InitCombatProcess,
     ) {}
 
     async handle(client: Socket, node_id: number): Promise<string> {
@@ -81,7 +83,7 @@ export class NodeSelectedProcess {
                         `Sent message InitCombat to client ${client.id}`,
                     );
 
-                    //await this.initCombatProcess.process(client);
+                    await this.initCombatProcess.process(client);
 
                     break;
                 default:
@@ -94,6 +96,24 @@ export class NodeSelectedProcess {
             }
 
             return JSON.stringify(response);
+        } else {
+            const nodeTypes = Object.values(ExpeditionMapNodeTypeEnum);
+            const combatNodes = nodeTypes.filter(
+                (node) => node.search('combat') !== -1,
+            );
+
+            if (combatNodes.includes(node.type)) {
+                this.logger.log(
+                    `Sent message InitCombat to client ${client.id}`,
+                );
+
+                await this.initCombatProcess.process(client);
+            } else {
+                this.logger.error('Selected node is not available');
+                client.emit('ErrorMessage', {
+                    message: `An Error has ocurred selecting the node`,
+                });
+            }
         }
     }
 }

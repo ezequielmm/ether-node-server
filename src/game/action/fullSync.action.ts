@@ -60,12 +60,10 @@ export class FullSyncAction {
         );
 
         if (currentNode !== undefined) {
-            const {
-                nodeType,
-                data: { round },
-            } = currentNode;
+            const { nodeType, data } = currentNode;
 
-            if (round !== undefined) {
+            if (data !== undefined) {
+                const { round } = data;
                 const nodeTypes = Object.values(ExpeditionMapNodeTypeEnum);
                 const combatNodes = nodeTypes.filter(
                     (node) => node.search('combat') !== -1,

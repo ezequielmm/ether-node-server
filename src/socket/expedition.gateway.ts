@@ -28,9 +28,8 @@ export class ExpeditionGateway {
             return await this.nodeSelectedProcess.handle(client, node_id);
         } catch (e) {
             this.logger.error(e.message);
-            this.logger.error(e.trace);
             client.emit('ErrorMessage', {
-                message: `${client.id} error has ocurred selecting the node ${node_id}`,
+                message: `An Error has ocurred selecting the node`,
             });
         }
     }
