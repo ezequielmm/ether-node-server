@@ -58,7 +58,7 @@ export class ExpeditionService {
             {
                 [field]: clientId,
             },
-            { $set: { payload } },
+            payload,
             { new: true },
         );
     }
