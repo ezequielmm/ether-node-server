@@ -1,3 +1,8 @@
+import { ExpeditionMapNodeTypeEnum } from 'src/game/components/expedition/expedition.enum';
+import nodeFactory from '..';
+import ExpeditionMap from '../../map/expeditionMap';
+import Combat from './combat';
+
 class CombatBoss extends Combat {
     constructor(
         id: number,

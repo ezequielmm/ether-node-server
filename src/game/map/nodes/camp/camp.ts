@@ -1,6 +1,10 @@
-import { ExpeditionMapNodeTypeEnum, ExpeditionStatusEnum } from 'src/game/components/expedition/expedition.enum';
+import {
+    ExpeditionMapNodeTypeEnum,
+    ExpeditionStatusEnum,
+} from 'src/game/components/expedition/expedition.enum';
 import { Activity } from 'src/game/elements/prototypes/activity';
 import { getApp } from 'src/main';
+import Node from '../node';
 
 class Camp extends Node {
     constructor(

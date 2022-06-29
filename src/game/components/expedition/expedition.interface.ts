@@ -1,4 +1,4 @@
-import { CardDocument } from '../card/card.schema';
+import { Card } from '../card/card.schema';
 import { EnemyDocument } from '../enemy/enemy.schema';
 import {
     ExpeditionMapNodeTypeEnum,
@@ -22,9 +22,9 @@ export interface IExpeditionNode {
     state?: any;
 }
 
-export interface IExpeditionPlayerStateDeckCard extends CardDocument {
+export interface IExpeditionPlayerStateDeckCard extends Card {
     id: string;
-    is_temporary: boolean;
+    isTemporary: boolean;
 }
 
 export interface IExpeditionCurrentNodeDataEnemy extends EnemyDocument {

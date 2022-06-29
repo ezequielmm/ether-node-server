@@ -1,4 +1,5 @@
 import { ExpeditionMapNodeTypeEnum } from 'src/game/components/expedition/expedition.enum';
+import ExpeditionMap from '../../map/expeditionMap';
 import Node from '../node';
 
 class Portal extends Node {

@@ -15,7 +15,7 @@ export type ExpeditionDocument = Expedition & Document;
 @Schema()
 export class Expedition {
     @Prop()
-    clientId: string;
+    clientId?: string;
 
     @Prop()
     playerId: number;
@@ -30,17 +30,15 @@ export class Expedition {
         hpMax: number;
         hpCurrent: number;
         gold: number;
-        potions: [];
-        trinkets: [];
+        potions?: [];
+        trinkets?: [];
         createdAt: Date;
-        deck: {
-            cards: IExpeditionPlayerStateDeckCard[];
-        };
+        cards: IExpeditionPlayerStateDeckCard[];
         stoppedAt?: Date;
     };
 
     @Prop({ type: Object })
-    currentNode: {
+    currentNode?: {
         node_id: number;
         node_type: ExpeditionMapNodeTypeEnum;
         completed: boolean;

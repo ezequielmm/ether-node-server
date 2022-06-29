@@ -3,6 +3,7 @@ import {
     ExpeditionMapNodeStatusEnum,
 } from 'src/game/components/expedition/expedition.enum';
 import { IExpeditionNode } from 'src/game/components/expedition/expedition.interface';
+import ExpeditionMap from '../map/expeditionMap';
 
 class Node implements IExpeditionNode {
     public id: number;

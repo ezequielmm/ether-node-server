@@ -7,6 +7,7 @@ import {
     HttpException,
     HttpStatus,
     Res,
+    Post,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '../guards/auth.guard';
@@ -19,6 +20,7 @@ import {
     IExpeditionStatusResponse,
 } from 'src/game/components/expedition/expedition.interface';
 import { CharacterClassEnum } from 'src/game/components/character/character.enum';
+import { ExpeditionStatusEnum } from 'src/game/components/expedition/expedition.enum';
 
 @ApiBearerAuth()
 @ApiTags('Expedition')
@@ -98,6 +100,37 @@ export class ExpeditionController {
                 });
 
                 const map = this.expeditionService.getMap();
+
+                await this.expeditionService.create({
+                    playerId,
+                    map,
+                    playerState: {
+                        playerName,
+                        characterClass: character.characterClass,
+                        hpMax: character.initialHealth,
+                        hpCurrent: character.initialHealth,
+                        gold: character.initialGold,
+                        cards: cards.map((card) => ({
+                            cardId: card.cardId,
+                            id: card._id.toString(),
+                            name: card.name,
+                            description: card.description,
+                            rarity: card.rarity,
+                            energy: card.energy,
+                            cardType: card.cardType,
+                            pool: card.pool,
+                            properties: card.properties,
+                            keywords: card.keywords,
+                            isTemporary: false,
+                        })),
+                        createdAt: new Date(),
+                    },
+                    status: ExpeditionStatusEnum.InProgress,
+                });
+
+                return response
+                    .status(HttpStatus.CREATED)
+                    .send({ data: { expeditionCreated: true } });
             }
         } catch (e) {
             this.logger.error(e.stack);

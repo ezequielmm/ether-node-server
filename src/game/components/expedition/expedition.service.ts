@@ -4,10 +4,13 @@ import { Model } from 'mongoose';
 import { Expedition, ExpeditionDocument } from './expedition.schema';
 import { CardService } from '../card/card.service';
 import {
+    CreateExpeditionDTO,
     FindOneExpeditionDTO,
     playerHasAnExpeditionDTO,
 } from './expedition.dto';
 import { ExpeditionStatusEnum } from './expedition.enum';
+import { IExpeditionNode } from './expedition.interface';
+import { generateMap } from 'src/game/map/app';
 
 @Injectable()
 export class ExpeditionService {
@@ -25,6 +28,10 @@ export class ExpeditionService {
         });
     }
 
+    async create(payload: CreateExpeditionDTO): Promise<ExpeditionDocument> {
+        return await this.expedition.create(payload);
+    }
+
     async playerHasExpeditionInProgress(
         payload: playerHasAnExpeditionDTO,
     ): Promise<boolean> {
@@ -33,5 +40,10 @@ export class ExpeditionService {
             status: ExpeditionStatusEnum.InProgress,
         });
         return item !== null;
+    }
+
+    getMap(): IExpeditionNode[] {
+        const { getMap } = generateMap();
+        return getMap;
     }
 }
