@@ -267,8 +267,8 @@ export const Cards: Card[] = [
                 {
                     name: EffectName.Damage,
                     args: {
-                        baseValue: Number.NaN, // Value is calculated in the effect
-                        calculatedValue: Number.NaN, // Value is calculated in the effect
+                        baseValue: 0, // Value is calculated in the effect
+                        calculatedValue: 0, // Value is calculated in the effect
                         targeted: CardTargetedEnum.Enemy,
                         times: 1,
                     },
@@ -291,8 +291,8 @@ export const Cards: Card[] = [
                 {
                     name: EffectName.Damage,
                     args: {
-                        baseValue: Number.NaN, // Value is calculated in the effect
-                        calculatedValue: Number.NaN, // Value is calculated in the effect
+                        baseValue: 0, // Value is calculated in the effect
+                        calculatedValue: 0, // Value is calculated in the effect
                         targeted: CardTargetedEnum.Enemy,
                         times: 2,
                     },
