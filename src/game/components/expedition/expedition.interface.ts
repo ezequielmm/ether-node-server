@@ -37,7 +37,7 @@ export interface IExpeditionStatusResponse {
 }
 
 export interface IExpeditionCreatedResponse {
-    readonly createdExpedition: boolean;
+    readonly expeditionCreated: boolean;
 }
 
 export interface IExpeditionCancelledResponse {

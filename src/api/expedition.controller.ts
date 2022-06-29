@@ -6,7 +6,6 @@ import {
     Headers,
     HttpException,
     HttpStatus,
-    Res,
     Post,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
@@ -41,6 +40,8 @@ export class ExpeditionController {
     async handleGetExpeditionStatus(
         @Headers() headers,
     ): Promise<IExpeditionStatusResponse> {
+        this.logger.log(`Client called route "/status"`);
+
         const { authorization } = headers;
 
         try {
@@ -74,8 +75,9 @@ export class ExpeditionController {
     @Post()
     async handleCreateExpedition(
         @Headers() headers,
-        @Res() response,
     ): Promise<IExpeditionCreatedResponse> {
+        this.logger.log(`Client called route "/"`);
+
         const { authorization } = headers;
 
         try {
@@ -96,9 +98,9 @@ export class ExpeditionController {
                     playerName,
                 });
 
-                return response
-                    .status(HttpStatus.CREATED)
-                    .send({ data: { expeditionCreated: true } });
+                return { expeditionCreated: true };
+            } else {
+                return { expeditionCreated: true };
             }
         } catch (e) {
             this.logger.error(e.stack);
@@ -118,8 +120,9 @@ export class ExpeditionController {
     @Post('/cancel')
     async handleCancelExpedition(
         @Headers() headers,
-        @Res() response,
     ): Promise<IExpeditionCancelledResponse> {
+        this.logger.log(`Client called route "/cancel"`);
+
         const { authorization } = headers;
 
         try {
@@ -139,15 +142,9 @@ export class ExpeditionController {
                     status: ExpeditionStatusEnum.Canceled,
                 });
 
-                return response
-                    .status(HttpStatus.OK)
-                    .send({ data: { expeditionCancelled: true } });
+                return { canceledExpedition: true };
             } else {
-                return response.status(HttpStatus.OK).send({
-                    data: {
-                        message: 'Player has no expedition in progress',
-                    },
-                });
+                return { canceledExpedition: false };
             }
         } catch (e) {
             this.logger.error(e.stack);
