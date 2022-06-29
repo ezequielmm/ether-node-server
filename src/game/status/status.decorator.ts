@@ -1,7 +1,7 @@
 import { STATUS_METADATA } from './contants';
-import { StatusConfig } from './interfaces';
+import { StatusMetadata } from './interfaces';
 
-export function Status(status: StatusConfig): ClassDecorator {
+export function Status(status: StatusMetadata): ClassDecorator {
     return (target) => {
         Reflect.defineMetadata(STATUS_METADATA, status, target);
     };

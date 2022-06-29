@@ -1,23 +1,58 @@
 import { Injectable } from '@nestjs/common';
 import { ModulesContainer } from '@nestjs/core';
 import { InstanceWrapper } from '@nestjs/core/injector/instance-wrapper';
+import { clone } from 'lodash';
+import { BaseEffectDTO } from '../effects/dto';
+import { EffectName } from '../effects/interfaces/baseEffect';
 import { STATUS_METADATA } from './contants';
-import { IBaseStatus, StatusJson } from './interfaces';
+import {
+    IBaseStatus,
+    StatusMetadata,
+    StatusJson,
+    StatusType,
+    StatusName,
+} from './interfaces';
+
+type StatusesItem = {
+    [key in StatusType]: { name: StatusName; instance: IBaseStatus }[];
+};
+
+type StatusDictionary = Map<EffectName, StatusesItem>;
 
 @Injectable()
 export class StatusService {
-    private cache: Map<string, IBaseStatus>;
+    private cache: StatusDictionary;
 
     constructor(private readonly modulesContainer: ModulesContainer) {}
 
-    async process(client_id: string, statuses: StatusJson[]): Promise<void> {
-        for (const { name, args } of statuses) {
-            await this.getStatusByName(name).handle({ ...args, client_id });
+    async process(
+        statuses: StatusJson[],
+        effect: EffectName,
+        dto: BaseEffectDTO,
+    ): Promise<BaseEffectDTO> {
+        const statusesByEffect = this.getStatusesByEffect(effect);
+        let result = dto;
+
+        for (const status of [
+            // Start with buff statuses
+            ...statusesByEffect.buff,
+            // Then apply debuff statuses
+            ...statusesByEffect.debuff,
+        ]) {
+            // Check if status is in the list of statuses
+            const json = statuses.find(
+                (statusJson) => statusJson.name == status.name,
+            );
+            if (json) {
+                result = await status.instance.handle(clone(result), json.args);
+            }
         }
+
+        return result;
     }
 
-    private getStatusByName(name: string): IBaseStatus {
-        const status = this.getAllStatusProivders().get(name);
+    private getStatusesByEffect(name: EffectName): StatusesItem {
+        const status = this.getStatusProviders().get(name);
 
         if (status === undefined) {
             throw new Error(`Status ${name} not found`);
@@ -26,38 +61,53 @@ export class StatusService {
         return status;
     }
 
-    private getAllStatusProivders(): Map<string, IBaseStatus> {
+    private getStatusProviders(): StatusDictionary {
         if (this.cache != undefined) {
             return this.cache;
         }
 
-        const statuses: Map<string, IBaseStatus> = new Map();
+        const dictonary: StatusDictionary = new Map();
+
         for (const module of this.modulesContainer.values()) {
             module.providers.forEach((provider) => {
                 if (this.isStatusProvider(provider)) {
-                    const name = this.getStatusNameMetadata(provider.metatype);
+                    const metadata = this.getStatusMetadata(provider.metatype);
 
-                    if (statuses.has(name)) {
-                        throw new Error(`Effect ${name} already exists`);
+                    for (const effect of metadata.effects) {
+                        const status = provider.instance as IBaseStatus;
+                        const type = metadata.type;
+
+                        if (!dictonary.has(effect)) {
+                            dictonary.set(effect, {
+                                [StatusType.Buff]: [],
+                                [StatusType.Debuff]: [],
+                            });
+                        }
+
+                        dictonary.get(effect)[type].push({
+                            name: metadata.name,
+                            instance: status,
+                        });
                     }
-
-                    statuses.set(name, provider.instance as IBaseStatus);
                 }
             });
         }
 
-        return statuses;
+        return dictonary;
     }
 
     private isStatusProvider(provider: InstanceWrapper<any>) {
-        return (
-            provider.instance &&
-            typeof provider.instance?.handle == 'function' &&
-            this.getStatusNameMetadata(provider.metatype)
-        );
+        if (!provider || !provider.instance || !provider.metatype) {
+            return false;
+        }
+
+        const statusMetadata = this.getStatusMetadata(provider.metatype);
+        const statusInstance = provider.instance as IBaseStatus;
+
+        return typeof statusInstance?.handle == 'function' && statusMetadata;
     }
 
-    private getStatusNameMetadata(object: any): string {
+    private getStatusMetadata(object: any): StatusMetadata {
         return Reflect.getMetadata(STATUS_METADATA, object);
     }
 }
