@@ -13,6 +13,7 @@ export class UpdateExpeditionDTO extends PartialType(CreateExpeditionDTO) {}
 export type UpdateClientIdDTO = BaseDTO;
 export type GetExpeditionMapDTO = BaseDTO;
 export type GetDeckCardsDTO = BaseDTO;
+export type GetCurrentNodeDTO = BaseDTO;
 
 export interface GetExpeditionMapNodeDTO extends BaseDTO {
     nodeId: number;

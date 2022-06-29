@@ -6,6 +6,7 @@ import { CardService } from '../card/card.service';
 import {
     CreateExpeditionDTO,
     FindOneExpeditionDTO,
+    GetCurrentNodeDTO,
     GetDeckCardsDTO,
     GetExpeditionMapDTO,
     GetExpeditionMapNodeDTO,
@@ -16,6 +17,7 @@ import {
 } from './expedition.dto';
 import { ExpeditionStatusEnum } from './expedition.enum';
 import {
+    IExpeditionCurrentNode,
     IExpeditionNode,
     IExpeditionPlayerStateDeckCard,
 } from './expedition.interface';
@@ -106,7 +108,7 @@ export class ExpeditionService {
             playerState: { cards },
         } = await this.expedition
             .findOne(payload)
-            .select('playerState.deck')
+            .select('playerState.cards')
             .lean();
 
         return cards;
@@ -128,5 +130,16 @@ export class ExpeditionService {
             },
             { new: true },
         );
+    }
+
+    async getCurrentNode(
+        payload: GetCurrentNodeDTO,
+    ): Promise<IExpeditionCurrentNode> {
+        const { clientId } = payload;
+        const { currentNode } = await this.expedition
+            .findOne({ clientId, status: ExpeditionStatusEnum.InProgress })
+            .select('currentNode')
+            .lean();
+        return currentNode;
     }
 }

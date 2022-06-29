@@ -6,6 +6,7 @@ import {
     StandardResponse,
     SWARMessageType,
 } from 'src/game/standardResponse/standardResponse';
+import { GetEnergyAction } from 'src/game/action/getEnergy.action';
 
 @WebSocketGateway({
     cors: {
@@ -14,6 +15,8 @@ import {
 })
 export class CombatGateway {
     private readonly logger: Logger = new Logger(CombatGateway.name);
+
+    constructor(private readonly getEnergyAction: GetEnergyAction) {}
 
     @SubscribeMessage('EndTurn')
     async handleEndTurn(client: Socket): Promise<void> {
@@ -34,32 +37,39 @@ export class CombatGateway {
             `Client ${client.id} trigger message "GetData": ${types}`,
         );
 
-        let data = null;
+        try {
+            let data = null;
 
-        switch (types) {
-            case DataWSRequestTypesEnum.Energy:
-                data = 'Energy';
-                break;
+            switch (types) {
+                case DataWSRequestTypesEnum.Energy:
+                    data = await this.getEnergyAction.handle(client.id);
+                    break;
 
-            case DataWSRequestTypesEnum.CardsPiles:
-                data = 'CardsPiles';
-                break;
+                case DataWSRequestTypesEnum.CardsPiles:
+                    data = 'CardsPiles';
+                    break;
 
-            case DataWSRequestTypesEnum.Enemies:
-                data = 'Enemies';
-                break;
+                case DataWSRequestTypesEnum.Enemies:
+                    data = 'Enemies';
+                    break;
 
-            case DataWSRequestTypesEnum.Players:
-                data = 'Players';
-                break;
+                case DataWSRequestTypesEnum.Players:
+                    data = 'Players';
+                    break;
+            }
+
+            return JSON.stringify(
+                StandardResponse.respond({
+                    message_type: SWARMessageType.GenericData,
+                    action: types,
+                    data,
+                }),
+            );
+        } catch (e) {
+            this.logger.error(e.message);
+            client.emit('ErrorMessage', {
+                message: `An Error has ocurred getting ${types}`,
+            });
         }
-
-        return JSON.stringify(
-            StandardResponse.respond({
-                message_type: SWARMessageType.GenericData,
-                action: types,
-                data,
-            }),
-        );
     }
 }
