@@ -3,7 +3,9 @@ import { ExpeditionModule } from '../components/expedition/expedition.module';
 import { EffectModule } from '../effects/effects.module';
 import { ProcessModule } from '../process/process.module';
 import { CardPlayedAction } from './cardPlayed.action';
+import { DiscardAllCardsAction } from './discardAllCards.action';
 import { DiscardCardAction } from './discardCard.action';
+import { EndturnAction } from './endTurn.action';
 import { FullSyncAction } from './fullSync.action';
 import { GetCardPilesAction } from './getCardPiles.action';
 import { GetEnemiesAction } from './getEnemies.action';
@@ -24,6 +26,8 @@ import { UpdatePlayerEnergyAction } from './updatePlayerEnergy.action';
         CardPlayedAction,
         UpdatePlayerEnergyAction,
         DiscardCardAction,
+        DiscardAllCardsAction,
+        EndturnAction,
     ],
     exports: [
         FullSyncAction,
@@ -35,6 +39,8 @@ import { UpdatePlayerEnergyAction } from './updatePlayerEnergy.action';
         CardPlayedAction,
         UpdatePlayerEnergyAction,
         DiscardCardAction,
+        DiscardAllCardsAction,
+        EndturnAction,
     ],
 })
 export class ActionModule {}
