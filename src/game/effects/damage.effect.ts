@@ -42,12 +42,15 @@ export class DamageEffect implements IBaseEffect {
             clientId: clientId,
         });
 
-        enemies.map((enemy) => {
+        enemies.forEach((enemy) => {
             const field = typeof targetId === 'string' ? 'id' : 'enemyId';
 
             if (enemy[field] === targetId) {
                 // Calculate true damage
-                const trueDamage = damage - Math.max(enemy.defense, 0);
+                const trueDamage = Math.max(
+                    damage - Math.max(enemy.defense, 0),
+                    0,
+                );
 
                 // If damage is less or equal to 0, trigger damage negated event
                 // TODO: Trigger damage negated event
@@ -60,7 +63,7 @@ export class DamageEffect implements IBaseEffect {
             }
 
             return enemy;
-        })[0];
+        });
 
         // update enemies array
         await this.expeditionService.updateEnemiesArray({ clientId, enemies });

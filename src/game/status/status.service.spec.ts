@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
-import { BaseEffectDTO } from '../effects/dto';
-import { EffectName } from '../effects/interfaces/baseEffect';
+import { EffectName } from '../effects/effects.enum';
+import { BaseEffectDTO } from '../effects/effects.interface';
 import { IBaseStatus, StatusName, StatusType } from './interfaces';
 import { Status } from './status.decorator';
 import { StatusService } from './status.service';
@@ -49,7 +49,8 @@ describe('StatusService', () => {
 
     it('should call status handle by effect name', async () => {
         const payload: BaseEffectDTO = {
-            client_id: 'test',
+            clientId: 'test',
+            targetId: 'test',
         };
 
         const result = await statusService.process(
@@ -68,7 +69,8 @@ describe('StatusService', () => {
 
     it('should call status handle by effect name by buff-debuff order', async () => {
         const payload: BaseEffectDTO = {
-            client_id: 'test',
+            clientId: 'test',
+            targetId: 'test',
         };
 
         const result = await statusService.process(

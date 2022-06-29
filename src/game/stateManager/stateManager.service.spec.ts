@@ -51,7 +51,7 @@ describe('StateManagerService', () => {
 
         expect(spyOnCreateState).toHaveBeenCalledWith('test');
         expect(mockExpeditionService.findOne).toHaveBeenCalledWith({
-            client_id: 'test',
+            clientId: 'test',
         });
         expect(service.stateCollection).toEqual({
             test: {
