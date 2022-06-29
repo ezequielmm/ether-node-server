@@ -4,6 +4,7 @@ import { Model } from 'mongoose';
 import { Expedition, ExpeditionDocument } from './expedition.schema';
 import { CardService } from '../card/card.service';
 import {
+    CardExistsOnPlayerHandDTO,
     CreateExpeditionDTO,
     FindOneExpeditionDTO,
     GetCurrentNodeDTO,
@@ -14,6 +15,7 @@ import {
     SetCombatTurnDTO,
     UpdateClientIdDTO,
     UpdateExpeditionDTO,
+    UpdatePlayerEnergyDTO,
 } from './expedition.dto';
 import { ExpeditionStatusEnum } from './expedition.enum';
 import {
@@ -22,6 +24,7 @@ import {
     IExpeditionPlayerStateDeckCard,
 } from './expedition.interface';
 import { generateMap, restoreMap } from 'src/game/map/app';
+import { ClientId } from './expedition.type';
 
 @Injectable()
 export class ExpeditionService {
@@ -43,11 +46,15 @@ export class ExpeditionService {
         return await this.expedition.create(payload);
     }
 
-    async update(payload: UpdateExpeditionDTO): Promise<ExpeditionDocument> {
-        const { clientId } = payload;
+    async update(
+        clientId: ClientId,
+        payload: UpdateExpeditionDTO,
+    ): Promise<ExpeditionDocument> {
+        const field = typeof clientId === 'string' ? 'clientId' : 'playerId';
+        delete payload.clientId;
         return await this.expedition.findOneAndUpdate(
             {
-                clientId,
+                [field]: clientId,
             },
             payload,
             { new: true },
@@ -57,8 +64,12 @@ export class ExpeditionService {
     async playerHasExpeditionInProgress(
         payload: playerHasAnExpeditionDTO,
     ): Promise<boolean> {
+        const { clientId } = payload;
+
+        const field = typeof clientId === 'string' ? 'clientId' : 'playerId';
+
         const item = await this.expedition.exists({
-            ...payload,
+            [field]: clientId,
             status: ExpeditionStatusEnum.InProgress,
         });
         return item !== null;
@@ -85,7 +96,8 @@ export class ExpeditionService {
             .lean();
 
         if (!map) return null;
-        return restoreMap(map, clientId).fullCurrentMap.get(nodeId);
+        if (typeof clientId === 'string')
+            return restoreMap(map, clientId).fullCurrentMap.get(nodeId);
     }
 
     async getExpeditionMap(
@@ -98,7 +110,8 @@ export class ExpeditionService {
 
         // TODO: throw error if there is no expedition
         if (!map) return null;
-        return restoreMap(map, payload.clientId).getMap;
+        if (typeof payload.clientId === 'string')
+            return restoreMap(map, payload.clientId).getMap;
     }
 
     async getDeckCards(
@@ -141,5 +154,34 @@ export class ExpeditionService {
             .select('currentNode')
             .lean();
         return currentNode;
+    }
+
+    async cardExistsOnPlayerHand(
+        payload: CardExistsOnPlayerHandDTO,
+    ): Promise<boolean> {
+        const { cardId, clientId } = payload;
+
+        const field =
+            typeof cardId === 'string'
+                ? 'currentNode.data.player.cards.hand.id'
+                : 'currentNode.data.player.cards.hand.cardId';
+
+        const itemExists = await this.expedition.exists({
+            clientId,
+            status: ExpeditionStatusEnum.InProgress,
+            [field]: cardId,
+        });
+        return itemExists !== null;
+    }
+
+    async updatePlayerEnergy(
+        payload: UpdatePlayerEnergyDTO,
+    ): Promise<ExpeditionDocument> {
+        const { clientId, newEnergy } = payload;
+        return this.expedition.findOneAndUpdate(
+            { clientId, status: ExpeditionStatusEnum.InProgress },
+            { 'currentNode.data.player.energy': newEnergy },
+            { new: true },
+        );
     }
 }

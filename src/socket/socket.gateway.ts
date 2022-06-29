@@ -50,7 +50,7 @@ export class SocketGateway
 
             const hasExpedition =
                 await this.expeditionService.playerHasExpeditionInProgress({
-                    playerId,
+                    clientId: playerId,
                 });
 
             if (hasExpedition) {

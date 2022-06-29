@@ -10,6 +10,14 @@ import { GetEnergyAction } from 'src/game/action/getEnergy.action';
 import { GetCardPilesAction } from 'src/game/action/getCardPiles.action';
 import { GetEnemiesAction } from 'src/game/action/getEnemies.action';
 import { GetPlayerInfoAction } from 'src/game/action/getPlayerInfo.action';
+import { CardId } from 'src/game/components/card/card.type';
+import { TargetId } from 'src/game/effects/effects.types';
+import { CardPlayedAction } from 'src/game/action/cardPlayed.action';
+
+interface CardPlayedInterface {
+    cardId: CardId;
+    targetId?: TargetId;
+}
 
 @WebSocketGateway({
     cors: {
@@ -24,6 +32,7 @@ export class CombatGateway {
         private readonly getCardPilesAction: GetCardPilesAction,
         private readonly getEnemiesAction: GetEnemiesAction,
         private readonly getPlayerInfoAction: GetPlayerInfoAction,
+        private readonly cardPlayedAction: CardPlayedAction,
     ) {}
 
     @SubscribeMessage('EndTurn')
@@ -36,7 +45,10 @@ export class CombatGateway {
         this.logger.log(
             `Client ${client.id} trigger message "CardPlayed": ${payload}`,
         );
-        console.log(payload);
+
+        const { cardId, targetId }: CardPlayedInterface = JSON.parse(payload);
+
+        await this.cardPlayedAction.handle({ client, cardId, targetId });
     }
 
     @SubscribeMessage('GetData')

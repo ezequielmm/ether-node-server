@@ -16,6 +16,7 @@ import { CardService } from '../game/components/card/card.service';
 import { CharacterService } from '../game/components/character/character.service';
 import { AuthGatewayService } from 'src/authGateway/authGateway.service';
 import {
+    IExpeditionCancelledResponse,
     IExpeditionCreatedResponse,
     IExpeditionStatusResponse,
 } from 'src/game/components/expedition/expedition.interface';
@@ -54,7 +55,7 @@ export class ExpeditionController {
 
             const hasExpedition =
                 await this.expeditionService.playerHasExpeditionInProgress({
-                    playerId,
+                    clientId: playerId,
                 });
 
             return { hasExpedition };
@@ -89,7 +90,7 @@ export class ExpeditionController {
 
             const hasExpedition =
                 await this.expeditionService.playerHasExpeditionInProgress({
-                    playerId,
+                    clientId: playerId,
                 });
 
             if (!hasExpedition) {
@@ -131,6 +132,55 @@ export class ExpeditionController {
                 return response
                     .status(HttpStatus.CREATED)
                     .send({ data: { expeditionCreated: true } });
+            }
+        } catch (e) {
+            this.logger.error(e.stack);
+            throw new HttpException(
+                {
+                    status: HttpStatus.UNAUTHORIZED,
+                    error: e.message,
+                },
+                HttpStatus.UNAUTHORIZED,
+            );
+        }
+    }
+
+    @ApiOperation({
+        summary: `Cancel the expedition`,
+    })
+    @Post('/cancel')
+    async handleCancelExpedition(
+        @Headers() headers,
+        @Res() response,
+    ): Promise<IExpeditionCancelledResponse> {
+        const { authorization } = headers;
+
+        try {
+            const {
+                data: {
+                    data: { id: playerId },
+                },
+            } = await this.authGatewayService.getUser(authorization);
+
+            const hasExpedition =
+                await this.expeditionService.playerHasExpeditionInProgress({
+                    clientId: playerId,
+                });
+
+            if (hasExpedition) {
+                await this.expeditionService.update(playerId, {
+                    status: ExpeditionStatusEnum.Canceled,
+                });
+
+                return response
+                    .status(HttpStatus.OK)
+                    .send({ data: { expeditionCancelled: true } });
+            } else {
+                return response.status(HttpStatus.OK).send({
+                    data: {
+                        message: 'Player has no expedition in progress',
+                    },
+                });
             }
         } catch (e) {
             this.logger.error(e.stack);

@@ -1,16 +1,20 @@
 import { PartialType } from '@nestjs/mapped-types';
+import { CardId } from '../card/card.type';
 import { Expedition } from './expedition.schema';
+import { ClientId } from './expedition.type';
 
 interface BaseDTO {
-    readonly clientId?: string;
-    readonly playerId?: number;
+    readonly clientId?: ClientId;
 }
 
 export type FindOneExpeditionDTO = BaseDTO;
 export type playerHasAnExpeditionDTO = BaseDTO;
 export class CreateExpeditionDTO extends Expedition implements BaseDTO {}
 export class UpdateExpeditionDTO extends PartialType(CreateExpeditionDTO) {}
-export type UpdateClientIdDTO = BaseDTO;
+export class UpdateClientIdDTO {
+    readonly clientId: string;
+    readonly playerId: number;
+}
 export type GetExpeditionMapDTO = BaseDTO;
 export type GetDeckCardsDTO = BaseDTO;
 export type GetCurrentNodeDTO = BaseDTO;
@@ -21,4 +25,12 @@ export interface GetExpeditionMapNodeDTO extends BaseDTO {
 
 export interface SetCombatTurnDTO extends BaseDTO {
     newRound: number;
+}
+
+export interface CardExistsOnPlayerHandDTO extends BaseDTO {
+    cardId: CardId;
+}
+
+export interface UpdatePlayerEnergyDTO extends BaseDTO {
+    newEnergy: number;
 }

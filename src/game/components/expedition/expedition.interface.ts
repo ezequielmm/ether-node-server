@@ -29,7 +29,7 @@ export interface IExpeditionPlayerStateDeckCard extends Card {
 }
 
 export interface IExpeditionCurrentNodeDataEnemy extends Enemy {
-    effects: [];
+    defense: number;
 }
 
 export interface IExpeditionStatusResponse {
@@ -38,6 +38,10 @@ export interface IExpeditionStatusResponse {
 
 export interface IExpeditionCreatedResponse {
     readonly createdExpedition: boolean;
+}
+
+export interface IExpeditionCancelledResponse {
+    readonly canceledExpedition: boolean;
 }
 
 export type IExpeditionCurrentNode = Expedition['currentNode'];

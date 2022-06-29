@@ -42,11 +42,13 @@ export class NodeSelectedProcess {
                     client.id,
                 );
 
-            const { map: newMap } = await this.expeditionService.update({
-                map: expeditionMap.getMap,
-                clientId: client.id,
-                currentNode,
-            });
+            const { map: newMap } = await this.expeditionService.update(
+                client.id,
+                {
+                    map: expeditionMap.getMap,
+                    currentNode,
+                },
+            );
 
             let response = {};
 

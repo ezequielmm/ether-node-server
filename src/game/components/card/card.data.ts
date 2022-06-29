@@ -17,8 +17,8 @@ export const Cards: Card[] = [
                 {
                     name: EffectName.Damage,
                     args: {
-                        base_value: 5,
-                        calculated_value: 5,
+                        baseValue: 5,
+                        calculatedValue: 5,
                         targeted: CardTargetedEnum.Enemy,
                         times: 1,
                     },
@@ -41,8 +41,8 @@ export const Cards: Card[] = [
                 {
                     name: EffectName.Damage,
                     args: {
-                        base_value: 8,
-                        calculated_value: 8,
+                        baseValue: 8,
+                        calculatedValue: 8,
                         targeted: CardTargetedEnum.Enemy,
                         times: 1,
                     },

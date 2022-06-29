@@ -20,15 +20,15 @@ export class EffectService {
     }
 
     async process(
-        client_id: string,
+        clientId: string,
         effects: JsonEffect[],
-        targetedId?: TargetId,
+        targetId?: TargetId,
     ): Promise<void> {
         for (const { name, args } of effects) {
             await this.getEffectByName(name).handle({
                 ...args,
-                client_id,
-                targetedId,
+                clientId,
+                targetId,
             });
         }
     }
