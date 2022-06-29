@@ -37,7 +37,6 @@ export class ExpeditionService {
     ) {}
 
     async findOne(payload: FindOneExpeditionDTO): Promise<ExpeditionDocument> {
-        payload;
         return await this.expedition.findOne({
             ...payload,
             status: ExpeditionStatusEnum.InProgress,

@@ -48,6 +48,11 @@ export class SocketGateway
                 },
             } = await this.authGatewayService.getUser(authorization);
 
+            await this.expeditionService.updateClientId({
+                clientId: client.id,
+                playerId,
+            });
+
             const hasExpedition =
                 await this.expeditionService.playerHasExpeditionInProgress({
                     clientId: playerId,
@@ -55,11 +60,6 @@ export class SocketGateway
 
             if (hasExpedition) {
                 this.logger.log(`Client connected: ${client.id}`);
-
-                await this.expeditionService.updateClientId({
-                    clientId: client.id,
-                    playerId,
-                });
 
                 await this.fullsyncAction.handle(client);
             } else {
