@@ -1,8 +1,8 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 import { Factory } from 'nestjs-seeder';
-import { PotionRarityEnum } from './enums';
 import { getRandomEnumValue } from 'src/utils';
+import { PotionRarityEnum } from './potion.enum';
 
 export type PotionDocument = Potion & Document;
 

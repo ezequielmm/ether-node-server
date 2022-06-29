@@ -20,9 +20,8 @@ export class Activity {
             // If val type is already set, serialize it if it's an object
             if (stateDelta.val_type) {
                 // Check if val is not a primitive type
-                if (_.isObject(stateDelta.val)) {
+                if (_.isObject(stateDelta.val))
                     stateDelta.val = JSON.stringify(stateDelta.val);
-                }
 
                 continue;
             }

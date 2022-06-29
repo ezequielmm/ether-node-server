@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { ExpeditionModule } from '../expedition/expedition.module';
+import { ExpeditionModule } from '../components/expedition/expedition.module';
 import { StateManagerService } from './stateManager.service';
 
 @Module({

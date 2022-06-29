@@ -1,7 +1,7 @@
 import { Test } from '@nestjs/testing';
-import { ExpeditionStatusEnum } from '../expedition/enums';
 import { StateManagerService } from './stateManager.service';
-import { ExpeditionService } from '../expedition/expedition.service';
+import { ExpeditionService } from '../components/expedition/expedition.service';
+import { ExpeditionStatusEnum } from '../components/expedition/expedition.enum';
 
 describe('StateManagerService', () => {
     let service: StateManagerService;
@@ -51,7 +51,7 @@ describe('StateManagerService', () => {
 
         expect(spyOnCreateState).toHaveBeenCalledWith('test');
         expect(mockExpeditionService.findOne).toHaveBeenCalledWith({
-            client_id: 'test',
+            clientId: 'test',
         });
         expect(service.stateCollection).toEqual({
             test: {

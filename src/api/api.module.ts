@@ -6,8 +6,8 @@ import { TrinketController } from './trinket.controller';
 import { AuthGatewayModule } from '../authGateway/authGateway.module';
 import { CharacterModule } from '../game/components/character/character.module';
 import { TrinketModule } from '../game/components/trinket/trinket.module';
-import { ExpeditionModule } from '../game/expedition/expedition.module';
-import { CardModule } from '../game/components/card/card.module';
+import { ExpeditionModule } from '../game/components/expedition/expedition.module';
+import { ProcessModule } from 'src/game/process/process.module';
 
 @Module({
     imports: [
@@ -15,7 +15,7 @@ import { CardModule } from '../game/components/card/card.module';
         CharacterModule,
         TrinketModule,
         ExpeditionModule,
-        CardModule,
+        ProcessModule,
     ],
     controllers: [
         ProfileController,

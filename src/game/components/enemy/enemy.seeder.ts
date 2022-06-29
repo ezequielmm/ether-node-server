@@ -3,7 +3,7 @@ import { Seeder } from 'nestjs-seeder';
 import { InjectModel } from '@nestjs/mongoose';
 import { Enemy, EnemyDocument } from './enemy.schema';
 import { Model } from 'mongoose';
-import { data } from './enemy.seeder.data';
+import { data } from './enemy.data';
 
 @Injectable()
 export class EnemySeeder implements Seeder {

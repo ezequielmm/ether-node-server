@@ -21,9 +21,8 @@ export class TrinketController {
                 id: trinket._id,
                 name: trinket.name,
                 rarity: trinket.rarity,
-                coin_cost: trinket.coin_cost,
-                effect: trinket.effect,
-                trigger: trinket.trigger,
+                coinCost: trinket.coinCost,
+                effects: trinket.effects,
             };
         });
     }

@@ -1,530 +1,354 @@
+import { EffectName } from 'src/game/effects/effects.enum';
+import { CardRarityEnum, CardTypeEnum, CardTargetedEnum } from './card.enum';
 import { Card } from './card.schema';
-import {
-    CardKeywordEnum,
-    CardRarityEnum,
-    CardTargetedEnum,
-    CardTypeEnum,
-} from './enums';
 
 export const Cards: Card[] = [
     {
+        cardId: 1,
         name: 'Attack',
         rarity: CardRarityEnum.Starter,
-        card_type: CardTypeEnum.Attack,
+        cardType: CardTypeEnum.Attack,
         pool: 'knight',
         energy: 1,
         description: 'Deal 5 Damage',
-        targeted: CardTargetedEnum.Enemy,
         keywords: [],
         properties: {
-            effects: {
-                damage: {
-                    base: 5,
-                    current: 5,
+            effects: [
+                {
+                    name: EffectName.Damage,
+                    args: {
+                        baseValue: 5,
+                        calculatedValue: 5,
+                        targeted: CardTargetedEnum.Enemy,
+                        times: 1,
+                    },
                 },
-            },
-            statuses: {},
+            ],
+            statuses: [],
         },
     },
     {
-        name: 'Defend',
+        cardId: 2,
+        name: 'Attack+',
         rarity: CardRarityEnum.Starter,
-        card_type: CardTypeEnum.Defend,
+        cardType: CardTypeEnum.Attack,
         pool: 'knight',
         energy: 1,
-        description: 'Gain 5 Defense',
-        targeted: CardTargetedEnum.Player,
+        description: 'Deal 8 Damage',
         keywords: [],
         properties: {
-            effects: {
-                defense: {
-                    base: 5,
-                    current: 5,
+            effects: [
+                {
+                    name: EffectName.Damage,
+                    args: {
+                        baseValue: 8,
+                        calculatedValue: 8,
+                        targeted: CardTargetedEnum.Enemy,
+                        times: 1,
+                    },
                 },
-            },
-            statuses: {},
+            ],
+            statuses: [],
         },
     },
     {
-        name: 'Brace',
-        rarity: CardRarityEnum.Starter,
-        card_type: CardTypeEnum.Defend,
+        cardId: 13,
+        name: 'Lunge',
+        rarity: CardRarityEnum.Common,
+        cardType: CardTypeEnum.Attack,
         pool: 'knight',
-        energy: 2,
-        description: 'Gain 8 Defense and 1 Resolve',
-        targeted: CardTargetedEnum.Player,
+        energy: 1,
+        description: 'Deal 4 damage twice.\nDraw 1 card',
         keywords: [],
         properties: {
-            effects: {
-                defense: {
-                    base: 8,
-                    current: 8,
+            effects: [
+                {
+                    name: EffectName.Damage,
+                    args: {
+                        baseValue: 4,
+                        calculatedValue: 4,
+                        targeted: CardTargetedEnum.Enemy,
+                        times: 2,
+                    },
                 },
-            },
-            statuses: {
-                resolve: {
-                    base: 1,
-                    current: 1,
-                },
-            },
+                // TODO: Draw effect (1)
+            ],
+            statuses: [],
         },
     },
     {
+        cardId: 14,
+        name: 'Lunge+',
+        rarity: CardRarityEnum.Common,
+        cardType: CardTypeEnum.Attack,
+        pool: 'knight',
+        energy: 1,
+        description: 'Deal 4 damage twice.\nDraw 2 cards',
+        keywords: [],
+        properties: {
+            effects: [
+                {
+                    name: EffectName.Damage,
+                    args: {
+                        baseValue: 4,
+                        calculatedValue: 4,
+                        targeted: CardTargetedEnum.Enemy,
+                        times: 2,
+                    },
+                },
+                // TODO: Draw effect (2)
+            ],
+            statuses: [],
+        },
+    },
+    {
+        cardId: 7,
         name: 'Counter',
         rarity: CardRarityEnum.Starter,
-        card_type: CardTypeEnum.Attack,
+        cardType: CardTypeEnum.Attack,
         pool: 'knight',
         energy: 1,
         description: 'Deal 4 Damage, Gain 4 Defense',
-        targeted: CardTargetedEnum.Enemy,
         keywords: [],
         properties: {
-            effects: {
-                damage: {
-                    base: 4,
-                    current: 4,
+            effects: [
+                {
+                    name: EffectName.Damage,
+                    args: {
+                        baseValue: 4,
+                        calculatedValue: 4,
+                        targeted: CardTargetedEnum.Enemy,
+                        times: 1,
+                    },
                 },
-                defense: {
-                    base: 4,
-                    current: 4,
-                },
-            },
-            statuses: {},
+                // TODO: Defense effect (4)
+            ],
+            statuses: [],
         },
     },
     {
-        name: 'First Move',
+        cardId: 8,
+        name: 'Counter+',
         rarity: CardRarityEnum.Starter,
-        card_type: CardTypeEnum.Skill,
+        cardType: CardTypeEnum.Attack,
         pool: 'knight',
         energy: 1,
-        description: 'Gain 2 Energy',
-        targeted: CardTargetedEnum.Player,
+        description: 'Deal 7 Damage, Gain 7 Defense',
         keywords: [],
         properties: {
-            effects: {
-                energy: {
-                    base: 2,
-                    current: 2,
+            effects: [
+                {
+                    name: EffectName.Damage,
+                    args: {
+                        baseValue: 7,
+                        calculatedValue: 7,
+                        targeted: CardTargetedEnum.Enemy,
+                        times: 1,
+                    },
                 },
-            },
-            statuses: {},
+                // TODO: Defense effect (7)
+            ],
+            statuses: [],
         },
     },
+
     {
-        name: 'Keg Chug',
-        rarity: CardRarityEnum.Common,
-        card_type: CardTypeEnum.Skill,
-        pool: 'knight',
-        energy: 1,
-        description: 'Draw 2 cards',
-        targeted: CardTargetedEnum.Player,
-        keywords: [],
-        properties: {
-            effects: {
-                energy: {
-                    base: 2,
-                    current: 2,
-                },
-            },
-            statuses: {},
-        },
-    },
-    {
-        name: 'Parry',
-        rarity: CardRarityEnum.Common,
-        card_type: CardTypeEnum.Defend,
-        pool: 'knight',
-        energy: 1,
-        description: 'Gain 5 Defense, Gain 2 Fortitude',
-        targeted: CardTargetedEnum.Player,
-        keywords: [],
-        properties: {
-            effects: {
-                defense: {
-                    base: 5,
-                    current: 5,
-                },
-            },
-            statuses: {
-                fortitude: {
-                    base: 2,
-                    current: 2,
-                },
-            },
-        },
-    },
-    {
-        name: 'Bulk Up',
-        rarity: CardRarityEnum.Common,
-        card_type: CardTypeEnum.Power,
-        pool: 'knight',
-        energy: 2,
-        description: 'Gain 2 Resolve',
-        targeted: CardTargetedEnum.Player,
-        keywords: [],
-        properties: {
-            effects: {},
-            statuses: {
-                resolve: {
-                    base: 2,
-                    current: 2,
-                },
-            },
-        },
-    },
-    {
-        name: 'Anticipate',
-        rarity: CardRarityEnum.Common,
-        card_type: CardTypeEnum.Defend,
-        pool: 'knight',
-        energy: 2,
-        description: 'Gain 8 Defense. Defense carries over to next turn.',
-        targeted: CardTargetedEnum.Player,
-        keywords: [],
-        properties: {
-            effects: {
-                defense: {
-                    base: 8,
-                    current: 8,
-                },
-            },
-            statuses: {},
-        },
-    },
-    {
-        name: 'Bankhand',
-        rarity: CardRarityEnum.Common,
-        card_type: CardTypeEnum.Defend,
-        pool: 'knight',
-        energy: 2,
-        description: 'Deal 10 damage. Inflict 1 Distraught.',
-        targeted: CardTargetedEnum.Enemy,
-        keywords: [],
-        properties: {
-            effects: {
-                damage: {
-                    base: 10,
-                    current: 10,
-                },
-            },
-            statuses: {
-                distraught: {
-                    base: 1,
-                    current: 1,
-                },
-            },
-        },
-    },
-    {
-        name: 'Bluster',
-        rarity: CardRarityEnum.Common,
-        card_type: CardTypeEnum.Skill,
-        pool: 'knight',
-        energy: 0,
-        description: 'Gain 2 energy. Start next turn with 1 less energy.',
-        targeted: CardTargetedEnum.Player,
-        keywords: [],
-        properties: {
-            effects: {
-                energy: {
-                    base: 2,
-                    current: 2,
-                },
-            },
-            statuses: {},
-        },
-    },
-    {
+        cardId: 11,
         name: 'Find Weakness',
         rarity: CardRarityEnum.Uncommon,
-        card_type: CardTypeEnum.Attack,
+        cardType: CardTypeEnum.Attack,
         pool: 'knight',
         energy: 1,
         description: 'Deal 1 damage 1 time. Double these values this combat.',
-        targeted: CardTargetedEnum.Enemy,
         keywords: [],
         properties: {
-            effects: {
-                damage: {
-                    base: 1,
-                    current: 1,
+            effects: [
+                {
+                    name: EffectName.Damage,
+                    args: {
+                        baseValue: 1,
+                        calculatedValue: 1,
+                        targeted: CardTargetedEnum.Enemy,
+                        times: 1,
+                    },
                 },
-            },
-            statuses: {},
-        },
-        merchant_info: {
-            coin_cost: [68, 82],
+                // TODO: Double the values of those numbers for remainder of combat
+                // SEE: https://robotseamonster.atlassian.net/wiki/spaces/KOTE/pages/38633485/Card+Find+Weakness
+            ],
+            statuses: [],
         },
     },
     {
-        name: 'Lunge',
+        cardId: 12,
+        name: 'Find Weakness+',
         rarity: CardRarityEnum.Common,
-        card_type: CardTypeEnum.Attack,
+        cardType: CardTypeEnum.Attack,
         pool: 'knight',
         energy: 1,
-        description: 'Deal 4 damage twice. Draw 1 card.',
-        targeted: CardTargetedEnum.Enemy,
+        description: 'Deal 1 damage 1 time. Double these values this combat.',
         keywords: [],
         properties: {
-            effects: {
-                damage: {
-                    base: 4,
-                    current: 4,
+            effects: [
+                {
+                    name: EffectName.Damage,
+                    args: {
+                        baseValue: 1,
+                        calculatedValue: 1,
+                        targeted: CardTargetedEnum.Enemy,
+                        times: 1,
+                    },
                 },
-                drawCard: {
-                    base: 1,
-                    current: 1,
-                },
-            },
-            statuses: {},
-        },
-        merchant_info: {
-            coin_cost: [45, 55],
+                // TODO: Double the values of those numbers for remainder of combat
+                // SEE: https://robotseamonster.atlassian.net/wiki/spaces/KOTE/pages/38633485/Card+Find+Weakness
+            ],
+            statuses: [],
         },
     },
     {
-        name: 'Turtle',
-        rarity: CardRarityEnum.Common,
-        card_type: CardTypeEnum.Defend,
-        pool: 'knight',
-        energy: 0,
-        description: 'At the end of this turn, double your defense',
-        targeted: CardTargetedEnum.Player,
-        keywords: [],
-        properties: {
-            effects: {},
-            statuses: {
-                turtling: {
-                    base: 1,
-                    current: 1,
-                },
-            },
-        },
-        merchant_info: {
-            coin_cost: [45, 55],
-        },
-    },
-    {
-        name: 'Enflame',
-        rarity: CardRarityEnum.Common,
-        card_type: CardTypeEnum.Power,
-        pool: 'knight',
-        energy: 2,
-        description: 'First Attack each turn will Apply 2 Burn. Exhaust',
-        targeted: CardTargetedEnum.Enemy,
-        keywords: [CardKeywordEnum.Exhaust],
-        properties: {
-            effects: {},
-            statuses: {
-                burn: {
-                    base: 2,
-                    current: 2,
-                },
-            },
-        },
-    },
-    {
+        cardId: 19,
         name: 'Charge',
         rarity: CardRarityEnum.Common,
-        card_type: CardTypeEnum.Attack,
+        cardType: CardTypeEnum.Attack,
         pool: 'knight',
         energy: 1,
         description: 'Deal 6 damage to all enemies.',
-        targeted: CardTargetedEnum.Enemy,
         keywords: [],
         properties: {
-            effects: {
-                damage: {
-                    base: 6,
-                    current: 6,
+            effects: [
+                {
+                    name: EffectName.Damage,
+                    args: {
+                        baseValue: 6,
+                        calculatedValue: 6,
+                        targeted: CardTargetedEnum.AllEnemies,
+                        times: 1,
+                    },
                 },
-            },
-            statuses: {},
+            ],
+            statuses: [],
         },
     },
     {
-        name: 'Plant Feet',
+        cardId: 20,
+        name: 'Charge+',
         rarity: CardRarityEnum.Common,
-        card_type: CardTypeEnum.Defend,
-        pool: 'knight',
-        energy: 0,
-        description:
-            'Gain 2 defense. Doubled each use for the remainder of combat.',
-        targeted: CardTargetedEnum.Player,
-        keywords: [],
-        properties: {
-            effects: {
-                defense: {
-                    base: 2,
-                    current: 2,
-                },
-            },
-            statuses: {},
-        },
-    },
-    {
-        name: 'Pray',
-        rarity: CardRarityEnum.Common,
-        card_type: CardTypeEnum.Skill,
+        cardType: CardTypeEnum.Attack,
         pool: 'knight',
         energy: 1,
-        description:
-            'At the beginning of your next turn gain 1 Resolve and 1 Fortitude.',
-        targeted: CardTargetedEnum.Player,
+        description: 'Deal 9 damage to all enemies.',
         keywords: [],
         properties: {
-            effects: {},
-            statuses: {
-                resolve: {
-                    base: 1,
-                    current: 1,
+            effects: [
+                {
+                    name: EffectName.Damage,
+                    args: {
+                        baseValue: 9,
+                        calculatedValue: 9,
+                        targeted: CardTargetedEnum.AllEnemies,
+                        times: 1,
+                    },
                 },
-                fortitude: {
-                    base: 1,
-                    current: 1,
-                },
-            },
+            ],
+            statuses: [],
         },
     },
+
     {
-        name: 'Intimidate',
+        cardId: 29,
+        name: 'Shield Bash',
         rarity: CardRarityEnum.Common,
-        card_type: CardTypeEnum.Skill,
+        cardType: CardTypeEnum.Attack,
         pool: 'knight',
-        energy: 2,
-        description: 'Inflict Confusion',
-        targeted: CardTargetedEnum.Enemy,
+        energy: 1,
+        description: 'Deal damage equal to your Defense.',
         keywords: [],
         properties: {
-            effects: {},
-            statuses: {
-                confusion: {
-                    base: 1,
-                    current: 2,
+            effects: [
+                {
+                    name: EffectName.Damage,
+                    args: {
+                        baseValue: 0, // Value is calculated in the effect
+                        calculatedValue: 0, // Value is calculated in the effect
+                        targeted: CardTargetedEnum.Enemy,
+                        times: 1,
+                    },
                 },
-            },
+            ],
+            statuses: [],
         },
     },
     {
-        name: 'Hit Punch',
+        cardId: 30,
+        name: 'Shield Bash+',
         rarity: CardRarityEnum.Common,
-        card_type: CardTypeEnum.Attack,
+        cardType: CardTypeEnum.Attack,
+        pool: 'knight',
+        energy: 1,
+        description: 'Deal damage equal to 2x your Defense.',
+        keywords: [],
+        properties: {
+            effects: [
+                {
+                    name: EffectName.Damage,
+                    args: {
+                        baseValue: 0, // Value is calculated in the effect
+                        calculatedValue: 0, // Value is calculated in the effect
+                        targeted: CardTargetedEnum.Enemy,
+                        times: 2,
+                    },
+                },
+            ],
+            statuses: [],
+        },
+    },
+    {
+        cardId: 31,
+        name: 'Hilt Punch',
+        rarity: CardRarityEnum.Common,
+        cardType: CardTypeEnum.Attack,
         pool: 'knight',
         energy: 0,
         description:
             'Deal 6 damage. Lower this card’s damage by 1 each use during this combat.',
-        targeted: CardTargetedEnum.Enemy,
         keywords: [],
         properties: {
-            effects: {
-                damage: {
-                    base: 6,
-                    current: 6,
+            effects: [
+                {
+                    name: EffectName.Damage,
+                    args: {
+                        baseValue: 6,
+                        calculatedValue: 6, // TODO: Calculate this value based in the count of uses
+                        targeted: CardTargetedEnum.Enemy,
+                        times: 1,
+                    },
                 },
-            },
-            statuses: {},
+            ],
+            statuses: [],
         },
     },
     {
-        name: 'Spark',
+        cardId: 32,
+        name: 'Hilt Punch+',
         rarity: CardRarityEnum.Common,
-        card_type: CardTypeEnum.Skill,
-        pool: 'knight',
-        energy: 1,
-        description: 'Inflict 2 Burn',
-        targeted: CardTargetedEnum.Enemy,
-        keywords: [],
-        properties: {
-            effects: {},
-            statuses: {
-                burn: {
-                    base: 2,
-                    current: 2,
-                },
-            },
-        },
-    },
-    {
-        name: 'Recover',
-        rarity: CardRarityEnum.Common,
-        card_type: CardTypeEnum.Skill,
-        pool: 'knight',
-        energy: 1,
-        description:
-            'Draw 2 cards. If an enemy is Confused, they both cost 0 this turn.',
-        targeted: CardTargetedEnum.Enemy,
-        keywords: [],
-        properties: {
-            effects: {
-                drawCard: {
-                    base: 2,
-                    current: 2,
-                },
-            },
-            statuses: {},
-        },
-    },
-    {
-        name: 'Armor Up',
-        rarity: CardRarityEnum.Special,
-        card_type: CardTypeEnum.Skill,
+        cardType: CardTypeEnum.Attack,
         pool: 'knight',
         energy: 0,
-        description: 'Gain 5 Defense. Exhaust.',
-        targeted: CardTargetedEnum.Player,
-        keywords: [CardKeywordEnum.Exhaust],
-        properties: {
-            effects: {
-                defense: {
-                    base: 5,
-                    current: 5,
-                },
-            },
-            statuses: {},
-        },
-    },
-    {
-        name: 'Backhand',
-        rarity: CardRarityEnum.Common,
-        card_type: CardTypeEnum.Attack,
-        pool: 'knight',
-        energy: 2,
-        description: 'Deal 10 damage. Inflict 1 Distraught.',
-        targeted: CardTargetedEnum.Enemy,
+        description:
+            'Deal 9 damage. Lower this card’s damage by 1 each use during this combat.',
         keywords: [],
         properties: {
-            effects: {
-                damage: {
-                    base: 10,
-                    current: 10,
+            effects: [
+                {
+                    name: EffectName.Damage,
+                    args: {
+                        baseValue: 9,
+                        calculatedValue: 9, // TODO: Calculate this value based in the count of uses
+                        targeted: CardTargetedEnum.Enemy,
+                        times: 1,
+                    },
                 },
-            },
-            statuses: {
-                regeneration: {
-                    base: 1,
-                    current: 1,
-                },
-            },
-        },
-    },
-    {
-        name: 'Quick to Adapt',
-        rarity: CardRarityEnum.Common,
-        card_type: CardTypeEnum.Defend,
-        pool: 'knight',
-        energy: 1,
-        description: 'Gain 4 defense for each enemy.',
-        targeted: CardTargetedEnum.Player,
-        keywords: [],
-        properties: {
-            effects: {
-                defense: {
-                    base: 4,
-                    current: 4,
-                },
-            },
-            statuses: {},
+            ],
+            statuses: [],
         },
     },
 ];

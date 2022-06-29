@@ -6,10 +6,10 @@ import {
 } from '@nestjs/websockets';
 import { Logger } from '@nestjs/common';
 import { Socket } from 'socket.io';
-import { isValidAuthToken } from '../utils';
-import { ExpeditionService } from '../game/expedition/expedition.service';
-import { FullSyncAction } from '../game/expedition/actions/fullSync.action';
+import { isValidAuthToken } from 'src/utils';
 import { AuthGatewayService } from 'src/authGateway/authGateway.service';
+import { ExpeditionService } from 'src/game/components/expedition/expedition.service';
+import { FullSyncAction } from 'src/game/action/fullSync.action';
 
 @WebSocketGateway({
     cors: {
@@ -24,7 +24,7 @@ export class SocketGateway
     constructor(
         private readonly authGatewayService: AuthGatewayService,
         private readonly expeditionService: ExpeditionService,
-        private readonly fullSyncAction: FullSyncAction,
+        private readonly fullsyncAction: FullSyncAction,
     ) {}
 
     afterInit(): void {
@@ -33,6 +33,7 @@ export class SocketGateway
 
     async handleConnection(client: Socket): Promise<void> {
         this.logger.log(`Client attempting a connection: ${client.id}`);
+
         const { authorization } = client.handshake.headers;
 
         if (!isValidAuthToken(authorization)) {
@@ -43,28 +44,32 @@ export class SocketGateway
         try {
             const {
                 data: {
-                    data: { id: player_id },
+                    data: { id: playerId },
                 },
             } = await this.authGatewayService.getUser(authorization);
 
-            const expeditionExists =
-                await this.expeditionService.playerHasExpeditionInProgress(
-                    player_id,
-                );
+            await this.expeditionService.updateClientId({
+                clientId: client.id,
+                playerId,
+            });
 
-            if (expeditionExists) {
-                await this.expeditionService.updateClientId({
-                    player_id,
-                    client_id: client.id,
+            const hasExpedition =
+                await this.expeditionService.playerHasExpeditionInProgress({
+                    clientId: playerId,
                 });
 
-                await this.fullSyncAction.handle(client);
-
+            if (hasExpedition) {
                 this.logger.log(`Client connected: ${client.id}`);
+
+                await this.fullsyncAction.handle(client);
             } else {
-                this.logger.log(
+                this.logger.error(
                     `There is no expedition in progress for this player: ${client.id}`,
                 );
+                await this.expeditionService.updateClientId({
+                    clientId: null,
+                    playerId,
+                });
                 client.disconnect(true);
             }
         } catch (e) {

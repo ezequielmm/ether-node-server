@@ -2,7 +2,7 @@ import { StateDeltaType } from './../elements/prototypes/types';
 import { Injectable } from '@nestjs/common';
 import { Diff, diff } from 'deep-diff';
 import { cloneDeep, get, set, isEqual } from 'lodash';
-import { ExpeditionService } from '../expedition/expedition.service';
+import { ExpeditionService } from '../components/expedition/expedition.service';
 interface CurrentStateType {
     [clientId: string]: any;
 }
@@ -40,7 +40,7 @@ export class StateManagerService {
 
     private async createState(clientId: string): Promise<StateType> {
         const expedition = await this.expeditionService.findOne({
-            client_id: clientId,
+            clientId,
         });
 
         const state = {
@@ -162,9 +162,7 @@ export class StateManagerService {
     ): Diff<PreviousStateType, CurrentStateType>[] {
         const state = this.stateCollection[clientId];
 
-        if (!state) {
-            return null;
-        }
+        if (!state) return null;
 
         return diff(state.previous, state.current);
     }
