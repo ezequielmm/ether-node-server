@@ -1,4 +1,14 @@
 import { cardCostRangeByRarity, findMockCardById, mockCards } from './cards';
+import {
+    findMockTrinketById,
+    mockTrinkets,
+    trinketCostRangeByRarity,
+} from './trinkets';
+import {
+    findMockPotionById,
+    mockPotions,
+    potionCostRangeByRarity,
+} from './potions';
 
 jest.mock('src/main', () => {
     return {
@@ -24,17 +34,7 @@ jest.mock('src/main', () => {
 });
 
 import Merchant from '../merchant';
-import {
-    findMockPotionById,
-    mockPotions,
-    potionCostRangeByRarity,
-} from './potions';
 import { ExpeditionMapNodeTypeEnum } from 'src/game/components/expedition/expedition.enum';
-import {
-    findMockTrinketById,
-    mockTrinkets,
-    trinketCostRangeByRarity,
-} from './trinkets';
 
 describe('Merchant', () => {
     let merchant: Merchant;
