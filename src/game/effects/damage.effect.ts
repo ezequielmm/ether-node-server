@@ -42,24 +42,27 @@ export class DamageEffect implements IBaseEffect {
             clientId: clientId,
         });
 
-        const { defense, hpCurrent } = enemies.filter((enemy) => {
+        enemies.map((enemy) => {
             const field = typeof targetId === 'string' ? 'id' : 'enemyId';
 
-            return enemy[field] === targetId;
+            if (enemy[field] === targetId) {
+                // Calculate true damage
+                const trueDamage = damage - Math.max(enemy.defense, 0);
+
+                // If damage is less or equal to 0, trigger damage negated event
+                // TODO: Trigger damage negated event
+
+                // Calculate new hp
+                enemy.hpCurrent = Math.max(0, enemy.hpCurrent - trueDamage);
+
+                // If new hp is less or equal than 0, trigger death event
+                // TODO: Trigger death effect event
+            }
+
+            return enemy;
         })[0];
 
-        // Calculate true damage
-        const trueDamage = damage - Math.max(defense, 0);
-
-        // If damage is less or equal to 0, trigger damage negated event
-        // TODO: Trigger damage negated event
-
-        // Calculate new hp
-        const newHp = Math.max(0, hpCurrent - trueDamage);
-
-        console.log(newHp);
-
-        // If new hp is less or equal than 0, trigger death event
-        // TODO: Trigger death effect event
+        // update enemies array
+        await this.expeditionService.updateEnemiesArray({ clientId, enemies });
     }
 }

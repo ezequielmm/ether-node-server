@@ -14,7 +14,9 @@ import {
     playerHasAnExpeditionDTO,
     SetCombatTurnDTO,
     UpdateClientIdDTO,
+    UpdateEnemiesArrayDTO,
     UpdateExpeditionDTO,
+    UpdateHandPilesDTO,
     UpdatePlayerEnergyDTO,
 } from './expedition.dto';
 import { ExpeditionStatusEnum } from './expedition.enum';
@@ -56,7 +58,7 @@ export class ExpeditionService {
             {
                 [field]: clientId,
             },
-            payload,
+            { $set: { payload } },
             { new: true },
         );
     }
@@ -161,15 +163,17 @@ export class ExpeditionService {
     ): Promise<boolean> {
         const { cardId, clientId } = payload;
 
-        const field =
+        const field = typeof clientId === 'string' ? 'clientId' : 'playerId';
+
+        const cardIdField =
             typeof cardId === 'string'
                 ? 'currentNode.data.player.cards.hand.id'
                 : 'currentNode.data.player.cards.hand.cardId';
 
         const itemExists = await this.expedition.exists({
-            clientId,
+            [field]: clientId,
             status: ExpeditionStatusEnum.InProgress,
-            [field]: cardId,
+            [cardIdField]: cardId,
         });
         return itemExists !== null;
     }
@@ -178,9 +182,53 @@ export class ExpeditionService {
         payload: UpdatePlayerEnergyDTO,
     ): Promise<ExpeditionDocument> {
         const { clientId, newEnergy } = payload;
+
+        const field = typeof clientId === 'string' ? 'clientId' : 'playerId';
+
         return this.expedition.findOneAndUpdate(
-            { clientId, status: ExpeditionStatusEnum.InProgress },
+            { [field]: clientId, status: ExpeditionStatusEnum.InProgress },
             { 'currentNode.data.player.energy': newEnergy },
+            { new: true },
+        );
+    }
+
+    async updateEnemiesArray(
+        payload: UpdateEnemiesArrayDTO,
+    ): Promise<ExpeditionDocument> {
+        const { clientId, enemies } = payload;
+
+        const field = typeof clientId === 'string' ? 'clientId' : 'playerId';
+
+        return this.expedition.findOneAndUpdate(
+            { [field]: clientId, status: ExpeditionStatusEnum.InProgress },
+            { 'currentNode.data.enemies': enemies },
+            { new: true },
+        );
+    }
+
+    async updateHandPiles(
+        payload: UpdateHandPilesDTO,
+    ): Promise<ExpeditionDocument> {
+        const { hand, exhausted, clientId, draw, discard } = payload;
+
+        const field = typeof clientId === 'string' ? 'clientId' : 'playerId';
+
+        const piles = {
+            ...(hand && { 'currentNode.data.player.cards.hand': hand }),
+            ...(exhausted && {
+                'currentNode.data.player.cards.exhausted': exhausted,
+            }),
+            ...(draw && {
+                'currentNode.data.player.cards.draw': draw,
+            }),
+            ...(discard && {
+                'currentNode.data.player.cards.discard': discard,
+            }),
+        };
+
+        return this.expedition.findOneAndUpdate(
+            { [field]: clientId, status: ExpeditionStatusEnum.InProgress },
+            piles,
             { new: true },
         );
     }

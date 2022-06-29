@@ -14,6 +14,7 @@ import {
     SWARMessageType,
     SWARAction,
 } from '../standardResponse/standardResponse';
+import { DiscardCardAction } from './discardCard.action';
 import { UpdatePlayerEnergyAction } from './updatePlayerEnergy.action';
 
 interface CardPlayedDTO {
@@ -30,6 +31,7 @@ export class CardPlayedAction {
         private readonly expeditionService: ExpeditionService,
         private readonly effectService: EffectService,
         private readonly updatePlayerEnergyAction: UpdatePlayerEnergyAction,
+        private readonly discardCardAction: DiscardCardAction,
     ) {}
 
     async handle(payload: CardPlayedDTO): Promise<void> {
@@ -148,6 +150,11 @@ export class CardPlayedAction {
                         effects,
                         targetId,
                     );
+
+                    await this.discardCardAction.handle({
+                        clientId: client.id,
+                        cardId,
+                    });
 
                     const {
                         data: {
