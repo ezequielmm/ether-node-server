@@ -30,7 +30,7 @@ export class InitCombatProcess {
 
         if (!isEven(round)) this.sendEnemyIntentProcess.process(client);
 
-        this.logger.log(`Sent message InitCombat to client ${client.id}`);
+        this.logger.log(`Sent message "InitCombat" to client ${client.id}`);
 
         client.emit(
             'InitCombat',

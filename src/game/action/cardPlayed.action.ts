@@ -156,6 +156,27 @@ export class CardPlayedAction {
                         cardId,
                     });
 
+                    this.logger.log(
+                        `Sent message PutData to client ${client.id}: ${SWARAction.MoveCard}`,
+                    );
+
+                    client.emit(
+                        'PutData',
+                        JSON.stringify(
+                            StandardResponse.respond({
+                                message_type: SWARMessageType.EnemyAttacked,
+                                action: SWARAction.MoveCard,
+                                data: [
+                                    {
+                                        source: 'hand',
+                                        destination: 'discard',
+                                        cardId,
+                                    },
+                                ],
+                            }),
+                        ),
+                    );
+
                     const {
                         data: {
                             player: { energy, energyMax },
@@ -176,27 +197,6 @@ export class CardPlayedAction {
                                 message_type: SWARMessageType.EnemyAttacked,
                                 action: SWARAction.UpdateEnergy,
                                 data: [energy, energyMax],
-                            }),
-                        ),
-                    );
-
-                    this.logger.log(
-                        `Sent message PutData to client ${client.id}: ${SWARAction.MoveCard}`,
-                    );
-
-                    client.emit(
-                        'PutData',
-                        JSON.stringify(
-                            StandardResponse.respond({
-                                message_type: SWARMessageType.EnemyAttacked,
-                                action: SWARAction.MoveCard,
-                                data: [
-                                    {
-                                        source: 'hand',
-                                        destination: 'discard',
-                                        cardId,
-                                    },
-                                ],
                             }),
                         ),
                     );

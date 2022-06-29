@@ -8,6 +8,7 @@ export enum SWARMessageType {
     EnemiesIntents = 'enemy_intents',
     GenericData = 'generic_data',
     EnemyAttacked = 'enemy_attacked',
+    EndTurn = 'end_turn',
 }
 
 export enum SWARAction {

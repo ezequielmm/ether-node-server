@@ -13,6 +13,7 @@ import { GetPlayerInfoAction } from 'src/game/action/getPlayerInfo.action';
 import { CardId } from 'src/game/components/card/card.type';
 import { TargetId } from 'src/game/effects/effects.types';
 import { CardPlayedAction } from 'src/game/action/cardPlayed.action';
+import { EndturnAction } from 'src/game/action/endTurn.action';
 
 interface CardPlayedInterface {
     cardId: CardId;
@@ -33,11 +34,14 @@ export class CombatGateway {
         private readonly getEnemiesAction: GetEnemiesAction,
         private readonly getPlayerInfoAction: GetPlayerInfoAction,
         private readonly cardPlayedAction: CardPlayedAction,
+        private readonly endTurnAction: EndturnAction,
     ) {}
 
     @SubscribeMessage('EndTurn')
     async handleEndTurn(client: Socket): Promise<void> {
         this.logger.log(`Client ${client.id} trigger message "EndTurn"`);
+
+        await this.endTurnAction.handle(client);
     }
 
     @SubscribeMessage('CardPlayed')
