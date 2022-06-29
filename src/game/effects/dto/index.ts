@@ -3,7 +3,7 @@ import { CardDestinationEnum } from '../enums';
 
 export interface BaseEffectDTO {
     readonly client_id: string;
-    readonly targeted?: CardTargetedEnum;
+    targeted_id?: string | number;
 }
 
 export type DiscardAllCardsDTO = BaseEffectDTO;
@@ -39,7 +39,7 @@ export interface DefenseDTO extends BaseEffectDTO {
 }
 
 export interface DamageDTO extends BaseEffectDTO {
-    value: number;
+    calculated_value: number;
     times?: number;
     targeted: CardTargetedEnum;
     targeted_id?: string;

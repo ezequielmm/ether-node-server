@@ -11,23 +11,23 @@ export class DamageEffect implements IBaseEffect {
     constructor(private readonly expeditionService: ExpeditionService) {}
 
     async handle(payload: DamageDTO): Promise<void> {
+        const { client_id, times, calculated_value, targeted, targeted_id } =
+            payload;
         // TODO: Triger damage attempted event
 
-        for (let i = 0; i < (payload.times || 1); i++) {
+        for (let i = 0; i < (times || 1); i++) {
             // Check targeted type
-            if (payload.targeted === CardTargetedEnum.Player) {
-                await this.applyDamageToPlayer(
-                    payload.client_id,
-                    payload.value,
-                );
-            } else if (payload.targeted === CardTargetedEnum.Enemy) {
-                // TODO: Find enemy by id and apply damage
-            } else if (payload.targeted === CardTargetedEnum.AllEnemies) {
-                // TODO: Find all enemies and apply damage
-            } else if (payload.targeted === CardTargetedEnum.RandomEnemy) {
-                // TODO: Find random enemy and apply damage
-            } else if (payload.targeted === CardTargetedEnum.None) {
-                // TODO: ???
+            switch (targeted) {
+                case CardTargetedEnum.Player:
+                    await this.applyDamageToPlayer(client_id, calculated_value);
+                    break;
+                case CardTargetedEnum.Enemy:
+                    await this.applyDamageToEnemy(
+                        client_id,
+                        calculated_value,
+                        targeted_id,
+                    );
+                    break;
             }
         }
     }
@@ -60,15 +60,49 @@ export class DamageEffect implements IBaseEffect {
         // Calculate new hp
         const newHp = hp_current - trueDamage;
 
-        // If new hp is less or equal than 0,  trigger death event
-        if (newHp <= 0) {
-            // TODO: Trigger death effect event
-            return;
-        }
+        // TODO: If new hp is less or equal than 0,  trigger death event
 
         // Update player hp
         await this.expeditionService.updatePlayerHp({
             client_id: clientId,
+            hp: newHp,
+        });
+    }
+
+    private async applyDamageToEnemy(
+        clientId: string,
+        damage: number,
+        target: string | number,
+    ): Promise<void> {
+        // Get enemy based on id
+        const enemies = await this.expeditionService.getCombatEnemies({
+            client_id: clientId,
+        });
+
+        const { defense, hpMin } = enemies.filter((enemy) => {
+            if (typeof target === 'string') {
+                return enemy.id === target;
+            } else {
+                return enemy.enemyId === target;
+            }
+        })[0];
+
+        // Calculate true damage
+        const trueDamage = damage - Math.max(defense, 0);
+
+        // If damage is less or equal to 0, trigger damage negated event
+        // TODO: Trigger damage negated event
+
+        // Calculate new hp
+        const newHp = Math.max(0, hpMin - trueDamage);
+
+        // If new hp is less or equal than 0, trigger death event
+        // TODO: Trigger death effect event
+
+        // update enemy health
+        await this.expeditionService.updateEnemyHp({
+            client_id: clientId,
+            enemy_id: target,
             hp: newHp,
         });
     }

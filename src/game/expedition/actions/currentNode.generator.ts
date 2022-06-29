@@ -88,6 +88,7 @@ export class CurrentNodeGenerator {
                     energy: settings.player.energy.initial,
                     energy_max: settings.player.energy.max,
                     hand_size: handSize,
+                    defense: 0,
                     cards: {
                         draw: drawCards,
                         hand: handCards,

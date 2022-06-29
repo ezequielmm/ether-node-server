@@ -42,6 +42,15 @@ export class CardExistsDTO {
     readonly card_id: string | number;
 }
 
+export class enemyExistsDTO {
+    readonly client_id: string;
+}
+
+export class GetPlayerHandDTO {
+    readonly client_id: string;
+    readonly card_id: string | number;
+}
+
 export class UpdatePlayerEnergyDTO {
     readonly client_id: string;
     readonly energy: number;
@@ -80,4 +89,19 @@ export class GetPlayerState {
 export class UpdatePlayerHpDTO {
     readonly client_id: string;
     readonly hp: number;
+}
+
+export class UpdateEnemyHpDTO {
+    readonly client_id: string;
+    readonly enemy_id: string | number;
+    readonly hp: number;
+}
+
+export class GetCombatEnemiesDTO {
+    readonly client_id: string;
+}
+
+export class CheckIfEnemyExistsDTO {
+    readonly client_id: string;
+    readonly enemy_id: string | number;
 }

@@ -21,12 +21,17 @@ import {
     SetPlayerDefense,
     GetPlayerState,
     UpdatePlayerHpDTO,
+    GetPlayerHandDTO,
+    GetCombatEnemiesDTO,
+    CheckIfEnemyExistsDTO,
+    UpdateEnemyHpDTO,
 } from '../../expedition/dto';
 import {
     IExpeditionNode,
     IExpeditionCurrentNode,
     IExpeditionPlayerStateDeckCard,
     IExpeditionPlayerState,
+    IExpeditionCurrentNodeDataEnemy,
 } from '../../expedition/interfaces';
 import { CardService } from '../card/card.service';
 import { generateMap, restoreMap } from '../../expedition/map/app';
@@ -152,6 +157,28 @@ export class ExpeditionService {
             [field]: card_id,
         });
         return itemExists !== null;
+    }
+
+    async getCardFromPlayerHand(
+        payload: GetPlayerHandDTO,
+    ): Promise<IExpeditionPlayerStateDeckCard> {
+        const { client_id, card_id } = payload;
+
+        const {
+            data: {
+                player: {
+                    cards: { hand },
+                },
+            },
+        } = await this.getCurrentNodeByClientId(client_id);
+
+        const handCard = hand.filter((card) => {
+            return typeof card_id === 'string'
+                ? card.id === card_id
+                : card.card_id === card_id;
+        });
+
+        return handCard.slice(0, 1).shift();
     }
 
     async getCurrentNodeByClientId(
@@ -458,7 +485,7 @@ export class ExpeditionService {
 
     async updatePlayerHp(payload: UpdatePlayerHpDTO): Promise<void> {
         // Update player hp
-        const response = await this.expedition.updateOne(
+        const { modifiedCount } = await this.expedition.updateOne(
             {
                 client_id: payload.client_id,
                 status: ExpeditionStatusEnum.InProgress,
@@ -470,8 +497,58 @@ export class ExpeditionService {
             },
         );
 
-        if (response.modifiedCount === 0) {
-            throw new Error('Player state not found');
-        }
+        if (modifiedCount === 0) throw new Error('Player state not found');
+    }
+
+    async updateEnemyHp(payload: UpdateEnemyHpDTO): Promise<void> {
+        const { client_id, hp, enemy_id } = payload;
+
+        const field =
+            typeof enemy_id === 'string'
+                ? 'current_node.data.enemies.id'
+                : 'current_node.data.enemies.enemyId';
+
+        const { modifiedCount } = await this.expedition.updateOne(
+            {
+                client_id: client_id,
+                status: ExpeditionStatusEnum.InProgress,
+                [field]: enemy_id,
+            },
+            {
+                $set: {
+                    'current_node.data.enemies.$.hpMin': hp,
+                },
+            },
+        );
+
+        if (modifiedCount === 0) throw new Error('Enemy not found');
+    }
+
+    async getCombatEnemies(
+        payload: GetCombatEnemiesDTO,
+    ): Promise<IExpeditionCurrentNodeDataEnemy[]> {
+        const { client_id } = payload;
+        const {
+            data: { enemies },
+        } = await this.getCurrentNodeByClientId(client_id);
+        return enemies;
+    }
+
+    async enemyExistsOnCurrentNode(
+        payload: CheckIfEnemyExistsDTO,
+    ): Promise<boolean> {
+        const { enemy_id, client_id } = payload;
+
+        const field =
+            typeof enemy_id === 'string'
+                ? 'current_node.data.enemies.id'
+                : 'current_node.data.enemies.enemyId';
+
+        const itemExists = await this.expedition.exists({
+            client_id,
+            status: ExpeditionStatusEnum.InProgress,
+            [field]: enemy_id,
+        });
+        return itemExists !== null;
     }
 }

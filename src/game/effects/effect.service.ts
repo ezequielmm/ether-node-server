@@ -10,18 +10,24 @@ export class EffectService {
 
     constructor(private readonly modulesContainer: ModulesContainer) {}
 
-    async process(client_id: string, effects: JsonEffect[]): Promise<void> {
+    async process(
+        client_id: string,
+        effects: JsonEffect[],
+        targeted_id?: string | number,
+    ): Promise<void> {
         for (const { name, args } of effects) {
-            await this.getEffectByName(name).handle({ ...args, client_id });
+            await this.getEffectByName(name).handle({
+                ...args,
+                client_id,
+                targeted_id,
+            });
         }
     }
 
     private getEffectByName(name: string): IBaseEffect {
         const effect = this.getAllEffectProviders().get(name);
 
-        if (effect === undefined) {
-            throw new Error(`Effect ${name} not found`);
-        }
+        if (effect === undefined) throw new Error(`Effect ${name} not found`);
 
         return effect;
     }
@@ -39,9 +45,8 @@ export class EffectService {
                         provider.metatype,
                     );
 
-                    if (effects.has(effectName)) {
+                    if (effects.has(effectName))
                         throw new Error(`Effect ${effectName} already exists`);
-                    }
 
                     effects.set(effectName, provider.instance as IBaseEffect);
                 }
