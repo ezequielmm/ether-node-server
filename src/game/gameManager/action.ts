@@ -1,9 +1,9 @@
 import { Activity } from '../elements/prototypes/activity';
 import {
+    LogActivityOptions,
     ActionError,
     ActionResponse,
-    LogActivityOptions,
-} from './interfaces/index';
+} from './gameManager.interface';
 import { GameManagerService } from './gameManager.service';
 
 export class Action {

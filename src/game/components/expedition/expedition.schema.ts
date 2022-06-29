@@ -1,30 +1,64 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
-import { ExpeditionStatusEnum } from '../../expedition/enums';
 import {
+    ExpeditionMapNodeTypeEnum,
+    ExpeditionStatusEnum,
+} from './expedition.enum';
+import {
+    IExpeditionCurrentNodeDataEnemy,
     IExpeditionNode,
-    IExpeditionCurrentNode,
-    IExpeditionPlayerState,
-} from '../../expedition/interfaces';
+    IExpeditionPlayerStateDeckCard,
+} from './expedition.interface';
 
 export type ExpeditionDocument = Expedition & Document;
 
 @Schema()
 export class Expedition {
     @Prop()
-    client_id: string;
+    clientId?: string;
 
     @Prop()
-    player_id: number;
+    playerId: number;
 
     @Prop()
     map: IExpeditionNode[];
 
     @Prop({ type: Object })
-    player_state: IExpeditionPlayerState;
+    playerState: {
+        playerName: string;
+        characterClass: string;
+        hpMax: number;
+        hpCurrent: number;
+        gold: number;
+        potions?: [];
+        trinkets?: [];
+        createdAt: Date;
+        cards: IExpeditionPlayerStateDeckCard[];
+        stoppedAt?: Date;
+    };
 
     @Prop({ type: Object })
-    current_node: IExpeditionCurrentNode;
+    currentNode?: {
+        nodeId: number;
+        nodeType: ExpeditionMapNodeTypeEnum;
+        completed: boolean;
+        data?: {
+            round: number;
+            player: {
+                energy: number;
+                energyMax?: number;
+                handSize: number;
+                defense: number;
+                cards: {
+                    hand: IExpeditionPlayerStateDeckCard[];
+                    draw: IExpeditionPlayerStateDeckCard[];
+                    discard: IExpeditionPlayerStateDeckCard[];
+                    exhausted: IExpeditionPlayerStateDeckCard[];
+                };
+            };
+            enemies: IExpeditionCurrentNodeDataEnemy[];
+        };
+    };
 
     @Prop({ default: ExpeditionStatusEnum.InProgress })
     status: ExpeditionStatusEnum;

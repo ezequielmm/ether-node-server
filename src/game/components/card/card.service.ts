@@ -2,8 +2,9 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Card, CardDocument } from './card.schema';
 import { Model } from 'mongoose';
-import { IExpeditionPlayerStateDeckCard } from '../../expedition/interfaces';
-import { CardTypeEnum } from './enums';
+import { CardTypeEnum } from './card.enum';
+import { CardId } from './card.type';
+import { IExpeditionPlayerStateDeckCard } from '../expedition/expedition.interface';
 
 @Injectable()
 export class CardService {
@@ -30,7 +31,9 @@ export class CardService {
         });
     }
 
-    async findById(id: string): Promise<CardDocument> {
-        return this.card.findById(id).lean();
+    async findById(id: CardId): Promise<CardDocument> {
+        return typeof id === 'string'
+            ? this.card.findById(id).lean()
+            : this.card.findOne({ cardId: id }).lean();
     }
 }

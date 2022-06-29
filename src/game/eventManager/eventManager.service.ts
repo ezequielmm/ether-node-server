@@ -1,8 +1,8 @@
-import { EventUtils } from './interfaces';
 import { ActivityLogService } from './../response/activityLog.service';
 import { Injectable } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { ProccessCounter } from './processCounter';
+import { EventUtils } from './eventManager.interface';
 
 @Injectable()
 export class EventManagerService {
@@ -28,6 +28,7 @@ export class EventManagerService {
         }
 
         counter.increase();
+
         const eventUtils: EventUtils = {
             activityLog: this.activityLogService.findOneByClientId(key),
             emitInContext: (e, ...a) => this.emit(key, e, ...a),
@@ -37,9 +38,7 @@ export class EventManagerService {
 
         counter.decrease();
 
-        if (counter.isLazy()) {
-            delete this.processDictionary[key];
-        }
+        if (counter.isLazy()) delete this.processDictionary[key];
     }
 
     public async wait(key): Promise<void> {
@@ -49,9 +48,7 @@ export class EventManagerService {
                 reject();
             } else {
                 counter.onChange(() => {
-                    if (counter.isLazy()) {
-                        resolve();
-                    }
+                    if (counter.isLazy()) resolve();
                 });
             }
         });
@@ -59,9 +56,7 @@ export class EventManagerService {
 
     public isProcessing(key: string): boolean {
         const counter = this.processDictionary[key];
-        if (!counter) {
-            return false;
-        }
+        if (!counter) return false;
         return counter.isProcessing();
     }
 }

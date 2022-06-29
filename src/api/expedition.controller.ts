@@ -1,21 +1,25 @@
 import {
     Controller,
     Get,
+    Logger,
+    UseGuards,
     Headers,
     HttpException,
     HttpStatus,
-    Logger,
-    Post,
     Res,
-    UseGuards,
+    Post,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '../guards/auth.guard';
 import { ExpeditionService } from '../game/components/expedition/expedition.service';
-import { CardService } from '../game/components/card/card.service';
-import { CharacterService } from '../game/components/character/character.service';
-import { CharacterClassEnum } from '../game/components/character/enums';
 import { AuthGatewayService } from 'src/authGateway/authGateway.service';
+import {
+    IExpeditionCancelledResponse,
+    IExpeditionCreatedResponse,
+    IExpeditionStatusResponse,
+} from 'src/game/components/expedition/expedition.interface';
+import { ExpeditionStatusEnum } from 'src/game/components/expedition/expedition.enum';
+import { InitExpeditionProcess } from 'src/game/process/initExpedition.process';
 
 @ApiBearerAuth()
 @ApiTags('Expedition')
@@ -25,33 +29,31 @@ export class ExpeditionController {
     constructor(
         private readonly authGatewayService: AuthGatewayService,
         private readonly expeditionService: ExpeditionService,
-        private readonly cardService: CardService,
-        private readonly characterService: CharacterService,
+        private readonly initExpeditionProcess: InitExpeditionProcess,
     ) {}
 
     private readonly logger: Logger = new Logger(ExpeditionController.name);
 
-    //#region Get Expedition status by player id
     @ApiOperation({
-        summary: 'Get if the user has an expedition in progress or not',
+        summary: 'Check if the given user has an expedition in progress or not',
     })
     @Get('/status')
-    async handleGetExpeditionsStatus(
+    async handleGetExpeditionStatus(
         @Headers() headers,
-    ): Promise<{ hasExpedition: boolean }> {
+    ): Promise<IExpeditionStatusResponse> {
         const { authorization } = headers;
 
         try {
             const {
                 data: {
-                    data: { id: player_id },
+                    data: { id: playerId },
                 },
             } = await this.authGatewayService.getUser(authorization);
 
             const hasExpedition =
-                await this.expeditionService.playerHasExpeditionInProgress(
-                    player_id,
-                );
+                await this.expeditionService.playerHasExpeditionInProgress({
+                    clientId: playerId,
+                });
 
             return { hasExpedition };
         } catch (e) {
@@ -65,9 +67,7 @@ export class ExpeditionController {
             );
         }
     }
-    //#endregion
 
-    //#region Creates a new expedition
     @ApiOperation({
         summary: `Creates a new expedition for the player`,
     })
@@ -75,72 +75,30 @@ export class ExpeditionController {
     async handleCreateExpedition(
         @Headers() headers,
         @Res() response,
-    ): Promise<{ createdExpedition: boolean }> {
+    ): Promise<IExpeditionCreatedResponse> {
         const { authorization } = headers;
 
         try {
             const {
                 data: {
-                    data: { id: player_id, name: player_name },
+                    data: { id: playerId, name: playerName },
                 },
             } = await this.authGatewayService.getUser(authorization);
 
             const hasExpedition =
-                await this.expeditionService.playerHasExpeditionInProgress(
-                    player_id,
-                );
-
-            if (!hasExpedition) {
-                const cards = await this.cardService.findAll();
-
-                const character = await this.characterService.findOne({
-                    character_class: CharacterClassEnum.Knight,
+                await this.expeditionService.playerHasExpeditionInProgress({
+                    clientId: playerId,
                 });
 
-                const map = this.expeditionService.getMap();
-
-                await this.expeditionService.create({
-                    player_id,
-                    map,
-                    player_state: {
-                        player_name,
-                        character_class: character.character_class,
-                        hp_max: character.initial_health,
-                        hp_current: character.initial_health,
-                        gold: character.initial_gold,
-                        potions: {
-                            1: null,
-                            2: null,
-                            3: null,
-                        },
-                        deck: {
-                            cards: cards.map((card) => ({
-                                card_id: card.card_id,
-                                id: card._id.toString(),
-                                name: card.name,
-                                description: card.description,
-                                rarity: card.rarity,
-                                energy: card.energy,
-                                card_type: card.card_type,
-                                pool: card.pool,
-                                properties: card.properties,
-                                keywords: card.keywords,
-                                is_temporary: false,
-                            })),
-                        },
-                        created_at: new Date(),
-                    },
+            if (!hasExpedition) {
+                await this.initExpeditionProcess.handle({
+                    playerId,
+                    playerName,
                 });
 
                 return response
                     .status(HttpStatus.CREATED)
                     .send({ data: { expeditionCreated: true } });
-            } else {
-                return response.status(HttpStatus.CREATED).send({
-                    data: {
-                        message: 'Player has an expedition in progress',
-                    },
-                });
             }
         } catch (e) {
             this.logger.error(e.stack);
@@ -153,9 +111,7 @@ export class ExpeditionController {
             );
         }
     }
-    //#endregion
 
-    // #region Cancel expedition
     @ApiOperation({
         summary: `Cancel the expedition`,
     })
@@ -163,23 +119,25 @@ export class ExpeditionController {
     async handleCancelExpedition(
         @Headers() headers,
         @Res() response,
-    ): Promise<{ canceledExpedition: boolean }> {
+    ): Promise<IExpeditionCancelledResponse> {
         const { authorization } = headers;
 
         try {
             const {
                 data: {
-                    data: { id: player_id },
+                    data: { id: playerId },
                 },
             } = await this.authGatewayService.getUser(authorization);
 
             const hasExpedition =
-                await this.expeditionService.playerHasExpeditionInProgress(
-                    player_id,
-                );
+                await this.expeditionService.playerHasExpeditionInProgress({
+                    clientId: playerId,
+                });
 
             if (hasExpedition) {
-                await this.expeditionService.cancel(player_id);
+                await this.expeditionService.update(playerId, {
+                    status: ExpeditionStatusEnum.Canceled,
+                });
 
                 return response
                     .status(HttpStatus.OK)
@@ -202,5 +160,4 @@ export class ExpeditionController {
             );
         }
     }
-    // #endregion
 }

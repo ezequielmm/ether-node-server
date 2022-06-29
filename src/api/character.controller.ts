@@ -21,9 +21,9 @@ export class CharacterController {
                 id: character._id,
                 name: character.name,
                 description: character.description,
-                initial_health: character.initial_health,
-                initial_gold: character.initial_gold,
-                character_class: character.character_class,
+                initialHealth: character.initialHealth,
+                initialGold: character.initialGold,
+                characterClass: character.characterClass,
             };
         });
     }

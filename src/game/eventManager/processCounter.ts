@@ -4,17 +4,13 @@ export class ProccessCounter {
 
     public increase(): number {
         this.count++;
-        if (this.callBack) {
-            this.callBack(this.count);
-        }
+        if (this.callBack) this.callBack(this.count);
         return this.count;
     }
 
     public decrease(): number {
         this.count--;
-        if (this.callBack) {
-            this.callBack(this.count);
-        }
+        if (this.callBack) this.callBack(this.count);
         return this.count;
     }
 

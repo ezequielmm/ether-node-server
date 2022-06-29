@@ -1,36 +1,21 @@
 import { SubscribeMessage, WebSocketGateway } from '@nestjs/websockets';
-import { Logger, UseFilters } from '@nestjs/common';
+import { Logger } from '@nestjs/common';
 import { Socket } from 'socket.io';
-import { FullSyncAction } from '../game/expedition/actions/fullSync.action';
-import { NodeSelectedAction } from '../game/expedition/actions/nodeSelected.action';
-import { CustomExceptionFilter } from 'src/socket/customException.filter';
+import { NodeSelectedProcess } from 'src/game/process/nodeSelected.process';
 
 @WebSocketGateway({
     cors: {
         origin: '*',
     },
 })
-@UseFilters(CustomExceptionFilter)
 export class ExpeditionGateway {
     private readonly logger: Logger = new Logger(ExpeditionGateway.name);
 
-    constructor(
-        private readonly fullSyncAction: FullSyncAction,
-        private readonly nodeSelectedAction: NodeSelectedAction,
-    ) {}
+    constructor(private readonly nodeSelectedProcess: NodeSelectedProcess) {}
 
     @SubscribeMessage('SyncExpedition')
     async handleSyncExpedition(client: Socket): Promise<void> {
         this.logger.log(`Client ${client.id} trigger message "SyncExpedition"`);
-
-        try {
-            await this.fullSyncAction.handle(client);
-        } catch (e) {
-            this.logger.error(e.trace);
-            client.emit('ErrorMessage', {
-                message: 'An error has ocurred syncing the expedition',
-            });
-        }
     }
 
     @SubscribeMessage('NodeSelected')
@@ -40,11 +25,11 @@ export class ExpeditionGateway {
         );
 
         try {
-            return await this.nodeSelectedAction.handle(client, node_id);
+            return await this.nodeSelectedProcess.handle(client, node_id);
         } catch (e) {
-            this.logger.error(e.trace);
+            this.logger.error(e.message);
             client.emit('ErrorMessage', {
-                message: `${client.id} error has ocurred selecting the node ${node_id}`,
+                message: `An Error has ocurred selecting the node`,
             });
         }
     }

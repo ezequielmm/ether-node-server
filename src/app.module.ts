@@ -5,7 +5,6 @@ import { ConfigurationModule } from './config/configuration.module';
 import { MongooseModule, MongooseModuleOptions } from '@nestjs/mongoose';
 import { ConfigurationService } from './config/configuration.service';
 import { SocketModule } from './socket/socket.module';
-import { StatusPipelineModule } from './game/status-pipeline/status-pipeline.module';
 
 @Module({
     imports: [
@@ -24,7 +23,6 @@ import { StatusPipelineModule } from './game/status-pipeline/status-pipeline.mod
                 return options;
             },
         }),
-        StatusPipelineModule,
     ],
     controllers: [AppController],
 })

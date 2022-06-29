@@ -41,7 +41,7 @@ interface SWARResponse {
 }
 
 export class StandardResponse {
-    static createResponse(payload: SWARPayload): SWARResponse {
+    static respond(payload: SWARPayload): SWARResponse {
         return { data: payload };
     }
 }

@@ -1,4 +1,4 @@
-import { CardKeywordEnum } from '../components/card/enums';
+import { CardKeywordEnum } from '../components/card/card.enum';
 
 interface PipelineReturn {
     unplayable: boolean;
@@ -17,13 +17,9 @@ export class CardKeywordPipeline {
         if (keywords.includes(CardKeywordEnum.Unplayable))
             response.unplayable = true;
 
-        if (keywords.includes(CardKeywordEnum.Exhaust)) {
-            response.exhaust = true;
-        }
+        if (keywords.includes(CardKeywordEnum.Exhaust)) response.exhaust = true;
 
-        if (keywords.includes(CardKeywordEnum.Retain)) {
-            response.retain = true;
-        }
+        if (keywords.includes(CardKeywordEnum.Retain)) response.retain = true;
 
         return response;
     }

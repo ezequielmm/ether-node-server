@@ -18,12 +18,15 @@ import { Enemy, EnemySchema } from './game/components/enemy/enemy.schema';
 import { EnemySeeder } from './game/components/enemy/enemy.seeder';
 import { PotionSeeder } from './game/components/potion/potion.seeder';
 import { Potion, PotionSchema } from './game/components/potion/potion.schema';
-import { EnemyGroupSeeder } from './game/expedition/enemy_groups/enemyGroups.seeder';
+import { EnemyGroupSeeder } from './game/components/enemyGroups/enemyGroups.seeder';
 import {
     EnemyGroup,
     EnemyGroupSchema,
-} from './game/expedition/enemy_groups/enemyGroups.schema';
-import { Settings, SettingsSchema } from './game/components/settings/settings.schema';
+} from './game/components/enemyGroups/enemyGroups.schema';
+import {
+    Settings,
+    SettingsSchema,
+} from './game/components/settings/settings.schema';
 import { SettingsSeeder } from './game/components/settings/settings.seeder';
 
 seeder({

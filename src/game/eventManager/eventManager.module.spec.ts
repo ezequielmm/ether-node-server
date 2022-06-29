@@ -1,7 +1,7 @@
-import { EventUtils } from './interfaces/index';
 import { Injectable, OnApplicationBootstrap } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
 import { Test } from '@nestjs/testing';
+import { EventUtils } from './eventManager.interface';
 import { EventManagerModule } from './eventManager.module';
 import { EventManagerService } from './eventManager.service';
 

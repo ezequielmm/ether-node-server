@@ -1,16 +1,16 @@
-import { StateManagerService } from './../stateManager/stateManager.service';
-import { EventManagerService } from './../eventManager/eventManager.service';
+import { ActivityLogService } from './../response/activityLog.service';
+import { Injectable } from '@nestjs/common';
+import { Activity } from '../elements/prototypes/activity';
+import * as _ from 'lodash';
+import { ErrorBehavior } from 'src/socket/custom.exception';
 import {
     ActionError,
     ActionResponse,
     LogActivityOptions,
-} from './interfaces/index';
-import { ActivityLogService } from './../response/activityLog.service';
-import { Injectable } from '@nestjs/common';
+} from './gameManager.interface';
+import { StateManagerService } from '../stateManager/stateManager.service';
 import { Action } from './action';
-import { Activity } from '../elements/prototypes/activity';
-import * as _ from 'lodash';
-import { ErrorBehavior } from 'src/socket/custom.exception';
+import { EventManagerService } from '../eventManager/eventManager.service';
 
 @Injectable()
 export class GameManagerService {

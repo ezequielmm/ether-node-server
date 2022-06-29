@@ -40,7 +40,7 @@ export class StateManagerService {
 
     private async createState(clientId: string): Promise<StateType> {
         const expedition = await this.expeditionService.findOne({
-            client_id: clientId,
+            clientId,
         });
 
         const state = {
@@ -162,9 +162,7 @@ export class StateManagerService {
     ): Diff<PreviousStateType, CurrentStateType>[] {
         const state = this.stateCollection[clientId];
 
-        if (!state) {
-            return null;
-        }
+        if (!state) return null;
 
         return diff(state.previous, state.current);
     }

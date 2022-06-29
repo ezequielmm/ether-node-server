@@ -1,9 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { CardTargetedEnum } from '../components/card/enums';
+import { CardTargetedEnum } from '../components/card/card.enum';
 import { ExpeditionService } from '../components/expedition/expedition.service';
-import { Effect } from './decorators/effect.decorator';
-import { DamageDTO } from './dto';
-import { EffectName, IBaseEffect } from './interfaces/baseEffect';
+import { Effect } from './effects.decorator';
+import { EffectName } from './effects.enum';
+import { DamageDTO, IBaseEffect } from './effects.interface';
+import { TargetId } from './effects.types';
 
 @Effect(EffectName.Damage)
 @Injectable()
@@ -11,99 +12,57 @@ export class DamageEffect implements IBaseEffect {
     constructor(private readonly expeditionService: ExpeditionService) {}
 
     async handle(payload: DamageDTO): Promise<void> {
-        const { client_id, times, calculated_value, targeted, targeted_id } =
+        const { clientId, times, calculatedValue, targeted, targetId } =
             payload;
         // TODO: Triger damage attempted event
 
-        for (let i = 0; i < (times || 1); i++) {
+        for (let i = 1; i <= times; i++) {
             // Check targeted type
             switch (targeted) {
-                case CardTargetedEnum.Player:
-                    await this.applyDamageToPlayer(client_id, calculated_value);
-                    break;
                 case CardTargetedEnum.Enemy:
                     await this.applyDamageToEnemy(
-                        client_id,
-                        calculated_value,
-                        targeted_id,
+                        clientId,
+                        calculatedValue,
+                        targetId,
                     );
                     break;
             }
         }
     }
 
-    private async applyDamageToPlayer(
-        clientId: string,
-        damage: number,
-    ): Promise<void> {
-        // NOTE: We can get player data and hp_current in one query, but we'll do it this way for now
-
-        // Get player defense
-        const {
-            data: { player },
-        } = await this.expeditionService.getCurrentNodeByClientId(clientId);
-
-        const { hp_current } =
-            await this.expeditionService.getPlayerStateByClientId({
-                client_id: clientId,
-            });
-
-        // Calculate true damage
-        const trueDamage = damage - (player.defense || 0);
-
-        // If damage is less or equal to 0, trigger damage negated event
-        if (trueDamage <= 0) {
-            // TODO: Trigger damage negated event
-            return;
-        }
-
-        // Calculate new hp
-        const newHp = hp_current - trueDamage;
-
-        // TODO: If new hp is less or equal than 0,  trigger death event
-
-        // Update player hp
-        await this.expeditionService.updatePlayerHp({
-            client_id: clientId,
-            hp: newHp,
-        });
-    }
-
     private async applyDamageToEnemy(
         clientId: string,
         damage: number,
-        target: string | number,
+        targetId: TargetId,
     ): Promise<void> {
         // Get enemy based on id
-        const enemies = await this.expeditionService.getCombatEnemies({
-            client_id: clientId,
+        const {
+            data: { enemies },
+        } = await this.expeditionService.getCurrentNode({
+            clientId: clientId,
         });
 
-        const { defense, hpMin } = enemies.filter((enemy) => {
-            if (typeof target === 'string') {
-                return enemy.id === target;
-            } else {
-                return enemy.enemyId === target;
+        enemies.map((enemy) => {
+            const field = typeof targetId === 'string' ? 'id' : 'enemyId';
+
+            if (enemy[field] === targetId) {
+                // Calculate true damage
+                const trueDamage = damage - Math.max(enemy.defense, 0);
+
+                // If damage is less or equal to 0, trigger damage negated event
+                // TODO: Trigger damage negated event
+
+                // Calculate new hp
+                enemy.hpCurrent = Math.max(0, enemy.hpCurrent - trueDamage);
+
+                // If new hp is less or equal than 0, trigger death event
+                // TODO: Trigger death effect event
             }
+
+            return enemy;
         })[0];
 
-        // Calculate true damage
-        const trueDamage = damage - Math.max(defense, 0);
-
-        // If damage is less or equal to 0, trigger damage negated event
-        // TODO: Trigger damage negated event
-
-        // Calculate new hp
-        const newHp = Math.max(0, hpMin - trueDamage);
-
-        // If new hp is less or equal than 0, trigger death event
-        // TODO: Trigger death effect event
-
-        // update enemy health
-        await this.expeditionService.updateEnemyHp({
-            client_id: clientId,
-            enemy_id: target,
-            hp: newHp,
-        });
+        // update enemies array
+        await this.expeditionService.updateEnemiesArray({ clientId, enemies });
     }
 }
