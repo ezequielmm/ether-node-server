@@ -2,8 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { ModulesContainer } from '@nestjs/core';
 import { InstanceWrapper } from '@nestjs/core/injector/instance-wrapper';
 import { clone } from 'lodash';
-import { BaseEffectDTO } from '../effects/dto';
-import { EffectName } from '../effects/interfaces/baseEffect';
+import { EffectName } from '../effects/effects.enum';
+import { BaseEffectDTO } from '../effects/effects.interface';
 import { STATUS_METADATA } from './contants';
 import {
     IBaseStatus,

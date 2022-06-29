@@ -1,5 +1,5 @@
-import { BaseEffectDTO } from '../effects/dto';
-import { EffectName } from '../effects/interfaces/baseEffect';
+import { EffectName } from '../effects/effects.enum';
+import { BaseEffectDTO } from '../effects/effects.interface';
 
 export enum StatusName {
     Resolve = 'resolve',
