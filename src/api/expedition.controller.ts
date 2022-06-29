@@ -12,16 +12,14 @@ import {
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '../guards/auth.guard';
 import { ExpeditionService } from '../game/components/expedition/expedition.service';
-import { CardService } from '../game/components/card/card.service';
-import { CharacterService } from '../game/components/character/character.service';
 import { AuthGatewayService } from 'src/authGateway/authGateway.service';
 import {
     IExpeditionCancelledResponse,
     IExpeditionCreatedResponse,
     IExpeditionStatusResponse,
 } from 'src/game/components/expedition/expedition.interface';
-import { CharacterClassEnum } from 'src/game/components/character/character.enum';
 import { ExpeditionStatusEnum } from 'src/game/components/expedition/expedition.enum';
+import { InitExpeditionProcess } from 'src/game/process/initExpedition.process';
 
 @ApiBearerAuth()
 @ApiTags('Expedition')
@@ -31,8 +29,7 @@ export class ExpeditionController {
     constructor(
         private readonly authGatewayService: AuthGatewayService,
         private readonly expeditionService: ExpeditionService,
-        private readonly cardService: CardService,
-        private readonly characterService: CharacterService,
+        private readonly initExpeditionProcess: InitExpeditionProcess,
     ) {}
 
     private readonly logger: Logger = new Logger(ExpeditionController.name);
@@ -94,39 +91,9 @@ export class ExpeditionController {
                 });
 
             if (!hasExpedition) {
-                const cards = await this.cardService.findAll();
-
-                const character = await this.characterService.findOne({
-                    characterClass: CharacterClassEnum.Knight,
-                });
-
-                const map = this.expeditionService.getMap();
-
-                await this.expeditionService.create({
+                await this.initExpeditionProcess.handle({
                     playerId,
-                    map,
-                    playerState: {
-                        playerName,
-                        characterClass: character.characterClass,
-                        hpMax: character.initialHealth,
-                        hpCurrent: character.initialHealth,
-                        gold: character.initialGold,
-                        cards: cards.map((card) => ({
-                            cardId: card.cardId,
-                            id: card._id.toString(),
-                            name: card.name,
-                            description: card.description,
-                            rarity: card.rarity,
-                            energy: card.energy,
-                            cardType: card.cardType,
-                            pool: card.pool,
-                            properties: card.properties,
-                            keywords: card.keywords,
-                            isTemporary: false,
-                        })),
-                        createdAt: new Date(),
-                    },
-                    status: ExpeditionStatusEnum.InProgress,
+                    playerName,
                 });
 
                 return response

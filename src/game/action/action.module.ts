@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { ExpeditionModule } from '../components/expedition/expedition.module';
 import { EffectModule } from '../effects/effects.module';
 import { ProcessModule } from '../process/process.module';
@@ -13,7 +13,7 @@ import { SetCombatTurnAction } from './setCombatTurn.action';
 import { UpdatePlayerEnergyAction } from './updatePlayerEnergy.action';
 
 @Module({
-    imports: [ExpeditionModule, ProcessModule, EffectModule],
+    imports: [ExpeditionModule, forwardRef(() => ProcessModule), EffectModule],
     providers: [
         FullSyncAction,
         SetCombatTurnAction,
