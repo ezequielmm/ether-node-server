@@ -143,6 +143,7 @@ export class CardPlayedAction {
                     }
 
                     try {
+                        // TODO: Apply status on effects before sending to processor
                         await this.effectService.process(
                             client.id,
                             effects,

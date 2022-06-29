@@ -2,6 +2,7 @@ import { Test } from '@nestjs/testing';
 import { CardTargetedEnum } from '../components/card/enums';
 import { ExpeditionService } from '../components/expedition/expedition.service';
 import { DamageEffect } from './damage.effect';
+import { DamageDTO } from './dto';
 
 describe('DamageEffect', () => {
     let effect: DamageEffect;
@@ -38,10 +39,11 @@ describe('DamageEffect', () => {
     });
 
     it('should handle damage for player', async () => {
-        const payload = {
+        const payload: DamageDTO = {
             client_id: 'client_id',
-            value: 10,
+            calculated_value: 10,
             targeted: CardTargetedEnum.Player,
+            targeted_id: 'targeted_id',
         };
 
         await effect.handle(payload);
@@ -61,10 +63,11 @@ describe('DamageEffect', () => {
     });
 
     it('should handle damage for player and trigger damage negated', async () => {
-        const payload = {
+        const payload: DamageDTO = {
             client_id: 'client_id',
-            value: 4,
+            calculated_value: 4,
             targeted: CardTargetedEnum.Player,
+            targeted_id: 'targeted_id',
         };
 
         await effect.handle(payload);
@@ -83,10 +86,11 @@ describe('DamageEffect', () => {
     });
 
     it('should handle damage for player and trigger death event', async () => {
-        const payload = {
+        const payload: DamageDTO = {
             client_id: 'client_id',
-            value: 105,
+            calculated_value: 105,
             targeted: CardTargetedEnum.Player,
+            targeted_id: 'targeted_id',
         };
 
         await effect.handle(payload);
@@ -99,7 +103,10 @@ describe('DamageEffect', () => {
             mockExpeditionService.getPlayerStateByClientId,
         ).toHaveBeenCalledWith({ client_id: payload.client_id });
 
-        expect(mockExpeditionService.updatePlayerHp).toHaveBeenCalledTimes(0);
+        expect(mockExpeditionService.updatePlayerHp).toHaveBeenCalledWith({
+            client_id: payload.client_id,
+            hp: 0,
+        });
 
         // TODO: Test trigger death event
     });
