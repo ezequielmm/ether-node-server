@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
+import { CardTargetedEnum } from '../components/card/card.enum';
 import { EffectName } from '../effects/effects.enum';
 import { BaseEffectDTO } from '../effects/effects.interface';
 import { IBaseStatus, StatusName, StatusType } from './interfaces';
@@ -51,6 +52,9 @@ describe('StatusService', () => {
         const payload: BaseEffectDTO = {
             clientId: 'test',
             targetId: 'test',
+            targeted: CardTargetedEnum.Player,
+            times: 1,
+            calculatedValue: 1,
         };
 
         const result = await statusService.process(
@@ -71,6 +75,9 @@ describe('StatusService', () => {
         const payload: BaseEffectDTO = {
             clientId: 'test',
             targetId: 'test',
+            targeted: CardTargetedEnum.Player,
+            times: 1,
+            calculatedValue: 1,
         };
 
         const result = await statusService.process(

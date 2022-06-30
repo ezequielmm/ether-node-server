@@ -52,6 +52,30 @@ export const Cards: Card[] = [
         },
     },
     {
+        cardId: 3,
+        name: 'Defend',
+        rarity: CardRarityEnum.Starter,
+        cardType: CardTypeEnum.Defend,
+        pool: 'knight',
+        energy: 1,
+        description: 'Gain 5 Defense',
+        keywords: [],
+        properties: {
+            effects: [
+                {
+                    name: EffectName.Defense,
+                    args: {
+                        baseValue: 5,
+                        calculatedValue: 5,
+                        targeted: CardTargetedEnum.Player,
+                        times: 1,
+                    },
+                },
+            ],
+            statuses: [],
+        },
+    },
+    {
         cardId: 13,
         name: 'Lunge',
         rarity: CardRarityEnum.Common,
@@ -121,7 +145,15 @@ export const Cards: Card[] = [
                         times: 1,
                     },
                 },
-                // TODO: Defense effect (4)
+                {
+                    name: EffectName.Defense,
+                    args: {
+                        baseValue: 4,
+                        calculatedValue: 4,
+                        targeted: CardTargetedEnum.Player,
+                        times: 1,
+                    },
+                },
             ],
             statuses: [],
         },
@@ -146,7 +178,15 @@ export const Cards: Card[] = [
                         times: 1,
                     },
                 },
-                // TODO: Defense effect (7)
+                {
+                    name: EffectName.Defense,
+                    args: {
+                        baseValue: 7,
+                        calculatedValue: 7,
+                        targeted: CardTargetedEnum.Player,
+                        times: 1,
+                    },
+                },
             ],
             statuses: [],
         },

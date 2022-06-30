@@ -25,6 +25,7 @@ export class EffectService {
         targetId?: TargetId,
     ): Promise<void> {
         for (const { name, args } of effects) {
+            // TODO: Validate if target exists
             await this.getEffectByName(name).handle({
                 ...args,
                 clientId,
