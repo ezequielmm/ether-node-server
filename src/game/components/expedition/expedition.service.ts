@@ -13,6 +13,7 @@ import {
     GetExpeditionMapNodeDTO,
     playerHasAnExpeditionDTO,
     SetCombatTurnDTO,
+    SetPlayerDefense,
     UpdateClientIdDTO,
     UpdateEnemiesArrayDTO,
     UpdateExpeditionDTO,
@@ -56,6 +57,7 @@ export class ExpeditionService {
         return await this.expedition.findOneAndUpdate(
             {
                 [field]: clientId,
+                status: ExpeditionStatusEnum.InProgress,
             },
             payload,
             { new: true },
@@ -231,6 +233,29 @@ export class ExpeditionService {
         return this.expedition.findOneAndUpdate(
             { [field]: clientId, status: ExpeditionStatusEnum.InProgress },
             piles,
+            { new: true },
+        );
+    }
+
+    async setPlayerDefense(
+        payload: SetPlayerDefense,
+    ): Promise<ExpeditionDocument> {
+        const { clientId, value } = payload;
+
+        const {
+            data: {
+                player: { defense },
+            },
+        } = await this.getCurrentNode({ clientId: clientId });
+
+        const newDefenseValue = defense + value;
+
+        return await this.expedition.findOneAndUpdate(
+            {
+                clientId,
+                status: ExpeditionStatusEnum.InProgress,
+            },
+            { 'currentNode.data.player.defense': newDefenseValue },
             { new: true },
         );
     }
