@@ -14,7 +14,6 @@ import { GetEnemiesAction } from './getEnemies.action';
 import { GetEnergyAction } from './getEnergy.action';
 import { GetPlayerInfoAction } from './getPlayerInfo.action';
 import { SetCombatTurnAction } from './setCombatTurn.action';
-import { ShuffleCardPilesAction } from './shuffleCardPiles.action';
 import { UpdatePlayerEnergyAction } from './updatePlayerEnergy.action';
 
 @Module({
@@ -37,7 +36,6 @@ import { UpdatePlayerEnergyAction } from './updatePlayerEnergy.action';
         DiscardCardAction,
         DiscardAllCardsAction,
         EndturnAction,
-        ShuffleCardPilesAction,
     ],
     exports: [
         FullSyncAction,
@@ -51,7 +49,6 @@ import { UpdatePlayerEnergyAction } from './updatePlayerEnergy.action';
         DiscardCardAction,
         DiscardAllCardsAction,
         EndturnAction,
-        ShuffleCardPilesAction,
     ],
 })
 export class ActionModule {}

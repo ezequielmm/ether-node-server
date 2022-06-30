@@ -5,6 +5,9 @@ import { TargetId } from './effects.types';
 export interface BaseEffectDTO {
     readonly clientId: string;
     readonly targetId: TargetId;
+    calculatedValue: number;
+    times: number;
+    targeted: CardTargetedEnum;
 }
 
 export interface IBaseEffect {
@@ -21,9 +24,5 @@ export interface JsonEffect {
     };
 }
 
-export interface DamageDTO extends BaseEffectDTO {
-    calculatedValue: number;
-    times: number;
-    targeted: CardTargetedEnum;
-    targetId: TargetId;
-}
+export type DamageDTO = BaseEffectDTO;
+export type DrawCardDTO = BaseEffectDTO;

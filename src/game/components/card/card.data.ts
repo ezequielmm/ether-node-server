@@ -71,7 +71,15 @@ export const Cards: Card[] = [
                         times: 2,
                     },
                 },
-                // TODO: Draw effect (1)
+                {
+                    name: EffectName.DrawCard,
+                    args: {
+                        baseValue: 2,
+                        calculatedValue: 2,
+                        targeted: CardTargetedEnum.Player,
+                        times: 1,
+                    },
+                },
             ],
             statuses: [],
         },
@@ -96,7 +104,15 @@ export const Cards: Card[] = [
                         times: 2,
                     },
                 },
-                // TODO: Draw effect (2)
+                {
+                    name: EffectName.DrawCard,
+                    args: {
+                        baseValue: 2,
+                        calculatedValue: 2,
+                        targeted: CardTargetedEnum.Player,
+                        times: 1,
+                    },
+                },
             ],
             statuses: [],
         },
