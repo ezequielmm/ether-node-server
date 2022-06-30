@@ -76,6 +76,30 @@ export const Cards: Card[] = [
         },
     },
     {
+        cardId: 4,
+        name: 'Defend+',
+        rarity: CardRarityEnum.Starter,
+        cardType: CardTypeEnum.Defend,
+        pool: 'knight',
+        energy: 1,
+        description: 'Gain 8 Defense',
+        keywords: [],
+        properties: {
+            effects: [
+                {
+                    name: EffectName.Defense,
+                    args: {
+                        baseValue: 8,
+                        calculatedValue: 8,
+                        targeted: CardTargetedEnum.Player,
+                        times: 1,
+                    },
+                },
+            ],
+            statuses: [],
+        },
+    },
+    {
         cardId: 13,
         name: 'Lunge',
         rarity: CardRarityEnum.Common,
