@@ -1,5 +1,10 @@
 import { EffectName } from 'src/game/effects/effects.enum';
-import { CardRarityEnum, CardTypeEnum, CardTargetedEnum } from './card.enum';
+import {
+    CardRarityEnum,
+    CardTypeEnum,
+    CardTargetedEnum,
+    CardKeywordEnum,
+} from './card.enum';
 import { Card } from './card.schema';
 
 export const Cards: Card[] = [
@@ -343,6 +348,30 @@ export const Cards: Card[] = [
                     args: {
                         baseValue: 9,
                         calculatedValue: 9, // TODO: Calculate this value based in the count of uses
+                        targeted: CardTargetedEnum.Enemy,
+                        times: 1,
+                    },
+                },
+            ],
+            statuses: [],
+        },
+    },
+    {
+        cardId: 57,
+        name: 'Fine Edge',
+        rarity: CardRarityEnum.Special,
+        cardType: CardTypeEnum.Attack,
+        pool: 'knight',
+        energy: 0,
+        description: 'Deal 5 damage. Exhaust',
+        keywords: [CardKeywordEnum.Exhaust],
+        properties: {
+            effects: [
+                {
+                    name: EffectName.Damage,
+                    args: {
+                        baseValue: 5,
+                        calculatedValue: 5, // TODO: Calculate this value based in the count of uses
                         targeted: CardTargetedEnum.Enemy,
                         times: 1,
                     },

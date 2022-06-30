@@ -8,6 +8,7 @@ import { CardPlayedAction } from './cardPlayed.action';
 import { DiscardAllCardsAction } from './discardAllCards.action';
 import { DiscardCardAction } from './discardCard.action';
 import { EndturnAction } from './endTurn.action';
+import { ExhaustCardAction } from './exhaustCard.action';
 import { FullSyncAction } from './fullSync.action';
 import { GetCardPilesAction } from './getCardPiles.action';
 import { GetEnemiesAction } from './getEnemies.action';
@@ -38,6 +39,7 @@ import { UpdatePlayerEnergyAction } from './updatePlayerEnergy.action';
         DiscardAllCardsAction,
         EndturnAction,
         ShuffleCardPilesAction,
+        ExhaustCardAction,
     ],
     exports: [
         FullSyncAction,
@@ -52,6 +54,7 @@ import { UpdatePlayerEnergyAction } from './updatePlayerEnergy.action';
         DiscardAllCardsAction,
         EndturnAction,
         ShuffleCardPilesAction,
+        ExhaustCardAction,
     ],
 })
 export class ActionModule {}
