@@ -11,7 +11,7 @@ export class DefenseEffect implements IBaseEffect {
 
     async handle(payload: DefenseDTO): Promise<void> {
         await this.expeditionService.setPlayerDefense({
-            clientId: payload.clientId,
+            clientId: payload.client.id,
             value: payload.calculatedValue,
         });
     }
