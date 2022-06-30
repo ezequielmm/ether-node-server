@@ -2,6 +2,7 @@ import { SubscribeMessage, WebSocketGateway } from '@nestjs/websockets';
 import { Logger } from '@nestjs/common';
 import { Socket } from 'socket.io';
 import { NodeSelectedProcess } from 'src/game/process/nodeSelected.process';
+import { FullSyncAction } from 'src/game/action/fullSync.action';
 
 @WebSocketGateway({
     cors: {
@@ -11,11 +12,16 @@ import { NodeSelectedProcess } from 'src/game/process/nodeSelected.process';
 export class ExpeditionGateway {
     private readonly logger: Logger = new Logger(ExpeditionGateway.name);
 
-    constructor(private readonly nodeSelectedProcess: NodeSelectedProcess) {}
+    constructor(
+        private readonly nodeSelectedProcess: NodeSelectedProcess,
+        private readonly fullSyncAction: FullSyncAction,
+    ) {}
 
     @SubscribeMessage('SyncExpedition')
     async handleSyncExpedition(client: Socket): Promise<void> {
         this.logger.log(`Client ${client.id} trigger message "SyncExpedition"`);
+
+        await this.fullSyncAction.handle(client);
     }
 
     @SubscribeMessage('NodeSelected')

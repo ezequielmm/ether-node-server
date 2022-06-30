@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { WsException } from '@nestjs/websockets';
 import { Socket } from 'socket.io';
+import { CardKeywordPipeline } from '../cardKeywordPipeline/cardKeywordPipeline';
 import {
     CardEnergyEnum,
     CardPlayErrorMessages,
@@ -15,6 +16,7 @@ import {
     SWARAction,
 } from '../standardResponse/standardResponse';
 import { DiscardCardAction } from './discardCard.action';
+import { ExhaustCardAction } from './exhaustCard.action';
 import { UpdatePlayerEnergyAction } from './updatePlayerEnergy.action';
 
 interface CardPlayedDTO {
@@ -32,6 +34,7 @@ export class CardPlayedAction {
         private readonly effectService: EffectService,
         private readonly updatePlayerEnergyAction: UpdatePlayerEnergyAction,
         private readonly discardCardAction: DiscardCardAction,
+        private readonly exhaustCardAction: ExhaustCardAction,
     ) {}
 
     async handle(payload: CardPlayedDTO): Promise<void> {
@@ -107,6 +110,7 @@ export class CardPlayedAction {
                 const {
                     energy: cardEnergyCost,
                     properties: { effects },
+                    keywords,
                 } = hand.filter((card) => {
                     const field = typeof cardId === 'string' ? 'id' : 'cardId';
 
@@ -151,31 +155,61 @@ export class CardPlayedAction {
                         targetId,
                     );
 
-                    await this.discardCardAction.handle({
-                        clientId: client.id,
-                        cardId,
-                    });
+                    const { exhaust } = CardKeywordPipeline.process(keywords);
 
-                    this.logger.log(
-                        `Sent message PutData to client ${client.id}: ${SWARAction.MoveCard}`,
-                    );
+                    if (exhaust) {
+                        await this.exhaustCardAction.handle({
+                            clientId: client.id,
+                            cardId,
+                        });
 
-                    client.emit(
-                        'PutData',
-                        JSON.stringify(
-                            StandardResponse.respond({
-                                message_type: SWARMessageType.EnemyAttacked,
-                                action: SWARAction.MoveCard,
-                                data: [
-                                    {
-                                        source: 'hand',
-                                        destination: 'discard',
-                                        cardId,
-                                    },
-                                ],
-                            }),
-                        ),
-                    );
+                        this.logger.log(
+                            `Sent message PutData to client ${client.id}: ${SWARAction.MoveCard}`,
+                        );
+
+                        client.emit(
+                            'PutData',
+                            JSON.stringify(
+                                StandardResponse.respond({
+                                    message_type: SWARMessageType.EnemyAttacked,
+                                    action: SWARAction.MoveCard,
+                                    data: [
+                                        {
+                                            source: 'hand',
+                                            destination: 'exhaust',
+                                            cardId,
+                                        },
+                                    ],
+                                }),
+                            ),
+                        );
+                    } else {
+                        await this.discardCardAction.handle({
+                            clientId: client.id,
+                            cardId,
+                        });
+
+                        this.logger.log(
+                            `Sent message PutData to client ${client.id}: ${SWARAction.MoveCard}`,
+                        );
+
+                        client.emit(
+                            'PutData',
+                            JSON.stringify(
+                                StandardResponse.respond({
+                                    message_type: SWARMessageType.EnemyAttacked,
+                                    action: SWARAction.MoveCard,
+                                    data: [
+                                        {
+                                            source: 'hand',
+                                            destination: 'discard',
+                                            cardId,
+                                        },
+                                    ],
+                                }),
+                            ),
+                        );
+                    }
 
                     const {
                         data: {
