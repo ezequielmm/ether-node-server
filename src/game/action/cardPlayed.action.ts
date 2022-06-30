@@ -149,11 +149,7 @@ export class CardPlayedAction {
                         newEnergy: newEnergyAmount,
                     });
 
-                    await this.effectService.process(
-                        client.id,
-                        effects,
-                        targetId,
-                    );
+                    await this.effectService.process(client, effects, targetId);
 
                     const { exhaust } = CardKeywordPipeline.process(keywords);
 

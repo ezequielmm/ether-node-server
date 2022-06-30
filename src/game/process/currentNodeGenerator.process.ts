@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { CardService } from '../components/card/card.service';
+import { removeCardsFromPile } from 'src/utils';
 import { EnemyService } from '../components/enemy/enemy.service';
 import { EnemyId } from '../components/enemy/enemy.type';
 import { ExpeditionMapNodeTypeEnum } from '../components/expedition/expedition.enum';
@@ -18,7 +18,6 @@ export class CurrentNodeGeneratorProcess {
 
     constructor(
         private readonly expeditionService: ExpeditionService,
-        private readonly cardService: CardService,
         private readonly settingsService: SettingsService,
         private readonly enemyService: EnemyService,
     ) {}
@@ -59,10 +58,10 @@ export class CurrentNodeGeneratorProcess {
             .sort(() => 0.5 - Math.random())
             .slice(0, handSize);
 
-        const drawCards = this.cardService.removeHandCardsFromDrawPile(
-            cards,
-            handCards,
-        );
+        const drawCards = removeCardsFromPile({
+            originalPile: cards,
+            cardsToRemove: handCards,
+        });
 
         const enemies: IExpeditionCurrentNodeDataEnemy[] = await Promise.all(
             this.node.private_data.enemies.map(async (enemyId: EnemyId) => {

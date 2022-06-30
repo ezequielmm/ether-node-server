@@ -1,10 +1,14 @@
+import { Socket } from 'socket.io';
 import { CardTargetedEnum } from '../components/card/card.enum';
 import { EffectName } from './effects.enum';
 import { TargetId } from './effects.types';
 
 export interface BaseEffectDTO {
-    readonly clientId: string;
+    client: Socket;
     readonly targetId: TargetId;
+    calculatedValue: number;
+    times: number;
+    targeted: CardTargetedEnum;
 }
 
 export interface IBaseEffect {
@@ -21,9 +25,5 @@ export interface JsonEffect {
     };
 }
 
-export interface DamageDTO extends BaseEffectDTO {
-    calculatedValue: number;
-    times: number;
-    targeted: CardTargetedEnum;
-    targetId: TargetId;
-}
+export type DamageDTO = BaseEffectDTO;
+export type DrawCardDTO = BaseEffectDTO;
