@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ModulesContainer } from '@nestjs/core';
 import { InstanceWrapper } from '@nestjs/core/injector/instance-wrapper';
+import { Socket } from 'socket.io';
 import { EFFECT_METADATA } from './effects.decorator';
 import { IBaseEffect, JsonEffect } from './effects.interface';
 import { TargetId } from './effects.types';
@@ -20,14 +21,14 @@ export class EffectService {
     }
 
     async process(
-        clientId: string,
+        client: Socket,
         effects: JsonEffect[],
         targetId?: TargetId,
     ): Promise<void> {
         for (const { name, args } of effects) {
             await this.getEffectByName(name).handle({
                 ...args,
-                clientId,
+                client,
                 targetId,
             });
         }

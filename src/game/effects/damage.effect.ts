@@ -12,8 +12,7 @@ export class DamageEffect implements IBaseEffect {
     constructor(private readonly expeditionService: ExpeditionService) {}
 
     async handle(payload: DamageDTO): Promise<void> {
-        const { clientId, times, calculatedValue, targeted, targetId } =
-            payload;
+        const { client, times, calculatedValue, targeted, targetId } = payload;
         // TODO: Triger damage attempted event
 
         for (let i = 1; i <= times; i++) {
@@ -21,7 +20,7 @@ export class DamageEffect implements IBaseEffect {
             switch (targeted) {
                 case CardTargetedEnum.Enemy:
                     await this.applyDamageToEnemy(
-                        clientId,
+                        client.id,
                         calculatedValue,
                         targetId,
                     );

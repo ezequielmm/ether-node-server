@@ -145,11 +145,7 @@ export class CardPlayedAction {
                         newEnergy: newEnergyAmount,
                     });
 
-                    await this.effectService.process(
-                        client.id,
-                        effects,
-                        targetId,
-                    );
+                    await this.effectService.process(client, effects, targetId);
 
                     await this.discardCardAction.handle({
                         clientId: client.id,
