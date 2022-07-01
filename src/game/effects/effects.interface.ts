@@ -28,4 +28,5 @@ export interface JsonEffect {
 export type DamageDTO = BaseEffectDTO;
 export type DefenseDTO = BaseEffectDTO;
 export type DrawCardDTO = BaseEffectDTO;
+export type HealCardDTO = BaseEffectDTO;
 export type EnergyDTO = BaseEffectDTO;
