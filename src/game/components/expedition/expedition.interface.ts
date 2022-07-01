@@ -45,3 +45,4 @@ export interface IExpeditionCancelledResponse {
 }
 
 export type IExpeditionCurrentNode = Expedition['currentNode'];
+export type IExpeditionPlayerState = Expedition['playerState'];

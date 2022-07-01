@@ -460,4 +460,28 @@ export const Cards: Card[] = [
             statuses: [],
         },
     },
+    {
+        cardId: 75,
+        name: 'Heaven’s Grace',
+        rarity: CardRarityEnum.Rare,
+        cardType: CardTypeEnum.Skill,
+        pool: 'knight',
+        energy: 1,
+        description: 'Heal 2 hp',
+        keywords: [],
+        properties: {
+            effects: [
+                {
+                    name: EffectName.Heal,
+                    args: {
+                        baseValue: 2,
+                        calculatedValue: 2,
+                        targeted: CardTargetedEnum.Player,
+                        times: 1,
+                    },
+                },
+            ],
+            statuses: [],
+        },
+    },
 ];
