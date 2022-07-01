@@ -5,6 +5,7 @@ import { DefenseEffect } from './defense.effect';
 import { DrawCardEffect } from './drawCard.effect';
 import { EffectService } from './effects.service';
 import { HealEffect } from './heal.effect';
+import { EnergyEffect } from './energy.effect';
 
 @Module({
     imports: [forwardRef(() => ExpeditionModule)],
@@ -14,6 +15,7 @@ import { HealEffect } from './heal.effect';
         DefenseEffect,
         DrawCardEffect,
         HealEffect,
+        EnergyEffect,
     ],
     exports: [EffectService],
 })

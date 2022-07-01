@@ -508,4 +508,52 @@ export const Cards: Card[] = [
             statuses: [],
         },
     },
+    {
+        cardId: 9,
+        name: 'First Move',
+        rarity: CardRarityEnum.Starter,
+        cardType: CardTypeEnum.Skill,
+        pool: 'knight',
+        energy: 1,
+        description: 'Gain 2 Energy',
+        keywords: [],
+        properties: {
+            effects: [
+                {
+                    name: EffectName.Energy,
+                    args: {
+                        baseValue: 2,
+                        calculatedValue: 2,
+                        targeted: CardTargetedEnum.Player,
+                        times: 1,
+                    },
+                },
+            ],
+            statuses: [],
+        },
+    },
+    {
+        cardId: 10,
+        name: 'First Move+',
+        rarity: CardRarityEnum.Starter,
+        cardType: CardTypeEnum.Skill,
+        pool: 'knight',
+        energy: 0,
+        description: 'Gain 2 Energy',
+        keywords: [],
+        properties: {
+            effects: [
+                {
+                    name: EffectName.Energy,
+                    args: {
+                        baseValue: 2,
+                        calculatedValue: 2,
+                        targeted: CardTargetedEnum.Player,
+                        times: 1,
+                    },
+                },
+            ],
+            statuses: [],
+        },
+    },
 ];
