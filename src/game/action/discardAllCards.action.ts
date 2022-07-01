@@ -54,7 +54,7 @@ export class DiscardAllCardsAction {
             'PutData',
             JSON.stringify(
                 StandardResponse.respond({
-                    message_type: SWARMessageType.EnemyAttacked,
+                    message_type: SWARMessageType.EndTurn,
                     action: SWARAction.MoveCard,
                     data: cardMoves,
                 }),
