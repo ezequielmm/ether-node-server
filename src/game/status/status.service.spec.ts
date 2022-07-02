@@ -1,35 +1,39 @@
 import { Injectable } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
+import { Socket } from 'socket.io';
 import { CardTargetedEnum } from '../components/card/card.enum';
 import { EffectName } from '../effects/effects.enum';
 import { BaseEffectDTO } from '../effects/effects.interface';
-import { IBaseStatus, StatusName, StatusType } from './interfaces';
-import { Status } from './status.decorator';
+import { IBaseStatus, StatusDTO } from './interfaces';
 import { StatusService } from './status.service';
+import { getModelToken } from '@nestjs/mongoose';
+import { Expedition } from '../components/expedition/expedition.schema';
+import { StatusDecorator } from './status.decorator';
+import { Statuses } from './contants';
 
-@Status({
+@StatusDecorator({
     effects: [EffectName.Damage],
-    type: StatusType.Buff,
-    name: StatusName.Resolve,
+    status: Statuses.Resolve,
 })
 @Injectable()
 class StatusA implements IBaseStatus {
-    async handle(payload: BaseEffectDTO): Promise<BaseEffectDTO> {
-        payload['status'] = (payload['status'] || '') + 'A';
-        return payload;
+    async handle(payload: StatusDTO): Promise<BaseEffectDTO> {
+        payload.baseEffectDTO['status'] =
+            (payload.baseEffectDTO['status'] || '') + 'A';
+        return payload.baseEffectDTO;
     }
 }
 
-@Status({
+@StatusDecorator({
     effects: [EffectName.Defense, EffectName.Damage],
-    type: StatusType.Debuff,
-    name: StatusName.Fortitude,
+    status: Statuses.Fortitude,
 })
 @Injectable()
 class StatusB implements IBaseStatus {
-    async handle(payload: BaseEffectDTO): Promise<BaseEffectDTO> {
-        payload['status'] = (payload['status'] || '') + 'B';
-        return payload;
+    async handle(payload: StatusDTO): Promise<BaseEffectDTO> {
+        payload.baseEffectDTO['status'] =
+            (payload.baseEffectDTO['status'] || '') + 'B';
+        return payload.baseEffectDTO;
     }
 }
 
@@ -38,7 +42,12 @@ describe('StatusService', () => {
 
     beforeEach(async () => {
         const module = await Test.createTestingModule({
-            providers: [StatusService, StatusA, StatusB],
+            providers: [
+                StatusService,
+                StatusA,
+                StatusB,
+                { provide: getModelToken(Expedition.name), useValue: {} },
+            ],
         }).compile();
 
         statusService = module.get(StatusService);
@@ -50,7 +59,7 @@ describe('StatusService', () => {
 
     it('should call status handle by effect name', async () => {
         const payload: BaseEffectDTO = {
-            clientId: 'test',
+            client: { id: 'test' } as Socket,
             targetId: 'test',
             targeted: CardTargetedEnum.Player,
             times: 1,
@@ -60,8 +69,10 @@ describe('StatusService', () => {
         const result = await statusService.process(
             [
                 {
-                    name: StatusName.Resolve,
-                    args: {},
+                    name: Statuses.Resolve.name,
+                    args: {
+                        value: null,
+                    },
                 },
             ],
             EffectName.Damage,
@@ -71,9 +82,9 @@ describe('StatusService', () => {
         expect(result['status']).toBe('A');
     });
 
-    it('should call status handle by effect name by buff-debuff order', async () => {
+    it('should call multiple status handle by effect name', async () => {
         const payload: BaseEffectDTO = {
-            clientId: 'test',
+            client: { id: 'test' } as Socket,
             targetId: 'test',
             targeted: CardTargetedEnum.Player,
             times: 1,
@@ -83,18 +94,22 @@ describe('StatusService', () => {
         const result = await statusService.process(
             [
                 {
-                    name: StatusName.Fortitude,
-                    args: {},
+                    name: Statuses.Fortitude.name,
+                    args: {
+                        value: null,
+                    },
                 },
                 {
-                    name: StatusName.Resolve,
-                    args: {},
+                    name: Statuses.Resolve.name,
+                    args: {
+                        value: null,
+                    },
                 },
             ],
             EffectName.Damage,
             payload,
         );
 
-        expect(result['status']).toBe('AB');
+        expect(result['status']).toBe('BA');
     });
 });

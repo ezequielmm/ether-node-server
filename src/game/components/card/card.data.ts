@@ -1,4 +1,5 @@
 import { EffectName } from 'src/game/effects/effects.enum';
+import { Statuses } from 'src/game/status/contants';
 import {
     CardRarityEnum,
     CardTypeEnum,
@@ -458,6 +459,28 @@ export const Cards: Card[] = [
                 },
             ],
             statuses: [],
+        },
+    },
+    {
+        cardId: 15,
+        name: 'Turtle',
+        rarity: CardRarityEnum.Common,
+        cardType: CardTypeEnum.Defend,
+        pool: 'knight',
+        energy: 0,
+        description: 'At the end of this turn, double your defense',
+        keywords: [],
+        properties: {
+            effects: [],
+            statuses: [
+                {
+                    name: Statuses.Turtling.name,
+                    args: {
+                        value: 1,
+                        targeted: CardTargetedEnum.Player,
+                    },
+                },
+            ],
         },
     },
 ];

@@ -4,6 +4,7 @@ import { ExpeditionModule } from '../components/expedition/expedition.module';
 import { SettingsModule } from '../components/settings/settings.module';
 import { EffectModule } from '../effects/effects.module';
 import { ProcessModule } from '../process/process.module';
+import { StatusModule } from '../status/status.module';
 import { CardPlayedAction } from './cardPlayed.action';
 import { DiscardAllCardsAction } from './discardAllCards.action';
 import { DiscardCardAction } from './discardCard.action';
@@ -22,6 +23,7 @@ import { UpdatePlayerEnergyAction } from './updatePlayerEnergy.action';
         ExpeditionModule,
         forwardRef(() => ProcessModule),
         EffectModule,
+        StatusModule,
         SettingsModule,
         CardModule,
     ],

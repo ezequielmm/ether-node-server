@@ -15,6 +15,7 @@ import {
     SWARMessageType,
     SWARAction,
 } from '../standardResponse/standardResponse';
+import { StatusService } from '../status/status.service';
 import { DiscardCardAction } from './discardCard.action';
 import { ExhaustCardAction } from './exhaustCard.action';
 import { UpdatePlayerEnergyAction } from './updatePlayerEnergy.action';
@@ -32,6 +33,7 @@ export class CardPlayedAction {
     constructor(
         private readonly expeditionService: ExpeditionService,
         private readonly effectService: EffectService,
+        private readonly statusService: StatusService,
         private readonly updatePlayerEnergyAction: UpdatePlayerEnergyAction,
         private readonly discardCardAction: DiscardCardAction,
         private readonly exhaustCardAction: ExhaustCardAction,
@@ -82,7 +84,7 @@ export class CardPlayedAction {
             // the player hand pile
             const {
                 energy: cardEnergyCost,
-                properties: { effects },
+                properties: { effects, statuses },
                 keywords,
             } = hand.find((card) => {
                 const field = typeof cardId === 'string' ? 'id' : 'cardId';
@@ -121,6 +123,12 @@ export class CardPlayedAction {
                     clientId: client.id,
                     newEnergy: newEnergyAmount,
                 });
+
+                await this.statusService.attachStatuses(
+                    client.id,
+                    statuses,
+                    targetId,
+                );
 
                 await this.effectService.process(client, effects, targetId);
 

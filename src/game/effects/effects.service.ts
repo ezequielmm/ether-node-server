@@ -2,6 +2,9 @@ import { Injectable } from '@nestjs/common';
 import { ModulesContainer } from '@nestjs/core';
 import { InstanceWrapper } from '@nestjs/core/injector/instance-wrapper';
 import { Socket } from 'socket.io';
+import { CardTargetedEnum } from '../components/card/card.enum';
+import { EntityStatuses, JsonStatus, StatusType } from '../status/interfaces';
+import { StatusService } from '../status/status.service';
 import { EFFECT_METADATA } from './effects.decorator';
 import { IBaseEffect, JsonEffect } from './effects.interface';
 import { TargetId } from './effects.types';
@@ -10,7 +13,10 @@ import { TargetId } from './effects.types';
 export class EffectService {
     private effectsCached: Map<string, IBaseEffect>;
 
-    constructor(private readonly modulesContainer: ModulesContainer) {}
+    constructor(
+        private readonly modulesContainer: ModulesContainer,
+        private readonly statusService: StatusService,
+    ) {}
 
     private getEffectByName(name: string): IBaseEffect {
         const effect = this.getAllEffectProviders().get(name);
@@ -25,13 +31,42 @@ export class EffectService {
         effects: JsonEffect[],
         targetId?: TargetId,
     ): Promise<void> {
-        for (const { name, args } of effects) {
+        for (const {
+            name,
+            args: { baseValue, ...args },
+        } of effects) {
             // TODO: Validate if target exists
-            await this.getEffectByName(name).handle({
+            let dto = {
                 ...args,
                 client,
                 targetId,
-            });
+            };
+            let statuses: EntityStatuses;
+            // Check type of target
+            if (args.targeted == CardTargetedEnum.Player) {
+                statuses = await this.statusService.getStatusesByPlayer(
+                    client.id,
+                );
+            } else if (args.targeted == CardTargetedEnum.Enemy) {
+                statuses = await this.statusService.getStatusesByEnemy(
+                    client.id,
+                    targetId,
+                );
+            }
+            if (statuses) {
+                dto = await this.statusService.process(
+                    statuses[StatusType.Buff],
+                    name,
+                    dto,
+                );
+                dto = await this.statusService.process(
+                    statuses[StatusType.Debuff],
+                    name,
+                    dto,
+                );
+            }
+
+            await this.getEffectByName(name).handle(dto);
         }
     }
 

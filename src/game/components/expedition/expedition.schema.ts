@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
+import { AttachedStatus, StatusType } from 'src/game/status/interfaces';
 import {
     ExpeditionMapNodeTypeEnum,
     ExpeditionStatusEnum,
@@ -54,6 +55,10 @@ export class Expedition {
                     draw: IExpeditionPlayerStateDeckCard[];
                     discard: IExpeditionPlayerStateDeckCard[];
                     exhausted: IExpeditionPlayerStateDeckCard[];
+                };
+                statuses: {
+                    [StatusType.Buff]: AttachedStatus[];
+                    [StatusType.Debuff]: AttachedStatus[];
                 };
             };
             enemies: IExpeditionCurrentNodeDataEnemy[];
