@@ -10,6 +10,7 @@ import {
     GetDeckCardsDTO,
     GetExpeditionMapDTO,
     GetExpeditionMapNodeDTO,
+    GetPlayerStateDTO,
     playerHasAnExpeditionDTO,
     SetCombatTurnDTO,
     SetPlayerDefense,
@@ -18,11 +19,13 @@ import {
     UpdateExpeditionDTO,
     UpdateHandPilesDTO,
     UpdatePlayerEnergyDTO,
+    UpdatePlayerHealth,
 } from './expedition.dto';
 import { ExpeditionStatusEnum } from './expedition.enum';
 import {
     IExpeditionCurrentNode,
     IExpeditionNode,
+    IExpeditionPlayerState,
     IExpeditionPlayerStateDeckCard,
 } from './expedition.interface';
 import { generateMap, restoreMap } from 'src/game/map/app';
@@ -160,6 +163,17 @@ export class ExpeditionService {
         return currentNode;
     }
 
+    async getPlayerState(
+        payload: GetPlayerStateDTO,
+    ): Promise<IExpeditionPlayerState> {
+        const { clientId } = payload;
+        const { playerState } = await this.expedition.findOne({
+            clientId,
+            status: ExpeditionStatusEnum.InProgress,
+        });
+        return playerState;
+    }
+
     async cardExistsOnPlayerHand(
         payload: CardExistsOnPlayerHandDTO,
     ): Promise<boolean> {
@@ -254,6 +268,23 @@ export class ExpeditionService {
                 status: ExpeditionStatusEnum.InProgress,
             },
             { 'currentNode.data.player.defense': newDefenseValue },
+            { new: true },
+        );
+    }
+
+    async setPlayerHealth(
+        payload: UpdatePlayerHealth,
+    ): Promise<ExpeditionDocument> {
+        const { clientId, hpCurrent } = payload;
+
+        const field = typeof clientId === 'string' ? 'clientId' : 'playerId';
+
+        return this.expedition.findOneAndUpdate(
+            {
+                [field]: clientId,
+                status: ExpeditionStatusEnum.InProgress,
+            },
+            { 'playerState.hpCurrent': hpCurrent },
             { new: true },
         );
     }

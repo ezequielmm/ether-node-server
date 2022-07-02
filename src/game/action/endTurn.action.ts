@@ -1,12 +1,14 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Socket } from 'socket.io';
 import { ExpeditionService } from '../components/expedition/expedition.service';
+import { SettingsService } from '../components/settings/settings.service';
 import {
     SWARAction,
     StandardResponse,
     SWARMessageType,
 } from '../standardResponse/standardResponse';
 import { DiscardAllCardsAction } from './discardAllCards.action';
+import { UpdatePlayerEnergyAction } from './updatePlayerEnergy.action';
 
 @Injectable()
 export class EndturnAction {
@@ -15,10 +17,23 @@ export class EndturnAction {
     constructor(
         private readonly discardAllCardsAction: DiscardAllCardsAction,
         private readonly expeditionService: ExpeditionService,
+        private readonly updatePlayerEnergyAction: UpdatePlayerEnergyAction,
+        private readonly settingsService: SettingsService,
     ) {}
 
     async handle(client: Socket): Promise<void> {
         await this.discardAllCardsAction.handle({ client });
+
+        const {
+            player: {
+                energy: { initial },
+            },
+        } = await this.settingsService.getSettings();
+
+        await this.updatePlayerEnergyAction.handle({
+            clientId: client.id,
+            newEnergy: initial,
+        });
 
         const {
             data: {
@@ -36,7 +51,7 @@ export class EndturnAction {
             'PutData',
             JSON.stringify(
                 StandardResponse.respond({
-                    message_type: SWARMessageType.EnemyAttacked,
+                    message_type: SWARMessageType.EndTurn,
                     action: SWARAction.UpdateEnergy,
                     data: [energy, energyMax],
                 }),

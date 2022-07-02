@@ -5,5 +5,5 @@ export enum EffectName {
     DrawCard = 'drawCard',
     AddCard = 'addCard',
     ModifyHPMax = 'modifyHPMax',
-    AddBuff = 'addBuff',
+    Heal = 'heal',
 }

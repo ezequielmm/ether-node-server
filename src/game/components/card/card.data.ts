@@ -483,4 +483,100 @@ export const Cards: Card[] = [
             ],
         },
     },
+    {
+        cardId: 75,
+        name: 'Heaven’s Grace',
+        rarity: CardRarityEnum.Rare,
+        cardType: CardTypeEnum.Skill,
+        pool: 'knight',
+        energy: 1,
+        description: 'Heal 2 hp',
+        keywords: [],
+        properties: {
+            effects: [
+                {
+                    name: EffectName.Heal,
+                    args: {
+                        baseValue: 2,
+                        calculatedValue: 2,
+                        targeted: CardTargetedEnum.Player,
+                        times: 1,
+                    },
+                },
+            ],
+            statuses: [],
+        },
+    },
+    {
+        cardId: 76,
+        name: 'Heaven’s Grace+',
+        rarity: CardRarityEnum.Rare,
+        cardType: CardTypeEnum.Skill,
+        pool: 'knight',
+        energy: 1,
+        description: 'Heal 4 hp',
+        keywords: [],
+        properties: {
+            effects: [
+                {
+                    name: EffectName.Heal,
+                    args: {
+                        baseValue: 4,
+                        calculatedValue: 4,
+                        targeted: CardTargetedEnum.Player,
+                        times: 1,
+                    },
+                },
+            ],
+            statuses: [],
+        },
+    },
+    {
+        cardId: 9,
+        name: 'First Move',
+        rarity: CardRarityEnum.Starter,
+        cardType: CardTypeEnum.Skill,
+        pool: 'knight',
+        energy: 1,
+        description: 'Gain 2 Energy',
+        keywords: [],
+        properties: {
+            effects: [
+                {
+                    name: EffectName.Energy,
+                    args: {
+                        baseValue: 2,
+                        calculatedValue: 2,
+                        targeted: CardTargetedEnum.Player,
+                        times: 1,
+                    },
+                },
+            ],
+            statuses: [],
+        },
+    },
+    {
+        cardId: 10,
+        name: 'First Move+',
+        rarity: CardRarityEnum.Starter,
+        cardType: CardTypeEnum.Skill,
+        pool: 'knight',
+        energy: 0,
+        description: 'Gain 2 Energy',
+        keywords: [],
+        properties: {
+            effects: [
+                {
+                    name: EffectName.Energy,
+                    args: {
+                        baseValue: 2,
+                        calculatedValue: 2,
+                        targeted: CardTargetedEnum.Player,
+                        times: 1,
+                    },
+                },
+            ],
+            statuses: [],
+        },
+    },
 ];

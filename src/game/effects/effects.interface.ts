@@ -5,7 +5,7 @@ import { TargetId } from './effects.types';
 
 export interface BaseEffectDTO {
     client: Socket;
-    readonly targetId: TargetId;
+    targetId?: TargetId;
     calculatedValue: number;
     times: number;
     targeted: CardTargetedEnum;
@@ -28,3 +28,5 @@ export interface JsonEffect {
 export type DamageDTO = BaseEffectDTO;
 export type DefenseDTO = BaseEffectDTO;
 export type DrawCardDTO = BaseEffectDTO;
+export type HealCardDTO = BaseEffectDTO;
+export type EnergyDTO = BaseEffectDTO;
