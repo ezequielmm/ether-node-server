@@ -57,8 +57,6 @@ export class DamageEffect implements IBaseEffect {
                     enemy.hpCurrent,
                 );
             }
-
-            return enemy;
         });
 
         // update enemies array
