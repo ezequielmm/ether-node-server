@@ -84,9 +84,11 @@ export class ExpeditionService {
         return getMap;
     }
 
-    async updateClientId(payload: UpdateClientIdDTO): Promise<void> {
+    async updateClientId(
+        payload: UpdateClientIdDTO,
+    ): Promise<ExpeditionDocument> {
         const { clientId, playerId } = payload;
-        await this.expedition.findOneAndUpdate(
+        return await this.expedition.findOneAndUpdate(
             { playerId, status: ExpeditionStatusEnum.InProgress },
             { clientId },
         );

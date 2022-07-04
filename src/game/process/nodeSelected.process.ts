@@ -8,7 +8,6 @@ import {
     SWARMessageType,
     SWARAction,
 } from '../standardResponse/standardResponse';
-import { CurrentNodeGeneratorProcess } from './currentNodeGenerator.process';
 import { InitCombatProcess } from './initCombat.process';
 
 @Injectable()
@@ -17,7 +16,6 @@ export class NodeSelectedProcess {
 
     constructor(
         private readonly expeditionService: ExpeditionService,
-        private readonly currentNodeGeneratorProcess: CurrentNodeGeneratorProcess,
         private readonly initCombatProcess: InitCombatProcess,
     ) {}
 
@@ -36,17 +34,10 @@ export class NodeSelectedProcess {
             const selectedNode = expeditionMap.fullCurrentMap.get(node_id);
             selectedNode.select(expeditionMap);
 
-            const currentNode =
-                await this.currentNodeGeneratorProcess.getCurrentNodeData(
-                    node,
-                    client.id,
-                );
-
             const { map: newMap } = await this.expeditionService.update(
                 client.id,
                 {
                     map: expeditionMap.getMap,
-                    currentNode,
                 },
             );
 
@@ -85,7 +76,7 @@ export class NodeSelectedProcess {
                         `Sent message InitCombat to client ${client.id}`,
                     );
 
-                    await this.initCombatProcess.process(client);
+                    await this.initCombatProcess.process(client, node);
 
                     break;
                 default:
@@ -109,7 +100,7 @@ export class NodeSelectedProcess {
                     `Sent message InitCombat to client ${client.id}`,
                 );
 
-                await this.initCombatProcess.process(client);
+                await this.initCombatProcess.process(client, node);
             } else {
                 this.logger.error('Selected node is not available');
                 client.emit('ErrorMessage', {
