@@ -10,6 +10,7 @@ import {
 } from '../components/expedition/expedition.interface';
 import { ExpeditionService } from '../components/expedition/expedition.service';
 import { SettingsService } from '../components/settings/settings.service';
+import { StatusType } from '../status/interfaces';
 
 @Injectable()
 export class CurrentNodeGeneratorProcess {
@@ -99,6 +100,10 @@ export class CurrentNodeGeneratorProcess {
                         hand: handCards,
                         exhausted: [],
                         discard: [],
+                    },
+                    statuses: {
+                        [StatusType.Buff]: [],
+                        [StatusType.Debuff]: [],
                     },
                 },
                 enemies,

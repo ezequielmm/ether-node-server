@@ -1,4 +1,5 @@
 import { Test } from '@nestjs/testing';
+import { Socket } from 'socket.io';
 import { CardTargetedEnum } from '../components/card/card.enum';
 import { ExpeditionService } from '../components/expedition/expedition.service';
 import { DamageEffect } from './damage.effect';
@@ -46,7 +47,7 @@ describe('DamageEffect', () => {
 
     it('should handle damage to enemy', async () => {
         const payload: DamageDTO = {
-            clientId: 'clientId',
+            client: { id: 'clientId' } as Socket,
             calculatedValue: 10,
             targeted: CardTargetedEnum.Enemy,
             targetId: 'targetId',
@@ -56,11 +57,11 @@ describe('DamageEffect', () => {
         await effect.handle(payload);
 
         expect(mockExpeditionService.getCurrentNode).toHaveBeenCalledWith({
-            clientId: payload.clientId,
+            clientId: payload.client.id,
         });
 
         expect(mockExpeditionService.updateEnemiesArray).toHaveBeenCalledWith({
-            clientId: payload.clientId,
+            clientId: payload.client.id,
             enemies: [
                 {
                     id: payload.targetId,
@@ -73,7 +74,7 @@ describe('DamageEffect', () => {
 
     it('should handle damage to enemy and trigger damage negated', async () => {
         const payload: DamageDTO = {
-            clientId: 'clientId',
+            client: { id: 'clientId' } as Socket,
             calculatedValue: 4,
             targeted: CardTargetedEnum.Enemy,
             targetId: 'targetId',
@@ -83,11 +84,11 @@ describe('DamageEffect', () => {
         await effect.handle(payload);
 
         expect(mockExpeditionService.getCurrentNode).toHaveBeenCalledWith({
-            clientId: payload.clientId,
+            clientId: payload.client.id,
         });
 
         expect(mockExpeditionService.updateEnemiesArray).toHaveBeenCalledWith({
-            clientId: payload.clientId,
+            clientId: payload.client.id,
             enemies: [
                 {
                     id: payload.targetId,
@@ -102,7 +103,7 @@ describe('DamageEffect', () => {
 
     it('should handle damage for player and trigger death event', async () => {
         const payload: DamageDTO = {
-            clientId: 'clientId',
+            client: { id: 'clientId' } as Socket,
             calculatedValue: 105,
             targeted: CardTargetedEnum.Enemy,
             targetId: 'targetId',
@@ -112,11 +113,11 @@ describe('DamageEffect', () => {
         await effect.handle(payload);
 
         expect(mockExpeditionService.getCurrentNode).toHaveBeenCalledWith({
-            clientId: payload.clientId,
+            clientId: payload.client.id,
         });
 
         expect(mockExpeditionService.updateEnemiesArray).toHaveBeenCalledWith({
-            clientId: payload.clientId,
+            clientId: payload.client.id,
             enemies: [
                 {
                     id: payload.targetId,
