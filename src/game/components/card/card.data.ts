@@ -32,6 +32,7 @@ export const Cards: Card[] = [
             ],
             statuses: [],
         },
+        showPointer: true,
     },
     {
         cardId: 2,
@@ -56,6 +57,7 @@ export const Cards: Card[] = [
             ],
             statuses: [],
         },
+        showPointer: true,
     },
     {
         cardId: 3,
@@ -80,6 +82,7 @@ export const Cards: Card[] = [
             ],
             statuses: [],
         },
+        showPointer: false,
     },
     {
         cardId: 4,
@@ -104,6 +107,7 @@ export const Cards: Card[] = [
             ],
             statuses: [],
         },
+        showPointer: false,
     },
     {
         cardId: 13,
@@ -137,6 +141,7 @@ export const Cards: Card[] = [
             ],
             statuses: [],
         },
+        showPointer: true,
     },
     {
         cardId: 14,
@@ -170,6 +175,7 @@ export const Cards: Card[] = [
             ],
             statuses: [],
         },
+        showPointer: true,
     },
     {
         cardId: 7,
@@ -203,6 +209,7 @@ export const Cards: Card[] = [
             ],
             statuses: [],
         },
+        showPointer: true,
     },
     {
         cardId: 8,
@@ -236,6 +243,7 @@ export const Cards: Card[] = [
             ],
             statuses: [],
         },
+        showPointer: true,
     },
 
     {
@@ -263,6 +271,7 @@ export const Cards: Card[] = [
             ],
             statuses: [],
         },
+        showPointer: true,
     },
     {
         cardId: 12,
@@ -289,6 +298,7 @@ export const Cards: Card[] = [
             ],
             statuses: [],
         },
+        showPointer: true,
     },
     {
         cardId: 19,
@@ -313,6 +323,7 @@ export const Cards: Card[] = [
             ],
             statuses: [],
         },
+        showPointer: true,
     },
     {
         cardId: 20,
@@ -337,6 +348,7 @@ export const Cards: Card[] = [
             ],
             statuses: [],
         },
+        showPointer: true,
     },
 
     {
@@ -362,6 +374,7 @@ export const Cards: Card[] = [
             ],
             statuses: [],
         },
+        showPointer: true,
     },
     {
         cardId: 30,
@@ -386,6 +399,7 @@ export const Cards: Card[] = [
             ],
             statuses: [],
         },
+        showPointer: true,
     },
     {
         cardId: 31,
@@ -411,6 +425,7 @@ export const Cards: Card[] = [
             ],
             statuses: [],
         },
+        showPointer: true,
     },
     {
         cardId: 32,
@@ -436,6 +451,7 @@ export const Cards: Card[] = [
             ],
             statuses: [],
         },
+        showPointer: true,
     },
     {
         cardId: 57,
@@ -460,6 +476,7 @@ export const Cards: Card[] = [
             ],
             statuses: [],
         },
+        showPointer: true,
     },
     {
         cardId: 15,
@@ -482,6 +499,7 @@ export const Cards: Card[] = [
                 },
             ],
         },
+        showPointer: false,
     },
     {
         cardId: 75,
@@ -506,6 +524,7 @@ export const Cards: Card[] = [
             ],
             statuses: [],
         },
+        showPointer: false,
     },
     {
         cardId: 76,
@@ -530,6 +549,7 @@ export const Cards: Card[] = [
             ],
             statuses: [],
         },
+        showPointer: false,
     },
     {
         cardId: 9,
@@ -554,6 +574,7 @@ export const Cards: Card[] = [
             ],
             statuses: [],
         },
+        showPointer: false,
     },
     {
         cardId: 10,
@@ -578,5 +599,6 @@ export const Cards: Card[] = [
             ],
             statuses: [],
         },
+        showPointer: false,
     },
 ];

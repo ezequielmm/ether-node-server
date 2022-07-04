@@ -50,6 +50,7 @@ export class InitExpeditionProcess {
                     properties: card.properties,
                     keywords: card.keywords,
                     isTemporary: false,
+                    showPointer: card.showPointer,
                 })),
                 createdAt: new Date(),
             },
