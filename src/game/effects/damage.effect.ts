@@ -13,7 +13,7 @@ export class DamageEffect implements IBaseEffect {
 
     async handle(payload: DamageDTO): Promise<void> {
         const { client, times, calculatedValue, targeted, targetId } = payload;
-        // TODO: Triger damage attempted event
+        // TODO: Trigger damage attempted event
 
         for (let i = 1; i <= times; i++) {
             // Check targeted type
@@ -23,6 +23,12 @@ export class DamageEffect implements IBaseEffect {
                         client.id,
                         calculatedValue,
                         targetId,
+                    );
+                    break;
+                case CardTargetedEnum.AllEnemies:
+                    await this.applyDamageToAllEnemies(
+                        client.id,
+                        calculatedValue,
                     );
                     break;
             }
@@ -45,20 +51,11 @@ export class DamageEffect implements IBaseEffect {
             const field = typeof targetId === 'string' ? 'id' : 'enemyId';
 
             if (enemy[field] === targetId) {
-                // Calculate true damage
-                const trueDamage = Math.max(
-                    damage - Math.max(enemy.defense, 0),
-                    0,
+                enemy.hpCurrent = this.calculateDamage(
+                    enemy.defense,
+                    damage,
+                    enemy.hpCurrent,
                 );
-
-                // If damage is less or equal to 0, trigger damage negated event
-                // TODO: Trigger damage negated event
-
-                // Calculate new hp
-                enemy.hpCurrent = Math.max(0, enemy.hpCurrent - trueDamage);
-
-                // If new hp is less or equal than 0, trigger death event
-                // TODO: Trigger death effect event
             }
 
             return enemy;
@@ -66,5 +63,49 @@ export class DamageEffect implements IBaseEffect {
 
         // update enemies array
         await this.expeditionService.updateEnemiesArray({ clientId, enemies });
+    }
+
+    private async applyDamageToAllEnemies(
+        clientId: string,
+        damage: number,
+    ): Promise<void> {
+        // Get all enemies of current node
+        const {
+            data: { enemies },
+        } = await this.expeditionService.getCurrentNode({
+            clientId: clientId,
+        });
+
+        enemies.forEach((enemy) => {
+            enemy.hpCurrent = this.calculateDamage(
+                enemy.defense,
+                damage,
+                enemy.hpCurrent,
+            );
+        });
+
+        // update enemies array
+        await this.expeditionService.updateEnemiesArray({ clientId, enemies });
+    }
+
+    private calculateDamage(
+        enemyDefense: number,
+        damageToApply: number,
+        enemyHPCurrent: number,
+    ): number {
+        // Calculate true damage
+        const trueDamage = Math.max(
+            damageToApply - Math.max(enemyDefense, 0),
+            0,
+        );
+
+        // If damage is less or equal to 0, trigger damage negated event
+        // TODO: Trigger damage negated event
+
+        // Calculate new hp
+        return Math.max(0, enemyHPCurrent - trueDamage);
+
+        // If new hp is less or equal than 0, trigger death event
+        // TODO: Trigger death effect event
     }
 }
