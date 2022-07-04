@@ -42,6 +42,9 @@ export class Card {
     merchantInfo?: {
         coinCost: number[];
     };
+
+    @Prop({ default: false })
+    showPointer: boolean;
 }
 
 export const CardSchema = SchemaFactory.createForClass(Card);
