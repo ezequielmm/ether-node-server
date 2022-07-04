@@ -6,7 +6,7 @@ import { CardTargetedEnum } from '../components/card/card.enum';
 import { EntityStatuses, JsonStatus, StatusType } from '../status/interfaces';
 import { StatusService } from '../status/status.service';
 import { EFFECT_METADATA } from './effects.decorator';
-import { IBaseEffect, JsonEffect } from './effects.interface';
+import { BaseEffectDTO, IBaseEffect, JsonEffect } from './effects.interface';
 import { TargetId } from './effects.types';
 
 @Injectable()
@@ -36,7 +36,7 @@ export class EffectService {
             args: { baseValue, ...args },
         } of effects) {
             // TODO: Validate if target exists
-            let dto = {
+            let dto: BaseEffectDTO = {
                 ...args,
                 client,
                 targetId,
