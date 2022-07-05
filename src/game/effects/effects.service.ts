@@ -54,16 +54,18 @@ export class EffectService {
                 );
             }
             if (statuses) {
-                dto = await this.statusService.process(
-                    statuses[StatusType.Buff],
-                    name,
-                    dto,
-                );
-                dto = await this.statusService.process(
-                    statuses[StatusType.Debuff],
-                    name,
-                    dto,
-                );
+                if (statuses[StatusType.Buff])
+                    dto = await this.statusService.process(
+                        statuses[StatusType.Buff],
+                        name,
+                        dto,
+                    );
+                if (statuses[StatusType.Debuff])
+                    dto = await this.statusService.process(
+                        statuses[StatusType.Debuff],
+                        name,
+                        dto,
+                    );
             }
 
             await this.getEffectByName(name).handle(dto);
