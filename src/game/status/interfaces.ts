@@ -1,4 +1,5 @@
 import { CardTargetedEnum } from '../components/card/card.enum';
+import { EnemyId } from '../components/enemy/enemy.type';
 import { EffectName } from '../effects/effects.enum';
 import { BaseEffectDTO } from '../effects/effects.interface';
 
@@ -54,5 +55,5 @@ export class AttachStatusToPlayerDTO {
 export class AttachStatusToEnemyDTO {
     readonly clientId: string;
     readonly status: JsonStatus;
-    readonly enemyId: string | number;
+    readonly enemyId: EnemyId;
 }
