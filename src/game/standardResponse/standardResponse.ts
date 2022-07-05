@@ -29,6 +29,7 @@ export enum SWARAction {
     UpdateEnergy = 'update_energy',
     MoveCard = 'move_card',
     UpdateEnemy = 'update_enemy',
+    EnemyAttacked = 'enemy_attacked',
 }
 
 interface SWARPayload {

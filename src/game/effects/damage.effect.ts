@@ -1,6 +1,12 @@
 import { Injectable } from '@nestjs/common';
+import { Socket } from 'socket.io';
 import { CardTargetedEnum } from '../components/card/card.enum';
 import { ExpeditionService } from '../components/expedition/expedition.service';
+import {
+    StandardResponse,
+    SWARAction,
+    SWARMessageType,
+} from '../standardResponse/standardResponse';
 import { Effect } from './effects.decorator';
 import { EffectName } from './effects.enum';
 import { DamageDTO, IBaseEffect } from './effects.interface';
@@ -20,23 +26,20 @@ export class DamageEffect implements IBaseEffect {
             switch (targeted) {
                 case CardTargetedEnum.Enemy:
                     await this.applyDamageToEnemy(
-                        client.id,
+                        client,
                         calculatedValue,
                         targetId,
                     );
                     break;
                 case CardTargetedEnum.AllEnemies:
-                    await this.applyDamageToAllEnemies(
-                        client.id,
-                        calculatedValue,
-                    );
+                    await this.applyDamageToAllEnemies(client, calculatedValue);
                     break;
             }
         }
     }
 
     private async applyDamageToEnemy(
-        clientId: string,
+        client: Socket,
         damage: number,
         targetId: TargetId,
     ): Promise<void> {
@@ -44,8 +47,10 @@ export class DamageEffect implements IBaseEffect {
         const {
             data: { enemies },
         } = await this.expeditionService.getCurrentNode({
-            clientId: clientId,
+            clientId: client.id,
         });
+
+        let dataResponse = null;
 
         enemies.forEach((enemy) => {
             const field = typeof targetId === 'string' ? 'id' : 'enemyId';
@@ -56,23 +61,45 @@ export class DamageEffect implements IBaseEffect {
                     damage,
                     enemy.hpCurrent,
                 );
+
+                dataResponse = [
+                    {
+                        id: targetId,
+                    },
+                ];
             }
         });
 
         // update enemies array
-        await this.expeditionService.updateEnemiesArray({ clientId, enemies });
+        await this.expeditionService.updateEnemiesArray({
+            clientId: client.id,
+            enemies,
+        });
+
+        client.emit(
+            'PutData',
+            JSON.stringify(
+                StandardResponse.respond({
+                    message_type: SWARMessageType.EnemyAttacked,
+                    action: SWARAction.EnemyAttacked,
+                    data: dataResponse,
+                }),
+            ),
+        );
     }
 
     private async applyDamageToAllEnemies(
-        clientId: string,
+        client: Socket,
         damage: number,
     ): Promise<void> {
         // Get all enemies of current node
         const {
             data: { enemies },
         } = await this.expeditionService.getCurrentNode({
-            clientId: clientId,
+            clientId: client.id,
         });
+
+        let dataResponse = null;
 
         enemies.forEach((enemy) => {
             enemy.hpCurrent = this.calculateDamage(
@@ -80,10 +107,27 @@ export class DamageEffect implements IBaseEffect {
                 damage,
                 enemy.hpCurrent,
             );
+
+            dataResponse = [];
+            dataResponse.push({ id: enemy.id });
         });
 
         // update enemies array
-        await this.expeditionService.updateEnemiesArray({ clientId, enemies });
+        await this.expeditionService.updateEnemiesArray({
+            clientId: client.id,
+            enemies,
+        });
+
+        client.emit(
+            'PutData',
+            JSON.stringify(
+                StandardResponse.respond({
+                    message_type: SWARMessageType.EnemyAttacked,
+                    action: SWARAction.EnemyAttacked,
+                    data: dataResponse,
+                }),
+            ),
+        );
     }
 
     private calculateDamage(
