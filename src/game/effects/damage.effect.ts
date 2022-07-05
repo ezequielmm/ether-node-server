@@ -18,7 +18,15 @@ export class DamageEffect implements IBaseEffect {
     constructor(private readonly expeditionService: ExpeditionService) {}
 
     async handle(payload: DamageDTO): Promise<void> {
-        const { client, times, calculatedValue, targeted, targetId } = payload;
+        const {
+            client,
+            times,
+            calculatedValue,
+            targeted,
+            targetId,
+            useDefense,
+            multiplier,
+        } = payload;
         // TODO: Trigger damage attempted event
 
         for (let i = 1; i <= times; i++) {
@@ -29,6 +37,8 @@ export class DamageEffect implements IBaseEffect {
                         client,
                         calculatedValue,
                         targetId,
+                        useDefense,
+                        multiplier,
                     );
                     break;
                 case CardTargetedEnum.AllEnemies:
@@ -42,13 +52,22 @@ export class DamageEffect implements IBaseEffect {
         client: Socket,
         damage: number,
         targetId: TargetId,
+        useDefense: boolean,
+        multiplier: number,
     ): Promise<void> {
         // Get enemy based on id
         const {
-            data: { enemies },
+            data: {
+                enemies,
+                player: { defense },
+            },
         } = await this.expeditionService.getCurrentNode({
             clientId: client.id,
         });
+
+        if (useDefense !== undefined && useDefense) {
+            damage = defense * multiplier;
+        }
 
         let dataResponse = null;
 
@@ -135,6 +154,9 @@ export class DamageEffect implements IBaseEffect {
         damageToApply: number,
         enemyHPCurrent: number,
     ): number {
+        // If we check if the card uses the player's defense and a value for
+        // the attack amount
+
         // Calculate true damage
         const trueDamage = Math.max(
             damageToApply - Math.max(enemyDefense, 0),
