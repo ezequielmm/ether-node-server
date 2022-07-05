@@ -99,8 +99,8 @@ export class DamageEffect implements IBaseEffect {
             'PutData',
             JSON.stringify(
                 StandardResponse.respond({
-                    message_type: SWARMessageType.EnemyAttacked,
-                    action: SWARAction.EnemyAttacked,
+                    message_type: SWARMessageType.EnemyAffected,
+                    action: SWARAction.EnemyAffected,
                     data: dataResponse,
                 }),
             ),
@@ -141,8 +141,8 @@ export class DamageEffect implements IBaseEffect {
             'PutData',
             JSON.stringify(
                 StandardResponse.respond({
-                    message_type: SWARMessageType.EnemyAttacked,
-                    action: SWARAction.EnemyAttacked,
+                    message_type: SWARMessageType.EnemyAffected,
+                    action: SWARAction.EnemyAffected,
                     data: dataResponse,
                 }),
             ),

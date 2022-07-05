@@ -70,7 +70,7 @@ export class DrawCardEffect implements IBaseEffect {
             'PutData',
             JSON.stringify(
                 StandardResponse.respond({
-                    message_type: SWARMessageType.EnemyAttacked,
+                    message_type: SWARMessageType.PlayerAffected,
                     action: SWARAction.MoveCard,
                     data: cardMoves,
                 }),

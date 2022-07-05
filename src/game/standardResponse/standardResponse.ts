@@ -7,7 +7,8 @@ export enum SWARMessageType {
     Error = 'error',
     EnemiesIntents = 'enemy_intents',
     GenericData = 'generic_data',
-    EnemyAttacked = 'enemy_attacked',
+    EnemyAffected = 'enemy_affected',
+    PlayerAffected = 'player_affected',
     EndTurn = 'end_turn',
 }
 
@@ -29,7 +30,8 @@ export enum SWARAction {
     UpdateEnergy = 'update_energy',
     MoveCard = 'move_card',
     UpdateEnemy = 'update_enemy',
-    EnemyAttacked = 'enemy_attacked',
+    EnemyAffected = 'enemy_affected',
+    PlayerAffected = 'player_affected',
 }
 
 interface SWARPayload {

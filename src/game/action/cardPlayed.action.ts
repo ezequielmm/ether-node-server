@@ -18,6 +18,7 @@ import {
 import { StatusService } from '../status/status.service';
 import { DiscardCardAction } from './discardCard.action';
 import { ExhaustCardAction } from './exhaustCard.action';
+import { GetPlayerInfoAction } from './getPlayerInfo.action';
 import { UpdatePlayerEnergyAction } from './updatePlayerEnergy.action';
 
 interface CardPlayedDTO {
@@ -37,6 +38,7 @@ export class CardPlayedAction {
         private readonly updatePlayerEnergyAction: UpdatePlayerEnergyAction,
         private readonly discardCardAction: DiscardCardAction,
         private readonly exhaustCardAction: ExhaustCardAction,
+        private readonly getPlayerInfoAction: GetPlayerInfoAction,
     ) {}
 
     async handle(payload: CardPlayedDTO): Promise<void> {
@@ -154,7 +156,7 @@ export class CardPlayedAction {
                     'PutData',
                     JSON.stringify(
                         StandardResponse.respond({
-                            message_type: SWARMessageType.EnemyAttacked,
+                            message_type: SWARMessageType.PlayerAffected,
                             action: SWARAction.MoveCard,
                             data: [
                                 {
@@ -186,7 +188,7 @@ export class CardPlayedAction {
                     'PutData',
                     JSON.stringify(
                         StandardResponse.respond({
-                            message_type: SWARMessageType.EnemyAttacked,
+                            message_type: SWARMessageType.PlayerAffected,
                             action: SWARAction.UpdateEnergy,
                             data: [energy, energyMax],
                         }),
@@ -201,9 +203,28 @@ export class CardPlayedAction {
                     'PutData',
                     JSON.stringify(
                         StandardResponse.respond({
-                            message_type: SWARMessageType.EnemyAttacked,
+                            message_type: SWARMessageType.EnemyAffected,
                             action: SWARAction.UpdateEnemy,
                             data: enemies,
+                        }),
+                    ),
+                );
+
+                const playerInfo = await this.getPlayerInfoAction.handle(
+                    client.id,
+                );
+
+                this.logger.log(
+                    `Sent message PutData to client ${client.id}: ${SWARAction.UpdatePlayerState}`,
+                );
+
+                client.emit(
+                    'PutData',
+                    JSON.stringify(
+                        StandardResponse.respond({
+                            message_type: SWARMessageType.PlayerAffected,
+                            action: SWARAction.UpdatePlayerState,
+                            data: playerInfo,
                         }),
                     ),
                 );
