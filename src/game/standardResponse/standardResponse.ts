@@ -30,6 +30,7 @@ export enum SWARAction {
     UpdateEnergy = 'update_energy',
     MoveCard = 'move_card',
     UpdateEnemy = 'update_enemy',
+    UpdatePlayer = 'update_player',
     EnemyAffected = 'enemy_affected',
     PlayerAffected = 'player_affected',
 }

@@ -223,7 +223,7 @@ export class CardPlayedAction {
                     JSON.stringify(
                         StandardResponse.respond({
                             message_type: SWARMessageType.PlayerAffected,
-                            action: SWARAction.UpdatePlayerState,
+                            action: SWARAction.UpdatePlayer,
                             data: playerInfo,
                         }),
                     ),
