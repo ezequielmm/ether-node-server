@@ -51,8 +51,7 @@ export interface UpdateHandPilesDTO extends BaseDTO {
     draw?: IExpeditionPlayerStateDeckCard[];
 }
 
-export interface SetPlayerDefense {
-    clientId: string;
+export interface SetPlayerDefense extends BaseDTO {
     value: number;
 }
 

@@ -12,7 +12,7 @@ export interface BaseEffectDTO {
 }
 
 export interface IBaseEffect {
-    handle: (...args: BaseEffectDTO[]) => Promise<any>;
+    handle: (...args: BaseEffectDTO[]) => Promise<void>;
 }
 
 export interface JsonEffect {
@@ -30,3 +30,4 @@ export type DefenseDTO = BaseEffectDTO;
 export type DrawCardDTO = BaseEffectDTO;
 export type HealCardDTO = BaseEffectDTO;
 export type EnergyDTO = BaseEffectDTO;
+export type RemoveDefenseDTO = BaseEffectDTO;
