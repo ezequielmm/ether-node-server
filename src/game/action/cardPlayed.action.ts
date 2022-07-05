@@ -1,5 +1,4 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { WsException } from '@nestjs/websockets';
 import { Socket } from 'socket.io';
 import { CardKeywordPipeline } from '../cardKeywordPipeline/cardKeywordPipeline';
 import {
@@ -51,6 +50,10 @@ export class CardPlayedAction {
         });
 
         if (!cardExists) {
+            this.logger.log(
+                `Sent message ErrorMessage to client ${client.id}: ${SWARAction.InvalidCard}`,
+            );
+
             client.emit(
                 'ErrorMessage',
                 JSON.stringify(
@@ -60,13 +63,6 @@ export class CardPlayedAction {
                         data: null,
                     }),
                 ),
-            );
-            throw new WsException(
-                StandardResponse.respond({
-                    message_type: SWARMessageType.Error,
-                    action: SWARAction.InvalidCard,
-                    data: null,
-                }),
             );
         } else {
             // If the card is valid we get the current node information
@@ -103,6 +99,10 @@ export class CardPlayedAction {
 
             // next we inform the player that is not possible to play the card
             if (!canPlayCard) {
+                this.logger.log(
+                    `Sent message ErrorMessage to client ${client.id}: ${SWARAction.InsufficientEnergy}`,
+                );
+
                 client.emit(
                     'ErrorMessage',
                     JSON.stringify(
@@ -112,13 +112,6 @@ export class CardPlayedAction {
                             data: message,
                         }),
                     ),
-                );
-                throw new WsException(
-                    StandardResponse.respond({
-                        message_type: SWARMessageType.Error,
-                        action: SWARAction.InsufficientEnergy,
-                        data: message,
-                    }),
                 );
             } else {
                 // if the card can be played, we update the energy, apply the effects
