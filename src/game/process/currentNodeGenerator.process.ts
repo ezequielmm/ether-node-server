@@ -72,7 +72,7 @@ export class CurrentNodeGeneratorProcess {
 
                 return {
                     id: _id.toString(),
-                    defense: 10,
+                    defense: 0,
                     name: rest.name,
                     enemyId: rest.enemyId,
                     type: rest.type,

@@ -9,7 +9,7 @@ import { TargetId } from './effects.types';
 
 @Effect(EffectName.RemoveDefense)
 @Injectable()
-export class RemoveDefense implements IBaseEffect {
+export class RemoveDefenseEffect implements IBaseEffect {
     constructor(private readonly expeditionService: ExpeditionService) {}
 
     async handle(payload: RemoveDefenseDTO): Promise<void> {
@@ -21,6 +21,9 @@ export class RemoveDefense implements IBaseEffect {
                 break;
             case CardTargetedEnum.Player:
                 await this.removeDefenseFromPlayer(client.id);
+                break;
+            case CardTargetedEnum.AllEnemies:
+                await this.removeDefenseFromAllEnemies(client.id);
                 break;
         }
     }
@@ -52,5 +55,26 @@ export class RemoveDefense implements IBaseEffect {
     private async removeDefenseFromPlayer(clientId: ClientId): Promise<void> {
         // Set player defense
         await this.expeditionService.setPlayerDefense({ clientId, value: 0 });
+    }
+
+    private async removeDefenseFromAllEnemies(
+        clientId: ClientId,
+    ): Promise<void> {
+        // Get enemy based on id
+        const {
+            data: { enemies },
+        } = await this.expeditionService.getCurrentNode({
+            clientId,
+        });
+
+        enemies.forEach((enemy) => {
+            enemy.defense = 0;
+        });
+
+        // update enemies array
+        await this.expeditionService.updateEnemiesArray({
+            clientId,
+            enemies,
+        });
     }
 }
