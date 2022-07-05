@@ -39,9 +39,9 @@ export class DrawCardEffect implements IBaseEffect {
             clientId: client.id,
         });
 
-        const cards = draw.slice(draw.length - amount);
+        const cardsToAdd = draw.slice(draw.length - amount);
 
-        const newHand = [...hand, ...cards];
+        const newHand = [...hand, ...cardsToAdd];
 
         const newDraw = removeCardsFromPile({
             originalPile: draw,
@@ -54,7 +54,7 @@ export class DrawCardEffect implements IBaseEffect {
             draw: newDraw,
         });
 
-        const cardMoves = cards.map((card) => {
+        const cardMoves = cardsToAdd.map((card) => {
             return {
                 source: 'draw',
                 destination: 'hand',
@@ -70,7 +70,7 @@ export class DrawCardEffect implements IBaseEffect {
             'PutData',
             JSON.stringify(
                 StandardResponse.respond({
-                    message_type: SWARMessageType.EnemyAttacked,
+                    message_type: SWARMessageType.PlayerAffected,
                     action: SWARAction.MoveCard,
                     data: cardMoves,
                 }),

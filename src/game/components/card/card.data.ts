@@ -369,6 +369,8 @@ export const Cards: Card[] = [
                         calculatedValue: 0, // Value is calculated in the effect
                         targeted: CardTargetedEnum.Enemy,
                         times: 1,
+                        useDefense: true,
+                        multiplier: 1,
                     },
                 },
             ],
@@ -393,7 +395,9 @@ export const Cards: Card[] = [
                         baseValue: 0, // Value is calculated in the effect
                         calculatedValue: 0, // Value is calculated in the effect
                         targeted: CardTargetedEnum.Enemy,
-                        times: 2,
+                        times: 1,
+                        useDefense: true,
+                        multiplier: 2,
                     },
                 },
             ],

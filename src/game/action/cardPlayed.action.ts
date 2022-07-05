@@ -1,5 +1,4 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { WsException } from '@nestjs/websockets';
 import { Socket } from 'socket.io';
 import { CardKeywordPipeline } from '../cardKeywordPipeline/cardKeywordPipeline';
 import {
@@ -18,6 +17,7 @@ import {
 import { StatusService } from '../status/status.service';
 import { DiscardCardAction } from './discardCard.action';
 import { ExhaustCardAction } from './exhaustCard.action';
+import { GetPlayerInfoAction } from './getPlayerInfo.action';
 import { UpdatePlayerEnergyAction } from './updatePlayerEnergy.action';
 
 interface CardPlayedDTO {
@@ -37,6 +37,7 @@ export class CardPlayedAction {
         private readonly updatePlayerEnergyAction: UpdatePlayerEnergyAction,
         private readonly discardCardAction: DiscardCardAction,
         private readonly exhaustCardAction: ExhaustCardAction,
+        private readonly getPlayerInfoAction: GetPlayerInfoAction,
     ) {}
 
     async handle(payload: CardPlayedDTO): Promise<void> {
@@ -49,6 +50,10 @@ export class CardPlayedAction {
         });
 
         if (!cardExists) {
+            this.logger.log(
+                `Sent message ErrorMessage to client ${client.id}: ${SWARAction.InvalidCard}`,
+            );
+
             client.emit(
                 'ErrorMessage',
                 JSON.stringify(
@@ -58,13 +63,6 @@ export class CardPlayedAction {
                         data: null,
                     }),
                 ),
-            );
-            throw new WsException(
-                StandardResponse.respond({
-                    message_type: SWARMessageType.Error,
-                    action: SWARAction.InvalidCard,
-                    data: null,
-                }),
             );
         } else {
             // If the card is valid we get the current node information
@@ -101,6 +99,10 @@ export class CardPlayedAction {
 
             // next we inform the player that is not possible to play the card
             if (!canPlayCard) {
+                this.logger.log(
+                    `Sent message ErrorMessage to client ${client.id}: ${SWARAction.InsufficientEnergy}`,
+                );
+
                 client.emit(
                     'ErrorMessage',
                     JSON.stringify(
@@ -110,13 +112,6 @@ export class CardPlayedAction {
                             data: message,
                         }),
                     ),
-                );
-                throw new WsException(
-                    StandardResponse.respond({
-                        message_type: SWARMessageType.Error,
-                        action: SWARAction.InsufficientEnergy,
-                        data: message,
-                    }),
                 );
             } else {
                 // if the card can be played, we update the energy, apply the effects
@@ -154,7 +149,7 @@ export class CardPlayedAction {
                     'PutData',
                     JSON.stringify(
                         StandardResponse.respond({
-                            message_type: SWARMessageType.EnemyAttacked,
+                            message_type: SWARMessageType.PlayerAffected,
                             action: SWARAction.MoveCard,
                             data: [
                                 {
@@ -186,7 +181,7 @@ export class CardPlayedAction {
                     'PutData',
                     JSON.stringify(
                         StandardResponse.respond({
-                            message_type: SWARMessageType.EnemyAttacked,
+                            message_type: SWARMessageType.PlayerAffected,
                             action: SWARAction.UpdateEnergy,
                             data: [energy, energyMax],
                         }),
@@ -201,9 +196,28 @@ export class CardPlayedAction {
                     'PutData',
                     JSON.stringify(
                         StandardResponse.respond({
-                            message_type: SWARMessageType.EnemyAttacked,
+                            message_type: SWARMessageType.EnemyAffected,
                             action: SWARAction.UpdateEnemy,
                             data: enemies,
+                        }),
+                    ),
+                );
+
+                const playerInfo = await this.getPlayerInfoAction.handle(
+                    client.id,
+                );
+
+                this.logger.log(
+                    `Sent message PutData to client ${client.id}: ${SWARAction.UpdatePlayerState}`,
+                );
+
+                client.emit(
+                    'PutData',
+                    JSON.stringify(
+                        StandardResponse.respond({
+                            message_type: SWARMessageType.PlayerAffected,
+                            action: SWARAction.UpdatePlayer,
+                            data: playerInfo,
                         }),
                     ),
                 );

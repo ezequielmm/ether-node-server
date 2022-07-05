@@ -9,6 +9,8 @@ export interface BaseEffectDTO {
     calculatedValue: number;
     times: number;
     targeted: CardTargetedEnum;
+    useDefense?: boolean;
+    multiplier?: number;
 }
 
 export interface IBaseEffect {
@@ -22,6 +24,8 @@ export interface JsonEffect {
         calculatedValue: number;
         targeted: CardTargetedEnum;
         times: number;
+        useDefense?: boolean;
+        multiplier?: number;
     };
 }
 
