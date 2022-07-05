@@ -39,9 +39,9 @@ export class DrawCardEffect implements IBaseEffect {
             clientId: client.id,
         });
 
-        const cards = draw.slice(draw.length - amount);
+        const cardsToAdd = draw.slice(draw.length - amount);
 
-        const newHand = [...hand, ...cards];
+        const newHand = [...hand, ...cardsToAdd];
 
         const newDraw = removeCardsFromPile({
             originalPile: draw,
@@ -54,7 +54,7 @@ export class DrawCardEffect implements IBaseEffect {
             draw: newDraw,
         });
 
-        const cardMoves = cards.map((card) => {
+        const cardMoves = cardsToAdd.map((card) => {
             return {
                 source: 'draw',
                 destination: 'hand',
