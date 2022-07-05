@@ -7,6 +7,10 @@ import { DamageDTO } from './effects.interface';
 
 describe('DamageEffect', () => {
     let effect: DamageEffect;
+    const client = {
+        id: 'clientId',
+        emit: jest.fn(),
+    } as unknown as Socket;
     const mockExpeditionService = {
         getCurrentNode: jest.fn().mockResolvedValue({
             data: {
@@ -47,7 +51,7 @@ describe('DamageEffect', () => {
 
     it('should handle damage to enemy', async () => {
         const payload: DamageDTO = {
-            client: { id: 'clientId' } as Socket,
+            client,
             calculatedValue: 10,
             targeted: CardTargetedEnum.Enemy,
             targetId: 'targetId',
@@ -74,7 +78,7 @@ describe('DamageEffect', () => {
 
     it('should handle damage to enemy and trigger damage negated', async () => {
         const payload: DamageDTO = {
-            client: { id: 'clientId' } as Socket,
+            client,
             calculatedValue: 4,
             targeted: CardTargetedEnum.Enemy,
             targetId: 'targetId',
@@ -103,7 +107,7 @@ describe('DamageEffect', () => {
 
     it('should handle damage for player and trigger death event', async () => {
         const payload: DamageDTO = {
-            client: { id: 'clientId' } as Socket,
+            client,
             calculatedValue: 105,
             targeted: CardTargetedEnum.Enemy,
             targetId: 'targetId',

@@ -601,4 +601,35 @@ export const Cards: Card[] = [
         },
         showPointer: false,
     },
+    {
+        cardId: 23,
+        name: 'Pray',
+        rarity: CardRarityEnum.Common,
+        cardType: CardTypeEnum.Skill,
+        pool: 'knight',
+        energy: 0,
+        description:
+            'At the beginning of your next turn gain 1 [Resolve] and 1 [Fortitude].',
+        keywords: [],
+        properties: {
+            effects: [],
+            statuses: [
+                {
+                    name: Statuses.Resolve.name,
+                    args: {
+                        value: 1,
+                        targeted: CardTargetedEnum.Enemy,
+                    },
+                },
+                {
+                    name: Statuses.Fortitude.name,
+                    args: {
+                        value: 1,
+                        targeted: CardTargetedEnum.Player,
+                    },
+                },
+            ],
+        },
+        showPointer: false,
+    },
 ];

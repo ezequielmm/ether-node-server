@@ -35,11 +35,11 @@ export interface EntityStatuses {
     [StatusType.Debuff]: AttachedStatus[];
 }
 
-export interface StatusDTO {
+export interface StatusDTO<T extends BaseEffectDTO = BaseEffectDTO> {
     args: {
         value: any;
     };
-    baseEffectDTO: BaseEffectDTO;
+    baseEffectDTO: T;
 }
 
 export interface IBaseStatus {
