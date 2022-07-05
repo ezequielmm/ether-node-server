@@ -50,8 +50,6 @@ export class CombatGateway {
             `Client ${client.id} trigger message "CardPlayed": ${payload}`,
         );
 
-        console.log(payload);
-
         const { cardId, targetId }: CardPlayedInterface = JSON.parse(payload);
 
         await this.cardPlayedAction.handle({ client, cardId, targetId });

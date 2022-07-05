@@ -13,7 +13,6 @@ import {
     AttachStatusToPlayerDTO,
     AttachStatusToEnemyDTO,
     AttachedStatus,
-    StatusType,
     EntityStatuses,
 } from './interfaces';
 import { Model } from 'mongoose';
@@ -23,7 +22,6 @@ import {
 } from '../components/expedition/expedition.schema';
 import { InjectModel } from '@nestjs/mongoose';
 import { ExpeditionStatusEnum } from '../components/expedition/expedition.enum';
-import { IExpeditionCurrentNodeDataEnemy } from '../components/expedition/expedition.interface';
 
 type StatusProvider = { metadata: StatusMetadata; instance: IBaseStatus };
 type StatusProviderDictionary = StatusProvider[];
@@ -56,17 +54,20 @@ export class StatusService {
         const { attachedStatus, provider } =
             this.convertJsonStatusToAttachedStatus(status);
 
+        const enemyField =
+            typeof enemyId === 'string'
+                ? 'currentNode.data.enemies.id'
+                : 'currentNode.data.enemies.enemyId';
+
+        const clientField =
+            typeof clientId === 'string' ? 'clientId' : 'playerId';
+
         return await this.expedition
             .findOneAndUpdate(
                 {
-                    clientId,
+                    [clientField]: clientId,
                     status: ExpeditionStatusEnum.InProgress,
-                    $or: [
-                        {
-                            'currentNode.data.enemies.id': enemyId,
-                            'currentNode.data.enemies.enemyId': enemyId,
-                        },
-                    ],
+                    [enemyField]: enemyId,
                 },
                 {
                     $push: {
@@ -82,6 +83,7 @@ export class StatusService {
         dto: AttachStatusToPlayerDTO,
     ): Promise<ExpeditionDocument> {
         const { clientId, status } = dto;
+
         const { attachedStatus, provider } =
             this.convertJsonStatusToAttachedStatus(status);
 

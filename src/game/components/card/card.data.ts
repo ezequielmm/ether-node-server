@@ -601,4 +601,54 @@ export const Cards: Card[] = [
         },
         showPointer: false,
     },
+    {
+        cardId: 45,
+        name: 'Feint',
+        rarity: CardRarityEnum.Uncommon,
+        cardType: CardTypeEnum.Skill,
+        pool: 'knight',
+        energy: 1,
+        description: 'Remove all Defense from an enemy',
+        keywords: [],
+        properties: {
+            effects: [
+                {
+                    name: EffectName.RemoveDefense,
+                    args: {
+                        baseValue: 0,
+                        calculatedValue: 0,
+                        targeted: CardTargetedEnum.Enemy,
+                        times: 1,
+                    },
+                },
+            ],
+            statuses: [],
+        },
+        showPointer: false,
+    },
+    {
+        cardId: 46,
+        name: 'Feint+',
+        rarity: CardRarityEnum.Uncommon,
+        cardType: CardTypeEnum.Skill,
+        pool: 'knight',
+        energy: 0,
+        description: 'Remove all Defense from all enemies',
+        keywords: [],
+        properties: {
+            effects: [
+                {
+                    name: EffectName.RemoveDefense,
+                    args: {
+                        baseValue: 0,
+                        calculatedValue: 0,
+                        targeted: CardTargetedEnum.AllEnemies,
+                        times: 1,
+                    },
+                },
+            ],
+            statuses: [],
+        },
+        showPointer: false,
+    },
 ];
