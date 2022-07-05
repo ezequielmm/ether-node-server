@@ -78,6 +78,17 @@ export class NodeSelectedProcess {
 
                     await this.initCombatProcess.process(client, node);
 
+                    client.emit(
+                        'InitCombat',
+                        JSON.stringify(
+                            StandardResponse.respond({
+                                message_type: SWARMessageType.CombatUpdate,
+                                action: SWARAction.BeginCombat,
+                                data: null,
+                            }),
+                        ),
+                    );
+
                     break;
                 default:
                     response = StandardResponse.respond({
@@ -101,6 +112,17 @@ export class NodeSelectedProcess {
                 );
 
                 await this.initCombatProcess.process(client, node);
+
+                client.emit(
+                    'InitCombat',
+                    JSON.stringify(
+                        StandardResponse.respond({
+                            message_type: SWARMessageType.CombatUpdate,
+                            action: SWARAction.BeginCombat,
+                            data: null,
+                        }),
+                    ),
+                );
             } else {
                 this.logger.error('Selected node is not available');
                 client.emit('ErrorMessage', {
