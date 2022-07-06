@@ -27,7 +27,7 @@ export class HealEffect implements IBaseEffect {
 
         await this.expeditionService.setPlayerHealth({
             clientId,
-            hpCurrent: Math.max(hpMax, hpCurrent + healToApply),
+            hpCurrent: Math.min(hpMax, hpCurrent + healToApply),
         });
     }
 }
