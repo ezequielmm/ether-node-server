@@ -22,6 +22,8 @@ import {
 } from '../components/expedition/expedition.schema';
 import { InjectModel } from '@nestjs/mongoose';
 import { ExpeditionStatusEnum } from '../components/expedition/expedition.enum';
+import { EnemyId } from '../components/enemy/enemy.type';
+import { ClientId } from '../components/expedition/expedition.type';
 
 type StatusProvider = { metadata: StatusMetadata; instance: IBaseStatus };
 type StatusProviderDictionary = StatusProvider[];
@@ -126,32 +128,30 @@ export class StatusService {
     }
 
     public async getStatusesByEnemy(
-        clientId: string,
-        enemyId,
+        clientId: ClientId,
+        enemyId: EnemyId,
     ): Promise<EntityStatuses> {
+        const clientField =
+            typeof clientId === 'string' ? 'clientId' : 'playerId';
+
+        const enemyField = typeof enemyId === 'string' ? 'id' : 'enemyId';
+
         const {
             currentNode: {
                 data: { enemies },
             },
         } = await this.expedition
             .findOne({
-                clientId,
+                [clientField]: clientId,
                 status: ExpeditionStatusEnum.InProgress,
-                $or: [
-                    {
-                        'currentNode.data.enemies.id': enemyId,
-                    },
-                    {
-                        'currentNode.data.enemies.enemyId': enemyId,
-                    },
-                ],
+                [`currentNode.data.enemies.${enemyField}`]: enemyId,
             })
             .select('currentNode.data.enemies')
             .lean();
 
-        const enemy = enemies.find(
-            (enemy) => enemy.id == enemyId || enemy.enemyId == enemyId,
-        );
+        const enemy = enemies.find((enemy) => {
+            enemy[enemyField] == enemyId;
+        });
 
         return enemy?.statuses;
     }
