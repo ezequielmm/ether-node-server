@@ -1,5 +1,11 @@
 import { EffectName } from 'src/game/effects/effects.enum';
-import { CardRarityEnum, CardTypeEnum, CardTargetedEnum } from './card.enum';
+import { Statuses } from 'src/game/status/contants';
+import {
+    CardRarityEnum,
+    CardTypeEnum,
+    CardTargetedEnum,
+    CardKeywordEnum,
+} from './card.enum';
 import { Card } from './card.schema';
 
 export const Cards: Card[] = [
@@ -26,6 +32,7 @@ export const Cards: Card[] = [
             ],
             statuses: [],
         },
+        showPointer: true,
     },
     {
         cardId: 2,
@@ -50,6 +57,57 @@ export const Cards: Card[] = [
             ],
             statuses: [],
         },
+        showPointer: true,
+    },
+    {
+        cardId: 3,
+        name: 'Defend',
+        rarity: CardRarityEnum.Starter,
+        cardType: CardTypeEnum.Defend,
+        pool: 'knight',
+        energy: 1,
+        description: 'Gain 5 Defense',
+        keywords: [],
+        properties: {
+            effects: [
+                {
+                    name: EffectName.Defense,
+                    args: {
+                        baseValue: 5,
+                        calculatedValue: 5,
+                        targeted: CardTargetedEnum.Player,
+                        times: 1,
+                    },
+                },
+            ],
+            statuses: [],
+        },
+        showPointer: false,
+    },
+    {
+        cardId: 4,
+        name: 'Defend+',
+        rarity: CardRarityEnum.Starter,
+        cardType: CardTypeEnum.Defend,
+        pool: 'knight',
+        energy: 1,
+        description: 'Gain 8 Defense',
+        keywords: [],
+        properties: {
+            effects: [
+                {
+                    name: EffectName.Defense,
+                    args: {
+                        baseValue: 8,
+                        calculatedValue: 8,
+                        targeted: CardTargetedEnum.Player,
+                        times: 1,
+                    },
+                },
+            ],
+            statuses: [],
+        },
+        showPointer: false,
     },
     {
         cardId: 13,
@@ -71,10 +129,19 @@ export const Cards: Card[] = [
                         times: 2,
                     },
                 },
-                // TODO: Draw effect (1)
+                {
+                    name: EffectName.DrawCard,
+                    args: {
+                        baseValue: 2,
+                        calculatedValue: 2,
+                        targeted: CardTargetedEnum.Player,
+                        times: 1,
+                    },
+                },
             ],
             statuses: [],
         },
+        showPointer: true,
     },
     {
         cardId: 14,
@@ -96,10 +163,19 @@ export const Cards: Card[] = [
                         times: 2,
                     },
                 },
-                // TODO: Draw effect (2)
+                {
+                    name: EffectName.DrawCard,
+                    args: {
+                        baseValue: 2,
+                        calculatedValue: 2,
+                        targeted: CardTargetedEnum.Player,
+                        times: 1,
+                    },
+                },
             ],
             statuses: [],
         },
+        showPointer: true,
     },
     {
         cardId: 7,
@@ -121,10 +197,19 @@ export const Cards: Card[] = [
                         times: 1,
                     },
                 },
-                // TODO: Defense effect (4)
+                {
+                    name: EffectName.Defense,
+                    args: {
+                        baseValue: 4,
+                        calculatedValue: 4,
+                        targeted: CardTargetedEnum.Player,
+                        times: 1,
+                    },
+                },
             ],
             statuses: [],
         },
+        showPointer: true,
     },
     {
         cardId: 8,
@@ -146,10 +231,19 @@ export const Cards: Card[] = [
                         times: 1,
                     },
                 },
-                // TODO: Defense effect (7)
+                {
+                    name: EffectName.Defense,
+                    args: {
+                        baseValue: 7,
+                        calculatedValue: 7,
+                        targeted: CardTargetedEnum.Player,
+                        times: 1,
+                    },
+                },
             ],
             statuses: [],
         },
+        showPointer: true,
     },
 
     {
@@ -177,6 +271,7 @@ export const Cards: Card[] = [
             ],
             statuses: [],
         },
+        showPointer: true,
     },
     {
         cardId: 12,
@@ -203,6 +298,7 @@ export const Cards: Card[] = [
             ],
             statuses: [],
         },
+        showPointer: true,
     },
     {
         cardId: 19,
@@ -227,6 +323,7 @@ export const Cards: Card[] = [
             ],
             statuses: [],
         },
+        showPointer: true,
     },
     {
         cardId: 20,
@@ -251,6 +348,7 @@ export const Cards: Card[] = [
             ],
             statuses: [],
         },
+        showPointer: true,
     },
 
     {
@@ -271,11 +369,14 @@ export const Cards: Card[] = [
                         calculatedValue: 0, // Value is calculated in the effect
                         targeted: CardTargetedEnum.Enemy,
                         times: 1,
+                        useDefense: true,
+                        multiplier: 1,
                     },
                 },
             ],
             statuses: [],
         },
+        showPointer: true,
     },
     {
         cardId: 30,
@@ -294,12 +395,15 @@ export const Cards: Card[] = [
                         baseValue: 0, // Value is calculated in the effect
                         calculatedValue: 0, // Value is calculated in the effect
                         targeted: CardTargetedEnum.Enemy,
-                        times: 2,
+                        times: 1,
+                        useDefense: true,
+                        multiplier: 2,
                     },
                 },
             ],
             statuses: [],
         },
+        showPointer: true,
     },
     {
         cardId: 31,
@@ -325,6 +429,7 @@ export const Cards: Card[] = [
             ],
             statuses: [],
         },
+        showPointer: true,
     },
     {
         cardId: 32,
@@ -350,5 +455,235 @@ export const Cards: Card[] = [
             ],
             statuses: [],
         },
+        showPointer: true,
+    },
+    {
+        cardId: 57,
+        name: 'Fine Edge',
+        rarity: CardRarityEnum.Special,
+        cardType: CardTypeEnum.Attack,
+        pool: 'knight',
+        energy: 0,
+        description: 'Deal 5 damage. Exhaust',
+        keywords: [CardKeywordEnum.Exhaust],
+        properties: {
+            effects: [
+                {
+                    name: EffectName.Damage,
+                    args: {
+                        baseValue: 5,
+                        calculatedValue: 5, // TODO: Calculate this value based in the count of uses
+                        targeted: CardTargetedEnum.Enemy,
+                        times: 1,
+                    },
+                },
+            ],
+            statuses: [],
+        },
+        showPointer: true,
+    },
+    {
+        cardId: 15,
+        name: 'Turtle',
+        rarity: CardRarityEnum.Common,
+        cardType: CardTypeEnum.Defend,
+        pool: 'knight',
+        energy: 0,
+        description: 'At the end of this turn, double your defense',
+        keywords: [],
+        properties: {
+            effects: [],
+            statuses: [
+                {
+                    name: Statuses.Turtling.name,
+                    args: {
+                        value: 1,
+                        targeted: CardTargetedEnum.Player,
+                    },
+                },
+            ],
+        },
+        showPointer: false,
+    },
+    {
+        cardId: 75,
+        name: 'Heaven’s Grace',
+        rarity: CardRarityEnum.Rare,
+        cardType: CardTypeEnum.Skill,
+        pool: 'knight',
+        energy: 1,
+        description: 'Heal 2 hp',
+        keywords: [],
+        properties: {
+            effects: [
+                {
+                    name: EffectName.Heal,
+                    args: {
+                        baseValue: 2,
+                        calculatedValue: 2,
+                        targeted: CardTargetedEnum.Player,
+                        times: 1,
+                    },
+                },
+            ],
+            statuses: [],
+        },
+        showPointer: false,
+    },
+    {
+        cardId: 76,
+        name: 'Heaven’s Grace+',
+        rarity: CardRarityEnum.Rare,
+        cardType: CardTypeEnum.Skill,
+        pool: 'knight',
+        energy: 1,
+        description: 'Heal 4 hp',
+        keywords: [],
+        properties: {
+            effects: [
+                {
+                    name: EffectName.Heal,
+                    args: {
+                        baseValue: 4,
+                        calculatedValue: 4,
+                        targeted: CardTargetedEnum.Player,
+                        times: 1,
+                    },
+                },
+            ],
+            statuses: [],
+        },
+        showPointer: false,
+    },
+    {
+        cardId: 9,
+        name: 'First Move',
+        rarity: CardRarityEnum.Starter,
+        cardType: CardTypeEnum.Skill,
+        pool: 'knight',
+        energy: 1,
+        description: 'Gain 2 Energy',
+        keywords: [],
+        properties: {
+            effects: [
+                {
+                    name: EffectName.Energy,
+                    args: {
+                        baseValue: 2,
+                        calculatedValue: 2,
+                        targeted: CardTargetedEnum.Player,
+                        times: 1,
+                    },
+                },
+            ],
+            statuses: [],
+        },
+        showPointer: false,
+    },
+    {
+        cardId: 10,
+        name: 'First Move+',
+        rarity: CardRarityEnum.Starter,
+        cardType: CardTypeEnum.Skill,
+        pool: 'knight',
+        energy: 0,
+        description: 'Gain 2 Energy',
+        keywords: [],
+        properties: {
+            effects: [
+                {
+                    name: EffectName.Energy,
+                    args: {
+                        baseValue: 2,
+                        calculatedValue: 2,
+                        targeted: CardTargetedEnum.Player,
+                        times: 1,
+                    },
+                },
+            ],
+            statuses: [],
+        },
+        showPointer: false,
+    },
+    {
+        cardId: 23,
+        name: 'Pray',
+        rarity: CardRarityEnum.Common,
+        cardType: CardTypeEnum.Skill,
+        pool: 'knight',
+        energy: 0,
+        description:
+            'At the beginning of your next turn gain 1 [Resolve] and 1 [Fortitude].',
+        keywords: [],
+        properties: {
+            effects: [],
+            statuses: [
+                {
+                    name: Statuses.Resolve.name,
+                    args: {
+                        value: 1,
+                        targeted: CardTargetedEnum.Enemy,
+                    },
+                },
+                {
+                    name: Statuses.Fortitude.name,
+                    args: {
+                        value: 1,
+                        targeted: CardTargetedEnum.Player,
+                    },
+                },
+            ],
+        },
+        showPointer: false,
+    },
+    {
+        cardId: 45,
+        name: 'Feint',
+        rarity: CardRarityEnum.Uncommon,
+        cardType: CardTypeEnum.Skill,
+        pool: 'knight',
+        energy: 1,
+        description: 'Remove all Defense from an enemy',
+        keywords: [],
+        properties: {
+            effects: [
+                {
+                    name: EffectName.RemoveDefense,
+                    args: {
+                        baseValue: 0,
+                        calculatedValue: 0,
+                        targeted: CardTargetedEnum.Enemy,
+                        times: 1,
+                    },
+                },
+            ],
+            statuses: [],
+        },
+        showPointer: false,
+    },
+    {
+        cardId: 46,
+        name: 'Feint+',
+        rarity: CardRarityEnum.Uncommon,
+        cardType: CardTypeEnum.Skill,
+        pool: 'knight',
+        energy: 0,
+        description: 'Remove all Defense from all enemies',
+        keywords: [],
+        properties: {
+            effects: [
+                {
+                    name: EffectName.RemoveDefense,
+                    args: {
+                        baseValue: 0,
+                        calculatedValue: 0,
+                        targeted: CardTargetedEnum.AllEnemies,
+                        times: 1,
+                    },
+                },
+            ],
+            statuses: [],
+        },
+        showPointer: false,
     },
 ];

@@ -8,7 +8,7 @@ import { Expedition } from './expedition.schema';
 import { ClientId } from './expedition.type';
 
 interface BaseDTO {
-    readonly clientId?: ClientId;
+    clientId?: ClientId;
 }
 
 export type FindOneExpeditionDTO = BaseDTO;
@@ -22,6 +22,7 @@ export class UpdateClientIdDTO {
 export type GetExpeditionMapDTO = BaseDTO;
 export type GetDeckCardsDTO = BaseDTO;
 export type GetCurrentNodeDTO = BaseDTO;
+export type GetPlayerStateDTO = BaseDTO;
 
 export interface GetExpeditionMapNodeDTO extends BaseDTO {
     nodeId: number;
@@ -48,4 +49,12 @@ export interface UpdateHandPilesDTO extends BaseDTO {
     discard?: IExpeditionPlayerStateDeckCard[];
     exhausted?: IExpeditionPlayerStateDeckCard[];
     draw?: IExpeditionPlayerStateDeckCard[];
+}
+
+export interface SetPlayerDefense extends BaseDTO {
+    value: number;
+}
+
+export interface UpdatePlayerHealth extends BaseDTO {
+    hpCurrent: number;
 }

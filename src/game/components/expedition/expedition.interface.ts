@@ -1,3 +1,4 @@
+import { AttachedStatus, StatusType } from 'src/game/status/interfaces';
 import { Card } from '../card/card.schema';
 import { Enemy } from '../enemy/enemy.schema';
 import {
@@ -29,7 +30,12 @@ export interface IExpeditionPlayerStateDeckCard extends Card {
 }
 
 export interface IExpeditionCurrentNodeDataEnemy extends Enemy {
+    id: string;
     defense: number;
+    statuses: {
+        [StatusType.Buff]: AttachedStatus[];
+        [StatusType.Debuff]: AttachedStatus[];
+    };
 }
 
 export interface IExpeditionStatusResponse {
@@ -45,3 +51,4 @@ export interface IExpeditionCancelledResponse {
 }
 
 export type IExpeditionCurrentNode = Expedition['currentNode'];
+export type IExpeditionPlayerState = Expedition['playerState'];

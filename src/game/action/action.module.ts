@@ -4,17 +4,18 @@ import { ExpeditionModule } from '../components/expedition/expedition.module';
 import { SettingsModule } from '../components/settings/settings.module';
 import { EffectModule } from '../effects/effects.module';
 import { ProcessModule } from '../process/process.module';
+import { StatusModule } from '../status/status.module';
 import { CardPlayedAction } from './cardPlayed.action';
 import { DiscardAllCardsAction } from './discardAllCards.action';
 import { DiscardCardAction } from './discardCard.action';
 import { EndturnAction } from './endTurn.action';
+import { ExhaustCardAction } from './exhaustCard.action';
 import { FullSyncAction } from './fullSync.action';
 import { GetCardPilesAction } from './getCardPiles.action';
 import { GetEnemiesAction } from './getEnemies.action';
 import { GetEnergyAction } from './getEnergy.action';
 import { GetPlayerInfoAction } from './getPlayerInfo.action';
 import { SetCombatTurnAction } from './setCombatTurn.action';
-import { ShuffleCardPilesAction } from './shuffleCardPiles.action';
 import { UpdatePlayerEnergyAction } from './updatePlayerEnergy.action';
 
 @Module({
@@ -22,6 +23,7 @@ import { UpdatePlayerEnergyAction } from './updatePlayerEnergy.action';
         ExpeditionModule,
         forwardRef(() => ProcessModule),
         EffectModule,
+        StatusModule,
         SettingsModule,
         CardModule,
     ],
@@ -37,7 +39,7 @@ import { UpdatePlayerEnergyAction } from './updatePlayerEnergy.action';
         DiscardCardAction,
         DiscardAllCardsAction,
         EndturnAction,
-        ShuffleCardPilesAction,
+        ExhaustCardAction,
     ],
     exports: [
         FullSyncAction,
@@ -51,7 +53,7 @@ import { UpdatePlayerEnergyAction } from './updatePlayerEnergy.action';
         DiscardCardAction,
         DiscardAllCardsAction,
         EndturnAction,
-        ShuffleCardPilesAction,
+        ExhaustCardAction,
     ],
 })
 export class ActionModule {}

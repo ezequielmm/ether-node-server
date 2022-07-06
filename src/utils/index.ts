@@ -1,3 +1,5 @@
+import { IExpeditionPlayerStateDeckCard } from 'src/game/components/expedition/expedition.interface';
+
 /**
  * Validates that the Bearer token is valid
  * @param token The bearer token to validate
@@ -55,4 +57,23 @@ export function getRandomBetween(min: number, max: number): number {
  */
 export function isEven(input: number): boolean {
     return input % 2 === 0;
+}
+
+/**
+ * Remove cards from a given pile
+ * @param originalPile The original card pile
+ * @param cardsToRemove The card array to remove from originalPile
+ * @return IExpeditionPlayerStateDeckCard[]
+ */
+export function removeCardsFromPile(payload: {
+    originalPile: IExpeditionPlayerStateDeckCard[];
+    cardsToRemove: IExpeditionPlayerStateDeckCard[];
+}): IExpeditionPlayerStateDeckCard[] {
+    const { originalPile, cardsToRemove } = payload;
+
+    return originalPile.filter((drawCard) => {
+        return !cardsToRemove.some((handCard) => {
+            return drawCard.id === handCard.id;
+        });
+    });
 }

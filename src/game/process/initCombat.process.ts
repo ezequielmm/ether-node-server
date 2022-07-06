@@ -1,76 +1,41 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { Socket } from 'socket.io';
 import { isEven } from 'src/utils';
 import { SetCombatTurnAction } from '../action/setCombatTurn.action';
-import { UpdatePlayerEnergyAction } from '../action/updatePlayerEnergy.action';
+import { IExpeditionNode } from '../components/expedition/expedition.interface';
 import { ExpeditionService } from '../components/expedition/expedition.service';
-import { SettingsService } from '../components/settings/settings.service';
-import {
-    StandardResponse,
-    SWARMessageType,
-    SWARAction,
-} from '../standardResponse/standardResponse';
+import { CurrentNodeGeneratorProcess } from './currentNodeGenerator.process';
 import { SendEnemyIntentProcess } from './sendEnemyIntents.process';
 
 @Injectable()
 export class InitCombatProcess {
-    private readonly logger: Logger = new Logger(InitCombatProcess.name);
-
     constructor(
-        private readonly setCombatTurnAction: SetCombatTurnAction,
-        private readonly sendEnemyIntentProcess: SendEnemyIntentProcess,
-        private readonly updatePlayerEnergyAction: UpdatePlayerEnergyAction,
-        private readonly settingsService: SettingsService,
+        private readonly currentNodeGeneratorProcess: CurrentNodeGeneratorProcess,
         private readonly expeditionService: ExpeditionService,
+        private readonly sendEnemyIntentProcess: SendEnemyIntentProcess,
+        private readonly setCombatTurnAction: SetCombatTurnAction,
     ) {}
 
-    async process(client: Socket): Promise<void> {
+    async process(client: Socket, node: IExpeditionNode): Promise<void> {
+        const currentNode =
+            await this.currentNodeGeneratorProcess.getCurrentNodeData(
+                node,
+                client.id,
+            );
+
+        await this.expeditionService.update(client.id, {
+            currentNode,
+        });
+
         const {
             currentNode: {
-                data: {
-                    round,
-                    player: {
-                        cards: { discard, hand },
-                    },
-                },
+                data: { round },
             },
         } = await this.setCombatTurnAction.handle({
             clientId: client.id,
             newRound: 1,
         });
 
-        const newHandPile = [...discard, ...hand];
-
-        await this.expeditionService.updateHandPiles({
-            clientId: client.id,
-            hand: newHandPile,
-            discard: [],
-        });
-
-        const {
-            player: {
-                energy: { initial: newEnergy },
-            },
-        } = await this.settingsService.getSettings();
-
-        await this.updatePlayerEnergyAction.handle({
-            clientId: client.id,
-            newEnergy,
-        });
-
         if (!isEven(round)) this.sendEnemyIntentProcess.process(client);
-
-        this.logger.log(`Sent message "InitCombat" to client ${client.id}`);
-
-        client.emit(
-            'InitCombat',
-            JSON.stringify(
-                StandardResponse.respond({
-                    message_type: SWARMessageType.CombatUpdate,
-                    action: SWARAction.BeginCombat,
-                    data: null,
-                }),
-            ),
-        );
     }
 }

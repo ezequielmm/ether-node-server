@@ -10,6 +10,8 @@ import { isValidAuthToken } from 'src/utils';
 import { AuthGatewayService } from 'src/authGateway/authGateway.service';
 import { ExpeditionService } from 'src/game/components/expedition/expedition.service';
 import { FullSyncAction } from 'src/game/action/fullSync.action';
+import { ExpeditionMapNodeTypeEnum } from 'src/game/components/expedition/expedition.enum';
+import { InitCombatProcess } from 'src/game/process/initCombat.process';
 
 @WebSocketGateway({
     cors: {
@@ -25,6 +27,7 @@ export class SocketGateway
         private readonly authGatewayService: AuthGatewayService,
         private readonly expeditionService: ExpeditionService,
         private readonly fullsyncAction: FullSyncAction,
+        private readonly initCombatProcess: InitCombatProcess,
     ) {}
 
     afterInit(): void {
@@ -48,10 +51,12 @@ export class SocketGateway
                 },
             } = await this.authGatewayService.getUser(authorization);
 
-            await this.expeditionService.updateClientId({
-                clientId: client.id,
-                playerId,
-            });
+            const { currentNode } = await this.expeditionService.updateClientId(
+                {
+                    clientId: client.id,
+                    playerId,
+                },
+            );
 
             const hasExpedition =
                 await this.expeditionService.playerHasExpeditionInProgress({
@@ -61,15 +66,35 @@ export class SocketGateway
             if (hasExpedition) {
                 this.logger.log(`Client connected: ${client.id}`);
 
+                if (currentNode !== undefined) {
+                    const { nodeType, nodeId } = currentNode;
+                    const nodeTypes = Object.values(ExpeditionMapNodeTypeEnum);
+                    const combatNodes = nodeTypes.filter(
+                        (node) => node.search('combat') !== -1,
+                    );
+
+                    if (combatNodes.includes(nodeType)) {
+                        const node =
+                            await this.expeditionService.getExpeditionMapNode({
+                                clientId: client.id,
+                                nodeId,
+                            });
+
+                        await this.initCombatProcess.process(client, node);
+                    }
+                }
+
                 await this.fullsyncAction.handle(client);
             } else {
                 this.logger.error(
                     `There is no expedition in progress for this player: ${client.id}`,
                 );
+
                 await this.expeditionService.updateClientId({
                     clientId: null,
                     playerId,
                 });
+
                 client.disconnect(true);
             }
         } catch (e) {
