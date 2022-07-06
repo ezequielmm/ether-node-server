@@ -4,6 +4,8 @@ import {
     Expedition,
     ExpeditionSchema,
 } from '../components/expedition/expedition.schema';
+import { FortitudeStatus } from './fortitude.status';
+import { ResolveStatus } from './resolve.status';
 import { StatusService } from './status.service';
 import { TurtlingStatus } from './turtling.status';
 
@@ -16,7 +18,7 @@ import { TurtlingStatus } from './turtling.status';
             },
         ]),
     ],
-    providers: [StatusService, TurtlingStatus],
+    providers: [StatusService, TurtlingStatus, ResolveStatus, FortitudeStatus],
     exports: [StatusService],
 })
 export class StatusModule {}

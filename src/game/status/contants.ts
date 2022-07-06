@@ -5,7 +5,7 @@ export const STATUS_METADATA = 'status';
 export const Statuses = {
     Resolve: {
         name: 'resolve',
-        type: StatusType.Buff,
+        type: StatusType.Debuff, // NOTE: Debuff for the target
     },
     Fortitude: {
         name: 'fortitude',
