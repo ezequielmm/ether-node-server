@@ -1,5 +1,6 @@
 import { PartialType } from '@nestjs/mapped-types';
 import { CardId } from '../card/card.type';
+import { CombatTurnEnum } from './expedition.enum';
 import {
     IExpeditionCurrentNodeDataEnemy,
     IExpeditionPlayerStateDeckCard,
@@ -29,7 +30,8 @@ export interface GetExpeditionMapNodeDTO extends BaseDTO {
 }
 
 export interface SetCombatTurnDTO extends BaseDTO {
-    newRound: number;
+    newRound?: number;
+    playing: CombatTurnEnum;
 }
 
 export interface CardExistsOnPlayerHandDTO extends BaseDTO {
@@ -51,10 +53,10 @@ export interface UpdateHandPilesDTO extends BaseDTO {
     draw?: IExpeditionPlayerStateDeckCard[];
 }
 
-export interface SetPlayerDefense extends BaseDTO {
+export interface SetPlayerDefenseDTO extends BaseDTO {
     value: number;
 }
 
-export interface UpdatePlayerHealth extends BaseDTO {
+export interface UpdatePlayerHealthDTO extends BaseDTO {
     hpCurrent: number;
 }

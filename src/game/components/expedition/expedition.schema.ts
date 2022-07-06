@@ -2,6 +2,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 import { AttachedStatus, StatusType } from 'src/game/status/interfaces';
 import {
+    CombatTurnEnum,
     ExpeditionMapNodeTypeEnum,
     ExpeditionStatusEnum,
 } from './expedition.enum';
@@ -45,6 +46,7 @@ export class Expedition {
         completed: boolean;
         data?: {
             round: number;
+            playing: CombatTurnEnum;
             player: {
                 energy: number;
                 energyMax?: number;

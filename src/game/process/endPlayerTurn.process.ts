@@ -1,5 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Socket } from 'socket.io';
+import { DiscardAllCardsAction } from '../action/discardAllCards.action';
+import { UpdatePlayerEnergyAction } from '../action/updatePlayerEnergy.action';
 import { ExpeditionService } from '../components/expedition/expedition.service';
 import { SettingsService } from '../components/settings/settings.service';
 import {
@@ -7,21 +9,27 @@ import {
     StandardResponse,
     SWARMessageType,
 } from '../standardResponse/standardResponse';
-import { DiscardAllCardsAction } from './discardAllCards.action';
-import { UpdatePlayerEnergyAction } from './updatePlayerEnergy.action';
+import { BeginEnemyTurnProcess } from './beginEnemyTurn.process';
+
+interface EndPlayerTurnDTO {
+    client: Socket;
+}
 
 @Injectable()
-export class EndturnAction {
-    private readonly logger: Logger = new Logger(EndturnAction.name);
+export class EndPlayerTurnProcess {
+    private readonly logger: Logger = new Logger(EndPlayerTurnProcess.name);
 
     constructor(
         private readonly discardAllCardsAction: DiscardAllCardsAction,
         private readonly expeditionService: ExpeditionService,
         private readonly updatePlayerEnergyAction: UpdatePlayerEnergyAction,
         private readonly settingsService: SettingsService,
+        private readonly beginEnemyTurnProcess: BeginEnemyTurnProcess,
     ) {}
 
-    async handle(client: Socket): Promise<void> {
+    async handle(payload: EndPlayerTurnDTO): Promise<void> {
+        const { client } = payload;
+
         await this.discardAllCardsAction.handle({ client });
 
         const {
@@ -57,5 +65,7 @@ export class EndturnAction {
                 }),
             ),
         );
+
+        await this.beginEnemyTurnProcess.handle({ client });
     }
 }
