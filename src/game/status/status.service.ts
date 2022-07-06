@@ -5,7 +5,7 @@ import { clone } from 'lodash';
 import { CardTargetedEnum } from '../components/card/card.enum';
 import { EffectName } from '../effects/effects.enum';
 import { BaseEffectDTO } from '../effects/effects.interface';
-import { Statuses, STATUS_METADATA } from './contants';
+import { STATUS_METADATA } from './contants';
 import {
     IBaseStatus,
     StatusMetadata,
