@@ -5,7 +5,9 @@ import { CharacterModule } from '../components/character/character.module';
 import { EnemyModule } from '../components/enemy/enemy.module';
 import { ExpeditionModule } from '../components/expedition/expedition.module';
 import { SettingsModule } from '../components/settings/settings.module';
+import { BeginEnemyTurnProcess } from './beginEnemyTurn.process';
 import { CurrentNodeGeneratorProcess } from './currentNodeGenerator.process';
+import { EndPlayerTurnProcess } from './endPlayerTurn.process';
 import { InitCombatProcess } from './initCombat.process';
 import { InitExpeditionProcess } from './initExpedition.process';
 import { NodeSelectedProcess } from './nodeSelected.process';
@@ -26,6 +28,8 @@ import { SendEnemyIntentProcess } from './sendEnemyIntents.process';
         CurrentNodeGeneratorProcess,
         InitCombatProcess,
         InitExpeditionProcess,
+        EndPlayerTurnProcess,
+        BeginEnemyTurnProcess,
     ],
     exports: [
         SendEnemyIntentProcess,
@@ -33,6 +37,8 @@ import { SendEnemyIntentProcess } from './sendEnemyIntents.process';
         CurrentNodeGeneratorProcess,
         InitCombatProcess,
         InitExpeditionProcess,
+        EndPlayerTurnProcess,
+        BeginEnemyTurnProcess,
     ],
 })
 export class ProcessModule {}
