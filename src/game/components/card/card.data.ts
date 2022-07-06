@@ -498,7 +498,7 @@ export const Cards: Card[] = [
                     name: Statuses.Turtling.name,
                     args: {
                         value: 1,
-                        targeted: CardTargetedEnum.Player,
+                        attachTo: CardTargetedEnum.Player,
                     },
                 },
             ],
@@ -622,14 +622,14 @@ export const Cards: Card[] = [
                     name: Statuses.Resolve.name,
                     args: {
                         value: 1,
-                        targeted: CardTargetedEnum.Enemy,
+                        attachTo: CardTargetedEnum.Player,
                     },
                 },
                 {
                     name: Statuses.Fortitude.name,
                     args: {
                         value: 1,
-                        targeted: CardTargetedEnum.Player,
+                        attachTo: CardTargetedEnum.Player,
                     },
                 },
             ],
@@ -683,6 +683,29 @@ export const Cards: Card[] = [
                 },
             ],
             statuses: [],
+        },
+        showPointer: false,
+    },
+    {
+        cardId: 95,
+        name: 'Herald of Pain',
+        rarity: CardRarityEnum.Common,
+        cardType: CardTypeEnum.Skill,
+        pool: 'knight',
+        energy: 0,
+        description: 'Double all damage dealt next turn.',
+        keywords: [],
+        properties: {
+            effects: [],
+            statuses: [
+                {
+                    name: Statuses.HeraldDelayed.name,
+                    args: {
+                        value: 1,
+                        attachTo: CardTargetedEnum.Player,
+                    },
+                },
+            ],
         },
         showPointer: false,
     },

@@ -3,7 +3,11 @@ import { ModulesContainer } from '@nestjs/core';
 import { InstanceWrapper } from '@nestjs/core/injector/instance-wrapper';
 import { Socket } from 'socket.io';
 import { CardTargetedEnum } from '../components/card/card.enum';
-import { EntityStatuses, JsonStatus, StatusType } from '../status/interfaces';
+import {
+    EntityStatuses,
+    StatusDirection,
+    StatusType,
+} from '../status/interfaces';
 import { StatusService } from '../status/status.service';
 import { EFFECT_METADATA } from './effects.decorator';
 import { BaseEffectDTO, IBaseEffect, JsonEffect } from './effects.interface';
@@ -30,6 +34,7 @@ export class EffectService {
         client: Socket,
         effects: JsonEffect[],
         targetId?: TargetId,
+        owner: 'player' | 'enemy' = 'player',
     ): Promise<void> {
         for (const {
             name,
@@ -41,32 +46,58 @@ export class EffectService {
                 client,
                 targetId,
             };
-            let statuses: EntityStatuses;
-            // Check type of target
-            if (args.targeted == CardTargetedEnum.Player) {
-                statuses = await this.statusService.getStatusesByPlayer(
+
+            let outgoingStatuses: EntityStatuses;
+            let incomingStatuses: EntityStatuses;
+
+            // Get statuses of the owner target to modify the outgoing effects
+            if (owner === 'player') {
+                outgoingStatuses = await this.statusService.getStatusesByPlayer(
                     client.id,
+                    StatusDirection.Outgoing,
+                );
+            } else if (owner === 'enemy') {
+                // TODO: Get statuses of the enemy that performs the effect
+            }
+
+            if (args.targeted == CardTargetedEnum.Player) {
+                incomingStatuses = await this.statusService.getStatusesByPlayer(
+                    client.id,
+                    StatusDirection.Incoming,
                 );
             } else if (args.targeted == CardTargetedEnum.Enemy) {
-                statuses = await this.statusService.getStatusesByEnemy(
+                incomingStatuses = await this.statusService.getStatusesByEnemy(
                     client.id,
                     targetId,
+                    StatusDirection.Incoming,
                 );
             }
-            if (statuses) {
-                if (statuses[StatusType.Buff])
-                    dto = await this.statusService.process(
-                        statuses[StatusType.Buff],
-                        name,
-                        dto,
-                    );
-                if (statuses[StatusType.Debuff])
-                    dto = await this.statusService.process(
-                        statuses[StatusType.Debuff],
-                        name,
-                        dto,
-                    );
-            }
+
+            // Apply statuses to the outgoing effects 🔫  →
+            dto = await this.statusService.process(
+                outgoingStatuses?.[StatusType.Buff],
+                name,
+                dto,
+            );
+
+            dto = await this.statusService.process(
+                outgoingStatuses?.[StatusType.Debuff],
+                name,
+                dto,
+            );
+
+            // Apply statuses to the incoming effects → 🛡
+            dto = await this.statusService.process(
+                incomingStatuses?.[StatusType.Buff],
+                name,
+                dto,
+            );
+
+            dto = await this.statusService.process(
+                incomingStatuses?.[StatusType.Debuff],
+                name,
+                dto,
+            );
 
             await this.getEffectByName(name).handle(dto);
         }

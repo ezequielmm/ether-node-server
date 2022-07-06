@@ -5,7 +5,7 @@ import { clone } from 'lodash';
 import { CardTargetedEnum } from '../components/card/card.enum';
 import { EffectName } from '../effects/effects.enum';
 import { BaseEffectDTO } from '../effects/effects.interface';
-import { STATUS_METADATA } from './contants';
+import { Statuses, STATUS_METADATA } from './contants';
 import {
     IBaseStatus,
     StatusMetadata,
@@ -14,6 +14,7 @@ import {
     AttachStatusToEnemyDTO,
     AttachedStatus,
     EntityStatuses,
+    StatusDirection,
 } from './interfaces';
 import { Model } from 'mongoose';
 import {
@@ -30,23 +31,13 @@ type StatusProviderDictionary = StatusProvider[];
 
 @Injectable()
 export class StatusService {
-    // #region Properties (1)
-
     private cache: StatusProviderDictionary;
-
-    // #endregion Properties (1)
-
-    // #region Constructors (1)
 
     constructor(
         private readonly modulesContainer: ModulesContainer,
         @InjectModel(Expedition.name)
         private readonly expedition: Model<ExpeditionDocument>,
     ) {}
-
-    // #endregion Constructors (1)
-
-    // #region Public Methods (6)
 
     public async attachStatusToEnemy(
         dto: AttachStatusToEnemyDTO,
@@ -109,7 +100,7 @@ export class StatusService {
         targetId?: string | number,
     ): Promise<void> {
         for (const status of statuses) {
-            switch (status.args.targeted) {
+            switch (status.args.attachTo) {
                 case CardTargetedEnum.Player:
                     await this.attachStatusToPlayer({
                         clientId,
@@ -130,6 +121,7 @@ export class StatusService {
     public async getStatusesByEnemy(
         clientId: ClientId,
         enemyId: EnemyId,
+        statusDirection: StatusDirection = StatusDirection.Incoming,
     ): Promise<EntityStatuses> {
         const clientField =
             typeof clientId === 'string' ? 'clientId' : 'playerId';
@@ -144,20 +136,25 @@ export class StatusService {
             .findOne({
                 [clientField]: clientId,
                 status: ExpeditionStatusEnum.InProgress,
-                [`currentNode.data.enemies.${enemyField}`]: enemyId,
             })
             .select('currentNode.data.enemies')
             .lean();
+        const enemy = enemies.find((enemy) => enemy[enemyField] == enemyId);
 
-        const enemy = enemies.find((enemy) => {
-            enemy[enemyField] == enemyId;
-        });
+        if (!enemy) {
+            throw new Error(`Enemy ${enemyId} not found`);
+        }
+
+        if (!enemy.statuses) return null;
+
+        this.filterEntityStatusesByDirection(enemy.statuses, statusDirection);
 
         return enemy?.statuses;
     }
 
     public async getStatusesByPlayer(
         clientId: string,
+        statusDirection: StatusDirection = StatusDirection.Incoming,
     ): Promise<EntityStatuses | undefined> {
         const {
             currentNode: {
@@ -173,6 +170,8 @@ export class StatusService {
             .select('currentNode.data.player.statuses')
             .lean();
 
+        this.filterEntityStatusesByDirection(statuses, statusDirection);
+
         return statuses;
     }
 
@@ -181,14 +180,15 @@ export class StatusService {
         effect: EffectName,
         dto: BaseEffectDTO,
     ): Promise<BaseEffectDTO> {
+        if (!statuses?.length) {
+            return dto;
+        }
+
         // Clone the dto to avoid mutating the original
         dto = clone(dto);
 
         for (const status of statuses) {
-            const provider = this.findStatusProviderByName(
-                this.getStatusProviders(),
-                status.name,
-            );
+            const provider = this.findStatusProviderByName(status.name);
 
             if (provider) {
                 // Validate if the status is valid for the effect
@@ -197,9 +197,7 @@ export class StatusService {
                         (effectName) => effectName == effect,
                     )
                 ) {
-                    throw new Error(
-                        `Status ${status.name} is not valid for effect ${effect}`,
-                    );
+                    continue;
                 }
 
                 const { instance } = provider;
@@ -214,14 +212,16 @@ export class StatusService {
         return dto;
     }
 
-    // #endregion Public Methods (6)
-
-    // #region Private Methods (5)
-
     private convertJsonStatusToAttachedStatus(jsonStatus: JsonStatus): {
         attachedStatus: AttachedStatus;
         provider: StatusProvider;
     } {
+        const provider = this.findStatusProviderByName(jsonStatus.name);
+
+        if (!provider) {
+            throw new Error(`Status ${jsonStatus.name} does not exist`);
+        }
+
         const attachedStatus: AttachedStatus = {
             name: jsonStatus.name,
             args: {
@@ -229,24 +229,29 @@ export class StatusService {
             },
         };
 
-        const provider = this.findStatusProviderByName(
-            this.getStatusProviders(),
-            attachedStatus.name,
-        );
-
-        if (!provider) {
-            throw new Error(`Status ${attachedStatus.name} does not exist`);
-        }
-
         return {
             attachedStatus,
             provider,
         };
     }
 
+    private filterEntityStatusesByDirection(
+        statuses: EntityStatuses,
+        statusDirection: StatusDirection,
+    ): EntityStatuses {
+        const filter = (status) =>
+            this.findStatusProviderByName(status.name).metadata.status
+                .direction === statusDirection;
+
+        statuses.buff = statuses.buff.filter(filter);
+        statuses.debuff = statuses.debuff.filter(filter);
+
+        return statuses;
+    }
+
     private findStatusProviderByName(
-        dictionary: StatusProviderDictionary,
         name: string,
+        dictionary: StatusProviderDictionary = this.getStatusProviders(),
     ): StatusProvider | undefined {
         return dictionary.find(
             (provider) => provider.metadata.status.name == name,
@@ -271,8 +276,8 @@ export class StatusService {
                     const instance = provider.instance as IBaseStatus;
 
                     const oldStatusProvider = this.findStatusProviderByName(
-                        dictionary,
                         metadata.status.name,
+                        dictionary,
                     );
 
                     if (oldStatusProvider) {
@@ -302,6 +307,4 @@ export class StatusService {
 
         return typeof statusInstance?.handle == 'function' && statusMetadata;
     }
-
-    // #endregion Private Methods (5)
 }

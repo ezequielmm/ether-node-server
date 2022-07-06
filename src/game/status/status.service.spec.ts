@@ -4,7 +4,7 @@ import { Socket } from 'socket.io';
 import { CardTargetedEnum } from '../components/card/card.enum';
 import { EffectName } from '../effects/effects.enum';
 import { BaseEffectDTO } from '../effects/effects.interface';
-import { IBaseStatus, StatusDTO } from './interfaces';
+import { IBaseStatus, StatusDirection, StatusDTO } from './interfaces';
 import { StatusService } from './status.service';
 import { getModelToken } from '@nestjs/mongoose';
 import { Expedition } from '../components/expedition/expedition.schema';
