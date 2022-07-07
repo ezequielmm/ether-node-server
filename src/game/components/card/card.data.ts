@@ -1,5 +1,10 @@
 import { EffectName } from 'src/game/effects/effects.enum';
-import { Statuses } from 'src/game/status/contants';
+import { fortitude } from 'src/game/status/fortitude.status';
+import { heraldDelayed } from 'src/game/status/heraldDelayed.status';
+import { resolve } from 'src/game/status/resolve.status';
+import { tasteOfBloodBuff } from 'src/game/status/tasteOfBlood.buff.status';
+import { tasteOfBloodDebuff } from 'src/game/status/tasteOfBlood.debuff.status';
+import { turtling } from 'src/game/status/turtling.status';
 import {
     CardRarityEnum,
     CardTypeEnum,
@@ -495,7 +500,7 @@ export const Cards: Card[] = [
             effects: [],
             statuses: [
                 {
-                    name: Statuses.Turtling.name,
+                    name: turtling.name,
                     args: {
                         value: 1,
                         attachTo: CardTargetedEnum.Player,
@@ -619,14 +624,14 @@ export const Cards: Card[] = [
             effects: [],
             statuses: [
                 {
-                    name: Statuses.Resolve.name,
+                    name: resolve.name,
                     args: {
                         value: 1,
                         attachTo: CardTargetedEnum.Player,
                     },
                 },
                 {
-                    name: Statuses.Fortitude.name,
+                    name: fortitude.name,
                     args: {
                         value: 1,
                         attachTo: CardTargetedEnum.Player,
@@ -699,7 +704,38 @@ export const Cards: Card[] = [
             effects: [],
             statuses: [
                 {
-                    name: Statuses.HeraldDelayed.name,
+                    name: heraldDelayed.name,
+                    args: {
+                        value: 1,
+                        attachTo: CardTargetedEnum.Player,
+                    },
+                },
+            ],
+        },
+        showPointer: false,
+    },
+    {
+        cardId: 105,
+        name: 'Taste of Blood',
+        rarity: CardRarityEnum.Rare,
+        cardType: CardTypeEnum.Skill,
+        pool: 'knight',
+        energy: 0,
+        description:
+            'Take double damage and deal double damage for the next 2 turns.',
+        keywords: [],
+        properties: {
+            effects: [],
+            statuses: [
+                {
+                    name: tasteOfBloodBuff.name,
+                    args: {
+                        value: 1,
+                        attachTo: CardTargetedEnum.Player,
+                    },
+                },
+                {
+                    name: tasteOfBloodDebuff.name,
                     args: {
                         value: 1,
                         attachTo: CardTargetedEnum.Player,
