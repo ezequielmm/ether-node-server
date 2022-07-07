@@ -8,7 +8,6 @@ import { StatusModule } from '../status/status.module';
 import { CardPlayedAction } from './cardPlayed.action';
 import { DiscardAllCardsAction } from './discardAllCards.action';
 import { DiscardCardAction } from './discardCard.action';
-import { EndturnAction } from './endTurn.action';
 import { ExhaustCardAction } from './exhaustCard.action';
 import { FullSyncAction } from './fullSync.action';
 import { GetCardPilesAction } from './getCardPiles.action';
@@ -38,7 +37,6 @@ import { UpdatePlayerEnergyAction } from './updatePlayerEnergy.action';
         UpdatePlayerEnergyAction,
         DiscardCardAction,
         DiscardAllCardsAction,
-        EndturnAction,
         ExhaustCardAction,
     ],
     exports: [
@@ -52,7 +50,6 @@ import { UpdatePlayerEnergyAction } from './updatePlayerEnergy.action';
         UpdatePlayerEnergyAction,
         DiscardCardAction,
         DiscardAllCardsAction,
-        EndturnAction,
         ExhaustCardAction,
     ],
 })

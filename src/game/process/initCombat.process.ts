@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { Socket } from 'socket.io';
 import { isEven } from 'src/utils';
 import { SetCombatTurnAction } from '../action/setCombatTurn.action';
+import { CombatTurnEnum } from '../components/expedition/expedition.enum';
 import { IExpeditionNode } from '../components/expedition/expedition.interface';
 import { ExpeditionService } from '../components/expedition/expedition.service';
 import { CurrentNodeGeneratorProcess } from './currentNodeGenerator.process';
@@ -34,6 +35,7 @@ export class InitCombatProcess {
         } = await this.setCombatTurnAction.handle({
             clientId: client.id,
             newRound: 1,
+            playing: CombatTurnEnum.Player,
         });
 
         if (!isEven(round)) this.sendEnemyIntentProcess.process(client);

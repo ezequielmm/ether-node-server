@@ -10,6 +10,7 @@ export enum SWARMessageType {
     EnemyAffected = 'enemy_affected',
     PlayerAffected = 'player_affected',
     EndTurn = 'end_turn',
+    BeginTurn = 'begin_turn',
 }
 
 export enum SWARAction {
@@ -33,6 +34,7 @@ export enum SWARAction {
     UpdatePlayer = 'update_player',
     EnemyAffected = 'enemy_affected',
     PlayerAffected = 'player_affected',
+    ChangeTurn = 'change_turn',
 }
 
 interface SWARPayload {

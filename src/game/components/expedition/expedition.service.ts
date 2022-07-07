@@ -13,13 +13,13 @@ import {
     GetPlayerStateDTO,
     playerHasAnExpeditionDTO,
     SetCombatTurnDTO,
-    SetPlayerDefense,
+    SetPlayerDefenseDTO,
     UpdateClientIdDTO,
     UpdateEnemiesArrayDTO,
     UpdateExpeditionDTO,
     UpdateHandPilesDTO,
     UpdatePlayerEnergyDTO,
-    UpdatePlayerHealth,
+    UpdatePlayerHealthDTO,
 } from './expedition.dto';
 import { ExpeditionStatusEnum } from './expedition.enum';
 import {
@@ -139,7 +139,7 @@ export class ExpeditionService {
     async setCombatTurn(
         payload: SetCombatTurnDTO,
     ): Promise<ExpeditionDocument> {
-        const { clientId, newRound } = payload;
+        const { clientId, newRound, playing } = payload;
         return await this.expedition.findOneAndUpdate(
             {
                 clientId,
@@ -147,7 +147,10 @@ export class ExpeditionService {
             },
             {
                 $set: {
-                    'currentNode.data.round': newRound,
+                    ...(newRound !== undefined && {
+                        'currentNode.data.round': newRound,
+                    }),
+                    'currentNode.data.playing': playing,
                 },
             },
             { new: true },
@@ -252,7 +255,7 @@ export class ExpeditionService {
     }
 
     async setPlayerDefense(
-        payload: SetPlayerDefense,
+        payload: SetPlayerDefenseDTO,
     ): Promise<ExpeditionDocument> {
         const { clientId, value } = payload;
 
@@ -275,7 +278,7 @@ export class ExpeditionService {
     }
 
     async setPlayerHealth(
-        payload: UpdatePlayerHealth,
+        payload: UpdatePlayerHealthDTO,
     ): Promise<ExpeditionDocument> {
         const { clientId, hpCurrent } = payload;
 

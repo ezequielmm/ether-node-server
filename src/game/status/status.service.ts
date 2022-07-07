@@ -25,6 +25,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { ExpeditionStatusEnum } from '../components/expedition/expedition.enum';
 import { EnemyId } from '../components/enemy/enemy.type';
 import { ClientId } from '../components/expedition/expedition.type';
+import { TargetId } from '../effects/effects.types';
 
 type StatusProvider = { metadata: StatusMetadata; instance: IBaseStatus };
 type StatusProviderDictionary = StatusProvider[];
@@ -97,7 +98,7 @@ export class StatusService {
     public async attachStatuses(
         clientId: string,
         statuses: JsonStatus[],
-        targetId?: string | number,
+        targetId?: TargetId,
     ): Promise<void> {
         for (const status of statuses) {
             switch (status.args.attachTo) {
@@ -156,6 +157,9 @@ export class StatusService {
         clientId: string,
         statusDirection: StatusDirection = StatusDirection.Incoming,
     ): Promise<EntityStatuses | undefined> {
+        const clientField =
+            typeof clientId === 'string' ? 'clientId' : 'playerId';
+
         const {
             currentNode: {
                 data: {
@@ -164,7 +168,7 @@ export class StatusService {
             },
         } = await this.expedition
             .findOne({
-                clientId,
+                [clientField]: clientId,
                 status: ExpeditionStatusEnum.InProgress,
             })
             .select('currentNode.data.player.statuses')

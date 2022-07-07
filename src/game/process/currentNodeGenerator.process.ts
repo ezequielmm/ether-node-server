@@ -2,7 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { removeCardsFromPile } from 'src/utils';
 import { EnemyService } from '../components/enemy/enemy.service';
 import { EnemyId } from '../components/enemy/enemy.type';
-import { ExpeditionMapNodeTypeEnum } from '../components/expedition/expedition.enum';
+import {
+    CombatTurnEnum,
+    ExpeditionMapNodeTypeEnum,
+} from '../components/expedition/expedition.enum';
 import {
     IExpeditionCurrentNode,
     IExpeditionCurrentNodeDataEnemy,
@@ -49,8 +52,12 @@ export class CurrentNodeGeneratorProcess {
     }
 
     private async getCombatCurrentNode(): Promise<IExpeditionCurrentNode> {
-        const settings = await this.settingsService.getSettings();
-        const handSize = settings.player.handSize;
+        const {
+            player: {
+                energy: { max, initial },
+                handSize,
+            },
+        } = await this.settingsService.getSettings();
         const cards = await this.expeditionService.getDeckCards({
             clientId: this.clientId,
         });
@@ -90,9 +97,10 @@ export class CurrentNodeGeneratorProcess {
             nodeType: this.node.type,
             data: {
                 round: 0,
+                playing: CombatTurnEnum.Player,
                 player: {
-                    energy: settings.player.energy.initial,
-                    energyMax: settings.player.energy.max,
+                    energy: initial,
+                    energyMax: max,
                     handSize,
                     defense: 0,
                     cards: {

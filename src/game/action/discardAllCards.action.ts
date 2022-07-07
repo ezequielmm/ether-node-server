@@ -38,11 +38,11 @@ export class DiscardAllCardsAction {
             discard: newDiscard,
         });
 
-        const cardMoves = hand.map((card) => {
+        const cardMoves = hand.map(({ id }) => {
             return {
-                source: 'hand',
+                source: 'npm run starthand',
                 destination: 'discard',
-                cardId: card.id,
+                cardId: id,
             };
         });
 
