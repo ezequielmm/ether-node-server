@@ -7,7 +7,6 @@ import {
     StandardResponse,
     SWARMessageType,
 } from '../standardResponse/standardResponse';
-import { EndEnemyTurnProcess } from './endEnemyTurn.process';
 
 interface BeginEnemyTurnDTO {
     client: Socket;
@@ -17,10 +16,7 @@ interface BeginEnemyTurnDTO {
 export class BeginEnemyTurnProcess {
     private readonly logger: Logger = new Logger(BeginEnemyTurnProcess.name);
 
-    constructor(
-        private readonly expeditionService: ExpeditionService,
-        private readonly endEnemyTurnProcess: EndEnemyTurnProcess,
-    ) {}
+    constructor(private readonly expeditionService: ExpeditionService) {}
 
     async handle(payload: BeginEnemyTurnDTO): Promise<void> {
         const { client } = payload;
@@ -44,7 +40,5 @@ export class BeginEnemyTurnProcess {
                 }),
             ),
         );
-
-        await this.endEnemyTurnProcess.handle({ client });
     }
 }
