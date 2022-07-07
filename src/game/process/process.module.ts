@@ -6,7 +6,10 @@ import { EnemyModule } from '../components/enemy/enemy.module';
 import { ExpeditionModule } from '../components/expedition/expedition.module';
 import { SettingsModule } from '../components/settings/settings.module';
 import { BeginEnemyTurnProcess } from './beginEnemyTurn.process';
+import { BeginPlayerTurnProcess } from './beginPlayerTurn.process';
 import { CurrentNodeGeneratorProcess } from './currentNodeGenerator.process';
+import { DrawCardProcess } from './drawCard.process';
+import { EndEnemyTurnProcess } from './endEnemyTurn.process';
 import { EndPlayerTurnProcess } from './endPlayerTurn.process';
 import { InitCombatProcess } from './initCombat.process';
 import { InitExpeditionProcess } from './initExpedition.process';
@@ -29,7 +32,10 @@ import { SendEnemyIntentProcess } from './sendEnemyIntents.process';
         InitCombatProcess,
         InitExpeditionProcess,
         EndPlayerTurnProcess,
+        EndEnemyTurnProcess,
         BeginEnemyTurnProcess,
+        BeginPlayerTurnProcess,
+        DrawCardProcess,
     ],
     exports: [
         SendEnemyIntentProcess,
@@ -38,7 +44,10 @@ import { SendEnemyIntentProcess } from './sendEnemyIntents.process';
         InitCombatProcess,
         InitExpeditionProcess,
         EndPlayerTurnProcess,
+        EndEnemyTurnProcess,
         BeginEnemyTurnProcess,
+        BeginPlayerTurnProcess,
+        DrawCardProcess,
     ],
 })
 export class ProcessModule {}

@@ -1,28 +1,28 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Socket } from 'socket.io';
-import { DiscardAllCardsAction } from '../action/discardAllCards.action';
 import { CombatTurnEnum } from '../components/expedition/expedition.enum';
+import { ExpeditionService } from '../components/expedition/expedition.service';
 import {
     SWARAction,
     StandardResponse,
     SWARMessageType,
 } from '../standardResponse/standardResponse';
-import { BeginEnemyTurnProcess } from './beginEnemyTurn.process';
+import { BeginPlayerTurnProcess } from './beginPlayerTurn.process';
 
-interface EndPlayerTurnDTO {
+interface EndEnemyTurnDTO {
     client: Socket;
 }
 
 @Injectable()
-export class EndPlayerTurnProcess {
-    private readonly logger: Logger = new Logger(EndPlayerTurnProcess.name);
+export class EndEnemyTurnProcess {
+    private readonly logger: Logger = new Logger(EndEnemyTurnProcess.name);
 
     constructor(
-        private readonly discardAllCardsAction: DiscardAllCardsAction,
-        private readonly beginEnemyTurnProcess: BeginEnemyTurnProcess,
+        private readonly expeditionService: ExpeditionService,
+        private readonly beginPlayerTurnProcess: BeginPlayerTurnProcess,
     ) {}
 
-    async handle(payload: EndPlayerTurnDTO): Promise<void> {
+    async handle(payload: EndEnemyTurnDTO): Promise<void> {
         const { client } = payload;
 
         this.logger.log(
@@ -35,13 +35,11 @@ export class EndPlayerTurnProcess {
                 StandardResponse.respond({
                     message_type: SWARMessageType.EndTurn,
                     action: SWARAction.ChangeTurn,
-                    data: CombatTurnEnum.Player,
+                    data: CombatTurnEnum.Enemy,
                 }),
             ),
         );
 
-        await this.discardAllCardsAction.handle({ client });
-
-        await this.beginEnemyTurnProcess.handle({ client });
+        await this.beginPlayerTurnProcess.handle({ client });
     }
 }
