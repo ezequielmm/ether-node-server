@@ -17,6 +17,9 @@ describe('DamageEffect', () => {
                 get enemies() {
                     return [{ id: 'targetId', hpCurrent: 100, defense: 5 }];
                 },
+                get player() {
+                    return { id: 'playerId', defense: 5 };
+                },
             },
         }),
         getPlayerStateByClientId: jest.fn().mockResolvedValue({
