@@ -692,6 +692,29 @@ export const Cards: Card[] = [
         rarity: CardRarityEnum.Common,
         cardType: CardTypeEnum.Skill,
         pool: 'knight',
+        energy: 1,
+        description: 'Double all damage dealt next turn.',
+        keywords: [],
+        properties: {
+            effects: [],
+            statuses: [
+                {
+                    name: Statuses.HeraldDelayed.name,
+                    args: {
+                        value: 1,
+                        attachTo: CardTargetedEnum.Player,
+                    },
+                },
+            ],
+        },
+        showPointer: false,
+    },
+    {
+        cardId: 96,
+        name: 'Herald of Pain',
+        rarity: CardRarityEnum.Common,
+        cardType: CardTypeEnum.Skill,
+        pool: 'knight',
         energy: 0,
         description: 'Double all damage dealt next turn.',
         keywords: [],
@@ -706,6 +729,58 @@ export const Cards: Card[] = [
                     },
                 },
             ],
+        },
+        showPointer: false,
+    },
+    {
+        cardId: 101,
+        name: 'Quick to Adapt',
+        rarity: CardRarityEnum.Common,
+        cardType: CardTypeEnum.Defend,
+        pool: 'knight',
+        energy: 1,
+        description: 'Gain 4 defense for each enemy.',
+        keywords: [],
+        properties: {
+            effects: [
+                {
+                    name: EffectName.Defense,
+                    args: {
+                        baseValue: 4,
+                        calculatedValue: 4,
+                        targeted: CardTargetedEnum.Player,
+                        times: 1,
+                        useEnemies: true,
+                    },
+                },
+            ],
+            statuses: [],
+        },
+        showPointer: false,
+    },
+    {
+        cardId: 102,
+        name: 'Quick to Adapt+',
+        rarity: CardRarityEnum.Common,
+        cardType: CardTypeEnum.Defend,
+        pool: 'knight',
+        energy: 1,
+        description: 'Gain 6 defense for each enemy.',
+        keywords: [],
+        properties: {
+            effects: [
+                {
+                    name: EffectName.Defense,
+                    args: {
+                        baseValue: 6,
+                        calculatedValue: 6,
+                        targeted: CardTargetedEnum.Player,
+                        times: 1,
+                        useEnemies: true,
+                    },
+                },
+            ],
+            statuses: [],
         },
         showPointer: false,
     },
