@@ -10,9 +10,23 @@ export class DefenseEffect implements IBaseEffect {
     constructor(private readonly expeditionService: ExpeditionService) {}
 
     async handle(payload: DefenseDTO): Promise<void> {
+        const { client, calculatedValue, useEnemies } = payload;
+
+        let newDefense = calculatedValue;
+
+        if (useEnemies !== undefined && useEnemies) {
+            const {
+                data: { enemies },
+            } = await this.expeditionService.getCurrentNode({
+                clientId: client.id,
+            });
+
+            newDefense = calculatedValue * enemies.length;
+        }
+
         await this.expeditionService.setPlayerDefense({
-            clientId: payload.client.id,
-            value: payload.calculatedValue,
+            clientId: client.id,
+            value: newDefense,
         });
     }
 }
