@@ -8,6 +8,7 @@ import {
     StandardResponse,
     SWARMessageType,
 } from '../standardResponse/standardResponse';
+import { DrawCardProcess } from './drawCard.process';
 
 interface BeginPlayerTurnDTO {
     client: Socket;
@@ -20,6 +21,7 @@ export class BeginPlayerTurnProcess {
     constructor(
         private readonly expeditionService: ExpeditionService,
         private readonly settingsService: SettingsService,
+        private readonly drawCardProcess: DrawCardProcess,
     ) {}
 
     async handle(payload: BeginPlayerTurnDTO): Promise<void> {
@@ -42,7 +44,10 @@ export class BeginPlayerTurnProcess {
 
         // Get previous round
         const {
-            data: { round },
+            data: {
+                round,
+                player: { handSize },
+            },
         } = await this.expeditionService.getCurrentNode({
             clientId: client.id,
         });
@@ -62,7 +67,7 @@ export class BeginPlayerTurnProcess {
             'PutData',
             JSON.stringify(
                 StandardResponse.respond({
-                    message_type: SWARMessageType.EndTurn,
+                    message_type: SWARMessageType.BeginTurn,
                     action: SWARAction.ChangeTurn,
                     data: CombatTurnEnum.Player,
                 }),
@@ -80,5 +85,7 @@ export class BeginPlayerTurnProcess {
             clientId: client.id,
             newEnergy: initial,
         });
+
+        await this.drawCardProcess.handle({ client, cardsTotake: handSize });
     }
 }

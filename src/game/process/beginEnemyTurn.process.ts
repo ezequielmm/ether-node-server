@@ -7,6 +7,7 @@ import {
     StandardResponse,
     SWARMessageType,
 } from '../standardResponse/standardResponse';
+import { EndEnemyTurnProcess } from './endEnemyTurn.process';
 
 interface BeginEnemyTurnDTO {
     client: Socket;
@@ -16,7 +17,10 @@ interface BeginEnemyTurnDTO {
 export class BeginEnemyTurnProcess {
     private readonly logger: Logger = new Logger(BeginEnemyTurnProcess.name);
 
-    constructor(private readonly expeditionService: ExpeditionService) {}
+    constructor(
+        private readonly expeditionService: ExpeditionService,
+        private readonly endEnemyTurnProcess: EndEnemyTurnProcess,
+    ) {}
 
     async handle(payload: BeginEnemyTurnDTO): Promise<void> {
         const { client } = payload;
@@ -34,11 +38,13 @@ export class BeginEnemyTurnProcess {
             'PutData',
             JSON.stringify(
                 StandardResponse.respond({
-                    message_type: SWARMessageType.EndTurn,
+                    message_type: SWARMessageType.BeginTurn,
                     action: SWARAction.ChangeTurn,
                     data: CombatTurnEnum.Enemy,
                 }),
             ),
         );
+
+        await this.endEnemyTurnProcess.handle({ client });
     }
 }
