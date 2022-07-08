@@ -71,28 +71,7 @@ export class CurrentNodeGeneratorProcess {
             cardsToRemove: handCards,
         });
 
-        const enemies: IExpeditionCurrentNodeDataEnemy[] = await Promise.all(
-            this.node.private_data.enemies.map(async (enemyId: EnemyId) => {
-                const enemy = await this.enemyService.findById(enemyId);
-
-                const newHealth = getRandomBetween(
-                    enemy.healthRange[0],
-                    enemy.healthRange[1],
-                );
-
-                return {
-                    id: enemy._id.toString(),
-                    defense: 0,
-                    name: enemy.name,
-                    enemyId: enemy.enemyId,
-                    type: enemy.type,
-                    category: enemy.category,
-                    size: enemy.size,
-                    hpCurrent: newHealth,
-                    hpMax: newHealth,
-                };
-            }),
-        );
+        const enemies = await this.getEnemies();
 
         return {
             nodeId: this.node.id,
@@ -128,5 +107,30 @@ export class CurrentNodeGeneratorProcess {
             completed: true,
             nodeType: this.node.type,
         };
+    }
+
+    private async getEnemies(): Promise<IExpeditionCurrentNodeDataEnemy[]> {
+        return await Promise.all(
+            this.node.private_data.enemies.map(async (enemyId: EnemyId) => {
+                const enemy = await this.enemyService.findById(enemyId);
+
+                const newHealth = getRandomBetween(
+                    enemy.healthRange[0],
+                    enemy.healthRange[1],
+                );
+
+                return {
+                    id: enemy._id.toString(),
+                    defense: 0,
+                    name: enemy.name,
+                    enemyId: enemy.enemyId,
+                    type: enemy.type,
+                    category: enemy.category,
+                    size: enemy.size,
+                    hpCurrent: newHealth,
+                    hpMax: newHealth,
+                };
+            }),
+        );
     }
 }
