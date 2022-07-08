@@ -38,6 +38,7 @@ export const Cards: Card[] = [
             statuses: [],
         },
         showPointer: true,
+        isUpgraded: false,
     },
     {
         cardId: 2,
@@ -63,6 +64,7 @@ export const Cards: Card[] = [
             statuses: [],
         },
         showPointer: true,
+        isUpgraded: true,
     },
     {
         cardId: 3,
@@ -88,6 +90,7 @@ export const Cards: Card[] = [
             statuses: [],
         },
         showPointer: false,
+        isUpgraded: false,
     },
     {
         cardId: 4,
@@ -113,6 +116,7 @@ export const Cards: Card[] = [
             statuses: [],
         },
         showPointer: false,
+        isUpgraded: true,
     },
     {
         cardId: 13,
@@ -147,6 +151,7 @@ export const Cards: Card[] = [
             statuses: [],
         },
         showPointer: true,
+        isUpgraded: false,
     },
     {
         cardId: 14,
@@ -181,6 +186,7 @@ export const Cards: Card[] = [
             statuses: [],
         },
         showPointer: true,
+        isUpgraded: true,
     },
     {
         cardId: 7,
@@ -215,6 +221,7 @@ export const Cards: Card[] = [
             statuses: [],
         },
         showPointer: true,
+        isUpgraded: false,
     },
     {
         cardId: 8,
@@ -249,6 +256,7 @@ export const Cards: Card[] = [
             statuses: [],
         },
         showPointer: true,
+        isUpgraded: true,
     },
 
     {
@@ -277,6 +285,7 @@ export const Cards: Card[] = [
             statuses: [],
         },
         showPointer: true,
+        isUpgraded: false,
     },
     {
         cardId: 12,
@@ -304,6 +313,7 @@ export const Cards: Card[] = [
             statuses: [],
         },
         showPointer: true,
+        isUpgraded: true,
     },
     {
         cardId: 19,
@@ -329,6 +339,7 @@ export const Cards: Card[] = [
             statuses: [],
         },
         showPointer: true,
+        isUpgraded: false,
     },
     {
         cardId: 20,
@@ -354,6 +365,7 @@ export const Cards: Card[] = [
             statuses: [],
         },
         showPointer: true,
+        isUpgraded: true,
     },
 
     {
@@ -382,6 +394,7 @@ export const Cards: Card[] = [
             statuses: [],
         },
         showPointer: true,
+        isUpgraded: false,
     },
     {
         cardId: 30,
@@ -409,6 +422,7 @@ export const Cards: Card[] = [
             statuses: [],
         },
         showPointer: true,
+        isUpgraded: true,
     },
     {
         cardId: 31,
@@ -435,6 +449,7 @@ export const Cards: Card[] = [
             statuses: [],
         },
         showPointer: true,
+        isUpgraded: false,
     },
     {
         cardId: 32,
@@ -461,6 +476,7 @@ export const Cards: Card[] = [
             statuses: [],
         },
         showPointer: true,
+        isUpgraded: true,
     },
     {
         cardId: 57,
@@ -486,6 +502,7 @@ export const Cards: Card[] = [
             statuses: [],
         },
         showPointer: true,
+        isUpgraded: false,
     },
     {
         cardId: 15,
@@ -509,6 +526,7 @@ export const Cards: Card[] = [
             ],
         },
         showPointer: false,
+        isUpgraded: false,
     },
     {
         cardId: 75,
@@ -534,6 +552,7 @@ export const Cards: Card[] = [
             statuses: [],
         },
         showPointer: false,
+        isUpgraded: false,
     },
     {
         cardId: 76,
@@ -559,6 +578,7 @@ export const Cards: Card[] = [
             statuses: [],
         },
         showPointer: false,
+        isUpgraded: true,
     },
     {
         cardId: 9,
@@ -584,6 +604,7 @@ export const Cards: Card[] = [
             statuses: [],
         },
         showPointer: false,
+        isUpgraded: false,
     },
     {
         cardId: 10,
@@ -609,6 +630,7 @@ export const Cards: Card[] = [
             statuses: [],
         },
         showPointer: false,
+        isUpgraded: true,
     },
     {
         cardId: 23,
@@ -640,6 +662,7 @@ export const Cards: Card[] = [
             ],
         },
         showPointer: false,
+        isUpgraded: false,
     },
     {
         cardId: 45,
@@ -665,6 +688,7 @@ export const Cards: Card[] = [
             statuses: [],
         },
         showPointer: false,
+        isUpgraded: false,
     },
     {
         cardId: 46,
@@ -690,6 +714,7 @@ export const Cards: Card[] = [
             statuses: [],
         },
         showPointer: false,
+        isUpgraded: true,
     },
     {
         cardId: 95,
@@ -713,6 +738,7 @@ export const Cards: Card[] = [
             ],
         },
         showPointer: false,
+        isUpgraded: false,
     },
     {
         cardId: 96,
@@ -736,6 +762,7 @@ export const Cards: Card[] = [
             ],
         },
         showPointer: false,
+        isUpgraded: true,
     },
     {
         cardId: 105,
@@ -767,6 +794,7 @@ export const Cards: Card[] = [
             ],
         },
         showPointer: false,
+        isUpgraded: false,
     },
     {
         cardId: 101,
@@ -793,6 +821,7 @@ export const Cards: Card[] = [
             statuses: [],
         },
         showPointer: false,
+        isUpgraded: false,
     },
     {
         cardId: 102,
@@ -819,5 +848,6 @@ export const Cards: Card[] = [
             statuses: [],
         },
         showPointer: false,
+        isUpgraded: true,
     },
 ];

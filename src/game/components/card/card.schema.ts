@@ -45,6 +45,9 @@ export class Card {
 
     @Prop({ default: false })
     showPointer: boolean;
+
+    @Prop({ default: false })
+    isUpgraded: boolean;
 }
 
 export const CardSchema = SchemaFactory.createForClass(Card);

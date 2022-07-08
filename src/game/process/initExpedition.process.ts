@@ -5,6 +5,7 @@ import { CharacterService } from '../components/character/character.service';
 import { ExpeditionStatusEnum } from '../components/expedition/expedition.enum';
 import { IExpeditionPlayerStateDeckCard } from '../components/expedition/expedition.interface';
 import { ExpeditionService } from '../components/expedition/expedition.service';
+import { SettingsService } from '../components/settings/settings.service';
 
 interface InitExpeditionDTO {
     playerId: number;
@@ -17,6 +18,7 @@ export class InitExpeditionProcess {
         private readonly expeditionService: ExpeditionService,
         private readonly cardService: CardService,
         private readonly characterService: CharacterService,
+        private readonly settingsService: SettingsService,
     ) {}
 
     async handle(payload: InitExpeditionDTO): Promise<void> {
@@ -51,7 +53,11 @@ export class InitExpeditionProcess {
     > {
         const cards = await this.cardService.findAll();
 
-        return cards.map((card) => ({
+        const {
+            player: { deckSize, deckSettings },
+        } = await this.settingsService.getSettings();
+
+        /*return cards.map((card) => ({
             cardId: card.cardId,
             id: card._id.toString(),
             name: card.name,
@@ -64,6 +70,6 @@ export class InitExpeditionProcess {
             keywords: card.keywords,
             isTemporary: false,
             showPointer: card.showPointer,
-        }));
+        }));*/
     }
 }
