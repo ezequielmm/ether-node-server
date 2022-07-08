@@ -22,10 +22,7 @@ export class Enemy {
     size: EnemySizeEnum;
 
     @Prop()
-    hpMax: number;
-
-    @Prop()
-    hpCurrent: number;
+    healthRange: number[];
 
     @Prop()
     description: string;
