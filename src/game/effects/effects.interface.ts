@@ -10,6 +10,7 @@ export interface BaseEffectDTO {
     times: number;
     targeted: CardTargetedEnum;
     useDefense?: boolean;
+    useEnemies?: boolean;
     multiplier?: number;
 }
 
@@ -25,6 +26,7 @@ export interface JsonEffect {
         targeted: CardTargetedEnum;
         times: number;
         useDefense?: boolean;
+        useEnemies?: boolean;
         multiplier?: number;
     };
 }

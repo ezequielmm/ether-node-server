@@ -131,7 +131,7 @@ export class DrawCardProcess {
                 JSON.stringify(
                     StandardResponse.respond({
                         message_type: SWARMessageType.BeginTurn,
-                        action: SWARAction.MoveCard,
+                        action: SWARAction.CreateCard,
                         data: moveFromDrawToHand,
                     }),
                 ),

@@ -40,7 +40,7 @@ export class DiscardAllCardsAction {
 
         const cardMoves = hand.map(({ id }) => {
             return {
-                source: 'npm run starthand',
+                source: 'hand',
                 destination: 'discard',
                 cardId: id,
             };

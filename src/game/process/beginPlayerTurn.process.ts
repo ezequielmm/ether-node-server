@@ -27,21 +27,6 @@ export class BeginPlayerTurnProcess {
     async handle(payload: BeginPlayerTurnDTO): Promise<void> {
         const { client } = payload;
 
-        this.logger.log(
-            `Sent message PutData to client ${client.id}: ${SWARAction.ChangeTurn}`,
-        );
-
-        client.emit(
-            'PutData',
-            JSON.stringify(
-                StandardResponse.respond({
-                    message_type: SWARMessageType.EndTurn,
-                    action: SWARAction.ChangeTurn,
-                    data: CombatTurnEnum.Player,
-                }),
-            ),
-        );
-
         // Get previous round
         const {
             data: {
