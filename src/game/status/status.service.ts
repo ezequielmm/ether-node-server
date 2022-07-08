@@ -16,7 +16,6 @@ import {
     EntityStatuses,
     StatusDirection,
     StatusStartsAt,
-    Status,
 } from './interfaces';
 import { Model } from 'mongoose';
 import {
