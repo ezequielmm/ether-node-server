@@ -704,7 +704,7 @@ export const Cards: Card[] = [
             effects: [],
             statuses: [
                 {
-                    name: Statuses.HeraldDelayed.name,
+                    name: heraldDelayed.name,
                     args: {
                         value: 1,
                         attachTo: CardTargetedEnum.Player,
@@ -716,7 +716,7 @@ export const Cards: Card[] = [
     },
     {
         cardId: 96,
-        name: 'Herald of Pain',
+        name: 'Herald of Pain+',
         rarity: CardRarityEnum.Common,
         cardType: CardTypeEnum.Skill,
         pool: 'knight',
