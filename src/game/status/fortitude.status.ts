@@ -1,12 +1,24 @@
 import { Injectable } from '@nestjs/common';
 import { EffectName } from '../effects/effects.enum';
 import { DefenseDTO } from '../effects/effects.interface';
-import { Statuses } from './contants';
-import { IBaseStatus, StatusDTO } from './interfaces';
+import {
+    IBaseStatus,
+    Status,
+    StatusDirection,
+    StatusDTO,
+    StatusStartsAt,
+    StatusType,
+} from './interfaces';
 import { StatusDecorator } from './status.decorator';
 
+export const fortitude: Status = {
+    name: 'fortitude',
+    type: StatusType.Buff,
+    direction: StatusDirection.Incoming,
+    startsAt: StatusStartsAt.NextTurn,
+};
 @StatusDecorator({
-    status: Statuses.Fortitude,
+    status: fortitude,
     effects: [EffectName.Defense],
 })
 @Injectable()

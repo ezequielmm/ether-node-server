@@ -9,12 +9,14 @@ import { STATUS_METADATA } from './contants';
 import {
     IBaseStatus,
     StatusMetadata,
-    JsonStatus,
+    CardStatus,
     AttachStatusToPlayerDTO,
     AttachStatusToEnemyDTO,
     AttachedStatus,
     EntityStatuses,
     StatusDirection,
+    StatusStartsAt,
+    Status,
 } from './interfaces';
 import { Model } from 'mongoose';
 import {
@@ -43,10 +45,10 @@ export class StatusService {
     public async attachStatusToEnemy(
         dto: AttachStatusToEnemyDTO,
     ): Promise<ExpeditionDocument> {
-        const { clientId, enemyId, status } = dto;
+        const { clientId, enemyId, status, currentRound } = dto;
 
         const { attachedStatus, provider } =
-            this.convertJsonStatusToAttachedStatus(status);
+            this.convertCardStatusToAttachedStatus(status, currentRound);
 
         const enemyField =
             typeof enemyId === 'string'
@@ -76,10 +78,10 @@ export class StatusService {
     public async attachStatusToPlayer(
         dto: AttachStatusToPlayerDTO,
     ): Promise<ExpeditionDocument> {
-        const { clientId, status } = dto;
+        const { clientId, status, currentRound } = dto;
 
         const { attachedStatus, provider } =
-            this.convertJsonStatusToAttachedStatus(status);
+            this.convertCardStatusToAttachedStatus(status, currentRound);
 
         return await this.expedition.findOneAndUpdate(
             {
@@ -97,7 +99,8 @@ export class StatusService {
 
     public async attachStatuses(
         clientId: string,
-        statuses: JsonStatus[],
+        statuses: CardStatus[],
+        currentRound: number,
         targetId?: TargetId,
     ): Promise<void> {
         for (const status of statuses) {
@@ -106,6 +109,7 @@ export class StatusService {
                     await this.attachStatusToPlayer({
                         clientId,
                         status,
+                        currentRound,
                     });
                     break;
                 case CardTargetedEnum.Enemy:
@@ -113,6 +117,7 @@ export class StatusService {
                         clientId,
                         status,
                         enemyId: targetId,
+                        currentRound,
                     });
                     break;
             }
@@ -183,6 +188,7 @@ export class StatusService {
         statuses: AttachedStatus[],
         effect: EffectName,
         dto: BaseEffectDTO,
+        currentRound: number,
     ): Promise<BaseEffectDTO> {
         if (!statuses?.length) {
             return dto;
@@ -195,18 +201,29 @@ export class StatusService {
             const provider = this.findStatusProviderByName(status.name);
 
             if (provider) {
+                const providerMetadata = provider.metadata;
+                const providerInstance = provider.instance;
+
+                // Validate if the status can starts in this round
+                if (
+                    !this.canApplyStatusInThisRound(
+                        providerMetadata.status.startsAt,
+                        status.args.addedInRound,
+                        currentRound,
+                    )
+                )
+                    continue;
+
                 // Validate if the status is valid for the effect
                 if (
-                    !provider.metadata.effects.some(
+                    !providerMetadata.effects.some(
                         (effectName) => effectName == effect,
                     )
                 ) {
                     continue;
                 }
 
-                const { instance } = provider;
-
-                dto = await instance.handle({
+                dto = await providerInstance.handle({
                     baseEffectDTO: dto,
                     args: status.args,
                 });
@@ -216,7 +233,20 @@ export class StatusService {
         return dto;
     }
 
-    private convertJsonStatusToAttachedStatus(jsonStatus: JsonStatus): {
+    private canApplyStatusInThisRound(
+        startsAt: StatusStartsAt,
+        addedInRound: number,
+        currentRound,
+    ): boolean {
+        return !(
+            startsAt == StatusStartsAt.NextTurn && addedInRound == currentRound
+        );
+    }
+
+    private convertCardStatusToAttachedStatus(
+        jsonStatus: CardStatus,
+        currentRound: number,
+    ): {
         attachedStatus: AttachedStatus;
         provider: StatusProvider;
     } {
@@ -230,6 +260,7 @@ export class StatusService {
             name: jsonStatus.name,
             args: {
                 value: jsonStatus.args.value,
+                addedInRound: currentRound,
             },
         };
 

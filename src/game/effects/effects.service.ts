@@ -33,6 +33,7 @@ export class EffectService {
     async process(
         client: Socket,
         effects: JsonEffect[],
+        currentRound: number,
         targetId?: TargetId,
         owner: 'player' | 'enemy' = 'player',
     ): Promise<void> {
@@ -78,12 +79,14 @@ export class EffectService {
                 outgoingStatuses?.[StatusType.Buff],
                 name,
                 dto,
+                currentRound,
             );
 
             dto = await this.statusService.process(
                 outgoingStatuses?.[StatusType.Debuff],
                 name,
                 dto,
+                currentRound,
             );
 
             // Apply statuses to the incoming effects → 🛡
@@ -91,12 +94,14 @@ export class EffectService {
                 incomingStatuses?.[StatusType.Buff],
                 name,
                 dto,
+                currentRound,
             );
 
             dto = await this.statusService.process(
                 incomingStatuses?.[StatusType.Debuff],
                 name,
                 dto,
+                currentRound,
             );
 
             await this.getEffectByName(name).handle(dto);

@@ -13,6 +13,11 @@ export enum StatusDirection {
     Outgoing = 'outgoing',
 }
 
+export enum StatusStartsAt {
+    Instantly = 'instantly',
+    NextTurn = 'nextTurn',
+}
+
 export interface Status {
     /**
      * The name of the status, used to identify it. It must be unique.
@@ -23,6 +28,7 @@ export interface Status {
      * @example 'turtling'
      */
     name: string;
+
     /**
      * The type of the status.
      * @type {StatusType}
@@ -31,6 +37,7 @@ export interface Status {
      * @property {StatusType} Debuff - The status is a debuff.
      */
     type: StatusType;
+
     /**
      * Effect direction
      * @type {StatusDirection}
@@ -39,7 +46,17 @@ export interface Status {
      * @property {StatusDirection} Outgoing - Outgoing effect
      */
     direction: StatusDirection;
-    // TODO: Add properties related to the behavior. For example if the status starts at the end of the turn, it will be removed at the start of the next turn.
+
+    /**
+     * The status starts at.
+     * @type {StatusStartsAt}
+     * @memberof Status
+     * @property {StatusStartsAt} Instantly - The status starts immediately.
+     * @property {StatusStartsAt} NextTurn - The status starts on the next turn.
+     * @example 'instantly'
+     * @example 'nextTurn'
+     */
+    startsAt: StatusStartsAt;
 }
 
 /**
@@ -52,7 +69,7 @@ export interface StatusMetadata {
 }
 
 /** It is used to declare the status information in the card. */
-export interface JsonStatus {
+export interface CardStatus {
     name: string;
     args: {
         value: any;
@@ -65,6 +82,7 @@ export interface AttachedStatus {
     name: string;
     args: {
         value: any;
+        addedInRound: number;
     };
 }
 
@@ -86,11 +104,13 @@ export interface IBaseStatus {
 
 export class AttachStatusToPlayerDTO {
     readonly clientId: string;
-    readonly status: JsonStatus;
+    readonly status: CardStatus;
+    readonly currentRound: number;
 }
 
 export class AttachStatusToEnemyDTO {
     readonly clientId: string;
-    readonly status: JsonStatus;
+    readonly status: CardStatus;
     readonly enemyId: EnemyId;
+    readonly currentRound: number;
 }

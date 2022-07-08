@@ -1,12 +1,25 @@
 import { Injectable } from '@nestjs/common';
 import { EffectName } from '../effects/effects.enum';
 import { DamageDTO } from '../effects/effects.interface';
-import { Statuses } from './contants';
-import { IBaseStatus, StatusDTO } from './interfaces';
+import {
+    IBaseStatus,
+    Status,
+    StatusDirection,
+    StatusDTO,
+    StatusStartsAt,
+    StatusType,
+} from './interfaces';
 import { StatusDecorator } from './status.decorator';
 
+export const heraldDelayed: Status = {
+    name: 'heraldDelayed',
+    type: StatusType.Buff,
+    direction: StatusDirection.Outgoing,
+    startsAt: StatusStartsAt.NextTurn,
+};
+
 @StatusDecorator({
-    status: Statuses.HeraldDelayed,
+    status: heraldDelayed,
     effects: [EffectName.Damage],
 })
 @Injectable()

@@ -9,11 +9,12 @@ import { StatusService } from './status.service';
 import { getModelToken } from '@nestjs/mongoose';
 import { Expedition } from '../components/expedition/expedition.schema';
 import { StatusDecorator } from './status.decorator';
-import { Statuses } from './contants';
+import { resolve } from './resolve.status';
+import { fortitude } from './fortitude.status';
 
 @StatusDecorator({
     effects: [EffectName.Damage],
-    status: Statuses.Resolve,
+    status: resolve,
 })
 @Injectable()
 class StatusA implements IBaseStatus {
@@ -26,7 +27,7 @@ class StatusA implements IBaseStatus {
 
 @StatusDecorator({
     effects: [EffectName.Defense, EffectName.Damage],
-    status: Statuses.Fortitude,
+    status: fortitude,
 })
 @Injectable()
 class StatusB implements IBaseStatus {
@@ -69,17 +70,46 @@ describe('StatusService', () => {
         const result = await statusService.process(
             [
                 {
-                    name: Statuses.Resolve.name,
+                    name: resolve.name,
                     args: {
                         value: null,
+                        addedInRound: 1,
                     },
                 },
             ],
             EffectName.Damage,
             payload,
+            2,
         );
 
         expect(result['status']).toBe('A');
+    });
+
+    it('should avoid to call status handle by effect name at the same turn', async () => {
+        const payload: BaseEffectDTO = {
+            client: { id: 'test' } as Socket,
+            targetId: 'test',
+            targeted: CardTargetedEnum.Player,
+            times: 1,
+            calculatedValue: 1,
+        };
+
+        const result = await statusService.process(
+            [
+                {
+                    name: resolve.name,
+                    args: {
+                        value: null,
+                        addedInRound: 1,
+                    },
+                },
+            ],
+            EffectName.Damage,
+            payload,
+            1,
+        );
+
+        expect(result['status']).toBe(undefined);
     });
 
     it('should call multiple status handle by effect name', async () => {
@@ -94,20 +124,23 @@ describe('StatusService', () => {
         const result = await statusService.process(
             [
                 {
-                    name: Statuses.Fortitude.name,
+                    name: fortitude.name,
                     args: {
                         value: null,
+                        addedInRound: 1,
                     },
                 },
                 {
-                    name: Statuses.Resolve.name,
+                    name: resolve.name,
                     args: {
                         value: null,
+                        addedInRound: 1,
                     },
                 },
             ],
             EffectName.Damage,
             payload,
+            2,
         );
 
         expect(result['status']).toBe('BA');

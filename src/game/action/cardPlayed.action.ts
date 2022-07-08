@@ -73,6 +73,7 @@ export class CardPlayedAction {
                         energy: availableEnergy,
                         cards: { hand },
                     },
+                    round,
                 },
             } = await this.expeditionService.getCurrentNode({
                 clientId: client.id,
@@ -124,10 +125,16 @@ export class CardPlayedAction {
                 await this.statusService.attachStatuses(
                     client.id,
                     statuses,
+                    round,
                     targetId,
                 );
 
-                await this.effectService.process(client, effects, targetId);
+                await this.effectService.process(
+                    client,
+                    effects,
+                    round,
+                    targetId,
+                );
 
                 if (exhaust) {
                     await this.exhaustCardAction.handle({
