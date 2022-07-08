@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { removeCardsFromPile } from 'src/utils';
+import { getRandomBetween, removeCardsFromPile } from 'src/utils';
 import { EnemyService } from '../components/enemy/enemy.service';
 import { EnemyId } from '../components/enemy/enemy.type';
 import {
@@ -73,20 +73,23 @@ export class CurrentNodeGeneratorProcess {
 
         const enemies: IExpeditionCurrentNodeDataEnemy[] = await Promise.all(
             this.node.private_data.enemies.map(async (enemyId: EnemyId) => {
-                const { _id, ...rest } = await this.enemyService.findById(
-                    enemyId,
+                const enemy = await this.enemyService.findById(enemyId);
+
+                const newHealth = getRandomBetween(
+                    enemy.healthRange[0],
+                    enemy.healthRange[1],
                 );
 
                 return {
-                    id: _id.toString(),
+                    id: enemy._id.toString(),
                     defense: 0,
-                    name: rest.name,
-                    enemyId: rest.enemyId,
-                    type: rest.type,
-                    category: rest.category,
-                    size: rest.size,
-                    hpCurrent: rest.hpCurrent,
-                    hpMax: rest.hpMax,
+                    name: enemy.name,
+                    enemyId: enemy.enemyId,
+                    type: enemy.type,
+                    category: enemy.category,
+                    size: enemy.size,
+                    hpCurrent: newHealth,
+                    hpMax: newHealth,
                 };
             }),
         );

@@ -18,11 +18,6 @@ import { Enemy, EnemySchema } from './game/components/enemy/enemy.schema';
 import { EnemySeeder } from './game/components/enemy/enemy.seeder';
 import { PotionSeeder } from './game/components/potion/potion.seeder';
 import { Potion, PotionSchema } from './game/components/potion/potion.schema';
-import { EnemyGroupSeeder } from './game/components/enemyGroups/enemyGroups.seeder';
-import {
-    EnemyGroup,
-    EnemyGroupSchema,
-} from './game/components/enemyGroups/enemyGroups.schema';
 import {
     Settings,
     SettingsSchema,
@@ -49,7 +44,6 @@ seeder({
             { name: Trinket.name, schema: TrinketSchema },
             { name: Potion.name, schema: PotionSchema },
             { name: Enemy.name, schema: EnemySchema },
-            { name: EnemyGroup.name, schema: EnemyGroupSchema },
             { name: Settings.name, schema: SettingsSchema },
         ]),
     ],
@@ -59,6 +53,5 @@ seeder({
     TrinketSeeder,
     PotionSeeder,
     EnemySeeder,
-    EnemyGroupSeeder,
     SettingsSeeder,
 ]);
