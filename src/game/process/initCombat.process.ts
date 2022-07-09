@@ -59,7 +59,9 @@ export class InitCombatProcess {
             ),
         );
 
+        await this.expeditionService.calculateNewEnemyIntentions(client.id);
+
         if (playing === CombatTurnEnum.Player)
-            this.sendEnemyIntentProcess.process(client);
+            await this.sendEnemyIntentProcess.process(client);
     }
 }
