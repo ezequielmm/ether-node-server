@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Socket } from 'socket.io';
-import { Intention, IntentionType } from '../components/enemy/enemy.schema';
+import { EnemyIntentionType } from '../components/enemy/enemy.enum';
 import { ExpeditionService } from '../components/expedition/expedition.service';
 import {
     StandardResponse,
@@ -54,19 +54,19 @@ export class SendEnemyIntentProcess {
     }
 
     private descriptionGenerator(
-        intent: IntentionType,
+        intent: EnemyIntentionType,
         value?: number,
     ): string {
         switch (intent) {
-            case IntentionType.Attack:
+            case EnemyIntentionType.Attack:
                 return `This Enemy will attack for ${value} Damage`;
-            case IntentionType.Defend:
+            case EnemyIntentionType.Defend:
                 return `This Enemy will Defend`;
-            case IntentionType.Buff:
+            case EnemyIntentionType.Buff:
                 return `This Enemy is plotting to gain a Buff effect`;
-            case IntentionType.Debuff:
+            case EnemyIntentionType.Debuff:
                 return `This Enemy is scheming to apply a Debuff effect`;
-            case IntentionType.Stun:
+            case EnemyIntentionType.Stun:
                 return `This enemy is doing nothing`;
             default:
                 return `Unknown intentions`;

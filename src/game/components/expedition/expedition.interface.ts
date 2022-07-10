@@ -1,6 +1,6 @@
 import { AttachedStatus, StatusType } from 'src/game/status/interfaces';
 import { Card } from '../card/card.schema';
-import { Script } from '../enemy/enemy.schema';
+import { EnemyScript } from '../enemy/enemy.interface';
 import {
     ExpeditionMapNodeTypeEnum,
     ExpeditionMapNodeStatusEnum,
@@ -38,7 +38,7 @@ export interface IExpeditionCurrentNodeDataEnemy {
         [StatusType.Buff]: AttachedStatus[];
         [StatusType.Debuff]: AttachedStatus[];
     };
-    currentScript?: Script;
+    currentScript?: EnemyScript;
 }
 
 export interface IExpeditionStatusResponse {

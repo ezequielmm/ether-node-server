@@ -1,7 +1,12 @@
 import { EffectName } from 'src/game/effects/effects.enum';
 import { CardTargetedEnum } from '../../card/card.enum';
-import { EnemyCategoryEnum, EnemySizeEnum, EnemyTypeEnum } from '../enemy.enum';
-import { Enemy, IntentionType } from '../enemy.schema';
+import {
+    EnemyCategoryEnum,
+    EnemyIntentionType,
+    EnemySizeEnum,
+    EnemyTypeEnum,
+} from '../enemy.enum';
+import { Enemy } from '../enemy.schema';
 
 export const sporeMongerData: Enemy = {
     enemyId: 1,
@@ -16,7 +21,7 @@ export const sporeMongerData: Enemy = {
         {
             intentions: [
                 {
-                    type: IntentionType.Attack,
+                    type: EnemyIntentionType.Attack,
                     target: CardTargetedEnum.Player,
                     value: 11,
                     effect: {
@@ -44,7 +49,7 @@ export const sporeMongerData: Enemy = {
         {
             intentions: [
                 {
-                    type: IntentionType.Defend,
+                    type: EnemyIntentionType.Defend,
                     target: CardTargetedEnum.Enemy,
                     value: 7,
                     effect: {
@@ -69,7 +74,7 @@ export const sporeMongerData: Enemy = {
         {
             intentions: [
                 {
-                    type: IntentionType.Attack,
+                    type: EnemyIntentionType.Attack,
                     target: CardTargetedEnum.Player,
                     value: 4,
                     effect: {
@@ -83,7 +88,7 @@ export const sporeMongerData: Enemy = {
                     },
                 },
                 {
-                    type: IntentionType.Attack,
+                    type: EnemyIntentionType.Attack,
                     target: CardTargetedEnum.Player,
                     value: 2,
                     // TODO: Create Feeble Status and use it here
