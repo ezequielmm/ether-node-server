@@ -70,7 +70,7 @@ export class FullSyncAction {
                 );
 
                 if (combatNodes.includes(nodeType) && !isEven(round))
-                    this.sendEnemyIntentProcess.process(client);
+                    await this.sendEnemyIntentProcess.process(client);
             }
         }
     }

@@ -1,6 +1,6 @@
 import { AttachedStatus, StatusType } from 'src/game/status/interfaces';
 import { Card } from '../card/card.schema';
-import { Enemy } from '../enemy/enemy.schema';
+import { EnemyScript } from '../enemy/enemy.interface';
 import {
     ExpeditionMapNodeTypeEnum,
     ExpeditionMapNodeStatusEnum,
@@ -29,13 +29,16 @@ export interface IExpeditionPlayerStateDeckCard extends Card {
     isTemporary: boolean;
 }
 
-export interface IExpeditionCurrentNodeDataEnemy extends Enemy {
+export interface IExpeditionCurrentNodeDataEnemy {
     id: string;
     defense: number;
+    hpMax: number;
+    hpCurrent: number;
     statuses: {
         [StatusType.Buff]: AttachedStatus[];
         [StatusType.Debuff]: AttachedStatus[];
     };
+    currentScript?: EnemyScript;
 }
 
 export interface IExpeditionStatusResponse {

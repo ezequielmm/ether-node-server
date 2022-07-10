@@ -1,3 +1,4 @@
+import { random } from 'lodash';
 import { IExpeditionPlayerStateDeckCard } from 'src/game/components/expedition/expedition.interface';
 
 /**
@@ -76,4 +77,25 @@ export function removeCardsFromPile(payload: {
             return drawCard.id === handCard.id;
         });
     });
+}
+
+/**
+ * Get a random item from an array based on a weight
+ * @param items The items to check
+ * @param weights The items weights
+ * @returns Item
+ */
+export function getRandomItemByWeight<T>(items: T[], weights: number[]): T {
+    const totalWeight = weights.reduce((a, b) => a + b);
+    const randomWeight = random(0, totalWeight, true);
+    let currentWeight = 0;
+
+    for (let i = 0; i < items.length; i++) {
+        currentWeight += weights[i];
+        if (randomWeight <= currentWeight) {
+            return items[i];
+        }
+    }
+
+    return items[items.length - 1];
 }

@@ -12,7 +12,6 @@ export class EnemySeeder implements Seeder {
     ) {}
 
     async seed(): Promise<any> {
-        // const enemies = DataFactory.createForClass(Enemy).generate(10);
         return this.enemy.insertMany(data);
     }
 
