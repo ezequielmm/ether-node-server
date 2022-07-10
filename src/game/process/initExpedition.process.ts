@@ -54,22 +54,35 @@ export class InitExpeditionProcess {
         const cards = await this.cardService.findAll();
 
         const {
-            player: { deckSize, deckSettings },
+            player: {
+                deckSettings: { typesAllowed, takeUpgrades, deckSize },
+            },
         } = await this.settingsService.getSettings();
 
-        /*return cards.map((card) => ({
-            cardId: card.cardId,
-            id: card._id.toString(),
-            name: card.name,
-            description: card.description,
-            rarity: card.rarity,
-            energy: card.energy,
-            cardType: card.cardType,
-            pool: card.pool,
-            properties: card.properties,
-            keywords: card.keywords,
-            isTemporary: false,
-            showPointer: card.showPointer,
-        }));*/
+        return cards
+            .filter((card) => {
+                return card.isUpgraded === takeUpgrades;
+            })
+            .filter((card) => {
+                return typesAllowed.includes(card.cardType);
+            })
+            .map((card) => {
+                return {
+                    cardId: card.cardId,
+                    id: card._id.toString(),
+                    name: card.name,
+                    description: card.description,
+                    rarity: card.rarity,
+                    energy: card.energy,
+                    cardType: card.cardType,
+                    pool: card.pool,
+                    properties: card.properties,
+                    keywords: card.keywords,
+                    isTemporary: false,
+                    showPointer: card.showPointer,
+                    isUpgraded: card.isUpgraded,
+                };
+            })
+            .slice(0, deckSize);
     }
 }

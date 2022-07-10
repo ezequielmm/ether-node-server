@@ -12,8 +12,7 @@ export class Settings {
             max: number;
         };
         handSize: number;
-        deckSize: number;
-        deckSettings: DeckSettings[];
+        deckSettings: DeckSettings;
     };
 }
 
