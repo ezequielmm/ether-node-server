@@ -24,18 +24,22 @@ import {
 import { ExpeditionStatusEnum } from './expedition.enum';
 import {
     IExpeditionCurrentNode,
+    IExpeditionCurrentNodeDataEnemy,
     IExpeditionNode,
     IExpeditionPlayerState,
     IExpeditionPlayerStateDeckCard,
 } from './expedition.interface';
 import { generateMap, restoreMap } from 'src/game/map/app';
 import { ClientId } from './expedition.type';
+import { EnemyService } from '../enemy/enemy.service';
+import { getRandomItemByWeight } from 'src/utils';
 
 @Injectable()
 export class ExpeditionService {
     constructor(
         @InjectModel(Expedition.name)
         private readonly expedition: Model<ExpeditionDocument>,
+        private readonly enemyService: EnemyService,
     ) {}
 
     async findOne(payload: FindOneExpeditionDTO): Promise<ExpeditionDocument> {
@@ -292,5 +296,40 @@ export class ExpeditionService {
             { 'playerState.hpCurrent': hpCurrent },
             { new: true },
         );
+    }
+
+    async calculateNewEnemyIntentions(
+        clientId: string,
+    ): Promise<IExpeditionCurrentNodeDataEnemy[]> {
+        const {
+            data: { enemies },
+        } = await this.getCurrentNode({ clientId });
+
+        for (const enemy of enemies) {
+            const { scripts } = await this.enemyService.findById(enemy.id);
+            const currentScript = enemy.currentScript;
+
+            if (!currentScript) {
+                enemy.currentScript = scripts[0];
+                continue;
+            }
+
+            const nextScript =
+                scripts[
+                    getRandomItemByWeight(
+                        currentScript.next,
+                        currentScript.next.map((s) => s.probability),
+                    ).scriptIndex
+                ];
+
+            enemy.currentScript = nextScript;
+        }
+
+        await this.updateEnemiesArray({
+            clientId,
+            enemies,
+        });
+
+        return enemies;
     }
 }

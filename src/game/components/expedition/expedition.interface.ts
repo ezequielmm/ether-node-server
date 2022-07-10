@@ -9,7 +9,7 @@ import {
     CardTypeEnum,
     CardKeywordEnum,
 } from '../card/card.enum';
-import { Enemy } from '../enemy/enemy.schema';
+import { EnemyScript } from '../enemy/enemy.interface';
 import {
     ExpeditionMapNodeTypeEnum,
     ExpeditionMapNodeStatusEnum,
@@ -51,13 +51,16 @@ export interface IExpeditionPlayerStateDeckCard {
     isUpgraded: boolean;
 }
 
-export interface IExpeditionCurrentNodeDataEnemy extends Enemy {
+export interface IExpeditionCurrentNodeDataEnemy {
     id: string;
     defense: number;
+    hpMax: number;
+    hpCurrent: number;
     statuses: {
         [StatusType.Buff]: AttachedStatus[];
         [StatusType.Debuff]: AttachedStatus[];
     };
+    currentScript?: EnemyScript;
 }
 
 export interface IExpeditionStatusResponse {
