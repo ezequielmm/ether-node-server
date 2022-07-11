@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { Socket } from 'socket.io';
 import { CombatTurnEnum } from '../components/expedition/expedition.enum';
 import { ExpeditionService } from '../components/expedition/expedition.service';
+import { EffectService } from '../effects/effects.service';
 import {
     SWARAction,
     StandardResponse,
@@ -16,12 +17,19 @@ interface BeginEnemyTurnDTO {
 export class BeginEnemyTurnProcess {
     private readonly logger: Logger = new Logger(BeginEnemyTurnProcess.name);
 
-    constructor(private readonly expeditionService: ExpeditionService) {}
+    constructor(
+        private readonly expeditionService: ExpeditionService,
+        private readonly effectService: EffectService,
+    ) {}
 
     async handle(payload: BeginEnemyTurnDTO): Promise<void> {
         const { client } = payload;
 
-        await this.expeditionService.setCombatTurn({
+        const {
+            currentNode: {
+                data: { enemies, round },
+            },
+        } = await this.expeditionService.setCombatTurn({
             clientId: client.id,
             playing: CombatTurnEnum.Enemy,
         });
@@ -40,5 +48,11 @@ export class BeginEnemyTurnProcess {
                 }),
             ),
         );
+
+        enemies.forEach((enemy) => {
+            const {
+                currentScript: { intentions },
+            } = enemy;
+        });
     }
 }
