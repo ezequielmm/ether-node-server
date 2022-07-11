@@ -1,11 +1,12 @@
 import { Injectable } from '@nestjs/common';
+import { randomUUID } from 'crypto';
 import { CardService } from '../components/card/card.service';
 import { CharacterClassEnum } from '../components/character/character.enum';
+import { CharacterDocument } from '../components/character/character.schema';
 import { CharacterService } from '../components/character/character.service';
 import { ExpeditionStatusEnum } from '../components/expedition/expedition.enum';
 import { IExpeditionPlayerStateDeckCard } from '../components/expedition/expedition.interface';
 import { ExpeditionService } from '../components/expedition/expedition.service';
-import { SettingsService } from '../components/settings/settings.service';
 
 interface InitExpeditionDTO {
     playerId: number;
@@ -18,7 +19,6 @@ export class InitExpeditionProcess {
         private readonly expeditionService: ExpeditionService,
         private readonly cardService: CardService,
         private readonly characterService: CharacterService,
-        private readonly settingsService: SettingsService,
     ) {}
 
     async handle(payload: InitExpeditionDTO): Promise<void> {
@@ -30,7 +30,7 @@ export class InitExpeditionProcess {
 
         const map = this.expeditionService.getMap();
 
-        const cards = await this.generatePlayerDeck();
+        const cards = await this.generatePlayerDeck(character);
 
         await this.expeditionService.create({
             playerId,
@@ -48,28 +48,40 @@ export class InitExpeditionProcess {
         });
     }
 
-    private async generatePlayerDeck(): Promise<
-        IExpeditionPlayerStateDeckCard[]
-    > {
+    private async generatePlayerDeck(
+        character: CharacterDocument,
+    ): Promise<IExpeditionPlayerStateDeckCard[]> {
+        // Get decksettings from character object
+        const {
+            deckSettings: { cards: cardsIdsArray },
+        } = character;
+
+        // Get card ids as an array of integers
+        const cardIds = cardsIdsArray.map(({ cardId }) => cardId);
+
+        // Get all the cards
         const cards = await this.cardService.findAll();
 
-        const {
-            player: {
-                deckSettings: { typesAllowed, takeUpgrades, deckSize },
-            },
-        } = await this.settingsService.getSettings();
-
+        // Filter the card ids and make a new array
         return cards
             .filter((card) => {
-                return card.isUpgraded === takeUpgrades;
+                return cardIds.includes(card.cardId);
             })
-            .filter((card) => {
-                return typesAllowed.includes(card.cardType);
-            })
+            .reduce((newDeckCards, card) => {
+                cardsIdsArray.forEach((cardId) => {
+                    if (card.cardId === cardId.cardId) {
+                        for (let i = 1; i <= cardId.amount; i++) {
+                            newDeckCards.push(card);
+                        }
+                    }
+                });
+
+                return newDeckCards;
+            }, [])
             .map((card) => {
                 return {
                     cardId: card.cardId,
-                    id: card._id.toString(),
+                    id: randomUUID(),
                     name: card.name,
                     description: card.description,
                     rarity: card.rarity,
@@ -82,7 +94,6 @@ export class InitExpeditionProcess {
                     showPointer: card.showPointer,
                     isUpgraded: card.isUpgraded,
                 };
-            })
-            .slice(0, deckSize);
+            });
     }
 }

@@ -1,4 +1,3 @@
-import { CardTypeEnum } from '../card/card.enum';
 import { Settings } from './settings.schema';
 
 export const settingsData: Settings = {
@@ -8,14 +7,6 @@ export const settingsData: Settings = {
             max: 3,
         },
         handSize: 5,
-        deckSettings: {
-            typesAllowed: [
-                CardTypeEnum.Attack,
-                CardTypeEnum.Defend,
-                CardTypeEnum.Skill,
-            ],
-            takeUpgrades: false,
-            deckSize: 10,
-        },
+        deckSize: 10,
     },
 };

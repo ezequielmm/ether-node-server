@@ -1,5 +1,4 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { DeckSettings } from './seetings.interface';
 
 export type SettingsDocument = Settings & Document;
 
@@ -12,7 +11,7 @@ export class Settings {
             max: number;
         };
         handSize: number;
-        deckSettings: DeckSettings;
+        deckSize: number;
     };
 }
 
