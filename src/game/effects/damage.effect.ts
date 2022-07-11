@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Socket } from 'socket.io';
 import { CardTargetedEnum } from '../components/card/card.enum';
+import { IExpeditionCurrentNodeDataEnemy } from '../components/expedition/expedition.interface';
 import { ExpeditionService } from '../components/expedition/expedition.service';
 import {
     StandardResponse,
@@ -75,11 +76,7 @@ export class DamageEffect implements IBaseEffect {
             const field = typeof targetId === 'string' ? 'id' : 'enemyId';
 
             if (enemy[field] === targetId) {
-                enemy.hpCurrent = this.calculateDamage(
-                    enemy.defense,
-                    damage,
-                    enemy.hpCurrent,
-                );
+                enemy = this.calculateEnemyDamage(enemy, damage);
 
                 dataResponse = [
                     {
@@ -121,11 +118,7 @@ export class DamageEffect implements IBaseEffect {
         let dataResponse = null;
 
         enemies.forEach((enemy) => {
-            enemy.hpCurrent = this.calculateDamage(
-                enemy.defense,
-                damage,
-                enemy.hpCurrent,
-            );
+            enemy = this.calculateEnemyDamage(enemy, damage);
 
             dataResponse = [];
             dataResponse.push({ id: enemy.id });
@@ -149,27 +142,27 @@ export class DamageEffect implements IBaseEffect {
         );
     }
 
-    private calculateDamage(
-        enemyDefense: number,
-        damageToApply: number,
-        enemyHPCurrent: number,
-    ): number {
-        // If we check if the card uses the player's defense and a value for
-        // the attack amount
+    private calculateEnemyDamage(
+        enemy: IExpeditionCurrentNodeDataEnemy,
+        damage: number,
+    ): IExpeditionCurrentNodeDataEnemy {
+        // First we check if the enemy has defense
+        if (enemy.defense > 0) {
+            // if is true, then we reduce the damage to the defense
+            const newDefense = enemy.defense - damage;
 
-        // Calculate true damage
-        const trueDamage = Math.max(
-            damageToApply - Math.max(enemyDefense, 0),
-            0,
-        );
+            // Next we check if the new defense is lower than 0
+            // and use the remaining value to reduce to the health
+            // and the set the defense to 0
+            if (newDefense < 0) {
+                enemy.defense = 0;
+                enemy.hpCurrent = enemy.hpCurrent + newDefense;
+            } else {
+                // Otherwise, we update the defense with the new value
+                enemy.defense = newDefense;
+            }
+        }
 
-        // If damage is less or equal to 0, trigger damage negated event
-        // TODO: Trigger damage negated event
-
-        // Calculate new hp
-        return Math.max(0, enemyHPCurrent - trueDamage);
-
-        // If new hp is less or equal than 0, trigger death event
-        // TODO: Trigger death effect event
+        return enemy;
     }
 }

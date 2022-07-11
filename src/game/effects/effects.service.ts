@@ -10,6 +10,7 @@ import {
 } from '../status/interfaces';
 import { StatusService } from '../status/status.service';
 import { EFFECT_METADATA } from './effects.decorator';
+import { EffectOwner } from './effects.enum';
 import { BaseEffectDTO, IBaseEffect, JsonEffect } from './effects.interface';
 import { TargetId } from './effects.types';
 
@@ -35,11 +36,11 @@ export class EffectService {
         effects: JsonEffect[],
         currentRound: number,
         targetId?: TargetId,
-        owner: 'player' | 'enemy' = 'player',
+        owner: EffectOwner = EffectOwner.Player,
     ): Promise<void> {
         for (const {
             name,
-            args: { baseValue, ...args },
+            args: { ...args }, // Here goes a baseValue parameter
         } of effects) {
             // TODO: Validate if target exists
             let dto: BaseEffectDTO = {
@@ -52,12 +53,12 @@ export class EffectService {
             let incomingStatuses: EntityStatuses;
 
             // Get statuses of the owner target to modify the outgoing effects
-            if (owner === 'player') {
+            if (owner === EffectOwner.Player) {
                 outgoingStatuses = await this.statusService.getStatusesByPlayer(
                     client.id,
                     StatusDirection.Outgoing,
                 );
-            } else if (owner === 'enemy') {
+            } else if (owner === EffectOwner.Enemy) {
                 // TODO: Get statuses of the enemy that performs the effect
             }
 

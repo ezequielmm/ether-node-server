@@ -8,3 +8,8 @@ export enum EffectName {
     Heal = 'heal',
     RemoveDefense = 'RemoveDefense',
 }
+
+export enum EffectOwner {
+    Player = 'player',
+    Enemy = 'enemy',
+}
