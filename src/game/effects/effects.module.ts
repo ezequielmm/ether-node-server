@@ -8,9 +8,14 @@ import { EffectService } from './effects.service';
 import { HealEffect } from './heal.effect';
 import { EnergyEffect } from './energy.effect';
 import { RemoveDefenseEffect } from './removeDefense.effect';
+import { ActionModule } from '../action/action.module';
 
 @Module({
-    imports: [forwardRef(() => ExpeditionModule), StatusModule],
+    imports: [
+        forwardRef(() => ExpeditionModule),
+        forwardRef(() => ActionModule),
+        StatusModule,
+    ],
     providers: [
         EffectService,
         DamageEffect,

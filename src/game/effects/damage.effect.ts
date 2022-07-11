@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Socket } from 'socket.io';
+import { GetPlayerInfoAction } from '../action/getPlayerInfo.action';
 import { CardTargetedEnum } from '../components/card/card.enum';
 import { IExpeditionCurrentNodeDataEnemy } from '../components/expedition/expedition.interface';
 import { ExpeditionService } from '../components/expedition/expedition.service';
@@ -16,13 +17,16 @@ import { TargetId } from './effects.types';
 @Effect(EffectName.Damage)
 @Injectable()
 export class DamageEffect implements IBaseEffect {
-    constructor(private readonly expeditionService: ExpeditionService) {}
+    constructor(
+        private readonly expeditionService: ExpeditionService,
+        private readonly getPlayerInfoAction: GetPlayerInfoAction,
+    ) {}
 
     async handle(payload: DamageDTO): Promise<void> {
         const {
             client,
             times,
-            calculatedValue,
+            calculatedValue: damage,
             targeted,
             targetId,
             useDefense,
@@ -36,15 +40,17 @@ export class DamageEffect implements IBaseEffect {
                 case CardTargetedEnum.Enemy:
                     await this.applyDamageToEnemy(
                         client,
-                        calculatedValue,
+                        damage,
                         targetId,
                         useDefense,
                         multiplier,
                     );
                     break;
                 case CardTargetedEnum.AllEnemies:
-                    await this.applyDamageToAllEnemies(client, calculatedValue);
+                    await this.applyDamageToAllEnemies(client, damage);
                     break;
+                case CardTargetedEnum.Player:
+                    await this.applyDamageToPlayer(client, damage);
             }
         }
     }
@@ -142,6 +148,41 @@ export class DamageEffect implements IBaseEffect {
         );
     }
 
+    private async applyDamageToPlayer(
+        client: Socket,
+        damage: number,
+    ): Promise<void> {
+        // First we get the actual hp and defense from the player
+        const { defense, hpCurrent } = await this.getPlayerInfoAction.handle(
+            client.id,
+        );
+
+        // Them we check if the player has defense to reduce from there
+        let newDefense = 0;
+        let newHpCurrent = 0;
+
+        if (defense > 0) {
+            newDefense = defense - damage;
+
+            if (newDefense < 0) {
+                newDefense = 0;
+                newHpCurrent = Math.max(0, hpCurrent + newDefense);
+            }
+        } else {
+            newHpCurrent = Math.max(0, hpCurrent - damage);
+        }
+
+        await this.expeditionService.setPlayerDefense({
+            clientId: client.id,
+            value: newDefense,
+        });
+
+        await this.expeditionService.setPlayerHealth({
+            clientId: client.id,
+            hpCurrent: newHpCurrent,
+        });
+    }
+
     private calculateEnemyDamage(
         enemy: IExpeditionCurrentNodeDataEnemy,
         damage: number,
@@ -156,11 +197,14 @@ export class DamageEffect implements IBaseEffect {
             // and the set the defense to 0
             if (newDefense < 0) {
                 enemy.defense = 0;
-                enemy.hpCurrent = enemy.hpCurrent + newDefense;
+                enemy.hpCurrent = Math.max(0, enemy.hpCurrent + newDefense);
             } else {
                 // Otherwise, we update the defense with the new value
                 enemy.defense = newDefense;
             }
+        } else {
+            // Otherwise, we apply the damage to the enemy's health
+            enemy.hpCurrent = Math.max(0, enemy.hpCurrent - damage);
         }
 
         return enemy;
