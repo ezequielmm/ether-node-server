@@ -1,8 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { DataFactory, Seeder } from 'nestjs-seeder';
+import { Seeder } from 'nestjs-seeder';
 import { InjectModel } from '@nestjs/mongoose';
 import { Character, CharacterDocument } from './character.schema';
 import { Model } from 'mongoose';
+import { CharacterData } from './character.data';
 
 @Injectable()
 export class CharacterSeeder implements Seeder {
@@ -12,8 +13,7 @@ export class CharacterSeeder implements Seeder {
     ) {}
 
     async seed(): Promise<any> {
-        const character = DataFactory.createForClass(Character).generate(1);
-        return this.character.create(character);
+        return this.character.create(CharacterData);
     }
 
     async drop(): Promise<any> {

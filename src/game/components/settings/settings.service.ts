@@ -18,8 +18,4 @@ export class SettingsService {
         }
         return settings;
     }
-
-    async updateSettings(settings: Settings): Promise<void> {
-        await this.settings.updateOne({}, { $set: settings });
-    }
 }

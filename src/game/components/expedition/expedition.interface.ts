@@ -1,5 +1,14 @@
-import { AttachedStatus, StatusType } from 'src/game/status/interfaces';
-import { Card } from '../card/card.schema';
+import { JsonEffect } from 'src/game/effects/effects.interface';
+import {
+    AttachedStatus,
+    CardStatus,
+    StatusType,
+} from 'src/game/status/interfaces';
+import {
+    CardRarityEnum,
+    CardTypeEnum,
+    CardKeywordEnum,
+} from '../card/card.enum';
 import { EnemyScript } from '../enemy/enemy.interface';
 import {
     ExpeditionMapNodeTypeEnum,
@@ -24,9 +33,22 @@ export interface IExpeditionNode {
     state?: any;
 }
 
-export interface IExpeditionPlayerStateDeckCard extends Card {
+export interface IExpeditionPlayerStateDeckCard {
     id: string;
     isTemporary: boolean;
+    name: string;
+    rarity: CardRarityEnum;
+    cardType: CardTypeEnum;
+    pool: string;
+    energy: number;
+    description: string;
+    properties: {
+        effects: JsonEffect[];
+        statuses: CardStatus[];
+    };
+    keywords: CardKeywordEnum[];
+    showPointer: boolean;
+    isUpgraded: boolean;
 }
 
 export interface IExpeditionCurrentNodeDataEnemy {

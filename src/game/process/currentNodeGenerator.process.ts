@@ -58,6 +58,7 @@ export class CurrentNodeGeneratorProcess {
                 handSize,
             },
         } = await this.settingsService.getSettings();
+
         const cards = await this.expeditionService.getDeckCards({
             clientId: this.clientId,
         });

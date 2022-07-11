@@ -92,9 +92,8 @@ export function getRandomItemByWeight<T>(items: T[], weights: number[]): T {
 
     for (let i = 0; i < items.length; i++) {
         currentWeight += weights[i];
-        if (randomWeight <= currentWeight) {
-            return items[i];
-        }
+
+        if (randomWeight <= currentWeight) return items[i];
     }
 
     return items[items.length - 1];
