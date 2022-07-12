@@ -53,6 +53,7 @@ export interface IExpeditionPlayerStateDeckCard {
 
 export interface IExpeditionCurrentNodeDataEnemy {
     id: string;
+    enemyId: number;
     defense: number;
     hpMax: number;
     hpCurrent: number;
@@ -76,4 +77,6 @@ export interface IExpeditionCancelledResponse {
 }
 
 export type IExpeditionCurrentNode = Expedition['currentNode'];
-export type IExpeditionPlayerState = Expedition['playerState'];
+export type IExpeditionPlayerGlobalState = Expedition['playerState'];
+export type IExpeditionPlayerCombatState =
+    IExpeditionCurrentNode['data']['player'];

@@ -1,7 +1,6 @@
 import { CardTargetedEnum } from '../components/card/card.enum';
 import { EnemyId } from '../components/enemy/enemy.type';
-import { EffectName } from '../effects/effects.enum';
-import { BaseEffectDTO } from '../effects/effects.interface';
+import { Effect, EffectDTO } from '../effects/effects.interface';
 
 export enum StatusType {
     Buff = 'buff',
@@ -65,7 +64,7 @@ export interface Status {
  */
 export interface StatusMetadata {
     status: Status;
-    effects: EffectName[];
+    effects: Effect[];
 }
 
 /** It is used to declare the status information in the card. */
@@ -86,20 +85,22 @@ export interface AttachedStatus {
     };
 }
 
-export interface EntityStatuses {
+export interface StatusCollection {
     [StatusType.Buff]: AttachedStatus[];
     [StatusType.Debuff]: AttachedStatus[];
 }
 
-export interface StatusDTO<T extends BaseEffectDTO = BaseEffectDTO> {
+export interface StatusDTO<
+    T extends Record<string, any> = Record<string, any>,
+> {
     args: {
         value: any;
     };
-    baseEffectDTO: T;
+    effectDTO: EffectDTO<T>;
 }
 
 export interface IBaseStatus {
-    handle(args: StatusDTO): Promise<BaseEffectDTO>;
+    handle(args: StatusDTO): Promise<EffectDTO>;
 }
 
 export class AttachStatusToPlayerDTO {

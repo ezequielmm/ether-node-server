@@ -42,7 +42,7 @@ export class DiscardAllCardsAction {
             return {
                 source: 'hand',
                 destination: 'discard',
-                cardId: id,
+                id,
             };
         });
 

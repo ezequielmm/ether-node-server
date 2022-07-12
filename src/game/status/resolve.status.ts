@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { EffectName } from '../effects/effects.enum';
-import { DamageDTO } from '../effects/effects.interface';
+import { damageEffect } from '../effects/constants';
+import { DamageArgs } from '../effects/damage.effect';
+import { EffectDTO } from '../effects/effects.interface';
 import {
     IBaseStatus,
     Status,
@@ -20,15 +21,16 @@ export const resolve: Status = {
 
 @StatusDecorator({
     status: resolve,
-    effects: [EffectName.Damage],
+    effects: [damageEffect],
 })
 @Injectable()
 export class ResolveStatus implements IBaseStatus {
-    async handle(dto: StatusDTO<DamageDTO>): Promise<DamageDTO> {
-        dto.baseEffectDTO.calculatedValue = Math.max(
-            dto.baseEffectDTO.calculatedValue + dto.args.value,
+    async handle(dto: StatusDTO<DamageArgs>): Promise<EffectDTO<DamageArgs>> {
+        const effectDTO = dto.effectDTO;
+        effectDTO.args.currentValue = Math.max(
+            effectDTO.args.currentValue + dto.args.value,
             0,
         );
-        return dto.baseEffectDTO;
+        return effectDTO;
     }
 }

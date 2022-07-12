@@ -48,7 +48,7 @@ export class DrawCardProcess {
                 return {
                     source: 'draw',
                     destination: 'hand',
-                    cardId: card.id,
+                    id: card.id,
                 };
             });
 
@@ -111,7 +111,7 @@ export class DrawCardProcess {
                 return {
                     source: 'draw',
                     destination: 'hand',
-                    cardId: card.id,
+                    id: card.id,
                 };
             });
 

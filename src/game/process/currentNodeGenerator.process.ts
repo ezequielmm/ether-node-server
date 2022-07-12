@@ -130,6 +130,10 @@ export class CurrentNodeGeneratorProcess {
                     size: enemy.size,
                     hpCurrent: newHealth,
                     hpMax: newHealth,
+                    statuses: {
+                        [StatusType.Buff]: [],
+                        [StatusType.Debuff]: [],
+                    },
                 };
             }),
         );

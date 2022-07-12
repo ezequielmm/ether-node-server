@@ -1,9 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
-import { Socket } from 'socket.io';
-import { CardTargetedEnum } from '../components/card/card.enum';
-import { EffectName } from '../effects/effects.enum';
-import { BaseEffectDTO } from '../effects/effects.interface';
+import { EffectDTO } from '../effects/effects.interface';
 import { IBaseStatus, StatusDTO } from './interfaces';
 import { StatusService } from './status.service';
 import { getModelToken } from '@nestjs/mongoose';
@@ -11,35 +8,37 @@ import { Expedition } from '../components/expedition/expedition.schema';
 import { StatusDecorator } from './status.decorator';
 import { resolve } from './resolve.status';
 import { fortitude } from './fortitude.status';
+import { damageEffect, defenseEffect } from '../effects/constants';
 
 @StatusDecorator({
-    effects: [EffectName.Damage],
+    effects: [damageEffect],
     status: resolve,
 })
 @Injectable()
 class StatusA implements IBaseStatus {
-    async handle(payload: StatusDTO): Promise<BaseEffectDTO> {
-        payload.baseEffectDTO['status'] =
-            (payload.baseEffectDTO['status'] || '') + 'A';
-        return payload.baseEffectDTO;
+    async handle(payload: StatusDTO): Promise<EffectDTO> {
+        payload.effectDTO.args.status =
+            (payload.effectDTO.args.status || '') + 'A';
+        return payload.effectDTO;
     }
 }
 
 @StatusDecorator({
-    effects: [EffectName.Defense, EffectName.Damage],
+    effects: [defenseEffect, damageEffect],
     status: fortitude,
 })
 @Injectable()
 class StatusB implements IBaseStatus {
-    async handle(payload: StatusDTO): Promise<BaseEffectDTO> {
-        payload.baseEffectDTO['status'] =
-            (payload.baseEffectDTO['status'] || '') + 'B';
-        return payload.baseEffectDTO;
+    async handle(payload: StatusDTO): Promise<EffectDTO> {
+        payload.effectDTO.args.status =
+            (payload.effectDTO.args.status || '') + 'B';
+        return payload.effectDTO;
     }
 }
 
 describe('StatusService', () => {
     let statusService: StatusService;
+    let effectDTO: EffectDTO;
 
     beforeEach(async () => {
         const module = await Test.createTestingModule({
@@ -52,6 +51,12 @@ describe('StatusService', () => {
         }).compile();
 
         statusService = module.get(StatusService);
+        effectDTO = {
+            args: {
+                initialValue: 1,
+                currentValue: 1,
+            },
+        } as EffectDTO;
     });
 
     it('should be defined', () => {
@@ -59,14 +64,6 @@ describe('StatusService', () => {
     });
 
     it('should call status handle by effect name', async () => {
-        const payload: BaseEffectDTO = {
-            client: { id: 'test' } as Socket,
-            targetId: 'test',
-            targeted: CardTargetedEnum.Player,
-            times: 1,
-            calculatedValue: 1,
-        };
-
         const result = await statusService.process(
             [
                 {
@@ -77,23 +74,15 @@ describe('StatusService', () => {
                     },
                 },
             ],
-            EffectName.Damage,
-            payload,
+            damageEffect.name,
+            effectDTO,
             2,
         );
 
-        expect(result['status']).toBe('A');
+        expect(result.args.status).toBe('A');
     });
 
     it('should avoid to call status handle by effect name at the same turn', async () => {
-        const payload: BaseEffectDTO = {
-            client: { id: 'test' } as Socket,
-            targetId: 'test',
-            targeted: CardTargetedEnum.Player,
-            times: 1,
-            calculatedValue: 1,
-        };
-
         const result = await statusService.process(
             [
                 {
@@ -104,23 +93,15 @@ describe('StatusService', () => {
                     },
                 },
             ],
-            EffectName.Damage,
-            payload,
+            damageEffect.name,
+            effectDTO,
             1,
         );
 
-        expect(result['status']).toBe(undefined);
+        expect(result.args.status).toBe(undefined);
     });
 
     it('should call multiple status handle by effect name', async () => {
-        const payload: BaseEffectDTO = {
-            client: { id: 'test' } as Socket,
-            targetId: 'test',
-            targeted: CardTargetedEnum.Player,
-            times: 1,
-            calculatedValue: 1,
-        };
-
         const result = await statusService.process(
             [
                 {
@@ -138,11 +119,11 @@ describe('StatusService', () => {
                     },
                 },
             ],
-            EffectName.Damage,
-            payload,
+            damageEffect.name,
+            effectDTO,
             2,
         );
 
-        expect(result['status']).toBe('BA');
+        expect(result.args.status).toBe('BA');
     });
 });

@@ -1,4 +1,11 @@
-import { EffectName } from 'src/game/effects/effects.enum';
+import {
+    damageEffect,
+    defenseEffect,
+    drawCardEffect,
+    energyEffect,
+    healEffect,
+    removeDefenseEffect,
+} from 'src/game/effects/constants';
 import { fortitude } from 'src/game/status/fortitude.status';
 import { heraldDelayed } from 'src/game/status/heraldDelayed.status';
 import { resolve } from 'src/game/status/resolve.status';
@@ -26,12 +33,10 @@ export const Cards: Card[] = [
         properties: {
             effects: [
                 {
-                    name: EffectName.Damage,
+                    effect: damageEffect.name,
+                    target: CardTargetedEnum.Enemy,
                     args: {
-                        baseValue: 5,
-                        calculatedValue: 5,
-                        targeted: CardTargetedEnum.Enemy,
-                        times: 1,
+                        value: 5,
                     },
                 },
             ],
@@ -52,12 +57,10 @@ export const Cards: Card[] = [
         properties: {
             effects: [
                 {
-                    name: EffectName.Damage,
+                    effect: damageEffect.name,
+                    target: CardTargetedEnum.Enemy,
                     args: {
-                        baseValue: 8,
-                        calculatedValue: 8,
-                        targeted: CardTargetedEnum.Enemy,
-                        times: 1,
+                        value: 8,
                     },
                 },
             ],
@@ -78,12 +81,10 @@ export const Cards: Card[] = [
         properties: {
             effects: [
                 {
-                    name: EffectName.Defense,
+                    effect: defenseEffect.name,
+                    target: CardTargetedEnum.Player,
                     args: {
-                        baseValue: 5,
-                        calculatedValue: 5,
-                        targeted: CardTargetedEnum.Player,
-                        times: 1,
+                        value: 5,
                     },
                 },
             ],
@@ -104,12 +105,10 @@ export const Cards: Card[] = [
         properties: {
             effects: [
                 {
-                    name: EffectName.Defense,
+                    effect: defenseEffect.name,
+                    target: CardTargetedEnum.Player,
                     args: {
-                        baseValue: 8,
-                        calculatedValue: 8,
-                        targeted: CardTargetedEnum.Player,
-                        times: 1,
+                        value: 8,
                     },
                 },
             ],
@@ -130,21 +129,18 @@ export const Cards: Card[] = [
         properties: {
             effects: [
                 {
-                    name: EffectName.Damage,
+                    effect: damageEffect.name,
+                    target: CardTargetedEnum.Enemy,
+                    times: 2,
                     args: {
-                        baseValue: 4,
-                        calculatedValue: 4,
-                        targeted: CardTargetedEnum.Enemy,
-                        times: 2,
+                        value: 4,
                     },
                 },
                 {
-                    name: EffectName.DrawCard,
+                    effect: drawCardEffect.name,
+                    target: CardTargetedEnum.Player,
                     args: {
-                        baseValue: 2,
-                        calculatedValue: 2,
-                        targeted: CardTargetedEnum.Player,
-                        times: 1,
+                        value: 2,
                     },
                 },
             ],
@@ -165,21 +161,18 @@ export const Cards: Card[] = [
         properties: {
             effects: [
                 {
-                    name: EffectName.Damage,
+                    effect: damageEffect.name,
+                    target: CardTargetedEnum.Enemy,
+                    times: 2,
                     args: {
-                        baseValue: 4,
-                        calculatedValue: 4,
-                        targeted: CardTargetedEnum.Enemy,
-                        times: 2,
+                        value: 4,
                     },
                 },
                 {
-                    name: EffectName.DrawCard,
+                    effect: drawCardEffect.name,
+                    target: CardTargetedEnum.Player,
                     args: {
-                        baseValue: 2,
-                        calculatedValue: 2,
-                        targeted: CardTargetedEnum.Player,
-                        times: 1,
+                        value: 2,
                     },
                 },
             ],
@@ -200,21 +193,17 @@ export const Cards: Card[] = [
         properties: {
             effects: [
                 {
-                    name: EffectName.Damage,
+                    effect: damageEffect.name,
+                    target: CardTargetedEnum.Enemy,
                     args: {
-                        baseValue: 4,
-                        calculatedValue: 4,
-                        targeted: CardTargetedEnum.Enemy,
-                        times: 1,
+                        value: 4,
                     },
                 },
                 {
-                    name: EffectName.Defense,
+                    effect: defenseEffect.name,
+                    target: CardTargetedEnum.Player,
                     args: {
-                        baseValue: 4,
-                        calculatedValue: 4,
-                        targeted: CardTargetedEnum.Player,
-                        times: 1,
+                        value: 4,
                     },
                 },
             ],
@@ -235,21 +224,17 @@ export const Cards: Card[] = [
         properties: {
             effects: [
                 {
-                    name: EffectName.Damage,
+                    effect: damageEffect.name,
+                    target: CardTargetedEnum.Enemy,
                     args: {
-                        baseValue: 7,
-                        calculatedValue: 7,
-                        targeted: CardTargetedEnum.Enemy,
-                        times: 1,
+                        value: 7,
                     },
                 },
                 {
-                    name: EffectName.Defense,
+                    effect: defenseEffect.name,
+                    target: CardTargetedEnum.Player,
                     args: {
-                        baseValue: 7,
-                        calculatedValue: 7,
-                        targeted: CardTargetedEnum.Player,
-                        times: 1,
+                        value: 7,
                     },
                 },
             ],
@@ -271,12 +256,10 @@ export const Cards: Card[] = [
         properties: {
             effects: [
                 {
-                    name: EffectName.Damage,
+                    effect: damageEffect.name,
+                    target: CardTargetedEnum.Enemy,
                     args: {
-                        baseValue: 1,
-                        calculatedValue: 1,
-                        targeted: CardTargetedEnum.Enemy,
-                        times: 1,
+                        value: 1,
                     },
                 },
                 // TODO: Double the values of those numbers for remainder of combat
@@ -299,12 +282,10 @@ export const Cards: Card[] = [
         properties: {
             effects: [
                 {
-                    name: EffectName.Damage,
+                    effect: damageEffect.name,
+                    target: CardTargetedEnum.Enemy,
                     args: {
-                        baseValue: 1,
-                        calculatedValue: 1,
-                        targeted: CardTargetedEnum.Enemy,
-                        times: 1,
+                        value: 1,
                     },
                 },
                 // TODO: Double the values of those numbers for remainder of combat
@@ -327,12 +308,10 @@ export const Cards: Card[] = [
         properties: {
             effects: [
                 {
-                    name: EffectName.Damage,
+                    effect: damageEffect.name,
+                    target: CardTargetedEnum.AllEnemies,
                     args: {
-                        baseValue: 6,
-                        calculatedValue: 6,
-                        targeted: CardTargetedEnum.AllEnemies,
-                        times: 1,
+                        value: 6,
                     },
                 },
             ],
@@ -353,12 +332,10 @@ export const Cards: Card[] = [
         properties: {
             effects: [
                 {
-                    name: EffectName.Damage,
+                    effect: damageEffect.name,
+                    target: CardTargetedEnum.AllEnemies,
                     args: {
-                        baseValue: 9,
-                        calculatedValue: 9,
-                        targeted: CardTargetedEnum.AllEnemies,
-                        times: 1,
+                        value: 9,
                     },
                 },
             ],
@@ -380,12 +357,10 @@ export const Cards: Card[] = [
         properties: {
             effects: [
                 {
-                    name: EffectName.Damage,
+                    effect: damageEffect.name,
+                    target: CardTargetedEnum.Enemy,
                     args: {
-                        baseValue: 0, // Value is calculated in the effect
-                        calculatedValue: 0, // Value is calculated in the effect
-                        targeted: CardTargetedEnum.Enemy,
-                        times: 1,
+                        value: 0, // Value is calculated in the effect
                         useDefense: true,
                         multiplier: 1,
                     },
@@ -408,12 +383,10 @@ export const Cards: Card[] = [
         properties: {
             effects: [
                 {
-                    name: EffectName.Damage,
+                    effect: damageEffect.name,
+                    target: CardTargetedEnum.Enemy,
                     args: {
-                        baseValue: 0, // Value is calculated in the effect
-                        calculatedValue: 0, // Value is calculated in the effect
-                        targeted: CardTargetedEnum.Enemy,
-                        times: 1,
+                        value: 0, // Value is calculated in the effect
                         useDefense: true,
                         multiplier: 2,
                     },
@@ -437,12 +410,10 @@ export const Cards: Card[] = [
         properties: {
             effects: [
                 {
-                    name: EffectName.Damage,
+                    effect: damageEffect.name,
+                    target: CardTargetedEnum.Enemy,
                     args: {
-                        baseValue: 6,
-                        calculatedValue: 6, // TODO: Calculate this value based in the count of uses
-                        targeted: CardTargetedEnum.Enemy,
-                        times: 1,
+                        value: 6,
                     },
                 },
             ],
@@ -464,12 +435,10 @@ export const Cards: Card[] = [
         properties: {
             effects: [
                 {
-                    name: EffectName.Damage,
+                    effect: damageEffect.name,
+                    target: CardTargetedEnum.Enemy,
                     args: {
-                        baseValue: 9,
-                        calculatedValue: 9, // TODO: Calculate this value based in the count of uses
-                        targeted: CardTargetedEnum.Enemy,
-                        times: 1,
+                        value: 9,
                     },
                 },
             ],
@@ -490,12 +459,10 @@ export const Cards: Card[] = [
         properties: {
             effects: [
                 {
-                    name: EffectName.Damage,
+                    effect: damageEffect.name,
+                    target: CardTargetedEnum.Enemy,
                     args: {
-                        baseValue: 5,
-                        calculatedValue: 5, // TODO: Calculate this value based in the count of uses
-                        targeted: CardTargetedEnum.Enemy,
-                        times: 1,
+                        value: 5,
                     },
                 },
             ],
@@ -540,12 +507,10 @@ export const Cards: Card[] = [
         properties: {
             effects: [
                 {
-                    name: EffectName.Heal,
+                    effect: healEffect.name,
+                    target: CardTargetedEnum.Player,
                     args: {
-                        baseValue: 2,
-                        calculatedValue: 2,
-                        targeted: CardTargetedEnum.Player,
-                        times: 1,
+                        value: 2,
                     },
                 },
             ],
@@ -566,12 +531,10 @@ export const Cards: Card[] = [
         properties: {
             effects: [
                 {
-                    name: EffectName.Heal,
+                    effect: healEffect.name,
+                    target: CardTargetedEnum.Player,
                     args: {
-                        baseValue: 4,
-                        calculatedValue: 4,
-                        targeted: CardTargetedEnum.Player,
-                        times: 1,
+                        value: 4,
                     },
                 },
             ],
@@ -592,12 +555,10 @@ export const Cards: Card[] = [
         properties: {
             effects: [
                 {
-                    name: EffectName.Energy,
+                    effect: energyEffect.name,
+                    target: CardTargetedEnum.Player,
                     args: {
-                        baseValue: 2,
-                        calculatedValue: 2,
-                        targeted: CardTargetedEnum.Player,
-                        times: 1,
+                        value: 2,
                     },
                 },
             ],
@@ -618,12 +579,10 @@ export const Cards: Card[] = [
         properties: {
             effects: [
                 {
-                    name: EffectName.Energy,
+                    effect: energyEffect.name,
+                    target: CardTargetedEnum.Player,
                     args: {
-                        baseValue: 2,
-                        calculatedValue: 2,
-                        targeted: CardTargetedEnum.Player,
-                        times: 1,
+                        value: 2,
                     },
                 },
             ],
@@ -676,12 +635,10 @@ export const Cards: Card[] = [
         properties: {
             effects: [
                 {
-                    name: EffectName.RemoveDefense,
+                    effect: removeDefenseEffect.name,
+                    target: CardTargetedEnum.Enemy,
                     args: {
-                        baseValue: 0,
-                        calculatedValue: 0,
-                        targeted: CardTargetedEnum.Enemy,
-                        times: 1,
+                        value: 0,
                     },
                 },
             ],
@@ -702,12 +659,10 @@ export const Cards: Card[] = [
         properties: {
             effects: [
                 {
-                    name: EffectName.RemoveDefense,
+                    effect: removeDefenseEffect.name,
+                    target: CardTargetedEnum.AllEnemies,
                     args: {
-                        baseValue: 0,
-                        calculatedValue: 0,
-                        targeted: CardTargetedEnum.AllEnemies,
-                        times: 1,
+                        value: 0,
                     },
                 },
             ],
@@ -808,12 +763,10 @@ export const Cards: Card[] = [
         properties: {
             effects: [
                 {
-                    name: EffectName.Defense,
+                    effect: defenseEffect.name,
+                    target: CardTargetedEnum.Player,
                     args: {
-                        baseValue: 4,
-                        calculatedValue: 4,
-                        targeted: CardTargetedEnum.Player,
-                        times: 1,
+                        value: 4,
                         useEnemies: true,
                     },
                 },
@@ -835,12 +788,10 @@ export const Cards: Card[] = [
         properties: {
             effects: [
                 {
-                    name: EffectName.Defense,
+                    effect: defenseEffect.name,
+                    target: CardTargetedEnum.Player,
                     args: {
-                        baseValue: 6,
-                        calculatedValue: 6,
-                        targeted: CardTargetedEnum.Player,
-                        times: 1,
+                        value: 6,
                         useEnemies: true,
                     },
                 },

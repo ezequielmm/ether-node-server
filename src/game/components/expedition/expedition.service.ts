@@ -26,7 +26,7 @@ import {
     IExpeditionCurrentNode,
     IExpeditionCurrentNodeDataEnemy,
     IExpeditionNode,
-    IExpeditionPlayerState,
+    IExpeditionPlayerGlobalState,
     IExpeditionPlayerStateDeckCard,
 } from './expedition.interface';
 import { generateMap, restoreMap } from 'src/game/map/app';
@@ -174,7 +174,7 @@ export class ExpeditionService {
 
     async getPlayerState(
         payload: GetPlayerStateDTO,
-    ): Promise<IExpeditionPlayerState> {
+    ): Promise<IExpeditionPlayerGlobalState> {
         const { clientId } = payload;
         const { playerState } = await this.expedition.findOne({
             clientId,

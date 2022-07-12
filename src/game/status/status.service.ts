@@ -3,8 +3,7 @@ import { ModulesContainer } from '@nestjs/core';
 import { InstanceWrapper } from '@nestjs/core/injector/instance-wrapper';
 import { clone } from 'lodash';
 import { CardTargetedEnum } from '../components/card/card.enum';
-import { EffectName } from '../effects/effects.enum';
-import { BaseEffectDTO } from '../effects/effects.interface';
+import { Effect, EffectDTO } from '../effects/effects.interface';
 import { STATUS_METADATA } from './contants';
 import {
     IBaseStatus,
@@ -13,7 +12,7 @@ import {
     AttachStatusToPlayerDTO,
     AttachStatusToEnemyDTO,
     AttachedStatus,
-    EntityStatuses,
+    StatusCollection,
     StatusDirection,
     StatusStartsAt,
 } from './interfaces';
@@ -127,7 +126,7 @@ export class StatusService {
         clientId: ClientId,
         enemyId: EnemyId,
         statusDirection: StatusDirection = StatusDirection.Incoming,
-    ): Promise<EntityStatuses> {
+    ): Promise<StatusCollection> {
         const clientField =
             typeof clientId === 'string' ? 'clientId' : 'playerId';
 
@@ -152,7 +151,7 @@ export class StatusService {
 
         if (!enemy.statuses) return null;
 
-        this.filterEntityStatusesByDirection(enemy.statuses, statusDirection);
+        this.filterStatusCollectionByDirection(enemy.statuses, statusDirection);
 
         return enemy?.statuses;
     }
@@ -160,7 +159,7 @@ export class StatusService {
     public async getStatusesByPlayer(
         clientId: string,
         statusDirection: StatusDirection = StatusDirection.Incoming,
-    ): Promise<EntityStatuses | undefined> {
+    ): Promise<StatusCollection | undefined> {
         const clientField =
             typeof clientId === 'string' ? 'clientId' : 'playerId';
 
@@ -178,17 +177,17 @@ export class StatusService {
             .select('currentNode.data.player.statuses')
             .lean();
 
-        this.filterEntityStatusesByDirection(statuses, statusDirection);
+        this.filterStatusCollectionByDirection(statuses, statusDirection);
 
         return statuses;
     }
 
     public async process(
         statuses: AttachedStatus[],
-        effect: EffectName,
-        dto: BaseEffectDTO,
+        effect: Effect['name'],
+        dto: EffectDTO,
         currentRound: number,
-    ): Promise<BaseEffectDTO> {
+    ): Promise<EffectDTO> {
         if (!statuses?.length) {
             return dto;
         }
@@ -216,14 +215,14 @@ export class StatusService {
                 // Validate if the status is valid for the effect
                 if (
                     !providerMetadata.effects.some(
-                        (effectName) => effectName == effect,
+                        (effectName) => effectName.name == effect,
                     )
                 ) {
                     continue;
                 }
 
                 dto = await providerInstance.handle({
-                    baseEffectDTO: dto,
+                    effectDTO: dto,
                     args: status.args,
                 });
             }
@@ -269,10 +268,12 @@ export class StatusService {
         };
     }
 
-    private filterEntityStatusesByDirection(
-        statuses: EntityStatuses,
+    public filterStatusCollectionByDirection(
+        statuses: StatusCollection,
         statusDirection: StatusDirection,
-    ): EntityStatuses {
+    ): StatusCollection {
+        statuses = clone(statuses);
+
         const filter = (status) =>
             this.findStatusProviderByName(status.name).metadata.status
                 .direction === statusDirection;
