@@ -20,6 +20,7 @@ import {
     JsonEffect,
     EffectDTORandomEnemy,
     EffectMetadata,
+    EffectAvailableTargets,
 } from './effects.interface';
 
 @Injectable()
@@ -42,12 +43,7 @@ export class EffectService {
     async process(
         client: Socket,
         source: Entity,
-        availableTargets: {
-            player: EffectDTOPlayer;
-            randomEnemy: EffectDTORandomEnemy;
-            selectedEnemy?: EffectDTOEnemy;
-            allEnemies: EffectDTOAllEnemies;
-        },
+        availableTargets: EffectAvailableTargets,
         effects: JsonEffect[],
         currentRound: number,
     ): Promise<void> {
