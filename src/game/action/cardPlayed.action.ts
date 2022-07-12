@@ -208,7 +208,7 @@ export class CardPlayedAction {
                                     destination: exhaust
                                         ? 'exhaust'
                                         : 'discard',
-                                    cardId,
+                                    id: cardId,
                                 },
                             ],
                         }),

@@ -61,7 +61,7 @@ export class DrawCardEffect implements IBaseEffect {
             return {
                 source: 'draw',
                 destination: 'hand',
-                cardId: card.id,
+                id: card.id,
             };
         });
 
