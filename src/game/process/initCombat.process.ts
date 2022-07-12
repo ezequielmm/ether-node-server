@@ -44,21 +44,6 @@ export class InitCombatProcess {
             playing: CombatTurnEnum.Player,
         });
 
-        this.logger.log(
-            `Sent message PutData to client ${client.id}: ${SWARAction.ChangeTurn}`,
-        );
-
-        client.emit(
-            'PutData',
-            JSON.stringify(
-                StandardResponse.respond({
-                    message_type: SWARMessageType.BeginTurn,
-                    action: SWARAction.ChangeTurn,
-                    data: CombatTurnEnum.Player,
-                }),
-            ),
-        );
-
         await this.expeditionService.calculateNewEnemyIntentions(client.id);
 
         if (playing === CombatTurnEnum.Player)

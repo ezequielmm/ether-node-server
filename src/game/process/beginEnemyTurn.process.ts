@@ -57,6 +57,10 @@ export class BeginEnemyTurnProcess {
             const {
                 currentScript: { intentions },
             } = enemy;
+
+            intentions.forEach((intention) => {
+                const { effect } = intention;
+            });
         });
     }
 }
