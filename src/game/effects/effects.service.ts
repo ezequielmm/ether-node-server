@@ -11,7 +11,6 @@ import {
 import { StatusService } from '../status/status.service';
 import { EFFECT_METADATA } from './effects.decorator';
 import {
-    Effect,
     EffectDTO,
     EffectDTOEnemy,
     EffectDTOPlayer,
