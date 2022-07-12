@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { Socket } from 'socket.io';
 import { GetPlayerInfoAction } from '../action/getPlayerInfo.action';
 import { IExpeditionCurrentNodeDataEnemy } from '../components/expedition/expedition.interface';
@@ -24,6 +24,8 @@ export interface DamageArgs {
 })
 @Injectable()
 export class DamageEffect implements IBaseEffect {
+    private readonly logger: Logger = new Logger(DamageEffect.name);
+
     constructor(
         private readonly expeditionService: ExpeditionService,
         private readonly getPlayerInfoAction: GetPlayerInfoAction,
@@ -48,6 +50,8 @@ export class DamageEffect implements IBaseEffect {
             );
         } else if (EffectService.isAllEnemies(target)) {
             await this.applyDamageToAllEnemies(client, currentValue);
+        } else if (EffectService.isPlayer(target)) {
+            await this.applyDamageToPlayer(client, currentValue);
         }
     }
 
@@ -68,9 +72,8 @@ export class DamageEffect implements IBaseEffect {
             clientId: client.id,
         });
 
-        if (useDefense !== undefined && useDefense) {
+        if (useDefense !== undefined && useDefense)
             damage = defense * multiplier;
-        }
 
         let dataResponse = null;
 
@@ -93,6 +96,10 @@ export class DamageEffect implements IBaseEffect {
             clientId: client.id,
             enemies,
         });
+
+        this.logger.log(
+            `Sent message PutData to client ${client.id}: ${SWARAction.EnemyAffected}`,
+        );
 
         client.emit(
             'PutData',
@@ -132,6 +139,10 @@ export class DamageEffect implements IBaseEffect {
             enemies,
         });
 
+        this.logger.log(
+            `Sent message PutData to client ${client.id}: ${SWARAction.EnemyAffected}`,
+        );
+
         client.emit(
             'PutData',
             JSON.stringify(
@@ -149,34 +160,55 @@ export class DamageEffect implements IBaseEffect {
         damage: number,
     ): Promise<void> {
         // First we get the actual hp and defense from the player
-        const { defense, hpCurrent } = await this.getPlayerInfoAction.handle(
-            client.id,
-        );
+        const { defense: currentDefense, hpCurrent } =
+            await this.getPlayerInfoAction.handle(client.id);
 
-        // Them we check if the player has defense to reduce from there
         let newDefense = 0;
         let newHpCurrent = 0;
 
-        if (defense > 0) {
-            newDefense = defense - damage;
+        // Them we check if the player has defense to reduce from there
+        if (currentDefense > 0) {
+            newDefense = currentDefense - damage;
 
+            // If newDefense is negative, it means that the defense is fully
+            // depleted and the remaining will be applied to the player's health
             if (newDefense < 0) {
                 newDefense = 0;
                 newHpCurrent = Math.max(0, hpCurrent + newDefense);
             }
         } else {
+            // If the player has no defense, the damage will be applied to the
+            // health directly
             newHpCurrent = Math.max(0, hpCurrent - damage);
         }
 
+        // Update the player's defense
         await this.expeditionService.setPlayerDefense({
             clientId: client.id,
             value: newDefense,
         });
 
+        // Update the player's health
         await this.expeditionService.setPlayerHealth({
             clientId: client.id,
             hpCurrent: newHpCurrent,
         });
+
+        // Send player message
+        this.logger.log(
+            `Sent message PutData to client ${client.id}: ${SWARAction.EnemyAffected}`,
+        );
+
+        client.emit(
+            'PutData',
+            JSON.stringify(
+                StandardResponse.respond({
+                    message_type: SWARMessageType.PlayerAffected,
+                    action: SWARAction.UpdatePlayer,
+                    data: null,
+                }),
+            ),
+        );
     }
 
     private calculateEnemyDamage(
