@@ -198,4 +198,8 @@ export class EffectService {
     public static isAllEnemies(entity): entity is EffectDTOAllEnemies {
         return entity.type === CardTargetedEnum.AllEnemies;
     }
+
+    public static isRandomEnemy(entity): entity is EffectDTORandomEnemy {
+        return entity.type === CardTargetedEnum.RandomEnemy;
+    }
 }
