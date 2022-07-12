@@ -7,24 +7,32 @@ import {
     StandardResponse,
     SWARMessageType,
 } from '../standardResponse/standardResponse';
-import { Effect } from './effects.decorator';
-import { EffectName } from './effects.enum';
-import { DrawCardDTO, IBaseEffect } from './effects.interface';
+import { EffectDecorator } from './effects.decorator';
+import { Effect, EffectDTO, IBaseEffect } from './effects.interface';
 
-@Effect(EffectName.DrawCard)
+export const drawCardEffect: Effect = {
+    name: 'drawCard',
+};
+
+@EffectDecorator({
+    effect: drawCardEffect,
+})
 @Injectable()
-export class DrawCardEffect implements IBaseEffect {
+export class DrawCardEffect extends IBaseEffect {
     private readonly logger: Logger = new Logger(DrawCardEffect.name);
 
-    constructor(private readonly expeditionService: ExpeditionService) {}
+    constructor(private readonly expeditionService: ExpeditionService) {
+        super();
+    }
 
-    async handle(payload: DrawCardDTO): Promise<void> {
-        const { client, times, calculatedValue } = payload;
+    async handle(payload: EffectDTO): Promise<void> {
+        const {
+            client,
+            args: { currentValue },
+        } = payload;
         // TODO: Triger draw card attempted event
 
-        for (let i = 1; i <= times; i++) {
-            this.drawCard(client, calculatedValue);
-        }
+        this.drawCard(client, currentValue);
     }
 
     private async drawCard(client: Socket, amount: number): Promise<void> {

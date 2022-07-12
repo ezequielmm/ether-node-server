@@ -1,4 +1,5 @@
-import { EffectName } from 'src/game/effects/effects.enum';
+import { damageEffect } from 'src/game/effects/damage.effect';
+import { defenseEffect } from 'src/game/effects/defense.effect';
 import { CardTargetedEnum } from '../../card/card.enum';
 import {
     EnemyCategoryEnum,
@@ -25,12 +26,10 @@ export const sporeMongerData: Enemy = {
                     target: CardTargetedEnum.Player,
                     value: 11,
                     effect: {
-                        name: EffectName.Damage,
+                        effect: damageEffect.name,
+                        target: CardTargetedEnum.Player,
                         args: {
-                            baseValue: 11,
-                            calculatedValue: 11,
-                            targeted: CardTargetedEnum.Player,
-                            times: 1,
+                            value: 11,
                         },
                     },
                 },
@@ -53,13 +52,10 @@ export const sporeMongerData: Enemy = {
                     target: CardTargetedEnum.Enemy,
                     value: 7,
                     effect: {
-                        name: EffectName.Defense,
-
+                        effect: defenseEffect.name,
+                        target: CardTargetedEnum.Self,
                         args: {
-                            baseValue: 7,
-                            calculatedValue: 7,
-                            targeted: CardTargetedEnum.Enemy,
-                            times: 1,
+                            value: 7,
                         },
                     },
                 },
@@ -78,12 +74,10 @@ export const sporeMongerData: Enemy = {
                     target: CardTargetedEnum.Player,
                     value: 4,
                     effect: {
-                        name: EffectName.Damage,
+                        effect: damageEffect.name,
+                        target: CardTargetedEnum.Player,
                         args: {
-                            baseValue: 4,
-                            calculatedValue: 4,
-                            targeted: CardTargetedEnum.Player,
-                            times: 1,
+                            value: 4,
                         },
                     },
                 },

@@ -1,19 +1,34 @@
 import { Injectable } from '@nestjs/common';
 import { ExpeditionService } from '../components/expedition/expedition.service';
-import { Effect } from './effects.decorator';
-import { EffectName } from './effects.enum';
-import { HealCardDTO, IBaseEffect } from './effects.interface';
+import { EffectDecorator } from './effects.decorator';
+import { Effect, EffectDTO, IBaseEffect } from './effects.interface';
 
-@Effect(EffectName.Heal)
+export const healEffect: Effect = {
+    name: 'heal',
+};
+
+export interface HealArgs {
+    value: number;
+}
+
+@EffectDecorator({
+    effect: healEffect,
+})
 @Injectable()
-export class HealEffect implements IBaseEffect {
-    constructor(private readonly expeditionService: ExpeditionService) {}
+export class HealEffect extends IBaseEffect {
+    constructor(private readonly expeditionService: ExpeditionService) {
+        super();
+    }
 
-    async handle(payload: HealCardDTO): Promise<void> {
-        const { client, times, calculatedValue } = payload;
+    async handle(payload: EffectDTO<HealArgs>): Promise<void> {
+        const {
+            client,
+            target,
+            args: { currentValue },
+        } = payload;
 
-        for (let i = 1; i <= times; i++) {
-            await this.applyHealToPlayer(client.id, calculatedValue);
+        if (this.isPlayer(target)) {
+            await this.applyHealToPlayer(client.id, currentValue);
         }
     }
 

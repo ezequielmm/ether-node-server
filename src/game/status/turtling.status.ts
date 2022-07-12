@@ -1,5 +1,5 @@
-import { EffectName } from '../effects/effects.enum';
-import { DefenseDTO } from '../effects/effects.interface';
+import { DefenseArgs, defenseEffect } from '../effects/defense.effect';
+import { EffectDTO } from '../effects/effects.interface';
 import {
     IBaseStatus,
     Status,
@@ -18,11 +18,11 @@ export const turtling: Status = {
 };
 @StatusDecorator({
     status: turtling,
-    effects: [EffectName.Defense],
+    effects: [defenseEffect],
 })
 export class TurtlingStatus implements IBaseStatus {
-    async handle(statusDto: StatusDTO): Promise<DefenseDTO> {
-        statusDto.baseEffectDTO.calculatedValue *= 2;
-        return statusDto.baseEffectDTO;
+    async handle(dto: StatusDTO<DefenseArgs>): Promise<EffectDTO<DefenseArgs>> {
+        dto.effectDTO.args.currentValue *= 2;
+        return dto.effectDTO;
     }
 }

@@ -4,9 +4,11 @@ import { CardKeywordPipeline } from '../cardKeywordPipeline/cardKeywordPipeline'
 import {
     CardEnergyEnum,
     CardPlayErrorMessages,
+    CardTargetedEnum,
 } from '../components/card/card.enum';
 import { CardId } from '../components/card/card.type';
 import { ExpeditionService } from '../components/expedition/expedition.service';
+import { EffectDTOEnemy, EffectDTOPlayer } from '../effects/effects.interface';
 import { EffectService } from '../effects/effects.service';
 import { TargetId } from '../effects/effects.types';
 import {
@@ -67,17 +69,35 @@ export class CardPlayedAction {
         } else {
             // If the card is valid we get the current node information
             // to validate the enemy
+
             const {
-                data: {
-                    player: {
-                        energy: availableEnergy,
-                        cards: { hand },
-                    },
-                    round,
+                playerState,
+                currentNode: {
+                    data: { player, enemies, round },
                 },
-            } = await this.expeditionService.getCurrentNode({
-                clientId: client.id,
-            });
+            } = await this.expeditionService.findOne({ clientId: client.id });
+
+            const {
+                energy: availableEnergy,
+                cards: { hand },
+            } = player;
+
+            const source: EffectDTOPlayer = {
+                type: CardTargetedEnum.Player,
+                value: {
+                    globalState: playerState,
+                    combatState: player,
+                },
+            };
+            const target: EffectDTOEnemy = targetId && {
+                type: CardTargetedEnum.Enemy,
+                value: enemies.find(
+                    (enemy) =>
+                        enemy[
+                            typeof targetId == 'string' ? 'id' : 'enemyId'
+                        ] === targetId,
+                ),
+            };
 
             // If everything goes right, we get the card information from
             // the player hand pile
@@ -131,9 +151,10 @@ export class CardPlayedAction {
 
                 await this.effectService.process(
                     client,
+                    source,
+                    target,
                     effects,
                     round,
-                    targetId,
                 );
 
                 if (exhaust) {

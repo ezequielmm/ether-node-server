@@ -1,50 +1,52 @@
 import { Injectable } from '@nestjs/common';
 import { Socket } from 'socket.io';
-import { CardTargetedEnum } from '../components/card/card.enum';
 import { ExpeditionService } from '../components/expedition/expedition.service';
 import {
     StandardResponse,
     SWARAction,
     SWARMessageType,
 } from '../standardResponse/standardResponse';
-import { Effect } from './effects.decorator';
-import { EffectName } from './effects.enum';
-import { DamageDTO, IBaseEffect } from './effects.interface';
+import { EffectDecorator } from './effects.decorator';
+import { Effect, EffectDTO, IBaseEffect } from './effects.interface';
 import { TargetId } from './effects.types';
 
-@Effect(EffectName.Damage)
-@Injectable()
-export class DamageEffect implements IBaseEffect {
-    constructor(private readonly expeditionService: ExpeditionService) {}
+export const damageEffect: Effect = {
+    name: 'damage',
+};
 
-    async handle(payload: DamageDTO): Promise<void> {
+export interface DamageArgs {
+    useDefense?: boolean;
+    multiplier?: number;
+}
+
+@EffectDecorator({
+    effect: damageEffect,
+})
+@Injectable()
+export class DamageEffect extends IBaseEffect {
+    constructor(private readonly expeditionService: ExpeditionService) {
+        super();
+    }
+
+    async handle(payload: EffectDTO<DamageArgs>): Promise<void> {
         const {
             client,
-            times,
-            calculatedValue,
-            targeted,
-            targetId,
-            useDefense,
-            multiplier,
+            target,
+            args: { currentValue, useDefense, multiplier },
         } = payload;
         // TODO: Trigger damage attempted event
 
-        for (let i = 1; i <= times; i++) {
-            // Check targeted type
-            switch (targeted) {
-                case CardTargetedEnum.Enemy:
-                    await this.applyDamageToEnemy(
-                        client,
-                        calculatedValue,
-                        targetId,
-                        useDefense,
-                        multiplier,
-                    );
-                    break;
-                case CardTargetedEnum.AllEnemies:
-                    await this.applyDamageToAllEnemies(client, calculatedValue);
-                    break;
-            }
+        // Check targeted type
+        if (this.isEnemy(target)) {
+            await this.applyDamageToEnemy(
+                client,
+                currentValue,
+                target.value.id,
+                useDefense,
+                multiplier,
+            );
+        } else if (this.isAllEnemies(target)) {
+            await this.applyDamageToAllEnemies(client, currentValue);
         }
     }
 

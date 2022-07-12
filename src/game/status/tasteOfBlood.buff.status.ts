@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { EffectName } from '../effects/effects.enum';
+import { damageEffect } from '../effects/damage.effect';
 import { HeraldDelayedStatus } from './heraldDelayed.status';
 import {
     Status,
@@ -25,7 +25,7 @@ export const tasteOfBloodBuff: Status = {
  */
 @StatusDecorator({
     status: tasteOfBloodBuff,
-    effects: [EffectName.Damage],
+    effects: [damageEffect],
 })
 @Injectable()
 export class TasteOfBloodBuffStatus extends HeraldDelayedStatus {}

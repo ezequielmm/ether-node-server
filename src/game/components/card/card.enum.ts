@@ -25,6 +25,7 @@ export enum CardTargetedEnum {
     RandomEnemy = 'random_enemy',
     AllEnemies = 'all_enemies',
     Player = 'player',
+    Self = 'self',
     None = 'none',
 }
 
