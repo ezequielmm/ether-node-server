@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { EffectName } from '../effects/effects.enum';
-import { DefenseDTO } from '../effects/effects.interface';
+import { defenseEffect } from '../effects/constants';
+import { DefenseArgs } from '../effects/defense.effect';
+import { EffectDTO } from '../effects/effects.interface';
 import {
     IBaseStatus,
     Status,
@@ -19,12 +20,12 @@ export const fortitude: Status = {
 };
 @StatusDecorator({
     status: fortitude,
-    effects: [EffectName.Defense],
+    effects: [defenseEffect],
 })
 @Injectable()
 export class FortitudeStatus implements IBaseStatus {
-    async handle(statusDTO: StatusDTO<DefenseDTO>): Promise<DefenseDTO> {
-        statusDTO.baseEffectDTO.calculatedValue += statusDTO.args.value;
-        return statusDTO.baseEffectDTO;
+    async handle(dto: StatusDTO<DefenseArgs>): Promise<EffectDTO<DefenseArgs>> {
+        dto.effectDTO.args.currentValue += dto.args.value;
+        return dto.effectDTO;
     }
 }

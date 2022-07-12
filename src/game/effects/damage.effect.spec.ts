@@ -1,9 +1,10 @@
 import { Test } from '@nestjs/testing';
 import { Socket } from 'socket.io';
 import { CardTargetedEnum } from '../components/card/card.enum';
+import { IExpeditionCurrentNodeDataEnemy } from '../components/expedition/expedition.interface';
 import { ExpeditionService } from '../components/expedition/expedition.service';
-import { DamageEffect } from './damage.effect';
-import { DamageDTO } from './effects.interface';
+import { DamageArgs, DamageEffect } from './damage.effect';
+import { EffectDTO } from './effects.interface';
 
 describe('DamageEffect', () => {
     let effect: DamageEffect;
@@ -53,12 +54,17 @@ describe('DamageEffect', () => {
     });
 
     it('should handle damage to enemy', async () => {
-        const payload: DamageDTO = {
+        const payload: EffectDTO<DamageArgs> = {
             client,
-            calculatedValue: 10,
-            targeted: CardTargetedEnum.Enemy,
-            targetId: 'targetId',
-            times: 1,
+            args: {
+                initialValue: 10,
+                currentValue: 10,
+            },
+            source: undefined,
+            target: {
+                type: CardTargetedEnum.Enemy,
+                value: { id: 'targetId' } as IExpeditionCurrentNodeDataEnemy,
+            },
         };
 
         await effect.handle(payload);
@@ -71,7 +77,7 @@ describe('DamageEffect', () => {
             clientId: payload.client.id,
             enemies: [
                 {
-                    id: payload.targetId,
+                    id: payload.target.value['id'],
                     hpCurrent: 95,
                     defense: 5,
                 },
@@ -80,12 +86,17 @@ describe('DamageEffect', () => {
     });
 
     it('should handle damage to enemy and trigger damage negated', async () => {
-        const payload: DamageDTO = {
+        const payload: EffectDTO<DamageArgs> = {
             client,
-            calculatedValue: 4,
-            targeted: CardTargetedEnum.Enemy,
-            targetId: 'targetId',
-            times: 1,
+            args: {
+                initialValue: 4,
+                currentValue: 4,
+            },
+            source: undefined,
+            target: {
+                type: CardTargetedEnum.Enemy,
+                value: { id: 'targetId' } as IExpeditionCurrentNodeDataEnemy,
+            },
         };
 
         await effect.handle(payload);
@@ -98,7 +109,7 @@ describe('DamageEffect', () => {
             clientId: payload.client.id,
             enemies: [
                 {
-                    id: payload.targetId,
+                    id: payload.target.value['id'],
                     hpCurrent: 100,
                     defense: 5,
                 },
@@ -109,12 +120,17 @@ describe('DamageEffect', () => {
     });
 
     it('should handle damage for player and trigger death event', async () => {
-        const payload: DamageDTO = {
+        const payload: EffectDTO<DamageArgs> = {
             client,
-            calculatedValue: 105,
-            targeted: CardTargetedEnum.Enemy,
-            targetId: 'targetId',
-            times: 1,
+            args: {
+                initialValue: 105,
+                currentValue: 105,
+            },
+            source: undefined,
+            target: {
+                type: CardTargetedEnum.Enemy,
+                value: { id: 'targetId' } as IExpeditionCurrentNodeDataEnemy,
+            },
         };
 
         await effect.handle(payload);
@@ -127,7 +143,7 @@ describe('DamageEffect', () => {
             clientId: payload.client.id,
             enemies: [
                 {
-                    id: payload.targetId,
+                    id: payload.target.value['id'],
                     hpCurrent: 0,
                     defense: 5,
                 },

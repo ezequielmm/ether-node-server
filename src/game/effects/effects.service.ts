@@ -4,25 +4,34 @@ import { InstanceWrapper } from '@nestjs/core/injector/instance-wrapper';
 import { Socket } from 'socket.io';
 import { CardTargetedEnum } from '../components/card/card.enum';
 import {
-    EntityStatuses,
+    StatusCollection,
     StatusDirection,
     StatusType,
 } from '../status/interfaces';
 import { StatusService } from '../status/status.service';
 import { EFFECT_METADATA } from './effects.decorator';
-import { BaseEffectDTO, IBaseEffect, JsonEffect } from './effects.interface';
-import { TargetId } from './effects.types';
+import {
+    EffectDTO,
+    EffectDTOEnemy,
+    EffectDTOPlayer,
+    EffectDTOAllEnemies,
+    Entity,
+    IBaseEffect,
+    JsonEffect,
+    EffectDTORandomEnemy,
+    EffectMetadata,
+} from './effects.interface';
 
 @Injectable()
 export class EffectService {
-    private effectsCached: Map<string, IBaseEffect>;
+    private cache: Map<string, IBaseEffect>;
 
     constructor(
         private readonly modulesContainer: ModulesContainer,
         private readonly statusService: StatusService,
     ) {}
 
-    private getEffectByName(name: string): IBaseEffect {
+    private findEffectByName(name: string): IBaseEffect {
         const effect = this.getAllEffectProviders().get(name);
 
         if (effect === undefined) throw new Error(`Effect ${name} not found`);
@@ -32,47 +41,84 @@ export class EffectService {
 
     async process(
         client: Socket,
+        source: Entity,
+        availableTargets: {
+            player: EffectDTOPlayer;
+            randomEnemy: EffectDTORandomEnemy;
+            selectedEnemy?: EffectDTOEnemy;
+            allEnemies: EffectDTOAllEnemies;
+        },
         effects: JsonEffect[],
         currentRound: number,
-        targetId?: TargetId,
-        owner: 'player' | 'enemy' = 'player',
     ): Promise<void> {
-        for (const {
-            name,
-            args: { baseValue, ...args },
-        } of effects) {
-            // TODO: Validate if target exists
-            let dto: BaseEffectDTO = {
-                ...args,
+        for (const effect of effects) {
+            const {
+                effect: name,
+                times = 1,
+                args: { value, ...args },
+            } = effect;
+
+            // Validate target
+            let target: Entity;
+
+            switch (effect.target) {
+                case CardTargetedEnum.Player:
+                    target = availableTargets.player;
+                    break;
+                case CardTargetedEnum.Self:
+                    target = source;
+                    break;
+                case CardTargetedEnum.AllEnemies:
+                    target = availableTargets.allEnemies;
+                    break;
+                case CardTargetedEnum.RandomEnemy:
+                    target = availableTargets.randomEnemy;
+                    break;
+                case CardTargetedEnum.Enemy:
+                    if (!availableTargets.selectedEnemy)
+                        throw new Error(
+                            `Effect ${name} requires a selected enemy, but none was provided`,
+                        );
+                    target = availableTargets.selectedEnemy;
+                    break;
+            }
+
+            let dto: EffectDTO = {
                 client,
-                targetId,
+                source,
+                target,
+                args: {
+                    initialValue: value,
+                    currentValue: value,
+                    ...args,
+                },
             };
 
-            let outgoingStatuses: EntityStatuses;
-            let incomingStatuses: EntityStatuses;
+            let outgoingStatuses: StatusCollection;
+            let incomingStatuses: StatusCollection;
 
-            // Get statuses of the owner target to modify the outgoing effects
-            if (owner === 'player') {
-                outgoingStatuses = await this.statusService.getStatusesByPlayer(
-                    client.id,
+            // Get statuses of the source and target to modify the effects
+            if (EffectService.isPlayer(source))
+                outgoingStatuses = source.value.combatState.statuses;
+            else if (EffectService.isEnemy(source))
+                outgoingStatuses = source.value.statuses;
+
+            if (EffectService.isPlayer(target))
+                incomingStatuses = target.value.combatState.statuses;
+            else if (EffectService.isEnemy(target))
+                incomingStatuses = target.value.statuses;
+
+            outgoingStatuses =
+                this.statusService.filterStatusCollectionByDirection(
+                    outgoingStatuses,
                     StatusDirection.Outgoing,
                 );
-            } else if (owner === 'enemy') {
-                // TODO: Get statuses of the enemy that performs the effect
-            }
 
-            if (args.targeted == CardTargetedEnum.Player) {
-                incomingStatuses = await this.statusService.getStatusesByPlayer(
-                    client.id,
+            incomingStatuses =
+                this.statusService.filterStatusCollectionByDirection(
+                    incomingStatuses,
                     StatusDirection.Incoming,
                 );
-            } else if (args.targeted == CardTargetedEnum.Enemy) {
-                incomingStatuses = await this.statusService.getStatusesByEnemy(
-                    client.id,
-                    targetId,
-                    StatusDirection.Incoming,
-                );
-            }
 
             // Apply statuses to the outgoing effects 🔫  →
             dto = await this.statusService.process(
@@ -104,26 +150,29 @@ export class EffectService {
                 currentRound,
             );
 
-            await this.getEffectByName(name).handle(dto);
+            for (let i = 0; i < times; i++) {
+                await this.findEffectByName(name).handle(dto);
+            }
         }
     }
 
     private getAllEffectProviders(): Map<string, IBaseEffect> {
-        if (this.effectsCached != undefined) return this.effectsCached;
+        if (this.cache != undefined) return this.cache;
 
         const effects: Map<string, IBaseEffect> = new Map();
 
         for (const module of this.modulesContainer.values()) {
             module.providers.forEach((provider) => {
                 if (this.isEffectProvider(provider)) {
-                    const effectName = this.getEffectNameMetadata(
-                        provider.metatype,
+                    const metadata = this.getEffectMetadata(provider.metatype);
+
+                    if (effects.has(metadata.effect.name))
+                        throw new Error(`Effect ${metadata} already exists`);
+
+                    effects.set(
+                        metadata.effect.name,
+                        provider.instance as IBaseEffect,
                     );
-
-                    if (effects.has(effectName))
-                        throw new Error(`Effect ${effectName} already exists`);
-
-                    effects.set(effectName, provider.instance as IBaseEffect);
                 }
             });
         }
@@ -135,11 +184,27 @@ export class EffectService {
         return (
             provider.instance &&
             typeof provider.instance?.handle == 'function' &&
-            this.getEffectNameMetadata(provider.metatype)
+            this.getEffectMetadata(provider.metatype)
         );
     }
 
-    private getEffectNameMetadata(object: any): string {
+    private getEffectMetadata(object: any): EffectMetadata | undefined {
         return Reflect.getMetadata(EFFECT_METADATA, object);
+    }
+
+    public static isPlayer(entity: Entity): entity is EffectDTOPlayer {
+        return entity.type === CardTargetedEnum.Player;
+    }
+
+    public static isEnemy(entity): entity is EffectDTOEnemy {
+        return entity.type === CardTargetedEnum.Enemy;
+    }
+
+    public static isAllEnemies(entity): entity is EffectDTOAllEnemies {
+        return entity.type === CardTargetedEnum.AllEnemies;
+    }
+
+    public static isRandomEnemy(entity): entity is EffectDTORandomEnemy {
+        return entity.type === CardTargetedEnum.RandomEnemy;
     }
 }

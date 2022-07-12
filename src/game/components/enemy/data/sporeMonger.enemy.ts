@@ -1,4 +1,4 @@
-import { EffectName } from 'src/game/effects/effects.enum';
+import { damageEffect, defenseEffect } from 'src/game/effects/constants';
 import { CardTargetedEnum } from '../../card/card.enum';
 import {
     EnemyCategoryEnum,
@@ -24,15 +24,15 @@ export const sporeMongerData: Enemy = {
                     type: EnemyIntentionType.Attack,
                     target: CardTargetedEnum.Player,
                     value: 11,
-                    effect: {
-                        name: EffectName.Damage,
-                        args: {
-                            baseValue: 11,
-                            calculatedValue: 11,
-                            targeted: CardTargetedEnum.Player,
-                            times: 1,
+                    effect: [
+                        {
+                            effect: damageEffect.name,
+                            target: CardTargetedEnum.Player,
+                            args: {
+                                value: 11,
+                            },
                         },
-                    },
+                    ],
                 },
             ],
             next: [
@@ -52,16 +52,15 @@ export const sporeMongerData: Enemy = {
                     type: EnemyIntentionType.Defend,
                     target: CardTargetedEnum.Enemy,
                     value: 7,
-                    effect: {
-                        name: EffectName.Defense,
-
-                        args: {
-                            baseValue: 7,
-                            calculatedValue: 7,
-                            targeted: CardTargetedEnum.Enemy,
-                            times: 1,
+                    effect: [
+                        {
+                            effect: defenseEffect.name,
+                            target: CardTargetedEnum.Self,
+                            args: {
+                                value: 7,
+                            },
                         },
-                    },
+                    ],
                 },
             ],
             next: [
@@ -77,15 +76,15 @@ export const sporeMongerData: Enemy = {
                     type: EnemyIntentionType.Attack,
                     target: CardTargetedEnum.Player,
                     value: 4,
-                    effect: {
-                        name: EffectName.Damage,
-                        args: {
-                            baseValue: 4,
-                            calculatedValue: 4,
-                            targeted: CardTargetedEnum.Player,
-                            times: 1,
+                    effect: [
+                        {
+                            effect: damageEffect.name,
+                            target: CardTargetedEnum.Player,
+                            args: {
+                                value: 4,
+                            },
                         },
-                    },
+                    ],
                 },
                 {
                     type: EnemyIntentionType.Attack,

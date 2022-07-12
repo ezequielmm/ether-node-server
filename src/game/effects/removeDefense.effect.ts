@@ -1,30 +1,28 @@
 import { Injectable } from '@nestjs/common';
-import { CardTargetedEnum } from '../components/card/card.enum';
 import { ExpeditionService } from '../components/expedition/expedition.service';
 import { ClientId } from '../components/expedition/expedition.type';
-import { Effect } from './effects.decorator';
-import { EffectName } from './effects.enum';
-import { IBaseEffect, RemoveDefenseDTO } from './effects.interface';
+import { removeDefenseEffect } from './constants';
+import { EffectDecorator } from './effects.decorator';
+import { EffectDTO, IBaseEffect } from './effects.interface';
+import { EffectService } from './effects.service';
 import { TargetId } from './effects.types';
 
-@Effect(EffectName.RemoveDefense)
+@EffectDecorator({
+    effect: removeDefenseEffect,
+})
 @Injectable()
 export class RemoveDefenseEffect implements IBaseEffect {
     constructor(private readonly expeditionService: ExpeditionService) {}
 
-    async handle(payload: RemoveDefenseDTO): Promise<void> {
-        const { client, targeted, targetId } = payload;
+    async handle(payload: EffectDTO): Promise<void> {
+        const { client, target } = payload;
 
-        switch (targeted) {
-            case CardTargetedEnum.Enemy:
-                await this.removeDefenseFromEnemy(client.id, targetId);
-                break;
-            case CardTargetedEnum.Player:
-                await this.removeDefenseFromPlayer(client.id);
-                break;
-            case CardTargetedEnum.AllEnemies:
-                await this.removeDefenseFromAllEnemies(client.id);
-                break;
+        if (EffectService.isEnemy(target)) {
+            await this.removeDefenseFromEnemy(client.id, target.value.id);
+        } else if (EffectService.isPlayer(target)) {
+            await this.removeDefenseFromPlayer(client.id);
+        } else if (EffectService.isAllEnemies(target)) {
+            await this.removeDefenseFromAllEnemies(client.id);
         }
     }
 

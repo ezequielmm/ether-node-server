@@ -1,9 +1,9 @@
-import { EffectName } from './effects.enum';
+import { EffectMetadata } from './effects.interface';
 
-export const EFFECT_METADATA = 'effect:name';
+export const EFFECT_METADATA = 'effect';
 
-export function Effect(name: EffectName): ClassDecorator {
+export function EffectDecorator(metadata: EffectMetadata): ClassDecorator {
     return (target) => {
-        Reflect.defineMetadata(EFFECT_METADATA, name, target);
+        Reflect.defineMetadata(EFFECT_METADATA, metadata, target);
     };
 }

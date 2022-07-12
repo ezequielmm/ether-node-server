@@ -1,18 +1,27 @@
 import { Injectable } from '@nestjs/common';
 import { ExpeditionService } from '../components/expedition/expedition.service';
-import { Effect } from './effects.decorator';
-import { EffectName } from './effects.enum';
-import { DefenseDTO, IBaseEffect } from './effects.interface';
+import { defenseEffect } from './constants';
+import { EffectDecorator } from './effects.decorator';
+import { EffectDTO, IBaseEffect } from './effects.interface';
 
-@Effect(EffectName.Defense)
+export interface DefenseArgs {
+    useEnemies: boolean;
+}
+
+@EffectDecorator({
+    effect: defenseEffect,
+})
 @Injectable()
 export class DefenseEffect implements IBaseEffect {
     constructor(private readonly expeditionService: ExpeditionService) {}
 
-    async handle(payload: DefenseDTO): Promise<void> {
-        const { client, calculatedValue, useEnemies } = payload;
+    async handle(payload: EffectDTO<DefenseArgs>): Promise<void> {
+        const {
+            client,
+            args: { currentValue, useEnemies },
+        } = payload;
 
-        let newDefense = calculatedValue;
+        let newDefense = currentValue;
 
         if (useEnemies !== undefined && useEnemies) {
             const {
@@ -21,7 +30,7 @@ export class DefenseEffect implements IBaseEffect {
                 clientId: client.id,
             });
 
-            newDefense = calculatedValue * enemies.length;
+            newDefense = currentValue * enemies.length;
         }
 
         await this.expeditionService.setPlayerDefense({
