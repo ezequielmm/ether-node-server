@@ -1,31 +1,27 @@
 import { Injectable } from '@nestjs/common';
 import { ExpeditionService } from '../components/expedition/expedition.service';
 import { ClientId } from '../components/expedition/expedition.type';
+import { removeDefenseEffect } from './constants';
 import { EffectDecorator } from './effects.decorator';
-import { Effect, EffectDTO, IBaseEffect } from './effects.interface';
+import { EffectDTO, IBaseEffect } from './effects.interface';
+import { EffectService } from './effects.service';
 import { TargetId } from './effects.types';
-
-export const removeDefenseEffect: Effect = {
-    name: 'removeDefense',
-};
 
 @EffectDecorator({
     effect: removeDefenseEffect,
 })
 @Injectable()
-export class RemoveDefenseEffect extends IBaseEffect {
-    constructor(private readonly expeditionService: ExpeditionService) {
-        super();
-    }
+export class RemoveDefenseEffect implements IBaseEffect {
+    constructor(private readonly expeditionService: ExpeditionService) {}
 
     async handle(payload: EffectDTO): Promise<void> {
         const { client, target } = payload;
 
-        if (this.isEnemy(target)) {
+        if (EffectService.isEnemy(target)) {
             await this.removeDefenseFromEnemy(client.id, target.value.id);
-        } else if (this.isPlayer(target)) {
+        } else if (EffectService.isPlayer(target)) {
             await this.removeDefenseFromPlayer(client.id);
-        } else if (this.isAllEnemies(target)) {
+        } else if (EffectService.isAllEnemies(target)) {
             await this.removeDefenseFromAllEnemies(client.id);
         }
     }

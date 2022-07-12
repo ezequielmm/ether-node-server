@@ -6,13 +6,11 @@ import {
     SWARAction,
     SWARMessageType,
 } from '../standardResponse/standardResponse';
+import { damageEffect } from './constants';
 import { EffectDecorator } from './effects.decorator';
-import { Effect, EffectDTO, IBaseEffect } from './effects.interface';
+import { EffectDTO, IBaseEffect } from './effects.interface';
+import { EffectService } from './effects.service';
 import { TargetId } from './effects.types';
-
-export const damageEffect: Effect = {
-    name: 'damage',
-};
 
 export interface DamageArgs {
     useDefense?: boolean;
@@ -23,10 +21,8 @@ export interface DamageArgs {
     effect: damageEffect,
 })
 @Injectable()
-export class DamageEffect extends IBaseEffect {
-    constructor(private readonly expeditionService: ExpeditionService) {
-        super();
-    }
+export class DamageEffect implements IBaseEffect {
+    constructor(private readonly expeditionService: ExpeditionService) {}
 
     async handle(payload: EffectDTO<DamageArgs>): Promise<void> {
         const {
@@ -37,7 +33,7 @@ export class DamageEffect extends IBaseEffect {
         // TODO: Trigger damage attempted event
 
         // Check targeted type
-        if (this.isEnemy(target)) {
+        if (EffectService.isEnemy(target)) {
             await this.applyDamageToEnemy(
                 client,
                 currentValue,
@@ -45,7 +41,7 @@ export class DamageEffect extends IBaseEffect {
                 useDefense,
                 multiplier,
             );
-        } else if (this.isAllEnemies(target)) {
+        } else if (EffectService.isAllEnemies(target)) {
             await this.applyDamageToAllEnemies(client, currentValue);
         }
     }

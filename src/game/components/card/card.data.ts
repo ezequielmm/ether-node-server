@@ -1,9 +1,11 @@
-import { damageEffect } from 'src/game/effects/damage.effect';
-import { defenseEffect } from 'src/game/effects/defense.effect';
-import { drawCardEffect } from 'src/game/effects/drawCard.effect';
-import { energyEffect } from 'src/game/effects/energy.effect';
-import { healEffect } from 'src/game/effects/heal.effect';
-import { removeDefenseEffect } from 'src/game/effects/removeDefense.effect';
+import {
+    damageEffect,
+    defenseEffect,
+    drawCardEffect,
+    energyEffect,
+    healEffect,
+    removeDefenseEffect,
+} from 'src/game/effects/constants';
 import { fortitude } from 'src/game/status/fortitude.status';
 import { heraldDelayed } from 'src/game/status/heraldDelayed.status';
 import { resolve } from 'src/game/status/resolve.status';

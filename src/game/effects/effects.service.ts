@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { ModulesContainer } from '@nestjs/core';
 import { InstanceWrapper } from '@nestjs/core/injector/instance-wrapper';
 import { Socket } from 'socket.io';
+import { CardTargetedEnum } from '../components/card/card.enum';
 import {
     StatusCollection,
     StatusDirection,
@@ -12,9 +13,14 @@ import { EFFECT_METADATA } from './effects.decorator';
 import {
     Effect,
     EffectDTO,
+    EffectDTOEnemy,
+    EffectDTOPlayer,
+    EffectDTOAllEnemies,
     Entity,
     IBaseEffect,
     JsonEffect,
+    EffectDTORandomEnemy,
+    EffectMetadata,
 } from './effects.interface';
 
 @Injectable()
@@ -37,7 +43,12 @@ export class EffectService {
     async process(
         client: Socket,
         source: Entity,
-        target: Entity,
+        availableTargets: {
+            player: EffectDTOPlayer;
+            randomEnemy: EffectDTORandomEnemy;
+            selectedEnemy?: EffectDTOEnemy;
+            allEnemies: EffectDTOAllEnemies;
+        },
         effects: JsonEffect[],
         currentRound: number,
     ): Promise<void> {
@@ -47,7 +58,26 @@ export class EffectService {
                 times = 1,
                 args: { value, ...args },
             } = effect;
-            const effectHandler = this.findEffectByName(name);
+
+            // Validate target
+            let target: Entity;
+
+            if (effect.target == CardTargetedEnum.Player) {
+                target = availableTargets.player;
+            } else if (effect.target == CardTargetedEnum.Self) {
+                target = source;
+            } else if (effect.target == CardTargetedEnum.AllEnemies) {
+                target = availableTargets.allEnemies;
+            } else if (effect.target == CardTargetedEnum.RandomEnemy) {
+                target = availableTargets.randomEnemy;
+            } else if (effect.target == CardTargetedEnum.Enemy) {
+                if (!availableTargets.selectedEnemy) {
+                    throw new Error(
+                        `Effect ${name} requires a selected enemy, but none was provided`,
+                    );
+                }
+                target = availableTargets.selectedEnemy;
+            }
 
             let dto: EffectDTO = {
                 client,
@@ -64,14 +94,14 @@ export class EffectService {
             let incomingStatuses: StatusCollection;
 
             // Get statuses of the source and target to modify the effects
-            if (effectHandler.isPlayer(source))
+            if (EffectService.isPlayer(source))
                 outgoingStatuses = source.value.combatState.statuses;
-            else if (effectHandler.isEnemy(source))
+            else if (EffectService.isEnemy(source))
                 outgoingStatuses = source.value.statuses;
 
-            if (effectHandler.isPlayer(target))
+            if (EffectService.isPlayer(target))
                 incomingStatuses = target.value.combatState.statuses;
-            else if (effectHandler.isEnemy(target))
+            else if (EffectService.isEnemy(target))
                 incomingStatuses = target.value.statuses;
 
             outgoingStatuses =
@@ -130,12 +160,15 @@ export class EffectService {
         for (const module of this.modulesContainer.values()) {
             module.providers.forEach((provider) => {
                 if (this.isEffectProvider(provider)) {
-                    const effect = this.getEffectMetadata(provider.metatype);
+                    const metadata = this.getEffectMetadata(provider.metatype);
 
-                    if (effects.has(effect.name))
-                        throw new Error(`Effect ${effect} already exists`);
+                    if (effects.has(metadata.effect.name))
+                        throw new Error(`Effect ${metadata} already exists`);
 
-                    effects.set(effect.name, provider.instance as IBaseEffect);
+                    effects.set(
+                        metadata.effect.name,
+                        provider.instance as IBaseEffect,
+                    );
                 }
             });
         }
@@ -151,7 +184,19 @@ export class EffectService {
         );
     }
 
-    private getEffectMetadata(object: any): Effect | undefined {
+    private getEffectMetadata(object: any): EffectMetadata | undefined {
         return Reflect.getMetadata(EFFECT_METADATA, object);
+    }
+
+    public static isPlayer(entity: Entity): entity is EffectDTOPlayer {
+        return entity.type === CardTargetedEnum.Player;
+    }
+
+    public static isEnemy(entity): entity is EffectDTOEnemy {
+        return entity.type === CardTargetedEnum.Enemy;
+    }
+
+    public static isAllEnemies(entity): entity is EffectDTOAllEnemies {
+        return entity.type === CardTargetedEnum.AllEnemies;
     }
 }

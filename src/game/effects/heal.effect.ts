@@ -1,11 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { ExpeditionService } from '../components/expedition/expedition.service';
+import { healEffect } from './constants';
 import { EffectDecorator } from './effects.decorator';
-import { Effect, EffectDTO, IBaseEffect } from './effects.interface';
-
-export const healEffect: Effect = {
-    name: 'heal',
-};
+import { EffectDTO, IBaseEffect } from './effects.interface';
+import { EffectService } from './effects.service';
 
 export interface HealArgs {
     value: number;
@@ -15,10 +13,8 @@ export interface HealArgs {
     effect: healEffect,
 })
 @Injectable()
-export class HealEffect extends IBaseEffect {
-    constructor(private readonly expeditionService: ExpeditionService) {
-        super();
-    }
+export class HealEffect implements IBaseEffect {
+    constructor(private readonly expeditionService: ExpeditionService) {}
 
     async handle(payload: EffectDTO<HealArgs>): Promise<void> {
         const {
@@ -27,7 +23,7 @@ export class HealEffect extends IBaseEffect {
             args: { currentValue },
         } = payload;
 
-        if (this.isPlayer(target)) {
+        if (EffectService.isPlayer(target)) {
             await this.applyHealToPlayer(client.id, currentValue);
         }
     }

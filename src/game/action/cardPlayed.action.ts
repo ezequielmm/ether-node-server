@@ -8,7 +8,12 @@ import {
 } from '../components/card/card.enum';
 import { CardId } from '../components/card/card.type';
 import { ExpeditionService } from '../components/expedition/expedition.service';
-import { EffectDTOEnemy, EffectDTOPlayer } from '../effects/effects.interface';
+import {
+    EffectDTOAllEnemies,
+    EffectDTOEnemy,
+    EffectDTOPlayer,
+    EffectDTORandomEnemy,
+} from '../effects/effects.interface';
 import { EffectService } from '../effects/effects.service';
 import { TargetId } from '../effects/effects.types';
 import {
@@ -89,7 +94,8 @@ export class CardPlayedAction {
                     combatState: player,
                 },
             };
-            const target: EffectDTOEnemy = targetId && {
+
+            const selectedEnemy: EffectDTOEnemy = targetId && {
                 type: CardTargetedEnum.Enemy,
                 value: enemies.find(
                     (enemy) =>
@@ -97,6 +103,23 @@ export class CardPlayedAction {
                             typeof targetId == 'string' ? 'id' : 'enemyId'
                         ] === targetId,
                 ),
+            };
+
+            const randomEnemy: EffectDTORandomEnemy = {
+                type: CardTargetedEnum.RandomEnemy,
+                value: enemies[Math.floor(Math.random() * enemies.length)],
+            };
+
+            const allEnemies: EffectDTOAllEnemies = {
+                type: CardTargetedEnum.AllEnemies,
+                value: enemies,
+            };
+
+            const availableTargets = {
+                player: source, // For this case the player is the source
+                selectedEnemy,
+                randomEnemy,
+                allEnemies,
             };
 
             // If everything goes right, we get the card information from
@@ -152,7 +175,7 @@ export class CardPlayedAction {
                 await this.effectService.process(
                     client,
                     source,
-                    target,
+                    availableTargets,
                     effects,
                     round,
                 );

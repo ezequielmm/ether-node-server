@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { damageEffect } from '../effects/damage.effect';
+import { damageEffect } from '../effects/constants';
 import { HeraldDelayedStatus } from './heraldDelayed.status';
 import {
     Status,

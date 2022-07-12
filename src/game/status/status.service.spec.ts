@@ -8,8 +8,7 @@ import { Expedition } from '../components/expedition/expedition.schema';
 import { StatusDecorator } from './status.decorator';
 import { resolve } from './resolve.status';
 import { fortitude } from './fortitude.status';
-import { damageEffect } from '../effects/damage.effect';
-import { DefenseEffect } from '../effects/defense.effect';
+import { damageEffect, defenseEffect } from '../effects/constants';
 
 @StatusDecorator({
     effects: [damageEffect],
@@ -25,7 +24,7 @@ class StatusA implements IBaseStatus {
 }
 
 @StatusDecorator({
-    effects: [DefenseEffect, damageEffect],
+    effects: [defenseEffect, damageEffect],
     status: fortitude,
 })
 @Injectable()

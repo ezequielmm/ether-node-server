@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { DefenseArgs, defenseEffect } from '../effects/defense.effect';
+import { defenseEffect } from '../effects/constants';
+import { DefenseArgs } from '../effects/defense.effect';
 import { EffectDTO } from '../effects/effects.interface';
 import {
     IBaseStatus,

@@ -1,4 +1,5 @@
-import { DefenseArgs, defenseEffect } from '../effects/defense.effect';
+import { DefenseArgs } from '../effects/defense.effect';
+import { defenseEffect } from '../effects/constants';
 import { EffectDTO } from '../effects/effects.interface';
 import {
     IBaseStatus,

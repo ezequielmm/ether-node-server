@@ -38,12 +38,21 @@ export interface EffectDTOEnemy {
     value: IExpeditionCurrentNodeDataEnemy;
 }
 
-export interface EffectDTOEnemies {
+export interface EffectDTOAllEnemies {
     type: CardTargetedEnum.AllEnemies;
     value: IExpeditionCurrentNodeDataEnemy[];
 }
 
-export type Entity = EffectDTOPlayer | EffectDTOEnemy | EffectDTOEnemies;
+export interface EffectDTORandomEnemy {
+    type: CardTargetedEnum.RandomEnemy;
+    value: IExpeditionCurrentNodeDataEnemy;
+}
+
+export type Entity =
+    | EffectDTOPlayer
+    | EffectDTOEnemy
+    | EffectDTORandomEnemy
+    | EffectDTOAllEnemies;
 
 export interface EffectDTO<
     Args extends Record<string, any> = Record<string, any>,
@@ -79,18 +88,6 @@ export interface JsonEffect {
 // export type EnergyDTO = BaseEffectDTO;
 // export type RemoveDefenseDTO = BaseEffectDTO;
 
-export abstract class IBaseEffect {
-    abstract handle(dto: EffectDTO): Promise<void>;
-
-    public isPlayer(entity: Entity): entity is EffectDTOPlayer {
-        return entity.type === CardTargetedEnum.Player;
-    }
-
-    public isEnemy(entity): entity is EffectDTOEnemy {
-        return entity.type === CardTargetedEnum.Enemy;
-    }
-
-    public isAllEnemies(entity): entity is EffectDTOEnemies {
-        return entity.type === CardTargetedEnum.AllEnemies;
-    }
+export interface IBaseEffect {
+    handle(dto: EffectDTO): Promise<void>;
 }

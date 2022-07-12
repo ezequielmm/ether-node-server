@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { DamageArgs, damageEffect } from '../effects/damage.effect';
+import { damageEffect } from '../effects/constants';
+import { DamageArgs } from '../effects/damage.effect';
 import { EffectDTO } from '../effects/effects.interface';
 import {
     IBaseStatus,

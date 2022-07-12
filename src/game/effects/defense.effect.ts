@@ -1,11 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { ExpeditionService } from '../components/expedition/expedition.service';
+import { defenseEffect } from './constants';
 import { EffectDecorator } from './effects.decorator';
-import { Effect, EffectDTO, IBaseEffect } from './effects.interface';
-
-export const defenseEffect: Effect = {
-    name: 'defense',
-};
+import { EffectDTO, IBaseEffect } from './effects.interface';
 
 export interface DefenseArgs {
     useEnemies: boolean;
@@ -15,10 +12,8 @@ export interface DefenseArgs {
     effect: defenseEffect,
 })
 @Injectable()
-export class DefenseEffect extends IBaseEffect {
-    constructor(private readonly expeditionService: ExpeditionService) {
-        super();
-    }
+export class DefenseEffect implements IBaseEffect {
+    constructor(private readonly expeditionService: ExpeditionService) {}
 
     async handle(payload: EffectDTO<DefenseArgs>): Promise<void> {
         const {

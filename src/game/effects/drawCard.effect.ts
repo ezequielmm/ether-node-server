@@ -7,23 +7,18 @@ import {
     StandardResponse,
     SWARMessageType,
 } from '../standardResponse/standardResponse';
+import { drawCardEffect } from './constants';
 import { EffectDecorator } from './effects.decorator';
-import { Effect, EffectDTO, IBaseEffect } from './effects.interface';
-
-export const drawCardEffect: Effect = {
-    name: 'drawCard',
-};
+import { EffectDTO, IBaseEffect } from './effects.interface';
 
 @EffectDecorator({
     effect: drawCardEffect,
 })
 @Injectable()
-export class DrawCardEffect extends IBaseEffect {
+export class DrawCardEffect implements IBaseEffect {
     private readonly logger: Logger = new Logger(DrawCardEffect.name);
 
-    constructor(private readonly expeditionService: ExpeditionService) {
-        super();
-    }
+    constructor(private readonly expeditionService: ExpeditionService) {}
 
     async handle(payload: EffectDTO): Promise<void> {
         const {
