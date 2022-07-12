@@ -24,13 +24,15 @@ export const sporeMongerData: Enemy = {
                     type: EnemyIntentionType.Attack,
                     target: CardTargetedEnum.Player,
                     value: 11,
-                    effect: {
-                        effect: damageEffect.name,
-                        target: CardTargetedEnum.Player,
-                        args: {
-                            value: 11,
+                    effect: [
+                        {
+                            effect: damageEffect.name,
+                            target: CardTargetedEnum.Player,
+                            args: {
+                                value: 11,
+                            },
                         },
-                    },
+                    ],
                 },
             ],
             next: [
@@ -50,13 +52,15 @@ export const sporeMongerData: Enemy = {
                     type: EnemyIntentionType.Defend,
                     target: CardTargetedEnum.Enemy,
                     value: 7,
-                    effect: {
-                        effect: defenseEffect.name,
-                        target: CardTargetedEnum.Self,
-                        args: {
-                            value: 7,
+                    effect: [
+                        {
+                            effect: defenseEffect.name,
+                            target: CardTargetedEnum.Self,
+                            args: {
+                                value: 7,
+                            },
                         },
-                    },
+                    ],
                 },
             ],
             next: [
@@ -72,13 +76,15 @@ export const sporeMongerData: Enemy = {
                     type: EnemyIntentionType.Attack,
                     target: CardTargetedEnum.Player,
                     value: 4,
-                    effect: {
-                        effect: damageEffect.name,
-                        target: CardTargetedEnum.Player,
-                        args: {
-                            value: 4,
+                    effect: [
+                        {
+                            effect: damageEffect.name,
+                            target: CardTargetedEnum.Player,
+                            args: {
+                                value: 4,
+                            },
                         },
-                    },
+                    ],
                 },
                 {
                     type: EnemyIntentionType.Attack,
