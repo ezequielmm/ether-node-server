@@ -6,17 +6,6 @@ import {
     IExpeditionPlayerGlobalState,
 } from '../components/expedition/expedition.interface';
 
-// export interface BaseEffectDTO {
-//     client: Socket;
-//     targetId?: TargetId;
-//     calculatedValue: number;
-//     times: number;
-//     targeted: CardTargetedEnum;
-//     useDefense?: boolean;
-//     useEnemies?: boolean;
-//     multiplier?: number;
-// }
-
 export interface Effect {
     name: string;
 }
@@ -80,13 +69,6 @@ export interface JsonEffect {
         // multiplier?: number;
     } & Record<string, any>;
 }
-
-// export type DamageDTO = BaseEffectDTO;
-// export type DefenseDTO = BaseEffectDTO;
-// export type DrawCardDTO = BaseEffectDTO;
-// export type HealCardDTO = BaseEffectDTO;
-// export type EnergyDTO = BaseEffectDTO;
-// export type RemoveDefenseDTO = BaseEffectDTO;
 
 export interface IBaseEffect {
     handle(dto: EffectDTO): Promise<void>;
