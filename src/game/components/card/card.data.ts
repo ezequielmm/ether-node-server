@@ -767,7 +767,6 @@ export const Cards: Card[] = [
                     target: CardTargetedEnum.Player,
                     args: {
                         value: 4,
-
                         useEnemies: true,
                     },
                 },
@@ -793,7 +792,6 @@ export const Cards: Card[] = [
                     target: CardTargetedEnum.Player,
                     args: {
                         value: 6,
-
                         useEnemies: true,
                     },
                 },

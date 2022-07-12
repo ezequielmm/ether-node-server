@@ -61,21 +61,26 @@ export class EffectService {
             // Validate target
             let target: Entity;
 
-            if (effect.target == CardTargetedEnum.Player) {
-                target = availableTargets.player;
-            } else if (effect.target == CardTargetedEnum.Self) {
-                target = source;
-            } else if (effect.target == CardTargetedEnum.AllEnemies) {
-                target = availableTargets.allEnemies;
-            } else if (effect.target == CardTargetedEnum.RandomEnemy) {
-                target = availableTargets.randomEnemy;
-            } else if (effect.target == CardTargetedEnum.Enemy) {
-                if (!availableTargets.selectedEnemy) {
-                    throw new Error(
-                        `Effect ${name} requires a selected enemy, but none was provided`,
-                    );
-                }
-                target = availableTargets.selectedEnemy;
+            switch (effect.target) {
+                case CardTargetedEnum.Player:
+                    target = availableTargets.player;
+                    break;
+                case CardTargetedEnum.Self:
+                    target = source;
+                    break;
+                case CardTargetedEnum.AllEnemies:
+                    target = availableTargets.allEnemies;
+                    break;
+                case CardTargetedEnum.RandomEnemy:
+                    target = availableTargets.randomEnemy;
+                    break;
+                case CardTargetedEnum.Enemy:
+                    if (!availableTargets.selectedEnemy)
+                        throw new Error(
+                            `Effect ${name} requires a selected enemy, but none was provided`,
+                        );
+                    target = availableTargets.selectedEnemy;
+                    break;
             }
 
             let dto: EffectDTO = {
