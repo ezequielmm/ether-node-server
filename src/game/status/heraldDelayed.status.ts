@@ -12,25 +12,21 @@ import {
 } from './interfaces';
 import { StatusDecorator } from './status.decorator';
 
-export const resolve: Status = {
-    name: 'resolve',
+export const heraldDelayed: Status = {
+    name: 'heraldDelayed',
     type: StatusType.Buff,
     direction: StatusDirection.Outgoing,
     startsAt: StatusStartsAt.NextTurn,
 };
 
 @StatusDecorator({
-    status: resolve,
+    status: heraldDelayed,
     effects: [damageEffect],
 })
 @Injectable()
-export class ResolveStatus implements IBaseStatus {
-    async handle(dto: StatusDTO<DamageArgs>): Promise<EffectDTO<DamageArgs>> {
-        const effectDTO = dto.effectDTO;
-        effectDTO.args.currentValue = Math.max(
-            effectDTO.args.currentValue + dto.args.value,
-            0,
-        );
-        return effectDTO;
+export class HeraldDelayedStatus implements IBaseStatus {
+    async handle(args: StatusDTO<DamageArgs>): Promise<EffectDTO<DamageArgs>> {
+        args.effectDTO.args.currentValue *= 2;
+        return args.effectDTO;
     }
 }

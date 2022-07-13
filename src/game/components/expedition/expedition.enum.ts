@@ -33,11 +33,6 @@ export enum ExpeditionMapNodeTypeEnum {
     Treasure = 'treasure',
 }
 
-export enum ExpeditionCurrentNodeDataPlayerStatusEnum {
-    Idle = 'idle',
-    Injured = 'injured',
-}
-
 export enum NodeTypeEnum {
     Combat = 'combat',
     CombatBoss = 'combat_boss',
@@ -61,4 +56,9 @@ export enum EnemyGroupTypeEnum {
     standard = 'Standard',
     elite = 'Elite',
     Boss = 'Boss',
+}
+
+export enum CombatTurnEnum {
+    Player = 'player',
+    Enemy = 'enemy',
 }

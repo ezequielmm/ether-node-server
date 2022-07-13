@@ -1,6 +1,15 @@
-import { AttachedStatus, StatusType } from 'src/game/status/interfaces';
-import { Card } from '../card/card.schema';
-import { Enemy } from '../enemy/enemy.schema';
+import { JsonEffect } from 'src/game/effects/effects.interface';
+import {
+    AttachedStatus,
+    CardStatus,
+    StatusType,
+} from 'src/game/status/interfaces';
+import {
+    CardRarityEnum,
+    CardTypeEnum,
+    CardKeywordEnum,
+} from '../card/card.enum';
+import { EnemyScript } from '../enemy/enemy.interface';
 import {
     ExpeditionMapNodeTypeEnum,
     ExpeditionMapNodeStatusEnum,
@@ -24,18 +33,35 @@ export interface IExpeditionNode {
     state?: any;
 }
 
-export interface IExpeditionPlayerStateDeckCard extends Card {
+export interface IExpeditionPlayerStateDeckCard {
     id: string;
     isTemporary: boolean;
+    name: string;
+    rarity: CardRarityEnum;
+    cardType: CardTypeEnum;
+    pool: string;
+    energy: number;
+    description: string;
+    properties: {
+        effects: JsonEffect[];
+        statuses: CardStatus[];
+    };
+    keywords: CardKeywordEnum[];
+    showPointer: boolean;
+    isUpgraded: boolean;
 }
 
-export interface IExpeditionCurrentNodeDataEnemy extends Enemy {
+export interface IExpeditionCurrentNodeDataEnemy {
     id: string;
+    enemyId: number;
     defense: number;
+    hpMax: number;
+    hpCurrent: number;
     statuses: {
         [StatusType.Buff]: AttachedStatus[];
         [StatusType.Debuff]: AttachedStatus[];
     };
+    currentScript?: EnemyScript;
 }
 
 export interface IExpeditionStatusResponse {
@@ -51,4 +77,6 @@ export interface IExpeditionCancelledResponse {
 }
 
 export type IExpeditionCurrentNode = Expedition['currentNode'];
-export type IExpeditionPlayerState = Expedition['playerState'];
+export type IExpeditionPlayerGlobalState = Expedition['playerState'];
+export type IExpeditionPlayerCombatState =
+    IExpeditionCurrentNode['data']['player'];

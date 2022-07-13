@@ -3,17 +3,18 @@ import { ModulesContainer } from '@nestjs/core';
 import { InstanceWrapper } from '@nestjs/core/injector/instance-wrapper';
 import { clone } from 'lodash';
 import { CardTargetedEnum } from '../components/card/card.enum';
-import { EffectName } from '../effects/effects.enum';
-import { BaseEffectDTO } from '../effects/effects.interface';
+import { Effect, EffectDTO } from '../effects/effects.interface';
 import { STATUS_METADATA } from './contants';
 import {
     IBaseStatus,
     StatusMetadata,
-    JsonStatus,
+    CardStatus,
     AttachStatusToPlayerDTO,
     AttachStatusToEnemyDTO,
     AttachedStatus,
-    EntityStatuses,
+    StatusCollection,
+    StatusDirection,
+    StatusStartsAt,
 } from './interfaces';
 import { Model } from 'mongoose';
 import {
@@ -24,19 +25,14 @@ import { InjectModel } from '@nestjs/mongoose';
 import { ExpeditionStatusEnum } from '../components/expedition/expedition.enum';
 import { EnemyId } from '../components/enemy/enemy.type';
 import { ClientId } from '../components/expedition/expedition.type';
+import { TargetId } from '../effects/effects.types';
 
 type StatusProvider = { metadata: StatusMetadata; instance: IBaseStatus };
 type StatusProviderDictionary = StatusProvider[];
 
 @Injectable()
 export class StatusService {
-    // #region Properties (1)
-
     private cache: StatusProviderDictionary;
-
-    // #endregion Properties (1)
-
-    // #region Constructors (1)
 
     constructor(
         private readonly modulesContainer: ModulesContainer,
@@ -44,17 +40,13 @@ export class StatusService {
         private readonly expedition: Model<ExpeditionDocument>,
     ) {}
 
-    // #endregion Constructors (1)
-
-    // #region Public Methods (6)
-
     public async attachStatusToEnemy(
         dto: AttachStatusToEnemyDTO,
     ): Promise<ExpeditionDocument> {
-        const { clientId, enemyId, status } = dto;
+        const { clientId, enemyId, status, currentRound } = dto;
 
         const { attachedStatus, provider } =
-            this.convertJsonStatusToAttachedStatus(status);
+            this.convertCardStatusToAttachedStatus(status, currentRound);
 
         const enemyField =
             typeof enemyId === 'string'
@@ -84,10 +76,10 @@ export class StatusService {
     public async attachStatusToPlayer(
         dto: AttachStatusToPlayerDTO,
     ): Promise<ExpeditionDocument> {
-        const { clientId, status } = dto;
+        const { clientId, status, currentRound } = dto;
 
         const { attachedStatus, provider } =
-            this.convertJsonStatusToAttachedStatus(status);
+            this.convertCardStatusToAttachedStatus(status, currentRound);
 
         return await this.expedition.findOneAndUpdate(
             {
@@ -105,15 +97,17 @@ export class StatusService {
 
     public async attachStatuses(
         clientId: string,
-        statuses: JsonStatus[],
-        targetId?: string | number,
+        statuses: CardStatus[],
+        currentRound: number,
+        targetId?: TargetId,
     ): Promise<void> {
         for (const status of statuses) {
-            switch (status.args.targeted) {
+            switch (status.args.attachTo) {
                 case CardTargetedEnum.Player:
                     await this.attachStatusToPlayer({
                         clientId,
                         status,
+                        currentRound,
                     });
                     break;
                 case CardTargetedEnum.Enemy:
@@ -121,6 +115,7 @@ export class StatusService {
                         clientId,
                         status,
                         enemyId: targetId,
+                        currentRound,
                     });
                     break;
             }
@@ -130,7 +125,8 @@ export class StatusService {
     public async getStatusesByEnemy(
         clientId: ClientId,
         enemyId: EnemyId,
-    ): Promise<EntityStatuses> {
+        statusDirection: StatusDirection = StatusDirection.Incoming,
+    ): Promise<StatusCollection> {
         const clientField =
             typeof clientId === 'string' ? 'clientId' : 'playerId';
 
@@ -144,21 +140,29 @@ export class StatusService {
             .findOne({
                 [clientField]: clientId,
                 status: ExpeditionStatusEnum.InProgress,
-                [`currentNode.data.enemies.${enemyField}`]: enemyId,
             })
             .select('currentNode.data.enemies')
             .lean();
+        const enemy = enemies.find((enemy) => enemy[enemyField] == enemyId);
 
-        const enemy = enemies.find((enemy) => {
-            enemy[enemyField] == enemyId;
-        });
+        if (!enemy) {
+            throw new Error(`Enemy ${enemyId} not found`);
+        }
+
+        if (!enemy.statuses) return null;
+
+        this.filterStatusCollectionByDirection(enemy.statuses, statusDirection);
 
         return enemy?.statuses;
     }
 
     public async getStatusesByPlayer(
         clientId: string,
-    ): Promise<EntityStatuses | undefined> {
+        statusDirection: StatusDirection = StatusDirection.Incoming,
+    ): Promise<StatusCollection | undefined> {
+        const clientField =
+            typeof clientId === 'string' ? 'clientId' : 'playerId';
+
         const {
             currentNode: {
                 data: {
@@ -167,45 +171,58 @@ export class StatusService {
             },
         } = await this.expedition
             .findOne({
-                clientId,
+                [clientField]: clientId,
                 status: ExpeditionStatusEnum.InProgress,
             })
             .select('currentNode.data.player.statuses')
             .lean();
+
+        this.filterStatusCollectionByDirection(statuses, statusDirection);
 
         return statuses;
     }
 
     public async process(
         statuses: AttachedStatus[],
-        effect: EffectName,
-        dto: BaseEffectDTO,
-    ): Promise<BaseEffectDTO> {
+        effect: Effect['name'],
+        dto: EffectDTO,
+        currentRound: number,
+    ): Promise<EffectDTO> {
+        if (!statuses?.length) {
+            return dto;
+        }
+
         // Clone the dto to avoid mutating the original
         dto = clone(dto);
 
         for (const status of statuses) {
-            const provider = this.findStatusProviderByName(
-                this.getStatusProviders(),
-                status.name,
-            );
+            const provider = this.findStatusProviderByName(status.name);
 
             if (provider) {
+                const providerMetadata = provider.metadata;
+                const providerInstance = provider.instance;
+
+                // Validate if the status can starts in this round
+                if (
+                    !this.canApplyStatusInThisRound(
+                        providerMetadata.status.startsAt,
+                        status.args.addedInRound,
+                        currentRound,
+                    )
+                )
+                    continue;
+
                 // Validate if the status is valid for the effect
                 if (
-                    !provider.metadata.effects.some(
-                        (effectName) => effectName == effect,
+                    !providerMetadata.effects.some(
+                        (effectName) => effectName.name == effect,
                     )
                 ) {
-                    throw new Error(
-                        `Status ${status.name} is not valid for effect ${effect}`,
-                    );
+                    continue;
                 }
 
-                const { instance } = provider;
-
-                dto = await instance.handle({
-                    baseEffectDTO: dto,
+                dto = await providerInstance.handle({
+                    effectDTO: dto,
                     args: status.args,
                 });
             }
@@ -214,29 +231,36 @@ export class StatusService {
         return dto;
     }
 
-    // #endregion Public Methods (6)
+    private canApplyStatusInThisRound(
+        startsAt: StatusStartsAt,
+        addedInRound: number,
+        currentRound,
+    ): boolean {
+        return !(
+            startsAt == StatusStartsAt.NextTurn && addedInRound == currentRound
+        );
+    }
 
-    // #region Private Methods (5)
-
-    private convertJsonStatusToAttachedStatus(jsonStatus: JsonStatus): {
+    private convertCardStatusToAttachedStatus(
+        jsonStatus: CardStatus,
+        currentRound: number,
+    ): {
         attachedStatus: AttachedStatus;
         provider: StatusProvider;
     } {
+        const provider = this.findStatusProviderByName(jsonStatus.name);
+
+        if (!provider) {
+            throw new Error(`Status ${jsonStatus.name} does not exist`);
+        }
+
         const attachedStatus: AttachedStatus = {
             name: jsonStatus.name,
             args: {
                 value: jsonStatus.args.value,
+                addedInRound: currentRound,
             },
         };
-
-        const provider = this.findStatusProviderByName(
-            this.getStatusProviders(),
-            attachedStatus.name,
-        );
-
-        if (!provider) {
-            throw new Error(`Status ${attachedStatus.name} does not exist`);
-        }
 
         return {
             attachedStatus,
@@ -244,9 +268,25 @@ export class StatusService {
         };
     }
 
+    public filterStatusCollectionByDirection(
+        statuses: StatusCollection,
+        statusDirection: StatusDirection,
+    ): StatusCollection {
+        statuses = clone(statuses);
+
+        const filter = (status) =>
+            this.findStatusProviderByName(status.name).metadata.status
+                .direction === statusDirection;
+
+        statuses.buff = statuses.buff.filter(filter);
+        statuses.debuff = statuses.debuff.filter(filter);
+
+        return statuses;
+    }
+
     private findStatusProviderByName(
-        dictionary: StatusProviderDictionary,
         name: string,
+        dictionary: StatusProviderDictionary = this.getStatusProviders(),
     ): StatusProvider | undefined {
         return dictionary.find(
             (provider) => provider.metadata.status.name == name,
@@ -271,8 +311,8 @@ export class StatusService {
                     const instance = provider.instance as IBaseStatus;
 
                     const oldStatusProvider = this.findStatusProviderByName(
-                        dictionary,
                         metadata.status.name,
+                        dictionary,
                     );
 
                     if (oldStatusProvider) {
@@ -302,6 +342,4 @@ export class StatusService {
 
         return typeof statusInstance?.handle == 'function' && statusMetadata;
     }
-
-    // #endregion Private Methods (5)
 }

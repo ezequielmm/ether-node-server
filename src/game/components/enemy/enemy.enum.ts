@@ -23,3 +23,11 @@ export enum EnemySizeEnum {
     Large = 'marge',
     Giant = 'giant',
 }
+
+export enum EnemyIntentionType {
+    Attack = 'attack',
+    Defend = 'defend',
+    Stun = 'stun',
+    Buff = 'buff',
+    Debuff = 'debuff',
+}

@@ -1,16 +1,29 @@
-import { EffectName } from '../effects/effects.enum';
-import { DefenseDTO } from '../effects/effects.interface';
-import { Statuses } from './contants';
-import { IBaseStatus, StatusDTO } from './interfaces';
+import { DefenseArgs } from '../effects/defense.effect';
+import { defenseEffect } from '../effects/constants';
+import { EffectDTO } from '../effects/effects.interface';
+import {
+    IBaseStatus,
+    Status,
+    StatusDirection,
+    StatusDTO,
+    StatusStartsAt,
+    StatusType,
+} from './interfaces';
 import { StatusDecorator } from './status.decorator';
 
+export const turtling: Status = {
+    name: 'turtling',
+    type: StatusType.Buff,
+    direction: StatusDirection.Incoming,
+    startsAt: StatusStartsAt.NextTurn,
+};
 @StatusDecorator({
-    status: Statuses.Turtling,
-    effects: [EffectName.Defense],
+    status: turtling,
+    effects: [defenseEffect],
 })
 export class TurtlingStatus implements IBaseStatus {
-    async handle(statusDto: StatusDTO): Promise<DefenseDTO> {
-        statusDto.baseEffectDTO.calculatedValue *= 2;
-        return statusDto.baseEffectDTO;
+    async handle(dto: StatusDTO<DefenseArgs>): Promise<EffectDTO<DefenseArgs>> {
+        dto.effectDTO.args.currentValue *= 2;
+        return dto.effectDTO;
     }
 }

@@ -1,8 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { DataFactory, Seeder } from 'nestjs-seeder';
+import { Seeder } from 'nestjs-seeder';
 import { Model } from 'mongoose';
 import { Settings, SettingsDocument } from './settings.schema';
+import { settingsData } from './settings.data';
 
 @Injectable()
 export class SettingsSeeder implements Seeder {
@@ -12,8 +13,7 @@ export class SettingsSeeder implements Seeder {
     ) {}
 
     async seed(): Promise<any> {
-        const settings = DataFactory.createForClass(Settings).generate(1);
-        return this.settings.insertMany(settings);
+        return this.settings.insertMany(settingsData);
     }
 
     async drop(): Promise<any> {

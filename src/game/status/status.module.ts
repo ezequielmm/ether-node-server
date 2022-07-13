@@ -5,8 +5,11 @@ import {
     ExpeditionSchema,
 } from '../components/expedition/expedition.schema';
 import { FortitudeStatus } from './fortitude.status';
+import { HeraldDelayedStatus } from './heraldDelayed.status';
 import { ResolveStatus } from './resolve.status';
 import { StatusService } from './status.service';
+import { TasteOfBloodBuffStatus } from './tasteOfBlood.buff.status';
+import { TasteOfBloodDebuffStatus } from './tasteOfBlood.debuff.status';
 import { TurtlingStatus } from './turtling.status';
 
 @Module({
@@ -18,7 +21,15 @@ import { TurtlingStatus } from './turtling.status';
             },
         ]),
     ],
-    providers: [StatusService, TurtlingStatus, ResolveStatus, FortitudeStatus],
+    providers: [
+        StatusService,
+        TurtlingStatus,
+        ResolveStatus,
+        FortitudeStatus,
+        HeraldDelayedStatus,
+        TasteOfBloodBuffStatus,
+        TasteOfBloodDebuffStatus,
+    ],
     exports: [StatusService],
 })
 export class StatusModule {}

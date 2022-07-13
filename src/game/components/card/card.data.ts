@@ -1,5 +1,17 @@
-import { EffectName } from 'src/game/effects/effects.enum';
-import { Statuses } from 'src/game/status/contants';
+import {
+    damageEffect,
+    defenseEffect,
+    drawCardEffect,
+    energyEffect,
+    healEffect,
+    removeDefenseEffect,
+} from 'src/game/effects/constants';
+import { fortitude } from 'src/game/status/fortitude.status';
+import { heraldDelayed } from 'src/game/status/heraldDelayed.status';
+import { resolve } from 'src/game/status/resolve.status';
+import { tasteOfBloodBuff } from 'src/game/status/tasteOfBlood.buff.status';
+import { tasteOfBloodDebuff } from 'src/game/status/tasteOfBlood.debuff.status';
+import { turtling } from 'src/game/status/turtling.status';
 import {
     CardRarityEnum,
     CardTypeEnum,
@@ -21,18 +33,17 @@ export const Cards: Card[] = [
         properties: {
             effects: [
                 {
-                    name: EffectName.Damage,
+                    effect: damageEffect.name,
+                    target: CardTargetedEnum.Enemy,
                     args: {
-                        baseValue: 5,
-                        calculatedValue: 5,
-                        targeted: CardTargetedEnum.Enemy,
-                        times: 1,
+                        value: 5,
                     },
                 },
             ],
             statuses: [],
         },
         showPointer: true,
+        isUpgraded: false,
     },
     {
         cardId: 2,
@@ -46,18 +57,17 @@ export const Cards: Card[] = [
         properties: {
             effects: [
                 {
-                    name: EffectName.Damage,
+                    effect: damageEffect.name,
+                    target: CardTargetedEnum.Enemy,
                     args: {
-                        baseValue: 8,
-                        calculatedValue: 8,
-                        targeted: CardTargetedEnum.Enemy,
-                        times: 1,
+                        value: 8,
                     },
                 },
             ],
             statuses: [],
         },
         showPointer: true,
+        isUpgraded: true,
     },
     {
         cardId: 3,
@@ -71,18 +81,17 @@ export const Cards: Card[] = [
         properties: {
             effects: [
                 {
-                    name: EffectName.Defense,
+                    effect: defenseEffect.name,
+                    target: CardTargetedEnum.Player,
                     args: {
-                        baseValue: 5,
-                        calculatedValue: 5,
-                        targeted: CardTargetedEnum.Player,
-                        times: 1,
+                        value: 5,
                     },
                 },
             ],
             statuses: [],
         },
         showPointer: false,
+        isUpgraded: false,
     },
     {
         cardId: 4,
@@ -96,18 +105,17 @@ export const Cards: Card[] = [
         properties: {
             effects: [
                 {
-                    name: EffectName.Defense,
+                    effect: defenseEffect.name,
+                    target: CardTargetedEnum.Player,
                     args: {
-                        baseValue: 8,
-                        calculatedValue: 8,
-                        targeted: CardTargetedEnum.Player,
-                        times: 1,
+                        value: 8,
                     },
                 },
             ],
             statuses: [],
         },
         showPointer: false,
+        isUpgraded: true,
     },
     {
         cardId: 13,
@@ -121,27 +129,25 @@ export const Cards: Card[] = [
         properties: {
             effects: [
                 {
-                    name: EffectName.Damage,
+                    effect: damageEffect.name,
+                    target: CardTargetedEnum.Enemy,
+                    times: 2,
                     args: {
-                        baseValue: 4,
-                        calculatedValue: 4,
-                        targeted: CardTargetedEnum.Enemy,
-                        times: 2,
+                        value: 4,
                     },
                 },
                 {
-                    name: EffectName.DrawCard,
+                    effect: drawCardEffect.name,
+                    target: CardTargetedEnum.Player,
                     args: {
-                        baseValue: 2,
-                        calculatedValue: 2,
-                        targeted: CardTargetedEnum.Player,
-                        times: 1,
+                        value: 2,
                     },
                 },
             ],
             statuses: [],
         },
         showPointer: true,
+        isUpgraded: false,
     },
     {
         cardId: 14,
@@ -155,27 +161,25 @@ export const Cards: Card[] = [
         properties: {
             effects: [
                 {
-                    name: EffectName.Damage,
+                    effect: damageEffect.name,
+                    target: CardTargetedEnum.Enemy,
+                    times: 2,
                     args: {
-                        baseValue: 4,
-                        calculatedValue: 4,
-                        targeted: CardTargetedEnum.Enemy,
-                        times: 2,
+                        value: 4,
                     },
                 },
                 {
-                    name: EffectName.DrawCard,
+                    effect: drawCardEffect.name,
+                    target: CardTargetedEnum.Player,
                     args: {
-                        baseValue: 2,
-                        calculatedValue: 2,
-                        targeted: CardTargetedEnum.Player,
-                        times: 1,
+                        value: 2,
                     },
                 },
             ],
             statuses: [],
         },
         showPointer: true,
+        isUpgraded: true,
     },
     {
         cardId: 7,
@@ -189,27 +193,24 @@ export const Cards: Card[] = [
         properties: {
             effects: [
                 {
-                    name: EffectName.Damage,
+                    effect: damageEffect.name,
+                    target: CardTargetedEnum.Enemy,
                     args: {
-                        baseValue: 4,
-                        calculatedValue: 4,
-                        targeted: CardTargetedEnum.Enemy,
-                        times: 1,
+                        value: 4,
                     },
                 },
                 {
-                    name: EffectName.Defense,
+                    effect: defenseEffect.name,
+                    target: CardTargetedEnum.Player,
                     args: {
-                        baseValue: 4,
-                        calculatedValue: 4,
-                        targeted: CardTargetedEnum.Player,
-                        times: 1,
+                        value: 4,
                     },
                 },
             ],
             statuses: [],
         },
         showPointer: true,
+        isUpgraded: false,
     },
     {
         cardId: 8,
@@ -223,27 +224,24 @@ export const Cards: Card[] = [
         properties: {
             effects: [
                 {
-                    name: EffectName.Damage,
+                    effect: damageEffect.name,
+                    target: CardTargetedEnum.Enemy,
                     args: {
-                        baseValue: 7,
-                        calculatedValue: 7,
-                        targeted: CardTargetedEnum.Enemy,
-                        times: 1,
+                        value: 7,
                     },
                 },
                 {
-                    name: EffectName.Defense,
+                    effect: defenseEffect.name,
+                    target: CardTargetedEnum.Player,
                     args: {
-                        baseValue: 7,
-                        calculatedValue: 7,
-                        targeted: CardTargetedEnum.Player,
-                        times: 1,
+                        value: 7,
                     },
                 },
             ],
             statuses: [],
         },
         showPointer: true,
+        isUpgraded: true,
     },
 
     {
@@ -258,12 +256,10 @@ export const Cards: Card[] = [
         properties: {
             effects: [
                 {
-                    name: EffectName.Damage,
+                    effect: damageEffect.name,
+                    target: CardTargetedEnum.Enemy,
                     args: {
-                        baseValue: 1,
-                        calculatedValue: 1,
-                        targeted: CardTargetedEnum.Enemy,
-                        times: 1,
+                        value: 1,
                     },
                 },
                 // TODO: Double the values of those numbers for remainder of combat
@@ -272,6 +268,7 @@ export const Cards: Card[] = [
             statuses: [],
         },
         showPointer: true,
+        isUpgraded: false,
     },
     {
         cardId: 12,
@@ -285,12 +282,10 @@ export const Cards: Card[] = [
         properties: {
             effects: [
                 {
-                    name: EffectName.Damage,
+                    effect: damageEffect.name,
+                    target: CardTargetedEnum.Enemy,
                     args: {
-                        baseValue: 1,
-                        calculatedValue: 1,
-                        targeted: CardTargetedEnum.Enemy,
-                        times: 1,
+                        value: 1,
                     },
                 },
                 // TODO: Double the values of those numbers for remainder of combat
@@ -299,6 +294,7 @@ export const Cards: Card[] = [
             statuses: [],
         },
         showPointer: true,
+        isUpgraded: true,
     },
     {
         cardId: 19,
@@ -312,18 +308,17 @@ export const Cards: Card[] = [
         properties: {
             effects: [
                 {
-                    name: EffectName.Damage,
+                    effect: damageEffect.name,
+                    target: CardTargetedEnum.AllEnemies,
                     args: {
-                        baseValue: 6,
-                        calculatedValue: 6,
-                        targeted: CardTargetedEnum.AllEnemies,
-                        times: 1,
+                        value: 6,
                     },
                 },
             ],
             statuses: [],
         },
         showPointer: true,
+        isUpgraded: false,
     },
     {
         cardId: 20,
@@ -337,18 +332,17 @@ export const Cards: Card[] = [
         properties: {
             effects: [
                 {
-                    name: EffectName.Damage,
+                    effect: damageEffect.name,
+                    target: CardTargetedEnum.AllEnemies,
                     args: {
-                        baseValue: 9,
-                        calculatedValue: 9,
-                        targeted: CardTargetedEnum.AllEnemies,
-                        times: 1,
+                        value: 9,
                     },
                 },
             ],
             statuses: [],
         },
         showPointer: true,
+        isUpgraded: true,
     },
 
     {
@@ -363,12 +357,10 @@ export const Cards: Card[] = [
         properties: {
             effects: [
                 {
-                    name: EffectName.Damage,
+                    effect: damageEffect.name,
+                    target: CardTargetedEnum.Enemy,
                     args: {
-                        baseValue: 0, // Value is calculated in the effect
-                        calculatedValue: 0, // Value is calculated in the effect
-                        targeted: CardTargetedEnum.Enemy,
-                        times: 1,
+                        value: 0, // Value is calculated in the effect
                         useDefense: true,
                         multiplier: 1,
                     },
@@ -377,6 +369,7 @@ export const Cards: Card[] = [
             statuses: [],
         },
         showPointer: true,
+        isUpgraded: false,
     },
     {
         cardId: 30,
@@ -390,12 +383,10 @@ export const Cards: Card[] = [
         properties: {
             effects: [
                 {
-                    name: EffectName.Damage,
+                    effect: damageEffect.name,
+                    target: CardTargetedEnum.Enemy,
                     args: {
-                        baseValue: 0, // Value is calculated in the effect
-                        calculatedValue: 0, // Value is calculated in the effect
-                        targeted: CardTargetedEnum.Enemy,
-                        times: 1,
+                        value: 0, // Value is calculated in the effect
                         useDefense: true,
                         multiplier: 2,
                     },
@@ -404,6 +395,7 @@ export const Cards: Card[] = [
             statuses: [],
         },
         showPointer: true,
+        isUpgraded: true,
     },
     {
         cardId: 31,
@@ -418,18 +410,17 @@ export const Cards: Card[] = [
         properties: {
             effects: [
                 {
-                    name: EffectName.Damage,
+                    effect: damageEffect.name,
+                    target: CardTargetedEnum.Enemy,
                     args: {
-                        baseValue: 6,
-                        calculatedValue: 6, // TODO: Calculate this value based in the count of uses
-                        targeted: CardTargetedEnum.Enemy,
-                        times: 1,
+                        value: 6,
                     },
                 },
             ],
             statuses: [],
         },
         showPointer: true,
+        isUpgraded: false,
     },
     {
         cardId: 32,
@@ -444,18 +435,17 @@ export const Cards: Card[] = [
         properties: {
             effects: [
                 {
-                    name: EffectName.Damage,
+                    effect: damageEffect.name,
+                    target: CardTargetedEnum.Enemy,
                     args: {
-                        baseValue: 9,
-                        calculatedValue: 9, // TODO: Calculate this value based in the count of uses
-                        targeted: CardTargetedEnum.Enemy,
-                        times: 1,
+                        value: 9,
                     },
                 },
             ],
             statuses: [],
         },
         showPointer: true,
+        isUpgraded: true,
     },
     {
         cardId: 57,
@@ -469,18 +459,17 @@ export const Cards: Card[] = [
         properties: {
             effects: [
                 {
-                    name: EffectName.Damage,
+                    effect: damageEffect.name,
+                    target: CardTargetedEnum.Enemy,
                     args: {
-                        baseValue: 5,
-                        calculatedValue: 5, // TODO: Calculate this value based in the count of uses
-                        targeted: CardTargetedEnum.Enemy,
-                        times: 1,
+                        value: 5,
                     },
                 },
             ],
             statuses: [],
         },
         showPointer: true,
+        isUpgraded: false,
     },
     {
         cardId: 15,
@@ -495,15 +484,16 @@ export const Cards: Card[] = [
             effects: [],
             statuses: [
                 {
-                    name: Statuses.Turtling.name,
+                    name: turtling.name,
                     args: {
                         value: 1,
-                        targeted: CardTargetedEnum.Player,
+                        attachTo: CardTargetedEnum.Player,
                     },
                 },
             ],
         },
         showPointer: false,
+        isUpgraded: false,
     },
     {
         cardId: 75,
@@ -517,18 +507,17 @@ export const Cards: Card[] = [
         properties: {
             effects: [
                 {
-                    name: EffectName.Heal,
+                    effect: healEffect.name,
+                    target: CardTargetedEnum.Player,
                     args: {
-                        baseValue: 2,
-                        calculatedValue: 2,
-                        targeted: CardTargetedEnum.Player,
-                        times: 1,
+                        value: 2,
                     },
                 },
             ],
             statuses: [],
         },
         showPointer: false,
+        isUpgraded: false,
     },
     {
         cardId: 76,
@@ -542,18 +531,17 @@ export const Cards: Card[] = [
         properties: {
             effects: [
                 {
-                    name: EffectName.Heal,
+                    effect: healEffect.name,
+                    target: CardTargetedEnum.Player,
                     args: {
-                        baseValue: 4,
-                        calculatedValue: 4,
-                        targeted: CardTargetedEnum.Player,
-                        times: 1,
+                        value: 4,
                     },
                 },
             ],
             statuses: [],
         },
         showPointer: false,
+        isUpgraded: true,
     },
     {
         cardId: 9,
@@ -567,18 +555,17 @@ export const Cards: Card[] = [
         properties: {
             effects: [
                 {
-                    name: EffectName.Energy,
+                    effect: energyEffect.name,
+                    target: CardTargetedEnum.Player,
                     args: {
-                        baseValue: 2,
-                        calculatedValue: 2,
-                        targeted: CardTargetedEnum.Player,
-                        times: 1,
+                        value: 2,
                     },
                 },
             ],
             statuses: [],
         },
         showPointer: false,
+        isUpgraded: false,
     },
     {
         cardId: 10,
@@ -592,18 +579,17 @@ export const Cards: Card[] = [
         properties: {
             effects: [
                 {
-                    name: EffectName.Energy,
+                    effect: energyEffect.name,
+                    target: CardTargetedEnum.Player,
                     args: {
-                        baseValue: 2,
-                        calculatedValue: 2,
-                        targeted: CardTargetedEnum.Player,
-                        times: 1,
+                        value: 2,
                     },
                 },
             ],
             statuses: [],
         },
         showPointer: false,
+        isUpgraded: true,
     },
     {
         cardId: 23,
@@ -619,22 +605,23 @@ export const Cards: Card[] = [
             effects: [],
             statuses: [
                 {
-                    name: Statuses.Resolve.name,
+                    name: resolve.name,
                     args: {
                         value: 1,
-                        targeted: CardTargetedEnum.Enemy,
+                        attachTo: CardTargetedEnum.Player,
                     },
                 },
                 {
-                    name: Statuses.Fortitude.name,
+                    name: fortitude.name,
                     args: {
                         value: 1,
-                        targeted: CardTargetedEnum.Player,
+                        attachTo: CardTargetedEnum.Player,
                     },
                 },
             ],
         },
         showPointer: false,
+        isUpgraded: false,
     },
     {
         cardId: 45,
@@ -648,18 +635,17 @@ export const Cards: Card[] = [
         properties: {
             effects: [
                 {
-                    name: EffectName.RemoveDefense,
+                    effect: removeDefenseEffect.name,
+                    target: CardTargetedEnum.Enemy,
                     args: {
-                        baseValue: 0,
-                        calculatedValue: 0,
-                        targeted: CardTargetedEnum.Enemy,
-                        times: 1,
+                        value: 0,
                     },
                 },
             ],
             statuses: [],
         },
         showPointer: false,
+        isUpgraded: false,
     },
     {
         cardId: 46,
@@ -673,17 +659,146 @@ export const Cards: Card[] = [
         properties: {
             effects: [
                 {
-                    name: EffectName.RemoveDefense,
+                    effect: removeDefenseEffect.name,
+                    target: CardTargetedEnum.AllEnemies,
                     args: {
-                        baseValue: 0,
-                        calculatedValue: 0,
-                        targeted: CardTargetedEnum.AllEnemies,
-                        times: 1,
+                        value: 0,
                     },
                 },
             ],
             statuses: [],
         },
         showPointer: false,
+        isUpgraded: true,
+    },
+    {
+        cardId: 95,
+        name: 'Herald of Pain',
+        rarity: CardRarityEnum.Common,
+        cardType: CardTypeEnum.Skill,
+        pool: 'knight',
+        energy: 1,
+        description: 'Double all damage dealt next turn.',
+        keywords: [],
+        properties: {
+            effects: [],
+            statuses: [
+                {
+                    name: heraldDelayed.name,
+                    args: {
+                        value: 1,
+                        attachTo: CardTargetedEnum.Player,
+                    },
+                },
+            ],
+        },
+        showPointer: false,
+        isUpgraded: false,
+    },
+    {
+        cardId: 96,
+        name: 'Herald of Pain+',
+        rarity: CardRarityEnum.Common,
+        cardType: CardTypeEnum.Skill,
+        pool: 'knight',
+        energy: 0,
+        description: 'Double all damage dealt next turn.',
+        keywords: [],
+        properties: {
+            effects: [],
+            statuses: [
+                {
+                    name: heraldDelayed.name,
+                    args: {
+                        value: 1,
+                        attachTo: CardTargetedEnum.Player,
+                    },
+                },
+            ],
+        },
+        showPointer: false,
+        isUpgraded: true,
+    },
+    {
+        cardId: 105,
+        name: 'Taste of Blood',
+        rarity: CardRarityEnum.Rare,
+        cardType: CardTypeEnum.Skill,
+        pool: 'knight',
+        energy: 0,
+        description:
+            'Take double damage and deal double damage for the next 2 turns.',
+        keywords: [],
+        properties: {
+            effects: [],
+            statuses: [
+                {
+                    name: tasteOfBloodBuff.name,
+                    args: {
+                        value: 1,
+                        attachTo: CardTargetedEnum.Player,
+                    },
+                },
+                {
+                    name: tasteOfBloodDebuff.name,
+                    args: {
+                        value: 1,
+                        attachTo: CardTargetedEnum.Player,
+                    },
+                },
+            ],
+        },
+        showPointer: false,
+        isUpgraded: false,
+    },
+    {
+        cardId: 101,
+        name: 'Quick to Adapt',
+        rarity: CardRarityEnum.Common,
+        cardType: CardTypeEnum.Defend,
+        pool: 'knight',
+        energy: 1,
+        description: 'Gain 4 defense for each enemy.',
+        keywords: [],
+        properties: {
+            effects: [
+                {
+                    effect: defenseEffect.name,
+                    target: CardTargetedEnum.Player,
+                    args: {
+                        value: 4,
+                        useEnemies: true,
+                    },
+                },
+            ],
+            statuses: [],
+        },
+        showPointer: false,
+        isUpgraded: false,
+    },
+    {
+        cardId: 102,
+        name: 'Quick to Adapt+',
+        rarity: CardRarityEnum.Common,
+        cardType: CardTypeEnum.Defend,
+        pool: 'knight',
+        energy: 1,
+        description: 'Gain 6 defense for each enemy.',
+        keywords: [],
+        properties: {
+            effects: [
+                {
+                    effect: defenseEffect.name,
+                    target: CardTargetedEnum.Player,
+                    args: {
+                        value: 6,
+                        useEnemies: true,
+                    },
+                },
+            ],
+            statuses: [],
+        },
+        showPointer: false,
+        isUpgraded: true,
     },
 ];

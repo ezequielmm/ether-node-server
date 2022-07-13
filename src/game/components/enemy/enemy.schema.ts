@@ -1,6 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 import { EnemyTypeEnum, EnemyCategoryEnum, EnemySizeEnum } from './enemy.enum';
+import { EnemyScript } from './enemy.interface';
 
 export type EnemyDocument = Enemy & Document;
 
@@ -22,13 +23,13 @@ export class Enemy {
     size: EnemySizeEnum;
 
     @Prop()
-    hpMax: number;
-
-    @Prop()
-    hpCurrent: number;
+    healthRange: number[];
 
     @Prop()
     description: string;
+
+    @Prop({ type: Object })
+    scripts: EnemyScript[];
 }
 
 export const EnemySchema = SchemaFactory.createForClass(Enemy);

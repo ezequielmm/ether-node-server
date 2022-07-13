@@ -1,14 +1,21 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { Socket } from 'socket.io';
-import { isEven } from 'src/utils';
 import { SetCombatTurnAction } from '../action/setCombatTurn.action';
+import { CombatTurnEnum } from '../components/expedition/expedition.enum';
 import { IExpeditionNode } from '../components/expedition/expedition.interface';
 import { ExpeditionService } from '../components/expedition/expedition.service';
+import {
+    SWARAction,
+    StandardResponse,
+    SWARMessageType,
+} from '../standardResponse/standardResponse';
 import { CurrentNodeGeneratorProcess } from './currentNodeGenerator.process';
 import { SendEnemyIntentProcess } from './sendEnemyIntents.process';
 
 @Injectable()
 export class InitCombatProcess {
+    private readonly logger: Logger = new Logger(InitCombatProcess.name);
+
     constructor(
         private readonly currentNodeGeneratorProcess: CurrentNodeGeneratorProcess,
         private readonly expeditionService: ExpeditionService,
@@ -29,13 +36,32 @@ export class InitCombatProcess {
 
         const {
             currentNode: {
-                data: { round },
+                data: { playing },
             },
         } = await this.setCombatTurnAction.handle({
             clientId: client.id,
             newRound: 1,
+            playing: CombatTurnEnum.Player,
         });
 
-        if (!isEven(round)) this.sendEnemyIntentProcess.process(client);
+        this.logger.log(
+            `Sent message PutData to client ${client.id}: ${SWARAction.ChangeTurn}`,
+        );
+
+        client.emit(
+            'PutData',
+            JSON.stringify(
+                StandardResponse.respond({
+                    message_type: SWARMessageType.BeginTurn,
+                    action: SWARAction.ChangeTurn,
+                    data: CombatTurnEnum.Player,
+                }),
+            ),
+        );
+
+        await this.expeditionService.calculateNewEnemyIntentions(client.id);
+
+        if (playing === CombatTurnEnum.Player)
+            await this.sendEnemyIntentProcess.process(client);
     }
 }
