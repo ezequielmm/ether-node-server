@@ -61,12 +61,6 @@ export interface JsonEffect {
     times?: number;
     args: {
         value: number;
-        // currentValue: number;
-        // targeted: CardTargetedEnum;
-        // times: number;
-        // useDefense?: boolean;
-        // useEnemies?: boolean;
-        // multiplier?: number;
     } & Record<string, any>;
 }
 
