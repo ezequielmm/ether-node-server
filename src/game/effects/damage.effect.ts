@@ -194,6 +194,8 @@ export class DamageEffect implements IBaseEffect {
             hpCurrent: newHpCurrent,
         });
 
+        const playerInfo = await this.getPlayerInfoAction.handle(client.id);
+
         // Send player message
         this.logger.log(
             `Sent message PutData to client ${client.id}: ${SWARAction.EnemyAffected}`,
@@ -205,7 +207,7 @@ export class DamageEffect implements IBaseEffect {
                 StandardResponse.respond({
                     message_type: SWARMessageType.PlayerAffected,
                     action: SWARAction.UpdatePlayer,
-                    data: null,
+                    data: playerInfo,
                 }),
             ),
         );

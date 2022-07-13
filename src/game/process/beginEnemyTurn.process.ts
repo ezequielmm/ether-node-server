@@ -1,7 +1,12 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Socket } from 'socket.io';
+import { CardTargetedEnum } from '../components/card/card.enum';
 import { CombatTurnEnum } from '../components/expedition/expedition.enum';
 import { ExpeditionService } from '../components/expedition/expedition.service';
+import {
+    EffectDTOEnemy,
+    EffectAvailableTargets,
+} from '../effects/effects.interface';
 import { EffectService } from '../effects/effects.service';
 import {
     SWARAction,
@@ -25,17 +30,12 @@ export class BeginEnemyTurnProcess {
     async handle(payload: BeginEnemyTurnDTO): Promise<void> {
         const { client } = payload;
 
-        /*const {
+        const {
             playerState,
             currentNode: {
                 data: { enemies, round, player },
             },
         } = await this.expeditionService.setCombatTurn({
-            clientId: client.id,
-            playing: CombatTurnEnum.Enemy,
-        });*/
-
-        await this.expeditionService.setCombatTurn({
             clientId: client.id,
             playing: CombatTurnEnum.Enemy,
         });
@@ -56,7 +56,7 @@ export class BeginEnemyTurnProcess {
         );
 
         // Then we loop over them and get their intentions and effects
-        /*enemies.forEach((enemy) => {
+        enemies.forEach((enemy) => {
             const {
                 currentScript: { intentions },
             } = enemy;
@@ -89,6 +89,6 @@ export class BeginEnemyTurnProcess {
                     round,
                 );
             });
-        });*/
+        });
     }
 }
