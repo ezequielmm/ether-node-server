@@ -9,6 +9,7 @@ import {
 import { CardId } from '../components/card/card.type';
 import { ExpeditionService } from '../components/expedition/expedition.service';
 import {
+    EffectAvailableTargets,
     EffectDTOAllEnemies,
     EffectDTOEnemy,
     EffectDTOPlayer,
@@ -115,7 +116,7 @@ export class CardPlayedAction {
                 value: enemies,
             };
 
-            const availableTargets = {
+            const availableTargets: EffectAvailableTargets = {
                 player: source, // For this case the player is the source
                 selectedEnemy,
                 randomEnemy,

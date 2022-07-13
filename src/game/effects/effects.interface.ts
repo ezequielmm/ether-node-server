@@ -73,3 +73,10 @@ export interface JsonEffect {
 export interface IBaseEffect {
     handle(dto: EffectDTO): Promise<void>;
 }
+
+export interface EffectAvailableTargets {
+    player: EffectDTOPlayer;
+    randomEnemy: EffectDTORandomEnemy;
+    selectedEnemy?: EffectDTOEnemy;
+    allEnemies: EffectDTOAllEnemies;
+}
