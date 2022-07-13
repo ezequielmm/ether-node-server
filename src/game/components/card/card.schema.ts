@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 import { JsonEffect } from 'src/game/effects/effects.interface';
-import { CardStatus } from 'src/game/status/interfaces';
+import { JsonStatus } from 'src/game/status/interfaces';
 import { CardRarityEnum, CardTypeEnum, CardKeywordEnum } from './card.enum';
 
 export type CardDocument = Card & Document;
@@ -32,7 +32,7 @@ export class Card {
     @Prop({ type: Object })
     properties: {
         effects: JsonEffect[];
-        statuses: CardStatus[];
+        statuses: JsonStatus[];
     };
 
     @Prop()

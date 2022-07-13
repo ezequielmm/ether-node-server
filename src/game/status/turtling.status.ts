@@ -2,27 +2,31 @@ import { DefenseArgs } from '../effects/defense.effect';
 import { defenseEffect } from '../effects/constants';
 import { EffectDTO } from '../effects/effects.interface';
 import {
-    IBaseStatus,
-    Status,
+    StatusEffectHandler,
     StatusDirection,
-    StatusDTO,
+    StatusEffectDTO,
     StatusStartsAt,
     StatusType,
+    StatusEffect,
+    StatusTrigger,
 } from './interfaces';
 import { StatusDecorator } from './status.decorator';
 
-export const turtling: Status = {
+export const turtling: StatusEffect = {
     name: 'turtling',
     type: StatusType.Buff,
     direction: StatusDirection.Incoming,
     startsAt: StatusStartsAt.NextTurn,
+    trigger: StatusTrigger.Effect,
+    effects: [defenseEffect],
 };
 @StatusDecorator({
     status: turtling,
-    effects: [defenseEffect],
 })
-export class TurtlingStatus implements IBaseStatus {
-    async handle(dto: StatusDTO<DefenseArgs>): Promise<EffectDTO<DefenseArgs>> {
+export class TurtlingStatus implements StatusEffectHandler {
+    async handle(
+        dto: StatusEffectDTO<DefenseArgs>,
+    ): Promise<EffectDTO<DefenseArgs>> {
         dto.effectDTO.args.currentValue *= 2;
         return dto.effectDTO;
     }

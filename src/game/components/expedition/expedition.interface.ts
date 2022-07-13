@@ -1,15 +1,17 @@
 import { JsonEffect } from 'src/game/effects/effects.interface';
 import {
     AttachedStatus,
-    CardStatus,
+    JsonStatus,
     StatusType,
 } from 'src/game/status/interfaces';
 import {
     CardRarityEnum,
     CardTypeEnum,
     CardKeywordEnum,
+    CardTargetedEnum,
 } from '../card/card.enum';
 import { EnemyScript } from '../enemy/enemy.interface';
+import { EnemyId } from '../enemy/enemy.type';
 import {
     ExpeditionMapNodeTypeEnum,
     ExpeditionMapNodeStatusEnum,
@@ -44,7 +46,7 @@ export interface IExpeditionPlayerStateDeckCard {
     description: string;
     properties: {
         effects: JsonEffect[];
-        statuses: CardStatus[];
+        statuses: JsonStatus[];
     };
     keywords: CardKeywordEnum[];
     showPointer: boolean;
@@ -80,3 +82,46 @@ export type IExpeditionCurrentNode = Expedition['currentNode'];
 export type IExpeditionPlayerGlobalState = Expedition['playerState'];
 export type IExpeditionPlayerCombatState =
     IExpeditionCurrentNode['data']['player'];
+
+export interface PlayerDTO {
+    type: CardTargetedEnum.Player;
+    value: {
+        globalState: IExpeditionPlayerGlobalState;
+        combatState: IExpeditionPlayerCombatState;
+    };
+}
+
+export interface EnemyDTO {
+    type: CardTargetedEnum.Enemy;
+    value: IExpeditionCurrentNodeDataEnemy;
+}
+
+export interface AllEnemiesDTO {
+    type: CardTargetedEnum.AllEnemies;
+    value: IExpeditionCurrentNodeDataEnemy[];
+}
+
+export interface RandomEnemyDTO {
+    type: CardTargetedEnum.RandomEnemy;
+    value: IExpeditionCurrentNodeDataEnemy;
+}
+
+export type SourceEntityDTO = PlayerDTO | EnemyDTO;
+export type TargetEntityDTO =
+    | PlayerDTO
+    | EnemyDTO
+    | RandomEnemyDTO
+    | AllEnemiesDTO;
+
+export type EntityDTO = SourceEntityDTO | TargetEntityDTO;
+
+export interface PlayerReferenceDTO {
+    type: CardTargetedEnum.Player;
+}
+
+export interface EnemyReferenceDTO {
+    type: CardTargetedEnum.Enemy;
+    id: EnemyId;
+}
+
+export type SourceEntityReferenceDTO = PlayerReferenceDTO | EnemyReferenceDTO;

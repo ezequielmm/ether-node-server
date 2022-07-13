@@ -1,20 +1,27 @@
 import { Injectable } from '@nestjs/common';
 import { ModulesContainer } from '@nestjs/core';
 import { InstanceWrapper } from '@nestjs/core/injector/instance-wrapper';
-import { clone } from 'lodash';
+import { clone, find, some } from 'lodash';
 import { CardTargetedEnum } from '../components/card/card.enum';
 import { Effect, EffectDTO } from '../effects/effects.interface';
 import { STATUS_METADATA } from './contants';
 import {
-    IBaseStatus,
+    StatusEffectHandler,
     StatusMetadata,
-    CardStatus,
+    JsonStatus,
     AttachStatusToPlayerDTO,
     AttachStatusToEnemyDTO,
     AttachedStatus,
     StatusCollection,
     StatusDirection,
     StatusStartsAt,
+    Status,
+    StatusEffect,
+    StatusTrigger,
+    StatusEvent,
+    StatusEventType,
+    StatusHandler,
+    StatusEventHandler,
 } from './interfaces';
 import { Model } from 'mongoose';
 import {
@@ -23,11 +30,22 @@ import {
 } from '../components/expedition/expedition.schema';
 import { InjectModel } from '@nestjs/mongoose';
 import { ExpeditionStatusEnum } from '../components/expedition/expedition.enum';
-import { EnemyId } from '../components/enemy/enemy.type';
+import { EnemyId, enemyIdField } from '../components/enemy/enemy.type';
 import { ClientId } from '../components/expedition/expedition.type';
 import { TargetId } from '../effects/effects.types';
+import { Socket } from 'socket.io';
+import {
+    EnemyReferenceDTO,
+    PlayerReferenceDTO,
+    SourceEntityDTO,
+    SourceEntityReferenceDTO,
+} from '../components/expedition/expedition.interface';
+import { ExpeditionService } from '../components/expedition/expedition.service';
 
-type StatusProvider = { metadata: StatusMetadata; instance: IBaseStatus };
+type StatusProvider = {
+    metadata: StatusMetadata;
+    instance: StatusHandler;
+};
 type StatusProviderDictionary = StatusProvider[];
 
 @Injectable()
@@ -38,6 +56,7 @@ export class StatusService {
         private readonly modulesContainer: ModulesContainer,
         @InjectModel(Expedition.name)
         private readonly expedition: Model<ExpeditionDocument>,
+        private readonly expeditionService: ExpeditionService,
     ) {}
 
     public async attachStatusToEnemy(
@@ -45,8 +64,11 @@ export class StatusService {
     ): Promise<ExpeditionDocument> {
         const { clientId, enemyId, status, currentRound } = dto;
 
-        const { attachedStatus, provider } =
-            this.convertCardStatusToAttachedStatus(status, currentRound);
+        const { attachedStatus, provider } = this.convertStatusToAttached(
+            status,
+            currentRound,
+            dto.sourceReference,
+        );
 
         const enemyField =
             typeof enemyId === 'string'
@@ -78,8 +100,11 @@ export class StatusService {
     ): Promise<ExpeditionDocument> {
         const { clientId, status, currentRound } = dto;
 
-        const { attachedStatus, provider } =
-            this.convertCardStatusToAttachedStatus(status, currentRound);
+        const { attachedStatus, provider } = this.convertStatusToAttached(
+            status,
+            currentRound,
+            dto.sourceReference,
+        );
 
         return await this.expedition.findOneAndUpdate(
             {
@@ -97,8 +122,9 @@ export class StatusService {
 
     public async attachStatuses(
         clientId: string,
-        statuses: CardStatus[],
+        statuses: JsonStatus[],
         currentRound: number,
+        sourceReference: SourceEntityReferenceDTO,
         targetId?: TargetId,
     ): Promise<void> {
         for (const status of statuses) {
@@ -106,6 +132,7 @@ export class StatusService {
                 case CardTargetedEnum.Player:
                     await this.attachStatusToPlayer({
                         clientId,
+                        sourceReference,
                         status,
                         currentRound,
                     });
@@ -114,6 +141,7 @@ export class StatusService {
                     await this.attachStatusToEnemy({
                         clientId,
                         status,
+                        sourceReference,
                         enemyId: targetId,
                         currentRound,
                     });
@@ -151,7 +179,7 @@ export class StatusService {
 
         if (!enemy.statuses) return null;
 
-        this.filterStatusCollectionByDirection(enemy.statuses, statusDirection);
+        this.filterCollectionByDirection(enemy.statuses, statusDirection);
 
         return enemy?.statuses;
     }
@@ -177,12 +205,12 @@ export class StatusService {
             .select('currentNode.data.player.statuses')
             .lean();
 
-        this.filterStatusCollectionByDirection(statuses, statusDirection);
+        this.filterCollectionByDirection(statuses, statusDirection);
 
         return statuses;
     }
 
-    public async process(
+    public async processStatusEffects(
         statuses: AttachedStatus[],
         effect: Effect['name'],
         dto: EffectDTO,
@@ -196,42 +224,80 @@ export class StatusService {
         dto = clone(dto);
 
         for (const status of statuses) {
-            const provider = this.findStatusProviderByName(status.name);
+            const provider = this.findProviderByName(status.name);
 
             if (provider) {
-                const providerMetadata = provider.metadata;
-                const providerInstance = provider.instance;
+                const metadata = provider.metadata;
+                const instance = provider.instance as StatusEffectHandler;
 
-                // Validate if the status can starts in this round
-                if (
-                    !this.canApplyStatusInThisRound(
-                        providerMetadata.status.startsAt,
-                        status.args.addedInRound,
+                if (this.isStatusEffect(metadata.status)) {
+                    const isActive = this.isActive(
+                        metadata.status.startsAt,
+                        status.addedInRound,
                         currentRound,
-                    )
-                )
-                    continue;
+                    );
+                    const compatibleEffect = some(metadata.status.effects, [
+                        'name',
+                        effect,
+                    ]);
 
-                // Validate if the status is valid for the effect
-                if (
-                    !providerMetadata.effects.some(
-                        (effectName) => effectName.name == effect,
-                    )
-                ) {
-                    continue;
+                    if (!(isActive && compatibleEffect)) continue;
+
+                    dto = await instance.handle({
+                        effectDTO: dto,
+                        args: status.args,
+                    });
                 }
-
-                dto = await providerInstance.handle({
-                    effectDTO: dto,
-                    args: status.args,
-                });
             }
         }
 
         return dto;
     }
 
-    private canApplyStatusInThisRound(
+    public async triggerStatusEvent(
+        client: Socket,
+        event: StatusEventType,
+    ): Promise<void> {
+        const currentNode = await this.expeditionService.getCurrentNode({
+            clientId: client.id,
+        });
+
+        const statuses = await this.expeditionService.findAllStatuses(
+            client.id,
+        );
+
+        for (const attachedStatus of statuses) {
+            for (const status of attachedStatus.statuses) {
+                const provider = this.findProviderByName(status.name);
+
+                if (provider) {
+                    const metadata = provider.metadata;
+                    const instance = provider.instance as StatusEventHandler;
+
+                    if (this.isStatusEvent(metadata.status)) {
+                        const isActive = this.isActive(
+                            metadata.status.startsAt,
+                            status.addedInRound,
+                            currentNode.data.round,
+                        );
+                        const compatibleEvent = metadata.status.event === event;
+
+                        if (!(isActive && compatibleEvent)) continue;
+
+                        await instance.handle({
+                            client,
+                            source: status.sourceReference,
+                            target: attachedStatus.target,
+                            currentRound: currentNode.data.round,
+                            args: status.args,
+                        });
+                    }
+                }
+            }
+        }
+    }
+
+    private isActive(
         startsAt: StatusStartsAt,
         addedInRound: number,
         currentRound,
@@ -241,14 +307,15 @@ export class StatusService {
         );
     }
 
-    private convertCardStatusToAttachedStatus(
-        jsonStatus: CardStatus,
+    private convertStatusToAttached(
+        jsonStatus: JsonStatus,
         currentRound: number,
+        sourceReference: SourceEntityReferenceDTO,
     ): {
         attachedStatus: AttachedStatus;
         provider: StatusProvider;
     } {
-        const provider = this.findStatusProviderByName(jsonStatus.name);
+        const provider = this.findProviderByName(jsonStatus.name);
 
         if (!provider) {
             throw new Error(`Status ${jsonStatus.name} does not exist`);
@@ -256,9 +323,10 @@ export class StatusService {
 
         const attachedStatus: AttachedStatus = {
             name: jsonStatus.name,
+            addedInRound: currentRound,
+            sourceReference,
             args: {
                 value: jsonStatus.args.value,
-                addedInRound: currentRound,
             },
         };
 
@@ -268,15 +336,20 @@ export class StatusService {
         };
     }
 
-    public filterStatusCollectionByDirection(
+    public filterCollectionByDirection(
         statuses: StatusCollection,
         statusDirection: StatusDirection,
     ): StatusCollection {
         statuses = clone(statuses);
 
-        const filter = (status) =>
-            this.findStatusProviderByName(status.name).metadata.status
-                .direction === statusDirection;
+        const filter = (status) => {
+            const provider = this.findProviderByName(status.name);
+
+            return (
+                this.isStatusEffect(provider.metadata.status) &&
+                provider.metadata.status.direction === statusDirection
+            );
+        };
 
         statuses.buff = statuses.buff.filter(filter);
         statuses.debuff = statuses.debuff.filter(filter);
@@ -284,7 +357,7 @@ export class StatusService {
         return statuses;
     }
 
-    private findStatusProviderByName(
+    private findProviderByName(
         name: string,
         dictionary: StatusProviderDictionary = this.getStatusProviders(),
     ): StatusProvider | undefined {
@@ -308,14 +381,14 @@ export class StatusService {
             for (const provider of module.providers.values()) {
                 if (this.isStatusProvider(provider)) {
                     const metadata = this.getStatusMetadata(provider.metatype);
-                    const instance = provider.instance as IBaseStatus;
+                    const instance = provider.instance as StatusEffectHandler;
 
-                    const oldStatusProvider = this.findStatusProviderByName(
+                    const oldProvider = this.findProviderByName(
                         metadata.status.name,
                         dictionary,
                     );
 
-                    if (oldStatusProvider) {
+                    if (oldProvider) {
                         throw new Error(
                             `Status ${metadata.status.name} already exists`,
                         );
@@ -338,8 +411,58 @@ export class StatusService {
         }
 
         const statusMetadata = this.getStatusMetadata(provider.metatype);
-        const statusInstance = provider.instance as IBaseStatus;
+        const statusInstance = provider.instance as StatusEffectHandler;
 
         return typeof statusInstance?.handle == 'function' && statusMetadata;
+    }
+
+    private isStatusEffect(status: Status): status is StatusEffect {
+        return status.trigger == StatusTrigger.Effect;
+    }
+
+    private isStatusEvent(status: Status): status is StatusEvent {
+        return status.trigger == StatusTrigger.Event;
+    }
+
+    private isPlayerReference(
+        reference: SourceEntityReferenceDTO,
+    ): reference is PlayerReferenceDTO {
+        return reference.type == CardTargetedEnum.Player;
+    }
+
+    private isEnemyReference(
+        reference: SourceEntityReferenceDTO,
+    ): reference is EnemyReferenceDTO {
+        return reference.type == CardTargetedEnum.Enemy;
+    }
+
+    public async getSourceFromReference(
+        client: Socket,
+        reference: SourceEntityReferenceDTO,
+    ): Promise<SourceEntityDTO> {
+        let source: SourceEntityDTO;
+        const expedition = await this.expeditionService.findOne({
+            clientId: client.id,
+        });
+
+        if (this.isPlayerReference(reference)) {
+            source = {
+                type: CardTargetedEnum.Player,
+                value: {
+                    globalState: expedition.playerState,
+                    combatState: expedition.currentNode.data.player,
+                },
+            };
+        } else if (this.isEnemyReference(reference)) {
+            source = {
+                type: CardTargetedEnum.Enemy,
+                value: find(expedition.currentNode.data.enemies, [
+                    enemyIdField(reference.id),
+                    reference.id,
+                ]),
+            };
+        }
+
+        return source;
     }
 }

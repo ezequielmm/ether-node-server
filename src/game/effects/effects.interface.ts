@@ -1,9 +1,13 @@
 import { Socket } from 'socket.io';
 import { CardTargetedEnum } from '../components/card/card.enum';
 import {
-    IExpeditionCurrentNodeDataEnemy,
-    IExpeditionPlayerCombatState,
-    IExpeditionPlayerGlobalState,
+    EntityDTO,
+    AllEnemiesDTO,
+    EnemyDTO,
+    PlayerDTO,
+    RandomEnemyDTO,
+    SourceEntityDTO,
+    TargetEntityDTO,
 } from '../components/expedition/expedition.interface';
 
 export interface Effect {
@@ -14,41 +18,12 @@ export interface EffectMetadata {
     effect: Effect;
 }
 
-export interface EffectDTOPlayer {
-    type: CardTargetedEnum.Player;
-    value: {
-        globalState: IExpeditionPlayerGlobalState;
-        combatState: IExpeditionPlayerCombatState;
-    };
-}
-
-export interface EffectDTOEnemy {
-    type: CardTargetedEnum.Enemy;
-    value: IExpeditionCurrentNodeDataEnemy;
-}
-
-export interface EffectDTOAllEnemies {
-    type: CardTargetedEnum.AllEnemies;
-    value: IExpeditionCurrentNodeDataEnemy[];
-}
-
-export interface EffectDTORandomEnemy {
-    type: CardTargetedEnum.RandomEnemy;
-    value: IExpeditionCurrentNodeDataEnemy;
-}
-
-export type Entity =
-    | EffectDTOPlayer
-    | EffectDTOEnemy
-    | EffectDTORandomEnemy
-    | EffectDTOAllEnemies;
-
 export interface EffectDTO<
     Args extends Record<string, any> = Record<string, any>,
 > {
     readonly client: Socket;
-    readonly source: Entity;
-    readonly target: Entity;
+    readonly source: SourceEntityDTO;
+    readonly target: TargetEntityDTO;
     args: {
         readonly initialValue: number;
         currentValue: number;
@@ -57,7 +32,7 @@ export interface EffectDTO<
 
 export interface JsonEffect {
     effect: Effect['name'];
-    target: CardTargetedEnum;
+    target?: CardTargetedEnum;
     times?: number;
     args: {
         value: number;
@@ -72,4 +47,17 @@ export interface JsonEffect {
 
 export interface IBaseEffect {
     handle(dto: EffectDTO): Promise<void>;
+}
+
+export interface ProccessEffectCollectionDTO {
+    client: Socket;
+    source: EntityDTO;
+    availableTargets: {
+        player: PlayerDTO;
+        randomEnemy?: RandomEnemyDTO;
+        selectedEnemy?: EnemyDTO;
+        allEnemies?: AllEnemiesDTO;
+    };
+    effects: JsonEffect[];
+    currentRound: number;
 }

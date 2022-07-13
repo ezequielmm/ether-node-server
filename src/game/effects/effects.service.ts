@@ -4,6 +4,15 @@ import { InstanceWrapper } from '@nestjs/core/injector/instance-wrapper';
 import { Socket } from 'socket.io';
 import { CardTargetedEnum } from '../components/card/card.enum';
 import {
+    AllEnemiesDTO,
+    EnemyDTO,
+    PlayerDTO,
+    RandomEnemyDTO,
+    EntityDTO,
+    SourceEntityDTO,
+    TargetEntityDTO,
+} from '../components/expedition/expedition.interface';
+import {
     StatusCollection,
     StatusDirection,
     StatusType,
@@ -12,13 +21,8 @@ import { StatusService } from '../status/status.service';
 import { EFFECT_METADATA } from './effects.decorator';
 import {
     EffectDTO,
-    EffectDTOEnemy,
-    EffectDTOPlayer,
-    EffectDTOAllEnemies,
-    Entity,
     IBaseEffect,
     JsonEffect,
-    EffectDTORandomEnemy,
     EffectMetadata,
 } from './effects.interface';
 
@@ -39,49 +43,30 @@ export class EffectService {
         return effect;
     }
 
-    async process(
+    async processEffectCollection(
         client: Socket,
-        source: Entity,
+        source: SourceEntityDTO,
         availableTargets: {
-            player: EffectDTOPlayer;
-            randomEnemy: EffectDTORandomEnemy;
-            selectedEnemy?: EffectDTOEnemy;
-            allEnemies: EffectDTOAllEnemies;
+            player: PlayerDTO;
+            randomEnemy?: RandomEnemyDTO;
+            selectedEnemy?: EnemyDTO;
+            allEnemies?: AllEnemiesDTO;
         },
-        effects: JsonEffect[],
+        collection: JsonEffect[],
         currentRound: number,
     ): Promise<void> {
-        for (const effect of effects) {
+        for (const effect of collection) {
             const {
                 effect: name,
                 times = 1,
                 args: { value, ...args },
             } = effect;
 
-            // Validate target
-            let target: Entity;
-
-            switch (effect.target) {
-                case CardTargetedEnum.Player:
-                    target = availableTargets.player;
-                    break;
-                case CardTargetedEnum.Self:
-                    target = source;
-                    break;
-                case CardTargetedEnum.AllEnemies:
-                    target = availableTargets.allEnemies;
-                    break;
-                case CardTargetedEnum.RandomEnemy:
-                    target = availableTargets.randomEnemy;
-                    break;
-                case CardTargetedEnum.Enemy:
-                    if (!availableTargets.selectedEnemy)
-                        throw new Error(
-                            `Effect ${name} requires a selected enemy, but none was provided`,
-                        );
-                    target = availableTargets.selectedEnemy;
-                    break;
-            }
+            const target: EntityDTO = this.defineTarget(
+                effect,
+                source,
+                availableTargets,
+            );
 
             let dto: EffectDTO = {
                 client,
@@ -94,66 +79,142 @@ export class EffectService {
                 },
             };
 
-            let outgoingStatuses: StatusCollection;
-            let incomingStatuses: StatusCollection;
-
-            // Get statuses of the source and target to modify the effects
-            if (EffectService.isPlayer(source))
-                outgoingStatuses = source.value.combatState.statuses;
-            else if (EffectService.isEnemy(source))
-                outgoingStatuses = source.value.statuses;
-
-            if (EffectService.isPlayer(target))
-                incomingStatuses = target.value.combatState.statuses;
-            else if (EffectService.isEnemy(target))
-                incomingStatuses = target.value.statuses;
-
-            outgoingStatuses =
-                this.statusService.filterStatusCollectionByDirection(
-                    outgoingStatuses,
-                    StatusDirection.Outgoing,
-                );
-
-            incomingStatuses =
-                this.statusService.filterStatusCollectionByDirection(
-                    incomingStatuses,
-                    StatusDirection.Incoming,
-                );
-
-            // Apply statuses to the outgoing effects 🔫  →
-            dto = await this.statusService.process(
-                outgoingStatuses?.[StatusType.Buff],
-                name,
-                dto,
-                currentRound,
-            );
-
-            dto = await this.statusService.process(
-                outgoingStatuses?.[StatusType.Debuff],
-                name,
-                dto,
-                currentRound,
-            );
-
-            // Apply statuses to the incoming effects → 🛡
-            dto = await this.statusService.process(
-                incomingStatuses?.[StatusType.Buff],
-                name,
-                dto,
-                currentRound,
-            );
-
-            dto = await this.statusService.process(
-                incomingStatuses?.[StatusType.Debuff],
-                name,
-                dto,
-                currentRound,
-            );
+            dto = await this.mutateDTO(source, target, dto, name, currentRound);
 
             for (let i = 0; i < times; i++) {
                 await this.findEffectByName(name).handle(dto);
             }
         }
+    }
+
+    public async processEffect(
+        client: Socket,
+        source: SourceEntityDTO,
+        target: TargetEntityDTO,
+        effect: JsonEffect,
+        currentRound: number,
+    ) {
+        const {
+            effect: name,
+            times = 1,
+            args: { value, ...args },
+        } = effect;
+
+        let dto: EffectDTO = {
+            client,
+            source,
+            target,
+            args: {
+                initialValue: value,
+                currentValue: value,
+                ...args,
+            },
+        };
+
+        dto = await this.mutateDTO(source, target, dto, name, currentRound);
+
+        for (let i = 0; i < times; i++) {
+            await this.findEffectByName(name).handle(dto);
+        }
+    }
+
+    private defineTarget(
+        effect: JsonEffect,
+        source: EntityDTO,
+        targets: {
+            player: PlayerDTO;
+            randomEnemy?: RandomEnemyDTO;
+            selectedEnemy?: EnemyDTO;
+            allEnemies?: AllEnemiesDTO;
+        },
+    ) {
+        let target: EntityDTO;
+        switch (effect.target) {
+            case CardTargetedEnum.Player:
+                target = targets.player;
+                break;
+            case CardTargetedEnum.Self:
+                target = source;
+                break;
+            case CardTargetedEnum.AllEnemies:
+                target = targets.allEnemies;
+                break;
+            case CardTargetedEnum.RandomEnemy:
+                target = targets.randomEnemy;
+                break;
+            case CardTargetedEnum.Enemy:
+                target = targets.selectedEnemy;
+                break;
+        }
+
+        if (target === undefined)
+            throw new Error(`Target not found for effect ${effect.effect}`);
+
+        return target;
+    }
+
+    private async mutateDTO(
+        source: EntityDTO,
+        target: EntityDTO,
+        dto: EffectDTO<Record<string, any>>,
+        name: string,
+        currentRound: number,
+    ) {
+        let outgoingStatuses: StatusCollection;
+        let incomingStatuses: StatusCollection;
+
+        // Get statuses of the source and target to modify the effects
+        if (EffectService.isPlayer(source))
+            outgoingStatuses = source.value.combatState.statuses;
+        else if (EffectService.isEnemy(source))
+            outgoingStatuses = source.value.statuses;
+
+        if (EffectService.isPlayer(target))
+            incomingStatuses = target.value.combatState.statuses;
+        else if (EffectService.isEnemy(target))
+            incomingStatuses = target.value.statuses;
+
+        outgoingStatuses = this.statusService.filterCollectionByDirection(
+            outgoingStatuses,
+            StatusDirection.Outgoing,
+        );
+
+        incomingStatuses = this.statusService.filterCollectionByDirection(
+            incomingStatuses,
+            StatusDirection.Incoming,
+        );
+
+        // Apply statuses to the outgoing effects 🔫  →
+        dto = await this.statusService.processStatusEffects(
+            outgoingStatuses?.[StatusType.Buff],
+            name,
+            dto,
+            currentRound,
+        );
+
+        dto = await this.statusService.processStatusEffects(
+            outgoingStatuses?.[StatusType.Debuff],
+            name,
+            dto,
+            currentRound,
+        );
+
+        // Apply statuses to the incoming effects → 🛡
+        dto = await this.statusService.processStatusEffects(
+            incomingStatuses?.[StatusType.Buff],
+            name,
+            dto,
+            currentRound,
+        );
+
+        dto = await this.statusService.processStatusEffects(
+            incomingStatuses?.[StatusType.Debuff],
+            name,
+            dto,
+            currentRound,
+        );
+
+        return dto;
     }
 
     private getAllEffectProviders(): Map<string, IBaseEffect> {
@@ -192,19 +253,19 @@ export class EffectService {
         return Reflect.getMetadata(EFFECT_METADATA, object);
     }
 
-    public static isPlayer(entity: Entity): entity is EffectDTOPlayer {
+    public static isPlayer(entity: EntityDTO): entity is PlayerDTO {
         return entity.type === CardTargetedEnum.Player;
     }
 
-    public static isEnemy(entity): entity is EffectDTOEnemy {
+    public static isEnemy(entity): entity is EnemyDTO {
         return entity.type === CardTargetedEnum.Enemy;
     }
 
-    public static isAllEnemies(entity): entity is EffectDTOAllEnemies {
+    public static isAllEnemies(entity): entity is AllEnemiesDTO {
         return entity.type === CardTargetedEnum.AllEnemies;
     }
 
-    public static isRandomEnemy(entity): entity is EffectDTORandomEnemy {
+    public static isRandomEnemy(entity): entity is RandomEnemyDTO {
         return entity.type === CardTargetedEnum.RandomEnemy;
     }
 }

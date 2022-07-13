@@ -1,9 +1,12 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
+import { ExpeditionModule } from '../components/expedition/expedition.module';
 import {
     Expedition,
     ExpeditionSchema,
 } from '../components/expedition/expedition.schema';
+import { EffectModule } from '../effects/effects.module';
+import { BurnStatus } from './burn.status';
 import { FortitudeStatus } from './fortitude.status';
 import { HeraldDelayedStatus } from './heraldDelayed.status';
 import { ResolveStatus } from './resolve.status';
@@ -20,6 +23,8 @@ import { TurtlingStatus } from './turtling.status';
                 schema: ExpeditionSchema,
             },
         ]),
+        ExpeditionModule,
+        forwardRef(() => EffectModule),
     ],
     providers: [
         StatusService,
@@ -29,6 +34,7 @@ import { TurtlingStatus } from './turtling.status';
         HeraldDelayedStatus,
         TasteOfBloodBuffStatus,
         TasteOfBloodDebuffStatus,
+        BurnStatus,
     ],
     exports: [StatusService],
 })

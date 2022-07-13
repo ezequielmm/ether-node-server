@@ -28,11 +28,17 @@ import {
     IExpeditionNode,
     IExpeditionPlayerGlobalState,
     IExpeditionPlayerStateDeckCard,
+    TargetEntityDTO,
 } from './expedition.interface';
 import { generateMap, restoreMap } from 'src/game/map/app';
 import { ClientId } from './expedition.type';
 import { EnemyService } from '../enemy/enemy.service';
 import { getRandomItemByWeight } from 'src/utils';
+import {
+    AttachedStatus,
+    StatusesGlobalCollection,
+} from 'src/game/status/interfaces';
+import { CardTargetedEnum } from '../card/card.enum';
 
 @Injectable()
 export class ExpeditionService {
@@ -331,5 +337,41 @@ export class ExpeditionService {
         });
 
         return enemies;
+    }
+
+    async findAllStatuses(clientId: string): Promise<StatusesGlobalCollection> {
+        const expedition = await this.expedition.findOne({
+            clientId,
+        });
+        const statuses: {
+            target: TargetEntityDTO;
+            statuses: AttachedStatus[];
+        }[] = [];
+
+        statuses.push({
+            target: {
+                type: CardTargetedEnum.Player,
+                value: {
+                    globalState: expedition.playerState,
+                    combatState: expedition.currentNode.data.player,
+                },
+            },
+            statuses: [
+                ...expedition.currentNode.data.player.statuses.buff,
+                ...expedition.currentNode.data.player.statuses.debuff,
+            ],
+        });
+
+        for (const enemy of expedition.currentNode.data.enemies) {
+            statuses.push({
+                target: {
+                    type: CardTargetedEnum.Enemy,
+                    value: enemy,
+                },
+                statuses: [...enemy.statuses.buff, ...enemy.statuses.debuff],
+            });
+        }
+
+        return statuses;
     }
 }

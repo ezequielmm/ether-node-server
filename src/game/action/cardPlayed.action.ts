@@ -7,13 +7,14 @@ import {
     CardTargetedEnum,
 } from '../components/card/card.enum';
 import { CardId } from '../components/card/card.type';
-import { ExpeditionService } from '../components/expedition/expedition.service';
 import {
-    EffectDTOAllEnemies,
-    EffectDTOEnemy,
-    EffectDTOPlayer,
-    EffectDTORandomEnemy,
-} from '../effects/effects.interface';
+    AllEnemiesDTO,
+    EnemyDTO,
+    PlayerDTO,
+    PlayerReferenceDTO,
+    RandomEnemyDTO,
+} from '../components/expedition/expedition.interface';
+import { ExpeditionService } from '../components/expedition/expedition.service';
 import { EffectService } from '../effects/effects.service';
 import { TargetId } from '../effects/effects.types';
 import {
@@ -87,7 +88,7 @@ export class CardPlayedAction {
                 cards: { hand },
             } = player;
 
-            const source: EffectDTOPlayer = {
+            const source: PlayerDTO = {
                 type: CardTargetedEnum.Player,
                 value: {
                     globalState: playerState,
@@ -95,7 +96,7 @@ export class CardPlayedAction {
                 },
             };
 
-            const selectedEnemy: EffectDTOEnemy = targetId && {
+            const selectedEnemy: EnemyDTO = targetId && {
                 type: CardTargetedEnum.Enemy,
                 value: enemies.find(
                     (enemy) =>
@@ -105,12 +106,12 @@ export class CardPlayedAction {
                 ),
             };
 
-            const randomEnemy: EffectDTORandomEnemy = {
+            const randomEnemy: RandomEnemyDTO = {
                 type: CardTargetedEnum.RandomEnemy,
                 value: enemies[Math.floor(Math.random() * enemies.length)],
             };
 
-            const allEnemies: EffectDTOAllEnemies = {
+            const allEnemies: AllEnemiesDTO = {
                 type: CardTargetedEnum.AllEnemies,
                 value: enemies,
             };
@@ -165,14 +166,19 @@ export class CardPlayedAction {
                     newEnergy: newEnergyAmount,
                 });
 
+                const sourceReference: PlayerReferenceDTO = {
+                    type: CardTargetedEnum.Player,
+                };
+
                 await this.statusService.attachStatuses(
                     client.id,
                     statuses,
                     round,
+                    sourceReference,
                     targetId,
                 );
 
-                await this.effectService.process(
+                await this.effectService.processEffectCollection(
                     client,
                     source,
                     availableTargets,

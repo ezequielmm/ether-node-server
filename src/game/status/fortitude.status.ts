@@ -3,28 +3,32 @@ import { defenseEffect } from '../effects/constants';
 import { DefenseArgs } from '../effects/defense.effect';
 import { EffectDTO } from '../effects/effects.interface';
 import {
-    IBaseStatus,
-    Status,
+    StatusEffectHandler,
     StatusDirection,
-    StatusDTO,
+    StatusEffectDTO,
     StatusStartsAt,
     StatusType,
+    StatusEffect,
+    StatusTrigger,
 } from './interfaces';
 import { StatusDecorator } from './status.decorator';
 
-export const fortitude: Status = {
+export const fortitude: StatusEffect = {
     name: 'fortitude',
     type: StatusType.Buff,
     direction: StatusDirection.Incoming,
     startsAt: StatusStartsAt.NextTurn,
+    trigger: StatusTrigger.Effect,
+    effects: [defenseEffect],
 };
 @StatusDecorator({
     status: fortitude,
-    effects: [defenseEffect],
 })
 @Injectable()
-export class FortitudeStatus implements IBaseStatus {
-    async handle(dto: StatusDTO<DefenseArgs>): Promise<EffectDTO<DefenseArgs>> {
+export class FortitudeStatus implements StatusEffectHandler {
+    async handle(
+        dto: StatusEffectDTO<DefenseArgs>,
+    ): Promise<EffectDTO<DefenseArgs>> {
         dto.effectDTO.args.currentValue += dto.args.value;
         return dto.effectDTO;
     }
