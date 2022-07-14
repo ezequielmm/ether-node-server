@@ -157,6 +157,7 @@ export class CardPlayedAction {
                     source,
                     effects,
                     round,
+                    targetId,
                 );
 
                 if (exhaust) {

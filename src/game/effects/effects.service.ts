@@ -56,7 +56,7 @@ export class EffectService {
         currentRound: number,
         selectedEnemy?: EnemyId,
     ): Promise<void> {
-        const targets = await this.expeditionService.findTargets(
+        const targets = this.expeditionService.findTargets(
             expedition,
             selectedEnemy,
         );
@@ -130,6 +130,7 @@ export class EffectService {
         targets: ExpeditionTargets,
     ) {
         let target: EntityDTO;
+
         switch (effect.target) {
             case CardTargetedEnum.Player:
                 target = targets.player;
