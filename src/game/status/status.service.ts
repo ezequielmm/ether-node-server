@@ -145,9 +145,7 @@ export class StatusService {
             .lean();
         const enemy = enemies.find((enemy) => enemy[enemyField] == enemyId);
 
-        if (!enemy) {
-            throw new Error(`Enemy ${enemyId} not found`);
-        }
+        if (!enemy) throw new Error(`Enemy ${enemyId} not found`);
 
         if (!enemy.statuses) return null;
 
@@ -234,7 +232,7 @@ export class StatusService {
     private canApplyStatusInThisRound(
         startsAt: StatusStartsAt,
         addedInRound: number,
-        currentRound,
+        currentRound: number,
     ): boolean {
         return !(
             startsAt == StatusStartsAt.NextTurn && addedInRound == currentRound
