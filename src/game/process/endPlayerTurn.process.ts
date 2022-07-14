@@ -7,6 +7,8 @@ import {
     StandardResponse,
     SWARMessageType,
 } from '../standardResponse/standardResponse';
+import { StatusEventType } from '../status/interfaces';
+import { StatusService } from '../status/status.service';
 import { BeginEnemyTurnProcess } from './beginEnemyTurn.process';
 
 interface EndPlayerTurnDTO {
@@ -20,6 +22,7 @@ export class EndPlayerTurnProcess {
     constructor(
         private readonly discardAllCardsAction: DiscardAllCardsAction,
         private readonly beginEnemyTurnProcess: BeginEnemyTurnProcess,
+        private readonly statusService: StatusService,
     ) {}
 
     async handle(payload: EndPlayerTurnDTO): Promise<void> {
@@ -41,7 +44,10 @@ export class EndPlayerTurnProcess {
         );
 
         await this.discardAllCardsAction.handle({ client });
-
+        await this.statusService.triggerEvent(
+            client,
+            StatusEventType.OnTurnEnd,
+        );
         await this.beginEnemyTurnProcess.handle({ client });
     }
 }

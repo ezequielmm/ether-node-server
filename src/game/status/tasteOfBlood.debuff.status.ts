@@ -2,18 +2,21 @@ import { Injectable } from '@nestjs/common';
 import { damageEffect } from '../effects/constants';
 import { HeraldDelayedStatus } from './heraldDelayed.status';
 import {
-    Status,
     StatusDirection,
+    StatusEffect,
     StatusStartsAt,
+    StatusTrigger,
     StatusType,
 } from './interfaces';
 import { StatusDecorator } from './status.decorator';
 
-export const tasteOfBloodDebuff: Status = {
+export const tasteOfBloodDebuff: StatusEffect = {
     name: 'tasteOfBlood:debuff',
     type: StatusType.Debuff,
     direction: StatusDirection.Incoming,
     startsAt: StatusStartsAt.NextTurn,
+    trigger: StatusTrigger.Effect,
+    effects: [damageEffect],
 };
 
 /**
@@ -26,7 +29,6 @@ export const tasteOfBloodDebuff: Status = {
  */
 @StatusDecorator({
     status: tasteOfBloodDebuff,
-    effects: [damageEffect],
 })
 @Injectable()
 export class TasteOfBloodDebuffStatus extends HeraldDelayedStatus {}

@@ -3,29 +3,33 @@ import { damageEffect } from '../effects/constants';
 import { DamageArgs } from '../effects/damage.effect';
 import { EffectDTO } from '../effects/effects.interface';
 import {
-    IBaseStatus,
-    Status,
+    StatusEffectHandler,
     StatusDirection,
-    StatusDTO,
+    StatusEffectDTO,
     StatusStartsAt,
     StatusType,
+    StatusEffect,
+    StatusTrigger,
 } from './interfaces';
 import { StatusDecorator } from './status.decorator';
 
-export const heraldDelayed: Status = {
+export const heraldDelayed: StatusEffect = {
     name: 'heraldDelayed',
     type: StatusType.Buff,
     direction: StatusDirection.Outgoing,
     startsAt: StatusStartsAt.NextTurn,
+    trigger: StatusTrigger.Effect,
+    effects: [damageEffect],
 };
 
 @StatusDecorator({
     status: heraldDelayed,
-    effects: [damageEffect],
 })
 @Injectable()
-export class HeraldDelayedStatus implements IBaseStatus {
-    async handle(args: StatusDTO<DamageArgs>): Promise<EffectDTO<DamageArgs>> {
+export class HeraldDelayedStatus implements StatusEffectHandler {
+    async handle(
+        args: StatusEffectDTO<DamageArgs>,
+    ): Promise<EffectDTO<DamageArgs>> {
         args.effectDTO.args.currentValue *= 2;
         return args.effectDTO;
     }

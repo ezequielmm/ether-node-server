@@ -1,5 +1,6 @@
 import { Test } from '@nestjs/testing';
 import { Socket } from 'socket.io';
+import { GetPlayerInfoAction } from '../action/getPlayerInfo.action';
 import { CardTargetedEnum } from '../components/card/card.enum';
 import { IExpeditionCurrentNodeDataEnemy } from '../components/expedition/expedition.interface';
 import { ExpeditionService } from '../components/expedition/expedition.service';
@@ -38,6 +39,10 @@ describe('DamageEffect', () => {
                 {
                     provide: ExpeditionService,
                     useValue: mockExpeditionService,
+                },
+                {
+                    provide: GetPlayerInfoAction,
+                    useValue: {},
                 },
             ],
         }).compile();
@@ -79,7 +84,7 @@ describe('DamageEffect', () => {
                 {
                     id: payload.target.value['id'],
                     hpCurrent: 95,
-                    defense: 5,
+                    defense: 0,
                 },
             ],
         });
@@ -111,7 +116,7 @@ describe('DamageEffect', () => {
                 {
                     id: payload.target.value['id'],
                     hpCurrent: 100,
-                    defense: 5,
+                    defense: 1,
                 },
             ],
         });
@@ -145,7 +150,7 @@ describe('DamageEffect', () => {
                 {
                     id: payload.target.value['id'],
                     hpCurrent: 0,
-                    defense: 5,
+                    defense: 0,
                 },
             ],
         });

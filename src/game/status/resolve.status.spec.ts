@@ -1,12 +1,12 @@
 import { DamageArgs } from '../effects/damage.effect';
 import { EffectDTO } from '../effects/effects.interface';
-import { StatusDTO } from './interfaces';
+import { StatusEffectDTO } from './interfaces';
 import { ResolveStatus } from './resolve.status';
 
 describe('ResolveStatus', () => {
     it('should calculate new positive damage', async () => {
         const status = new ResolveStatus();
-        const dto: StatusDTO<DamageArgs> = {
+        const dto: StatusEffectDTO<DamageArgs> = {
             args: {
                 value: 2,
             },
@@ -23,7 +23,7 @@ describe('ResolveStatus', () => {
 
     it('should calculate new zero damage', async () => {
         const status = new ResolveStatus();
-        const dto: StatusDTO<DamageArgs> = {
+        const dto: StatusEffectDTO<DamageArgs> = {
             args: {
                 value: -5,
             },

@@ -6,6 +6,7 @@ import {
     healEffect,
     removeDefenseEffect,
 } from 'src/game/effects/constants';
+import { burn } from 'src/game/status/burn/constants';
 import { dodge } from 'src/game/status/dodge.status';
 import { fortitude } from 'src/game/status/fortitude.status';
 import { heraldDelayed } from 'src/game/status/heraldDelayed.status';
@@ -801,6 +802,58 @@ export const Cards: Card[] = [
         },
         showPointer: false,
         isUpgraded: true,
+    },
+    {
+        cardId: 91,
+        name: 'Kindle',
+        rarity: CardRarityEnum.Common,
+        cardType: CardTypeEnum.Skill,
+        pool: 'knight',
+        energy: 1,
+        description: 'Apply 1 Burn\nDouble any Burn on all enemies',
+        keywords: [],
+        properties: {
+            effects: [
+                // TODO: Add effect for double burn on all enemies
+            ],
+            statuses: [
+                {
+                    name: burn.name,
+                    args: {
+                        attachTo: CardTargetedEnum.Enemy,
+                        value: 1,
+                    },
+                },
+            ],
+        },
+        showPointer: true,
+        isUpgraded: false,
+    },
+    {
+        cardId: 92,
+        name: 'Kindle+',
+        rarity: CardRarityEnum.Common,
+        cardType: CardTypeEnum.Skill,
+        pool: 'knight',
+        energy: 1,
+        description: 'Apply 2 Burn\nDouble any Burn on all enemies',
+        keywords: [],
+        properties: {
+            effects: [
+                // TODO: Add effect for double burn on all enemies
+            ],
+            statuses: [
+                {
+                    name: burn.name,
+                    args: {
+                        attachTo: CardTargetedEnum.Enemy,
+                        value: 2,
+                    },
+                },
+            ],
+        },
+        showPointer: true,
+        isUpgraded: false,
     },
     {
         cardId: 131,
