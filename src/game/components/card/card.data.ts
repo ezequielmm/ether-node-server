@@ -6,6 +6,7 @@ import {
     healEffect,
     removeDefenseEffect,
 } from 'src/game/effects/constants';
+import { dodge } from 'src/game/status/dodge.status';
 import { fortitude } from 'src/game/status/fortitude.status';
 import { heraldDelayed } from 'src/game/status/heraldDelayed.status';
 import { resolve } from 'src/game/status/resolve.status';
@@ -854,5 +855,29 @@ export const Cards: Card[] = [
         },
         showPointer: false,
         isUpgraded: true,
+    },
+    {
+        cardId: 41,
+        name: 'Fade',
+        rarity: CardRarityEnum.Common,
+        cardType: CardTypeEnum.Skill,
+        pool: 'knight',
+        energy: 2,
+        description: 'Dodge the next attack',
+        keywords: [],
+        properties: {
+            effects: [],
+            statuses: [
+                {
+                    name: dodge.name,
+                    args: {
+                        value: 0,
+                        attachTo: CardTargetedEnum.Player,
+                    },
+                },
+            ],
+        },
+        showPointer: false,
+        isUpgraded: false,
     },
 ];

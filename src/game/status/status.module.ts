@@ -4,6 +4,7 @@ import {
     Expedition,
     ExpeditionSchema,
 } from '../components/expedition/expedition.schema';
+import { DodgeStatus } from './dodge.status';
 import { FortitudeStatus } from './fortitude.status';
 import { HeraldDelayedStatus } from './heraldDelayed.status';
 import { ResolveStatus } from './resolve.status';
@@ -29,6 +30,7 @@ import { TurtlingStatus } from './turtling.status';
         HeraldDelayedStatus,
         TasteOfBloodBuffStatus,
         TasteOfBloodDebuffStatus,
+        DodgeStatus,
     ],
     exports: [StatusService],
 })
