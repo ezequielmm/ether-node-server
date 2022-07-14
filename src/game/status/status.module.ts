@@ -6,7 +6,7 @@ import {
     ExpeditionSchema,
 } from '../components/expedition/expedition.schema';
 import { EffectModule } from '../effects/effects.module';
-import { BurnStatus } from './burn.status';
+import { BurnStatus } from './burn/burn.status';
 import { FortitudeStatus } from './fortitude.status';
 import { HeraldDelayedStatus } from './heraldDelayed.status';
 import { ResolveStatus } from './resolve.status';

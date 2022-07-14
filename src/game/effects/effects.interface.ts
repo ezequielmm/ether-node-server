@@ -36,23 +36,17 @@ export interface JsonEffect {
     times?: number;
     args: {
         value: number;
-        // currentValue: number;
-        // targeted: CardTargetedEnum;
-        // times: number;
-        // useDefense?: boolean;
-        // useEnemies?: boolean;
-        // multiplier?: number;
     } & Record<string, any>;
 }
 
-export interface IBaseEffect {
+export interface EffectHandler {
     handle(dto: EffectDTO): Promise<void>;
 }
 
-export interface ProccessEffectCollectionDTO {
+export interface ApplyEffectCollectionDTO {
     client: Socket;
     source: EntityDTO;
-    availableTargets: {
+    targets: {
         player: PlayerDTO;
         randomEnemy?: RandomEnemyDTO;
         selectedEnemy?: EnemyDTO;
@@ -60,4 +54,11 @@ export interface ProccessEffectCollectionDTO {
     };
     effects: JsonEffect[];
     currentRound: number;
+}
+
+export interface ExpeditionTargets {
+    player: PlayerDTO;
+    randomEnemy: RandomEnemyDTO;
+    allEnemies: AllEnemiesDTO;
+    selectedEnemy?: EnemyDTO;
 }

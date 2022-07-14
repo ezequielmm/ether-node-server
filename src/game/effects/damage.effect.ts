@@ -8,7 +8,7 @@ import {
 } from '../standardResponse/standardResponse';
 import { damageEffect } from './constants';
 import { EffectDecorator } from './effects.decorator';
-import { EffectDTO, IBaseEffect } from './effects.interface';
+import { EffectDTO, EffectHandler } from './effects.interface';
 import { EffectService } from './effects.service';
 import { TargetId } from './effects.types';
 
@@ -21,7 +21,7 @@ export interface DamageArgs {
     effect: damageEffect,
 })
 @Injectable()
-export class DamageEffect implements IBaseEffect {
+export class DamageEffect implements EffectHandler {
     constructor(private readonly expeditionService: ExpeditionService) {}
 
     async handle(payload: EffectDTO<DamageArgs>): Promise<void> {

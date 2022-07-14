@@ -1,26 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import { damageEffect } from '../effects/constants';
-import { JsonEffect } from '../effects/effects.interface';
-import { EffectService } from '../effects/effects.service';
-import {
-    StatusEvent,
-    StatusEventDTO,
-    StatusEventHandler,
-    StatusEventType,
-    StatusStartsAt,
-    StatusTrigger,
-    StatusType,
-} from './interfaces';
-import { StatusDecorator } from './status.decorator';
-import { StatusService } from './status.service';
+import { damageEffect } from '../../effects/constants';
+import { JsonEffect } from '../../effects/effects.interface';
+import { EffectService } from '../../effects/effects.service';
+import { StatusEventDTO, StatusEventHandler } from '../interfaces';
+import { StatusDecorator } from '../status.decorator';
+import { StatusService } from '../status.service';
+import { burn } from './constants';
 
-export const burn: StatusEvent = {
-    name: 'burn',
-    type: StatusType.Buff,
-    startsAt: StatusStartsAt.NextTurn,
-    trigger: StatusTrigger.Event,
-    event: StatusEventType.OnTurnEnd,
-};
 @StatusDecorator({
     status: burn,
 })
@@ -43,7 +29,7 @@ export class BurnStatus implements StatusEventHandler {
             },
         };
 
-        await this.effectService.processEffect(
+        await this.effectService.apply(
             dto.client,
             source,
             dto.target,

@@ -79,7 +79,7 @@ describe('StatusService', () => {
     });
 
     it('should call status handle by effect name', async () => {
-        const result = await statusService.processStatusEffects(
+        const result = await statusService.mutateEffects(
             [
                 {
                     name: resolve.name,
@@ -99,7 +99,7 @@ describe('StatusService', () => {
     });
 
     it('should avoid to call status handle by effect name at the same turn', async () => {
-        const result = await statusService.processStatusEffects(
+        const result = await statusService.mutateEffects(
             [
                 {
                     name: resolve.name,
@@ -119,7 +119,7 @@ describe('StatusService', () => {
     });
 
     it('should call multiple status handle by effect name', async () => {
-        const result = await statusService.processStatusEffects(
+        const result = await statusService.mutateEffects(
             [
                 {
                     name: fortitude.name,
@@ -147,7 +147,7 @@ describe('StatusService', () => {
     });
 
     it('should call multiple status handle by effect name', async () => {
-        const result = await statusService.processStatusEffects(
+        const result = await statusService.mutateEffects(
             [
                 {
                     name: fortitude.name,

@@ -9,13 +9,13 @@ import {
 } from '../standardResponse/standardResponse';
 import { drawCardEffect } from './constants';
 import { EffectDecorator } from './effects.decorator';
-import { EffectDTO, IBaseEffect } from './effects.interface';
+import { EffectDTO, EffectHandler } from './effects.interface';
 
 @EffectDecorator({
     effect: drawCardEffect,
 })
 @Injectable()
-export class DrawCardEffect implements IBaseEffect {
+export class DrawCardEffect implements EffectHandler {
     private readonly logger: Logger = new Logger(DrawCardEffect.name);
 
     constructor(private readonly expeditionService: ExpeditionService) {}

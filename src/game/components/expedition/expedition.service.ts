@@ -23,11 +23,15 @@ import {
 } from './expedition.dto';
 import { ExpeditionStatusEnum } from './expedition.enum';
 import {
+    AllEnemiesDTO,
+    EnemyDTO,
     IExpeditionCurrentNode,
     IExpeditionCurrentNodeDataEnemy,
     IExpeditionNode,
     IExpeditionPlayerGlobalState,
     IExpeditionPlayerStateDeckCard,
+    PlayerDTO,
+    RandomEnemyDTO,
     TargetEntityDTO,
 } from './expedition.interface';
 import { generateMap, restoreMap } from 'src/game/map/app';
@@ -39,6 +43,9 @@ import {
     StatusesGlobalCollection,
 } from 'src/game/status/interfaces';
 import { CardTargetedEnum } from '../card/card.enum';
+import { ExpeditionTargets } from 'src/game/effects/effects.interface';
+import { EnemyId, getEnemyIdField } from '../enemy/enemy.type';
+import { find } from 'lodash';
 
 @Injectable()
 export class ExpeditionService {
@@ -339,10 +346,9 @@ export class ExpeditionService {
         return enemies;
     }
 
-    async findAllStatuses(clientId: string): Promise<StatusesGlobalCollection> {
-        const expedition = await this.expedition.findOne({
-            clientId,
-        });
+    async findAllStatuses(
+        expedition: Expedition,
+    ): Promise<StatusesGlobalCollection> {
         const statuses: {
             target: TargetEntityDTO;
             statuses: AttachedStatus[];
@@ -373,5 +379,47 @@ export class ExpeditionService {
         }
 
         return statuses;
+    }
+
+    public async findTargets(
+        expedition: Expedition,
+        enemyId?: EnemyId,
+    ): Promise<ExpeditionTargets> {
+        const {
+            playerState: globalState,
+            currentNode: {
+                data: { player: combatState, enemies },
+            },
+        } = expedition;
+
+        const player: PlayerDTO = {
+            type: CardTargetedEnum.Player,
+            value: {
+                globalState,
+                combatState,
+            },
+        };
+
+        const selectedEnemy: EnemyDTO = enemyId && {
+            type: CardTargetedEnum.Enemy,
+            value: find(enemies, [getEnemyIdField(enemyId), enemyId]),
+        };
+
+        const randomEnemy: RandomEnemyDTO = {
+            type: CardTargetedEnum.RandomEnemy,
+            value: enemies[Math.floor(Math.random() * enemies.length)],
+        };
+
+        const allEnemies: AllEnemiesDTO = {
+            type: CardTargetedEnum.AllEnemies,
+            value: enemies,
+        };
+
+        return {
+            player,
+            randomEnemy,
+            allEnemies,
+            selectedEnemy,
+        };
     }
 }

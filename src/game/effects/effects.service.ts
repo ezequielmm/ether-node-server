@@ -3,6 +3,7 @@ import { ModulesContainer } from '@nestjs/core';
 import { InstanceWrapper } from '@nestjs/core/injector/instance-wrapper';
 import { Socket } from 'socket.io';
 import { CardTargetedEnum } from '../components/card/card.enum';
+import { EnemyId } from '../components/enemy/enemy.type';
 import {
     AllEnemiesDTO,
     EnemyDTO,
@@ -12,6 +13,8 @@ import {
     SourceEntityDTO,
     TargetEntityDTO,
 } from '../components/expedition/expedition.interface';
+import { Expedition } from '../components/expedition/expedition.schema';
+import { ExpeditionService } from '../components/expedition/expedition.service';
 import {
     StatusCollection,
     StatusDirection,
@@ -21,21 +24,23 @@ import { StatusService } from '../status/status.service';
 import { EFFECT_METADATA } from './effects.decorator';
 import {
     EffectDTO,
-    IBaseEffect,
+    EffectHandler,
     JsonEffect,
     EffectMetadata,
+    ExpeditionTargets,
 } from './effects.interface';
 
 @Injectable()
 export class EffectService {
-    private cache: Map<string, IBaseEffect>;
+    private cache: Map<string, EffectHandler>;
 
     constructor(
         private readonly modulesContainer: ModulesContainer,
         private readonly statusService: StatusService,
+        private readonly expeditionService: ExpeditionService,
     ) {}
 
-    private findEffectByName(name: string): IBaseEffect {
+    private findEffectByName(name: string): EffectHandler {
         const effect = this.getAllEffectProviders().get(name);
 
         if (effect === undefined) throw new Error(`Effect ${name} not found`);
@@ -43,18 +48,19 @@ export class EffectService {
         return effect;
     }
 
-    async processEffectCollection(
+    async applyCollection(
         client: Socket,
+        expedition: Expedition,
         source: SourceEntityDTO,
-        availableTargets: {
-            player: PlayerDTO;
-            randomEnemy?: RandomEnemyDTO;
-            selectedEnemy?: EnemyDTO;
-            allEnemies?: AllEnemiesDTO;
-        },
         collection: JsonEffect[],
         currentRound: number,
+        selectedEnemy?: EnemyId,
     ): Promise<void> {
+        const targets = await this.expeditionService.findTargets(
+            expedition,
+            selectedEnemy,
+        );
+
         for (const effect of collection) {
             const {
                 effect: name,
@@ -65,7 +71,7 @@ export class EffectService {
             const target: EntityDTO = this.defineTarget(
                 effect,
                 source,
-                availableTargets,
+                targets,
             );
 
             let dto: EffectDTO = {
@@ -87,7 +93,7 @@ export class EffectService {
         }
     }
 
-    public async processEffect(
+    public async apply(
         client: Socket,
         source: SourceEntityDTO,
         target: TargetEntityDTO,
@@ -120,13 +126,8 @@ export class EffectService {
 
     private defineTarget(
         effect: JsonEffect,
-        source: EntityDTO,
-        targets: {
-            player: PlayerDTO;
-            randomEnemy?: RandomEnemyDTO;
-            selectedEnemy?: EnemyDTO;
-            allEnemies?: AllEnemiesDTO;
-        },
+        source: SourceEntityDTO,
+        targets: ExpeditionTargets,
     ) {
         let target: EntityDTO;
         switch (effect.target) {
@@ -185,14 +186,14 @@ export class EffectService {
         );
 
         // Apply statuses to the outgoing effects 🔫  →
-        dto = await this.statusService.processStatusEffects(
+        dto = await this.statusService.mutateEffects(
             outgoingStatuses?.[StatusType.Buff],
             name,
             dto,
             currentRound,
         );
 
-        dto = await this.statusService.processStatusEffects(
+        dto = await this.statusService.mutateEffects(
             outgoingStatuses?.[StatusType.Debuff],
             name,
             dto,
@@ -200,14 +201,14 @@ export class EffectService {
         );
 
         // Apply statuses to the incoming effects → 🛡
-        dto = await this.statusService.processStatusEffects(
+        dto = await this.statusService.mutateEffects(
             incomingStatuses?.[StatusType.Buff],
             name,
             dto,
             currentRound,
         );
 
-        dto = await this.statusService.processStatusEffects(
+        dto = await this.statusService.mutateEffects(
             incomingStatuses?.[StatusType.Debuff],
             name,
             dto,
@@ -217,10 +218,10 @@ export class EffectService {
         return dto;
     }
 
-    private getAllEffectProviders(): Map<string, IBaseEffect> {
+    private getAllEffectProviders(): Map<string, EffectHandler> {
         if (this.cache != undefined) return this.cache;
 
-        const effects: Map<string, IBaseEffect> = new Map();
+        const effects: Map<string, EffectHandler> = new Map();
 
         for (const module of this.modulesContainer.values()) {
             module.providers.forEach((provider) => {
@@ -232,7 +233,7 @@ export class EffectService {
 
                     effects.set(
                         metadata.effect.name,
-                        provider.instance as IBaseEffect,
+                        provider.instance as EffectHandler,
                     );
                 }
             });

@@ -30,7 +30,7 @@ import {
 } from '../components/expedition/expedition.schema';
 import { InjectModel } from '@nestjs/mongoose';
 import { ExpeditionStatusEnum } from '../components/expedition/expedition.enum';
-import { EnemyId, enemyIdField } from '../components/enemy/enemy.type';
+import { EnemyId, getEnemyIdField } from '../components/enemy/enemy.type';
 import { ClientId } from '../components/expedition/expedition.type';
 import { TargetId } from '../effects/effects.types';
 import { Socket } from 'socket.io';
@@ -210,7 +210,7 @@ export class StatusService {
         return statuses;
     }
 
-    public async processStatusEffects(
+    public async mutateEffects(
         statuses: AttachedStatus[],
         effect: Effect['name'],
         dto: EffectDTO,
@@ -254,16 +254,17 @@ export class StatusService {
         return dto;
     }
 
-    public async triggerStatusEvent(
+    public async triggerEvent(
         client: Socket,
         event: StatusEventType,
     ): Promise<void> {
-        const currentNode = await this.expeditionService.getCurrentNode({
+        const expedition = await this.expeditionService.findOne({
             clientId: client.id,
         });
+        const currentNode = expedition.currentNode;
 
         const statuses = await this.expeditionService.findAllStatuses(
-            client.id,
+            expedition,
         );
 
         for (const attachedStatus of statuses) {
@@ -457,7 +458,7 @@ export class StatusService {
             source = {
                 type: CardTargetedEnum.Enemy,
                 value: find(expedition.currentNode.data.enemies, [
-                    enemyIdField(reference.id),
+                    getEnemyIdField(reference.id),
                     reference.id,
                 ]),
             };
