@@ -7,7 +7,7 @@ export interface EnemyIntention {
     type: EnemyIntentionType;
     target: CardTargetedEnum;
     value: any;
-    effect?: JsonEffect[];
+    effects?: JsonEffect[];
     status?: JsonStatus[];
 }
 

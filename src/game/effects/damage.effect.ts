@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Socket } from 'socket.io';
 import { GetPlayerInfoAction } from '../action/getPlayerInfo.action';
+import { getEnemyIdField } from '../components/enemy/enemy.type';
 import { IExpeditionCurrentNodeDataEnemy } from '../components/expedition/expedition.interface';
 import { ExpeditionService } from '../components/expedition/expedition.service';
 import {
@@ -78,9 +79,7 @@ export class DamageEffect implements EffectHandler {
         let dataResponse = null;
 
         enemies.forEach((enemy) => {
-            const field = typeof targetId === 'string' ? 'id' : 'enemyId';
-
-            if (enemy[field] === targetId) {
+            if (enemy[getEnemyIdField(targetId)] === targetId) {
                 enemy = this.calculateEnemyDamage(enemy, damage);
 
                 dataResponse = [

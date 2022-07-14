@@ -381,10 +381,10 @@ export class ExpeditionService {
         return statuses;
     }
 
-    public async findTargets(
+    public findTargets(
         expedition: Expedition,
         enemyId?: EnemyId,
-    ): Promise<ExpeditionTargets> {
+    ): ExpeditionTargets {
         const {
             playerState: globalState,
             currentNode: {
