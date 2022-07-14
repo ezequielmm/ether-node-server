@@ -8,7 +8,7 @@ import {
 
 export const burn: StatusEvent = {
     name: 'burn',
-    type: StatusType.Buff,
+    type: StatusType.Debuff,
     startsAt: StatusStartsAt.Instantly,
     trigger: StatusTrigger.Event,
     event: StatusEventType.OnTurnEnd,
