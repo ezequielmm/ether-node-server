@@ -854,4 +854,58 @@ export const Cards: Card[] = [
         showPointer: true,
         isUpgraded: false,
     },
+    {
+        cardId: 131,
+        name: 'Shake it Off',
+        rarity: CardRarityEnum.Rare,
+        cardType: CardTypeEnum.Defend,
+        pool: 'knight',
+        energy: 1,
+        description:
+            'Gain defense equal to the number of cards in your discard pile.',
+        keywords: [],
+        properties: {
+            effects: [
+                {
+                    effect: defenseEffect.name,
+                    target: CardTargetedEnum.Player,
+                    args: {
+                        value: 0,
+                        useDiscardPileAsValue: true,
+                        multiplier: 1,
+                    },
+                },
+            ],
+            statuses: [],
+        },
+        showPointer: false,
+        isUpgraded: false,
+    },
+    {
+        cardId: 132,
+        name: 'Shake it Off+',
+        rarity: CardRarityEnum.Rare,
+        cardType: CardTypeEnum.Defend,
+        pool: 'knight',
+        energy: 1,
+        description:
+            'Gain defense equal to twice the number of cards in your discard pile.',
+        keywords: [],
+        properties: {
+            effects: [
+                {
+                    effect: defenseEffect.name,
+                    target: CardTargetedEnum.Player,
+                    args: {
+                        value: 0,
+                        useDiscardPileAsValue: true,
+                        multiplier: 2,
+                    },
+                },
+            ],
+            statuses: [],
+        },
+        showPointer: false,
+        isUpgraded: true,
+    },
 ];

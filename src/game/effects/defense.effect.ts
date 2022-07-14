@@ -6,6 +6,8 @@ import { EffectDTO, EffectHandler } from './effects.interface';
 
 export interface DefenseArgs {
     useEnemies: boolean;
+    useDiscardPileAsValue: boolean;
+    multiplier: number;
 }
 
 @EffectDecorator({
@@ -18,11 +20,18 @@ export class DefenseEffect implements EffectHandler {
     async handle(payload: EffectDTO<DefenseArgs>): Promise<void> {
         const {
             client,
-            args: { currentValue, useEnemies },
+            args: {
+                currentValue,
+                useEnemies,
+                useDiscardPileAsValue,
+                multiplier,
+            },
         } = payload;
 
         let newDefense = currentValue;
 
+        // check if the card uses the amount of enemies as
+        // value to calculate the defense amount to apply
         if (useEnemies !== undefined && useEnemies) {
             const {
                 data: { enemies },
@@ -31,6 +40,24 @@ export class DefenseEffect implements EffectHandler {
             });
 
             newDefense = currentValue * enemies.length;
+        }
+
+        // check if the card uses the amount of cards from the
+        // discard pile as a value to set the defense
+        if (useDiscardPileAsValue !== undefined && useDiscardPileAsValue) {
+            const {
+                data: {
+                    player: {
+                        cards: { discard },
+                    },
+                },
+            } = await this.expeditionService.getCurrentNode({
+                clientId: client.id,
+            });
+
+            const discardAmount = discard.length;
+
+            newDefense = currentValue + discardAmount * multiplier;
         }
 
         await this.expeditionService.setPlayerDefense({

@@ -5,6 +5,7 @@ import { CharacterModule } from '../components/character/character.module';
 import { EnemyModule } from '../components/enemy/enemy.module';
 import { ExpeditionModule } from '../components/expedition/expedition.module';
 import { SettingsModule } from '../components/settings/settings.module';
+import { EffectModule } from '../effects/effects.module';
 import { StatusModule } from '../status/status.module';
 import { BeginEnemyTurnProcess } from './beginEnemyTurn.process';
 import { BeginPlayerTurnProcess } from './beginPlayerTurn.process';
@@ -26,6 +27,7 @@ import { SendEnemyIntentProcess } from './sendEnemyIntents.process';
         forwardRef(() => ActionModule),
         CharacterModule,
         StatusModule,
+        EffectModule,
     ],
     providers: [
         SendEnemyIntentProcess,

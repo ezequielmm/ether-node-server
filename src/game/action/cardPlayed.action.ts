@@ -15,6 +15,12 @@ import {
     RandomEnemyDTO,
 } from '../components/expedition/expedition.interface';
 import { ExpeditionService } from '../components/expedition/expedition.service';
+import {
+    EffectDTOAllEnemies,
+    EffectDTOEnemy,
+    EffectDTOPlayer,
+    EffectDTORandomEnemy,
+} from '../effects/effects.interface';
 import { EffectService } from '../effects/effects.service';
 import { TargetId } from '../effects/effects.types';
 import {

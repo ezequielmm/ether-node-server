@@ -30,54 +30,126 @@ export class DrawCardEffect implements EffectHandler {
         this.drawCard(client, currentValue);
     }
 
-    private async drawCard(client: Socket, amount: number): Promise<void> {
+    private async drawCard(client: Socket, cardsTotake: number): Promise<void> {
         // Get cards from current node
         const {
             data: {
                 player: {
-                    cards: { draw, hand },
+                    cards: { draw, hand, discard },
                 },
             },
         } = await this.expeditionService.getCurrentNode({
             clientId: client.id,
         });
 
-        const cardsToAdd = draw.slice(draw.length - amount);
+        // First we check if the draw pile more than the amount
+        // of cards required
 
-        const newHand = [...hand, ...cardsToAdd];
+        if (draw.length >= cardsTotake) {
+            const cardsToAdd = draw.slice(draw.length - cardsTotake);
 
-        const newDraw = removeCardsFromPile({
-            originalPile: draw,
-            cardsToRemove: newHand,
-        });
+            const newHand = [...hand, ...cardsToAdd];
 
-        await this.expeditionService.updateHandPiles({
-            clientId: client.id,
-            hand: newHand,
-            draw: newDraw,
-        });
+            const newDraw = removeCardsFromPile({
+                originalPile: draw,
+                cardsToRemove: newHand,
+            });
 
-        const cardMoves = cardsToAdd.map((card) => {
-            return {
-                source: 'draw',
-                destination: 'hand',
-                id: card.id,
-            };
-        });
+            await this.expeditionService.updateHandPiles({
+                clientId: client.id,
+                hand: newHand,
+                draw: newDraw,
+            });
 
-        this.logger.log(
-            `Sent message PutData to client ${client.id}: ${SWARAction.MoveCard}`,
-        );
+            const cardMoves = cardsToAdd.map((card) => {
+                return {
+                    source: 'draw',
+                    destination: 'hand',
+                    id: card.id,
+                };
+            });
 
-        client.emit(
-            'PutData',
-            JSON.stringify(
-                StandardResponse.respond({
-                    message_type: SWARMessageType.PlayerAffected,
-                    action: SWARAction.MoveCard,
-                    data: cardMoves,
-                }),
-            ),
-        );
+            this.logger.log(
+                `Sent message PutData to client ${client.id}: ${SWARAction.MoveCard}`,
+            );
+
+            client.emit(
+                'PutData',
+                JSON.stringify(
+                    StandardResponse.respond({
+                        message_type: SWARMessageType.PlayerAffected,
+                        action: SWARAction.MoveCard,
+                        data: cardMoves,
+                    }),
+                ),
+            );
+        } else {
+            // If not, we move all the discard pile to the draw pile
+            // and draw the desired card to the hand pile
+
+            let newDraw = [...discard, ...draw];
+
+            const moveFromDiscardToDraw = discard.map((card) => {
+                return {
+                    source: 'discard',
+                    destination: 'draw',
+                    cardId: card.id,
+                };
+            });
+
+            this.logger.log(
+                `Sent message PutData to client ${client.id}: ${SWARAction.MoveCard}`,
+            );
+
+            client.emit(
+                'PutData',
+                JSON.stringify(
+                    StandardResponse.respond({
+                        message_type: SWARMessageType.PlayerAffected,
+                        action: SWARAction.MoveCard,
+                        data: moveFromDiscardToDraw,
+                    }),
+                ),
+            );
+
+            const newHand = newDraw
+                .sort(() => 0.5 - Math.random())
+                .slice(0, cardsTotake);
+
+            newDraw = removeCardsFromPile({
+                originalPile: draw,
+                cardsToRemove: newHand,
+            });
+
+            const moveFromDrawToHand = newHand.map((card) => {
+                return {
+                    source: 'draw',
+                    destination: 'hand',
+                    cardId: card.id,
+                };
+            });
+
+            await this.expeditionService.updateHandPiles({
+                clientId: client.id,
+                draw: newDraw,
+                hand: newHand,
+                discard: [],
+            });
+
+            this.logger.log(
+                `Sent message PutData to client ${client.id}: ${SWARAction.MoveCard}`,
+            );
+
+            client.emit(
+                'PutData',
+                JSON.stringify(
+                    StandardResponse.respond({
+                        message_type: SWARMessageType.PlayerAffected,
+                        action: SWARAction.MoveCard,
+                        data: moveFromDrawToHand,
+                    }),
+                ),
+            );
+        }
     }
 }

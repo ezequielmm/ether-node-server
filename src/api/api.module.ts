@@ -1,8 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ProfileController } from './profile.controller';
 import { ExpeditionController } from './expedition.controller';
-import { CharacterController } from './character.controller';
-import { TrinketController } from './trinket.controller';
 import { AuthGatewayModule } from '../authGateway/authGateway.module';
 import { CharacterModule } from '../game/components/character/character.module';
 import { TrinketModule } from '../game/components/trinket/trinket.module';
@@ -17,11 +15,6 @@ import { ProcessModule } from 'src/game/process/process.module';
         ExpeditionModule,
         ProcessModule,
     ],
-    controllers: [
-        ProfileController,
-        ExpeditionController,
-        CharacterController,
-        TrinketController,
-    ],
+    controllers: [ProfileController, ExpeditionController],
 })
 export class ApiModule {}
