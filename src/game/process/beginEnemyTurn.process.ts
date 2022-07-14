@@ -2,11 +2,9 @@ import { Injectable, Logger } from '@nestjs/common';
 import { Socket } from 'socket.io';
 import { CardTargetedEnum } from '../components/card/card.enum';
 import { CombatTurnEnum } from '../components/expedition/expedition.enum';
+import { EnemyDTO } from '../components/expedition/expedition.interface';
 import { ExpeditionService } from '../components/expedition/expedition.service';
-import {
-    EffectDTOEnemy,
-    EffectAvailableTargets,
-} from '../effects/effects.interface';
+import { ExpeditionTargets } from '../effects/effects.interface';
 import { EffectService } from '../effects/effects.service';
 import {
     SWARAction,
@@ -30,15 +28,16 @@ export class BeginEnemyTurnProcess {
     async handle(payload: BeginEnemyTurnDTO): Promise<void> {
         const { client } = payload;
 
-        const {
-            playerState,
-            currentNode: {
-                data: { enemies, round, player },
-            },
-        } = await this.expeditionService.setCombatTurn({
+        const expedition = await this.expeditionService.setCombatTurn({
             clientId: client.id,
             playing: CombatTurnEnum.Enemy,
         });
+
+        const {
+            currentNode: {
+                data: { enemies, round },
+            },
+        } = expedition;
 
         this.logger.log(
             `Sent message PutData to client ${client.id}: ${SWARAction.ChangeTurn}`,
@@ -61,31 +60,19 @@ export class BeginEnemyTurnProcess {
                 currentScript: { intentions },
             } = enemy;
 
-            const source: EffectDTOEnemy = {
+            const source: EnemyDTO = {
                 type: CardTargetedEnum.Enemy,
                 value: enemy,
             };
 
-            const availableTargets: EffectAvailableTargets = {
-                player: {
-                    type: CardTargetedEnum.Player,
-                    value: {
-                        globalState: playerState,
-                        combatState: player,
-                    },
-                },
-                randomEnemy: null,
-                allEnemies: null,
-            };
-
             intentions.forEach(async (intention) => {
-                const { effect } = intention;
+                const { effects } = intention;
 
-                await this.effectService.process(
+                await this.effectService.applyCollection(
                     client,
+                    expedition,
                     source,
-                    availableTargets,
-                    effect,
+                    effects,
                     round,
                 );
             });

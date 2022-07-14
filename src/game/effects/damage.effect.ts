@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Socket } from 'socket.io';
 import { GetPlayerInfoAction } from '../action/getPlayerInfo.action';
+import { getEnemyIdField } from '../components/enemy/enemy.type';
 import { IExpeditionCurrentNodeDataEnemy } from '../components/expedition/expedition.interface';
 import { ExpeditionService } from '../components/expedition/expedition.service';
 import {
@@ -10,7 +11,7 @@ import {
 } from '../standardResponse/standardResponse';
 import { damageEffect } from './constants';
 import { EffectDecorator } from './effects.decorator';
-import { EffectDTO, IBaseEffect } from './effects.interface';
+import { EffectDTO, EffectHandler } from './effects.interface';
 import { EffectService } from './effects.service';
 import { TargetId } from './effects.types';
 
@@ -23,7 +24,7 @@ export interface DamageArgs {
     effect: damageEffect,
 })
 @Injectable()
-export class DamageEffect implements IBaseEffect {
+export class DamageEffect implements EffectHandler {
     private readonly logger: Logger = new Logger(DamageEffect.name);
 
     constructor(
@@ -78,9 +79,7 @@ export class DamageEffect implements IBaseEffect {
         let dataResponse = null;
 
         enemies.forEach((enemy) => {
-            const field = typeof targetId === 'string' ? 'id' : 'enemyId';
-
-            if (enemy[field] === targetId) {
+            if (enemy[getEnemyIdField(targetId)] === targetId) {
                 enemy = this.calculateEnemyDamage(enemy, damage);
 
                 dataResponse = [

@@ -3,7 +3,7 @@ import { ExpeditionService } from '../components/expedition/expedition.service';
 import { ClientId } from '../components/expedition/expedition.type';
 import { removeDefenseEffect } from './constants';
 import { EffectDecorator } from './effects.decorator';
-import { EffectDTO, IBaseEffect } from './effects.interface';
+import { EffectDTO, EffectHandler } from './effects.interface';
 import { EffectService } from './effects.service';
 import { TargetId } from './effects.types';
 
@@ -11,7 +11,7 @@ import { TargetId } from './effects.types';
     effect: removeDefenseEffect,
 })
 @Injectable()
-export class RemoveDefenseEffect implements IBaseEffect {
+export class RemoveDefenseEffect implements EffectHandler {
     constructor(private readonly expeditionService: ExpeditionService) {}
 
     async handle(payload: EffectDTO): Promise<void> {

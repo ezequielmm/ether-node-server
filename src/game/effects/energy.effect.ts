@@ -2,13 +2,13 @@ import { Injectable } from '@nestjs/common';
 import { ExpeditionService } from '../components/expedition/expedition.service';
 import { energyEffect } from './constants';
 import { EffectDecorator } from './effects.decorator';
-import { EffectDTO, IBaseEffect } from './effects.interface';
+import { EffectDTO, EffectHandler } from './effects.interface';
 
 @EffectDecorator({
     effect: energyEffect,
 })
 @Injectable()
-export class EnergyEffect implements IBaseEffect {
+export class EnergyEffect implements EffectHandler {
     constructor(private readonly expeditionService: ExpeditionService) {}
 
     async handle(payload: EffectDTO): Promise<void> {

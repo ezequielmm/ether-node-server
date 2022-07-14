@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { ExpeditionService } from '../components/expedition/expedition.service';
 import { healEffect } from './constants';
 import { EffectDecorator } from './effects.decorator';
-import { EffectDTO, IBaseEffect } from './effects.interface';
+import { EffectDTO, EffectHandler } from './effects.interface';
 import { EffectService } from './effects.service';
 
 export interface HealArgs {
@@ -13,7 +13,7 @@ export interface HealArgs {
     effect: healEffect,
 })
 @Injectable()
-export class HealEffect implements IBaseEffect {
+export class HealEffect implements EffectHandler {
     constructor(private readonly expeditionService: ExpeditionService) {}
 
     async handle(payload: EffectDTO<HealArgs>): Promise<void> {
