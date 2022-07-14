@@ -66,10 +66,31 @@ export class BeginPlayerTurnProcess {
             },
         } = await this.settingsService.getSettings();
 
-        await this.expeditionService.updatePlayerEnergy({
+        const {
+            currentNode: {
+                data: {
+                    player: { energy, energyMax },
+                },
+            },
+        } = await this.expeditionService.updatePlayerEnergy({
             clientId: client.id,
             newEnergy: initial,
         });
+
+        this.logger.log(
+            `Sent message PutData to client ${client.id}: ${SWARAction.ChangeTurn}`,
+        );
+
+        client.emit(
+            'PutData',
+            JSON.stringify(
+                StandardResponse.respond({
+                    message_type: SWARMessageType.PlayerAffected,
+                    action: SWARAction.UpdateEnergy,
+                    data: [energy, energyMax],
+                }),
+            ),
+        );
 
         await this.drawCardProcess.handle({ client, cardsTotake: handSize });
         await this.expeditionService.calculateNewEnemyIntentions(client.id);
