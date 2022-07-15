@@ -31,10 +31,10 @@ export class BurnStatus implements StatusEventHandler {
 
         await this.effectService.apply(
             dto.client,
+            dto.expedition,
             source,
             dto.target,
             effect,
-            dto.currentRound,
         );
     }
 }

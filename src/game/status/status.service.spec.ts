@@ -1,15 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import { EffectDTO } from '../effects/effects.interface';
-import { StatusEffectHandler, StatusEffectDTO } from './interfaces';
+import { StatusEffectHandler, StatusEffectDTO, StatusType } from './interfaces';
 import { StatusService } from './status.service';
 import { getModelToken } from '@nestjs/mongoose';
 import { Expedition } from '../components/expedition/expedition.schema';
 import { StatusDecorator } from './status.decorator';
-import { resolve } from './resolve.status';
-import { fortitude } from './fortitude.status';
+import { resolve } from './resolve/constants';
+import { fortitude } from './fortitude/constants';
 import { damageEffect } from '../effects/constants';
-import { heraldDelayed } from './heraldDelayed.status';
+import { heraldDelayed } from './heraldDelayed/constants';
 import { SourceEntityReferenceDTO } from '../components/expedition/expedition.interface';
 import { ExpeditionService } from '../components/expedition/expedition.service';
 
@@ -79,105 +79,121 @@ describe('StatusService', () => {
     });
 
     it('should call status handle by effect name', async () => {
-        const result = await statusService.mutateEffects(
-            [
-                {
-                    name: resolve.name,
-                    addedInRound: 1,
-                    sourceReference: {} as SourceEntityReferenceDTO,
-                    args: {
-                        value: null,
+        const result = await statusService.mutateEffects({
+            expedition: { currentNode: { data: { round: 2 } } } as Expedition,
+            collection: {
+                [StatusType.Buff]: [
+                    {
+                        name: resolve.name,
+                        addedInRound: 1,
+                        sourceReference: {} as SourceEntityReferenceDTO,
+                        args: {
+                            value: null,
+                        },
                     },
-                },
-            ],
-            damageEffect.name,
-            effectDTO,
-            2,
-        );
+                ],
+                [StatusType.Debuff]: [],
+            },
+            collectionOwner: undefined,
+            effect: damageEffect.name,
+            effectDTO: effectDTO,
+        });
 
         expect(result.args.status).toBe('A');
     });
 
     it('should avoid to call status handle by effect name at the same turn', async () => {
-        const result = await statusService.mutateEffects(
-            [
-                {
-                    name: resolve.name,
-                    addedInRound: 1,
-                    sourceReference: {} as SourceEntityReferenceDTO,
-                    args: {
-                        value: null,
+        const result = await statusService.mutateEffects({
+            expedition: { currentNode: { data: { round: 1 } } } as Expedition,
+            collection: {
+                [StatusType.Buff]: [
+                    {
+                        name: resolve.name,
+                        addedInRound: 1,
+                        sourceReference: {} as SourceEntityReferenceDTO,
+                        args: {
+                            value: null,
+                        },
                     },
-                },
-            ],
-            damageEffect.name,
-            effectDTO,
-            1,
-        );
+                ],
+                [StatusType.Debuff]: [],
+            },
+            collectionOwner: undefined,
+            effect: damageEffect.name,
+            effectDTO: effectDTO,
+        });
 
         expect(result.args.status).toBe(undefined);
     });
 
     it('should call multiple status handle by effect name', async () => {
-        const result = await statusService.mutateEffects(
-            [
-                {
-                    name: fortitude.name,
-                    addedInRound: 1,
-                    sourceReference: {} as SourceEntityReferenceDTO,
-                    args: {
-                        value: null,
+        const result = await statusService.mutateEffects({
+            expedition: { currentNode: { data: { round: 2 } } } as Expedition,
+            collection: {
+                [StatusType.Buff]: [
+                    {
+                        name: fortitude.name,
+                        addedInRound: 1,
+                        sourceReference: {} as SourceEntityReferenceDTO,
+                        args: {
+                            value: null,
+                        },
                     },
-                },
-                {
-                    name: resolve.name,
-                    addedInRound: 1,
-                    sourceReference: {} as SourceEntityReferenceDTO,
-                    args: {
-                        value: null,
+                    {
+                        name: resolve.name,
+                        addedInRound: 1,
+                        sourceReference: {} as SourceEntityReferenceDTO,
+                        args: {
+                            value: null,
+                        },
                     },
-                },
-            ],
-            damageEffect.name,
-            effectDTO,
-            2,
-        );
+                ],
+                [StatusType.Debuff]: [],
+            },
+            collectionOwner: undefined,
+            effect: damageEffect.name,
+            effectDTO: effectDTO,
+        });
 
         expect(result.args.status).toBe('A');
     });
 
     it('should call multiple status handle by effect name', async () => {
-        const result = await statusService.mutateEffects(
-            [
-                {
-                    name: fortitude.name,
-                    addedInRound: 1,
-                    sourceReference: {} as SourceEntityReferenceDTO,
-                    args: {
-                        value: null,
+        const result = await statusService.mutateEffects({
+            expedition: { currentNode: { data: { round: 2 } } } as Expedition,
+            collection: {
+                [StatusType.Buff]: [
+                    {
+                        name: fortitude.name,
+                        addedInRound: 1,
+                        sourceReference: {} as SourceEntityReferenceDTO,
+                        args: {
+                            value: null,
+                        },
                     },
-                },
-                {
-                    name: resolve.name,
-                    addedInRound: 1,
-                    sourceReference: {} as SourceEntityReferenceDTO,
-                    args: {
-                        value: null,
+                    {
+                        name: resolve.name,
+                        addedInRound: 1,
+                        sourceReference: {} as SourceEntityReferenceDTO,
+                        args: {
+                            value: null,
+                        },
                     },
-                },
-                {
-                    name: heraldDelayed.name,
-                    addedInRound: 1,
-                    sourceReference: {} as SourceEntityReferenceDTO,
-                    args: {
-                        value: null,
+                    {
+                        name: heraldDelayed.name,
+                        addedInRound: 1,
+                        sourceReference: {} as SourceEntityReferenceDTO,
+                        args: {
+                            value: null,
+                        },
                     },
-                },
-            ],
-            damageEffect.name,
-            effectDTO,
-            2,
-        );
+                ],
+                [StatusType.Debuff]: [],
+            },
+            collectionOwner: undefined,
+            effect: damageEffect.name,
+            effectDTO: effectDTO,
+        });
 
         expect(result.args.status).toBe('AC');
     });

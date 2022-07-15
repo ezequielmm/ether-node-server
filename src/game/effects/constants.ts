@@ -23,3 +23,7 @@ export const healEffect: Effect = {
 export const removeDefenseEffect: Effect = {
     name: 'removeDefense',
 };
+
+export const dodgeEffect: Effect = {
+    name: 'dodge',
+};

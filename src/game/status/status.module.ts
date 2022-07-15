@@ -7,13 +7,14 @@ import {
 } from '../components/expedition/expedition.schema';
 import { EffectModule } from '../effects/effects.module';
 import { BurnStatus } from './burn/burn.status';
-import { FortitudeStatus } from './fortitude.status';
-import { HeraldDelayedStatus } from './heraldDelayed.status';
-import { ResolveStatus } from './resolve.status';
+import { DodgeStatus } from './dodge/dodge.status';
+import { FortitudeStatus } from './fortitude/fortitude.status';
+import { HeraldDelayedStatus } from './heraldDelayed/heraldDelayed.status';
+import { ResolveStatus } from './resolve/resolve.status';
 import { StatusService } from './status.service';
-import { TasteOfBloodBuffStatus } from './tasteOfBlood.buff.status';
-import { TasteOfBloodDebuffStatus } from './tasteOfBlood.debuff.status';
-import { TurtlingStatus } from './turtling.status';
+import { TasteOfBloodBuffStatus } from './tasteOfBlood/tasteOfBlood.buff.status';
+import { TasteOfBloodDebuffStatus } from './tasteOfBlood/tasteOfBlood.debuff.status';
+import { TurtlingStatus } from './turtling/turtling.status';
 
 @Module({
     imports: [
@@ -35,6 +36,7 @@ import { TurtlingStatus } from './turtling.status';
         TasteOfBloodBuffStatus,
         TasteOfBloodDebuffStatus,
         BurnStatus,
+        DodgeStatus,
     ],
     exports: [StatusService],
 })

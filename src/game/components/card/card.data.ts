@@ -7,12 +7,15 @@ import {
     removeDefenseEffect,
 } from 'src/game/effects/constants';
 import { burn } from 'src/game/status/burn/constants';
-import { fortitude } from 'src/game/status/fortitude.status';
-import { heraldDelayed } from 'src/game/status/heraldDelayed.status';
-import { resolve } from 'src/game/status/resolve.status';
-import { tasteOfBloodBuff } from 'src/game/status/tasteOfBlood.buff.status';
-import { tasteOfBloodDebuff } from 'src/game/status/tasteOfBlood.debuff.status';
-import { turtling } from 'src/game/status/turtling.status';
+import { dodge } from 'src/game/status/dodge/constants';
+import { fortitude } from 'src/game/status/fortitude/constants';
+import { heraldDelayed } from 'src/game/status/heraldDelayed/constants';
+import { resolve } from 'src/game/status/resolve/constants';
+import {
+    tasteOfBloodBuff,
+    tasteOfBloodDebuff,
+} from 'src/game/status/tasteOfBlood/constants';
+import { turtling } from 'src/game/status/turtling/constants';
 import {
     CardRarityEnum,
     CardTypeEnum,
@@ -907,6 +910,30 @@ export const Cards: Card[] = [
         },
         showPointer: false,
         isUpgraded: true,
+    },
+    {
+        cardId: 41,
+        name: 'Fade',
+        rarity: CardRarityEnum.Common,
+        cardType: CardTypeEnum.Skill,
+        pool: 'knight',
+        energy: 2,
+        description: 'Dodge the next attack',
+        keywords: [],
+        properties: {
+            effects: [],
+            statuses: [
+                {
+                    name: dodge.name,
+                    args: {
+                        value: 1,
+                        attachTo: CardTargetedEnum.Player,
+                    },
+                },
+            ],
+        },
+        showPointer: false,
+        isUpgraded: false,
     },
     {
         cardId: 129,

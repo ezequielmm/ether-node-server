@@ -1,6 +1,6 @@
-import { DamageArgs } from '../effects/damage.effect';
-import { EffectDTO } from '../effects/effects.interface';
-import { StatusEffectDTO } from './interfaces';
+import { DamageArgs } from '../../effects/damage.effect';
+import { EffectDTO } from '../../effects/effects.interface';
+import { StatusEffectDTO } from '../interfaces';
 import { ResolveStatus } from './resolve.status';
 
 describe('ResolveStatus', () => {
@@ -16,6 +16,8 @@ describe('ResolveStatus', () => {
                     currentValue: 3,
                 },
             } as EffectDTO<DamageArgs>,
+            update: jest.fn(),
+            remove: jest.fn(),
         };
         const result = await status.handle(dto);
         expect(result.args.currentValue).toBe(5);
@@ -33,6 +35,8 @@ describe('ResolveStatus', () => {
                     currentValue: 3,
                 },
             } as EffectDTO<DamageArgs>,
+            update: jest.fn(),
+            remove: jest.fn(),
         };
         const result = await status.handle(dto);
         expect(result.args.currentValue).toBe(0);

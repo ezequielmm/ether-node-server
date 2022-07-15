@@ -15,11 +15,7 @@ import {
 } from '../components/expedition/expedition.interface';
 import { Expedition } from '../components/expedition/expedition.schema';
 import { ExpeditionService } from '../components/expedition/expedition.service';
-import {
-    StatusCollection,
-    StatusDirection,
-    StatusType,
-} from '../status/interfaces';
+import { StatusCollection, StatusDirection } from '../status/interfaces';
 import { StatusService } from '../status/status.service';
 import { EFFECT_METADATA } from './effects.decorator';
 import {
@@ -28,6 +24,7 @@ import {
     JsonEffect,
     EffectMetadata,
     ExpeditionTargets,
+    Effect,
 } from './effects.interface';
 
 @Injectable()
@@ -53,7 +50,6 @@ export class EffectService {
         expedition: Expedition,
         source: SourceEntityDTO,
         collection: JsonEffect[],
-        currentRound: number,
         selectedEnemy?: EnemyId,
     ): Promise<void> {
         const targets = this.expeditionService.findTargets(
@@ -85,7 +81,7 @@ export class EffectService {
                 },
             };
 
-            dto = await this.mutateDTO(source, target, dto, name, currentRound);
+            dto = await this.mutateDTO(expedition, source, target, dto, name);
 
             for (let i = 0; i < times; i++) {
                 await this.findEffectByName(name).handle(dto);
@@ -95,10 +91,10 @@ export class EffectService {
 
     public async apply(
         client: Socket,
+        expedition: Expedition,
         source: SourceEntityDTO,
         target: TargetEntityDTO,
         effect: JsonEffect,
-        currentRound: number,
     ) {
         const {
             effect: name,
@@ -117,7 +113,7 @@ export class EffectService {
             },
         };
 
-        dto = await this.mutateDTO(source, target, dto, name, currentRound);
+        dto = await this.mutateDTO(expedition, source, target, dto, name);
 
         for (let i = 0; i < times; i++) {
             await this.findEffectByName(name).handle(dto);
@@ -156,11 +152,11 @@ export class EffectService {
     }
 
     private async mutateDTO(
-        source: EntityDTO,
-        target: EntityDTO,
+        expedition: Expedition,
+        source: SourceEntityDTO,
+        target: TargetEntityDTO,
         dto: EffectDTO<Record<string, any>>,
-        name: string,
-        currentRound: number,
+        effect: Effect['name'],
     ) {
         let outgoingStatuses: StatusCollection;
         let incomingStatuses: StatusCollection;
@@ -187,34 +183,22 @@ export class EffectService {
         );
 
         // Apply statuses to the outgoing effects 🔫  →
-        dto = await this.statusService.mutateEffects(
-            outgoingStatuses?.[StatusType.Buff],
-            name,
-            dto,
-            currentRound,
-        );
-
-        dto = await this.statusService.mutateEffects(
-            outgoingStatuses?.[StatusType.Debuff],
-            name,
-            dto,
-            currentRound,
-        );
+        dto = await this.statusService.mutateEffects({
+            expedition,
+            collection: outgoingStatuses,
+            collectionOwner: source,
+            effectDTO: dto,
+            effect,
+        });
 
         // Apply statuses to the incoming effects → 🛡
-        dto = await this.statusService.mutateEffects(
-            incomingStatuses?.[StatusType.Buff],
-            name,
-            dto,
-            currentRound,
-        );
-
-        dto = await this.statusService.mutateEffects(
-            incomingStatuses?.[StatusType.Debuff],
-            name,
-            dto,
-            currentRound,
-        );
+        dto = await this.statusService.mutateEffects({
+            expedition,
+            collection: incomingStatuses,
+            collectionOwner: target as SourceEntityDTO,
+            effectDTO: dto,
+            effect,
+        });
 
         return dto;
     }

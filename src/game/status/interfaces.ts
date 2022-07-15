@@ -2,9 +2,11 @@ import { Socket } from 'socket.io';
 import { CardTargetedEnum } from '../components/card/card.enum';
 import { EnemyId } from '../components/enemy/enemy.type';
 import {
+    SourceEntityDTO,
     SourceEntityReferenceDTO,
     TargetEntityDTO,
 } from '../components/expedition/expedition.interface';
+import { Expedition } from '../components/expedition/expedition.schema';
 import { Effect, EffectDTO } from '../effects/effects.interface';
 
 export enum StatusType {
@@ -174,12 +176,15 @@ export interface StatusCollection {
 export interface StatusEffectDTO<
     T extends Record<string, any> = Record<string, any>,
 > {
+    update(args: AttachedStatus['args']): void;
+    remove(): void;
     args: AttachedStatus['args'];
     effectDTO: EffectDTO<T>;
 }
 
 export interface StatusEventDTO {
     client: Socket;
+    expedition: Expedition;
     source: SourceEntityReferenceDTO;
     target: TargetEntityDTO;
     currentRound: number;
@@ -227,3 +232,11 @@ export type StatusesGlobalCollection = {
     target: TargetEntityDTO;
     statuses: AttachedStatus[];
 }[];
+
+export interface MutateEffectArgsDTO {
+    expedition: Expedition;
+    collectionOwner: SourceEntityDTO;
+    collection: StatusCollection;
+    effect: Effect['name'];
+    effectDTO: EffectDTO;
+}
