@@ -935,4 +935,54 @@ export const Cards: Card[] = [
         showPointer: false,
         isUpgraded: false,
     },
+    {
+        cardId: 129,
+        name: 'Give no Ground',
+        rarity: CardRarityEnum.Rare,
+        cardType: CardTypeEnum.Defend,
+        pool: 'knight',
+        energy: 1,
+        description: 'Gain 6 defense for each enemy planning to attack.',
+        keywords: [],
+        properties: {
+            effects: [
+                {
+                    effect: defenseEffect.name,
+                    target: CardTargetedEnum.Player,
+                    args: {
+                        value: 6,
+                        useAttackingEnemies: true,
+                    },
+                },
+            ],
+            statuses: [],
+        },
+        showPointer: false,
+        isUpgraded: false,
+    },
+    {
+        cardId: 130,
+        name: 'Give no Ground+',
+        rarity: CardRarityEnum.Rare,
+        cardType: CardTypeEnum.Defend,
+        pool: 'knight',
+        energy: 1,
+        description: 'Gain 9 defense for each enemy planning to attack.',
+        keywords: [],
+        properties: {
+            effects: [
+                {
+                    effect: defenseEffect.name,
+                    target: CardTargetedEnum.Player,
+                    args: {
+                        value: 9,
+                        useAttackingEnemies: true,
+                    },
+                },
+            ],
+            statuses: [],
+        },
+        showPointer: false,
+        isUpgraded: true,
+    },
 ];

@@ -319,9 +319,8 @@ export class StatusService {
     } {
         const provider = this.findProviderByName(jsonStatus.name);
 
-        if (!provider) {
+        if (!provider)
             throw new Error(`Status ${jsonStatus.name} does not exist`);
-        }
 
         const attachedStatus: AttachedStatus = {
             name: jsonStatus.name,
@@ -373,9 +372,7 @@ export class StatusService {
     }
 
     private getStatusProviders(): StatusProviderDictionary {
-        if (this.cache != undefined) {
-            return this.cache;
-        }
+        if (this.cache != undefined) return this.cache;
 
         const dictionary: StatusProviderDictionary = [];
 
@@ -390,11 +387,10 @@ export class StatusService {
                         dictionary,
                     );
 
-                    if (oldProvider) {
+                    if (oldProvider)
                         throw new Error(
                             `Status ${metadata.status.name} already exists`,
                         );
-                    }
 
                     dictionary.push({
                         metadata,
@@ -408,9 +404,7 @@ export class StatusService {
     }
 
     private isStatusProvider(provider: InstanceWrapper<any>) {
-        if (!provider || !provider.instance || !provider.metatype) {
-            return false;
-        }
+        if (!provider || !provider.instance || !provider.metatype) return false;
 
         const statusMetadata = this.getStatusMetadata(provider.metatype);
         const statusInstance = provider.instance as StatusEffectHandler;
@@ -443,6 +437,7 @@ export class StatusService {
         reference: SourceEntityReferenceDTO,
     ): Promise<SourceEntityDTO> {
         let source: SourceEntityDTO;
+
         const expedition = await this.expeditionService.findOne({
             clientId: client.id,
         });
