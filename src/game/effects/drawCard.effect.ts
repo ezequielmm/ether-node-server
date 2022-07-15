@@ -1,6 +1,9 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Socket } from 'socket.io';
 import { removeCardsFromPile } from 'src/utils';
+import { CardTypeEnum } from '../components/card/card.enum';
+import { EnemyIntentionType } from '../components/enemy/enemy.enum';
+import { IExpeditionPlayerStateDeckCard } from '../components/expedition/expedition.interface';
 import { ExpeditionService } from '../components/expedition/expedition.service';
 import {
     SWARAction,
@@ -11,6 +14,10 @@ import { drawCardEffect } from './constants';
 import { EffectDecorator } from './effects.decorator';
 import { EffectDTO, EffectHandler } from './effects.interface';
 
+export interface DrawCardArgs {
+    useAttackingEnemies: true;
+}
+
 @EffectDecorator({
     effect: drawCardEffect,
 })
@@ -20,17 +27,21 @@ export class DrawCardEffect implements EffectHandler {
 
     constructor(private readonly expeditionService: ExpeditionService) {}
 
-    async handle(payload: EffectDTO): Promise<void> {
+    async handle(payload: EffectDTO<DrawCardArgs>): Promise<void> {
         const {
             client,
-            args: { currentValue },
+            args: { currentValue, useAttackingEnemies },
         } = payload;
         // TODO: Triger draw card attempted event
 
-        this.drawCard(client, currentValue);
+        if (useAttackingEnemies !== undefined && useAttackingEnemies) {
+            await this.useAttackingEnemiesAsValue(client, currentValue);
+        } else {
+            await this.drawCard(client, currentValue);
+        }
     }
 
-    private async drawCard(client: Socket, cardsTotake: number): Promise<void> {
+    private async drawCard(client: Socket, cardsToTake: number): Promise<void> {
         // Get cards from current node
         const {
             data: {
@@ -45,8 +56,8 @@ export class DrawCardEffect implements EffectHandler {
         // First we check if the draw pile more than the amount
         // of cards required
 
-        if (draw.length >= cardsTotake) {
-            const cardsToAdd = draw.slice(draw.length - cardsTotake);
+        if (draw.length >= cardsToTake) {
+            const cardsToAdd = draw.slice(draw.length - cardsToTake);
 
             const newHand = [...hand, ...cardsToAdd];
 
@@ -114,7 +125,7 @@ export class DrawCardEffect implements EffectHandler {
 
             const newHand = newDraw
                 .sort(() => 0.5 - Math.random())
-                .slice(0, cardsTotake);
+                .slice(0, cardsToTake);
 
             newDraw = removeCardsFromPile({
                 originalPile: draw,
@@ -150,6 +161,47 @@ export class DrawCardEffect implements EffectHandler {
                     }),
                 ),
             );
+        }
+    }
+
+    private async useAttackingEnemiesAsValue(
+        client: Socket,
+        cardsToTake: number,
+    ): Promise<void> {
+        // Get cards and enemies from current node
+        const {
+            data: {
+                player: {
+                    cards: { draw, hand, discard },
+                },
+                enemies,
+            },
+        } = await this.expeditionService.getCurrentNode({
+            clientId: client.id,
+        });
+
+        // Set initial enemies variable in 0
+        let enemiesAttacking = 0;
+
+        // Check if there are any enemies with
+        // attacking intentions, if there are, increase the
+        // enemiesAttacking variable by one
+        enemies.forEach(({ currentScript: { intentions } }) => {
+            intentions.forEach(({ type }) => {
+                if (type === EnemyIntentionType.Attack) enemiesAttacking++;
+            });
+        });
+
+        // if the enemies attacking are more than 0
+        // we run re rest of the script
+        if (enemiesAttacking > 0) {
+            // First we get the defense cards from the draw pile
+            const drawDefenseCards = draw.filter(({ cardType }) => {
+                return cardType === CardTypeEnum.Defend;
+            });
+
+            // Now we check if we have enough defense cards
+            // on the draw pile and we have enough cards to move then
         }
     }
 }
