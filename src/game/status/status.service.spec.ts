@@ -6,10 +6,10 @@ import { StatusService } from './status.service';
 import { getModelToken } from '@nestjs/mongoose';
 import { Expedition } from '../components/expedition/expedition.schema';
 import { StatusDecorator } from './status.decorator';
-import { resolve } from './resolve.status';
-import { fortitude } from './fortitude.status';
+import { resolve } from './resolve/constants';
+import { fortitude } from './fortitude/constants';
 import { damageEffect } from '../effects/constants';
-import { heraldDelayed } from './heraldDelayed.status';
+import { heraldDelayed } from './heraldDelayed/constants';
 import { SourceEntityReferenceDTO } from '../components/expedition/expedition.interface';
 import { ExpeditionService } from '../components/expedition/expedition.service';
 

@@ -3,7 +3,7 @@ import { ModulesContainer } from '@nestjs/core';
 import { InstanceWrapper } from '@nestjs/core/injector/instance-wrapper';
 import { clone, find, some } from 'lodash';
 import { CardTargetedEnum } from '../components/card/card.enum';
-import { Effect, EffectDTO } from '../effects/effects.interface';
+import { EffectDTO } from '../effects/effects.interface';
 import { STATUS_METADATA } from './contants';
 import {
     StatusEffectHandler,

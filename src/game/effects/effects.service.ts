@@ -15,11 +15,7 @@ import {
 } from '../components/expedition/expedition.interface';
 import { Expedition } from '../components/expedition/expedition.schema';
 import { ExpeditionService } from '../components/expedition/expedition.service';
-import {
-    StatusCollection,
-    StatusDirection,
-    StatusType,
-} from '../status/interfaces';
+import { StatusCollection, StatusDirection } from '../status/interfaces';
 import { StatusService } from '../status/status.service';
 import { EFFECT_METADATA } from './effects.decorator';
 import {

@@ -1,6 +1,6 @@
-import { DamageArgs } from '../effects/damage.effect';
-import { EffectDTO } from '../effects/effects.interface';
-import { StatusEffectDTO } from './interfaces';
+import { DamageArgs } from '../../effects/damage.effect';
+import { EffectDTO } from '../../effects/effects.interface';
+import { StatusEffectDTO } from '../interfaces';
 import { ResolveStatus } from './resolve.status';
 
 describe('ResolveStatus', () => {
