@@ -23,9 +23,8 @@ export class HealEffect implements EffectHandler {
             args: { currentValue },
         } = payload;
 
-        if (EffectService.isPlayer(target)) {
+        if (EffectService.isPlayer(target))
             await this.applyHealToPlayer(client.id, currentValue);
-        }
     }
 
     private async applyHealToPlayer(
