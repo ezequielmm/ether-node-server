@@ -156,7 +156,7 @@ export class CardPlayedAction {
                     expedition,
                     source,
                     effects,
-                    round,
+                    targetId,
                 );
 
                 if (exhaust) {

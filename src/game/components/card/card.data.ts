@@ -7,7 +7,7 @@ import {
     removeDefenseEffect,
 } from 'src/game/effects/constants';
 import { burn } from 'src/game/status/burn/constants';
-import { dodge } from 'src/game/status/dodge.status';
+import { dodge } from 'src/game/status/dodge/constants';
 import { fortitude } from 'src/game/status/fortitude.status';
 import { heraldDelayed } from 'src/game/status/heraldDelayed.status';
 import { resolve } from 'src/game/status/resolve.status';
@@ -924,7 +924,7 @@ export const Cards: Card[] = [
                 {
                     name: dodge.name,
                     args: {
-                        value: 0,
+                        value: 1,
                         attachTo: CardTargetedEnum.Player,
                     },
                 },

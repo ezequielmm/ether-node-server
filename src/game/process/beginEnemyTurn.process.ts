@@ -4,7 +4,6 @@ import { CardTargetedEnum } from '../components/card/card.enum';
 import { CombatTurnEnum } from '../components/expedition/expedition.enum';
 import { EnemyDTO } from '../components/expedition/expedition.interface';
 import { ExpeditionService } from '../components/expedition/expedition.service';
-import { ExpeditionTargets } from '../effects/effects.interface';
 import { EffectService } from '../effects/effects.service';
 import {
     SWARAction,

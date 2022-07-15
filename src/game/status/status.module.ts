@@ -7,7 +7,7 @@ import {
 } from '../components/expedition/expedition.schema';
 import { EffectModule } from '../effects/effects.module';
 import { BurnStatus } from './burn/burn.status';
-import { DodgeStatus } from './dodge.status';
+import { DodgeStatus } from './dodge/dodge.status';
 import { FortitudeStatus } from './fortitude.status';
 import { HeraldDelayedStatus } from './heraldDelayed.status';
 import { ResolveStatus } from './resolve.status';
