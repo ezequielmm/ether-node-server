@@ -72,11 +72,11 @@ export class DrawCardEffect implements EffectHandler {
                 draw: newDraw,
             });
 
-            const cardMoves = cardsToAdd.map((card) => {
+            const cardMoves = cardsToAdd.map(({ id }) => {
                 return {
                     source: 'draw',
                     destination: 'hand',
-                    id: card.id,
+                    id,
                 };
             });
 
@@ -100,11 +100,11 @@ export class DrawCardEffect implements EffectHandler {
 
             let newDraw = [...discard, ...draw];
 
-            const moveFromDiscardToDraw = discard.map((card) => {
+            const moveFromDiscardToDraw = discard.map(({ id }) => {
                 return {
                     source: 'discard',
                     destination: 'draw',
-                    cardId: card.id,
+                    id,
                 };
             });
 
@@ -132,11 +132,11 @@ export class DrawCardEffect implements EffectHandler {
                 cardsToRemove: newHand,
             });
 
-            const moveFromDrawToHand = newHand.map((card) => {
+            const moveFromDrawToHand = newHand.map(({ id }) => {
                 return {
                     source: 'draw',
                     destination: 'hand',
-                    cardId: card.id,
+                    id,
                 };
             });
 
@@ -195,13 +195,98 @@ export class DrawCardEffect implements EffectHandler {
         // if the enemies attacking are more than 0
         // we run re rest of the script
         if (enemiesAttacking > 0) {
-            // First we get the defense cards from the draw pile
+            // First we calculate the real amount of cards to take
+            // based on the amount to take * the enemies that are attacking
+            const cardsNeeded = cardsToTake * enemiesAttacking;
+
+            // Then, we get the defense cards that we have in the draw pile
             const drawDefenseCards = draw.filter(({ cardType }) => {
                 return cardType === CardTypeEnum.Defend;
             });
 
-            // Now we check if we have enough defense cards
-            // on the draw pile and we have enough cards to move then
+            // we prepare the variables to store the cards and create the moves array
+            // for the SWAR response
+            let newHand = [...hand];
+            let cardsToMove = [];
+
+            // Now we check if we have at least one defense card
+            if (drawDefenseCards.length > 0) {
+                // If we do, we create a variable to check how many we can get
+                // from the drawDefenseCards array
+                const cardsToTakeFromDraw = Math.min(
+                    drawDefenseCards.length,
+                    cardsNeeded,
+                );
+
+                // Next, we get the defense cards that we have in the discard pile
+                const discardDefenseCards = discard.filter(({ cardType }) => {
+                    return cardType === CardTypeEnum.Defend;
+                });
+
+                // Now we calculate how many cards we need from the discard pile
+                // if we dont have enough defense cards in the draw pile
+                const cardsToTakeFromDiscard = Math.max(
+                    Math.min(
+                        cardsNeeded - cardsToTakeFromDraw,
+                        discardDefenseCards.length,
+                    ),
+                    0,
+                );
+
+                // Now we take the cards from the draw pile
+                const cardsFromDrawToHand = drawDefenseCards.slice(
+                    0,
+                    cardsToTakeFromDraw,
+                );
+
+                // Now we create the data for the SWAR to move the cards from the
+                // draw pile to the hand pile
+                cardsToMove = [
+                    ...cardsFromDrawToHand.map(({ id }) => {
+                        return {
+                            source: 'draw',
+                            destination: 'hand',
+                            id,
+                        };
+                    }),
+                ];
+
+                // now we merge the new cards with the hand pile
+                newHand = newHand.concat(cardsFromDrawToHand);
+
+                // Then we have to take cards from the discard
+                // if we have cards to take
+                if (cardsToTakeFromDiscard > 0) {
+                    // Now we take the cards from the discard pile
+                    const cardFromDiscardToDraw = discardDefenseCards.slice(
+                        0,
+                        cardsToTakeFromDiscard,
+                    );
+
+                    // Now we create the data for the SWAR to move the cards from the
+                    // discard pile to the hand pile
+                    cardsToMove = [
+                        ...cardsToMove,
+                        ...cardFromDiscardToDraw.map(({ id }) => {
+                            return {
+                                source: 'discard',
+                                destination: 'hand',
+                                id,
+                            };
+                        }),
+                    ];
+
+                    // now we merge the new cards with the hand pile
+                    newHand = newHand.concat(cardFromDiscardToDraw);
+                }
+
+                // Now we remove the cards from the draw pile
+                // that are being moved to the hand pile
+                const newDraw = removeCardsFromPile({
+                    originalPile: draw,
+                    cardsToRemove: cardsFromDrawToHand,
+                });
+            }
         }
     }
 }
