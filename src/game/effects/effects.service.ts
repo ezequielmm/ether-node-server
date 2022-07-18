@@ -66,6 +66,7 @@ export class EffectService {
 
         let effectDTO: EffectDTO = {
             client,
+            expedition,
             source,
             target,
             args: {

@@ -1,5 +1,5 @@
 import { CardTargetedEnum } from 'src/game/components/card/card.enum';
-import { DamageArgs } from '../../effects/damage.effect';
+import { DamageArgs } from '../../effects/damage/damage.effect';
 import { EffectDTO } from '../../effects/effects.interface';
 import { StatusEffectDTO } from '../interfaces';
 import { resolve } from './constants';

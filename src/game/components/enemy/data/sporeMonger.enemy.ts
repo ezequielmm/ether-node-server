@@ -1,4 +1,5 @@
-import { damageEffect, defenseEffect } from 'src/game/effects/constants';
+import { damageEffect } from 'src/game/effects/damage/constants';
+import { defenseEffect } from 'src/game/effects/defense/constants';
 import { CardTargetedEnum } from '../../card/card.enum';
 import {
     EnemyCategoryEnum,
