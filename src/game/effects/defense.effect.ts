@@ -111,14 +111,9 @@ export class DefenseEffect implements EffectHandler {
         let newDefense = currentValue;
         let multiplier = 0;
 
-        enemies.forEach((enemy) => {
-            const {
-                currentScript: { intentions },
-            } = enemy;
-
-            intentions.forEach((intention) => {
-                if (intention.type === EnemyIntentionType.Attack)
-                    multiplier += 1;
+        enemies.forEach(({ currentScript: { intentions } }) => {
+            intentions.forEach(({ type }) => {
+                if (type === EnemyIntentionType.Attack) multiplier += 1;
             });
         });
 

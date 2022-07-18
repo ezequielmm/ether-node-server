@@ -987,6 +987,56 @@ export const Cards: Card[] = [
         isUpgraded: true,
     },
     {
+        cardId: 159,
+        name: 'Perfect Timing',
+        rarity: CardRarityEnum.Legendary,
+        cardType: CardTypeEnum.Defend,
+        pool: 'knight',
+        energy: 1,
+        description: 'If the enemy intends to attack. Draw 2 defense cards',
+        keywords: [],
+        properties: {
+            effects: [
+                {
+                    effect: drawCardEffect.name,
+                    target: CardTargetedEnum.Player,
+                    args: {
+                        value: 2,
+                        useAttackingEnemies: true,
+                    },
+                },
+            ],
+            statuses: [],
+        },
+        showPointer: false,
+        isUpgraded: false,
+    },
+    {
+        cardId: 160,
+        name: 'Perfect Timing+',
+        rarity: CardRarityEnum.Legendary,
+        cardType: CardTypeEnum.Defend,
+        pool: 'knight',
+        energy: 1,
+        description: 'If the enemy intends to attack. Draw 3 defense cards',
+        keywords: [],
+        properties: {
+            effects: [
+                {
+                    effect: drawCardEffect.name,
+                    target: CardTargetedEnum.Player,
+                    args: {
+                        value: 3,
+                        useAttackingEnemies: true,
+                    },
+                },
+            ],
+            statuses: [],
+        },
+        showPointer: false,
+        isUpgraded: true,
+    },
+    {
         cardId: 77,
         name: 'Siphon',
         rarity: CardRarityEnum.Common,
