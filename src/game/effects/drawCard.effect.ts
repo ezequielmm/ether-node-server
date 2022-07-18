@@ -78,7 +78,7 @@ export class DrawCardEffect implements EffectHandler {
                 JSON.stringify(
                     StandardResponse.respond({
                         message_type: SWARMessageType.PlayerAffected,
-                        action: SWARAction.MoveCard,
+                        action: SWARAction.CreateCard,
                         data: cardMoves,
                     }),
                 ),
