@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { Socket } from 'socket.io';
 import { DiscardAllCardsAction } from '../action/discardAllCards.action';
 import { CombatTurnEnum } from '../components/expedition/expedition.enum';
+import { ExpeditionService } from '../components/expedition/expedition.service';
 import {
     SWARAction,
     StandardResponse,
@@ -23,6 +24,7 @@ export class EndPlayerTurnProcess {
         private readonly discardAllCardsAction: DiscardAllCardsAction,
         private readonly beginEnemyTurnProcess: BeginEnemyTurnProcess,
         private readonly statusService: StatusService,
+        private readonly expeditionService: ExpeditionService,
     ) {}
 
     async handle(payload: EndPlayerTurnDTO): Promise<void> {
@@ -43,8 +45,16 @@ export class EndPlayerTurnProcess {
             ),
         );
 
+        const expedition = await this.expeditionService.findOne({
+            clientId: client.id,
+        });
+
         await this.discardAllCardsAction.handle({ client });
-        await this.statusService.trigger(client, StatusEventType.OnTurnEnd);
+        await this.statusService.trigger(
+            client,
+            expedition,
+            StatusEventType.OnTurnEnd,
+        );
         await this.beginEnemyTurnProcess.handle({ client });
     }
 }

@@ -189,7 +189,9 @@ export interface StatusEventDTO {
     expedition: Expedition;
     source: SourceEntityDTO;
     target: TargetEntityDTO;
-    args: AttachedStatus;
+    status: AttachedStatus;
+    update(args: AttachedStatus['args']): void;
+    remove(): void;
 }
 
 /**
@@ -242,7 +244,7 @@ export type SourceEntityReferenceDTO = PlayerReferenceDTO | EnemyReferenceDTO;
 
 export type StatusesGlobalCollection = {
     target: TargetEntityDTO;
-    statuses: AttachedStatus[];
+    statuses: StatusCollection;
 }[];
 
 export interface MutateEffectArgsDTO {

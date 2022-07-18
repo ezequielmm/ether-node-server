@@ -1,18 +1,22 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, PayloadTooLargeException } from '@nestjs/common';
 import { getModelToken } from '@nestjs/mongoose';
 import { Test } from '@nestjs/testing';
 import { Socket } from 'socket.io';
 import { Expedition } from '../components/expedition/expedition.schema';
 import { ExpeditionService } from '../components/expedition/expedition.service';
-import { damageEffect } from '../effects/constants';
+import { damageEffect } from '../effects/damage/constants';
 import { EffectDTO } from '../effects/effects.interface';
 import { ProviderService } from '../provider/provider.service';
+import { burn } from './burn/constants';
 import { fortitude } from './fortitude/constants';
 import { heraldDelayed } from './heraldDelayed/constants';
 import {
     SourceEntityReferenceDTO,
     StatusEffectDTO,
     StatusEffectHandler,
+    StatusEventDTO,
+    StatusEventHandler,
+    StatusEventType,
     StatusType,
 } from './interfaces';
 import { resolve } from './resolve/constants';
@@ -55,8 +59,20 @@ class StatusC implements StatusEffectHandler {
     }
 }
 
+@StatusDecorator({
+    status: burn,
+})
+@Injectable()
+class StatusEventA implements StatusEventHandler {
+    args: any;
+    async handle(args: StatusEventDTO): Promise<any> {
+        this.args = args.status.args;
+    }
+}
+
 describe('StatusService', () => {
     let statusService: StatusService;
+    let statusEventA: StatusEventA;
     let effectDTO: EffectDTO;
 
     beforeEach(async () => {
@@ -66,6 +82,7 @@ describe('StatusService', () => {
                 StatusA,
                 StatusB,
                 StatusC,
+                StatusEventA,
                 { provide: getModelToken(Expedition.name), useValue: {} },
                 { provide: ExpeditionService, useValue: {} },
                 ProviderService,
@@ -73,6 +90,7 @@ describe('StatusService', () => {
         }).compile();
 
         statusService = module.get(StatusService);
+        statusEventA = module.get(StatusEventA);
         effectDTO = {
             args: {
                 initialValue: 1,
@@ -209,8 +227,37 @@ describe('StatusService', () => {
         expect(result.args.status).toBe('AC');
     });
 
-    // it('should call status event by type', async () => {
-    //     const result = await statusService.processStatusEffects(
-    //         [
-    // });
+    it('should call status handle by end turn event', async () => {
+        await statusService.trigger(
+            {} as Socket,
+            {
+                playerState: {},
+                currentNode: {
+                    data: {
+                        player: {
+                            statuses: {
+                                [StatusType.Buff]: [],
+                                [StatusType.Debuff]: [
+                                    {
+                                        name: burn.name,
+                                        addedInRound: 1,
+                                        sourceReference: {
+                                            type: 'player',
+                                        },
+                                        args: {
+                                            value: 22,
+                                        },
+                                    },
+                                ],
+                            },
+                        },
+                        enemies: [],
+                    },
+                },
+            } as Expedition,
+            StatusEventType.OnTurnEnd,
+        );
+
+        statusEventA.args = { value: 22 };
+    });
 });

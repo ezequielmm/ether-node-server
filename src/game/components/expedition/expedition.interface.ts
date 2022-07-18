@@ -1,4 +1,3 @@
-import { Socket } from 'socket.io';
 import { JsonEffect } from 'src/game/effects/effects.interface';
 import {
     AttachedStatus,
@@ -9,10 +8,8 @@ import {
     CardRarityEnum,
     CardTypeEnum,
     CardKeywordEnum,
-    CardTargetedEnum,
 } from '../card/card.enum';
 import { EnemyScript } from '../enemy/enemy.interface';
-import { EnemyId } from '../enemy/enemy.type';
 import {
     ExpeditionMapNodeTypeEnum,
     ExpeditionMapNodeStatusEnum,
@@ -83,5 +80,3 @@ export type IExpeditionCurrentNode = Expedition['currentNode'];
 export type IExpeditionPlayerGlobalState = Expedition['playerState'];
 export type IExpeditionPlayerCombatState =
     IExpeditionCurrentNode['data']['player'];
-
-
