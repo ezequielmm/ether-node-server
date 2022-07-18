@@ -15,7 +15,6 @@ export class RegenerateStatus implements StatusEffectHandler {
 
     async handle(dto: StatusEffectDTO<HealArgs>): Promise<EffectDTO<HealArgs>> {
         const {
-            remove,
             expedition: {
                 playerState: { hpCurrent, hpMax },
             },
@@ -24,11 +23,6 @@ export class RegenerateStatus implements StatusEffectHandler {
             },
             client,
         } = dto;
-
-        if (dto.expedition.currentNode.data.round > dto.status.addedInRound) {
-            remove();
-            return dto.effectDTO;
-        }
 
         const newHpCurrent = Math.min(hpMax, hpCurrent + hpToApply);
 
