@@ -6,6 +6,7 @@ import {
     healEffect,
     removeDefenseEffect,
 } from 'src/game/effects/constants';
+import { doubleBurn } from 'src/game/effects/doubleBurn/constants';
 import { burn } from 'src/game/status/burn/constants';
 import { dodge } from 'src/game/status/dodge/constants';
 import { fortitude } from 'src/game/status/fortitude/constants';
@@ -817,7 +818,13 @@ export const Cards: Card[] = [
         keywords: [],
         properties: {
             effects: [
-                // TODO: Add effect for double burn on all enemies
+                {
+                    effect: doubleBurn.name,
+                    target: CardTargetedEnum.AllEnemies,
+                    args: {
+                        value: 1,
+                    },
+                },
             ],
             statuses: [
                 {
@@ -1060,5 +1067,30 @@ export const Cards: Card[] = [
         },
         showPointer: false,
         isUpgraded: false,
+    },
+    {
+        cardId: 78,
+        name: 'Siphon+',
+        rarity: CardRarityEnum.Common,
+        cardType: CardTypeEnum.Defend,
+        pool: 'knight',
+        energy: 0,
+        description:
+            'For the rest of this turn, gain defense equal to damage dealt.',
+        keywords: [],
+        properties: {
+            effects: [],
+            statuses: [
+                {
+                    name: siphoning.name,
+                    args: {
+                        attachTo: CardTargetedEnum.Player,
+                        value: 1,
+                    },
+                },
+            ],
+        },
+        showPointer: false,
+        isUpgraded: true,
     },
 ];

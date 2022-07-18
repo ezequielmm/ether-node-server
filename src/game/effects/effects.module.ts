@@ -10,6 +10,7 @@ import { EnergyEffect } from './energy.effect';
 import { RemoveDefenseEffect } from './removeDefense.effect';
 import { ActionModule } from '../action/action.module';
 import { ProviderModule } from '../provider/provider.module';
+import { DoubleBurnEffect } from './doubleBurn/doubleBurn.effect';
 
 @Module({
     imports: [
@@ -26,6 +27,7 @@ import { ProviderModule } from '../provider/provider.module';
         HealEffect,
         EnergyEffect,
         RemoveDefenseEffect,
+        DoubleBurnEffect,
     ],
     exports: [EffectService],
 })

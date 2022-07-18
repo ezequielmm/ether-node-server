@@ -234,7 +234,7 @@ export class StatusService {
         };
     }
 
-    private async updateStatuses(
+    public async updateStatuses(
         collectionOwner: SourceEntityDTO,
         expedition: Expedition,
         collection: StatusCollection,
@@ -250,7 +250,7 @@ export class StatusService {
         }
     }
 
-    private async updateEnemyStatuses(
+    public async updateEnemyStatuses(
         expedition: Expedition,
         collectionOwner: EnemyDTO,
         collection: StatusCollection,
@@ -269,7 +269,7 @@ export class StatusService {
         );
     }
 
-    private async updatePlayerStatuses(
+    public async updatePlayerStatuses(
         expedition: Expedition,
         collection: StatusCollection,
     ): Promise<void> {
