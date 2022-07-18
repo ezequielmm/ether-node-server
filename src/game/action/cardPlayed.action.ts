@@ -141,14 +141,6 @@ export class CardPlayedAction {
                     },
                 };
 
-                await this.statusService.attachStatuses(
-                    client.id,
-                    statuses,
-                    round,
-                    sourceReference,
-                    targetId,
-                );
-
                 await this.effectService.applyAll({
                     client,
                     expedition,
@@ -156,6 +148,14 @@ export class CardPlayedAction {
                     effects,
                     selectedEnemy: targetId,
                 });
+
+                await this.statusService.attachStatuses(
+                    client.id,
+                    statuses,
+                    round,
+                    sourceReference,
+                    targetId,
+                );
 
                 if (exhaust) {
                     await this.exhaustCardAction.handle({

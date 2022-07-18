@@ -1,4 +1,4 @@
-import { defenseEffect } from '../../effects/constants';
+import { defenseEffect } from '../../effects/defense/constants';
 import {
     StatusDirection,
     StatusStartsAt,

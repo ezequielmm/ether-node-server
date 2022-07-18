@@ -1,4 +1,4 @@
-import { DefenseArgs } from '../../effects/defense.effect';
+import { DefenseArgs } from '../../effects/defense/defense.effect';
 import { EffectDTO } from '../../effects/effects.interface';
 import { StatusEffectHandler, StatusEffectDTO } from '../interfaces';
 import { StatusDecorator } from '../status.decorator';
