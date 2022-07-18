@@ -73,7 +73,8 @@ export class StatusService {
                 {
                     [getClientIdField(clientId)]: clientId,
                     status: ExpeditionStatusEnum.InProgress,
-                    [getEnemyIdField(enemyId)]: enemyId,
+                    [`currentNode.data.enemies.${getEnemyIdField(enemyId)}`]:
+                        enemyId,
                 },
                 {
                     $push: {
@@ -225,6 +226,10 @@ export class StatusService {
                 trigger: StatusTrigger.Effect,
             });
 
+            if (!container) {
+                return false;
+            }
+
             return container.metadata.status.direction === direction;
         };
 
@@ -255,7 +260,7 @@ export class StatusService {
         collectionOwner: EnemyDTO,
         collection: StatusCollection,
     ): Promise<void> {
-        this.expedition.findOneAndUpdate(
+        return this.expedition.findOneAndUpdate(
             {
                 clientId: expedition.clientId,
                 status: ExpeditionStatusEnum.InProgress,
@@ -264,7 +269,9 @@ export class StatusService {
                 )}`]: collectionOwner.value.id,
             },
             {
-                'currentNode.data.enemies.$.statuses': collection,
+                $set: {
+                    'currentNode.data.enemies.$.statuses': collection,
+                },
             },
         );
     }

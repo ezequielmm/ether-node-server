@@ -15,7 +15,6 @@ export class ProviderService {
                 const metadata = Reflect.getMetadata(key, metatype ?? {});
 
                 if (metadata) {
-                    console.log(metadata);
                     providers.push({
                         metadata: metadata as M,
                         instance: instance as T,

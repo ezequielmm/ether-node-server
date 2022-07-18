@@ -848,7 +848,13 @@ export const Cards: Card[] = [
         keywords: [],
         properties: {
             effects: [
-                // TODO: Add effect for double burn on all enemies
+                {
+                    effect: doubleBurn.name,
+                    target: CardTargetedEnum.AllEnemies,
+                    args: {
+                        value: 1,
+                    },
+                },
             ],
             statuses: [
                 {
