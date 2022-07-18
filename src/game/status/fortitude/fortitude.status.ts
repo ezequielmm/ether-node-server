@@ -13,7 +13,7 @@ export class FortitudeStatus implements StatusEffectHandler {
     async handle(
         dto: StatusEffectDTO<DefenseArgs>,
     ): Promise<EffectDTO<DefenseArgs>> {
-        dto.effectDTO.args.currentValue += dto.args.value;
+        dto.effectDTO.args.currentValue += dto.status.args.value;
         return dto.effectDTO;
     }
 }

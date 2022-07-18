@@ -1,108 +1,73 @@
 import { Injectable } from '@nestjs/common';
-import { ModulesContainer } from '@nestjs/core';
-import { InstanceWrapper } from '@nestjs/core/injector/instance-wrapper';
-import { Socket } from 'socket.io';
+import { find, sample } from 'lodash';
 import { CardTargetedEnum } from '../components/card/card.enum';
-import { EnemyId } from '../components/enemy/enemy.type';
-import {
-    AllEnemiesDTO,
-    EnemyDTO,
-    PlayerDTO,
-    RandomEnemyDTO,
-    EntityDTO,
-    SourceEntityDTO,
-    TargetEntityDTO,
-} from '../components/expedition/expedition.interface';
+import { EnemyId, getEnemyIdField } from '../components/enemy/enemy.type';
 import { Expedition } from '../components/expedition/expedition.schema';
-import { ExpeditionService } from '../components/expedition/expedition.service';
+import { ProviderContainer } from '../provider/interfaces';
+import { ProviderService } from '../provider/provider.service';
 import { StatusCollection, StatusDirection } from '../status/interfaces';
 import { StatusService } from '../status/status.service';
-import { EFFECT_METADATA } from './effects.decorator';
+import { EFFECT_METADATA_KEY } from './effects.decorator';
 import {
     EffectDTO,
     EffectHandler,
-    JsonEffect,
     EffectMetadata,
-    ExpeditionTargets,
-    Effect,
+    ApplyAllDTO,
+    ApplyDTO,
+    SourceEntityDTO,
+    TargetEntityDTO,
+    PlayerDTO,
+    EnemyDTO,
+    RandomEnemyDTO,
+    AllEnemiesDTO,
+    MutateDTO,
+    FindTargetsDTO,
 } from './effects.interface';
 
 @Injectable()
 export class EffectService {
-    private cache: Map<string, EffectHandler>;
+    private handlers: ProviderContainer<EffectMetadata, EffectHandler>[];
 
     constructor(
-        private readonly modulesContainer: ModulesContainer,
+        private readonly providerService: ProviderService,
         private readonly statusService: StatusService,
-        private readonly expeditionService: ExpeditionService,
-    ) {}
-
-    private findEffectByName(name: string): EffectHandler {
-        const effect = this.getAllEffectProviders().get(name);
-
-        if (effect === undefined) throw new Error(`Effect ${name} not found`);
-
-        return effect;
+    ) {
+        this.handlers =
+            this.providerService.findByMetadataKey(EFFECT_METADATA_KEY);
     }
 
-    async applyCollection(
-        client: Socket,
-        expedition: Expedition,
-        source: SourceEntityDTO,
-        collection: JsonEffect[],
-        selectedEnemy?: EnemyId,
-    ): Promise<void> {
-        const targets = this.expeditionService.findTargets(
-            expedition,
-            selectedEnemy,
-        );
+    async applyAll(dto: ApplyAllDTO): Promise<void> {
+        const { client, expedition, source, effects, selectedEnemy } = dto;
 
-        for (const effect of collection) {
-            const {
-                effect: name,
-                times = 1,
-                args: { value, ...args },
-            } = effect;
-
-            const target: EntityDTO = this.defineTarget(
+        for (const effect of effects) {
+            const targets = this.findAffectedTargets({
+                expedition,
                 effect,
                 source,
-                targets,
-            );
+                selectedEnemy,
+            });
 
-            let dto: EffectDTO = {
-                client,
-                source,
-                target,
-                args: {
-                    initialValue: value,
-                    currentValue: value,
-                    ...args,
-                },
-            };
-
-            dto = await this.mutateDTO(expedition, source, target, dto, name);
-
-            for (let i = 0; i < times; i++) {
-                await this.findEffectByName(name).handle(dto);
+            for (const target of targets) {
+                await this.apply({
+                    client,
+                    expedition,
+                    source,
+                    target,
+                    effect,
+                });
             }
         }
     }
 
-    public async apply(
-        client: Socket,
-        expedition: Expedition,
-        source: SourceEntityDTO,
-        target: TargetEntityDTO,
-        effect: JsonEffect,
-    ) {
+    public async apply(dto: ApplyDTO) {
+        const { client, expedition, source, target, effect } = dto;
         const {
             effect: name,
             times = 1,
             args: { value, ...args },
         } = effect;
 
-        let dto: EffectDTO = {
+        let effectDTO: EffectDTO = {
             client,
             source,
             target,
@@ -113,51 +78,117 @@ export class EffectService {
             },
         };
 
-        dto = await this.mutateDTO(expedition, source, target, dto, name);
+        effectDTO = await this.mutate({
+            client,
+            expedition,
+            source,
+            target,
+            dto: effectDTO,
+            effect: name,
+        });
 
         for (let i = 0; i < times; i++) {
-            await this.findEffectByName(name).handle(dto);
+            const handler = await this.findHandlerByName(name);
+            handler.handle(effectDTO);
         }
     }
 
-    private defineTarget(
-        effect: JsonEffect,
-        source: SourceEntityDTO,
-        targets: ExpeditionTargets,
-    ) {
-        let target: EntityDTO;
+    private findAffectedTargets(dto: FindTargetsDTO): TargetEntityDTO[] {
+        const { effect, source, expedition, selectedEnemy } = dto;
+        const targets: TargetEntityDTO[] = [];
 
         switch (effect.target) {
             case CardTargetedEnum.Player:
-                target = targets.player;
+                targets.push(this.extractPlayerDTO(expedition));
                 break;
             case CardTargetedEnum.Self:
-                target = source;
+                targets.push(source);
                 break;
             case CardTargetedEnum.AllEnemies:
-                target = targets.allEnemies;
+                this.extractAllEnemiesDTO(expedition).value.forEach((enemy) =>
+                    targets.push({
+                        type: CardTargetedEnum.Enemy,
+                        value: enemy,
+                    }),
+                );
                 break;
             case CardTargetedEnum.RandomEnemy:
-                target = targets.randomEnemy;
+                targets.push({
+                    type: CardTargetedEnum.Enemy,
+                    value: this.extractRandomEnemyDTO(expedition).value,
+                });
                 break;
             case CardTargetedEnum.Enemy:
-                target = targets.selectedEnemy;
+                targets.push(this.extractEnemyDTO(expedition, selectedEnemy));
                 break;
         }
 
-        if (target === undefined)
+        if (targets === undefined)
             throw new Error(`Target not found for effect ${effect.effect}`);
 
-        return target;
+        return targets;
     }
 
-    private async mutateDTO(
-        expedition: Expedition,
-        source: SourceEntityDTO,
-        target: TargetEntityDTO,
-        dto: EffectDTO<Record<string, any>>,
-        effect: Effect['name'],
-    ) {
+    private extractPlayerDTO(expedition: Expedition): PlayerDTO {
+        const {
+            playerState: globalState,
+            currentNode: {
+                data: { player: combatState },
+            },
+        } = expedition;
+
+        return {
+            type: CardTargetedEnum.Player,
+            value: {
+                globalState,
+                combatState,
+            },
+        };
+    }
+
+    private extractEnemyDTO(expedition: Expedition, enemy: EnemyId): EnemyDTO {
+        const {
+            currentNode: {
+                data: { enemies },
+            },
+        } = expedition;
+
+        return {
+            type: CardTargetedEnum.Enemy,
+            value: find(enemies, [getEnemyIdField(enemy), enemy]),
+        };
+    }
+
+    private extractRandomEnemyDTO(expedition: Expedition): RandomEnemyDTO {
+        const {
+            currentNode: {
+                data: { enemies },
+            },
+        } = expedition;
+
+        return {
+            type: CardTargetedEnum.RandomEnemy,
+            value: sample(enemies),
+        };
+    }
+
+    private extractAllEnemiesDTO(expedition: Expedition): AllEnemiesDTO {
+        const {
+            currentNode: {
+                data: { enemies },
+            },
+        } = expedition;
+
+        return {
+            type: CardTargetedEnum.AllEnemies,
+            value: enemies,
+        };
+    }
+
+    private async mutate(dto: MutateDTO) {
+        const { client, expedition, source, target, effect } = dto;
+        let { dto: effectDTO } = dto;
+
         let outgoingStatuses: StatusCollection;
         let incomingStatuses: StatusCollection;
 
@@ -183,63 +214,41 @@ export class EffectService {
         );
 
         // Apply statuses to the outgoing effects 🔫  →
-        dto = await this.statusService.mutateEffects({
+        effectDTO = await this.statusService.mutate({
+            client,
             expedition,
             collection: outgoingStatuses,
             collectionOwner: source,
-            effectDTO: dto,
+            effectDTO: effectDTO,
             effect,
         });
 
         // Apply statuses to the incoming effects → 🛡
-        dto = await this.statusService.mutateEffects({
+        effectDTO = await this.statusService.mutate({
+            client,
             expedition,
             collection: incomingStatuses,
-            collectionOwner: target as SourceEntityDTO,
-            effectDTO: dto,
+            collectionOwner: target,
+            effectDTO: effectDTO,
             effect,
         });
 
-        return dto;
+        return effectDTO;
     }
 
-    private getAllEffectProviders(): Map<string, EffectHandler> {
-        if (this.cache != undefined) return this.cache;
+    private findHandlerByName(name: string): EffectHandler {
+        const container = find(this.handlers, ['metadata.effect.name', name]);
 
-        const effects: Map<string, EffectHandler> = new Map();
-
-        for (const module of this.modulesContainer.values()) {
-            module.providers.forEach((provider) => {
-                if (this.isEffectProvider(provider)) {
-                    const metadata = this.getEffectMetadata(provider.metatype);
-
-                    if (effects.has(metadata.effect.name))
-                        throw new Error(`Effect ${metadata} already exists`);
-
-                    effects.set(
-                        metadata.effect.name,
-                        provider.instance as EffectHandler,
-                    );
-                }
-            });
+        if (container === undefined) {
+            throw new Error(`Effect handler ${name} not found`);
         }
 
-        return effects;
+        return container.instance;
     }
 
-    private isEffectProvider(provider: InstanceWrapper<any>) {
-        return (
-            provider.instance &&
-            typeof provider.instance?.handle == 'function' &&
-            this.getEffectMetadata(provider.metatype)
-        );
-    }
-
-    private getEffectMetadata(object: any): EffectMetadata | undefined {
-        return Reflect.getMetadata(EFFECT_METADATA, object);
-    }
-
-    public static isPlayer(entity: EntityDTO): entity is PlayerDTO {
+    public static isPlayer(
+        entity: SourceEntityDTO | TargetEntityDTO,
+    ): entity is PlayerDTO {
         return entity.type === CardTargetedEnum.Player;
     }
 

@@ -1,17 +1,23 @@
 import { Injectable } from '@nestjs/common';
-import { Test } from '@nestjs/testing';
-import { EffectDTO } from '../effects/effects.interface';
-import { StatusEffectHandler, StatusEffectDTO, StatusType } from './interfaces';
-import { StatusService } from './status.service';
 import { getModelToken } from '@nestjs/mongoose';
+import { Test } from '@nestjs/testing';
+import { Socket } from 'socket.io';
 import { Expedition } from '../components/expedition/expedition.schema';
-import { StatusDecorator } from './status.decorator';
-import { resolve } from './resolve/constants';
-import { fortitude } from './fortitude/constants';
-import { damageEffect } from '../effects/constants';
-import { heraldDelayed } from './heraldDelayed/constants';
-import { SourceEntityReferenceDTO } from '../components/expedition/expedition.interface';
 import { ExpeditionService } from '../components/expedition/expedition.service';
+import { damageEffect } from '../effects/constants';
+import { EffectDTO } from '../effects/effects.interface';
+import { ProviderService } from '../provider/provider.service';
+import { fortitude } from './fortitude/constants';
+import { heraldDelayed } from './heraldDelayed/constants';
+import {
+    SourceEntityReferenceDTO,
+    StatusEffectDTO,
+    StatusEffectHandler,
+    StatusType,
+} from './interfaces';
+import { resolve } from './resolve/constants';
+import { StatusDecorator } from './status.decorator';
+import { StatusService } from './status.service';
 
 @StatusDecorator({
     status: resolve,
@@ -62,6 +68,7 @@ describe('StatusService', () => {
                 StatusC,
                 { provide: getModelToken(Expedition.name), useValue: {} },
                 { provide: ExpeditionService, useValue: {} },
+                ProviderService,
             ],
         }).compile();
 
@@ -79,7 +86,8 @@ describe('StatusService', () => {
     });
 
     it('should call status handle by effect name', async () => {
-        const result = await statusService.mutateEffects({
+        const result = await statusService.mutate({
+            client: {} as Socket,
             expedition: { currentNode: { data: { round: 2 } } } as Expedition,
             collection: {
                 [StatusType.Buff]: [
@@ -103,7 +111,8 @@ describe('StatusService', () => {
     });
 
     it('should avoid to call status handle by effect name at the same turn', async () => {
-        const result = await statusService.mutateEffects({
+        const result = await statusService.mutate({
+            client: {} as Socket,
             expedition: { currentNode: { data: { round: 1 } } } as Expedition,
             collection: {
                 [StatusType.Buff]: [
@@ -127,7 +136,8 @@ describe('StatusService', () => {
     });
 
     it('should call multiple status handle by effect name', async () => {
-        const result = await statusService.mutateEffects({
+        const result = await statusService.mutate({
+            client: {} as Socket,
             expedition: { currentNode: { data: { round: 2 } } } as Expedition,
             collection: {
                 [StatusType.Buff]: [
@@ -159,7 +169,8 @@ describe('StatusService', () => {
     });
 
     it('should call multiple status handle by effect name', async () => {
-        const result = await statusService.mutateEffects({
+        const result = await statusService.mutate({
+            client: {} as Socket,
             expedition: { currentNode: { data: { round: 2 } } } as Expedition,
             collection: {
                 [StatusType.Buff]: [

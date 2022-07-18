@@ -23,16 +23,11 @@ import {
 } from './expedition.dto';
 import { ExpeditionStatusEnum } from './expedition.enum';
 import {
-    AllEnemiesDTO,
-    EnemyDTO,
     IExpeditionCurrentNode,
     IExpeditionCurrentNodeDataEnemy,
     IExpeditionNode,
     IExpeditionPlayerGlobalState,
     IExpeditionPlayerStateDeckCard,
-    PlayerDTO,
-    RandomEnemyDTO,
-    TargetEntityDTO,
 } from './expedition.interface';
 import { generateMap, restoreMap } from 'src/game/map/app';
 import { ClientId } from './expedition.type';
@@ -43,9 +38,8 @@ import {
     StatusesGlobalCollection,
 } from 'src/game/status/interfaces';
 import { CardTargetedEnum } from '../card/card.enum';
-import { ExpeditionTargets } from 'src/game/effects/effects.interface';
 import { EnemyId, getEnemyIdField } from '../enemy/enemy.type';
-import { find } from 'lodash';
+import { TargetEntityDTO } from 'src/game/effects/effects.interface';
 
 @Injectable()
 export class ExpeditionService {
@@ -294,6 +288,24 @@ export class ExpeditionService {
         );
     }
 
+    async setEnemyDefense(
+        clientId: string,
+        enemyId: EnemyId,
+        defense,
+    ): Promise<ExpeditionDocument> {
+        return this.expedition.findOneAndUpdate(
+            {
+                clientId,
+                status: ExpeditionStatusEnum.InProgress,
+                [`currentNode.data.enemies.${getEnemyIdField(enemyId)}`]:
+                    enemyId,
+            },
+            {
+                'currentNode.data.enemies.$.defense': defense,
+            },
+        );
+    }
+
     async setPlayerHealth(
         payload: UpdatePlayerHealthDTO,
     ): Promise<ExpeditionDocument> {
@@ -379,47 +391,5 @@ export class ExpeditionService {
         }
 
         return statuses;
-    }
-
-    public findTargets(
-        expedition: Expedition,
-        enemyId?: EnemyId,
-    ): ExpeditionTargets {
-        const {
-            playerState: globalState,
-            currentNode: {
-                data: { player: combatState, enemies },
-            },
-        } = expedition;
-
-        const player: PlayerDTO = {
-            type: CardTargetedEnum.Player,
-            value: {
-                globalState,
-                combatState,
-            },
-        };
-
-        const selectedEnemy: EnemyDTO = enemyId && {
-            type: CardTargetedEnum.Enemy,
-            value: find(enemies, [getEnemyIdField(enemyId), enemyId]),
-        };
-
-        const randomEnemy: RandomEnemyDTO = {
-            type: CardTargetedEnum.RandomEnemy,
-            value: enemies[Math.floor(Math.random() * enemies.length)],
-        };
-
-        const allEnemies: AllEnemiesDTO = {
-            type: CardTargetedEnum.AllEnemies,
-            value: enemies,
-        };
-
-        return {
-            player,
-            randomEnemy,
-            allEnemies,
-            selectedEnemy,
-        };
     }
 }

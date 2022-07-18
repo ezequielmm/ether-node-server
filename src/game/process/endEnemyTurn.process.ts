@@ -43,10 +43,7 @@ export class EndEnemyTurnProcess {
             ),
         );
 
-        await this.statusService.triggerEvent(
-            client,
-            StatusEventType.OnTurnEnd,
-        );
+        await this.statusService.trigger(client, StatusEventType.OnTurnEnd);
         await this.beingPlayerTurnProcess.handle({ client });
     }
 }

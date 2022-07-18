@@ -7,11 +7,8 @@ import {
     CardTargetedEnum,
 } from '../components/card/card.enum';
 import { CardId } from '../components/card/card.type';
-import {
-    PlayerDTO,
-    PlayerReferenceDTO,
-} from '../components/expedition/expedition.interface';
 import { ExpeditionService } from '../components/expedition/expedition.service';
+import { PlayerDTO } from '../effects/effects.interface';
 import { EffectService } from '../effects/effects.service';
 import { TargetId } from '../effects/effects.types';
 import {
@@ -19,6 +16,7 @@ import {
     SWARMessageType,
     SWARAction,
 } from '../standardResponse/standardResponse';
+import { PlayerReferenceDTO } from '../status/interfaces';
 import { StatusService } from '../status/status.service';
 import { DiscardCardAction } from './discardCard.action';
 import { ExhaustCardAction } from './exhaustCard.action';
@@ -151,13 +149,13 @@ export class CardPlayedAction {
                     targetId,
                 );
 
-                await this.effectService.applyCollection(
+                await this.effectService.applyAll({
                     client,
                     expedition,
                     source,
                     effects,
-                    targetId,
-                );
+                    selectedEnemy: targetId,
+                });
 
                 if (exhaust) {
                     await this.exhaustCardAction.handle({
