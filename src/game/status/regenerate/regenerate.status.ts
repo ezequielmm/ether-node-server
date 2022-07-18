@@ -11,10 +11,7 @@ import { regenerate } from './contants';
 @Injectable()
 export class RegenerateStatus implements StatusEffectHandler {
     async handle(dto: StatusEffectDTO<HealArgs>): Promise<EffectDTO<HealArgs>> {
-        const {
-            effectDTO: { client },
-            remove,
-        } = dto;
+        const { remove } = dto;
 
         if (dto.expedition.currentNode.data.round > dto.status.addedInRound) {
             remove();
