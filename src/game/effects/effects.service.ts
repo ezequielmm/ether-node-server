@@ -31,10 +31,7 @@ export class EffectService {
     constructor(
         private readonly providerService: ProviderService,
         private readonly statusService: StatusService,
-    ) {
-        this.handlers =
-            this.providerService.findByMetadataKey(EFFECT_METADATA_KEY);
-    }
+    ) {}
 
     async applyAll(dto: ApplyAllDTO): Promise<void> {
         const { client, expedition, source, effects, selectedEnemy } = dto;
@@ -237,6 +234,10 @@ export class EffectService {
     }
 
     private findHandlerByName(name: string): EffectHandler {
+        this.handlers =
+            this.handlers ||
+            this.providerService.findByMetadataKey(EFFECT_METADATA_KEY);
+
         const container = find(this.handlers, ['metadata.effect.name', name]);
 
         if (container === undefined) {

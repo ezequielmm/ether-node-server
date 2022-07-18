@@ -54,10 +54,7 @@ export class StatusService {
         private readonly expedition: Model<ExpeditionDocument>,
         private readonly expeditionService: ExpeditionService,
         private readonly providerService: ProviderService,
-    ) {
-        this.handlers =
-            this.providerService.findByMetadataKey(STATUS_METADATA_KEY);
-    }
+    ) {}
 
     public async attachStatusToEnemy(
         dto: AttachStatusToEnemyDTO,
@@ -189,7 +186,7 @@ export class StatusService {
 
                 if (!isActive) continue;
 
-                mutatedDTO = await instance.handle({
+                mutatedDTO = await instance.handle.bind(instance)({
                     client,
                     expedition: expedition,
                     effectDTO: mutatedDTO,
@@ -330,7 +327,7 @@ export class StatusService {
                     status.sourceReference,
                 );
 
-                await instance.handle({
+                await instance.handle.bind(instance)({
                     client,
                     expedition,
                     source,
@@ -382,6 +379,10 @@ export class StatusService {
     private findHandlerContainer<S extends Status, H extends StatusHandler>(
         status: Partial<S>,
     ): ProviderContainer<StatusMetadata<S>, H> {
+        this.handlers =
+            this.handlers ||
+            this.providerService.findByMetadataKey(STATUS_METADATA_KEY);
+
         const container = find(
             this.handlers,
             matches({
