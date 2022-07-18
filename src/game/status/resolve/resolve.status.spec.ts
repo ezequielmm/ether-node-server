@@ -1,14 +1,25 @@
+import { CardTargetedEnum } from 'src/game/components/card/card.enum';
 import { DamageArgs } from '../../effects/damage.effect';
 import { EffectDTO } from '../../effects/effects.interface';
 import { StatusEffectDTO } from '../interfaces';
+import { resolve } from './constants';
 import { ResolveStatus } from './resolve.status';
 
 describe('ResolveStatus', () => {
     it('should calculate new positive damage', async () => {
         const status = new ResolveStatus();
         const dto: StatusEffectDTO<DamageArgs> = {
-            args: {
-                value: 2,
+            client: undefined,
+            expedition: undefined,
+            status: {
+                name: resolve.name,
+                sourceReference: {
+                    type: CardTargetedEnum.Player,
+                },
+                addedInRound: 1,
+                args: {
+                    value: 2,
+                },
             },
             effectDTO: {
                 args: {
@@ -26,8 +37,17 @@ describe('ResolveStatus', () => {
     it('should calculate new zero damage', async () => {
         const status = new ResolveStatus();
         const dto: StatusEffectDTO<DamageArgs> = {
-            args: {
-                value: -5,
+            client: undefined,
+            expedition: undefined,
+            status: {
+                name: resolve.name,
+                sourceReference: {
+                    type: CardTargetedEnum.Player,
+                },
+                addedInRound: 1,
+                args: {
+                    value: -5,
+                },
             },
             effectDTO: {
                 args: {

@@ -44,10 +44,7 @@ export class EndPlayerTurnProcess {
         );
 
         await this.discardAllCardsAction.handle({ client });
-        await this.statusService.triggerEvent(
-            client,
-            StatusEventType.OnTurnEnd,
-        );
+        await this.statusService.trigger(client, StatusEventType.OnTurnEnd);
         await this.beginEnemyTurnProcess.handle({ client });
     }
 }

@@ -11,6 +11,7 @@ import { dodge } from 'src/game/status/dodge/constants';
 import { fortitude } from 'src/game/status/fortitude/constants';
 import { heraldDelayed } from 'src/game/status/heraldDelayed/constants';
 import { resolve } from 'src/game/status/resolve/constants';
+import { siphoning } from 'src/game/status/siphoning/constants';
 import {
     tasteOfBloodBuff,
     tasteOfBloodDebuff,
@@ -1034,5 +1035,30 @@ export const Cards: Card[] = [
         },
         showPointer: false,
         isUpgraded: true,
+    },
+    {
+        cardId: 77,
+        name: 'Siphon',
+        rarity: CardRarityEnum.Common,
+        cardType: CardTypeEnum.Defend,
+        pool: 'knight',
+        energy: 1,
+        description:
+            'For the rest of this turn, gain defense equal to damage dealt.',
+        keywords: [],
+        properties: {
+            effects: [],
+            statuses: [
+                {
+                    name: siphoning.name,
+                    args: {
+                        attachTo: CardTargetedEnum.Player,
+                        value: 1,
+                    },
+                },
+            ],
+        },
+        showPointer: false,
+        isUpgraded: false,
     },
 ];

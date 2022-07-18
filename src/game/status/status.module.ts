@@ -6,11 +6,13 @@ import {
     ExpeditionSchema,
 } from '../components/expedition/expedition.schema';
 import { EffectModule } from '../effects/effects.module';
+import { ProviderModule } from '../provider/provider.module';
 import { BurnStatus } from './burn/burn.status';
 import { DodgeStatus } from './dodge/dodge.status';
 import { FortitudeStatus } from './fortitude/fortitude.status';
 import { HeraldDelayedStatus } from './heraldDelayed/heraldDelayed.status';
 import { ResolveStatus } from './resolve/resolve.status';
+import { SiphoningStatus } from './siphoning/siphoning.status';
 import { StatusService } from './status.service';
 import { TasteOfBloodBuffStatus } from './tasteOfBlood/tasteOfBlood.buff.status';
 import { TasteOfBloodDebuffStatus } from './tasteOfBlood/tasteOfBlood.debuff.status';
@@ -26,6 +28,7 @@ import { TurtlingStatus } from './turtling/turtling.status';
         ]),
         ExpeditionModule,
         forwardRef(() => EffectModule),
+        ProviderModule,
     ],
     providers: [
         StatusService,
@@ -37,6 +40,7 @@ import { TurtlingStatus } from './turtling/turtling.status';
         TasteOfBloodDebuffStatus,
         BurnStatus,
         DodgeStatus,
+        SiphoningStatus,
     ],
     exports: [StatusService],
 })

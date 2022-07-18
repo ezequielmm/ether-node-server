@@ -13,12 +13,12 @@ export class DodgeStatus implements StatusEffectHandler {
     async handle(
         dto: StatusEffectDTO<DamageArgs>,
     ): Promise<EffectDTO<DamageArgs>> {
-        const args = dto.args;
+        const args = dto.status.args;
+
         dto.effectDTO.args.currentValue = 0;
+        args.value--;
 
-        dto.args.value--;
-
-        if (dto.args.value <= 0) {
+        if (args.value <= 0) {
             dto.remove();
         } else {
             dto.update(args);
