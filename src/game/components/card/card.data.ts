@@ -1144,6 +1144,6 @@ export const Cards: Card[] = [
             ],
         },
         showPointer: false,
-        isUpgraded: false,
+        isUpgraded: true,
     },
 ];
