@@ -4,7 +4,6 @@ import { JsonEffect } from '../../effects/effects.interface';
 import { EffectService } from '../../effects/effects.service';
 import { StatusEventDTO, StatusEventHandler } from '../interfaces';
 import { StatusDecorator } from '../status.decorator';
-import { StatusService } from '../status.service';
 import { burn } from './constants';
 
 @StatusDecorator({
@@ -12,10 +11,7 @@ import { burn } from './constants';
 })
 @Injectable()
 export class BurnStatus implements StatusEventHandler {
-    constructor(
-        private readonly effectService: EffectService,
-        private readonly statusService: StatusService,
-    ) {}
+    constructor(private readonly effectService: EffectService) {}
 
     async handle(dto: StatusEventDTO): Promise<void> {
         const effect: JsonEffect = {

@@ -1,17 +1,15 @@
-import { healEffect } from 'src/game/effects/constants';
 import {
-    StatusDirection,
-    StatusEffect,
+    StatusEvent,
+    StatusEventType,
     StatusStartsAt,
     StatusTrigger,
     StatusType,
 } from '../interfaces';
 
-export const regenerate: StatusEffect = {
+export const regenerate: StatusEvent = {
     name: 'regenerate',
     type: StatusType.Buff,
-    direction: StatusDirection.Incoming,
-    startsAt: StatusStartsAt.NextTurn,
-    trigger: StatusTrigger.Effect,
-    effects: [healEffect],
+    startsAt: StatusStartsAt.Instantly,
+    trigger: StatusTrigger.Event,
+    event: StatusEventType.OnTurnEnd,
 };
