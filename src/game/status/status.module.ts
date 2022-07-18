@@ -11,6 +11,7 @@ import { BurnStatus } from './burn/burn.status';
 import { DodgeStatus } from './dodge/dodge.status';
 import { FortitudeStatus } from './fortitude/fortitude.status';
 import { HeraldDelayedStatus } from './heraldDelayed/heraldDelayed.status';
+import { RegenerateStatus } from './regenerate/regenerate.status';
 import { ResolveStatus } from './resolve/resolve.status';
 import { SiphoningStatus } from './siphoning/siphoning.status';
 import { StatusService } from './status.service';
@@ -41,6 +42,7 @@ import { TurtlingStatus } from './turtling/turtling.status';
         BurnStatus,
         DodgeStatus,
         SiphoningStatus,
+        RegenerateStatus,
     ],
     exports: [StatusService],
 })

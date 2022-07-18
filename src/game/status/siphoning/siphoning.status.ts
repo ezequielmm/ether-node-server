@@ -26,20 +26,23 @@ export class SiphoningStatus implements StatusEffectHandler {
             remove();
             return dto.effectDTO;
         }
-        const damage = args.currentValue;
+
+        const newDefense = args.currentValue;
 
         if (EffectService.isPlayer(source)) {
             const defense = source.value.combatState.defense;
+
             this.expeditionService.setPlayerDefense({
                 clientId: client.id,
-                value: damage + defense,
+                value: newDefense + defense,
             });
         } else if (EffectService.isEnemy(source)) {
             const defense = source.value.defense;
+
             this.expeditionService.setEnemyDefense(
                 client.id,
                 source.value.id,
-                damage + defense,
+                newDefense + defense,
             );
         }
 
