@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { ExpeditionService } from '../components/expedition/expedition.service';
-import { ClientId } from '../components/expedition/expedition.type';
+import { ExpeditionService } from '../../components/expedition/expedition.service';
+import { ClientId } from '../../components/expedition/expedition.type';
 import { removeDefenseEffect } from './constants';
-import { EffectDecorator } from './effects.decorator';
-import { EffectDTO, EffectHandler } from './effects.interface';
-import { EffectService } from './effects.service';
-import { TargetId } from './effects.types';
+import { EffectDecorator } from '../effects.decorator';
+import { EffectDTO, EffectHandler } from '../effects.interface';
+import { EffectService } from '../effects.service';
+import { TargetId } from '../effects.types';
 
 @EffectDecorator({
     effect: removeDefenseEffect,

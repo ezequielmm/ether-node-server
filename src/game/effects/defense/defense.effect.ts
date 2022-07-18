@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { Socket } from 'socket.io';
-import { EnemyIntentionType } from '../components/enemy/enemy.enum';
-import { ExpeditionService } from '../components/expedition/expedition.service';
+import { EnemyIntentionType } from '../../components/enemy/enemy.enum';
+import { ExpeditionService } from '../../components/expedition/expedition.service';
 import { defenseEffect } from './constants';
-import { EffectDecorator } from './effects.decorator';
-import { EffectDTO, EffectHandler } from './effects.interface';
+import { EffectDecorator } from '../effects.decorator';
+import { EffectDTO, EffectHandler } from '../effects.interface';
 
 export interface DefenseArgs {
     useEnemies: boolean;

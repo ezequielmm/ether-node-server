@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { ExpeditionService } from '../components/expedition/expedition.service';
+import { ExpeditionService } from '../../components/expedition/expedition.service';
 import { energyEffect } from './constants';
-import { EffectDecorator } from './effects.decorator';
-import { EffectDTO, EffectHandler } from './effects.interface';
+import { EffectDecorator } from '../effects.decorator';
+import { EffectDTO, EffectHandler } from '../effects.interface';
 
 @EffectDecorator({
     effect: energyEffect,

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ExpeditionService } from 'src/game/components/expedition/expedition.service';
 import { EffectDTO } from 'src/game/effects/effects.interface';
-import { HealArgs } from 'src/game/effects/heal.effect';
+import { HealArgs } from 'src/game/effects/heal/heal.effect';
 import { StatusEffectDTO, StatusEffectHandler } from '../interfaces';
 import { StatusDecorator } from '../status.decorator';
 import { regenerate } from './contants';

@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { damageEffect } from '../../effects/constants';
+import { damageEffect } from 'src/game/effects/damage/constants';
 import { JsonEffect } from '../../effects/effects.interface';
 import { EffectService } from '../../effects/effects.service';
 import { StatusEventDTO, StatusEventHandler } from '../interfaces';

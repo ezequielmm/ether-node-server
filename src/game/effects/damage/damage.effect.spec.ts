@@ -1,11 +1,12 @@
 import { Test } from '@nestjs/testing';
 import { Socket } from 'socket.io';
-import { GetPlayerInfoAction } from '../action/getPlayerInfo.action';
-import { CardTargetedEnum } from '../components/card/card.enum';
-import { IExpeditionCurrentNodeDataEnemy } from '../components/expedition/expedition.interface';
-import { ExpeditionService } from '../components/expedition/expedition.service';
+import { GetPlayerInfoAction } from '../../action/getPlayerInfo.action';
+import { CardTargetedEnum } from '../../components/card/card.enum';
+import { IExpeditionCurrentNodeDataEnemy } from '../../components/expedition/expedition.interface';
+import { ExpeditionService } from '../../components/expedition/expedition.service';
 import { DamageArgs, DamageEffect } from './damage.effect';
-import { EffectDTO } from './effects.interface';
+import { EffectDTO } from '../effects.interface';
+import { Expedition } from 'src/game/components/expedition/expedition.schema';
 
 describe('DamageEffect', () => {
     let effect: DamageEffect;
@@ -13,6 +14,8 @@ describe('DamageEffect', () => {
         id: 'clientId',
         emit: jest.fn(),
     } as unknown as Socket;
+    const expedition: Expedition = {} as Expedition;
+
     const mockExpeditionService = {
         getCurrentNode: jest.fn().mockResolvedValue({
             data: {
@@ -61,6 +64,7 @@ describe('DamageEffect', () => {
     it('should handle damage to enemy', async () => {
         const payload: EffectDTO<DamageArgs> = {
             client,
+            expedition,
             args: {
                 initialValue: 10,
                 currentValue: 10,
@@ -93,6 +97,7 @@ describe('DamageEffect', () => {
     it('should handle damage to enemy and trigger damage negated', async () => {
         const payload: EffectDTO<DamageArgs> = {
             client,
+            expedition,
             args: {
                 initialValue: 4,
                 currentValue: 4,
@@ -127,6 +132,7 @@ describe('DamageEffect', () => {
     it('should handle damage for player and trigger death event', async () => {
         const payload: EffectDTO<DamageArgs> = {
             client,
+            expedition,
             args: {
                 initialValue: 105,
                 currentValue: 105,

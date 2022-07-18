@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ExpeditionService } from 'src/game/components/expedition/expedition.service';
-import { DamageArgs } from 'src/game/effects/damage.effect';
+import { DamageArgs } from 'src/game/effects/damage/damage.effect';
 import { EffectDTO } from 'src/game/effects/effects.interface';
 import { EffectService } from 'src/game/effects/effects.service';
 import { StatusEffectDTO, StatusEffectHandler } from '../interfaces';

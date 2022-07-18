@@ -20,6 +20,7 @@ export interface EffectDTO<
     Args extends Record<string, any> = Record<string, any>,
 > {
     readonly client: Socket;
+    readonly expedition: Expedition;
     readonly source: SourceEntityDTO;
     readonly target: TargetEntityDTO;
     args: {

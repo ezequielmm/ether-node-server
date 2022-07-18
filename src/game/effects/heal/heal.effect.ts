@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { ExpeditionService } from '../components/expedition/expedition.service';
+import { ExpeditionService } from '../../components/expedition/expedition.service';
 import { healEffect } from './constants';
-import { EffectDecorator } from './effects.decorator';
-import { EffectDTO, EffectHandler } from './effects.interface';
-import { EffectService } from './effects.service';
+import { EffectDecorator } from '../effects.decorator';
+import { EffectDTO, EffectHandler } from '../effects.interface';
+import { EffectService } from '../effects.service';
 
 export interface HealArgs {
     value: number;

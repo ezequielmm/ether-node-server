@@ -1,4 +1,4 @@
-import { damageEffect } from '../../effects/constants';
+import { damageEffect } from 'src/game/effects/damage/constants';
 import {
     StatusDirection,
     StatusEffect,
