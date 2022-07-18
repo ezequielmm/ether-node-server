@@ -14,13 +14,11 @@ export class ProviderService {
                 const metatype = provider.metatype;
                 const metadata = Reflect.getMetadata(key, metatype ?? {});
 
-                if (metadata) {
-                    console.log(metadata);
+                if (metadata)
                     providers.push({
                         metadata: metadata as M,
                         instance: instance as T,
                     });
-                }
             }
         }
         return providers;

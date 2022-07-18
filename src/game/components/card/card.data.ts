@@ -10,6 +10,7 @@ import { burn } from 'src/game/status/burn/constants';
 import { dodge } from 'src/game/status/dodge/constants';
 import { fortitude } from 'src/game/status/fortitude/constants';
 import { heraldDelayed } from 'src/game/status/heraldDelayed/constants';
+import { regenerate } from 'src/game/status/regenerate/contants';
 import { resolve } from 'src/game/status/resolve/constants';
 import { siphoning } from 'src/game/status/siphoning/constants';
 import {
@@ -1051,6 +1052,79 @@ export const Cards: Card[] = [
             statuses: [
                 {
                     name: siphoning.name,
+                    args: {
+                        attachTo: CardTargetedEnum.Player,
+                        value: 1,
+                    },
+                },
+            ],
+        },
+        showPointer: false,
+        isUpgraded: false,
+    },
+    {
+        cardId: 78,
+        name: 'Siphon+',
+        rarity: CardRarityEnum.Common,
+        cardType: CardTypeEnum.Defend,
+        pool: 'knight',
+        energy: 0,
+        description:
+            'For the rest of this turn, gain defense equal to damage dealt.',
+        keywords: [],
+        properties: {
+            effects: [],
+            statuses: [
+                {
+                    name: siphoning.name,
+                    args: {
+                        attachTo: CardTargetedEnum.Player,
+                        value: 1,
+                    },
+                },
+            ],
+        },
+        showPointer: false,
+        isUpgraded: true,
+    },
+    {
+        cardId: 79,
+        name: 'Invoke Blessing',
+        rarity: CardRarityEnum.Common,
+        cardType: CardTypeEnum.Power,
+        pool: 'knight',
+        energy: 1,
+        description: 'Gain 1 Regenerate',
+        keywords: [],
+        properties: {
+            effects: [],
+            statuses: [
+                {
+                    name: regenerate.name,
+                    args: {
+                        attachTo: CardTargetedEnum.Player,
+                        value: 1,
+                    },
+                },
+            ],
+        },
+        showPointer: false,
+        isUpgraded: true,
+    },
+    {
+        cardId: 80,
+        name: 'Invoke Blessing+',
+        rarity: CardRarityEnum.Common,
+        cardType: CardTypeEnum.Power,
+        pool: 'knight',
+        energy: 0,
+        description: 'Gain 1 Regenerate',
+        keywords: [],
+        properties: {
+            effects: [],
+            statuses: [
+                {
+                    name: regenerate.name,
                     args: {
                         attachTo: CardTargetedEnum.Player,
                         value: 1,
