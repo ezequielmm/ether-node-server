@@ -3,7 +3,6 @@ import { Socket } from 'socket.io';
 import { removeCardsFromPile } from 'src/utils';
 import { CardTypeEnum } from '../components/card/card.enum';
 import { EnemyIntentionType } from '../components/enemy/enemy.enum';
-import { IExpeditionPlayerStateDeckCard } from '../components/expedition/expedition.interface';
 import { ExpeditionService } from '../components/expedition/expedition.service';
 import {
     SWARAction,
@@ -207,6 +206,7 @@ export class DrawCardEffect implements EffectHandler {
             // we prepare the variables to store the cards and create the moves array
             // for the SWAR response
             let newHand = [...hand];
+            let newDiscard = [...discard];
             let cardsToMove = [];
 
             // Now we check if we have at least one defense card
@@ -278,6 +278,13 @@ export class DrawCardEffect implements EffectHandler {
 
                     // now we merge the new cards with the hand pile
                     newHand = newHand.concat(cardFromDiscardToDraw);
+
+                    // Now we remove the cards from the discard pile
+                    // that are being moved to the hand pile
+                    newDiscard = removeCardsFromPile({
+                        originalPile: discard,
+                        cardsToRemove: cardFromDiscardToDraw,
+                    });
                 }
 
                 // Now we remove the cards from the draw pile
@@ -286,6 +293,28 @@ export class DrawCardEffect implements EffectHandler {
                     originalPile: draw,
                     cardsToRemove: cardsFromDrawToHand,
                 });
+
+                await this.expeditionService.updateHandPiles({
+                    clientId: client.id,
+                    draw: newDraw,
+                    hand: newHand,
+                    discard: newDiscard,
+                });
+
+                this.logger.log(
+                    `Sent message PutData to client ${client.id}: ${SWARAction.MoveCard}`,
+                );
+
+                client.emit(
+                    'PutData',
+                    JSON.stringify(
+                        StandardResponse.respond({
+                            message_type: SWARMessageType.PlayerAffected,
+                            action: SWARAction.CreateCard,
+                            data: cardsToMove,
+                        }),
+                    ),
+                );
             }
         }
     }
