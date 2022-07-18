@@ -15,7 +15,7 @@ export class ResolveStatus implements StatusEffectHandler {
     ): Promise<EffectDTO<DamageArgs>> {
         const effectDTO = dto.effectDTO;
         effectDTO.args.currentValue = Math.max(
-            effectDTO.args.currentValue + dto.args.value,
+            effectDTO.args.currentValue + dto.status.args.value,
             0,
         );
         return effectDTO;

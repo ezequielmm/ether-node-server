@@ -1,13 +1,11 @@
 import { Socket } from 'socket.io';
 import { CardTargetedEnum } from '../components/card/card.enum';
+import { EnemyId } from '../components/enemy/enemy.type';
+import { Expedition } from '../components/expedition/expedition.schema';
 import {
-    EntityDTO,
-    AllEnemiesDTO,
-    EnemyDTO,
-    PlayerDTO,
-    RandomEnemyDTO,
-    SourceEntityDTO,
-    TargetEntityDTO,
+    IExpeditionCurrentNodeDataEnemy,
+    IExpeditionPlayerCombatState,
+    IExpeditionPlayerGlobalState,
 } from '../components/expedition/expedition.interface';
 
 export interface Effect {
@@ -45,7 +43,7 @@ export interface EffectHandler {
 
 export interface ApplyEffectCollectionDTO {
     client: Socket;
-    source: EntityDTO;
+    source: SourceEntityDTO;
     targets: {
         player: PlayerDTO;
         randomEnemy?: RandomEnemyDTO;
@@ -61,4 +59,67 @@ export interface ExpeditionTargets {
     randomEnemy: RandomEnemyDTO;
     allEnemies: AllEnemiesDTO;
     selectedEnemy?: EnemyDTO;
+}
+
+export interface ApplyAllDTO {
+    client: Socket;
+    expedition: Expedition;
+    source: SourceEntityDTO;
+    effects: JsonEffect[];
+    selectedEnemy?: EnemyId;
+}
+
+export interface ApplyDTO {
+    client: Socket;
+    expedition: Expedition;
+    source: SourceEntityDTO;
+    target: TargetEntityDTO;
+    effect: JsonEffect;
+}
+
+export interface PlayerDTO {
+    type: CardTargetedEnum.Player;
+    value: {
+        globalState: IExpeditionPlayerGlobalState;
+        combatState: IExpeditionPlayerCombatState;
+    };
+}
+
+export interface EnemyDTO {
+    type: CardTargetedEnum.Enemy;
+    value: IExpeditionCurrentNodeDataEnemy;
+}
+
+export interface AllEnemiesDTO {
+    type: CardTargetedEnum.AllEnemies;
+    value: IExpeditionCurrentNodeDataEnemy[];
+}
+
+export interface RandomEnemyDTO {
+    type: CardTargetedEnum.RandomEnemy;
+    value: IExpeditionCurrentNodeDataEnemy;
+}
+
+export type SourceEntityDTO = PlayerDTO | EnemyDTO;
+export type TargetEntityDTO = PlayerDTO | EnemyDTO;
+
+export interface FindTargetsDTO {
+    expedition: Expedition;
+    source: SourceEntityDTO;
+    effect: JsonEffect;
+    selectedEnemy?: EnemyId;
+}
+
+export interface ExtractTargetsDTO {
+    expedition: Expedition;
+    enemyId?: EnemyId;
+}
+
+export interface MutateDTO {
+    client: Socket;
+    expedition: Expedition;
+    source: SourceEntityDTO;
+    target: TargetEntityDTO;
+    dto: EffectDTO;
+    effect: Effect['name'];
 }

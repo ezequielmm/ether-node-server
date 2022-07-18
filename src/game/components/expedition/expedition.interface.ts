@@ -1,3 +1,4 @@
+import { Socket } from 'socket.io';
 import { JsonEffect } from 'src/game/effects/effects.interface';
 import {
     AttachedStatus,
@@ -83,45 +84,4 @@ export type IExpeditionPlayerGlobalState = Expedition['playerState'];
 export type IExpeditionPlayerCombatState =
     IExpeditionCurrentNode['data']['player'];
 
-export interface PlayerDTO {
-    type: CardTargetedEnum.Player;
-    value: {
-        globalState: IExpeditionPlayerGlobalState;
-        combatState: IExpeditionPlayerCombatState;
-    };
-}
 
-export interface EnemyDTO {
-    type: CardTargetedEnum.Enemy;
-    value: IExpeditionCurrentNodeDataEnemy;
-}
-
-export interface AllEnemiesDTO {
-    type: CardTargetedEnum.AllEnemies;
-    value: IExpeditionCurrentNodeDataEnemy[];
-}
-
-export interface RandomEnemyDTO {
-    type: CardTargetedEnum.RandomEnemy;
-    value: IExpeditionCurrentNodeDataEnemy;
-}
-
-export type SourceEntityDTO = PlayerDTO | EnemyDTO;
-export type TargetEntityDTO =
-    | PlayerDTO
-    | EnemyDTO
-    | RandomEnemyDTO
-    | AllEnemiesDTO;
-
-export type EntityDTO = SourceEntityDTO | TargetEntityDTO;
-
-export interface PlayerReferenceDTO {
-    type: CardTargetedEnum.Player;
-}
-
-export interface EnemyReferenceDTO {
-    type: CardTargetedEnum.Enemy;
-    id: EnemyId;
-}
-
-export type SourceEntityReferenceDTO = PlayerReferenceDTO | EnemyReferenceDTO;

@@ -2,8 +2,8 @@ import { Injectable, Logger } from '@nestjs/common';
 import { Socket } from 'socket.io';
 import { CardTargetedEnum } from '../components/card/card.enum';
 import { CombatTurnEnum } from '../components/expedition/expedition.enum';
-import { EnemyDTO } from '../components/expedition/expedition.interface';
 import { ExpeditionService } from '../components/expedition/expedition.service';
+import { EnemyDTO } from '../effects/effects.interface';
 import { EffectService } from '../effects/effects.service';
 import {
     SWARAction,
@@ -67,13 +67,13 @@ export class BeginEnemyTurnProcess {
             intentions.forEach(async (intention) => {
                 const { effects } = intention;
 
-                await this.effectService.applyCollection(
+                await this.effectService.applyAll({
                     client,
                     expedition,
                     source,
                     effects,
-                    round,
-                );
+                    selectedEnemy: round,
+                });
             });
         });
     }

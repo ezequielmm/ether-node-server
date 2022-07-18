@@ -18,23 +18,19 @@ export class BurnStatus implements StatusEventHandler {
     ) {}
 
     async handle(dto: StatusEventDTO): Promise<void> {
-        const source = await this.statusService.getSourceFromReference(
-            dto.client,
-            dto.source,
-        );
         const effect: JsonEffect = {
             effect: damageEffect.name,
             args: {
-                value: dto.args.value,
+                value: dto.args.args.value,
             },
         };
 
-        await this.effectService.apply(
-            dto.client,
-            dto.expedition,
-            source,
-            dto.target,
+        await this.effectService.apply({
+            client: dto.client,
+            expedition: dto.expedition,
+            source: dto.source,
+            target: dto.target,
             effect,
-        );
+        });
     }
 }

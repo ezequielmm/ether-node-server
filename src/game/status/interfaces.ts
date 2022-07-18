@@ -1,13 +1,13 @@
 import { Socket } from 'socket.io';
 import { CardTargetedEnum } from '../components/card/card.enum';
 import { EnemyId } from '../components/enemy/enemy.type';
-import {
-    SourceEntityDTO,
-    SourceEntityReferenceDTO,
-    TargetEntityDTO,
-} from '../components/expedition/expedition.interface';
 import { Expedition } from '../components/expedition/expedition.schema';
-import { Effect, EffectDTO } from '../effects/effects.interface';
+import {
+    Effect,
+    EffectDTO,
+    SourceEntityDTO,
+    TargetEntityDTO,
+} from '../effects/effects.interface';
 
 export enum StatusType {
     Buff = 'buff',
@@ -119,8 +119,8 @@ export type Status = StatusEffect | StatusEvent;
  * Status metadata
  * It is used to declare the status information in the class metadata.
  */
-export interface StatusMetadata {
-    status: Status;
+export interface StatusMetadata<T extends Status = Status> {
+    status: T;
     // DEPRECATED: use `triggers` instead.
     // @deprecated
     // effects: Effect[];
@@ -144,7 +144,7 @@ export interface AttachedStatus {
      * @memberof AttachedStatus
      * @example 'resolve'
      */
-    name: string;
+    readonly name: string;
 
     /**
      * The number of the round when the status was attached.
@@ -152,7 +152,7 @@ export interface AttachedStatus {
      * @memberof AttachedStatus
      * @example 1
      */
-    addedInRound: number;
+    readonly addedInRound: number;
 
     /**
      * The source who attached the status.
@@ -161,7 +161,7 @@ export interface AttachedStatus {
      * @example { id: '1', type: 'player' }
      * @example { id: '1', type: 'enemy' }
      */
-    sourceReference: SourceEntityReferenceDTO;
+    readonly sourceReference: SourceEntityReferenceDTO;
 
     args: {
         value: any;
@@ -176,19 +176,20 @@ export interface StatusCollection {
 export interface StatusEffectDTO<
     T extends Record<string, any> = Record<string, any>,
 > {
+    client: Socket;
+    expedition: Expedition;
+    status: AttachedStatus;
+    effectDTO: EffectDTO<T>;
     update(args: AttachedStatus['args']): void;
     remove(): void;
-    args: AttachedStatus['args'];
-    effectDTO: EffectDTO<T>;
 }
 
 export interface StatusEventDTO {
     client: Socket;
     expedition: Expedition;
-    source: SourceEntityReferenceDTO;
+    source: SourceEntityDTO;
     target: TargetEntityDTO;
-    currentRound: number;
-    args: AttachedStatus['args'];
+    args: AttachedStatus;
 }
 
 /**
@@ -228,12 +229,24 @@ export class AttachStatusToEnemyDTO {
     readonly currentRound: number;
 }
 
+export interface PlayerReferenceDTO {
+    type: CardTargetedEnum.Player;
+}
+
+export interface EnemyReferenceDTO {
+    type: CardTargetedEnum.Enemy;
+    id: EnemyId;
+}
+
+export type SourceEntityReferenceDTO = PlayerReferenceDTO | EnemyReferenceDTO;
+
 export type StatusesGlobalCollection = {
     target: TargetEntityDTO;
     statuses: AttachedStatus[];
 }[];
 
 export interface MutateEffectArgsDTO {
+    client: Socket;
     expedition: Expedition;
     collectionOwner: SourceEntityDTO;
     collection: StatusCollection;
