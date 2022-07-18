@@ -163,7 +163,7 @@ export class DamageEffect implements EffectHandler {
             await this.getPlayerInfoAction.handle(client.id);
 
         let newDefense = 0;
-        let newHpCurrent = 0;
+        let newHpCurrent = hpCurrent;
 
         // Them we check if the player has defense to reduce from there
         if (currentDefense > 0) {
