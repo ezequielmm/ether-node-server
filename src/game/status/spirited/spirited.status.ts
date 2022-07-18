@@ -1,21 +1,21 @@
 import { Injectable } from '@nestjs/common';
 import { JsonEffect } from 'src/game/effects/effects.interface';
 import { EffectService } from 'src/game/effects/effects.service';
-import { healEffect } from 'src/game/effects/heal/constants';
+import { energyEffect } from 'src/game/effects/energy/constants';
 import { StatusEventDTO, StatusEventHandler } from '../interfaces';
 import { StatusDecorator } from '../status.decorator';
-import { regenerate } from './contants';
+import { spirited } from './contants';
 
 @StatusDecorator({
-    status: regenerate,
+    status: spirited,
 })
 @Injectable()
-export class RegenerateStatus implements StatusEventHandler {
+export class SpiritedStatus implements StatusEventHandler {
     constructor(private readonly effectService: EffectService) {}
 
     async handle(dto: StatusEventDTO): Promise<void> {
         const effect: JsonEffect = {
-            effect: healEffect.name,
+            effect: energyEffect.name,
             args: {
                 value: dto.args.args.value,
             },

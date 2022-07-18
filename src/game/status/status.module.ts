@@ -14,6 +14,7 @@ import { HeraldDelayedStatus } from './heraldDelayed/heraldDelayed.status';
 import { RegenerateStatus } from './regenerate/regenerate.status';
 import { ResolveStatus } from './resolve/resolve.status';
 import { SiphoningStatus } from './siphoning/siphoning.status';
+import { SpiritedStatus } from './spirited/spirited.status';
 import { StatusService } from './status.service';
 import { TasteOfBloodBuffStatus } from './tasteOfBlood/tasteOfBlood.buff.status';
 import { TasteOfBloodDebuffStatus } from './tasteOfBlood/tasteOfBlood.debuff.status';
@@ -43,6 +44,7 @@ import { TurtlingStatus } from './turtling/turtling.status';
         DodgeStatus,
         SiphoningStatus,
         RegenerateStatus,
+        SpiritedStatus,
     ],
     exports: [StatusService],
 })

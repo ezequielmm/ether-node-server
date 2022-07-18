@@ -4,7 +4,7 @@ import { Test } from '@nestjs/testing';
 import { Socket } from 'socket.io';
 import { Expedition } from '../components/expedition/expedition.schema';
 import { ExpeditionService } from '../components/expedition/expedition.service';
-import { damageEffect } from '../effects/constants';
+import { damageEffect } from '../effects/damage/constants';
 import { EffectDTO } from '../effects/effects.interface';
 import { ProviderService } from '../provider/provider.service';
 import { fortitude } from './fortitude/constants';

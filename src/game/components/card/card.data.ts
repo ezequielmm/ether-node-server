@@ -1120,7 +1120,7 @@ export const Cards: Card[] = [
             ],
         },
         showPointer: false,
-        isUpgraded: true,
+        isUpgraded: false,
     },
     {
         cardId: 80,
@@ -1142,6 +1142,52 @@ export const Cards: Card[] = [
                     },
                 },
             ],
+        },
+        showPointer: false,
+        isUpgraded: true,
+    },
+    {
+        cardId: 119,
+        name: 'GN',
+        rarity: CardRarityEnum.Rare,
+        cardType: CardTypeEnum.Skill,
+        pool: 'knight',
+        energy: 3,
+        description:
+            'Gain 1 Resolve, 1 Fortitude, 1 Spirited and 1 Spikes. End turn.',
+        keywords: [],
+        properties: {
+            effects: [],
+            statuses: [
+                {
+                    name: resolve.name,
+                    args: {
+                        attachTo: CardTargetedEnum.Player,
+                        value: 1,
+                    },
+                },
+                {
+                    name: fortitude.name,
+                    args: { attachTo: CardTargetedEnum.Player, value: 1 },
+                },
+            ],
+        },
+        showPointer: false,
+        isUpgraded: false,
+    },
+    {
+        cardId: 120,
+        name: 'GN',
+        rarity: CardRarityEnum.Rare,
+        cardType: CardTypeEnum.Skill,
+        pool: 'knight',
+        energy: 2,
+        description:
+            'Gain 1 Resolve, 1 Fortitude, 1 Spirited and 1 Spikes. End turn.',
+        keywords: [],
+        properties: {
+            effects: [],
+            statuses: [],
         },
         showPointer: false,
         isUpgraded: true,
