@@ -1,4 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { isEmpty } from 'lodash';
 import { Socket } from 'socket.io';
 import { CardTargetedEnum } from '../components/card/card.enum';
 import { CombatTurnEnum } from '../components/expedition/expedition.enum';
@@ -67,13 +68,15 @@ export class BeginEnemyTurnProcess {
             intentions.forEach(async (intention) => {
                 const { effects } = intention;
 
-                await this.effectService.applyAll({
-                    client,
-                    expedition,
-                    source,
-                    effects,
-                    selectedEnemy: round,
-                });
+                if (!isEmpty(effects)) {
+                    await this.effectService.applyAll({
+                        client,
+                        expedition,
+                        source,
+                        effects,
+                        selectedEnemy: round,
+                    });
+                }
             });
         });
     }
