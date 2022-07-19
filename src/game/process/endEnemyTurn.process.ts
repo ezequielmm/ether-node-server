@@ -43,7 +43,14 @@ export class EndEnemyTurnProcess {
             ),
         );
 
-        await this.statusService.trigger(client, StatusEventType.OnTurnEnd);
+        const expedition = await this.expeditionService.findOne({
+            clientId: client.id,
+        });
+        await this.statusService.trigger(
+            client,
+            expedition,
+            StatusEventType.OnTurnEnd,
+        );
         await this.beingPlayerTurnProcess.handle({ client });
     }
 }

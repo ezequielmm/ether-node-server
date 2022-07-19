@@ -17,7 +17,7 @@ export class BurnStatus implements StatusEventHandler {
         const effect: JsonEffect = {
             effect: damageEffect.name,
             args: {
-                value: dto.args.args.value,
+                value: dto.status.args.value,
             },
         };
 
@@ -28,5 +28,8 @@ export class BurnStatus implements StatusEventHandler {
             target: dto.target,
             effect,
         });
+
+        dto.status.args.value++;
+        dto.update(dto.status.args);
     }
 }
