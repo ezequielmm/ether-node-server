@@ -1222,4 +1222,54 @@ export const Cards: Card[] = [
         showPointer: false,
         isUpgraded: true,
     },
+    {
+        cardId: 33,
+        name: 'Head Butt',
+        rarity: CardRarityEnum.Common,
+        cardType: CardTypeEnum.Attack,
+        pool: 'knight',
+        energy: 2,
+        description:
+            'Deal 8 damage. If enemy is undefended, Inflict Confusion.',
+        keywords: [],
+        properties: {
+            effects: [
+                {
+                    effect: damageEffect.name,
+                    target: CardTargetedEnum.Enemy,
+                    args: {
+                        value: 8,
+                    },
+                },
+            ],
+            statuses: [],
+        },
+        showPointer: true,
+        isUpgraded: false,
+    },
+    {
+        cardId: 34,
+        name: 'Head Butt+',
+        rarity: CardRarityEnum.Common,
+        cardType: CardTypeEnum.Attack,
+        pool: 'knight',
+        energy: 2,
+        description:
+            'Deal 11 damage. If enemy is undefended, Inflict Confusion.',
+        keywords: [],
+        properties: {
+            effects: [
+                {
+                    effect: damageEffect.name,
+                    target: CardTargetedEnum.Enemy,
+                    args: {
+                        value: 11,
+                    },
+                },
+            ],
+            statuses: [],
+        },
+        showPointer: true,
+        isUpgraded: true,
+    },
 ];
