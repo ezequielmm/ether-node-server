@@ -69,9 +69,14 @@ export class BeginPlayerTurnProcess {
             },
         } = await this.settingsService.getSettings();
 
-        const expedition = await this.expeditionService.updatePlayerEnergy({
+        await this.expeditionService.updatePlayerEnergy({
             clientId: client.id,
             newEnergy: initial,
+        });
+
+        const expedition = await this.expeditionService.setPlayerDefense({
+            clientId: client.id,
+            value: 0,
         });
 
         const {
