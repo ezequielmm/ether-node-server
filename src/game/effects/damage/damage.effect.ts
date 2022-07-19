@@ -172,8 +172,8 @@ export class DamageEffect implements EffectHandler {
             // If newDefense is negative, it means that the defense is fully
             // depleted and the remaining will be applied to the player's health
             if (newDefense < 0) {
-                newDefense = 0;
                 newHpCurrent = Math.max(0, hpCurrent + newDefense);
+                newDefense = 0;
             }
         } else {
             // If the player has no defense, the damage will be applied to the
