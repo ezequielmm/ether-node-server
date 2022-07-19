@@ -87,7 +87,7 @@ export class EffectService {
 
         for (let i = 0; i < times; i++) {
             const handler = await this.findHandlerByName(name);
-            handler.handle(effectDTO);
+            await handler.handle(effectDTO);
         }
     }
 

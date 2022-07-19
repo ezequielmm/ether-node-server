@@ -22,17 +22,7 @@ import { TasteOfBloodDebuffStatus } from './tasteOfBlood/tasteOfBlood.debuff.sta
 import { TurtlingStatus } from './turtling/turtling.status';
 
 @Module({
-    imports: [
-        MongooseModule.forFeature([
-            {
-                name: Expedition.name,
-                schema: ExpeditionSchema,
-            },
-        ]),
-        ExpeditionModule,
-        forwardRef(() => EffectModule),
-        ProviderModule,
-    ],
+    imports: [ExpeditionModule, forwardRef(() => EffectModule), ProviderModule],
     providers: [
         StatusService,
         TurtlingStatus,
