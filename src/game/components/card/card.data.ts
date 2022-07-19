@@ -147,7 +147,7 @@ export const Cards: Card[] = [
                     effect: drawCardEffect.name,
                     target: CardTargetedEnum.Player,
                     args: {
-                        value: 2,
+                        value: 1,
                     },
                 },
             ],
