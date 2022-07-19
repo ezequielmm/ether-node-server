@@ -20,13 +20,13 @@ export class EnergyEffect implements EffectHandler {
         // Get current energy and max energy amount
         const {
             data: {
-                player: { energy },
+                player: { energy, energyMax },
             },
         } = await this.expeditionService.getCurrentNode({
             clientId: client.id,
         });
 
-        const newEnergy = energy + amountToAdd;
+        const newEnergy = Math.max(energy + amountToAdd, energyMax);
 
         // update energy amount
         await this.expeditionService.updatePlayerEnergy({
