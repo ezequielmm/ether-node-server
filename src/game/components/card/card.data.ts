@@ -1272,4 +1272,54 @@ export const Cards: Card[] = [
         showPointer: true,
         isUpgraded: true,
     },
+    {
+        cardId: 21,
+        name: 'Plant Feet',
+        rarity: CardRarityEnum.Common,
+        cardType: CardTypeEnum.Defend,
+        pool: 'knight',
+        energy: 0,
+        description:
+            'Gain 2 defense. Doubled each use for the remainder of combat.',
+        keywords: [],
+        properties: {
+            effects: [
+                {
+                    effect: defenseEffect.name,
+                    target: CardTargetedEnum.Player,
+                    args: {
+                        value: 2,
+                    },
+                },
+            ],
+            statuses: [],
+        },
+        showPointer: false,
+        isUpgraded: false,
+    },
+    {
+        cardId: 22,
+        name: 'Plant Feet+',
+        rarity: CardRarityEnum.Common,
+        cardType: CardTypeEnum.Defend,
+        pool: 'knight',
+        energy: 0,
+        description:
+            'Gain 3 defense. Doubled each use for the remainder of combat.',
+        keywords: [],
+        properties: {
+            effects: [
+                {
+                    effect: defenseEffect.name,
+                    target: CardTargetedEnum.Player,
+                    args: {
+                        value: 3,
+                    },
+                },
+            ],
+            statuses: [],
+        },
+        showPointer: false,
+        isUpgraded: false,
+    },
 ];
