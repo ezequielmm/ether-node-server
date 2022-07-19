@@ -311,9 +311,7 @@ export class StatusService {
                         event,
                     });
 
-                    if (!container) {
-                        continue;
-                    }
+                    if (!container) continue;
 
                     const metadata = container.metadata;
                     const instance = container.instance;
@@ -352,13 +350,12 @@ export class StatusService {
                     await instance.handle.bind(instance)(dto);
                 }
             }
-            if (isUpdate) {
+            if (isUpdate)
                 await this.updateStatuses(
                     entityCollection.target,
                     expedition,
                     collection,
                 );
-            }
         }
     }
 
