@@ -31,7 +31,7 @@ export const CharacterData: Character[] = [
                     amount: 1,
                 },
                 {
-                    cardId: 79,
+                    cardId: 119,
                     amount: 1,
                 },
             ],
