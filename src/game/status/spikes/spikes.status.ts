@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { damageEffect } from 'src/game/effects/damage/constants';
 import { DamageArgs } from 'src/game/effects/damage/damage.effect';
-import { EffectDTO, JsonEffect } from 'src/game/effects/effects.interface';
+import { EffectDTO } from 'src/game/effects/effects.interface';
 import { EffectService } from 'src/game/effects/effects.service';
 import { StatusEffectDTO, StatusEffectHandler } from '../interfaces';
 import { StatusDecorator } from '../status.decorator';
