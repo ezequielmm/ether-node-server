@@ -17,6 +17,6 @@ import { EnemyModule } from '../enemy/enemy.module';
         EnemyModule,
     ],
     providers: [ExpeditionService],
-    exports: [ExpeditionService],
+    exports: [ExpeditionService, MongooseModule],
 })
 export class ExpeditionModule {}

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { clone, find, matches } from 'lodash';
+import { clone, cloneDeep, find, matches } from 'lodash';
 import { Model } from 'mongoose';
 import { Socket } from 'socket.io';
 import { CardTargetedEnum } from '../components/card/card.enum';
@@ -185,7 +185,7 @@ export class StatusService {
 
                 if (!isActive) continue;
 
-                mutatedDTO = await instance.handle.bind(instance)({
+                mutatedDTO = await instance.handle({
                     client,
                     expedition: expedition,
                     effectDTO: mutatedDTO,
@@ -251,7 +251,7 @@ export class StatusService {
         source: EnemyDTO,
         collection: StatusCollection,
     ): Promise<void> {
-        return this.expedition
+        await this.expedition
             .findOneAndUpdate(
                 {
                     clientId: expedition.clientId,
@@ -297,7 +297,7 @@ export class StatusService {
 
         for (const entityCollection of statusGlobalCollection) {
             let isUpdate = false;
-            const collection = entityCollection.statuses;
+            const collection = cloneDeep(entityCollection.statuses);
 
             for (const type in collection) {
                 const statuses = collection[type];
@@ -347,7 +347,7 @@ export class StatusService {
                         },
                     };
 
-                    await instance.handle.bind(instance)(dto);
+                    await instance.handle(dto);
                 }
             }
             if (isUpdate)
