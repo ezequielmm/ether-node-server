@@ -225,8 +225,8 @@ export class DamageEffect implements EffectHandler {
             // and use the remaining value to reduce to the health
             // and the set the defense to 0
             if (newDefense < 0) {
-                enemy.defense = 0;
                 enemy.hpCurrent = Math.max(0, enemy.hpCurrent + newDefense);
+                enemy.defense = 0;
             } else {
                 // Otherwise, we update the defense with the new value
                 enemy.defense = newDefense;
