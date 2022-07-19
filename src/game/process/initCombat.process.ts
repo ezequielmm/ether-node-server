@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { Socket } from 'socket.io';
 import { SetCombatTurnAction } from '../action/setCombatTurn.action';
 import { CombatTurnEnum } from '../components/expedition/expedition.enum';
@@ -9,8 +9,6 @@ import { SendEnemyIntentProcess } from './sendEnemyIntents.process';
 
 @Injectable()
 export class InitCombatProcess {
-    private readonly logger: Logger = new Logger(InitCombatProcess.name);
-
     constructor(
         private readonly currentNodeGeneratorProcess: CurrentNodeGeneratorProcess,
         private readonly expeditionService: ExpeditionService,
