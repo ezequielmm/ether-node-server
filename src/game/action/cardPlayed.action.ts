@@ -11,6 +11,7 @@ import { ExpeditionService } from '../components/expedition/expedition.service';
 import { PlayerDTO } from '../effects/effects.interface';
 import { EffectService } from '../effects/effects.service';
 import { TargetId } from '../effects/effects.types';
+import { EndPlayerTurnProcess } from '../process/endPlayerTurn.process';
 import {
     StandardResponse,
     SWARMessageType,
@@ -41,6 +42,7 @@ export class CardPlayedAction {
         private readonly discardCardAction: DiscardCardAction,
         private readonly exhaustCardAction: ExhaustCardAction,
         private readonly getPlayerInfoAction: GetPlayerInfoAction,
+        private readonly endPlayerTurnProcess: EndPlayerTurnProcess,
     ) {}
 
     async handle(payload: CardPlayedDTO): Promise<void> {
@@ -98,7 +100,7 @@ export class CardPlayedAction {
                 return card[field] === cardId;
             });
 
-            const { exhaust } = CardKeywordPipeline.process(keywords);
+            const { exhaust, endTurn } = CardKeywordPipeline.process(keywords);
 
             // Next we make sure that the card can be played and the user has
             // enough energy
@@ -249,6 +251,8 @@ export class CardPlayedAction {
                         }),
                     ),
                 );
+
+                if (endTurn) await this.endPlayerTurnProcess.handle({ client });
             }
         }
     }
