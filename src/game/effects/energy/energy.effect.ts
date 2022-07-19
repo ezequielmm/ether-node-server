@@ -14,30 +14,23 @@ export class EnergyEffect implements EffectHandler {
     async handle(payload: EffectDTO): Promise<void> {
         const {
             client,
-            args: { currentValue },
+            args: { currentValue: amountToAdd },
         } = payload;
 
-        this.applyEnergyToPlayer(client.id, currentValue);
-    }
-
-    private async applyEnergyToPlayer(
-        clientId: string,
-        amountToAdd: number,
-    ): Promise<void> {
         // Get current energy and max energy amount
         const {
             data: {
                 player: { energy },
             },
         } = await this.expeditionService.getCurrentNode({
-            clientId: clientId,
+            clientId: client.id,
         });
 
         const newEnergy = energy + amountToAdd;
 
         // update energy amount
         await this.expeditionService.updatePlayerEnergy({
-            clientId,
+            clientId: client.id,
             newEnergy,
         });
     }

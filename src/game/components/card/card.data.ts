@@ -2,6 +2,7 @@ import { damageEffect } from 'src/game/effects/damage/constants';
 import { defenseEffect } from 'src/game/effects/defense/constants';
 import { doubleBurn } from 'src/game/effects/doubleBurn/constants';
 import { drawCardEffect } from 'src/game/effects/drawCard/constants';
+import { endTurnEffect } from 'src/game/effects/endTurn/constants';
 import { energyEffect } from 'src/game/effects/energy/constants';
 import { healEffect } from 'src/game/effects/heal/constants';
 import { removeDefenseEffect } from 'src/game/effects/removeDefense/constants';
@@ -12,6 +13,7 @@ import { heraldDelayed } from 'src/game/status/heraldDelayed/constants';
 import { regenerate } from 'src/game/status/regenerate/contants';
 import { resolve } from 'src/game/status/resolve/constants';
 import { siphoning } from 'src/game/status/siphoning/constants';
+import { spirited } from 'src/game/status/spirited/contants';
 import {
     tasteOfBloodBuff,
     tasteOfBloodDebuff,
@@ -145,7 +147,7 @@ export const Cards: Card[] = [
                     effect: drawCardEffect.name,
                     target: CardTargetedEnum.Player,
                     args: {
-                        value: 2,
+                        value: 1,
                     },
                 },
             ],
@@ -1120,7 +1122,7 @@ export const Cards: Card[] = [
             ],
         },
         showPointer: false,
-        isUpgraded: true,
+        isUpgraded: false,
     },
     {
         cardId: 80,
@@ -1140,6 +1142,88 @@ export const Cards: Card[] = [
                         attachTo: CardTargetedEnum.Player,
                         value: 1,
                     },
+                },
+            ],
+        },
+        showPointer: false,
+        isUpgraded: true,
+    },
+    {
+        cardId: 119,
+        name: 'GN',
+        rarity: CardRarityEnum.Rare,
+        cardType: CardTypeEnum.Skill,
+        pool: 'knight',
+        energy: 3,
+        description:
+            'Gain 1 Resolve, 1 Fortitude, 1 Spirited and 1 Spikes. End turn.',
+        keywords: [],
+        properties: {
+            effects: [
+                {
+                    effect: endTurnEffect.name,
+                    target: CardTargetedEnum.Player,
+                    args: {
+                        value: 0,
+                    },
+                },
+            ],
+            statuses: [
+                {
+                    name: resolve.name,
+                    args: {
+                        attachTo: CardTargetedEnum.Player,
+                        value: 1,
+                    },
+                },
+                {
+                    name: fortitude.name,
+                    args: { attachTo: CardTargetedEnum.Player, value: 1 },
+                },
+                {
+                    name: spirited.name,
+                    args: { attachTo: CardTargetedEnum.Player, value: 1 },
+                },
+            ],
+        },
+        showPointer: false,
+        isUpgraded: false,
+    },
+    {
+        cardId: 120,
+        name: 'GN+',
+        rarity: CardRarityEnum.Rare,
+        cardType: CardTypeEnum.Skill,
+        pool: 'knight',
+        energy: 2,
+        description:
+            'Gain 1 Resolve, 1 Fortitude, 1 Spirited and 1 Spikes. End turn.',
+        keywords: [],
+        properties: {
+            effects: [
+                {
+                    effect: endTurnEffect.name,
+                    target: CardTargetedEnum.Player,
+                    args: {
+                        value: 0,
+                    },
+                },
+            ],
+            statuses: [
+                {
+                    name: resolve.name,
+                    args: {
+                        attachTo: CardTargetedEnum.Player,
+                        value: 1,
+                    },
+                },
+                {
+                    name: fortitude.name,
+                    args: { attachTo: CardTargetedEnum.Player, value: 1 },
+                },
+                {
+                    name: spirited.name,
+                    args: { attachTo: CardTargetedEnum.Player, value: 1 },
                 },
             ],
         },

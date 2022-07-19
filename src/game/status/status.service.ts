@@ -172,9 +172,7 @@ export class StatusService {
                     effects: [{ name: effect }],
                 });
 
-                if (!container) {
-                    continue;
-                }
+                if (!container) continue;
 
                 const metadata = container.metadata;
                 const instance = container.instance as StatusEffectHandler;
@@ -206,9 +204,8 @@ export class StatusService {
             }
         }
 
-        if (isUpdate) {
+        if (isUpdate)
             await this.updateStatuses(collectionOwner, expedition, collection);
-        }
 
         return mutatedDTO;
     }
@@ -226,9 +223,7 @@ export class StatusService {
                 trigger: StatusTrigger.Effect,
             });
 
-            if (!container) {
-                return false;
-            }
+            if (!container) return false;
 
             return container.metadata.status.direction === direction;
         };
@@ -316,9 +311,7 @@ export class StatusService {
                         event,
                     });
 
-                    if (!container) {
-                        continue;
-                    }
+                    if (!container) continue;
 
                     const metadata = container.metadata;
                     const instance = container.instance;
@@ -357,13 +350,12 @@ export class StatusService {
                     await instance.handle.bind(instance)(dto);
                 }
             }
-            if (isUpdate) {
+            if (isUpdate)
                 await this.updateStatuses(
                     entityCollection.target,
                     expedition,
                     collection,
                 );
-            }
         }
     }
 

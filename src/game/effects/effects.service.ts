@@ -241,9 +241,8 @@ export class EffectService {
 
         const container = find(this.handlers, ['metadata.effect.name', name]);
 
-        if (container === undefined) {
+        if (container === undefined)
             throw new Error(`Effect handler ${name} not found`);
-        }
 
         return container.instance;
     }

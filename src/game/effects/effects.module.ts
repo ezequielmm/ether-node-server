@@ -11,11 +11,14 @@ import { RemoveDefenseEffect } from './removeDefense/removeDefense.effect';
 import { ActionModule } from '../action/action.module';
 import { ProviderModule } from '../provider/provider.module';
 import { DoubleBurnEffect } from './doubleBurn/doubleBurn.effect';
+import { EndTurnEffect } from './endTurn/endTurn.effect';
+import { ProcessModule } from '../process/process.module';
 
 @Module({
     imports: [
         forwardRef(() => ExpeditionModule),
         forwardRef(() => ActionModule),
+        forwardRef(() => ProcessModule),
         StatusModule,
         ProviderModule,
     ],
@@ -28,6 +31,7 @@ import { DoubleBurnEffect } from './doubleBurn/doubleBurn.effect';
         EnergyEffect,
         RemoveDefenseEffect,
         DoubleBurnEffect,
+        EndTurnEffect,
     ],
     exports: [EffectService],
 })
