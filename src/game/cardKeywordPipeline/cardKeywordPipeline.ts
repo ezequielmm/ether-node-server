@@ -4,6 +4,7 @@ interface PipelineReturn {
     unplayable: boolean;
     exhaust: boolean;
     retain: boolean;
+    endTurn: boolean;
 }
 
 export class CardKeywordPipeline {
@@ -12,6 +13,7 @@ export class CardKeywordPipeline {
             unplayable: false,
             exhaust: false,
             retain: false,
+            endTurn: false,
         };
 
         if (keywords.includes(CardKeywordEnum.Unplayable))
@@ -20,6 +22,8 @@ export class CardKeywordPipeline {
         if (keywords.includes(CardKeywordEnum.Exhaust)) response.exhaust = true;
 
         if (keywords.includes(CardKeywordEnum.Retain)) response.retain = true;
+
+        if (keywords.includes(CardKeywordEnum.EndTurn)) response.endTurn = true;
 
         return response;
     }

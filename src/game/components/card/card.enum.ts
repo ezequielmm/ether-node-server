@@ -36,6 +36,7 @@ export enum CardKeywordEnum {
     Retain = 'retain',
     Unplayable = 'unplayable',
     None = 'none',
+    EndTurn = 'endTurn',
 }
 
 export enum CardEnergyEnum {
