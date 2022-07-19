@@ -11,5 +11,5 @@ export const spirited: StatusEvent = {
     type: StatusType.Buff,
     startsAt: StatusStartsAt.Instantly,
     trigger: StatusTrigger.Event,
-    event: StatusEventType.OnTurnStart,
+    event: StatusEventType.OnPlayerTurnStart,
 };

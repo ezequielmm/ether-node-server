@@ -95,7 +95,7 @@ export interface StatusEffect extends StatusBase {
 }
 
 export enum StatusEventType {
-    OnTurnStart = 'onTurnStart',
+    OnPlayerTurnStart = 'onPlayerTurnStart',
     OnTurnEnd = 'onTurnEnd',
 }
 export interface StatusEvent extends StatusBase {
