@@ -8,6 +8,8 @@ import {
     StandardResponse,
     SWARMessageType,
 } from '../standardResponse/standardResponse';
+import { StatusEventType } from '../status/interfaces';
+import { StatusService } from '../status/status.service';
 import { DrawCardProcess } from './drawCard.process';
 
 interface BeginPlayerTurnDTO {
@@ -22,6 +24,7 @@ export class BeginPlayerTurnProcess {
         private readonly expeditionService: ExpeditionService,
         private readonly settingsService: SettingsService,
         private readonly drawCardProcess: DrawCardProcess,
+        private readonly statusService: StatusService,
     ) {}
 
     async handle(payload: BeginPlayerTurnDTO): Promise<void> {
@@ -66,16 +69,18 @@ export class BeginPlayerTurnProcess {
             },
         } = await this.settingsService.getSettings();
 
+        const expedition = await this.expeditionService.updatePlayerEnergy({
+            clientId: client.id,
+            newEnergy: initial,
+        });
+
         const {
             currentNode: {
                 data: {
                     player: { energy, energyMax },
                 },
             },
-        } = await this.expeditionService.updatePlayerEnergy({
-            clientId: client.id,
-            newEnergy: initial,
-        });
+        } = expedition;
 
         this.logger.log(
             `Sent message PutData to client ${client.id}: ${SWARAction.ChangeTurn}`,
@@ -94,5 +99,10 @@ export class BeginPlayerTurnProcess {
 
         await this.drawCardProcess.handle({ client, cardsTotake: handSize });
         await this.expeditionService.calculateNewEnemyIntentions(client.id);
+        await this.statusService.trigger(
+            client,
+            expedition,
+            StatusEventType.OnPlayerTurnStart,
+        );
     }
 }

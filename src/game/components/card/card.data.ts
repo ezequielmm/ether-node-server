@@ -13,6 +13,7 @@ import { heraldDelayed } from 'src/game/status/heraldDelayed/constants';
 import { regenerate } from 'src/game/status/regenerate/contants';
 import { resolve } from 'src/game/status/resolve/constants';
 import { siphoning } from 'src/game/status/siphoning/constants';
+import { spikesStatus } from 'src/game/status/spikes/constants';
 import { spirited } from 'src/game/status/spirited/contants';
 import {
     tasteOfBloodBuff,
@@ -1184,6 +1185,10 @@ export const Cards: Card[] = [
                     name: spirited.name,
                     args: { attachTo: CardTargetedEnum.Player, value: 1 },
                 },
+                {
+                    name: spikesStatus.name,
+                    args: { attachTo: CardTargetedEnum.Player, value: 1 },
+                },
             ],
         },
         showPointer: false,
@@ -1223,6 +1228,10 @@ export const Cards: Card[] = [
                 },
                 {
                     name: spirited.name,
+                    args: { attachTo: CardTargetedEnum.Player, value: 1 },
+                },
+                {
+                    name: spikesStatus.name,
                     args: { attachTo: CardTargetedEnum.Player, value: 1 },
                 },
             ],
