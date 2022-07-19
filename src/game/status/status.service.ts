@@ -10,7 +10,6 @@ import {
     Expedition,
     ExpeditionDocument,
 } from '../components/expedition/expedition.schema';
-import { ExpeditionService } from '../components/expedition/expedition.service';
 import { getClientIdField } from '../components/expedition/expedition.type';
 import {
     EffectDTO,
@@ -36,7 +35,9 @@ import {
     StatusDirection,
     StatusEffect,
     StatusEffectHandler,
+    StatusesGlobalCollection,
     StatusEvent,
+    StatusEventDTO,
     StatusEventHandler,
     StatusEventType,
     StatusHandler,
@@ -52,7 +53,6 @@ export class StatusService {
     constructor(
         @InjectModel(Expedition.name)
         private readonly expedition: Model<ExpeditionDocument>,
-        private readonly expeditionService: ExpeditionService,
         private readonly providerService: ProviderService,
     ) {}
 
@@ -235,105 +235,129 @@ export class StatusService {
     }
 
     public async updateStatuses(
-        collectionOwner: SourceEntityDTO,
+        source: SourceEntityDTO,
         expedition: Expedition,
         collection: StatusCollection,
     ) {
-        if (EffectService.isPlayer(collectionOwner)) {
+        if (EffectService.isPlayer(source)) {
             await this.updatePlayerStatuses(expedition, collection);
-        } else if (EffectService.isEnemy(collectionOwner)) {
-            await this.updateEnemyStatuses(
-                expedition,
-                collectionOwner,
-                collection,
-            );
+        } else if (EffectService.isEnemy(source)) {
+            await this.updateEnemyStatuses(expedition, source, collection);
         }
     }
 
     public async updateEnemyStatuses(
         expedition: Expedition,
-        collectionOwner: EnemyDTO,
+        source: EnemyDTO,
         collection: StatusCollection,
     ): Promise<void> {
-        return this.expedition.findOneAndUpdate(
-            {
-                clientId: expedition.clientId,
-                status: ExpeditionStatusEnum.InProgress,
-                [`currentNode.data.enemies.${getEnemyIdField(
-                    collectionOwner.value.id,
-                )}`]: collectionOwner.value.id,
-            },
-            {
-                $set: {
-                    'currentNode.data.enemies.$.statuses': collection,
+        return this.expedition
+            .findOneAndUpdate(
+                {
+                    clientId: expedition.clientId,
+                    status: ExpeditionStatusEnum.InProgress,
+                    [`currentNode.data.enemies.${getEnemyIdField(
+                        source.value.id,
+                    )}`]: source.value.id,
                 },
-            },
-        );
+                {
+                    $set: {
+                        'currentNode.data.enemies.$.statuses': collection,
+                    },
+                },
+            )
+            .lean();
     }
 
     public async updatePlayerStatuses(
         expedition: Expedition,
         collection: StatusCollection,
     ): Promise<void> {
-        await this.expedition.findOneAndUpdate(
-            {
-                clientId: expedition.clientId,
-                status: ExpeditionStatusEnum.InProgress,
-            },
-            {
-                'currentNode.data.player.statuses': collection,
-            },
-        );
+        return this.expedition
+            .findOneAndUpdate(
+                {
+                    clientId: expedition.clientId,
+                    status: ExpeditionStatusEnum.InProgress,
+                },
+                {
+                    'currentNode.data.player.statuses': collection,
+                },
+            )
+            .lean();
     }
 
     public async trigger(
         client: Socket,
+        expedition: Expedition,
         event: StatusEventType,
     ): Promise<void> {
-        const expedition = await this.expeditionService.findOne({
-            clientId: client.id,
-        });
         const currentNode = expedition.currentNode;
 
-        const statusGlobalCollection =
-            await this.expeditionService.findAllStatuses(expedition);
+        const statusGlobalCollection = await this.findAllStatuses(expedition);
 
-        for (const attachedStatus of statusGlobalCollection) {
-            for (const status of attachedStatus.statuses) {
-                const container = this.findHandlerContainer<
-                    StatusEvent,
-                    StatusEventHandler
-                >({
-                    name: status.name,
-                    trigger: StatusTrigger.Event,
-                    event,
-                });
+        for (const entityCollection of statusGlobalCollection) {
+            let isUpdate = false;
+            const collection = entityCollection.statuses;
 
-                if (!container) continue;
+            for (const type in collection) {
+                const statuses = collection[type];
+                for (const status of statuses) {
+                    const container = this.findHandlerContainer<
+                        StatusEvent,
+                        StatusEventHandler
+                    >({
+                        name: status.name,
+                        trigger: StatusTrigger.Event,
+                        event,
+                    });
 
-                const metadata = container.metadata;
-                const instance = container.instance;
+                    if (!container) {
+                        continue;
+                    }
 
-                const isActive = this.isActive(
-                    metadata.status.startsAt,
-                    status.addedInRound,
-                    currentNode.data.round,
-                );
+                    const metadata = container.metadata;
+                    const instance = container.instance;
 
-                if (!isActive) continue;
+                    const isActive = this.isActive(
+                        metadata.status.startsAt,
+                        status.addedInRound,
+                        currentNode.data.round,
+                    );
 
-                const source = this.getSourceFromReference(
+                    if (!isActive) continue;
+
+                    const source = this.getSourceFromReference(
+                        expedition,
+                        status.sourceReference,
+                    );
+
+                    const dto: StatusEventDTO = {
+                        client,
+                        expedition,
+                        source,
+                        target: entityCollection.target,
+                        status,
+                        update(args) {
+                            const index = statuses.indexOf(status);
+                            statuses[index].args = args;
+                            isUpdate = true;
+                        },
+                        remove() {
+                            const index = statuses.indexOf(status);
+                            statuses.splice(index, 1);
+                            isUpdate = true;
+                        },
+                    };
+
+                    await instance.handle.bind(instance)(dto);
+                }
+            }
+            if (isUpdate) {
+                await this.updateStatuses(
+                    entityCollection.target,
                     expedition,
-                    status.sourceReference,
+                    collection,
                 );
-
-                await instance.handle.bind(instance)({
-                    client,
-                    expedition,
-                    source,
-                    target: attachedStatus.target,
-                    args: status,
-                });
             }
         }
     }
@@ -432,5 +456,34 @@ export class StatusService {
         }
 
         return source;
+    }
+
+    async findAllStatuses(
+        expedition: Expedition,
+    ): Promise<StatusesGlobalCollection> {
+        const collection: StatusesGlobalCollection = [];
+
+        collection.push({
+            target: {
+                type: CardTargetedEnum.Player,
+                value: {
+                    globalState: expedition.playerState,
+                    combatState: expedition.currentNode.data.player,
+                },
+            },
+            statuses: expedition.currentNode.data.player.statuses,
+        });
+
+        for (const enemy of expedition.currentNode.data.enemies) {
+            collection.push({
+                target: {
+                    type: CardTargetedEnum.Enemy,
+                    value: enemy,
+                },
+                statuses: enemy.statuses,
+            });
+        }
+
+        return collection;
     }
 }

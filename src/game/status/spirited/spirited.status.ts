@@ -17,7 +17,7 @@ export class SpiritedStatus implements StatusEventHandler {
         const effect: JsonEffect = {
             effect: energyEffect.name,
             args: {
-                value: dto.args.args.value,
+                value: dto.status.args.value,
             },
         };
 

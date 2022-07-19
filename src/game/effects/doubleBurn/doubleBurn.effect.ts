@@ -26,12 +26,11 @@ export class DoubleBurnEffect implements EffectHandler {
             statuses = target.value.statuses;
         }
 
-        forEach(
-            filter(statuses[burn.type], { name: burn.name }),
-            (status) => (status.args.value *= 2),
-        );
+        const burnStatuses = filter(statuses.debuff, { name: burn.name });
 
-        if (statuses) {
+        forEach(burnStatuses, (status) => (status.args.value *= 2));
+
+        if (burnStatuses.length) {
             await this.statusService.updateStatuses(
                 target,
                 expedition,

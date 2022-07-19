@@ -17,7 +17,7 @@ export class RegenerateStatus implements StatusEventHandler {
         const effect: JsonEffect = {
             effect: healEffect.name,
             args: {
-                value: dto.args.args.value,
+                value: dto.status.args.value,
             },
         };
 
