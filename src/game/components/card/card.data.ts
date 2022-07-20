@@ -267,10 +267,10 @@ export const Cards: Card[] = [
                     target: CardTargetedEnum.Enemy,
                     args: {
                         value: 1,
+                        times: 1,
+                        doubleValuesWhenPlayed: true,
                     },
                 },
-                // TODO: Double the values of those numbers for remainder of combat
-                // SEE: https://robotseamonster.atlassian.net/wiki/spaces/KOTE/pages/38633485/Card+Find+Weakness
             ],
             statuses: [],
         },
@@ -283,7 +283,7 @@ export const Cards: Card[] = [
         rarity: CardRarityEnum.Common,
         cardType: CardTypeEnum.Attack,
         pool: 'knight',
-        energy: 1,
+        energy: 0,
         description: 'Deal 1 damage 1 time. Double these values this combat.',
         keywords: [],
         properties: {
@@ -293,10 +293,10 @@ export const Cards: Card[] = [
                     target: CardTargetedEnum.Enemy,
                     args: {
                         value: 1,
+                        times: 1,
+                        doubleValuesWhenPlayed: true,
                     },
                 },
-                // TODO: Double the values of those numbers for remainder of combat
-                // SEE: https://robotseamonster.atlassian.net/wiki/spaces/KOTE/pages/38633485/Card+Find+Weakness
             ],
             statuses: [],
         },
@@ -1271,5 +1271,57 @@ export const Cards: Card[] = [
         },
         showPointer: true,
         isUpgraded: true,
+    },
+    {
+        cardId: 21,
+        name: 'Plant Feet',
+        rarity: CardRarityEnum.Common,
+        cardType: CardTypeEnum.Defend,
+        pool: 'knight',
+        energy: 0,
+        description:
+            'Gain 2 defense. Doubled each use for the remainder of combat.',
+        keywords: [],
+        properties: {
+            effects: [
+                {
+                    effect: defenseEffect.name,
+                    target: CardTargetedEnum.Player,
+                    args: {
+                        value: 2,
+                        doubleValuesWhenPlayed: true,
+                    },
+                },
+            ],
+            statuses: [],
+        },
+        showPointer: false,
+        isUpgraded: false,
+    },
+    {
+        cardId: 22,
+        name: 'Plant Feet+',
+        rarity: CardRarityEnum.Common,
+        cardType: CardTypeEnum.Defend,
+        pool: 'knight',
+        energy: 0,
+        description:
+            'Gain 3 defense. Doubled each use for the remainder of combat.',
+        keywords: [],
+        properties: {
+            effects: [
+                {
+                    effect: defenseEffect.name,
+                    target: CardTargetedEnum.Player,
+                    args: {
+                        value: 3,
+                        doubleValuesWhenPlayed: true,
+                    },
+                },
+            ],
+            statuses: [],
+        },
+        showPointer: false,
+        isUpgraded: false,
     },
 ];

@@ -37,6 +37,20 @@ export class DiscardCardAction {
             return card[field] !== cardId;
         });
 
+        // Before we move it to the discard pile, we check if the
+        // card has to double its effect values
+        cardToDiscard.properties.effects.map((effect) => {
+            if (
+                effect.args.doubleValuesWhenPlayed !== undefined &&
+                effect.args.doubleValuesWhenPlayed
+            ) {
+                effect.args.value *= 2;
+                if (effect.args.times !== undefined) effect.args.times *= 2;
+            }
+
+            return effect;
+        });
+
         // Them add the card to the discard pile
         discard.push(cardToDiscard);
 
