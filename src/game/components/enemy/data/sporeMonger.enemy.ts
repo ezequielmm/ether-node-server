@@ -1,4 +1,5 @@
-import { damageEffect, defenseEffect } from 'src/game/effects/constants';
+import { damageEffect } from 'src/game/effects/damage/constants';
+import { defenseEffect } from 'src/game/effects/defense/constants';
 import { CardTargetedEnum } from '../../card/card.enum';
 import {
     EnemyCategoryEnum,
@@ -24,7 +25,7 @@ export const sporeMongerData: Enemy = {
                     type: EnemyIntentionType.Attack,
                     target: CardTargetedEnum.Player,
                     value: 11,
-                    effect: [
+                    effects: [
                         {
                             effect: damageEffect.name,
                             target: CardTargetedEnum.Player,
@@ -52,7 +53,7 @@ export const sporeMongerData: Enemy = {
                     type: EnemyIntentionType.Defend,
                     target: CardTargetedEnum.Enemy,
                     value: 7,
-                    effect: [
+                    effects: [
                         {
                             effect: defenseEffect.name,
                             target: CardTargetedEnum.Self,
@@ -76,7 +77,7 @@ export const sporeMongerData: Enemy = {
                     type: EnemyIntentionType.Attack,
                     target: CardTargetedEnum.Player,
                     value: 4,
-                    effect: [
+                    effects: [
                         {
                             effect: damageEffect.name,
                             target: CardTargetedEnum.Player,

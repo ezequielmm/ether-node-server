@@ -1,43 +1,59 @@
 import { Injectable } from '@nestjs/common';
-import { ModulesContainer } from '@nestjs/core';
-import { InstanceWrapper } from '@nestjs/core/injector/instance-wrapper';
-import { clone } from 'lodash';
-import { CardTargetedEnum } from '../components/card/card.enum';
-import { Effect, EffectDTO } from '../effects/effects.interface';
-import { STATUS_METADATA } from './contants';
-import {
-    IBaseStatus,
-    StatusMetadata,
-    CardStatus,
-    AttachStatusToPlayerDTO,
-    AttachStatusToEnemyDTO,
-    AttachedStatus,
-    StatusCollection,
-    StatusDirection,
-    StatusStartsAt,
-} from './interfaces';
+import { InjectModel } from '@nestjs/mongoose';
+import { clone, cloneDeep, find, matches } from 'lodash';
 import { Model } from 'mongoose';
+import { Socket } from 'socket.io';
+import { CardTargetedEnum } from '../components/card/card.enum';
+import { getEnemyIdField } from '../components/enemy/enemy.type';
+import { ExpeditionStatusEnum } from '../components/expedition/expedition.enum';
 import {
     Expedition,
     ExpeditionDocument,
 } from '../components/expedition/expedition.schema';
-import { InjectModel } from '@nestjs/mongoose';
-import { ExpeditionStatusEnum } from '../components/expedition/expedition.enum';
-import { EnemyId } from '../components/enemy/enemy.type';
-import { ClientId } from '../components/expedition/expedition.type';
+import { getClientIdField } from '../components/expedition/expedition.type';
+import {
+    EffectDTO,
+    EnemyDTO,
+    SourceEntityDTO,
+} from '../effects/effects.interface';
+import { EffectService } from '../effects/effects.service';
 import { TargetId } from '../effects/effects.types';
-
-type StatusProvider = { metadata: StatusMetadata; instance: IBaseStatus };
-type StatusProviderDictionary = StatusProvider[];
+import { ProviderContainer } from '../provider/interfaces';
+import { ProviderService } from '../provider/provider.service';
+import { STATUS_METADATA_KEY } from './contants';
+import {
+    AttachedStatus,
+    AttachStatusToEnemyDTO,
+    AttachStatusToPlayerDTO,
+    EnemyReferenceDTO,
+    JsonStatus,
+    MutateEffectArgsDTO,
+    PlayerReferenceDTO,
+    SourceEntityReferenceDTO,
+    Status,
+    StatusCollection,
+    StatusDirection,
+    StatusEffect,
+    StatusEffectHandler,
+    StatusesGlobalCollection,
+    StatusEvent,
+    StatusEventDTO,
+    StatusEventHandler,
+    StatusEventType,
+    StatusHandler,
+    StatusMetadata,
+    StatusStartsAt,
+    StatusTrigger,
+} from './interfaces';
 
 @Injectable()
 export class StatusService {
-    private cache: StatusProviderDictionary;
+    private handlers: ProviderContainer<StatusMetadata, StatusHandler>[];
 
     constructor(
-        private readonly modulesContainer: ModulesContainer,
         @InjectModel(Expedition.name)
         private readonly expedition: Model<ExpeditionDocument>,
+        private readonly providerService: ProviderService,
     ) {}
 
     public async attachStatusToEnemy(
@@ -45,23 +61,20 @@ export class StatusService {
     ): Promise<ExpeditionDocument> {
         const { clientId, enemyId, status, currentRound } = dto;
 
-        const { attachedStatus, provider } =
-            this.convertCardStatusToAttachedStatus(status, currentRound);
+        const { status: attachedStatus, container: provider } =
+            this.convertStatusToAttached(
+                status,
+                currentRound,
+                dto.sourceReference,
+            );
 
-        const enemyField =
-            typeof enemyId === 'string'
-                ? 'currentNode.data.enemies.id'
-                : 'currentNode.data.enemies.enemyId';
-
-        const clientField =
-            typeof clientId === 'string' ? 'clientId' : 'playerId';
-
-        return await this.expedition
+        return this.expedition
             .findOneAndUpdate(
                 {
-                    [clientField]: clientId,
+                    [getClientIdField(clientId)]: clientId,
                     status: ExpeditionStatusEnum.InProgress,
-                    [enemyField]: enemyId,
+                    [`currentNode.data.enemies.${getEnemyIdField(enemyId)}`]:
+                        enemyId,
                 },
                 {
                     $push: {
@@ -78,8 +91,12 @@ export class StatusService {
     ): Promise<ExpeditionDocument> {
         const { clientId, status, currentRound } = dto;
 
-        const { attachedStatus, provider } =
-            this.convertCardStatusToAttachedStatus(status, currentRound);
+        const { status: attachedStatus, container: provider } =
+            this.convertStatusToAttached(
+                status,
+                currentRound,
+                dto.sourceReference,
+            );
 
         return await this.expedition.findOneAndUpdate(
             {
@@ -97,8 +114,9 @@ export class StatusService {
 
     public async attachStatuses(
         clientId: string,
-        statuses: CardStatus[],
+        statuses: JsonStatus[],
         currentRound: number,
+        sourceReference: SourceEntityReferenceDTO,
         targetId?: TargetId,
     ): Promise<void> {
         for (const status of statuses) {
@@ -106,6 +124,7 @@ export class StatusService {
                 case CardTargetedEnum.Player:
                     await this.attachStatusToPlayer({
                         clientId,
+                        sourceReference,
                         status,
                         currentRound,
                     });
@@ -114,6 +133,7 @@ export class StatusService {
                     await this.attachStatusToEnemy({
                         clientId,
                         status,
+                        sourceReference,
                         enemyId: targetId,
                         currentRound,
                     });
@@ -122,224 +142,345 @@ export class StatusService {
         }
     }
 
-    public async getStatusesByEnemy(
-        clientId: ClientId,
-        enemyId: EnemyId,
-        statusDirection: StatusDirection = StatusDirection.Incoming,
-    ): Promise<StatusCollection> {
-        const clientField =
-            typeof clientId === 'string' ? 'clientId' : 'playerId';
-
-        const enemyField = typeof enemyId === 'string' ? 'id' : 'enemyId';
-
+    public async mutate(dto: MutateEffectArgsDTO): Promise<EffectDTO> {
+        const {
+            client,
+            expedition,
+            collectionOwner,
+            collection,
+            effect,
+            effectDTO,
+        } = dto;
+        let mutatedDTO = clone(effectDTO);
         const {
             currentNode: {
-                data: { enemies },
+                data: { round },
             },
-        } = await this.expedition
-            .findOne({
-                [clientField]: clientId,
-                status: ExpeditionStatusEnum.InProgress,
-            })
-            .select('currentNode.data.enemies')
-            .lean();
-        const enemy = enemies.find((enemy) => enemy[enemyField] == enemyId);
-
-        if (!enemy) {
-            throw new Error(`Enemy ${enemyId} not found`);
-        }
-
-        if (!enemy.statuses) return null;
-
-        this.filterStatusCollectionByDirection(enemy.statuses, statusDirection);
-
-        return enemy?.statuses;
-    }
-
-    public async getStatusesByPlayer(
-        clientId: string,
-        statusDirection: StatusDirection = StatusDirection.Incoming,
-    ): Promise<StatusCollection | undefined> {
-        const clientField =
-            typeof clientId === 'string' ? 'clientId' : 'playerId';
-
-        const {
-            currentNode: {
-                data: {
-                    player: { statuses },
-                },
-            },
-        } = await this.expedition
-            .findOne({
-                [clientField]: clientId,
-                status: ExpeditionStatusEnum.InProgress,
-            })
-            .select('currentNode.data.player.statuses')
-            .lean();
-
-        this.filterStatusCollectionByDirection(statuses, statusDirection);
-
-        return statuses;
-    }
-
-    public async process(
-        statuses: AttachedStatus[],
-        effect: Effect['name'],
-        dto: EffectDTO,
-        currentRound: number,
-    ): Promise<EffectDTO> {
-        if (!statuses?.length) {
-            return dto;
-        }
-
+        } = expedition;
         // Clone the dto to avoid mutating the original
-        dto = clone(dto);
+        let isUpdate = false;
 
-        for (const status of statuses) {
-            const provider = this.findStatusProviderByName(status.name);
+        for (const type in collection) {
+            const statuses = collection[type];
+            for (const status of statuses) {
+                const container = this.findHandlerContainer<
+                    StatusEffect,
+                    StatusEffectHandler
+                >({
+                    name: status.name,
+                    trigger: StatusTrigger.Effect,
+                    effects: [{ name: effect }],
+                });
 
-            if (provider) {
-                const providerMetadata = provider.metadata;
-                const providerInstance = provider.instance;
+                if (!container) continue;
 
-                // Validate if the status can starts in this round
-                if (
-                    !this.canApplyStatusInThisRound(
-                        providerMetadata.status.startsAt,
-                        status.args.addedInRound,
-                        currentRound,
-                    )
-                )
-                    continue;
+                const metadata = container.metadata;
+                const instance = container.instance as StatusEffectHandler;
 
-                // Validate if the status is valid for the effect
-                if (
-                    !providerMetadata.effects.some(
-                        (effectName) => effectName.name == effect,
-                    )
-                ) {
-                    continue;
-                }
+                const isActive = this.isActive(
+                    metadata.status.startsAt,
+                    status.addedInRound,
+                    round,
+                );
 
-                dto = await providerInstance.handle({
-                    effectDTO: dto,
-                    args: status.args,
+                if (!isActive) continue;
+
+                mutatedDTO = await instance.handle({
+                    client,
+                    expedition: expedition,
+                    effectDTO: mutatedDTO,
+                    status: status,
+                    update(args) {
+                        const index = statuses.indexOf(status);
+                        statuses[index].args = args;
+                        isUpdate = true;
+                    },
+                    remove() {
+                        const index = statuses.indexOf(status);
+                        statuses.splice(index, 1);
+                        isUpdate = true;
+                    },
                 });
             }
         }
 
-        return dto;
+        if (isUpdate)
+            await this.updateStatuses(collectionOwner, expedition, collection);
+
+        return mutatedDTO;
     }
 
-    private canApplyStatusInThisRound(
+    public filterCollectionByDirection(
+        collection: StatusCollection,
+        direction: StatusDirection,
+    ): StatusCollection {
+        const filter = (status) => {
+            const container = this.findHandlerContainer<
+                StatusEffect,
+                StatusEffectHandler
+            >({
+                name: status.name,
+                trigger: StatusTrigger.Effect,
+            });
+
+            if (!container) return false;
+
+            return container.metadata.status.direction === direction;
+        };
+
+        return {
+            buff: collection.buff.filter(filter),
+            debuff: collection.debuff.filter(filter),
+        };
+    }
+
+    public async updateStatuses(
+        source: SourceEntityDTO,
+        expedition: Expedition,
+        collection: StatusCollection,
+    ) {
+        if (EffectService.isPlayer(source)) {
+            await this.updatePlayerStatuses(expedition, collection);
+        } else if (EffectService.isEnemy(source)) {
+            await this.updateEnemyStatuses(expedition, source, collection);
+        }
+    }
+
+    public async updateEnemyStatuses(
+        expedition: Expedition,
+        source: EnemyDTO,
+        collection: StatusCollection,
+    ): Promise<void> {
+        await this.expedition
+            .findOneAndUpdate(
+                {
+                    clientId: expedition.clientId,
+                    status: ExpeditionStatusEnum.InProgress,
+                    [`currentNode.data.enemies.${getEnemyIdField(
+                        source.value.id,
+                    )}`]: source.value.id,
+                },
+                {
+                    $set: {
+                        'currentNode.data.enemies.$.statuses': collection,
+                    },
+                },
+            )
+            .lean();
+    }
+
+    public async updatePlayerStatuses(
+        expedition: Expedition,
+        collection: StatusCollection,
+    ): Promise<void> {
+        return this.expedition
+            .findOneAndUpdate(
+                {
+                    clientId: expedition.clientId,
+                    status: ExpeditionStatusEnum.InProgress,
+                },
+                {
+                    'currentNode.data.player.statuses': collection,
+                },
+            )
+            .lean();
+    }
+
+    public async trigger(
+        client: Socket,
+        expedition: Expedition,
+        event: StatusEventType,
+    ): Promise<void> {
+        const currentNode = expedition.currentNode;
+
+        const statusGlobalCollection = await this.findAllStatuses(expedition);
+
+        for (const entityCollection of statusGlobalCollection) {
+            let isUpdate = false;
+            const collection = cloneDeep(entityCollection.statuses);
+
+            for (const type in collection) {
+                const statuses = collection[type];
+                for (const status of statuses) {
+                    const container = this.findHandlerContainer<
+                        StatusEvent,
+                        StatusEventHandler
+                    >({
+                        name: status.name,
+                        trigger: StatusTrigger.Event,
+                        event,
+                    });
+
+                    if (!container) continue;
+
+                    const metadata = container.metadata;
+                    const instance = container.instance;
+
+                    const isActive = this.isActive(
+                        metadata.status.startsAt,
+                        status.addedInRound,
+                        currentNode.data.round,
+                    );
+
+                    if (!isActive) continue;
+
+                    const source = this.getSourceFromReference(
+                        expedition,
+                        status.sourceReference,
+                    );
+
+                    const dto: StatusEventDTO = {
+                        client,
+                        expedition,
+                        source,
+                        target: entityCollection.target,
+                        status,
+                        update(args) {
+                            const index = statuses.indexOf(status);
+                            statuses[index].args = args;
+                            isUpdate = true;
+                        },
+                        remove() {
+                            const index = statuses.indexOf(status);
+                            statuses.splice(index, 1);
+                            isUpdate = true;
+                        },
+                    };
+
+                    await instance.handle(dto);
+                }
+            }
+            if (isUpdate)
+                await this.updateStatuses(
+                    entityCollection.target,
+                    expedition,
+                    collection,
+                );
+        }
+    }
+
+    private isActive(
         startsAt: StatusStartsAt,
         addedInRound: number,
-        currentRound,
+        currentRound: number,
     ): boolean {
         return !(
             startsAt == StatusStartsAt.NextTurn && addedInRound == currentRound
         );
     }
 
-    private convertCardStatusToAttachedStatus(
-        jsonStatus: CardStatus,
+    private convertStatusToAttached(
+        jsonStatus: JsonStatus,
         currentRound: number,
+        sourceReference: SourceEntityReferenceDTO,
     ): {
-        attachedStatus: AttachedStatus;
-        provider: StatusProvider;
+        status: AttachedStatus;
+        container: ProviderContainer<StatusMetadata, StatusHandler>;
     } {
-        const provider = this.findStatusProviderByName(jsonStatus.name);
+        const container = this.findHandlerContainer({ name: jsonStatus.name });
 
-        if (!provider) {
+        if (!container)
             throw new Error(`Status ${jsonStatus.name} does not exist`);
-        }
 
-        const attachedStatus: AttachedStatus = {
+        const status: AttachedStatus = {
             name: jsonStatus.name,
+            addedInRound: currentRound,
+            sourceReference,
             args: {
                 value: jsonStatus.args.value,
-                addedInRound: currentRound,
             },
         };
 
         return {
-            attachedStatus,
-            provider,
+            status,
+            container,
         };
     }
 
-    public filterStatusCollectionByDirection(
-        statuses: StatusCollection,
-        statusDirection: StatusDirection,
-    ): StatusCollection {
-        statuses = clone(statuses);
+    private findHandlerContainer<S extends Status, H extends StatusHandler>(
+        status: Partial<S>,
+    ): ProviderContainer<StatusMetadata<S>, H> {
+        this.handlers =
+            this.handlers ||
+            this.providerService.findByMetadataKey(STATUS_METADATA_KEY);
 
-        const filter = (status) =>
-            this.findStatusProviderByName(status.name).metadata.status
-                .direction === statusDirection;
-
-        statuses.buff = statuses.buff.filter(filter);
-        statuses.debuff = statuses.debuff.filter(filter);
-
-        return statuses;
-    }
-
-    private findStatusProviderByName(
-        name: string,
-        dictionary: StatusProviderDictionary = this.getStatusProviders(),
-    ): StatusProvider | undefined {
-        return dictionary.find(
-            (provider) => provider.metadata.status.name == name,
+        const container = find(
+            this.handlers,
+            matches({
+                metadata: {
+                    status,
+                },
+            }),
         );
+
+        return container;
     }
 
-    private getStatusMetadata(object: any): StatusMetadata {
-        return Reflect.getMetadata(STATUS_METADATA, object);
+    private isPlayerReference(
+        reference: SourceEntityReferenceDTO,
+    ): reference is PlayerReferenceDTO {
+        return reference.type == CardTargetedEnum.Player;
     }
 
-    private getStatusProviders(): StatusProviderDictionary {
-        if (this.cache != undefined) {
-            return this.cache;
-        }
-
-        const dictionary: StatusProviderDictionary = [];
-
-        for (const module of this.modulesContainer.values()) {
-            for (const provider of module.providers.values()) {
-                if (this.isStatusProvider(provider)) {
-                    const metadata = this.getStatusMetadata(provider.metatype);
-                    const instance = provider.instance as IBaseStatus;
-
-                    const oldStatusProvider = this.findStatusProviderByName(
-                        metadata.status.name,
-                        dictionary,
-                    );
-
-                    if (oldStatusProvider) {
-                        throw new Error(
-                            `Status ${metadata.status.name} already exists`,
-                        );
-                    }
-
-                    dictionary.push({
-                        metadata,
-                        instance,
-                    });
-                }
-            }
-        }
-
-        return dictionary;
+    private isEnemyReference(
+        reference: SourceEntityReferenceDTO,
+    ): reference is EnemyReferenceDTO {
+        return reference.type == CardTargetedEnum.Enemy;
     }
 
-    private isStatusProvider(provider: InstanceWrapper<any>) {
-        if (!provider || !provider.instance || !provider.metatype) {
-            return false;
+    public getSourceFromReference(
+        expedition: Expedition,
+        reference: SourceEntityReferenceDTO,
+    ): SourceEntityDTO {
+        let source: SourceEntityDTO;
+
+        if (this.isPlayerReference(reference)) {
+            source = {
+                type: CardTargetedEnum.Player,
+                value: {
+                    globalState: expedition.playerState,
+                    combatState: expedition.currentNode.data.player,
+                },
+            };
+        } else if (this.isEnemyReference(reference)) {
+            source = {
+                type: CardTargetedEnum.Enemy,
+                value: find(expedition.currentNode.data.enemies, [
+                    getEnemyIdField(reference.id),
+                    reference.id,
+                ]),
+            };
         }
 
-        const statusMetadata = this.getStatusMetadata(provider.metatype);
-        const statusInstance = provider.instance as IBaseStatus;
+        return source;
+    }
 
-        return typeof statusInstance?.handle == 'function' && statusMetadata;
+    async findAllStatuses(
+        expedition: Expedition,
+    ): Promise<StatusesGlobalCollection> {
+        const collection: StatusesGlobalCollection = [];
+
+        collection.push({
+            target: {
+                type: CardTargetedEnum.Player,
+                value: {
+                    globalState: expedition.playerState,
+                    combatState: expedition.currentNode.data.player,
+                },
+            },
+            statuses: expedition.currentNode.data.player.statuses,
+        });
+
+        for (const enemy of expedition.currentNode.data.enemies) {
+            collection.push({
+                target: {
+                    type: CardTargetedEnum.Enemy,
+                    value: enemy,
+                },
+                statuses: enemy.statuses,
+            });
+        }
+
+        return collection;
     }
 }

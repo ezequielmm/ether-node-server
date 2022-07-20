@@ -35,6 +35,7 @@ export class SendEnemyIntentProcess {
                         intention.type,
                         intention.value,
                     ),
+                    type: intention.type,
                 });
             }
         }

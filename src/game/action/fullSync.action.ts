@@ -1,8 +1,10 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Socket } from 'socket.io';
 import { CustomException, ErrorBehavior } from 'src/socket/custom.exception';
-import { isEven } from 'src/utils';
-import { ExpeditionMapNodeTypeEnum } from '../components/expedition/expedition.enum';
+import {
+    CombatTurnEnum,
+    ExpeditionMapNodeTypeEnum,
+} from '../components/expedition/expedition.enum';
 import { ExpeditionService } from '../components/expedition/expedition.service';
 import { SendEnemyIntentProcess } from '../process/sendEnemyIntents.process';
 import {
@@ -63,13 +65,16 @@ export class FullSyncAction {
             const { nodeType, data } = currentNode;
 
             if (data !== undefined) {
-                const { round } = data;
+                const { playing } = data;
                 const nodeTypes = Object.values(ExpeditionMapNodeTypeEnum);
                 const combatNodes = nodeTypes.filter(
                     (node) => node.search('combat') !== -1,
                 );
 
-                if (combatNodes.includes(nodeType) && !isEven(round))
+                if (
+                    combatNodes.includes(nodeType) &&
+                    playing === CombatTurnEnum.Player
+                )
                     await this.sendEnemyIntentProcess.process(client);
             }
         }

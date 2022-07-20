@@ -12,6 +12,8 @@ import { ExpeditionService } from 'src/game/components/expedition/expedition.ser
 import { FullSyncAction } from 'src/game/action/fullSync.action';
 import { ExpeditionMapNodeTypeEnum } from 'src/game/components/expedition/expedition.enum';
 import { InitCombatProcess } from 'src/game/process/initCombat.process';
+import { CharacterService } from 'src/game/components/character/character.service';
+import { CharacterClassEnum } from 'src/game/components/character/character.enum';
 
 @WebSocketGateway({
     cors: {
@@ -28,6 +30,7 @@ export class SocketGateway
         private readonly expeditionService: ExpeditionService,
         private readonly fullsyncAction: FullSyncAction,
         private readonly initCombatProcess: InitCombatProcess,
+        private readonly characterService: CharacterService,
     ) {}
 
     afterInit(): void {
@@ -79,6 +82,16 @@ export class SocketGateway
                                 clientId: client.id,
                                 nodeId,
                             });
+
+                        const { initialHealth } =
+                            await this.characterService.findOne({
+                                characterClass: CharacterClassEnum.Knight,
+                            });
+
+                        await this.expeditionService.setPlayerHealth({
+                            clientId: client.id,
+                            hpCurrent: initialHealth,
+                        });
 
                         await this.initCombatProcess.process(client, node);
                     }

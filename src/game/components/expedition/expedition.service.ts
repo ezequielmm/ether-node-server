@@ -30,9 +30,10 @@ import {
     IExpeditionPlayerStateDeckCard,
 } from './expedition.interface';
 import { generateMap, restoreMap } from 'src/game/map/app';
-import { ClientId } from './expedition.type';
+import { ClientId, getClientIdField } from './expedition.type';
 import { EnemyService } from '../enemy/enemy.service';
 import { getRandomItemByWeight } from 'src/utils';
+import { EnemyId, getEnemyIdField } from '../enemy/enemy.type';
 
 @Injectable()
 export class ExpeditionService {
@@ -57,11 +58,13 @@ export class ExpeditionService {
         clientId: ClientId,
         payload: UpdateExpeditionDTO,
     ): Promise<ExpeditionDocument> {
-        const field = typeof clientId === 'string' ? 'clientId' : 'playerId';
+        const clientField = getClientIdField(clientId);
+
         delete payload.clientId;
+
         return await this.expedition.findOneAndUpdate(
             {
-                [field]: clientId,
+                [clientField]: clientId,
                 status: ExpeditionStatusEnum.InProgress,
             },
             payload,
@@ -74,10 +77,10 @@ export class ExpeditionService {
     ): Promise<boolean> {
         const { clientId } = payload;
 
-        const field = typeof clientId === 'string' ? 'clientId' : 'playerId';
+        const clientField = getClientIdField(clientId);
 
         const item = await this.expedition.exists({
-            [field]: clientId,
+            [clientField]: clientId,
             status: ExpeditionStatusEnum.InProgress,
         });
         return item !== null;
@@ -188,7 +191,7 @@ export class ExpeditionService {
     ): Promise<boolean> {
         const { cardId, clientId } = payload;
 
-        const field = typeof clientId === 'string' ? 'clientId' : 'playerId';
+        const clientField = getClientIdField(clientId);
 
         const cardIdField =
             typeof cardId === 'string'
@@ -196,7 +199,7 @@ export class ExpeditionService {
                 : 'currentNode.data.player.cards.hand.cardId';
 
         const itemExists = await this.expedition.exists({
-            [field]: clientId,
+            [clientField]: clientId,
             status: ExpeditionStatusEnum.InProgress,
             [cardIdField]: cardId,
         });
@@ -263,21 +266,35 @@ export class ExpeditionService {
     ): Promise<ExpeditionDocument> {
         const { clientId, value } = payload;
 
-        const {
-            data: {
-                player: { defense },
-            },
-        } = await this.getCurrentNode({ clientId: clientId });
-
-        const newDefenseValue = defense + value;
+        const clientField = getClientIdField(clientId);
 
         return await this.expedition.findOneAndUpdate(
             {
-                clientId,
+                [clientField]: clientId,
                 status: ExpeditionStatusEnum.InProgress,
             },
-            { 'currentNode.data.player.defense': newDefenseValue },
+            { 'currentNode.data.player.defense': value },
             { new: true },
+        );
+    }
+
+    async setEnemyDefense(
+        clientId: string,
+        enemyId: EnemyId,
+        defense: number,
+    ): Promise<ExpeditionDocument> {
+        const clientField = getClientIdField(clientId);
+
+        return this.expedition.findOneAndUpdate(
+            {
+                [clientField]: clientId,
+                status: ExpeditionStatusEnum.InProgress,
+                [`currentNode.data.enemies.${getEnemyIdField(enemyId)}`]:
+                    enemyId,
+            },
+            {
+                'currentNode.data.enemies.$.defense': defense,
+            },
         );
     }
 
@@ -286,11 +303,11 @@ export class ExpeditionService {
     ): Promise<ExpeditionDocument> {
         const { clientId, hpCurrent } = payload;
 
-        const field = typeof clientId === 'string' ? 'clientId' : 'playerId';
+        const clientField = getClientIdField(clientId);
 
         return this.expedition.findOneAndUpdate(
             {
-                [field]: clientId,
+                [clientField]: clientId,
                 status: ExpeditionStatusEnum.InProgress,
             },
             { 'playerState.hpCurrent': hpCurrent },

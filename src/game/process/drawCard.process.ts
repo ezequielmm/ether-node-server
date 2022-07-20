@@ -10,7 +10,7 @@ import {
 
 interface DrawCardDTO {
     client: Socket;
-    cardsTotake: number;
+    cardsToTake: number;
 }
 
 @Injectable()
@@ -20,7 +20,7 @@ export class DrawCardProcess {
     constructor(private readonly expeditionService: ExpeditionService) {}
 
     async handle(payload: DrawCardDTO): Promise<void> {
-        const { client, cardsTotake } = payload;
+        const { client, cardsToTake } = payload;
 
         const {
             data: {
@@ -34,10 +34,10 @@ export class DrawCardProcess {
 
         // Then, we verify if the draw pile has enough cards to shuffle and take from it
         // If not, we move all the discard cards to the draw pile and shuffle
-        if (draw.length >= cardsTotake) {
+        if (cardsToTake <= draw.length) {
             const newHand = draw
                 .sort(() => 0.5 - Math.random())
-                .slice(0, cardsTotake);
+                .slice(0, cardsToTake);
 
             const newDraw = removeCardsFromPile({
                 originalPile: draw,
@@ -100,10 +100,10 @@ export class DrawCardProcess {
 
             const newHand = newDraw
                 .sort(() => 0.5 - Math.random())
-                .slice(0, cardsTotake);
+                .slice(0, cardsToTake);
 
             newDraw = removeCardsFromPile({
-                originalPile: draw,
+                originalPile: newDraw,
                 cardsToRemove: newHand,
             });
 

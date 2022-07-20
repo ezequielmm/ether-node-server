@@ -1,1 +1,1 @@
-export const STATUS_METADATA = 'status';
+export const STATUS_METADATA_KEY = 'status';

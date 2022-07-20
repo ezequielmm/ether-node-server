@@ -1,7 +1,7 @@
 import { JsonEffect } from 'src/game/effects/effects.interface';
 import {
     AttachedStatus,
-    CardStatus,
+    JsonStatus,
     StatusType,
 } from 'src/game/status/interfaces';
 import {
@@ -44,7 +44,7 @@ export interface IExpeditionPlayerStateDeckCard {
     description: string;
     properties: {
         effects: JsonEffect[];
-        statuses: CardStatus[];
+        statuses: JsonStatus[];
     };
     keywords: CardKeywordEnum[];
     showPointer: boolean;

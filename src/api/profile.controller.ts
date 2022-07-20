@@ -26,7 +26,10 @@ export class ProfileController {
     })
     @Get()
     async handleGetProfile(@Headers() headers): Promise<IProfile> {
+        this.logger.log(`Client called GET route "/profile"`);
+
         const { authorization: token } = headers;
+
         try {
             const {
                 data: { data },

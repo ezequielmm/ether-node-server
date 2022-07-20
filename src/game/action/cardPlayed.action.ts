@@ -6,21 +6,18 @@ import {
     CardPlayErrorMessages,
     CardTargetedEnum,
 } from '../components/card/card.enum';
-import { CardId } from '../components/card/card.type';
+import { CardId, getCardIdField } from '../components/card/card.type';
 import { ExpeditionService } from '../components/expedition/expedition.service';
-import {
-    EffectDTOAllEnemies,
-    EffectDTOEnemy,
-    EffectDTOPlayer,
-    EffectDTORandomEnemy,
-} from '../effects/effects.interface';
+import { PlayerDTO } from '../effects/effects.interface';
 import { EffectService } from '../effects/effects.service';
 import { TargetId } from '../effects/effects.types';
+import { EndPlayerTurnProcess } from '../process/endPlayerTurn.process';
 import {
     StandardResponse,
     SWARMessageType,
     SWARAction,
 } from '../standardResponse/standardResponse';
+import { PlayerReferenceDTO } from '../status/interfaces';
 import { StatusService } from '../status/status.service';
 import { DiscardCardAction } from './discardCard.action';
 import { ExhaustCardAction } from './exhaustCard.action';
@@ -45,6 +42,7 @@ export class CardPlayedAction {
         private readonly discardCardAction: DiscardCardAction,
         private readonly exhaustCardAction: ExhaustCardAction,
         private readonly getPlayerInfoAction: GetPlayerInfoAction,
+        private readonly endPlayerTurnProcess: EndPlayerTurnProcess,
     ) {}
 
     async handle(payload: CardPlayedDTO): Promise<void> {
@@ -74,53 +72,21 @@ export class CardPlayedAction {
         } else {
             // If the card is valid we get the current node information
             // to validate the enemy
+            const expedition = await this.expeditionService.findOne({
+                clientId: client.id,
+            });
 
             const {
-                playerState,
                 currentNode: {
-                    data: { player, enemies, round },
+                    data: {
+                        player: {
+                            energy: availableEnergy,
+                            cards: { hand },
+                        },
+                        round,
+                    },
                 },
-            } = await this.expeditionService.findOne({ clientId: client.id });
-
-            const {
-                energy: availableEnergy,
-                cards: { hand },
-            } = player;
-
-            const source: EffectDTOPlayer = {
-                type: CardTargetedEnum.Player,
-                value: {
-                    globalState: playerState,
-                    combatState: player,
-                },
-            };
-
-            const selectedEnemy: EffectDTOEnemy = targetId && {
-                type: CardTargetedEnum.Enemy,
-                value: enemies.find(
-                    (enemy) =>
-                        enemy[
-                            typeof targetId == 'string' ? 'id' : 'enemyId'
-                        ] === targetId,
-                ),
-            };
-
-            const randomEnemy: EffectDTORandomEnemy = {
-                type: CardTargetedEnum.RandomEnemy,
-                value: enemies[Math.floor(Math.random() * enemies.length)],
-            };
-
-            const allEnemies: EffectDTOAllEnemies = {
-                type: CardTargetedEnum.AllEnemies,
-                value: enemies,
-            };
-
-            const availableTargets = {
-                player: source, // For this case the player is the source
-                selectedEnemy,
-                randomEnemy,
-                allEnemies,
-            };
+            } = expedition;
 
             // If everything goes right, we get the card information from
             // the player hand pile
@@ -129,12 +95,12 @@ export class CardPlayedAction {
                 properties: { effects, statuses },
                 keywords,
             } = hand.find((card) => {
-                const field = typeof cardId === 'string' ? 'id' : 'cardId';
+                const field = getCardIdField(cardId);
 
                 return card[field] === cardId;
             });
 
-            const { exhaust } = CardKeywordPipeline.process(keywords);
+            const { exhaust, endTurn } = CardKeywordPipeline.process(keywords);
 
             // Next we make sure that the card can be played and the user has
             // enough energy
@@ -165,19 +131,32 @@ export class CardPlayedAction {
                     newEnergy: newEnergyAmount,
                 });
 
+                const sourceReference: PlayerReferenceDTO = {
+                    type: CardTargetedEnum.Player,
+                };
+
+                const source: PlayerDTO = {
+                    type: CardTargetedEnum.Player,
+                    value: {
+                        globalState: expedition.playerState,
+                        combatState: expedition.currentNode.data.player,
+                    },
+                };
+
+                await this.effectService.applyAll({
+                    client,
+                    expedition,
+                    source,
+                    effects,
+                    selectedEnemy: targetId,
+                });
+
                 await this.statusService.attachStatuses(
                     client.id,
                     statuses,
                     round,
+                    sourceReference,
                     targetId,
-                );
-
-                await this.effectService.process(
-                    client,
-                    source,
-                    availableTargets,
-                    effects,
-                    round,
                 );
 
                 if (exhaust) {
@@ -272,6 +251,8 @@ export class CardPlayedAction {
                         }),
                     ),
                 );
+
+                if (endTurn) await this.endPlayerTurnProcess.handle({ client });
             }
         }
     }

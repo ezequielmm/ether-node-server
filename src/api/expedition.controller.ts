@@ -40,7 +40,7 @@ export class ExpeditionController {
     async handleGetExpeditionStatus(
         @Headers() headers,
     ): Promise<IExpeditionStatusResponse> {
-        this.logger.log(`Client called route "/status"`);
+        this.logger.log(`Client called GET route "/expeditions/status"`);
 
         const { authorization } = headers;
 
@@ -76,7 +76,7 @@ export class ExpeditionController {
     async handleCreateExpedition(
         @Headers() headers,
     ): Promise<IExpeditionCreatedResponse> {
-        this.logger.log(`Client called route "/"`);
+        this.logger.log(`Client called POST route "/expeditions"`);
 
         const { authorization } = headers;
 
@@ -121,7 +121,7 @@ export class ExpeditionController {
     async handleCancelExpedition(
         @Headers() headers,
     ): Promise<IExpeditionCancelledResponse> {
-        this.logger.log(`Client called route "/cancel"`);
+        this.logger.log(`Client called POST route "/expedition/cancel"`);
 
         const { authorization } = headers;
 
