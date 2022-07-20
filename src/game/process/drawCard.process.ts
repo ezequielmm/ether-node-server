@@ -103,7 +103,7 @@ export class DrawCardProcess {
                 .slice(0, cardsTotake);
 
             newDraw = removeCardsFromPile({
-                originalPile: draw,
+                originalPile: newDraw,
                 cardsToRemove: newHand,
             });
 
