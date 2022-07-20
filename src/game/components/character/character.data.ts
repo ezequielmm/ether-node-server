@@ -12,7 +12,7 @@ export const CharacterData: Character[] = [
             cards: [
                 {
                     cardId: 1,
-                    amount: 3,
+                    amount: 5,
                 },
                 {
                     cardId: 3,
@@ -28,14 +28,6 @@ export const CharacterData: Character[] = [
                 },
                 {
                     cardId: 13,
-                    amount: 1,
-                },
-                {
-                    cardId: 21,
-                    amount: 1,
-                },
-                {
-                    cardId: 11,
                     amount: 1,
                 },
             ],
