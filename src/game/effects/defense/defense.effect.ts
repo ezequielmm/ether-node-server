@@ -23,6 +23,13 @@ export class DefenseEffect implements EffectHandler {
     async handle(payload: EffectDTO<DefenseArgs>): Promise<void> {
         const {
             client,
+            expedition: {
+                currentNode: {
+                    data: {
+                        player: { defense: currentDefense },
+                    },
+                },
+            },
             args: {
                 currentValue,
                 useEnemies,
@@ -58,6 +65,8 @@ export class DefenseEffect implements EffectHandler {
                 currentValue,
             );
         }
+
+        newDefense = newDefense + currentDefense;
 
         await this.expeditionService.setPlayerDefense({
             clientId: client.id,
