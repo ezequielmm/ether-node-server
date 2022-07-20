@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ExpeditionService } from 'src/game/components/expedition/expedition.service';
-import { CardId } from '../components/card/card.type';
+import { CardId, getCardIdField } from '../components/card/card.type';
 import { IExpeditionPlayerStateDeckCard } from '../components/expedition/expedition.interface';
 import { ClientId } from '../components/expedition/expedition.type';
 
@@ -30,7 +30,7 @@ export class DiscardCardAction {
         let cardToDiscard: IExpeditionPlayerStateDeckCard = null;
 
         const newHand = hand.filter((card) => {
-            const field = typeof cardId === 'string' ? 'id' : 'cardId';
+            const field = getCardIdField(cardId);
 
             if (card[field] === cardId) cardToDiscard = card;
 

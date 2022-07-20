@@ -6,7 +6,7 @@ import {
     CardPlayErrorMessages,
     CardTargetedEnum,
 } from '../components/card/card.enum';
-import { CardId } from '../components/card/card.type';
+import { CardId, getCardIdField } from '../components/card/card.type';
 import { ExpeditionService } from '../components/expedition/expedition.service';
 import { PlayerDTO } from '../effects/effects.interface';
 import { EffectService } from '../effects/effects.service';
@@ -95,7 +95,7 @@ export class CardPlayedAction {
                 properties: { effects, statuses },
                 keywords,
             } = hand.find((card) => {
-                const field = typeof cardId === 'string' ? 'id' : 'cardId';
+                const field = getCardIdField(cardId);
 
                 return card[field] === cardId;
             });
