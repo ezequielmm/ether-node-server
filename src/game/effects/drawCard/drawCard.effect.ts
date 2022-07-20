@@ -55,7 +55,7 @@ export class DrawCardEffect implements EffectHandler {
         // First we check if the draw pile more than the amount
         // of cards required
 
-        if (draw.length >= cardsToTake) {
+        if (cardsToTake <= draw.length) {
             const cardsToAdd = draw.slice(draw.length - cardsToTake);
 
             const newHand = [...hand, ...cardsToAdd];
