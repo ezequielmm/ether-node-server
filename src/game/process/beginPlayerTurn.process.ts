@@ -34,7 +34,7 @@ export class BeginPlayerTurnProcess {
         const {
             data: {
                 round,
-                player: { handSize },
+                player: { handSize, defense },
             },
         } = await this.expeditionService.getCurrentNode({
             clientId: client.id,
@@ -69,14 +69,16 @@ export class BeginPlayerTurnProcess {
             },
         } = await this.settingsService.getSettings();
 
-        await this.expeditionService.updatePlayerEnergy({
+        // Reset defense
+        if (defense > 0)
+            await this.expeditionService.setPlayerDefense({
+                clientId: client.id,
+                value: 0,
+            });
+
+        const expedition = await this.expeditionService.updatePlayerEnergy({
             clientId: client.id,
             newEnergy: initial,
-        });
-
-        const expedition = await this.expeditionService.setPlayerDefense({
-            clientId: client.id,
-            value: 0,
         });
 
         const {
@@ -103,7 +105,9 @@ export class BeginPlayerTurnProcess {
         );
 
         await this.drawCardProcess.handle({ client, cardsTotake: handSize });
+
         await this.expeditionService.calculateNewEnemyIntentions(client.id);
+
         await this.statusService.trigger(
             client,
             expedition,

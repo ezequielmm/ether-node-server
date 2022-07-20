@@ -58,11 +58,13 @@ export class ExpeditionService {
         clientId: ClientId,
         payload: UpdateExpeditionDTO,
     ): Promise<ExpeditionDocument> {
-        const field = typeof clientId === 'string' ? 'clientId' : 'playerId';
+        const clientField = getClientIdField(clientId);
+
         delete payload.clientId;
+
         return await this.expedition.findOneAndUpdate(
             {
-                [field]: clientId,
+                [clientField]: clientId,
                 status: ExpeditionStatusEnum.InProgress,
             },
             payload,
@@ -75,10 +77,10 @@ export class ExpeditionService {
     ): Promise<boolean> {
         const { clientId } = payload;
 
-        const field = typeof clientId === 'string' ? 'clientId' : 'playerId';
+        const clientField = getClientIdField(clientId);
 
         const item = await this.expedition.exists({
-            [field]: clientId,
+            [clientField]: clientId,
             status: ExpeditionStatusEnum.InProgress,
         });
         return item !== null;
@@ -189,7 +191,7 @@ export class ExpeditionService {
     ): Promise<boolean> {
         const { cardId, clientId } = payload;
 
-        const field = typeof clientId === 'string' ? 'clientId' : 'playerId';
+        const clientField = getClientIdField(clientId);
 
         const cardIdField =
             typeof cardId === 'string'
@@ -197,7 +199,7 @@ export class ExpeditionService {
                 : 'currentNode.data.player.cards.hand.cardId';
 
         const itemExists = await this.expedition.exists({
-            [field]: clientId,
+            [clientField]: clientId,
             status: ExpeditionStatusEnum.InProgress,
             [cardIdField]: cardId,
         });
