@@ -421,6 +421,8 @@ export const Cards: Card[] = [
                     target: CardTargetedEnum.Enemy,
                     args: {
                         value: 6,
+                        decreaseValue: true,
+                        decrementBy: 1,
                     },
                 },
             ],
@@ -446,6 +448,8 @@ export const Cards: Card[] = [
                     target: CardTargetedEnum.Enemy,
                     args: {
                         value: 9,
+                        decreaseValue: true,
+                        decrementBy: 1,
                     },
                 },
             ],

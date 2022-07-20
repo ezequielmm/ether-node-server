@@ -39,13 +39,24 @@ export class DiscardCardAction {
 
         // Before we move it to the discard pile, we check if the
         // card has to double its effect values
+        // First we loop the card effects
         cardToDiscard.properties.effects.map((effect) => {
+            // If is true, we double the values for the card
+            // before moving it to the discard pile
             if (
                 effect.args.doubleValuesWhenPlayed !== undefined &&
                 effect.args.doubleValuesWhenPlayed
             ) {
                 effect.args.value *= 2;
                 if (effect.args.times !== undefined) effect.args.times *= 2;
+            }
+
+            // Also we check if the card has to lower its values every time is used
+            if (
+                effect.args.decreaseValue !== undefined &&
+                effect.args.decreaseValue
+            ) {
+                effect.args.value -= effect.args.decrementBy;
             }
 
             return effect;
