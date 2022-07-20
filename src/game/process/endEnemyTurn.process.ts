@@ -46,11 +46,18 @@ export class EndEnemyTurnProcess {
         const expedition = await this.expeditionService.findOne({
             clientId: client.id,
         });
+
         await this.statusService.trigger(
             client,
             expedition,
             StatusEventType.OnTurnEnd,
         );
+
+        await this.expeditionService.setPlayerDefense({
+            clientId: client.id,
+            value: 0,
+        });
+
         await this.beingPlayerTurnProcess.handle({ client });
     }
 }

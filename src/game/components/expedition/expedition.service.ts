@@ -30,7 +30,7 @@ import {
     IExpeditionPlayerStateDeckCard,
 } from './expedition.interface';
 import { generateMap, restoreMap } from 'src/game/map/app';
-import { ClientId } from './expedition.type';
+import { ClientId, getClientIdField } from './expedition.type';
 import { EnemyService } from '../enemy/enemy.service';
 import { getRandomItemByWeight } from 'src/utils';
 import { EnemyId, getEnemyIdField } from '../enemy/enemy.type';
@@ -264,20 +264,14 @@ export class ExpeditionService {
     ): Promise<ExpeditionDocument> {
         const { clientId, value } = payload;
 
-        const {
-            data: {
-                player: { defense },
-            },
-        } = await this.getCurrentNode({ clientId: clientId });
-
-        const newDefenseValue = defense + value;
+        const clientField = getClientIdField(clientId);
 
         return await this.expedition.findOneAndUpdate(
             {
-                clientId,
+                [clientField]: clientId,
                 status: ExpeditionStatusEnum.InProgress,
             },
-            { 'currentNode.data.player.defense': newDefenseValue },
+            { 'currentNode.data.player.defense': value },
             { new: true },
         );
     }
@@ -285,11 +279,13 @@ export class ExpeditionService {
     async setEnemyDefense(
         clientId: string,
         enemyId: EnemyId,
-        defense,
+        defense: number,
     ): Promise<ExpeditionDocument> {
+        const clientField = getClientIdField(clientId);
+
         return this.expedition.findOneAndUpdate(
             {
-                clientId,
+                [clientField]: clientId,
                 status: ExpeditionStatusEnum.InProgress,
                 [`currentNode.data.enemies.${getEnemyIdField(enemyId)}`]:
                     enemyId,
@@ -305,11 +301,11 @@ export class ExpeditionService {
     ): Promise<ExpeditionDocument> {
         const { clientId, hpCurrent } = payload;
 
-        const field = typeof clientId === 'string' ? 'clientId' : 'playerId';
+        const clientField = getClientIdField(clientId);
 
         return this.expedition.findOneAndUpdate(
             {
-                [field]: clientId,
+                [clientField]: clientId,
                 status: ExpeditionStatusEnum.InProgress,
             },
             { 'playerState.hpCurrent': hpCurrent },

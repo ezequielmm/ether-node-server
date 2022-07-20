@@ -34,7 +34,7 @@ export class DrawCardProcess {
 
         // Then, we verify if the draw pile has enough cards to shuffle and take from it
         // If not, we move all the discard cards to the draw pile and shuffle
-        if (draw.length >= cardsTotake) {
+        if (cardsTotake <= draw.length) {
             const newHand = draw
                 .sort(() => 0.5 - Math.random())
                 .slice(0, cardsTotake);
@@ -103,7 +103,7 @@ export class DrawCardProcess {
                 .slice(0, cardsTotake);
 
             newDraw = removeCardsFromPile({
-                originalPile: draw,
+                originalPile: newDraw,
                 cardsToRemove: newHand,
             });
 
