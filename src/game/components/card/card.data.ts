@@ -267,10 +267,10 @@ export const Cards: Card[] = [
                     target: CardTargetedEnum.Enemy,
                     args: {
                         value: 1,
+                        times: 1,
+                        doubleValuesWhenPlayed: true,
                     },
                 },
-                // TODO: Double the values of those numbers for remainder of combat
-                // SEE: https://robotseamonster.atlassian.net/wiki/spaces/KOTE/pages/38633485/Card+Find+Weakness
             ],
             statuses: [],
         },
@@ -283,7 +283,7 @@ export const Cards: Card[] = [
         rarity: CardRarityEnum.Common,
         cardType: CardTypeEnum.Attack,
         pool: 'knight',
-        energy: 1,
+        energy: 0,
         description: 'Deal 1 damage 1 time. Double these values this combat.',
         keywords: [],
         properties: {
@@ -293,10 +293,10 @@ export const Cards: Card[] = [
                     target: CardTargetedEnum.Enemy,
                     args: {
                         value: 1,
+                        times: 1,
+                        doubleValuesWhenPlayed: true,
                     },
                 },
-                // TODO: Double the values of those numbers for remainder of combat
-                // SEE: https://robotseamonster.atlassian.net/wiki/spaces/KOTE/pages/38633485/Card+Find+Weakness
             ],
             statuses: [],
         },
@@ -1289,6 +1289,7 @@ export const Cards: Card[] = [
                     target: CardTargetedEnum.Player,
                     args: {
                         value: 2,
+                        doubleValuesWhenPlayed: true,
                     },
                 },
             ],
@@ -1314,6 +1315,7 @@ export const Cards: Card[] = [
                     target: CardTargetedEnum.Player,
                     args: {
                         value: 3,
+                        doubleValuesWhenPlayed: true,
                     },
                 },
             ],
