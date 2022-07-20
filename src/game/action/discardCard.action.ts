@@ -56,7 +56,12 @@ export class DiscardCardAction {
                 effect.args.decreaseValue !== undefined &&
                 effect.args.decreaseValue
             ) {
-                effect.args.value -= effect.args.decrementBy;
+                // We lower the value (won't be reduce below 1)
+                const newValue = Math.max(
+                    1,
+                    effect.args.value - effect.args.decrementBy,
+                );
+                effect.args.value = newValue;
             }
 
             return effect;
