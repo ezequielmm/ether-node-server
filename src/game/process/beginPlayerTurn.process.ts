@@ -104,7 +104,7 @@ export class BeginPlayerTurnProcess {
             ),
         );
 
-        await this.drawCardProcess.handle({ client, cardsTotake: handSize });
+        await this.drawCardProcess.handle({ client, cardsToTake: handSize });
 
         await this.expeditionService.calculateNewEnemyIntentions(client.id);
 
