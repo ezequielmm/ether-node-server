@@ -14,6 +14,7 @@ import { GetCardPilesAction } from './getCardPiles.action';
 import { GetEnemiesAction } from './getEnemies.action';
 import { GetEnergyAction } from './getEnergy.action';
 import { GetPlayerInfoAction } from './getPlayerInfo.action';
+import { GetPlayerStatusesAction } from './getPlayerStatuses.action';
 import { SetCombatTurnAction } from './setCombatTurn.action';
 import { UpdatePlayerEnergyAction } from './updatePlayerEnergy.action';
 
@@ -38,6 +39,7 @@ import { UpdatePlayerEnergyAction } from './updatePlayerEnergy.action';
         DiscardCardAction,
         DiscardAllCardsAction,
         ExhaustCardAction,
+        GetPlayerStatusesAction,
     ],
     exports: [
         FullSyncAction,
@@ -51,6 +53,7 @@ import { UpdatePlayerEnergyAction } from './updatePlayerEnergy.action';
         DiscardCardAction,
         DiscardAllCardsAction,
         ExhaustCardAction,
+        GetPlayerStatusesAction,
     ],
 })
 export class ActionModule {}
