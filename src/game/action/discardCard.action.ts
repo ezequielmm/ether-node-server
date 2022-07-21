@@ -1,20 +1,27 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
+import { Socket } from 'socket.io';
 import { ExpeditionService } from 'src/game/components/expedition/expedition.service';
 import { CardId, getCardIdField } from '../components/card/card.type';
 import { IExpeditionPlayerStateDeckCard } from '../components/expedition/expedition.interface';
-import { ClientId } from '../components/expedition/expedition.type';
+import {
+    StandardResponse,
+    SWARAction,
+    SWARMessageType,
+} from '../standardResponse/standardResponse';
 
 interface DiscardCardDTO {
-    readonly clientId: ClientId;
+    readonly client: Socket;
     readonly cardId: CardId;
 }
 
 @Injectable()
 export class DiscardCardAction {
+    private readonly logger: Logger = new Logger(DiscardCardAction.name);
+
     constructor(private readonly expeditionService: ExpeditionService) {}
 
-    async handle(payload: DiscardCardDTO) {
-        const { clientId, cardId } = payload;
+    async handle(payload: DiscardCardDTO): Promise<void> {
+        const { client, cardId } = payload;
 
         // First we get the hand and discard piles from the current node object
         const {
@@ -23,7 +30,9 @@ export class DiscardCardAction {
                     cards: { hand, discard },
                 },
             },
-        } = await this.expeditionService.getCurrentNode({ clientId });
+        } = await this.expeditionService.getCurrentNode({
+            clientId: client.id,
+        });
 
         // Then we take the desired card from the hand pile
         // Also remove it from the hand pile
@@ -71,9 +80,30 @@ export class DiscardCardAction {
         discard.push(cardToDiscard);
 
         await this.expeditionService.updateHandPiles({
-            clientId,
+            clientId: client.id,
             hand: newHand,
             discard,
         });
+
+        this.logger.log(
+            `Sent message PutData to client ${client.id}: ${SWARAction.MoveCard}`,
+        );
+
+        client.emit(
+            'PutData',
+            JSON.stringify(
+                StandardResponse.respond({
+                    message_type: SWARMessageType.PlayerAffected,
+                    action: SWARAction.MoveCard,
+                    data: [
+                        {
+                            source: 'hand',
+                            destination: 'discard',
+                            id: cardId,
+                        },
+                    ],
+                }),
+            ),
+        );
     }
 }
