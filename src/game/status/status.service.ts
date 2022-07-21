@@ -15,6 +15,7 @@ import {
     EffectDTO,
     EnemyDTO,
     SourceEntityDTO,
+    TargetEntityDTO,
 } from '../effects/effects.interface';
 import { EffectService } from '../effects/effects.service';
 import { TargetId } from '../effects/effects.types';
@@ -150,6 +151,7 @@ export class StatusService {
             collection,
             effect,
             effectDTO,
+            preview,
         } = dto;
         let mutatedDTO = clone(effectDTO);
         const {
@@ -185,7 +187,7 @@ export class StatusService {
 
                 if (!isActive) continue;
 
-                mutatedDTO = await instance.handle({
+                mutatedDTO = await instance[preview ? 'preview' : 'handle']({
                     client,
                     expedition: expedition,
                     effectDTO: mutatedDTO,
@@ -208,6 +210,24 @@ export class StatusService {
             await this.updateStatuses(collectionOwner, expedition, collection);
 
         return mutatedDTO;
+    }
+
+    public findEffectStatuses(
+        entity: SourceEntityDTO | TargetEntityDTO,
+        direction: StatusDirection,
+    ): StatusCollection {
+        let statuses: StatusCollection;
+        if (EffectService.isPlayer(entity)) {
+            statuses = entity.value.combatState.statuses;
+        } else if (EffectService.isEnemy(entity)) {
+            statuses = entity.value.statuses;
+        }
+
+        if (!statuses) {
+            throw new Error(`Could not find statuses for ${entity.type}`);
+        }
+
+        return this.filterCollectionByDirection(statuses, direction);
     }
 
     public filterCollectionByDirection(

@@ -22,7 +22,7 @@ export interface EffectDTO<
     readonly client: Socket;
     readonly expedition: Expedition;
     readonly source: SourceEntityDTO;
-    readonly target: TargetEntityDTO;
+    readonly target?: TargetEntityDTO;
     args: {
         readonly initialValue: number;
         currentValue: number;
@@ -119,8 +119,6 @@ export interface ExtractTargetsDTO {
 export interface MutateDTO {
     client: Socket;
     expedition: Expedition;
-    source: SourceEntityDTO;
-    target: TargetEntityDTO;
     dto: EffectDTO;
     effect: Effect['name'];
 }

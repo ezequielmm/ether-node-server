@@ -5,7 +5,7 @@ import { EnemyId, getEnemyIdField } from '../components/enemy/enemy.type';
 import { Expedition } from '../components/expedition/expedition.schema';
 import { ProviderContainer } from '../provider/interfaces';
 import { ProviderService } from '../provider/provider.service';
-import { StatusCollection, StatusDirection } from '../status/interfaces';
+import { StatusDirection } from '../status/interfaces';
 import { StatusService } from '../status/status.service';
 import { EFFECT_METADATA_KEY } from './effects.decorator';
 import {
@@ -79,8 +79,6 @@ export class EffectService {
         effectDTO = await this.mutate({
             client,
             expedition,
-            source,
-            target,
             dto: effectDTO,
             effect: name,
         });
@@ -183,31 +181,21 @@ export class EffectService {
         };
     }
 
-    private async mutate(dto: MutateDTO) {
-        const { client, expedition, source, target, effect } = dto;
+    private async mutate(dto: MutateDTO): Promise<EffectDTO> {
+        const {
+            client,
+            expedition,
+            effect,
+            dto: { source, target },
+        } = dto;
         let { dto: effectDTO } = dto;
 
-        let outgoingStatuses: StatusCollection;
-        let incomingStatuses: StatusCollection;
-
-        // Get statuses of the source and target to modify the effects
-        if (EffectService.isPlayer(source))
-            outgoingStatuses = source.value.combatState.statuses;
-        else if (EffectService.isEnemy(source))
-            outgoingStatuses = source.value.statuses;
-
-        if (EffectService.isPlayer(target))
-            incomingStatuses = target.value.combatState.statuses;
-        else if (EffectService.isEnemy(target))
-            incomingStatuses = target.value.statuses;
-
-        outgoingStatuses = this.statusService.filterCollectionByDirection(
-            outgoingStatuses,
+        const outgoingStatuses = this.statusService.findEffectStatuses(
+            source,
             StatusDirection.Outgoing,
         );
-
-        incomingStatuses = this.statusService.filterCollectionByDirection(
-            incomingStatuses,
+        const incomingStatuses = this.statusService.findEffectStatuses(
+            target,
             StatusDirection.Incoming,
         );
 
@@ -219,6 +207,7 @@ export class EffectService {
             collectionOwner: source,
             effectDTO: effectDTO,
             effect,
+            preview: false,
         });
 
         // Apply statuses to the incoming effects → 🛡
@@ -229,6 +218,35 @@ export class EffectService {
             collectionOwner: target,
             effectDTO: effectDTO,
             effect,
+            preview: false,
+        });
+
+        return effectDTO;
+    }
+
+    public async preview(dto: MutateDTO): Promise<EffectDTO> {
+        const {
+            client,
+            expedition,
+            effect,
+            dto: { source },
+        } = dto;
+        let { dto: effectDTO } = dto;
+
+        const outgoingStatuses = this.statusService.findEffectStatuses(
+            source,
+            StatusDirection.Outgoing,
+        );
+
+        // Apply statuses to the outgoing effects 🔫  →
+        effectDTO = await this.statusService.mutate({
+            client,
+            expedition,
+            collection: outgoingStatuses,
+            collectionOwner: source,
+            effectDTO: effectDTO,
+            effect,
+            preview: true,
         });
 
         return effectDTO;

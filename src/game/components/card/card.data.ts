@@ -35,7 +35,7 @@ export const Cards: Card[] = [
         cardType: CardTypeEnum.Attack,
         pool: 'knight',
         energy: 1,
-        description: 'Deal 5 Damage',
+        description: `Deal {${damageEffect.name}} Damage`,
         keywords: [],
         properties: {
             effects: [
@@ -59,7 +59,7 @@ export const Cards: Card[] = [
         cardType: CardTypeEnum.Attack,
         pool: 'knight',
         energy: 1,
-        description: 'Deal 8 Damage',
+        description: `Deal {${damageEffect.name}} Damage`,
         keywords: [],
         properties: {
             effects: [
@@ -83,7 +83,7 @@ export const Cards: Card[] = [
         cardType: CardTypeEnum.Defend,
         pool: 'knight',
         energy: 1,
-        description: 'Gain 5 Defense',
+        description: `Gain {${defenseEffect.name}} Defense`,
         keywords: [],
         properties: {
             effects: [
@@ -107,7 +107,7 @@ export const Cards: Card[] = [
         cardType: CardTypeEnum.Defend,
         pool: 'knight',
         energy: 1,
-        description: 'Gain 8 Defense',
+        description: `Gain {${defenseEffect.name}} Defense`,
         keywords: [],
         properties: {
             effects: [
@@ -131,7 +131,7 @@ export const Cards: Card[] = [
         cardType: CardTypeEnum.Attack,
         pool: 'knight',
         energy: 1,
-        description: 'Deal 4 damage twice.\nDraw 1 card',
+        description: `Deal {${damageEffect.name}} damage twice.\nDraw {${drawCardEffect.name}} card`,
         keywords: [],
         properties: {
             effects: [
@@ -163,7 +163,7 @@ export const Cards: Card[] = [
         cardType: CardTypeEnum.Attack,
         pool: 'knight',
         energy: 1,
-        description: 'Deal 4 damage twice.\nDraw 2 cards',
+        description: `Deal {${damageEffect.name}} damage twice.\nDraw {${drawCardEffect.name}} cards`,
         keywords: [],
         properties: {
             effects: [
@@ -195,7 +195,7 @@ export const Cards: Card[] = [
         cardType: CardTypeEnum.Attack,
         pool: 'knight',
         energy: 1,
-        description: 'Deal 4 Damage, Gain 4 Defense',
+        description: `Deal {${damageEffect.name}} Damage, Gain {${defenseEffect.name}} Defense`,
         keywords: [],
         properties: {
             effects: [
@@ -226,7 +226,7 @@ export const Cards: Card[] = [
         cardType: CardTypeEnum.Attack,
         pool: 'knight',
         energy: 1,
-        description: 'Deal 7 Damage, Gain 7 Defense',
+        description: `Deal {${damageEffect.name}} Damage, Gain {${defenseEffect.name}} Defense`,
         keywords: [],
         properties: {
             effects: [
@@ -258,7 +258,7 @@ export const Cards: Card[] = [
         cardType: CardTypeEnum.Attack,
         pool: 'knight',
         energy: 1,
-        description: 'Deal 1 damage 1 time. Double these values this combat.',
+        description: `Deal {${damageEffect.name}} damage 1 time. Double these values this combat.`,
         keywords: [],
         properties: {
             effects: [
@@ -284,7 +284,7 @@ export const Cards: Card[] = [
         cardType: CardTypeEnum.Attack,
         pool: 'knight',
         energy: 0,
-        description: 'Deal 1 damage 1 time. Double these values this combat.',
+        description: `Deal {${damageEffect.name}} damage 1 time. Double these values this combat.`,
         keywords: [],
         properties: {
             effects: [
@@ -310,7 +310,7 @@ export const Cards: Card[] = [
         cardType: CardTypeEnum.Attack,
         pool: 'knight',
         energy: 1,
-        description: 'Deal 6 damage to all enemies.',
+        description: `Deal {${damageEffect.name}} damage to all enemies.`,
         keywords: [],
         properties: {
             effects: [
@@ -334,7 +334,7 @@ export const Cards: Card[] = [
         cardType: CardTypeEnum.Attack,
         pool: 'knight',
         energy: 1,
-        description: 'Deal 9 damage to all enemies.',
+        description: `Deal {${damageEffect.name}} damage to all enemies.`,
         keywords: [],
         properties: {
             effects: [
@@ -359,7 +359,7 @@ export const Cards: Card[] = [
         cardType: CardTypeEnum.Attack,
         pool: 'knight',
         energy: 1,
-        description: 'Deal damage equal to your Defense.',
+        description: `Deal damage equal to your Defense.`,
         keywords: [],
         properties: {
             effects: [
@@ -385,7 +385,7 @@ export const Cards: Card[] = [
         cardType: CardTypeEnum.Attack,
         pool: 'knight',
         energy: 1,
-        description: 'Deal damage equal to 2x your Defense.',
+        description: `Deal damage equal to 2x your Defense.`,
         keywords: [],
         properties: {
             effects: [
@@ -411,8 +411,7 @@ export const Cards: Card[] = [
         cardType: CardTypeEnum.Attack,
         pool: 'knight',
         energy: 0,
-        description:
-            'Deal 6 damage. Lower this card’s damage by 1 each use during this combat.',
+        description: `Deal {${damageEffect.name}} damage. Lower this card’s damage by 1 each use during this combat.`,
         keywords: [],
         properties: {
             effects: [
@@ -438,8 +437,7 @@ export const Cards: Card[] = [
         cardType: CardTypeEnum.Attack,
         pool: 'knight',
         energy: 0,
-        description:
-            'Deal 9 damage. Lower this card’s damage by 1 each use during this combat.',
+        description: `Deal {${damageEffect.name}} damage. Lower this card’s damage by 1 each use during this combat.`,
         keywords: [],
         properties: {
             effects: [
@@ -465,7 +463,7 @@ export const Cards: Card[] = [
         cardType: CardTypeEnum.Attack,
         pool: 'knight',
         energy: 0,
-        description: 'Deal 5 damage. Exhaust',
+        description: `Deal {${damageEffect.name}} damage. Exhaust`,
         keywords: [CardKeywordEnum.Exhaust],
         properties: {
             effects: [
@@ -489,7 +487,7 @@ export const Cards: Card[] = [
         cardType: CardTypeEnum.Defend,
         pool: 'knight',
         energy: 0,
-        description: 'At the end of this turn, double your defense',
+        description: `At the end of this turn, double your defense`,
         keywords: [],
         properties: {
             effects: [],
@@ -513,7 +511,7 @@ export const Cards: Card[] = [
         cardType: CardTypeEnum.Skill,
         pool: 'knight',
         energy: 1,
-        description: 'Heal 2 hp',
+        description: `Heal {${healEffect.name}} hp`,
         keywords: [],
         properties: {
             effects: [
@@ -537,7 +535,7 @@ export const Cards: Card[] = [
         cardType: CardTypeEnum.Skill,
         pool: 'knight',
         energy: 1,
-        description: 'Heal 4 hp',
+        description: `Heal {${healEffect.name}} hp`,
         keywords: [],
         properties: {
             effects: [
@@ -561,7 +559,7 @@ export const Cards: Card[] = [
         cardType: CardTypeEnum.Skill,
         pool: 'knight',
         energy: 1,
-        description: 'Gain 2 Energy',
+        description: `Gain {${energyEffect.name}} Energy`,
         keywords: [],
         properties: {
             effects: [
@@ -585,7 +583,7 @@ export const Cards: Card[] = [
         cardType: CardTypeEnum.Skill,
         pool: 'knight',
         energy: 0,
-        description: 'Gain 2 Energy',
+        description: `Gain {${energyEffect.name}} Energy`,
         keywords: [],
         properties: {
             effects: [
@@ -641,7 +639,7 @@ export const Cards: Card[] = [
         cardType: CardTypeEnum.Skill,
         pool: 'knight',
         energy: 1,
-        description: 'Remove all Defense from an enemy',
+        description: `Remove all Defense from an enemy`,
         keywords: [],
         properties: {
             effects: [
@@ -665,7 +663,7 @@ export const Cards: Card[] = [
         cardType: CardTypeEnum.Skill,
         pool: 'knight',
         energy: 0,
-        description: 'Remove all Defense from all enemies',
+        description: `Remove all Defense from all enemies`,
         keywords: [],
         properties: {
             effects: [
@@ -689,7 +687,7 @@ export const Cards: Card[] = [
         cardType: CardTypeEnum.Skill,
         pool: 'knight',
         energy: 1,
-        description: 'Double all damage dealt next turn.',
+        description: `Double all damage dealt next turn.`,
         keywords: [],
         properties: {
             effects: [],
@@ -713,7 +711,7 @@ export const Cards: Card[] = [
         cardType: CardTypeEnum.Skill,
         pool: 'knight',
         energy: 0,
-        description: 'Double all damage dealt next turn.',
+        description: `Double all damage dealt next turn.`,
         keywords: [],
         properties: {
             effects: [],
@@ -769,7 +767,7 @@ export const Cards: Card[] = [
         cardType: CardTypeEnum.Defend,
         pool: 'knight',
         energy: 1,
-        description: 'Gain 4 defense for each enemy.',
+        description: `Gain {${defenseEffect.name}} defense for each enemy.`,
         keywords: [],
         properties: {
             effects: [
@@ -794,7 +792,7 @@ export const Cards: Card[] = [
         cardType: CardTypeEnum.Defend,
         pool: 'knight',
         energy: 1,
-        description: 'Gain 6 defense for each enemy.',
+        description: `Gain {${defenseEffect.name}} defense for each enemy.`,
         keywords: [],
         properties: {
             effects: [
@@ -819,7 +817,7 @@ export const Cards: Card[] = [
         cardType: CardTypeEnum.Skill,
         pool: 'knight',
         energy: 1,
-        description: 'Apply 1 Burn\nDouble any Burn on all enemies',
+        description: `Apply {${doubleBurn.name}} Burn\nDouble any Burn on all enemies`,
         keywords: [],
         properties: {
             effects: [
@@ -851,7 +849,7 @@ export const Cards: Card[] = [
         cardType: CardTypeEnum.Skill,
         pool: 'knight',
         energy: 1,
-        description: 'Apply 2 Burn\nDouble any Burn on all enemies',
+        description: `Apply {${doubleBurn.name}} Burn\nDouble any Burn on all enemies`,
         keywords: [],
         properties: {
             effects: [
@@ -937,7 +935,7 @@ export const Cards: Card[] = [
         cardType: CardTypeEnum.Skill,
         pool: 'knight',
         energy: 2,
-        description: 'Dodge the next attack',
+        description: `Dodge the next attack`,
         keywords: [],
         properties: {
             effects: [],
@@ -961,7 +959,7 @@ export const Cards: Card[] = [
         cardType: CardTypeEnum.Defend,
         pool: 'knight',
         energy: 1,
-        description: 'Gain 6 defense for each enemy planning to attack.',
+        description: `Gain {${defenseEffect.name}} defense for each enemy planning to attack.`,
         keywords: [],
         properties: {
             effects: [
@@ -986,7 +984,7 @@ export const Cards: Card[] = [
         cardType: CardTypeEnum.Defend,
         pool: 'knight',
         energy: 1,
-        description: 'Gain 9 defense for each enemy planning to attack.',
+        description: `Gain {${defenseEffect.name}} defense for each enemy planning to attack.`,
         keywords: [],
         properties: {
             effects: [
@@ -1011,7 +1009,7 @@ export const Cards: Card[] = [
         cardType: CardTypeEnum.Defend,
         pool: 'knight',
         energy: 1,
-        description: 'If the enemy intends to attack. Draw 2 defense cards',
+        description: `If the enemy intends to attack. Draw {${drawCardEffect.name}} defense cards`,
         keywords: [],
         properties: {
             effects: [
@@ -1036,7 +1034,7 @@ export const Cards: Card[] = [
         cardType: CardTypeEnum.Defend,
         pool: 'knight',
         energy: 1,
-        description: 'If the enemy intends to attack. Draw 3 defense cards',
+        description: `If the enemy intends to attack. Draw {${drawCardEffect.name}} defense cards`,
         keywords: [],
         properties: {
             effects: [
@@ -1111,7 +1109,7 @@ export const Cards: Card[] = [
         cardType: CardTypeEnum.Power,
         pool: 'knight',
         energy: 1,
-        description: 'Gain 1 Regenerate',
+        description: `Gain {${regenerate.name}} Regenerate`,
         keywords: [],
         properties: {
             effects: [],
@@ -1135,7 +1133,7 @@ export const Cards: Card[] = [
         cardType: CardTypeEnum.Power,
         pool: 'knight',
         energy: 0,
-        description: 'Gain 1 Regenerate',
+        description: `Gain {${regenerate.name}} Regenerate`,
         keywords: [],
         properties: {
             effects: [],
@@ -1233,8 +1231,7 @@ export const Cards: Card[] = [
         cardType: CardTypeEnum.Attack,
         pool: 'knight',
         energy: 2,
-        description:
-            'Deal 8 damage. If enemy is undefended, Inflict Confusion.',
+        description: `Deal {${damageEffect.name}} damage. If enemy is undefended, Inflict Confusion.`,
         keywords: [],
         properties: {
             effects: [
@@ -1258,8 +1255,7 @@ export const Cards: Card[] = [
         cardType: CardTypeEnum.Attack,
         pool: 'knight',
         energy: 2,
-        description:
-            'Deal 11 damage. If enemy is undefended, Inflict Confusion.',
+        description: `Deal {${damageEffect.name}} damage. If enemy is undefended, Inflict Confusion.`,
         keywords: [],
         properties: {
             effects: [
@@ -1283,8 +1279,7 @@ export const Cards: Card[] = [
         cardType: CardTypeEnum.Defend,
         pool: 'knight',
         energy: 0,
-        description:
-            'Gain 2 defense. Doubled each use for the remainder of combat.',
+        description: `Gain {${defenseEffect.name}} defense. Doubled each use for the remainder of combat.`,
         keywords: [],
         properties: {
             effects: [
@@ -1309,8 +1304,7 @@ export const Cards: Card[] = [
         cardType: CardTypeEnum.Defend,
         pool: 'knight',
         energy: 0,
-        description:
-            'Gain 3 defense. Doubled each use for the remainder of combat.',
+        description: `Gain {${defenseEffect.name}} defense. Doubled each use for the remainder of combat.`,
         keywords: [],
         properties: {
             effects: [

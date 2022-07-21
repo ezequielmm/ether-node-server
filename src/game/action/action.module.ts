@@ -19,9 +19,9 @@ import { UpdatePlayerEnergyAction } from './updatePlayerEnergy.action';
 
 @Module({
     imports: [
-        ExpeditionModule,
+        forwardRef(() => ExpeditionModule),
         forwardRef(() => ProcessModule),
-        EffectModule,
+        forwardRef(() => EffectModule),
         StatusModule,
         SettingsModule,
         CardModule,
