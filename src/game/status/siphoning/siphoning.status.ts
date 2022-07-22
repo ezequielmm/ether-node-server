@@ -14,6 +14,12 @@ import { siphoning } from './constants';
 export class SiphoningStatus implements StatusEffectHandler {
     constructor(private readonly expeditionService: ExpeditionService) {}
 
+    async preview(
+        args: StatusEffectDTO<DamageArgs>,
+    ): Promise<EffectDTO<DamageArgs>> {
+        return args.effectDTO;
+    }
+
     async handle(
         dto: StatusEffectDTO<DamageArgs>,
     ): Promise<EffectDTO<DamageArgs>> {

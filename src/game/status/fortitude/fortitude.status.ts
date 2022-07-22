@@ -10,6 +10,12 @@ import { fortitude } from './constants';
 })
 @Injectable()
 export class FortitudeStatus implements StatusEffectHandler {
+    async preview(
+        args: StatusEffectDTO<DefenseArgs>,
+    ): Promise<EffectDTO<DefenseArgs>> {
+        return this.handle(args);
+    }
+
     async handle(
         dto: StatusEffectDTO<DefenseArgs>,
     ): Promise<EffectDTO<DefenseArgs>> {

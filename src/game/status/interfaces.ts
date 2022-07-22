@@ -201,6 +201,7 @@ export interface StatusEventDTO {
  * is applied to the target.
  */
 export interface StatusEffectHandler {
+    preview(args: StatusEffectDTO): Promise<EffectDTO>;
     handle(args: StatusEffectDTO): Promise<EffectDTO>;
 }
 
@@ -254,4 +255,5 @@ export interface MutateEffectArgsDTO {
     collection: StatusCollection;
     effect: Effect['name'];
     effectDTO: EffectDTO;
+    preview: boolean;
 }

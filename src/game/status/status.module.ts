@@ -1,10 +1,5 @@
 import { forwardRef, Module } from '@nestjs/common';
-import { MongooseModule } from '@nestjs/mongoose';
 import { ExpeditionModule } from '../components/expedition/expedition.module';
-import {
-    Expedition,
-    ExpeditionSchema,
-} from '../components/expedition/expedition.schema';
 import { EffectModule } from '../effects/effects.module';
 import { ProviderModule } from '../provider/provider.module';
 import { BurnStatus } from './burn/burn.status';
@@ -22,7 +17,11 @@ import { TasteOfBloodDebuffStatus } from './tasteOfBlood/tasteOfBlood.debuff.sta
 import { TurtlingStatus } from './turtling/turtling.status';
 
 @Module({
-    imports: [ExpeditionModule, forwardRef(() => EffectModule), ProviderModule],
+    imports: [
+        forwardRef(() => ExpeditionModule),
+        forwardRef(() => EffectModule),
+        ProviderModule,
+    ],
     providers: [
         StatusService,
         TurtlingStatus,
