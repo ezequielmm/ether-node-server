@@ -14,12 +14,6 @@ interface DrawCardDTO {
     readonly amountToTake: number;
 }
 
-interface ICardMoves {
-    source: string;
-    destination: string;
-    id: string;
-}
-
 @Injectable()
 export class DrawCardAction {
     private readonly logger: Logger = new Logger(DrawCardAction.name);
@@ -41,17 +35,35 @@ export class DrawCardAction {
             clientId: client.id,
         });
 
-        // We verify that we have enough cards in the draw
-        // pile to move them to the hand pile
-        if (amountToTake <= draw.length) {
-            const data = await this.drawCardsFromDrawPile(
-                client.id,
-                draw,
-                hand,
-                amountToTake,
+        // First we check is we have to take at least 1 card
+        if (amountToTake > 0) {
+            // Verify how many card we need from the draw pile
+            // And how many we might need from the discard pile
+            const amountToTakeFromDraw = Math.min(amountToTake, draw.length);
+            const amountToTakeFromDiscard = Math.max(
+                0,
+                Math.min(amountToTake - draw.length, discard.length),
             );
 
-            // Finally we send the message to the frontend to create the animations
+            // Now, we will always take from the draw pile first
+            // we will create the array that will store those cards first
+            let cardsToMoveToHand: IExpeditionPlayerStateDeckCard[] = [];
+
+            // Now we take the cards we need from the draw pile
+            cardsToMoveToHand = draw.slice(0, amountToTakeFromDraw);
+
+            // Remove the cards taken from the draw pile
+            let newDraw = removeCardsFromPile({
+                originalPile: draw,
+                cardsToRemove: cardsToMoveToHand,
+            });
+
+            // Set the discard pile in case we don't need
+            let newDiscard = [...discard];
+
+            // Send create message for the new cards
+            // source: draw
+            // destination: hand
             this.logger.log(
                 `Sent message PutData to client ${client.id}: ${SWARAction.CreateCard}`,
             );
@@ -62,49 +74,102 @@ export class DrawCardAction {
                     StandardResponse.respond({
                         message_type: SWARMessageType.PlayerAffected,
                         action: SWARAction.CreateCard,
-                        data,
+                        data: cardsToMoveToHand.map(({ id }) => {
+                            return {
+                                source: 'draw',
+                                destination: 'hand',
+                                id,
+                            };
+                        }),
                     }),
                 ),
             );
-        } else {
-            // If the amount of cards that we require is higher than
-            // the amount of cards that we have available on the draw pile
-            // we calculate and take all the cards from the draw pile,
-            // move all the discard pile to the draw pile, shuffle it, and take
-            // the remaining cards again from the draw pile
+
+            // Now we check if we have to take cards from the discard pile
+            if (amountToTakeFromDiscard > 0) {
+                // First we move all the cards from the discard pile to the
+                // draw pile and shuffle it
+                newDraw = [...newDraw, ...discard].sort(
+                    () => 0.5 - Math.random(),
+                );
+
+                // Send create message for the cards
+                // source: discard
+                // destination: draw
+                this.logger.log(
+                    `Sent message PutData to client ${client.id}: ${SWARAction.MoveCard}`,
+                );
+
+                client.emit(
+                    'PutData',
+                    JSON.stringify(
+                        StandardResponse.respond({
+                            message_type: SWARMessageType.PlayerAffected,
+                            action: SWARAction.MoveCard,
+                            data: discard.map(({ id }) => {
+                                return {
+                                    source: 'discard',
+                                    destination: 'draw',
+                                    id,
+                                };
+                            }),
+                        }),
+                    ),
+                );
+
+                newDiscard = [];
+
+                const restOfCardsToTake = draw.slice(
+                    0,
+                    amountToTakeFromDiscard,
+                );
+
+                // next we take the rest of the card that we need
+                cardsToMoveToHand = [
+                    ...cardsToMoveToHand,
+                    ...restOfCardsToTake,
+                ];
+
+                newDraw = removeCardsFromPile({
+                    originalPile: newDraw,
+                    cardsToRemove: cardsToMoveToHand,
+                });
+
+                // Send create message for the new cards
+                // source: draw
+                // destination: hand
+                this.logger.log(
+                    `Sent message PutData to client ${client.id}: ${SWARAction.CreateCard}`,
+                );
+
+                client.emit(
+                    'PutData',
+                    JSON.stringify(
+                        StandardResponse.respond({
+                            message_type: SWARMessageType.PlayerAffected,
+                            action: SWARAction.CreateCard,
+                            data: restOfCardsToTake.map(({ id }) => {
+                                return {
+                                    source: 'draw',
+                                    destination: 'hand',
+                                    id,
+                                };
+                            }),
+                        }),
+                    ),
+                );
+            }
+
+            // Move the cards to the hand pile
+            const newHand = [...hand, ...cardsToMoveToHand];
+
+            // Update piles
+            await this.expeditionService.updateHandPiles({
+                clientId: client.id,
+                hand: newHand,
+                draw: newDraw,
+                discard: newDiscard,
+            });
         }
-    }
-
-    private async drawCardsFromDrawPile(
-        clientId: string,
-        draw: IExpeditionPlayerStateDeckCard[],
-        hand: IExpeditionPlayerStateDeckCard[],
-        amountToTake: number,
-    ): Promise<ICardMoves[]> {
-        // First, we take the first cards required from the draw pile
-        const cardsToDraw = draw.slice(0, amountToTake);
-
-        // Next we remove those cards from the draw pile
-        const newDraw = removeCardsFromPile({
-            originalPile: draw,
-            cardsToRemove: cardsToDraw,
-        });
-
-        const newHand = [...hand, ...cardsToDraw];
-
-        await this.expeditionService.updateHandPiles({
-            clientId,
-            draw: newDraw,
-            hand: newHand,
-        });
-
-        // Now we generate the create card message for the frontend
-        return cardsToDraw.map(({ id }) => {
-            return {
-                source: 'draw',
-                destination: 'hand',
-                id,
-            };
-        });
     }
 }

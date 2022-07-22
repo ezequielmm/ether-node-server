@@ -1,17 +1,8 @@
-import { Injectable, Logger } from '@nestjs/common';
-import { Socket } from 'socket.io';
-import { removeCardsFromPile } from 'src/utils';
-import { CardTypeEnum } from '../../components/card/card.enum';
-import { EnemyIntentionType } from '../../components/enemy/enemy.enum';
-import { ExpeditionService } from '../../components/expedition/expedition.service';
-import {
-    SWARAction,
-    StandardResponse,
-    SWARMessageType,
-} from '../../standardResponse/standardResponse';
+import { Injectable } from '@nestjs/common';
 import { drawCardEffect } from './constants';
 import { EffectDecorator } from '../effects.decorator';
 import { EffectDTO, EffectHandler } from '../effects.interface';
+import { DrawCardAction } from 'src/game/action/drawCard.action';
 
 export interface DrawCardArgs {
     useAttackingEnemies: true;
@@ -22,148 +13,18 @@ export interface DrawCardArgs {
 })
 @Injectable()
 export class DrawCardEffect implements EffectHandler {
-    private readonly logger: Logger = new Logger(DrawCardEffect.name);
-
-    constructor(private readonly expeditionService: ExpeditionService) {}
+    constructor(private readonly drawCardAction: DrawCardAction) {}
 
     async handle(payload: EffectDTO<DrawCardArgs>): Promise<void> {
         const {
             client,
-            args: { currentValue, useAttackingEnemies },
+            args: { currentValue: amountToTake },
         } = payload;
-        // TODO: Triger draw card attempted event
 
-        if (useAttackingEnemies !== undefined && useAttackingEnemies) {
-            await this.useAttackingEnemiesAsValue(client, currentValue);
-        } else {
-            await this.drawCard(client, currentValue);
-        }
+        await this.drawCardAction.handle({ client, amountToTake });
     }
 
-    private async drawCard(client: Socket, cardsToTake: number): Promise<void> {
-        // Get cards from current node
-        const {
-            data: {
-                player: {
-                    cards: { draw, hand, discard },
-                },
-            },
-        } = await this.expeditionService.getCurrentNode({
-            clientId: client.id,
-        });
-
-        // First we check if the draw pile more than the amount
-        // of cards required
-
-        if (cardsToTake <= draw.length) {
-            const cardsToAdd = draw.slice(draw.length - cardsToTake);
-
-            const newHand = [...hand, ...cardsToAdd];
-
-            const newDraw = removeCardsFromPile({
-                originalPile: draw,
-                cardsToRemove: newHand,
-            });
-
-            await this.expeditionService.updateHandPiles({
-                clientId: client.id,
-                hand: newHand,
-                draw: newDraw,
-            });
-
-            const cardMoves = cardsToAdd.map(({ id }) => {
-                return {
-                    source: 'draw',
-                    destination: 'hand',
-                    id,
-                };
-            });
-
-            this.logger.log(
-                `Sent message PutData to client ${client.id}: ${SWARAction.MoveCard}`,
-            );
-
-            client.emit(
-                'PutData',
-                JSON.stringify(
-                    StandardResponse.respond({
-                        message_type: SWARMessageType.PlayerAffected,
-                        action: SWARAction.CreateCard,
-                        data: cardMoves,
-                    }),
-                ),
-            );
-        } else {
-            // If not, we move all the discard pile to the draw pile
-            // and draw the desired card to the hand pile
-
-            let newDraw = [...discard, ...draw];
-
-            const moveFromDiscardToDraw = discard.map(({ id }) => {
-                return {
-                    source: 'discard',
-                    destination: 'draw',
-                    id,
-                };
-            });
-
-            this.logger.log(
-                `Sent message PutData to client ${client.id}: ${SWARAction.MoveCard}`,
-            );
-
-            client.emit(
-                'PutData',
-                JSON.stringify(
-                    StandardResponse.respond({
-                        message_type: SWARMessageType.PlayerAffected,
-                        action: SWARAction.MoveCard,
-                        data: moveFromDiscardToDraw,
-                    }),
-                ),
-            );
-
-            const newHand = newDraw
-                .sort(() => 0.5 - Math.random())
-                .slice(0, cardsToTake);
-
-            newDraw = removeCardsFromPile({
-                originalPile: draw,
-                cardsToRemove: newHand,
-            });
-
-            const moveFromDrawToHand = newHand.map(({ id }) => {
-                return {
-                    source: 'draw',
-                    destination: 'hand',
-                    id,
-                };
-            });
-
-            await this.expeditionService.updateHandPiles({
-                clientId: client.id,
-                draw: newDraw,
-                hand: newHand,
-                discard: [],
-            });
-
-            this.logger.log(
-                `Sent message PutData to client ${client.id}: ${SWARAction.MoveCard}`,
-            );
-
-            client.emit(
-                'PutData',
-                JSON.stringify(
-                    StandardResponse.respond({
-                        message_type: SWARMessageType.PlayerAffected,
-                        action: SWARAction.MoveCard,
-                        data: moveFromDrawToHand,
-                    }),
-                ),
-            );
-        }
-    }
-
-    private async useAttackingEnemiesAsValue(
+    /*private async useAttackingEnemiesAsValue(
         client: Socket,
         cardsToTake: number,
     ): Promise<void> {
@@ -317,5 +178,5 @@ export class DrawCardEffect implements EffectHandler {
                 );
             }
         }
-    }
+    }*/
 }
