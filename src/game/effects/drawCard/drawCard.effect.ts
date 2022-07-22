@@ -3,6 +3,7 @@ import { drawCardEffect } from './constants';
 import { EffectDecorator } from '../effects.decorator';
 import { EffectDTO, EffectHandler } from '../effects.interface';
 import { DrawCardAction } from 'src/game/action/drawCard.action';
+import { EnemyIntentionType } from 'src/game/components/enemy/enemy.enum';
 
 export interface DrawCardArgs {
     useAttackingEnemies: true;
@@ -18,8 +19,37 @@ export class DrawCardEffect implements EffectHandler {
     async handle(payload: EffectDTO<DrawCardArgs>): Promise<void> {
         const {
             client,
-            args: { currentValue: amountToTake },
+            args: { currentValue, useAttackingEnemies },
+            expedition,
         } = payload;
+
+        let amountToTake = currentValue;
+
+        if (useAttackingEnemies !== undefined && useAttackingEnemies) {
+            // If we have a condition to modify the amount of cards to take based
+            // on the enemies that are attacking the player
+
+            // First, we deestructure the expedition to get the enemies
+            const {
+                currentNode: {
+                    data: { enemies },
+                },
+            } = expedition;
+
+            // Set initial enemies variable in 0
+            let enemiesAttacking = 0;
+
+            // Check if there are any enemies with
+            // attacking intentions, if there are, increase the
+            // enemiesAttacking variable by one
+            enemies.forEach(({ currentScript: { intentions } }) => {
+                intentions.forEach(({ type }) => {
+                    if (type === EnemyIntentionType.Attack) enemiesAttacking++;
+                });
+            });
+
+            amountToTake += enemiesAttacking;
+        }
 
         await this.drawCardAction.handle({ client, amountToTake });
     }
