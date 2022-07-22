@@ -161,38 +161,15 @@ export class CardPlayedAction {
 
                 if (exhaust) {
                     await this.exhaustCardAction.handle({
-                        clientId: client.id,
+                        client,
                         cardId,
                     });
                 } else {
                     await this.discardCardAction.handle({
-                        clientId: client.id,
+                        client,
                         cardId,
                     });
                 }
-
-                this.logger.log(
-                    `Sent message PutData to client ${client.id}: ${SWARAction.MoveCard}`,
-                );
-
-                client.emit(
-                    'PutData',
-                    JSON.stringify(
-                        StandardResponse.respond({
-                            message_type: SWARMessageType.PlayerAffected,
-                            action: SWARAction.MoveCard,
-                            data: [
-                                {
-                                    source: 'hand',
-                                    destination: exhaust
-                                        ? 'exhaust'
-                                        : 'discard',
-                                    id: cardId,
-                                },
-                            ],
-                        }),
-                    ),
-                );
 
                 const {
                     data: {
