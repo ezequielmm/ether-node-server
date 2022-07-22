@@ -34,6 +34,10 @@ import { ClientId, getClientIdField } from './expedition.type';
 import { EnemyService } from '../enemy/enemy.service';
 import { getRandomItemByWeight } from 'src/utils';
 import { EnemyId, getEnemyIdField } from '../enemy/enemy.type';
+import { EffectService } from 'src/game/effects/effects.service';
+import { CardTargetedEnum } from '../card/card.enum';
+import { sample } from 'lodash';
+import { Socket } from 'socket.io';
 
 @Injectable()
 export class ExpeditionService {
@@ -41,13 +45,63 @@ export class ExpeditionService {
         @InjectModel(Expedition.name)
         private readonly expedition: Model<ExpeditionDocument>,
         private readonly enemyService: EnemyService,
+        private readonly effectService: EffectService,
     ) {}
 
-    async findOne(payload: FindOneExpeditionDTO): Promise<ExpeditionDocument> {
-        return await this.expedition.findOne({
-            ...payload,
-            status: ExpeditionStatusEnum.InProgress,
-        });
+    async findOne(payload: FindOneExpeditionDTO): Promise<Expedition> {
+        const expedition = await this.expedition
+            .findOne({
+                ...payload,
+                status: ExpeditionStatusEnum.InProgress,
+            })
+            .lean();
+
+        await this.description(expedition);
+
+        return expedition;
+    }
+
+    async description(expedition: Expedition): Promise<Expedition> {
+        const cards = expedition.currentNode?.data?.player?.cards?.hand;
+
+        if (!cards) return expedition;
+
+        for (const card of cards) {
+            for (const jsonEffect of card.properties.effects) {
+                const { effect: name, args } = jsonEffect;
+
+                const dto = await this.effectService.preview({
+                    client: {} as Socket,
+                    expedition,
+                    dto: {
+                        client: {} as Socket,
+                        expedition,
+                        source: {
+                            type: CardTargetedEnum.Player,
+                            value: {
+                                globalState: expedition.playerState,
+                                combatState: expedition.currentNode.data.player,
+                            },
+                        },
+                        target: {
+                            type: CardTargetedEnum.Enemy,
+                            value: sample(
+                                expedition.currentNode?.data?.enemies,
+                            ),
+                        },
+                        args: {
+                            initialValue: args.value,
+                            currentValue: args.value,
+                        },
+                    },
+                    effect: name,
+                });
+                card.description = card.description.replace(
+                    `{${name}}`,
+                    dto.args.currentValue.toString(),
+                );
+            }
+        }
     }
 
     async create(payload: CreateExpeditionDTO): Promise<ExpeditionDocument> {
@@ -167,12 +221,8 @@ export class ExpeditionService {
     async getCurrentNode(
         payload: GetCurrentNodeDTO,
     ): Promise<IExpeditionCurrentNode> {
-        const { clientId } = payload;
-        const { currentNode } = await this.expedition
-            .findOne({ clientId, status: ExpeditionStatusEnum.InProgress })
-            .select('currentNode')
-            .lean();
-        return currentNode;
+        const expedition = await this.findOne(payload);
+        return expedition.currentNode;
     }
 
     async getPlayerState(

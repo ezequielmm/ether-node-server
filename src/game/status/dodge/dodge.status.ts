@@ -10,12 +10,19 @@ import { dodge } from './constants';
 })
 @Injectable()
 export class DodgeStatus implements StatusEffectHandler {
+    async preview(
+        args: StatusEffectDTO<DamageArgs>,
+    ): Promise<EffectDTO<DamageArgs>> {
+        return this.cancelDamage(args.effectDTO);
+    }
+
     async handle(
         dto: StatusEffectDTO<DamageArgs>,
     ): Promise<EffectDTO<DamageArgs>> {
         const args = dto.status.args;
 
-        dto.effectDTO.args.currentValue = 0;
+        this.cancelDamage(dto.effectDTO);
+
         args.value--;
 
         if (args.value <= 0) {
@@ -25,5 +32,10 @@ export class DodgeStatus implements StatusEffectHandler {
         }
 
         return dto.effectDTO;
+    }
+
+    private cancelDamage(dto: EffectDTO<DamageArgs>): EffectDTO<DamageArgs> {
+        dto.args.currentValue = 0;
+        return dto;
     }
 }
