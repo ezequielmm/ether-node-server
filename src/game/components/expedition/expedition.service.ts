@@ -56,17 +56,15 @@ export class ExpeditionService {
             })
             .lean();
 
-        await this.descripion(expedition);
+        await this.description(expedition);
 
         return expedition;
     }
 
-    async descripion(expedition: Expedition): Promise<Expedition> {
+    async description(expedition: Expedition): Promise<Expedition> {
         const cards = expedition.currentNode?.data?.player?.cards?.hand;
 
-        if (!cards) {
-            return expedition;
-        }
+        if (!cards) return expedition;
 
         for (const card of cards) {
             for (const jsonEffect of card.properties.effects) {
