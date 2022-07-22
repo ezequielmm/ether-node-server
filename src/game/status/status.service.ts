@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { clone, cloneDeep, find, matches } from 'lodash';
+import { cloneDeep, find, matches } from 'lodash';
 import { Model } from 'mongoose';
 import { Socket } from 'socket.io';
 import { CardTargetedEnum } from '../components/card/card.enum';

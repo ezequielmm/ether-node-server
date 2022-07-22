@@ -1,4 +1,4 @@
-import { Injectable, PayloadTooLargeException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { getModelToken } from '@nestjs/mongoose';
 import { Test } from '@nestjs/testing';
 import { Socket } from 'socket.io';
