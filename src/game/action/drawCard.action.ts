@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Socket } from 'socket.io';
 import { removeCardsFromPile } from 'src/utils';
+import { CardTypeEnum } from '../components/card/card.enum';
 import { IExpeditionPlayerStateDeckCard } from '../components/expedition/expedition.interface';
 import { ExpeditionService } from '../components/expedition/expedition.service';
 import {
@@ -12,6 +13,7 @@ import {
 interface DrawCardDTO {
     readonly client: Socket;
     readonly amountToTake: number;
+    readonly cardType?: CardTypeEnum;
 }
 
 @Injectable()
@@ -21,7 +23,12 @@ export class DrawCardAction {
     constructor(private readonly expeditionService: ExpeditionService) {}
 
     async handle(payload: DrawCardDTO): Promise<void> {
-        const { client, amountToTake } = payload;
+        const { client, amountToTake, cardType } = payload;
+
+        const cardTypeFilter = cardType === undefined ? 'All' : cardType;
+
+        // First we check if we receive a cardType parameter
+        // if not we set the filter to get all the cards
 
         // First we get the hand and draw piles from the current node object
         // Also we get the discard pile for a later step
@@ -37,12 +44,31 @@ export class DrawCardAction {
 
         // First we check is we have to take at least 1 card
         if (amountToTake > 0) {
+            // Now we check if we have a condition to filter the cards
+            // by type
+
+            let drawPile = draw;
+            let discardPile = discard;
+
+            if (cardTypeFilter !== 'All') {
+                drawPile = draw.filter(({ cardType }) => {
+                    return cardType === cardTypeFilter;
+                });
+
+                discardPile = discard.filter(({ cardType }) => {
+                    return cardType === cardTypeFilter;
+                });
+            }
+
             // Verify how many card we need from the draw pile
             // And how many we might need from the discard pile
-            const amountToTakeFromDraw = Math.min(amountToTake, draw.length);
+            const amountToTakeFromDraw = Math.min(
+                amountToTake,
+                drawPile.length,
+            );
             const amountToTakeFromDiscard = Math.max(
                 0,
-                Math.min(amountToTake - draw.length, discard.length),
+                Math.min(amountToTake - drawPile.length, discardPile.length),
             );
 
             // Now, we will always take from the draw pile first
@@ -50,7 +76,7 @@ export class DrawCardAction {
             let cardsToMoveToHand: IExpeditionPlayerStateDeckCard[] = [];
 
             // Now we take the cards we need from the draw pile
-            cardsToMoveToHand = draw.slice(0, amountToTakeFromDraw);
+            cardsToMoveToHand = drawPile.slice(0, amountToTakeFromDraw);
 
             // Remove the cards taken from the draw pile
             let newDraw = removeCardsFromPile({
@@ -59,7 +85,7 @@ export class DrawCardAction {
             });
 
             // Set the discard pile in case we don't need
-            let newDiscard = [...discard];
+            let newDiscard = [...discardPile];
 
             // Send create message for the new cards
             // source: draw
@@ -106,7 +132,7 @@ export class DrawCardAction {
                         StandardResponse.respond({
                             message_type: SWARMessageType.PlayerAffected,
                             action: SWARAction.MoveCard,
-                            data: discard.map(({ id }) => {
+                            data: discardPile.map(({ id }) => {
                                 return {
                                     source: 'discard',
                                     destination: 'draw',
@@ -119,7 +145,8 @@ export class DrawCardAction {
 
                 newDiscard = [];
 
-                const restOfCardsToTake = draw.slice(
+                // Here we get the rest of cards to take from the discard pile
+                const restOfCardsToTake = newDraw.slice(
                     0,
                     amountToTakeFromDiscard,
                 );
