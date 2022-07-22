@@ -89,6 +89,8 @@ export class BeginPlayerTurnProcess {
             },
         } = expedition;
 
+        // Send new energy amount
+
         this.logger.log(
             `Sent message PutData to client ${client.id}: ${SWARAction.ChangeTurn}`,
         );
