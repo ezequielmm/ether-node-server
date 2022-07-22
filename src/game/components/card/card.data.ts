@@ -6,6 +6,7 @@ import { energyEffect } from 'src/game/effects/energy/constants';
 import { healEffect } from 'src/game/effects/heal/constants';
 import { removeDefenseEffect } from 'src/game/effects/removeDefense/constants';
 import { burn } from 'src/game/status/burn/constants';
+import { confusion } from 'src/game/status/confusion/constants';
 import { dodge } from 'src/game/status/dodge/constants';
 import { fortitude } from 'src/game/status/fortitude/constants';
 import { heraldDelayed } from 'src/game/status/heraldDelayed/constants';
@@ -1320,6 +1321,30 @@ export const Cards: Card[] = [
             statuses: [],
         },
         showPointer: false,
+        isUpgraded: false,
+    },
+    {
+        cardId: 25,
+        name: 'Intimidate',
+        rarity: CardRarityEnum.Common,
+        cardType: CardTypeEnum.Skill,
+        pool: 'knight',
+        energy: 2,
+        description: `Inflict Confusion`,
+        keywords: [],
+        properties: {
+            effects: [],
+            statuses: [
+                {
+                    name: confusion.name,
+                    args: {
+                        attachTo: CardTargetedEnum.Enemy,
+                        value: 1,
+                    },
+                },
+            ],
+        },
+        showPointer: true,
         isUpgraded: false,
     },
 ];

@@ -150,16 +150,14 @@ export class StatusService {
             collectionOwner,
             collection,
             effect,
-            effectDTO,
             preview,
         } = dto;
-        let mutatedDTO = clone(effectDTO);
         const {
             currentNode: {
                 data: { round },
             },
         } = expedition;
-        // Clone the dto to avoid mutating the original
+        let { effectDTO } = dto;
         let isUpdate = false;
 
         for (const type in collection) {
@@ -187,10 +185,10 @@ export class StatusService {
 
                 if (!isActive) continue;
 
-                mutatedDTO = await instance[preview ? 'preview' : 'handle']({
+                effectDTO = await instance[preview ? 'preview' : 'handle']({
                     client,
                     expedition: expedition,
-                    effectDTO: mutatedDTO,
+                    effectDTO,
                     status: status,
                     update(args) {
                         const index = statuses.indexOf(status);
@@ -209,7 +207,7 @@ export class StatusService {
         if (isUpdate)
             await this.updateStatuses(collectionOwner, expedition, collection);
 
-        return mutatedDTO;
+        return effectDTO;
     }
 
     public findEffectStatuses(

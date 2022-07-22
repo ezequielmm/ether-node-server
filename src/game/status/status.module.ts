@@ -3,6 +3,7 @@ import { ExpeditionModule } from '../components/expedition/expedition.module';
 import { EffectModule } from '../effects/effects.module';
 import { ProviderModule } from '../provider/provider.module';
 import { BurnStatus } from './burn/burn.status';
+import { ConfusionStatus } from './confusion/confusion.status';
 import { DodgeStatus } from './dodge/dodge.status';
 import { FortitudeStatus } from './fortitude/fortitude.status';
 import { HeraldDelayedStatus } from './heraldDelayed/heraldDelayed.status';
@@ -36,6 +37,7 @@ import { TurtlingStatus } from './turtling/turtling.status';
         RegenerateStatus,
         SpiritedStatus,
         SpikesStatus,
+        ConfusionStatus,
     ],
     exports: [StatusService],
 })
