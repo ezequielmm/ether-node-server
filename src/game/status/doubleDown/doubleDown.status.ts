@@ -1,15 +1,15 @@
 import { Injectable } from '@nestjs/common';
-import { DamageArgs } from '../../effects/damage/damage.effect';
-import { EffectDTO } from '../../effects/effects.interface';
+import { DamageArgs } from 'src/game/effects/damage/damage.effect';
+import { EffectDTO } from 'src/game/effects/effects.interface';
 import { StatusEffectDTO, StatusEffectHandler } from '../interfaces';
 import { StatusDecorator } from '../status.decorator';
-import { resolve } from './constants';
+import { doubleDown } from './contants';
 
 @StatusDecorator({
-    status: resolve,
+    status: doubleDown,
 })
 @Injectable()
-export class ResolveStatus implements StatusEffectHandler {
+export class DoubleDownStatus implements StatusEffectHandler {
     async preview(
         args: StatusEffectDTO<DamageArgs>,
     ): Promise<EffectDTO<DamageArgs>> {
@@ -21,10 +21,10 @@ export class ResolveStatus implements StatusEffectHandler {
     ): Promise<EffectDTO<DamageArgs>> {
         const effectDTO = dto.effectDTO;
 
-        effectDTO.args.currentValue = Math.max(
-            effectDTO.args.currentValue + dto.status.args.value,
-            0,
-        );
+        effectDTO.args.currentValue =
+            effectDTO.args.currentValue * dto.status.args.value;
+
+        dto.remove();
 
         return effectDTO;
     }

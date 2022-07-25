@@ -7,6 +7,7 @@ import { healEffect } from 'src/game/effects/heal/constants';
 import { removeDefenseEffect } from 'src/game/effects/removeDefense/constants';
 import { burn } from 'src/game/status/burn/constants';
 import { dodge } from 'src/game/status/dodge/constants';
+import { doubleDown } from 'src/game/status/doubleDown/contants';
 import { fortitude } from 'src/game/status/fortitude/constants';
 import { heraldDelayed } from 'src/game/status/heraldDelayed/constants';
 import { regenerate } from 'src/game/status/regenerate/contants';
@@ -1318,6 +1319,48 @@ export const Cards: Card[] = [
                 },
             ],
             statuses: [],
+        },
+        showPointer: false,
+        isUpgraded: false,
+    },
+    {
+        cardId: 113,
+        name: 'Double Down',
+        rarity: CardRarityEnum.Rare,
+        cardType: CardTypeEnum.Skill,
+        pool: 'knight',
+        energy: 1,
+        description: `Your next attack this turn does double damage`,
+        keywords: [],
+        properties: {
+            effects: [],
+            statuses: [
+                {
+                    name: doubleDown.name,
+                    args: { attachTo: CardTargetedEnum.Player, value: 2 },
+                },
+            ],
+        },
+        showPointer: false,
+        isUpgraded: false,
+    },
+    {
+        cardId: 114,
+        name: 'Double Down+',
+        rarity: CardRarityEnum.Rare,
+        cardType: CardTypeEnum.Skill,
+        pool: 'knight',
+        energy: 1,
+        description: `Your next attack this turn does triple damage`,
+        keywords: [],
+        properties: {
+            effects: [],
+            statuses: [
+                {
+                    name: doubleDown.name,
+                    args: { attachTo: CardTargetedEnum.Player, value: 3 },
+                },
+            ],
         },
         showPointer: false,
         isUpgraded: false,
