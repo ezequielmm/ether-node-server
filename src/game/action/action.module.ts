@@ -8,12 +8,14 @@ import { StatusModule } from '../status/status.module';
 import { CardPlayedAction } from './cardPlayed.action';
 import { DiscardAllCardsAction } from './discardAllCards.action';
 import { DiscardCardAction } from './discardCard.action';
+import { DrawCardAction } from './drawCard.action';
 import { ExhaustCardAction } from './exhaustCard.action';
 import { FullSyncAction } from './fullSync.action';
 import { GetCardPilesAction } from './getCardPiles.action';
 import { GetEnemiesAction } from './getEnemies.action';
 import { GetEnergyAction } from './getEnergy.action';
 import { GetPlayerInfoAction } from './getPlayerInfo.action';
+import { GetPlayerStatusesAction } from './getPlayerStatuses.action';
 import { SetCombatTurnAction } from './setCombatTurn.action';
 import { UpdatePlayerEnergyAction } from './updatePlayerEnergy.action';
 
@@ -38,6 +40,8 @@ import { UpdatePlayerEnergyAction } from './updatePlayerEnergy.action';
         DiscardCardAction,
         DiscardAllCardsAction,
         ExhaustCardAction,
+        GetPlayerStatusesAction,
+        DrawCardAction,
     ],
     exports: [
         FullSyncAction,
@@ -51,6 +55,8 @@ import { UpdatePlayerEnergyAction } from './updatePlayerEnergy.action';
         DiscardCardAction,
         DiscardAllCardsAction,
         ExhaustCardAction,
+        GetPlayerStatusesAction,
+        DrawCardAction,
     ],
 })
 export class ActionModule {}

@@ -6,4 +6,5 @@ export enum DataWSRequestTypesEnum {
     Enemies = 'Enemies',
     Potions = 'Potions',
     Trinkets = 'Trinkets',
+    PlayerStatuses = 'PlayerStatuses',
 }

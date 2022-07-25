@@ -37,6 +37,7 @@ export class CombatGateway {
         private readonly getEnemiesAction: GetEnemiesAction,
         private readonly getPlayerInfoAction: GetPlayerInfoAction,
         private readonly cardPlayedAction: CardPlayedAction,
+        private readonly getPlayerStatusesAction: GetPlayerInfoAction,
         private readonly endPlayerTurnProcess: EndPlayerTurnProcess,
         private readonly endEnemyTurnProcess: EndEnemyTurnProcess,
         private readonly expeditionService: ExpeditionService,
@@ -97,6 +98,10 @@ export class CombatGateway {
 
                 case DataWSRequestTypesEnum.Players:
                     data = await this.getPlayerInfoAction.handle(client.id);
+                    break;
+
+                case DataWSRequestTypesEnum.PlayerStatuses:
+                    data = await this.getPlayerStatusesAction.handle(client.id);
                     break;
             }
 

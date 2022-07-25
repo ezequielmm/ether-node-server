@@ -68,9 +68,9 @@ export class InitExpeditionProcess {
                 return cardIds.includes(card.cardId);
             })
             .reduce((newDeckCards, card) => {
-                cardsIdsArray.forEach((cardId) => {
-                    if (card.cardId === cardId.cardId) {
-                        for (let i = 1; i <= cardId.amount; i++) {
+                cardsIdsArray.forEach(({ cardId, amount }) => {
+                    if (card.cardId === cardId) {
+                        for (let i = 1; i <= amount; i++) {
                             newDeckCards.push(card);
                         }
                     }
