@@ -74,7 +74,7 @@ export class BeginEnemyTurnProcess {
                         expedition,
                         source,
                         effects,
-                        selectedEnemy: round,
+                        selectedEnemy: enemy.id,
                     });
                 }
             });
