@@ -1388,7 +1388,7 @@ export const Cards: Card[] = [
         cardType: CardTypeEnum.Skill,
         pool: 'knight',
         energy: 2,
-        description: `Inflict Confusion`,
+        description: `Inflict {${confusion.name}}`,
         keywords: [],
         properties: {
             effects: [],
@@ -1412,7 +1412,7 @@ export const Cards: Card[] = [
         cardType: CardTypeEnum.Skill,
         pool: 'knight',
         energy: 2,
-        description: `Inflict Confusion on all enemies`,
+        description: `Inflict {${confusion.name}} on all enemies`,
         keywords: [],
         properties: {
             effects: [],
@@ -1422,6 +1422,54 @@ export const Cards: Card[] = [
                     args: {
                         attachTo: CardTargetedEnum.AllEnemies,
                         value: 1,
+                    },
+                },
+            ],
+        },
+        showPointer: false,
+        isUpgraded: true,
+    },
+    {
+        cardId: 70,
+        name: 'Spike Armor',
+        rarity: CardRarityEnum.Common,
+        cardType: CardTypeEnum.Skill,
+        pool: 'knight',
+        energy: 1,
+        description: `Whenever you are attacked, deal {${damageEffect.name}} damage back to attacker`,
+        keywords: [],
+        properties: {
+            effects: [],
+            statuses: [
+                {
+                    name: spikesStatus.name,
+                    args: {
+                        attachTo: CardTargetedEnum.Enemy,
+                        value: 3,
+                    },
+                },
+            ],
+        },
+        showPointer: false,
+        isUpgraded: false,
+    },
+    {
+        cardId: 71,
+        name: 'Spike Armor+',
+        rarity: CardRarityEnum.Common,
+        cardType: CardTypeEnum.Skill,
+        pool: 'knight',
+        energy: 1,
+        description: `Whenever you are attacked, deal {${damageEffect.name}} damage back to attacker`,
+        keywords: [],
+        properties: {
+            effects: [],
+            statuses: [
+                {
+                    name: spikesStatus.name,
+                    args: {
+                        attachTo: CardTargetedEnum.Enemy,
+                        value: 5,
                     },
                 },
             ],
