@@ -473,6 +473,21 @@ export class StatusService {
         return source;
     }
 
+    public getReferenceFromSource(
+        source: SourceEntityDTO,
+    ): SourceEntityReferenceDTO {
+        if (EffectService.isPlayer(source)) {
+            return {
+                type: CardTargetedEnum.Player,
+            };
+        } else if (EffectService.isEnemy(source)) {
+            return {
+                type: CardTargetedEnum.Enemy,
+                id: source.value.id,
+            };
+        }
+    }
+
     async findAllStatuses(
         expedition: Expedition,
     ): Promise<StatusesGlobalCollection> {

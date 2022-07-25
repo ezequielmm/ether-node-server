@@ -3,6 +3,7 @@ import { defenseEffect } from 'src/game/effects/defense/constants';
 import { doubleBurn } from 'src/game/effects/doubleBurn/constants';
 import { drawCardEffect } from 'src/game/effects/drawCard/constants';
 import { energyEffect } from 'src/game/effects/energy/constants';
+import { headButt } from 'src/game/effects/headButt/constants';
 import { healEffect } from 'src/game/effects/heal/constants';
 import { removeDefenseEffect } from 'src/game/effects/removeDefense/constants';
 import { burn } from 'src/game/status/burn/constants';
@@ -1243,6 +1244,13 @@ export const Cards: Card[] = [
                         value: 8,
                     },
                 },
+                {
+                    effect: headButt.name,
+                    target: CardTargetedEnum.Enemy,
+                    args: {
+                        value: Number.NaN,
+                    },
+                },
             ],
             statuses: [],
         },
@@ -1265,6 +1273,13 @@ export const Cards: Card[] = [
                     target: CardTargetedEnum.Enemy,
                     args: {
                         value: 11,
+                    },
+                },
+                {
+                    effect: headButt.name,
+                    target: CardTargetedEnum.Enemy,
+                    args: {
+                        value: Number.NaN,
                     },
                 },
             ],
