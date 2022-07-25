@@ -95,27 +95,31 @@ export class EffectService {
 
         switch (effect.target) {
             case CardTargetedEnum.Player:
-                targets.push(this.extractPlayerDTO(expedition));
+                targets.push(EffectService.extractPlayerDTO(expedition));
                 break;
             case CardTargetedEnum.Self:
                 targets.push(source);
                 break;
             case CardTargetedEnum.AllEnemies:
-                this.extractAllEnemiesDTO(expedition).value.forEach((enemy) =>
-                    targets.push({
-                        type: CardTargetedEnum.Enemy,
-                        value: enemy,
-                    }),
+                EffectService.extractAllEnemiesDTO(expedition).value.forEach(
+                    (enemy) =>
+                        targets.push({
+                            type: CardTargetedEnum.Enemy,
+                            value: enemy,
+                        }),
                 );
                 break;
             case CardTargetedEnum.RandomEnemy:
                 targets.push({
                     type: CardTargetedEnum.Enemy,
-                    value: this.extractRandomEnemyDTO(expedition).value,
+                    value: EffectService.extractRandomEnemyDTO(expedition)
+                        .value,
                 });
                 break;
             case CardTargetedEnum.Enemy:
-                targets.push(this.extractEnemyDTO(expedition, selectedEnemy));
+                targets.push(
+                    EffectService.extractEnemyDTO(expedition, selectedEnemy),
+                );
                 break;
         }
 
@@ -125,7 +129,7 @@ export class EffectService {
         return targets;
     }
 
-    private extractPlayerDTO(expedition: Expedition): PlayerDTO {
+    public static extractPlayerDTO(expedition: Expedition): PlayerDTO {
         const {
             playerState: globalState,
             currentNode: {
@@ -142,7 +146,10 @@ export class EffectService {
         };
     }
 
-    private extractEnemyDTO(expedition: Expedition, enemy: EnemyId): EnemyDTO {
+    public static extractEnemyDTO(
+        expedition: Expedition,
+        enemy: EnemyId,
+    ): EnemyDTO {
         const {
             currentNode: {
                 data: { enemies },
@@ -155,7 +162,9 @@ export class EffectService {
         };
     }
 
-    private extractRandomEnemyDTO(expedition: Expedition): RandomEnemyDTO {
+    public static extractRandomEnemyDTO(
+        expedition: Expedition,
+    ): RandomEnemyDTO {
         const {
             currentNode: {
                 data: { enemies },
@@ -168,7 +177,7 @@ export class EffectService {
         };
     }
 
-    private extractAllEnemiesDTO(expedition: Expedition): AllEnemiesDTO {
+    public static extractAllEnemiesDTO(expedition: Expedition): AllEnemiesDTO {
         const {
             currentNode: {
                 data: { enemies },
