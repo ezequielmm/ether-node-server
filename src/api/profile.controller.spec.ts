@@ -15,7 +15,20 @@ describe('ProfileController', () => {
 
     describe('Get player profile', () => {
         it(`Should return player's profile`, async () => {
-            const result = { data: {} };
+            const result = {
+                data: {
+                    id: 4,
+                    name: 'Javier Mercedes',
+                    email: 'manuelmercedez10@gmail.com',
+                    last_logged_in: null,
+                    created_at: '2022-06-13T20:13:51.000000Z',
+                    updated_at: '2022-06-13T20:13:51.000000Z',
+                    last_name: null,
+                    access_token: null,
+                    signup_type: 'email',
+                    metamask_accounts: [],
+                },
+            };
         });
     });
 });
