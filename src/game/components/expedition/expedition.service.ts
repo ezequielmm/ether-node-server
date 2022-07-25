@@ -56,12 +56,10 @@ export class ExpeditionService {
             })
             .lean();
 
-        await this.description(expedition);
-
         return expedition;
     }
 
-    async description(expedition: Expedition): Promise<Expedition> {
+    async syncCardDescriptions(expedition: Expedition): Promise<Expedition> {
         const cards = expedition.currentNode?.data?.player?.cards?.hand;
 
         if (!cards) return expedition;
@@ -102,6 +100,17 @@ export class ExpeditionService {
                 );
             }
         }
+
+        return this.expedition
+            .findOneAndUpdate(
+                {
+                    clientId: expedition.clientId,
+                },
+                {
+                    'currentNode.data.player.cards.hand': cards,
+                },
+            )
+            .lean();
     }
 
     async create(payload: CreateExpeditionDTO): Promise<ExpeditionDocument> {
@@ -284,9 +293,7 @@ export class ExpeditionService {
         );
     }
 
-    async updateHandPiles(
-        payload: UpdateHandPilesDTO,
-    ): Promise<ExpeditionDocument> {
+    async updateHandPiles(payload: UpdateHandPilesDTO): Promise<Expedition> {
         const { hand, exhausted, clientId, draw, discard } = payload;
 
         const field = typeof clientId === 'string' ? 'clientId' : 'playerId';
@@ -304,11 +311,15 @@ export class ExpeditionService {
             }),
         };
 
-        return this.expedition.findOneAndUpdate(
-            { [field]: clientId, status: ExpeditionStatusEnum.InProgress },
-            piles,
-            { new: true },
-        );
+        const expedition = await this.expedition
+            .findOneAndUpdate(
+                { [field]: clientId, status: ExpeditionStatusEnum.InProgress },
+                piles,
+                { new: true },
+            )
+            .lean();
+
+        return this.syncCardDescriptions(expedition);
     }
 
     async setPlayerDefense(

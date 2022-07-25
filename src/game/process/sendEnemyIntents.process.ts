@@ -1,57 +1,48 @@
-import { Injectable, Logger } from '@nestjs/common';
-import { Socket } from 'socket.io';
+import { Injectable } from '@nestjs/common';
 import { EnemyIntentionType } from '../components/enemy/enemy.enum';
 import { ExpeditionService } from '../components/expedition/expedition.service';
-import {
-    StandardResponse,
-    SWARMessageType,
-    SWARAction,
-} from '../standardResponse/standardResponse';
+
+interface EnemyIntentsResponse {
+    id: string;
+    intents: {
+        value?: number;
+        description?: string;
+        type?: EnemyIntentionType;
+    }[];
+}
 
 @Injectable()
 export class SendEnemyIntentProcess {
-    private readonly logger: Logger = new Logger(SendEnemyIntentProcess.name);
-
     constructor(private readonly expeditionService: ExpeditionService) {}
 
-    async process(client: Socket): Promise<void> {
+    async handle(clientId: string): Promise<EnemyIntentsResponse[]> {
+        // First we query all the enemies from the current node
         const {
             data: { enemies },
         } = await this.expeditionService.getCurrentNode({
-            clientId: client.id,
+            clientId,
         });
-        const message = [];
 
-        for (const enemy of enemies) {
-            message.push({
-                id: enemy.id,
+        // Then, we return the data mapped to the desired response
+        return enemies.map(({ id, currentScript: { intentions } }) => {
+            // First, we create an object to map the id and
+            // initialize the intents array
+            const response: EnemyIntentsResponse = {
+                id,
                 intents: [],
+            };
+
+            // Next we loop over all the intentions and create the response
+            response.intents = intentions.map(({ value, type }) => {
+                return {
+                    value: value,
+                    description: this.descriptionGenerator(type, value),
+                    type,
+                };
             });
 
-            for (const intention of enemy.currentScript.intentions) {
-                message[message.length - 1].intents.push({
-                    value: intention.value,
-                    description: this.descriptionGenerator(
-                        intention.type,
-                        intention.value,
-                    ),
-                    type: intention.type,
-                });
-            }
-        }
-
-        this.logger.log(`Sent message EnemiesIntents to client ${client.id}`);
-
-        client.emit(
-            'EnemiesIntents',
-            JSON.stringify(
-                StandardResponse.respond({
-                    message_type: SWARMessageType.EnemiesIntents,
-                    action: SWARAction.UpdateEnemyIntents,
-                    data: message,
-                }),
-            ),
-        );
+            return response;
+        });
     }
 
     private descriptionGenerator(
