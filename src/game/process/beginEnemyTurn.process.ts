@@ -35,7 +35,7 @@ export class BeginEnemyTurnProcess {
 
         const {
             currentNode: {
-                data: { enemies, round },
+                data: { enemies },
             },
         } = expedition;
 
