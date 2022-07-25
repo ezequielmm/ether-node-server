@@ -23,9 +23,11 @@ export class InitCombatProcess {
                 client.id,
             );
 
-        await this.expeditionService.update(client.id, {
+        const expedition = await this.expeditionService.update(client.id, {
             currentNode,
         });
+
+        await this.expeditionService.syncCardDescriptions(expedition);
 
         const {
             currentNode: {
