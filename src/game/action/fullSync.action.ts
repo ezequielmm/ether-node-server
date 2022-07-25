@@ -1,12 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Socket } from 'socket.io';
 import { CustomException, ErrorBehavior } from 'src/socket/custom.exception';
-import {
-    CombatTurnEnum,
-    ExpeditionMapNodeTypeEnum,
-} from '../components/expedition/expedition.enum';
 import { ExpeditionService } from '../components/expedition/expedition.service';
-import { SendEnemyIntentProcess } from '../process/sendEnemyIntents.process';
 import {
     StandardResponse,
     SWARMessageType,
@@ -17,10 +12,7 @@ import {
 export class FullSyncAction {
     private readonly logger: Logger = new Logger(FullSyncAction.name);
 
-    constructor(
-        private readonly expeditionService: ExpeditionService,
-        private readonly sendEnemyIntentProcess: SendEnemyIntentProcess,
-    ) {}
+    constructor(private readonly expeditionService: ExpeditionService) {}
 
     async handle(client: Socket): Promise<void> {
         const expedition = await this.expeditionService.findOne({
@@ -33,7 +25,7 @@ export class FullSyncAction {
                 ErrorBehavior.ReturnToMainMenu,
             );
 
-        const { map, playerState, currentNode } = expedition;
+        const { map, playerState } = expedition;
 
         this.logger.log(`Sent message ExpeditionMap to client ${client.id}`);
 
@@ -60,23 +52,5 @@ export class FullSyncAction {
                 }),
             ),
         );
-
-        if (currentNode !== undefined) {
-            const { nodeType, data } = currentNode;
-
-            if (data !== undefined) {
-                const { playing } = data;
-                const nodeTypes = Object.values(ExpeditionMapNodeTypeEnum);
-                const combatNodes = nodeTypes.filter(
-                    (node) => node.search('combat') !== -1,
-                );
-
-                if (
-                    combatNodes.includes(nodeType) &&
-                    playing === CombatTurnEnum.Player
-                )
-                    await this.sendEnemyIntentProcess.process(client);
-            }
-        }
     }
 }
