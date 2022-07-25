@@ -4,6 +4,7 @@ import { EffectModule } from '../effects/effects.module';
 import { ProviderModule } from '../provider/provider.module';
 import { BurnStatus } from './burn/burn.status';
 import { DodgeStatus } from './dodge/dodge.status';
+import { DoubleDownStatus } from './doubleDown/doubleDown.status';
 import { FortitudeStatus } from './fortitude/fortitude.status';
 import { HeraldDelayedStatus } from './heraldDelayed/heraldDelayed.status';
 import { RegenerateStatus } from './regenerate/regenerate.status';
@@ -36,6 +37,7 @@ import { TurtlingStatus } from './turtling/turtling.status';
         RegenerateStatus,
         SpiritedStatus,
         SpikesStatus,
+        DoubleDownStatus,
     ],
     exports: [StatusService],
 })

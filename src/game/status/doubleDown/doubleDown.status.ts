@@ -11,18 +11,32 @@ import { doubleDown } from './contants';
 @Injectable()
 export class DoubleDownStatus implements StatusEffectHandler {
     async preview(
-        args: StatusEffectDTO<DamageArgs>,
+        dto: StatusEffectDTO<DamageArgs>,
     ): Promise<EffectDTO<DamageArgs>> {
-        return this.handle(args);
+        const {
+            effectDTO,
+            status: {
+                args: { value },
+            },
+        } = dto;
+        effectDTO.args.currentValue *= value;
+        return effectDTO;
     }
 
     async handle(
         dto: StatusEffectDTO<DamageArgs>,
     ): Promise<EffectDTO<DamageArgs>> {
-        const effectDTO = dto.effectDTO;
+        const {
+            effectDTO,
+            status: {
+                args: { value },
+            },
+            remove,
+        } = dto;
 
-        effectDTO.args.currentValue =
-            effectDTO.args.currentValue * dto.status.args.value;
+        effectDTO.args.currentValue *= value;
+
+        remove();
 
         return effectDTO;
     }

@@ -1,15 +1,17 @@
+import { damageEffect } from 'src/game/effects/damage/constants';
 import {
-    Status,
-    StatusEventType,
+    StatusDirection,
+    StatusEffect,
     StatusStartsAt,
     StatusTrigger,
     StatusType,
 } from '../interfaces';
 
-export const doubleDown: Status = {
+export const doubleDown: StatusEffect = {
     name: 'doubleDown',
     type: StatusType.Buff,
     startsAt: StatusStartsAt.Instantly,
-    trigger: StatusTrigger.Event,
-    event: StatusEventType.OnTurnEnd,
+    trigger: StatusTrigger.Effect,
+    direction: StatusDirection.Outgoing,
+    effects: [damageEffect],
 };
