@@ -9,6 +9,7 @@ import { removeDefenseEffect } from 'src/game/effects/removeDefense/constants';
 import { burn } from 'src/game/status/burn/constants';
 import { confusion } from 'src/game/status/confusion/constants';
 import { dodge } from 'src/game/status/dodge/constants';
+import { doubleDown } from 'src/game/status/doubleDown/contants';
 import { fortitude } from 'src/game/status/fortitude/constants';
 import { heraldDelayed } from 'src/game/status/heraldDelayed/constants';
 import { regenerate } from 'src/game/status/regenerate/contants';
@@ -1339,6 +1340,48 @@ export const Cards: Card[] = [
         isUpgraded: false,
     },
     {
+        cardId: 113,
+        name: 'Double Down',
+        rarity: CardRarityEnum.Rare,
+        cardType: CardTypeEnum.Skill,
+        pool: 'knight',
+        energy: 1,
+        description: `Your next attack this turn does double damage`,
+        keywords: [],
+        properties: {
+            effects: [],
+            statuses: [
+                {
+                    name: doubleDown.name,
+                    args: { attachTo: CardTargetedEnum.Player, value: 2 },
+                },
+            ],
+        },
+        showPointer: false,
+        isUpgraded: false,
+    },
+    {
+        cardId: 114,
+        name: 'Double Down+',
+        rarity: CardRarityEnum.Rare,
+        cardType: CardTypeEnum.Skill,
+        pool: 'knight',
+        energy: 1,
+        description: `Your next attack this turn does triple damage`,
+        keywords: [],
+        properties: {
+            effects: [],
+            statuses: [
+                {
+                    name: doubleDown.name,
+                    args: { attachTo: CardTargetedEnum.Player, value: 3 },
+                },
+            ],
+        },
+        showPointer: false,
+        isUpgraded: true,
+    },
+    {
         cardId: 25,
         name: 'Intimidate',
         rarity: CardRarityEnum.Common,
@@ -1359,7 +1402,31 @@ export const Cards: Card[] = [
                 },
             ],
         },
-        showPointer: true,
+        showPointer: false,
         isUpgraded: false,
+    },
+    {
+        cardId: 26,
+        name: 'Intimidate+',
+        rarity: CardRarityEnum.Common,
+        cardType: CardTypeEnum.Skill,
+        pool: 'knight',
+        energy: 2,
+        description: `Inflict Confusion on all enemies`,
+        keywords: [],
+        properties: {
+            effects: [],
+            statuses: [
+                {
+                    name: confusion.name,
+                    args: {
+                        attachTo: CardTargetedEnum.AllEnemies,
+                        value: 1,
+                    },
+                },
+            ],
+        },
+        showPointer: false,
+        isUpgraded: true,
     },
 ];

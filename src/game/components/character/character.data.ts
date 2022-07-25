@@ -27,12 +27,8 @@ export const CharacterData: Character[] = [
                     amount: 1,
                 },
                 {
-                    cardId: 13, // Lunge
-                    amount: 1,
-                },
-                {
-                    cardId: 159, // Perfect Timing
-                    amount: 1,
+                    cardId: 113, // First Move
+                    amount: 2,
                 },
             ],
         },

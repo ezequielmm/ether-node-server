@@ -162,6 +162,7 @@ export class StatusService {
 
         for (const type in collection) {
             const statuses = collection[type];
+            const statusesToRemove: Status[] = [];
             for (const status of statuses) {
                 const container = this.findHandlerContainer<
                     StatusEffect,
@@ -191,16 +192,19 @@ export class StatusService {
                     effectDTO,
                     status: status,
                     update(args) {
-                        const index = statuses.indexOf(status);
-                        statuses[index].args = args;
+                        status.args = args;
                         isUpdate = true;
                     },
                     remove() {
-                        const index = statuses.indexOf(status);
-                        statuses.splice(index, 1);
+                        statusesToRemove.push(status);
                         isUpdate = true;
                     },
                 });
+            }
+            if (statusesToRemove.length > 0) {
+                collection[type] = statuses.filter(
+                    (status) => !statusesToRemove.includes(status),
+                );
             }
         }
 
@@ -319,6 +323,7 @@ export class StatusService {
 
             for (const type in collection) {
                 const statuses = collection[type];
+                const statusesToRemove: Status[] = [];
                 for (const status of statuses) {
                     const container = this.findHandlerContainer<
                         StatusEvent,
@@ -354,18 +359,22 @@ export class StatusService {
                         target: entityCollection.target,
                         status,
                         update(args) {
-                            const index = statuses.indexOf(status);
-                            statuses[index].args = args;
+                            status.args = args;
                             isUpdate = true;
                         },
                         remove() {
-                            const index = statuses.indexOf(status);
-                            statuses.splice(index, 1);
+                            statusesToRemove.push(status);
                             isUpdate = true;
                         },
                     };
 
                     await instance.handle(dto);
+                }
+
+                if (statusesToRemove.length > 0) {
+                    collection[type] = statuses.filter(
+                        (status) => !statusesToRemove.includes(status),
+                    );
                 }
             }
             if (isUpdate)
