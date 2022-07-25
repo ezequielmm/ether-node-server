@@ -106,7 +106,12 @@ export class BeginPlayerTurnProcess {
             ),
         );
 
-        await this.drawCardAction.handle({ client, amountToTake: handSize });
+        await this.drawCardAction.handle({
+            client,
+            amountToTake: handSize,
+            cardType: undefined,
+            SWARMessageTypeToSend: SWARMessageType.BeginTurn,
+        });
 
         await this.expeditionService.calculateNewEnemyIntentions(client.id);
 

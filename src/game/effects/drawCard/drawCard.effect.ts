@@ -5,6 +5,7 @@ import { EffectDTO, EffectHandler } from '../effects.interface';
 import { DrawCardAction } from 'src/game/action/drawCard.action';
 import { EnemyIntentionType } from 'src/game/components/enemy/enemy.enum';
 import { CardTypeEnum } from 'src/game/components/card/card.enum';
+import { SWARMessageType } from 'src/game/standardResponse/standardResponse';
 
 export interface DrawCardArgs {
     useAttackingEnemies: true;
@@ -64,6 +65,7 @@ export class DrawCardEffect implements EffectHandler {
             ...(useAttackingEnemiesAsValue && {
                 cardType: CardTypeEnum.Defend,
             }),
+            SWARMessageTypeToSend: SWARMessageType.PlayerAffected,
         });
     }
 }

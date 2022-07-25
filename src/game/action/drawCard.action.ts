@@ -13,6 +13,7 @@ import {
 interface DrawCardDTO {
     readonly client: Socket;
     readonly amountToTake: number;
+    readonly SWARMessageTypeToSend: SWARMessageType;
     readonly cardType?: CardTypeEnum;
 }
 
@@ -23,7 +24,8 @@ export class DrawCardAction {
     constructor(private readonly expeditionService: ExpeditionService) {}
 
     async handle(payload: DrawCardDTO): Promise<void> {
-        const { client, amountToTake, cardType } = payload;
+        const { client, amountToTake, cardType, SWARMessageTypeToSend } =
+            payload;
 
         const cardTypeFilter = cardType === undefined ? 'All' : cardType;
 
@@ -98,7 +100,7 @@ export class DrawCardAction {
                 'PutData',
                 JSON.stringify(
                     StandardResponse.respond({
-                        message_type: SWARMessageType.PlayerAffected,
+                        message_type: SWARMessageTypeToSend,
                         action: SWARAction.MoveCard,
                         data: cardsToMoveToHand.map(({ id }) => {
                             return {
@@ -130,7 +132,7 @@ export class DrawCardAction {
                     'PutData',
                     JSON.stringify(
                         StandardResponse.respond({
-                            message_type: SWARMessageType.PlayerAffected,
+                            message_type: SWARMessageTypeToSend,
                             action: SWARAction.MoveCard,
                             data: discardPile.map(({ id }) => {
                                 return {
@@ -173,7 +175,7 @@ export class DrawCardAction {
                     'PutData',
                     JSON.stringify(
                         StandardResponse.respond({
-                            message_type: SWARMessageType.PlayerAffected,
+                            message_type: SWARMessageTypeToSend,
                             action: SWARAction.MoveCard,
                             data: restOfCardsToTake.map(({ id }) => {
                                 return {
