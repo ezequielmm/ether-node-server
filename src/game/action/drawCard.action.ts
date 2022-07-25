@@ -91,7 +91,7 @@ export class DrawCardAction {
             // source: draw
             // destination: hand
             this.logger.log(
-                `Sent message PutData to client ${client.id}: ${SWARAction.CreateCard}`,
+                `Sent message PutData to client ${client.id}: ${SWARAction.MoveCard}`,
             );
 
             client.emit(
@@ -99,7 +99,7 @@ export class DrawCardAction {
                 JSON.stringify(
                     StandardResponse.respond({
                         message_type: SWARMessageType.PlayerAffected,
-                        action: SWARAction.CreateCard,
+                        action: SWARAction.MoveCard,
                         data: cardsToMoveToHand.map(({ id }) => {
                             return {
                                 source: 'draw',
@@ -166,7 +166,7 @@ export class DrawCardAction {
                 // source: draw
                 // destination: hand
                 this.logger.log(
-                    `Sent message PutData to client ${client.id}: ${SWARAction.CreateCard}`,
+                    `Sent message PutData to client ${client.id}: ${SWARAction.MoveCard}`,
                 );
 
                 client.emit(
@@ -174,7 +174,7 @@ export class DrawCardAction {
                     JSON.stringify(
                         StandardResponse.respond({
                             message_type: SWARMessageType.PlayerAffected,
-                            action: SWARAction.CreateCard,
+                            action: SWARAction.MoveCard,
                             data: restOfCardsToTake.map(({ id }) => {
                                 return {
                                     source: 'draw',
