@@ -11,6 +11,7 @@ import { RemoveDefenseEffect } from './removeDefense/removeDefense.effect';
 import { ActionModule } from '../action/action.module';
 import { ProviderModule } from '../provider/provider.module';
 import { DoubleBurnEffect } from './doubleBurn/doubleBurn.effect';
+import { HeadButtEffect } from './headButt/headButt.effect';
 
 @Module({
     imports: [
@@ -28,6 +29,7 @@ import { DoubleBurnEffect } from './doubleBurn/doubleBurn.effect';
         EnergyEffect,
         RemoveDefenseEffect,
         DoubleBurnEffect,
+        HeadButtEffect,
     ],
     exports: [EffectService],
 })
