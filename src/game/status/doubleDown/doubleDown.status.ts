@@ -24,8 +24,6 @@ export class DoubleDownStatus implements StatusEffectHandler {
         effectDTO.args.currentValue =
             effectDTO.args.currentValue * dto.status.args.value;
 
-        dto.remove();
-
         return effectDTO;
     }
 }
