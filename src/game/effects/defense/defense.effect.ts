@@ -83,8 +83,8 @@ export class DefenseEffect implements EffectHandler {
             newDefense = newDefense + currentDefense;
 
             await this.expeditionService.setEnemyDefense(
-                client,
-                target.value,
+                client.id,
+                target.value.id,
                 newDefense,
             );
         }
