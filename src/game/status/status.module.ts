@@ -8,6 +8,7 @@ import { DodgeStatus } from './dodge/dodge.status';
 import { DoubleDownStatus } from './doubleDown/doubleDown.status';
 import { FortitudeStatus } from './fortitude/fortitude.status';
 import { HeraldDelayedStatus } from './heraldDelayed/heraldDelayed.status';
+import { ImbuedStatus } from './imbued/imbued.status';
 import { RegenerateStatus } from './regenerate/regenerate.status';
 import { ResolveStatus } from './resolve/resolve.status';
 import { SiphoningStatus } from './siphoning/siphoning.status';
@@ -40,6 +41,7 @@ import { TurtlingStatus } from './turtling/turtling.status';
         SpikesStatus,
         ConfusionStatus,
         DoubleDownStatus,
+        ImbuedStatus,
     ],
     exports: [StatusService],
 })

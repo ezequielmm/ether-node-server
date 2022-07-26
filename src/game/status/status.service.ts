@@ -319,6 +319,7 @@ export class StatusService {
         client: Socket,
         expedition: Expedition,
         event: StatusEventType,
+        args: any = {},
     ): Promise<void> {
         const currentNode = expedition.currentNode;
 
@@ -365,6 +366,7 @@ export class StatusService {
                         source,
                         target: entityCollection.target,
                         status,
+                        args,
                         update(args) {
                             status.args = args;
                             isUpdate = true;
