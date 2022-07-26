@@ -92,6 +92,15 @@ export const sporeMongerData: Enemy = {
                     target: CardTargetedEnum.Player,
                     value: 2,
                     // TODO: Create Feeble Status and use it here
+                    effects: [
+                        {
+                            effect: damageEffect.name,
+                            target: CardTargetedEnum.Player,
+                            args: {
+                                value: 2,
+                            },
+                        },
+                    ],
                 },
             ],
             next: [

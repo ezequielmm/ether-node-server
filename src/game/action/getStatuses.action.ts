@@ -15,6 +15,7 @@ interface GetStatusesResponse {
 
 interface IStatusesList {
     name: string;
+    counter?: number;
 }
 
 @Injectable()
@@ -31,6 +32,7 @@ export class GetStatusesAction {
                     player: {
                         statuses: { buff, debuff },
                     },
+                    enemies,
                 },
             },
         } = await this.expeditionService.findOne({ clientId });
@@ -48,6 +50,19 @@ export class GetStatusesAction {
             ],
         });
 
+        // Then, we get the enemies and its statuses and add
+        // all to the array
+        enemies.forEach(({ enemyId, statuses: { buff, debuff } }) => {
+            response.push({
+                targetEntity: TargetEntityEnum.Enemy,
+                id: enemyId,
+                statuses: [
+                    ...this.formatStatusesToArray(buff),
+                    ...this.formatStatusesToArray(debuff),
+                ],
+            });
+        });
+
         // Finally return the result
         return response;
     }
@@ -56,6 +71,7 @@ export class GetStatusesAction {
         return items.map((item) => {
             return {
                 name: item.name,
+                counter: item.args.value,
             };
         });
     }
