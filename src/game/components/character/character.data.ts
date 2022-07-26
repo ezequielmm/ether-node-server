@@ -27,7 +27,7 @@ export const CharacterData: Character[] = [
                     amount: 1,
                 },
                 {
-                    cardId: 113, // First Move
+                    cardId: 125, // Reposition
                     amount: 2,
                 },
             ],
