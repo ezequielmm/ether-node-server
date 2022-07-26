@@ -35,7 +35,7 @@ export class SendEnemyIntentProcess {
             // Next we loop over all the intentions and create the response
             response.intents = intentions.map(({ value, type }) => {
                 return {
-                    value: value,
+                    value,
                     description: this.descriptionGenerator(type, value),
                     type,
                 };
