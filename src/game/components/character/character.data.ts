@@ -28,7 +28,11 @@ export const CharacterData: Character[] = [
                 },
                 {
                     cardId: 125, // Reposition
-                    amount: 2,
+                    amount: 1,
+                },
+                {
+                    cardId: 159, // Perfect Timing
+                    amount: 1,
                 },
             ],
         },

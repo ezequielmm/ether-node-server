@@ -1574,6 +1574,6 @@ export const Cards: Card[] = [
             statuses: [],
         },
         showPointer: false,
-        isUpgraded: false,
+        isUpgraded: true,
     },
 ];

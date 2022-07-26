@@ -214,6 +214,8 @@ export class DrawCardAction {
                     hasConfusedEnemies = debuff.some((item) => {
                         return item.name === confusion.name;
                     });
+
+                    if (hasConfusedEnemies) return;
                 });
 
                 // If it does, we modify the cost for the cards to 0
