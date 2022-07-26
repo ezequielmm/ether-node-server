@@ -18,6 +18,7 @@ import { ExpeditionService } from 'src/game/components/expedition/expedition.ser
 import { CombatTurnEnum } from 'src/game/components/expedition/expedition.enum';
 import { EndEnemyTurnProcess } from 'src/game/process/endEnemyTurn.process';
 import { SendEnemyIntentProcess } from 'src/game/process/sendEnemyIntents.process';
+import { GetPlayerStatusesAction } from 'src/game/action/getPlayerStatuses.action';
 
 interface CardPlayedInterface {
     cardId: CardId;
@@ -38,7 +39,7 @@ export class CombatGateway {
         private readonly getEnemiesAction: GetEnemiesAction,
         private readonly getPlayerInfoAction: GetPlayerInfoAction,
         private readonly cardPlayedAction: CardPlayedAction,
-        private readonly getPlayerStatusesAction: GetPlayerInfoAction,
+        private readonly getPlayerStatusesAction: GetPlayerStatusesAction,
         private readonly endPlayerTurnProcess: EndPlayerTurnProcess,
         private readonly endEnemyTurnProcess: EndEnemyTurnProcess,
         private readonly expeditionService: ExpeditionService,
