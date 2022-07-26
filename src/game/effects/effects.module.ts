@@ -12,6 +12,7 @@ import { ActionModule } from '../action/action.module';
 import { ProviderModule } from '../provider/provider.module';
 import { DoubleBurnEffect } from './doubleBurn/doubleBurn.effect';
 import { HeadButtEffect } from './headButt/headButt.effect';
+import { RepositionEffect } from './reposition/reposition.effect';
 
 @Module({
     imports: [
@@ -30,6 +31,7 @@ import { HeadButtEffect } from './headButt/headButt.effect';
         RemoveDefenseEffect,
         DoubleBurnEffect,
         HeadButtEffect,
+        RepositionEffect,
     ],
     exports: [EffectService],
 })
