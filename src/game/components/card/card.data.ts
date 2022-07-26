@@ -6,6 +6,7 @@ import { energyEffect } from 'src/game/effects/energy/constants';
 import { headButt } from 'src/game/effects/headButt/constants';
 import { healEffect } from 'src/game/effects/heal/constants';
 import { removeDefenseEffect } from 'src/game/effects/removeDefense/constants';
+import { repositionEffect } from 'src/game/effects/reposition/contants';
 import { burn } from 'src/game/status/burn/constants';
 import { confusion } from 'src/game/status/confusion/constants';
 import { dodge } from 'src/game/status/dodge/constants';
@@ -1476,5 +1477,53 @@ export const Cards: Card[] = [
         },
         showPointer: false,
         isUpgraded: true,
+    },
+    {
+        cardId: 125,
+        name: 'Reposition',
+        rarity: CardRarityEnum.Rare,
+        cardType: CardTypeEnum.Skill,
+        pool: 'knight',
+        energy: 1,
+        description: `Shuffle all of your cards and replace your hand.`,
+        keywords: [],
+        properties: {
+            effects: [
+                {
+                    effect: repositionEffect.name,
+                    target: CardTargetedEnum.Player,
+                    args: {
+                        value: 0,
+                    },
+                },
+            ],
+            statuses: [],
+        },
+        showPointer: false,
+        isUpgraded: false,
+    },
+    {
+        cardId: 126,
+        name: 'Reposition',
+        rarity: CardRarityEnum.Rare,
+        cardType: CardTypeEnum.Skill,
+        pool: 'knight',
+        energy: 0,
+        description: `Shuffle all of your cards and replace your hand.`,
+        keywords: [],
+        properties: {
+            effects: [
+                {
+                    effect: repositionEffect.name,
+                    target: CardTargetedEnum.Player,
+                    args: {
+                        value: 0,
+                    },
+                },
+            ],
+            statuses: [],
+        },
+        showPointer: false,
+        isUpgraded: false,
     },
 ];

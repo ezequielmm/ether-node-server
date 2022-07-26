@@ -49,12 +49,17 @@ export class EndPlayerTurnProcess {
             clientId: client.id,
         });
 
-        await this.discardAllCardsAction.handle({ client });
+        await this.discardAllCardsAction.handle({
+            client,
+            SWARMessageTypeToSend: SWARMessageType.EndTurn,
+        });
+
         await this.statusService.trigger(
             client,
             expedition,
             StatusEventType.OnTurnEnd,
         );
+
         await this.beginEnemyTurnProcess.handle({ client });
     }
 }

@@ -131,6 +131,18 @@ export class CardPlayedAction {
                     newEnergy: newEnergyAmount,
                 });
 
+                if (exhaust) {
+                    await this.exhaustCardAction.handle({
+                        client,
+                        cardId,
+                    });
+                } else {
+                    await this.discardCardAction.handle({
+                        client,
+                        cardId,
+                    });
+                }
+
                 const sourceReference: PlayerReferenceDTO = {
                     type: CardTargetedEnum.Player,
                 };
@@ -158,18 +170,6 @@ export class CardPlayedAction {
                     sourceReference,
                     targetId,
                 );
-
-                if (exhaust) {
-                    await this.exhaustCardAction.handle({
-                        client,
-                        cardId,
-                    });
-                } else {
-                    await this.discardCardAction.handle({
-                        client,
-                        cardId,
-                    });
-                }
 
                 const {
                     data: {
