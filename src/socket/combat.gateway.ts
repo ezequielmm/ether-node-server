@@ -18,7 +18,7 @@ import { ExpeditionService } from 'src/game/components/expedition/expedition.ser
 import { CombatTurnEnum } from 'src/game/components/expedition/expedition.enum';
 import { EndEnemyTurnProcess } from 'src/game/process/endEnemyTurn.process';
 import { SendEnemyIntentProcess } from 'src/game/process/sendEnemyIntents.process';
-import { GetPlayerStatusesAction } from 'src/game/action/getPlayerStatuses.action';
+import { GetStatusesAction } from 'src/game/action/getStatuses.action';
 
 interface CardPlayedInterface {
     cardId: CardId;
@@ -39,7 +39,7 @@ export class CombatGateway {
         private readonly getEnemiesAction: GetEnemiesAction,
         private readonly getPlayerInfoAction: GetPlayerInfoAction,
         private readonly cardPlayedAction: CardPlayedAction,
-        private readonly getPlayerStatusesAction: GetPlayerStatusesAction,
+        private readonly getStatusesAction: GetStatusesAction,
         private readonly endPlayerTurnProcess: EndPlayerTurnProcess,
         private readonly endEnemyTurnProcess: EndEnemyTurnProcess,
         private readonly expeditionService: ExpeditionService,
@@ -103,8 +103,8 @@ export class CombatGateway {
                     data = await this.getPlayerInfoAction.handle(client.id);
                     break;
 
-                case DataWSRequestTypesEnum.PlayerStatuses:
-                    data = await this.getPlayerStatusesAction.handle(client.id);
+                case DataWSRequestTypesEnum.Statuses:
+                    data = await this.getStatusesAction.handle(client.id);
                     break;
 
                 case DataWSRequestTypesEnum.EnemyIntents:
