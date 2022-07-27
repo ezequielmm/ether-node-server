@@ -1,3 +1,4 @@
+import jwtDecode from 'jwt-decode';
 import { random } from 'lodash';
 import { IExpeditionPlayerStateDeckCard } from 'src/game/components/expedition/expedition.interface';
 
@@ -7,15 +8,38 @@ import { IExpeditionPlayerStateDeckCard } from 'src/game/components/expedition/e
  * @return boolean
  */
 export function isValidAuthToken(token: string): boolean {
+    // First we create a variable to keep track
+    // if the token is valid or not, default value
+    // is True
+    let isValidToken = true;
+
+    // First, we check if the token is not empty
+    // otherwise we return false
     if (!token) return false;
 
+    // If we have something, we remove the "Bearer" word
+    // to have just the token itself
     token = token.startsWith('Bearer')
         ? token.replace('Bearer', '').trim()
         : token;
 
-    return !token ? false : true;
-}
+    // Next we use jwt-decode to get the header of the
+    // token and make sure that is a real token
+    // enclosed on a try catch just is case the string is
+    // not a JWT token
+    try {
+        const decodedHeader = jwtDecode<{ typ: string; alg: string }>(token, {
+            header: true,
+        });
 
+        isValidToken = decodedHeader.typ === 'JWT';
+    } catch (e) {
+        isValidToken = false;
+    }
+
+    // At the end we return the boolean value
+    return isValidToken;
+}
 /**
  * Get a random value from an Enum
  * @param anEnum the enum to get the value
