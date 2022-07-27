@@ -3,7 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Seeder } from 'nestjs-seeder';
 import { Card, CardDocument } from './card.schema';
 import { Model } from 'mongoose';
-import { Cards } from './card.data';
+import { data } from './card.data';
 
 @Injectable()
 export class CardSeeder implements Seeder {
@@ -12,7 +12,7 @@ export class CardSeeder implements Seeder {
     ) {}
 
     async seed(): Promise<any> {
-        return this.card.insertMany(Cards);
+        return this.card.insertMany(data);
     }
 
     async drop(): Promise<any> {
