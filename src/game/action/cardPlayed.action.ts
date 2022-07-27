@@ -144,13 +144,9 @@ export class CardPlayedAction {
                     StatusEventType.OnBeginCardPlay,
                     onBeginCardPlayEventArgs,
                 );
+
                 // if the card can be played, we update the energy, apply the effects
                 // and move the card to the desired pile
-                await this.updatePlayerEnergyAction.handle({
-                    clientId: client.id,
-                    newEnergy: newEnergyAmount,
-                });
-
                 if (exhaust) {
                     await this.exhaustCardAction.handle({
                         client,
@@ -178,6 +174,11 @@ export class CardPlayedAction {
                     sourceReference,
                     targetId,
                 );
+
+                await this.updatePlayerEnergyAction.handle({
+                    clientId: client.id,
+                    newEnergy: newEnergyAmount,
+                });
 
                 const {
                     data: {

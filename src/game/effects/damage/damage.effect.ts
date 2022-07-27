@@ -14,10 +14,13 @@ import { EffectDecorator } from '../effects.decorator';
 import { EffectDTO, EffectHandler } from '../effects.interface';
 import { EffectService } from '../effects.service';
 import { TargetId } from '../effects.types';
+import { isNotUndefined } from 'src/utils';
 
 export interface DamageArgs {
     useDefense?: boolean;
     multiplier?: number;
+    useEnergyAsValue?: boolean;
+    useEnergyAsMultiplier?: boolean;
 }
 
 @EffectDecorator({
@@ -36,23 +39,58 @@ export class DamageEffect implements EffectHandler {
         const {
             client,
             target,
-            args: { currentValue, useDefense, multiplier },
+            args: {
+                currentValue,
+                useDefense,
+                multiplier,
+                useEnergyAsMultiplier,
+                useEnergyAsValue,
+            },
+            expedition: {
+                currentNode: {
+                    data: {
+                        player: { energy: currentEnergy },
+                    },
+                },
+            },
         } = payload;
-        // TODO: Trigger damage attempted event
 
         // Check targeted type
         if (EffectService.isEnemy(target)) {
+            // First we check if we have to deal a multiplier
+            // using the remaining energy of the player
+            const newCurrentValue = isNotUndefined(useEnergyAsMultiplier)
+                ? currentValue * currentEnergy
+                : currentValue;
+
             await this.applyDamageToEnemy(
                 client,
-                currentValue,
+                newCurrentValue,
                 target.value.id,
                 useDefense,
                 multiplier,
             );
-        } else if (EffectService.isAllEnemies(target)) {
-            await this.applyDamageToAllEnemies(client, currentValue);
-        } else if (EffectService.isPlayer(target)) {
-            await this.applyDamageToPlayer(client, currentValue);
+        }
+
+        if (EffectService.isAllEnemies(target)) {
+            // First we check if we have to deal a multiplier
+            // using the remaining energy of the player
+            const newCurrentValue = isNotUndefined(useEnergyAsMultiplier)
+                ? currentValue * currentEnergy
+                : currentValue;
+
+            await this.applyDamageToAllEnemies(client, newCurrentValue);
+        }
+
+        if (EffectService.isPlayer(target)) {
+            // Here we check if we have to use the enemy available
+            // as currentValue, here we just need to add it, the value
+            // on the effect is 0
+            const newCurrentValue = isNotUndefined(useEnergyAsValue)
+                ? currentEnergy
+                : currentValue;
+
+            await this.applyDamageToPlayer(client, newCurrentValue);
         }
     }
 
@@ -73,20 +111,17 @@ export class DamageEffect implements EffectHandler {
             clientId: client.id,
         });
 
-        if (useDefense !== undefined && useDefense)
-            damage = defense * multiplier;
+        if (isNotUndefined(useDefense)) damage = defense * multiplier;
 
-        let dataResponse = null;
+        const dataResponse = [];
 
         enemies.forEach((enemy) => {
             if (enemy[getEnemyIdField(targetId)] === targetId) {
                 enemy = this.calculateEnemyDamage(enemy, damage);
 
-                dataResponse = [
-                    {
-                        id: targetId,
-                    },
-                ];
+                dataResponse.push({
+                    id: targetId,
+                });
             }
         });
 
@@ -123,12 +158,10 @@ export class DamageEffect implements EffectHandler {
             clientId: client.id,
         });
 
-        let dataResponse = null;
+        const dataResponse = [];
 
         enemies.forEach((enemy) => {
             enemy = this.calculateEnemyDamage(enemy, damage);
-
-            dataResponse = [];
             dataResponse.push({ id: enemy.id });
         });
 
