@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Socket } from 'socket.io';
 import { ExpeditionService } from 'src/game/components/expedition/expedition.service';
+import { isNotUndefined } from 'src/utils';
 import { CardId, getCardIdField } from '../components/card/card.type';
 import { IExpeditionPlayerStateDeckCard } from '../components/expedition/expedition.interface';
 import {
@@ -52,19 +53,13 @@ export class DiscardCardAction {
         cardToDiscard.properties.effects.map((effect) => {
             // If is true, we double the values for the card
             // before moving it to the discard pile
-            if (
-                effect.args.doubleValuesWhenPlayed !== undefined &&
-                effect.args.doubleValuesWhenPlayed
-            ) {
+            if (isNotUndefined(effect.args.doubleValuesWhenPlayed)) {
                 effect.args.value *= 2;
                 if (effect.args.times !== undefined) effect.args.times *= 2;
             }
 
             // Also we check if the card has to lower its values every time is used
-            if (
-                effect.args.decreaseValue !== undefined &&
-                effect.args.decreaseValue
-            ) {
+            if (isNotUndefined(effect.args.decreaseValue)) {
                 // We lower the value (won't be reduce below 1)
                 const newValue = Math.max(
                     1,

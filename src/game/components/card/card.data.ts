@@ -1689,7 +1689,7 @@ export const Cards: Card[] = [
                     effect: damageEffect.name,
                     target: CardTargetedEnum.Player,
                     args: {
-                        value: 1,
+                        value: 0,
                         useEnergyAsValue: true,
                     },
                 },
@@ -1722,7 +1722,7 @@ export const Cards: Card[] = [
                     effect: damageEffect.name,
                     target: CardTargetedEnum.Player,
                     args: {
-                        value: 1,
+                        value: 0,
                         useEnergyAsValue: true,
                     },
                 },
