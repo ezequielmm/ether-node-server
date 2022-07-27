@@ -56,7 +56,7 @@ export class ExpeditionService {
             })
             .lean();
 
-        return expedition;
+        return this.syncCardDescriptions(expedition);
     }
 
     async syncCardDescriptions(expedition: Expedition): Promise<Expedition> {

@@ -13,6 +13,7 @@ import { dodge } from 'src/game/status/dodge/constants';
 import { doubleDown } from 'src/game/status/doubleDown/contants';
 import { fortitude } from 'src/game/status/fortitude/constants';
 import { heraldDelayed } from 'src/game/status/heraldDelayed/constants';
+import { imbued } from 'src/game/status/imbued/constants';
 import { regenerate } from 'src/game/status/regenerate/contants';
 import { resolve } from 'src/game/status/resolve/constants';
 import { siphoning } from 'src/game/status/siphoning/constants';
@@ -1572,6 +1573,54 @@ export const Cards: Card[] = [
                 },
             ],
             statuses: [],
+        },
+        showPointer: false,
+        isUpgraded: true,
+    },
+    {
+        cardId: 111,
+        name: 'Tighten Grip',
+        rarity: CardRarityEnum.Rare,
+        cardType: CardTypeEnum.Skill,
+        pool: 'knight',
+        energy: 1,
+        description: `Play your next card twice`,
+        keywords: [],
+        properties: {
+            effects: [],
+            statuses: [
+                {
+                    name: imbued.name,
+                    args: {
+                        attachTo: CardTargetedEnum.Player,
+                        value: Number.NaN,
+                    },
+                },
+            ],
+        },
+        showPointer: false,
+        isUpgraded: false,
+    },
+    {
+        cardId: 112,
+        name: 'Tighten Grip+',
+        rarity: CardRarityEnum.Rare,
+        cardType: CardTypeEnum.Skill,
+        pool: 'knight',
+        energy: 0,
+        description: `Play your next card twice`,
+        keywords: [],
+        properties: {
+            effects: [],
+            statuses: [
+                {
+                    name: imbued.name,
+                    args: {
+                        attachTo: CardTargetedEnum.Player,
+                        value: Number.NaN,
+                    },
+                },
+            ],
         },
         showPointer: false,
         isUpgraded: true,

@@ -1,6 +1,7 @@
 import { Socket } from 'socket.io';
 import { CardTargetedEnum } from '../components/card/card.enum';
 import { EnemyId } from '../components/enemy/enemy.type';
+import { IExpeditionPlayerStateDeckCard } from '../components/expedition/expedition.interface';
 import { Expedition } from '../components/expedition/expedition.schema';
 import {
     Effect,
@@ -8,6 +9,7 @@ import {
     SourceEntityDTO,
     TargetEntityDTO,
 } from '../effects/effects.interface';
+import { TargetId } from '../effects/effects.types';
 
 export enum StatusType {
     Buff = 'buff',
@@ -97,6 +99,8 @@ export interface StatusEffect extends StatusBase {
 export enum StatusEventType {
     OnPlayerTurnStart = 'onPlayerTurnStart',
     OnTurnEnd = 'onTurnEnd',
+    OnBeginCardPlay = 'onBeginCardPlay',
+    OnEndCardPlay = 'onEndCardPlay',
 }
 export interface StatusEvent extends StatusBase {
     trigger: StatusTrigger.Event;
@@ -184,14 +188,22 @@ export interface StatusEffectDTO<
     remove(): void;
 }
 
-export interface StatusEventDTO {
+export interface StatusEventDTO<Args = Record<string, any>> {
     client: Socket;
     expedition: Expedition;
     source: SourceEntityDTO;
     target: TargetEntityDTO;
     status: AttachedStatus;
+    args: Args;
     update(args: AttachedStatus['args']): void;
     remove(): void;
+}
+
+export interface OnBeginCardPlayEventArgs {
+    card: IExpeditionPlayerStateDeckCard;
+    cardSource: SourceEntityDTO;
+    cardSourceReference: SourceEntityReferenceDTO;
+    cardTargetId: TargetId;
 }
 
 /**
