@@ -25,6 +25,7 @@ import {
 } from 'src/game/status/tasteOfBlood/constants';
 import { turtling } from 'src/game/status/turtling/constants';
 import {
+    CardEnergyEnum,
     CardKeywordEnum,
     CardRarityEnum,
     CardTargetedEnum,
@@ -1672,5 +1673,71 @@ export const Cards: Card[] = [
         },
         showPointer: false,
         isUpgraded: false,
+    },
+    {
+        cardId: 141,
+        name: 'Last Resort',
+        rarity: CardRarityEnum.Rare,
+        cardType: CardTypeEnum.Attack,
+        pool: 'knight',
+        energy: CardEnergyEnum.All,
+        description: `Deal X damage to yourself and X times {${damageEffect.name}} damage to an enemy`,
+        keywords: [],
+        properties: {
+            effects: [
+                {
+                    effect: damageEffect.name,
+                    target: CardTargetedEnum.Player,
+                    args: {
+                        value: 1,
+                        useEnergyAsValue: true,
+                    },
+                },
+                {
+                    effect: damageEffect.name,
+                    target: CardTargetedEnum.Enemy,
+                    args: {
+                        value: 9,
+                        useEnergyAsMultiplier: true,
+                    },
+                },
+            ],
+            statuses: [],
+        },
+        showPointer: true,
+        isUpgraded: false,
+    },
+    {
+        cardId: 142,
+        name: 'Last Resort+',
+        rarity: CardRarityEnum.Rare,
+        cardType: CardTypeEnum.Attack,
+        pool: 'knight',
+        energy: CardEnergyEnum.All,
+        description: `Deal X damage to yourself and X times {${damageEffect.name}} damage to an enemy`,
+        keywords: [],
+        properties: {
+            effects: [
+                {
+                    effect: damageEffect.name,
+                    target: CardTargetedEnum.Player,
+                    args: {
+                        value: 1,
+                        useEnergyAsValue: true,
+                    },
+                },
+                {
+                    effect: damageEffect.name,
+                    target: CardTargetedEnum.AllEnemies,
+                    args: {
+                        value: 9,
+                        useEnergyAsMultiplier: true,
+                    },
+                },
+            ],
+            statuses: [],
+        },
+        showPointer: true,
+        isUpgraded: true,
     },
 ];
