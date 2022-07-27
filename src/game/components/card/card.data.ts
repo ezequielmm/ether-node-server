@@ -749,14 +749,14 @@ export const Cards: Card[] = [
                 {
                     name: tasteOfBloodBuff.name,
                     args: {
-                        value: 1,
+                        value: 2,
                         attachTo: CardTargetedEnum.Player,
                     },
                 },
                 {
                     name: tasteOfBloodDebuff.name,
                     args: {
-                        value: 1,
+                        value: 2,
                         attachTo: CardTargetedEnum.Player,
                     },
                 },
