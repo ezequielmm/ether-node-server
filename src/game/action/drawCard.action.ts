@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Socket } from 'socket.io';
-import { removeCardsFromPile } from 'src/utils';
+import { isNotUndefined, removeCardsFromPile } from 'src/utils';
 import { CardTypeEnum } from '../components/card/card.enum';
 import { IExpeditionPlayerStateDeckCard } from '../components/expedition/expedition.interface';
 import { ExpeditionService } from '../components/expedition/expedition.service';
@@ -9,12 +9,14 @@ import {
     StandardResponse,
     SWARMessageType,
 } from '../standardResponse/standardResponse';
+import { confusion } from '../status/confusion/constants';
 
 interface DrawCardDTO {
     readonly client: Socket;
     readonly amountToTake: number;
     readonly SWARMessageTypeToSend: SWARMessageType;
     readonly cardType?: CardTypeEnum;
+    readonly useEnemiesConfusedAsValue?: boolean;
 }
 
 @Injectable()
@@ -24,8 +26,13 @@ export class DrawCardAction {
     constructor(private readonly expeditionService: ExpeditionService) {}
 
     async handle(payload: DrawCardDTO): Promise<void> {
-        const { client, amountToTake, cardType, SWARMessageTypeToSend } =
-            payload;
+        const {
+            client,
+            amountToTake,
+            cardType,
+            SWARMessageTypeToSend,
+            useEnemiesConfusedAsValue,
+        } = payload;
 
         const cardTypeFilter = cardType === undefined ? 'All' : cardType;
 
@@ -39,6 +46,7 @@ export class DrawCardAction {
                 player: {
                     cards: { hand, discard, draw },
                 },
+                enemies,
             },
         } = await this.expeditionService.getCurrentNode({
             clientId: client.id,
@@ -187,6 +195,31 @@ export class DrawCardAction {
                         }),
                     ),
                 );
+            }
+
+            // Here we check if we have to modify the energy cost
+            // of the taken cards if there is at least one
+            // enemy with a confusion status
+            if (isNotUndefined(useEnemiesConfusedAsValue)) {
+                // First we initialize a boolean for the confused
+                // enemies
+                let hasConfusedEnemies = false;
+
+                // Next go to all the enemies and check if we have
+                // at least one enemy confused
+                enemies.forEach(({ statuses: { debuff } }) => {
+                    hasConfusedEnemies = debuff.some((item) => {
+                        return item.name === confusion.name;
+                    });
+
+                    if (hasConfusedEnemies) return;
+                });
+
+                // If it does, we modify the cost for the cards to 0
+                if (hasConfusedEnemies)
+                    cardsToMoveToHand.forEach((card) => {
+                        card.energy = 0;
+                    });
             }
 
             // Move the cards to the hand pile

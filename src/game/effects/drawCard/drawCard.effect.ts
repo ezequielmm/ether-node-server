@@ -6,9 +6,11 @@ import { DrawCardAction } from 'src/game/action/drawCard.action';
 import { EnemyIntentionType } from 'src/game/components/enemy/enemy.enum';
 import { CardTypeEnum } from 'src/game/components/card/card.enum';
 import { SWARMessageType } from 'src/game/standardResponse/standardResponse';
+import { isNotUndefined } from 'src/utils';
 
 export interface DrawCardArgs {
-    useAttackingEnemies: true;
+    useAttackingEnemies: boolean;
+    useEnemiesConfusedAsCost: boolean;
 }
 
 @EffectDecorator({
@@ -21,7 +23,11 @@ export class DrawCardEffect implements EffectHandler {
     async handle(payload: EffectDTO<DrawCardArgs>): Promise<void> {
         const {
             client,
-            args: { currentValue, useAttackingEnemies },
+            args: {
+                currentValue,
+                useAttackingEnemies,
+                useEnemiesConfusedAsCost,
+            },
             expedition,
         } = payload;
 
@@ -30,8 +36,13 @@ export class DrawCardEffect implements EffectHandler {
 
         // If we use the enemies that are attacking the player
         // se set this boolean value
-        const useAttackingEnemiesAsValue =
-            useAttackingEnemies !== undefined && useAttackingEnemies;
+        const useAttackingEnemiesAsValue = isNotUndefined(useAttackingEnemies);
+
+        // If we use the enemies have a confusion status
+        // se set this boolean value
+        const useEnemiesConfusedAsValue = isNotUndefined(
+            useEnemiesConfusedAsCost,
+        );
 
         if (useAttackingEnemiesAsValue) {
             // If we have a condition to modify the amount of cards to take based
@@ -66,6 +77,7 @@ export class DrawCardEffect implements EffectHandler {
                 cardType: CardTypeEnum.Defend,
             }),
             SWARMessageTypeToSend: SWARMessageType.PlayerAffected,
+            useEnemiesConfusedAsValue,
         });
     }
 }

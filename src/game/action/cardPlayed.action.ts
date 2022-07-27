@@ -4,11 +4,9 @@ import { CardKeywordPipeline } from '../cardKeywordPipeline/cardKeywordPipeline'
 import {
     CardEnergyEnum,
     CardPlayErrorMessages,
-    CardTargetedEnum,
 } from '../components/card/card.enum';
 import { CardId, getCardIdField } from '../components/card/card.type';
 import { ExpeditionService } from '../components/expedition/expedition.service';
-import { PlayerDTO } from '../effects/effects.interface';
 import { EffectService } from '../effects/effects.service';
 import { TargetId } from '../effects/effects.types';
 import { EndPlayerTurnProcess } from '../process/endPlayerTurn.process';
@@ -17,7 +15,10 @@ import {
     SWARMessageType,
     SWARAction,
 } from '../standardResponse/standardResponse';
-import { PlayerReferenceDTO } from '../status/interfaces';
+import {
+    OnBeginCardPlayEventArgs,
+    StatusEventType,
+} from '../status/interfaces';
 import { StatusService } from '../status/status.service';
 import { DiscardCardAction } from './discardCard.action';
 import { ExhaustCardAction } from './exhaustCard.action';
@@ -90,15 +91,17 @@ export class CardPlayedAction {
 
             // If everything goes right, we get the card information from
             // the player hand pile
-            const {
-                energy: cardEnergyCost,
-                properties: { effects, statuses },
-                keywords,
-            } = hand.find((card) => {
+            const card = hand.find((card) => {
                 const field = getCardIdField(cardId);
 
                 return card[field] === cardId;
             });
+
+            const {
+                energy: cardEnergyCost,
+                properties: { effects, statuses },
+                keywords,
+            } = card;
 
             const { exhaust, endTurn } = CardKeywordPipeline.process(keywords);
 
@@ -124,24 +127,37 @@ export class CardPlayedAction {
                     ),
                 );
             } else {
+                const source = EffectService.extractPlayerDTO(expedition);
+                const sourceReference =
+                    this.statusService.getReferenceFromSource(source);
+
+                const onBeginCardPlayEventArgs: OnBeginCardPlayEventArgs = {
+                    card,
+                    cardSource: source,
+                    cardSourceReference: sourceReference,
+                    cardTargetId: targetId,
+                };
+
+                await this.statusService.trigger(
+                    client,
+                    expedition,
+                    StatusEventType.OnBeginCardPlay,
+                    onBeginCardPlayEventArgs,
+                );
+
                 // if the card can be played, we update the energy, apply the effects
                 // and move the card to the desired pile
-                await this.updatePlayerEnergyAction.handle({
-                    clientId: client.id,
-                    newEnergy: newEnergyAmount,
-                });
-
-                const sourceReference: PlayerReferenceDTO = {
-                    type: CardTargetedEnum.Player,
-                };
-
-                const source: PlayerDTO = {
-                    type: CardTargetedEnum.Player,
-                    value: {
-                        globalState: expedition.playerState,
-                        combatState: expedition.currentNode.data.player,
-                    },
-                };
+                if (exhaust) {
+                    await this.exhaustCardAction.handle({
+                        client,
+                        cardId,
+                    });
+                } else {
+                    await this.discardCardAction.handle({
+                        client,
+                        cardId,
+                    });
+                }
 
                 await this.effectService.applyAll({
                     client,
@@ -159,17 +175,10 @@ export class CardPlayedAction {
                     targetId,
                 );
 
-                if (exhaust) {
-                    await this.exhaustCardAction.handle({
-                        client,
-                        cardId,
-                    });
-                } else {
-                    await this.discardCardAction.handle({
-                        client,
-                        cardId,
-                    });
-                }
+                await this.updatePlayerEnergyAction.handle({
+                    clientId: client.id,
+                    newEnergy: newEnergyAmount,
+                });
 
                 const {
                     data: {
@@ -227,6 +236,13 @@ export class CardPlayedAction {
                             data: playerInfo,
                         }),
                     ),
+                );
+
+                await this.statusService.trigger(
+                    client,
+                    expedition,
+                    StatusEventType.OnEndCardPlay,
+                    onBeginCardPlayEventArgs,
                 );
 
                 if (endTurn) await this.endPlayerTurnProcess.handle({ client });

@@ -25,23 +25,16 @@ export class SendEnemyIntentProcess {
 
         // Then, we return the data mapped to the desired response
         return enemies.map(({ id, currentScript: { intentions } }) => {
-            // First, we create an object to map the id and
-            // initialize the intents array
-            const response: EnemyIntentsResponse = {
+            return {
                 id,
-                intents: [],
+                intents: intentions.map(({ value, type }) => {
+                    return {
+                        value,
+                        description: this.descriptionGenerator(type, value),
+                        type,
+                    };
+                }),
             };
-
-            // Next we loop over all the intentions and create the response
-            response.intents = intentions.map(({ value, type }) => {
-                return {
-                    value: value,
-                    description: this.descriptionGenerator(type, value),
-                    type,
-                };
-            });
-
-            return response;
         });
     }
 
