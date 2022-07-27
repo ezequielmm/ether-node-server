@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Socket } from 'socket.io';
-import { removeCardsFromPile } from 'src/utils';
+import { isNotUndefined, removeCardsFromPile } from 'src/utils';
 import { CardTypeEnum } from '../components/card/card.enum';
 import { IExpeditionPlayerStateDeckCard } from '../components/expedition/expedition.interface';
 import { ExpeditionService } from '../components/expedition/expedition.service';
@@ -200,10 +200,7 @@ export class DrawCardAction {
             // Here we check if we have to modify the energy cost
             // of the taken cards if there is at least one
             // enemy with a confusion status
-            if (
-                useEnemiesConfusedAsValue !== undefined &&
-                useEnemiesConfusedAsValue
-            ) {
+            if (isNotUndefined(useEnemiesConfusedAsValue)) {
                 // First we initialize a boolean for the confused
                 // enemies
                 let hasConfusedEnemies = false;

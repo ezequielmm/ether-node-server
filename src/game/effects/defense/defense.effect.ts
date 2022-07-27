@@ -6,6 +6,7 @@ import { defenseEffect } from './constants';
 import { EffectDecorator } from '../effects.decorator';
 import { EffectDTO, EffectHandler } from '../effects.interface';
 import { EffectService } from '../effects.service';
+import { isNotUndefined } from 'src/utils';
 
 export interface DefenseArgs {
     useEnemies: boolean;
@@ -47,13 +48,13 @@ export class DefenseEffect implements EffectHandler {
         if (EffectService.isPlayer(target)) {
             // Check if the card uses the amount of enemies as
             // value to calculate the defense amount to apply
-            if (useEnemies !== undefined && useEnemies) {
+            if (isNotUndefined(useEnemies)) {
                 newDefense = await this.useEnemiesAsValue(client, currentValue);
             }
 
             // Check if the card uses the amount of cards from the
             // discard pile as a value to set the defense
-            if (useDiscardPileAsValue !== undefined && useDiscardPileAsValue) {
+            if (isNotUndefined(useDiscardPileAsValue)) {
                 newDefense = await this.useDiscardPileAsValue(
                     client,
                     currentValue,
@@ -63,7 +64,7 @@ export class DefenseEffect implements EffectHandler {
 
             // Check if the card uses the enemies that are attacking next turn as
             // value to calculate the defense amount to apply
-            if (useAttackingEnemies !== undefined && useAttackingEnemies) {
+            if (isNotUndefined(useAttackingEnemies)) {
                 newDefense = await this.useEnemiesAttackingAsValue(
                     client,
                     currentValue,
