@@ -5,6 +5,7 @@ import { ExpeditionService } from '../../components/expedition/expedition.servic
 import { defenseEffect } from './constants';
 import { EffectDecorator } from '../effects.decorator';
 import { EffectDTO, EffectHandler } from '../effects.interface';
+import { EffectService } from '../effects.service';
 
 export interface DefenseArgs {
     useEnemies: boolean;
@@ -23,6 +24,7 @@ export class DefenseEffect implements EffectHandler {
     async handle(payload: EffectDTO<DefenseArgs>): Promise<void> {
         const {
             client,
+            target,
             expedition: {
                 currentNode: {
                     data: {
@@ -41,37 +43,51 @@ export class DefenseEffect implements EffectHandler {
 
         let newDefense = currentValue;
 
-        // Check if the card uses the amount of enemies as
-        // value to calculate the defense amount to apply
-        if (useEnemies !== undefined && useEnemies) {
-            newDefense = await this.useEnemiesAsValue(client, currentValue);
+        // Apply if the player is the target
+        if (EffectService.isPlayer(target)) {
+            // Check if the card uses the amount of enemies as
+            // value to calculate the defense amount to apply
+            if (useEnemies !== undefined && useEnemies) {
+                newDefense = await this.useEnemiesAsValue(client, currentValue);
+            }
+
+            // Check if the card uses the amount of cards from the
+            // discard pile as a value to set the defense
+            if (useDiscardPileAsValue !== undefined && useDiscardPileAsValue) {
+                newDefense = await this.useDiscardPileAsValue(
+                    client,
+                    currentValue,
+                    multiplier,
+                );
+            }
+
+            // Check if the card uses the enemies that are attacking next turn as
+            // value to calculate the defense amount to apply
+            if (useAttackingEnemies !== undefined && useAttackingEnemies) {
+                newDefense = await this.useEnemiesAttackingAsValue(
+                    client,
+                    currentValue,
+                );
+            }
+
+            newDefense = newDefense + currentDefense;
+
+            await this.expeditionService.setPlayerDefense({
+                clientId: client.id,
+                value: newDefense,
+            });
         }
 
-        // Check if the card uses the amount of cards from the
-        // discard pile as a value to set the defense
-        if (useDiscardPileAsValue !== undefined && useDiscardPileAsValue) {
-            newDefense = await this.useDiscardPileAsValue(
-                client,
-                currentValue,
-                multiplier,
+        // Apply if the enemy is the target
+        if (EffectService.isEnemy(target)) {
+            newDefense = newDefense + currentDefense;
+
+            await this.expeditionService.setEnemyDefense(
+                client.id,
+                target.value.id,
+                newDefense,
             );
         }
-
-        // Check if the card uses the enemies that are attacking next turn as
-        // value to calculate the defense amount to apply
-        if (useAttackingEnemies !== undefined && useAttackingEnemies) {
-            newDefense = await this.useEnemiesAttackingAsValue(
-                client,
-                currentValue,
-            );
-        }
-
-        newDefense = newDefense + currentDefense;
-
-        await this.expeditionService.setPlayerDefense({
-            clientId: client.id,
-            value: newDefense,
-        });
     }
 
     private async useEnemiesAsValue(
