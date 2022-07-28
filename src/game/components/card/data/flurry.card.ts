@@ -1,4 +1,4 @@
-import { damageEffect } from 'src/game/effects/damage/constants';
+import { flurry } from 'src/game/effects/flurry/constants';
 import {
     CardRarityEnum,
     CardTypeEnum,
@@ -14,32 +14,29 @@ export const FlurryCard: Card = {
     cardType: CardTypeEnum.Attack,
     pool: 'knight',
     energy: CardEnergyEnum.All,
-    description: `Deal {${damageEffect.name}} damage to 3 random enemies X times`,
+    description: `Deal {${flurry.name}} damage to 3 random enemies X times`,
     keywords: [],
     properties: {
         effects: [
             {
-                effect: damageEffect.name,
+                effect: flurry.name,
                 target: CardTargetedEnum.RandomEnemy,
                 args: {
                     value: 3,
-                    useEnergyAsTimes: true,
                 },
             },
             {
-                effect: damageEffect.name,
+                effect: flurry.name,
                 target: CardTargetedEnum.RandomEnemy,
                 args: {
                     value: 3,
-                    useEnergyAsTimes: true,
                 },
             },
             {
-                effect: damageEffect.name,
+                effect: flurry.name,
                 target: CardTargetedEnum.RandomEnemy,
                 args: {
                     value: 3,
-                    useEnergyAsTimes: true,
                 },
             },
         ],
@@ -56,32 +53,29 @@ export const FlurryCardUpgraded: Card = {
     cardType: CardTypeEnum.Attack,
     pool: 'knight',
     energy: CardEnergyEnum.All,
-    description: `Deal {${damageEffect.name}} damage to 3 random enemies X times`,
+    description: `Deal {${flurry.name}} damage to 3 random enemies X times`,
     keywords: [],
     properties: {
         effects: [
             {
-                effect: damageEffect.name,
+                effect: flurry.name,
                 target: CardTargetedEnum.RandomEnemy,
                 args: {
                     value: 4,
-                    useEnergyAsTimes: true,
                 },
             },
             {
-                effect: damageEffect.name,
+                effect: flurry.name,
                 target: CardTargetedEnum.RandomEnemy,
                 args: {
                     value: 4,
-                    useEnergyAsTimes: true,
                 },
             },
             {
-                effect: damageEffect.name,
+                effect: flurry.name,
                 target: CardTargetedEnum.RandomEnemy,
                 args: {
                     value: 4,
-                    useEnergyAsTimes: true,
                 },
             },
         ],
