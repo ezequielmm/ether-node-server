@@ -12,6 +12,7 @@ import {
 } from './data/findWeakness.card';
 import { FineEdgeCard, FineEdgeCardUpgraded } from './data/fineEdge.card';
 import { FirstMoveCard, FirstMoveCardUpgraded } from './data/firstMove.card';
+import { FlurryCard, FlurryCardUpgraded } from './data/flurry.card';
 import {
     GiveNoGroundCard,
     GiveNoGroundCardUpgraded,
@@ -133,4 +134,6 @@ export const data: Card[] = [
     KegChugCardUpgraded,
     LastResortCard,
     LastResortCardUpgraded,
+    FlurryCard,
+    FlurryCardUpgraded,
 ];
