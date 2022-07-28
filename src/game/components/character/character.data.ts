@@ -27,10 +27,34 @@ export const CharacterData: Character[] = [
                     amount: 1,
                 },
                 {
-                    cardId: 27, // Keg Chug
+                    cardId: 83, // Keg Chug
                     amount: 2,
                 },
             ],
         },
     },
 ];
+
+/*
+Initial data
+{
+    cardId: 1, // Attack
+    amount: 4,
+},
+{
+    cardId: 3, // Defend
+    amount: 2,
+},
+{
+    cardId: 75, // Heaven’s Grace
+    amount: 1,
+},
+{
+    cardId: 9, // First Move
+    amount: 1,
+},
+{
+    cardId: 27, // Keg Chug
+    amount: 2,
+},
+ */

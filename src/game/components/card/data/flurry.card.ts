@@ -24,7 +24,7 @@ export const FlurryCard: Card = {
                 args: {
                     value: 3,
                     amountOfEnemiesToTarget: 3,
-                    useEnergyAsMultiplier: true,
+                    useEnergyAsTimes: true,
                 },
             },
         ],
@@ -51,7 +51,7 @@ export const FlurryCardUpgraded: Card = {
                 args: {
                     value: 4,
                     amountOfEnemiesToTarget: 3,
-                    useEnergyAsMultiplier: true,
+                    useEnergyAsTimes: true,
                 },
             },
         ],
