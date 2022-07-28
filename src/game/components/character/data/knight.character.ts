@@ -11,11 +11,11 @@ export const KnightCharacter: Character = {
         cards: [
             {
                 cardId: 1, // Attack
-                amount: 4,
+                amount: 3,
             },
             {
                 cardId: 3, // Defend
-                amount: 2,
+                amount: 3,
             },
             {
                 cardId: 75, // Heaven’s Grace
@@ -26,7 +26,7 @@ export const KnightCharacter: Character = {
                 amount: 1,
             },
             {
-                cardId: 83, // Flurry
+                cardId: 13, // Lunge
                 amount: 2,
             },
         ],
