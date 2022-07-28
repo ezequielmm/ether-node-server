@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { find, sample } from 'lodash';
-import { isNotUndefined } from 'src/utils';
 import { CardTargetedEnum } from '../components/card/card.enum';
 import { EnemyId, getEnemyIdField } from '../components/enemy/enemy.type';
 import { Expedition } from '../components/expedition/expedition.schema';
@@ -62,7 +61,7 @@ export class EffectService {
         const {
             effect: name,
             times = 1,
-            args: { useEnergyAsTimes, value, ...args },
+            args: { value, ...args },
         } = effect;
 
         let effectDTO: EffectDTO = {
@@ -84,21 +83,7 @@ export class EffectService {
             effect: name,
         });
 
-        let timesToAttack = times;
-
-        if (isNotUndefined(useEnergyAsTimes)) {
-            const {
-                currentNode: {
-                    data: {
-                        player: { energy: currentEnergy },
-                    },
-                },
-            } = expedition;
-
-            timesToAttack *= currentEnergy;
-        }
-
-        for (let i = 0; i < timesToAttack; i++) {
+        for (let i = 0; i < times; i++) {
             const handler = this.findHandlerByName(name);
             await handler.handle(effectDTO);
         }
