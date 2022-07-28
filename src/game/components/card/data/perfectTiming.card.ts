@@ -15,16 +15,16 @@ export const PerfectTimingCard: Card = {
         effects: [
             {
                 effect: drawCardEffect.name,
-                target: CardTargetedEnum.Player,
+                target: CardTargetedEnum.Enemy,
                 args: {
                     value: 2,
-                    useAttackingEnemies: true,
+                    checkIfEnemyIsAttacking: true,
                 },
             },
         ],
         statuses: [],
     },
-    showPointer: false,
+    showPointer: true,
     isUpgraded: false,
 };
 
@@ -41,15 +41,15 @@ export const PerfectTimingCardUpgraded: Card = {
         effects: [
             {
                 effect: drawCardEffect.name,
-                target: CardTargetedEnum.Player,
+                target: CardTargetedEnum.Enemy,
                 args: {
                     value: 3,
-                    useAttackingEnemies: true,
+                    checkIfEnemyIsAttacking: true,
                 },
             },
         ],
         statuses: [],
     },
-    showPointer: false,
+    showPointer: true,
     isUpgraded: true,
 };

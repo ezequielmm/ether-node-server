@@ -4,13 +4,17 @@ import { EffectDecorator } from '../effects.decorator';
 import { EffectDTO, EffectHandler } from '../effects.interface';
 import { DrawCardAction } from 'src/game/action/drawCard.action';
 import { EnemyIntentionType } from 'src/game/components/enemy/enemy.enum';
-import { CardTypeEnum } from 'src/game/components/card/card.enum';
+import {
+    CardTargetedEnum,
+    CardTypeEnum,
+} from 'src/game/components/card/card.enum';
 import { SWARMessageType } from 'src/game/standardResponse/standardResponse';
 import { isNotUndefined } from 'src/utils';
 
 export interface DrawCardArgs {
     useAttackingEnemies: boolean;
     useEnemiesConfusedAsCost: boolean;
+    checkIfEnemyIsAttacking: boolean;
 }
 
 @EffectDecorator({
@@ -23,10 +27,12 @@ export class DrawCardEffect implements EffectHandler {
     async handle(payload: EffectDTO<DrawCardArgs>): Promise<void> {
         const {
             client,
+            target,
             args: {
                 currentValue,
                 useAttackingEnemies,
                 useEnemiesConfusedAsCost,
+                checkIfEnemyIsAttacking,
             },
             expedition,
         } = payload;
@@ -35,8 +41,12 @@ export class DrawCardEffect implements EffectHandler {
         let amountToTake = currentValue;
 
         // If we use the enemies that are attacking the player
-        // se set this boolean value
+        // we set this boolean value
         const useAttackingEnemiesAsValue = isNotUndefined(useAttackingEnemies);
+
+        // If we use the enemy selected to check its intentions
+        // we set this boolean value
+        const useCheckEnemyIntentions = isNotUndefined(checkIfEnemyIsAttacking);
 
         // If we use the enemies have a confusion status
         // se set this boolean value
@@ -44,6 +54,7 @@ export class DrawCardEffect implements EffectHandler {
             useEnemiesConfusedAsCost,
         );
 
+        // Here is we have to check all the enemy intentions
         if (useAttackingEnemiesAsValue) {
             // If we have a condition to modify the amount of cards to take based
             // on the enemies that are attacking the player
@@ -70,10 +81,25 @@ export class DrawCardEffect implements EffectHandler {
             amountToTake += enemiesAttacking;
         }
 
+        // Here we set a variable to check if the targeted enemy
+        let enemyIsAttacking = false;
+
+        // Here we check the enemy selected to get its intentions
+        if (useCheckEnemyIntentions && target.type === CardTargetedEnum.Enemy) {
+            // Here we get the enemy to check the intentions
+            const {
+                currentScript: { intentions },
+            } = target.value;
+
+            intentions.forEach(({ type }) => {
+                if (type === EnemyIntentionType.Attack) enemyIsAttacking = true;
+            });
+        }
+
         await this.drawCardAction.handle({
             client,
             amountToTake,
-            ...(useAttackingEnemiesAsValue && {
+            ...((useAttackingEnemiesAsValue || enemyIsAttacking) && {
                 cardType: CardTypeEnum.Defend,
             }),
             SWARMessageTypeToSend: SWARMessageType.PlayerAffected,
