@@ -7,7 +7,7 @@ enum TargetEntityEnum {
     Enemy = 'enemy',
 }
 
-interface GetStatusesResponse {
+export interface GetStatusesResponse {
     targetEntity: TargetEntityEnum;
     id: string | number;
     statuses: IStatusesList[];
