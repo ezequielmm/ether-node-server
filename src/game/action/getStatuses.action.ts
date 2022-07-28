@@ -7,15 +7,16 @@ enum TargetEntityEnum {
     Enemy = 'enemy',
 }
 
-interface GetStatusesResponse {
+export interface GetStatusesResponse {
     targetEntity: TargetEntityEnum;
     id: string | number;
-    statuses?: IStatusesList[];
+    statuses: IStatusesList[];
 }
 
 interface IStatusesList {
     name: string;
-    counter?: number;
+    counter: number;
+    description: string;
 }
 
 @Injectable()
@@ -68,11 +69,23 @@ export class GetStatusesAction {
     }
 
     private formatStatusesToArray(items: AttachedStatus[]): IStatusesList[] {
-        return items.map((item) => {
+        return items.map(({ name, args: { value: counter } }) => {
             return {
-                name: item.name,
-                counter: item.args.value,
+                name,
+                counter,
+                description: this.generateDescription(name, counter),
             };
         });
+    }
+
+    private generateDescription(name: string, counter: number): string {
+        switch (name) {
+            case 'resolve':
+                return `Burn does ${counter} points of damage at the end of each round`;
+            case 'confusion':
+                return `For ${counter} turn, all actions will be redirected to random targets`;
+            default:
+                return `Unknown Intentions`;
+        }
     }
 }
