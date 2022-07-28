@@ -26,7 +26,7 @@ export const KnightCharacter: Character = {
                 amount: 1,
             },
             {
-                cardId: 83, // Flurry
+                cardId: 159, // Flurry
                 amount: 2,
             },
         ],
