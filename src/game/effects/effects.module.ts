@@ -13,6 +13,7 @@ import { ProviderModule } from '../provider/provider.module';
 import { DoubleBurnEffect } from './doubleBurn/doubleBurn.effect';
 import { HeadButtEffect } from './headButt/headButt.effect';
 import { RepositionEffect } from './reposition/reposition.effect';
+import { FlurryEffect } from './flurry/flurry.effect';
 
 @Module({
     imports: [
@@ -32,6 +33,7 @@ import { RepositionEffect } from './reposition/reposition.effect';
         DoubleBurnEffect,
         HeadButtEffect,
         RepositionEffect,
+        FlurryEffect,
     ],
     exports: [EffectService],
 })
