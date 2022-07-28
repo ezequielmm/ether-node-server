@@ -23,7 +23,22 @@ export const FlurryCard: Card = {
                 target: CardTargetedEnum.RandomEnemy,
                 args: {
                     value: 3,
-                    amountOfEnemiesToTarget: 3,
+                    useEnergyAsTimes: true,
+                },
+            },
+            {
+                effect: damageEffect.name,
+                target: CardTargetedEnum.RandomEnemy,
+                args: {
+                    value: 3,
+                    useEnergyAsTimes: true,
+                },
+            },
+            {
+                effect: damageEffect.name,
+                target: CardTargetedEnum.RandomEnemy,
+                args: {
+                    value: 3,
                     useEnergyAsTimes: true,
                 },
             },
@@ -50,7 +65,22 @@ export const FlurryCardUpgraded: Card = {
                 target: CardTargetedEnum.RandomEnemy,
                 args: {
                     value: 4,
-                    amountOfEnemiesToTarget: 3,
+                    useEnergyAsTimes: true,
+                },
+            },
+            {
+                effect: damageEffect.name,
+                target: CardTargetedEnum.RandomEnemy,
+                args: {
+                    value: 4,
+                    useEnergyAsTimes: true,
+                },
+            },
+            {
+                effect: damageEffect.name,
+                target: CardTargetedEnum.RandomEnemy,
+                args: {
+                    value: 4,
                     useEnergyAsTimes: true,
                 },
             },
