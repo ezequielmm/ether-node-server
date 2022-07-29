@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Card, CardDocument } from './card.schema';
 import { Model } from 'mongoose';
 import { CardTypeEnum } from './card.enum';
+import { Card, CardDocument } from './card.schema';
 import { CardId } from './card.type';
 
 @Injectable()

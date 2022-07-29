@@ -10,7 +10,6 @@ import { StatusModule } from '../status/status.module';
 import { BeginEnemyTurnProcess } from './beginEnemyTurn.process';
 import { BeginPlayerTurnProcess } from './beginPlayerTurn.process';
 import { CurrentNodeGeneratorProcess } from './currentNodeGenerator.process';
-import { DrawCardProcess } from './drawCard.process';
 import { EndEnemyTurnProcess } from './endEnemyTurn.process';
 import { EndPlayerTurnProcess } from './endPlayerTurn.process';
 import { InitCombatProcess } from './initCombat.process';
@@ -20,14 +19,14 @@ import { SendEnemyIntentProcess } from './sendEnemyIntents.process';
 
 @Module({
     imports: [
-        ExpeditionModule,
+        forwardRef(() => ExpeditionModule),
         CardModule,
         SettingsModule,
         EnemyModule,
         forwardRef(() => ActionModule),
         CharacterModule,
         StatusModule,
-        EffectModule,
+        forwardRef(() => EffectModule),
     ],
     providers: [
         SendEnemyIntentProcess,
@@ -39,7 +38,6 @@ import { SendEnemyIntentProcess } from './sendEnemyIntents.process';
         EndEnemyTurnProcess,
         BeginEnemyTurnProcess,
         BeginPlayerTurnProcess,
-        DrawCardProcess,
     ],
     exports: [
         SendEnemyIntentProcess,
@@ -51,7 +49,6 @@ import { SendEnemyIntentProcess } from './sendEnemyIntents.process';
         EndEnemyTurnProcess,
         BeginEnemyTurnProcess,
         BeginPlayerTurnProcess,
-        DrawCardProcess,
     ],
 })
 export class ProcessModule {}

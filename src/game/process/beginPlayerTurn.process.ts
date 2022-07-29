@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Socket } from 'socket.io';
+import { DrawCardAction } from '../action/drawCard.action';
 import { CombatTurnEnum } from '../components/expedition/expedition.enum';
 import { ExpeditionService } from '../components/expedition/expedition.service';
 import { SettingsService } from '../components/settings/settings.service';
@@ -10,7 +11,6 @@ import {
 } from '../standardResponse/standardResponse';
 import { StatusEventType } from '../status/interfaces';
 import { StatusService } from '../status/status.service';
-import { DrawCardProcess } from './drawCard.process';
 
 interface BeginPlayerTurnDTO {
     client: Socket;
@@ -23,7 +23,7 @@ export class BeginPlayerTurnProcess {
     constructor(
         private readonly expeditionService: ExpeditionService,
         private readonly settingsService: SettingsService,
-        private readonly drawCardProcess: DrawCardProcess,
+        private readonly drawCardAction: DrawCardAction,
         private readonly statusService: StatusService,
     ) {}
 
@@ -89,6 +89,8 @@ export class BeginPlayerTurnProcess {
             },
         } = expedition;
 
+        // Send new energy amount
+
         this.logger.log(
             `Sent message PutData to client ${client.id}: ${SWARAction.ChangeTurn}`,
         );
@@ -104,7 +106,12 @@ export class BeginPlayerTurnProcess {
             ),
         );
 
-        await this.drawCardProcess.handle({ client, cardsToTake: handSize });
+        await this.drawCardAction.handle({
+            client,
+            amountToTake: handSize,
+            cardType: undefined,
+            SWARMessageTypeToSend: SWARMessageType.BeginTurn,
+        });
 
         await this.expeditionService.calculateNewEnemyIntentions(client.id);
 

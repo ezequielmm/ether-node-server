@@ -1,16 +1,14 @@
 import { forwardRef, Module } from '@nestjs/common';
-import { MongooseModule } from '@nestjs/mongoose';
 import { ExpeditionModule } from '../components/expedition/expedition.module';
-import {
-    Expedition,
-    ExpeditionSchema,
-} from '../components/expedition/expedition.schema';
 import { EffectModule } from '../effects/effects.module';
 import { ProviderModule } from '../provider/provider.module';
 import { BurnStatus } from './burn/burn.status';
+import { ConfusionStatus } from './confusion/confusion.status';
 import { DodgeStatus } from './dodge/dodge.status';
+import { DoubleDownStatus } from './doubleDown/doubleDown.status';
 import { FortitudeStatus } from './fortitude/fortitude.status';
 import { HeraldDelayedStatus } from './heraldDelayed/heraldDelayed.status';
+import { ImbuedStatus } from './imbued/imbued.status';
 import { RegenerateStatus } from './regenerate/regenerate.status';
 import { ResolveStatus } from './resolve/resolve.status';
 import { SiphoningStatus } from './siphoning/siphoning.status';
@@ -22,7 +20,11 @@ import { TasteOfBloodDebuffStatus } from './tasteOfBlood/tasteOfBlood.debuff.sta
 import { TurtlingStatus } from './turtling/turtling.status';
 
 @Module({
-    imports: [ExpeditionModule, forwardRef(() => EffectModule), ProviderModule],
+    imports: [
+        forwardRef(() => ExpeditionModule),
+        forwardRef(() => EffectModule),
+        ProviderModule,
+    ],
     providers: [
         StatusService,
         TurtlingStatus,
@@ -37,6 +39,9 @@ import { TurtlingStatus } from './turtling/turtling.status';
         RegenerateStatus,
         SpiritedStatus,
         SpikesStatus,
+        ConfusionStatus,
+        DoubleDownStatus,
+        ImbuedStatus,
     ],
     exports: [StatusService],
 })

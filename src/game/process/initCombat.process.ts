@@ -5,14 +5,12 @@ import { CombatTurnEnum } from '../components/expedition/expedition.enum';
 import { IExpeditionNode } from '../components/expedition/expedition.interface';
 import { ExpeditionService } from '../components/expedition/expedition.service';
 import { CurrentNodeGeneratorProcess } from './currentNodeGenerator.process';
-import { SendEnemyIntentProcess } from './sendEnemyIntents.process';
 
 @Injectable()
 export class InitCombatProcess {
     constructor(
         private readonly currentNodeGeneratorProcess: CurrentNodeGeneratorProcess,
         private readonly expeditionService: ExpeditionService,
-        private readonly sendEnemyIntentProcess: SendEnemyIntentProcess,
         private readonly setCombatTurnAction: SetCombatTurnAction,
     ) {}
 
@@ -23,23 +21,18 @@ export class InitCombatProcess {
                 client.id,
             );
 
-        await this.expeditionService.update(client.id, {
+        const expedition = await this.expeditionService.update(client.id, {
             currentNode,
         });
 
-        const {
-            currentNode: {
-                data: { playing },
-            },
-        } = await this.setCombatTurnAction.handle({
+        await this.expeditionService.syncCardDescriptions(expedition);
+
+        await this.setCombatTurnAction.handle({
             clientId: client.id,
             newRound: 1,
             playing: CombatTurnEnum.Player,
         });
 
         await this.expeditionService.calculateNewEnemyIntentions(client.id);
-
-        if (playing === CombatTurnEnum.Player)
-            await this.sendEnemyIntentProcess.process(client);
     }
 }

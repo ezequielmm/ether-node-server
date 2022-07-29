@@ -35,7 +35,7 @@ export class BeginEnemyTurnProcess {
 
         const {
             currentNode: {
-                data: { enemies, round },
+                data: { enemies },
             },
         } = expedition;
 
@@ -74,7 +74,7 @@ export class BeginEnemyTurnProcess {
                         expedition,
                         source,
                         effects,
-                        selectedEnemy: round,
+                        selectedEnemy: enemy.id,
                     });
                 }
             });

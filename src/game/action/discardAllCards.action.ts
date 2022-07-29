@@ -9,6 +9,7 @@ import {
 
 interface DiscardAllCardsDTO {
     readonly client: Socket;
+    readonly SWARMessageTypeToSend: SWARMessageType;
 }
 
 @Injectable()
@@ -18,7 +19,7 @@ export class DiscardAllCardsAction {
     constructor(private readonly expeditionService: ExpeditionService) {}
 
     async handle(payload: DiscardAllCardsDTO) {
-        const { client } = payload;
+        const { client, SWARMessageTypeToSend } = payload;
 
         const {
             data: {
@@ -54,7 +55,7 @@ export class DiscardAllCardsAction {
             'PutData',
             JSON.stringify(
                 StandardResponse.respond({
-                    message_type: SWARMessageType.EndTurn,
+                    message_type: SWARMessageTypeToSend,
                     action: SWARAction.MoveCard,
                     data: cardMoves,
                 }),

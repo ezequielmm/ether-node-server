@@ -10,9 +10,24 @@ import { heraldDelayed } from './constants';
 })
 @Injectable()
 export class HeraldDelayedStatus implements StatusEffectHandler {
+    async preview(
+        args: StatusEffectDTO<DamageArgs>,
+    ): Promise<EffectDTO<DamageArgs>> {
+        return this.handle(args);
+    }
+
     async handle(
         args: StatusEffectDTO<DamageArgs>,
     ): Promise<EffectDTO<DamageArgs>> {
+        const turns = args.status.args.value;
+        if (
+            args.status.addedInRound + turns <
+            args.expedition.currentNode.data.round
+        ) {
+            args.remove();
+            return args.effectDTO;
+        }
+
         args.effectDTO.args.currentValue *= 2;
         return args.effectDTO;
     }

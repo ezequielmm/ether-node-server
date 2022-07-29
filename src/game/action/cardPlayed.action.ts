@@ -4,11 +4,10 @@ import { CardKeywordPipeline } from '../cardKeywordPipeline/cardKeywordPipeline'
 import {
     CardEnergyEnum,
     CardPlayErrorMessages,
-    CardTargetedEnum,
 } from '../components/card/card.enum';
 import { CardId, getCardIdField } from '../components/card/card.type';
+import { IExpeditionCurrentNodeDataEnemy } from '../components/expedition/expedition.interface';
 import { ExpeditionService } from '../components/expedition/expedition.service';
-import { PlayerDTO } from '../effects/effects.interface';
 import { EffectService } from '../effects/effects.service';
 import { TargetId } from '../effects/effects.types';
 import { EndPlayerTurnProcess } from '../process/endPlayerTurn.process';
@@ -17,11 +16,18 @@ import {
     SWARMessageType,
     SWARAction,
 } from '../standardResponse/standardResponse';
-import { PlayerReferenceDTO } from '../status/interfaces';
+import {
+    OnBeginCardPlayEventArgs,
+    StatusEventType,
+} from '../status/interfaces';
 import { StatusService } from '../status/status.service';
 import { DiscardCardAction } from './discardCard.action';
 import { ExhaustCardAction } from './exhaustCard.action';
-import { GetPlayerInfoAction } from './getPlayerInfo.action';
+import {
+    GetPlayerInfoAction,
+    PlayerInfoResponse,
+} from './getPlayerInfo.action';
+import { GetStatusesAction, GetStatusesResponse } from './getStatuses.action';
 import { UpdatePlayerEnergyAction } from './updatePlayerEnergy.action';
 
 interface CardPlayedDTO {
@@ -34,6 +40,8 @@ interface CardPlayedDTO {
 export class CardPlayedAction {
     private readonly logger: Logger = new Logger(CardPlayedAction.name);
 
+    private client: Socket;
+
     constructor(
         private readonly expeditionService: ExpeditionService,
         private readonly effectService: EffectService,
@@ -43,37 +51,27 @@ export class CardPlayedAction {
         private readonly exhaustCardAction: ExhaustCardAction,
         private readonly getPlayerInfoAction: GetPlayerInfoAction,
         private readonly endPlayerTurnProcess: EndPlayerTurnProcess,
+        private readonly getStatusesAction: GetStatusesAction,
     ) {}
 
     async handle(payload: CardPlayedDTO): Promise<void> {
         const { client, cardId, targetId } = payload;
 
+        this.client = client;
+
         // First make sure card exists on player's hand pile
         const cardExists = await this.expeditionService.cardExistsOnPlayerHand({
-            clientId: client.id,
+            clientId: this.client.id,
             cardId,
         });
 
         if (!cardExists) {
-            this.logger.log(
-                `Sent message ErrorMessage to client ${client.id}: ${SWARAction.InvalidCard}`,
-            );
-
-            client.emit(
-                'ErrorMessage',
-                JSON.stringify(
-                    StandardResponse.respond({
-                        message_type: SWARMessageType.Error,
-                        action: SWARAction.InvalidCard,
-                        data: null,
-                    }),
-                ),
-            );
+            this.sendInvalidCardMessage();
         } else {
             // If the card is valid we get the current node information
             // to validate the enemy
             const expedition = await this.expeditionService.findOne({
-                clientId: client.id,
+                clientId: this.client.id,
             });
 
             const {
@@ -90,15 +88,17 @@ export class CardPlayedAction {
 
             // If everything goes right, we get the card information from
             // the player hand pile
-            const {
-                energy: cardEnergyCost,
-                properties: { effects, statuses },
-                keywords,
-            } = hand.find((card) => {
+            const card = hand.find((card) => {
                 const field = getCardIdField(cardId);
 
                 return card[field] === cardId;
             });
+
+            const {
+                energy: cardEnergyCost,
+                properties: { effects, statuses },
+                keywords,
+            } = card;
 
             const { exhaust, endTurn } = CardKeywordPipeline.process(keywords);
 
@@ -109,42 +109,42 @@ export class CardPlayedAction {
 
             // next we inform the player that is not possible to play the card
             if (!canPlayCard) {
-                this.logger.log(
-                    `Sent message ErrorMessage to client ${client.id}: ${SWARAction.InsufficientEnergy}`,
+                this.sendNotEnoughEnergyMessage(message);
+            } else {
+                const source = EffectService.extractPlayerDTO(expedition);
+                const sourceReference =
+                    this.statusService.getReferenceFromSource(source);
+
+                const onBeginCardPlayEventArgs: OnBeginCardPlayEventArgs = {
+                    card,
+                    cardSource: source,
+                    cardSourceReference: sourceReference,
+                    cardTargetId: targetId,
+                };
+
+                await this.statusService.trigger(
+                    this.client,
+                    expedition,
+                    StatusEventType.OnBeginCardPlay,
+                    onBeginCardPlayEventArgs,
                 );
 
-                client.emit(
-                    'ErrorMessage',
-                    JSON.stringify(
-                        StandardResponse.respond({
-                            message_type: SWARMessageType.Error,
-                            action: SWARAction.InsufficientEnergy,
-                            data: message,
-                        }),
-                    ),
-                );
-            } else {
                 // if the card can be played, we update the energy, apply the effects
                 // and move the card to the desired pile
-                await this.updatePlayerEnergyAction.handle({
-                    clientId: client.id,
-                    newEnergy: newEnergyAmount,
-                });
-
-                const sourceReference: PlayerReferenceDTO = {
-                    type: CardTargetedEnum.Player,
-                };
-
-                const source: PlayerDTO = {
-                    type: CardTargetedEnum.Player,
-                    value: {
-                        globalState: expedition.playerState,
-                        combatState: expedition.currentNode.data.player,
-                    },
-                };
+                if (exhaust) {
+                    await this.exhaustCardAction.handle({
+                        client: this.client,
+                        cardId,
+                    });
+                } else {
+                    await this.discardCardAction.handle({
+                        client: this.client,
+                        cardId,
+                    });
+                }
 
                 await this.effectService.applyAll({
-                    client,
+                    client: this.client,
                     expedition,
                     source,
                     effects,
@@ -152,47 +152,17 @@ export class CardPlayedAction {
                 });
 
                 await this.statusService.attachStatuses(
-                    client.id,
+                    this.client.id,
                     statuses,
                     round,
                     sourceReference,
                     targetId,
                 );
 
-                if (exhaust) {
-                    await this.exhaustCardAction.handle({
-                        clientId: client.id,
-                        cardId,
-                    });
-                } else {
-                    await this.discardCardAction.handle({
-                        clientId: client.id,
-                        cardId,
-                    });
-                }
-
-                this.logger.log(
-                    `Sent message PutData to client ${client.id}: ${SWARAction.MoveCard}`,
-                );
-
-                client.emit(
-                    'PutData',
-                    JSON.stringify(
-                        StandardResponse.respond({
-                            message_type: SWARMessageType.PlayerAffected,
-                            action: SWARAction.MoveCard,
-                            data: [
-                                {
-                                    source: 'hand',
-                                    destination: exhaust
-                                        ? 'exhaust'
-                                        : 'discard',
-                                    id: cardId,
-                                },
-                            ],
-                        }),
-                    ),
-                );
+                await this.updatePlayerEnergyAction.handle({
+                    clientId: this.client.id,
+                    newEnergy: newEnergyAmount,
+                });
 
                 const {
                     data: {
@@ -203,56 +173,33 @@ export class CardPlayedAction {
                     clientId: client.id,
                 });
 
-                this.logger.log(
-                    `Sent message PutData to client ${client.id}: ${SWARAction.UpdateEnergy}`,
-                );
+                this.sendUpdateEnergyMessage(energy, energyMax);
 
-                client.emit(
-                    'PutData',
-                    JSON.stringify(
-                        StandardResponse.respond({
-                            message_type: SWARMessageType.PlayerAffected,
-                            action: SWARAction.UpdateEnergy,
-                            data: [energy, energyMax],
-                        }),
-                    ),
-                );
-
-                this.logger.log(
-                    `Sent message PutData to client ${client.id}: ${SWARAction.UpdateEnemy}`,
-                );
-
-                client.emit(
-                    'PutData',
-                    JSON.stringify(
-                        StandardResponse.respond({
-                            message_type: SWARMessageType.EnemyAffected,
-                            action: SWARAction.UpdateEnemy,
-                            data: enemies,
-                        }),
-                    ),
-                );
+                this.sendUpdateEnemiesMessage(enemies);
 
                 const playerInfo = await this.getPlayerInfoAction.handle(
-                    client.id,
+                    this.client.id,
                 );
 
-                this.logger.log(
-                    `Sent message PutData to client ${client.id}: ${SWARAction.UpdatePlayerState}`,
+                this.sendUpdatePlayerMessage(playerInfo);
+
+                await this.statusService.trigger(
+                    this.client,
+                    expedition,
+                    StatusEventType.OnEndCardPlay,
+                    onBeginCardPlayEventArgs,
                 );
 
-                client.emit(
-                    'PutData',
-                    JSON.stringify(
-                        StandardResponse.respond({
-                            message_type: SWARMessageType.PlayerAffected,
-                            action: SWARAction.UpdatePlayer,
-                            data: playerInfo,
-                        }),
-                    ),
+                const statusData = await this.getStatusesAction.handle(
+                    this.client.id,
                 );
 
-                if (endTurn) await this.endPlayerTurnProcess.handle({ client });
+                this.sendStatusMessage(statusData);
+
+                if (endTurn)
+                    await this.endPlayerTurnProcess.handle({
+                        client: this.client,
+                    });
             }
         }
     }
@@ -293,5 +240,109 @@ export class CardPlayedAction {
                 canPlayCard: true,
                 newEnergyAmount: availableEnergy - cardEnergyCost,
             };
+    }
+
+    private sendInvalidCardMessage(): void {
+        this.logger.log(
+            `Sent message ErrorMessage to client ${this.client.id}: ${SWARAction.InvalidCard}`,
+        );
+
+        this.client.emit(
+            'ErrorMessage',
+            JSON.stringify(
+                StandardResponse.respond({
+                    message_type: SWARMessageType.Error,
+                    action: SWARAction.InvalidCard,
+                    data: null,
+                }),
+            ),
+        );
+    }
+
+    private sendNotEnoughEnergyMessage(message: string): void {
+        this.logger.log(
+            `Sent message ErrorMessage to client ${this.client.id}: ${SWARAction.InsufficientEnergy}`,
+        );
+
+        this.client.emit(
+            'ErrorMessage',
+            JSON.stringify(
+                StandardResponse.respond({
+                    message_type: SWARMessageType.Error,
+                    action: SWARAction.InsufficientEnergy,
+                    data: message,
+                }),
+            ),
+        );
+    }
+
+    private sendUpdateEnergyMessage(energy: number, energyMax: number): void {
+        this.logger.log(
+            `Sent message PutData to client ${this.client.id}: ${SWARAction.UpdateEnergy}`,
+        );
+
+        this.client.emit(
+            'PutData',
+            JSON.stringify(
+                StandardResponse.respond({
+                    message_type: SWARMessageType.PlayerAffected,
+                    action: SWARAction.UpdateEnergy,
+                    data: [energy, energyMax],
+                }),
+            ),
+        );
+    }
+
+    private sendUpdateEnemiesMessage(
+        enemies: IExpeditionCurrentNodeDataEnemy[],
+    ): void {
+        this.logger.log(
+            `Sent message PutData to client ${this.client.id}: ${SWARAction.UpdateEnemy}`,
+        );
+
+        this.client.emit(
+            'PutData',
+            JSON.stringify(
+                StandardResponse.respond({
+                    message_type: SWARMessageType.EnemyAffected,
+                    action: SWARAction.UpdateEnemy,
+                    data: enemies,
+                }),
+            ),
+        );
+    }
+
+    private sendUpdatePlayerMessage(playerInfo: PlayerInfoResponse): void {
+        this.logger.log(
+            `Sent message PutData to client ${this.client.id}: ${SWARAction.UpdatePlayerState}`,
+        );
+
+        this.client.emit(
+            'PutData',
+            JSON.stringify(
+                StandardResponse.respond({
+                    message_type: SWARMessageType.PlayerAffected,
+                    action: SWARAction.UpdatePlayer,
+                    data: playerInfo,
+                }),
+            ),
+        );
+    }
+
+    private sendStatusMessage(statusList: GetStatusesResponse[]): void {
+        this.logger.log(
+            `Sent message PutData to client ${this.client.id}: ${SWARAction.UpdateStatuses}`,
+        );
+
+        this.client.emit(
+            'PutData',
+            JSON.stringify(
+                StandardResponse.respond({
+                    message_type: SWARMessageType.CombatUpdate,
+                    action: SWARAction.UpdateStatuses,
+                    data: statusList,
+                }),
+            ),
+        );
     }
 }

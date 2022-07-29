@@ -1,4 +1,4 @@
-import { Injectable, PayloadTooLargeException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { getModelToken } from '@nestjs/mongoose';
 import { Test } from '@nestjs/testing';
 import { Socket } from 'socket.io';
@@ -28,6 +28,12 @@ import { StatusService } from './status.service';
 })
 @Injectable()
 class StatusA implements StatusEffectHandler {
+    preview(
+        args: StatusEffectDTO<Record<string, any>>,
+    ): Promise<EffectDTO<Record<string, any>>> {
+        return this.handle(args);
+    }
+
     async handle(payload: StatusEffectDTO): Promise<EffectDTO> {
         payload.effectDTO.args.status =
             (payload.effectDTO.args.status || '') + 'A';
@@ -40,6 +46,12 @@ class StatusA implements StatusEffectHandler {
 })
 @Injectable()
 class StatusB implements StatusEffectHandler {
+    preview(
+        args: StatusEffectDTO<Record<string, any>>,
+    ): Promise<EffectDTO<Record<string, any>>> {
+        return this.handle(args);
+    }
+
     async handle(payload: StatusEffectDTO): Promise<EffectDTO> {
         payload.effectDTO.args.status =
             (payload.effectDTO.args.status || '') + 'B';
@@ -52,6 +64,12 @@ class StatusB implements StatusEffectHandler {
 })
 @Injectable()
 class StatusC implements StatusEffectHandler {
+    preview(
+        args: StatusEffectDTO<Record<string, any>>,
+    ): Promise<EffectDTO<Record<string, any>>> {
+        return this.handle(args);
+    }
+
     async handle(payload: StatusEffectDTO): Promise<EffectDTO> {
         payload.effectDTO.args.status =
             (payload.effectDTO.args.status || '') + 'C';
@@ -123,6 +141,7 @@ describe('StatusService', () => {
             collectionOwner: undefined,
             effect: damageEffect.name,
             effectDTO: effectDTO,
+            preview: false,
         });
 
         expect(result.args.status).toBe('A');
@@ -148,6 +167,7 @@ describe('StatusService', () => {
             collectionOwner: undefined,
             effect: damageEffect.name,
             effectDTO: effectDTO,
+            preview: false,
         });
 
         expect(result.args.status).toBe(undefined);
@@ -181,6 +201,7 @@ describe('StatusService', () => {
             collectionOwner: undefined,
             effect: damageEffect.name,
             effectDTO: effectDTO,
+            preview: false,
         });
 
         expect(result.args.status).toBe('A');
@@ -222,6 +243,7 @@ describe('StatusService', () => {
             collectionOwner: undefined,
             effect: damageEffect.name,
             effectDTO: effectDTO,
+            preview: false,
         });
 
         expect(result.args.status).toBe('AC');

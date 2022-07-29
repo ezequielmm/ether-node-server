@@ -1,6 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { clone, cloneDeep, find, matches } from 'lodash';
+import { cloneDeep, find, matches } from 'lodash';
 import { Model } from 'mongoose';
 import { Socket } from 'socket.io';
 import { CardTargetedEnum } from '../components/card/card.enum';
@@ -10,11 +10,13 @@ import {
     Expedition,
     ExpeditionDocument,
 } from '../components/expedition/expedition.schema';
+import { ExpeditionService } from '../components/expedition/expedition.service';
 import { getClientIdField } from '../components/expedition/expedition.type';
 import {
     EffectDTO,
     EnemyDTO,
     SourceEntityDTO,
+    TargetEntityDTO,
 } from '../effects/effects.interface';
 import { EffectService } from '../effects/effects.service';
 import { TargetId } from '../effects/effects.types';
@@ -54,6 +56,8 @@ export class StatusService {
         @InjectModel(Expedition.name)
         private readonly expedition: Model<ExpeditionDocument>,
         private readonly providerService: ProviderService,
+        @Inject(forwardRef(() => ExpeditionService))
+        private readonly expeditionService: ExpeditionService,
     ) {}
 
     public async attachStatusToEnemy(
@@ -88,7 +92,7 @@ export class StatusService {
 
     public async attachStatusToPlayer(
         dto: AttachStatusToPlayerDTO,
-    ): Promise<ExpeditionDocument> {
+    ): Promise<Expedition> {
         const { clientId, status, currentRound } = dto;
 
         const { status: attachedStatus, container: provider } =
@@ -98,7 +102,7 @@ export class StatusService {
                 dto.sourceReference,
             );
 
-        return await this.expedition.findOneAndUpdate(
+        const expedition = await this.expedition.findOneAndUpdate(
             {
                 clientId,
                 status: ExpeditionStatusEnum.InProgress,
@@ -110,6 +114,8 @@ export class StatusService {
                 },
             },
         );
+
+        return this.expeditionService.syncCardDescriptions(expedition);
     }
 
     public async attachStatuses(
@@ -149,19 +155,19 @@ export class StatusService {
             collectionOwner,
             collection,
             effect,
-            effectDTO,
+            preview,
         } = dto;
-        let mutatedDTO = clone(effectDTO);
         const {
             currentNode: {
                 data: { round },
             },
         } = expedition;
-        // Clone the dto to avoid mutating the original
+        let { effectDTO } = dto;
         let isUpdate = false;
 
         for (const type in collection) {
             const statuses = collection[type];
+            const statusesToRemove: Status[] = [];
             for (const status of statuses) {
                 const container = this.findHandlerContainer<
                     StatusEffect,
@@ -185,29 +191,52 @@ export class StatusService {
 
                 if (!isActive) continue;
 
-                mutatedDTO = await instance.handle({
+                effectDTO = await instance[preview ? 'preview' : 'handle']({
                     client,
                     expedition: expedition,
-                    effectDTO: mutatedDTO,
+                    effectDTO,
                     status: status,
                     update(args) {
-                        const index = statuses.indexOf(status);
-                        statuses[index].args = args;
+                        status.args = args;
                         isUpdate = true;
                     },
                     remove() {
-                        const index = statuses.indexOf(status);
-                        statuses.splice(index, 1);
+                        statusesToRemove.push(status);
                         isUpdate = true;
                     },
                 });
             }
+            if (statusesToRemove.length > 0) {
+                collection[type] = statuses.filter(
+                    (status) => !statusesToRemove.includes(status),
+                );
+            }
         }
 
-        if (isUpdate)
+        if (isUpdate) {
             await this.updateStatuses(collectionOwner, expedition, collection);
+            await this.expeditionService.syncCardDescriptions(expedition);
+        }
 
-        return mutatedDTO;
+        return effectDTO;
+    }
+
+    public findEffectStatuses(
+        entity: SourceEntityDTO | TargetEntityDTO,
+        direction: StatusDirection,
+    ): StatusCollection {
+        let statuses: StatusCollection;
+        if (EffectService.isPlayer(entity)) {
+            statuses = entity.value.combatState.statuses;
+        } else if (EffectService.isEnemy(entity)) {
+            statuses = entity.value.statuses;
+        }
+
+        if (!statuses) {
+            throw new Error(`Could not find statuses for ${entity.type}`);
+        }
+
+        return this.filterCollectionByDirection(statuses, direction);
     }
 
     public filterCollectionByDirection(
@@ -290,6 +319,7 @@ export class StatusService {
         client: Socket,
         expedition: Expedition,
         event: StatusEventType,
+        args: any = {},
     ): Promise<void> {
         const currentNode = expedition.currentNode;
 
@@ -301,6 +331,7 @@ export class StatusService {
 
             for (const type in collection) {
                 const statuses = collection[type];
+                const statusesToRemove: Status[] = [];
                 for (const status of statuses) {
                     const container = this.findHandlerContainer<
                         StatusEvent,
@@ -335,19 +366,24 @@ export class StatusService {
                         source,
                         target: entityCollection.target,
                         status,
+                        args,
                         update(args) {
-                            const index = statuses.indexOf(status);
-                            statuses[index].args = args;
+                            status.args = args;
                             isUpdate = true;
                         },
                         remove() {
-                            const index = statuses.indexOf(status);
-                            statuses.splice(index, 1);
+                            statusesToRemove.push(status);
                             isUpdate = true;
                         },
                     };
 
                     await instance.handle(dto);
+                }
+
+                if (statusesToRemove.length > 0) {
+                    collection[type] = statuses.filter(
+                        (status) => !statusesToRemove.includes(status),
+                    );
                 }
             }
             if (isUpdate)
@@ -453,6 +489,21 @@ export class StatusService {
         }
 
         return source;
+    }
+
+    public getReferenceFromSource(
+        source: SourceEntityDTO,
+    ): SourceEntityReferenceDTO {
+        if (EffectService.isPlayer(source)) {
+            return {
+                type: CardTargetedEnum.Player,
+            };
+        } else if (EffectService.isEnemy(source)) {
+            return {
+                type: CardTargetedEnum.Enemy,
+                id: source.value.id,
+            };
+        }
     }
 
     async findAllStatuses(

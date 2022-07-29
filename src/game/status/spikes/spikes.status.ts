@@ -14,6 +14,10 @@ import { spikesStatus } from './constants';
 export class SpikesStatus implements StatusEffectHandler {
     constructor(private readonly effectService: EffectService) {}
 
+    async preview(args: StatusEffectDTO): Promise<EffectDTO> {
+        return args.effectDTO;
+    }
+
     async handle(
         dto: StatusEffectDTO<DamageArgs>,
     ): Promise<EffectDTO<DamageArgs>> {

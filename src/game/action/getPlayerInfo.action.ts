@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { ExpeditionService } from 'src/game/components/expedition/expedition.service';
 import { IExpeditionPlayerStateDeckCard } from '../components/expedition/expedition.interface';
 
-interface PlayerInfoResponse {
+export interface PlayerInfoResponse {
     playerName: string;
     characterClass: string;
     hpCurrent: number;
