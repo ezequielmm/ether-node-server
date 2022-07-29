@@ -7,9 +7,9 @@ import {
 } from '../interfaces';
 
 export const imbued: StatusEvent = {
+    name: 'imbued',
     trigger: StatusTrigger.Event,
     event: StatusEventType.OnEndCardPlay,
-    name: 'imbued',
     type: StatusType.Buff,
     startsAt: StatusStartsAt.Instantly,
 };
