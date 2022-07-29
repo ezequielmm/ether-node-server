@@ -34,10 +34,6 @@ import { ClientId, getClientIdField } from './expedition.type';
 import { EnemyService } from '../enemy/enemy.service';
 import { getRandomItemByWeight } from 'src/utils';
 import { EnemyId, getEnemyIdField } from '../enemy/enemy.type';
-import { EffectService } from 'src/game/effects/effects.service';
-import { CardTargetedEnum } from '../card/card.enum';
-import { sample } from 'lodash';
-import { Socket } from 'socket.io';
 
 @Injectable()
 export class ExpeditionService {
@@ -45,71 +41,14 @@ export class ExpeditionService {
         @InjectModel(Expedition.name)
         private readonly expedition: Model<ExpeditionDocument>,
         private readonly enemyService: EnemyService,
-        private readonly effectService: EffectService,
     ) {}
 
     async findOne(payload: FindOneExpeditionDTO): Promise<Expedition> {
-        const expedition = await this.expedition
+        return await this.expedition
             .findOne({
                 ...payload,
                 status: ExpeditionStatusEnum.InProgress,
             })
-            .lean();
-
-        return this.syncCardDescriptions(expedition);
-    }
-
-    async syncCardDescriptions(expedition: Expedition): Promise<Expedition> {
-        const cards = expedition.currentNode?.data?.player?.cards?.hand;
-
-        if (!cards) return expedition;
-
-        for (const card of cards) {
-            for (const jsonEffect of card.properties.effects) {
-                const { effect: name, args } = jsonEffect;
-
-                const dto = await this.effectService.preview({
-                    client: {} as Socket,
-                    expedition,
-                    dto: {
-                        client: {} as Socket,
-                        expedition,
-                        source: {
-                            type: CardTargetedEnum.Player,
-                            value: {
-                                globalState: expedition.playerState,
-                                combatState: expedition.currentNode.data.player,
-                            },
-                        },
-                        target: {
-                            type: CardTargetedEnum.Enemy,
-                            value: sample(
-                                expedition.currentNode?.data?.enemies,
-                            ),
-                        },
-                        args: {
-                            initialValue: args.value,
-                            currentValue: args.value,
-                        },
-                    },
-                    effect: name,
-                });
-                card.description = card.description.replace(
-                    `{${name}}`,
-                    dto.args.currentValue.toString(),
-                );
-            }
-        }
-
-        return this.expedition
-            .findOneAndUpdate(
-                {
-                    clientId: expedition.clientId,
-                },
-                {
-                    'currentNode.data.player.cards.hand': cards,
-                },
-            )
             .lean();
     }
 
@@ -311,15 +250,13 @@ export class ExpeditionService {
             }),
         };
 
-        const expedition = await this.expedition
+        return await this.expedition
             .findOneAndUpdate(
                 { [field]: clientId, status: ExpeditionStatusEnum.InProgress },
                 piles,
                 { new: true },
             )
             .lean();
-
-        return this.syncCardDescriptions(expedition);
     }
 
     async setPlayerDefense(
