@@ -2,7 +2,10 @@ import { Injectable, Logger } from '@nestjs/common';
 import { Socket } from 'socket.io';
 import { DrawCardAction } from '../action/drawCard.action';
 import { CombatTurnEnum } from '../components/expedition/expedition.enum';
+import { ExpeditionDocument } from '../components/expedition/expedition.schema';
 import { ExpeditionService } from '../components/expedition/expedition.service';
+import { Context } from '../components/interfaces';
+import { PlayerService } from '../components/player/player.service';
 import { SettingsService } from '../components/settings/settings.service';
 import {
     SWARAction,
@@ -22,6 +25,7 @@ export class BeginPlayerTurnProcess {
 
     constructor(
         private readonly expeditionService: ExpeditionService,
+        private readonly playerService: PlayerService,
         private readonly settingsService: SettingsService,
         private readonly drawCardAction: DrawCardAction,
         private readonly statusService: StatusService,
@@ -31,14 +35,22 @@ export class BeginPlayerTurnProcess {
         const { client } = payload;
 
         // Get previous round
-        const {
-            data: {
-                round,
-                player: { handSize, defense },
-            },
-        } = await this.expeditionService.getCurrentNode({
+        const expedition = await this.expeditionService.findOne({
             clientId: client.id,
         });
+        const {
+            currentNode: {
+                data: {
+                    round,
+                    player: { handSize, defense },
+                },
+            },
+        } = expedition;
+
+        const ctx: Context = {
+            client,
+            expedition: expedition as ExpeditionDocument,
+        };
 
         // Update round and entity playing
         await this.expeditionService.setCombatTurn({
@@ -65,29 +77,14 @@ export class BeginPlayerTurnProcess {
         // Reset energy
         const {
             player: {
-                energy: { initial },
+                energy: { initial, max },
             },
         } = await this.settingsService.getSettings();
 
         // Reset defense
-        if (defense > 0)
-            await this.expeditionService.setPlayerDefense({
-                clientId: client.id,
-                value: 0,
-            });
+        if (defense > 0) await this.playerService.setDefense(ctx, 0);
 
-        const expedition = await this.expeditionService.updatePlayerEnergy({
-            clientId: client.id,
-            newEnergy: initial,
-        });
-
-        const {
-            currentNode: {
-                data: {
-                    player: { energy, energyMax },
-                },
-            },
-        } = expedition;
+        this.playerService.setEnergy(ctx, initial);
 
         // Send new energy amount
 
@@ -101,7 +98,7 @@ export class BeginPlayerTurnProcess {
                 StandardResponse.respond({
                     message_type: SWARMessageType.PlayerAffected,
                     action: SWARAction.UpdateEnergy,
-                    data: [energy, energyMax],
+                    data: [initial, max],
                 }),
             ),
         );

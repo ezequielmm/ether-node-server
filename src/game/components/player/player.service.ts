@@ -1,18 +1,23 @@
-import { CardTargetedEnum } from '../card/card.enum';
-import { Context } from '../interfaces';
-import { ExpeditionPlayer } from './interfaces';
-import { ExpeditionService } from '../expedition/expedition.service';
+import { forwardRef, Inject, Injectable, Logger } from '@nestjs/common';
 import { set } from 'lodash';
+import { CardTargetedEnum } from '../card/card.enum';
+import { ExpeditionService } from '../expedition/expedition.service';
+import { Context } from '../interfaces';
 import {
+    PLAYER_CURRENT_HP_PATH,
     PLAYER_DEFENSE_PATH,
     PLAYER_ENERGY_PATH,
-    PLAYER_CURRENT_HP_PATH,
 } from './contants';
-import { Injectable } from '@nestjs/common';
+import { ExpeditionPlayer } from './interfaces';
 
 @Injectable()
 export class PlayerService {
-    constructor(private readonly expeditionService: ExpeditionService) {}
+    private readonly logger: Logger = new Logger(PlayerService.name);
+
+    constructor(
+        @Inject(forwardRef(() => ExpeditionService))
+        private readonly expeditionService: ExpeditionService,
+    ) {}
 
     /**
      * Get the player from the context
@@ -37,12 +42,13 @@ export class PlayerService {
      * @param ctx Context
      * @param defense Defense to set
      */
-    public async defend(ctx: Context, defense: number): Promise<number> {
-        await this.expeditionService.updateById(ctx.expedition.id, {
+    public async setDefense(ctx: Context, defense: number): Promise<number> {
+        await this.expeditionService.updateById(ctx.expedition._id, {
             [PLAYER_DEFENSE_PATH]: defense,
         });
 
         set(ctx.expedition, PLAYER_DEFENSE_PATH, defense);
+        this.logger.log(`Player 🛡 defense set to ${defense}`);
 
         return defense;
     }
@@ -54,12 +60,13 @@ export class PlayerService {
      * @param energy New energy value
      * @returns Return the new energy value
      */
-    public async energize(ctx: Context, energy: number): Promise<number> {
-        await this.expeditionService.updateById(ctx.expedition.id, {
+    public async setEnergy(ctx: Context, energy: number): Promise<number> {
+        await this.expeditionService.updateById(ctx.expedition._id, {
             [PLAYER_ENERGY_PATH]: energy,
         });
 
         set(ctx.expedition, PLAYER_ENERGY_PATH, energy);
+        this.logger.log(`Player energy set to ${energy}`);
 
         return energy;
     }
@@ -71,14 +78,18 @@ export class PlayerService {
      * @param hp New hp value
      * @returns Return the new hp value
      */
-    public async heal(ctx: Context, heal: number): Promise<number> {
-        await this.expeditionService.updateById(ctx.expedition.id, {
-            [PLAYER_CURRENT_HP_PATH]: heal,
+    public async setHealt(ctx: Context, hp: number): Promise<number> {
+        const player = this.get(ctx);
+        const newHp = Math.min(hp, player.value.globalState.hpMax);
+
+        await this.expeditionService.updateById(ctx.expedition._id, {
+            [PLAYER_CURRENT_HP_PATH]: newHp,
         });
 
-        set(ctx.expedition, PLAYER_CURRENT_HP_PATH, heal);
+        set(ctx.expedition, PLAYER_CURRENT_HP_PATH, newHp);
+        this.logger.log(`Player hp set to ${newHp}`);
 
-        return heal;
+        return hp;
     }
 
     /**
@@ -113,14 +124,11 @@ export class PlayerService {
             newHp = Math.max(0, currentHp - damage);
         }
 
-        // Update the player's defense and new health
-        await this.expeditionService.updateById(ctx.expedition.id, {
-            [PLAYER_DEFENSE_PATH]: newDefense,
-            [PLAYER_CURRENT_HP_PATH]: newHp,
-        });
+        this.logger.log(`Player damage attempt of ${damage}`);
 
-        set(ctx.expedition, PLAYER_DEFENSE_PATH, newDefense);
-        set(ctx.expedition, PLAYER_CURRENT_HP_PATH, newHp);
+        // Update the player's defense and new health
+        await this.setDefense(ctx, newDefense);
+        await this.setHealt(ctx, newHp);
 
         return newHp;
     }

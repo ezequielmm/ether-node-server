@@ -4,6 +4,7 @@ import { CardModule } from '../components/card/card.module';
 import { CharacterModule } from '../components/character/character.module';
 import { EnemyModule } from '../components/enemy/enemy.module';
 import { ExpeditionModule } from '../components/expedition/expedition.module';
+import { PlayerModule } from '../components/player/player.module';
 import { SettingsModule } from '../components/settings/settings.module';
 import { EffectModule } from '../effects/effects.module';
 import { StatusModule } from '../status/status.module';
@@ -27,6 +28,7 @@ import { SendEnemyIntentProcess } from './sendEnemyIntents.process';
         CharacterModule,
         StatusModule,
         forwardRef(() => EffectModule),
+        PlayerModule,
     ],
     providers: [
         SendEnemyIntentProcess,

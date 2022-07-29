@@ -7,6 +7,9 @@ import { EffectDecorator } from '../effects.decorator';
 import { EffectDTO, EffectHandler } from '../effects.interface';
 import { EffectService } from '../effects.service';
 import { isNotUndefined } from 'src/utils';
+import { PlayerService } from 'src/game/components/player/player.service';
+import { ExpeditionDocument } from 'src/game/components/expedition/expedition.schema';
+import { Context } from 'src/game/components/interfaces';
 
 export interface DefenseArgs {
     useEnemies: boolean;
@@ -20,7 +23,10 @@ export interface DefenseArgs {
 })
 @Injectable()
 export class DefenseEffect implements EffectHandler {
-    constructor(private readonly expeditionService: ExpeditionService) {}
+    constructor(
+        private readonly expeditionService: ExpeditionService,
+        private readonly playerService: PlayerService,
+    ) {}
 
     async handle(payload: EffectDTO<DefenseArgs>): Promise<void> {
         const {
@@ -41,6 +47,10 @@ export class DefenseEffect implements EffectHandler {
                 useAttackingEnemies,
             },
         } = payload;
+        const ctx: Context = {
+            client,
+            expedition: payload.expedition as ExpeditionDocument,
+        };
 
         let newDefense = currentValue;
 
@@ -73,10 +83,7 @@ export class DefenseEffect implements EffectHandler {
 
             newDefense = newDefense + currentDefense;
 
-            await this.expeditionService.setPlayerDefense({
-                clientId: client.id,
-                value: newDefense,
-            });
+            await this.playerService.setDefense(ctx, newDefense);
         }
 
         // Apply if the enemy is the target

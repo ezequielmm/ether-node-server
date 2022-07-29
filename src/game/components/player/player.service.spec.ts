@@ -68,7 +68,7 @@ describe('PlayerService', () => {
 
     describe('defend', () => {
         it('should update the player defense', async () => {
-            await playerService.defend(mockContext, 10);
+            await playerService.setDefense(mockContext, 10);
             expect(mockExpeditionService.updateById).toHaveBeenCalledWith(
                 mockContext.expedition.id,
                 {
@@ -82,7 +82,7 @@ describe('PlayerService', () => {
 
     describe('energize', () => {
         it('should update the player energy', async () => {
-            await playerService.energize(mockContext, 10);
+            await playerService.setEnergy(mockContext, 10);
             expect(mockExpeditionService.updateById).toHaveBeenCalledWith(
                 mockContext.expedition.id,
                 {
@@ -95,7 +95,7 @@ describe('PlayerService', () => {
 
     describe('heal', () => {
         it('should update the player health', async () => {
-            await playerService.heal(mockContext, 10);
+            await playerService.setHealt(mockContext, 10);
             expect(mockExpeditionService.updateById).toHaveBeenCalledWith(
                 mockContext.expedition.id,
                 {
@@ -104,6 +104,19 @@ describe('PlayerService', () => {
             );
             expect(get(mockContext.expedition, PLAYER_CURRENT_HP_PATH)).toBe(
                 10,
+            );
+        });
+
+        it('should heal to max hp', async () => {
+            await playerService.setHealt(mockContext, 90);
+            expect(mockExpeditionService.updateById).toHaveBeenCalledWith(
+                mockContext.expedition.id,
+                {
+                    [PLAYER_CURRENT_HP_PATH]: 80,
+                },
+            );
+            expect(get(mockContext.expedition, PLAYER_CURRENT_HP_PATH)).toBe(
+                80,
             );
         });
     });

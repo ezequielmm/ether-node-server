@@ -10,23 +10,19 @@ import {
     GetDeckCardsDTO,
     GetExpeditionMapDTO,
     GetExpeditionMapNodeDTO,
-    GetPlayerStateDTO,
     playerHasAnExpeditionDTO,
     SetCombatTurnDTO,
-    SetPlayerDefenseDTO,
     UpdateClientIdDTO,
     UpdateEnemiesArrayDTO,
     UpdateExpeditionDTO,
     UpdateHandPilesDTO,
     UpdatePlayerEnergyDTO,
-    UpdatePlayerHealthDTO,
 } from './expedition.dto';
 import { ExpeditionStatusEnum } from './expedition.enum';
 import {
     IExpeditionCurrentNode,
     IExpeditionCurrentNodeDataEnemy,
     IExpeditionNode,
-    IExpeditionPlayerGlobalState,
     IExpeditionPlayerStateDeckCard,
 } from './expedition.interface';
 import { generateMap, restoreMap } from 'src/game/map/app';
@@ -261,18 +257,6 @@ export class ExpeditionService {
         return expedition.currentNode;
     }
 
-    /** @deprecated Use PlayerService.getPlayer instead */
-    async getPlayerState(
-        payload: GetPlayerStateDTO,
-    ): Promise<IExpeditionPlayerGlobalState> {
-        const { clientId } = payload;
-        const { playerState } = await this.expedition.findOne({
-            clientId,
-            status: ExpeditionStatusEnum.InProgress,
-        });
-        return playerState;
-    }
-
     async cardExistsOnPlayerHand(
         payload: CardExistsOnPlayerHandDTO,
     ): Promise<boolean> {
@@ -351,24 +335,6 @@ export class ExpeditionService {
         return this.syncCardDescriptions(expedition);
     }
 
-    /** @deprecated Use PlayerService.defense instead */
-    async setPlayerDefense(
-        payload: SetPlayerDefenseDTO,
-    ): Promise<ExpeditionDocument> {
-        const { clientId, value } = payload;
-
-        const clientField = getClientIdField(clientId);
-
-        return await this.expedition.findOneAndUpdate(
-            {
-                [clientField]: clientId,
-                status: ExpeditionStatusEnum.InProgress,
-            },
-            { 'currentNode.data.player.defense': value },
-            { new: true },
-        );
-    }
-
     async setEnemyDefense(
         clientId: string,
         enemyId: EnemyId,
@@ -386,24 +352,6 @@ export class ExpeditionService {
             {
                 'currentNode.data.enemies.$.defense': defense,
             },
-        );
-    }
-
-    /** @deprecated Use PlayerService.heal instead */
-    async setPlayerHealth(
-        payload: UpdatePlayerHealthDTO,
-    ): Promise<ExpeditionDocument> {
-        const { clientId, hpCurrent } = payload;
-
-        const clientField = getClientIdField(clientId);
-
-        return this.expedition.findOneAndUpdate(
-            {
-                [clientField]: clientId,
-                status: ExpeditionStatusEnum.InProgress,
-            },
-            { 'playerState.hpCurrent': hpCurrent },
-            { new: true },
         );
     }
 

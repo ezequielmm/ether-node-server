@@ -13,6 +13,7 @@ import { ProviderModule } from '../provider/provider.module';
 import { DoubleBurnEffect } from './doubleBurn/doubleBurn.effect';
 import { HeadButtEffect } from './headButt/headButt.effect';
 import { RepositionEffect } from './reposition/reposition.effect';
+import { PlayerModule } from '../components/player/player.module';
 
 @Module({
     imports: [
@@ -20,6 +21,7 @@ import { RepositionEffect } from './reposition/reposition.effect';
         forwardRef(() => ActionModule),
         StatusModule,
         ProviderModule,
+        PlayerModule,
     ],
     providers: [
         EffectService,

@@ -14,6 +14,7 @@ import { ExpeditionMapNodeTypeEnum } from 'src/game/components/expedition/expedi
 import { InitCombatProcess } from 'src/game/process/initCombat.process';
 import { CharacterService } from 'src/game/components/character/character.service';
 import { CharacterClassEnum } from 'src/game/components/character/character.enum';
+import { PlayerService } from 'src/game/components/player/player.service';
 
 @WebSocketGateway({
     cors: {
@@ -31,6 +32,7 @@ export class SocketGateway
         private readonly fullsyncAction: FullSyncAction,
         private readonly initCombatProcess: InitCombatProcess,
         private readonly characterService: CharacterService,
+        private readonly playerService: PlayerService,
     ) {}
 
     afterInit(): void {
@@ -54,12 +56,12 @@ export class SocketGateway
                 },
             } = await this.authGatewayService.getUser(authorization);
 
-            const { currentNode } = await this.expeditionService.updateClientId(
-                {
-                    clientId: client.id,
-                    playerId,
-                },
-            );
+            const expedition = await this.expeditionService.updateClientId({
+                clientId: client.id,
+                playerId,
+            });
+
+            const { currentNode } = expedition;
 
             const hasExpedition =
                 await this.expeditionService.playerHasExpeditionInProgress({
@@ -88,10 +90,13 @@ export class SocketGateway
                                 characterClass: CharacterClassEnum.Knight,
                             });
 
-                        await this.expeditionService.setPlayerHealth({
-                            clientId: client.id,
-                            hpCurrent: initialHealth,
-                        });
+                        await this.playerService.setHealt(
+                            {
+                                client,
+                                expedition,
+                            },
+                            initialHealth,
+                        );
 
                         await this.initCombatProcess.process(client, node);
                     }
