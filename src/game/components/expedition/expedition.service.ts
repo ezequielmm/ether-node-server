@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, UpdateQuery } from 'mongoose';
 import { Expedition, ExpeditionDocument } from './expedition.schema';
 import {
     CardExistsOnPlayerHandDTO,
@@ -115,6 +115,33 @@ export class ExpeditionService {
 
     async create(payload: CreateExpeditionDTO): Promise<ExpeditionDocument> {
         return await this.expedition.create(payload);
+    }
+
+    /**
+     * Update the expedition using ObjectId
+     *
+     * @param id The id of the expedition
+     * @param query Expedition query
+     * @returns If the expedition was updated
+     */
+    async updateById(
+        id: any,
+        query: UpdateQuery<ExpeditionDocument>,
+    ): Promise<boolean> {
+        // Using udpateOne to save a bit of time and bandwidth
+        // it is not necessary to return the updated document
+        const response = await this.expedition.updateOne(
+            {
+                _id: id,
+            },
+            query,
+            {
+                new: true,
+            },
+        );
+
+        // Return if expedition was updated
+        return response.modifiedCount > 0;
     }
 
     async update(
@@ -234,6 +261,7 @@ export class ExpeditionService {
         return expedition.currentNode;
     }
 
+    /** @deprecated Use PlayerService.getPlayer instead */
     async getPlayerState(
         payload: GetPlayerStateDTO,
     ): Promise<IExpeditionPlayerGlobalState> {
@@ -265,6 +293,7 @@ export class ExpeditionService {
         return itemExists !== null;
     }
 
+    /** @deprecated Use PlayerService.energy instead */
     async updatePlayerEnergy(
         payload: UpdatePlayerEnergyDTO,
     ): Promise<ExpeditionDocument> {
@@ -322,6 +351,7 @@ export class ExpeditionService {
         return this.syncCardDescriptions(expedition);
     }
 
+    /** @deprecated Use PlayerService.defense instead */
     async setPlayerDefense(
         payload: SetPlayerDefenseDTO,
     ): Promise<ExpeditionDocument> {
@@ -359,6 +389,7 @@ export class ExpeditionService {
         );
     }
 
+    /** @deprecated Use PlayerService.heal instead */
     async setPlayerHealth(
         payload: UpdatePlayerHealthDTO,
     ): Promise<ExpeditionDocument> {
