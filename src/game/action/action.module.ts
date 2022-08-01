@@ -1,6 +1,7 @@
 import { forwardRef, Module } from '@nestjs/common';
 import { CardModule } from '../components/card/card.module';
 import { ExpeditionModule } from '../components/expedition/expedition.module';
+import { PlayerModule } from '../components/player/player.module';
 import { SettingsModule } from '../components/settings/settings.module';
 import { EffectModule } from '../effects/effects.module';
 import { ProcessModule } from '../process/process.module';
@@ -17,7 +18,6 @@ import { GetEnergyAction } from './getEnergy.action';
 import { GetPlayerInfoAction } from './getPlayerInfo.action';
 import { GetStatusesAction } from './getStatuses.action';
 import { SetCombatTurnAction } from './setCombatTurn.action';
-import { UpdatePlayerEnergyAction } from './updatePlayerEnergy.action';
 
 @Module({
     imports: [
@@ -27,6 +27,7 @@ import { UpdatePlayerEnergyAction } from './updatePlayerEnergy.action';
         StatusModule,
         SettingsModule,
         CardModule,
+        PlayerModule,
     ],
     providers: [
         FullSyncAction,
@@ -36,7 +37,6 @@ import { UpdatePlayerEnergyAction } from './updatePlayerEnergy.action';
         GetEnemiesAction,
         GetPlayerInfoAction,
         CardPlayedAction,
-        UpdatePlayerEnergyAction,
         DiscardCardAction,
         DiscardAllCardsAction,
         ExhaustCardAction,
@@ -51,7 +51,6 @@ import { UpdatePlayerEnergyAction } from './updatePlayerEnergy.action';
         GetEnemiesAction,
         GetPlayerInfoAction,
         CardPlayedAction,
-        UpdatePlayerEnergyAction,
         DiscardCardAction,
         DiscardAllCardsAction,
         ExhaustCardAction,
