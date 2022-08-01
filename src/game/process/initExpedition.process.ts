@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { randomUUID } from 'crypto';
+import { CardDescriptionFormatter } from '../cardDescriptionFormatter/cardDescriptionFormatter';
 import { CardService } from '../components/card/card.service';
 import { CharacterClassEnum } from '../components/character/character.enum';
 import { CharacterDocument } from '../components/character/character.schema';
@@ -83,7 +84,7 @@ export class InitExpeditionProcess {
                     cardId: card.cardId,
                     id: randomUUID(),
                     name: card.name,
-                    description: this.generateCardDescription(card),
+                    description: CardDescriptionFormatter.process(card),
                     rarity: card.rarity,
                     energy: card.energy,
                     cardType: card.cardType,
@@ -95,26 +96,5 @@ export class InitExpeditionProcess {
                     isUpgraded: card.isUpgraded,
                 };
             });
-    }
-
-    private generateCardDescription(
-        card: IExpeditionPlayerStateDeckCard,
-    ): string {
-        // First we deestructure the effect array
-        const {
-            properties: { effects },
-        } = card;
-
-        // Next we loop over all the effects to find the value on the text
-        // and update it with the correct value
-        effects.forEach(({ effect: name, args: { value } }) => {
-            card.description = card.description.replace(
-                `{${name}}`,
-                value.toString(),
-            );
-        });
-
-        // Finally we return the card with the next description
-        return card.description;
     }
 }
