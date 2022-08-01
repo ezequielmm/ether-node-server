@@ -108,7 +108,7 @@ export class PlayerService {
         let newDefense = 0;
         let newHp = currentHp;
 
-        // Them we check if the player has defense to reduce from there
+        // Now we check if the player has defense to reduce from there
         if (currentDefense > 0) {
             newDefense = currentDefense - damage;
 

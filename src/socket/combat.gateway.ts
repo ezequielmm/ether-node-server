@@ -19,6 +19,7 @@ import { CombatTurnEnum } from 'src/game/components/expedition/expedition.enum';
 import { EndEnemyTurnProcess } from 'src/game/process/endEnemyTurn.process';
 import { SendEnemyIntentProcess } from 'src/game/process/sendEnemyIntents.process';
 import { GetStatusesAction } from 'src/game/action/getStatuses.action';
+import { GetPlayerDeckAction } from 'src/game/action/getPlayerDeck.action';
 
 interface CardPlayedInterface {
     cardId: CardId;
@@ -44,6 +45,7 @@ export class CombatGateway {
         private readonly endEnemyTurnProcess: EndEnemyTurnProcess,
         private readonly expeditionService: ExpeditionService,
         private readonly sendEnemyIntentsProcess: SendEnemyIntentProcess,
+        private readonly getPlayerDeckAction: GetPlayerDeckAction,
     ) {}
 
     @SubscribeMessage('EndTurn')
@@ -109,6 +111,10 @@ export class CombatGateway {
 
                 case DataWSRequestTypesEnum.EnemyIntents:
                     data = await this.sendEnemyIntentsProcess.handle(client.id);
+                    break;
+
+                case DataWSRequestTypesEnum.PlayerDeck:
+                    data = await this.getPlayerDeckAction.handle(client.id);
                     break;
             }
 
