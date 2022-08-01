@@ -83,7 +83,7 @@ export class InitExpeditionProcess {
                     cardId: card.cardId,
                     id: randomUUID(),
                     name: card.name,
-                    description: card.description,
+                    description: this.generateCardDescription(card),
                     rarity: card.rarity,
                     energy: card.energy,
                     cardType: card.cardType,
@@ -95,5 +95,26 @@ export class InitExpeditionProcess {
                     isUpgraded: card.isUpgraded,
                 };
             });
+    }
+
+    private generateCardDescription(
+        card: IExpeditionPlayerStateDeckCard,
+    ): string {
+        // First we deestructure the effect array
+        const {
+            properties: { effects },
+        } = card;
+
+        // Next we loop over all the effects to find the value on the text
+        // and update it with the correct value
+        effects.forEach(({ effect: name, args: { value } }) => {
+            card.description = card.description.replace(
+                `{${name}}`,
+                value.toString(),
+            );
+        });
+
+        // Finally we return the card with the next description
+        return card.description;
     }
 }
