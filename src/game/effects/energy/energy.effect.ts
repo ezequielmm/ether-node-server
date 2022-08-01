@@ -1,37 +1,44 @@
 import { Injectable } from '@nestjs/common';
-import { ExpeditionService } from '../../components/expedition/expedition.service';
 import { energyEffect } from './constants';
 import { EffectDecorator } from '../effects.decorator';
 import { EffectDTO, EffectHandler } from '../effects.interface';
+import { PlayerService } from 'src/game/components/player/player.service';
+import { Context } from 'src/game/components/interfaces';
+import { ExpeditionDocument } from 'src/game/components/expedition/expedition.schema';
 
 @EffectDecorator({
     effect: energyEffect,
 })
 @Injectable()
 export class EnergyEffect implements EffectHandler {
-    constructor(private readonly expeditionService: ExpeditionService) {}
+    constructor(private readonly playerService: PlayerService) {}
 
     async handle(payload: EffectDTO): Promise<void> {
         const {
             client,
-            args: { currentValue: amountToAdd },
+            args: { currentValue: energyToAdd },
+            expedition,
         } = payload;
 
-        // Get current energy and max energy amount
+        // Deestructure the expedition to get the current
+        // energy available
         const {
-            data: {
-                player: { energy },
+            currentNode: {
+                data: {
+                    player: { energy: currentEnergy },
+                },
             },
-        } = await this.expeditionService.getCurrentNode({
-            clientId: client.id,
-        });
+        } = expedition;
 
-        const newEnergy = energy + amountToAdd;
+        // Sum the values to get the new energy
+        const newEnergy = currentEnergy + energyToAdd;
 
-        // update energy amount
-        await this.expeditionService.updatePlayerEnergy({
-            clientId: client.id,
-            newEnergy,
-        });
+        const ctx: Context = {
+            client,
+            expedition: expedition as ExpeditionDocument,
+        };
+
+        // Set the new energy value to the expedition
+        await this.playerService.setEnergy(ctx, newEnergy);
     }
 }

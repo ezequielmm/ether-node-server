@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, UpdateQuery } from 'mongoose';
 import { Expedition, ExpeditionDocument } from './expedition.schema';
 import {
     CardExistsOnPlayerHandDTO,
@@ -10,23 +10,19 @@ import {
     GetDeckCardsDTO,
     GetExpeditionMapDTO,
     GetExpeditionMapNodeDTO,
-    GetPlayerStateDTO,
     playerHasAnExpeditionDTO,
     SetCombatTurnDTO,
-    SetPlayerDefenseDTO,
     UpdateClientIdDTO,
     UpdateEnemiesArrayDTO,
     UpdateExpeditionDTO,
     UpdateHandPilesDTO,
     UpdatePlayerEnergyDTO,
-    UpdatePlayerHealthDTO,
 } from './expedition.dto';
 import { ExpeditionStatusEnum } from './expedition.enum';
 import {
     IExpeditionCurrentNode,
     IExpeditionCurrentNodeDataEnemy,
     IExpeditionNode,
-    IExpeditionPlayerGlobalState,
     IExpeditionPlayerStateDeckCard,
 } from './expedition.interface';
 import { generateMap, restoreMap } from 'src/game/map/app';
@@ -54,6 +50,33 @@ export class ExpeditionService {
 
     async create(payload: CreateExpeditionDTO): Promise<ExpeditionDocument> {
         return await this.expedition.create(payload);
+    }
+
+    /**
+     * Update the expedition using ObjectId
+     *
+     * @param id The id of the expedition
+     * @param query Expedition query
+     * @returns If the expedition was updated
+     */
+    async updateById(
+        id: any,
+        query: UpdateQuery<ExpeditionDocument>,
+    ): Promise<boolean> {
+        // Using udpateOne to save a bit of time and bandwidth
+        // it is not necessary to return the updated document
+        const response = await this.expedition.updateOne(
+            {
+                _id: id,
+            },
+            query,
+            {
+                new: true,
+            },
+        );
+
+        // Return if expedition was updated
+        return response.modifiedCount > 0;
     }
 
     async update(
@@ -173,17 +196,6 @@ export class ExpeditionService {
         return expedition.currentNode;
     }
 
-    async getPlayerState(
-        payload: GetPlayerStateDTO,
-    ): Promise<IExpeditionPlayerGlobalState> {
-        const { clientId } = payload;
-        const { playerState } = await this.expedition.findOne({
-            clientId,
-            status: ExpeditionStatusEnum.InProgress,
-        });
-        return playerState;
-    }
-
     async cardExistsOnPlayerHand(
         payload: CardExistsOnPlayerHandDTO,
     ): Promise<boolean> {
@@ -204,6 +216,7 @@ export class ExpeditionService {
         return itemExists !== null;
     }
 
+    /** @deprecated Use PlayerService.energy instead */
     async updatePlayerEnergy(
         payload: UpdatePlayerEnergyDTO,
     ): Promise<ExpeditionDocument> {
@@ -259,23 +272,6 @@ export class ExpeditionService {
             .lean();
     }
 
-    async setPlayerDefense(
-        payload: SetPlayerDefenseDTO,
-    ): Promise<ExpeditionDocument> {
-        const { clientId, value } = payload;
-
-        const clientField = getClientIdField(clientId);
-
-        return await this.expedition.findOneAndUpdate(
-            {
-                [clientField]: clientId,
-                status: ExpeditionStatusEnum.InProgress,
-            },
-            { 'currentNode.data.player.defense': value },
-            { new: true },
-        );
-    }
-
     async setEnemyDefense(
         clientId: string,
         enemyId: EnemyId,
@@ -293,23 +289,6 @@ export class ExpeditionService {
             {
                 'currentNode.data.enemies.$.defense': defense,
             },
-        );
-    }
-
-    async setPlayerHealth(
-        payload: UpdatePlayerHealthDTO,
-    ): Promise<ExpeditionDocument> {
-        const { clientId, hpCurrent } = payload;
-
-        const clientField = getClientIdField(clientId);
-
-        return this.expedition.findOneAndUpdate(
-            {
-                [clientField]: clientId,
-                status: ExpeditionStatusEnum.InProgress,
-            },
-            { 'playerState.hpCurrent': hpCurrent },
-            { new: true },
         );
     }
 
