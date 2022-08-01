@@ -7,7 +7,9 @@ import {
 } from '../components/card/card.enum';
 import { CardId, getCardIdField } from '../components/card/card.type';
 import { IExpeditionCurrentNodeDataEnemy } from '../components/expedition/expedition.interface';
+import { ExpeditionDocument } from '../components/expedition/expedition.schema';
 import { ExpeditionService } from '../components/expedition/expedition.service';
+import { PlayerService } from '../components/player/player.service';
 import { EffectService } from '../effects/effects.service';
 import { TargetId } from '../effects/effects.types';
 import { EndPlayerTurnProcess } from '../process/endPlayerTurn.process';
@@ -28,12 +30,16 @@ import {
     PlayerInfoResponse,
 } from './getPlayerInfo.action';
 import { GetStatusesAction, GetStatusesResponse } from './getStatuses.action';
-import { UpdatePlayerEnergyAction } from './updatePlayerEnergy.action';
 
 interface CardPlayedDTO {
     readonly client: Socket;
     readonly cardId: CardId;
     readonly targetId: TargetId;
+}
+
+interface ICanPlayCard {
+    readonly canPlayCard: boolean;
+    readonly message?: string;
 }
 
 @Injectable()
@@ -46,12 +52,12 @@ export class CardPlayedAction {
         private readonly expeditionService: ExpeditionService,
         private readonly effectService: EffectService,
         private readonly statusService: StatusService,
-        private readonly updatePlayerEnergyAction: UpdatePlayerEnergyAction,
         private readonly discardCardAction: DiscardCardAction,
         private readonly exhaustCardAction: ExhaustCardAction,
         private readonly getPlayerInfoAction: GetPlayerInfoAction,
         private readonly endPlayerTurnProcess: EndPlayerTurnProcess,
         private readonly getStatusesAction: GetStatusesAction,
+        private readonly playerService: PlayerService,
     ) {}
 
     async handle(payload: CardPlayedDTO): Promise<void> {
@@ -104,8 +110,10 @@ export class CardPlayedAction {
 
             // Next we make sure that the card can be played and the user has
             // enough energy
-            const { canPlayCard, newEnergyAmount, message } =
-                this.canPlayerPlayCard(cardEnergyCost, availableEnergy);
+            const { canPlayCard, message } = this.canPlayerPlayCard(
+                cardEnergyCost,
+                availableEnergy,
+            );
 
             // next we inform the player that is not possible to play the card
             if (!canPlayCard) {
@@ -159,11 +167,6 @@ export class CardPlayedAction {
                     targetId,
                 );
 
-                await this.updatePlayerEnergyAction.handle({
-                    clientId: this.client.id,
-                    newEnergy: newEnergyAmount,
-                });
-
                 const {
                     data: {
                         player: { energy, energyMax },
@@ -173,7 +176,14 @@ export class CardPlayedAction {
                     clientId: client.id,
                 });
 
-                this.sendUpdateEnergyMessage(energy, energyMax);
+                const newEnergy = energy - cardEnergyCost;
+
+                await this.playerService.setEnergy(
+                    { client, expedition: expedition as ExpeditionDocument },
+                    newEnergy,
+                );
+
+                this.sendUpdateEnergyMessage(newEnergy, energyMax);
 
                 this.sendUpdateEnemiesMessage(enemies);
 
@@ -207,14 +217,13 @@ export class CardPlayedAction {
     private canPlayerPlayCard(
         cardEnergyCost: number,
         availableEnergy: number,
-    ): { canPlayCard: boolean; newEnergyAmount: number; message?: string } {
+    ): ICanPlayCard {
         // First we verify if the card has a 0 cost
         // if this is true, we allow the use of this card no matter the energy
         // the player has available
         if (cardEnergyCost === CardEnergyEnum.None)
             return {
                 canPlayCard: true,
-                newEnergyAmount: availableEnergy,
             };
 
         // If the card has a cost of -1, this means that the card will use all the available
@@ -222,7 +231,6 @@ export class CardPlayedAction {
         if (cardEnergyCost === CardEnergyEnum.All && availableEnergy > 0)
             return {
                 canPlayCard: true,
-                newEnergyAmount: 0,
             };
 
         // If the card energy cost is higher than the player's available energy or the
@@ -230,7 +238,6 @@ export class CardPlayedAction {
         if (cardEnergyCost > availableEnergy || availableEnergy === 0)
             return {
                 canPlayCard: false,
-                newEnergyAmount: availableEnergy,
                 message: CardPlayErrorMessages.NoEnergyLeft,
             };
 
@@ -238,7 +245,6 @@ export class CardPlayedAction {
         if (cardEnergyCost <= availableEnergy)
             return {
                 canPlayCard: true,
-                newEnergyAmount: availableEnergy - cardEnergyCost,
             };
     }
 
