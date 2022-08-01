@@ -4,7 +4,7 @@ import { cloneDeep, find, matches } from 'lodash';
 import { Model } from 'mongoose';
 import { Socket } from 'socket.io';
 import { CardTargetedEnum } from '../components/card/card.enum';
-import { getEnemyIdField } from '../components/enemy/enemy.type';
+import { enemyIdField } from '../components/enemy/enemy.type';
 import { ExpeditionStatusEnum } from '../components/expedition/expedition.enum';
 import {
     Expedition,
@@ -77,7 +77,7 @@ export class StatusService {
                 {
                     [getClientIdField(clientId)]: clientId,
                     status: ExpeditionStatusEnum.InProgress,
-                    [`currentNode.data.enemies.${getEnemyIdField(enemyId)}`]:
+                    [`currentNode.data.enemies.${enemyIdField(enemyId)}`]:
                         enemyId,
                 },
                 {
@@ -285,7 +285,7 @@ export class StatusService {
                 {
                     clientId: expedition.clientId,
                     status: ExpeditionStatusEnum.InProgress,
-                    [`currentNode.data.enemies.${getEnemyIdField(
+                    [`currentNode.data.enemies.${enemyIdField(
                         source.value.id,
                     )}`]: source.value.id,
                 },
@@ -482,7 +482,7 @@ export class StatusService {
             source = {
                 type: CardTargetedEnum.Enemy,
                 value: find(expedition.currentNode.data.enemies, [
-                    getEnemyIdField(reference.id),
+                    enemyIdField(reference.id),
                     reference.id,
                 ]),
             };

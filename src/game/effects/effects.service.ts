@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { find, sample } from 'lodash';
 import { CardTargetedEnum } from '../components/card/card.enum';
-import { EnemyId, getEnemyIdField } from '../components/enemy/enemy.type';
+import { EnemyId, enemyIdField } from '../components/enemy/enemy.type';
 import { Expedition } from '../components/expedition/expedition.schema';
 import { ProviderContainer } from '../provider/interfaces';
 import { ProviderService } from '../provider/provider.service';
@@ -146,6 +146,7 @@ export class EffectService {
         };
     }
 
+    /** @deprecated Use EnemyService.get instead */
     public static extractEnemyDTO(
         expedition: Expedition,
         enemy: EnemyId,
@@ -158,10 +159,11 @@ export class EffectService {
 
         return {
             type: CardTargetedEnum.Enemy,
-            value: find(enemies, [getEnemyIdField(enemy), enemy]),
+            value: find(enemies, [enemyIdField(enemy), enemy]),
         };
     }
 
+    /** @deprecated Use EnemyService.getRandom instead */
     public static extractRandomEnemyDTO(
         expedition: Expedition,
     ): RandomEnemyDTO {
@@ -177,6 +179,7 @@ export class EffectService {
         };
     }
 
+    /** @deprecated Use EnemyService.getAll instead */
     public static extractAllEnemiesDTO(expedition: Expedition): AllEnemiesDTO {
         const {
             currentNode: {

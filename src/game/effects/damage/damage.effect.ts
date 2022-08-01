@@ -4,7 +4,7 @@ import { ExpeditionDocument } from 'src/game/components/expedition/expedition.sc
 import { Context } from 'src/game/components/interfaces';
 import { PlayerService } from 'src/game/components/player/player.service';
 import { isNotUndefined } from 'src/utils';
-import { getEnemyIdField } from '../../components/enemy/enemy.type';
+import { enemyIdField } from '../../components/enemy/enemy.type';
 import { IExpeditionCurrentNodeDataEnemy } from '../../components/expedition/expedition.interface';
 import { ExpeditionService } from '../../components/expedition/expedition.service';
 import {
@@ -123,7 +123,7 @@ export class DamageEffect implements EffectHandler {
         const dataResponse = [];
 
         enemies.forEach((enemy) => {
-            if (enemy[getEnemyIdField(targetId)] === targetId) {
+            if (enemy[enemyIdField(targetId)] === targetId) {
                 enemy = this.calculateEnemyDamage(enemy, damage);
 
                 dataResponse.push({

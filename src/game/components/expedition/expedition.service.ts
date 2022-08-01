@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, UpdateQuery } from 'mongoose';
+import { Model, UpdateQuery, FilterQuery } from 'mongoose';
 import { Expedition, ExpeditionDocument } from './expedition.schema';
 import {
     CardExistsOnPlayerHandDTO,
@@ -29,7 +29,7 @@ import { generateMap, restoreMap } from 'src/game/map/app';
 import { ClientId, getClientIdField } from './expedition.type';
 import { EnemyService } from '../enemy/enemy.service';
 import { getRandomItemByWeight } from 'src/utils';
-import { EnemyId, getEnemyIdField } from '../enemy/enemy.type';
+import { EnemyId, enemyIdField } from '../enemy/enemy.type';
 import { EffectService } from 'src/game/effects/effects.service';
 import { CardTargetedEnum } from '../card/card.enum';
 import { sample } from 'lodash';
@@ -137,6 +137,17 @@ export class ExpeditionService {
         );
 
         // Return if expedition was updated
+        return response.modifiedCount > 0;
+    }
+
+    async updateByFilter(
+        filter: FilterQuery<ExpeditionDocument>,
+        query: UpdateQuery<ExpeditionDocument>,
+    ): Promise<boolean> {
+        const response = await this.expedition.updateOne(filter, query, {
+            new: true,
+        });
+
         return response.modifiedCount > 0;
     }
 
@@ -335,6 +346,7 @@ export class ExpeditionService {
         return this.syncCardDescriptions(expedition);
     }
 
+    /** @deprecated Use EnemyService.setDefense instead */
     async setEnemyDefense(
         clientId: string,
         enemyId: EnemyId,
@@ -346,8 +358,7 @@ export class ExpeditionService {
             {
                 [clientField]: clientId,
                 status: ExpeditionStatusEnum.InProgress,
-                [`currentNode.data.enemies.${getEnemyIdField(enemyId)}`]:
-                    enemyId,
+                [`currentNode.data.enemies.${enemyIdField(enemyId)}`]: enemyId,
             },
             {
                 'currentNode.data.enemies.$.defense': defense,
@@ -355,6 +366,7 @@ export class ExpeditionService {
         );
     }
 
+    /** @deprecated Use EnemyService.calculateNewIntentions instead */
     async calculateNewEnemyIntentions(
         clientId: string,
     ): Promise<IExpeditionCurrentNodeDataEnemy[]> {
