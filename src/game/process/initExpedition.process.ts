@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { randomUUID } from 'crypto';
+import { CardDescriptionFormatter } from '../cardDescriptionFormatter/cardDescriptionFormatter';
 import { CardService } from '../components/card/card.service';
 import { CharacterClassEnum } from '../components/character/character.enum';
 import { CharacterDocument } from '../components/character/character.schema';
@@ -83,7 +84,7 @@ export class InitExpeditionProcess {
                     cardId: card.cardId,
                     id: randomUUID(),
                     name: card.name,
-                    description: card.description,
+                    description: CardDescriptionFormatter.process(card),
                     rarity: card.rarity,
                     energy: card.energy,
                     cardType: card.cardType,

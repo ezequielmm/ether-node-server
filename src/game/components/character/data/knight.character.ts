@@ -11,11 +11,11 @@ export const KnightCharacter: Character = {
         cards: [
             {
                 cardId: 1, // Attack
-                amount: 3,
+                amount: 2,
             },
             {
                 cardId: 3, // Defend
-                amount: 3,
+                amount: 2,
             },
             {
                 cardId: 75, // Heaven’s Grace
@@ -26,33 +26,21 @@ export const KnightCharacter: Character = {
                 amount: 1,
             },
             {
+                cardId: 27, // Keg Chug
+                amount: 1,
+            },
+            {
                 cardId: 13, // Lunge
-                amount: 2,
+                amount: 1,
+            },
+            {
+                cardId: 24, // Pray
+                amount: 1,
+            },
+            {
+                cardId: 79, // Invoke Blessing
+                amount: 1,
             },
         ],
     },
 };
-
-/*
-Initial data
-{
-    cardId: 1, // Attack
-    amount: 4,
-},
-{
-    cardId: 3, // Defend
-    amount: 2,
-},
-{
-    cardId: 75, // Heaven’s Grace
-    amount: 1,
-},
-{
-    cardId: 9, // First Move
-    amount: 1,
-},
-{
-    cardId: 27, // Keg Chug
-    amount: 2,
-},
-*/
