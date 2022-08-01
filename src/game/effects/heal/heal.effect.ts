@@ -1,9 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { ExpeditionService } from '../../components/expedition/expedition.service';
 import { healEffect } from './constants';
 import { EffectDecorator } from '../effects.decorator';
 import { EffectDTO, EffectHandler } from '../effects.interface';
 import { EffectService } from '../effects.service';
+import { PlayerService } from 'src/game/components/player/player.service';
+import { ExpeditionDocument } from 'src/game/components/expedition/expedition.schema';
+import { Context } from 'src/game/components/interfaces';
 
 export interface HealArgs {
     value: number;
@@ -14,30 +16,22 @@ export interface HealArgs {
 })
 @Injectable()
 export class HealEffect implements EffectHandler {
-    constructor(private readonly expeditionService: ExpeditionService) {}
+    constructor(private readonly playerService: PlayerService) {}
 
     async handle(payload: EffectDTO<HealArgs>): Promise<void> {
         const {
             client,
+            expedition,
             target,
             args: { currentValue },
         } = payload;
 
+        const ctx: Context = {
+            client,
+            expedition: expedition as ExpeditionDocument,
+        };
+
         if (EffectService.isPlayer(target))
-            await this.applyHealToPlayer(client.id, currentValue);
-    }
-
-    private async applyHealToPlayer(
-        clientId: string,
-        healToApply: number,
-    ): Promise<void> {
-        // Get player's current and max health
-        const { hpCurrent, hpMax } =
-            await this.expeditionService.getPlayerState({ clientId });
-
-        await this.expeditionService.setPlayerHealth({
-            clientId,
-            hpCurrent: Math.min(hpMax, hpCurrent + healToApply),
-        });
+            await this.playerService.setHealt(ctx, currentValue);
     }
 }

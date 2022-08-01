@@ -1,6 +1,9 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Socket } from 'socket.io';
-import { GetPlayerInfoAction } from '../../action/getPlayerInfo.action';
+import { ExpeditionDocument } from 'src/game/components/expedition/expedition.schema';
+import { Context } from 'src/game/components/interfaces';
+import { PlayerService } from 'src/game/components/player/player.service';
+import { isNotUndefined } from 'src/utils';
 import { getEnemyIdField } from '../../components/enemy/enemy.type';
 import { IExpeditionCurrentNodeDataEnemy } from '../../components/expedition/expedition.interface';
 import { ExpeditionService } from '../../components/expedition/expedition.service';
@@ -9,12 +12,11 @@ import {
     SWARAction,
     SWARMessageType,
 } from '../../standardResponse/standardResponse';
-import { damageEffect } from './constants';
 import { EffectDecorator } from '../effects.decorator';
 import { EffectDTO, EffectHandler } from '../effects.interface';
 import { EffectService } from '../effects.service';
 import { TargetId } from '../effects.types';
-import { isNotUndefined } from 'src/utils';
+import { damageEffect } from './constants';
 
 export interface DamageArgs {
     useDefense?: boolean;
@@ -32,7 +34,7 @@ export class DamageEffect implements EffectHandler {
 
     constructor(
         private readonly expeditionService: ExpeditionService,
-        private readonly getPlayerInfoAction: GetPlayerInfoAction,
+        private readonly playerService: PlayerService,
     ) {}
 
     async handle(payload: EffectDTO<DamageArgs>): Promise<void> {
@@ -54,6 +56,11 @@ export class DamageEffect implements EffectHandler {
                 },
             },
         } = payload;
+
+        const ctx: Context = {
+            client,
+            expedition: payload.expedition as ExpeditionDocument,
+        };
 
         // Check targeted type
         if (EffectService.isEnemy(target)) {
@@ -90,7 +97,7 @@ export class DamageEffect implements EffectHandler {
                 ? currentEnergy
                 : currentValue;
 
-            await this.applyDamageToPlayer(client, newCurrentValue);
+            await this.playerService.damage(ctx, newCurrentValue);
         }
     }
 
@@ -182,64 +189,6 @@ export class DamageEffect implements EffectHandler {
                     message_type: SWARMessageType.EnemyAffected,
                     action: SWARAction.EnemyAffected,
                     data: dataResponse,
-                }),
-            ),
-        );
-    }
-
-    private async applyDamageToPlayer(
-        client: Socket,
-        damage: number,
-    ): Promise<void> {
-        // First we get the actual hp and defense from the player
-        const { defense: currentDefense, hpCurrent } =
-            await this.getPlayerInfoAction.handle(client.id);
-
-        let newDefense = 0;
-        let newHpCurrent = hpCurrent;
-
-        // Them we check if the player has defense to reduce from there
-        if (currentDefense > 0) {
-            newDefense = currentDefense - damage;
-
-            // If newDefense is negative, it means that the defense is fully
-            // depleted and the remaining will be applied to the player's health
-            if (newDefense < 0) {
-                newHpCurrent = Math.max(0, hpCurrent + newDefense);
-                newDefense = 0;
-            }
-        } else {
-            // If the player has no defense, the damage will be applied to the
-            // health directly
-            newHpCurrent = Math.max(0, hpCurrent - damage);
-        }
-
-        // Update the player's defense
-        await this.expeditionService.setPlayerDefense({
-            clientId: client.id,
-            value: newDefense,
-        });
-
-        // Update the player's health
-        await this.expeditionService.setPlayerHealth({
-            clientId: client.id,
-            hpCurrent: newHpCurrent,
-        });
-
-        const playerInfo = await this.getPlayerInfoAction.handle(client.id);
-
-        // Send player message
-        this.logger.log(
-            `Sent message PutData to client ${client.id}: ${SWARAction.EnemyAffected}`,
-        );
-
-        client.emit(
-            'PutData',
-            JSON.stringify(
-                StandardResponse.respond({
-                    message_type: SWARMessageType.PlayerAffected,
-                    action: SWARAction.UpdatePlayer,
-                    data: playerInfo,
                 }),
             ),
         );

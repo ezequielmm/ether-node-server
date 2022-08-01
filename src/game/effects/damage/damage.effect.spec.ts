@@ -10,11 +10,23 @@ import { Expedition } from 'src/game/components/expedition/expedition.schema';
 
 describe('DamageEffect', () => {
     let effect: DamageEffect;
+    const defaultDamageArgs: DamageArgs = {
+        useDefense: false,
+        multiplier: 1,
+        useEnergyAsMultiplier: false,
+        useEnergyAsValue: false,
+    };
     const client = {
         id: 'clientId',
         emit: jest.fn(),
     } as unknown as Socket;
-    const expedition: Expedition = {} as Expedition;
+    const expedition: Expedition = {
+        currentNode: {
+            data: {
+                player: { energy: 3 },
+            },
+        },
+    } as Expedition;
 
     const mockExpeditionService = {
         getCurrentNode: jest.fn().mockResolvedValue({
@@ -66,6 +78,7 @@ describe('DamageEffect', () => {
             client,
             expedition,
             args: {
+                ...defaultDamageArgs,
                 initialValue: 10,
                 currentValue: 10,
             },
@@ -99,6 +112,7 @@ describe('DamageEffect', () => {
             client,
             expedition,
             args: {
+                ...defaultDamageArgs,
                 initialValue: 4,
                 currentValue: 4,
             },
@@ -134,6 +148,7 @@ describe('DamageEffect', () => {
             client,
             expedition,
             args: {
+                ...defaultDamageArgs,
                 initialValue: 105,
                 currentValue: 105,
             },
