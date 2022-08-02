@@ -16,7 +16,10 @@ export class DoubleBurnEffect implements EffectHandler {
     constructor(private readonly statusService: StatusService) {}
 
     async handle(dto: EffectDTO): Promise<void> {
-        const { target, expedition } = dto;
+        const {
+            target,
+            ctx: { expedition },
+        } = dto;
 
         let statuses: StatusCollection;
 

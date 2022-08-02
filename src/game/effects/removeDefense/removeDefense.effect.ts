@@ -1,7 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { EnemyService } from 'src/game/components/enemy/enemy.service';
-import { ExpeditionDocument } from 'src/game/components/expedition/expedition.schema';
-import { Context } from 'src/game/components/interfaces';
 import { PlayerService } from 'src/game/components/player/player.service';
 import { EffectDecorator } from '../effects.decorator';
 import { EffectDTO, EffectHandler } from '../effects.interface';
@@ -19,11 +17,7 @@ export class RemoveDefenseEffect implements EffectHandler {
     ) {}
 
     async handle(payload: EffectDTO): Promise<void> {
-        const { client, expedition, target } = payload;
-        const ctx: Context = {
-            client,
-            expedition: expedition as ExpeditionDocument,
-        };
+        const { ctx, target } = payload;
 
         if (EffectService.isEnemy(target)) {
             await this.enemyService.setDefense(ctx, target.value.id, 0);

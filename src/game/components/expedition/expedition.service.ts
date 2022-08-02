@@ -32,7 +32,7 @@ export class ExpeditionService {
         private readonly expedition: Model<ExpeditionDocument>,
     ) {}
 
-    async findOne(payload: FindOneExpeditionDTO): Promise<Expedition> {
+    async findOne(payload: FindOneExpeditionDTO): Promise<ExpeditionDocument> {
         return await this.expedition
             .findOne({
                 ...payload,

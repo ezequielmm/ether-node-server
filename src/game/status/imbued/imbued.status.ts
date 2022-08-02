@@ -21,7 +21,7 @@ export class ImbuedStatus implements StatusEventHandler {
 
     async handle(dto: StatusEventDTO<OnBeginCardPlayEventArgs>): Promise<void> {
         const {
-            client,
+            ctx,
             args: {
                 card,
                 cardSource: source,
@@ -35,24 +35,23 @@ export class ImbuedStatus implements StatusEventHandler {
         } = card;
 
         const expedition = await this.expeditionService.findOne({
-            clientId: dto.expedition.clientId,
+            clientId: dto.ctx.expedition.clientId,
         });
 
         await this.effectService.applyAll({
-            client,
-            expedition,
+            ctx,
             source,
             effects,
             selectedEnemy: targetId,
         });
 
-        await this.statusService.attachStatuses(
-            client.id,
+        await this.statusService.attachStatuses({
+            ctx: dto.ctx,
             statuses,
-            expedition.currentNode.data.round,
+            currentRound: expedition.currentNode.data.round,
             sourceReference,
             targetId,
-        );
+        });
 
         dto.remove();
     }

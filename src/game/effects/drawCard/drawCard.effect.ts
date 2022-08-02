@@ -26,7 +26,7 @@ export class DrawCardEffect implements EffectHandler {
 
     async handle(payload: EffectDTO<DrawCardArgs>): Promise<void> {
         const {
-            client,
+            ctx: { client, expedition },
             target,
             args: {
                 currentValue,
@@ -34,7 +34,6 @@ export class DrawCardEffect implements EffectHandler {
                 useEnemiesConfusedAsCost,
                 checkIfEnemyIsAttacking,
             },
-            expedition,
         } = payload;
 
         // Set the amount of cards to take

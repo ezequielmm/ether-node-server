@@ -7,6 +7,7 @@ import {
     IExpeditionPlayerCombatState,
     IExpeditionPlayerGlobalState,
 } from '../components/expedition/expedition.interface';
+import { Context } from '../components/interfaces';
 
 export interface Effect {
     name: string;
@@ -19,8 +20,7 @@ export interface EffectMetadata {
 export interface EffectDTO<
     Args extends Record<string, any> = Record<string, any>,
 > {
-    readonly client: Socket;
-    readonly expedition: Expedition;
+    readonly ctx: Context;
     readonly source: SourceEntityDTO;
     readonly target?: TargetEntityDTO;
     args: {
@@ -63,16 +63,14 @@ export interface ExpeditionTargets {
 }
 
 export interface ApplyAllDTO {
-    client: Socket;
-    expedition: Expedition;
+    ctx: Context;
     source: SourceEntityDTO;
     effects: JsonEffect[];
     selectedEnemy?: EnemyId;
 }
 
 export interface ApplyDTO {
-    client: Socket;
-    expedition: Expedition;
+    ctx: Context;
     source: SourceEntityDTO;
     target: TargetEntityDTO;
     effect: JsonEffect;
@@ -105,7 +103,7 @@ export type SourceEntityDTO = PlayerDTO | EnemyDTO;
 export type TargetEntityDTO = PlayerDTO | EnemyDTO;
 
 export interface FindTargetsDTO {
-    expedition: Expedition;
+    ctx: Context;
     source: SourceEntityDTO;
     effect: JsonEffect;
     selectedEnemy?: EnemyId;
@@ -117,8 +115,7 @@ export interface ExtractTargetsDTO {
 }
 
 export interface MutateDTO {
-    client: Socket;
-    expedition: Expedition;
+    ctx: Context;
     dto: EffectDTO;
     effect: Effect['name'];
 }

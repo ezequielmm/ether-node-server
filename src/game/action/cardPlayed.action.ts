@@ -9,6 +9,7 @@ import { CardId, getCardIdField } from '../components/card/card.type';
 import { IExpeditionCurrentNodeDataEnemy } from '../components/expedition/expedition.interface';
 import { ExpeditionDocument } from '../components/expedition/expedition.schema';
 import { ExpeditionService } from '../components/expedition/expedition.service';
+import { Context } from '../components/interfaces';
 import { PlayerService } from '../components/player/player.service';
 import { EffectService } from '../effects/effects.service';
 import { TargetId } from '../effects/effects.types';
@@ -92,6 +93,11 @@ export class CardPlayedAction {
                 },
             } = expedition;
 
+            const ctx: Context = {
+                client,
+                expedition,
+            };
+
             // If everything goes right, we get the card information from
             // the player hand pile
             const card = hand.find((card) => {
@@ -131,8 +137,7 @@ export class CardPlayedAction {
                 };
 
                 await this.statusService.trigger(
-                    this.client,
-                    expedition,
+                    ctx,
                     StatusEventType.OnBeginCardPlay,
                     onBeginCardPlayEventArgs,
                 );
@@ -152,20 +157,19 @@ export class CardPlayedAction {
                 }
 
                 await this.effectService.applyAll({
-                    client: this.client,
-                    expedition,
+                    ctx,
                     source,
                     effects,
                     selectedEnemy: targetId,
                 });
 
-                await this.statusService.attachStatuses(
-                    this.client.id,
+                await this.statusService.attachStatuses({
+                    ctx,
                     statuses,
-                    round,
+                    currentRound: round,
                     sourceReference,
                     targetId,
-                );
+                });
 
                 const {
                     data: {
@@ -194,8 +198,7 @@ export class CardPlayedAction {
                 this.sendUpdatePlayerMessage(playerInfo);
 
                 await this.statusService.trigger(
-                    this.client,
-                    expedition,
+                    ctx,
                     StatusEventType.OnEndCardPlay,
                     onBeginCardPlayEventArgs,
                 );
@@ -249,7 +252,7 @@ export class CardPlayedAction {
     }
 
     private sendInvalidCardMessage(): void {
-        this.logger.log(
+        this.logger.error(
             `Sent message ErrorMessage to client ${this.client.id}: ${SWARAction.InvalidCard}`,
         );
 

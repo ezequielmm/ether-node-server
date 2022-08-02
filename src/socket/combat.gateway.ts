@@ -20,6 +20,7 @@ import { EndEnemyTurnProcess } from 'src/game/process/endEnemyTurn.process';
 import { SendEnemyIntentProcess } from 'src/game/process/sendEnemyIntents.process';
 import { GetStatusesAction } from 'src/game/action/getStatuses.action';
 import { GetPlayerDeckAction } from 'src/game/action/getPlayerDeck.action';
+import { Context } from 'src/game/components/interfaces';
 
 interface CardPlayedInterface {
     cardId: CardId;
@@ -52,18 +53,27 @@ export class CombatGateway {
     async handleEndTurn(client: Socket): Promise<void> {
         this.logger.log(`Client ${client.id} trigger message "EndTurn"`);
 
-        const {
-            data: { playing },
-        } = await this.expeditionService.getCurrentNode({
+        const expedition = await this.expeditionService.findOne({
             clientId: client.id,
         });
+
+        const ctx: Context = {
+            client,
+            expedition,
+        };
+
+        const {
+            currentNode: {
+                data: { playing },
+            },
+        } = expedition;
 
         switch (playing) {
             case CombatTurnEnum.Player:
                 await this.endPlayerTurnProcess.handle({ client });
                 break;
             case CombatTurnEnum.Enemy:
-                await this.endEnemyTurnProcess.handle({ client });
+                await this.endEnemyTurnProcess.handle({ ctx });
                 break;
         }
     }

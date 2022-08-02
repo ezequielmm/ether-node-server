@@ -1,8 +1,7 @@
-import { Socket } from 'socket.io';
 import { CardTargetedEnum } from '../components/card/card.enum';
 import { EnemyId } from '../components/enemy/enemy.type';
 import { IExpeditionPlayerStateDeckCard } from '../components/expedition/expedition.interface';
-import { Expedition } from '../components/expedition/expedition.schema';
+import { Context } from '../components/interfaces';
 import {
     Effect,
     EffectDTO,
@@ -125,10 +124,6 @@ export type Status = StatusEffect | StatusEvent;
  */
 export interface StatusMetadata<T extends Status = Status> {
     status: T;
-    // DEPRECATED: use `triggers` instead.
-    // @deprecated
-    // effects: Effect[];
-    // trigger: Status;
 }
 
 /** It is used to declare the status information in the card. */
@@ -180,21 +175,19 @@ export interface StatusCollection {
 export interface StatusEffectDTO<
     T extends Record<string, any> = Record<string, any>,
 > {
-    client: Socket;
-    expedition: Expedition;
-    status: AttachedStatus;
-    effectDTO: EffectDTO<T>;
+    readonly ctx: Context;
+    readonly status: AttachedStatus;
+    readonly effectDTO: EffectDTO<T>;
     update(args: AttachedStatus['args']): void;
     remove(): void;
 }
 
 export interface StatusEventDTO<Args = Record<string, any>> {
-    client: Socket;
-    expedition: Expedition;
-    source: SourceEntityDTO;
-    target: TargetEntityDTO;
-    status: AttachedStatus;
-    args: Args;
+    readonly ctx: Context;
+    readonly source: SourceEntityDTO;
+    readonly target: TargetEntityDTO;
+    readonly status: AttachedStatus;
+    readonly args: Args;
     update(args: AttachedStatus['args']): void;
     remove(): void;
 }
@@ -229,15 +222,23 @@ export interface StatusEventHandler {
 
 export type StatusHandler = StatusEffectHandler | StatusEventHandler;
 
-export class AttachStatusToPlayerDTO {
-    readonly clientId: string;
+export interface AttachStatusesDTO {
+    ctx: Context;
+    statuses: JsonStatus[];
+    currentRound: number;
+    sourceReference: SourceEntityReferenceDTO;
+    targetId?: TargetId;
+}
+
+export interface AttachStatusToPlayerDTO {
+    readonly ctx: Context;
     readonly sourceReference: SourceEntityReferenceDTO;
     readonly status: JsonStatus;
     readonly currentRound: number;
 }
 
-export class AttachStatusToEnemyDTO {
-    readonly clientId: string;
+export interface AttachStatusToEnemyDTO {
+    readonly ctx: Context;
     readonly sourceReference: SourceEntityReferenceDTO;
     readonly status: JsonStatus;
     readonly enemyId: EnemyId;
@@ -261,8 +262,7 @@ export type StatusesGlobalCollection = {
 }[];
 
 export interface MutateEffectArgsDTO {
-    client: Socket;
-    expedition: Expedition;
+    ctx: Context;
     collectionOwner: SourceEntityDTO;
     collection: StatusCollection;
     effect: Effect['name'];

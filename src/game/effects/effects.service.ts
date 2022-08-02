@@ -3,10 +3,7 @@ import { find, sample } from 'lodash';
 import { CardTargetedEnum } from '../components/card/card.enum';
 import { EnemyService } from '../components/enemy/enemy.service';
 import { EnemyId, enemyIdField } from '../components/enemy/enemy.type';
-import {
-    Expedition,
-    ExpeditionDocument,
-} from '../components/expedition/expedition.schema';
+import { Expedition } from '../components/expedition/expedition.schema';
 import { PlayerService } from '../components/player/player.service';
 import { ProviderContainer } from '../provider/interfaces';
 import { ProviderService } from '../provider/provider.service';
@@ -41,11 +38,11 @@ export class EffectService {
     ) {}
 
     async applyAll(dto: ApplyAllDTO): Promise<void> {
-        const { client, expedition, source, effects, selectedEnemy } = dto;
+        const { ctx, source, effects, selectedEnemy } = dto;
 
         for (const effect of effects) {
             const targets = this.findAffectedTargets({
-                expedition,
+                ctx,
                 effect,
                 source,
                 selectedEnemy,
@@ -53,8 +50,7 @@ export class EffectService {
 
             for (const target of targets) {
                 await this.apply({
-                    client,
-                    expedition,
+                    ctx,
                     source,
                     target,
                     effect,
@@ -64,7 +60,7 @@ export class EffectService {
     }
 
     public async apply(dto: ApplyDTO) {
-        const { client, expedition, source, target, effect } = dto;
+        const { ctx, source, target, effect } = dto;
         const {
             effect: name,
             times = 1,
@@ -72,8 +68,7 @@ export class EffectService {
         } = effect;
 
         let effectDTO: EffectDTO = {
-            client,
-            expedition,
+            ctx,
             source,
             target,
             args: {
@@ -84,8 +79,7 @@ export class EffectService {
         };
 
         effectDTO = await this.mutate({
-            client,
-            expedition,
+            ctx,
             dto: effectDTO,
             effect: name,
         });
@@ -97,12 +91,8 @@ export class EffectService {
     }
 
     private findAffectedTargets(dto: FindTargetsDTO): TargetEntityDTO[] {
-        const { effect, source, expedition, selectedEnemy } = dto;
+        const { ctx, effect, source, selectedEnemy } = dto;
         const targets: TargetEntityDTO[] = [];
-        const ctx = {
-            client: undefined,
-            expedition: expedition as ExpeditionDocument,
-        };
 
         switch (effect.target) {
             case CardTargetedEnum.Player:
@@ -197,8 +187,7 @@ export class EffectService {
 
     private async mutate(dto: MutateDTO): Promise<EffectDTO> {
         const {
-            client,
-            expedition,
+            ctx,
             effect,
             dto: { source, target },
         } = dto;
@@ -215,8 +204,7 @@ export class EffectService {
 
         // Apply statuses to the outgoing effects 🔫  →
         effectDTO = await this.statusService.mutate({
-            client,
-            expedition,
+            ctx,
             collection: outgoingStatuses,
             collectionOwner: source,
             effectDTO: effectDTO,
@@ -226,8 +214,7 @@ export class EffectService {
 
         // Apply statuses to the incoming effects → 🛡
         effectDTO = await this.statusService.mutate({
-            client,
-            expedition,
+            ctx,
             collection: incomingStatuses,
             collectionOwner: target,
             effectDTO: effectDTO,
@@ -240,8 +227,7 @@ export class EffectService {
 
     public async preview(dto: MutateDTO): Promise<EffectDTO> {
         const {
-            client,
-            expedition,
+            ctx,
             effect,
             dto: { source },
         } = dto;
@@ -254,8 +240,7 @@ export class EffectService {
 
         // Apply statuses to the outgoing effects 🔫  →
         effectDTO = await this.statusService.mutate({
-            client,
-            expedition,
+            ctx,
             collection: outgoingStatuses,
             collectionOwner: source,
             effectDTO: effectDTO,

@@ -14,7 +14,9 @@ export class HeadButtEffect implements EffectHandler {
     constructor(private readonly statusService: StatusService) {}
 
     async handle(dto: EffectDTO): Promise<void> {
-        const { target, source, expedition, client } = dto;
+        const { target, source, ctx } = dto;
+
+        const { expedition } = ctx;
 
         const sourceReference =
             this.statusService.getReferenceFromSource(source);
@@ -30,9 +32,9 @@ export class HeadButtEffect implements EffectHandler {
         }
 
         if (defense == 0) {
-            await this.statusService.attachStatuses(
-                client.id,
-                [
+            await this.statusService.attachStatuses({
+                ctx,
+                statuses: [
                     {
                         name: confusion.name,
                         args: {
@@ -41,10 +43,10 @@ export class HeadButtEffect implements EffectHandler {
                         },
                     },
                 ],
-                expedition.currentNode.data.round,
+                currentRound: expedition.currentNode.data.round,
                 sourceReference,
                 targetId,
-            );
+            });
         }
     }
 }

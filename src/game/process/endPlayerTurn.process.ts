@@ -3,6 +3,7 @@ import { Socket } from 'socket.io';
 import { DiscardAllCardsAction } from '../action/discardAllCards.action';
 import { CombatTurnEnum } from '../components/expedition/expedition.enum';
 import { ExpeditionService } from '../components/expedition/expedition.service';
+import { Context } from '../components/interfaces';
 import {
     SWARAction,
     StandardResponse,
@@ -49,16 +50,17 @@ export class EndPlayerTurnProcess {
             clientId: client.id,
         });
 
+        const ctx: Context = {
+            client,
+            expedition,
+        };
+
         await this.discardAllCardsAction.handle({
             client,
             SWARMessageTypeToSend: SWARMessageType.EndTurn,
         });
 
-        await this.statusService.trigger(
-            client,
-            expedition,
-            StatusEventType.OnTurnEnd,
-        );
+        await this.statusService.trigger(ctx, StatusEventType.OnTurnEnd);
 
         await this.beginEnemyTurnProcess.handle({ client });
     }

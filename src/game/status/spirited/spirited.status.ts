@@ -22,8 +22,7 @@ export class SpiritedStatus implements StatusEventHandler {
         };
 
         await this.effectService.apply({
-            client: dto.client,
-            expedition: dto.expedition,
+            ctx: dto.ctx,
             source: dto.source,
             target: dto.target,
             effect,
