@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Socket } from 'socket.io';
 import { DrawCardAction } from '../action/drawCard.action';
+import { EnemyService } from '../components/enemy/enemy.service';
 import { CombatTurnEnum } from '../components/expedition/expedition.enum';
 import { ExpeditionDocument } from '../components/expedition/expedition.schema';
 import { ExpeditionService } from '../components/expedition/expedition.service';
@@ -26,6 +27,7 @@ export class BeginPlayerTurnProcess {
     constructor(
         private readonly expeditionService: ExpeditionService,
         private readonly playerService: PlayerService,
+        private readonly enemyService: EnemyService,
         private readonly settingsService: SettingsService,
         private readonly drawCardAction: DrawCardAction,
         private readonly statusService: StatusService,
@@ -110,7 +112,7 @@ export class BeginPlayerTurnProcess {
             SWARMessageTypeToSend: SWARMessageType.BeginTurn,
         });
 
-        await this.expeditionService.calculateNewEnemyIntentions(client.id);
+        await this.enemyService.calculateNewIntentions(ctx);
 
         await this.statusService.trigger(
             client,

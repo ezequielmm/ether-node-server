@@ -15,6 +15,7 @@ import { HeadButtEffect } from './headButt/headButt.effect';
 import { RepositionEffect } from './reposition/reposition.effect';
 import { PlayerModule } from '../components/player/player.module';
 import { FlurryEffect } from './flurry/flurry.effect';
+import { EnemyModule } from '../components/enemy/enemy.module';
 
 @Module({
     imports: [
@@ -23,6 +24,7 @@ import { FlurryEffect } from './flurry/flurry.effect';
         StatusModule,
         ProviderModule,
         PlayerModule,
+        EnemyModule,
     ],
     providers: [
         EffectService,

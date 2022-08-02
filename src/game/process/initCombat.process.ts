@@ -1,15 +1,19 @@
 import { Injectable } from '@nestjs/common';
 import { Socket } from 'socket.io';
 import { SetCombatTurnAction } from '../action/setCombatTurn.action';
+import { EnemyService } from '../components/enemy/enemy.service';
 import { CombatTurnEnum } from '../components/expedition/expedition.enum';
 import { IExpeditionNode } from '../components/expedition/expedition.interface';
+import { ExpeditionDocument } from '../components/expedition/expedition.schema';
 import { ExpeditionService } from '../components/expedition/expedition.service';
+import { Context } from '../components/interfaces';
 import { CurrentNodeGeneratorProcess } from './currentNodeGenerator.process';
 
 @Injectable()
 export class InitCombatProcess {
     constructor(
         private readonly currentNodeGeneratorProcess: CurrentNodeGeneratorProcess,
+        private readonly enemyService: EnemyService,
         private readonly expeditionService: ExpeditionService,
         private readonly setCombatTurnAction: SetCombatTurnAction,
     ) {}
@@ -25,6 +29,11 @@ export class InitCombatProcess {
             currentNode,
         });
 
+        const ctx: Context = {
+            client,
+            expedition: expedition as ExpeditionDocument,
+        };
+
         await this.expeditionService.syncCardDescriptions(expedition);
 
         await this.setCombatTurnAction.handle({
@@ -33,6 +42,6 @@ export class InitCombatProcess {
             playing: CombatTurnEnum.Player,
         });
 
-        await this.expeditionService.calculateNewEnemyIntentions(client.id);
+        await this.enemyService.calculateNewIntentions(ctx);
     }
 }
