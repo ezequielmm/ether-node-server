@@ -48,7 +48,7 @@ export class PlayerService {
         });
 
         set(ctx.expedition, PLAYER_DEFENSE_PATH, defense);
-        this.logger.log(`Player 🛡 defense set to ${defense}`);
+        this.logger.debug(`Player defense set to ${defense}`);
 
         return defense;
     }
@@ -66,19 +66,19 @@ export class PlayerService {
         });
 
         set(ctx.expedition, PLAYER_ENERGY_PATH, energy);
-        this.logger.log(`Player energy set to ${energy}`);
+        this.logger.debug(`Player energy set to ${energy}`);
 
         return energy;
     }
 
     /**
-     * Set the player's health
+     * Set the player's hp
      *
      * @param ctx Context
      * @param hp New hp value
      * @returns Return the new hp value
      */
-    public async setHealt(ctx: Context, hp: number): Promise<number> {
+    public async setHp(ctx: Context, hp: number): Promise<number> {
         const player = this.get(ctx);
         const newHp = Math.min(hp, player.value.globalState.hpMax);
 
@@ -87,7 +87,7 @@ export class PlayerService {
         });
 
         set(ctx.expedition, PLAYER_CURRENT_HP_PATH, newHp);
-        this.logger.log(`Player hp set to ${newHp}`);
+        this.logger.debug(`Player hp set to ${newHp}`);
 
         return hp;
     }
@@ -124,11 +124,11 @@ export class PlayerService {
             newHp = Math.max(0, currentHp - damage);
         }
 
-        this.logger.log(`Player damage attempt of ${damage}`);
+        this.logger.debug(`Player damage attempt of ${damage}`);
 
         // Update the player's defense and new health
         await this.setDefense(ctx, newDefense);
-        await this.setHealt(ctx, newHp);
+        await this.setHp(ctx, newHp);
 
         return newHp;
     }

@@ -10,6 +10,7 @@ import { isNotUndefined } from 'src/utils';
 import { PlayerService } from 'src/game/components/player/player.service';
 import { ExpeditionDocument } from 'src/game/components/expedition/expedition.schema';
 import { Context } from 'src/game/components/interfaces';
+import { EnemyService } from 'src/game/components/enemy/enemy.service';
 
 export interface DefenseArgs {
     useEnemies: boolean;
@@ -26,6 +27,7 @@ export class DefenseEffect implements EffectHandler {
     constructor(
         private readonly expeditionService: ExpeditionService,
         private readonly playerService: PlayerService,
+        private readonly enemyService: EnemyService,
     ) {}
 
     async handle(payload: EffectDTO<DefenseArgs>): Promise<void> {
@@ -90,8 +92,8 @@ export class DefenseEffect implements EffectHandler {
         if (EffectService.isEnemy(target)) {
             newDefense = newDefense + currentDefense;
 
-            await this.expeditionService.setEnemyDefense(
-                client.id,
+            await this.enemyService.setDefense(
+                ctx,
                 target.value.id,
                 newDefense,
             );

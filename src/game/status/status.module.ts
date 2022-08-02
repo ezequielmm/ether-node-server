@@ -1,4 +1,5 @@
 import { forwardRef, Module } from '@nestjs/common';
+import { EnemyModule } from '../components/enemy/enemy.module';
 import { ExpeditionModule } from '../components/expedition/expedition.module';
 import { PlayerModule } from '../components/player/player.module';
 import { EffectModule } from '../effects/effects.module';
@@ -26,6 +27,7 @@ import { TurtlingStatus } from './turtling/turtling.status';
         forwardRef(() => EffectModule),
         ProviderModule,
         forwardRef(() => PlayerModule),
+        forwardRef(() => EnemyModule),
     ],
     providers: [
         StatusService,

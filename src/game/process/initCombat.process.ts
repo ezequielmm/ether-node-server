@@ -1,15 +1,19 @@
 import { Injectable } from '@nestjs/common';
 import { Socket } from 'socket.io';
 import { SetCombatTurnAction } from '../action/setCombatTurn.action';
+import { EnemyService } from '../components/enemy/enemy.service';
 import { CombatTurnEnum } from '../components/expedition/expedition.enum';
 import { IExpeditionNode } from '../components/expedition/expedition.interface';
+import { ExpeditionDocument } from '../components/expedition/expedition.schema';
 import { ExpeditionService } from '../components/expedition/expedition.service';
+import { Context } from '../components/interfaces';
 import { CurrentNodeGeneratorProcess } from './currentNodeGenerator.process';
 
 @Injectable()
 export class InitCombatProcess {
     constructor(
         private readonly currentNodeGeneratorProcess: CurrentNodeGeneratorProcess,
+        private readonly enemyService: EnemyService,
         private readonly expeditionService: ExpeditionService,
         private readonly setCombatTurnAction: SetCombatTurnAction,
     ) {}
@@ -21,9 +25,14 @@ export class InitCombatProcess {
                 client.id,
             );
 
-        await this.expeditionService.update(client.id, {
+        const expedition = await this.expeditionService.update(client.id, {
             currentNode,
         });
+
+        const ctx: Context = {
+            client,
+            expedition: expedition as ExpeditionDocument,
+        };
 
         await this.setCombatTurnAction.handle({
             clientId: client.id,
@@ -31,6 +40,6 @@ export class InitCombatProcess {
             playing: CombatTurnEnum.Player,
         });
 
-        await this.expeditionService.calculateNewEnemyIntentions(client.id);
+        await this.enemyService.calculateNewIntentions(ctx);
     }
 }

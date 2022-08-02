@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, UpdateQuery } from 'mongoose';
+import { Model, UpdateQuery, FilterQuery } from 'mongoose';
 import { Expedition, ExpeditionDocument } from './expedition.schema';
 import {
     CardExistsOnPlayerHandDTO,
@@ -13,30 +13,23 @@ import {
     playerHasAnExpeditionDTO,
     SetCombatTurnDTO,
     UpdateClientIdDTO,
-    UpdateEnemiesArrayDTO,
     UpdateExpeditionDTO,
     UpdateHandPilesDTO,
-    UpdatePlayerEnergyDTO,
 } from './expedition.dto';
 import { ExpeditionStatusEnum } from './expedition.enum';
 import {
     IExpeditionCurrentNode,
-    IExpeditionCurrentNodeDataEnemy,
     IExpeditionNode,
     IExpeditionPlayerStateDeckCard,
 } from './expedition.interface';
 import { generateMap, restoreMap } from 'src/game/map/app';
 import { ClientId, getClientIdField } from './expedition.type';
-import { EnemyService } from '../enemy/enemy.service';
-import { getRandomItemByWeight } from 'src/utils';
-import { EnemyId, getEnemyIdField } from '../enemy/enemy.type';
 
 @Injectable()
 export class ExpeditionService {
     constructor(
         @InjectModel(Expedition.name)
         private readonly expedition: Model<ExpeditionDocument>,
-        private readonly enemyService: EnemyService,
     ) {}
 
     async findOne(payload: FindOneExpeditionDTO): Promise<Expedition> {
@@ -76,6 +69,17 @@ export class ExpeditionService {
         );
 
         // Return if expedition was updated
+        return response.modifiedCount > 0;
+    }
+
+    async updateByFilter(
+        filter: FilterQuery<ExpeditionDocument>,
+        query: UpdateQuery<ExpeditionDocument>,
+    ): Promise<boolean> {
+        const response = await this.expedition.updateOne(filter, query, {
+            new: true,
+        });
+
         return response.modifiedCount > 0;
     }
 
@@ -216,35 +220,6 @@ export class ExpeditionService {
         return itemExists !== null;
     }
 
-    /** @deprecated Use PlayerService.energy instead */
-    async updatePlayerEnergy(
-        payload: UpdatePlayerEnergyDTO,
-    ): Promise<ExpeditionDocument> {
-        const { clientId, newEnergy } = payload;
-
-        const field = typeof clientId === 'string' ? 'clientId' : 'playerId';
-
-        return this.expedition.findOneAndUpdate(
-            { [field]: clientId, status: ExpeditionStatusEnum.InProgress },
-            { 'currentNode.data.player.energy': newEnergy },
-            { new: true },
-        );
-    }
-
-    async updateEnemiesArray(
-        payload: UpdateEnemiesArrayDTO,
-    ): Promise<ExpeditionDocument> {
-        const { clientId, enemies } = payload;
-
-        const field = typeof clientId === 'string' ? 'clientId' : 'playerId';
-
-        return this.expedition.findOneAndUpdate(
-            { [field]: clientId, status: ExpeditionStatusEnum.InProgress },
-            { 'currentNode.data.enemies': enemies },
-            { new: true },
-        );
-    }
-
     async updateHandPiles(payload: UpdateHandPilesDTO): Promise<Expedition> {
         const { hand, exhausted, clientId, draw, discard } = payload;
 
@@ -270,60 +245,5 @@ export class ExpeditionService {
                 { new: true },
             )
             .lean();
-    }
-
-    async setEnemyDefense(
-        clientId: string,
-        enemyId: EnemyId,
-        defense: number,
-    ): Promise<ExpeditionDocument> {
-        const clientField = getClientIdField(clientId);
-
-        return this.expedition.findOneAndUpdate(
-            {
-                [clientField]: clientId,
-                status: ExpeditionStatusEnum.InProgress,
-                [`currentNode.data.enemies.${getEnemyIdField(enemyId)}`]:
-                    enemyId,
-            },
-            {
-                'currentNode.data.enemies.$.defense': defense,
-            },
-        );
-    }
-
-    async calculateNewEnemyIntentions(
-        clientId: string,
-    ): Promise<IExpeditionCurrentNodeDataEnemy[]> {
-        const {
-            data: { enemies },
-        } = await this.getCurrentNode({ clientId });
-
-        for (const enemy of enemies) {
-            const { scripts } = await this.enemyService.findById(enemy.id);
-            const currentScript = enemy.currentScript;
-
-            if (!currentScript) {
-                enemy.currentScript = scripts[0];
-                continue;
-            }
-
-            const nextScript =
-                scripts[
-                    getRandomItemByWeight(
-                        currentScript.next,
-                        currentScript.next.map((s) => s.probability),
-                    ).scriptIndex
-                ];
-
-            enemy.currentScript = nextScript;
-        }
-
-        await this.updateEnemiesArray({
-            clientId,
-            enemies,
-        });
-
-        return enemies;
     }
 }

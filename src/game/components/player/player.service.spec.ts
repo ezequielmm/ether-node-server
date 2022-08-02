@@ -18,6 +18,8 @@ describe('PlayerService', () => {
 
     let playerService: PlayerService;
     let mockContext: Context;
+    let spyOnSetHealt: jest.SpyInstance;
+    let spyOnSetDefense: jest.SpyInstance;
 
     beforeEach(async () => {
         const module = await Test.createTestingModule({
@@ -47,6 +49,9 @@ describe('PlayerService', () => {
                 },
             } as unknown as ExpeditionDocument,
         };
+
+        spyOnSetHealt = jest.spyOn(playerService, 'setHp');
+        spyOnSetDefense = jest.spyOn(playerService, 'setDefense');
     });
 
     it('should be defined', () => {
@@ -95,7 +100,7 @@ describe('PlayerService', () => {
 
     describe('heal', () => {
         it('should update the player health', async () => {
-            await playerService.setHealt(mockContext, 10);
+            await playerService.setHp(mockContext, 10);
             expect(mockExpeditionService.updateById).toHaveBeenCalledWith(
                 mockContext.expedition.id,
                 {
@@ -108,7 +113,7 @@ describe('PlayerService', () => {
         });
 
         it('should heal to max hp', async () => {
-            await playerService.setHealt(mockContext, 90);
+            await playerService.setHp(mockContext, 90);
             expect(mockExpeditionService.updateById).toHaveBeenCalledWith(
                 mockContext.expedition.id,
                 {
@@ -124,13 +129,10 @@ describe('PlayerService', () => {
     describe('damage', () => {
         it('should update the player health', async () => {
             await playerService.damage(mockContext, 0);
-            expect(mockExpeditionService.updateById).toHaveBeenCalledWith(
-                mockContext.expedition.id,
-                {
-                    [PLAYER_CURRENT_HP_PATH]: 80,
-                    [PLAYER_DEFENSE_PATH]: 5,
-                },
-            );
+
+            expect(spyOnSetDefense).toHaveBeenCalledWith(mockContext, 5);
+            expect(spyOnSetHealt).toHaveBeenCalledWith(mockContext, 80);
+
             expect(get(mockContext.expedition, PLAYER_CURRENT_HP_PATH)).toBe(
                 80,
             );
@@ -139,13 +141,10 @@ describe('PlayerService', () => {
 
         it('should update the player health to 0 if the damage is greater than the current health', async () => {
             await playerService.damage(mockContext, 85);
-            expect(mockExpeditionService.updateById).toHaveBeenCalledWith(
-                mockContext.expedition.id,
-                {
-                    [PLAYER_CURRENT_HP_PATH]: 0,
-                    [PLAYER_DEFENSE_PATH]: 0,
-                },
-            );
+
+            expect(spyOnSetDefense).toHaveBeenCalledWith(mockContext, 0);
+            expect(spyOnSetHealt).toHaveBeenCalledWith(mockContext, 0);
+
             expect(get(mockContext.expedition, PLAYER_CURRENT_HP_PATH)).toBe(0);
             expect(get(mockContext.expedition, PLAYER_DEFENSE_PATH)).toBe(0);
         });

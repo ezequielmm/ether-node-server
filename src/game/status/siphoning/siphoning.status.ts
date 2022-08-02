@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
+import { EnemyService } from 'src/game/components/enemy/enemy.service';
 import { ExpeditionDocument } from 'src/game/components/expedition/expedition.schema';
-import { ExpeditionService } from 'src/game/components/expedition/expedition.service';
 import { Context } from 'src/game/components/interfaces';
 import { PlayerService } from 'src/game/components/player/player.service';
 import { DamageArgs } from 'src/game/effects/damage/damage.effect';
@@ -16,8 +16,8 @@ import { siphoning } from './constants';
 @Injectable()
 export class SiphoningStatus implements StatusEffectHandler {
     constructor(
-        private readonly expeditionService: ExpeditionService,
         private readonly playerService: PlayerService,
+        private readonly enemyService: EnemyService,
     ) {}
 
     async preview(
@@ -53,10 +53,10 @@ export class SiphoningStatus implements StatusEffectHandler {
         } else if (EffectService.isEnemy(source)) {
             const defense = source.value.defense;
 
-            await this.expeditionService.setEnemyDefense(
-                client.id,
+            await this.enemyService.setDefense(
+                ctx,
                 source.value.id,
-                newDefense + defense,
+                defense + newDefense,
             );
         }
 

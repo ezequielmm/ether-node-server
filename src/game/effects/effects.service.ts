@@ -1,8 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { find, sample } from 'lodash';
 import { CardTargetedEnum } from '../components/card/card.enum';
-import { EnemyId, getEnemyIdField } from '../components/enemy/enemy.type';
-import { Expedition } from '../components/expedition/expedition.schema';
+import { EnemyService } from '../components/enemy/enemy.service';
+import { EnemyId, enemyIdField } from '../components/enemy/enemy.type';
+import {
+    Expedition,
+    ExpeditionDocument,
+} from '../components/expedition/expedition.schema';
+import { PlayerService } from '../components/player/player.service';
 import { ProviderContainer } from '../provider/interfaces';
 import { ProviderService } from '../provider/provider.service';
 import { StatusDirection } from '../status/interfaces';
@@ -31,6 +36,8 @@ export class EffectService {
     constructor(
         private readonly providerService: ProviderService,
         private readonly statusService: StatusService,
+        private readonly enemyService: EnemyService,
+        private readonly playerService: PlayerService,
     ) {}
 
     async applyAll(dto: ApplyAllDTO): Promise<void> {
@@ -92,34 +99,29 @@ export class EffectService {
     private findAffectedTargets(dto: FindTargetsDTO): TargetEntityDTO[] {
         const { effect, source, expedition, selectedEnemy } = dto;
         const targets: TargetEntityDTO[] = [];
+        const ctx = {
+            client: undefined,
+            expedition: expedition as ExpeditionDocument,
+        };
 
         switch (effect.target) {
             case CardTargetedEnum.Player:
-                targets.push(EffectService.extractPlayerDTO(expedition));
+                targets.push(this.playerService.get(ctx));
                 break;
             case CardTargetedEnum.Self:
                 targets.push(source);
                 break;
             case CardTargetedEnum.AllEnemies:
-                EffectService.extractAllEnemiesDTO(expedition).value.forEach(
-                    (enemy) =>
-                        targets.push({
-                            type: CardTargetedEnum.Enemy,
-                            value: enemy,
-                        }),
-                );
+                targets.push(...this.enemyService.getAll(ctx));
                 break;
             case CardTargetedEnum.RandomEnemy:
                 targets.push({
                     type: CardTargetedEnum.Enemy,
-                    value: EffectService.extractRandomEnemyDTO(expedition)
-                        .value,
+                    value: this.enemyService.getRandom(ctx).value,
                 });
                 break;
             case CardTargetedEnum.Enemy:
-                targets.push(
-                    EffectService.extractEnemyDTO(expedition, selectedEnemy),
-                );
+                targets.push(this.enemyService.get(ctx, selectedEnemy));
                 break;
         }
 
@@ -146,6 +148,7 @@ export class EffectService {
         };
     }
 
+    /** @deprecated Use EnemyService.get instead */
     public static extractEnemyDTO(
         expedition: Expedition,
         enemy: EnemyId,
@@ -158,10 +161,11 @@ export class EffectService {
 
         return {
             type: CardTargetedEnum.Enemy,
-            value: find(enemies, [getEnemyIdField(enemy), enemy]),
+            value: find(enemies, [enemyIdField(enemy), enemy]),
         };
     }
 
+    /** @deprecated Use EnemyService.getRandom instead */
     public static extractRandomEnemyDTO(
         expedition: Expedition,
     ): RandomEnemyDTO {
@@ -177,6 +181,7 @@ export class EffectService {
         };
     }
 
+    /** @deprecated Use EnemyService.getAll instead */
     public static extractAllEnemiesDTO(expedition: Expedition): AllEnemiesDTO {
         const {
             currentNode: {

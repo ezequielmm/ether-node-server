@@ -90,7 +90,7 @@ export class SocketGateway
                                 characterClass: CharacterClassEnum.Knight,
                             });
 
-                        await this.playerService.setHealt(
+                        await this.playerService.setHp(
                             {
                                 client,
                                 expedition,
