@@ -245,7 +245,5 @@ export class ExpeditionService {
                 { new: true },
             )
             .lean();
-
-        return this.syncCardDescriptions(expedition);
     }
 }

@@ -32,6 +32,6 @@ export class HealEffect implements EffectHandler {
         };
 
         if (EffectService.isPlayer(target))
-            await this.playerService.setHealt(ctx, currentValue);
+            await this.playerService.setHp(ctx, currentValue);
     }
 }

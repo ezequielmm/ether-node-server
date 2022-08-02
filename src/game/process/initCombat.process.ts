@@ -25,7 +25,7 @@ export class InitCombatProcess {
                 client.id,
             );
 
-        await this.expeditionService.update(client.id, {
+        const expedition = await this.expeditionService.update(client.id, {
             currentNode,
         });
 
@@ -33,8 +33,6 @@ export class InitCombatProcess {
             client,
             expedition: expedition as ExpeditionDocument,
         };
-
-        await this.expeditionService.syncCardDescriptions(expedition);
 
         await this.setCombatTurnAction.handle({
             clientId: client.id,

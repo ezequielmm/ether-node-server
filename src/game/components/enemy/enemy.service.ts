@@ -6,7 +6,7 @@ import { EnemyId, enemyIdField, enemySelector } from './enemy.type';
 import { Context } from '../interfaces';
 import { ExpeditionEnemy } from './enemy.interface';
 import { CardTargetedEnum } from '../card/card.enum';
-import { find, has, sample } from 'lodash';
+import { find, sample } from 'lodash';
 import { ExpeditionService } from '../expedition/expedition.service';
 import {
     ENEMY_CURRENT_SCRIPT_PATH,
@@ -46,7 +46,7 @@ export class EnemyService {
     public getAll(ctx: Context): ExpeditionEnemy[] {
         const { expedition } = ctx;
 
-        if (!has(expedition, 'currentNode.data.enemies')) {
+        if (!expedition.currentNode?.data?.enemies) {
             throw new Error('Current node has no enemies');
         }
 
