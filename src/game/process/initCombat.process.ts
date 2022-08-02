@@ -25,7 +25,7 @@ export class InitCombatProcess {
                 client.id,
             );
 
-        const expedition = await this.expeditionService.update(client.id, {
+        await this.expeditionService.update(client.id, {
             currentNode,
         });
 

@@ -1,4 +1,4 @@
-import { forwardRef, Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { cloneDeep, find, matches } from 'lodash';
 import { Model } from 'mongoose';
@@ -10,7 +10,6 @@ import {
     Expedition,
     ExpeditionDocument,
 } from '../components/expedition/expedition.schema';
-import { ExpeditionService } from '../components/expedition/expedition.service';
 import { getClientIdField } from '../components/expedition/expedition.type';
 import {
     EffectDTO,
@@ -56,8 +55,6 @@ export class StatusService {
         @InjectModel(Expedition.name)
         private readonly expedition: Model<ExpeditionDocument>,
         private readonly providerService: ProviderService,
-        @Inject(forwardRef(() => ExpeditionService))
-        private readonly expeditionService: ExpeditionService,
     ) {}
 
     public async attachStatusToEnemy(
@@ -102,7 +99,7 @@ export class StatusService {
                 dto.sourceReference,
             );
 
-        const expedition = await this.expedition.findOneAndUpdate(
+        return await this.expedition.findOneAndUpdate(
             {
                 clientId,
                 status: ExpeditionStatusEnum.InProgress,
@@ -114,8 +111,6 @@ export class StatusService {
                 },
             },
         );
-
-        return this.expeditionService.syncCardDescriptions(expedition);
     }
 
     public async attachStatuses(
@@ -213,10 +208,8 @@ export class StatusService {
             }
         }
 
-        if (isUpdate) {
+        if (isUpdate)
             await this.updateStatuses(collectionOwner, expedition, collection);
-            await this.expeditionService.syncCardDescriptions(expedition);
-        }
 
         return effectDTO;
     }

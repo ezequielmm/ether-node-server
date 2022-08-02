@@ -29,7 +29,7 @@ export class SendEnemyIntentProcess {
                 id,
                 intents: intentions.map(({ value, type }) => {
                     return {
-                        value,
+                        ...(type === EnemyIntentionType.Attack && { value }),
                         description: this.descriptionGenerator(type, value),
                         type,
                     };
