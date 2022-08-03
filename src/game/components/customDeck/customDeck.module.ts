@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { CustomDeck, CustomDeckSchema } from './customDeck.schema';
+import { CustomDeckService } from './customDeck.service';
 
 @Module({
     imports: [
@@ -11,5 +12,7 @@ import { CustomDeck, CustomDeckSchema } from './customDeck.schema';
             },
         ]),
     ],
+    providers: [CustomDeckService],
+    exports: [CustomDeckService],
 })
 export class CustomDeckModule {}

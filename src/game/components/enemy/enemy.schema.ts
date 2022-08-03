@@ -5,7 +5,9 @@ import { EnemyScript } from './enemy.interface';
 
 export type EnemyDocument = Enemy & Document;
 
-@Schema()
+@Schema({
+    collection: 'enemies',
+})
 export class Enemy {
     @Prop({ unique: true })
     enemyId: number;

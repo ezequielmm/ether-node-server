@@ -6,7 +6,9 @@ import { PotionRarityEnum } from './potion.enum';
 
 export type PotionDocument = Potion & Document;
 
-@Schema()
+@Schema({
+    collection: 'potions',
+})
 export class Potion {
     @Prop(() => 'potion')
     name: string;
@@ -19,25 +21,9 @@ export class Potion {
     @Prop()
     rarity: PotionRarityEnum;
 
-    @Factory('Deal $prop.damage.current$ damage to target')
+    @Factory('Future description')
     @Prop()
     description: string;
-
-    @Factory(() => {
-        return {
-            properties: {
-                effects: {},
-            },
-        };
-    })
-    @Prop({ type: Object })
-    properties: {
-        effects: {
-            resolve?: {
-                base: number;
-            };
-        };
-    };
 }
 
 export const PotionSchema = SchemaFactory.createForClass(Potion);

@@ -6,7 +6,9 @@ import { CardRarityEnum, CardTypeEnum, CardKeywordEnum } from './card.enum';
 
 export type CardDocument = Card & Document;
 
-@Schema()
+@Schema({
+    collection: 'cards',
+})
 export class Card {
     @Prop({ unique: true })
     cardId: number;

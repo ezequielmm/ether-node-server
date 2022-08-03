@@ -14,7 +14,9 @@ import {
 
 export type ExpeditionDocument = Expedition & Document;
 
-@Schema()
+@Schema({
+    collection: 'expeditions',
+})
 export class Expedition {
     @Prop()
     clientId?: string;
