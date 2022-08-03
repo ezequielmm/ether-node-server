@@ -77,16 +77,13 @@ export class BeginPlayerTurnProcess {
         );
 
         // Reset energy
-        const {
-            player: {
-                energy: { initial, max },
-            },
-        } = await this.settingsService.getSettings();
+        const { initialEnergy, maxEnergy } =
+            await this.settingsService.getSettings();
 
         // Reset defense
         if (defense > 0) await this.playerService.setDefense(ctx, 0);
 
-        this.playerService.setEnergy(ctx, initial);
+        this.playerService.setEnergy(ctx, initialEnergy);
 
         // Send new energy amount
 
@@ -100,7 +97,7 @@ export class BeginPlayerTurnProcess {
                 StandardResponse.respond({
                     message_type: SWARMessageType.PlayerAffected,
                     action: SWARAction.UpdateEnergy,
-                    data: [initial, max],
+                    data: [initialEnergy, maxEnergy],
                 }),
             ),
         );

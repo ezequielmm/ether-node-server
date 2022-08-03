@@ -52,12 +52,8 @@ export class CurrentNodeGeneratorProcess {
     }
 
     private async getCombatCurrentNode(): Promise<IExpeditionCurrentNode> {
-        const {
-            player: {
-                energy: { max, initial },
-                handSize,
-            },
-        } = await this.settingsService.getSettings();
+        const { initialEnergy, maxEnergy, initialHandPileSize } =
+            await this.settingsService.getSettings();
 
         const cards = await this.expeditionService.getDeckCards({
             clientId: this.clientId,
@@ -65,7 +61,7 @@ export class CurrentNodeGeneratorProcess {
 
         const handCards = cards
             .sort(() => 0.5 - Math.random())
-            .slice(0, handSize);
+            .slice(0, initialHandPileSize);
 
         const drawCards = removeCardsFromPile({
             originalPile: cards,
@@ -82,9 +78,9 @@ export class CurrentNodeGeneratorProcess {
                 round: 0,
                 playing: CombatTurnEnum.Player,
                 player: {
-                    energy: initial,
-                    energyMax: max,
-                    handSize,
+                    energy: initialEnergy,
+                    energyMax: maxEnergy,
+                    handSize: initialHandPileSize,
                     defense: 0,
                     cards: {
                         draw: drawCards,

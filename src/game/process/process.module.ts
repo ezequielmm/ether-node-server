@@ -2,6 +2,7 @@ import { forwardRef, Module } from '@nestjs/common';
 import { ActionModule } from '../action/action.module';
 import { CardModule } from '../components/card/card.module';
 import { CharacterModule } from '../components/character/character.module';
+import { CustomDeckModule } from '../components/customDeck/customDeck.module';
 import { EnemyModule } from '../components/enemy/enemy.module';
 import { ExpeditionModule } from '../components/expedition/expedition.module';
 import { PlayerModule } from '../components/player/player.module';
@@ -29,6 +30,7 @@ import { SendEnemyIntentProcess } from './sendEnemyIntents.process';
         StatusModule,
         forwardRef(() => EffectModule),
         PlayerModule,
+        CustomDeckModule,
     ],
     providers: [
         SendEnemyIntentProcess,

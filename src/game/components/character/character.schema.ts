@@ -1,11 +1,12 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 import { CharacterClassEnum } from './character.enum';
-import { CharacterDeckSettings } from './character.interface';
 
 export type CharacterDocument = Character & Document;
 
-@Schema()
+@Schema({
+    collection: 'characters',
+})
 export class Character {
     @Prop()
     name: string;
@@ -23,7 +24,10 @@ export class Character {
     characterClass: CharacterClassEnum;
 
     @Prop({ type: Object })
-    deckSettings: CharacterDeckSettings;
+    cards: {
+        cardId: number;
+        amount: number;
+    }[];
 }
 
 export const CharacterSchema = SchemaFactory.createForClass(Character);
