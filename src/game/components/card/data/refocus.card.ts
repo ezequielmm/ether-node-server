@@ -1,3 +1,4 @@
+import { removeDebuff } from 'src/game/effects/removeDebuff/contants';
 import { resist } from 'src/game/status/resist/constants';
 import { CardRarityEnum, CardTypeEnum, CardTargetedEnum } from '../card.enum';
 import { Card } from '../card.schema';
@@ -13,7 +14,13 @@ export const Refocus: Card = {
     keywords: [],
     properties: {
         effects: [
-            // TODO: Add refocus effect (remove 1 debuff)
+            {
+                effect: removeDebuff.name,
+                target: CardTargetedEnum.Player,
+                args: {
+                    value: 1,
+                },
+            },
         ],
         statuses: [
             {
@@ -40,7 +47,13 @@ export const RefocusUpgraded: Card = {
     keywords: [],
     properties: {
         effects: [
-            // TODO: Add refocus effect (remove all debuffs)
+            {
+                effect: removeDebuff.name,
+                target: CardTargetedEnum.Player,
+                args: {
+                    value: Number.POSITIVE_INFINITY,
+                },
+            },
         ],
         statuses: [
             {

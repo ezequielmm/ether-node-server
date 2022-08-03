@@ -60,6 +60,7 @@ export class StatusService {
         private readonly expeditionService: ExpeditionService,
     ) {}
 
+    // TODO: Move to EnemyService
     private async attachToEnemy(dto: AttachToEnemyDTO): Promise<void> {
         const { ctx, enemyId, status, currentRound } = dto;
 
@@ -86,6 +87,7 @@ export class StatusService {
         this.logger.debug(`Attached status ${status.name} to enemy ${enemyId}`);
     }
 
+    // TODO: Move to PlayService
     private async attachToPlayer(dto: AttachToPlayerDTO): Promise<void> {
         const { ctx, status, currentRound } = dto;
 
@@ -120,6 +122,7 @@ export class StatusService {
                 targetId,
             };
             await this.trigger(ctx, StatusEventType.OnAttachStatus, args);
+            // TODO: Add attachTo.Self case
             switch (status.args.attachTo) {
                 case CardTargetedEnum.Player:
                     await this.attachToPlayer({

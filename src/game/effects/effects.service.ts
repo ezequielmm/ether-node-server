@@ -86,9 +86,9 @@ export class EffectService {
         });
 
         for (let i = 0; i < times; i++) {
+            this.logger.debug(`Effect ${name} applied to ${target.type}`);
             const handler = this.findHandlerByName(name);
             await handler.handle(effectDTO);
-            this.logger.debug(`Effect ${name} applied to ${target.type}`);
         }
     }
 
