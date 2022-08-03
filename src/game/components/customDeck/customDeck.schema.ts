@@ -9,9 +9,6 @@ export class CustomDeck {
     name: string;
 
     @Prop()
-    email: string;
-
-    @Prop()
     cards: number[];
 }
 

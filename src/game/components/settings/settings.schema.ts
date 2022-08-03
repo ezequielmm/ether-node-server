@@ -4,15 +4,17 @@ export type SettingsDocument = Settings & Document;
 
 @Schema()
 export class Settings {
-    @Prop({ type: Object })
-    player: {
-        energy: {
-            initial: number;
-            max: number;
-        };
-        handSize: number;
-        deckSize: number;
-    };
+    @Prop()
+    initialEnergy: number;
+
+    @Prop()
+    maxEnergy: number;
+
+    @Prop()
+    initialHandPileSize: number;
+
+    @Prop()
+    initialDeckSize: number;
 }
 
 export const SettingsSchema = SchemaFactory.createForClass(Settings);
