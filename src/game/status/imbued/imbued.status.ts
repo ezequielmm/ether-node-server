@@ -45,7 +45,7 @@ export class ImbuedStatus implements StatusEventHandler {
             selectedEnemy: targetId,
         });
 
-        await this.statusService.attachStatuses({
+        await this.statusService.attach({
             ctx: dto.ctx,
             statuses,
             currentRound: expedition.currentNode.data.round,

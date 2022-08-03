@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { find, sample } from 'lodash';
 import { CardTargetedEnum } from '../components/card/card.enum';
 import { EnemyService } from '../components/enemy/enemy.service';
@@ -28,6 +28,7 @@ import {
 
 @Injectable()
 export class EffectService {
+    private readonly logger: Logger = new Logger(EffectService.name);
     private handlers: ProviderContainer<EffectMetadata, EffectHandler>[];
 
     constructor(
@@ -87,6 +88,7 @@ export class EffectService {
         for (let i = 0; i < times; i++) {
             const handler = this.findHandlerByName(name);
             await handler.handle(effectDTO);
+            this.logger.debug(`Effect ${name} applied to ${target.type}`);
         }
     }
 

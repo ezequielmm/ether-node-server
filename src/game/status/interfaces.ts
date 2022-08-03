@@ -100,6 +100,7 @@ export enum StatusEventType {
     OnTurnEnd = 'onTurnEnd',
     OnBeginCardPlay = 'onBeginCardPlay',
     OnEndCardPlay = 'onEndCardPlay',
+    OnAttachStatus = 'onAttachStatus',
 }
 export interface StatusEvent extends StatusBase {
     trigger: StatusTrigger.Event;
@@ -220,9 +221,14 @@ export interface StatusEventHandler {
     handle(args: StatusEventDTO): Promise<any>;
 }
 
+export interface OnAttachStatusEventArgs {
+    status: JsonStatus;
+    targetId: TargetId;
+}
+
 export type StatusHandler = StatusEffectHandler | StatusEventHandler;
 
-export interface AttachStatusesDTO {
+export interface AttachDTO {
     ctx: Context;
     statuses: JsonStatus[];
     currentRound: number;
@@ -230,14 +236,14 @@ export interface AttachStatusesDTO {
     targetId?: TargetId;
 }
 
-export interface AttachStatusToPlayerDTO {
+export interface AttachToPlayerDTO {
     readonly ctx: Context;
     readonly sourceReference: SourceEntityReferenceDTO;
     readonly status: JsonStatus;
     readonly currentRound: number;
 }
 
-export interface AttachStatusToEnemyDTO {
+export interface AttachToEnemyDTO {
     readonly ctx: Context;
     readonly sourceReference: SourceEntityReferenceDTO;
     readonly status: JsonStatus;

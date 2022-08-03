@@ -163,7 +163,7 @@ export class CardPlayedAction {
                     selectedEnemy: targetId,
                 });
 
-                await this.statusService.attachStatuses({
+                await this.statusService.attach({
                     ctx,
                     statuses,
                     currentRound: round,

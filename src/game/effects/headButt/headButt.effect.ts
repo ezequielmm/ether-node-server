@@ -32,7 +32,7 @@ export class HeadButtEffect implements EffectHandler {
         }
 
         if (defense == 0) {
-            await this.statusService.attachStatuses({
+            await this.statusService.attach({
                 ctx,
                 statuses: [
                     {
