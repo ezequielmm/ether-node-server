@@ -10,7 +10,6 @@ import {
     ExpeditionDocument,
 } from '../components/expedition/expedition.schema';
 import { ExpeditionService } from '../components/expedition/expedition.service';
-import { getClientIdField } from '../components/expedition/expedition.type';
 import { Context } from '../components/interfaces';
 import {
     EffectDTO,

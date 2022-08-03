@@ -1,4 +1,3 @@
-import { repositionEffect } from 'src/game/effects/reposition/contants';
 import { resist } from 'src/game/status/resist/constants';
 import { CardRarityEnum, CardTypeEnum, CardTargetedEnum } from '../card.enum';
 import { Card } from '../card.schema';
