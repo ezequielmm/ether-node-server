@@ -9,7 +9,7 @@ export const Refocus: Card = {
     rarity: CardRarityEnum.Legendary,
     cardType: CardTypeEnum.Skill,
     pool: 'knight',
-    energy: 1,
+    energy: -1,
     description: `Remove 1 debuff\nGain X Resist`,
     keywords: [],
     properties: {
@@ -42,7 +42,7 @@ export const RefocusUpgraded: Card = {
     rarity: CardRarityEnum.Legendary,
     cardType: CardTypeEnum.Skill,
     pool: 'knight',
-    energy: 1,
+    energy: -1,
     description: `Remove all debuffs\nGain X Resist`,
     keywords: [],
     properties: {
