@@ -83,7 +83,7 @@ export class ExpeditionController {
         try {
             const {
                 data: {
-                    data: { id: playerId, name: playerName },
+                    data: { id: playerId, name: playerName, email },
                 },
             } = await this.authGatewayService.getUser(authorization);
 
@@ -96,6 +96,7 @@ export class ExpeditionController {
                 await this.initExpeditionProcess.handle({
                     playerId,
                     playerName,
+                    email,
                 });
 
                 return { expeditionCreated: true };

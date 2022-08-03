@@ -5,6 +5,7 @@ import { CardService } from '../components/card/card.service';
 import { CharacterClassEnum } from '../components/character/character.enum';
 import { CharacterDocument } from '../components/character/character.schema';
 import { CharacterService } from '../components/character/character.service';
+import { CustomDeckService } from '../components/customDeck/customDeck.service';
 import { ExpeditionStatusEnum } from '../components/expedition/expedition.enum';
 import { IExpeditionPlayerStateDeckCard } from '../components/expedition/expedition.interface';
 import { ExpeditionService } from '../components/expedition/expedition.service';
@@ -12,6 +13,7 @@ import { ExpeditionService } from '../components/expedition/expedition.service';
 interface InitExpeditionDTO {
     playerId: number;
     playerName: string;
+    email: string;
 }
 
 @Injectable()
@@ -20,10 +22,11 @@ export class InitExpeditionProcess {
         private readonly expeditionService: ExpeditionService,
         private readonly cardService: CardService,
         private readonly characterService: CharacterService,
+        private readonly customDeckService: CustomDeckService,
     ) {}
 
     async handle(payload: InitExpeditionDTO): Promise<void> {
-        const { playerId, playerName } = payload;
+        const { playerId, playerName, email } = payload;
 
         const character = await this.characterService.findOne({
             characterClass: CharacterClassEnum.Knight,
@@ -31,7 +34,7 @@ export class InitExpeditionProcess {
 
         const map = this.expeditionService.getMap();
 
-        const cards = await this.generatePlayerDeck(character);
+        const cards = await this.generatePlayerDeck(character, email);
 
         await this.expeditionService.create({
             playerId,
@@ -51,11 +54,13 @@ export class InitExpeditionProcess {
 
     private async generatePlayerDeck(
         character: CharacterDocument,
+        email: string,
     ): Promise<IExpeditionPlayerStateDeckCard[]> {
-        // Get decksettings from character object
-        const {
-            deckSettings: { cards: cardsIdsArray },
-        } = character;
+        // First we check if we have a custom deck to apply
+        const customDeck = await this.customDeckService.findByEmail(email);
+
+        const cardsIdsArray =
+            customDeck !== null ? customDeck.cards : character.cards;
 
         // Get card ids as an array of integers
         const cardIds = cardsIdsArray.map(({ cardId }) => cardId);
