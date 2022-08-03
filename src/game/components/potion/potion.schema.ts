@@ -1,3 +1,4 @@
+import { Faker } from '@faker-js/faker';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 import { Factory } from 'nestjs-seeder';
@@ -10,10 +11,11 @@ export type PotionDocument = Potion & Document;
     collection: 'potions',
 })
 export class Potion {
+    @Factory((faker: Faker) => faker.name.findName())
     @Prop(() => 'potion')
     name: string;
 
-    @Prop(() => true)
+    @Factory(() => true)
     @Prop()
     usable: boolean;
 
