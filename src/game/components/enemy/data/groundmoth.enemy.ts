@@ -1,24 +1,92 @@
 import { damageEffect } from 'src/game/effects/damage/constants';
 import { defenseEffect } from 'src/game/effects/defense/constants';
+import { resolve } from 'src/game/status/resolve/constants';
 import { CardTargetedEnum } from '../../card/card.enum';
 import {
-    EnemyCategoryEnum,
-    EnemyIntentionType,
-    EnemySizeEnum,
     EnemyTypeEnum,
+    EnemyCategoryEnum,
+    EnemySizeEnum,
+    EnemyIntentionType,
 } from '../enemy.enum';
 import { Enemy } from '../enemy.schema';
 
-export const sporeMongerData: Enemy = {
-    enemyId: 1,
-    name: 'Sporemonger',
-    type: EnemyTypeEnum.Plant,
+export const groundMothData: Enemy = {
+    enemyId: 2,
+    name: 'GroundMoth',
+    type: EnemyTypeEnum.Beast,
     category: EnemyCategoryEnum.Basic,
-    size: EnemySizeEnum.Small,
+    size: EnemySizeEnum.Medium,
     description:
-        'Floating enemy. Camouflaged, but will flare its foliage "hair" to appear more intimidating. Mouth can spit a toxic slime at enemies.',
-    healthRange: [42, 46],
+        'Medium sized - maybe with his back slightly above a human. His tiny face is actually fake and a lure to make him seem kinda harmless despite his size',
+    healthRange: [48, 56],
     scripts: [
+        {
+            intentions: [
+                {
+                    type: EnemyIntentionType.Attack,
+                    target: CardTargetedEnum.Player,
+                    value: 5,
+                    effects: [
+                        {
+                            effect: damageEffect.name,
+                            target: CardTargetedEnum.Player,
+                            args: {
+                                value: 5,
+                            },
+                        },
+                    ],
+                },
+                {
+                    type: EnemyIntentionType.Attack,
+                    target: CardTargetedEnum.Player,
+                    value: 5,
+                    // TODO: Create Feeble Status and use it here
+                    effects: [
+                        {
+                            effect: damageEffect.name,
+                            target: CardTargetedEnum.Player,
+                            args: {
+                                value: 5,
+                            },
+                        },
+                    ],
+                },
+            ],
+            next: [
+                {
+                    probability: 1,
+                    scriptIndex: 0,
+                },
+            ],
+        },
+        {
+            intentions: [
+                {
+                    type: EnemyIntentionType.Defend,
+                    target: CardTargetedEnum.Enemy,
+                    value: 6,
+                    effects: [
+                        {
+                            effect: defenseEffect.name,
+                            target: CardTargetedEnum.Self,
+                            args: {
+                                value: 6,
+                            },
+                        },
+                    ],
+                },
+            ],
+            next: [
+                {
+                    probability: 0.7,
+                    scriptIndex: 3,
+                },
+                {
+                    probability: 0.2,
+                    scriptIndex: 1,
+                },
+            ],
+        },
         {
             intentions: [
                 {
@@ -30,74 +98,21 @@ export const sporeMongerData: Enemy = {
                             effect: damageEffect.name,
                             target: CardTargetedEnum.Player,
                             args: {
-                                value: 11,
+                                value: 1,
                             },
                         },
                     ],
                 },
-            ],
-            next: [
                 {
-                    probability: 0.5,
-                    scriptIndex: 1,
-                },
-                {
-                    probability: 0.5,
-                    scriptIndex: 2,
-                },
-            ],
-        },
-        {
-            intentions: [
-                {
-                    type: EnemyIntentionType.Defend,
+                    type: EnemyIntentionType.Buff,
                     target: CardTargetedEnum.Self,
-                    value: 7,
-                    effects: [
+                    value: 5,
+                    status: [
                         {
-                            effect: defenseEffect.name,
-                            target: CardTargetedEnum.Self,
+                            name: resolve.name,
                             args: {
-                                value: 7,
-                            },
-                        },
-                    ],
-                },
-            ],
-            next: [
-                {
-                    probability: 1,
-                    scriptIndex: 2,
-                },
-            ],
-        },
-        {
-            intentions: [
-                {
-                    type: EnemyIntentionType.Attack,
-                    target: CardTargetedEnum.Player,
-                    value: 4,
-                    effects: [
-                        {
-                            effect: damageEffect.name,
-                            target: CardTargetedEnum.Player,
-                            args: {
-                                value: 4,
-                            },
-                        },
-                    ],
-                },
-                {
-                    type: EnemyIntentionType.Attack,
-                    target: CardTargetedEnum.Player,
-                    value: 2,
-                    // TODO: Create Feeble Status and use it here
-                    effects: [
-                        {
-                            effect: damageEffect.name,
-                            target: CardTargetedEnum.Player,
-                            args: {
-                                value: 2,
+                                attachTo: CardTargetedEnum.Self,
+                                value: 3,
                             },
                         },
                     ],
