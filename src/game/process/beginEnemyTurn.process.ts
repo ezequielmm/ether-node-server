@@ -4,6 +4,7 @@ import { Socket } from 'socket.io';
 import { CardTargetedEnum } from '../components/card/card.enum';
 import { CombatTurnEnum } from '../components/expedition/expedition.enum';
 import { ExpeditionService } from '../components/expedition/expedition.service';
+import { Context } from '../components/interfaces';
 import { EnemyDTO } from '../effects/effects.interface';
 import { EffectService } from '../effects/effects.service';
 import {
@@ -39,6 +40,11 @@ export class BeginEnemyTurnProcess {
             },
         } = expedition;
 
+        const ctx: Context = {
+            client,
+            expedition,
+        };
+
         this.logger.log(
             `Sent message PutData to client ${client.id}: ${SWARAction.ChangeTurn}`,
         );
@@ -70,8 +76,7 @@ export class BeginEnemyTurnProcess {
 
                 if (!isEmpty(effects)) {
                     await this.effectService.applyAll({
-                        client,
-                        expedition,
+                        ctx,
                         source,
                         effects,
                         selectedEnemy: enemy.id,

@@ -112,8 +112,7 @@ export class BeginPlayerTurnProcess {
         await this.enemyService.calculateNewIntentions(ctx);
 
         await this.statusService.trigger(
-            client,
-            expedition,
+            ctx,
             StatusEventType.OnPlayerTurnStart,
         );
     }

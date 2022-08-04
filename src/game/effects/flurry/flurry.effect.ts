@@ -1,3 +1,5 @@
+import { get } from 'lodash';
+import { PLAYER_ENERGY_PATH } from 'src/game/components/player/contants';
 import { damageEffect } from '../damage/constants';
 import { EffectDecorator } from '../effects.decorator';
 import { EffectDTO, EffectHandler } from '../effects.interface';
@@ -11,13 +13,13 @@ export class FlurryEffect implements EffectHandler {
     constructor(private readonly effectService: EffectService) {}
 
     async handle(dto: EffectDTO): Promise<void> {
-        const { client, expedition, source, target } = dto;
-        const energy = expedition.currentNode.data.player.energy;
+        const { ctx, source, target } = dto;
+
+        const energy = get(ctx.expedition, PLAYER_ENERGY_PATH);
 
         for (let i = 0; i < energy; i++) {
             await this.effectService.apply({
-                client,
-                expedition,
+                ctx: dto.ctx,
                 source,
                 target,
                 effect: {

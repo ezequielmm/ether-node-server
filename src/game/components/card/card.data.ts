@@ -48,6 +48,7 @@ import {
     QuickToAdaptCardUpgraded,
 } from './data/quickToAdapt.card';
 import { RecoverCard, RecoverCardUpgraded } from './data/recover.data';
+import { Refocus, RefocusUpgraded } from './data/refocus.card';
 import { RepositionCard, RepositionCardUpgraded } from './data/reposition.card';
 import { ShakeItOffCard, ShakeItOffCardUpgraded } from './data/shakeItOff.card';
 import { ShieldBashCard, ShieldBashCardUpgraded } from './data/shieldBash.card';
@@ -136,4 +137,6 @@ export const data: Card[] = [
     LastResortCardUpgraded,
     FlurryCard,
     FlurryCardUpgraded,
+    Refocus,
+    RefocusUpgraded,
 ];

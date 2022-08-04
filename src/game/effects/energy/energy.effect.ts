@@ -15,9 +15,8 @@ export class EnergyEffect implements EffectHandler {
 
     async handle(payload: EffectDTO): Promise<void> {
         const {
-            client,
+            ctx: { client, expedition },
             args: { currentValue: energyToAdd },
-            expedition,
         } = payload;
 
         // Deestructure the expedition to get the current

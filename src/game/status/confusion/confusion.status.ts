@@ -25,19 +25,16 @@ export class ConfusionStatus implements StatusEffectHandler {
     }
 
     async handle(dto: StatusEffectDTO): Promise<EffectDTO> {
+        const {
+            effectDTO: { source, target },
+            ctx: { expedition },
+        } = dto;
+
         // If the round is over, the status will be removed
-        if (
-            dto.expedition.currentNode.data.round >
-            dto.status.addedInRound + 1
-        ) {
+        if (expedition.currentNode.data.round > dto.status.addedInRound + 1) {
             dto.remove();
             return dto.effectDTO;
         }
-
-        const {
-            effectDTO: { source, target },
-            expedition,
-        } = dto;
 
         let newTarget: TargetEntityDTO;
 

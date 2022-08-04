@@ -8,8 +8,6 @@ import { EffectDTO, EffectHandler } from '../effects.interface';
 import { EffectService } from '../effects.service';
 import { isNotUndefined } from 'src/utils';
 import { PlayerService } from 'src/game/components/player/player.service';
-import { ExpeditionDocument } from 'src/game/components/expedition/expedition.schema';
-import { Context } from 'src/game/components/interfaces';
 import { EnemyService } from 'src/game/components/enemy/enemy.service';
 
 export interface DefenseArgs {
@@ -32,15 +30,8 @@ export class DefenseEffect implements EffectHandler {
 
     async handle(payload: EffectDTO<DefenseArgs>): Promise<void> {
         const {
-            client,
+            ctx,
             target,
-            expedition: {
-                currentNode: {
-                    data: {
-                        player: { defense: currentDefense },
-                    },
-                },
-            },
             args: {
                 currentValue,
                 useEnemies,
@@ -49,10 +40,16 @@ export class DefenseEffect implements EffectHandler {
                 useAttackingEnemies,
             },
         } = payload;
-        const ctx: Context = {
+        const {
             client,
-            expedition: payload.expedition as ExpeditionDocument,
-        };
+            expedition: {
+                currentNode: {
+                    data: {
+                        player: { defense: currentDefense },
+                    },
+                },
+            },
+        } = ctx;
 
         let newDefense = currentValue;
 

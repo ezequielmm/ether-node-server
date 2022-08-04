@@ -12,6 +12,7 @@ import { FortitudeStatus } from './fortitude/fortitude.status';
 import { HeraldDelayedStatus } from './heraldDelayed/heraldDelayed.status';
 import { ImbuedStatus } from './imbued/imbued.status';
 import { RegenerateStatus } from './regenerate/regenerate.status';
+import { ResistStatus } from './resist/resist.status';
 import { ResolveStatus } from './resolve/resolve.status';
 import { SiphoningStatus } from './siphoning/siphoning.status';
 import { SpikesStatus } from './spikes/spikes.status';
@@ -23,9 +24,9 @@ import { TurtlingStatus } from './turtling/turtling.status';
 
 @Module({
     imports: [
+        ProviderModule,
         forwardRef(() => ExpeditionModule),
         forwardRef(() => EffectModule),
-        ProviderModule,
         forwardRef(() => PlayerModule),
         forwardRef(() => EnemyModule),
     ],
@@ -46,6 +47,7 @@ import { TurtlingStatus } from './turtling/turtling.status';
         ConfusionStatus,
         DoubleDownStatus,
         ImbuedStatus,
+        ResistStatus,
     ],
     exports: [StatusService],
 })

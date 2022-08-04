@@ -1,25 +1,21 @@
 import { Injectable } from '@nestjs/common';
-import { filter, forEach } from 'lodash';
-import { burn } from 'src/game/status/burn/constants';
+import { sampleSize } from 'lodash';
 import { StatusCollection } from 'src/game/status/interfaces';
 import { StatusService } from 'src/game/status/status.service';
 import { EffectDecorator } from '../effects.decorator';
 import { EffectDTO, EffectHandler } from '../effects.interface';
 import { EffectService } from '../effects.service';
-import { doubleBurn } from './constants';
+import { removeDebuff } from './contants';
 
 @EffectDecorator({
-    effect: doubleBurn,
+    effect: removeDebuff,
 })
 @Injectable()
-export class DoubleBurnEffect implements EffectHandler {
+export class RemoveDebuffEffect implements EffectHandler {
     constructor(private readonly statusService: StatusService) {}
 
     async handle(dto: EffectDTO): Promise<void> {
-        const {
-            target,
-            ctx: { expedition },
-        } = dto;
+        const { target, args } = dto;
 
         let statuses: StatusCollection;
 
@@ -29,16 +25,17 @@ export class DoubleBurnEffect implements EffectHandler {
             statuses = target.value.statuses;
         }
 
-        const burnStatuses = filter(statuses.debuff, { name: burn.name });
+        statuses.debuff = Number.isFinite(args.currentValue)
+            ? []
+            : sampleSize(
+                  statuses.debuff,
+                  statuses.debuff.length - args.currentValue,
+              );
 
-        forEach(burnStatuses, (status) => (status.args.value *= 2));
-
-        if (burnStatuses.length) {
-            await this.statusService.updateStatuses(
-                target,
-                expedition,
-                statuses,
-            );
-        }
+        await this.statusService.updateStatuses(
+            target,
+            dto.ctx.expedition,
+            statuses,
+        );
     }
 }

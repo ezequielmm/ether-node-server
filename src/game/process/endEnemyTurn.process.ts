@@ -1,8 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { Socket } from 'socket.io';
 import { CombatTurnEnum } from '../components/expedition/expedition.enum';
 import { ExpeditionDocument } from '../components/expedition/expedition.schema';
 import { ExpeditionService } from '../components/expedition/expedition.service';
+import { Context } from '../components/interfaces';
 import { PlayerService } from '../components/player/player.service';
 import {
     SWARAction,
@@ -14,7 +14,7 @@ import { StatusService } from '../status/status.service';
 import { BeginPlayerTurnProcess } from './beginPlayerTurn.process';
 
 interface EndEnemyTurnDTO {
-    client: Socket;
+    ctx: Context;
 }
 
 @Injectable()
@@ -29,7 +29,8 @@ export class EndEnemyTurnProcess {
     ) {}
 
     async handle(payload: EndEnemyTurnDTO): Promise<void> {
-        const { client } = payload;
+        const { ctx } = payload;
+        const { client } = ctx;
 
         this.logger.log(
             `Sent message PutData to client ${client.id}: ${SWARAction.ChangeTurn}`,
@@ -50,11 +51,7 @@ export class EndEnemyTurnProcess {
             clientId: client.id,
         });
 
-        await this.statusService.trigger(
-            client,
-            expedition,
-            StatusEventType.OnTurnEnd,
-        );
+        await this.statusService.trigger(ctx, StatusEventType.OnTurnEnd);
 
         await this.playerService.setDefense(
             {

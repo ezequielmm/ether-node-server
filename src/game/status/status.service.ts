@@ -1,8 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { cloneDeep, find, matches } from 'lodash';
 import { Model } from 'mongoose';
-import { Socket } from 'socket.io';
 import { CardTargetedEnum } from '../components/card/card.enum';
 import { enemyIdField } from '../components/enemy/enemy.type';
 import { ExpeditionStatusEnum } from '../components/expedition/expedition.enum';
@@ -10,7 +9,8 @@ import {
     Expedition,
     ExpeditionDocument,
 } from '../components/expedition/expedition.schema';
-import { getClientIdField } from '../components/expedition/expedition.type';
+import { ExpeditionService } from '../components/expedition/expedition.service';
+import { Context } from '../components/interfaces';
 import {
     EffectDTO,
     EnemyDTO,
@@ -18,14 +18,14 @@ import {
     TargetEntityDTO,
 } from '../effects/effects.interface';
 import { EffectService } from '../effects/effects.service';
-import { TargetId } from '../effects/effects.types';
 import { ProviderContainer } from '../provider/interfaces';
 import { ProviderService } from '../provider/provider.service';
 import { STATUS_METADATA_KEY } from './contants';
 import {
     AttachedStatus,
-    AttachStatusToEnemyDTO,
-    AttachStatusToPlayerDTO,
+    AttachDTO,
+    AttachToEnemyDTO,
+    AttachToPlayerDTO,
     EnemyReferenceDTO,
     JsonStatus,
     MutateEffectArgsDTO,
@@ -45,22 +45,24 @@ import {
     StatusMetadata,
     StatusStartsAt,
     StatusTrigger,
+    OnAttachStatusEventArgs,
 } from './interfaces';
 
 @Injectable()
 export class StatusService {
+    private readonly logger: Logger = new Logger(StatusService.name);
     private handlers: ProviderContainer<StatusMetadata, StatusHandler>[];
 
     constructor(
         @InjectModel(Expedition.name)
         private readonly expedition: Model<ExpeditionDocument>,
         private readonly providerService: ProviderService,
+        private readonly expeditionService: ExpeditionService,
     ) {}
 
-    public async attachStatusToEnemy(
-        dto: AttachStatusToEnemyDTO,
-    ): Promise<ExpeditionDocument> {
-        const { clientId, enemyId, status, currentRound } = dto;
+    // TODO: Move to EnemyService
+    private async attachToEnemy(dto: AttachToEnemyDTO): Promise<void> {
+        const { ctx, enemyId, status, currentRound } = dto;
 
         const { status: attachedStatus, container: provider } =
             this.convertStatusToAttached(
@@ -69,28 +71,25 @@ export class StatusService {
                 dto.sourceReference,
             );
 
-        return this.expedition
-            .findOneAndUpdate(
-                {
-                    [getClientIdField(clientId)]: clientId,
-                    status: ExpeditionStatusEnum.InProgress,
-                    [`currentNode.data.enemies.${enemyIdField(enemyId)}`]:
-                        enemyId,
+        await this.expeditionService.updateByFilter(
+            {
+                _id: ctx.expedition._id,
+                [`currentNode.data.enemies.${enemyIdField(enemyId)}`]: enemyId,
+            },
+            {
+                $push: {
+                    [`currentNode.data.enemies.$.statuses.${provider.metadata.status.type}`]:
+                        attachedStatus,
                 },
-                {
-                    $push: {
-                        [`currentNode.data.enemies.$.statuses.${provider.metadata.status.type}`]:
-                            attachedStatus,
-                    },
-                },
-            )
-            .lean();
+            },
+        );
+
+        this.logger.debug(`Attached status ${status.name} to enemy ${enemyId}`);
     }
 
-    public async attachStatusToPlayer(
-        dto: AttachStatusToPlayerDTO,
-    ): Promise<Expedition> {
-        const { clientId, status, currentRound } = dto;
+    // TODO: Move to PlayService
+    private async attachToPlayer(dto: AttachToPlayerDTO): Promise<void> {
+        const { ctx, status, currentRound } = dto;
 
         const { status: attachedStatus, container: provider } =
             this.convertStatusToAttached(
@@ -99,10 +98,9 @@ export class StatusService {
                 dto.sourceReference,
             );
 
-        return await this.expedition.findOneAndUpdate(
+        await this.expeditionService.updateByFilter(
             {
-                clientId,
-                status: ExpeditionStatusEnum.InProgress,
+                _id: ctx.expedition._id,
             },
             {
                 $push: {
@@ -111,28 +109,32 @@ export class StatusService {
                 },
             },
         );
+
+        this.logger.debug(`Attached status ${status.name} to player`);
     }
 
-    public async attachStatuses(
-        clientId: string,
-        statuses: JsonStatus[],
-        currentRound: number,
-        sourceReference: SourceEntityReferenceDTO,
-        targetId?: TargetId,
-    ): Promise<void> {
+    public async attach(dto: AttachDTO): Promise<void> {
+        const { ctx, statuses, currentRound, sourceReference, targetId } = dto;
+
         for (const status of statuses) {
+            const args: OnAttachStatusEventArgs = {
+                status,
+                targetId,
+            };
+            await this.trigger(ctx, StatusEventType.OnAttachStatus, args);
+            // TODO: Add attachTo.Self case
             switch (status.args.attachTo) {
                 case CardTargetedEnum.Player:
-                    await this.attachStatusToPlayer({
-                        clientId,
+                    await this.attachToPlayer({
+                        ctx,
                         sourceReference,
                         status,
                         currentRound,
                     });
                     break;
                 case CardTargetedEnum.Enemy:
-                    await this.attachStatusToEnemy({
-                        clientId,
+                    await this.attachToEnemy({
+                        ctx,
                         status,
                         sourceReference,
                         enemyId: targetId,
@@ -144,14 +146,8 @@ export class StatusService {
     }
 
     public async mutate(dto: MutateEffectArgsDTO): Promise<EffectDTO> {
-        const {
-            client,
-            expedition,
-            collectionOwner,
-            collection,
-            effect,
-            preview,
-        } = dto;
+        const { ctx, collectionOwner, collection, effect, preview } = dto;
+        const { expedition } = ctx;
         const {
             currentNode: {
                 data: { round },
@@ -187,8 +183,7 @@ export class StatusService {
                 if (!isActive) continue;
 
                 effectDTO = await instance[preview ? 'preview' : 'handle']({
-                    client,
-                    expedition: expedition,
+                    ctx,
                     effectDTO,
                     status: status,
                     update(args) {
@@ -309,12 +304,12 @@ export class StatusService {
     }
 
     public async trigger(
-        client: Socket,
-        expedition: Expedition,
+        ctx: Context,
         event: StatusEventType,
-        args: any = {},
+        args = {},
     ): Promise<void> {
-        const currentNode = expedition.currentNode;
+        const { expedition } = ctx;
+        const { currentNode } = expedition;
 
         const statusGlobalCollection = await this.findAllStatuses(expedition);
 
@@ -354,8 +349,7 @@ export class StatusService {
                     );
 
                     const dto: StatusEventDTO = {
-                        client,
-                        expedition,
+                        ctx,
                         source,
                         target: entityCollection.target,
                         status,
@@ -426,7 +420,7 @@ export class StatusService {
         };
     }
 
-    private findHandlerContainer<S extends Status, H extends StatusHandler>(
+    public findHandlerContainer<S extends Status, H extends StatusHandler>(
         status: Partial<S>,
     ): ProviderContainer<StatusMetadata<S>, H> {
         this.handlers =

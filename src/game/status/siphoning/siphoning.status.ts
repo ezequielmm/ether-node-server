@@ -1,7 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { EnemyService } from 'src/game/components/enemy/enemy.service';
-import { ExpeditionDocument } from 'src/game/components/expedition/expedition.schema';
-import { Context } from 'src/game/components/interfaces';
 import { PlayerService } from 'src/game/components/player/player.service';
 import { DamageArgs } from 'src/game/effects/damage/damage.effect';
 import { EffectDTO } from 'src/game/effects/effects.interface';
@@ -30,16 +28,12 @@ export class SiphoningStatus implements StatusEffectHandler {
         dto: StatusEffectDTO<DamageArgs>,
     ): Promise<EffectDTO<DamageArgs>> {
         const {
-            expedition,
-            effectDTO: { args, source, client },
+            ctx,
+            effectDTO: { args, source },
             remove,
         } = dto;
-        const ctx: Context = {
-            client,
-            expedition: expedition as ExpeditionDocument,
-        };
 
-        if (dto.expedition.currentNode.data.round > dto.status.addedInRound) {
+        if (ctx.expedition.currentNode.data.round > dto.status.addedInRound) {
             remove();
             return dto.effectDTO;
         }

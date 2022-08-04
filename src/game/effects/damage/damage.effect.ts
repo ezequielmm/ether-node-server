@@ -1,7 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { get } from 'lodash';
 import { EnemyService } from 'src/game/components/enemy/enemy.service';
-import { ExpeditionDocument } from 'src/game/components/expedition/expedition.schema';
 import { Context } from 'src/game/components/interfaces';
+import { PLAYER_ENERGY_PATH } from 'src/game/components/player/contants';
 import { PlayerService } from 'src/game/components/player/player.service';
 import { isNotUndefined } from 'src/utils';
 import {
@@ -36,7 +37,7 @@ export class DamageEffect implements EffectHandler {
 
     async handle(payload: EffectDTO<DamageArgs>): Promise<void> {
         const {
-            client,
+            ctx,
             target,
             args: {
                 currentValue,
@@ -45,19 +46,9 @@ export class DamageEffect implements EffectHandler {
                 useEnergyAsMultiplier,
                 useEnergyAsValue,
             },
-            expedition: {
-                currentNode: {
-                    data: {
-                        player: { energy: currentEnergy },
-                    },
-                },
-            },
         } = payload;
 
-        const ctx: Context = {
-            client,
-            expedition: payload.expedition as ExpeditionDocument,
-        };
+        const currentEnergy = get(ctx.expedition, PLAYER_ENERGY_PATH);
 
         // Check targeted type
         if (EffectService.isEnemy(target)) {

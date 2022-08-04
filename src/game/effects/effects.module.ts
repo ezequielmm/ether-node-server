@@ -1,21 +1,22 @@
 import { forwardRef, Module } from '@nestjs/common';
+import { ActionModule } from '../action/action.module';
+import { EnemyModule } from '../components/enemy/enemy.module';
 import { ExpeditionModule } from '../components/expedition/expedition.module';
+import { PlayerModule } from '../components/player/player.module';
+import { ProviderModule } from '../provider/provider.module';
 import { StatusModule } from '../status/status.module';
 import { DamageEffect } from './damage/damage.effect';
 import { DefenseEffect } from './defense/defense.effect';
+import { DoubleBurnEffect } from './doubleBurn/doubleBurn.effect';
 import { DrawCardEffect } from './drawCard/drawCard.effect';
 import { EffectService } from './effects.service';
-import { HealEffect } from './heal/heal.effect';
 import { EnergyEffect } from './energy/energy.effect';
-import { RemoveDefenseEffect } from './removeDefense/removeDefense.effect';
-import { ActionModule } from '../action/action.module';
-import { ProviderModule } from '../provider/provider.module';
-import { DoubleBurnEffect } from './doubleBurn/doubleBurn.effect';
-import { HeadButtEffect } from './headButt/headButt.effect';
-import { RepositionEffect } from './reposition/reposition.effect';
-import { PlayerModule } from '../components/player/player.module';
 import { FlurryEffect } from './flurry/flurry.effect';
-import { EnemyModule } from '../components/enemy/enemy.module';
+import { HeadButtEffect } from './headButt/headButt.effect';
+import { HealEffect } from './heal/heal.effect';
+import { RemoveDebuffEffect } from './removeDebuff/removeDebuff.effect';
+import { RemoveDefenseEffect } from './removeDefense/removeDefense.effect';
+import { RepositionEffect } from './reposition/reposition.effect';
 
 @Module({
     imports: [
@@ -38,6 +39,7 @@ import { EnemyModule } from '../components/enemy/enemy.module';
         HeadButtEffect,
         RepositionEffect,
         FlurryEffect,
+        RemoveDebuffEffect,
     ],
     exports: [EffectService],
 })
