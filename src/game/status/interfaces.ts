@@ -1,13 +1,8 @@
 import { CardTargetedEnum } from '../components/card/card.enum';
 import { EnemyId } from '../components/enemy/enemy.type';
 import { IExpeditionPlayerStateDeckCard } from '../components/expedition/expedition.interface';
-import { Context } from '../components/interfaces';
-import {
-    Effect,
-    EffectDTO,
-    SourceEntityDTO,
-    TargetEntityDTO,
-} from '../effects/effects.interface';
+import { Context, ExpeditionEntity } from '../components/interfaces';
+import { Effect, EffectDTO } from '../effects/effects.interface';
 import { TargetId } from '../effects/effects.types';
 
 export enum StatusType {
@@ -185,8 +180,8 @@ export interface StatusEffectDTO<
 
 export interface StatusEventDTO<Args = Record<string, any>> {
     readonly ctx: Context;
-    readonly source: SourceEntityDTO;
-    readonly target: TargetEntityDTO;
+    readonly source: ExpeditionEntity;
+    readonly target: ExpeditionEntity;
     readonly status: AttachedStatus;
     readonly args: Args;
     update(args: AttachedStatus['args']): void;
@@ -195,7 +190,7 @@ export interface StatusEventDTO<Args = Record<string, any>> {
 
 export interface OnBeginCardPlayEventArgs {
     card: IExpeditionPlayerStateDeckCard;
-    cardSource: SourceEntityDTO;
+    cardSource: ExpeditionEntity;
     cardSourceReference: SourceEntityReferenceDTO;
     cardTargetId: TargetId;
 }
@@ -263,13 +258,13 @@ export interface EnemyReferenceDTO {
 export type SourceEntityReferenceDTO = PlayerReferenceDTO | EnemyReferenceDTO;
 
 export type StatusesGlobalCollection = {
-    target: TargetEntityDTO;
+    target: ExpeditionEntity;
     statuses: StatusCollection;
 }[];
 
 export interface MutateEffectArgsDTO {
     ctx: Context;
-    collectionOwner: SourceEntityDTO;
+    collectionOwner: ExpeditionEntity;
     collection: StatusCollection;
     effect: Effect['name'];
     effectDTO: EffectDTO;

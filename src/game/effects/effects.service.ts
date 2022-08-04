@@ -1,9 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { find, sample } from 'lodash';
+import { find } from 'lodash';
 import { CardTargetedEnum } from '../components/card/card.enum';
 import { EnemyService } from '../components/enemy/enemy.service';
-import { EnemyId, enemyIdField } from '../components/enemy/enemy.type';
-import { Expedition } from '../components/expedition/expedition.schema';
+import { ExpeditionEntity } from '../components/interfaces';
 import { PlayerService } from '../components/player/player.service';
 import { ProviderContainer } from '../provider/interfaces';
 import { ProviderService } from '../provider/provider.service';
@@ -11,19 +10,13 @@ import { StatusDirection } from '../status/interfaces';
 import { StatusService } from '../status/status.service';
 import { EFFECT_METADATA_KEY } from './effects.decorator';
 import {
+    ApplyAllDTO,
+    ApplyDTO,
     EffectDTO,
     EffectHandler,
     EffectMetadata,
-    ApplyAllDTO,
-    ApplyDTO,
-    SourceEntityDTO,
-    TargetEntityDTO,
-    PlayerDTO,
-    EnemyDTO,
-    RandomEnemyDTO,
-    AllEnemiesDTO,
-    MutateDTO,
     FindTargetsDTO,
+    MutateDTO,
 } from './effects.interface';
 
 @Injectable()
@@ -92,9 +85,9 @@ export class EffectService {
         }
     }
 
-    private findAffectedTargets(dto: FindTargetsDTO): TargetEntityDTO[] {
+    private findAffectedTargets(dto: FindTargetsDTO): ExpeditionEntity[] {
         const { ctx, effect, source, selectedEnemy } = dto;
-        const targets: TargetEntityDTO[] = [];
+        const targets: ExpeditionEntity[] = [];
 
         switch (effect.target) {
             case CardTargetedEnum.Player:
@@ -121,70 +114,6 @@ export class EffectService {
             throw new Error(`Target not found for effect ${effect.effect}`);
 
         return targets;
-    }
-
-    public static extractPlayerDTO(expedition: Expedition): PlayerDTO {
-        const {
-            playerState: globalState,
-            currentNode: {
-                data: { player: combatState },
-            },
-        } = expedition;
-
-        return {
-            type: CardTargetedEnum.Player,
-            value: {
-                globalState,
-                combatState,
-            },
-        };
-    }
-
-    /** @deprecated Use EnemyService.get instead */
-    public static extractEnemyDTO(
-        expedition: Expedition,
-        enemy: EnemyId,
-    ): EnemyDTO {
-        const {
-            currentNode: {
-                data: { enemies },
-            },
-        } = expedition;
-
-        return {
-            type: CardTargetedEnum.Enemy,
-            value: find(enemies, [enemyIdField(enemy), enemy]),
-        };
-    }
-
-    /** @deprecated Use EnemyService.getRandom instead */
-    public static extractRandomEnemyDTO(
-        expedition: Expedition,
-    ): RandomEnemyDTO {
-        const {
-            currentNode: {
-                data: { enemies },
-            },
-        } = expedition;
-
-        return {
-            type: CardTargetedEnum.RandomEnemy,
-            value: sample(enemies),
-        };
-    }
-
-    /** @deprecated Use EnemyService.getAll instead */
-    public static extractAllEnemiesDTO(expedition: Expedition): AllEnemiesDTO {
-        const {
-            currentNode: {
-                data: { enemies },
-            },
-        } = expedition;
-
-        return {
-            type: CardTargetedEnum.AllEnemies,
-            value: enemies,
-        };
     }
 
     private async mutate(dto: MutateDTO): Promise<EffectDTO> {
@@ -264,23 +193,5 @@ export class EffectService {
             throw new Error(`Effect handler ${name} not found`);
 
         return container.instance;
-    }
-
-    public static isPlayer(
-        entity: SourceEntityDTO | TargetEntityDTO,
-    ): entity is PlayerDTO {
-        return entity.type === CardTargetedEnum.Player;
-    }
-
-    public static isEnemy(entity): entity is EnemyDTO {
-        return entity.type === CardTargetedEnum.Enemy;
-    }
-
-    public static isAllEnemies(entity): entity is AllEnemiesDTO {
-        return entity.type === CardTargetedEnum.AllEnemies;
-    }
-
-    public static isRandomEnemy(entity): entity is RandomEnemyDTO {
-        return entity.type === CardTargetedEnum.RandomEnemy;
     }
 }

@@ -54,7 +54,7 @@ export class DefenseEffect implements EffectHandler {
         let newDefense = currentValue;
 
         // Apply if the player is the target
-        if (EffectService.isPlayer(target)) {
+        if (PlayerService.isPlayer(target)) {
             // Check if the card uses the amount of enemies as
             // value to calculate the defense amount to apply
             if (isNotUndefined(useEnemies)) {
@@ -86,7 +86,7 @@ export class DefenseEffect implements EffectHandler {
         }
 
         // Apply if the enemy is the target
-        if (EffectService.isEnemy(target)) {
+        if (EnemyService.isEnemy(target)) {
             newDefense = newDefense + currentDefense;
 
             await this.enemyService.setDefense(
