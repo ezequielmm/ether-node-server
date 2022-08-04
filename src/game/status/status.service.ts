@@ -3,6 +3,8 @@ import { InjectModel } from '@nestjs/mongoose';
 import { cloneDeep, find, matches } from 'lodash';
 import { Model } from 'mongoose';
 import { CardTargetedEnum } from '../components/card/card.enum';
+import { ExpeditionEnemy } from '../components/enemy/enemy.interface';
+import { EnemyService } from '../components/enemy/enemy.service';
 import { enemyIdField } from '../components/enemy/enemy.type';
 import { ExpeditionStatusEnum } from '../components/expedition/expedition.enum';
 import {
@@ -10,14 +12,9 @@ import {
     ExpeditionDocument,
 } from '../components/expedition/expedition.schema';
 import { ExpeditionService } from '../components/expedition/expedition.service';
-import { Context } from '../components/interfaces';
-import {
-    EffectDTO,
-    EnemyDTO,
-    SourceEntityDTO,
-    TargetEntityDTO,
-} from '../effects/effects.interface';
-import { EffectService } from '../effects/effects.service';
+import { Context, ExpeditionEntity } from '../components/interfaces';
+import { PlayerService } from '../components/player/player.service';
+import { EffectDTO } from '../effects/effects.interface';
 import { ProviderContainer } from '../provider/interfaces';
 import { ProviderService } from '../provider/provider.service';
 import { STATUS_METADATA_KEY } from './contants';
@@ -210,13 +207,13 @@ export class StatusService {
     }
 
     public findEffectStatuses(
-        entity: SourceEntityDTO | TargetEntityDTO,
+        entity: ExpeditionEntity,
         direction: StatusDirection,
     ): StatusCollection {
         let statuses: StatusCollection;
-        if (EffectService.isPlayer(entity)) {
+        if (PlayerService.isPlayer(entity)) {
             statuses = entity.value.combatState.statuses;
-        } else if (EffectService.isEnemy(entity)) {
+        } else if (EnemyService.isEnemy(entity)) {
             statuses = entity.value.statuses;
         }
 
@@ -252,20 +249,20 @@ export class StatusService {
     }
 
     public async updateStatuses(
-        source: SourceEntityDTO,
+        source: ExpeditionEntity,
         expedition: Expedition,
         collection: StatusCollection,
     ) {
-        if (EffectService.isPlayer(source)) {
+        if (PlayerService.isPlayer(source)) {
             await this.updatePlayerStatuses(expedition, collection);
-        } else if (EffectService.isEnemy(source)) {
+        } else if (EnemyService.isEnemy(source)) {
             await this.updateEnemyStatuses(expedition, source, collection);
         }
     }
 
     public async updateEnemyStatuses(
         expedition: Expedition,
-        source: EnemyDTO,
+        source: ExpeditionEnemy,
         collection: StatusCollection,
     ): Promise<void> {
         await this.expedition
@@ -454,8 +451,8 @@ export class StatusService {
     public getSourceFromReference(
         expedition: Expedition,
         reference: SourceEntityReferenceDTO,
-    ): SourceEntityDTO {
-        let source: SourceEntityDTO;
+    ): ExpeditionEntity {
+        let source: ExpeditionEntity;
 
         if (this.isPlayerReference(reference)) {
             source = {
@@ -479,13 +476,13 @@ export class StatusService {
     }
 
     public getReferenceFromSource(
-        source: SourceEntityDTO,
+        source: ExpeditionEntity,
     ): SourceEntityReferenceDTO {
-        if (EffectService.isPlayer(source)) {
+        if (PlayerService.isPlayer(source)) {
             return {
                 type: CardTargetedEnum.Player,
             };
-        } else if (EffectService.isEnemy(source)) {
+        } else if (EnemyService.isEnemy(source)) {
             return {
                 type: CardTargetedEnum.Enemy,
                 id: source.value.id,

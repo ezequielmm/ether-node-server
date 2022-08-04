@@ -2,7 +2,7 @@ import { forwardRef, Inject, Injectable, Logger } from '@nestjs/common';
 import { set } from 'lodash';
 import { CardTargetedEnum } from '../card/card.enum';
 import { ExpeditionService } from '../expedition/expedition.service';
-import { Context } from '../interfaces';
+import { Context, ExpeditionEntity } from '../interfaces';
 import {
     PLAYER_CURRENT_HP_PATH,
     PLAYER_DEFENSE_PATH,
@@ -131,5 +131,11 @@ export class PlayerService {
         await this.setHp(ctx, newHp);
 
         return newHp;
+    }
+
+    public static isPlayer(
+        entity: ExpeditionEntity,
+    ): entity is ExpeditionPlayer {
+        return entity.type === CardTargetedEnum.Player;
     }
 }

@@ -125,7 +125,7 @@ export class CardPlayedAction {
             if (!canPlayCard) {
                 this.sendNotEnoughEnergyMessage(message);
             } else {
-                const source = EffectService.extractPlayerDTO(expedition);
+                const source = this.playerService.get(ctx);
                 const sourceReference =
                     this.statusService.getReferenceFromSource(source);
 

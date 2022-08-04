@@ -3,7 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Enemy, EnemyDocument } from './enemy.schema';
 import { Model } from 'mongoose';
 import { EnemyId, enemyIdField, enemySelector } from './enemy.type';
-import { Context } from '../interfaces';
+import { Context, ExpeditionEntity } from '../interfaces';
 import { ExpeditionEnemy } from './enemy.interface';
 import { CardTargetedEnum } from '../card/card.enum';
 import { find, sample } from 'lodash';
@@ -223,5 +223,9 @@ export class EnemyService {
 
             this.logger.debug(`Calculated new script for ${enemy.value.id}`);
         }
+    }
+
+    public static isEnemy(entity: ExpeditionEntity): entity is ExpeditionEnemy {
+        return entity.type === CardTargetedEnum.Enemy;
     }
 }

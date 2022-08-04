@@ -1,8 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { get } from 'lodash';
+import { ExpeditionEnemy } from 'src/game/components/enemy/enemy.interface';
 import { EnemyService } from 'src/game/components/enemy/enemy.service';
 import { Context } from 'src/game/components/interfaces';
-import { PLAYER_ENERGY_PATH } from 'src/game/components/player/contants';
 import { PlayerService } from 'src/game/components/player/player.service';
 import { isNotUndefined } from 'src/utils';
 import {
@@ -12,8 +11,6 @@ import {
 } from '../../standardResponse/standardResponse';
 import { EffectDecorator } from '../effects.decorator';
 import { EffectDTO, EffectHandler } from '../effects.interface';
-import { EffectService } from '../effects.service';
-import { TargetId } from '../effects.types';
 import { damageEffect } from './constants';
 
 export interface DamageArgs {
@@ -48,57 +45,36 @@ export class DamageEffect implements EffectHandler {
             },
         } = payload;
 
-        const currentEnergy = get(ctx.expedition, PLAYER_ENERGY_PATH);
+        const {
+            value: {
+                combatState: { energy, defense },
+            },
+        } = this.playerService.get(ctx);
 
         // Check targeted type
-        if (EffectService.isEnemy(target)) {
+        if (EnemyService.isEnemy(target)) {
             // First we check if we have to deal a multiplier
             // using the remaining energy of the player
-            const newCurrentValue = isNotUndefined(useEnergyAsMultiplier)
-                ? currentValue * currentEnergy
-                : currentValue;
+            const damage =
+                currentValue *
+                (useEnergyAsMultiplier ? energy : 1) *
+                (useDefense ? multiplier * defense : 1);
 
-            await this.applyDamageToEnemy(
-                ctx,
-                newCurrentValue,
-                target.value.id,
-                useDefense,
-                multiplier,
-            );
-        } else if (EffectService.isPlayer(target)) {
+            await this.enemyService.damage(ctx, target.value.id, damage);
+            this.emitEnemyDamage(ctx, target);
+        } else if (PlayerService.isPlayer(target)) {
             // Here we check if we have to use the enemy available
             // as currentValue, here we just need to add it, the value
             // on the effect is 0
-            const newCurrentValue = isNotUndefined(useEnergyAsValue)
-                ? currentEnergy
+            const damage = isNotUndefined(useEnergyAsValue)
+                ? energy
                 : currentValue;
 
-            await this.playerService.damage(ctx, newCurrentValue);
+            await this.playerService.damage(ctx, damage);
         }
     }
 
-    private async applyDamageToEnemy(
-        ctx: Context,
-        damage: number,
-        targetId: TargetId,
-        useDefense: boolean,
-        multiplier: number,
-    ): Promise<void> {
-        const player = this.playerService.get(ctx);
-        // Get enemy based on id
-        const enemy = this.enemyService.get(ctx, targetId);
-
-        if (isNotUndefined(useDefense))
-            damage = player.value.combatState.defense * multiplier;
-
-        const dataResponse = [];
-
-        await this.enemyService.damage(ctx, enemy.value.id, damage);
-
-        dataResponse.push({
-            id: targetId,
-        });
-
+    private emitEnemyDamage(ctx: Context, target: ExpeditionEnemy) {
         this.logger.log(
             `Sent message PutData to client ${ctx.client.id}: ${SWARAction.EnemyAffected}`,
         );
@@ -109,7 +85,7 @@ export class DamageEffect implements EffectHandler {
                 StandardResponse.respond({
                     message_type: SWARMessageType.EnemyAffected,
                     action: SWARAction.EnemyAffected,
-                    data: dataResponse,
+                    data: [{ id: target.value.id }],
                 }),
             ),
         );

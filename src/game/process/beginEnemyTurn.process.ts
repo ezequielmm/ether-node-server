@@ -2,10 +2,10 @@ import { Injectable, Logger } from '@nestjs/common';
 import { isEmpty } from 'lodash';
 import { Socket } from 'socket.io';
 import { CardTargetedEnum } from '../components/card/card.enum';
+import { ExpeditionEnemy } from '../components/enemy/enemy.interface';
 import { CombatTurnEnum } from '../components/expedition/expedition.enum';
 import { ExpeditionService } from '../components/expedition/expedition.service';
 import { Context } from '../components/interfaces';
-import { EnemyDTO } from '../effects/effects.interface';
 import { EffectService } from '../effects/effects.service';
 import {
     SWARAction,
@@ -66,7 +66,7 @@ export class BeginEnemyTurnProcess {
                 currentScript: { intentions },
             } = enemy;
 
-            const source: EnemyDTO = {
+            const source: ExpeditionEnemy = {
                 type: CardTargetedEnum.Enemy,
                 value: enemy,
             };

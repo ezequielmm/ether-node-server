@@ -19,9 +19,9 @@ export class RemoveDefenseEffect implements EffectHandler {
     async handle(payload: EffectDTO): Promise<void> {
         const { ctx, target } = payload;
 
-        if (EffectService.isEnemy(target)) {
+        if (EnemyService.isEnemy(target)) {
             await this.enemyService.setDefense(ctx, target.value.id, 0);
-        } else if (EffectService.isPlayer(target)) {
+        } else if (PlayerService.isPlayer(target)) {
             await this.playerService.setDefense(ctx, 0);
         }
     }

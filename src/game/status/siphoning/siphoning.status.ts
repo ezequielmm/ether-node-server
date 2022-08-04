@@ -3,7 +3,6 @@ import { EnemyService } from 'src/game/components/enemy/enemy.service';
 import { PlayerService } from 'src/game/components/player/player.service';
 import { DamageArgs } from 'src/game/effects/damage/damage.effect';
 import { EffectDTO } from 'src/game/effects/effects.interface';
-import { EffectService } from 'src/game/effects/effects.service';
 import { StatusEffectDTO, StatusEffectHandler } from '../interfaces';
 import { StatusDecorator } from '../status.decorator';
 import { siphoning } from './constants';
@@ -40,11 +39,11 @@ export class SiphoningStatus implements StatusEffectHandler {
 
         const newDefense = args.currentValue;
 
-        if (EffectService.isPlayer(source)) {
+        if (PlayerService.isPlayer(source)) {
             const defense = source.value.combatState.defense;
 
             await this.playerService.setDefense(ctx, defense + newDefense);
-        } else if (EffectService.isEnemy(source)) {
+        } else if (EnemyService.isEnemy(source)) {
             const defense = source.value.defense;
 
             await this.enemyService.setDefense(

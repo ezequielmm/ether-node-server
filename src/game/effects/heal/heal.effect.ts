@@ -27,9 +27,9 @@ export class HealEffect implements EffectHandler {
             args: { currentValue },
         } = payload;
 
-        if (EffectService.isPlayer(target))
+        if (PlayerService.isPlayer(target))
             await this.playerService.setHp(ctx, currentValue);
-        else if (EffectService.isEnemy(target))
+        else if (EnemyService.isEnemy(target))
             await this.enemyService.setHp(ctx, target.value.id, currentValue);
     }
 }

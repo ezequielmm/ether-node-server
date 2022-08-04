@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { CardTargetedEnum } from 'src/game/components/card/card.enum';
+import { EnemyService } from 'src/game/components/enemy/enemy.service';
 import { enemyIdField } from 'src/game/components/enemy/enemy.type';
-import { EffectService } from 'src/game/effects/effects.service';
+import { PlayerService } from 'src/game/components/player/player.service';
 import {
     OnAttachStatusEventArgs,
     StatusEventDTO,
@@ -27,9 +28,9 @@ export class ResistStatus implements StatusEventHandler {
 
         if (metadata.status.type == StatusType.Debuff) {
             if (
-                (EffectService.isPlayer(dto.target) &&
+                (PlayerService.isPlayer(dto.target) &&
                     status.args.attachTo == CardTargetedEnum.Player) ||
-                (EffectService.isEnemy(dto.target) &&
+                (EnemyService.isEnemy(dto.target) &&
                     status.args.attachTo == CardTargetedEnum.Enemy &&
                     dto.target.value[enemyIdField(targetId)] == targetId)
             ) {

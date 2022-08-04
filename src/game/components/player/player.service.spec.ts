@@ -18,7 +18,7 @@ describe('PlayerService', () => {
 
     let playerService: PlayerService;
     let mockContext: Context;
-    let spyOnSetHealt: jest.SpyInstance;
+    let spyOnSetHp: jest.SpyInstance;
     let spyOnSetDefense: jest.SpyInstance;
 
     beforeEach(async () => {
@@ -50,7 +50,7 @@ describe('PlayerService', () => {
             } as unknown as ExpeditionDocument,
         };
 
-        spyOnSetHealt = jest.spyOn(playerService, 'setHp');
+        spyOnSetHp = jest.spyOn(playerService, 'setHp');
         spyOnSetDefense = jest.spyOn(playerService, 'setDefense');
     });
 
@@ -128,10 +128,24 @@ describe('PlayerService', () => {
 
     describe('damage', () => {
         it('should update the player health', async () => {
+            mockContext.expedition.currentNode.data.player.defense = 0;
+
+            await playerService.damage(mockContext, 10);
+
+            expect(spyOnSetDefense).toHaveBeenCalledWith(mockContext, 0);
+            expect(spyOnSetHp).toHaveBeenCalledWith(mockContext, 70);
+
+            expect(get(mockContext.expedition, PLAYER_CURRENT_HP_PATH)).toBe(
+                70,
+            );
+            expect(get(mockContext.expedition, PLAYER_DEFENSE_PATH)).toBe(0);
+        });
+
+        it('should update the player health', async () => {
             await playerService.damage(mockContext, 0);
 
             expect(spyOnSetDefense).toHaveBeenCalledWith(mockContext, 5);
-            expect(spyOnSetHealt).toHaveBeenCalledWith(mockContext, 80);
+            expect(spyOnSetHp).toHaveBeenCalledWith(mockContext, 80);
 
             expect(get(mockContext.expedition, PLAYER_CURRENT_HP_PATH)).toBe(
                 80,
@@ -143,7 +157,7 @@ describe('PlayerService', () => {
             await playerService.damage(mockContext, 85);
 
             expect(spyOnSetDefense).toHaveBeenCalledWith(mockContext, 0);
-            expect(spyOnSetHealt).toHaveBeenCalledWith(mockContext, 0);
+            expect(spyOnSetHp).toHaveBeenCalledWith(mockContext, 0);
 
             expect(get(mockContext.expedition, PLAYER_CURRENT_HP_PATH)).toBe(0);
             expect(get(mockContext.expedition, PLAYER_DEFENSE_PATH)).toBe(0);
