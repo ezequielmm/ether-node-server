@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { find } from 'lodash';
+import { AttackQueueService } from '../components/attackQueue/attackQueue.service';
 import { CardTargetedEnum } from '../components/card/card.enum';
 import { EnemyService } from '../components/enemy/enemy.service';
 import { ExpeditionEntity } from '../components/interfaces';
@@ -8,6 +9,7 @@ import { ProviderContainer } from '../provider/interfaces';
 import { ProviderService } from '../provider/provider.service';
 import { StatusDirection } from '../status/interfaces';
 import { StatusService } from '../status/status.service';
+import { damageEffect } from './damage/constants';
 import { EFFECT_METADATA_KEY } from './effects.decorator';
 import {
     ApplyAllDTO,
@@ -29,6 +31,7 @@ export class EffectService {
         private readonly statusService: StatusService,
         private readonly enemyService: EnemyService,
         private readonly playerService: PlayerService,
+        private readonly attackQueueService: AttackQueueService,
     ) {}
 
     async applyAll(dto: ApplyAllDTO): Promise<void> {
@@ -77,6 +80,31 @@ export class EffectService {
             dto: effectDTO,
             effect: name,
         });
+
+        // Here we check if the effect that we are calling
+        // is the damage effect
+        if (name === damageEffect.name) {
+            // If it is, we get who is attacking and create the queue
+            // Also we deestructure the context to get the player uuid
+            // and expedition id
+            const {
+                ctx: {
+                    expedition: { _id },
+                },
+                source: { type: originType },
+            } = effectDTO;
+
+            const originId =
+                source.type === CardTargetedEnum.Enemy
+                    ? source.value.id
+                    : source.value.globalState.playerId;
+
+            await this.attackQueueService.create({
+                expeditionId: _id.toString(),
+                originType,
+                originId,
+            });
+        }
 
         for (let i = 0; i < times; i++) {
             this.logger.debug(`Effect ${name} applied to ${target.type}`);
