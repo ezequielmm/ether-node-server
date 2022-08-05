@@ -10,6 +10,7 @@ import {
     IExpeditionCurrentNodeDataEnemy,
     IExpeditionNode,
     IExpeditionPlayerStateDeckCard,
+    IExpeditionReward,
 } from './expedition.interface';
 
 export type ExpeditionDocument = Expedition & Document;
@@ -66,6 +67,7 @@ export class Expedition {
                 };
             };
             enemies: IExpeditionCurrentNodeDataEnemy[];
+            rewards: IExpeditionReward[];
         };
     };
 

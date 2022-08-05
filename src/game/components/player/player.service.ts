@@ -1,4 +1,5 @@
 import { forwardRef, Inject, Injectable, Logger } from '@nestjs/common';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import { set } from 'lodash';
 import { CardTargetedEnum } from '../card/card.enum';
 import { ExpeditionService } from '../expedition/expedition.service';
@@ -17,7 +18,30 @@ export class PlayerService {
     constructor(
         @Inject(forwardRef(() => ExpeditionService))
         private readonly expeditionService: ExpeditionService,
+        private readonly eventEmitter: EventEmitter2,
     ) {}
+
+    /**
+     * Check if the entity is the player
+     *
+     * @param entity Expedition entity
+     * @returns If the entity is the player
+     */
+    public static isPlayer(
+        entity: ExpeditionEntity,
+    ): entity is ExpeditionPlayer {
+        return entity.type === CardTargetedEnum.Player;
+    }
+
+    /**
+     * Check if the player is dead
+     *
+     * @param ctx Context
+     * @returns If the player is dead
+     */
+    public isDead(ctx: Context): boolean {
+        return ctx.expedition.playerState.hpCurrent <= 0;
+    }
 
     /**
      * Get the player from the context
@@ -130,12 +154,12 @@ export class PlayerService {
         await this.setDefense(ctx, newDefense);
         await this.setHp(ctx, newHp);
 
-        return newHp;
-    }
+        // Emit the event
+        this.eventEmitter.emit('entity.damage', {
+            ctx,
+            entity: player,
+        });
 
-    public static isPlayer(
-        entity: ExpeditionEntity,
-    ): entity is ExpeditionPlayer {
-        return entity.type === CardTargetedEnum.Player;
+        return newHp;
     }
 }

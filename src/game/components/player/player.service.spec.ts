@@ -1,6 +1,7 @@
 import { Test } from '@nestjs/testing';
 import { get } from 'lodash';
 import { CardTargetedEnum } from '../card/card.enum';
+import { ExpeditionEnemy } from '../enemy/enemy.interface';
 import { ExpeditionDocument } from '../expedition/expedition.schema';
 import { ExpeditionService } from '../expedition/expedition.service';
 import { Context } from '../interfaces';
@@ -56,6 +57,44 @@ describe('PlayerService', () => {
 
     it('should be defined', () => {
         expect(playerService).toBeDefined();
+    });
+
+    describe('isPlayer', () => {
+        it('should return true if the target is the player', () => {
+            const isPlayer = PlayerService.isPlayer({
+                type: CardTargetedEnum.Player,
+                value: {
+                    globalState: mockContext.expedition.playerState,
+                    combatState: mockContext.expedition.currentNode.data.player,
+                },
+            });
+
+            expect(isPlayer).toBe(true);
+        });
+        it('should return false if the target is not the player', () => {
+            const isPlayer = PlayerService.isPlayer({
+                type: CardTargetedEnum.Enemy,
+                value: {},
+            } as ExpeditionEnemy);
+
+            expect(isPlayer).toBe(false);
+        });
+    });
+
+    describe('isDead', () => {
+        it('should return true if the player is dead', () => {
+            mockContext.expedition.playerState.hpCurrent = 0;
+            const isDead = playerService.isDead(mockContext);
+
+            expect(isDead).toBe(true);
+        });
+
+        it('should return false if the player is alive', () => {
+            mockContext.expedition.playerState.hpCurrent = 10;
+            const isDead = playerService.isDead(mockContext);
+
+            expect(isDead).toBe(false);
+        });
     });
 
     describe('get', () => {

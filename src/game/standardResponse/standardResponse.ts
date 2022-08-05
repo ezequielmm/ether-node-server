@@ -1,6 +1,7 @@
 export enum SWARMessageType {
     MapUpdate = 'map_update',
     CombatUpdate = 'combat_update',
+    EndCombat = 'end_combat',
     PlayerStateUpdate = 'player_state_update',
     CardPlayed = 'card_played',
     UnplayableCard = 'unplayable_card',
@@ -18,6 +19,9 @@ export enum SWARAction {
     ExtendMap = 'extend_map',
     BeginCombat = 'begin_combat',
     EndTurn = 'end_turn',
+    EnemiesDefeated = 'enemies_defeated',
+    PlayerDefeated = 'player_defeated',
+    SelectAnotherReward = 'select_another_reward',
     ShowMap = 'show_map',
     UpdatePlayerState = 'update_player_state',
     MapUpdate = 'map_update',
