@@ -1,3 +1,4 @@
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import { Test } from '@nestjs/testing';
 import { get } from 'lodash';
 import { CardTargetedEnum } from '../card/card.enum';
@@ -18,15 +19,28 @@ describe('PlayerService', () => {
     };
 
     let playerService: PlayerService;
+
     let mockContext: Context;
+
     let spyOnSetHp: jest.SpyInstance;
     let spyOnSetDefense: jest.SpyInstance;
+
+    const mockEventEmitter2 = {
+        emit: jest.fn(),
+    };
 
     beforeEach(async () => {
         const module = await Test.createTestingModule({
             providers: [
-                { provide: ExpeditionService, useValue: mockExpeditionService },
+                {
+                    provide: ExpeditionService,
+                    useValue: mockExpeditionService,
+                },
                 PlayerService,
+                {
+                    provide: EventEmitter2,
+                    useValue: mockEventEmitter2,
+                },
             ],
         }).compile();
 
@@ -53,6 +67,7 @@ describe('PlayerService', () => {
 
         spyOnSetHp = jest.spyOn(playerService, 'setHp');
         spyOnSetDefense = jest.spyOn(playerService, 'setDefense');
+        mockEventEmitter2.emit.mockClear();
     });
 
     it('should be defined', () => {
@@ -178,6 +193,11 @@ describe('PlayerService', () => {
                 70,
             );
             expect(get(mockContext.expedition, PLAYER_DEFENSE_PATH)).toBe(0);
+
+            expect(mockEventEmitter2.emit).toBeCalledWith(
+                'entity.damage',
+                expect.objectContaining({}),
+            );
         });
 
         it('should update the player health', async () => {
@@ -190,6 +210,11 @@ describe('PlayerService', () => {
                 80,
             );
             expect(get(mockContext.expedition, PLAYER_DEFENSE_PATH)).toBe(5);
+
+            expect(mockEventEmitter2.emit).toBeCalledWith(
+                'entity.damage',
+                expect.objectContaining({}),
+            );
         });
 
         it('should update the player health to 0 if the damage is greater than the current health', async () => {
@@ -200,6 +225,11 @@ describe('PlayerService', () => {
 
             expect(get(mockContext.expedition, PLAYER_CURRENT_HP_PATH)).toBe(0);
             expect(get(mockContext.expedition, PLAYER_DEFENSE_PATH)).toBe(0);
+
+            expect(mockEventEmitter2.emit).toBeCalledWith(
+                'entity.damage',
+                expect.objectContaining({}),
+            );
         });
     });
 });

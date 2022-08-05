@@ -1,3 +1,4 @@
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import { getModelToken } from '@nestjs/mongoose';
 import { Test } from '@nestjs/testing';
 import { cloneDeep } from 'lodash';
@@ -25,6 +26,10 @@ describe('EnemyService', () => {
     let mockEnemyModel: Model<EnemyDocument>;
     let spyOnSetHp: jest.SpyInstance;
     let spyOnSetDefense: jest.SpyInstance;
+
+    const mockEventEmitter2 = {
+        emit: jest.fn(),
+    };
 
     const mockExpeditionService = {
         updateById: jest.fn().mockImplementation(() => Promise.resolve()),
@@ -200,14 +205,19 @@ describe('EnemyService', () => {
                     useValue: mockExpeditionService,
                 },
                 EnemyService,
+                {
+                    provide: EventEmitter2,
+                    useValue: mockEventEmitter2,
+                },
             ],
         }).compile();
 
         enemyService = module.get<EnemyService>(EnemyService);
         spyOnSetHp = jest.spyOn(enemyService, 'setHp');
         spyOnSetDefense = jest.spyOn(enemyService, 'setDefense');
-        mockExpeditionService.updateByFilter.mockReset();
-        mockExpeditionService.updateById.mockReset();
+        mockExpeditionService.updateByFilter.mockClear();
+        mockExpeditionService.updateById.mockClear();
+        mockEventEmitter2.emit.mockClear();
         mockEnemyModel = module.get(getModelToken(Enemy.name));
         mockCtx = {
             client: null,
@@ -416,6 +426,11 @@ describe('EnemyService', () => {
 
             expect(enemy).toHaveProperty('value.hpCurrent', 10);
             expect(enemy).toHaveProperty('value.defense', 0);
+
+            expect(mockEventEmitter2.emit).toBeCalledWith(
+                'entity.damage',
+                expect.objectContaining({}),
+            );
         });
 
         it('should invalidate defense and change the hp', async () => {
@@ -432,6 +447,11 @@ describe('EnemyService', () => {
 
             expect(enemy).toHaveProperty('value.hpCurrent', 5);
             expect(enemy).toHaveProperty('value.defense', 0);
+
+            expect(mockEventEmitter2.emit).toBeCalledWith(
+                'entity.damage',
+                expect.objectContaining({}),
+            );
         });
 
         it('should invalidate defense and change the hp to 0', async () => {
@@ -448,6 +468,11 @@ describe('EnemyService', () => {
 
             expect(enemy).toHaveProperty('value.hpCurrent', 0);
             expect(enemy).toHaveProperty('value.defense', 0);
+
+            expect(mockEventEmitter2.emit).toBeCalledWith(
+                'entity.damage',
+                expect.objectContaining({}),
+            );
         });
     });
 

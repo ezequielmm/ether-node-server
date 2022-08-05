@@ -14,6 +14,7 @@ import {
     ENEMY_HP_CURRENT_PATH,
 } from './constants';
 import { getRandomItemByWeight } from 'src/utils';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 
 @Injectable()
 export class EnemyService {
@@ -23,6 +24,7 @@ export class EnemyService {
         @InjectModel(Enemy.name) private readonly enemy: Model<EnemyDocument>,
         @Inject(forwardRef(() => ExpeditionService))
         private readonly expeditionService: ExpeditionService,
+        private readonly eventEmitter: EventEmitter2,
     ) {}
 
     /**
@@ -214,6 +216,12 @@ export class EnemyService {
 
         await this.setHp(ctx, id, enemy.hpCurrent);
         await this.setDefense(ctx, id, enemy.defense);
+
+        // Emit the event
+        this.eventEmitter.emit('entity.damage', {
+            ctx,
+            entity: enemy,
+        });
 
         return enemy.hpCurrent;
     }
