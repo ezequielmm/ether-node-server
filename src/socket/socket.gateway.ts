@@ -61,16 +61,12 @@ export class SocketGateway
                 playerId,
             });
 
-            const { currentNode } = expedition;
-
-            const hasExpedition =
-                await this.expeditionService.playerHasExpeditionInProgress({
-                    clientId: playerId,
-                });
-
-            if (hasExpedition) {
+            if (expedition) {
                 this.logger.log(`Client connected: ${client.id}`);
 
+                const { currentNode } = expedition;
+
+                // Here we check if the player is in a node already
                 if (currentNode !== undefined) {
                     const { nodeType, nodeId } = currentNode;
                     const nodeTypes = Object.values(ExpeditionMapNodeTypeEnum);
@@ -118,7 +114,6 @@ export class SocketGateway
         } catch (e) {
             this.logger.log(e.message);
             this.logger.log(e.stack);
-            this.logger.log(`Client has an invalid auth token: ${client.id}`);
             client.disconnect(true);
         }
     }
