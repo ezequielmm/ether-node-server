@@ -46,9 +46,8 @@ export class EnemyService {
     public getAll(ctx: Context): ExpeditionEnemy[] {
         const { expedition } = ctx;
 
-        if (!expedition.currentNode?.data?.enemies) {
+        if (!expedition.currentNode?.data?.enemies)
             throw new Error('Current node has no enemies');
-        }
 
         return expedition.currentNode.data.enemies.map((enemy) => ({
             type: CardTargetedEnum.Enemy,
@@ -183,7 +182,7 @@ export class EnemyService {
         }
 
         this.logger.debug(
-            `Player ${client.id} Applied damage of ${damage} to enemy ${id}`,
+            `Player ${client.id} applied damage of ${damage} to enemy ${id}`,
         );
 
         await this.setHp(ctx, id, enemy.hpCurrent);
