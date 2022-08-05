@@ -160,6 +160,8 @@ export class EnemyService {
     ): Promise<number> {
         const { value: enemy } = this.get(ctx, id);
 
+        const { client } = ctx;
+
         // First we check if the enemy has defense
         if (enemy.defense > 0) {
             // if is true, then we reduce the damage to the defense
@@ -180,7 +182,9 @@ export class EnemyService {
             enemy.hpCurrent = Math.max(0, enemy.hpCurrent - damage);
         }
 
-        this.logger.debug(`Applied damage of ${damage} to ${id}`);
+        this.logger.debug(
+            `Player ${client.id} Applied damage of ${damage} to enemy ${id}`,
+        );
 
         await this.setHp(ctx, id, enemy.hpCurrent);
         await this.setDefense(ctx, id, enemy.defense);

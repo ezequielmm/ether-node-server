@@ -124,7 +124,7 @@ export class PlayerService {
             newHp = Math.max(0, currentHp - damage);
         }
 
-        this.logger.debug(`Player damage attempt of ${damage}`);
+        this.logger.debug(`Player received damage for ${damage} points`);
 
         // Update the player's defense and new health
         await this.setDefense(ctx, newDefense);

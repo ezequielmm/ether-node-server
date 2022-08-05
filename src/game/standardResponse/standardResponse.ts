@@ -37,6 +37,7 @@ export enum SWARAction {
     PlayerAffected = 'player_affected',
     ChangeTurn = 'change_turn',
     UpdateStatuses = 'update_statuses',
+    CombatQueue = 'combat_queue',
 }
 
 interface SWARPayload {
