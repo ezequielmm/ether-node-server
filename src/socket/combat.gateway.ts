@@ -23,7 +23,6 @@ import { GetStatusesAction } from 'src/game/action/getStatuses.action';
 import { GetPlayerDeckAction } from 'src/game/action/getPlayerDeck.action';
 import { Context } from 'src/game/components/interfaces';
 import { filter, find } from 'lodash';
-import { restoreMap } from 'src/game/map/app';
 
 interface CardPlayedInterface {
     cardId: CardId;
@@ -186,30 +185,17 @@ export class CombatGateway {
             });
         }
 
-        const missingRewards = filter(expedition.currentNode.data.rewards, {
+        const rewardsToTake = filter(expedition.currentNode.data.rewards, {
             taken: false,
         });
 
-        if (missingRewards.length === 0) {
-            const map = restoreMap(expedition.map, client.id);
-            map.activeNode = map.fullCurrentMap.get(
-                expedition.currentNode.nodeId,
-            );
-            map.activeNode.complete(map);
-
-            await this.expeditionService.updateById(expedition._id, {
-                $set: {
-                    map: map.getMap,
-                    'currentNode.completed': true,
-                },
-            });
-
+        if (rewardsToTake.length === 0) {
             return JSON.stringify(
                 StandardResponse.respond({
                     message_type: SWARMessageType.EndCombat,
                     action: SWARAction.ShowMap,
                     data: {
-                        map: map.getMap,
+                        map: expedition.map,
                     },
                 }),
             );
