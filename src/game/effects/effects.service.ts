@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { find } from 'lodash';
+import { AttackQueueDocument } from '../components/attackQueue/attackQueue.schema';
 import { AttackQueueService } from '../components/attackQueue/attackQueue.service';
 import { CardTargetedEnum } from '../components/card/card.enum';
 import { EnemyService } from '../components/enemy/enemy.service';
@@ -81,6 +82,11 @@ export class EffectService {
             effect: name,
         });
 
+        // we initialize the attack queue variable to use it
+        // later once the effect has been applied
+
+        let attackQueue: AttackQueueDocument = null;
+
         // Here we check if the effect that we are calling
         // is the damage effect
         if (name === damageEffect.name) {
@@ -99,7 +105,7 @@ export class EffectService {
                     ? source.value.id
                     : source.value.globalState.playerId;
 
-            await this.attackQueueService.create({
+            attackQueue = await this.attackQueueService.create({
                 expeditionId: _id.toString(),
                 originType,
                 originId,
@@ -110,6 +116,12 @@ export class EffectService {
             this.logger.debug(`Effect ${name} applied to ${target.type}`);
             const handler = this.findHandlerByName(name);
             await handler.handle(effectDTO);
+        }
+
+        if (attackQueue) {
+            await this.attackQueueService.delete({
+                id: attackQueue._id.toString(),
+            });
         }
     }
 

@@ -1,5 +1,6 @@
 import { forwardRef, Inject, Injectable, Logger } from '@nestjs/common';
 import { set } from 'lodash';
+import { AttackQueueService } from '../attackQueue/attackQueue.service';
 import { CardTargetedEnum } from '../card/card.enum';
 import { ExpeditionService } from '../expedition/expedition.service';
 import { Context, ExpeditionEntity } from '../interfaces';
@@ -17,6 +18,7 @@ export class PlayerService {
     constructor(
         @Inject(forwardRef(() => ExpeditionService))
         private readonly expeditionService: ExpeditionService,
+        private readonly attackQueueService: AttackQueueService,
     ) {}
 
     /**
@@ -100,6 +102,8 @@ export class PlayerService {
      * @returns The new hp of the player
      */
     public async damage(ctx: Context, damage: number): Promise<number> {
+        // First we get the attackQueue if we have one
+
         const player = this.get(ctx);
 
         const currentDefense = player.value.combatState.defense;
