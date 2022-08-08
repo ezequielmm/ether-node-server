@@ -15,6 +15,8 @@ import {
 } from './constants';
 import { getRandomItemByWeight } from 'src/utils';
 import { AttackQueueService } from '../attackQueue/attackQueue.service';
+import { IAttackQueueTarget } from '../attackQueue/attackQueue.interface';
+import { IExpeditionCurrentNodeDataEnemy } from '../expedition/expedition.interface';
 
 @Injectable()
 export class EnemyService {
@@ -163,7 +165,14 @@ export class EnemyService {
 
         const { client } = ctx;
 
-        // Here we resume the attackQueue
+        const attackDetails: IAttackQueueTarget = {
+            targetType: CardTargetedEnum.Enemy,
+            targetId: enemy.id,
+            healthDelta: 0,
+            finalHealth: 0,
+            defenseDelta: 0,
+            finalDefense: 0,
+        };
 
         // First we check if the enemy has defense
         if (enemy.defense > 0) {
@@ -174,11 +183,24 @@ export class EnemyService {
             // and use the remaining value to reduce to the health
             // and the set the defense to 0
             if (newDefense < 0) {
-                enemy.hpCurrent = Math.max(0, enemy.hpCurrent + newDefense);
+                enemy.hpCurrent = Math.max(
+                    0,
+                    enemy.hpCurrent - Math.abs(newDefense),
+                );
                 enemy.defense = 0;
+
+                // Update attackQueue Details
+                attackDetails.defenseDelta = -damage;
+                attackDetails.finalDefense = enemy.defense;
+                attackDetails.healthDelta = newDefense;
+                attackDetails.finalHealth = enemy.hpCurrent;
             } else {
                 // Otherwise, we update the defense with the new value
                 enemy.defense = newDefense;
+
+                // Update attackQueue Details
+                attackDetails.defenseDelta = -damage;
+                attackDetails.finalDefense = newDefense;
             }
         } else {
             // Otherwise, we apply the damage to the enemy's health
