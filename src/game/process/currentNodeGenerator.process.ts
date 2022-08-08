@@ -1,4 +1,6 @@
 import { Injectable } from '@nestjs/common';
+import { randomUUID } from 'crypto';
+import { random } from 'lodash';
 import { getRandomBetween, removeCardsFromPile } from 'src/utils';
 import { EnemyService } from '../components/enemy/enemy.service';
 import { EnemyId } from '../components/enemy/enemy.type';
@@ -10,6 +12,7 @@ import {
     IExpeditionCurrentNode,
     IExpeditionCurrentNodeDataEnemy,
     IExpeditionNode,
+    IExpeditionReward,
 } from '../components/expedition/expedition.interface';
 import { ExpeditionService } from '../components/expedition/expedition.service';
 import { SettingsService } from '../components/settings/settings.service';
@@ -69,6 +72,7 @@ export class CurrentNodeGeneratorProcess {
         });
 
         const enemies = await this.getEnemies();
+        const rewards = this.getRewards();
 
         return {
             nodeId: this.node.id,
@@ -94,6 +98,7 @@ export class CurrentNodeGeneratorProcess {
                     },
                 },
                 enemies,
+                rewards,
             },
         };
     }
@@ -133,5 +138,25 @@ export class CurrentNodeGeneratorProcess {
                 };
             }),
         );
+    }
+
+    private getRewards(): IExpeditionReward[] {
+        const amount =
+            this.node.type == ExpeditionMapNodeTypeEnum.Combat
+                ? random(10, 20)
+                : this.node.type == ExpeditionMapNodeTypeEnum.CombatElite
+                ? random(25, 35)
+                : this.node.type == ExpeditionMapNodeTypeEnum.CombatBoss
+                ? random(95, 105)
+                : 0;
+
+        return [
+            {
+                id: randomUUID(),
+                type: 'gold',
+                amount,
+                taken: false,
+            },
+        ];
     }
 }

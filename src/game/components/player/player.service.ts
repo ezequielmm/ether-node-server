@@ -20,6 +20,28 @@ export class PlayerService {
     ) {}
 
     /**
+     * Check if the entity is the player
+     *
+     * @param entity Expedition entity
+     * @returns If the entity is the player
+     */
+    public static isPlayer(
+        entity: ExpeditionEntity,
+    ): entity is ExpeditionPlayer {
+        return entity.type === CardTargetedEnum.Player;
+    }
+
+    /**
+     * Check if the player is dead
+     *
+     * @param ctx Context
+     * @returns If the player is dead
+     */
+    public isDead(ctx: Context): boolean {
+        return ctx.expedition.playerState.hpCurrent <= 0;
+    }
+
+    /**
      * Get the player from the context
      *
      * @param ctx Context
@@ -131,11 +153,5 @@ export class PlayerService {
         await this.setHp(ctx, newHp);
 
         return newHp;
-    }
-
-    public static isPlayer(
-        entity: ExpeditionEntity,
-    ): entity is ExpeditionPlayer {
-        return entity.type === CardTargetedEnum.Player;
     }
 }

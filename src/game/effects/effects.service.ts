@@ -55,6 +55,12 @@ export class EffectService {
 
     public async apply(dto: ApplyDTO) {
         const { ctx, source, target, effect } = dto;
+
+        if (ctx.expedition.currentNode.completed) {
+            this.logger.debug(`Combat ended, skipping effect ${effect.effect}`);
+            return;
+        }
+
         const {
             effect: name,
             times = 1,

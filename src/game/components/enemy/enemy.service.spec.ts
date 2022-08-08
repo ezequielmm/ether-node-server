@@ -1,3 +1,4 @@
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import { getModelToken } from '@nestjs/mongoose';
 import { Test } from '@nestjs/testing';
 import { cloneDeep } from 'lodash';
@@ -5,6 +6,7 @@ import { Model } from 'mongoose';
 import { damageEffect } from 'src/game/effects/damage/constants';
 import { defenseEffect } from 'src/game/effects/defense/constants';
 import { CardTargetedEnum } from '../card/card.enum';
+import { IExpeditionCurrentNodeDataEnemy } from '../expedition/expedition.interface';
 import { ExpeditionService } from '../expedition/expedition.service';
 import { Context } from '../interfaces';
 import {
@@ -13,16 +15,21 @@ import {
     ENEMY_HP_CURRENT_PATH,
 } from './constants';
 import { EnemyIntentionType } from './enemy.enum';
+import { ExpeditionEnemy } from './enemy.interface';
 import { Enemy, EnemyDocument } from './enemy.schema';
 import { EnemyService } from './enemy.service';
 import { enemySelector } from './enemy.type';
 
 describe('EnemyService', () => {
-    let service: EnemyService;
+    let enemyService: EnemyService;
     let mockCtx: Context;
     let mockEnemyModel: Model<EnemyDocument>;
     let spyOnSetHp: jest.SpyInstance;
     let spyOnSetDefense: jest.SpyInstance;
+
+    const mockEventEmitter2 = {
+        emit: jest.fn(),
+    };
 
     const mockExpeditionService = {
         updateById: jest.fn().mockImplementation(() => Promise.resolve()),
@@ -198,14 +205,19 @@ describe('EnemyService', () => {
                     useValue: mockExpeditionService,
                 },
                 EnemyService,
+                {
+                    provide: EventEmitter2,
+                    useValue: mockEventEmitter2,
+                },
             ],
         }).compile();
 
-        service = module.get<EnemyService>(EnemyService);
-        spyOnSetHp = jest.spyOn(service, 'setHp');
-        spyOnSetDefense = jest.spyOn(service, 'setDefense');
-        mockExpeditionService.updateByFilter.mockReset();
-        mockExpeditionService.updateById.mockReset();
+        enemyService = module.get<EnemyService>(EnemyService);
+        spyOnSetHp = jest.spyOn(enemyService, 'setHp');
+        spyOnSetDefense = jest.spyOn(enemyService, 'setDefense');
+        mockExpeditionService.updateByFilter.mockClear();
+        mockExpeditionService.updateById.mockClear();
+        mockEventEmitter2.emit.mockClear();
         mockEnemyModel = module.get(getModelToken(Enemy.name));
         mockCtx = {
             client: null,
@@ -224,12 +236,83 @@ describe('EnemyService', () => {
     });
 
     it('should be defined', () => {
-        expect(service).toBeDefined();
+        expect(enemyService).toBeDefined();
+    });
+
+    describe('isEnemy', () => {
+        it('should return true if the target is an enemy', () => {
+            const enemy = {
+                type: CardTargetedEnum.Enemy,
+            } as unknown as ExpeditionEnemy;
+
+            expect(EnemyService.isEnemy(enemy)).toBe(true);
+        });
+        it('should return false if the target is not an enemy', () => {
+            const enemy = {
+                type: CardTargetedEnum.Player,
+            } as unknown as ExpeditionEnemy;
+
+            expect(EnemyService.isEnemy(enemy)).toBe(false);
+        });
+    });
+
+    describe('isDead', () => {
+        it('should return true if the enemy is dead', () => {
+            const enemy = {
+                value: {
+                    hpCurrent: 0,
+                },
+            } as unknown as ExpeditionEnemy;
+
+            expect(enemyService.isDead(enemy)).toBe(true);
+        });
+
+        it('should return false if the enemy is not dead', () => {
+            const enemy = {
+                value: {
+                    hpCurrent: 10,
+                },
+            } as unknown as ExpeditionEnemy;
+
+            expect(enemyService.isDead(enemy)).toBe(false);
+        });
+    });
+
+    describe('isAllDead', () => {
+        it('should return true if all enemies are dead', () => {
+            const enemies = [
+                {
+                    hpCurrent: 0,
+                } as unknown as IExpeditionCurrentNodeDataEnemy,
+                {
+                    hpCurrent: 0,
+                } as unknown as IExpeditionCurrentNodeDataEnemy,
+            ];
+
+            mockCtx.expedition.currentNode.data.enemies = enemies;
+
+            expect(enemyService.isAllDead(mockCtx)).toBe(true);
+        });
+
+        it('should return false if all enemies are not dead', () => {
+            const enemies = [
+                {
+                    hpCurrent: 10,
+                } as unknown as IExpeditionCurrentNodeDataEnemy,
+                {
+                    hpCurrent: 0,
+                } as unknown as IExpeditionCurrentNodeDataEnemy,
+            ];
+
+            mockCtx.expedition.currentNode.data.enemies = enemies;
+
+            expect(enemyService.isAllDead(mockCtx)).toBe(false);
+        });
     });
 
     describe('findById', () => {
         it('should call find by id', async () => {
-            const enemy = await service.findById('123');
+            const enemy = await enemyService.findById('123');
 
             expect(enemy).toEqual(mockEnemy);
 
@@ -237,7 +320,7 @@ describe('EnemyService', () => {
         });
 
         it('should call find one', async () => {
-            const enemy = await service.findById(123);
+            const enemy = await enemyService.findById(123);
 
             expect(enemy).toEqual(mockEnemy);
 
@@ -249,7 +332,7 @@ describe('EnemyService', () => {
 
     describe('getAll', () => {
         it('should return all enemies', async () => {
-            const enemies = await service.getAll(mockCtx);
+            const enemies = await enemyService.getAll(mockCtx);
 
             expect(enemies).toEqual([
                 {
@@ -266,7 +349,10 @@ describe('EnemyService', () => {
 
     describe('get', () => {
         it('should return enemy data', async () => {
-            const enemy = await service.get(mockCtx, mockExpeditionEnemyA.id);
+            const enemy = await enemyService.get(
+                mockCtx,
+                mockExpeditionEnemyA.id,
+            );
             expect(enemy).toEqual({
                 type: CardTargetedEnum.Enemy,
                 value: mockExpeditionEnemyA,
@@ -276,16 +362,16 @@ describe('EnemyService', () => {
 
     describe('getRandom', () => {
         it('should return random enemy', async () => {
-            const enemy = await service.getRandom(mockCtx);
+            const enemy = await enemyService.getRandom(mockCtx);
             expect(enemy).toHaveProperty('value.enemyId');
         });
     });
 
     describe('setDefense', () => {
         it('should update enemy defense', async () => {
-            const enemy = service.get(mockCtx, '1');
+            const enemy = enemyService.get(mockCtx, '1');
 
-            await service.setDefense(mockCtx, enemy.value.id, 5);
+            await enemyService.setDefense(mockCtx, enemy.value.id, 5);
 
             expect(mockExpeditionService.updateByFilter).toHaveBeenCalledWith(
                 {
@@ -303,9 +389,9 @@ describe('EnemyService', () => {
 
     describe('setHp', () => {
         it('should update enemy hp', async () => {
-            const enemy = service.get(mockCtx, '1');
+            const enemy = enemyService.get(mockCtx, '1');
 
-            await service.setHp(mockCtx, enemy.value.id, 5);
+            await enemyService.setHp(mockCtx, enemy.value.id, 5);
 
             expect(mockExpeditionService.updateByFilter).toHaveBeenCalledWith(
                 {
@@ -323,9 +409,9 @@ describe('EnemyService', () => {
 
     describe('damage', () => {
         it('should invalidate defense without change the hp', async () => {
-            const enemy = service.get(mockCtx, '1');
+            const enemy = enemyService.get(mockCtx, '1');
 
-            await service.damage(mockCtx, enemy.value.id, 5);
+            await enemyService.damage(mockCtx, enemy.value.id, 5);
 
             expect(spyOnSetHp).toHaveBeenCalledWith(
                 mockCtx,
@@ -340,12 +426,17 @@ describe('EnemyService', () => {
 
             expect(enemy).toHaveProperty('value.hpCurrent', 10);
             expect(enemy).toHaveProperty('value.defense', 0);
+
+            expect(mockEventEmitter2.emit).toBeCalledWith(
+                'entity.damage',
+                expect.objectContaining({}),
+            );
         });
 
         it('should invalidate defense and change the hp', async () => {
-            const enemy = service.get(mockCtx, '1');
+            const enemy = enemyService.get(mockCtx, '1');
 
-            await service.damage(mockCtx, enemy.value.id, 10);
+            await enemyService.damage(mockCtx, enemy.value.id, 10);
 
             expect(spyOnSetHp).toHaveBeenCalledWith(mockCtx, enemy.value.id, 5);
             expect(spyOnSetDefense).toHaveBeenCalledWith(
@@ -356,12 +447,17 @@ describe('EnemyService', () => {
 
             expect(enemy).toHaveProperty('value.hpCurrent', 5);
             expect(enemy).toHaveProperty('value.defense', 0);
+
+            expect(mockEventEmitter2.emit).toBeCalledWith(
+                'entity.damage',
+                expect.objectContaining({}),
+            );
         });
 
         it('should invalidate defense and change the hp to 0', async () => {
-            const enemy = service.get(mockCtx, '1');
+            const enemy = enemyService.get(mockCtx, '1');
 
-            await service.damage(mockCtx, enemy.value.id, 20);
+            await enemyService.damage(mockCtx, enemy.value.id, 20);
 
             expect(spyOnSetHp).toHaveBeenCalledWith(mockCtx, enemy.value.id, 0);
             expect(spyOnSetDefense).toHaveBeenCalledWith(
@@ -372,12 +468,17 @@ describe('EnemyService', () => {
 
             expect(enemy).toHaveProperty('value.hpCurrent', 0);
             expect(enemy).toHaveProperty('value.defense', 0);
+
+            expect(mockEventEmitter2.emit).toBeCalledWith(
+                'entity.damage',
+                expect.objectContaining({}),
+            );
         });
     });
 
     describe('calculateNewIntentions', () => {
         it('should set new intentions', async () => {
-            await service.calculateNewIntentions(mockCtx);
+            await enemyService.calculateNewIntentions(mockCtx);
 
             expect(mockExpeditionService.updateByFilter).toHaveBeenCalledWith(
                 {

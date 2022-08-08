@@ -64,6 +64,13 @@ export interface IExpeditionCurrentNodeDataEnemy {
     currentScript?: EnemyScript;
 }
 
+export interface IExpeditionReward {
+    id: string;
+    type: 'gold' | 'card' | 'potion' | 'trinket';
+    amount: number;
+    taken: boolean;
+}
+
 export interface IExpeditionStatusResponse {
     readonly hasExpedition: boolean;
 }

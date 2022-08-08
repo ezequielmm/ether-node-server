@@ -163,6 +163,15 @@ export class CardPlayedAction {
                     selectedEnemy: targetId,
                 });
 
+                // After applying the effects, check if the current
+                // combat has ended and if so, skip all next steps
+                if (ctx.expedition.currentNode.completed) {
+                    this.logger.debug(
+                        'Current node is completed. Skipping next actions',
+                    );
+                    return;
+                }
+
                 await this.statusService.attach({
                     ctx,
                     statuses,

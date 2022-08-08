@@ -1,4 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import { ExpeditionEnemy } from 'src/game/components/enemy/enemy.interface';
 import { EnemyService } from 'src/game/components/enemy/enemy.service';
 import { Context } from 'src/game/components/interfaces';
@@ -30,6 +31,7 @@ export class DamageEffect implements EffectHandler {
     constructor(
         private readonly playerService: PlayerService,
         private readonly enemyService: EnemyService,
+        private readonly eventEmitter2: EventEmitter2,
     ) {}
 
     async handle(payload: EffectDTO<DamageArgs>): Promise<void> {
@@ -72,6 +74,12 @@ export class DamageEffect implements EffectHandler {
 
             await this.playerService.damage(ctx, damage);
         }
+
+        // Emit the event
+        this.eventEmitter2.emit('entity.damage', {
+            ctx,
+            entity: target,
+        });
     }
 
     private emitEnemyDamage(ctx: Context, target: ExpeditionEnemy) {
