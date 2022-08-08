@@ -8,6 +8,11 @@ import { ExpeditionEntity } from '../components/interfaces';
 import { PlayerService } from '../components/player/player.service';
 import { ProviderContainer } from '../provider/interfaces';
 import { ProviderService } from '../provider/provider.service';
+import {
+    StandardResponse,
+    SWARAction,
+    SWARMessageType,
+} from '../standardResponse/standardResponse';
 import { StatusDirection } from '../status/interfaces';
 import { StatusService } from '../status/status.service';
 import { damageEffect } from './damage/constants';
@@ -82,16 +87,11 @@ export class EffectService {
             effect: name,
         });
 
-        // we initialize the attack queue variable to use it
-        // later once the effect has been applied
-
-        let attackQueue: AttackQueueDocument = null;
-
         // Here we check if the effect that we are calling
         // is the damage effect
         if (name === damageEffect.name) {
             // If it is, we get who is attacking and create the queue
-            // Also we deestructure the context to get the player uuid
+            // Also we deestructure the context to get the player/enemy uuid
             // and expedition id
             const {
                 ctx: {
@@ -105,7 +105,7 @@ export class EffectService {
                     ? source.value.id
                     : source.value.globalState.playerId;
 
-            attackQueue = await this.attackQueueService.create({
+            await this.attackQueueService.create({
                 expeditionId: _id.toString(),
                 originType,
                 originId,
@@ -122,14 +122,41 @@ export class EffectService {
             await handler.handle(effectDTO);
         }
 
-        if (attackQueue) {
-            await this.attackQueueService.delete({
-                id: attackQueue._id.toString(),
+        // Here we check again if is a damage effect
+        if (name === damageEffect.name) {
+            // Now we see if we have an attack queue, first
+            // we get the expedition id to query the data
+            const {
+                ctx: {
+                    client,
+                    expedition: { _id },
+                },
+            } = effectDTO;
+
+            const attackQueue = await this.attackQueueService.findOne({
+                expeditionId: _id.toString(),
             });
 
-            this.logger.debug(
-                `Deleted attack queue for expedition: ${attackQueue.expeditionId}`,
-            );
+            // If we have an attack queue ready, we get it and send it
+            // to the client
+            if (attackQueue) {
+                // We send the message to the client
+                client.emit(
+                    'PutData',
+                    JSON.stringify(
+                        StandardResponse.respond({
+                            message_type: SWARMessageType.CombatUpdate,
+                            action: SWARAction.CombatQueue,
+                            data: attackQueue.targets,
+                        }),
+                    ),
+                );
+
+                // Finally delete the queue for the next time there is an attack
+                await this.attackQueueService.delete({
+                    id: attackQueue._id.toString(),
+                });
+            }
         }
     }
 

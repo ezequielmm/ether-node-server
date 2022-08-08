@@ -16,7 +16,6 @@ import {
 import { getRandomItemByWeight } from 'src/utils';
 import { AttackQueueService } from '../attackQueue/attackQueue.service';
 import { IAttackQueueTarget } from '../attackQueue/attackQueue.interface';
-import { IExpeditionCurrentNodeDataEnemy } from '../expedition/expedition.interface';
 
 @Injectable()
 export class EnemyService {
@@ -163,7 +162,10 @@ export class EnemyService {
     ): Promise<number> {
         const { value: enemy } = this.get(ctx, id);
 
-        const { client } = ctx;
+        const {
+            client,
+            expedition: { _id },
+        } = ctx;
 
         const attackDetails: IAttackQueueTarget = {
             targetType: CardTargetedEnum.Enemy,
@@ -205,6 +207,10 @@ export class EnemyService {
         } else {
             // Otherwise, we apply the damage to the enemy's health
             enemy.hpCurrent = Math.max(0, enemy.hpCurrent - damage);
+
+            // Update attackQueue Details
+            attackDetails.healthDelta = -damage;
+            attackDetails.finalHealth = enemy.hpCurrent;
         }
 
         this.logger.debug(
@@ -213,6 +219,12 @@ export class EnemyService {
 
         await this.setHp(ctx, id, enemy.hpCurrent);
         await this.setDefense(ctx, id, enemy.defense);
+
+        // Save the details to the Attack Queue
+        await this.attackQueueService.addTargetToQueue(
+            { expeditionId: _id.toString() },
+            attackDetails,
+        );
 
         return enemy.hpCurrent;
     }

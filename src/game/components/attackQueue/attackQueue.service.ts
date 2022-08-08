@@ -4,6 +4,7 @@ import { Model } from 'mongoose';
 import {
     CreateAttackQueueDTO,
     FilterAttackQueueDTO,
+    IAttackQueueTarget,
     UpdateAttackQueueDTO,
 } from './attackQueue.interface';
 import { AttackQueue, AttackQueueDocument } from './attackQueue.schema';
@@ -29,6 +30,15 @@ export class AttackQueueService {
     ): Promise<AttackQueueDocument> {
         return await this.attackQueue.findOneAndUpdate(filters, payload, {
             new: true,
+        });
+    }
+
+    async addTargetToQueue(
+        filters: FilterAttackQueueDTO,
+        target: IAttackQueueTarget,
+    ): Promise<void> {
+        await this.attackQueue.findOneAndUpdate(filters, {
+            $push: { targets: target },
         });
     }
 
