@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
 import { filter } from 'lodash';
 import { EnemyService } from 'src/game/components/enemy/enemy.service';
@@ -9,13 +9,14 @@ import { StatusService } from 'src/game/status/status.service';
 
 @Injectable()
 export class DistraughtEvent implements StatusEventHandler {
+    private readonly logger = new Logger(DistraughtEvent.name);
     constructor(
         private readonly statusService: StatusService,
         private readonly enemyService: EnemyService,
         private readonly playerService: PlayerService,
     ) {}
 
-    @OnEvent('OnBeginEnemyTurn')
+    @OnEvent('OnBeginEnemyTurn', { async: true })
     async enemyHandler(args: { ctx: Context }): Promise<void> {
         const { ctx } = args;
         const enemies = this.enemyService.getAll(ctx);
@@ -32,6 +33,9 @@ export class DistraughtEvent implements StatusEventHandler {
 
             for (const status of distraughtStatuses) {
                 status.args.value--;
+                this.logger.debug(
+                    `Decreasing distraught status value to ${status.args.value}`,
+                );
             }
 
             await this.statusService.updateEnemyStatuses(
@@ -42,7 +46,7 @@ export class DistraughtEvent implements StatusEventHandler {
         }
     }
 
-    @OnEvent('OnBeginPlayerTurn')
+    @OnEvent('OnBeginPlayerTurn', { async: true })
     async playerHandler(args: { ctx: Context }): Promise<void> {
         const { ctx } = args;
         const player = this.playerService.get(ctx);
@@ -58,6 +62,9 @@ export class DistraughtEvent implements StatusEventHandler {
 
         for (const status of distraughtStatuses) {
             status.args.value--;
+            this.logger.debug(
+                `Decreasing distraught status value to ${status.args.value}`,
+            );
         }
 
         await this.statusService.updatePlayerStatuses(
