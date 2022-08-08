@@ -79,7 +79,11 @@ export class AttackQueueService {
                     StandardResponse.respond({
                         message_type: SWARMessageType.CombatUpdate,
                         action: SWARAction.CombatQueue,
-                        data: attackQueue.targets,
+                        data: {
+                            originType: attackQueue.originType,
+                            originId: attackQueue.originId,
+                            targets: attackQueue.targets,
+                        },
                     }),
                 ),
             );
