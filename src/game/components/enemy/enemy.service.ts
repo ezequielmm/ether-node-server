@@ -14,6 +14,7 @@ import {
     ENEMY_HP_CURRENT_PATH,
 } from './constants';
 import { getRandomItemByWeight } from 'src/utils';
+import { AttackQueueService } from '../attackQueue/attackQueue.service';
 
 @Injectable()
 export class EnemyService {
@@ -23,6 +24,7 @@ export class EnemyService {
         @InjectModel(Enemy.name) private readonly enemy: Model<EnemyDocument>,
         @Inject(forwardRef(() => ExpeditionService))
         private readonly expeditionService: ExpeditionService,
+        private readonly attackQueueService: AttackQueueService,
     ) {}
 
     /**
@@ -160,6 +162,8 @@ export class EnemyService {
         const { value: enemy } = this.get(ctx, id);
 
         const { client } = ctx;
+
+        // Here we resume the attackQueue
 
         // First we check if the enemy has defense
         if (enemy.defense > 0) {

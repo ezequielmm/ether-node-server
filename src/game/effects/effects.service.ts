@@ -110,6 +110,10 @@ export class EffectService {
                 originType,
                 originId,
             });
+
+            this.logger.debug(
+                `Created attack queue for expedition: ${_id.toString()}`,
+            );
         }
 
         for (let i = 0; i < times; i++) {
@@ -122,6 +126,10 @@ export class EffectService {
             await this.attackQueueService.delete({
                 id: attackQueue._id.toString(),
             });
+
+            this.logger.debug(
+                `Deleted attack queue for expedition: ${attackQueue.expeditionId}`,
+            );
         }
     }
 
