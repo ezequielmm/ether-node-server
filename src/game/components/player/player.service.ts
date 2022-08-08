@@ -1,5 +1,6 @@
 import { forwardRef, Inject, Injectable, Logger } from '@nestjs/common';
 import { set } from 'lodash';
+import { IAttackQueueTarget } from '../attackQueue/attackQueue.interface';
 import { AttackQueueService } from '../attackQueue/attackQueue.service';
 import { CardTargetedEnum } from '../card/card.enum';
 import { ExpeditionService } from '../expedition/expedition.service';
@@ -102,12 +103,25 @@ export class PlayerService {
      * @returns The new hp of the player
      */
     public async damage(ctx: Context, damage: number): Promise<number> {
-        // First we get the attackQueue if we have one
-
         const player = this.get(ctx);
+
+        const {
+            client,
+            expedition: { _id },
+        } = ctx;
 
         const currentDefense = player.value.combatState.defense;
         const currentHp = player.value.globalState.hpCurrent;
+        const playerUUID = player.value.globalState.playerId;
+
+        const attackDetails: IAttackQueueTarget = {
+            targetType: CardTargetedEnum.Player,
+            targetId: playerUUID,
+            defenseDelta: 0,
+            finalDefense: 0,
+            healthDelta: 0,
+            finalHealth: 0,
+        };
 
         let newDefense = 0;
         let newHp = currentHp;
@@ -119,20 +133,42 @@ export class PlayerService {
             // If newDefense is negative, it means that the defense is fully
             // depleted and the remaining will be applied to the player's health
             if (newDefense < 0) {
-                newHp = Math.max(0, currentHp + newDefense);
+                newHp = Math.max(0, currentHp - Math.abs(newDefense));
                 newDefense = 0;
+
+                // Update attackQueue Details
+                attackDetails.defenseDelta = -damage;
+                attackDetails.finalDefense = newDefense;
+                attackDetails.healthDelta = newDefense;
+                attackDetails.finalHealth = newHp;
+            } else {
+                // Update attackQueue Details
+                attackDetails.defenseDelta = -damage;
+                attackDetails.finalDefense = newDefense;
             }
         } else {
             // If the player has no defense, the damage will be applied to the
             // health directly
             newHp = Math.max(0, currentHp - damage);
+
+            // Update attackQueue Details
+            attackDetails.healthDelta = -damage;
+            attackDetails.finalHealth = newHp;
         }
 
-        this.logger.debug(`Player received damage for ${damage} points`);
+        this.logger.debug(
+            `Player ${client.id} received damage for ${damage} points`,
+        );
 
         // Update the player's defense and new health
         await this.setDefense(ctx, newDefense);
         await this.setHp(ctx, newHp);
+
+        // Save the details to the Attack Queue
+        await this.attackQueueService.addTargetToQueue(
+            { expeditionId: _id.toString() },
+            attackDetails,
+        );
 
         return newHp;
     }

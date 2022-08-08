@@ -1,6 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { find } from 'lodash';
-import { AttackQueueDocument } from '../components/attackQueue/attackQueue.schema';
 import { AttackQueueService } from '../components/attackQueue/attackQueue.service';
 import { CardTargetedEnum } from '../components/card/card.enum';
 import { EnemyService } from '../components/enemy/enemy.service';
@@ -8,11 +7,6 @@ import { ExpeditionEntity } from '../components/interfaces';
 import { PlayerService } from '../components/player/player.service';
 import { ProviderContainer } from '../provider/interfaces';
 import { ProviderService } from '../provider/provider.service';
-import {
-    StandardResponse,
-    SWARAction,
-    SWARMessageType,
-} from '../standardResponse/standardResponse';
 import { StatusDirection } from '../status/interfaces';
 import { StatusService } from '../status/status.service';
 import { damageEffect } from './damage/constants';
@@ -133,30 +127,10 @@ export class EffectService {
                 },
             } = effectDTO;
 
-            const attackQueue = await this.attackQueueService.findOne({
-                expeditionId: _id.toString(),
-            });
-
-            // If we have an attack queue ready, we get it and send it
-            // to the client
-            if (attackQueue) {
-                // We send the message to the client
-                client.emit(
-                    'PutData',
-                    JSON.stringify(
-                        StandardResponse.respond({
-                            message_type: SWARMessageType.CombatUpdate,
-                            action: SWARAction.CombatQueue,
-                            data: attackQueue.targets,
-                        }),
-                    ),
-                );
-
-                // Finally delete the queue for the next time there is an attack
-                await this.attackQueueService.delete({
-                    id: attackQueue._id.toString(),
-                });
-            }
+            await this.attackQueueService.sendQueueToClient(
+                { expeditionId: _id.toString() },
+                client,
+            );
         }
     }
 

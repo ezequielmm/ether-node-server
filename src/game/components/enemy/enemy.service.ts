@@ -170,10 +170,10 @@ export class EnemyService {
         const attackDetails: IAttackQueueTarget = {
             targetType: CardTargetedEnum.Enemy,
             targetId: enemy.id,
-            healthDelta: 0,
-            finalHealth: 0,
             defenseDelta: 0,
             finalDefense: 0,
+            healthDelta: 0,
+            finalHealth: 0,
         };
 
         // First we check if the enemy has defense
