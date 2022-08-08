@@ -29,6 +29,36 @@ export class EnemyService {
     ) {}
 
     /**
+     * Check if the entity is an enemy
+     *
+     * @param entity ExpeditionEntity
+     * @returns If the entity is an enemy
+     */
+    public static isEnemy(entity: ExpeditionEntity): entity is ExpeditionEnemy {
+        return entity.type === CardTargetedEnum.Enemy;
+    }
+
+    /**
+     * Check if the enemy is dead
+     *
+     * @param enemy Enemy
+     * @returns If the enemy is dead
+     */
+    public isDead(enemy: ExpeditionEnemy): boolean {
+        return enemy.value.hpCurrent <= 0;
+    }
+
+    /**
+     * Check if all enemies are dead
+     *
+     * @param ctx Context
+     * @returns If all enemies are dead
+     */
+    public isAllDead(ctx: Context): boolean {
+        return this.getAll(ctx).every((enemy) => this.isDead(enemy));
+    }
+
+    /**
      * Returns enemy by id or enemyId
      *
      * @param enemyId EnemyId
@@ -264,9 +294,5 @@ export class EnemyService {
 
             this.logger.debug(`Calculated new script for ${enemy.value.id}`);
         }
-    }
-
-    public static isEnemy(entity: ExpeditionEntity): entity is ExpeditionEnemy {
-        return entity.type === CardTargetedEnum.Enemy;
     }
 }
