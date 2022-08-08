@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { isEmpty } from 'lodash';
 import { Socket } from 'socket.io';
+import { GetPlayerInfoAction } from '../action/getPlayerInfo.action';
 import { CardTargetedEnum } from '../components/card/card.enum';
 import { ExpeditionEnemy } from '../components/enemy/enemy.interface';
 import { CombatTurnEnum } from '../components/expedition/expedition.enum';
@@ -21,16 +22,21 @@ interface BeginEnemyTurnDTO {
 export class BeginEnemyTurnProcess {
     private readonly logger: Logger = new Logger(BeginEnemyTurnProcess.name);
 
+    private client: Socket;
+
     constructor(
         private readonly expeditionService: ExpeditionService,
         private readonly effectService: EffectService,
+        private readonly getPlayerInfoAction: GetPlayerInfoAction,
     ) {}
 
     async handle(payload: BeginEnemyTurnDTO): Promise<void> {
         const { client } = payload;
 
+        this.client = client;
+
         const expedition = await this.expeditionService.setCombatTurn({
-            clientId: client.id,
+            clientId: this.client.id,
             playing: CombatTurnEnum.Enemy,
         });
 
@@ -41,24 +47,11 @@ export class BeginEnemyTurnProcess {
         } = expedition;
 
         const ctx: Context = {
-            client,
+            client: this.client,
             expedition,
         };
 
-        this.logger.log(
-            `Sent message PutData to client ${client.id}: ${SWARAction.ChangeTurn}`,
-        );
-
-        client.emit(
-            'PutData',
-            JSON.stringify(
-                StandardResponse.respond({
-                    message_type: SWARMessageType.BeginTurn,
-                    action: SWARAction.ChangeTurn,
-                    data: CombatTurnEnum.Enemy,
-                }),
-            ),
-        );
+        this.sendCombatTurnChange();
 
         // Then we loop over them and get their intentions and effects
         enemies.forEach((enemy) => {
@@ -85,26 +78,70 @@ export class BeginEnemyTurnProcess {
             });
         });
 
+        await this.sendUpdatedEnemiesData();
+
+        await this.sendPlayerInfoMessage();
+    }
+
+    private async sendUpdatedEnemiesData(): Promise<void> {
         // Next we query back the enemies from the database and
         // send them to the client
         const {
             data: { enemies: enemiesUpdated },
         } = await this.expeditionService.getCurrentNode({
-            clientId: client.id,
+            clientId: this.client.id,
         });
 
         // Send enemies updated
         this.logger.log(
-            `Sent message PutData to client ${client.id}: ${SWARAction.UpdateEnemy}`,
+            `Sent message PutData to client ${this.client.id}: ${SWARAction.UpdateEnemy}`,
         );
 
-        client.emit(
+        this.client.emit(
             'PutData',
             JSON.stringify(
                 StandardResponse.respond({
                     message_type: SWARMessageType.EnemyAffected,
                     action: SWARAction.UpdateEnemy,
                     data: enemiesUpdated,
+                }),
+            ),
+        );
+    }
+
+    private sendCombatTurnChange(): void {
+        this.logger.log(
+            `Sent message PutData to client ${this.client.id}: ${SWARAction.ChangeTurn}`,
+        );
+
+        this.client.emit(
+            'PutData',
+            JSON.stringify(
+                StandardResponse.respond({
+                    message_type: SWARMessageType.BeginTurn,
+                    action: SWARAction.ChangeTurn,
+                    data: CombatTurnEnum.Enemy,
+                }),
+            ),
+        );
+    }
+
+    private async sendPlayerInfoMessage(): Promise<void> {
+        const playerInfo = await this.getPlayerInfoAction.handle(
+            this.client.id,
+        );
+
+        this.logger.log(
+            `Sent message PutData to client ${this.client.id}: ${SWARAction.UpdatePlayerState}`,
+        );
+
+        this.client.emit(
+            'PutData',
+            JSON.stringify(
+                StandardResponse.respond({
+                    message_type: SWARMessageType.PlayerAffected,
+                    action: SWARAction.UpdatePlayer,
+                    data: playerInfo,
                 }),
             ),
         );
