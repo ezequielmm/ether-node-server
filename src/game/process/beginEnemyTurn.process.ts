@@ -84,5 +84,29 @@ export class BeginEnemyTurnProcess {
                 }
             });
         });
+
+        // Next we query back the enemies from the database and
+        // send them to the client
+        const {
+            data: { enemies: enemiesUpdated },
+        } = await this.expeditionService.getCurrentNode({
+            clientId: client.id,
+        });
+
+        // Send enemies updated
+        this.logger.log(
+            `Sent message PutData to client ${client.id}: ${SWARAction.UpdateEnemy}`,
+        );
+
+        client.emit(
+            'PutData',
+            JSON.stringify(
+                StandardResponse.respond({
+                    message_type: SWARMessageType.EnemyAffected,
+                    action: SWARAction.UpdateEnemy,
+                    data: enemiesUpdated,
+                }),
+            ),
+        );
     }
 }

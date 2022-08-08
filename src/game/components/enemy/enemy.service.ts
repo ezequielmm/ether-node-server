@@ -14,6 +14,8 @@ import {
     ENEMY_HP_CURRENT_PATH,
 } from './constants';
 import { getRandomItemByWeight } from 'src/utils';
+import { AttackQueueService } from '../attackQueue/attackQueue.service';
+import { IAttackQueueTarget } from '../attackQueue/attackQueue.interface';
 
 @Injectable()
 export class EnemyService {
@@ -23,6 +25,7 @@ export class EnemyService {
         @InjectModel(Enemy.name) private readonly enemy: Model<EnemyDocument>,
         @Inject(forwardRef(() => ExpeditionService))
         private readonly expeditionService: ExpeditionService,
+        private readonly attackQueueService: AttackQueueService,
     ) {}
 
     /**
@@ -76,9 +79,8 @@ export class EnemyService {
     public getAll(ctx: Context): ExpeditionEnemy[] {
         const { expedition } = ctx;
 
-        if (!expedition.currentNode?.data?.enemies) {
+        if (!expedition.currentNode?.data?.enemies)
             throw new Error('Current node has no enemies');
-        }
 
         return expedition.currentNode.data.enemies.map((enemy) => ({
             type: CardTargetedEnum.Enemy,
@@ -190,6 +192,20 @@ export class EnemyService {
     ): Promise<number> {
         const { value: enemy } = this.get(ctx, id);
 
+        const {
+            client,
+            expedition: { _id },
+        } = ctx;
+
+        const attackDetails: IAttackQueueTarget = {
+            targetType: CardTargetedEnum.Enemy,
+            targetId: enemy.id,
+            defenseDelta: 0,
+            finalDefense: 0,
+            healthDelta: 0,
+            finalHealth: 0,
+        };
+
         // First we check if the enemy has defense
         if (enemy.defense > 0) {
             // if is true, then we reduce the damage to the defense
@@ -199,21 +215,46 @@ export class EnemyService {
             // and use the remaining value to reduce to the health
             // and the set the defense to 0
             if (newDefense < 0) {
-                enemy.hpCurrent = Math.max(0, enemy.hpCurrent + newDefense);
+                enemy.hpCurrent = Math.max(
+                    0,
+                    enemy.hpCurrent - Math.abs(newDefense),
+                );
                 enemy.defense = 0;
+
+                // Update attackQueue Details
+                attackDetails.defenseDelta = -damage;
+                attackDetails.finalDefense = enemy.defense;
+                attackDetails.healthDelta = newDefense;
+                attackDetails.finalHealth = enemy.hpCurrent;
             } else {
                 // Otherwise, we update the defense with the new value
                 enemy.defense = newDefense;
+
+                // Update attackQueue Details
+                attackDetails.defenseDelta = -damage;
+                attackDetails.finalDefense = newDefense;
             }
         } else {
             // Otherwise, we apply the damage to the enemy's health
             enemy.hpCurrent = Math.max(0, enemy.hpCurrent - damage);
+
+            // Update attackQueue Details
+            attackDetails.healthDelta = -damage;
+            attackDetails.finalHealth = enemy.hpCurrent;
         }
 
-        this.logger.debug(`Applied damage of ${damage} to ${id}`);
+        this.logger.debug(
+            `Player ${client.id} applied damage of ${damage} to enemy ${id}`,
+        );
 
         await this.setHp(ctx, id, enemy.hpCurrent);
         await this.setDefense(ctx, id, enemy.defense);
+
+        // Save the details to the Attack Queue
+        await this.attackQueueService.addTargetToQueue(
+            { expeditionId: _id.toString() },
+            attackDetails,
+        );
 
         return enemy.hpCurrent;
     }

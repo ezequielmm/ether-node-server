@@ -30,6 +30,7 @@ export class Expedition {
 
     @Prop({ type: Object })
     playerState: {
+        playerId: string;
         playerName: string;
         characterClass: string;
         hpMax: number;
