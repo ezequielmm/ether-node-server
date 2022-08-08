@@ -57,6 +57,8 @@ export class EndCombatProcess {
                 'currentNode.completed': true,
             },
         });
+
+        this.logger.debug('Combat ended');
     }
 
     private emitEnemiesDefeated(ctx: Context) {

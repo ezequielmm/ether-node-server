@@ -1,5 +1,4 @@
 import { forwardRef, Inject, Injectable, Logger } from '@nestjs/common';
-import { EventEmitter2 } from '@nestjs/event-emitter';
 import { set } from 'lodash';
 import { CardTargetedEnum } from '../card/card.enum';
 import { ExpeditionService } from '../expedition/expedition.service';
@@ -18,7 +17,6 @@ export class PlayerService {
     constructor(
         @Inject(forwardRef(() => ExpeditionService))
         private readonly expeditionService: ExpeditionService,
-        private readonly eventEmitter: EventEmitter2,
     ) {}
 
     /**
@@ -153,12 +151,6 @@ export class PlayerService {
         // Update the player's defense and new health
         await this.setDefense(ctx, newDefense);
         await this.setHp(ctx, newHp);
-
-        // Emit the event
-        this.eventEmitter.emit('entity.damage', {
-            ctx,
-            entity: player,
-        });
 
         return newHp;
     }
