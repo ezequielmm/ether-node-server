@@ -20,7 +20,9 @@ import { resist } from './constants';
 export class ResistStatus implements StatusEventHandler {
     constructor(private readonly statusService: StatusService) {}
 
-    async handle(dto: StatusEventDTO<OnAttachStatusEventArgs>): Promise<void> {
+    async enemyHandler(
+        dto: StatusEventDTO<OnAttachStatusEventArgs>,
+    ): Promise<void> {
         const { status, targetId } = dto.args;
         const { metadata } = this.statusService.findHandlerContainer({
             name: status.name,

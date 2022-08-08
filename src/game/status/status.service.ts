@@ -361,7 +361,7 @@ export class StatusService {
                         },
                     };
 
-                    await instance.handle(dto);
+                    await instance.enemyHandler(dto);
                 }
 
                 if (statusesToRemove.length > 0) {

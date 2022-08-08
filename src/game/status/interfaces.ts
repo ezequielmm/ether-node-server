@@ -92,6 +92,7 @@ export interface StatusEffect extends StatusBase {
 
 export enum StatusEventType {
     OnPlayerTurnStart = 'onPlayerTurnStart',
+    OnEnemyTurnStart = 'onEnemyTurnStart',
     OnTurnEnd = 'onTurnEnd',
     OnBeginCardPlay = 'onBeginCardPlay',
     OnEndCardPlay = 'onEndCardPlay',
@@ -213,7 +214,7 @@ export interface StatusEffectHandler {
  */
 export interface StatusEventHandler {
     // TODO: Define the args
-    handle(args: StatusEventDTO): Promise<any>;
+    enemyHandler(args: StatusEventDTO): Promise<any>;
 }
 
 export interface OnAttachStatusEventArgs {

@@ -87,7 +87,7 @@ class StatusC implements StatusEffectHandler {
 @Injectable()
 class StatusEventA implements StatusEventHandler {
     args: any;
-    async handle(args: StatusEventDTO): Promise<any> {
+    async enemyHandler(args: StatusEventDTO): Promise<any> {
         this.args = args.status.args;
     }
 }
