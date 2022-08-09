@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { Socket } from 'socket.io';
 import { DrawCardAction } from '../action/drawCard.action';
+import { GetPlayerInfoAction } from '../action/getPlayerInfo.action';
 import { EnemyService } from '../components/enemy/enemy.service';
 import { CombatTurnEnum } from '../components/expedition/expedition.enum';
 import { ExpeditionDocument } from '../components/expedition/expedition.schema';
@@ -33,6 +34,7 @@ export class BeginPlayerTurnProcess {
         private readonly drawCardAction: DrawCardAction,
         private readonly statusService: StatusService,
         private readonly eventEmitter: EventEmitter2,
+        private readonly getPlayerInfoAction: GetPlayerInfoAction,
     ) {}
 
     async handle(payload: BeginPlayerTurnDTO): Promise<void> {
@@ -118,6 +120,20 @@ export class BeginPlayerTurnProcess {
         await this.statusService.trigger(
             ctx,
             StatusEventType.OnPlayerTurnStart,
+        );
+
+        // Send updated player information
+        const playerInfo = await this.getPlayerInfoAction.handle(client.id);
+
+        client.emit(
+            'PutData',
+            JSON.stringify(
+                StandardResponse.respond({
+                    message_type: SWARMessageType.PlayerAffected,
+                    action: SWARAction.PlayerAffected,
+                    data: playerInfo,
+                }),
+            ),
         );
     }
 }
