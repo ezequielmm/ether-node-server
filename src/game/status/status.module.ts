@@ -27,10 +27,10 @@ import { TurtlingStatus } from './turtling/turtling.status';
 @Module({
     imports: [
         ProviderModule,
-        forwardRef(() => ExpeditionModule),
+        ExpeditionModule,
         forwardRef(() => EffectModule),
-        forwardRef(() => PlayerModule),
-        forwardRef(() => EnemyModule),
+        PlayerModule,
+        EnemyModule,
     ],
     providers: [
         StatusService,

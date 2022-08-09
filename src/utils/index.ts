@@ -126,9 +126,9 @@ export function getRandomItemByWeight<T>(items: T[], weights: number[]): T {
 /**
  * Checks if the value is not undefined and returns its boolean
  * representation
- * @param value the value to evaluate
+ * @param value the param to evaluaye
  * @returns boolean
  * */
-export function isNotUndefined(value: boolean): boolean {
-    return value !== undefined && value;
+export function isNotUndefined(value: boolean | undefined | null): boolean {
+    return !!value;
 }

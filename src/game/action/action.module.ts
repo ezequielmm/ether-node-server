@@ -1,8 +1,6 @@
 import { forwardRef, Module } from '@nestjs/common';
-import { CardModule } from '../components/card/card.module';
 import { ExpeditionModule } from '../components/expedition/expedition.module';
 import { PlayerModule } from '../components/player/player.module';
-import { SettingsModule } from '../components/settings/settings.module';
 import { EffectModule } from '../effects/effects.module';
 import { ProcessModule } from '../process/process.module';
 import { StatusModule } from '../status/status.module';
@@ -22,12 +20,11 @@ import { SetCombatTurnAction } from './setCombatTurn.action';
 
 @Module({
     imports: [
-        forwardRef(() => ExpeditionModule),
+        ExpeditionModule,
+        ActionModule,
         forwardRef(() => ProcessModule),
-        forwardRef(() => EffectModule),
+        EffectModule,
         StatusModule,
-        SettingsModule,
-        CardModule,
         PlayerModule,
     ],
     providers: [

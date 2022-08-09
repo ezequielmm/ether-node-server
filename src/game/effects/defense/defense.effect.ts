@@ -5,10 +5,12 @@ import { ExpeditionService } from '../../components/expedition/expedition.servic
 import { defenseEffect } from './constants';
 import { EffectDecorator } from '../effects.decorator';
 import { EffectDTO, EffectHandler } from '../effects.interface';
-import { EffectService } from '../effects.service';
 import { isNotUndefined } from 'src/utils';
 import { PlayerService } from 'src/game/components/player/player.service';
 import { EnemyService } from 'src/game/components/enemy/enemy.service';
+import { CombatQueueTargetTypeEnum } from 'src/game/components/combatQueue/combatQueue.enum';
+import { ICombatQueueTarget } from 'src/game/components/combatQueue/combatQueue.interface';
+import { CombatQueueService } from 'src/game/components/combatQueue/combatQueue.service';
 
 export interface DefenseArgs {
     useEnemies: boolean;
@@ -26,6 +28,7 @@ export class DefenseEffect implements EffectHandler {
         private readonly expeditionService: ExpeditionService,
         private readonly playerService: PlayerService,
         private readonly enemyService: EnemyService,
+        private readonly combatQueueService: CombatQueueService,
     ) {}
 
     async handle(payload: EffectDTO<DefenseArgs>): Promise<void> {
@@ -39,6 +42,7 @@ export class DefenseEffect implements EffectHandler {
                 multiplier,
                 useAttackingEnemies,
             },
+            combatQueueId,
         } = payload;
         const {
             client,
@@ -80,19 +84,61 @@ export class DefenseEffect implements EffectHandler {
                 );
             }
 
-            newDefense = newDefense + currentDefense;
+            const {
+                value: {
+                    globalState: { playerId },
+                },
+            } = target;
 
-            await this.playerService.setDefense(ctx, newDefense);
+            const defenseCalculated = newDefense + currentDefense;
+
+            // Here we create the target for the combat queue
+            const combatQueueTarget: ICombatQueueTarget = {
+                targetType: CombatQueueTargetTypeEnum.Player,
+                targetId: playerId,
+                defenseDelta: newDefense,
+                finalDefense: defenseCalculated,
+                healthDelta: 0,
+                finalHealth: 0,
+                statuses: [],
+            };
+
+            await this.playerService.setDefense(ctx, defenseCalculated);
+
+            await this.combatQueueService.addTargetsToCombatQueue(
+                combatQueueId,
+                [combatQueueTarget],
+            );
         }
 
         // Apply if the enemy is the target
         if (EnemyService.isEnemy(target)) {
-            newDefense = newDefense + currentDefense;
+            const {
+                value: { id },
+            } = target;
+
+            const defenseCalculated = newDefense + currentDefense;
+
+            // Here we create the target for the combat queue
+            const combatQueueTarget: ICombatQueueTarget = {
+                targetType: CombatQueueTargetTypeEnum.Enemy,
+                targetId: id,
+                defenseDelta: newDefense,
+                finalDefense: defenseCalculated,
+                healthDelta: 0,
+                finalHealth: 0,
+                statuses: [],
+            };
 
             await this.enemyService.setDefense(
                 ctx,
                 target.value.id,
-                newDefense,
+                defenseCalculated,
+            );
+
+            await this.combatQueueService.addTargetsToCombatQueue(
+                combatQueueId,
+                [combatQueueTarget],
             );
         }
     }
