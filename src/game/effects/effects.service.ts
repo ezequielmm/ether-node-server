@@ -133,6 +133,10 @@ export class EffectService {
                 },
             } = effectDTO;
 
+            this.logger.debug(
+                `Sent attack queue for expedition: ${_id.toString()}`,
+            );
+
             await this.attackQueueService.sendQueueToClient(
                 { expeditionId: _id.toString() },
                 client,

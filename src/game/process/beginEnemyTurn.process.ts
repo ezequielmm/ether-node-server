@@ -1,7 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { isEmpty } from 'lodash';
 import { Socket } from 'socket.io';
-import { GetPlayerInfoAction } from '../action/getPlayerInfo.action';
 import { CardTargetedEnum } from '../components/card/card.enum';
 import { ExpeditionEnemy } from '../components/enemy/enemy.interface';
 import { CombatTurnEnum } from '../components/expedition/expedition.enum';
@@ -27,7 +26,6 @@ export class BeginEnemyTurnProcess {
     constructor(
         private readonly expeditionService: ExpeditionService,
         private readonly effectService: EffectService,
-        private readonly getPlayerInfoAction: GetPlayerInfoAction,
     ) {}
 
     async handle(payload: BeginEnemyTurnDTO): Promise<void> {
@@ -79,8 +77,6 @@ export class BeginEnemyTurnProcess {
         });
 
         await this.sendUpdatedEnemiesData();
-
-        await this.sendPlayerInfoMessage();
     }
 
     private async sendUpdatedEnemiesData(): Promise<void> {
@@ -121,27 +117,6 @@ export class BeginEnemyTurnProcess {
                     message_type: SWARMessageType.BeginTurn,
                     action: SWARAction.ChangeTurn,
                     data: CombatTurnEnum.Enemy,
-                }),
-            ),
-        );
-    }
-
-    private async sendPlayerInfoMessage(): Promise<void> {
-        const playerInfo = await this.getPlayerInfoAction.handle(
-            this.client.id,
-        );
-
-        this.logger.log(
-            `Sent message PutData to client ${this.client.id}: ${SWARAction.UpdatePlayerState}`,
-        );
-
-        this.client.emit(
-            'PutData',
-            JSON.stringify(
-                StandardResponse.respond({
-                    message_type: SWARMessageType.PlayerAffected,
-                    action: SWARAction.UpdatePlayer,
-                    data: playerInfo,
                 }),
             ),
         );
