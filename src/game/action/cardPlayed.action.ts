@@ -6,7 +6,6 @@ import {
     CardPlayErrorMessages,
 } from '../components/card/card.enum';
 import { CardId, getCardIdField } from '../components/card/card.type';
-import { IExpeditionCurrentNodeDataEnemy } from '../components/expedition/expedition.interface';
 import { ExpeditionDocument } from '../components/expedition/expedition.schema';
 import { ExpeditionService } from '../components/expedition/expedition.service';
 import { Context } from '../components/interfaces';
@@ -26,11 +25,6 @@ import {
 import { StatusService } from '../status/status.service';
 import { DiscardCardAction } from './discardCard.action';
 import { ExhaustCardAction } from './exhaustCard.action';
-import {
-    GetPlayerInfoAction,
-    PlayerInfoResponse,
-} from './getPlayerInfo.action';
-import { GetStatusesAction, GetStatusesResponse } from './getStatuses.action';
 
 interface CardPlayedDTO {
     readonly client: Socket;
@@ -55,9 +49,7 @@ export class CardPlayedAction {
         private readonly statusService: StatusService,
         private readonly discardCardAction: DiscardCardAction,
         private readonly exhaustCardAction: ExhaustCardAction,
-        private readonly getPlayerInfoAction: GetPlayerInfoAction,
         private readonly endPlayerTurnProcess: EndPlayerTurnProcess,
-        private readonly getStatusesAction: GetStatusesAction,
         private readonly playerService: PlayerService,
     ) {}
 
@@ -183,7 +175,6 @@ export class CardPlayedAction {
                 const {
                     data: {
                         player: { energy, energyMax },
-                        enemies,
                     },
                 } = await this.expeditionService.getCurrentNode({
                     clientId: client.id,
@@ -198,25 +189,11 @@ export class CardPlayedAction {
 
                 this.sendUpdateEnergyMessage(newEnergy, energyMax);
 
-                this.sendUpdateEnemiesMessage(enemies);
-
-                const playerInfo = await this.getPlayerInfoAction.handle(
-                    this.client.id,
-                );
-
-                this.sendUpdatePlayerMessage(playerInfo);
-
                 await this.statusService.trigger(
                     ctx,
                     StatusEventType.OnEndCardPlay,
                     onBeginCardPlayEventArgs,
                 );
-
-                const statusData = await this.getStatusesAction.handle(
-                    this.client.id,
-                );
-
-                this.sendStatusMessage(statusData);
 
                 if (endTurn)
                     await this.endPlayerTurnProcess.handle({
@@ -306,59 +283,6 @@ export class CardPlayedAction {
                     message_type: SWARMessageType.PlayerAffected,
                     action: SWARAction.UpdateEnergy,
                     data: [energy, energyMax],
-                }),
-            ),
-        );
-    }
-
-    private sendUpdateEnemiesMessage(
-        enemies: IExpeditionCurrentNodeDataEnemy[],
-    ): void {
-        this.logger.log(
-            `Sent message PutData to client ${this.client.id}: ${SWARAction.UpdateEnemy}`,
-        );
-
-        this.client.emit(
-            'PutData',
-            JSON.stringify(
-                StandardResponse.respond({
-                    message_type: SWARMessageType.EnemyAffected,
-                    action: SWARAction.UpdateEnemy,
-                    data: enemies,
-                }),
-            ),
-        );
-    }
-
-    private sendUpdatePlayerMessage(playerInfo: PlayerInfoResponse): void {
-        this.logger.log(
-            `Sent message PutData to client ${this.client.id}: ${SWARAction.UpdatePlayer}`,
-        );
-
-        this.client.emit(
-            'PutData',
-            JSON.stringify(
-                StandardResponse.respond({
-                    message_type: SWARMessageType.PlayerAffected,
-                    action: SWARAction.UpdatePlayer,
-                    data: playerInfo,
-                }),
-            ),
-        );
-    }
-
-    private sendStatusMessage(statusList: GetStatusesResponse[]): void {
-        this.logger.log(
-            `Sent message PutData to client ${this.client.id}: ${SWARAction.UpdateStatuses}`,
-        );
-
-        this.client.emit(
-            'PutData',
-            JSON.stringify(
-                StandardResponse.respond({
-                    message_type: SWARMessageType.CombatUpdate,
-                    action: SWARAction.UpdateStatuses,
-                    data: statusList,
                 }),
             ),
         );
