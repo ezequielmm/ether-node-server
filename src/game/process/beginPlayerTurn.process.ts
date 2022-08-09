@@ -114,6 +114,7 @@ export class BeginPlayerTurnProcess {
         await this.enemyService.calculateNewIntentions(ctx);
 
         await this.eventEmitter.emitAsync('OnBeginPlayerTurn', { ctx });
+
         await this.statusService.trigger(
             ctx,
             StatusEventType.OnPlayerTurnStart,

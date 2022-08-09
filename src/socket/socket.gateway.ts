@@ -15,6 +15,7 @@ import { InitCombatProcess } from 'src/game/process/initCombat.process';
 import { CharacterService } from 'src/game/components/character/character.service';
 import { CharacterClassEnum } from 'src/game/components/character/character.enum';
 import { PlayerService } from 'src/game/components/player/player.service';
+import { CombatQueueService } from 'src/game/components/combatQueue/combatQueue.service';
 
 @WebSocketGateway({
     cors: {
@@ -33,6 +34,7 @@ export class SocketGateway
         private readonly initCombatProcess: InitCombatProcess,
         private readonly characterService: CharacterService,
         private readonly playerService: PlayerService,
+        private readonly combatQueueService: CombatQueueService,
     ) {}
 
     afterInit(): void {
@@ -100,14 +102,9 @@ export class SocketGateway
 
                 await this.fullsyncAction.handle(client);
             } else {
-                this.logger.error(
+                this.logger.log(
                     `There is no expedition in progress for this player: ${client.id}`,
                 );
-
-                await this.expeditionService.updateClientId({
-                    clientId: null,
-                    playerId,
-                });
 
                 client.disconnect(true);
             }
@@ -118,7 +115,11 @@ export class SocketGateway
         }
     }
 
-    handleDisconnect(client: Socket): void {
+    async handleDisconnect(client: Socket): Promise<void> {
         this.logger.log(`Client disconnected: ${client.id}`);
+
+        this.logger.log(`Deleted combat queue for client ${client.id}`);
+
+        await this.combatQueueService.deleteCombatQueueByClientId(client.id);
     }
 }
