@@ -332,7 +332,7 @@ export class CardPlayedAction {
 
     private sendUpdatePlayerMessage(playerInfo: PlayerInfoResponse): void {
         this.logger.log(
-            `Sent message PutData to client ${this.client.id}: ${SWARAction.UpdatePlayerState}`,
+            `Sent message PutData to client ${this.client.id}: ${SWARAction.UpdatePlayer}`,
         );
 
         this.client.emit(

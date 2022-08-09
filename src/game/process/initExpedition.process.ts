@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { randomUUID } from 'crypto';
 import { CardDescriptionFormatter } from '../cardDescriptionFormatter/cardDescriptionFormatter';
 import { CardService } from '../components/card/card.service';
@@ -18,6 +18,8 @@ interface InitExpeditionDTO {
 
 @Injectable()
 export class InitExpeditionProcess {
+    private readonly logger: Logger = new Logger(InitExpeditionProcess.name);
+
     constructor(
         private readonly expeditionService: ExpeditionService,
         private readonly cardService: CardService,
@@ -40,6 +42,7 @@ export class InitExpeditionProcess {
             playerId,
             map,
             playerState: {
+                playerId: randomUUID(),
                 playerName,
                 characterClass: character.characterClass,
                 hpMax: character.initialHealth,
@@ -50,6 +53,8 @@ export class InitExpeditionProcess {
             },
             status: ExpeditionStatusEnum.InProgress,
         });
+
+        this.logger.log(`Created expedition for player id: ${playerId}`);
     }
 
     private async generatePlayerDeck(

@@ -24,6 +24,8 @@ interface BeginEnemyTurnDTO {
 export class BeginEnemyTurnProcess {
     private readonly logger: Logger = new Logger(BeginEnemyTurnProcess.name);
 
+    private client: Socket;
+
     constructor(
         private readonly expeditionService: ExpeditionService,
         private readonly effectService: EffectService,
@@ -34,8 +36,10 @@ export class BeginEnemyTurnProcess {
     async handle(payload: BeginEnemyTurnDTO): Promise<void> {
         const { client } = payload;
 
+        this.client = client;
+
         const expedition = await this.expeditionService.setCombatTurn({
-            clientId: client.id,
+            clientId: this.client.id,
             playing: CombatTurnEnum.Enemy,
         });
 
@@ -46,27 +50,14 @@ export class BeginEnemyTurnProcess {
         } = expedition;
 
         const ctx: Context = {
-            client,
+            client: this.client,
             expedition,
         };
 
         await this.eventEmitter.emitAsync('OnBeginEnemyTurn', { ctx });
         await this.statusService.trigger(ctx, StatusEventType.OnEnemyTurnStart);
 
-        this.logger.log(
-            `Sent message PutData to client ${client.id}: ${SWARAction.ChangeTurn}`,
-        );
-
-        client.emit(
-            'PutData',
-            JSON.stringify(
-                StandardResponse.respond({
-                    message_type: SWARMessageType.BeginTurn,
-                    action: SWARAction.ChangeTurn,
-                    data: CombatTurnEnum.Enemy,
-                }),
-            ),
-        );
+        this.sendCombatTurnChange();
 
         // Then we loop over them and get their intentions and effects
         enemies.forEach((enemy) => {
@@ -92,5 +83,50 @@ export class BeginEnemyTurnProcess {
                 }
             });
         });
+
+        await this.sendUpdatedEnemiesData();
+    }
+
+    private async sendUpdatedEnemiesData(): Promise<void> {
+        // Next we query back the enemies from the database and
+        // send them to the client
+        const {
+            data: { enemies: enemiesUpdated },
+        } = await this.expeditionService.getCurrentNode({
+            clientId: this.client.id,
+        });
+
+        // Send enemies updated
+        this.logger.log(
+            `Sent message PutData to client ${this.client.id}: ${SWARAction.UpdateEnemy}`,
+        );
+
+        this.client.emit(
+            'PutData',
+            JSON.stringify(
+                StandardResponse.respond({
+                    message_type: SWARMessageType.EnemyAffected,
+                    action: SWARAction.UpdateEnemy,
+                    data: enemiesUpdated,
+                }),
+            ),
+        );
+    }
+
+    private sendCombatTurnChange(): void {
+        this.logger.log(
+            `Sent message PutData to client ${this.client.id}: ${SWARAction.ChangeTurn}`,
+        );
+
+        this.client.emit(
+            'PutData',
+            JSON.stringify(
+                StandardResponse.respond({
+                    message_type: SWARMessageType.BeginTurn,
+                    action: SWARAction.ChangeTurn,
+                    data: CombatTurnEnum.Enemy,
+                }),
+            ),
+        );
     }
 }
