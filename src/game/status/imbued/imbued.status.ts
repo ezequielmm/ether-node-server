@@ -19,7 +19,9 @@ export class ImbuedStatus implements StatusEventHandler {
         private readonly expeditionService: ExpeditionService,
     ) {}
 
-    async handle(dto: StatusEventDTO<OnBeginCardPlayEventArgs>): Promise<void> {
+    async enemyHandler(
+        dto: StatusEventDTO<OnBeginCardPlayEventArgs>,
+    ): Promise<void> {
         const {
             ctx,
             args: {

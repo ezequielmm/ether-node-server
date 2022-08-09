@@ -1,4 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import { Socket } from 'socket.io';
 import { DrawCardAction } from '../action/drawCard.action';
 import { EnemyService } from '../components/enemy/enemy.service';
@@ -31,6 +32,7 @@ export class BeginPlayerTurnProcess {
         private readonly settingsService: SettingsService,
         private readonly drawCardAction: DrawCardAction,
         private readonly statusService: StatusService,
+        private readonly eventEmitter: EventEmitter2,
     ) {}
 
     async handle(payload: BeginPlayerTurnDTO): Promise<void> {
@@ -111,6 +113,7 @@ export class BeginPlayerTurnProcess {
 
         await this.enemyService.calculateNewIntentions(ctx);
 
+        await this.eventEmitter.emitAsync('OnBeginPlayerTurn', { ctx });
         await this.statusService.trigger(
             ctx,
             StatusEventType.OnPlayerTurnStart,

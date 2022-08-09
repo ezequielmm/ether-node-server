@@ -1,4 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import { isEmpty } from 'lodash';
 import { Socket } from 'socket.io';
 import { CardTargetedEnum } from '../components/card/card.enum';
@@ -12,6 +13,8 @@ import {
     StandardResponse,
     SWARMessageType,
 } from '../standardResponse/standardResponse';
+import { StatusEventType } from '../status/interfaces';
+import { StatusService } from '../status/status.service';
 
 interface BeginEnemyTurnDTO {
     client: Socket;
@@ -26,6 +29,8 @@ export class BeginEnemyTurnProcess {
     constructor(
         private readonly expeditionService: ExpeditionService,
         private readonly effectService: EffectService,
+        private readonly statusService: StatusService,
+        private readonly eventEmitter: EventEmitter2,
     ) {}
 
     async handle(payload: BeginEnemyTurnDTO): Promise<void> {
@@ -48,6 +53,9 @@ export class BeginEnemyTurnProcess {
             client: this.client,
             expedition,
         };
+
+        await this.eventEmitter.emitAsync('OnBeginEnemyTurn', { ctx });
+        await this.statusService.trigger(ctx, StatusEventType.OnEnemyTurnStart);
 
         this.sendCombatTurnChange();
 
