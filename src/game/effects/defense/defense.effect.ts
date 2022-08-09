@@ -64,28 +64,25 @@ export class DefenseEffect implements EffectHandler {
         if (PlayerService.isPlayer(target)) {
             // Check if the card uses the amount of enemies as
             // value to calculate the defense amount to apply
-            if (isNotUndefined(useEnemies)) {
+            if (isNotUndefined(useEnemies))
                 newDefense = await this.useEnemiesAsValue(client, currentValue);
-            }
 
             // Check if the card uses the amount of cards from the
             // discard pile as a value to set the defense
-            if (isNotUndefined(useDiscardPileAsValue)) {
+            if (isNotUndefined(useDiscardPileAsValue))
                 newDefense = await this.useDiscardPileAsValue(
                     client,
                     currentValue,
                     multiplier,
                 );
-            }
 
             // Check if the card uses the enemies that are attacking next turn as
             // value to calculate the defense amount to apply
-            if (isNotUndefined(useAttackingEnemies)) {
+            if (isNotUndefined(useAttackingEnemies))
                 newDefense = await this.useEnemiesAttackingAsValue(
                     client,
                     currentValue,
                 );
-            }
 
             const {
                 value: {

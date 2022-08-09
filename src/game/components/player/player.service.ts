@@ -163,10 +163,12 @@ export class PlayerService {
             // If newDefense is negative, it means that the defense is fully
             // depleted and the remaining will be applied to the player's health
             if (newDefense < 0) {
-                newHp = Math.max(0, currentHp - Math.abs(newDefense));
+                const newDamage = Math.abs(newDefense);
+
+                newHp = Math.max(0, currentHp - newDamage);
 
                 // Update attackQueue Details
-                combatQueueTarget.healthDelta = -newDefense;
+                combatQueueTarget.healthDelta = -newDamage;
 
                 newDefense = 0;
 
