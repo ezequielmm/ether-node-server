@@ -22,13 +22,13 @@ import { RepositionEffect } from './reposition/reposition.effect';
 
 @Module({
     imports: [
-        forwardRef(() => ExpeditionModule),
-        forwardRef(() => ActionModule),
+        ExpeditionModule,
         StatusModule,
+        EnemyModule,
         ProviderModule,
         PlayerModule,
-        EnemyModule,
         CombatQueueModule,
+        forwardRef(() => ActionModule),
     ],
     providers: [
         EffectService,

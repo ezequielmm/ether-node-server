@@ -5,7 +5,6 @@ import { ExpeditionService } from '../../components/expedition/expedition.servic
 import { defenseEffect } from './constants';
 import { EffectDecorator } from '../effects.decorator';
 import { EffectDTO, EffectHandler } from '../effects.interface';
-import { EffectService } from '../effects.service';
 import { isNotUndefined } from 'src/utils';
 import { PlayerService } from 'src/game/components/player/player.service';
 import { EnemyService } from 'src/game/components/enemy/enemy.service';
