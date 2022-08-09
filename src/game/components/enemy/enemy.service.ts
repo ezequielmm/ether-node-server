@@ -148,7 +148,7 @@ export class EnemyService {
 
         enemy.value.defense = defense;
 
-        this.logger.debug(`Set defense of ${id} to ${defense}`);
+        this.logger.debug(`Set defense of enemy ${id} to ${defense}`);
 
         return defense;
     }
@@ -176,7 +176,7 @@ export class EnemyService {
 
         enemy.value.hpCurrent = hp;
 
-        this.logger.debug(`Set hp of ${id} to ${hp}`);
+        this.logger.debug(`Set hpCurrent  of enemy ${id} to ${hp}`);
 
         return hp;
     }
