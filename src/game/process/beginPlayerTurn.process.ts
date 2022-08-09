@@ -130,7 +130,7 @@ export class BeginPlayerTurnProcess {
             JSON.stringify(
                 StandardResponse.respond({
                     message_type: SWARMessageType.PlayerAffected,
-                    action: SWARAction.PlayerAffected,
+                    action: SWARAction.UpdatePlayer,
                     data: playerInfo,
                 }),
             ),
