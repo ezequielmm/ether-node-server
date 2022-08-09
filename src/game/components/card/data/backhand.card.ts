@@ -17,6 +17,7 @@ export const BackHandCard: Card = {
         effects: [
             {
                 effect: damageEffect.name,
+                target: CardTargetedEnum.Enemy,
                 args: {
                     value: 10,
                 },
@@ -27,7 +28,7 @@ export const BackHandCard: Card = {
                 name: distraught.name,
                 args: {
                     attachTo: CardTargetedEnum.Enemy,
-                    value: Number.NaN,
+                    value: 1,
                 },
             },
         ],
@@ -60,14 +61,7 @@ export const BackHandCardUpgraded: Card = {
                 name: distraught.name,
                 args: {
                     attachTo: CardTargetedEnum.Enemy,
-                    value: Number.NaN,
-                },
-            },
-            {
-                name: distraught.name,
-                args: {
-                    attachTo: CardTargetedEnum.Enemy,
-                    value: Number.NaN,
+                    value: 2,
                 },
             },
         ],

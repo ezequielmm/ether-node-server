@@ -21,8 +21,9 @@ export class DistraughtEffect implements StatusEffectHandler {
     async handle(
         args: StatusEffectDTO<DamageArgs>,
     ): Promise<EffectDTO<DamageArgs>> {
-        args.effectDTO.args.currentValue =
-            1.5 * args.effectDTO.args.currentValue;
+        args.effectDTO.args.currentValue = Math.floor(
+            1.5 * args.effectDTO.args.currentValue,
+        );
         return args.effectDTO;
     }
 }
