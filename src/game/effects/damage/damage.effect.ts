@@ -36,6 +36,7 @@ export class DamageEffect implements EffectHandler {
                 useEnergyAsMultiplier,
                 useEnergyAsValue,
             },
+            combatQueueId,
         } = payload;
 
         const {
@@ -53,7 +54,12 @@ export class DamageEffect implements EffectHandler {
                 (useEnergyAsMultiplier ? energy : 1) *
                 (useDefense ? multiplier * defense : 1);
 
-            await this.enemyService.damage(ctx, target.value.id, damage);
+            await this.enemyService.damage(
+                ctx,
+                target.value.id,
+                damage,
+                combatQueueId,
+            );
         } else if (PlayerService.isPlayer(target)) {
             // Here we check if we have to use the enemy available
             // as currentValue, here we just need to add it, the value
@@ -62,7 +68,7 @@ export class DamageEffect implements EffectHandler {
                 ? energy
                 : currentValue;
 
-            await this.playerService.damage(ctx, damage);
+            await this.playerService.damage(ctx, damage, combatQueueId);
         }
 
         // Emit the event

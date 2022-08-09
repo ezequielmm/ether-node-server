@@ -1,8 +1,9 @@
 import { forwardRef, Inject, Injectable, Logger } from '@nestjs/common';
 import { set } from 'lodash';
-import { IAttackQueueTarget } from '../attackQueue/attackQueue.interface';
-import { AttackQueueService } from '../attackQueue/attackQueue.service';
 import { CardTargetedEnum } from '../card/card.enum';
+import { CombatQueueTargetTypeEnum } from '../combatQueue/combatQueue.enum';
+import { ICombatQueueTarget } from '../combatQueue/combatQueue.interface';
+import { CombatQueueService } from '../combatQueue/combatQueue.service';
 import { ExpeditionService } from '../expedition/expedition.service';
 import { Context, ExpeditionEntity } from '../interfaces';
 import {
@@ -19,7 +20,7 @@ export class PlayerService {
     constructor(
         @Inject(forwardRef(() => ExpeditionService))
         private readonly expeditionService: ExpeditionService,
-        private readonly attackQueueService: AttackQueueService,
+        private readonly combatQueueService: CombatQueueService,
     ) {}
 
     /**
@@ -124,25 +125,28 @@ export class PlayerService {
      * @param damage Damage to apply
      * @returns The new hp of the player
      */
-    public async damage(ctx: Context, damage: number): Promise<number> {
+    public async damage(
+        ctx: Context,
+        damage: number,
+        combatQueueId: string,
+    ): Promise<number> {
         const player = this.get(ctx);
 
-        const {
-            client,
-            expedition: { _id },
-        } = ctx;
+        const { client } = ctx;
 
         const currentDefense = player.value.combatState.defense;
         const currentHp = player.value.globalState.hpCurrent;
         const playerUUID = player.value.globalState.playerId;
 
-        const attackDetails: IAttackQueueTarget = {
-            targetType: CardTargetedEnum.Player,
+        // Here we create the target for the combat queue
+        const combatQueueTarget: ICombatQueueTarget = {
+            targetType: CombatQueueTargetTypeEnum.Player,
             targetId: playerUUID,
             defenseDelta: 0,
             finalDefense: 0,
             healthDelta: 0,
             finalHealth: 0,
+            statuses: [],
         };
 
         let newDefense = 0;
@@ -159,14 +163,14 @@ export class PlayerService {
                 newDefense = 0;
 
                 // Update attackQueue Details
-                attackDetails.defenseDelta = -damage;
-                attackDetails.finalDefense = newDefense;
-                attackDetails.healthDelta = newDefense;
-                attackDetails.finalHealth = newHp;
+                combatQueueTarget.defenseDelta = -damage;
+                combatQueueTarget.finalDefense = newDefense;
+                combatQueueTarget.healthDelta = newDefense;
+                combatQueueTarget.finalHealth = newHp;
             } else {
                 // Update attackQueue Details
-                attackDetails.defenseDelta = -damage;
-                attackDetails.finalDefense = newDefense;
+                combatQueueTarget.defenseDelta = -damage;
+                combatQueueTarget.finalDefense = newDefense;
             }
         } else {
             // If the player has no defense, the damage will be applied to the
@@ -174,8 +178,8 @@ export class PlayerService {
             newHp = Math.max(0, currentHp - damage);
 
             // Update attackQueue Details
-            attackDetails.healthDelta = -damage;
-            attackDetails.finalHealth = newHp;
+            combatQueueTarget.healthDelta = -damage;
+            combatQueueTarget.finalHealth = newHp;
         }
 
         this.logger.debug(
@@ -187,10 +191,9 @@ export class PlayerService {
         await this.setHp(ctx, newHp);
 
         // Save the details to the Attack Queue
-        await this.attackQueueService.addTargetToQueue(
-            { expeditionId: _id.toString() },
-            attackDetails,
-        );
+        await this.combatQueueService.addTargetsToCombatQueue(combatQueueId, [
+            combatQueueTarget,
+        ]);
 
         return newHp;
     }

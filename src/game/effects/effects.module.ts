@@ -1,6 +1,6 @@
 import { forwardRef, Module } from '@nestjs/common';
 import { ActionModule } from '../action/action.module';
-import { AttackQueueModule } from '../components/attackQueue/attackQueue.module';
+import { CombatQueueModule } from '../components/combatQueue/combatQueue.module';
 import { EnemyModule } from '../components/enemy/enemy.module';
 import { ExpeditionModule } from '../components/expedition/expedition.module';
 import { PlayerModule } from '../components/player/player.module';
@@ -28,7 +28,7 @@ import { RepositionEffect } from './reposition/reposition.effect';
         ProviderModule,
         PlayerModule,
         EnemyModule,
-        AttackQueueModule,
+        CombatQueueModule,
     ],
     providers: [
         EffectService,

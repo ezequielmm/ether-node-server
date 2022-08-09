@@ -14,8 +14,9 @@ import {
     ENEMY_HP_CURRENT_PATH,
 } from './constants';
 import { getRandomItemByWeight } from 'src/utils';
-import { AttackQueueService } from '../attackQueue/attackQueue.service';
-import { IAttackQueueTarget } from '../attackQueue/attackQueue.interface';
+import { CombatQueueService } from '../combatQueue/combatQueue.service';
+import { ICombatQueueTarget } from '../combatQueue/combatQueue.interface';
+import { CombatQueueTargetTypeEnum } from '../combatQueue/combatQueue.enum';
 
 @Injectable()
 export class EnemyService {
@@ -25,7 +26,7 @@ export class EnemyService {
         @InjectModel(Enemy.name) private readonly enemy: Model<EnemyDocument>,
         @Inject(forwardRef(() => ExpeditionService))
         private readonly expeditionService: ExpeditionService,
-        private readonly attackQueueService: AttackQueueService,
+        private readonly combatQueueService: CombatQueueService,
     ) {}
 
     /**
@@ -189,21 +190,21 @@ export class EnemyService {
         ctx: Context,
         id: EnemyId,
         damage: number,
+        combatQueueId: string,
     ): Promise<number> {
         const { value: enemy } = this.get(ctx, id);
 
-        const {
-            client,
-            expedition: { _id },
-        } = ctx;
+        const { client } = ctx;
 
-        const attackDetails: IAttackQueueTarget = {
-            targetType: CardTargetedEnum.Enemy,
+        // Here we create the target for the combat queue
+        const combatQueueTarget: ICombatQueueTarget = {
+            targetType: CombatQueueTargetTypeEnum.Enemy,
             targetId: enemy.id,
             defenseDelta: 0,
             finalDefense: 0,
             healthDelta: 0,
             finalHealth: 0,
+            statuses: [],
         };
 
         // First we check if the enemy has defense
@@ -222,25 +223,25 @@ export class EnemyService {
                 enemy.defense = 0;
 
                 // Update attackQueue Details
-                attackDetails.defenseDelta = -damage;
-                attackDetails.finalDefense = enemy.defense;
-                attackDetails.healthDelta = newDefense;
-                attackDetails.finalHealth = enemy.hpCurrent;
+                combatQueueTarget.defenseDelta = -damage;
+                combatQueueTarget.finalDefense = enemy.defense;
+                combatQueueTarget.healthDelta = newDefense;
+                combatQueueTarget.finalHealth = enemy.hpCurrent;
             } else {
                 // Otherwise, we update the defense with the new value
                 enemy.defense = newDefense;
 
                 // Update attackQueue Details
-                attackDetails.defenseDelta = -damage;
-                attackDetails.finalDefense = newDefense;
+                combatQueueTarget.defenseDelta = -damage;
+                combatQueueTarget.finalDefense = newDefense;
             }
         } else {
             // Otherwise, we apply the damage to the enemy's health
             enemy.hpCurrent = Math.max(0, enemy.hpCurrent - damage);
 
             // Update attackQueue Details
-            attackDetails.healthDelta = -damage;
-            attackDetails.finalHealth = enemy.hpCurrent;
+            combatQueueTarget.healthDelta = -damage;
+            combatQueueTarget.finalHealth = enemy.hpCurrent;
         }
 
         this.logger.debug(
@@ -251,10 +252,9 @@ export class EnemyService {
         await this.setDefense(ctx, id, enemy.defense);
 
         // Save the details to the Attack Queue
-        await this.attackQueueService.addTargetToQueue(
-            { expeditionId: _id.toString() },
-            attackDetails,
-        );
+        await this.combatQueueService.addTargetsToCombatQueue(combatQueueId, [
+            combatQueueTarget,
+        ]);
 
         return enemy.hpCurrent;
     }

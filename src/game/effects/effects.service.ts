@@ -1,7 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { find } from 'lodash';
-import { AttackQueueService } from '../components/attackQueue/attackQueue.service';
 import { CardTargetedEnum } from '../components/card/card.enum';
+import { CombatQueueOriginTypeEnum } from '../components/combatQueue/combatQueue.enum';
+import { CombatQueueService } from '../components/combatQueue/combatQueue.service';
 import { EnemyService } from '../components/enemy/enemy.service';
 import { ExpeditionEntity } from '../components/interfaces';
 import { PlayerService } from '../components/player/player.service';
@@ -9,7 +10,6 @@ import { ProviderContainer } from '../provider/interfaces';
 import { ProviderService } from '../provider/provider.service';
 import { StatusDirection } from '../status/interfaces';
 import { StatusService } from '../status/status.service';
-import { damageEffect } from './damage/constants';
 import { EFFECT_METADATA_KEY } from './effects.decorator';
 import {
     ApplyAllDTO,
@@ -31,7 +31,7 @@ export class EffectService {
         private readonly statusService: StatusService,
         private readonly enemyService: EnemyService,
         private readonly playerService: PlayerService,
-        private readonly attackQueueService: AttackQueueService,
+        private readonly combatQueueService: CombatQueueService,
     ) {}
 
     async applyAll(dto: ApplyAllDTO): Promise<void> {
@@ -58,6 +58,8 @@ export class EffectService {
 
     public async apply(dto: ApplyDTO) {
         const { ctx, source, target, effect } = dto;
+
+        const { client } = ctx;
 
         if (ctx.expedition.currentNode.completed) {
             this.logger.debug(`Combat ended, skipping effect ${effect.effect}`);
@@ -87,59 +89,40 @@ export class EffectService {
             effect: name,
         });
 
-        // Here we check if the effect that we are calling
-        // is the damage effect
-        if (name === damageEffect.name) {
-            // If it is, we get who is attacking and create the queue
-            // Also we deestructure the context to get the player/enemy uuid
-            // and expedition id
-            const {
-                ctx: {
-                    expedition: { _id },
-                },
-                source: { type: originType },
-            } = effectDTO;
-
-            const originId =
-                source.type === CardTargetedEnum.Enemy
-                    ? source.value.id
-                    : source.value.globalState.playerId;
-
-            await this.attackQueueService.create({
-                expeditionId: _id.toString(),
-                originType,
-                originId,
+        for (let i = 0; i < times; i++) {
+            // Initialize the combat queue
+            const combatQueue = await this.combatQueueService.create({
+                clientId: client.id,
+                originType:
+                    source.type === CardTargetedEnum.Player
+                        ? CombatQueueOriginTypeEnum.Player
+                        : CombatQueueOriginTypeEnum.Enemy,
+                originId:
+                    source.type === CardTargetedEnum.Player
+                        ? source.value.globalState.playerId
+                        : source.value.id,
             });
 
-            this.logger.debug(
-                `Created attack queue for expedition: ${_id.toString()}`,
-            );
-        }
+            this.logger.log(`Created Combat Queue`);
 
-        for (let i = 0; i < times; i++) {
+            // Send the queue id to the effects to add the target
+            effectDTO = {
+                ...effectDTO,
+                combatQueueId: combatQueue._id.toString(),
+            };
+
             this.logger.debug(`Effect ${name} applied to ${target.type}`);
             const handler = this.findHandlerByName(name);
             await handler.handle(effectDTO);
-        }
 
-        // Here we check again if is a damage effect
-        if (name === damageEffect.name) {
-            // Now we see if we have an attack queue, first
-            // we get the expedition id to query the data
-            const {
-                ctx: {
-                    client,
-                    expedition: { _id },
-                },
-            } = effectDTO;
+            // Send the combat queue to the client
+            this.logger.log(`Sent combat queue to client ${client.id}`);
+            await this.combatQueueService.sendQueueToClient(client);
 
-            this.logger.debug(
-                `Sent attack queue for expedition: ${_id.toString()}`,
-            );
-
-            await this.attackQueueService.sendQueueToClient(
-                { expeditionId: _id.toString() },
-                client,
+            // Clear the queue
+            this.logger.log(`Cleared combat queue to client ${client.id}`);
+            await this.combatQueueService.deleteCombatQueueByClientId(
+                client.id,
             );
         }
     }
