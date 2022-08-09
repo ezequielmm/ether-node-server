@@ -30,14 +30,10 @@ export const KnightCharacter: Character = {
         },
         {
             cardId: 13, // Lunge
-            amount: 1,
+            amount: 2,
         },
         {
             cardId: 24, // Pray
-            amount: 1,
-        },
-        {
-            cardId: 79, // Invoke Blessing
             amount: 1,
         },
     ],
