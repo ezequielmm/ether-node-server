@@ -229,7 +229,7 @@ export class EnemyService {
                 // Update attackQueue Details
                 combatQueueTarget.defenseDelta = -damage;
                 combatQueueTarget.finalDefense = enemy.defense;
-                combatQueueTarget.healthDelta = newDefense;
+                combatQueueTarget.healthDelta = -newDefense;
                 combatQueueTarget.finalHealth = enemy.hpCurrent;
             } else {
                 // Otherwise, we update the defense with the new value
