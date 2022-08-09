@@ -42,11 +42,12 @@ export class BeginPlayerTurnProcess {
         const expedition = await this.expeditionService.findOne({
             clientId: client.id,
         });
+
         const {
             currentNode: {
                 data: {
                     round,
-                    player: { handSize, defense },
+                    player: { handSize, defense: currentDefense },
                 },
             },
         } = expedition;
@@ -83,14 +84,13 @@ export class BeginPlayerTurnProcess {
             await this.settingsService.getSettings();
 
         // Reset defense
-        if (defense > 0) await this.playerService.setDefense(ctx, 0);
+        if (currentDefense > 0) await this.playerService.setDefense(ctx, 0);
 
         this.playerService.setEnergy(ctx, initialEnergy);
 
         // Send new energy amount
-
         this.logger.log(
-            `Sent message PutData to client ${client.id}: ${SWARAction.ChangeTurn}`,
+            `Sent message PutData to client ${client.id}: ${SWARAction.UpdateEnergy}`,
         );
 
         client.emit(
