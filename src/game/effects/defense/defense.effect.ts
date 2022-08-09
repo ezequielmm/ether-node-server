@@ -8,7 +8,10 @@ import { EffectDTO, EffectHandler } from '../effects.interface';
 import { isNotUndefined } from 'src/utils';
 import { PlayerService } from 'src/game/components/player/player.service';
 import { EnemyService } from 'src/game/components/enemy/enemy.service';
-import { CombatQueueTargetTypeEnum } from 'src/game/components/combatQueue/combatQueue.enum';
+import {
+    CombatQueueTargetEffectTypeEnum,
+    CombatQueueTargetTypeEnum,
+} from 'src/game/components/combatQueue/combatQueue.enum';
 import { ICombatQueueTarget } from 'src/game/components/combatQueue/combatQueue.interface';
 import { CombatQueueService } from 'src/game/components/combatQueue/combatQueue.service';
 
@@ -94,6 +97,7 @@ export class DefenseEffect implements EffectHandler {
 
             // Here we create the target for the combat queue
             const combatQueueTarget: ICombatQueueTarget = {
+                effectType: CombatQueueTargetEffectTypeEnum.Defense,
                 targetType: CombatQueueTargetTypeEnum.Player,
                 targetId: playerId,
                 defenseDelta: newDefense,
@@ -121,6 +125,7 @@ export class DefenseEffect implements EffectHandler {
 
             // Here we create the target for the combat queue
             const combatQueueTarget: ICombatQueueTarget = {
+                effectType: CombatQueueTargetEffectTypeEnum.Defense,
                 targetType: CombatQueueTargetTypeEnum.Enemy,
                 targetId: id,
                 defenseDelta: newDefense,

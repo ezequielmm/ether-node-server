@@ -4,7 +4,10 @@ import { EffectDecorator } from '../effects.decorator';
 import { EffectDTO, EffectHandler } from '../effects.interface';
 import { PlayerService } from 'src/game/components/player/player.service';
 import { EnemyService } from 'src/game/components/enemy/enemy.service';
-import { CombatQueueTargetTypeEnum } from 'src/game/components/combatQueue/combatQueue.enum';
+import {
+    CombatQueueTargetEffectTypeEnum,
+    CombatQueueTargetTypeEnum,
+} from 'src/game/components/combatQueue/combatQueue.enum';
 import { ICombatQueueTarget } from 'src/game/components/combatQueue/combatQueue.interface';
 import { CombatQueueService } from 'src/game/components/combatQueue/combatQueue.service';
 
@@ -40,6 +43,7 @@ export class HealEffect implements EffectHandler {
 
             // Here we create the target for the combat queue
             const combatQueueTarget: ICombatQueueTarget = {
+                effectType: CombatQueueTargetEffectTypeEnum.Heal,
                 targetType: CombatQueueTargetTypeEnum.Player,
                 targetId: playerId,
                 defenseDelta: 0,
@@ -64,6 +68,7 @@ export class HealEffect implements EffectHandler {
 
             // Here we create the target for the combat queue
             const combatQueueTarget: ICombatQueueTarget = {
+                effectType: CombatQueueTargetEffectTypeEnum.Heal,
                 targetType: CombatQueueTargetTypeEnum.Enemy,
                 targetId: id,
                 defenseDelta: 0,

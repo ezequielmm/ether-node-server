@@ -1,7 +1,11 @@
-import { CombatQueueTargetTypeEnum } from './combatQueue.enum';
+import {
+    CombatQueueTargetEffectTypeEnum,
+    CombatQueueTargetTypeEnum,
+} from './combatQueue.enum';
 import { CombatQueue } from './combatQueue.schema';
 
 export interface ICombatQueueTarget {
+    effectType: CombatQueueTargetEffectTypeEnum;
     targetType: CombatQueueTargetTypeEnum;
     targetId: string;
     healthDelta: number;

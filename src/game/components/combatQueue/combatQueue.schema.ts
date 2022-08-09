@@ -18,7 +18,7 @@ export class CombatQueue {
     @Prop()
     originId: string;
 
-    @Prop()
+    @Prop({ type: Object })
     targets?: ICombatQueueTarget[];
 }
 

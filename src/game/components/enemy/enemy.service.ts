@@ -16,7 +16,10 @@ import {
 import { getRandomItemByWeight } from 'src/utils';
 import { CombatQueueService } from '../combatQueue/combatQueue.service';
 import { ICombatQueueTarget } from '../combatQueue/combatQueue.interface';
-import { CombatQueueTargetTypeEnum } from '../combatQueue/combatQueue.enum';
+import {
+    CombatQueueTargetEffectTypeEnum,
+    CombatQueueTargetTypeEnum,
+} from '../combatQueue/combatQueue.enum';
 
 @Injectable()
 export class EnemyService {
@@ -198,6 +201,7 @@ export class EnemyService {
 
         // Here we create the target for the combat queue
         const combatQueueTarget: ICombatQueueTarget = {
+            effectType: CombatQueueTargetEffectTypeEnum.Damage,
             targetType: CombatQueueTargetTypeEnum.Enemy,
             targetId: enemy.id,
             defenseDelta: 0,

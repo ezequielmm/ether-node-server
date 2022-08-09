@@ -1,7 +1,10 @@
 import { forwardRef, Inject, Injectable, Logger } from '@nestjs/common';
 import { set } from 'lodash';
 import { CardTargetedEnum } from '../card/card.enum';
-import { CombatQueueTargetTypeEnum } from '../combatQueue/combatQueue.enum';
+import {
+    CombatQueueTargetEffectTypeEnum,
+    CombatQueueTargetTypeEnum,
+} from '../combatQueue/combatQueue.enum';
 import { ICombatQueueTarget } from '../combatQueue/combatQueue.interface';
 import { CombatQueueService } from '../combatQueue/combatQueue.service';
 import { ExpeditionService } from '../expedition/expedition.service';
@@ -140,6 +143,7 @@ export class PlayerService {
 
         // Here we create the target for the combat queue
         const combatQueueTarget: ICombatQueueTarget = {
+            effectType: CombatQueueTargetEffectTypeEnum.Damage,
             targetType: CombatQueueTargetTypeEnum.Player,
             targetId: playerUUID,
             defenseDelta: 0,
