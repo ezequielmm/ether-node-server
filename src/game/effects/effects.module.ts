@@ -8,7 +8,7 @@ import { ProviderModule } from '../provider/provider.module';
 import { StatusModule } from '../status/status.module';
 import { DamageEffect } from './damage/damage.effect';
 import { DefenseEffect } from './defense/defense.effect';
-import { DistraughtEffect } from './distraught/distraught.status';
+import { DistraughtStatus } from './distraught/distraught.status';
 import { DoubleBurnEffect } from './doubleBurn/doubleBurn.effect';
 import { DrawCardEffect } from './drawCard/drawCard.effect';
 import { EffectService } from './effects.service';
@@ -43,7 +43,7 @@ import { RepositionEffect } from './reposition/reposition.effect';
         RepositionEffect,
         FlurryEffect,
         RemoveDebuffEffect,
-        DistraughtEffect,
+        DistraughtStatus,
     ],
     exports: [EffectService],
 })
