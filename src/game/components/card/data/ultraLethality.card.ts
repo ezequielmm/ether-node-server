@@ -1,5 +1,5 @@
 import { damageEffect } from 'src/game/effects/damage/constants';
-import { resolve } from 'src/game/status/resolve/constants';
+import { doubleResolve } from 'src/game/effects/doubleResolve/constants';
 import { CardRarityEnum, CardTypeEnum, CardTargetedEnum } from '../card.enum';
 import { Card } from '../card.schema';
 
@@ -28,16 +28,15 @@ export const UltraLethalityCard: Card = {
                     value: 10,
                 },
             },
-        ],
-        statuses: [
             {
-                name: resolve.name,
+                effect: doubleResolve.name,
+                target: CardTargetedEnum.Player,
                 args: {
-                    value: 2,
-                    attachTo: CardTargetedEnum.Player,
+                    value: Number.NaN,
                 },
             },
         ],
+        statuses: [],
     },
     showPointer: true,
     isUpgraded: false,
@@ -68,16 +67,15 @@ export const UltraLethalityCardUpgraded: Card = {
                     value: 15,
                 },
             },
-        ],
-        statuses: [
             {
-                name: resolve.name,
+                effect: doubleResolve.name,
+                target: CardTargetedEnum.Player,
                 args: {
-                    value: 2,
-                    attachTo: CardTargetedEnum.Player,
+                    value: Number.NaN,
                 },
             },
         ],
+        statuses: [],
     },
     showPointer: true,
     isUpgraded: false,
