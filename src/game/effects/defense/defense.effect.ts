@@ -118,7 +118,7 @@ export class DefenseEffect implements EffectHandler {
                 value: { id },
             } = target;
 
-            const defenseCalculated = newDefense + currentDefense;
+            newDefense = newDefense + currentDefense;
 
             // Here we create the target for the combat queue
             const combatQueueTarget: ICombatQueueTarget = {
@@ -126,7 +126,7 @@ export class DefenseEffect implements EffectHandler {
                 targetType: CombatQueueTargetTypeEnum.Enemy,
                 targetId: id,
                 defenseDelta: newDefense,
-                finalDefense: defenseCalculated,
+                finalDefense: currentDefense,
                 healthDelta: 0,
                 finalHealth: 0,
                 statuses: [],
@@ -135,7 +135,7 @@ export class DefenseEffect implements EffectHandler {
             await this.enemyService.setDefense(
                 ctx,
                 target.value.id,
-                defenseCalculated,
+                newDefense,
             );
 
             await this.combatQueueService.addTargetsToCombatQueue(
