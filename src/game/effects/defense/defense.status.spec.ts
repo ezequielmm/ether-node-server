@@ -21,6 +21,8 @@ describe('DefenseEffect', () => {
             globalState: {},
             combatState: {
                 energy: 3,
+                energyMax: 3,
+                handSize: 5,
                 defense: 0,
             },
         },
