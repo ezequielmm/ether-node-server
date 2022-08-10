@@ -47,12 +47,11 @@ export class DistraughtEvent implements StatusEventHandler {
         const distraughts = filter(collection.debuff, {
             name: distraught.name,
         });
+
         const distraughtsToRemove = [];
 
         // If there are no distraughts, return
-        if (distraughts.length == 0) {
-            return;
-        }
+        if (distraughts.length == 0) return;
 
         for (const status of distraughts) {
             // Decremement the value of the status

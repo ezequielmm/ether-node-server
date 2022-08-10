@@ -15,9 +15,9 @@ import { ICombatQueueTarget } from 'src/game/components/combatQueue/combatQueue.
 
 export interface DefenseArgs {
     useEnemies: boolean;
+    multiplier?: number;
     useDiscardPileAsValue: boolean;
     useAttackingEnemies: boolean;
-    multiplier: number;
 }
 
 @EffectDecorator({

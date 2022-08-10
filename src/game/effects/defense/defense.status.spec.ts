@@ -1,5 +1,4 @@
 import { CardTargetedEnum } from 'src/game/components/card/card.enum';
-import { ExpeditionEnemy } from 'src/game/components/enemy/enemy.interface';
 import { Context } from 'src/game/components/interfaces';
 import { ExpeditionPlayer } from 'src/game/components/player/interfaces';
 import { DefenseEffect } from './defense.effect';
@@ -15,7 +14,7 @@ describe('DefenseEffect', () => {
     // Set effect to test
     let defenseEffect: DefenseEffect;
 
-    // Mock player for an expedition
+    // Mock player
     const mockPlayer: ExpeditionPlayer = {
         type: CardTargetedEnum.Player,
         value: {
@@ -26,12 +25,6 @@ describe('DefenseEffect', () => {
             },
         },
     } as ExpeditionPlayer;
-
-    // Mock enemy for an expedition
-    const mockEnemy: ExpeditionEnemy = {
-        type: CardTargetedEnum.Enemy,
-        value: { id: '123' },
-    } as ExpeditionEnemy;
 
     // Mock context
     const mockCtx: Context = {
@@ -83,9 +76,35 @@ describe('DefenseEffect', () => {
         mockPlayerService.get.mockClear();
         mockPlayerService.setDefense.mockClear();
         mockEnemyService.setDefense.mockClear();
+        mockCombatQueueService.addTargetsToCombatQueue.mockClear();
     });
 
     it('should be defined', () => {
         expect(defenseEffect).toBeDefined();
+    });
+
+    describe('Player defense', () => {
+        it('should give defense to the player', async () => {
+            await defenseEffect.handle({
+                ctx: mockCtx,
+                source: mockPlayer,
+                target: mockPlayer,
+                args: {
+                    currentValue: 5,
+                    initialValue: 5,
+                    useEnemies: false,
+                    useAttackingEnemies: false,
+                    useDiscardPileAsValue: false,
+                    multiplier: 1,
+                },
+                combatQueueId: '555',
+            });
+
+            expect(mockPlayerService.setDefense).toHaveBeenCalledWith(
+                mockCtx,
+                5,
+                '555',
+            );
+        });
     });
 });
