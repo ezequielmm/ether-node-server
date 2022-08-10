@@ -22,8 +22,8 @@ export class HeadButtEffect implements EffectHandler {
         const sourceReference =
             this.statusService.getReferenceFromSource(source);
 
-        let defense;
-        let targetId;
+        let defense = 0;
+        let targetId: string = null;
 
         if (EnemyService.isEnemy(target)) {
             defense = target.value.defense;
@@ -32,7 +32,7 @@ export class HeadButtEffect implements EffectHandler {
             defense = target.value.combatState.defense;
         }
 
-        if (defense == 0) {
+        if (defense === 0) {
             await this.statusService.attach({
                 ctx,
                 statuses: [
