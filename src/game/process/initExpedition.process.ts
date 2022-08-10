@@ -80,8 +80,8 @@ export class InitExpeditionProcess {
 
         // Filter the card ids and make a new array
         return cards
-            .filter((card) => {
-                return cardIds.includes(card.cardId);
+            .filter(({ cardId }) => {
+                return cardIds.includes(cardId);
             })
             .reduce((newDeckCards, card) => {
                 cardsIdsArray.forEach(({ cardId, amount }) => {
