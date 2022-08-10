@@ -25,9 +25,7 @@ describe('DamageEffect', () => {
 
     const mockEnemy: ExpeditionEnemy = {
         type: CardTargetedEnum.Enemy,
-        value: {
-            id: '123',
-        },
+        value: { id: '123' },
     } as ExpeditionEnemy;
 
     const mockCtx: Context = {
@@ -55,18 +53,9 @@ describe('DamageEffect', () => {
         const module = await Test.createTestingModule({
             providers: [
                 DamageEffect,
-                {
-                    provide: PlayerService,
-                    useValue: mockPlayerService,
-                },
-                {
-                    provide: EnemyService,
-                    useValue: mockEnemyService,
-                },
-                {
-                    provide: EventEmitter2,
-                    useValue: new EventEmitter2(),
-                },
+                { provide: PlayerService, useValue: mockPlayerService },
+                { provide: EnemyService, useValue: mockEnemyService },
+                { provide: EventEmitter2, useValue: new EventEmitter2() },
             ],
         }).compile();
 

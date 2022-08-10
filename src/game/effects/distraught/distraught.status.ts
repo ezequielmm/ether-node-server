@@ -13,11 +13,12 @@ import { distraught } from './constants';
 })
 @Injectable()
 export class DistraughtStatus implements StatusEffectHandler {
-    preview(
+    async preview(
         args: StatusEffectDTO<DamageArgs>,
     ): Promise<EffectDTO<Record<string, any>>> {
         return this.handle(args);
     }
+
     async handle(
         args: StatusEffectDTO<DamageArgs>,
     ): Promise<EffectDTO<DamageArgs>> {
