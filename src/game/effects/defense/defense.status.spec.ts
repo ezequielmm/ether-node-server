@@ -105,7 +105,6 @@ describe('DefenseEffect', () => {
             expect(mockPlayerService.setDefense).toHaveBeenCalledWith(
                 mockCtx,
                 5,
-                '555',
             );
         });
     });
