@@ -61,11 +61,16 @@ export class InitExpeditionProcess {
         character: CharacterDocument,
         email: string,
     ): Promise<IExpeditionPlayerStateDeckCard[]> {
-        // First we check if we have a custom deck to apply
+        // We deestructure the cards from the character
+        const { cards: characterDeck } = character;
+
+        // we check if we have a custom deck to apply
+        // For this user
         const customDeck = await this.customDeckService.findByEmail(email);
 
-        const cardsIdsArray =
-            customDeck !== null ? customDeck.cards : character.cards;
+        let cardsIdsArray = characterDeck;
+
+        if (customDeck) cardsIdsArray = customDeck.cards;
 
         // Get card ids as an array of integers
         const cardIds = cardsIdsArray.map(({ cardId }) => cardId);
