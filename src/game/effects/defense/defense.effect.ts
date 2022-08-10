@@ -137,7 +137,7 @@ export class DefenseEffect implements EffectHandler {
                 value: { defense: currentDefense, id },
             } = target;
 
-            const defenseCalculated = newDefense + currentDefense;
+            const defenseCalculated = currentDefense + newDefense;
 
             // Here we create the target for the combat queue
             const combatQueueTarget: ICombatQueueTarget = {
