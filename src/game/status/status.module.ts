@@ -10,6 +10,7 @@ import { BurnStatus } from './burn/burn.status';
 import { ConfusionStatus } from './confusion/confusion.status';
 import { DodgeStatus } from './dodge/dodge.status';
 import { DoubleDownStatus } from './doubleDown/doubleDown.status';
+import { DrainedStatus } from './drained/drained.status';
 import { FortitudeStatus } from './fortitude/fortitude.status';
 import { HeraldDelayedStatus } from './heraldDelayed/heraldDelayed.status';
 import { ImbuedStatus } from './imbued/imbued.status';
@@ -52,6 +53,7 @@ import { TurtlingStatus } from './turtling/turtling.status';
         ResistStatus,
         DistraughtStatus,
         DistraughtEvent,
+        DrainedStatus,
     ],
     exports: [StatusService],
 })

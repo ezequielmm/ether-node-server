@@ -148,7 +148,7 @@ export class EnemyService {
 
         enemy.value.defense = defense;
 
-        this.logger.debug(`Set defense of ${id} to ${defense}`);
+        this.logger.debug(`Set defense of enemy ${id} to ${defense}`);
 
         return defense;
     }
@@ -178,7 +178,7 @@ export class EnemyService {
 
         enemy.value.hpCurrent = newHp;
 
-        this.logger.debug(`Set hp of ${id} to ${newHp}`);
+        this.logger.debug(`Set hpCurrent of enemy ${id} to ${hp}`);
 
         return newHp;
     }
@@ -231,7 +231,7 @@ export class EnemyService {
                 // Update attackQueue Details
                 combatQueueTarget.defenseDelta = -damage;
                 combatQueueTarget.finalDefense = enemy.defense;
-                combatQueueTarget.healthDelta = newDefense;
+                combatQueueTarget.healthDelta = -newDefense;
                 combatQueueTarget.finalHealth = enemy.hpCurrent;
             } else {
                 // Otherwise, we update the defense with the new value

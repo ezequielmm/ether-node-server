@@ -1,7 +1,11 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { find } from 'lodash';
 import { CardTargetedEnum } from '../components/card/card.enum';
-import { CombatQueueOriginTypeEnum } from '../components/combatQueue/combatQueue.enum';
+import {
+    CombatQueueOriginTypeEnum,
+    CombatQueueTargetEffectTypeEnum,
+} from '../components/combatQueue/combatQueue.enum';
+import { CombatQueueDocument } from '../components/combatQueue/combatQueue.schema';
 import { CombatQueueService } from '../components/combatQueue/combatQueue.service';
 import { EnemyService } from '../components/enemy/enemy.service';
 import { ExpeditionEntity } from '../components/interfaces';
@@ -90,40 +94,55 @@ export class EffectService {
         });
 
         for (let i = 0; i < times; i++) {
-            // Initialize the combat queue
-            const combatQueue = await this.combatQueueService.create({
-                clientId: client.id,
-                originType:
-                    source.type === CardTargetedEnum.Player
-                        ? CombatQueueOriginTypeEnum.Player
-                        : CombatQueueOriginTypeEnum.Enemy,
-                originId:
-                    source.type === CardTargetedEnum.Player
-                        ? source.value.globalState.playerId
-                        : source.value.id,
-            });
+            let combatQueue: CombatQueueDocument = null;
 
-            this.logger.log(`Created Combat Queue`);
+            // Initialize the combat queue if the effect is damage,
+            // heal or defense only
+
+            if (
+                Object.values(CombatQueueTargetEffectTypeEnum).includes(
+                    name as CombatQueueTargetEffectTypeEnum,
+                )
+            ) {
+                combatQueue = await this.combatQueueService.create({
+                    clientId: client.id,
+                    originType:
+                        source.type === CardTargetedEnum.Player
+                            ? CombatQueueOriginTypeEnum.Player
+                            : CombatQueueOriginTypeEnum.Enemy,
+                    originId:
+                        source.type === CardTargetedEnum.Player
+                            ? source.value.globalState.playerId
+                            : source.value.id,
+                });
+
+                this.logger.log(`Created Combat Queue`);
+            }
 
             // Send the queue id to the effects to add the target
             effectDTO = {
                 ...effectDTO,
-                combatQueueId: combatQueue._id.toString(),
+                ...(combatQueue && {
+                    combatQueueId: combatQueue._id.toString(),
+                }),
             };
 
             this.logger.debug(`Effect ${name} applied to ${target.type}`);
             const handler = this.findHandlerByName(name);
             await handler.handle(effectDTO);
 
-            // Send the combat queue to the client
-            this.logger.log(`Sent combat queue to client ${client.id}`);
-            await this.combatQueueService.sendQueueToClient(client);
+            // If we have a combat queue initiated, we run the queue
+            if (combatQueue) {
+                // Send the combat queue to the client
+                this.logger.log(`Sent combat queue to client ${client.id}`);
+                await this.combatQueueService.sendQueueToClient(client);
 
-            // Clear the queue
-            this.logger.log(`Cleared combat queue to client ${client.id}`);
-            await this.combatQueueService.deleteCombatQueueByClientId(
-                client.id,
-            );
+                // Clear the queue
+                this.logger.log(`Cleared combat queue to client ${client.id}`);
+                await this.combatQueueService.deleteCombatQueueByClientId(
+                    client.id,
+                );
+            }
         }
     }
 

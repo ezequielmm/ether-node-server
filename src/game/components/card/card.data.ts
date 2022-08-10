@@ -1,6 +1,7 @@
 import { Card } from './card.schema';
 import { AttackCard, AttackCardUpgraded } from './data/attack.card';
 import { BackHandCard, BackHandCardUpgraded } from './data/backhand.card';
+import { BlusterCard, BlusterCardUpgraded } from './data/bluster.card';
 import { ChargeCard, ChargeCardUpgraded } from './data/charge.card';
 import { CounterCard, CounterCardUpgraded } from './data/counter.card';
 import { DefenseCard, DefenseCardUpgraded } from './data/defend.card';
@@ -148,4 +149,6 @@ export const data: Card[] = [
     BackHandCardUpgraded,
     UltraLethalityCard,
     UltraLethalityCardUpgraded,
+    BlusterCard,
+    BlusterCardUpgraded,
 ];
