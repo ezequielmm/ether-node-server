@@ -11,9 +11,11 @@ import { ConfusionStatus } from './confusion/confusion.status';
 import { DodgeStatus } from './dodge/dodge.status';
 import { DoubleDownStatus } from './doubleDown/doubleDown.status';
 import { DrainedStatus } from './drained/drained.status';
+import { ForceFieldStatus } from './forceField/forceField.status';
 import { FortitudeStatus } from './fortitude/fortitude.status';
 import { HeraldDelayedStatus } from './heraldDelayed/heraldDelayed.status';
 import { ImbuedStatus } from './imbued/imbued.status';
+import { InterceptStatus } from './intercept/intercept.status';
 import { RegenerateStatus } from './regenerate/regenerate.status';
 import { ResistStatus } from './resist/resist.status';
 import { ResolveStatus } from './resolve/resolve.status';
@@ -54,6 +56,8 @@ import { TurtlingStatus } from './turtling/turtling.status';
         DistraughtStatus,
         DistraughtEvent,
         DrainedStatus,
+        ForceFieldStatus,
+        InterceptStatus,
     ],
     exports: [StatusService],
 })
