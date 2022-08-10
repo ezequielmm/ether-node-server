@@ -9,6 +9,7 @@ import { PlayerService } from 'src/game/components/player/player.service';
 import { EnemyService } from 'src/game/components/enemy/enemy.service';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { CombatQueueService } from 'src/game/components/combatQueue/combatQueue.service';
+import { ExpeditionEnemy } from 'src/game/components/enemy/enemy.interface';
 
 describe('DefenseEffect', () => {
     // Set effect to test
@@ -27,6 +28,12 @@ describe('DefenseEffect', () => {
             },
         },
     } as ExpeditionPlayer;
+
+    // Mock enemy
+    const mockEnemy: ExpeditionEnemy = {
+        type: CardTargetedEnum.Enemy,
+        value: { id: '123', defense: 0 },
+    } as ExpeditionEnemy;
 
     // Mock context
     const mockCtx: Context = {
@@ -104,6 +111,31 @@ describe('DefenseEffect', () => {
 
             expect(mockPlayerService.setDefense).toHaveBeenCalledWith(
                 mockCtx,
+                5,
+            );
+        });
+    });
+
+    describe('Enemy defense', () => {
+        it('should give defense to an emeny', async () => {
+            await defenseEffect.handle({
+                ctx: mockCtx,
+                source: mockEnemy,
+                target: mockEnemy,
+                args: {
+                    currentValue: 5,
+                    initialValue: 5,
+                    useEnemies: false,
+                    useAttackingEnemies: false,
+                    useDiscardPileAsValue: false,
+                    multiplier: 1,
+                },
+                combatQueueId: '555',
+            });
+
+            expect(mockEnemyService.setDefense).toHaveBeenCalledWith(
+                mockCtx,
+                '123',
                 5,
             );
         });

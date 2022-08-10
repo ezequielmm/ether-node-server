@@ -4,8 +4,8 @@ import {
     StatusEffectHandler,
 } from 'src/game/status/interfaces';
 import { StatusDecorator } from 'src/game/status/status.decorator';
-import { DamageArgs } from '../damage/damage.effect';
-import { EffectDTO } from '../effects.interface';
+import { DamageArgs } from '../../effects/damage/damage.effect';
+import { EffectDTO } from '../../effects/effects.interface';
 import { distraught } from './constants';
 
 @StatusDecorator({
