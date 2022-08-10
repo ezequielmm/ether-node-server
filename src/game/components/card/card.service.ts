@@ -24,4 +24,8 @@ export class CardService {
             ? this.card.findById(id).lean()
             : this.card.findOne({ cardId: id }).lean();
     }
+
+    async findCardsById(cards: number[]): Promise<CardDocument[]> {
+        return this.card.find({ cardId: { $in: cards } }).lean();
+    }
 }

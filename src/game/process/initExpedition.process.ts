@@ -76,13 +76,10 @@ export class InitExpeditionProcess {
         const cardIds = cardsIdsArray.map(({ cardId }) => cardId);
 
         // Get all the cards
-        const cards = await this.cardService.findAll();
+        const cards = await this.cardService.findCardsById(cardIds);
 
         // Filter the card ids and make a new array
         return cards
-            .filter(({ cardId }) => {
-                return cardIds.includes(cardId);
-            })
             .reduce((newDeckCards, card) => {
                 cardsIdsArray.forEach(({ cardId, amount }) => {
                     if (card.cardId === cardId) {
