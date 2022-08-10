@@ -64,6 +64,10 @@ import {
     TightenGripCardUpgraded,
 } from './data/tightenGrip.card';
 import { TurtleCard, TurtleCardUpgraded } from './data/turtle.card';
+import {
+    UltraLethalityCard,
+    UltraLethalityCardUpgraded,
+} from './data/ultraLethality.card';
 
 export const data: Card[] = [
     AttackCard,
@@ -142,4 +146,6 @@ export const data: Card[] = [
     RefocusUpgraded,
     BackHandCard,
     BackHandCardUpgraded,
+    UltraLethalityCard,
+    UltraLethalityCardUpgraded,
 ];

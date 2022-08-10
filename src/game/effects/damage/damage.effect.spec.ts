@@ -1,3 +1,4 @@
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import { Test } from '@nestjs/testing';
 import * as MockedSocket from 'socket.io-mock';
 import { ExpeditionEnemy } from 'src/game/components/enemy/enemy.interface';
@@ -62,6 +63,10 @@ describe('DamageEffect', () => {
                     provide: EnemyService,
                     useValue: mockEnemyService,
                 },
+                {
+                    provide: EventEmitter2,
+                    useValue: new EventEmitter2(),
+                },
             ],
         }).compile();
 
@@ -86,8 +91,13 @@ describe('DamageEffect', () => {
                     currentValue: 4,
                     initialValue: 4,
                 },
+                combatQueueId: '555',
             });
-            expect(mockPlayerService.damage).toHaveBeenCalledWith(mockCtx, 4);
+            expect(mockPlayerService.damage).toHaveBeenCalledWith(
+                mockCtx,
+                4,
+                '555',
+            );
         });
 
         it('should damage player with energy as value', async () => {
@@ -100,8 +110,13 @@ describe('DamageEffect', () => {
                     initialValue: 4,
                     useEnergyAsValue: true,
                 },
+                combatQueueId: '555',
             });
-            expect(mockPlayerService.damage).toHaveBeenCalledWith(mockCtx, 3);
+            expect(mockPlayerService.damage).toHaveBeenCalledWith(
+                mockCtx,
+                3,
+                '555',
+            );
         });
     });
 
@@ -115,11 +130,13 @@ describe('DamageEffect', () => {
                     currentValue: 4,
                     initialValue: 4,
                 },
+                combatQueueId: '555',
             });
             expect(mockEnemyService.damage).toHaveBeenCalledWith(
                 mockCtx,
                 '123',
                 4,
+                '555',
             );
         });
 
@@ -133,11 +150,13 @@ describe('DamageEffect', () => {
                     initialValue: 4,
                     useEnergyAsMultiplier: true,
                 },
+                combatQueueId: '555',
             });
             expect(mockEnemyService.damage).toHaveBeenCalledWith(
                 mockCtx,
                 '123',
                 12,
+                '555',
             );
         });
 
@@ -152,11 +171,13 @@ describe('DamageEffect', () => {
                     useDefense: true,
                     multiplier: 2,
                 },
+                combatQueueId: '555',
             });
             expect(mockEnemyService.damage).toHaveBeenCalledWith(
                 mockCtx,
                 '123',
                 56,
+                '555',
             );
         });
 
@@ -172,11 +193,13 @@ describe('DamageEffect', () => {
                     useEnergyAsMultiplier: true,
                     multiplier: 2,
                 },
+                combatQueueId: '555',
             });
             expect(mockEnemyService.damage).toHaveBeenCalledWith(
                 mockCtx,
                 '123',
                 168,
+                '555',
             );
         });
     });

@@ -37,9 +37,12 @@ export class HealEffect implements EffectHandler {
         if (PlayerService.isPlayer(target)) {
             const {
                 value: {
-                    globalState: { playerId, hpMax },
+                    globalState: { playerId, hpCurrent },
                 },
             } = target;
+
+            const deltaHp = currentValue + hpCurrent;
+            const finalHp = await this.playerService.setHp(ctx, deltaHp);
 
             // Here we create the target for the combat queue
             const combatQueueTarget: ICombatQueueTarget = {
@@ -48,12 +51,10 @@ export class HealEffect implements EffectHandler {
                 targetId: playerId,
                 defenseDelta: 0,
                 finalDefense: 0,
-                healthDelta: currentValue,
-                finalHealth: Math.min(currentValue, hpMax),
+                healthDelta: deltaHp,
+                finalHealth: finalHp,
                 statuses: [],
             };
-
-            await this.playerService.setHp(ctx, currentValue);
 
             await this.combatQueueService.addTargetsToCombatQueue(
                 combatQueueId,
@@ -63,8 +64,15 @@ export class HealEffect implements EffectHandler {
 
         if (EnemyService.isEnemy(target)) {
             const {
-                value: { id, hpMax },
+                value: { id, hpCurrent },
             } = target;
+
+            const deltaHp = currentValue + hpCurrent;
+            const finalHp = await this.enemyService.setHp(
+                ctx,
+                target.value.id,
+                deltaHp,
+            );
 
             // Here we create the target for the combat queue
             const combatQueueTarget: ICombatQueueTarget = {
@@ -73,12 +81,10 @@ export class HealEffect implements EffectHandler {
                 targetId: id,
                 defenseDelta: 0,
                 finalDefense: 0,
-                healthDelta: currentValue,
-                finalHealth: Math.min(currentValue, hpMax),
+                healthDelta: deltaHp,
+                finalHealth: finalHp,
                 statuses: [],
             };
-
-            await this.enemyService.setHp(ctx, target.value.id, currentValue);
 
             await this.combatQueueService.addTargetsToCombatQueue(
                 combatQueueId,

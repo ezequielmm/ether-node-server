@@ -118,7 +118,7 @@ export class PlayerService {
         set(ctx.expedition, PLAYER_CURRENT_HP_PATH, newHp);
         this.logger.debug(`Player hp set to ${newHp}`);
 
-        return hp;
+        return newHp;
     }
 
     /**

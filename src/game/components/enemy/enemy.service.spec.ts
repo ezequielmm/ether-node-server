@@ -1,4 +1,3 @@
-import { EventEmitter2 } from '@nestjs/event-emitter';
 import { getModelToken } from '@nestjs/mongoose';
 import { Test } from '@nestjs/testing';
 import { cloneDeep } from 'lodash';
@@ -6,6 +5,7 @@ import { Model } from 'mongoose';
 import { damageEffect } from 'src/game/effects/damage/constants';
 import { defenseEffect } from 'src/game/effects/defense/constants';
 import { CardTargetedEnum } from '../card/card.enum';
+import { CombatQueueService } from '../combatQueue/combatQueue.service';
 import { IExpeditionCurrentNodeDataEnemy } from '../expedition/expedition.interface';
 import { ExpeditionService } from '../expedition/expedition.service';
 import { Context } from '../interfaces';
@@ -19,6 +19,7 @@ import { ExpeditionEnemy } from './enemy.interface';
 import { Enemy, EnemyDocument } from './enemy.schema';
 import { EnemyService } from './enemy.service';
 import { enemySelector } from './enemy.type';
+import * as MockedSocket from 'socket.io-mock';
 
 describe('EnemyService', () => {
     let enemyService: EnemyService;
@@ -27,13 +28,15 @@ describe('EnemyService', () => {
     let spyOnSetHp: jest.SpyInstance;
     let spyOnSetDefense: jest.SpyInstance;
 
-    const mockEventEmitter2 = {
-        emit: jest.fn(),
-    };
-
     const mockExpeditionService = {
         updateById: jest.fn().mockImplementation(() => Promise.resolve()),
         updateByFilter: jest.fn().mockResolvedValue(true),
+    };
+
+    const mockCombatQueueService = {
+        addTargetsToCombatQueue: jest
+            .fn()
+            .mockImplementation(() => Promise.resolve()),
     };
 
     const mockEnemy = {
@@ -206,8 +209,8 @@ describe('EnemyService', () => {
                 },
                 EnemyService,
                 {
-                    provide: EventEmitter2,
-                    useValue: mockEventEmitter2,
+                    provide: CombatQueueService,
+                    useValue: mockCombatQueueService,
                 },
             ],
         }).compile();
@@ -217,10 +220,9 @@ describe('EnemyService', () => {
         spyOnSetDefense = jest.spyOn(enemyService, 'setDefense');
         mockExpeditionService.updateByFilter.mockClear();
         mockExpeditionService.updateById.mockClear();
-        mockEventEmitter2.emit.mockClear();
         mockEnemyModel = module.get(getModelToken(Enemy.name));
         mockCtx = {
-            client: null,
+            client: new MockedSocket(),
             expedition: {
                 _id: '84932',
                 currentNode: {
@@ -405,13 +407,34 @@ describe('EnemyService', () => {
 
             expect(enemy).toHaveProperty('value.hpCurrent', 5);
         });
+
+        it('should update enemy hp to the max if hp is greater than max', async () => {
+            const enemy = enemyService.get(mockCtx, '1');
+
+            await enemyService.setHp(mockCtx, enemy.value.id, 100);
+
+            expect(mockExpeditionService.updateByFilter).toHaveBeenCalledWith(
+                {
+                    _id: mockCtx.expedition._id,
+                    ...enemySelector(enemy.value.id),
+                },
+                {
+                    [ENEMY_HP_CURRENT_PATH]: mockExpeditionEnemyA.hpMax,
+                },
+            );
+
+            expect(enemy).toHaveProperty(
+                'value.hpCurrent',
+                mockExpeditionEnemyA.hpMax,
+            );
+        });
     });
 
     describe('damage', () => {
         it('should invalidate defense without change the hp', async () => {
             const enemy = enemyService.get(mockCtx, '1');
 
-            await enemyService.damage(mockCtx, enemy.value.id, 5);
+            await enemyService.damage(mockCtx, enemy.value.id, 5, '1');
 
             expect(spyOnSetHp).toHaveBeenCalledWith(
                 mockCtx,
@@ -427,16 +450,13 @@ describe('EnemyService', () => {
             expect(enemy).toHaveProperty('value.hpCurrent', 10);
             expect(enemy).toHaveProperty('value.defense', 0);
 
-            expect(mockEventEmitter2.emit).toBeCalledWith(
-                'entity.damage',
-                expect.objectContaining({}),
-            );
+            // TODO combatQueueService.addTargetsToCombatQueue
         });
 
         it('should invalidate defense and change the hp', async () => {
             const enemy = enemyService.get(mockCtx, '1');
 
-            await enemyService.damage(mockCtx, enemy.value.id, 10);
+            await enemyService.damage(mockCtx, enemy.value.id, 10, '1');
 
             expect(spyOnSetHp).toHaveBeenCalledWith(mockCtx, enemy.value.id, 5);
             expect(spyOnSetDefense).toHaveBeenCalledWith(
@@ -448,16 +468,13 @@ describe('EnemyService', () => {
             expect(enemy).toHaveProperty('value.hpCurrent', 5);
             expect(enemy).toHaveProperty('value.defense', 0);
 
-            expect(mockEventEmitter2.emit).toBeCalledWith(
-                'entity.damage',
-                expect.objectContaining({}),
-            );
+            // TODO combatQueueService.addTargetsToCombatQueue
         });
 
         it('should invalidate defense and change the hp to 0', async () => {
             const enemy = enemyService.get(mockCtx, '1');
 
-            await enemyService.damage(mockCtx, enemy.value.id, 20);
+            await enemyService.damage(mockCtx, enemy.value.id, 20, '1');
 
             expect(spyOnSetHp).toHaveBeenCalledWith(mockCtx, enemy.value.id, 0);
             expect(spyOnSetDefense).toHaveBeenCalledWith(
@@ -469,10 +486,7 @@ describe('EnemyService', () => {
             expect(enemy).toHaveProperty('value.hpCurrent', 0);
             expect(enemy).toHaveProperty('value.defense', 0);
 
-            expect(mockEventEmitter2.emit).toBeCalledWith(
-                'entity.damage',
-                expect.objectContaining({}),
-            );
+            // TODO combatQueueService.addTargetsToCombatQueue
         });
     });
 
