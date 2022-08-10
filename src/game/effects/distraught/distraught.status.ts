@@ -12,7 +12,7 @@ import { distraught } from './constants';
     status: distraught,
 })
 @Injectable()
-export class DistraughtEffect implements StatusEffectHandler {
+export class DistraughtStatus implements StatusEffectHandler {
     preview(
         args: StatusEffectDTO<DamageArgs>,
     ): Promise<EffectDTO<Record<string, any>>> {

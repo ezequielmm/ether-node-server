@@ -3,7 +3,7 @@ import { EnemyModule } from '../components/enemy/enemy.module';
 import { ExpeditionModule } from '../components/expedition/expedition.module';
 import { PlayerModule } from '../components/player/player.module';
 import { DistraughtEvent } from '../effects/distraught/distraught.event';
-import { DistraughtEffect } from '../effects/distraught/distraught.status';
+import { DistraughtStatus } from '../effects/distraught/distraught.status';
 import { EffectModule } from '../effects/effects.module';
 import { ProviderModule } from '../provider/provider.module';
 import { BurnStatus } from './burn/burn.status';
@@ -51,7 +51,7 @@ import { TurtlingStatus } from './turtling/turtling.status';
         DoubleDownStatus,
         ImbuedStatus,
         ResistStatus,
-        DistraughtEffect,
+        DistraughtStatus,
         DistraughtEvent,
         DrainedStatus,
     ],

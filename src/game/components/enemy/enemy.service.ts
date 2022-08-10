@@ -164,21 +164,23 @@ export class EnemyService {
     public async setHp(ctx: Context, id: EnemyId, hp: number): Promise<number> {
         const enemy = this.get(ctx, id);
 
+        const newHp = Math.min(hp, enemy.value.hpMax);
+
         await this.expeditionService.updateByFilter(
             {
                 _id: ctx.expedition._id,
                 ...enemySelector(enemy.value.id),
             },
             {
-                [ENEMY_HP_CURRENT_PATH]: hp,
+                [ENEMY_HP_CURRENT_PATH]: newHp,
             },
         );
 
-        enemy.value.hpCurrent = hp;
+        enemy.value.hpCurrent = newHp;
 
-        this.logger.debug(`Set hpCurrent  of enemy ${id} to ${hp}`);
+        this.logger.debug(`Set hpCurrent of enemy ${id} to ${hp}`);
 
-        return hp;
+        return newHp;
     }
 
     /**

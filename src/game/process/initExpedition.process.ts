@@ -9,6 +9,7 @@ import { CustomDeckService } from '../components/customDeck/customDeck.service';
 import { ExpeditionStatusEnum } from '../components/expedition/expedition.enum';
 import { IExpeditionPlayerStateDeckCard } from '../components/expedition/expedition.interface';
 import { ExpeditionService } from '../components/expedition/expedition.service';
+import { SettingsService } from '../components/settings/settings.service';
 
 interface InitExpeditionDTO {
     playerId: number;
@@ -25,6 +26,7 @@ export class InitExpeditionProcess {
         private readonly cardService: CardService,
         private readonly characterService: CharacterService,
         private readonly customDeckService: CustomDeckService,
+        private readonly settingsService: SettingsService,
     ) {}
 
     async handle(payload: InitExpeditionDTO): Promise<void> {
@@ -61,6 +63,8 @@ export class InitExpeditionProcess {
         character: CharacterDocument,
         email: string,
     ): Promise<IExpeditionPlayerStateDeckCard[]> {
+        const { initialDeckSize } = await this.settingsService.getSettings();
+
         // We deestructure the cards from the character
         const { cards: characterDeck } = character;
 
@@ -107,6 +111,7 @@ export class InitExpeditionProcess {
                     showPointer: card.showPointer,
                     isUpgraded: card.isUpgraded,
                 };
-            });
+            })
+            .slice(0, initialDeckSize);
     }
 }
