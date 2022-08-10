@@ -250,7 +250,7 @@ describe('PlayerService', () => {
                     effectType: 'damage',
                     finalDefense: 0,
                     finalHealth: 0,
-                    healthDelta: 0,
+                    healthDelta: -80,
                 }),
             ]);
         });
