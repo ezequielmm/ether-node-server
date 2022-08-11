@@ -6,6 +6,7 @@ import { DistraughtEvent } from '../effects/distraught/distraught.event';
 import { DistraughtStatus } from '../effects/distraught/distraught.status';
 import { EffectModule } from '../effects/effects.module';
 import { ProviderModule } from '../provider/provider.module';
+import { BolsteredStatus } from './bolstered/bolstered.status';
 import { BurnStatus } from './burn/burn.status';
 import { ConfusionStatus } from './confusion/confusion.status';
 import { DodgeStatus } from './dodge/dodge.status';
@@ -54,6 +55,7 @@ import { TurtlingStatus } from './turtling/turtling.status';
         DistraughtStatus,
         DistraughtEvent,
         DrainedStatus,
+        BolsteredStatus,
     ],
     exports: [StatusService],
 })

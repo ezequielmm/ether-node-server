@@ -20,7 +20,7 @@ export class DistraughtEvent implements StatusEventHandler {
         private readonly playerService: PlayerService,
     ) {}
 
-    @OnEvent('OnBeginEnemyTurn', { async: true })
+    @OnEvent('enemy:before-begin-turn', { async: true })
     async enemyHandler(args: { ctx: Context }): Promise<void> {
         const { ctx } = args;
         const enemies = this.enemyService.getAll(ctx);
@@ -30,7 +30,7 @@ export class DistraughtEvent implements StatusEventHandler {
         }
     }
 
-    @OnEvent('OnBeginPlayerTurn', { async: true })
+    @OnEvent('player:before-begin-turn', { async: true })
     async playerHandler(args: { ctx: Context }): Promise<void> {
         const { ctx } = args;
         const player = this.playerService.get(ctx);

@@ -57,7 +57,7 @@ export class BeginEnemyTurnProcess {
             expedition,
         };
 
-        await this.eventEmitter.emitAsync('OnBeginEnemyTurn', { ctx });
+        await this.eventEmitter.emitAsync('enemy:before-begin-turn', { ctx });
         await this.statusService.trigger(ctx, StatusEventType.OnEnemyTurnStart);
 
         // Then we loop over them and get their intentions and effects
