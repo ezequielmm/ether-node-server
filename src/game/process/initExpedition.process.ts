@@ -72,13 +72,16 @@ export class InitExpeditionProcess {
             ? characterDeck.map(({ cardId }) => Math.round(cardId))
             : customDeck.cards.map(({ cardId }) => Math.round(cardId));
 
+        // Set deck to get the amount of cards
+        const deck = !customDeck ? characterDeck : customDeck.cards;
+
         // Get all the cards
         const cards = await this.cardService.findCardsById(cardIds);
 
         // Filter the card ids and make a new array
         return cards
             .reduce((newDeckCards, card) => {
-                characterDeck.forEach(({ cardId, amount }) => {
+                deck.forEach(({ cardId, amount }) => {
                     if (card.cardId === cardId) {
                         for (let i = 1; i <= amount; i++) {
                             newDeckCards.push(card);
