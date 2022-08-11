@@ -20,7 +20,7 @@ describe('HealEffect', () => {
         type: CardTargetedEnum.Player,
         value: {
             globalState: {
-                hpCurrent: 80,
+                hpCurrent: 75,
                 hpMax: 80,
             },
             combatState: {
@@ -35,7 +35,7 @@ describe('HealEffect', () => {
     // Mock enemy
     const mockEnemy: ExpeditionEnemy = {
         type: CardTargetedEnum.Enemy,
-        value: { id: '123', defense: 0, hpCurrent: 80, hpMax: 80 },
+        value: { id: '123', defense: 0, hpCurrent: 75, hpMax: 80 },
     } as ExpeditionEnemy;
 
     // Mock context
@@ -107,7 +107,23 @@ describe('HealEffect', () => {
                 combatQueueId: '555',
             });
 
-            expect(mockPlayerService.setHp).toHaveBeenCalledWith(mockCtx, 85);
+            expect(mockPlayerService.setHp).toHaveBeenCalledWith(mockCtx, 80);
+        });
+
+        it('should set the maxHp for the player', async () => {
+            await healEffect.handle({
+                ctx: mockCtx,
+                source: mockPlayer,
+                target: mockPlayer,
+                args: {
+                    initialValue: 10,
+                    currentValue: 10,
+                    value: 10,
+                },
+                combatQueueId: '555',
+            });
+
+            expect(mockPlayerService.setHp).toHaveBeenCalledWith(mockCtx, 80);
         });
     });
 
@@ -128,7 +144,27 @@ describe('HealEffect', () => {
             expect(mockEnemyService.setHp).toHaveBeenCalledWith(
                 mockCtx,
                 '123',
-                85,
+                80,
+            );
+        });
+
+        it('should set the maxHp for the enemy', async () => {
+            await healEffect.handle({
+                ctx: mockCtx,
+                source: mockEnemy,
+                target: mockEnemy,
+                args: {
+                    initialValue: 10,
+                    currentValue: 10,
+                    value: 10,
+                },
+                combatQueueId: '555',
+            });
+
+            expect(mockEnemyService.setHp).toHaveBeenCalledWith(
+                mockCtx,
+                '123',
+                80,
             );
         });
     });
