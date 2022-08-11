@@ -7,6 +7,7 @@ import { EnemyId } from '../components/enemy/enemy.type';
 import {
     CombatTurnEnum,
     ExpeditionMapNodeTypeEnum,
+    IExpeditionNodeReward,
 } from '../components/expedition/expedition.enum';
 import {
     IExpeditionCurrentNode,
@@ -153,7 +154,7 @@ export class CurrentNodeGeneratorProcess {
         return [
             {
                 id: randomUUID(),
-                type: 'gold',
+                type: IExpeditionNodeReward.Gold,
                 amount,
                 taken: false,
             },
