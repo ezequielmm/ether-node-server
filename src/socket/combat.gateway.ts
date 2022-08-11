@@ -16,13 +16,15 @@ import { TargetId } from 'src/game/effects/effects.types';
 import { CardPlayedAction } from 'src/game/action/cardPlayed.action';
 import { EndPlayerTurnProcess } from 'src/game/process/endPlayerTurn.process';
 import { ExpeditionService } from 'src/game/components/expedition/expedition.service';
-import { CombatTurnEnum } from 'src/game/components/expedition/expedition.enum';
+import {
+    CombatTurnEnum,
+    IExpeditionNodeReward,
+} from 'src/game/components/expedition/expedition.enum';
 import { EndEnemyTurnProcess } from 'src/game/process/endEnemyTurn.process';
 import { SendEnemyIntentProcess } from 'src/game/process/sendEnemyIntents.process';
 import { GetStatusesAction } from 'src/game/action/getStatuses.action';
 import { GetPlayerDeckAction } from 'src/game/action/getPlayerDeck.action';
 import { Context } from 'src/game/components/interfaces';
-import { filter, find } from 'lodash';
 
 interface CardPlayedInterface {
     cardId: CardId;
@@ -146,28 +148,41 @@ export class CombatGateway {
     }
 
     @SubscribeMessage('RewardSelected')
-    async handleRewardSelected(client: Socket, rewardId: string): Promise<any> {
-        const expedition = await this.expeditionService.findOne({
+    async handleRewardSelected(
+        client: Socket,
+        rewardId: string,
+    ): Promise<string> {
+        // Get the updated expedition
+        const {
+            _id,
+            currentNode: {
+                completed: nodeIsCompleted,
+                data: { rewards },
+            },
+            map,
+        } = await this.expeditionService.findOne({
             clientId: client.id,
         });
 
-        if (expedition.currentNode.completed) {
+        // Check if the node is completed
+        if (nodeIsCompleted)
             throw new Error('Node already completed, cannot select reward');
-        }
 
-        const reward = find(expedition.currentNode.data.rewards, {
-            id: rewardId,
+        // check if the reward that we are receiving is correct and exists
+        const reward = rewards.find(({ id }) => {
+            return id === rewardId;
         });
 
-        if (!reward) {
-            throw new Error(`Reward ${rewardId} not found`);
-        }
+        // If the reward is inavlid we throw and exception
+        if (!reward) throw new Error(`Reward ${rewardId} not found`);
 
+        // Now we set that we took the reward
         reward.taken = true;
 
+        // Next we save the reward on the expedition
         await this.expeditionService.updateByFilter(
             {
-                _id: expedition._id,
+                _id,
                 'currentNode.data.rewards.id': rewardId,
             },
             {
@@ -177,38 +192,38 @@ export class CombatGateway {
             },
         );
 
-        if (reward.type === 'gold') {
-            await this.expeditionService.updateById(expedition._id, {
-                $inc: {
-                    'playerState.gold': reward.amount,
-                },
-            });
+        // Now we apply the redward to the user profile
+        switch (reward.type) {
+            case IExpeditionNodeReward.Gold:
+                await this.expeditionService.updateById(_id, {
+                    $inc: {
+                        'playerState.gold': reward.amount,
+                    },
+                });
+                break;
         }
 
-        const rewardsToTake = filter(expedition.currentNode.data.rewards, {
-            taken: false,
+        // Now we get the rewards that are pending to be taken
+        const pendingRewards = rewards.filter(({ id, taken }) => {
+            return id !== rewardId && taken === false;
         });
 
-        if (rewardsToTake.length === 0) {
+        if (pendingRewards.length === 0) {
             return JSON.stringify(
                 StandardResponse.respond({
                     message_type: SWARMessageType.EndCombat,
                     action: SWARAction.ShowMap,
-                    data: {
-                        map: expedition.map,
-                    },
+                    data: map,
+                }),
+            );
+        } else {
+            return JSON.stringify(
+                StandardResponse.respond({
+                    message_type: SWARMessageType.EndTurn,
+                    action: SWARAction.SelectAnotherReward,
+                    data: pendingRewards,
                 }),
             );
         }
-
-        return JSON.stringify(
-            StandardResponse.respond({
-                message_type: SWARMessageType.EndTurn,
-                action: SWARAction.SelectAnotherReward,
-                data: filter(expedition.currentNode.data.rewards, {
-                    taken: false,
-                }),
-            }),
-        );
     }
 }

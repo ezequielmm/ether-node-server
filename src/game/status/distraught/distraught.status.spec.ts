@@ -1,6 +1,6 @@
 import { Test } from '@nestjs/testing';
 import { StatusEffectDTO } from 'src/game/status/interfaces';
-import { DamageArgs } from '../damage/damage.effect';
+import { DamageArgs } from '../../effects/damage/damage.effect';
 import { DistraughtStatus } from './distraught.status';
 
 describe('DistraughtStatus', () => {

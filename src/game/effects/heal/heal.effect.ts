@@ -68,6 +68,7 @@ export class HealEffect implements EffectHandler {
             } = target;
 
             const deltaHp = currentValue + hpCurrent;
+
             const finalHp = await this.enemyService.setHp(
                 ctx,
                 target.value.id,

@@ -1,5 +1,5 @@
 import { damageEffect } from 'src/game/effects/damage/constants';
-import { distraught } from 'src/game/effects/distraught/constants';
+import { distraught } from 'src/game/status/distraught/constants';
 import { CardRarityEnum, CardTypeEnum, CardTargetedEnum } from '../card.enum';
 import { Card } from '../card.schema';
 

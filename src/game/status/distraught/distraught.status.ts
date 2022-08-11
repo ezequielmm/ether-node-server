@@ -4,8 +4,8 @@ import {
     StatusEffectHandler,
 } from 'src/game/status/interfaces';
 import { StatusDecorator } from 'src/game/status/status.decorator';
-import { DamageArgs } from '../damage/damage.effect';
-import { EffectDTO } from '../effects.interface';
+import { DamageArgs } from '../../effects/damage/damage.effect';
+import { EffectDTO } from '../../effects/effects.interface';
 import { distraught } from './constants';
 
 @StatusDecorator({
@@ -13,11 +13,12 @@ import { distraught } from './constants';
 })
 @Injectable()
 export class DistraughtStatus implements StatusEffectHandler {
-    preview(
+    async preview(
         args: StatusEffectDTO<DamageArgs>,
     ): Promise<EffectDTO<Record<string, any>>> {
         return this.handle(args);
     }
+
     async handle(
         args: StatusEffectDTO<DamageArgs>,
     ): Promise<EffectDTO<DamageArgs>> {
