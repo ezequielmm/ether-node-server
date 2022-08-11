@@ -5,11 +5,9 @@ import { CardService } from '../components/card/card.service';
 import { CharacterClassEnum } from '../components/character/character.enum';
 import { CharacterDocument } from '../components/character/character.schema';
 import { CharacterService } from '../components/character/character.service';
-import { CustomDeckService } from '../components/customDeck/customDeck.service';
 import { ExpeditionStatusEnum } from '../components/expedition/expedition.enum';
 import { IExpeditionPlayerStateDeckCard } from '../components/expedition/expedition.interface';
 import { ExpeditionService } from '../components/expedition/expedition.service';
-import { SettingsService } from '../components/settings/settings.service';
 
 interface InitExpeditionDTO {
     playerId: number;
@@ -25,12 +23,10 @@ export class InitExpeditionProcess {
         private readonly expeditionService: ExpeditionService,
         private readonly cardService: CardService,
         private readonly characterService: CharacterService,
-        private readonly customDeckService: CustomDeckService,
-        private readonly settingsService: SettingsService,
     ) {}
 
     async handle(payload: InitExpeditionDTO): Promise<void> {
-        const { playerId, playerName, email } = payload;
+        const { playerId, playerName } = payload;
 
         const character = await this.characterService.findOne({
             characterClass: CharacterClassEnum.Knight,
@@ -38,7 +34,7 @@ export class InitExpeditionProcess {
 
         const map = this.expeditionService.getMap();
 
-        const cards = await this.generatePlayerDeck(character, email);
+        const cards = await this.generatePlayerDeck(character);
 
         await this.expeditionService.create({
             playerId,
@@ -61,23 +57,12 @@ export class InitExpeditionProcess {
 
     private async generatePlayerDeck(
         character: CharacterDocument,
-        email: string,
     ): Promise<IExpeditionPlayerStateDeckCard[]> {
-        const { initialDeckSize } = await this.settingsService.getSettings();
-
         // We deestructure the cards from the character
         const { cards: characterDeck } = character;
 
-        // we check if we have a custom deck to apply
-        // For this user
-        const customDeck = await this.customDeckService.findByEmail(email);
-
-        let cardsIdsArray = characterDeck;
-
-        if (customDeck) cardsIdsArray = customDeck.cards;
-
         // Get card ids as an array of integers
-        const cardIds = cardsIdsArray.map(({ cardId }) => cardId);
+        const cardIds = characterDeck.map(({ cardId }) => cardId);
 
         // Get all the cards
         const cards = await this.cardService.findCardsById(cardIds);
@@ -85,7 +70,7 @@ export class InitExpeditionProcess {
         // Filter the card ids and make a new array
         return cards
             .reduce((newDeckCards, card) => {
-                cardsIdsArray.forEach(({ cardId, amount }) => {
+                characterDeck.forEach(({ cardId, amount }) => {
                     if (card.cardId === cardId) {
                         for (let i = 1; i <= amount; i++) {
                             newDeckCards.push(card);
@@ -111,7 +96,6 @@ export class InitExpeditionProcess {
                     showPointer: card.showPointer,
                     isUpgraded: card.isUpgraded,
                 };
-            })
-            .slice(0, initialDeckSize);
+            });
     }
 }

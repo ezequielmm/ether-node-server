@@ -13,6 +13,7 @@ import { EnemyScript } from '../enemy/enemy.interface';
 import {
     ExpeditionMapNodeTypeEnum,
     ExpeditionMapNodeStatusEnum,
+    IExpeditionNodeReward,
 } from './expedition.enum';
 import { Expedition } from './expedition.schema';
 
@@ -66,7 +67,7 @@ export interface IExpeditionCurrentNodeDataEnemy {
 
 export interface IExpeditionReward {
     id: string;
-    type: 'gold' | 'card' | 'potion' | 'trinket';
+    type: IExpeditionNodeReward;
     amount: number;
     taken: boolean;
 }

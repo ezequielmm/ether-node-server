@@ -16,6 +16,7 @@ import {
 import { FineEdgeCard, FineEdgeCardUpgraded } from './data/fineEdge.card';
 import { FirstMoveCard, FirstMoveCardUpgraded } from './data/firstMove.card';
 import { FlurryCard, FlurryCardUpgraded } from './data/flurry.card';
+import { ForceFieldCard, ForceFieldCardUpgraded } from './data/forceField.card';
 import {
     GiveNoGroundCard,
     GiveNoGroundCardUpgraded,
@@ -31,6 +32,7 @@ import {
     HeraldOfPainCardUpgraded,
 } from './data/heraldOfPain.card';
 import { HiltPunchCard, HiltPunchCardUpgraded } from './data/hiltPunch.card';
+import { InterceptCard, InterceptCardUpgraded } from './data/intercept.card';
 import { IntimidateCard, IntimidateCardUpgraded } from './data/intimidate.card';
 import {
     InvokeBlessingCard,
@@ -152,6 +154,10 @@ export const data: Card[] = [
     UltraLethalityCardUpgraded,
     BlusterCard,
     BlusterCardUpgraded,
+    InterceptCard,
+    InterceptCardUpgraded,
+    ForceFieldCard,
+    ForceFieldCardUpgraded,
     BolsterCard,
     BolsterCardUpgraded,
 ];
