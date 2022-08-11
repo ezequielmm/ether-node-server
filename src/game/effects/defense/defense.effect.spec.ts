@@ -339,5 +339,34 @@ describe('DefenseEffect', () => {
                 5,
             );
         });
+
+        it('should increase the existing defense for the player', async () => {
+            mockEnemy.value.defense = 5;
+
+            mockCtx.expedition.currentNode.data.enemies.push({
+                ...mockEnemy.value,
+            });
+
+            await defenseEffect.handle({
+                ctx: mockCtx,
+                source: mockEnemy,
+                target: mockEnemy,
+                args: {
+                    currentValue: 5,
+                    initialValue: 5,
+                    useEnemies: false,
+                    useAttackingEnemies: false,
+                    useDiscardPileAsValue: false,
+                    multiplier: 1,
+                },
+                combatQueueId: '555',
+            });
+
+            expect(mockEnemyService.setDefense).toHaveBeenCalledWith(
+                mockCtx,
+                '123',
+                10,
+            );
+        });
     });
 });
