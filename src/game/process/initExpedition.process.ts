@@ -64,8 +64,13 @@ export class InitExpeditionProcess {
         // We deestructure the cards from the character
         const { cards: characterDeck } = character;
 
+        // Now we get any custom deck that we have available
+        const customDeck = await this.customDeckService.findByEmail(email);
+
         // Get card ids as an array of integers
-        const cardIds = characterDeck.map(({ cardId }) => cardId);
+        const cardIds = !customDeck
+            ? characterDeck.map(({ cardId }) => Math.round(cardId))
+            : customDeck.cards.map(({ cardId }) => Math.round(cardId));
 
         // Get all the cards
         const cards = await this.cardService.findCardsById(cardIds);
