@@ -1,5 +1,7 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
+import { CombatQueueModule } from '../combatQueue/combatQueue.module';
+import { ExpeditionModule } from '../expedition/expedition.module';
 import { Enemy, EnemySchema } from './enemy.schema';
 import { EnemyService } from './enemy.service';
 
@@ -11,6 +13,8 @@ import { EnemyService } from './enemy.service';
                 schema: EnemySchema,
             },
         ]),
+        forwardRef(() => ExpeditionModule),
+        CombatQueueModule,
     ],
     providers: [EnemyService],
     exports: [EnemyService],

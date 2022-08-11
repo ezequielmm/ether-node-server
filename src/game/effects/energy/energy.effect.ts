@@ -1,37 +1,39 @@
 import { Injectable } from '@nestjs/common';
-import { ExpeditionService } from '../../components/expedition/expedition.service';
 import { energyEffect } from './constants';
 import { EffectDecorator } from '../effects.decorator';
 import { EffectDTO, EffectHandler } from '../effects.interface';
+import { PlayerService } from 'src/game/components/player/player.service';
 
 @EffectDecorator({
     effect: energyEffect,
 })
 @Injectable()
 export class EnergyEffect implements EffectHandler {
-    constructor(private readonly expeditionService: ExpeditionService) {}
+    constructor(private readonly playerService: PlayerService) {}
 
     async handle(payload: EffectDTO): Promise<void> {
         const {
-            client,
-            args: { currentValue: amountToAdd },
+            ctx,
+            args: { currentValue: energyToAdd },
         } = payload;
 
-        // Get current energy and max energy amount
+        // Deestructure the expedition to get the current
+        // energy available
+
         const {
-            data: {
-                player: { energy },
+            expedition: {
+                currentNode: {
+                    data: {
+                        player: { energy: currentEnergy },
+                    },
+                },
             },
-        } = await this.expeditionService.getCurrentNode({
-            clientId: client.id,
-        });
+        } = ctx;
 
-        const newEnergy = energy + amountToAdd;
+        // Sum the values to get the new energy
+        const newEnergy = currentEnergy + energyToAdd;
 
-        // update energy amount
-        await this.expeditionService.updatePlayerEnergy({
-            clientId: client.id,
-            newEnergy,
-        });
+        // Set the new energy value to the expedition
+        await this.playerService.setEnergy(ctx, newEnergy);
     }
 }

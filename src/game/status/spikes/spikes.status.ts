@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { damageEffect } from 'src/game/effects/damage/constants';
 import { DamageArgs } from 'src/game/effects/damage/damage.effect';
-import { EffectDTO } from 'src/game/effects/effects.interface';
+import { ApplyDTO, EffectDTO } from 'src/game/effects/effects.interface';
 import { EffectService } from 'src/game/effects/effects.service';
 import { StatusEffectDTO, StatusEffectHandler } from '../interfaces';
 import { StatusDecorator } from '../status.decorator';
@@ -22,9 +22,8 @@ export class SpikesStatus implements StatusEffectHandler {
         dto: StatusEffectDTO<DamageArgs>,
     ): Promise<EffectDTO<DamageArgs>> {
         // Return the damage to the source with the value of the status
-        const applyDTO = {
-            client: dto.client,
-            expedition: dto.expedition,
+        const applyDTO: ApplyDTO = {
+            ctx: dto.ctx,
             source: dto.effectDTO.target,
             target: dto.effectDTO.source,
             effect: {

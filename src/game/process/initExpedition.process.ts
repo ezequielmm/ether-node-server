@@ -1,5 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { randomUUID } from 'crypto';
+import { CardDescriptionFormatter } from '../cardDescriptionFormatter/cardDescriptionFormatter';
 import { CardService } from '../components/card/card.service';
 import { CharacterClassEnum } from '../components/character/character.enum';
 import { CharacterDocument } from '../components/character/character.schema';
@@ -11,10 +12,13 @@ import { ExpeditionService } from '../components/expedition/expedition.service';
 interface InitExpeditionDTO {
     playerId: number;
     playerName: string;
+    email: string;
 }
 
 @Injectable()
 export class InitExpeditionProcess {
+    private readonly logger: Logger = new Logger(InitExpeditionProcess.name);
+
     constructor(
         private readonly expeditionService: ExpeditionService,
         private readonly cardService: CardService,
@@ -36,6 +40,7 @@ export class InitExpeditionProcess {
             playerId,
             map,
             playerState: {
+                playerId: randomUUID(),
                 playerName,
                 characterClass: character.characterClass,
                 hpMax: character.initialHealth,
@@ -46,29 +51,26 @@ export class InitExpeditionProcess {
             },
             status: ExpeditionStatusEnum.InProgress,
         });
+
+        this.logger.log(`Created expedition for player id: ${playerId}`);
     }
 
     private async generatePlayerDeck(
         character: CharacterDocument,
     ): Promise<IExpeditionPlayerStateDeckCard[]> {
-        // Get decksettings from character object
-        const {
-            deckSettings: { cards: cardsIdsArray },
-        } = character;
+        // We deestructure the cards from the character
+        const { cards: characterDeck } = character;
 
         // Get card ids as an array of integers
-        const cardIds = cardsIdsArray.map(({ cardId }) => cardId);
+        const cardIds = characterDeck.map(({ cardId }) => cardId);
 
         // Get all the cards
-        const cards = await this.cardService.findAll();
+        const cards = await this.cardService.findCardsById(cardIds);
 
         // Filter the card ids and make a new array
         return cards
-            .filter((card) => {
-                return cardIds.includes(card.cardId);
-            })
             .reduce((newDeckCards, card) => {
-                cardsIdsArray.forEach(({ cardId, amount }) => {
+                characterDeck.forEach(({ cardId, amount }) => {
                     if (card.cardId === cardId) {
                         for (let i = 1; i <= amount; i++) {
                             newDeckCards.push(card);
@@ -83,7 +85,7 @@ export class InitExpeditionProcess {
                     cardId: card.cardId,
                     id: randomUUID(),
                     name: card.name,
-                    description: card.description,
+                    description: CardDescriptionFormatter.process(card),
                     rarity: card.rarity,
                     energy: card.energy,
                     cardType: card.cardType,

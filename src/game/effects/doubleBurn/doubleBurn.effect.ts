@@ -1,11 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { filter, forEach } from 'lodash';
+import { EnemyService } from 'src/game/components/enemy/enemy.service';
+import { PlayerService } from 'src/game/components/player/player.service';
 import { burn } from 'src/game/status/burn/constants';
 import { StatusCollection } from 'src/game/status/interfaces';
 import { StatusService } from 'src/game/status/status.service';
 import { EffectDecorator } from '../effects.decorator';
 import { EffectDTO, EffectHandler } from '../effects.interface';
-import { EffectService } from '../effects.service';
 import { doubleBurn } from './constants';
 
 @EffectDecorator({
@@ -16,13 +17,16 @@ export class DoubleBurnEffect implements EffectHandler {
     constructor(private readonly statusService: StatusService) {}
 
     async handle(dto: EffectDTO): Promise<void> {
-        const { target, expedition } = dto;
+        const {
+            target,
+            ctx: { expedition },
+        } = dto;
 
         let statuses: StatusCollection;
 
-        if (EffectService.isPlayer(target)) {
+        if (PlayerService.isPlayer(target)) {
             statuses = target.value.combatState.statuses;
-        } else if (EffectService.isEnemy(target)) {
+        } else if (EnemyService.isEnemy(target)) {
             statuses = target.value.statuses;
         }
 

@@ -1,20 +1,11 @@
-import { Injectable, Logger } from '@nestjs/common';
-import { Socket } from 'socket.io';
-import { GetPlayerInfoAction } from '../../action/getPlayerInfo.action';
-import { getEnemyIdField } from '../../components/enemy/enemy.type';
-import { IExpeditionCurrentNodeDataEnemy } from '../../components/expedition/expedition.interface';
-import { ExpeditionService } from '../../components/expedition/expedition.service';
-import {
-    StandardResponse,
-    SWARAction,
-    SWARMessageType,
-} from '../../standardResponse/standardResponse';
-import { damageEffect } from './constants';
+import { Injectable } from '@nestjs/common';
+import { EventEmitter2 } from '@nestjs/event-emitter';
+import { EnemyService } from 'src/game/components/enemy/enemy.service';
+import { PlayerService } from 'src/game/components/player/player.service';
+import { isNotUndefined } from 'src/utils';
 import { EffectDecorator } from '../effects.decorator';
 import { EffectDTO, EffectHandler } from '../effects.interface';
-import { EffectService } from '../effects.service';
-import { TargetId } from '../effects.types';
-import { isNotUndefined } from 'src/utils';
+import { damageEffect } from './constants';
 
 export interface DamageArgs {
     useDefense?: boolean;
@@ -28,16 +19,15 @@ export interface DamageArgs {
 })
 @Injectable()
 export class DamageEffect implements EffectHandler {
-    private readonly logger: Logger = new Logger(DamageEffect.name);
-
     constructor(
-        private readonly expeditionService: ExpeditionService,
-        private readonly getPlayerInfoAction: GetPlayerInfoAction,
+        private readonly playerService: PlayerService,
+        private readonly enemyService: EnemyService,
+        private readonly eventEmitter2: EventEmitter2,
     ) {}
 
     async handle(payload: EffectDTO<DamageArgs>): Promise<void> {
         const {
-            client,
+            ctx,
             target,
             args: {
                 currentValue,
@@ -46,229 +36,45 @@ export class DamageEffect implements EffectHandler {
                 useEnergyAsMultiplier,
                 useEnergyAsValue,
             },
-            expedition: {
-                currentNode: {
-                    data: {
-                        player: { energy: currentEnergy },
-                    },
-                },
-            },
+            combatQueueId,
         } = payload;
 
+        const {
+            value: {
+                combatState: { energy, defense },
+            },
+        } = this.playerService.get(ctx);
+
         // Check targeted type
-        if (EffectService.isEnemy(target)) {
+        if (EnemyService.isEnemy(target)) {
             // First we check if we have to deal a multiplier
             // using the remaining energy of the player
-            const newCurrentValue = isNotUndefined(useEnergyAsMultiplier)
-                ? currentValue * currentEnergy
-                : currentValue;
+            const damage =
+                currentValue *
+                (useEnergyAsMultiplier ? energy : 1) *
+                (useDefense ? multiplier * defense : 1);
 
-            await this.applyDamageToEnemy(
-                client,
-                newCurrentValue,
+            await this.enemyService.damage(
+                ctx,
                 target.value.id,
-                useDefense,
-                multiplier,
+                damage,
+                combatQueueId,
             );
-        }
-
-        if (EffectService.isAllEnemies(target)) {
-            // First we check if we have to deal a multiplier
-            // using the remaining energy of the player
-            const newCurrentValue = isNotUndefined(useEnergyAsMultiplier)
-                ? currentValue * currentEnergy
-                : currentValue;
-
-            await this.applyDamageToAllEnemies(client, newCurrentValue);
-        }
-
-        if (EffectService.isPlayer(target)) {
+        } else if (PlayerService.isPlayer(target)) {
             // Here we check if we have to use the enemy available
             // as currentValue, here we just need to add it, the value
             // on the effect is 0
-            const newCurrentValue = isNotUndefined(useEnergyAsValue)
-                ? currentEnergy
+            const damage = isNotUndefined(useEnergyAsValue)
+                ? energy
                 : currentValue;
 
-            await this.applyDamageToPlayer(client, newCurrentValue);
-        }
-    }
-
-    private async applyDamageToEnemy(
-        client: Socket,
-        damage: number,
-        targetId: TargetId,
-        useDefense: boolean,
-        multiplier: number,
-    ): Promise<void> {
-        // Get enemy based on id
-        const {
-            data: {
-                enemies,
-                player: { defense },
-            },
-        } = await this.expeditionService.getCurrentNode({
-            clientId: client.id,
-        });
-
-        if (isNotUndefined(useDefense)) damage = defense * multiplier;
-
-        const dataResponse = [];
-
-        enemies.forEach((enemy) => {
-            if (enemy[getEnemyIdField(targetId)] === targetId) {
-                enemy = this.calculateEnemyDamage(enemy, damage);
-
-                dataResponse.push({
-                    id: targetId,
-                });
-            }
-        });
-
-        // update enemies array
-        await this.expeditionService.updateEnemiesArray({
-            clientId: client.id,
-            enemies,
-        });
-
-        this.logger.log(
-            `Sent message PutData to client ${client.id}: ${SWARAction.EnemyAffected}`,
-        );
-
-        client.emit(
-            'PutData',
-            JSON.stringify(
-                StandardResponse.respond({
-                    message_type: SWARMessageType.EnemyAffected,
-                    action: SWARAction.EnemyAffected,
-                    data: dataResponse,
-                }),
-            ),
-        );
-    }
-
-    private async applyDamageToAllEnemies(
-        client: Socket,
-        damage: number,
-    ): Promise<void> {
-        // Get all enemies of current node
-        const {
-            data: { enemies },
-        } = await this.expeditionService.getCurrentNode({
-            clientId: client.id,
-        });
-
-        const dataResponse = [];
-
-        enemies.forEach((enemy) => {
-            enemy = this.calculateEnemyDamage(enemy, damage);
-            dataResponse.push({ id: enemy.id });
-        });
-
-        // update enemies array
-        await this.expeditionService.updateEnemiesArray({
-            clientId: client.id,
-            enemies,
-        });
-
-        this.logger.log(
-            `Sent message PutData to client ${client.id}: ${SWARAction.EnemyAffected}`,
-        );
-
-        client.emit(
-            'PutData',
-            JSON.stringify(
-                StandardResponse.respond({
-                    message_type: SWARMessageType.EnemyAffected,
-                    action: SWARAction.EnemyAffected,
-                    data: dataResponse,
-                }),
-            ),
-        );
-    }
-
-    private async applyDamageToPlayer(
-        client: Socket,
-        damage: number,
-    ): Promise<void> {
-        // First we get the actual hp and defense from the player
-        const { defense: currentDefense, hpCurrent } =
-            await this.getPlayerInfoAction.handle(client.id);
-
-        let newDefense = 0;
-        let newHpCurrent = hpCurrent;
-
-        // Them we check if the player has defense to reduce from there
-        if (currentDefense > 0) {
-            newDefense = currentDefense - damage;
-
-            // If newDefense is negative, it means that the defense is fully
-            // depleted and the remaining will be applied to the player's health
-            if (newDefense < 0) {
-                newHpCurrent = Math.max(0, hpCurrent + newDefense);
-                newDefense = 0;
-            }
-        } else {
-            // If the player has no defense, the damage will be applied to the
-            // health directly
-            newHpCurrent = Math.max(0, hpCurrent - damage);
+            await this.playerService.damage(ctx, damage, combatQueueId);
         }
 
-        // Update the player's defense
-        await this.expeditionService.setPlayerDefense({
-            clientId: client.id,
-            value: newDefense,
+        // Emit the event
+        this.eventEmitter2.emit('entity.damage', {
+            ctx,
+            entity: target,
         });
-
-        // Update the player's health
-        await this.expeditionService.setPlayerHealth({
-            clientId: client.id,
-            hpCurrent: newHpCurrent,
-        });
-
-        const playerInfo = await this.getPlayerInfoAction.handle(client.id);
-
-        // Send player message
-        this.logger.log(
-            `Sent message PutData to client ${client.id}: ${SWARAction.EnemyAffected}`,
-        );
-
-        client.emit(
-            'PutData',
-            JSON.stringify(
-                StandardResponse.respond({
-                    message_type: SWARMessageType.PlayerAffected,
-                    action: SWARAction.UpdatePlayer,
-                    data: playerInfo,
-                }),
-            ),
-        );
-    }
-
-    private calculateEnemyDamage(
-        enemy: IExpeditionCurrentNodeDataEnemy,
-        damage: number,
-    ): IExpeditionCurrentNodeDataEnemy {
-        // First we check if the enemy has defense
-        if (enemy.defense > 0) {
-            // if is true, then we reduce the damage to the defense
-            const newDefense = enemy.defense - damage;
-
-            // Next we check if the new defense is lower than 0
-            // and use the remaining value to reduce to the health
-            // and the set the defense to 0
-            if (newDefense < 0) {
-                enemy.hpCurrent = Math.max(0, enemy.hpCurrent + newDefense);
-                enemy.defense = 0;
-            } else {
-                // Otherwise, we update the defense with the new value
-                enemy.defense = newDefense;
-            }
-        } else {
-            // Otherwise, we apply the damage to the enemy's health
-            enemy.hpCurrent = Math.max(0, enemy.hpCurrent - damage);
-        }
-
-        return enemy;
     }
 }

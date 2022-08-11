@@ -4,6 +4,7 @@ import { Socket } from 'socket.io';
 import { DataWSRequestTypesEnum } from './socket.enum';
 import {
     StandardResponse,
+    SWARAction,
     SWARMessageType,
 } from 'src/game/standardResponse/standardResponse';
 import { GetEnergyAction } from 'src/game/action/getEnergy.action';
@@ -15,10 +16,15 @@ import { TargetId } from 'src/game/effects/effects.types';
 import { CardPlayedAction } from 'src/game/action/cardPlayed.action';
 import { EndPlayerTurnProcess } from 'src/game/process/endPlayerTurn.process';
 import { ExpeditionService } from 'src/game/components/expedition/expedition.service';
-import { CombatTurnEnum } from 'src/game/components/expedition/expedition.enum';
+import {
+    CombatTurnEnum,
+    IExpeditionNodeReward,
+} from 'src/game/components/expedition/expedition.enum';
 import { EndEnemyTurnProcess } from 'src/game/process/endEnemyTurn.process';
 import { SendEnemyIntentProcess } from 'src/game/process/sendEnemyIntents.process';
 import { GetStatusesAction } from 'src/game/action/getStatuses.action';
+import { GetPlayerDeckAction } from 'src/game/action/getPlayerDeck.action';
+import { Context } from 'src/game/components/interfaces';
 
 interface CardPlayedInterface {
     cardId: CardId;
@@ -44,24 +50,34 @@ export class CombatGateway {
         private readonly endEnemyTurnProcess: EndEnemyTurnProcess,
         private readonly expeditionService: ExpeditionService,
         private readonly sendEnemyIntentsProcess: SendEnemyIntentProcess,
+        private readonly getPlayerDeckAction: GetPlayerDeckAction,
     ) {}
 
     @SubscribeMessage('EndTurn')
     async handleEndTurn(client: Socket): Promise<void> {
         this.logger.log(`Client ${client.id} trigger message "EndTurn"`);
 
-        const {
-            data: { playing },
-        } = await this.expeditionService.getCurrentNode({
+        const expedition = await this.expeditionService.findOne({
             clientId: client.id,
         });
+
+        const ctx: Context = {
+            client,
+            expedition,
+        };
+
+        const {
+            currentNode: {
+                data: { playing },
+            },
+        } = expedition;
 
         switch (playing) {
             case CombatTurnEnum.Player:
                 await this.endPlayerTurnProcess.handle({ client });
                 break;
             case CombatTurnEnum.Enemy:
-                await this.endEnemyTurnProcess.handle({ client });
+                await this.endEnemyTurnProcess.handle({ ctx });
                 break;
         }
     }
@@ -110,6 +126,10 @@ export class CombatGateway {
                 case DataWSRequestTypesEnum.EnemyIntents:
                     data = await this.sendEnemyIntentsProcess.handle(client.id);
                     break;
+
+                case DataWSRequestTypesEnum.PlayerDeck:
+                    data = await this.getPlayerDeckAction.handle(client.id);
+                    break;
             }
 
             return JSON.stringify(
@@ -124,6 +144,86 @@ export class CombatGateway {
             client.emit('ErrorMessage', {
                 message: `An Error has ocurred getting ${types}`,
             });
+        }
+    }
+
+    @SubscribeMessage('RewardSelected')
+    async handleRewardSelected(
+        client: Socket,
+        rewardId: string,
+    ): Promise<string> {
+        // Get the updated expedition
+        const {
+            _id,
+            currentNode: {
+                completed: nodeIsCompleted,
+                data: { rewards },
+            },
+            map,
+        } = await this.expeditionService.findOne({
+            clientId: client.id,
+        });
+
+        // Check if the node is completed
+        if (nodeIsCompleted)
+            throw new Error('Node already completed, cannot select reward');
+
+        // check if the reward that we are receiving is correct and exists
+        const reward = rewards.find(({ id }) => {
+            return id === rewardId;
+        });
+
+        // If the reward is inavlid we throw and exception
+        if (!reward) throw new Error(`Reward ${rewardId} not found`);
+
+        // Now we set that we took the reward
+        reward.taken = true;
+
+        // Next we save the reward on the expedition
+        await this.expeditionService.updateByFilter(
+            {
+                _id,
+                'currentNode.data.rewards.id': rewardId,
+            },
+            {
+                $set: {
+                    'currentNode.data.rewards.$.taken': true,
+                },
+            },
+        );
+
+        // Now we apply the redward to the user profile
+        switch (reward.type) {
+            case IExpeditionNodeReward.Gold:
+                await this.expeditionService.updateById(_id, {
+                    $inc: {
+                        'playerState.gold': reward.amount,
+                    },
+                });
+                break;
+        }
+
+        // Now we get the rewards that are pending to be taken
+        const pendingRewards = rewards.filter(({ id, taken }) => {
+            return id !== rewardId && taken === false;
+        });
+
+        if (pendingRewards.length === 0) {
+            return JSON.stringify(
+                StandardResponse.respond({
+                    message_type: SWARMessageType.EndCombat,
+                    action: SWARAction.ShowMap,
+                    data: map,
+                }),
+            );
+        } else {
+            return JSON.stringify(
+                StandardResponse.respond({
+                    message_type: SWARMessageType.EndTurn,
+                    action: SWARAction.SelectAnotherReward,
+                    data: pendingRewards,
+                }),
+            );
         }
     }
 }

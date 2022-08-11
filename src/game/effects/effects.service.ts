@@ -1,44 +1,49 @@
-import { Injectable } from '@nestjs/common';
-import { find, sample } from 'lodash';
+import { Injectable, Logger } from '@nestjs/common';
+import { find } from 'lodash';
 import { CardTargetedEnum } from '../components/card/card.enum';
-import { EnemyId, getEnemyIdField } from '../components/enemy/enemy.type';
-import { Expedition } from '../components/expedition/expedition.schema';
+import {
+    CombatQueueOriginTypeEnum,
+    CombatQueueTargetEffectTypeEnum,
+} from '../components/combatQueue/combatQueue.enum';
+import { CombatQueueDocument } from '../components/combatQueue/combatQueue.schema';
+import { CombatQueueService } from '../components/combatQueue/combatQueue.service';
+import { EnemyService } from '../components/enemy/enemy.service';
+import { ExpeditionEntity } from '../components/interfaces';
+import { PlayerService } from '../components/player/player.service';
 import { ProviderContainer } from '../provider/interfaces';
 import { ProviderService } from '../provider/provider.service';
 import { StatusDirection } from '../status/interfaces';
 import { StatusService } from '../status/status.service';
 import { EFFECT_METADATA_KEY } from './effects.decorator';
 import {
+    ApplyAllDTO,
+    ApplyDTO,
     EffectDTO,
     EffectHandler,
     EffectMetadata,
-    ApplyAllDTO,
-    ApplyDTO,
-    SourceEntityDTO,
-    TargetEntityDTO,
-    PlayerDTO,
-    EnemyDTO,
-    RandomEnemyDTO,
-    AllEnemiesDTO,
-    MutateDTO,
     FindTargetsDTO,
+    MutateDTO,
 } from './effects.interface';
 
 @Injectable()
 export class EffectService {
+    private readonly logger: Logger = new Logger(EffectService.name);
     private handlers: ProviderContainer<EffectMetadata, EffectHandler>[];
 
     constructor(
         private readonly providerService: ProviderService,
         private readonly statusService: StatusService,
+        private readonly enemyService: EnemyService,
+        private readonly playerService: PlayerService,
+        private readonly combatQueueService: CombatQueueService,
     ) {}
 
     async applyAll(dto: ApplyAllDTO): Promise<void> {
-        const { client, expedition, source, effects, selectedEnemy } = dto;
+        const { ctx, source, effects, selectedEnemy } = dto;
 
         for (const effect of effects) {
             const targets = this.findAffectedTargets({
-                expedition,
+                ctx,
                 effect,
                 source,
                 selectedEnemy,
@@ -46,8 +51,7 @@ export class EffectService {
 
             for (const target of targets) {
                 await this.apply({
-                    client,
-                    expedition,
+                    ctx,
                     source,
                     target,
                     effect,
@@ -57,7 +61,15 @@ export class EffectService {
     }
 
     public async apply(dto: ApplyDTO) {
-        const { client, expedition, source, target, effect } = dto;
+        const { ctx, source, target, effect } = dto;
+
+        const { client } = ctx;
+
+        if (ctx.expedition.currentNode.completed) {
+            this.logger.debug(`Combat ended, skipping effect ${effect.effect}`);
+            return;
+        }
+
         const {
             effect: name,
             times = 1,
@@ -65,8 +77,7 @@ export class EffectService {
         } = effect;
 
         let effectDTO: EffectDTO = {
-            client,
-            expedition,
+            ctx,
             source,
             target,
             args: {
@@ -77,49 +88,86 @@ export class EffectService {
         };
 
         effectDTO = await this.mutate({
-            client,
-            expedition,
+            ctx,
             dto: effectDTO,
             effect: name,
         });
 
         for (let i = 0; i < times; i++) {
+            let combatQueue: CombatQueueDocument = null;
+
+            // Initialize the combat queue if the effect is damage,
+            // heal or defense only
+
+            if (
+                Object.values(CombatQueueTargetEffectTypeEnum).includes(
+                    name as CombatQueueTargetEffectTypeEnum,
+                )
+            ) {
+                combatQueue = await this.combatQueueService.create({
+                    clientId: client.id,
+                    originType:
+                        source.type === CardTargetedEnum.Player
+                            ? CombatQueueOriginTypeEnum.Player
+                            : CombatQueueOriginTypeEnum.Enemy,
+                    originId:
+                        source.type === CardTargetedEnum.Player
+                            ? source.value.globalState.playerId
+                            : source.value.id,
+                });
+
+                this.logger.log(`Created Combat Queue`);
+            }
+
+            // Send the queue id to the effects to add the target
+            effectDTO = {
+                ...effectDTO,
+                ...(combatQueue && {
+                    combatQueueId: combatQueue._id.toString(),
+                }),
+            };
+
+            this.logger.debug(`Effect ${name} applied to ${target.type}`);
             const handler = this.findHandlerByName(name);
             await handler.handle(effectDTO);
+
+            // If we have a combat queue initiated, we run the queue
+            if (combatQueue) {
+                // Send the combat queue to the client
+                this.logger.log(`Sent combat queue to client ${client.id}`);
+                await this.combatQueueService.sendQueueToClient(client);
+
+                // Clear the queue
+                this.logger.log(`Cleared combat queue to client ${client.id}`);
+                await this.combatQueueService.deleteCombatQueueByClientId(
+                    client.id,
+                );
+            }
         }
     }
 
-    private findAffectedTargets(dto: FindTargetsDTO): TargetEntityDTO[] {
-        const { effect, source, expedition, selectedEnemy } = dto;
-        const targets: TargetEntityDTO[] = [];
+    private findAffectedTargets(dto: FindTargetsDTO): ExpeditionEntity[] {
+        const { ctx, effect, source, selectedEnemy } = dto;
+        const targets: ExpeditionEntity[] = [];
 
         switch (effect.target) {
             case CardTargetedEnum.Player:
-                targets.push(EffectService.extractPlayerDTO(expedition));
+                targets.push(this.playerService.get(ctx));
                 break;
             case CardTargetedEnum.Self:
                 targets.push(source);
                 break;
             case CardTargetedEnum.AllEnemies:
-                EffectService.extractAllEnemiesDTO(expedition).value.forEach(
-                    (enemy) =>
-                        targets.push({
-                            type: CardTargetedEnum.Enemy,
-                            value: enemy,
-                        }),
-                );
+                targets.push(...this.enemyService.getAll(ctx));
                 break;
             case CardTargetedEnum.RandomEnemy:
                 targets.push({
                     type: CardTargetedEnum.Enemy,
-                    value: EffectService.extractRandomEnemyDTO(expedition)
-                        .value,
+                    value: this.enemyService.getRandom(ctx).value,
                 });
                 break;
             case CardTargetedEnum.Enemy:
-                targets.push(
-                    EffectService.extractEnemyDTO(expedition, selectedEnemy),
-                );
+                targets.push(this.enemyService.get(ctx, selectedEnemy));
                 break;
         }
 
@@ -129,71 +177,9 @@ export class EffectService {
         return targets;
     }
 
-    public static extractPlayerDTO(expedition: Expedition): PlayerDTO {
-        const {
-            playerState: globalState,
-            currentNode: {
-                data: { player: combatState },
-            },
-        } = expedition;
-
-        return {
-            type: CardTargetedEnum.Player,
-            value: {
-                globalState,
-                combatState,
-            },
-        };
-    }
-
-    public static extractEnemyDTO(
-        expedition: Expedition,
-        enemy: EnemyId,
-    ): EnemyDTO {
-        const {
-            currentNode: {
-                data: { enemies },
-            },
-        } = expedition;
-
-        return {
-            type: CardTargetedEnum.Enemy,
-            value: find(enemies, [getEnemyIdField(enemy), enemy]),
-        };
-    }
-
-    public static extractRandomEnemyDTO(
-        expedition: Expedition,
-    ): RandomEnemyDTO {
-        const {
-            currentNode: {
-                data: { enemies },
-            },
-        } = expedition;
-
-        return {
-            type: CardTargetedEnum.RandomEnemy,
-            value: sample(enemies),
-        };
-    }
-
-    public static extractAllEnemiesDTO(expedition: Expedition): AllEnemiesDTO {
-        const {
-            currentNode: {
-                data: { enemies },
-            },
-        } = expedition;
-
-        return {
-            type: CardTargetedEnum.AllEnemies,
-            value: enemies,
-        };
-    }
-
     private async mutate(dto: MutateDTO): Promise<EffectDTO> {
         const {
-            client,
-            expedition,
+            ctx,
             effect,
             dto: { source, target },
         } = dto;
@@ -210,8 +196,7 @@ export class EffectService {
 
         // Apply statuses to the outgoing effects 🔫  →
         effectDTO = await this.statusService.mutate({
-            client,
-            expedition,
+            ctx,
             collection: outgoingStatuses,
             collectionOwner: source,
             effectDTO: effectDTO,
@@ -221,8 +206,7 @@ export class EffectService {
 
         // Apply statuses to the incoming effects → 🛡
         effectDTO = await this.statusService.mutate({
-            client,
-            expedition,
+            ctx,
             collection: incomingStatuses,
             collectionOwner: target,
             effectDTO: effectDTO,
@@ -235,8 +219,7 @@ export class EffectService {
 
     public async preview(dto: MutateDTO): Promise<EffectDTO> {
         const {
-            client,
-            expedition,
+            ctx,
             effect,
             dto: { source },
         } = dto;
@@ -249,8 +232,7 @@ export class EffectService {
 
         // Apply statuses to the outgoing effects 🔫  →
         effectDTO = await this.statusService.mutate({
-            client,
-            expedition,
+            ctx,
             collection: outgoingStatuses,
             collectionOwner: source,
             effectDTO: effectDTO,
@@ -272,23 +254,5 @@ export class EffectService {
             throw new Error(`Effect handler ${name} not found`);
 
         return container.instance;
-    }
-
-    public static isPlayer(
-        entity: SourceEntityDTO | TargetEntityDTO,
-    ): entity is PlayerDTO {
-        return entity.type === CardTargetedEnum.Player;
-    }
-
-    public static isEnemy(entity): entity is EnemyDTO {
-        return entity.type === CardTargetedEnum.Enemy;
-    }
-
-    public static isAllEnemies(entity): entity is AllEnemiesDTO {
-        return entity.type === CardTargetedEnum.AllEnemies;
-    }
-
-    public static isRandomEnemy(entity): entity is RandomEnemyDTO {
-        return entity.type === CardTargetedEnum.RandomEnemy;
     }
 }

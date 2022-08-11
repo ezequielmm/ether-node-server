@@ -1,37 +1,51 @@
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import { Test } from '@nestjs/testing';
-import { Socket } from 'socket.io';
-import { GetPlayerInfoAction } from '../../action/getPlayerInfo.action';
+import * as MockedSocket from 'socket.io-mock';
+import { ExpeditionEnemy } from 'src/game/components/enemy/enemy.interface';
+import { EnemyService } from 'src/game/components/enemy/enemy.service';
+import { ExpeditionDocument } from 'src/game/components/expedition/expedition.schema';
+import { Context } from 'src/game/components/interfaces';
+import { ExpeditionPlayer } from 'src/game/components/player/interfaces';
+import { PlayerService } from 'src/game/components/player/player.service';
 import { CardTargetedEnum } from '../../components/card/card.enum';
-import { IExpeditionCurrentNodeDataEnemy } from '../../components/expedition/expedition.interface';
-import { ExpeditionService } from '../../components/expedition/expedition.service';
-import { DamageArgs, DamageEffect } from './damage.effect';
-import { EffectDTO } from '../effects.interface';
-import { Expedition } from 'src/game/components/expedition/expedition.schema';
+import { DamageEffect } from './damage.effect';
 
 describe('DamageEffect', () => {
-    let effect: DamageEffect;
-    const client = {
-        id: 'clientId',
-        emit: jest.fn(),
-    } as unknown as Socket;
-    const expedition: Expedition = {} as Expedition;
+    let damageEffect: DamageEffect;
+    const mockPlayer: ExpeditionPlayer = {
+        type: CardTargetedEnum.Player,
+        value: {
+            globalState: {},
+            combatState: {
+                energy: 3,
+                defense: 7,
+            },
+        },
+    } as ExpeditionPlayer;
 
-    const mockExpeditionService = {
-        getCurrentNode: jest.fn().mockResolvedValue({
-            data: {
-                get enemies() {
-                    return [{ id: 'targetId', hpCurrent: 100, defense: 5 }];
-                },
-                get player() {
-                    return { id: 'playerId', defense: 5 };
+    const mockEnemy: ExpeditionEnemy = {
+        type: CardTargetedEnum.Enemy,
+        value: { id: '123' },
+    } as ExpeditionEnemy;
+
+    const mockCtx: Context = {
+        client: new MockedSocket(),
+        expedition: {
+            currentNode: {
+                data: {
+                    player: mockPlayer.value.combatState,
                 },
             },
-        }),
-        getPlayerStateByClientId: jest.fn().mockResolvedValue({
-            hp_current: 100,
-        }),
-        updatePlayerHp: jest.fn(() => Promise.resolve()),
-        updateEnemiesArray: jest.fn(() => Promise.resolve()),
+        } as ExpeditionDocument,
+    };
+
+    const mockPlayerService = {
+        get: jest.fn().mockReturnValue(mockPlayer),
+        damage: jest.fn().mockResolvedValue(undefined),
+    };
+
+    const mockEnemyService = {
+        damage: jest.fn().mockResolvedValue(undefined),
     };
 
     beforeEach(async () => {
@@ -39,128 +53,143 @@ describe('DamageEffect', () => {
         const module = await Test.createTestingModule({
             providers: [
                 DamageEffect,
-                {
-                    provide: ExpeditionService,
-                    useValue: mockExpeditionService,
-                },
-                {
-                    provide: GetPlayerInfoAction,
-                    useValue: {},
-                },
+                { provide: PlayerService, useValue: mockPlayerService },
+                { provide: EnemyService, useValue: mockEnemyService },
+                { provide: EventEmitter2, useValue: new EventEmitter2() },
             ],
         }).compile();
 
-        effect = module.get(DamageEffect);
-        mockExpeditionService.getCurrentNode.mockClear();
-        mockExpeditionService.getPlayerStateByClientId.mockClear();
-        mockExpeditionService.updatePlayerHp.mockClear();
-        mockExpeditionService.updateEnemiesArray.mockClear();
+        damageEffect = module.get(DamageEffect);
+
+        mockPlayerService.get.mockClear();
+        mockPlayerService.damage.mockClear();
+        mockEnemyService.damage.mockClear();
     });
 
     it('should be defined', () => {
-        expect(effect).toBeDefined();
+        expect(damageEffect).toBeDefined();
     });
 
-    it('should handle damage to enemy', async () => {
-        const payload: EffectDTO<DamageArgs> = {
-            client,
-            expedition,
-            args: {
-                initialValue: 10,
-                currentValue: 10,
-            },
-            source: undefined,
-            target: {
-                type: CardTargetedEnum.Enemy,
-                value: { id: 'targetId' } as IExpeditionCurrentNodeDataEnemy,
-            },
-        };
-
-        await effect.handle(payload);
-
-        expect(mockExpeditionService.getCurrentNode).toHaveBeenCalledWith({
-            clientId: payload.client.id,
+    describe('Player damage', () => {
+        it('should damage player', async () => {
+            await damageEffect.handle({
+                ctx: mockCtx,
+                source: mockEnemy,
+                target: mockPlayer,
+                args: {
+                    currentValue: 4,
+                    initialValue: 4,
+                },
+                combatQueueId: '555',
+            });
+            expect(mockPlayerService.damage).toHaveBeenCalledWith(
+                mockCtx,
+                4,
+                '555',
+            );
         });
 
-        expect(mockExpeditionService.updateEnemiesArray).toHaveBeenCalledWith({
-            clientId: payload.client.id,
-            enemies: [
-                {
-                    id: payload.target.value['id'],
-                    hpCurrent: 95,
-                    defense: 0,
+        it('should damage player with energy as value', async () => {
+            await damageEffect.handle({
+                ctx: mockCtx,
+                source: mockEnemy,
+                target: mockPlayer,
+                args: {
+                    currentValue: 4,
+                    initialValue: 4,
+                    useEnergyAsValue: true,
                 },
-            ],
+                combatQueueId: '555',
+            });
+            expect(mockPlayerService.damage).toHaveBeenCalledWith(
+                mockCtx,
+                3,
+                '555',
+            );
         });
     });
 
-    it('should handle damage to enemy and trigger damage negated', async () => {
-        const payload: EffectDTO<DamageArgs> = {
-            client,
-            expedition,
-            args: {
-                initialValue: 4,
-                currentValue: 4,
-            },
-            source: undefined,
-            target: {
-                type: CardTargetedEnum.Enemy,
-                value: { id: 'targetId' } as IExpeditionCurrentNodeDataEnemy,
-            },
-        };
-
-        await effect.handle(payload);
-
-        expect(mockExpeditionService.getCurrentNode).toHaveBeenCalledWith({
-            clientId: payload.client.id,
-        });
-
-        expect(mockExpeditionService.updateEnemiesArray).toHaveBeenCalledWith({
-            clientId: payload.client.id,
-            enemies: [
-                {
-                    id: payload.target.value['id'],
-                    hpCurrent: 100,
-                    defense: 1,
+    describe('Enemy damage', () => {
+        it('should damage enemy', async () => {
+            await damageEffect.handle({
+                ctx: mockCtx,
+                source: mockPlayer,
+                target: mockEnemy,
+                args: {
+                    currentValue: 4,
+                    initialValue: 4,
                 },
-            ],
+                combatQueueId: '555',
+            });
+            expect(mockEnemyService.damage).toHaveBeenCalledWith(
+                mockCtx,
+                '123',
+                4,
+                '555',
+            );
         });
 
-        // TODO: Test trigger damage negated event
-    });
-
-    it('should handle damage for player and trigger death event', async () => {
-        const payload: EffectDTO<DamageArgs> = {
-            client,
-            expedition,
-            args: {
-                initialValue: 105,
-                currentValue: 105,
-            },
-            source: undefined,
-            target: {
-                type: CardTargetedEnum.Enemy,
-                value: { id: 'targetId' } as IExpeditionCurrentNodeDataEnemy,
-            },
-        };
-
-        await effect.handle(payload);
-
-        expect(mockExpeditionService.getCurrentNode).toHaveBeenCalledWith({
-            clientId: payload.client.id,
-        });
-
-        expect(mockExpeditionService.updateEnemiesArray).toHaveBeenCalledWith({
-            clientId: payload.client.id,
-            enemies: [
-                {
-                    id: payload.target.value['id'],
-                    hpCurrent: 0,
-                    defense: 0,
+        it('should damage enemy with energy as multiplier', async () => {
+            await damageEffect.handle({
+                ctx: mockCtx,
+                source: mockPlayer,
+                target: mockEnemy,
+                args: {
+                    currentValue: 4,
+                    initialValue: 4,
+                    useEnergyAsMultiplier: true,
                 },
-            ],
+                combatQueueId: '555',
+            });
+            expect(mockEnemyService.damage).toHaveBeenCalledWith(
+                mockCtx,
+                '123',
+                12,
+                '555',
+            );
         });
 
-        // TODO: Test trigger death event
+        it('should damage enemy with defense as multiplier', async () => {
+            await damageEffect.handle({
+                ctx: mockCtx,
+                source: mockPlayer,
+                target: mockEnemy,
+                args: {
+                    currentValue: 4,
+                    initialValue: 4,
+                    useDefense: true,
+                    multiplier: 2,
+                },
+                combatQueueId: '555',
+            });
+            expect(mockEnemyService.damage).toHaveBeenCalledWith(
+                mockCtx,
+                '123',
+                56,
+                '555',
+            );
+        });
+
+        it('should damage enemy with defense and energy as multiplier', async () => {
+            await damageEffect.handle({
+                ctx: mockCtx,
+                source: mockPlayer,
+                target: mockEnemy,
+                args: {
+                    currentValue: 4,
+                    initialValue: 4,
+                    useDefense: true,
+                    useEnergyAsMultiplier: true,
+                    multiplier: 2,
+                },
+                combatQueueId: '555',
+            });
+            expect(mockEnemyService.damage).toHaveBeenCalledWith(
+                mockCtx,
+                '123',
+                168,
+                '555',
+            );
+        });
     });
 });

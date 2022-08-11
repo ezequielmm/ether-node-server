@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { ExpeditionService } from 'src/game/components/expedition/expedition.service';
+import { EnemyService } from 'src/game/components/enemy/enemy.service';
+import { PlayerService } from 'src/game/components/player/player.service';
 import { DamageArgs } from 'src/game/effects/damage/damage.effect';
 import { EffectDTO } from 'src/game/effects/effects.interface';
-import { EffectService } from 'src/game/effects/effects.service';
 import { StatusEffectDTO, StatusEffectHandler } from '../interfaces';
 import { StatusDecorator } from '../status.decorator';
 import { siphoning } from './constants';
@@ -12,7 +12,10 @@ import { siphoning } from './constants';
 })
 @Injectable()
 export class SiphoningStatus implements StatusEffectHandler {
-    constructor(private readonly expeditionService: ExpeditionService) {}
+    constructor(
+        private readonly playerService: PlayerService,
+        private readonly enemyService: EnemyService,
+    ) {}
 
     async preview(
         args: StatusEffectDTO<DamageArgs>,
@@ -24,31 +27,29 @@ export class SiphoningStatus implements StatusEffectHandler {
         dto: StatusEffectDTO<DamageArgs>,
     ): Promise<EffectDTO<DamageArgs>> {
         const {
-            effectDTO: { args, source, client },
+            ctx,
+            effectDTO: { args, source },
             remove,
         } = dto;
 
-        if (dto.expedition.currentNode.data.round > dto.status.addedInRound) {
+        if (ctx.expedition.currentNode.data.round > dto.status.addedInRound) {
             remove();
             return dto.effectDTO;
         }
 
         const newDefense = args.currentValue;
 
-        if (EffectService.isPlayer(source)) {
+        if (PlayerService.isPlayer(source)) {
             const defense = source.value.combatState.defense;
 
-            this.expeditionService.setPlayerDefense({
-                clientId: client.id,
-                value: newDefense + defense,
-            });
-        } else if (EffectService.isEnemy(source)) {
+            await this.playerService.setDefense(ctx, defense + newDefense);
+        } else if (EnemyService.isEnemy(source)) {
             const defense = source.value.defense;
 
-            this.expeditionService.setEnemyDefense(
-                client.id,
+            await this.enemyService.setDefense(
+                ctx,
                 source.value.id,
-                newDefense + defense,
+                defense + newDefense,
             );
         }
 

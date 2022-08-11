@@ -10,11 +10,14 @@ import {
     IExpeditionCurrentNodeDataEnemy,
     IExpeditionNode,
     IExpeditionPlayerStateDeckCard,
+    IExpeditionReward,
 } from './expedition.interface';
 
 export type ExpeditionDocument = Expedition & Document;
 
-@Schema()
+@Schema({
+    collection: 'expeditions',
+})
 export class Expedition {
     @Prop()
     clientId?: string;
@@ -27,6 +30,7 @@ export class Expedition {
 
     @Prop({ type: Object })
     playerState: {
+        playerId: string;
         playerName: string;
         characterClass: string;
         hpMax: number;
@@ -64,6 +68,7 @@ export class Expedition {
                 };
             };
             enemies: IExpeditionCurrentNodeDataEnemy[];
+            rewards: IExpeditionReward[];
         };
     };
 

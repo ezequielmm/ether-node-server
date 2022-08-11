@@ -5,6 +5,7 @@ import { ConfigurationModule } from './config/configuration.module';
 import { MongooseModule, MongooseModuleOptions } from '@nestjs/mongoose';
 import { ConfigurationService } from './config/configuration.service';
 import { SocketModule } from './socket/socket.module';
+import { EventEmitterModule } from '@nestjs/event-emitter';
 
 @Module({
     imports: [
@@ -22,6 +23,9 @@ import { SocketModule } from './socket/socket.module';
                 };
                 return options;
             },
+        }),
+        EventEmitterModule.forRoot({
+            wildcard: true,
         }),
     ],
     controllers: [AppController],

@@ -2,8 +2,12 @@ import { Injectable } from '@nestjs/common';
 import { getModelToken } from '@nestjs/mongoose';
 import { Test } from '@nestjs/testing';
 import { Socket } from 'socket.io';
-import { Expedition } from '../components/expedition/expedition.schema';
+import {
+    Expedition,
+    ExpeditionDocument,
+} from '../components/expedition/expedition.schema';
 import { ExpeditionService } from '../components/expedition/expedition.service';
+import { Context } from '../components/interfaces';
 import { damageEffect } from '../effects/damage/constants';
 import { EffectDTO } from '../effects/effects.interface';
 import { ProviderService } from '../provider/provider.service';
@@ -83,15 +87,19 @@ class StatusC implements StatusEffectHandler {
 @Injectable()
 class StatusEventA implements StatusEventHandler {
     args: any;
-    async handle(args: StatusEventDTO): Promise<any> {
+    async enemyHandler(args: StatusEventDTO): Promise<any> {
         this.args = args.status.args;
     }
 }
 
 describe('StatusService', () => {
-    let statusService: StatusService;
+    let service: StatusService;
     let statusEventA: StatusEventA;
     let effectDTO: EffectDTO;
+    const mockCtx: Context = {
+        client: undefined,
+        expedition: undefined,
+    };
 
     beforeEach(async () => {
         const module = await Test.createTestingModule({
@@ -107,7 +115,7 @@ describe('StatusService', () => {
             ],
         }).compile();
 
-        statusService = module.get(StatusService);
+        service = module.get(StatusService);
         statusEventA = module.get(StatusEventA);
         effectDTO = {
             args: {
@@ -118,13 +126,17 @@ describe('StatusService', () => {
     });
 
     it('should be defined', () => {
-        expect(statusService).toBeDefined();
+        expect(service).toBeDefined();
     });
 
     it('should call status handle by effect name', async () => {
-        const result = await statusService.mutate({
-            client: {} as Socket,
-            expedition: { currentNode: { data: { round: 2 } } } as Expedition,
+        const result = await service.mutate({
+            ctx: {
+                client: {} as Socket,
+                expedition: {
+                    currentNode: { data: { round: 2 } },
+                } as ExpeditionDocument,
+            },
             collection: {
                 [StatusType.Buff]: [
                     {
@@ -148,9 +160,13 @@ describe('StatusService', () => {
     });
 
     it('should avoid to call status handle by effect name at the same turn', async () => {
-        const result = await statusService.mutate({
-            client: {} as Socket,
-            expedition: { currentNode: { data: { round: 1 } } } as Expedition,
+        const result = await service.mutate({
+            ctx: {
+                client: undefined,
+                expedition: {
+                    currentNode: { data: { round: 1 } },
+                } as ExpeditionDocument,
+            },
             collection: {
                 [StatusType.Buff]: [
                     {
@@ -174,9 +190,13 @@ describe('StatusService', () => {
     });
 
     it('should call multiple status handle by effect name', async () => {
-        const result = await statusService.mutate({
-            client: {} as Socket,
-            expedition: { currentNode: { data: { round: 2 } } } as Expedition,
+        const result = await service.mutate({
+            ctx: {
+                client: undefined,
+                expedition: {
+                    currentNode: { data: { round: 2 } },
+                } as ExpeditionDocument,
+            },
             collection: {
                 [StatusType.Buff]: [
                     {
@@ -208,9 +228,13 @@ describe('StatusService', () => {
     });
 
     it('should call multiple status handle by effect name', async () => {
-        const result = await statusService.mutate({
-            client: {} as Socket,
-            expedition: { currentNode: { data: { round: 2 } } } as Expedition,
+        const result = await service.mutate({
+            ctx: {
+                client: {} as Socket,
+                expedition: {
+                    currentNode: { data: { round: 2 } },
+                } as ExpeditionDocument,
+            },
             collection: {
                 [StatusType.Buff]: [
                     {
@@ -250,33 +274,35 @@ describe('StatusService', () => {
     });
 
     it('should call status handle by end turn event', async () => {
-        await statusService.trigger(
-            {} as Socket,
+        await service.trigger(
             {
-                playerState: {},
-                currentNode: {
-                    data: {
-                        player: {
-                            statuses: {
-                                [StatusType.Buff]: [],
-                                [StatusType.Debuff]: [
-                                    {
-                                        name: burn.name,
-                                        addedInRound: 1,
-                                        sourceReference: {
-                                            type: 'player',
+                client: undefined,
+                expedition: {
+                    playerState: {},
+                    currentNode: {
+                        data: {
+                            player: {
+                                statuses: {
+                                    [StatusType.Buff]: [],
+                                    [StatusType.Debuff]: [
+                                        {
+                                            name: burn.name,
+                                            addedInRound: 1,
+                                            sourceReference: {
+                                                type: 'player',
+                                            },
+                                            args: {
+                                                value: 22,
+                                            },
                                         },
-                                        args: {
-                                            value: 22,
-                                        },
-                                    },
-                                ],
+                                    ],
+                                },
                             },
+                            enemies: [],
                         },
-                        enemies: [],
                     },
-                },
-            } as Expedition,
+                } as ExpeditionDocument,
+            },
             StatusEventType.OnTurnEnd,
         );
 

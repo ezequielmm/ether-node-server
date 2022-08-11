@@ -7,52 +7,34 @@ export const KnightCharacter: Character = {
     initialHealth: 80,
     initialGold: 0,
     characterClass: CharacterClassEnum.Knight,
-    deckSettings: {
-        cards: [
-            {
-                cardId: 1, // Attack
-                amount: 3,
-            },
-            {
-                cardId: 3, // Defend
-                amount: 3,
-            },
-            {
-                cardId: 75, // Heaven’s Grace
-                amount: 1,
-            },
-            {
-                cardId: 9, // First Move
-                amount: 1,
-            },
-            {
-                cardId: 13, // Lunge
-                amount: 2,
-            },
-        ],
-    },
+    cards: [
+        {
+            cardId: 1, // Attack
+            amount: 2,
+        },
+        {
+            cardId: 3, // Defend
+            amount: 2,
+        },
+        {
+            cardId: 75, // Heaven’s Grace
+            amount: 1,
+        },
+        {
+            cardId: 9, // First Move
+            amount: 1,
+        },
+        {
+            cardId: 27, // Keg Chug
+            amount: 1,
+        },
+        {
+            cardId: 13, // Lunge
+            amount: 2,
+        },
+        {
+            cardId: 24, // Pray
+            amount: 1,
+        },
+    ],
 };
-
-/*
-Initial data
-{
-    cardId: 1, // Attack
-    amount: 4,
-},
-{
-    cardId: 3, // Defend
-    amount: 2,
-},
-{
-    cardId: 75, // Heaven’s Grace
-    amount: 1,
-},
-{
-    cardId: 9, // First Move
-    amount: 1,
-},
-{
-    cardId: 27, // Keg Chug
-    amount: 2,
-},
-*/

@@ -20,12 +20,14 @@ export class RepositionEffect implements EffectHandler {
         // Here we get the client Socket and the cards from the
         // current node object
         const {
-            client,
-            expedition: {
-                currentNode: {
-                    data: {
-                        player: {
-                            cards: { hand },
+            ctx: {
+                client,
+                expedition: {
+                    currentNode: {
+                        data: {
+                            player: {
+                                cards: { hand },
+                            },
                         },
                     },
                 },

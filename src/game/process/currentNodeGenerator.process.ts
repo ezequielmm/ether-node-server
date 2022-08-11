@@ -1,15 +1,19 @@
 import { Injectable } from '@nestjs/common';
+import { randomUUID } from 'crypto';
+import { random } from 'lodash';
 import { getRandomBetween, removeCardsFromPile } from 'src/utils';
 import { EnemyService } from '../components/enemy/enemy.service';
 import { EnemyId } from '../components/enemy/enemy.type';
 import {
     CombatTurnEnum,
     ExpeditionMapNodeTypeEnum,
+    IExpeditionNodeReward,
 } from '../components/expedition/expedition.enum';
 import {
     IExpeditionCurrentNode,
     IExpeditionCurrentNodeDataEnemy,
     IExpeditionNode,
+    IExpeditionReward,
 } from '../components/expedition/expedition.interface';
 import { ExpeditionService } from '../components/expedition/expedition.service';
 import { SettingsService } from '../components/settings/settings.service';
@@ -52,12 +56,8 @@ export class CurrentNodeGeneratorProcess {
     }
 
     private async getCombatCurrentNode(): Promise<IExpeditionCurrentNode> {
-        const {
-            player: {
-                energy: { max, initial },
-                handSize,
-            },
-        } = await this.settingsService.getSettings();
+        const { initialEnergy, maxEnergy, initialHandPileSize } =
+            await this.settingsService.getSettings();
 
         const cards = await this.expeditionService.getDeckCards({
             clientId: this.clientId,
@@ -65,7 +65,7 @@ export class CurrentNodeGeneratorProcess {
 
         const handCards = cards
             .sort(() => 0.5 - Math.random())
-            .slice(0, handSize);
+            .slice(0, initialHandPileSize);
 
         const drawCards = removeCardsFromPile({
             originalPile: cards,
@@ -73,6 +73,7 @@ export class CurrentNodeGeneratorProcess {
         });
 
         const enemies = await this.getEnemies();
+        const rewards = this.getRewards();
 
         return {
             nodeId: this.node.id,
@@ -82,9 +83,9 @@ export class CurrentNodeGeneratorProcess {
                 round: 0,
                 playing: CombatTurnEnum.Player,
                 player: {
-                    energy: initial,
-                    energyMax: max,
-                    handSize,
+                    energy: initialEnergy,
+                    energyMax: maxEnergy,
+                    handSize: initialHandPileSize,
                     defense: 0,
                     cards: {
                         draw: drawCards,
@@ -98,6 +99,7 @@ export class CurrentNodeGeneratorProcess {
                     },
                 },
                 enemies,
+                rewards,
             },
         };
     }
@@ -137,5 +139,25 @@ export class CurrentNodeGeneratorProcess {
                 };
             }),
         );
+    }
+
+    private getRewards(): IExpeditionReward[] {
+        const amount =
+            this.node.type == ExpeditionMapNodeTypeEnum.Combat
+                ? random(10, 20)
+                : this.node.type == ExpeditionMapNodeTypeEnum.CombatElite
+                ? random(25, 35)
+                : this.node.type == ExpeditionMapNodeTypeEnum.CombatBoss
+                ? random(95, 105)
+                : 0;
+
+        return [
+            {
+                id: randomUUID(),
+                type: IExpeditionNodeReward.Gold,
+                amount,
+                taken: false,
+            },
+        ];
     }
 }

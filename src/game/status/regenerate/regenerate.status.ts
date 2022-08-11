@@ -13,7 +13,7 @@ import { regenerate } from './contants';
 export class RegenerateStatus implements StatusEventHandler {
     constructor(private readonly effectService: EffectService) {}
 
-    async handle(dto: StatusEventDTO): Promise<void> {
+    async enemyHandler(dto: StatusEventDTO): Promise<void> {
         const effect: JsonEffect = {
             effect: healEffect.name,
             args: {
@@ -22,8 +22,7 @@ export class RegenerateStatus implements StatusEventHandler {
         };
 
         await this.effectService.apply({
-            client: dto.client,
-            expedition: dto.expedition,
+            ctx: dto.ctx,
             source: dto.source,
             target: dto.target,
             effect,

@@ -13,6 +13,7 @@ import { EnemyScript } from '../enemy/enemy.interface';
 import {
     ExpeditionMapNodeTypeEnum,
     ExpeditionMapNodeStatusEnum,
+    IExpeditionNodeReward,
 } from './expedition.enum';
 import { Expedition } from './expedition.schema';
 
@@ -62,6 +63,13 @@ export interface IExpeditionCurrentNodeDataEnemy {
         [StatusType.Debuff]: AttachedStatus[];
     };
     currentScript?: EnemyScript;
+}
+
+export interface IExpeditionReward {
+    id: string;
+    type: IExpeditionNodeReward;
+    amount: number;
+    taken: boolean;
 }
 
 export interface IExpeditionStatusResponse {

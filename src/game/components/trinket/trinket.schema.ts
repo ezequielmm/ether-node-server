@@ -7,7 +7,9 @@ import { TrinketRarityEnum } from './trinket.enum';
 
 export type TrinketDocument = Trinket & Document;
 
-@Schema()
+@Schema({
+    collection: 'trinkets',
+})
 export class Trinket {
     @Factory((faker: Faker) => faker.name.findName())
     @Prop()
@@ -24,10 +26,6 @@ export class Trinket {
     })
     @Prop()
     coinCost: number;
-
-    @Factory([])
-    @Prop()
-    effects: [];
 }
 
 export const TrinketSchema = SchemaFactory.createForClass(Trinket);

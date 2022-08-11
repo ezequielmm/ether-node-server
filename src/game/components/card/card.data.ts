@@ -1,5 +1,7 @@
 import { Card } from './card.schema';
 import { AttackCard, AttackCardUpgraded } from './data/attack.card';
+import { BackHandCard, BackHandCardUpgraded } from './data/backhand.card';
+import { BlusterCard, BlusterCardUpgraded } from './data/bluster.card';
 import { ChargeCard, ChargeCardUpgraded } from './data/charge.card';
 import { CounterCard, CounterCardUpgraded } from './data/counter.card';
 import { DefenseCard, DefenseCardUpgraded } from './data/defend.card';
@@ -13,6 +15,7 @@ import {
 import { FineEdgeCard, FineEdgeCardUpgraded } from './data/fineEdge.card';
 import { FirstMoveCard, FirstMoveCardUpgraded } from './data/firstMove.card';
 import { FlurryCard, FlurryCardUpgraded } from './data/flurry.card';
+import { ForceFieldCard, ForceFieldCardUpgraded } from './data/forceField.card';
 import {
     GiveNoGroundCard,
     GiveNoGroundCardUpgraded,
@@ -28,6 +31,7 @@ import {
     HeraldOfPainCardUpgraded,
 } from './data/heraldOfPain.card';
 import { HiltPunchCard, HiltPunchCardUpgraded } from './data/hiltPunch.card';
+import { InterceptCard, InterceptCardUpgraded } from './data/intercept.card';
 import { IntimidateCard, IntimidateCardUpgraded } from './data/intimidate.card';
 import {
     InvokeBlessingCard,
@@ -48,6 +52,7 @@ import {
     QuickToAdaptCardUpgraded,
 } from './data/quickToAdapt.card';
 import { RecoverCard, RecoverCardUpgraded } from './data/recover.data';
+import { Refocus, RefocusUpgraded } from './data/refocus.card';
 import { RepositionCard, RepositionCardUpgraded } from './data/reposition.card';
 import { ShakeItOffCard, ShakeItOffCardUpgraded } from './data/shakeItOff.card';
 import { ShieldBashCard, ShieldBashCardUpgraded } from './data/shieldBash.card';
@@ -62,6 +67,10 @@ import {
     TightenGripCardUpgraded,
 } from './data/tightenGrip.card';
 import { TurtleCard, TurtleCardUpgraded } from './data/turtle.card';
+import {
+    UltraLethalityCard,
+    UltraLethalityCardUpgraded,
+} from './data/ultraLethality.card';
 
 export const data: Card[] = [
     AttackCard,
@@ -136,4 +145,16 @@ export const data: Card[] = [
     LastResortCardUpgraded,
     FlurryCard,
     FlurryCardUpgraded,
+    Refocus,
+    RefocusUpgraded,
+    BackHandCard,
+    BackHandCardUpgraded,
+    UltraLethalityCard,
+    UltraLethalityCardUpgraded,
+    BlusterCard,
+    BlusterCardUpgraded,
+    InterceptCard,
+    InterceptCardUpgraded,
+    ForceFieldCard,
+    ForceFieldCardUpgraded,
 ];

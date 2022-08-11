@@ -4,7 +4,12 @@ import {
     CardTypeEnum,
 } from 'src/game/components/card/card.enum';
 import { IExpeditionPlayerStateDeckCard } from 'src/game/components/expedition/expedition.interface';
-import { isEven, isValidAuthToken, removeCardsFromPile } from '.';
+import {
+    isEven,
+    isNotUndefined,
+    isValidAuthToken,
+    removeCardsFromPile,
+} from '.';
 
 describe('Utility Functions', () => {
     it('should verify if string is a valid token', () => {
@@ -227,5 +232,37 @@ describe('Utility Functions', () => {
                 }),
             ]),
         );
+    });
+
+    it('should return true is key is defined and has a true value', () => {
+        const testValue = true;
+
+        const result = isNotUndefined(testValue);
+
+        expect(result).toBeTruthy();
+    });
+
+    it('should return false is key is defined and has a null value', () => {
+        const testValue = null;
+
+        const result = isNotUndefined(testValue);
+
+        expect(result).toBeFalsy();
+    });
+
+    it('should return false is key is defined and has an undefined value', () => {
+        const testValue = undefined;
+
+        const result = isNotUndefined(testValue);
+
+        expect(result).toBeFalsy();
+    });
+
+    it('should return false is key is defined and has a false value', () => {
+        const testValue = false;
+
+        const result = isNotUndefined(testValue);
+
+        expect(result).toBeFalsy();
     });
 });

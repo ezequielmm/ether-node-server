@@ -1,12 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { set } from 'lodash';
 import { CardTargetedEnum } from 'src/game/components/card/card.enum';
-import {
-    EffectDTO,
-    SourceEntityDTO,
-    TargetEntityDTO,
-} from 'src/game/effects/effects.interface';
-import { EffectService } from 'src/game/effects/effects.service';
+import { EnemyService } from 'src/game/components/enemy/enemy.service';
+import { ExpeditionEntity } from 'src/game/components/interfaces';
+import { PlayerService } from 'src/game/components/player/player.service';
+import { EffectDTO } from 'src/game/effects/effects.interface';
 import {
     JsonStatus,
     StatusEffectDTO,
@@ -20,34 +18,34 @@ import { confusion } from './constants';
 })
 @Injectable()
 export class ConfusionStatus implements StatusEffectHandler {
+    constructor(
+        private readonly enemyService: EnemyService,
+        private readonly playerService: PlayerService,
+    ) {}
+
     async preview(args: StatusEffectDTO): Promise<EffectDTO> {
         return args.effectDTO;
     }
 
     async handle(dto: StatusEffectDTO): Promise<EffectDTO> {
+        const {
+            effectDTO: { source, target },
+            ctx,
+        } = dto;
+        const { expedition } = ctx;
+
         // If the round is over, the status will be removed
-        if (
-            dto.expedition.currentNode.data.round >
-            dto.status.addedInRound + 1
-        ) {
+        if (expedition.currentNode.data.round > dto.status.addedInRound + 1) {
             dto.remove();
             return dto.effectDTO;
         }
 
-        const {
-            effectDTO: { source, target },
-            expedition,
-        } = dto;
+        let newTarget: ExpeditionEntity;
 
-        let newTarget: TargetEntityDTO;
-
-        if (EffectService.isPlayer(target)) {
-            newTarget = {
-                ...EffectService.extractRandomEnemyDTO(expedition),
-                type: CardTargetedEnum.Enemy,
-            };
-        } else if (EffectService.isEnemy(target)) {
-            newTarget = EffectService.extractPlayerDTO(expedition);
+        if (PlayerService.isPlayer(target)) {
+            newTarget = this.enemyService.getRandom(ctx);
+        } else if (EnemyService.isEnemy(target)) {
+            newTarget = this.playerService.get(ctx);
         }
 
         // Set using lodash to avoid typescript readonly error
@@ -61,13 +59,13 @@ export class ConfusionStatus implements StatusEffectHandler {
         return dto.effectDTO;
     }
 
-    private confuseStatuses(source: SourceEntityDTO) {
+    private confuseStatuses(source: ExpeditionEntity) {
         let statuses: JsonStatus[] = [];
-        if (EffectService.isEnemy(source)) {
+        if (EnemyService.isEnemy(source)) {
             statuses = source.value.currentScript.intentions.flatMap(
                 (intention) => intention.status || [],
             );
-        } else if (EffectService.isPlayer(source)) {
+        } else if (PlayerService.isPlayer(source)) {
             statuses = source.value.combatState.cards.hand.flatMap(
                 (card) => card.properties.statuses,
             );

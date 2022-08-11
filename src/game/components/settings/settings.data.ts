@@ -1,12 +1,8 @@
 import { Settings } from './settings.schema';
 
 export const settingsData: Settings = {
-    player: {
-        energy: {
-            initial: 3,
-            max: 3,
-        },
-        handSize: 5,
-        deckSize: 10,
-    },
+    initialEnergy: 3,
+    maxEnergy: 3,
+    initialHandPileSize: 5,
+    initialDeckSize: 10,
 };

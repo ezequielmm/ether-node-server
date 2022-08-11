@@ -6,8 +6,10 @@ import {
     CardPlayErrorMessages,
 } from '../components/card/card.enum';
 import { CardId, getCardIdField } from '../components/card/card.type';
-import { IExpeditionCurrentNodeDataEnemy } from '../components/expedition/expedition.interface';
+import { ExpeditionDocument } from '../components/expedition/expedition.schema';
 import { ExpeditionService } from '../components/expedition/expedition.service';
+import { Context } from '../components/interfaces';
+import { PlayerService } from '../components/player/player.service';
 import { EffectService } from '../effects/effects.service';
 import { TargetId } from '../effects/effects.types';
 import { EndPlayerTurnProcess } from '../process/endPlayerTurn.process';
@@ -23,17 +25,16 @@ import {
 import { StatusService } from '../status/status.service';
 import { DiscardCardAction } from './discardCard.action';
 import { ExhaustCardAction } from './exhaustCard.action';
-import {
-    GetPlayerInfoAction,
-    PlayerInfoResponse,
-} from './getPlayerInfo.action';
-import { GetStatusesAction, GetStatusesResponse } from './getStatuses.action';
-import { UpdatePlayerEnergyAction } from './updatePlayerEnergy.action';
 
 interface CardPlayedDTO {
     readonly client: Socket;
     readonly cardId: CardId;
     readonly targetId: TargetId;
+}
+
+interface ICanPlayCard {
+    readonly canPlayCard: boolean;
+    readonly message?: string;
 }
 
 @Injectable()
@@ -46,12 +47,10 @@ export class CardPlayedAction {
         private readonly expeditionService: ExpeditionService,
         private readonly effectService: EffectService,
         private readonly statusService: StatusService,
-        private readonly updatePlayerEnergyAction: UpdatePlayerEnergyAction,
         private readonly discardCardAction: DiscardCardAction,
         private readonly exhaustCardAction: ExhaustCardAction,
-        private readonly getPlayerInfoAction: GetPlayerInfoAction,
         private readonly endPlayerTurnProcess: EndPlayerTurnProcess,
-        private readonly getStatusesAction: GetStatusesAction,
+        private readonly playerService: PlayerService,
     ) {}
 
     async handle(payload: CardPlayedDTO): Promise<void> {
@@ -86,6 +85,11 @@ export class CardPlayedAction {
                 },
             } = expedition;
 
+            const ctx: Context = {
+                client,
+                expedition,
+            };
+
             // If everything goes right, we get the card information from
             // the player hand pile
             const card = hand.find((card) => {
@@ -104,14 +108,16 @@ export class CardPlayedAction {
 
             // Next we make sure that the card can be played and the user has
             // enough energy
-            const { canPlayCard, newEnergyAmount, message } =
-                this.canPlayerPlayCard(cardEnergyCost, availableEnergy);
+            const { canPlayCard, message } = this.canPlayerPlayCard(
+                cardEnergyCost,
+                availableEnergy,
+            );
 
             // next we inform the player that is not possible to play the card
             if (!canPlayCard) {
                 this.sendNotEnoughEnergyMessage(message);
             } else {
-                const source = EffectService.extractPlayerDTO(expedition);
+                const source = this.playerService.get(ctx);
                 const sourceReference =
                     this.statusService.getReferenceFromSource(source);
 
@@ -123,8 +129,7 @@ export class CardPlayedAction {
                 };
 
                 await this.statusService.trigger(
-                    this.client,
-                    expedition,
+                    ctx,
                     StatusEventType.OnBeginCardPlay,
                     onBeginCardPlayEventArgs,
                 );
@@ -144,57 +149,51 @@ export class CardPlayedAction {
                 }
 
                 await this.effectService.applyAll({
-                    client: this.client,
-                    expedition,
+                    ctx,
                     source,
                     effects,
                     selectedEnemy: targetId,
                 });
 
-                await this.statusService.attachStatuses(
-                    this.client.id,
+                // After applying the effects, check if the current
+                // combat has ended and if so, skip all next steps
+                if (ctx.expedition.currentNode.completed) {
+                    this.logger.debug(
+                        'Current node is completed. Skipping next actions',
+                    );
+                    return;
+                }
+
+                await this.statusService.attach({
+                    ctx,
                     statuses,
-                    round,
+                    currentRound: round,
                     sourceReference,
                     targetId,
-                );
-
-                await this.updatePlayerEnergyAction.handle({
-                    clientId: this.client.id,
-                    newEnergy: newEnergyAmount,
                 });
 
                 const {
                     data: {
                         player: { energy, energyMax },
-                        enemies,
                     },
                 } = await this.expeditionService.getCurrentNode({
                     clientId: client.id,
                 });
 
-                this.sendUpdateEnergyMessage(energy, energyMax);
+                const newEnergy = energy - cardEnergyCost;
 
-                this.sendUpdateEnemiesMessage(enemies);
-
-                const playerInfo = await this.getPlayerInfoAction.handle(
-                    this.client.id,
+                await this.playerService.setEnergy(
+                    { client, expedition: expedition as ExpeditionDocument },
+                    newEnergy,
                 );
 
-                this.sendUpdatePlayerMessage(playerInfo);
+                this.sendUpdateEnergyMessage(newEnergy, energyMax);
 
                 await this.statusService.trigger(
-                    this.client,
-                    expedition,
+                    ctx,
                     StatusEventType.OnEndCardPlay,
                     onBeginCardPlayEventArgs,
                 );
-
-                const statusData = await this.getStatusesAction.handle(
-                    this.client.id,
-                );
-
-                this.sendStatusMessage(statusData);
 
                 if (endTurn)
                     await this.endPlayerTurnProcess.handle({
@@ -207,14 +206,13 @@ export class CardPlayedAction {
     private canPlayerPlayCard(
         cardEnergyCost: number,
         availableEnergy: number,
-    ): { canPlayCard: boolean; newEnergyAmount: number; message?: string } {
+    ): ICanPlayCard {
         // First we verify if the card has a 0 cost
         // if this is true, we allow the use of this card no matter the energy
         // the player has available
         if (cardEnergyCost === CardEnergyEnum.None)
             return {
                 canPlayCard: true,
-                newEnergyAmount: availableEnergy,
             };
 
         // If the card has a cost of -1, this means that the card will use all the available
@@ -222,7 +220,6 @@ export class CardPlayedAction {
         if (cardEnergyCost === CardEnergyEnum.All && availableEnergy > 0)
             return {
                 canPlayCard: true,
-                newEnergyAmount: 0,
             };
 
         // If the card energy cost is higher than the player's available energy or the
@@ -230,7 +227,6 @@ export class CardPlayedAction {
         if (cardEnergyCost > availableEnergy || availableEnergy === 0)
             return {
                 canPlayCard: false,
-                newEnergyAmount: availableEnergy,
                 message: CardPlayErrorMessages.NoEnergyLeft,
             };
 
@@ -238,12 +234,11 @@ export class CardPlayedAction {
         if (cardEnergyCost <= availableEnergy)
             return {
                 canPlayCard: true,
-                newEnergyAmount: availableEnergy - cardEnergyCost,
             };
     }
 
     private sendInvalidCardMessage(): void {
-        this.logger.log(
+        this.logger.error(
             `Sent message ErrorMessage to client ${this.client.id}: ${SWARAction.InvalidCard}`,
         );
 
@@ -288,59 +283,6 @@ export class CardPlayedAction {
                     message_type: SWARMessageType.PlayerAffected,
                     action: SWARAction.UpdateEnergy,
                     data: [energy, energyMax],
-                }),
-            ),
-        );
-    }
-
-    private sendUpdateEnemiesMessage(
-        enemies: IExpeditionCurrentNodeDataEnemy[],
-    ): void {
-        this.logger.log(
-            `Sent message PutData to client ${this.client.id}: ${SWARAction.UpdateEnemy}`,
-        );
-
-        this.client.emit(
-            'PutData',
-            JSON.stringify(
-                StandardResponse.respond({
-                    message_type: SWARMessageType.EnemyAffected,
-                    action: SWARAction.UpdateEnemy,
-                    data: enemies,
-                }),
-            ),
-        );
-    }
-
-    private sendUpdatePlayerMessage(playerInfo: PlayerInfoResponse): void {
-        this.logger.log(
-            `Sent message PutData to client ${this.client.id}: ${SWARAction.UpdatePlayerState}`,
-        );
-
-        this.client.emit(
-            'PutData',
-            JSON.stringify(
-                StandardResponse.respond({
-                    message_type: SWARMessageType.PlayerAffected,
-                    action: SWARAction.UpdatePlayer,
-                    data: playerInfo,
-                }),
-            ),
-        );
-    }
-
-    private sendStatusMessage(statusList: GetStatusesResponse[]): void {
-        this.logger.log(
-            `Sent message PutData to client ${this.client.id}: ${SWARAction.UpdateStatuses}`,
-        );
-
-        this.client.emit(
-            'PutData',
-            JSON.stringify(
-                StandardResponse.respond({
-                    message_type: SWARMessageType.CombatUpdate,
-                    action: SWARAction.UpdateStatuses,
-                    data: statusList,
                 }),
             ),
         );

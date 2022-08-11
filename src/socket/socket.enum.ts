@@ -8,4 +8,5 @@ export enum DataWSRequestTypesEnum {
     Trinkets = 'Trinkets',
     Statuses = 'Statuses',
     EnemyIntents = 'EnemyIntents',
+    PlayerDeck = 'PlayerDeck',
 }

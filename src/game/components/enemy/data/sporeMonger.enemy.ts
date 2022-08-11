@@ -51,7 +51,7 @@ export const sporeMongerData: Enemy = {
             intentions: [
                 {
                     type: EnemyIntentionType.Defend,
-                    target: CardTargetedEnum.Enemy,
+                    target: CardTargetedEnum.Self,
                     value: 7,
                     effects: [
                         {

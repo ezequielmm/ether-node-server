@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { damageEffect } from 'src/game/effects/damage/constants';
 import { JsonEffect } from '../../effects/effects.interface';
 import { EffectService } from '../../effects/effects.service';
@@ -11,9 +11,12 @@ import { burn } from './constants';
 })
 @Injectable()
 export class BurnStatus implements StatusEventHandler {
-    constructor(private readonly effectService: EffectService) {}
+    constructor(
+        @Inject(forwardRef(() => EffectService))
+        private readonly effectService: EffectService,
+    ) {}
 
-    async handle(dto: StatusEventDTO): Promise<void> {
+    async enemyHandler(dto: StatusEventDTO): Promise<void> {
         const effect: JsonEffect = {
             effect: damageEffect.name,
             args: {
@@ -22,8 +25,7 @@ export class BurnStatus implements StatusEventHandler {
         };
 
         await this.effectService.apply({
-            client: dto.client,
-            expedition: dto.expedition,
+            ctx: dto.ctx,
             source: dto.source,
             target: dto.target,
             effect,
