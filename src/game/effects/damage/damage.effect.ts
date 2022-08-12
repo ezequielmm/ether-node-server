@@ -60,7 +60,9 @@ export class DamageEffect implements EffectHandler {
                 damage,
                 combatQueueId,
             );
-        } else if (PlayerService.isPlayer(target)) {
+        }
+
+        if (PlayerService.isPlayer(target)) {
             // Here we check if we have to use the enemy available
             // as currentValue, here we just need to add it, the value
             // on the effect is 0

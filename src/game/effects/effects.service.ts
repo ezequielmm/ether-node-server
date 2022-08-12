@@ -128,7 +128,9 @@ export class EffectService {
             };
 
             this.logger.debug(`Effect ${name} applied to ${target.type}`);
+
             const handler = this.findHandlerByName(name);
+
             await handler.handle(effectDTO);
 
             // If we have a combat queue initiated, we run the queue
