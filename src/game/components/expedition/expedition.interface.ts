@@ -8,6 +8,20 @@ import {
 } from './expedition.enum';
 import { Expedition } from './expedition.schema';
 
+export interface IExpeditionPlayerState {
+    playerId: string;
+    playerName: string;
+    characterClass: string;
+    hpMax: number;
+    hpCurrent: number;
+    gold: number;
+    potions?: [];
+    trinkets?: [];
+    createdAt: Date;
+    cards: IExpeditionPlayerStateDeckCard[];
+    stoppedAt?: Date;
+}
+
 export interface IExpeditionNode {
     readonly id: number;
     readonly act: number;

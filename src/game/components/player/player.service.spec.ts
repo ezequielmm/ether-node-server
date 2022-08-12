@@ -64,6 +64,8 @@ describe('PlayerService', () => {
                             energyMax: 3,
                             handSize: 5,
                             defense: 5,
+                            hpMax: 80,
+                            hpCurrent: 80,
                         },
                     },
                 },

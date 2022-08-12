@@ -10,6 +10,7 @@ import {
     GetDeckCardsDTO,
     GetExpeditionMapDTO,
     GetExpeditionMapNodeDTO,
+    GetPlayerStateDTO,
     playerHasAnExpeditionDTO,
     SetCombatTurnDTO,
     UpdateClientIdDTO,
@@ -20,6 +21,7 @@ import { ExpeditionStatusEnum } from './expedition.enum';
 import {
     IExpeditionCurrentNode,
     IExpeditionNode,
+    IExpeditionPlayerState,
     IExpeditionPlayerStateDeckCard,
 } from './expedition.interface';
 import { generateMap, restoreMap } from 'src/game/map/app';
@@ -170,6 +172,17 @@ export class ExpeditionService {
             .lean();
 
         return cards;
+    }
+
+    async getPlayerState(
+        payload: GetPlayerStateDTO,
+    ): Promise<IExpeditionPlayerState> {
+        const { playerState } = await this.expedition
+            .findOne(payload)
+            .select('playerState')
+            .lean();
+
+        return playerState;
     }
 
     async setCombatTurn(

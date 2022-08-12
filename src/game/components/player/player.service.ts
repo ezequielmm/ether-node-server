@@ -138,7 +138,7 @@ export class PlayerService {
         const { client } = ctx;
 
         const currentDefense = player.value.combatState.defense;
-        const currentHp = player.value.globalState.hpCurrent;
+        const currentHp = player.value.combatState.hpCurrent;
         const playerUUID = player.value.globalState.playerId;
 
         // Here we create the target for the combat queue
