@@ -66,6 +66,7 @@ describe('PlayerService', () => {
                             defense: 5,
                             hpMax: 80,
                             hpCurrent: 80,
+                            statuses: { buff: [], debuff: [] },
                         },
                     },
                 },
