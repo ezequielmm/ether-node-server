@@ -30,19 +30,18 @@ export class HealEffect implements EffectHandler {
         const {
             ctx,
             target,
-            args: { currentValue },
+            args: { currentValue: hpToAdd },
             combatQueueId,
         } = payload;
 
         if (PlayerService.isPlayer(target)) {
             const {
                 value: {
-                    globalState: { playerId, hpCurrent },
+                    globalState: { playerId, hpCurrent, hpMax },
                 },
             } = target;
 
-            const deltaHp = currentValue + hpCurrent;
-            const finalHp = await this.playerService.setHp(ctx, deltaHp);
+            const newHp = Math.min(hpMax, hpCurrent + hpToAdd);
 
             // Here we create the target for the combat queue
             const combatQueueTarget: ICombatQueueTarget = {
@@ -51,10 +50,12 @@ export class HealEffect implements EffectHandler {
                 targetId: playerId,
                 defenseDelta: 0,
                 finalDefense: 0,
-                healthDelta: deltaHp,
-                finalHealth: finalHp,
+                healthDelta: hpToAdd,
+                finalHealth: newHp,
                 statuses: [],
             };
+
+            await this.playerService.setHp(ctx, newHp);
 
             await this.combatQueueService.addTargetsToCombatQueue(
                 combatQueueId,
@@ -64,16 +65,10 @@ export class HealEffect implements EffectHandler {
 
         if (EnemyService.isEnemy(target)) {
             const {
-                value: { id, hpCurrent },
+                value: { id, hpCurrent, hpMax },
             } = target;
 
-            const deltaHp = currentValue + hpCurrent;
-
-            const finalHp = await this.enemyService.setHp(
-                ctx,
-                target.value.id,
-                deltaHp,
-            );
+            const newHp = Math.min(hpMax, hpCurrent + hpToAdd);
 
             // Here we create the target for the combat queue
             const combatQueueTarget: ICombatQueueTarget = {
@@ -82,10 +77,12 @@ export class HealEffect implements EffectHandler {
                 targetId: id,
                 defenseDelta: 0,
                 finalDefense: 0,
-                healthDelta: deltaHp,
-                finalHealth: finalHp,
+                healthDelta: hpToAdd,
+                finalHealth: newHp,
                 statuses: [],
             };
+
+            await this.enemyService.setHp(ctx, target.value.id, newHp);
 
             await this.combatQueueService.addTargetsToCombatQueue(
                 combatQueueId,
