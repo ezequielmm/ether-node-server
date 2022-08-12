@@ -301,4 +301,13 @@ export class EnemyService {
             this.logger.debug(`Calculated new script for ${enemy.value.id}`);
         }
     }
+
+    /**
+     * Get multiple enemies by their id
+     *
+     * @param enemies number[]
+     */
+    async findEnemiesById(enemies: number[]): Promise<EnemyDocument[]> {
+        return await this.enemy.find({ enemyId: { $in: enemies } }).lean();
+    }
 }

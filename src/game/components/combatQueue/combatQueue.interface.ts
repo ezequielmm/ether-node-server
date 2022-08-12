@@ -1,3 +1,4 @@
+import { IStatusesList } from 'src/game/status/statusGenerator';
 import {
     CombatQueueTargetEffectTypeEnum,
     CombatQueueTargetTypeEnum,
@@ -12,13 +13,7 @@ export interface ICombatQueueTarget {
     finalHealth: number;
     defenseDelta: number;
     finalDefense: number;
-    statuses: ICombatQueueTargetStatus[];
-}
-
-export interface ICombatQueueTargetStatus {
-    name: string;
-    description: string;
-    counter: number;
+    statuses: IStatusesList[];
 }
 
 export type CreateCombatQueueDTO = CombatQueue;

@@ -29,11 +29,14 @@ export class EndCombatProcess {
     @OnEvent('entity.*', { async: true })
     async handle(payload: EntityDamageEvent): Promise<void> {
         const { ctx } = payload;
+
         if (this.playerService.isDead(ctx)) {
             this.logger.debug('Player is dead. Ending combat');
             await this.endCombat(ctx);
             this.emitPlayerDefeated(ctx);
-        } else if (this.enemyService.isAllDead(ctx)) {
+        }
+
+        if (this.enemyService.isAllDead(ctx)) {
             this.logger.debug('All enemies are dead. Ending combat');
             await this.endCombat(ctx);
             this.emitEnemiesDefeated(ctx);

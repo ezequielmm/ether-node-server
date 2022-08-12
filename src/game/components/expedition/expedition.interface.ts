@@ -1,6 +1,7 @@
 import { AttachedStatus, StatusType } from 'src/game/status/interfaces';
 import { Card } from '../card/card.schema';
 import { EnemyScript } from '../enemy/enemy.interface';
+import { Enemy } from '../enemy/enemy.schema';
 import {
     ExpeditionMapNodeTypeEnum,
     ExpeditionMapNodeStatusEnum,
@@ -44,7 +45,7 @@ export class IExpeditionPlayerStateDeckCard extends Card {
     isTemporary: boolean;
 }
 
-export interface IExpeditionCurrentNodeDataEnemy {
+export interface IExpeditionCurrentNodeDataEnemy extends Enemy {
     id: string;
     enemyId: number;
     defense: number;

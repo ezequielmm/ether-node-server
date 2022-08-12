@@ -1,5 +1,6 @@
 import { forwardRef, Inject, Injectable, Logger } from '@nestjs/common';
 import { set } from 'lodash';
+import { StatusGenerator } from 'src/game/status/statusGenerator';
 import { CardTargetedEnum } from '../card/card.enum';
 import {
     CombatQueueTargetEffectTypeEnum,
@@ -198,6 +199,21 @@ export class PlayerService {
         // Update the player's defense and new health
         await this.setDefense(ctx, newDefense);
         await this.setHp(ctx, newHp);
+
+        // Net we query the statuses for the player
+        const {
+            value: {
+                combatState: {
+                    statuses: { buff, debuff },
+                },
+            },
+        } = player;
+
+        // Now we generate the statuses and add them to the combat queue
+        combatQueueTarget.statuses = [
+            ...StatusGenerator.formatStatusesToArray(buff),
+            ...StatusGenerator.formatStatusesToArray(debuff),
+        ];
 
         // Save the details to the Attack Queue
         await this.combatQueueService.addTargetsToCombatQueue(combatQueueId, [
