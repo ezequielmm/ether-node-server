@@ -34,18 +34,16 @@ export class GetEnemiesAction {
             clientId,
         });
 
-        return enemies.map((enemy) => {
-            return {
-                id: enemy.id,
-                enemyId: enemy.enemyId,
-                defense: enemy.defense,
-                name: enemy.name,
-                type: enemy.type,
-                category: enemy.category,
-                size: enemy.size,
-                hpCurrent: enemy.hpCurrent,
-                hpMax: enemy.hpMax,
-            };
-        });
+        return enemies.map((enemy) => ({
+            id: enemy.id,
+            enemyId: enemy.enemyId,
+            defense: enemy.defense,
+            name: enemy.name,
+            type: enemy.type,
+            category: enemy.category,
+            size: enemy.size,
+            hpCurrent: enemy.hpCurrent,
+            hpMax: enemy.hpMax,
+        }));
     }
 }

@@ -54,10 +54,23 @@ export class EndCombatProcess {
         expedition.currentNode.completed = true;
         expedition.map = map.getMap;
 
+        // Get the final health and update it on the player state
+        const {
+            currentNode: {
+                data: {
+                    player: { hpCurrent, hpMax },
+                },
+            },
+        } = expedition;
+
         await this.expeditionService.updateById(expedition._id, {
             $set: {
                 map: map.getMap,
                 'currentNode.completed': true,
+                'currentNode.player': null,
+                'currentNode.enemies': null,
+                'playerState.hpCurrent': hpCurrent,
+                'playerState.hpMax': hpMax,
             },
         });
 
