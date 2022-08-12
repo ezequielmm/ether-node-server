@@ -22,6 +22,7 @@ export class UpdateClientIdDTO {
 }
 export type GetExpeditionMapDTO = BaseDTO;
 export type GetDeckCardsDTO = BaseDTO;
+export type GetPlayerState = BaseDTO;
 export type GetCurrentNodeDTO = BaseDTO;
 export type GetPlayerStateDTO = BaseDTO;
 

@@ -1,5 +1,10 @@
 import { AttachedStatus, StatusType } from 'src/game/status/interfaces';
 import { Card } from '../card/card.schema';
+import {
+    EnemyTypeEnum,
+    EnemyCategoryEnum,
+    EnemySizeEnum,
+} from '../enemy/enemy.enum';
 import { EnemyScript } from '../enemy/enemy.interface';
 import {
     ExpeditionMapNodeTypeEnum,
@@ -7,6 +12,20 @@ import {
     IExpeditionNodeReward,
 } from './expedition.enum';
 import { Expedition } from './expedition.schema';
+
+export interface IExpeditionPlayerState {
+    playerId: string;
+    playerName: string;
+    characterClass: string;
+    hpMax: number;
+    hpCurrent: number;
+    gold: number;
+    potions?: [];
+    trinkets?: [];
+    createdAt: Date;
+    cards: IExpeditionPlayerStateDeckCard[];
+    stoppedAt?: Date;
+}
 
 export interface IExpeditionNode {
     readonly id: number;
@@ -34,8 +53,12 @@ export interface IExpeditionCurrentNodeDataEnemy {
     id: string;
     enemyId: number;
     defense: number;
-    hpMax: number;
+    name: string;
+    type: EnemyTypeEnum;
+    category: EnemyCategoryEnum;
+    size: EnemySizeEnum;
     hpCurrent: number;
+    hpMax: number;
     statuses: {
         [StatusType.Buff]: AttachedStatus[];
         [StatusType.Debuff]: AttachedStatus[];

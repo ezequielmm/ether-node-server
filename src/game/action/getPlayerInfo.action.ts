@@ -20,17 +20,10 @@ export class GetPlayerInfoAction {
 
     async handle(clientId: string): Promise<PlayerInfoResponse> {
         const {
-            playerState: {
-                playerName,
-                characterClass,
-                hpCurrent,
-                hpMax,
-                gold,
-                cards,
-            },
+            playerState: { playerName, characterClass, gold, cards },
             currentNode: {
                 data: {
-                    player: { energy, energyMax, defense },
+                    player: { energy, energyMax, defense, hpCurrent, hpMax },
                 },
             },
         } = await this.expeditionService.findOne({

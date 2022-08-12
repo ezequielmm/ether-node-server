@@ -37,7 +37,8 @@ export class HealEffect implements EffectHandler {
         if (PlayerService.isPlayer(target)) {
             const {
                 value: {
-                    globalState: { playerId, hpCurrent, hpMax },
+                    globalState: { playerId },
+                    combatState: { hpCurrent, hpMax },
                 },
             } = target;
 
