@@ -55,6 +55,7 @@ import { SendEnemyIntentProcess } from './sendEnemyIntents.process';
         EndEnemyTurnProcess,
         BeginEnemyTurnProcess,
         BeginPlayerTurnProcess,
+        EndCombatProcess,
     ],
 })
 export class ProcessModule {}

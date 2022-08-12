@@ -9,4 +9,5 @@ export enum DataWSRequestTypesEnum {
     Statuses = 'Statuses',
     EnemyIntents = 'EnemyIntents',
     PlayerDeck = 'PlayerDeck',
+    CurrentNode = 'CurrentNode',
 }

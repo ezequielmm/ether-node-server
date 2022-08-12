@@ -10,6 +10,8 @@ import { ProcessModule } from 'src/game/process/process.module';
 import { CharacterModule } from 'src/game/components/character/character.module';
 import { PlayerModule } from 'src/game/components/player/player.module';
 import { CombatQueueModule } from 'src/game/components/combatQueue/combatQueue.module';
+import { GetDataGateway } from './getData.gateway';
+import { RewardGateway } from './reward.gateway';
 
 @Module({
     imports: [
@@ -22,6 +24,12 @@ import { CombatQueueModule } from 'src/game/components/combatQueue/combatQueue.m
         PlayerModule,
         CombatQueueModule,
     ],
-    providers: [SocketGateway, CombatGateway, ExpeditionGateway],
+    providers: [
+        SocketGateway,
+        CombatGateway,
+        ExpeditionGateway,
+        GetDataGateway,
+        RewardGateway,
+    ],
 })
 export class SocketModule {}
