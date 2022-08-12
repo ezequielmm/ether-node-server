@@ -61,25 +61,27 @@ export class InitExpeditionProcess {
         character: CharacterDocument,
         email: string,
     ): Promise<IExpeditionPlayerStateDeckCard[]> {
-        // First we check if we have a custom deck to apply
+        // We deestructure the cards from the character
+        const { cards: characterDeck } = character;
+
+        // Now we get any custom deck that we have available
         const customDeck = await this.customDeckService.findByEmail(email);
 
-        const cardsIdsArray =
-            customDeck !== null ? customDeck.cards : character.cards;
-
         // Get card ids as an array of integers
-        const cardIds = cardsIdsArray.map(({ cardId }) => cardId);
+        const cardIds = !customDeck
+            ? characterDeck.map(({ cardId }) => Math.round(cardId))
+            : customDeck.cards.map(({ cardId }) => Math.round(cardId));
+
+        // Set deck to get the amount of cards
+        const deck = !customDeck ? characterDeck : customDeck.cards;
 
         // Get all the cards
-        const cards = await this.cardService.findAll();
+        const cards = await this.cardService.findCardsById(cardIds);
 
         // Filter the card ids and make a new array
         return cards
-            .filter((card) => {
-                return cardIds.includes(card.cardId);
-            })
             .reduce((newDeckCards, card) => {
-                cardsIdsArray.forEach(({ cardId, amount }) => {
+                deck.forEach(({ cardId, amount }) => {
                     if (card.cardId === cardId) {
                         for (let i = 1; i <= amount; i++) {
                             newDeckCards.push(card);

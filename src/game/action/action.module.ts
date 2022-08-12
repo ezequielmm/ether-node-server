@@ -11,6 +11,7 @@ import { DrawCardAction } from './drawCard.action';
 import { ExhaustCardAction } from './exhaustCard.action';
 import { FullSyncAction } from './fullSync.action';
 import { GetCardPilesAction } from './getCardPiles.action';
+import { GetCurrentStepAction } from './getCurrentStep.action';
 import { GetEnemiesAction } from './getEnemies.action';
 import { GetEnergyAction } from './getEnergy.action';
 import { GetPlayerDeckAction } from './getPlayerDeck.action';
@@ -41,6 +42,7 @@ import { SetCombatTurnAction } from './setCombatTurn.action';
         GetStatusesAction,
         DrawCardAction,
         GetPlayerDeckAction,
+        GetCurrentStepAction,
     ],
     exports: [
         FullSyncAction,
@@ -56,6 +58,7 @@ import { SetCombatTurnAction } from './setCombatTurn.action';
         GetStatusesAction,
         DrawCardAction,
         GetPlayerDeckAction,
+        GetCurrentStepAction,
     ],
 })
 export class ActionModule {}

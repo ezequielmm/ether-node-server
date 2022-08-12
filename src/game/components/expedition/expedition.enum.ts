@@ -62,3 +62,10 @@ export enum CombatTurnEnum {
     Player = 'player',
     Enemy = 'enemy',
 }
+
+export enum IExpeditionNodeReward {
+    Gold = 'gold',
+    Card = 'card',
+    Potion = 'potion',
+    Trinket = 'trinket',
+}

@@ -27,11 +27,11 @@ import { SendEnemyIntentProcess } from './sendEnemyIntents.process';
         EnemyModule,
         forwardRef(() => ActionModule),
         CardModule,
-        CustomDeckModule,
         CharacterModule,
         StatusModule,
         PlayerModule,
         EffectModule,
+        CustomDeckModule,
     ],
     providers: [
         SendEnemyIntentProcess,
@@ -55,6 +55,7 @@ import { SendEnemyIntentProcess } from './sendEnemyIntents.process';
         EndEnemyTurnProcess,
         BeginEnemyTurnProcess,
         BeginPlayerTurnProcess,
+        EndCombatProcess,
     ],
 })
 export class ProcessModule {}

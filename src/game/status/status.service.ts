@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { cloneDeep, find, matches } from 'lodash';
+import { cloneDeep, compact, filter, find, matches } from 'lodash';
 import { Model } from 'mongoose';
 import { CardTargetedEnum } from '../components/card/card.enum';
 import { ExpeditionEnemy } from '../components/enemy/enemy.interface';
@@ -308,7 +308,7 @@ export class StatusService {
         const { expedition } = ctx;
         const { currentNode } = expedition;
 
-        const statusGlobalCollection = await this.findAllStatuses(expedition);
+        const statusGlobalCollection = await this.getAll(ctx);
 
         for (const entityCollection of statusGlobalCollection) {
             let isUpdate = false;
@@ -490,9 +490,8 @@ export class StatusService {
         }
     }
 
-    async findAllStatuses(
-        expedition: Expedition,
-    ): Promise<StatusesGlobalCollection> {
+    getAll(ctx: Context): StatusesGlobalCollection {
+        const { expedition } = ctx;
         const collection: StatusesGlobalCollection = [];
 
         collection.push({
@@ -517,5 +516,15 @@ export class StatusService {
         }
 
         return collection;
+    }
+
+    getAllByName(ctx: Context, name: string): StatusesGlobalCollection {
+        const global = this.getAll(ctx);
+        const statuses: StatusesGlobalCollection = [];
+
+        statuses.push(...filter(global, { statuses: { buff: [{ name }] } }));
+        statuses.push(...filter(global, { statuses: { debuff: [{ name }] } }));
+
+        return compact(statuses);
     }
 }

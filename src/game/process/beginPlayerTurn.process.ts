@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { Socket } from 'socket.io';
 import { DrawCardAction } from '../action/drawCard.action';
+import { GetPlayerInfoAction } from '../action/getPlayerInfo.action';
 import { EnemyService } from '../components/enemy/enemy.service';
 import { CombatTurnEnum } from '../components/expedition/expedition.enum';
 import { ExpeditionDocument } from '../components/expedition/expedition.schema';
@@ -33,6 +34,7 @@ export class BeginPlayerTurnProcess {
         private readonly drawCardAction: DrawCardAction,
         private readonly statusService: StatusService,
         private readonly eventEmitter: EventEmitter2,
+        private readonly getPlayerInfoAction: GetPlayerInfoAction,
     ) {}
 
     async handle(payload: BeginPlayerTurnDTO): Promise<void> {
@@ -42,11 +44,12 @@ export class BeginPlayerTurnProcess {
         const expedition = await this.expeditionService.findOne({
             clientId: client.id,
         });
+
         const {
             currentNode: {
                 data: {
                     round,
-                    player: { handSize, defense },
+                    player: { handSize, defense: currentDefense },
                 },
             },
         } = expedition;
@@ -83,14 +86,13 @@ export class BeginPlayerTurnProcess {
             await this.settingsService.getSettings();
 
         // Reset defense
-        if (defense > 0) await this.playerService.setDefense(ctx, 0);
+        if (currentDefense > 0) await this.playerService.setDefense(ctx, 0);
 
         this.playerService.setEnergy(ctx, initialEnergy);
 
         // Send new energy amount
-
         this.logger.log(
-            `Sent message PutData to client ${client.id}: ${SWARAction.ChangeTurn}`,
+            `Sent message PutData to client ${client.id}: ${SWARAction.UpdateEnergy}`,
         );
 
         client.emit(
@@ -113,11 +115,27 @@ export class BeginPlayerTurnProcess {
 
         await this.enemyService.calculateNewIntentions(ctx);
 
-        await this.eventEmitter.emitAsync('OnBeginPlayerTurn', { ctx });
+        await this.eventEmitter.emitAsync('player:before-start-turn', { ctx });
 
         await this.statusService.trigger(
             ctx,
             StatusEventType.OnPlayerTurnStart,
         );
+
+        // Send updated player information
+        const playerInfo = await this.getPlayerInfoAction.handle(client.id);
+
+        client.emit(
+            'PutData',
+            JSON.stringify(
+                StandardResponse.respond({
+                    message_type: SWARMessageType.PlayerAffected,
+                    action: SWARAction.UpdatePlayer,
+                    data: playerInfo,
+                }),
+            ),
+        );
+
+        await this.eventEmitter.emitAsync('player:after-start-turn', { ctx });
     }
 }

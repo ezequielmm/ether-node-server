@@ -2,17 +2,23 @@ import { forwardRef, Module } from '@nestjs/common';
 import { EnemyModule } from '../components/enemy/enemy.module';
 import { ExpeditionModule } from '../components/expedition/expedition.module';
 import { PlayerModule } from '../components/player/player.module';
-import { DistraughtEvent } from '../effects/distraught/distraught.event';
-import { DistraughtEffect } from '../effects/distraught/distraught.status';
 import { EffectModule } from '../effects/effects.module';
 import { ProviderModule } from '../provider/provider.module';
+import { BolsteredStatus } from './bolstered/bolstered.status';
 import { BurnStatus } from './burn/burn.status';
 import { ConfusionStatus } from './confusion/confusion.status';
+import { DistraughtEvent } from './distraught/distraught.event';
+import { DistraughtStatus } from './distraught/distraught.status';
 import { DodgeStatus } from './dodge/dodge.status';
 import { DoubleDownStatus } from './doubleDown/doubleDown.status';
+import { DrainedStatus } from './drained/drained.status';
+import { ForceFieldEvent } from './forceField/forcefield.event';
+import { ForceFieldStatus } from './forceField/forceField.status';
 import { FortitudeStatus } from './fortitude/fortitude.status';
 import { HeraldDelayedStatus } from './heraldDelayed/heraldDelayed.status';
 import { ImbuedStatus } from './imbued/imbued.status';
+import { InterceptEvent } from './intercept/intercept.event';
+import { InterceptStatus } from './intercept/intercept.status';
 import { RegenerateStatus } from './regenerate/regenerate.status';
 import { ResistStatus } from './resist/resist.status';
 import { ResolveStatus } from './resolve/resolve.status';
@@ -50,8 +56,16 @@ import { TurtlingStatus } from './turtling/turtling.status';
         DoubleDownStatus,
         ImbuedStatus,
         ResistStatus,
-        DistraughtEffect,
+        DrainedStatus,
+        ForceFieldStatus,
+        ForceFieldEvent,
+        InterceptStatus,
+        InterceptEvent,
         DistraughtEvent,
+        DistraughtStatus,
+        DistraughtEvent,
+        DrainedStatus,
+        BolsteredStatus,
     ],
     exports: [StatusService],
 })

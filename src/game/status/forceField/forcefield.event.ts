@@ -4,74 +4,65 @@ import { filter } from 'lodash';
 import { EnemyService } from 'src/game/components/enemy/enemy.service';
 import { Context, ExpeditionEntity } from 'src/game/components/interfaces';
 import { PlayerService } from 'src/game/components/player/player.service';
-import {
-    StatusCollection,
-    StatusEventHandler,
-} from 'src/game/status/interfaces';
-import { StatusService } from 'src/game/status/status.service';
-import { distraught } from './constants';
+import { StatusCollection, StatusEventHandler } from '../interfaces';
+import { StatusService } from '../status.service';
+import { forceField } from './contants';
 
 @Injectable()
-export class DistraughtEvent implements StatusEventHandler {
-    private readonly logger = new Logger(DistraughtEvent.name);
+export class ForceFieldEvent implements StatusEventHandler {
+    private readonly logger = new Logger(ForceFieldEvent.name);
+
     constructor(
         private readonly statusService: StatusService,
         private readonly enemyService: EnemyService,
         private readonly playerService: PlayerService,
     ) {}
 
-    @OnEvent('OnBeginEnemyTurn', { async: true })
+    @OnEvent('enemy:before-start-turn', { async: true })
     async enemyHandler(args: { ctx: Context }): Promise<void> {
         const { ctx } = args;
         const enemies = this.enemyService.getAll(ctx);
 
         for (const enemy of enemies) {
-            await this.updateStraughts(ctx, enemy.value.statuses, enemy);
+            await this.updateForceFields(ctx, enemy.value.statuses, enemy);
         }
     }
 
-    @OnEvent('OnBeginPlayerTurn', { async: true })
+    @OnEvent('player:before-start-turn', { async: true })
     async playerHandler(args: { ctx: Context }): Promise<void> {
         const { ctx } = args;
         const player = this.playerService.get(ctx);
         const statuses = player.value.combatState.statuses;
 
-        await this.updateStraughts(ctx, statuses, player);
+        await this.updateForceFields(ctx, statuses, player);
     }
 
-    private async updateStraughts(
+    private async updateForceFields(
         ctx: Context,
         collection: StatusCollection,
         entity: ExpeditionEntity,
     ): Promise<void> {
-        const distraughts = filter(collection.debuff, {
-            name: distraught.name,
-        });
-        const distraughtsToRemove = [];
+        const forceFields = filter(collection.buff, { name: forceField.name });
 
-        // If there are no distraughts, return
-        if (distraughts.length == 0) {
-            return;
-        }
+        const forceFieldsToRemove = [];
 
-        for (const status of distraughts) {
-            // Decremement the value of the status
+        if (forceFields.length === 0) return;
+
+        for (const status of forceFields) {
             status.args.value--;
 
-            if (status.args.value == 0) {
-                // If the value is 0, remove the status
-                distraughtsToRemove.push(status);
+            if (status.args.value === 0) {
+                forceFieldsToRemove.push(status);
                 this.logger.debug(`Removing status ${status.name}`);
             } else {
                 this.logger.debug(
-                    `Decreasing distraught status value to ${status.args.value}`,
+                    `Decreasing force field status value to ${status.args.value}`,
                 );
             }
         }
 
-        // Remove the distraughts that are 0
-        collection.debuff = collection.debuff.filter(
-            (status) => !distraughtsToRemove.includes(status),
+        collection.buff = collection.buff.filter(
+            (status) => !forceFieldsToRemove.includes(status),
         );
 
         // Update the entity

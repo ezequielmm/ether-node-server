@@ -1,7 +1,7 @@
 import { IExpeditionPlayerStateDeckCard } from '../components/expedition/expedition.interface';
 
 export class CardDescriptionFormatter {
-    static process(card: IExpeditionPlayerStateDeckCard): string {
+    public static process(card: IExpeditionPlayerStateDeckCard): string {
         // First we deestructure the effect array
         const {
             properties: { effects, statuses },

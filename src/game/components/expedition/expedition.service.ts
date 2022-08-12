@@ -223,7 +223,7 @@ export class ExpeditionService {
     async updateHandPiles(payload: UpdateHandPilesDTO): Promise<Expedition> {
         const { hand, exhausted, clientId, draw, discard } = payload;
 
-        const field = typeof clientId === 'string' ? 'clientId' : 'playerId';
+        const clientField = getClientIdField(clientId);
 
         const piles = {
             ...(hand && { 'currentNode.data.player.cards.hand': hand }),
@@ -240,7 +240,10 @@ export class ExpeditionService {
 
         return await this.expedition
             .findOneAndUpdate(
-                { [field]: clientId, status: ExpeditionStatusEnum.InProgress },
+                {
+                    [clientField]: clientId,
+                    status: ExpeditionStatusEnum.InProgress,
+                },
                 piles,
                 { new: true },
             )

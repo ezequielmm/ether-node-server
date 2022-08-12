@@ -43,6 +43,9 @@ export class BeginEnemyTurnProcess {
             playing: CombatTurnEnum.Enemy,
         });
 
+        // Set combat turn change
+        this.sendCombatTurnChange();
+
         const {
             currentNode: {
                 data: { enemies },
@@ -54,10 +57,8 @@ export class BeginEnemyTurnProcess {
             expedition,
         };
 
-        await this.eventEmitter.emitAsync('OnBeginEnemyTurn', { ctx });
+        await this.eventEmitter.emitAsync('enemy:before-start-turn', { ctx });
         await this.statusService.trigger(ctx, StatusEventType.OnEnemyTurnStart);
-
-        this.sendCombatTurnChange();
 
         // Then we loop over them and get their intentions and effects
         enemies.forEach((enemy) => {
@@ -85,6 +86,7 @@ export class BeginEnemyTurnProcess {
         });
 
         await this.sendUpdatedEnemiesData();
+        await this.eventEmitter.emitAsync('enemy:after-start-turn', { ctx });
     }
 
     private async sendUpdatedEnemiesData(): Promise<void> {

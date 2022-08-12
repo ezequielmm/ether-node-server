@@ -1,6 +1,8 @@
 import { Card } from './card.schema';
 import { AttackCard, AttackCardUpgraded } from './data/attack.card';
 import { BackHandCard, BackHandCardUpgraded } from './data/backhand.card';
+import { BlusterCard, BlusterCardUpgraded } from './data/bluster.card';
+import { BolsterCard, BolsterCardUpgraded } from './data/bolster.card';
 import { ChargeCard, ChargeCardUpgraded } from './data/charge.card';
 import { CounterCard, CounterCardUpgraded } from './data/counter.card';
 import { DefenseCard, DefenseCardUpgraded } from './data/defend.card';
@@ -14,6 +16,7 @@ import {
 import { FineEdgeCard, FineEdgeCardUpgraded } from './data/fineEdge.card';
 import { FirstMoveCard, FirstMoveCardUpgraded } from './data/firstMove.card';
 import { FlurryCard, FlurryCardUpgraded } from './data/flurry.card';
+import { ForceFieldCard, ForceFieldCardUpgraded } from './data/forceField.card';
 import {
     GiveNoGroundCard,
     GiveNoGroundCardUpgraded,
@@ -29,6 +32,7 @@ import {
     HeraldOfPainCardUpgraded,
 } from './data/heraldOfPain.card';
 import { HiltPunchCard, HiltPunchCardUpgraded } from './data/hiltPunch.card';
+import { InterceptCard, InterceptCardUpgraded } from './data/intercept.card';
 import { IntimidateCard, IntimidateCardUpgraded } from './data/intimidate.card';
 import {
     InvokeBlessingCard,
@@ -64,6 +68,10 @@ import {
     TightenGripCardUpgraded,
 } from './data/tightenGrip.card';
 import { TurtleCard, TurtleCardUpgraded } from './data/turtle.card';
+import {
+    UltraLethalityCard,
+    UltraLethalityCardUpgraded,
+} from './data/ultraLethality.card';
 
 export const data: Card[] = [
     AttackCard,
@@ -142,4 +150,14 @@ export const data: Card[] = [
     RefocusUpgraded,
     BackHandCard,
     BackHandCardUpgraded,
+    UltraLethalityCard,
+    UltraLethalityCardUpgraded,
+    BlusterCard,
+    BlusterCardUpgraded,
+    InterceptCard,
+    InterceptCardUpgraded,
+    ForceFieldCard,
+    ForceFieldCardUpgraded,
+    BolsterCard,
+    BolsterCardUpgraded,
 ];

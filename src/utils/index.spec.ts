@@ -44,6 +44,7 @@ describe('Utility Functions', () => {
     it('should remove given cards from pile', () => {
         const originalPile: IExpeditionPlayerStateDeckCard[] = [
             {
+                cardId: 1,
                 id: 'bcc92fe2-0571-48cd-bdf9-e6811b100ce4',
                 name: 'Attack',
                 description: 'Deal {damage} Damage',
@@ -69,6 +70,7 @@ describe('Utility Functions', () => {
                 isUpgraded: false,
             },
             {
+                cardId: 2,
                 id: '48872d01-406e-4095-8692-8eaf32ecf411',
                 name: 'Heaven’s Grace',
                 description: 'Heal {heal} hp',
@@ -94,6 +96,7 @@ describe('Utility Functions', () => {
                 isUpgraded: false,
             },
             {
+                cardId: 3,
                 id: '9acb234b-6d2f-4b10-a5c3-2b7638bb6bc5',
                 name: 'Last Resort+',
                 description:
@@ -129,6 +132,7 @@ describe('Utility Functions', () => {
                 isUpgraded: true,
             },
             {
+                cardId: 4,
                 id: 'be115c6e-5001-459b-963c-7d687a3619e3',
                 name: 'Last Resort+',
                 description:
@@ -164,6 +168,7 @@ describe('Utility Functions', () => {
                 isUpgraded: true,
             },
             {
+                cardId: 5,
                 id: 'b60ee368-0c17-4f67-90ff-3cd8607fa124',
                 name: 'Attack',
                 description: 'Deal {damage} Damage',
@@ -192,6 +197,7 @@ describe('Utility Functions', () => {
 
         const cardsToRemove: IExpeditionPlayerStateDeckCard[] = [
             {
+                cardId: 1,
                 id: 'bcc92fe2-0571-48cd-bdf9-e6811b100ce4',
                 name: 'Attack',
                 description: 'Deal {damage} Damage',

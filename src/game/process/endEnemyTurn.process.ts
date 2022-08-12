@@ -1,9 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import { CombatTurnEnum } from '../components/expedition/expedition.enum';
-import { ExpeditionDocument } from '../components/expedition/expedition.schema';
-import { ExpeditionService } from '../components/expedition/expedition.service';
 import { Context } from '../components/interfaces';
-import { PlayerService } from '../components/player/player.service';
 import {
     SWARAction,
     StandardResponse,
@@ -23,14 +21,15 @@ export class EndEnemyTurnProcess {
 
     constructor(
         private readonly beingPlayerTurnProcess: BeginPlayerTurnProcess,
-        private readonly expeditionService: ExpeditionService,
         private readonly statusService: StatusService,
-        private readonly playerService: PlayerService,
+        private readonly eventEmitter: EventEmitter2,
     ) {}
 
     async handle(payload: EndEnemyTurnDTO): Promise<void> {
         const { ctx } = payload;
         const { client } = ctx;
+
+        await this.eventEmitter.emitAsync('enemy:before-end-turn', { ctx });
 
         this.logger.log(
             `Sent message PutData to client ${client.id}: ${SWARAction.ChangeTurn}`,
@@ -47,20 +46,8 @@ export class EndEnemyTurnProcess {
             ),
         );
 
-        const expedition = await this.expeditionService.findOne({
-            clientId: client.id,
-        });
-
         await this.statusService.trigger(ctx, StatusEventType.OnTurnEnd);
-
-        await this.playerService.setDefense(
-            {
-                client,
-                expedition: expedition as ExpeditionDocument,
-            },
-            0,
-        );
-
         await this.beingPlayerTurnProcess.handle({ client });
+        await this.eventEmitter.emitAsync('enemy:after-end-turn', { ctx });
     }
 }

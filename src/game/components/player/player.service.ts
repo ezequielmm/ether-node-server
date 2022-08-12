@@ -1,7 +1,10 @@
 import { forwardRef, Inject, Injectable, Logger } from '@nestjs/common';
 import { set } from 'lodash';
 import { CardTargetedEnum } from '../card/card.enum';
-import { CombatQueueTargetTypeEnum } from '../combatQueue/combatQueue.enum';
+import {
+    CombatQueueTargetEffectTypeEnum,
+    CombatQueueTargetTypeEnum,
+} from '../combatQueue/combatQueue.enum';
 import { ICombatQueueTarget } from '../combatQueue/combatQueue.interface';
 import { CombatQueueService } from '../combatQueue/combatQueue.service';
 import { ExpeditionService } from '../expedition/expedition.service';
@@ -115,7 +118,7 @@ export class PlayerService {
         set(ctx.expedition, PLAYER_CURRENT_HP_PATH, newHp);
         this.logger.debug(`Player hp set to ${newHp}`);
 
-        return hp;
+        return newHp;
     }
 
     /**
@@ -140,6 +143,7 @@ export class PlayerService {
 
         // Here we create the target for the combat queue
         const combatQueueTarget: ICombatQueueTarget = {
+            effectType: CombatQueueTargetEffectTypeEnum.Damage,
             targetType: CombatQueueTargetTypeEnum.Player,
             targetId: playerUUID,
             defenseDelta: 0,
@@ -159,13 +163,18 @@ export class PlayerService {
             // If newDefense is negative, it means that the defense is fully
             // depleted and the remaining will be applied to the player's health
             if (newDefense < 0) {
-                newHp = Math.max(0, currentHp - Math.abs(newDefense));
+                const newDamage = Math.abs(newDefense);
+
+                newHp = Math.max(0, currentHp - newDamage);
+
+                // Update attackQueue Details
+                combatQueueTarget.healthDelta = -newDamage;
+
                 newDefense = 0;
 
                 // Update attackQueue Details
                 combatQueueTarget.defenseDelta = -damage;
                 combatQueueTarget.finalDefense = newDefense;
-                combatQueueTarget.healthDelta = newDefense;
                 combatQueueTarget.finalHealth = newHp;
             } else {
                 // Update attackQueue Details

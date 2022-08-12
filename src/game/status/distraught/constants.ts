@@ -7,7 +7,7 @@ import {
     StatusTrigger,
     StatusType,
 } from 'src/game/status/interfaces';
-import { damageEffect } from '../damage/constants';
+import { damageEffect } from '../../effects/damage/constants';
 
 export const distraught: StatusEffect = {
     name: 'distraught',

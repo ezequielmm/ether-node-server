@@ -1,18 +1,10 @@
-import { JsonEffect } from 'src/game/effects/effects.interface';
-import {
-    AttachedStatus,
-    JsonStatus,
-    StatusType,
-} from 'src/game/status/interfaces';
-import {
-    CardRarityEnum,
-    CardTypeEnum,
-    CardKeywordEnum,
-} from '../card/card.enum';
+import { AttachedStatus, StatusType } from 'src/game/status/interfaces';
+import { Card } from '../card/card.schema';
 import { EnemyScript } from '../enemy/enemy.interface';
 import {
     ExpeditionMapNodeTypeEnum,
     ExpeditionMapNodeStatusEnum,
+    IExpeditionNodeReward,
 } from './expedition.enum';
 import { Expedition } from './expedition.schema';
 
@@ -33,22 +25,9 @@ export interface IExpeditionNode {
     state?: any;
 }
 
-export interface IExpeditionPlayerStateDeckCard {
+export class IExpeditionPlayerStateDeckCard extends Card {
     id: string;
     isTemporary: boolean;
-    name: string;
-    rarity: CardRarityEnum;
-    cardType: CardTypeEnum;
-    pool: string;
-    energy: number;
-    description: string;
-    properties: {
-        effects: JsonEffect[];
-        statuses: JsonStatus[];
-    };
-    keywords: CardKeywordEnum[];
-    showPointer: boolean;
-    isUpgraded: boolean;
 }
 
 export interface IExpeditionCurrentNodeDataEnemy {
@@ -66,7 +45,7 @@ export interface IExpeditionCurrentNodeDataEnemy {
 
 export interface IExpeditionReward {
     id: string;
-    type: 'gold' | 'card' | 'potion' | 'trinket';
+    type: IExpeditionNodeReward;
     amount: number;
     taken: boolean;
 }

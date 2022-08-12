@@ -15,13 +15,17 @@ export class CardService {
         return this.card.find().lean();
     }
 
-    async findByType(type: CardTypeEnum): Promise<CardDocument[]> {
-        return this.card.find({ card_type: type }).lean();
+    async findByType(card_type: CardTypeEnum): Promise<CardDocument[]> {
+        return this.card.find({ card_type }).lean();
     }
 
     async findById(id: CardId): Promise<CardDocument> {
         return typeof id === 'string'
             ? this.card.findById(id).lean()
             : this.card.findOne({ cardId: id }).lean();
+    }
+
+    async findCardsById(cards: number[]): Promise<CardDocument[]> {
+        return this.card.find({ cardId: { $in: cards } }).lean();
     }
 }

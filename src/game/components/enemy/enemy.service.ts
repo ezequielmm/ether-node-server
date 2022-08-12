@@ -16,7 +16,10 @@ import {
 import { getRandomItemByWeight } from 'src/utils';
 import { CombatQueueService } from '../combatQueue/combatQueue.service';
 import { ICombatQueueTarget } from '../combatQueue/combatQueue.interface';
-import { CombatQueueTargetTypeEnum } from '../combatQueue/combatQueue.enum';
+import {
+    CombatQueueTargetEffectTypeEnum,
+    CombatQueueTargetTypeEnum,
+} from '../combatQueue/combatQueue.enum';
 
 @Injectable()
 export class EnemyService {
@@ -145,7 +148,7 @@ export class EnemyService {
 
         enemy.value.defense = defense;
 
-        this.logger.debug(`Set defense of ${id} to ${defense}`);
+        this.logger.debug(`Set defense of enemy ${id} to ${defense}`);
 
         return defense;
     }
@@ -161,21 +164,23 @@ export class EnemyService {
     public async setHp(ctx: Context, id: EnemyId, hp: number): Promise<number> {
         const enemy = this.get(ctx, id);
 
+        const newHp = Math.min(hp, enemy.value.hpMax);
+
         await this.expeditionService.updateByFilter(
             {
                 _id: ctx.expedition._id,
                 ...enemySelector(enemy.value.id),
             },
             {
-                [ENEMY_HP_CURRENT_PATH]: hp,
+                [ENEMY_HP_CURRENT_PATH]: newHp,
             },
         );
 
-        enemy.value.hpCurrent = hp;
+        enemy.value.hpCurrent = newHp;
 
-        this.logger.debug(`Set hp of ${id} to ${hp}`);
+        this.logger.debug(`Set hpCurrent of enemy ${id} to ${hp}`);
 
-        return hp;
+        return newHp;
     }
 
     /**
@@ -198,6 +203,7 @@ export class EnemyService {
 
         // Here we create the target for the combat queue
         const combatQueueTarget: ICombatQueueTarget = {
+            effectType: CombatQueueTargetEffectTypeEnum.Damage,
             targetType: CombatQueueTargetTypeEnum.Enemy,
             targetId: enemy.id,
             defenseDelta: 0,
@@ -225,7 +231,7 @@ export class EnemyService {
                 // Update attackQueue Details
                 combatQueueTarget.defenseDelta = -damage;
                 combatQueueTarget.finalDefense = enemy.defense;
-                combatQueueTarget.healthDelta = newDefense;
+                combatQueueTarget.healthDelta = -newDefense;
                 combatQueueTarget.finalHealth = enemy.hpCurrent;
             } else {
                 // Otherwise, we update the defense with the new value
