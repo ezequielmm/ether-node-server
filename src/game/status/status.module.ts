@@ -4,6 +4,7 @@ import { ExpeditionModule } from '../components/expedition/expedition.module';
 import { PlayerModule } from '../components/player/player.module';
 import { EffectModule } from '../effects/effects.module';
 import { ProviderModule } from '../provider/provider.module';
+import { BolsteredStatus } from './bolstered/bolstered.status';
 import { BurnStatus } from './burn/burn.status';
 import { ConfusionStatus } from './confusion/confusion.status';
 import { DistraughtEvent } from './distraught/distraught.event';
@@ -62,6 +63,9 @@ import { TurtlingStatus } from './turtling/turtling.status';
         InterceptEvent,
         DistraughtEvent,
         DistraughtStatus,
+        DistraughtEvent,
+        DrainedStatus,
+        BolsteredStatus,
     ],
     exports: [StatusService],
 })

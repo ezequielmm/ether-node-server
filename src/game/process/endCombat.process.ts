@@ -26,7 +26,7 @@ export class EndCombatProcess {
         private readonly expeditionService: ExpeditionService,
     ) {}
 
-    @OnEvent('entity.*')
+    @OnEvent('entity.*', { async: true })
     async handle(payload: EntityDamageEvent): Promise<void> {
         const { ctx } = payload;
         if (this.playerService.isDead(ctx)) {

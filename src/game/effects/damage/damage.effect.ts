@@ -22,7 +22,7 @@ export class DamageEffect implements EffectHandler {
     constructor(
         private readonly playerService: PlayerService,
         private readonly enemyService: EnemyService,
-        private readonly eventEmitter2: EventEmitter2,
+        private readonly eventEmitter: EventEmitter2,
     ) {}
 
     async handle(payload: EffectDTO<DamageArgs>): Promise<void> {
@@ -72,7 +72,7 @@ export class DamageEffect implements EffectHandler {
         }
 
         // Emit the event
-        this.eventEmitter2.emit('entity.damage', {
+        await this.eventEmitter.emitAsync('entity.damage', {
             ctx,
             entity: target,
         });
