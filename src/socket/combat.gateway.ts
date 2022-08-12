@@ -219,7 +219,7 @@ export class CombatGateway {
         } else {
             return JSON.stringify(
                 StandardResponse.respond({
-                    message_type: SWARMessageType.EndTurn,
+                    message_type: SWARMessageType.EndCombat,
                     action: SWARAction.SelectAnotherReward,
                     data: pendingRewards,
                 }),
