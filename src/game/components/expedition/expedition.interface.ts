@@ -1,14 +1,4 @@
-import { JsonEffect } from 'src/game/effects/effects.interface';
-import {
-    AttachedStatus,
-    JsonStatus,
-    StatusType,
-} from 'src/game/status/interfaces';
-import {
-    CardRarityEnum,
-    CardTypeEnum,
-    CardKeywordEnum,
-} from '../card/card.enum';
+import { AttachedStatus, StatusType } from 'src/game/status/interfaces';
 import { Card } from '../card/card.schema';
 import { EnemyScript } from '../enemy/enemy.interface';
 import {
