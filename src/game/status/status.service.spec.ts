@@ -7,7 +7,6 @@ import {
     ExpeditionDocument,
 } from '../components/expedition/expedition.schema';
 import { ExpeditionService } from '../components/expedition/expedition.service';
-import { Context } from '../components/interfaces';
 import { damageEffect } from '../effects/damage/constants';
 import { EffectDTO } from '../effects/effects.interface';
 import { ProviderService } from '../provider/provider.service';
@@ -96,10 +95,6 @@ describe('StatusService', () => {
     let service: StatusService;
     let statusEventA: StatusEventA;
     let effectDTO: EffectDTO;
-    const mockCtx: Context = {
-        client: undefined,
-        expedition: undefined,
-    };
 
     beforeEach(async () => {
         const module = await Test.createTestingModule({

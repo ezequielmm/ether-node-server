@@ -1,4 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import { Socket } from 'socket.io';
 import { DiscardAllCardsAction } from '../action/discardAllCards.action';
 import { CombatTurnEnum } from '../components/expedition/expedition.enum';
@@ -26,6 +27,7 @@ export class EndPlayerTurnProcess {
         private readonly beginEnemyTurnProcess: BeginEnemyTurnProcess,
         private readonly statusService: StatusService,
         private readonly expeditionService: ExpeditionService,
+        private readonly eventEmitter: EventEmitter2,
     ) {}
 
     async handle(payload: EndPlayerTurnDTO): Promise<void> {
@@ -55,13 +57,16 @@ export class EndPlayerTurnProcess {
             expedition,
         };
 
+        await this.eventEmitter.emitAsync('player:before-end-turn', { ctx });
+
         await this.discardAllCardsAction.handle({
             client,
             SWARMessageTypeToSend: SWARMessageType.EndTurn,
         });
 
         await this.statusService.trigger(ctx, StatusEventType.OnTurnEnd);
-
         await this.beginEnemyTurnProcess.handle({ client });
+
+        await this.eventEmitter.emitAsync('player:after-end-turn', { ctx });
     }
 }
