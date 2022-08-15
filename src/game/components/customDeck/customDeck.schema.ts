@@ -10,6 +10,9 @@ export class CustomDeck {
     @Prop()
     name: string;
 
+    @Prop()
+    email: string;
+
     @Prop({ type: Object })
     cards: {
         cardId: number;
