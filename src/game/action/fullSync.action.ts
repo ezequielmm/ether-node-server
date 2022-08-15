@@ -27,7 +27,7 @@ export class FullSyncAction {
 
         const { map, playerState } = expedition;
 
-        this.logger.log(`Sent message ExpeditionMap to client ${client.id}`);
+        this.logger.debug(`Sent message ExpeditionMap to client ${client.id}`);
 
         client.emit(
             'ExpeditionMap',
@@ -40,7 +40,7 @@ export class FullSyncAction {
             ),
         );
 
-        this.logger.log(`Sent message PlayerState to client ${client.id}`);
+        this.logger.debug(`Sent message PlayerState to client ${client.id}`);
 
         client.emit(
             'PlayerState',

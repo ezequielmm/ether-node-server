@@ -1,7 +1,9 @@
+import { Logger } from '@nestjs/common';
 import { SubscribeMessage, WebSocketGateway } from '@nestjs/websockets';
 import { Socket } from 'socket.io';
 import { IExpeditionNodeReward } from 'src/game/components/expedition/expedition.enum';
 import { ExpeditionService } from 'src/game/components/expedition/expedition.service';
+import { restoreMap } from 'src/game/map/app';
 import {
     StandardResponse,
     SWARMessageType,
@@ -14,6 +16,8 @@ import {
     },
 })
 export class RewardGateway {
+    private readonly logger: Logger = new Logger(RewardGateway.name);
+
     constructor(private readonly expeditionService: ExpeditionService) {}
 
     @SubscribeMessage('RewardSelected')
@@ -21,21 +25,24 @@ export class RewardGateway {
         client: Socket,
         rewardId: string,
     ): Promise<string> {
+        this.logger.debug(`client ${client.id} choose reward id: ${rewardId}`);
+
         // Get the updated expedition
+        const expedition = await this.expeditionService.findOne({
+            clientId: client.id,
+        });
+
         const {
-            _id,
+            _id: expeditionId,
             currentNode: {
                 completed: nodeIsCompleted,
                 data: { rewards },
             },
-            map,
-        } = await this.expeditionService.findOne({
-            clientId: client.id,
-        });
+        } = expedition;
 
         // Check if the node is completed
         if (nodeIsCompleted)
-            throw new Error('Node already completed, cannot select reward');
+            this.logger.debug('Node already completed, cannot select reward');
 
         // check if the reward that we are receiving is correct and exists
         const reward = rewards.find(({ id }) => {
@@ -51,7 +58,7 @@ export class RewardGateway {
         // Next we save the reward on the expedition
         await this.expeditionService.updateByFilter(
             {
-                _id,
+                expeditionId,
                 'currentNode.data.rewards.id': rewardId,
             },
             {
@@ -64,7 +71,7 @@ export class RewardGateway {
         // Now we apply the redward to the user profile
         switch (reward.type) {
             case IExpeditionNodeReward.Gold:
-                await this.expeditionService.updateById(_id, {
+                await this.expeditionService.updateById(expeditionId, {
                     $inc: {
                         'playerState.gold': reward.amount,
                     },
@@ -78,21 +85,50 @@ export class RewardGateway {
         });
 
         if (pendingRewards.length === 0) {
+            const {
+                map: oldMap,
+                currentNode: {
+                    nodeId,
+                    data: {
+                        player: { hpCurrent, hpMax },
+                    },
+                },
+            } = expedition;
+
+            const newMap = restoreMap(oldMap, client.id);
+
+            newMap.activeNode = newMap.fullCurrentMap.get(nodeId);
+            newMap.activeNode.complete(newMap);
+
+            const mapToSave = newMap.getMap;
+
+            await this.expeditionService.updateById(expedition._id, {
+                $set: {
+                    map: mapToSave,
+                    'currentNode.completed': true,
+                    'currentNode.showRewards': false,
+                    'currentNode.data.player': null,
+                    'currentNode.data.enemies': null,
+                    'playerState.hpCurrent': hpCurrent,
+                    'playerState.hpMax': hpMax,
+                },
+            });
+
             return JSON.stringify(
                 StandardResponse.respond({
                     message_type: SWARMessageType.EndCombat,
                     action: SWARAction.ShowMap,
-                    data: map,
-                }),
-            );
-        } else {
-            return JSON.stringify(
-                StandardResponse.respond({
-                    message_type: SWARMessageType.EndCombat,
-                    action: SWARAction.SelectAnotherReward,
-                    data: pendingRewards,
+                    data: mapToSave,
                 }),
             );
         }
+
+        return JSON.stringify(
+            StandardResponse.respond({
+                message_type: SWARMessageType.EndCombat,
+                action: SWARAction.SelectAnotherReward,
+                data: pendingRewards,
+            }),
+        );
     }
 }

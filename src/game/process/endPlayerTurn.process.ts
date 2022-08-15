@@ -33,7 +33,7 @@ export class EndPlayerTurnProcess {
     async handle(payload: EndPlayerTurnDTO): Promise<void> {
         const { client } = payload;
 
-        this.logger.log(
+        this.logger.debug(
             `Sent message PutData to client ${client.id}: ${SWARAction.ChangeTurn}`,
         );
 

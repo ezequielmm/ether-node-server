@@ -66,7 +66,7 @@ export class BeginPlayerTurnProcess {
             newRound: round + 1,
         });
 
-        this.logger.log(
+        this.logger.debug(
             `Sent message PutData to client ${client.id}: ${SWARAction.ChangeTurn}`,
         );
 
@@ -91,7 +91,7 @@ export class BeginPlayerTurnProcess {
         this.playerService.setEnergy(ctx, initialEnergy);
 
         // Send new energy amount
-        this.logger.log(
+        this.logger.debug(
             `Sent message PutData to client ${client.id}: ${SWARAction.UpdateEnergy}`,
         );
 

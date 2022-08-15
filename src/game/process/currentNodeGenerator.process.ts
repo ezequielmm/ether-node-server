@@ -87,6 +87,7 @@ export class CurrentNodeGeneratorProcess {
             nodeId: this.node.id,
             completed: this.node.isComplete,
             nodeType: this.node.type,
+            showRewards: false,
             data: {
                 round: 0,
                 playing: CombatTurnEnum.Player,
@@ -119,6 +120,7 @@ export class CurrentNodeGeneratorProcess {
             nodeId: this.node.id,
             completed: true,
             nodeType: this.node.type,
+            showRewards: false,
         };
     }
 

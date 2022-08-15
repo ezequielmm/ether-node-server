@@ -298,7 +298,9 @@ export class EnemyService {
 
             enemy.value.currentScript = nextScript;
 
-            this.logger.debug(`Calculated new script for ${enemy.value.id}`);
+            this.logger.debug(
+                `Calculated new script for enemy ${enemy.value.id}`,
+            );
         }
     }
 
