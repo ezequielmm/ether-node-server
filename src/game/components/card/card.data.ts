@@ -7,6 +7,7 @@ import { BolsterCard, BolsterCardUpgraded } from './data/bolster.card';
 import { ChargeCard, ChargeCardUpgraded } from './data/charge.card';
 import { CounterCard, CounterCardUpgraded } from './data/counter.card';
 import { DefenseCard, DefenseCardUpgraded } from './data/defend.card';
+import { DivineGiftCard, DivineGiftCardUpgraded } from './data/divineGift.card';
 import { DoubleDownCard, DoubleDownCardUpgraded } from './data/doubleDown.card';
 import { FadeCard, FadeCardUpgraded } from './data/fade.card';
 import { FeintCard, FeintCardUpgraded } from './data/feint.card';
@@ -163,4 +164,6 @@ export const data: Card[] = [
     BolsterCardUpgraded,
     AdeptCard,
     AdeptCardUpgraded,
+    DivineGiftCard,
+    DivineGiftCardUpgraded,
 ];
