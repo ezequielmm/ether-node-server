@@ -25,7 +25,7 @@ export class RewardGateway {
         client: Socket,
         rewardId: string,
     ): Promise<string> {
-        this.logger.debug(`client ${client.id} choose reward id: ${rewardId}`);
+        this.logger.debug(`Client ${client.id} choose reward id: ${rewardId}`);
 
         // Get the updated expedition
         const expedition = await this.expeditionService.findOne({
@@ -84,50 +84,58 @@ export class RewardGateway {
             return id !== rewardId && taken === false;
         });
 
-        if (pendingRewards.length === 0) {
-            const {
-                map: oldMap,
-                currentNode: {
-                    nodeId,
-                    data: {
-                        player: { hpCurrent, hpMax },
-                    },
-                },
-            } = expedition;
-
-            const newMap = restoreMap(oldMap, client.id);
-
-            newMap.activeNode = newMap.fullCurrentMap.get(nodeId);
-            newMap.activeNode.complete(newMap);
-
-            const mapToSave = newMap.getMap;
-
-            await this.expeditionService.updateById(expedition._id, {
-                $set: {
-                    map: mapToSave,
-                    'currentNode.completed': true,
-                    'currentNode.showRewards': false,
-                    'currentNode.data.player': null,
-                    'currentNode.data.enemies': null,
-                    'playerState.hpCurrent': hpCurrent,
-                    'playerState.hpMax': hpMax,
-                },
-            });
-
-            return JSON.stringify(
-                StandardResponse.respond({
-                    message_type: SWARMessageType.EndCombat,
-                    action: SWARAction.ShowMap,
-                    data: mapToSave,
-                }),
-            );
-        }
-
         return JSON.stringify(
             StandardResponse.respond({
                 message_type: SWARMessageType.EndCombat,
                 action: SWARAction.SelectAnotherReward,
                 data: pendingRewards,
+            }),
+        );
+    }
+
+    @SubscribeMessage('ContinueExpedition')
+    async handleContinueExpedition(client: Socket): Promise<string> {
+        this.logger.debug(
+            `Client ${client.id} will continue with teh expedition`,
+        );
+
+        // Get the updated expedition
+        const expedition = await this.expeditionService.findOne({
+            clientId: client.id,
+        });
+
+        const {
+            map: oldMap,
+            currentNode: {
+                nodeId,
+                data: {
+                    player: { hpCurrent, hpMax },
+                },
+            },
+        } = expedition;
+
+        const newMap = restoreMap(oldMap, client.id);
+
+        newMap.activeNode = newMap.fullCurrentMap.get(nodeId);
+        newMap.activeNode.complete(newMap);
+
+        const mapToSave = newMap.getMap;
+
+        await this.expeditionService.updateById(expedition._id, {
+            $set: {
+                map: mapToSave,
+                'currentNode.completed': true,
+                'currentNode.showRewards': false,
+                'playerState.hpCurrent': hpCurrent,
+                'playerState.hpMax': hpMax,
+            },
+        });
+
+        return JSON.stringify(
+            StandardResponse.respond({
+                message_type: SWARMessageType.EndCombat,
+                action: SWARAction.ShowMap,
+                data: mapToSave,
             }),
         );
     }
