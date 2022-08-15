@@ -96,7 +96,7 @@ export class RewardGateway {
     @SubscribeMessage('ContinueExpedition')
     async handleContinueExpedition(client: Socket): Promise<string> {
         this.logger.debug(
-            `Client ${client.id} will continue with teh expedition`,
+            `Client ${client.id} will continue with the expedition`,
         );
 
         // Get the updated expedition
@@ -120,6 +120,8 @@ export class RewardGateway {
         newMap.activeNode.complete(newMap);
 
         const mapToSave = newMap.getMap;
+
+        this.logger.debug(`Player ${client.id} completed the node ${nodeId}`);
 
         await this.expeditionService.updateById(expedition._id, {
             $set: {
