@@ -80,8 +80,6 @@ export class InitExpeditionProcess {
         // Get all the cards
         const cards = await this.cardService.findCardsById(cardIds);
 
-        console.log({ cards });
-
         // Filter the card ids and make a new array
         return cards
             .reduce((newDeckCards, card) => {
