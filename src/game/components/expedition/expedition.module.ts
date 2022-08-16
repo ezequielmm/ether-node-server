@@ -4,6 +4,7 @@ import { Expedition, ExpeditionSchema } from './expedition.schema';
 import { ExpeditionService } from './expedition.service';
 import { CardModule } from '../card/card.module';
 import { EnemyModule } from '../enemy/enemy.module';
+import { PlayerModule } from '../player/player.module';
 
 @Module({
     imports: [
@@ -15,6 +16,7 @@ import { EnemyModule } from '../enemy/enemy.module';
         ]),
         CardModule,
         EnemyModule,
+        PlayerModule,
     ],
     providers: [ExpeditionService],
     exports: [ExpeditionService, MongooseModule],

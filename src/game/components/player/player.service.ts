@@ -1,5 +1,7 @@
 import { forwardRef, Inject, Injectable, Logger } from '@nestjs/common';
 import { set } from 'lodash';
+import { AttachedStatus, Status } from 'src/game/status/interfaces';
+import { StatusService } from 'src/game/status/status.service';
 import { CardTargetedEnum } from '../card/card.enum';
 import {
     CombatQueueTargetEffectTypeEnum,
@@ -7,12 +9,14 @@ import {
 } from '../combatQueue/combatQueue.enum';
 import { ICombatQueueTarget } from '../combatQueue/combatQueue.interface';
 import { CombatQueueService } from '../combatQueue/combatQueue.service';
+import { EnemyId } from '../enemy/enemy.type';
 import { ExpeditionService } from '../expedition/expedition.service';
 import { Context, ExpeditionEntity } from '../interfaces';
 import {
     PLAYER_CURRENT_HP_PATH,
     PLAYER_DEFENSE_PATH,
     PLAYER_ENERGY_PATH,
+    PLAYER_STATUSES_PATH,
 } from './contants';
 import { ExpeditionPlayer } from './interfaces';
 
@@ -24,6 +28,8 @@ export class PlayerService {
         @Inject(forwardRef(() => ExpeditionService))
         private readonly expeditionService: ExpeditionService,
         private readonly combatQueueService: CombatQueueService,
+        @Inject(forwardRef(() => StatusService))
+        private readonly statusService: StatusService,
     ) {}
 
     /**
@@ -205,5 +211,55 @@ export class PlayerService {
         ]);
 
         return newHp;
+    }
+
+    /**
+     * Attach a status to an enemy
+     *
+     * @param ctx Context
+     * @param source Source of the status (Who is attacking)
+     * @param status Status to attach
+     * @param [args = { value: 1 }] Arguments to pass to the status
+     *
+     * @returns Attached status
+     * @throws Error if the status is not found
+     */
+    async attach(
+        ctx: Context,
+        source: ExpeditionEntity,
+        name: Status['name'],
+        args: AttachedStatus['args'] = { value: 1 },
+    ): Promise<AttachedStatus> {
+        const player = this.get(ctx);
+        // Get metadata to determine the type of status to attach
+        const metadata = this.statusService.getMetadataByName(name);
+
+        // Create the status to attach
+        const status: AttachedStatus = {
+            name,
+            args,
+            sourceReference: {
+                type: source.type,
+                id: source.value['id'],
+            },
+            addedInRound: ctx.expedition.currentNode.data.round,
+        };
+
+        // Attach the status to the player
+        player.value.combatState.statuses[metadata.status.type].push(status);
+
+        // Save the status to the database
+        await this.expeditionService.updateByFilter(
+            {
+                _id: ctx.expedition._id,
+            },
+            {
+                [PLAYER_STATUSES_PATH]: player.value.combatState.statuses,
+            },
+        );
+
+        this.logger.debug(`Status ${name} attached to player`);
+
+        return status;
     }
 }
