@@ -28,7 +28,7 @@ import { SetCombatTurnAction } from './setCombatTurn.action';
         forwardRef(() => EffectModule),
         forwardRef(() => StatusModule),
         PlayerModule,
-        EnemyModule,
+        forwardRef(() => EnemyModule),
     ],
     providers: [
         FullSyncAction,
