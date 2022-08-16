@@ -12,8 +12,6 @@ import { ExpeditionService } from 'src/game/components/expedition/expedition.ser
 import { FullSyncAction } from 'src/game/action/fullSync.action';
 import { ExpeditionMapNodeTypeEnum } from 'src/game/components/expedition/expedition.enum';
 import { InitCombatProcess } from 'src/game/process/initCombat.process';
-import { CharacterService } from 'src/game/components/character/character.service';
-import { CharacterClassEnum } from 'src/game/components/character/character.enum';
 import { PlayerService } from 'src/game/components/player/player.service';
 import { CombatQueueService } from 'src/game/components/combatQueue/combatQueue.service';
 
@@ -32,7 +30,6 @@ export class SocketGateway
         private readonly expeditionService: ExpeditionService,
         private readonly fullsyncAction: FullSyncAction,
         private readonly initCombatProcess: InitCombatProcess,
-        private readonly characterService: CharacterService,
         private readonly playerService: PlayerService,
         private readonly combatQueueService: CombatQueueService,
     ) {}
@@ -83,9 +80,9 @@ export class SocketGateway
                                 nodeId,
                             });
 
-                        const { initialHealth } =
-                            await this.characterService.findOne({
-                                characterClass: CharacterClassEnum.Knight,
+                        const { hpCurrent } =
+                            await this.expeditionService.getPlayerState({
+                                clientId: client.id,
                             });
 
                         await this.playerService.setHp(
@@ -93,7 +90,7 @@ export class SocketGateway
                                 client,
                                 expedition,
                             },
-                            initialHealth,
+                            hpCurrent,
                         );
 
                         await this.initCombatProcess.process(client, node);

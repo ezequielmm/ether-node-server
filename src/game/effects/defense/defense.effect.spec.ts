@@ -15,7 +15,12 @@ import { EventEmitter2 } from '@nestjs/event-emitter';
 import { CombatQueueService } from 'src/game/components/combatQueue/combatQueue.service';
 import { ExpeditionEnemy } from 'src/game/components/enemy/enemy.interface';
 import { StatusType } from 'src/game/status/interfaces';
-import { EnemyIntentionType } from 'src/game/components/enemy/enemy.enum';
+import {
+    EnemyCategoryEnum,
+    EnemyIntentionType,
+    EnemySizeEnum,
+    EnemyTypeEnum,
+} from 'src/game/components/enemy/enemy.enum';
 import { damageEffect } from '../damage/constants';
 
 describe('DefenseEffect', () => {
@@ -205,11 +210,15 @@ describe('DefenseEffect', () => {
         it('should get defense based by the number of enemies in node', async () => {
             mockCtx.expedition.currentNode.data.enemies = [
                 {
-                    enemyId: 1,
                     id: '123',
                     defense: 0,
-                    hpCurrent: 80,
-                    hpMax: 80,
+                    name: 'Sporemonger',
+                    enemyId: 1,
+                    type: EnemyTypeEnum.Plant,
+                    category: EnemyCategoryEnum.Basic,
+                    size: EnemySizeEnum.Small,
+                    hpCurrent: 46,
+                    hpMax: 46,
                     statuses: {
                         [StatusType.Buff]: [],
                         [StatusType.Debuff]: [],
@@ -226,11 +235,15 @@ describe('DefenseEffect', () => {
                     },
                 },
                 {
-                    enemyId: 2,
                     id: '12345',
                     defense: 0,
-                    hpCurrent: 80,
-                    hpMax: 80,
+                    name: 'Sporemonger',
+                    enemyId: 2,
+                    type: EnemyTypeEnum.Plant,
+                    category: EnemyCategoryEnum.Basic,
+                    size: EnemySizeEnum.Small,
+                    hpCurrent: 46,
+                    hpMax: 46,
                     statuses: {
                         [StatusType.Buff]: [],
                         [StatusType.Debuff]: [],

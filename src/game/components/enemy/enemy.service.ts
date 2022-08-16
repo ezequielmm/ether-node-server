@@ -308,6 +308,15 @@ export class EnemyService {
     }
 
     /**
+     * Get multiple enemies by their id
+     *
+     * @param enemies number[]
+     */
+    async findEnemiesById(enemies: number[]): Promise<EnemyDocument[]> {
+        return await this.enemy.find({ enemyId: { $in: enemies } }).lean();
+    }
+
+    /**
      * Attach a status to an enemy
      *
      * @param ctx Context

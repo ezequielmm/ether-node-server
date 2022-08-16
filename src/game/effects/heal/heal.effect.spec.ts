@@ -24,6 +24,8 @@ describe('HealEffect', () => {
                 hpMax: 80,
             },
             combatState: {
+                hpCurrent: 75,
+                hpMax: 80,
                 energy: 3,
                 energyMax: 3,
                 handSize: 5,
