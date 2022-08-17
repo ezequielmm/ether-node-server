@@ -4,6 +4,7 @@ import { CombatQueueModule } from '../components/combatQueue/combatQueue.module'
 import { EnemyModule } from '../components/enemy/enemy.module';
 import { ExpeditionModule } from '../components/expedition/expedition.module';
 import { PlayerModule } from '../components/player/player.module';
+import { HistoryModule } from '../history/history.module';
 import { ProviderModule } from '../provider/provider.module';
 import { StatusModule } from '../status/status.module';
 import { DamageEffect } from './damage/damage.effect';
@@ -19,6 +20,7 @@ import { HealEffect } from './heal/heal.effect';
 import { RemoveDebuffEffect } from './removeDebuff/removeDebuff.effect';
 import { RemoveDefenseEffect } from './removeDefense/removeDefense.effect';
 import { RepositionEffect } from './reposition/reposition.effect';
+import { TwistTheBladeEffect } from './twistTheBlade/twistTheBlade.effect';
 
 @Module({
     imports: [
@@ -29,6 +31,7 @@ import { RepositionEffect } from './reposition/reposition.effect';
         PlayerModule,
         CombatQueueModule,
         forwardRef(() => ActionModule),
+        HistoryModule,
     ],
     providers: [
         EffectService,
@@ -44,6 +47,7 @@ import { RepositionEffect } from './reposition/reposition.effect';
         FlurryEffect,
         RemoveDebuffEffect,
         DoubleResolveEffect,
+        TwistTheBladeEffect,
     ],
     exports: [EffectService],
 })

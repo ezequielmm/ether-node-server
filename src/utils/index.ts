@@ -132,3 +132,9 @@ export function getRandomItemByWeight<T>(items: T[], weights: number[]): T {
 export function isNotUndefined(value: boolean | undefined | null): boolean {
     return !!value;
 }
+
+export type DeepPartial<T> = T extends object
+    ? {
+          [P in keyof T]?: DeepPartial<T[P]>;
+      }
+    : T;
