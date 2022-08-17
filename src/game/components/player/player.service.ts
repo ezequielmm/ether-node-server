@@ -10,7 +10,6 @@ import {
 } from '../combatQueue/combatQueue.enum';
 import { ICombatQueueTarget } from '../combatQueue/combatQueue.interface';
 import { CombatQueueService } from '../combatQueue/combatQueue.service';
-import { EnemyId } from '../enemy/enemy.type';
 import { ExpeditionService } from '../expedition/expedition.service';
 import { Context, ExpeditionEntity } from '../interfaces';
 import {
