@@ -1,5 +1,6 @@
 import { Card } from './card.schema';
 import { AdeptCard, AdeptCardUpgraded } from './data/adept.card';
+import { AnticipateCard, AnticipateCardUpgraded } from './data/anticipate.card';
 import { AttackCard, AttackCardUpgraded } from './data/attack.card';
 import { BackHandCard, BackHandCardUpgraded } from './data/backhand.card';
 import { BlusterCard, BlusterCardUpgraded } from './data/bluster.card';
@@ -169,4 +170,6 @@ export const data: Card[] = [
     DivineGiftCardUpgraded,
     ShoutCard,
     ShoutCardUpgraded,
+    AnticipateCard,
+    AnticipateCardUpgraded,
 ];
