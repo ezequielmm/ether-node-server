@@ -15,6 +15,7 @@ import { DrainedStatus } from './drained/drained.status';
 import { ForceFieldEvent } from './forceField/forcefield.event';
 import { ForceFieldStatus } from './forceField/forceField.status';
 import { FortitudeStatus } from './fortitude/fortitude.status';
+import { GiftedStatus } from './gifted/gifted.status';
 import { HeraldDelayedStatus } from './heraldDelayed/heraldDelayed.status';
 import { ImbuedStatus } from './imbued/imbued.status';
 import { InterceptEvent } from './intercept/intercept.event';
@@ -66,6 +67,7 @@ import { TurtlingStatus } from './turtling/turtling.status';
         DistraughtEvent,
         DrainedStatus,
         BolsteredStatus,
+        GiftedStatus,
     ],
     exports: [StatusService],
 })
