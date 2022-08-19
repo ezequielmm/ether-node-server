@@ -2,11 +2,13 @@ import { Injectable } from '@nestjs/common';
 import { getModelToken } from '@nestjs/mongoose';
 import { Test } from '@nestjs/testing';
 import { Socket } from 'socket.io';
+import { EnemyService } from '../components/enemy/enemy.service';
 import {
     Expedition,
     ExpeditionDocument,
 } from '../components/expedition/expedition.schema';
 import { ExpeditionService } from '../components/expedition/expedition.service';
+import { PlayerService } from '../components/player/player.service';
 import { damageEffect } from '../effects/damage/constants';
 import { EffectDTO } from '../effects/effects.interface';
 import { ProviderService } from '../provider/provider.service';
@@ -106,6 +108,14 @@ describe('StatusService', () => {
                 StatusEventA,
                 { provide: getModelToken(Expedition.name), useValue: {} },
                 { provide: ExpeditionService, useValue: {} },
+                {
+                    provide: EnemyService,
+                    useValue: {},
+                },
+                {
+                    provide: PlayerService,
+                    useValue: {},
+                },
                 ProviderService,
             ],
         }).compile();

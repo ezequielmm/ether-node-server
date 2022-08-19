@@ -13,6 +13,7 @@ import { DistraughtStatus } from './distraught/distraught.status';
 import { DodgeStatus } from './dodge/dodge.status';
 import { DoubleDownStatus } from './doubleDown/doubleDown.status';
 import { DrainedStatus } from './drained/drained.status';
+import { FatigueStatus } from './fatigue/fatigue.status';
 import { ForceFieldEvent } from './forceField/forcefield.event';
 import { ForceFieldStatus } from './forceField/forceField.status';
 import { FortitudeStatus } from './fortitude/fortitude.status';
@@ -35,10 +36,10 @@ import { TurtlingStatus } from './turtling/turtling.status';
 @Module({
     imports: [
         ProviderModule,
-        ExpeditionModule,
+        forwardRef(() => ExpeditionModule),
         forwardRef(() => EffectModule),
-        PlayerModule,
-        EnemyModule,
+        forwardRef(() => EnemyModule),
+        forwardRef(() => PlayerModule),
         CardModule,
     ],
     providers: [
@@ -69,6 +70,7 @@ import { TurtlingStatus } from './turtling/turtling.status';
         DistraughtEvent,
         DrainedStatus,
         BolsteredStatus,
+        FatigueStatus,
         SharpenBladeStatus,
     ],
     exports: [StatusService],
