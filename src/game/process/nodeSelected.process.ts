@@ -57,7 +57,9 @@ export class NodeSelectedProcess {
                 case ExpeditionMapNodeTypeEnum.RoyalHouseB:
                 case ExpeditionMapNodeTypeEnum.RoyalHouseC:
                 case ExpeditionMapNodeTypeEnum.RoyalHouseD:
-                    this.logger.debug(`Map extended for client ${client.id}`);
+                    this.logger.debug(
+                        `Activated portal for client ${client.id}`,
+                    );
 
                     return JSON.stringify(
                         StandardResponse.respond({
