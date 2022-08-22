@@ -7,6 +7,7 @@ import { PlayerModule } from '../components/player/player.module';
 import { HistoryModule } from '../history/history.module';
 import { ProviderModule } from '../provider/provider.module';
 import { StatusModule } from '../status/status.module';
+import { AnticipatingEffect } from './anticipating/anticipating.effect';
 import { DamageEffect } from './damage/damage.effect';
 import { DefenseEffect } from './defense/defense.effect';
 import { DoubleBurnEffect } from './doubleBurn/doubleBurn.effect';
@@ -47,6 +48,7 @@ import { TwistTheBladeEffect } from './twistTheBlade/twistTheBlade.effect';
         FlurryEffect,
         RemoveDebuffEffect,
         DoubleResolveEffect,
+        AnticipatingEffect,
         TwistTheBladeEffect,
     ],
     exports: [EffectService],
