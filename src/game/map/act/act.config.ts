@@ -22,7 +22,24 @@ export const actCconfigAlternatives = [
                     subType: 'combat_standard',
                     chance: 80,
                     config: {
-                        enemies: [1],
+                        enemies: [
+                            {
+                                enemies: [1, 1], // TODO: StingFae1, StingFae2
+                                probability: 0.25,
+                            },
+                            {
+                                enemies: [1, 1], // TODO: BarkCharger, BarkCharger
+                                probability: 0.25,
+                            },
+                            {
+                                enemies: [1],
+                                probability: 0.25,
+                            },
+                            {
+                                enemies: [1], // TODO: MimicFrog (1 or 2)
+                                probability: 0.25,
+                            },
+                        ],
                     },
                 },
                 {
@@ -48,7 +65,24 @@ export const actCconfigAlternatives = [
                         subType: 'combat_standard',
                         chance: 40,
                         config: {
-                            enemies: [1],
+                            enemies: [
+                                {
+                                    enemies: [1, 1], // TODO: StingFae1, StingFae2
+                                    probability: 0.25,
+                                },
+                                {
+                                    enemies: [1, 1], // TODO: BarkCharger, BarkCharger
+                                    probability: 0.25,
+                                },
+                                {
+                                    enemies: [1],
+                                    probability: 0.25,
+                                },
+                                {
+                                    enemies: [1], // TODO: MimicFrog (1 or 2)
+                                    probability: 0.25,
+                                },
+                            ],
                         },
                     },
                 ],
@@ -61,7 +95,24 @@ export const actCconfigAlternatives = [
                         subType: 'combat_standard',
                         chance: 40,
                         config: {
-                            enemies: [1],
+                            enemies: [
+                                {
+                                    enemies: [1, 1], // TODO: StingFae1, StingFae2
+                                    probability: 0.25,
+                                },
+                                {
+                                    enemies: [1, 1], // TODO: BarkCharger, BarkCharger
+                                    probability: 0.25,
+                                },
+                                {
+                                    enemies: [1],
+                                    probability: 0.25,
+                                },
+                                {
+                                    enemies: [1], // TODO: MimicFrog (1 or 2)
+                                    probability: 0.25,
+                                },
+                            ],
                         },
                     },
                 ],
@@ -74,7 +125,24 @@ export const actCconfigAlternatives = [
                         subType: 'combat_standard',
                         chance: 40,
                         config: {
-                            enemies: [1],
+                            enemies: [
+                                {
+                                    enemies: [1, 1], // TODO: StingFae1, StingFae2
+                                    probability: 0.25,
+                                },
+                                {
+                                    enemies: [1, 1], // TODO: BarkCharger, BarkCharger
+                                    probability: 0.25,
+                                },
+                                {
+                                    enemies: [1],
+                                    probability: 0.25,
+                                },
+                                {
+                                    enemies: [1], // TODO: MimicFrog (1 or 2)
+                                    probability: 0.25,
+                                },
+                            ],
                         },
                     },
                 ],
@@ -87,7 +155,24 @@ export const actCconfigAlternatives = [
                         subType: 'combat_standard',
                         chance: 40,
                         config: {
-                            enemies: [1],
+                            enemies: [
+                                {
+                                    enemies: [1, 1], // TODO: StingFae1, StingFae2
+                                    probability: 0.25,
+                                },
+                                {
+                                    enemies: [1, 1], // TODO: BarkCharger, BarkCharger
+                                    probability: 0.25,
+                                },
+                                {
+                                    enemies: [1],
+                                    probability: 0.25,
+                                },
+                                {
+                                    enemies: [1], // TODO: MimicFrog (1 or 2)
+                                    probability: 0.25,
+                                },
+                            ],
                         },
                     },
                     {
@@ -95,7 +180,24 @@ export const actCconfigAlternatives = [
                         subType: 'combat_elite',
                         chance: 60,
                         config: {
-                            enemies: [],
+                            enemies: [
+                                {
+                                    enemies: [1, 1], // TODO: StingFae1, StingFae2
+                                    probability: 0.25,
+                                },
+                                {
+                                    enemies: [1, 1], // TODO: BarkCharger, BarkCharger
+                                    probability: 0.25,
+                                },
+                                {
+                                    enemies: [1],
+                                    probability: 0.25,
+                                },
+                                {
+                                    enemies: [1], // TODO: MimicFrog (1 or 2)
+                                    probability: 0.25,
+                                },
+                            ],
                         },
                     },
                 ],
@@ -108,7 +210,24 @@ export const actCconfigAlternatives = [
                         subType: 'combat_standard',
                         chance: 70,
                         config: {
-                            enemies: [1],
+                            enemies: [
+                                {
+                                    enemies: [1, 1], // TODO: StingFae1, StingFae2
+                                    probability: 0.25,
+                                },
+                                {
+                                    enemies: [1, 1], // TODO: BarkCharger, BarkCharger
+                                    probability: 0.25,
+                                },
+                                {
+                                    enemies: [1],
+                                    probability: 0.25,
+                                },
+                                {
+                                    enemies: [1], // TODO: MimicFrog (1 or 2)
+                                    probability: 0.25,
+                                },
+                            ],
                         },
                     },
                     {
@@ -116,7 +235,24 @@ export const actCconfigAlternatives = [
                         subType: 'combat_elite',
                         chance: 30,
                         config: {
-                            enemies: [],
+                            enemies: [
+                                {
+                                    enemies: [1, 1], // TODO: StingFae1, StingFae2
+                                    probability: 0.25,
+                                },
+                                {
+                                    enemies: [1, 1], // TODO: BarkCharger, BarkCharger
+                                    probability: 0.25,
+                                },
+                                {
+                                    enemies: [1],
+                                    probability: 0.25,
+                                },
+                                {
+                                    enemies: [1], // TODO: MimicFrog (1 or 2)
+                                    probability: 0.25,
+                                },
+                            ],
                         },
                     },
                 ],
@@ -129,7 +265,24 @@ export const actCconfigAlternatives = [
                         subType: 'combat_standard',
                         chance: 30,
                         config: {
-                            enemies: [1],
+                            enemies: [
+                                {
+                                    enemies: [1, 1], // TODO: StingFae1, StingFae2
+                                    probability: 0.25,
+                                },
+                                {
+                                    enemies: [1, 1], // TODO: BarkCharger, BarkCharger
+                                    probability: 0.25,
+                                },
+                                {
+                                    enemies: [1],
+                                    probability: 0.25,
+                                },
+                                {
+                                    enemies: [1], // TODO: MimicFrog (1 or 2)
+                                    probability: 0.25,
+                                },
+                            ],
                         },
                     },
                     {
@@ -137,7 +290,24 @@ export const actCconfigAlternatives = [
                         subType: 'combat_elite',
                         chance: 20,
                         config: {
-                            enemies: [],
+                            enemies: [
+                                {
+                                    enemies: [1, 1], // TODO: StingFae1, StingFae2
+                                    probability: 0.25,
+                                },
+                                {
+                                    enemies: [1, 1], // TODO: BarkCharger, BarkCharger
+                                    probability: 0.25,
+                                },
+                                {
+                                    enemies: [1],
+                                    probability: 0.25,
+                                },
+                                {
+                                    enemies: [1], // TODO: MimicFrog (1 or 2)
+                                    probability: 0.25,
+                                },
+                            ],
                         },
                     },
                     {
@@ -196,7 +366,24 @@ export const actCconfigAlternatives = [
                         subType: 'combat_boss',
                         chance: 100,
                         config: {
-                            enemies: ['boss_1'],
+                            enemies: [
+                                {
+                                    enemies: [1, 1], // TODO: StingFae1, StingFae2
+                                    probability: 0.25,
+                                },
+                                {
+                                    enemies: [1, 1], // TODO: BarkCharger, BarkCharger
+                                    probability: 0.25,
+                                },
+                                {
+                                    enemies: [1],
+                                    probability: 0.25,
+                                },
+                                {
+                                    enemies: [1], // TODO: MimicFrog (1 or 2)
+                                    probability: 0.25,
+                                },
+                            ],
                         },
                         map_data: {
                             icon: 'combat_boss_act1boss1',
@@ -221,7 +408,24 @@ export const actCconfigAlternatives = [
                     subType: 'combat_standard',
                     chance: 80,
                     config: {
-                        enemies: [1],
+                        enemies: [
+                            {
+                                enemies: [1, 1], // TODO: StingFae1, StingFae2
+                                probability: 0.25,
+                            },
+                            {
+                                enemies: [1, 1], // TODO: BarkCharger, BarkCharger
+                                probability: 0.25,
+                            },
+                            {
+                                enemies: [1],
+                                probability: 0.25,
+                            },
+                            {
+                                enemies: [1], // TODO: MimicFrog (1 or 2)
+                                probability: 0.25,
+                            },
+                        ],
                     },
                 },
                 {
@@ -260,7 +464,24 @@ export const actCconfigAlternatives = [
                         subType: 'combat_standard',
                         chance: 40,
                         config: {
-                            enemies: [1],
+                            enemies: [
+                                {
+                                    enemies: [1, 1], // TODO: StingFae1, StingFae2
+                                    probability: 0.25,
+                                },
+                                {
+                                    enemies: [1, 1], // TODO: BarkCharger, BarkCharger
+                                    probability: 0.25,
+                                },
+                                {
+                                    enemies: [1],
+                                    probability: 0.25,
+                                },
+                                {
+                                    enemies: [1], // TODO: MimicFrog (1 or 2)
+                                    probability: 0.25,
+                                },
+                            ],
                         },
                     },
                 ],
@@ -273,7 +494,24 @@ export const actCconfigAlternatives = [
                         subType: 'combat_standard',
                         chance: 40,
                         config: {
-                            enemies: [1],
+                            enemies: [
+                                {
+                                    enemies: [1, 1], // TODO: StingFae1, StingFae2
+                                    probability: 0.25,
+                                },
+                                {
+                                    enemies: [1, 1], // TODO: BarkCharger, BarkCharger
+                                    probability: 0.25,
+                                },
+                                {
+                                    enemies: [1],
+                                    probability: 0.25,
+                                },
+                                {
+                                    enemies: [1], // TODO: MimicFrog (1 or 2)
+                                    probability: 0.25,
+                                },
+                            ],
                         },
                     },
                 ],
@@ -286,7 +524,24 @@ export const actCconfigAlternatives = [
                         subType: 'combat_boss',
                         chance: 100,
                         config: {
-                            enemies: ['boss_1'],
+                            enemies: [
+                                {
+                                    enemies: [1, 1], // TODO: StingFae1, StingFae2
+                                    probability: 0.25,
+                                },
+                                {
+                                    enemies: [1, 1], // TODO: BarkCharger, BarkCharger
+                                    probability: 0.25,
+                                },
+                                {
+                                    enemies: [1],
+                                    probability: 0.25,
+                                },
+                                {
+                                    enemies: [1], // TODO: MimicFrog (1 or 2)
+                                    probability: 0.25,
+                                },
+                            ],
                         },
                         map_data: {
                             icon: 'combat_boss_act1boss1',
