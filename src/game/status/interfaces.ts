@@ -127,9 +127,9 @@ export interface StatusMetadata<T extends Status = Status> {
 export interface JsonStatus {
     name: string;
     args: {
-        value: any;
+        value: number;
         attachTo: CardTargetedEnum;
-    };
+    } & Record<string, any>;
 }
 
 /** It is used to declare the status information in the attached target. */

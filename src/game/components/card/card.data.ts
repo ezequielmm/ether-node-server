@@ -60,6 +60,10 @@ import { RecoverCard, RecoverCardUpgraded } from './data/recover.data';
 import { Refocus, RefocusUpgraded } from './data/refocus.card';
 import { RepositionCard, RepositionCardUpgraded } from './data/reposition.card';
 import { ShakeItOffCard, ShakeItOffCardUpgraded } from './data/shakeItOff.card';
+import {
+    SharpenBladeCard,
+    SharpenBladeCardUpgraded,
+} from './data/sharpenBlade.card';
 import { ShieldBashCard, ShieldBashCardUpgraded } from './data/shieldBash.card';
 import { ShoutCard, ShoutCardUpgraded } from './data/shout.card';
 import { SiphonCard, SiphonCardUpgraded } from './data/siphon.card';
@@ -173,6 +177,8 @@ export const data: Card[] = [
     AdeptCardUpgraded,
     DivineGiftCard,
     DivineGiftCardUpgraded,
+    SharpenBladeCard,
+    SharpenBladeCardUpgraded,
     OnARollCard,
     OnARollCardUpgraded,
     ShoutCard,
