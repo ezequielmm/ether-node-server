@@ -224,11 +224,38 @@ export interface OnAttachStatusEventArgs {
 
 export type StatusHandler = StatusEffectHandler | StatusEventHandler;
 
+/**
+ * DTO for attach set of status.
+ */
 export interface AttachDTO {
+    /**
+     * Context
+     * @type {Context}
+     * @memberof AttachDTO
+     */
     ctx: Context;
+
+    /**
+     * Set of status to attach.
+     * @type {JsonStatus[]}
+     * @memberof AttachDTO
+     * @example [{ name: 'resolve', args: { value: 1, attachTo: 'player' } }]
+     */
     statuses: JsonStatus[];
-    currentRound: number;
-    sourceReference: SourceEntityReferenceDTO;
+
+    /**
+     * Source of the action. (Who is attaching the status)
+     * @type {ExpeditionEntity}
+     * @memberof AttachDTO
+     */
+    source: ExpeditionEntity;
+
+    /**
+     * Preselected target of the action
+     * @type {TargetId}
+     * @memberof AttachDTO
+     * @example '1'
+     */
     targetId?: TargetId;
 }
 

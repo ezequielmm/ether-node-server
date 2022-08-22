@@ -8,6 +8,7 @@ import {
 import { CombatQueueDocument } from '../components/combatQueue/combatQueue.schema';
 import { CombatQueueService } from '../components/combatQueue/combatQueue.service';
 import { EnemyService } from '../components/enemy/enemy.service';
+import { ExpeditionService } from '../components/expedition/expedition.service';
 import { ExpeditionEntity } from '../components/interfaces';
 import { PlayerService } from '../components/player/player.service';
 import { ProviderContainer } from '../provider/interfaces';
@@ -36,18 +37,19 @@ export class EffectService {
         private readonly enemyService: EnemyService,
         private readonly playerService: PlayerService,
         private readonly combatQueueService: CombatQueueService,
+        private readonly expeditionService: ExpeditionService,
     ) {}
 
     async applyAll(dto: ApplyAllDTO): Promise<void> {
         const { ctx, source, effects, selectedEnemy } = dto;
 
         for (const effect of effects) {
-            const targets = this.findAffectedTargets({
+            const targets = this.expeditionService.getEntitiesByType(
                 ctx,
-                effect,
+                effect.target,
                 source,
                 selectedEnemy,
-            });
+            );
 
             for (const target of targets) {
                 await this.apply({
@@ -146,37 +148,6 @@ export class EffectService {
                 );
             }
         }
-    }
-
-    private findAffectedTargets(dto: FindTargetsDTO): ExpeditionEntity[] {
-        const { ctx, effect, source, selectedEnemy } = dto;
-        const targets: ExpeditionEntity[] = [];
-
-        switch (effect.target) {
-            case CardTargetedEnum.Player:
-                targets.push(this.playerService.get(ctx));
-                break;
-            case CardTargetedEnum.Self:
-                targets.push(source);
-                break;
-            case CardTargetedEnum.AllEnemies:
-                targets.push(...this.enemyService.getAll(ctx));
-                break;
-            case CardTargetedEnum.RandomEnemy:
-                targets.push({
-                    type: CardTargetedEnum.Enemy,
-                    value: this.enemyService.getRandom(ctx).value,
-                });
-                break;
-            case CardTargetedEnum.Enemy:
-                targets.push(this.enemyService.get(ctx, selectedEnemy));
-                break;
-        }
-
-        if (targets === undefined)
-            throw new Error(`Target not found for effect ${effect.effect}`);
-
-        return targets;
     }
 
     private async mutate(dto: MutateDTO): Promise<EffectDTO> {

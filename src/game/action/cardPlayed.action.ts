@@ -29,7 +29,7 @@ import { ExhaustCardAction } from './exhaustCard.action';
 interface CardPlayedDTO {
     readonly client: Socket;
     readonly cardId: CardId;
-    readonly targetId: TargetId;
+    readonly selectedEnemyId: TargetId;
 }
 
 interface ICanPlayCard {
@@ -54,7 +54,7 @@ export class CardPlayedAction {
     ) {}
 
     async handle(payload: CardPlayedDTO): Promise<void> {
-        const { client, cardId, targetId } = payload;
+        const { client, cardId, selectedEnemyId: selectedEnemyId } = payload;
 
         this.client = client;
 
@@ -80,7 +80,6 @@ export class CardPlayedAction {
                             energy: availableEnergy,
                             cards: { hand },
                         },
-                        round,
                     },
                 },
             } = expedition;
@@ -125,7 +124,7 @@ export class CardPlayedAction {
                     card,
                     cardSource: source,
                     cardSourceReference: sourceReference,
-                    cardTargetId: targetId,
+                    cardTargetId: selectedEnemyId,
                 };
 
                 await this.statusService.trigger(
@@ -152,7 +151,7 @@ export class CardPlayedAction {
                     ctx,
                     source,
                     effects,
-                    selectedEnemy: targetId,
+                    selectedEnemy: selectedEnemyId,
                 });
 
                 // After applying the effects, check if the current
@@ -167,9 +166,8 @@ export class CardPlayedAction {
                 await this.statusService.attach({
                     ctx,
                     statuses,
-                    currentRound: round,
-                    sourceReference,
-                    targetId,
+                    targetId: selectedEnemyId,
+                    source,
                 });
 
                 const {

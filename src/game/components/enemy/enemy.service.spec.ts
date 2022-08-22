@@ -20,6 +20,7 @@ import { Enemy, EnemyDocument } from './enemy.schema';
 import { EnemyService } from './enemy.service';
 import { enemySelector } from './enemy.type';
 import * as MockedSocket from 'socket.io-mock';
+import { StatusService } from 'src/game/status/status.service';
 
 describe('EnemyService', () => {
     let enemyService: EnemyService;
@@ -211,6 +212,10 @@ describe('EnemyService', () => {
                 {
                     provide: CombatQueueService,
                     useValue: mockCombatQueueService,
+                },
+                {
+                    provide: StatusService,
+                    useValue: {},
                 },
             ],
         }).compile();
@@ -517,4 +522,6 @@ describe('EnemyService', () => {
             );
         });
     });
+
+    // TODO: Add attach tests
 });

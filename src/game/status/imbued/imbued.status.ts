@@ -1,4 +1,3 @@
-import { ExpeditionService } from 'src/game/components/expedition/expedition.service';
 import { EffectService } from 'src/game/effects/effects.service';
 import {
     OnBeginCardPlayEventArgs,
@@ -16,7 +15,6 @@ export class ImbuedStatus implements StatusEventHandler {
     constructor(
         private readonly statusService: StatusService,
         private readonly effectService: EffectService,
-        private readonly expeditionService: ExpeditionService,
     ) {}
 
     async enemyHandler(
@@ -24,21 +22,12 @@ export class ImbuedStatus implements StatusEventHandler {
     ): Promise<void> {
         const {
             ctx,
-            args: {
-                card,
-                cardSource: source,
-                cardSourceReference: sourceReference,
-                cardTargetId: targetId,
-            },
+            args: { card, cardSource: source, cardTargetId: targetId },
         } = dto;
 
         const {
             properties: { effects, statuses },
         } = card;
-
-        const expedition = await this.expeditionService.findOne({
-            clientId: dto.ctx.expedition.clientId,
-        });
 
         await this.effectService.applyAll({
             ctx,
@@ -50,8 +39,7 @@ export class ImbuedStatus implements StatusEventHandler {
         await this.statusService.attach({
             ctx: dto.ctx,
             statuses,
-            currentRound: expedition.currentNode.data.round,
-            sourceReference,
+            source,
             targetId,
         });
 

@@ -26,12 +26,19 @@ import {
 } from './expedition.interface';
 import { generateMap, restoreMap } from 'src/game/map/app';
 import { ClientId, getClientIdField } from './expedition.type';
+import { CardTargetedEnum } from '../card/card.enum';
+import { Context, ExpeditionEntity } from '../interfaces';
+import { PlayerService } from '../player/player.service';
+import { EnemyService } from '../enemy/enemy.service';
+import { EnemyId } from '../enemy/enemy.type';
 
 @Injectable()
 export class ExpeditionService {
     constructor(
         @InjectModel(Expedition.name)
         private readonly expedition: Model<ExpeditionDocument>,
+        private readonly playerService: PlayerService,
+        private readonly enemyService: EnemyService,
     ) {}
 
     async findOne(payload: FindOneExpeditionDTO): Promise<ExpeditionDocument> {
@@ -261,5 +268,51 @@ export class ExpeditionService {
                 { new: true },
             )
             .lean();
+    }
+
+    /**
+     * Get entities based on the type and the context
+     *
+     * @param ctx Context
+     * @param type Type of the entity
+     * @param source Source of the action
+     * @param [selectedEnemy] Preselected enemy
+     *
+     * @returns Array of expedition entities
+     *
+     * @throws Error if the type is not found
+     */
+    public getEntitiesByType(
+        ctx: Context,
+        type: CardTargetedEnum,
+        source: ExpeditionEntity,
+        selectedEnemy: EnemyId,
+    ): ExpeditionEntity[] {
+        const targets: ExpeditionEntity[] = [];
+
+        switch (type) {
+            case CardTargetedEnum.Player:
+                targets.push(this.playerService.get(ctx));
+                break;
+            case CardTargetedEnum.Self:
+                targets.push(source);
+                break;
+            case CardTargetedEnum.AllEnemies:
+                targets.push(...this.enemyService.getAll(ctx));
+                break;
+            case CardTargetedEnum.RandomEnemy:
+                targets.push({
+                    type: CardTargetedEnum.Enemy,
+                    value: this.enemyService.getRandom(ctx).value,
+                });
+                break;
+            case CardTargetedEnum.Enemy:
+                targets.push(this.enemyService.get(ctx, selectedEnemy));
+                break;
+        }
+
+        if (!targets) throw new Error('Target ${type} not found');
+
+        return targets;
     }
 }

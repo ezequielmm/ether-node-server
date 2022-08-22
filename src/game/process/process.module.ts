@@ -22,15 +22,15 @@ import { SendEnemyIntentProcess } from './sendEnemyIntents.process';
 
 @Module({
     imports: [
-        ExpeditionModule,
+        forwardRef(() => ExpeditionModule),
         SettingsModule,
-        EnemyModule,
+        forwardRef(() => EnemyModule),
         forwardRef(() => ActionModule),
         CardModule,
         CharacterModule,
-        StatusModule,
+        forwardRef(() => StatusModule),
         PlayerModule,
-        EffectModule,
+        forwardRef(() => EffectModule),
         CustomDeckModule,
     ],
     providers: [
