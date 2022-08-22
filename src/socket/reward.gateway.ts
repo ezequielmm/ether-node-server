@@ -41,8 +41,17 @@ export class RewardGateway {
         } = expedition;
 
         // Check if the node is completed
-        if (nodeIsCompleted)
+        if (nodeIsCompleted) {
             this.logger.debug('Node already completed, cannot select reward');
+
+            return JSON.stringify(
+                StandardResponse.respond({
+                    message_type: SWARMessageType.EndCombat,
+                    action: SWARAction.SelectAnotherReward,
+                    data: rewards,
+                }),
+            );
+        }
 
         // check if the reward that we are receiving is correct and exists
         const reward = rewards.find(({ id }) => {
