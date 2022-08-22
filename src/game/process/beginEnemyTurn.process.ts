@@ -99,7 +99,7 @@ export class BeginEnemyTurnProcess {
         });
 
         // Send enemies updated
-        this.logger.log(
+        this.logger.debug(
             `Sent message PutData to client ${this.client.id}: ${SWARAction.UpdateEnemy}`,
         );
 
@@ -116,7 +116,7 @@ export class BeginEnemyTurnProcess {
     }
 
     private sendCombatTurnChange(): void {
-        this.logger.log(
+        this.logger.debug(
             `Sent message PutData to client ${this.client.id}: ${SWARAction.ChangeTurn}`,
         );
 

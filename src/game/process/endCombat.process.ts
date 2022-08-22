@@ -4,7 +4,6 @@ import { EnemyService } from '../components/enemy/enemy.service';
 import { ExpeditionService } from '../components/expedition/expedition.service';
 import { Context, ExpeditionEntity } from '../components/interfaces';
 import { PlayerService } from '../components/player/player.service';
-import { restoreMap } from '../map/app';
 import {
     StandardResponse,
     SWARAction,
@@ -44,33 +43,13 @@ export class EndCombatProcess {
     }
 
     private async endCombat(ctx: Context): Promise<void> {
-        const { expedition, client } = ctx;
-
-        const map = restoreMap(expedition.map, client.id);
-
-        map.activeNode = map.fullCurrentMap.get(expedition.currentNode.nodeId);
-        map.activeNode.complete(map);
-
-        expedition.currentNode.completed = true;
-        expedition.map = map.getMap;
-
-        // Get the final health and update it on the player state
         const {
-            currentNode: {
-                data: {
-                    player: { hpCurrent, hpMax },
-                },
-            },
-        } = expedition;
+            expedition: { _id: expeditionId },
+        } = ctx;
 
-        await this.expeditionService.updateById(expedition._id, {
+        await this.expeditionService.updateById(expeditionId, {
             $set: {
-                map: map.getMap,
-                'currentNode.completed': true,
-                'currentNode.player': null,
-                'currentNode.enemies': null,
-                'playerState.hpCurrent': hpCurrent,
-                'playerState.hpMax': hpMax,
+                'currentNode.showRewards': true,
             },
         });
 

@@ -125,7 +125,7 @@ export class EffectService {
                             : source.value.id,
                 });
 
-                this.logger.log(`Created Combat Queue`);
+                this.logger.debug(`Created Combat Queue`);
             }
 
             // Send the queue id to the effects to add the target
@@ -145,11 +145,13 @@ export class EffectService {
             // If we have a combat queue initiated, we run the queue
             if (combatQueue) {
                 // Send the combat queue to the client
-                this.logger.log(`Sent combat queue to client ${client.id}`);
+                this.logger.debug(`Sent combat queue to client ${client.id}`);
                 await this.combatQueueService.sendQueueToClient(client);
 
                 // Clear the queue
-                this.logger.log(`Cleared combat queue to client ${client.id}`);
+                this.logger.debug(
+                    `Cleared combat queue to client ${client.id}`,
+                );
                 await this.combatQueueService.deleteCombatQueueByClientId(
                     client.id,
                 );

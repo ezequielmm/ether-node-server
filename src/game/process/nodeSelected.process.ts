@@ -72,7 +72,7 @@ export class NodeSelectedProcess {
                         data: newMap,
                     });
 
-                    this.logger.log(
+                    this.logger.debug(
                         `Sent message InitCombat to client ${client.id}`,
                     );
 
@@ -107,7 +107,7 @@ export class NodeSelectedProcess {
             );
 
             if (combatNodes.includes(node.type)) {
-                this.logger.log(
+                this.logger.debug(
                     `Sent message InitCombat to client ${client.id}`,
                 );
 

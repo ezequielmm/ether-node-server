@@ -253,7 +253,7 @@ export class CardPlayedAction {
     }
 
     private sendNotEnoughEnergyMessage(message: string): void {
-        this.logger.log(
+        this.logger.debug(
             `Sent message ErrorMessage to client ${this.client.id}: ${SWARAction.InsufficientEnergy}`,
         );
 
@@ -270,7 +270,7 @@ export class CardPlayedAction {
     }
 
     private sendUpdateEnergyMessage(energy: number, energyMax: number): void {
-        this.logger.log(
+        this.logger.debug(
             `Sent message PutData to client ${this.client.id}: ${SWARAction.UpdateEnergy}`,
         );
 
