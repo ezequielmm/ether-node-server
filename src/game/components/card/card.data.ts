@@ -60,6 +60,7 @@ import { Refocus, RefocusUpgraded } from './data/refocus.card';
 import { RepositionCard, RepositionCardUpgraded } from './data/reposition.card';
 import { ShakeItOffCard, ShakeItOffCardUpgraded } from './data/shakeItOff.card';
 import { ShieldBashCard, ShieldBashCardUpgraded } from './data/shieldBash.card';
+import { ShoutCard, ShoutCardUpgraded } from './data/shout.card';
 import { SiphonCard, SiphonCardUpgraded } from './data/siphon.card';
 import { SpikeArmorCard, SpikeArmorCardUpgraded } from './data/spikeArmor.card';
 import {
@@ -71,6 +72,10 @@ import {
     TightenGripCardUpgraded,
 } from './data/tightenGrip.card';
 import { TurtleCard, TurtleCardUpgraded } from './data/turtle.card';
+import {
+    TwistTheBladeCard,
+    TwistTheBladeCardUpgraded,
+} from './data/twistTheBlade.card';
 import {
     UltraLethalityCard,
     UltraLethalityCardUpgraded,
@@ -169,4 +174,8 @@ export const data: Card[] = [
     DivineGiftCardUpgraded,
     OnARollCard,
     OnARollCardUpgraded,
+    ShoutCard,
+    ShoutCardUpgraded,
+    TwistTheBladeCard,
+    TwistTheBladeCardUpgraded,
 ];

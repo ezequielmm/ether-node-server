@@ -152,12 +152,12 @@ export interface AttachedStatus {
 
     /**
      * The source who attached the status.
-     * @type {SourceEntityReferenceDTO}
+     * @type {EntityReferenceDTO}
      * @memberof AttachedStatus
      * @example { id: '1', type: 'player' }
      * @example { id: '1', type: 'enemy' }
      */
-    readonly sourceReference: SourceEntityReferenceDTO;
+    readonly sourceReference: EntityReferenceDTO;
 
     args: {
         value: any;
@@ -192,7 +192,7 @@ export interface StatusEventDTO<Args = Record<string, any>> {
 export interface OnBeginCardPlayEventArgs {
     card: IExpeditionPlayerStateDeckCard;
     cardSource: ExpeditionEntity;
-    cardSourceReference: SourceEntityReferenceDTO;
+    cardSourceReference: EntityReferenceDTO;
     cardTargetId: TargetId;
 }
 
@@ -224,24 +224,51 @@ export interface OnAttachStatusEventArgs {
 
 export type StatusHandler = StatusEffectHandler | StatusEventHandler;
 
+/**
+ * DTO for attach set of status.
+ */
 export interface AttachDTO {
+    /**
+     * Context
+     * @type {Context}
+     * @memberof AttachDTO
+     */
     ctx: Context;
+
+    /**
+     * Set of status to attach.
+     * @type {JsonStatus[]}
+     * @memberof AttachDTO
+     * @example [{ name: 'resolve', args: { value: 1, attachTo: 'player' } }]
+     */
     statuses: JsonStatus[];
-    currentRound: number;
-    sourceReference: SourceEntityReferenceDTO;
+
+    /**
+     * Source of the action. (Who is attaching the status)
+     * @type {ExpeditionEntity}
+     * @memberof AttachDTO
+     */
+    source: ExpeditionEntity;
+
+    /**
+     * Preselected target of the action
+     * @type {TargetId}
+     * @memberof AttachDTO
+     * @example '1'
+     */
     targetId?: TargetId;
 }
 
 export interface AttachToPlayerDTO {
     readonly ctx: Context;
-    readonly sourceReference: SourceEntityReferenceDTO;
+    readonly sourceReference: EntityReferenceDTO;
     readonly status: JsonStatus;
     readonly currentRound: number;
 }
 
 export interface AttachToEnemyDTO {
     readonly ctx: Context;
-    readonly sourceReference: SourceEntityReferenceDTO;
+    readonly sourceReference: EntityReferenceDTO;
     readonly status: JsonStatus;
     readonly enemyId: EnemyId;
     readonly currentRound: number;
@@ -256,7 +283,7 @@ export interface EnemyReferenceDTO {
     id: EnemyId;
 }
 
-export type SourceEntityReferenceDTO = PlayerReferenceDTO | EnemyReferenceDTO;
+export type EntityReferenceDTO = PlayerReferenceDTO | EnemyReferenceDTO;
 
 export type StatusesGlobalCollection = {
     target: ExpeditionEntity;

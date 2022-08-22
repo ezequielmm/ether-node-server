@@ -2,11 +2,13 @@ import { Injectable } from '@nestjs/common';
 import { getModelToken } from '@nestjs/mongoose';
 import { Test } from '@nestjs/testing';
 import { Socket } from 'socket.io';
+import { EnemyService } from '../components/enemy/enemy.service';
 import {
     Expedition,
     ExpeditionDocument,
 } from '../components/expedition/expedition.schema';
 import { ExpeditionService } from '../components/expedition/expedition.service';
+import { PlayerService } from '../components/player/player.service';
 import { damageEffect } from '../effects/damage/constants';
 import { EffectDTO } from '../effects/effects.interface';
 import { ProviderService } from '../provider/provider.service';
@@ -14,7 +16,7 @@ import { burn } from './burn/constants';
 import { fortitude } from './fortitude/constants';
 import { heraldDelayed } from './heraldDelayed/constants';
 import {
-    SourceEntityReferenceDTO,
+    EntityReferenceDTO,
     StatusEffectDTO,
     StatusEffectHandler,
     StatusEventDTO,
@@ -106,6 +108,14 @@ describe('StatusService', () => {
                 StatusEventA,
                 { provide: getModelToken(Expedition.name), useValue: {} },
                 { provide: ExpeditionService, useValue: {} },
+                {
+                    provide: EnemyService,
+                    useValue: {},
+                },
+                {
+                    provide: PlayerService,
+                    useValue: {},
+                },
                 ProviderService,
             ],
         }).compile();
@@ -137,7 +147,7 @@ describe('StatusService', () => {
                     {
                         name: resolve.name,
                         addedInRound: 1,
-                        sourceReference: {} as SourceEntityReferenceDTO,
+                        sourceReference: {} as EntityReferenceDTO,
                         args: {
                             value: null,
                         },
@@ -167,7 +177,7 @@ describe('StatusService', () => {
                     {
                         name: resolve.name,
                         addedInRound: 1,
-                        sourceReference: {} as SourceEntityReferenceDTO,
+                        sourceReference: {} as EntityReferenceDTO,
                         args: {
                             value: null,
                         },
@@ -197,7 +207,7 @@ describe('StatusService', () => {
                     {
                         name: fortitude.name,
                         addedInRound: 1,
-                        sourceReference: {} as SourceEntityReferenceDTO,
+                        sourceReference: {} as EntityReferenceDTO,
                         args: {
                             value: null,
                         },
@@ -205,7 +215,7 @@ describe('StatusService', () => {
                     {
                         name: resolve.name,
                         addedInRound: 1,
-                        sourceReference: {} as SourceEntityReferenceDTO,
+                        sourceReference: {} as EntityReferenceDTO,
                         args: {
                             value: null,
                         },
@@ -235,7 +245,7 @@ describe('StatusService', () => {
                     {
                         name: fortitude.name,
                         addedInRound: 1,
-                        sourceReference: {} as SourceEntityReferenceDTO,
+                        sourceReference: {} as EntityReferenceDTO,
                         args: {
                             value: null,
                         },
@@ -243,7 +253,7 @@ describe('StatusService', () => {
                     {
                         name: resolve.name,
                         addedInRound: 1,
-                        sourceReference: {} as SourceEntityReferenceDTO,
+                        sourceReference: {} as EntityReferenceDTO,
                         args: {
                             value: null,
                         },
@@ -251,7 +261,7 @@ describe('StatusService', () => {
                     {
                         name: heraldDelayed.name,
                         addedInRound: 1,
-                        sourceReference: {} as SourceEntityReferenceDTO,
+                        sourceReference: {} as EntityReferenceDTO,
                         args: {
                             value: null,
                         },

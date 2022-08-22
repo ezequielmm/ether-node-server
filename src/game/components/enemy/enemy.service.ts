@@ -12,6 +12,7 @@ import {
     ENEMY_CURRENT_SCRIPT_PATH,
     ENEMY_DEFENSE_PATH,
     ENEMY_HP_CURRENT_PATH,
+    ENEMY_STATUSES_PATH,
 } from './constants';
 import { getRandomItemByWeight } from 'src/utils';
 import { CombatQueueService } from '../combatQueue/combatQueue.service';
@@ -20,6 +21,8 @@ import {
     CombatQueueTargetEffectTypeEnum,
     CombatQueueTargetTypeEnum,
 } from '../combatQueue/combatQueue.enum';
+import { AttachedStatus, Status } from 'src/game/status/interfaces';
+import { StatusService } from 'src/game/status/status.service';
 
 @Injectable()
 export class EnemyService {
@@ -30,6 +33,8 @@ export class EnemyService {
         @Inject(forwardRef(() => ExpeditionService))
         private readonly expeditionService: ExpeditionService,
         private readonly combatQueueService: CombatQueueService,
+        @Inject(forwardRef(() => StatusService))
+        private readonly statusService: StatusService,
     ) {}
 
     /**
@@ -309,5 +314,58 @@ export class EnemyService {
      */
     async findEnemiesById(enemies: number[]): Promise<EnemyDocument[]> {
         return await this.enemy.find({ enemyId: { $in: enemies } }).lean();
+    }
+
+    /**
+     * Attach a status to an enemy
+     *
+     * @param ctx Context
+     * @param id Enemy id
+     * @param source Source of the status (Who is attacking)
+     * @param status Status to attach
+     * @param [args = { value: 1 }] Arguments to pass to the status
+     *
+     * @returns Attached status
+     * @throws Error if the status is not found
+     */
+    async attach(
+        ctx: Context,
+        id: EnemyId,
+        source: ExpeditionEntity,
+        name: Status['name'],
+        args: AttachedStatus['args'] = { value: 1 },
+    ): Promise<AttachedStatus> {
+        const enemy = this.get(ctx, id);
+        // Get metadata to determine the type of status to attach
+        const metadata = this.statusService.getMetadataByName(name);
+
+        // Create the status to attach
+        const status: AttachedStatus = {
+            name,
+            args,
+            sourceReference: {
+                type: source.type,
+                id: source.value['id'],
+            },
+            addedInRound: ctx.expedition.currentNode.data.round,
+        };
+
+        // Attach the status to the enemy
+        enemy.value.statuses[metadata.status.type].push(status);
+
+        // Save the status to the database
+        await this.expeditionService.updateByFilter(
+            {
+                _id: ctx.expedition._id,
+                ...enemySelector(enemy.value.id),
+            },
+            {
+                [ENEMY_STATUSES_PATH]: enemy.value.statuses,
+            },
+        );
+
+        this.logger.debug(`Status ${name} attached to enemy ${id}`);
+
+        return status;
     }
 }

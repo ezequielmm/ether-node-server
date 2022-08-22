@@ -17,11 +17,6 @@ export class HeadButtEffect implements EffectHandler {
     async handle(dto: EffectDTO): Promise<void> {
         const { target, source, ctx } = dto;
 
-        const { expedition } = ctx;
-
-        const sourceReference =
-            this.statusService.getReferenceFromSource(source);
-
         let defense = 0;
         let targetId: string = null;
 
@@ -44,8 +39,7 @@ export class HeadButtEffect implements EffectHandler {
                         },
                     },
                 ],
-                currentRound: expedition.currentNode.data.round,
-                sourceReference,
+                source,
                 targetId,
             });
         }
