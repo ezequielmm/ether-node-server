@@ -1,4 +1,4 @@
-import { sharpenBlade } from 'src/game/status/sharpenblade/constants';
+import { sharpenBlade } from 'src/game/status/sharpenBlade/constants';
 import { CardRarityEnum, CardTypeEnum, CardTargetedEnum } from '../card.enum';
 import { Card } from '../card.schema';
 
