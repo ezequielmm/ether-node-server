@@ -130,8 +130,10 @@ export class CurrentNodeGeneratorProcess {
 
     private async getEnemies(): Promise<IExpeditionCurrentNodeDataEnemy[]> {
         const enemyGroup = getRandomItemByWeight<EnemyId[]>(
-            this.node.private_data.enemies.map((e) => e.enemies),
-            this.node.private_data.enemies.map((e) => e.probability),
+            this.node.private_data.enemies.map(({ enemies }) => enemies),
+            this.node.private_data.enemies.map(
+                ({ probability }) => probability,
+            ),
         );
 
         return await Promise.all(
