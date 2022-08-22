@@ -451,7 +451,7 @@ export const actCconfigAlternatives = [
                         subType: 'combat_standard',
                         chance: 40,
                         config: {
-                            enemies: [1],
+                            enemies: [12],
                         },
                     },
                 ],
