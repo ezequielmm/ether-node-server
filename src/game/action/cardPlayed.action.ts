@@ -118,7 +118,7 @@ export class CardPlayedAction {
             } else {
                 const source = this.playerService.get(ctx);
                 const sourceReference =
-                    this.statusService.getReferenceFromSource(source);
+                    this.statusService.getReferenceFromEntity(source);
 
                 const onBeginCardPlayEventArgs: OnBeginCardPlayEventArgs = {
                     card,

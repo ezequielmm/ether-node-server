@@ -6,10 +6,10 @@ import {
     StatusType,
 } from '../interfaces';
 
-export const gifted: StatusEvent = {
-    name: 'gifted',
-    type: StatusType.Buff,
-    startsAt: StatusStartsAt.Instantly,
+export const anticipatingStatus: StatusEvent = {
+    name: 'anticipating',
     trigger: StatusTrigger.Event,
+    type: StatusType.Buff,
     event: StatusEventType.OnPlayerTurnStart,
+    startsAt: StatusStartsAt.Instantly,
 };

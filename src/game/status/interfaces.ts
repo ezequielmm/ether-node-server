@@ -152,12 +152,12 @@ export interface AttachedStatus {
 
     /**
      * The source who attached the status.
-     * @type {SourceEntityReferenceDTO}
+     * @type {EntityReferenceDTO}
      * @memberof AttachedStatus
      * @example { id: '1', type: 'player' }
      * @example { id: '1', type: 'enemy' }
      */
-    readonly sourceReference: SourceEntityReferenceDTO;
+    readonly sourceReference: EntityReferenceDTO;
 
     args: {
         value: any;
@@ -192,7 +192,7 @@ export interface StatusEventDTO<Args = Record<string, any>> {
 export interface OnBeginCardPlayEventArgs {
     card: IExpeditionPlayerStateDeckCard;
     cardSource: ExpeditionEntity;
-    cardSourceReference: SourceEntityReferenceDTO;
+    cardSourceReference: EntityReferenceDTO;
     cardTargetId: TargetId;
 }
 
@@ -261,14 +261,14 @@ export interface AttachDTO {
 
 export interface AttachToPlayerDTO {
     readonly ctx: Context;
-    readonly sourceReference: SourceEntityReferenceDTO;
+    readonly sourceReference: EntityReferenceDTO;
     readonly status: JsonStatus;
     readonly currentRound: number;
 }
 
 export interface AttachToEnemyDTO {
     readonly ctx: Context;
-    readonly sourceReference: SourceEntityReferenceDTO;
+    readonly sourceReference: EntityReferenceDTO;
     readonly status: JsonStatus;
     readonly enemyId: EnemyId;
     readonly currentRound: number;
@@ -283,7 +283,7 @@ export interface EnemyReferenceDTO {
     id: EnemyId;
 }
 
-export type SourceEntityReferenceDTO = PlayerReferenceDTO | EnemyReferenceDTO;
+export type EntityReferenceDTO = PlayerReferenceDTO | EnemyReferenceDTO;
 
 export type StatusesGlobalCollection = {
     target: ExpeditionEntity;

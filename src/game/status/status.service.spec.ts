@@ -16,7 +16,7 @@ import { burn } from './burn/constants';
 import { fortitude } from './fortitude/constants';
 import { heraldDelayed } from './heraldDelayed/constants';
 import {
-    SourceEntityReferenceDTO,
+    EntityReferenceDTO,
     StatusEffectDTO,
     StatusEffectHandler,
     StatusEventDTO,
@@ -147,7 +147,7 @@ describe('StatusService', () => {
                     {
                         name: resolve.name,
                         addedInRound: 1,
-                        sourceReference: {} as SourceEntityReferenceDTO,
+                        sourceReference: {} as EntityReferenceDTO,
                         args: {
                             value: null,
                         },
@@ -177,7 +177,7 @@ describe('StatusService', () => {
                     {
                         name: resolve.name,
                         addedInRound: 1,
-                        sourceReference: {} as SourceEntityReferenceDTO,
+                        sourceReference: {} as EntityReferenceDTO,
                         args: {
                             value: null,
                         },
@@ -207,7 +207,7 @@ describe('StatusService', () => {
                     {
                         name: fortitude.name,
                         addedInRound: 1,
-                        sourceReference: {} as SourceEntityReferenceDTO,
+                        sourceReference: {} as EntityReferenceDTO,
                         args: {
                             value: null,
                         },
@@ -215,7 +215,7 @@ describe('StatusService', () => {
                     {
                         name: resolve.name,
                         addedInRound: 1,
-                        sourceReference: {} as SourceEntityReferenceDTO,
+                        sourceReference: {} as EntityReferenceDTO,
                         args: {
                             value: null,
                         },
@@ -245,7 +245,7 @@ describe('StatusService', () => {
                     {
                         name: fortitude.name,
                         addedInRound: 1,
-                        sourceReference: {} as SourceEntityReferenceDTO,
+                        sourceReference: {} as EntityReferenceDTO,
                         args: {
                             value: null,
                         },
@@ -253,7 +253,7 @@ describe('StatusService', () => {
                     {
                         name: resolve.name,
                         addedInRound: 1,
-                        sourceReference: {} as SourceEntityReferenceDTO,
+                        sourceReference: {} as EntityReferenceDTO,
                         args: {
                             value: null,
                         },
@@ -261,7 +261,7 @@ describe('StatusService', () => {
                     {
                         name: heraldDelayed.name,
                         addedInRound: 1,
-                        sourceReference: {} as SourceEntityReferenceDTO,
+                        sourceReference: {} as EntityReferenceDTO,
                         args: {
                             value: null,
                         },
