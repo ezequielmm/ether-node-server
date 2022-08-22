@@ -31,7 +31,7 @@ export class EndEnemyTurnProcess {
 
         await this.eventEmitter.emitAsync('enemy:before-end-turn', { ctx });
 
-        this.logger.log(
+        this.logger.debug(
             `Sent message PutData to client ${client.id}: ${SWARAction.ChangeTurn}`,
         );
 

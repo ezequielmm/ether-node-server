@@ -31,7 +31,7 @@ export class CombatGateway {
 
     @SubscribeMessage('EndTurn')
     async handleEndTurn(client: Socket): Promise<void> {
-        this.logger.log(`Client ${client.id} trigger message "EndTurn"`);
+        this.logger.debug(`Client ${client.id} trigger message "EndTurn"`);
 
         const expedition = await this.expeditionService.findOne({
             clientId: client.id,
@@ -60,12 +60,16 @@ export class CombatGateway {
 
     @SubscribeMessage('CardPlayed')
     async handleCardPlayed(client: Socket, payload: string): Promise<void> {
-        this.logger.log(
+        this.logger.debug(
             `Client ${client.id} trigger message "CardPlayed": ${payload}`,
         );
 
         const { cardId, targetId }: CardPlayedInterface = JSON.parse(payload);
 
-        await this.cardPlayedAction.handle({ client, cardId, targetId });
+        await this.cardPlayedAction.handle({
+            client,
+            cardId,
+            selectedEnemyId: targetId,
+        });
     }
 }
