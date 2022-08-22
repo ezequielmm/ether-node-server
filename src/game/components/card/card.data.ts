@@ -45,6 +45,7 @@ import { KegChugCard, KegChugCardUpgraded } from './data/kegChug.card';
 import { KindleCard, KindleCardUpgraded } from './data/kindle.card';
 import { LastResortCard, LastResortCardUpgraded } from './data/lastResort.card';
 import { LungeCard, LungeCardUpgraded } from './data/lunge.card';
+import { OnARollCard, OnARollCardUpgraded } from './data/onARoll.card';
 import {
     PerfectTimingCard,
     PerfectTimingCardUpgraded,
@@ -72,6 +73,10 @@ import {
     TightenGripCardUpgraded,
 } from './data/tightenGrip.card';
 import { TurtleCard, TurtleCardUpgraded } from './data/turtle.card';
+import {
+    TwistTheBladeCard,
+    TwistTheBladeCardUpgraded,
+} from './data/twistTheBlade.card';
 import {
     UltraLethalityCard,
     UltraLethalityCardUpgraded,
@@ -168,8 +173,12 @@ export const data: Card[] = [
     AdeptCardUpgraded,
     DivineGiftCard,
     DivineGiftCardUpgraded,
+    OnARollCard,
+    OnARollCardUpgraded,
     ShoutCard,
     ShoutCardUpgraded,
     AnticipateCard,
     AnticipateCardUpgraded,
+    TwistTheBladeCard,
+    TwistTheBladeCardUpgraded,
 ];

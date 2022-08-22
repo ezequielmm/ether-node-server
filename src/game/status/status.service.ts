@@ -25,7 +25,7 @@ import {
     JsonStatus,
     MutateEffectArgsDTO,
     PlayerReferenceDTO,
-    SourceEntityReferenceDTO,
+    EntityReferenceDTO,
     Status,
     StatusCollection,
     StatusDirection,
@@ -358,7 +358,7 @@ export class StatusService {
     private convertStatusToAttached(
         jsonStatus: JsonStatus,
         currentRound: number,
-        sourceReference: SourceEntityReferenceDTO,
+        sourceReference: EntityReferenceDTO,
     ): {
         status: AttachedStatus;
         container: ProviderContainer<StatusMetadata, StatusHandler>;
@@ -411,20 +411,20 @@ export class StatusService {
     }
 
     private isPlayerReference(
-        reference: SourceEntityReferenceDTO,
+        reference: EntityReferenceDTO,
     ): reference is PlayerReferenceDTO {
         return reference.type == CardTargetedEnum.Player;
     }
 
     private isEnemyReference(
-        reference: SourceEntityReferenceDTO,
+        reference: EntityReferenceDTO,
     ): reference is EnemyReferenceDTO {
         return reference.type == CardTargetedEnum.Enemy;
     }
 
     public getSourceFromReference(
         expedition: Expedition,
-        reference: SourceEntityReferenceDTO,
+        reference: EntityReferenceDTO,
     ): ExpeditionEntity {
         let source: ExpeditionEntity;
 
@@ -449,9 +449,10 @@ export class StatusService {
         return source;
     }
 
-    public getReferenceFromSource(
+    // TODO: Move to player and enemy service respectively
+    public getReferenceFromEntity(
         source: ExpeditionEntity,
-    ): SourceEntityReferenceDTO {
+    ): EntityReferenceDTO {
         if (PlayerService.isPlayer(source)) {
             return {
                 type: CardTargetedEnum.Player,
