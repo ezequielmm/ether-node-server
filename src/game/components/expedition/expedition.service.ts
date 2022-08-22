@@ -237,6 +237,7 @@ export class ExpeditionService {
             status: ExpeditionStatusEnum.InProgress,
             [cardIdField]: cardId,
         });
+
         return itemExists !== null;
     }
 
