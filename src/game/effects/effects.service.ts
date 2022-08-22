@@ -7,10 +7,8 @@ import {
 } from '../components/combatQueue/combatQueue.enum';
 import { CombatQueueDocument } from '../components/combatQueue/combatQueue.schema';
 import { CombatQueueService } from '../components/combatQueue/combatQueue.service';
-import { EnemyService } from '../components/enemy/enemy.service';
 import { ExpeditionService } from '../components/expedition/expedition.service';
-import { ExpeditionEntity } from '../components/interfaces';
-import { PlayerService } from '../components/player/player.service';
+import { HistoryService } from '../history/history.service';
 import { ProviderContainer } from '../provider/interfaces';
 import { ProviderService } from '../provider/provider.service';
 import { StatusDirection } from '../status/interfaces';
@@ -22,7 +20,6 @@ import {
     EffectDTO,
     EffectHandler,
     EffectMetadata,
-    FindTargetsDTO,
     MutateDTO,
 } from './effects.interface';
 
@@ -34,10 +31,9 @@ export class EffectService {
     constructor(
         private readonly providerService: ProviderService,
         private readonly statusService: StatusService,
-        private readonly enemyService: EnemyService,
-        private readonly playerService: PlayerService,
         private readonly combatQueueService: CombatQueueService,
         private readonly expeditionService: ExpeditionService,
+        private readonly historyService: HistoryService,
     ) {}
 
     async applyAll(dto: ApplyAllDTO): Promise<void> {
@@ -71,6 +67,17 @@ export class EffectService {
             this.logger.debug(`Combat ended, skipping effect ${effect.effect}`);
             return;
         }
+
+        // Register the effect in the history
+        this.historyService.register({
+            clientId: client.id,
+            registry: {
+                type: 'effect',
+                effect: effect,
+                source: this.statusService.getReferenceFromEntity(source),
+                target: this.statusService.getReferenceFromEntity(target),
+            },
+        });
 
         const {
             effect: name,
