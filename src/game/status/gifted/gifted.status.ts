@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { EffectDTO } from 'src/game/effects/effects.interface';
-import { StatusEffectDTO, StatusEffectHandler } from '../interfaces';
+import { EnemyService } from 'src/game/components/enemy/enemy.service';
+import { PlayerService } from 'src/game/components/player/player.service';
+import { StatusEventDTO, StatusEventHandler } from '../interfaces';
 import { StatusDecorator } from '../status.decorator';
 import { gifted } from './constants';
 
@@ -8,21 +9,26 @@ import { gifted } from './constants';
     status: gifted,
 })
 @Injectable()
-export class GiftedStatus implements StatusEffectHandler {
-    async preview(payload: StatusEffectDTO): Promise<EffectDTO> {
-        return this.handle(payload);
-    }
+export class GiftedStatus implements StatusEventHandler {
+    constructor(
+        private readonly playerService: PlayerService,
+        private readonly enemyService: EnemyService,
+    ) {}
 
-    async handle(payload: StatusEffectDTO): Promise<EffectDTO> {
-        const {
-            status: {
-                args: { value },
-            },
-            effectDTO,
-        } = payload;
+    async enemyHandler(dto: StatusEventDTO<Record<string, any>>): Promise<any> {
+        const { ctx, target, status } = dto;
 
-        effectDTO.args.currentValue = value;
-
-        return effectDTO;
+        if (PlayerService.isPlayer(target)) {
+            await this.playerService.setDefense(
+                ctx,
+                target.value.combatState.defense + status.args.value,
+            );
+        } else if (EnemyService.isEnemy(target)) {
+            await this.enemyService.setDefense(
+                ctx,
+                target.value.id,
+                target.value.defense + status.args.value,
+            );
+        }
     }
 }
