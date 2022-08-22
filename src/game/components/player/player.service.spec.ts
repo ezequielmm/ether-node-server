@@ -13,6 +13,7 @@ import {
 } from './contants';
 import { PlayerService } from './player.service';
 import * as MockedSocket from 'socket.io-mock';
+import { StatusService } from 'src/game/status/status.service';
 
 describe('PlayerService', () => {
     const mockExpeditionService = {
@@ -45,6 +46,10 @@ describe('PlayerService', () => {
                 {
                     provide: CombatQueueService,
                     useValue: mockCombatQueueService,
+                },
+                {
+                    provide: StatusService,
+                    useValue: {},
                 },
             ],
         }).compile();
@@ -260,4 +265,6 @@ describe('PlayerService', () => {
             ]);
         });
     });
+
+    // TODO: Add attack tests
 });

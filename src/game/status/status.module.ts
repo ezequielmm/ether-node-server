@@ -4,6 +4,7 @@ import { ExpeditionModule } from '../components/expedition/expedition.module';
 import { PlayerModule } from '../components/player/player.module';
 import { EffectModule } from '../effects/effects.module';
 import { ProviderModule } from '../provider/provider.module';
+import { AnticipatingStatus } from './anticipating/anticipating.status';
 import { BolsteredStatus } from './bolstered/bolstered.status';
 import { BurnStatus } from './burn/burn.status';
 import { ConfusionStatus } from './confusion/confusion.status';
@@ -12,6 +13,7 @@ import { DistraughtStatus } from './distraught/distraught.status';
 import { DodgeStatus } from './dodge/dodge.status';
 import { DoubleDownStatus } from './doubleDown/doubleDown.status';
 import { DrainedStatus } from './drained/drained.status';
+import { FatigueStatus } from './fatigue/fatigue.status';
 import { ForceFieldEvent } from './forceField/forcefield.event';
 import { ForceFieldStatus } from './forceField/forceField.status';
 import { FortitudeStatus } from './fortitude/fortitude.status';
@@ -34,10 +36,10 @@ import { TurtlingStatus } from './turtling/turtling.status';
 @Module({
     imports: [
         ProviderModule,
-        ExpeditionModule,
+        forwardRef(() => ExpeditionModule),
         forwardRef(() => EffectModule),
-        PlayerModule,
-        EnemyModule,
+        forwardRef(() => EnemyModule),
+        forwardRef(() => PlayerModule),
     ],
     providers: [
         StatusService,
@@ -68,6 +70,8 @@ import { TurtlingStatus } from './turtling/turtling.status';
         DrainedStatus,
         BolsteredStatus,
         GiftedStatus,
+        FatigueStatus,
+        AnticipatingStatus,
     ],
     exports: [StatusService],
 })
