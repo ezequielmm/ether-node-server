@@ -6,10 +6,10 @@ import {
     StatusType,
 } from '../interfaces';
 
-export const gifted: StatusEvent = {
-    name: 'gifted',
+export const sharpenBlade: StatusEvent = {
+    name: 'Sharpen Blade',
     type: StatusType.Buff,
-    startsAt: StatusStartsAt.Instantly,
     trigger: StatusTrigger.Event,
     event: StatusEventType.OnPlayerTurnStart,
+    startsAt: StatusStartsAt.Instantly,
 };

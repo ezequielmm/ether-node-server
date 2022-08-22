@@ -22,13 +22,13 @@ import { SetCombatTurnAction } from './setCombatTurn.action';
 
 @Module({
     imports: [
-        ExpeditionModule,
+        forwardRef(() => ExpeditionModule),
         ActionModule,
         forwardRef(() => ProcessModule),
-        EffectModule,
-        StatusModule,
+        forwardRef(() => EffectModule),
+        forwardRef(() => StatusModule),
         PlayerModule,
-        EnemyModule,
+        forwardRef(() => EnemyModule),
     ],
     providers: [
         FullSyncAction,

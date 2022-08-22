@@ -66,6 +66,10 @@ export class CombatGateway {
 
         const { cardId, targetId }: CardPlayedInterface = JSON.parse(payload);
 
-        await this.cardPlayedAction.handle({ client, cardId, targetId });
+        await this.cardPlayedAction.handle({
+            client,
+            cardId,
+            selectedEnemyId: targetId,
+        });
     }
 }
