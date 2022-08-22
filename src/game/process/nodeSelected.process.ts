@@ -43,6 +43,8 @@ export class NodeSelectedProcess {
 
             switch (node.type) {
                 case ExpeditionMapNodeTypeEnum.Portal:
+                    this.logger.debug(`Map extended for client ${client.id}`);
+
                     return JSON.stringify(
                         StandardResponse.respond({
                             message_type: SWARMessageType.MapUpdate,
@@ -55,6 +57,8 @@ export class NodeSelectedProcess {
                 case ExpeditionMapNodeTypeEnum.RoyalHouseB:
                 case ExpeditionMapNodeTypeEnum.RoyalHouseC:
                 case ExpeditionMapNodeTypeEnum.RoyalHouseD:
+                    this.logger.debug(`Map extended for client ${client.id}`);
+
                     return JSON.stringify(
                         StandardResponse.respond({
                             message_type: SWARMessageType.MapUpdate,
