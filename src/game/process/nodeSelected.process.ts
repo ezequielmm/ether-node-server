@@ -36,9 +36,7 @@ export class NodeSelectedProcess {
 
             const { map: newMap } = await this.expeditionService.update(
                 client.id,
-                {
-                    map: expeditionMap.getMap,
-                },
+                { map: expeditionMap.getMap },
             );
 
             switch (node.type) {
@@ -96,12 +94,38 @@ export class NodeSelectedProcess {
                             data: newMap,
                         }),
                     );
-                default:
+                case ExpeditionMapNodeTypeEnum.Camp:
+                case ExpeditionMapNodeTypeEnum.CampHouse:
+                case ExpeditionMapNodeTypeEnum.CampRegular:
                     return JSON.stringify(
                         StandardResponse.respond({
-                            message_type: SWARMessageType.MapUpdate,
-                            action: SWARAction.MapUpdate,
-                            data: newMap,
+                            message_type: SWARMessageType.CampUpdate,
+                            action: SWARAction.BeginCamp,
+                            data: null,
+                        }),
+                    );
+                case ExpeditionMapNodeTypeEnum.Encounter:
+                    return JSON.stringify(
+                        StandardResponse.respond({
+                            message_type: SWARMessageType.EncounterUpdate,
+                            action: SWARAction.BeginEncounter,
+                            data: null,
+                        }),
+                    );
+                case ExpeditionMapNodeTypeEnum.Treasure:
+                    return JSON.stringify(
+                        StandardResponse.respond({
+                            message_type: SWARMessageType.TreasureUpdate,
+                            action: SWARAction.BeginTreasure,
+                            data: null,
+                        }),
+                    );
+                case ExpeditionMapNodeTypeEnum.Merchant:
+                    return JSON.stringify(
+                        StandardResponse.respond({
+                            message_type: SWARMessageType.MerchantUpdate,
+                            action: SWARAction.BeginMerchant,
+                            data: null,
                         }),
                     );
             }
