@@ -12,6 +12,10 @@ export enum SWARMessageType {
     PlayerAffected = 'player_affected',
     EndTurn = 'end_turn',
     BeginTurn = 'begin_turn',
+    CampUpdate = 'camp_update ',
+    EncounterUpdate = 'encounter_update',
+    TreasureUpdate = 'treasure_update',
+    MerchantUpdate = 'merchant_update',
 }
 
 export enum SWARAction {
@@ -41,6 +45,10 @@ export enum SWARAction {
     ChangeTurn = 'change_turn',
     UpdateStatuses = 'update_statuses',
     CombatQueue = 'combat_queue',
+    BeginCamp = 'begin_camp',
+    BeginEncounter = 'begin_encounter',
+    BeginTreasure = 'begin_treasure',
+    BeginMerchant = 'begin_merchant',
 }
 
 interface SWARPayload {
