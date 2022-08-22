@@ -41,37 +41,31 @@ export class NodeSelectedProcess {
                 },
             );
 
-            let response = {};
-
             switch (node.type) {
                 case ExpeditionMapNodeTypeEnum.Portal:
-                    response = StandardResponse.respond({
-                        message_type: SWARMessageType.MapUpdate,
-                        action: SWARAction.ExtendMap,
-                        data: newMap,
-                    });
-                    break;
+                    return JSON.stringify(
+                        StandardResponse.respond({
+                            message_type: SWARMessageType.MapUpdate,
+                            action: SWARAction.ExtendMap,
+                            data: newMap,
+                        }),
+                    );
                 case ExpeditionMapNodeTypeEnum.RoyalHouse:
                 case ExpeditionMapNodeTypeEnum.RoyalHouseA:
                 case ExpeditionMapNodeTypeEnum.RoyalHouseB:
                 case ExpeditionMapNodeTypeEnum.RoyalHouseC:
                 case ExpeditionMapNodeTypeEnum.RoyalHouseD:
-                    response = StandardResponse.respond({
-                        message_type: SWARMessageType.MapUpdate,
-                        action: SWARAction.ActivatePortal,
-                        data: newMap,
-                    });
-                    break;
+                    return JSON.stringify(
+                        StandardResponse.respond({
+                            message_type: SWARMessageType.MapUpdate,
+                            action: SWARAction.ActivatePortal,
+                            data: newMap,
+                        }),
+                    );
                 case ExpeditionMapNodeTypeEnum.Combat:
                 case ExpeditionMapNodeTypeEnum.CombatBoss:
                 case ExpeditionMapNodeTypeEnum.CombatElite:
                 case ExpeditionMapNodeTypeEnum.CombatStandard:
-                    response = StandardResponse.respond({
-                        message_type: SWARMessageType.MapUpdate,
-                        action: SWARAction.MapUpdate,
-                        data: newMap,
-                    });
-
                     this.logger.debug(
                         `Sent message InitCombat to client ${client.id}`,
                     );
@@ -89,17 +83,22 @@ export class NodeSelectedProcess {
                         ),
                     );
 
-                    break;
+                    return JSON.stringify(
+                        StandardResponse.respond({
+                            message_type: SWARMessageType.MapUpdate,
+                            action: SWARAction.MapUpdate,
+                            data: newMap,
+                        }),
+                    );
                 default:
-                    response = StandardResponse.respond({
-                        message_type: SWARMessageType.MapUpdate,
-                        action: SWARAction.ShowMap,
-                        data: newMap,
-                    });
-                    break;
+                    return JSON.stringify(
+                        StandardResponse.respond({
+                            message_type: SWARMessageType.MapUpdate,
+                            action: SWARAction.MapUpdate,
+                            data: newMap,
+                        }),
+                    );
             }
-
-            return JSON.stringify(response);
         } else {
             const nodeTypes = Object.values(ExpeditionMapNodeTypeEnum);
             const combatNodes = nodeTypes.filter(
