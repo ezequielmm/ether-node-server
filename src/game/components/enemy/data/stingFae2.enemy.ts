@@ -45,5 +45,34 @@ export const stingFae2Data: Enemy = {
                 },
             ],
         },
+        {
+            intentions: [
+                {
+                    type: EnemyIntentionType.Attack,
+                    target: CardTargetedEnum.Player,
+                    value: 2,
+                    effects: [
+                        {
+                            effect: damageEffect.name,
+                            target: CardTargetedEnum.Player,
+                            times: 3,
+                            args: {
+                                value: 2,
+                            },
+                        },
+                    ],
+                },
+            ],
+            next: [
+                {
+                    probability: 0.5,
+                    scriptIndex: 2,
+                },
+                {
+                    probability: 0.5,
+                    scriptIndex: 3,
+                },
+            ],
+        },
     ],
 };
