@@ -41,6 +41,12 @@ export class EffectService {
     async applyAll(dto: ApplyAllDTO): Promise<void> {
         const { ctx, source, effects, selectedEnemy } = dto;
 
+        if (effects.length < 1) {
+            // if (ctx.expedition.currentNode.completed) return;
+            const { client } = ctx;
+            await this.combatQueueService.sendQueueToClient(client);
+        }
+
         for (const effect of effects) {
             const targets = this.findAffectedTargets({
                 ctx,

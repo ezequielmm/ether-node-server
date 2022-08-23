@@ -218,9 +218,6 @@ export class ExpeditionService {
     ): Promise<boolean> {
         const { cardId, clientId } = payload;
 
-        console.log('cardId', cardId);
-        console.log('clinetId', clientId);
-
         const clientField = getClientIdField(clientId);
 
         const cardIdField =
@@ -228,23 +225,12 @@ export class ExpeditionService {
                 ? 'currentNode.data.player.cards.hand.id'
                 : 'currentNode.data.player.cards.hand.cardId';
 
-        console.log(this.expedition);
-
-        console.log('Client ID FIELD', clientField);
-        console.log('cardIdField', cardIdField);
-
         const itemExists = await this.expedition.exists({
             [clientField]: clientId,
             status: ExpeditionStatusEnum.InProgress,
             [cardIdField]: cardId,
         });
 
-        // console.log(itemExists);
-        console.log({
-            [clientField]: clientId,
-            status: ExpeditionStatusEnum.InProgress,
-            [cardIdField]: cardId,
-        });
         return itemExists !== null;
     }
 
