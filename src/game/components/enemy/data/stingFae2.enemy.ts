@@ -1,4 +1,5 @@
 import { damageEffect } from 'src/game/effects/damage/constants';
+import { defenseEffect } from 'src/game/effects/defense/constants';
 import { CardTargetedEnum } from '../../card/card.enum';
 import {
     EnemyCategoryEnum,
@@ -71,6 +72,34 @@ export const stingFae2Data: Enemy = {
                 {
                     probability: 0.5,
                     scriptIndex: 3,
+                },
+            ],
+        },
+        {
+            intentions: [
+                {
+                    type: EnemyIntentionType.Defend,
+                    target: CardTargetedEnum.Self,
+                    value: 4,
+                    effects: [
+                        {
+                            effect: defenseEffect.name,
+                            target: CardTargetedEnum.Self,
+                            args: {
+                                value: 4,
+                            },
+                        },
+                    ],
+                },
+            ],
+            next: [
+                {
+                    probability: 0.5,
+                    scriptIndex: 1,
+                },
+                {
+                    probability: 0.5,
+                    scriptIndex: 2,
                 },
             ],
         },
