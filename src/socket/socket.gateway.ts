@@ -12,8 +12,6 @@ import { ExpeditionService } from 'src/game/components/expedition/expedition.ser
 import { FullSyncAction } from 'src/game/action/fullSync.action';
 import { ExpeditionMapNodeTypeEnum } from 'src/game/components/expedition/expedition.enum';
 import { InitCombatProcess } from 'src/game/process/initCombat.process';
-import { CharacterService } from 'src/game/components/character/character.service';
-import { CharacterClassEnum } from 'src/game/components/character/character.enum';
 import { PlayerService } from 'src/game/components/player/player.service';
 import { CombatQueueService } from 'src/game/components/combatQueue/combatQueue.service';
 
@@ -32,22 +30,21 @@ export class SocketGateway
         private readonly expeditionService: ExpeditionService,
         private readonly fullsyncAction: FullSyncAction,
         private readonly initCombatProcess: InitCombatProcess,
-        private readonly characterService: CharacterService,
         private readonly playerService: PlayerService,
         private readonly combatQueueService: CombatQueueService,
     ) {}
 
     afterInit(): void {
-        this.logger.log(`Socket Initiated`);
+        this.logger.debug(`Socket Initiated`);
     }
 
     async handleConnection(client: Socket): Promise<void> {
-        this.logger.log(`Client attempting a connection: ${client.id}`);
+        this.logger.debug(`Client attempting a connection: ${client.id}`);
 
         const { authorization } = client.handshake.headers;
 
         if (!isValidAuthToken(authorization)) {
-            this.logger.log(`Client has an invalid auth token: ${client.id}`);
+            this.logger.debug(`Client has an invalid auth token: ${client.id}`);
             client.disconnect(true);
         }
 
@@ -64,13 +61,14 @@ export class SocketGateway
             });
 
             if (expedition) {
-                this.logger.log(`Client connected: ${client.id}`);
+                this.logger.debug(`Client connected: ${client.id}`);
 
                 const { currentNode } = expedition;
 
                 // Here we check if the player is in a node already
                 if (currentNode !== undefined) {
                     const { nodeType, nodeId } = currentNode;
+
                     const nodeTypes = Object.values(ExpeditionMapNodeTypeEnum);
                     const combatNodes = nodeTypes.filter(
                         (node) => node.search('combat') !== -1,
@@ -83,9 +81,9 @@ export class SocketGateway
                                 nodeId,
                             });
 
-                        const { initialHealth } =
-                            await this.characterService.findOne({
-                                characterClass: CharacterClassEnum.Knight,
+                        const { hpCurrent } =
+                            await this.expeditionService.getPlayerState({
+                                clientId: client.id,
                             });
 
                         await this.playerService.setHp(
@@ -93,7 +91,7 @@ export class SocketGateway
                                 client,
                                 expedition,
                             },
-                            initialHealth,
+                            hpCurrent,
                         );
 
                         await this.initCombatProcess.process(client, node);
@@ -102,23 +100,23 @@ export class SocketGateway
 
                 await this.fullsyncAction.handle(client);
             } else {
-                this.logger.log(
+                this.logger.debug(
                     `There is no expedition in progress for this player: ${client.id}`,
                 );
 
                 client.disconnect(true);
             }
         } catch (e) {
-            this.logger.log(e.message);
-            this.logger.log(e.stack);
+            this.logger.debug(e.message);
+            this.logger.debug(e.stack);
             client.disconnect(true);
         }
     }
 
     async handleDisconnect(client: Socket): Promise<void> {
-        this.logger.log(`Client disconnected: ${client.id}`);
+        this.logger.debug(`Client disconnected: ${client.id}`);
 
-        this.logger.log(`Deleted combat queue for client ${client.id}`);
+        this.logger.debug(`Deleted combat queue for client ${client.id}`);
 
         await this.combatQueueService.deleteCombatQueueByClientId(client.id);
     }

@@ -1,4 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import { CombatTurnEnum } from '../components/expedition/expedition.enum';
 import { Context } from '../components/interfaces';
 import {
@@ -21,13 +22,16 @@ export class EndEnemyTurnProcess {
     constructor(
         private readonly beingPlayerTurnProcess: BeginPlayerTurnProcess,
         private readonly statusService: StatusService,
+        private readonly eventEmitter: EventEmitter2,
     ) {}
 
     async handle(payload: EndEnemyTurnDTO): Promise<void> {
         const { ctx } = payload;
         const { client } = ctx;
 
-        this.logger.log(
+        await this.eventEmitter.emitAsync('enemy:before-end-turn', { ctx });
+
+        this.logger.debug(
             `Sent message PutData to client ${client.id}: ${SWARAction.ChangeTurn}`,
         );
 
@@ -43,7 +47,7 @@ export class EndEnemyTurnProcess {
         );
 
         await this.statusService.trigger(ctx, StatusEventType.OnTurnEnd);
-
         await this.beingPlayerTurnProcess.handle({ client });
+        await this.eventEmitter.emitAsync('enemy:after-end-turn', { ctx });
     }
 }

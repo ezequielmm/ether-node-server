@@ -2,6 +2,7 @@ import { forwardRef, Module } from '@nestjs/common';
 import { ActionModule } from '../action/action.module';
 import { CardModule } from '../components/card/card.module';
 import { CharacterModule } from '../components/character/character.module';
+import { CustomDeckModule } from '../components/customDeck/customDeck.module';
 import { EnemyModule } from '../components/enemy/enemy.module';
 import { ExpeditionModule } from '../components/expedition/expedition.module';
 import { PlayerModule } from '../components/player/player.module';
@@ -21,15 +22,16 @@ import { SendEnemyIntentProcess } from './sendEnemyIntents.process';
 
 @Module({
     imports: [
-        ExpeditionModule,
+        forwardRef(() => ExpeditionModule),
         SettingsModule,
-        EnemyModule,
+        forwardRef(() => EnemyModule),
         forwardRef(() => ActionModule),
         CardModule,
         CharacterModule,
-        StatusModule,
+        forwardRef(() => StatusModule),
         PlayerModule,
-        EffectModule,
+        forwardRef(() => EffectModule),
+        CustomDeckModule,
     ],
     providers: [
         SendEnemyIntentProcess,
@@ -53,6 +55,7 @@ import { SendEnemyIntentProcess } from './sendEnemyIntents.process';
         EndEnemyTurnProcess,
         BeginEnemyTurnProcess,
         BeginPlayerTurnProcess,
+        EndCombatProcess,
     ],
 })
 export class ProcessModule {}

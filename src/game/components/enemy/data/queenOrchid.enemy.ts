@@ -1,0 +1,101 @@
+import { damageEffect } from 'src/game/effects/damage/constants';
+import { defenseEffect } from 'src/game/effects/defense/constants';
+import { CardTargetedEnum } from '../../card/card.enum';
+import {
+    EnemyTypeEnum,
+    EnemyCategoryEnum,
+    EnemySizeEnum,
+    EnemyIntentionType,
+} from '../enemy.enum';
+import { Enemy } from '../enemy.schema';
+
+export const queenOrchidData: Enemy = {
+    enemyId: 9,
+    name: 'QueenOrchid',
+    type: EnemyTypeEnum.Plant,
+    category: EnemyCategoryEnum.Elite,
+    size: EnemySizeEnum.Large,
+    description:
+        'The sexy siren of the mossy dark forest. Impossible to resist! But as soon as you get close, you realize she is just a kind of "doll" and you are about to get wrapped in leafy tendrils and into the huge gaping maw of... the ORCHID QUEEN!',
+    healthRange: [70, 75],
+    scripts: [
+        {
+            intentions: [
+                {
+                    type: EnemyIntentionType.Defend,
+                    target: CardTargetedEnum.Self,
+                    value: 1,
+                    //  This effect 'cardAdd' was not developed so I have added x one
+                    effects: [
+                        {
+                            effect: defenseEffect.name,
+                            target: CardTargetedEnum.Self,
+                            args: {
+                                value: 1,
+                            },
+                        },
+                    ],
+                },
+            ],
+            next: [
+                {
+                    probability: 1,
+                    scriptIndex: 1,
+                },
+            ],
+        },
+        {
+            intentions: [
+                {
+                    type: EnemyIntentionType.Defend,
+                    target: CardTargetedEnum.Self,
+                    value: 2,
+                    //  This effect 'ApplyDebuff' was not developed so I have added x one
+                    effects: [
+                        {
+                            effect: damageEffect.name,
+                            target: CardTargetedEnum.Self,
+                            args: {
+                                value: 2,
+                            },
+                        },
+                    ],
+                },
+            ],
+            next: [
+                {
+                    probability: 1,
+                    scriptIndex: 2,
+                },
+            ],
+        },
+        {
+            intentions: [
+                {
+                    type: EnemyIntentionType.Attack,
+                    target: CardTargetedEnum.Player,
+                    value: 10,
+                    effects: [
+                        {
+                            effect: damageEffect.name,
+                            target: CardTargetedEnum.Player,
+                            args: {
+                                value: 10,
+                            },
+                        },
+                    ],
+                },
+            ],
+            next: [
+                {
+                    probability: 0.5,
+                    scriptIndex: 0,
+                },
+                {
+                    probability: 0.5,
+                    scriptIndex: 1,
+                },
+            ],
+        },
+    ],
+};

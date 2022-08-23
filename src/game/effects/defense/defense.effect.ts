@@ -154,7 +154,7 @@ export class DefenseEffect implements EffectHandler {
             await this.enemyService.setDefense(
                 ctx,
                 target.value.id,
-                newDefense,
+                defenseCalculated,
             );
 
             await this.combatQueueService.addTargetsToCombatQueue(

@@ -4,7 +4,6 @@ import { EnemyService } from '../components/enemy/enemy.service';
 import { ExpeditionService } from '../components/expedition/expedition.service';
 import { Context, ExpeditionEntity } from '../components/interfaces';
 import { PlayerService } from '../components/player/player.service';
-import { restoreMap } from '../map/app';
 import {
     StandardResponse,
     SWARAction,
@@ -26,14 +25,17 @@ export class EndCombatProcess {
         private readonly expeditionService: ExpeditionService,
     ) {}
 
-    @OnEvent('entity.*')
+    @OnEvent('entity.*', { async: true })
     async handle(payload: EntityDamageEvent): Promise<void> {
         const { ctx } = payload;
+
         if (this.playerService.isDead(ctx)) {
             this.logger.debug('Player is dead. Ending combat');
             await this.endCombat(ctx);
             this.emitPlayerDefeated(ctx);
-        } else if (this.enemyService.isAllDead(ctx)) {
+        }
+
+        if (this.enemyService.isAllDead(ctx)) {
             this.logger.debug('All enemies are dead. Ending combat');
             await this.endCombat(ctx);
             this.emitEnemiesDefeated(ctx);
@@ -41,20 +43,13 @@ export class EndCombatProcess {
     }
 
     private async endCombat(ctx: Context): Promise<void> {
-        const { expedition, client } = ctx;
+        const {
+            expedition: { _id: expeditionId },
+        } = ctx;
 
-        const map = restoreMap(expedition.map, client.id);
-
-        map.activeNode = map.fullCurrentMap.get(expedition.currentNode.nodeId);
-        map.activeNode.complete(map);
-
-        expedition.currentNode.completed = true;
-        expedition.map = map.getMap;
-
-        await this.expeditionService.updateById(expedition._id, {
+        await this.expeditionService.updateById(expeditionId, {
             $set: {
-                map: map.getMap,
-                'currentNode.completed': true,
+                'currentNode.showRewards': true,
             },
         });
 

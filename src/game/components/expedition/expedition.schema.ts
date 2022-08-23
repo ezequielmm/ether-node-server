@@ -9,6 +9,7 @@ import {
 import {
     IExpeditionCurrentNodeDataEnemy,
     IExpeditionNode,
+    IExpeditionPlayerState,
     IExpeditionPlayerStateDeckCard,
     IExpeditionReward,
 } from './expedition.interface';
@@ -29,25 +30,14 @@ export class Expedition {
     map: IExpeditionNode[];
 
     @Prop({ type: Object })
-    playerState: {
-        playerId: string;
-        playerName: string;
-        characterClass: string;
-        hpMax: number;
-        hpCurrent: number;
-        gold: number;
-        potions?: [];
-        trinkets?: [];
-        createdAt: Date;
-        cards: IExpeditionPlayerStateDeckCard[];
-        stoppedAt?: Date;
-    };
+    playerState: IExpeditionPlayerState;
 
     @Prop({ type: Object })
     currentNode?: {
         nodeId: number;
         nodeType: ExpeditionMapNodeTypeEnum;
         completed: boolean;
+        showRewards: boolean;
         data?: {
             round: number;
             playing: CombatTurnEnum;
@@ -56,6 +46,8 @@ export class Expedition {
                 energyMax?: number;
                 handSize: number;
                 defense: number;
+                hpCurrent: number;
+                hpMax: number;
                 cards: {
                     hand: IExpeditionPlayerStateDeckCard[];
                     draw: IExpeditionPlayerStateDeckCard[];

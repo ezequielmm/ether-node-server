@@ -1,5 +1,8 @@
 import { forwardRef, Inject, Injectable, Logger } from '@nestjs/common';
 import { set } from 'lodash';
+import { AttachedStatus, Status } from 'src/game/status/interfaces';
+import { StatusService } from 'src/game/status/status.service';
+import { StatusGenerator } from 'src/game/status/statusGenerator';
 import { CardTargetedEnum } from '../card/card.enum';
 import {
     CombatQueueTargetEffectTypeEnum,
@@ -13,6 +16,7 @@ import {
     PLAYER_CURRENT_HP_PATH,
     PLAYER_DEFENSE_PATH,
     PLAYER_ENERGY_PATH,
+    PLAYER_STATUSES_PATH,
 } from './contants';
 import { ExpeditionPlayer } from './interfaces';
 
@@ -24,6 +28,8 @@ export class PlayerService {
         @Inject(forwardRef(() => ExpeditionService))
         private readonly expeditionService: ExpeditionService,
         private readonly combatQueueService: CombatQueueService,
+        @Inject(forwardRef(() => StatusService))
+        private readonly statusService: StatusService,
     ) {}
 
     /**
@@ -138,7 +144,7 @@ export class PlayerService {
         const { client } = ctx;
 
         const currentDefense = player.value.combatState.defense;
-        const currentHp = player.value.globalState.hpCurrent;
+        const currentHp = player.value.combatState.hpCurrent;
         const playerUUID = player.value.globalState.playerId;
 
         // Here we create the target for the combat queue
@@ -199,11 +205,76 @@ export class PlayerService {
         await this.setDefense(ctx, newDefense);
         await this.setHp(ctx, newHp);
 
+        // Net we query the statuses for the player
+        const {
+            value: {
+                combatState: {
+                    statuses: { buff, debuff },
+                },
+            },
+        } = player;
+
+        // Now we generate the statuses and add them to the combat queue
+        combatQueueTarget.statuses = [
+            ...StatusGenerator.formatStatusesToArray(buff),
+            ...StatusGenerator.formatStatusesToArray(debuff),
+        ];
+
         // Save the details to the Attack Queue
         await this.combatQueueService.addTargetsToCombatQueue(combatQueueId, [
             combatQueueTarget,
         ]);
 
         return newHp;
+    }
+
+    /**
+     * Attach a status to an enemy
+     *
+     * @param ctx Context
+     * @param source Source of the status (Who is attacking)
+     * @param status Status to attach
+     * @param [args = { value: 1 }] Arguments to pass to the status
+     *
+     * @returns Attached status
+     * @throws Error if the status is not found
+     */
+    async attach(
+        ctx: Context,
+        source: ExpeditionEntity,
+        name: Status['name'],
+        args: AttachedStatus['args'] = { value: 1 },
+    ): Promise<AttachedStatus> {
+        const player = this.get(ctx);
+        // Get metadata to determine the type of status to attach
+        const metadata = this.statusService.getMetadataByName(name);
+
+        // Create the status to attach
+        const status: AttachedStatus = {
+            name,
+            args,
+            sourceReference: {
+                type: source.type,
+                id: source.value['id'],
+            },
+            addedInRound: ctx.expedition.currentNode.data.round,
+        };
+
+        // Attach the status to the player
+        player.value.combatState.statuses[metadata.status.type].push(status);
+
+        // Save the status to the database
+        await this.expeditionService.updateByFilter(
+            {
+                _id: ctx.expedition._id,
+            },
+            {
+                [PLAYER_STATUSES_PATH]: player.value.combatState.statuses,
+            },
+        );
+
+        this.logger.debug(`Status ${name} attached to player`);
+
+        return status;
     }
 }

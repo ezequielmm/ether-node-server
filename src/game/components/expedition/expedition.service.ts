@@ -10,6 +10,7 @@ import {
     GetDeckCardsDTO,
     GetExpeditionMapDTO,
     GetExpeditionMapNodeDTO,
+    GetPlayerStateDTO,
     playerHasAnExpeditionDTO,
     SetCombatTurnDTO,
     UpdateClientIdDTO,
@@ -20,16 +21,24 @@ import { ExpeditionStatusEnum } from './expedition.enum';
 import {
     IExpeditionCurrentNode,
     IExpeditionNode,
+    IExpeditionPlayerState,
     IExpeditionPlayerStateDeckCard,
 } from './expedition.interface';
 import { generateMap, restoreMap } from 'src/game/map/app';
 import { ClientId, getClientIdField } from './expedition.type';
+import { CardTargetedEnum } from '../card/card.enum';
+import { Context, ExpeditionEntity } from '../interfaces';
+import { PlayerService } from '../player/player.service';
+import { EnemyService } from '../enemy/enemy.service';
+import { EnemyId } from '../enemy/enemy.type';
 
 @Injectable()
 export class ExpeditionService {
     constructor(
         @InjectModel(Expedition.name)
         private readonly expedition: Model<ExpeditionDocument>,
+        private readonly playerService: PlayerService,
+        private readonly enemyService: EnemyService,
     ) {}
 
     async findOne(payload: FindOneExpeditionDTO): Promise<ExpeditionDocument> {
@@ -172,6 +181,17 @@ export class ExpeditionService {
         return cards;
     }
 
+    async getPlayerState(
+        payload: GetPlayerStateDTO,
+    ): Promise<IExpeditionPlayerState> {
+        const { playerState } = await this.expedition
+            .findOne(payload)
+            .select('playerState')
+            .lean();
+
+        return playerState;
+    }
+
     async setCombatTurn(
         payload: SetCombatTurnDTO,
     ): Promise<ExpeditionDocument> {
@@ -217,13 +237,14 @@ export class ExpeditionService {
             status: ExpeditionStatusEnum.InProgress,
             [cardIdField]: cardId,
         });
+
         return itemExists !== null;
     }
 
     async updateHandPiles(payload: UpdateHandPilesDTO): Promise<Expedition> {
         const { hand, exhausted, clientId, draw, discard } = payload;
 
-        const field = typeof clientId === 'string' ? 'clientId' : 'playerId';
+        const clientField = getClientIdField(clientId);
 
         const piles = {
             ...(hand && { 'currentNode.data.player.cards.hand': hand }),
@@ -240,10 +261,59 @@ export class ExpeditionService {
 
         return await this.expedition
             .findOneAndUpdate(
-                { [field]: clientId, status: ExpeditionStatusEnum.InProgress },
+                {
+                    [clientField]: clientId,
+                    status: ExpeditionStatusEnum.InProgress,
+                },
                 piles,
                 { new: true },
             )
             .lean();
+    }
+
+    /**
+     * Get entities based on the type and the context
+     *
+     * @param ctx Context
+     * @param type Type of the entity
+     * @param source Source of the action
+     * @param [selectedEnemy] Preselected enemy
+     *
+     * @returns Array of expedition entities
+     *
+     * @throws Error if the type is not found
+     */
+    public getEntitiesByType(
+        ctx: Context,
+        type: CardTargetedEnum,
+        source: ExpeditionEntity,
+        selectedEnemy: EnemyId,
+    ): ExpeditionEntity[] {
+        const targets: ExpeditionEntity[] = [];
+
+        switch (type) {
+            case CardTargetedEnum.Player:
+                targets.push(this.playerService.get(ctx));
+                break;
+            case CardTargetedEnum.Self:
+                targets.push(source);
+                break;
+            case CardTargetedEnum.AllEnemies:
+                targets.push(...this.enemyService.getAll(ctx));
+                break;
+            case CardTargetedEnum.RandomEnemy:
+                targets.push({
+                    type: CardTargetedEnum.Enemy,
+                    value: this.enemyService.getRandom(ctx).value,
+                });
+                break;
+            case CardTargetedEnum.Enemy:
+                targets.push(this.enemyService.get(ctx, selectedEnemy));
+                break;
+        }
+
+        if (!targets) throw new Error('Target ${type} not found');
+
+        return targets;
     }
 }

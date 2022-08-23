@@ -13,6 +13,7 @@ import {
 } from './contants';
 import { PlayerService } from './player.service';
 import * as MockedSocket from 'socket.io-mock';
+import { StatusService } from 'src/game/status/status.service';
 
 describe('PlayerService', () => {
     const mockExpeditionService = {
@@ -46,6 +47,10 @@ describe('PlayerService', () => {
                     provide: CombatQueueService,
                     useValue: mockCombatQueueService,
                 },
+                {
+                    provide: StatusService,
+                    useValue: {},
+                },
             ],
         }).compile();
 
@@ -64,6 +69,9 @@ describe('PlayerService', () => {
                             energyMax: 3,
                             handSize: 5,
                             defense: 5,
+                            hpMax: 80,
+                            hpCurrent: 80,
+                            statuses: { buff: [], debuff: [] },
                         },
                     },
                 },
@@ -160,12 +168,14 @@ describe('PlayerService', () => {
     describe('heal', () => {
         it('should update the player health', async () => {
             await playerService.setHp(mockContext, 10);
+
             expect(mockExpeditionService.updateById).toHaveBeenCalledWith(
                 mockContext.expedition.id,
                 {
                     [PLAYER_CURRENT_HP_PATH]: 10,
                 },
             );
+
             expect(get(mockContext.expedition, PLAYER_CURRENT_HP_PATH)).toBe(
                 10,
             );
@@ -255,4 +265,6 @@ describe('PlayerService', () => {
             ]);
         });
     });
+
+    // TODO: Add attack tests
 });

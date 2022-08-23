@@ -9,7 +9,7 @@ export const IntimidateCard: Card = {
     cardType: CardTypeEnum.Skill,
     pool: 'knight',
     energy: 2,
-    description: `Inflict {${confusion.name}}`,
+    description: `Inflict {${confusion.name}} confusion`,
     keywords: [],
     properties: {
         effects: [],

@@ -57,11 +57,11 @@ export class BeginEnemyTurnProcess {
             expedition,
         };
 
-        await this.eventEmitter.emitAsync('OnBeginEnemyTurn', { ctx });
+        await this.eventEmitter.emitAsync('enemy:before-start-turn', { ctx });
         await this.statusService.trigger(ctx, StatusEventType.OnEnemyTurnStart);
 
         // Then we loop over them and get their intentions and effects
-        enemies.forEach((enemy) => {
+        for (const enemy of enemies) {
             const {
                 currentScript: { intentions },
             } = enemy;
@@ -71,7 +71,7 @@ export class BeginEnemyTurnProcess {
                 value: enemy,
             };
 
-            intentions.forEach(async (intention) => {
+            for (const intention of intentions) {
                 const { effects } = intention;
 
                 if (!isEmpty(effects)) {
@@ -82,10 +82,11 @@ export class BeginEnemyTurnProcess {
                         selectedEnemy: enemy.id,
                     });
                 }
-            });
-        });
+            }
+        }
 
         await this.sendUpdatedEnemiesData();
+        await this.eventEmitter.emitAsync('enemy:after-start-turn', { ctx });
     }
 
     private async sendUpdatedEnemiesData(): Promise<void> {
@@ -98,7 +99,7 @@ export class BeginEnemyTurnProcess {
         });
 
         // Send enemies updated
-        this.logger.log(
+        this.logger.debug(
             `Sent message PutData to client ${this.client.id}: ${SWARAction.UpdateEnemy}`,
         );
 
@@ -115,7 +116,7 @@ export class BeginEnemyTurnProcess {
     }
 
     private sendCombatTurnChange(): void {
-        this.logger.log(
+        this.logger.debug(
             `Sent message PutData to client ${this.client.id}: ${SWARAction.ChangeTurn}`,
         );
 

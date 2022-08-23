@@ -59,9 +59,16 @@ export class CurrentNodeGeneratorProcess {
         const { initialEnergy, maxEnergy, initialHandPileSize } =
             await this.settingsService.getSettings();
 
+        // Get all the deck cards
         const cards = await this.expeditionService.getDeckCards({
             clientId: this.clientId,
         });
+
+        // Get current health
+        const { hpCurrent, hpMax } =
+            await this.expeditionService.getPlayerState({
+                clientId: this.clientId,
+            });
 
         const handCards = cards
             .sort(() => 0.5 - Math.random())
@@ -73,12 +80,14 @@ export class CurrentNodeGeneratorProcess {
         });
 
         const enemies = await this.getEnemies();
+
         const rewards = this.getRewards();
 
         return {
             nodeId: this.node.id,
             completed: this.node.isComplete,
             nodeType: this.node.type,
+            showRewards: false,
             data: {
                 round: 0,
                 playing: CombatTurnEnum.Player,
@@ -86,6 +95,8 @@ export class CurrentNodeGeneratorProcess {
                     energy: initialEnergy,
                     energyMax: maxEnergy,
                     handSize: initialHandPileSize,
+                    hpCurrent,
+                    hpMax,
                     defense: 0,
                     cards: {
                         draw: drawCards,
@@ -109,6 +120,7 @@ export class CurrentNodeGeneratorProcess {
             nodeId: this.node.id,
             completed: true,
             nodeType: this.node.type,
+            showRewards: false,
         };
     }
 

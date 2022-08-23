@@ -22,7 +22,7 @@ export class DamageEffect implements EffectHandler {
     constructor(
         private readonly playerService: PlayerService,
         private readonly enemyService: EnemyService,
-        private readonly eventEmitter2: EventEmitter2,
+        private readonly eventEmitter: EventEmitter2,
     ) {}
 
     async handle(payload: EffectDTO<DamageArgs>): Promise<void> {
@@ -60,7 +60,9 @@ export class DamageEffect implements EffectHandler {
                 damage,
                 combatQueueId,
             );
-        } else if (PlayerService.isPlayer(target)) {
+        }
+
+        if (PlayerService.isPlayer(target)) {
             // Here we check if we have to use the enemy available
             // as currentValue, here we just need to add it, the value
             // on the effect is 0
@@ -72,7 +74,7 @@ export class DamageEffect implements EffectHandler {
         }
 
         // Emit the event
-        this.eventEmitter2.emit('entity.damage', {
+        await this.eventEmitter.emitAsync('entity.damage', {
             ctx,
             entity: target,
         });

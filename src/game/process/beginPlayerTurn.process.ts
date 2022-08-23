@@ -66,7 +66,7 @@ export class BeginPlayerTurnProcess {
             newRound: round + 1,
         });
 
-        this.logger.log(
+        this.logger.debug(
             `Sent message PutData to client ${client.id}: ${SWARAction.ChangeTurn}`,
         );
 
@@ -91,7 +91,7 @@ export class BeginPlayerTurnProcess {
         this.playerService.setEnergy(ctx, initialEnergy);
 
         // Send new energy amount
-        this.logger.log(
+        this.logger.debug(
             `Sent message PutData to client ${client.id}: ${SWARAction.UpdateEnergy}`,
         );
 
@@ -115,7 +115,7 @@ export class BeginPlayerTurnProcess {
 
         await this.enemyService.calculateNewIntentions(ctx);
 
-        await this.eventEmitter.emitAsync('OnBeginPlayerTurn', { ctx });
+        await this.eventEmitter.emitAsync('player:before-start-turn', { ctx });
 
         await this.statusService.trigger(
             ctx,
@@ -135,5 +135,7 @@ export class BeginPlayerTurnProcess {
                 }),
             ),
         );
+
+        await this.eventEmitter.emitAsync('player:after-start-turn', { ctx });
     }
 }

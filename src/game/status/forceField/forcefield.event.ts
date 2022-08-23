@@ -18,7 +18,7 @@ export class ForceFieldEvent implements StatusEventHandler {
         private readonly playerService: PlayerService,
     ) {}
 
-    @OnEvent('OnBeginEnemyTurn', { async: true })
+    @OnEvent('enemy:before-start-turn', { async: true })
     async enemyHandler(args: { ctx: Context }): Promise<void> {
         const { ctx } = args;
         const enemies = this.enemyService.getAll(ctx);
@@ -28,7 +28,7 @@ export class ForceFieldEvent implements StatusEventHandler {
         }
     }
 
-    @OnEvent('OnBeginPlayerTurn', { async: true })
+    @OnEvent('player:before-start-turn', { async: true })
     async playerHandler(args: { ctx: Context }): Promise<void> {
         const { ctx } = args;
         const player = this.playerService.get(ctx);

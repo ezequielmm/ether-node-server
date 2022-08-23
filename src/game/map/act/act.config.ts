@@ -61,7 +61,7 @@ export const actCconfigAlternatives = [
                         subType: 'combat_standard',
                         chance: 40,
                         config: {
-                            enemies: [1],
+                            enemies: [2],
                         },
                     },
                 ],
@@ -74,7 +74,7 @@ export const actCconfigAlternatives = [
                         subType: 'combat_standard',
                         chance: 40,
                         config: {
-                            enemies: [1],
+                            enemies: [3],
                         },
                     },
                 ],
@@ -87,7 +87,7 @@ export const actCconfigAlternatives = [
                         subType: 'combat_standard',
                         chance: 40,
                         config: {
-                            enemies: [1],
+                            enemies: [4],
                         },
                     },
                     {
@@ -95,7 +95,7 @@ export const actCconfigAlternatives = [
                         subType: 'combat_elite',
                         chance: 60,
                         config: {
-                            enemies: [],
+                            enemies: [5],
                         },
                     },
                 ],
@@ -108,7 +108,7 @@ export const actCconfigAlternatives = [
                         subType: 'combat_standard',
                         chance: 70,
                         config: {
-                            enemies: [1],
+                            enemies: [6],
                         },
                     },
                     {
@@ -116,7 +116,7 @@ export const actCconfigAlternatives = [
                         subType: 'combat_elite',
                         chance: 30,
                         config: {
-                            enemies: [],
+                            enemies: [9],
                         },
                     },
                 ],
@@ -129,7 +129,7 @@ export const actCconfigAlternatives = [
                         subType: 'combat_standard',
                         chance: 30,
                         config: {
-                            enemies: [1],
+                            enemies: [8],
                         },
                     },
                     {
@@ -137,7 +137,7 @@ export const actCconfigAlternatives = [
                         subType: 'combat_elite',
                         chance: 20,
                         config: {
-                            enemies: [],
+                            enemies: [11],
                         },
                     },
                     {
@@ -196,7 +196,7 @@ export const actCconfigAlternatives = [
                         subType: 'combat_boss',
                         chance: 100,
                         config: {
-                            enemies: ['boss_1'],
+                            enemies: [7],
                         },
                         map_data: {
                             icon: 'combat_boss_act1boss1',
@@ -247,7 +247,7 @@ export const actCconfigAlternatives = [
                         subType: 'combat_standard',
                         chance: 40,
                         config: {
-                            enemies: [1],
+                            enemies: [12],
                         },
                     },
                 ],
@@ -260,7 +260,7 @@ export const actCconfigAlternatives = [
                         subType: 'combat_standard',
                         chance: 40,
                         config: {
-                            enemies: [1],
+                            enemies: [6],
                         },
                     },
                 ],
@@ -273,7 +273,7 @@ export const actCconfigAlternatives = [
                         subType: 'combat_standard',
                         chance: 40,
                         config: {
-                            enemies: [1],
+                            enemies: [10],
                         },
                     },
                 ],
@@ -286,7 +286,7 @@ export const actCconfigAlternatives = [
                         subType: 'combat_boss',
                         chance: 100,
                         config: {
-                            enemies: ['boss_1'],
+                            enemies: [13],
                         },
                         map_data: {
                             icon: 'combat_boss_act1boss1',
