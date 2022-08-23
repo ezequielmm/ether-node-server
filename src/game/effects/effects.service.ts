@@ -102,32 +102,32 @@ export class EffectService {
             effect: name,
         });
 
+        let combatQueue: CombatQueueDocument = null;
+
+        // Initialize the combat queue if the effect is damage,
+        // heal or defense only
+
+        if (
+            Object.values(CombatQueueTargetEffectTypeEnum).includes(
+                name as CombatQueueTargetEffectTypeEnum,
+            )
+        ) {
+            combatQueue = await this.combatQueueService.create({
+                clientId: client.id,
+                originType:
+                    source.type === CardTargetedEnum.Player
+                        ? CombatQueueOriginTypeEnum.Player
+                        : CombatQueueOriginTypeEnum.Enemy,
+                originId:
+                    source.type === CardTargetedEnum.Player
+                        ? source.value.globalState.playerId
+                        : source.value.id,
+            });
+
+            this.logger.debug(`Created Combat Queue`);
+        }
+
         for (let i = 0; i < times; i++) {
-            let combatQueue: CombatQueueDocument = null;
-
-            // Initialize the combat queue if the effect is damage,
-            // heal or defense only
-
-            if (
-                Object.values(CombatQueueTargetEffectTypeEnum).includes(
-                    name as CombatQueueTargetEffectTypeEnum,
-                )
-            ) {
-                combatQueue = await this.combatQueueService.create({
-                    clientId: client.id,
-                    originType:
-                        source.type === CardTargetedEnum.Player
-                            ? CombatQueueOriginTypeEnum.Player
-                            : CombatQueueOriginTypeEnum.Enemy,
-                    originId:
-                        source.type === CardTargetedEnum.Player
-                            ? source.value.globalState.playerId
-                            : source.value.id,
-                });
-
-                this.logger.debug(`Created Combat Queue`);
-            }
-
             // Send the queue id to the effects to add the target
             effectDTO = {
                 ...effectDTO,
@@ -141,21 +141,19 @@ export class EffectService {
             const handler = this.findHandlerByName(name);
 
             await handler.handle(effectDTO);
+        }
 
-            // If we have a combat queue initiated, we run the queue
-            if (combatQueue) {
-                // Send the combat queue to the client
-                this.logger.debug(`Sent combat queue to client ${client.id}`);
-                await this.combatQueueService.sendQueueToClient(client);
+        // If we have a combat queue initiated, we run the queue
+        if (combatQueue) {
+            // Send the combat queue to the client
+            this.logger.debug(`Sent combat queue to client ${client.id}`);
+            await this.combatQueueService.sendQueueToClient(client);
 
-                // Clear the queue
-                this.logger.debug(
-                    `Cleared combat queue to client ${client.id}`,
-                );
-                await this.combatQueueService.deleteCombatQueueByClientId(
-                    client.id,
-                );
-            }
+            // Clear the queue
+            this.logger.debug(`Cleared combat queue to client ${client.id}`);
+            await this.combatQueueService.deleteCombatQueueByClientId(
+                client.id,
+            );
         }
     }
 
