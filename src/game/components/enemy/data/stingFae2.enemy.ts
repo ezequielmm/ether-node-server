@@ -1,35 +1,34 @@
 import { damageEffect } from 'src/game/effects/damage/constants';
 import { CardTargetedEnum } from '../../card/card.enum';
 import {
-    EnemyTypeEnum,
     EnemyCategoryEnum,
-    EnemySizeEnum,
     EnemyIntentionType,
+    EnemySizeEnum,
+    EnemyTypeEnum,
 } from '../enemy.enum';
 import { Enemy } from '../enemy.schema';
 
-export const swampGoblin2Data: Enemy = {
-    enemyId: 4,
-    name: 'SwampGoblin2',
+export const stingFae2Data: Enemy = {
+    enemyId: 14,
+    name: 'StingFae',
     type: EnemyTypeEnum.Fae,
     category: EnemyCategoryEnum.Basic,
-    size: EnemySizeEnum.Medium,
-    description:
-        'Elderly and hunch-backed, she tries to appear harmless but she is aggressive and has Magic powers. Her MAGIC SPORE STAFF is like a huge wand - it can be used to cover enemies in magic toxic spores and choke them',
-    healthRange: [38, 44],
+    size: EnemySizeEnum.Small,
+    description: '',
+    healthRange: [10, 15],
     scripts: [
         {
             intentions: [
                 {
                     type: EnemyIntentionType.Attack,
                     target: CardTargetedEnum.Player,
-                    value: 8,
+                    value: 5,
                     effects: [
                         {
                             effect: damageEffect.name,
                             target: CardTargetedEnum.Player,
                             args: {
-                                value: 8,
+                                value: 5,
                             },
                         },
                     ],
@@ -37,11 +36,11 @@ export const swampGoblin2Data: Enemy = {
             ],
             next: [
                 {
-                    probability: 0.7,
-                    scriptIndex: 1,
+                    probability: 0.5,
+                    scriptIndex: 2,
                 },
                 {
-                    probability: 0.3,
+                    probability: 0.5,
                     scriptIndex: 3,
                 },
             ],
