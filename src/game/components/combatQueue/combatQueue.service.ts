@@ -40,13 +40,7 @@ export class CombatQueueService {
         combatQueueId: string,
         targets: ICombatQueueTarget[],
     ): Promise<void> {
-        await this.combatQueue.findByIdAndUpdate(combatQueueId, {
-            $push: {
-                targets: {
-                    $each: targets,
-                },
-            },
-        });
+        await this.combatQueue.findByIdAndUpdate(combatQueueId, { targets });
     }
 
     async sendQueueToClient(client: Socket): Promise<void> {

@@ -61,7 +61,7 @@ export class BeginEnemyTurnProcess {
         await this.statusService.trigger(ctx, StatusEventType.OnEnemyTurnStart);
 
         // Then we loop over them and get their intentions and effects
-        for (const enemy of enemies) {
+        enemies.forEach((enemy) => {
             const {
                 currentScript: { intentions },
             } = enemy;
@@ -71,7 +71,7 @@ export class BeginEnemyTurnProcess {
                 value: enemy,
             };
 
-            for (const intention of intentions) {
+            intentions.forEach(async (intention) => {
                 const { effects } = intention;
 
                 if (!isEmpty(effects)) {
@@ -82,8 +82,8 @@ export class BeginEnemyTurnProcess {
                         selectedEnemy: enemy.id,
                     });
                 }
-            }
-        }
+            });
+        });
 
         await this.sendUpdatedEnemiesData();
         await this.eventEmitter.emitAsync('enemy:after-start-turn', { ctx });
