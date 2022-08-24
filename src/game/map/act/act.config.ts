@@ -1,3 +1,8 @@
+import { barkChargerData } from 'src/game/components/enemy/data/barkCharger.enemy';
+import { mimicFrog1Data } from 'src/game/components/enemy/data/mimicFrog1.enemy';
+import { sporeMongerData } from 'src/game/components/enemy/data/sporeMonger.enemy';
+import { stingFae1Data } from 'src/game/components/enemy/data/stingFae1.enemy';
+
 export const actDefaults = {
     stepsTotal: 20,
     minNodesPerStep: 2,
@@ -24,19 +29,25 @@ export const actCconfigAlternatives = [
                     config: {
                         enemies: [
                             {
-                                enemies: [1, 1], // TODO: StingFae1, StingFae2
+                                enemies: [
+                                    stingFae1Data.enemyId,
+                                    stingFae1Data.enemyId,
+                                ],
                                 probability: 0.25,
                             },
                             {
-                                enemies: [1, 1], // TODO: BarkCharger, BarkCharger
+                                enemies: [
+                                    barkChargerData.enemyId,
+                                    barkChargerData.enemyId,
+                                ],
                                 probability: 0.25,
                             },
                             {
-                                enemies: [1],
+                                enemies: [sporeMongerData.enemyId],
                                 probability: 0.25,
                             },
                             {
-                                enemies: [1], // TODO: MimicFrog (1 or 2)
+                                enemies: [mimicFrog1Data.enemyId],
                                 probability: 0.25,
                             },
                         ],
