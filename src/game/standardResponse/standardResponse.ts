@@ -29,6 +29,7 @@ export enum SWARAction {
     ShowMap = 'show_map',
     UpdatePlayerState = 'update_player_state',
     MapUpdate = 'map_update',
+    InvalidCard = 'invalid_card',
     InsufficientEnergy = 'insufficient_energy',
     UpdateEnergy = 'update_energy',
     MoveCard = 'move_card',
