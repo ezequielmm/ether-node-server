@@ -2,7 +2,7 @@ export enum EnemyTypeEnum {
     Spirit = 'spirit',
     Plant = 'plant',
     Beast = 'beast',
-    Fey = 'fey',
+    Fae = 'fae',
     Undead = 'undead',
     Clockwork = 'clockwork',
     Eldritch = 'eldritch',
