@@ -60,13 +60,11 @@ export class CombatQueueService {
                 StandardResponse.respond({
                     message_type: SWARMessageType.CombatUpdate,
                     action: SWARAction.CombatQueue,
-                    data: combatQueues.map((item) => {
-                        return {
-                            originType: item.originType,
-                            originId: item.originId,
-                            targets: item.targets,
-                        };
-                    }),
+                    data: combatQueues.map(
+                        ({ originType, originId, targets }) => {
+                            return { originType, originId, targets };
+                        },
+                    ),
                 }),
             ),
         );
