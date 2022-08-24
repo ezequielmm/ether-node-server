@@ -87,10 +87,7 @@ export class SocketGateway
                             });
 
                         await this.playerService.setHp(
-                            {
-                                client,
-                                expedition,
-                            },
+                            { client, expedition },
                             hpCurrent,
                         );
 
@@ -116,8 +113,8 @@ export class SocketGateway
     async handleDisconnect(client: Socket): Promise<void> {
         this.logger.debug(`Client disconnected: ${client.id}`);
 
-        this.logger.debug(`Deleted combat queue for client ${client.id}`);
-
         await this.combatQueueService.deleteCombatQueueByClientId(client.id);
+
+        this.logger.debug(`Deleted combat queue for client ${client.id}`);
     }
 }
