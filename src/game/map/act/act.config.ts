@@ -1,7 +1,17 @@
+import { ancientOneData } from 'src/game/components/enemy/data/ancientOne.enemy';
 import { barkChargerData } from 'src/game/components/enemy/data/barkCharger.enemy';
+import { fungalBruteData } from 'src/game/components/enemy/data/fungalBrute.enemy';
+import { groundMothData } from 'src/game/components/enemy/data/groundmoth.enemy';
 import { mimicFrog1Data } from 'src/game/components/enemy/data/mimicFrog1.enemy';
+import { queenOrchidData } from 'src/game/components/enemy/data/queenOrchid.enemy';
 import { sporeMongerData } from 'src/game/components/enemy/data/sporeMonger.enemy';
 import { stingFae1Data } from 'src/game/components/enemy/data/stingFae1.enemy';
+import { stingFae2Data } from 'src/game/components/enemy/data/stingFae2.enemy';
+import { swampGoblin1Data } from 'src/game/components/enemy/data/swampGoblin1.enemy';
+import { swampGoblin2Data } from 'src/game/components/enemy/data/swampGoblin2.enemy';
+import { thornWolfData } from 'src/game/components/enemy/data/thornWolf.enemy';
+import { trapelicanData } from 'src/game/components/enemy/data/trapelican.enemy';
+import { treantData } from 'src/game/components/enemy/data/treant.enemy';
 
 export const actDefaults = {
     stepsTotal: 20,
@@ -78,19 +88,25 @@ export const actCconfigAlternatives = [
                         config: {
                             enemies: [
                                 {
-                                    enemies: [1, 1], // TODO: StingFae1, StingFae2
+                                    enemies: [
+                                        stingFae1Data.enemyId,
+                                        stingFae2Data.enemyId,
+                                    ],
                                     probability: 0.25,
                                 },
                                 {
-                                    enemies: [1, 1], // TODO: BarkCharger, BarkCharger
+                                    enemies: [
+                                        barkChargerData.enemyId,
+                                        barkChargerData.enemyId,
+                                    ],
                                     probability: 0.25,
                                 },
                                 {
-                                    enemies: [1],
+                                    enemies: [sporeMongerData.enemyId],
                                     probability: 0.25,
                                 },
                                 {
-                                    enemies: [1], // TODO: MimicFrog (1 or 2)
+                                    enemies: [mimicFrog1Data.enemyId],
                                     probability: 0.25,
                                 },
                             ],
@@ -108,19 +124,25 @@ export const actCconfigAlternatives = [
                         config: {
                             enemies: [
                                 {
-                                    enemies: [1, 1], // TODO: StingFae1, StingFae2
+                                    enemies: [
+                                        stingFae1Data.enemyId,
+                                        stingFae2Data.enemyId,
+                                    ],
                                     probability: 0.25,
                                 },
                                 {
-                                    enemies: [1, 1], // TODO: BarkCharger, BarkCharger
+                                    enemies: [
+                                        barkChargerData.enemyId,
+                                        barkChargerData.enemyId,
+                                    ],
                                     probability: 0.25,
                                 },
                                 {
-                                    enemies: [1],
+                                    enemies: [sporeMongerData.enemyId],
                                     probability: 0.25,
                                 },
                                 {
-                                    enemies: [1], // TODO: MimicFrog (1 or 2)
+                                    enemies: [mimicFrog1Data.enemyId],
                                     probability: 0.25,
                                 },
                             ],
@@ -138,19 +160,25 @@ export const actCconfigAlternatives = [
                         config: {
                             enemies: [
                                 {
-                                    enemies: [1, 1], // TODO: StingFae1, StingFae2
+                                    enemies: [
+                                        stingFae1Data.enemyId,
+                                        stingFae2Data.enemyId,
+                                    ],
                                     probability: 0.25,
                                 },
                                 {
-                                    enemies: [1, 1], // TODO: BarkCharger, BarkCharger
+                                    enemies: [
+                                        barkChargerData.enemyId,
+                                        barkChargerData.enemyId,
+                                    ],
                                     probability: 0.25,
                                 },
                                 {
-                                    enemies: [1],
+                                    enemies: [sporeMongerData.enemyId],
                                     probability: 0.25,
                                 },
                                 {
-                                    enemies: [1], // TODO: MimicFrog (1 or 2)
+                                    enemies: [mimicFrog1Data.enemyId],
                                     probability: 0.25,
                                 },
                             ],
@@ -168,20 +196,77 @@ export const actCconfigAlternatives = [
                         config: {
                             enemies: [
                                 {
-                                    enemies: [1, 1], // TODO: StingFae1, StingFae2
-                                    probability: 0.25,
+                                    enemies: [
+                                        mimicFrog1Data.enemyId,
+                                        mimicFrog1Data.enemyId,
+                                    ], // TODO: Mimic Frog 2
+                                    probability: 0.12,
                                 },
                                 {
-                                    enemies: [1, 1], // TODO: BarkCharger, BarkCharger
-                                    probability: 0.25,
+                                    enemies: [groundMothData.enemyId],
+                                    probability: 0.11,
                                 },
                                 {
-                                    enemies: [1],
-                                    probability: 0.25,
+                                    enemies: [
+                                        stingFae1Data.enemyId,
+                                        stingFae2Data.enemyId,
+                                        swampGoblin1Data.enemyId,
+                                    ],
+                                    probability: 0.11,
                                 },
                                 {
-                                    enemies: [1], // TODO: MimicFrog (1 or 2)
-                                    probability: 0.25,
+                                    enemies: [
+                                        barkChargerData.enemyId,
+                                        barkChargerData.enemyId,
+                                        barkChargerData.enemyId,
+                                    ],
+                                    probability: 0.1,
+                                },
+                                {
+                                    enemies: [
+                                        swampGoblin2Data.enemyId,
+                                        swampGoblin2Data.enemyId,
+                                        swampGoblin1Data.enemyId,
+                                    ],
+                                    probability: 0.1,
+                                },
+                                {
+                                    enemies: [
+                                        sporeMongerData.enemyId,
+                                        trapelicanData.enemyId,
+                                    ],
+                                    probability: 0.1,
+                                },
+                                {
+                                    enemies: [
+                                        trapelicanData.enemyId,
+                                        mimicFrog1Data.enemyId,
+                                    ],
+                                    probability: 0.1,
+                                },
+                                {
+                                    enemies: [
+                                        barkChargerData.enemyId,
+                                        swampGoblin2Data.enemyId,
+                                    ],
+                                    probability: 0.09,
+                                },
+                                {
+                                    enemies: [
+                                        stingFae1Data.enemyId,
+                                        stingFae1Data.enemyId,
+                                        stingFae1Data.enemyId,
+                                        stingFae1Data.enemyId,
+                                    ],
+                                    probability: 0.09,
+                                },
+                                {
+                                    enemies: [
+                                        stingFae1Data.enemyId,
+                                        groundMothData.enemyId,
+                                        stingFae2Data.enemyId,
+                                    ],
+                                    probability: 0.08,
                                 },
                             ],
                         },
@@ -193,20 +278,16 @@ export const actCconfigAlternatives = [
                         config: {
                             enemies: [
                                 {
-                                    enemies: [1, 1], // TODO: StingFae1, StingFae2
-                                    probability: 0.25,
+                                    enemies: [thornWolfData.enemyId],
+                                    probability: 33.3,
                                 },
                                 {
-                                    enemies: [1, 1], // TODO: BarkCharger, BarkCharger
-                                    probability: 0.25,
+                                    enemies: [queenOrchidData.enemyId],
+                                    probability: 33.3,
                                 },
                                 {
-                                    enemies: [1],
-                                    probability: 0.25,
-                                },
-                                {
-                                    enemies: [1], // TODO: MimicFrog (1 or 2)
-                                    probability: 0.25,
+                                    enemies: [ancientOneData.enemyId],
+                                    probability: 33.3,
                                 },
                             ],
                         },
@@ -223,20 +304,77 @@ export const actCconfigAlternatives = [
                         config: {
                             enemies: [
                                 {
-                                    enemies: [1, 1], // TODO: StingFae1, StingFae2
-                                    probability: 0.25,
+                                    enemies: [
+                                        mimicFrog1Data.enemyId,
+                                        mimicFrog1Data.enemyId,
+                                    ], // TODO: Mimic Frog 2
+                                    probability: 0.12,
                                 },
                                 {
-                                    enemies: [1, 1], // TODO: BarkCharger, BarkCharger
-                                    probability: 0.25,
+                                    enemies: [groundMothData.enemyId],
+                                    probability: 0.11,
                                 },
                                 {
-                                    enemies: [1],
-                                    probability: 0.25,
+                                    enemies: [
+                                        stingFae1Data.enemyId,
+                                        stingFae2Data.enemyId,
+                                        swampGoblin1Data.enemyId,
+                                    ],
+                                    probability: 0.11,
                                 },
                                 {
-                                    enemies: [1], // TODO: MimicFrog (1 or 2)
-                                    probability: 0.25,
+                                    enemies: [
+                                        barkChargerData.enemyId,
+                                        barkChargerData.enemyId,
+                                        barkChargerData.enemyId,
+                                    ],
+                                    probability: 0.1,
+                                },
+                                {
+                                    enemies: [
+                                        swampGoblin2Data.enemyId,
+                                        swampGoblin2Data.enemyId,
+                                        swampGoblin1Data.enemyId,
+                                    ],
+                                    probability: 0.1,
+                                },
+                                {
+                                    enemies: [
+                                        sporeMongerData.enemyId,
+                                        trapelicanData.enemyId,
+                                    ],
+                                    probability: 0.1,
+                                },
+                                {
+                                    enemies: [
+                                        trapelicanData.enemyId,
+                                        mimicFrog1Data.enemyId,
+                                    ],
+                                    probability: 0.1,
+                                },
+                                {
+                                    enemies: [
+                                        barkChargerData.enemyId,
+                                        swampGoblin2Data.enemyId,
+                                    ],
+                                    probability: 0.09,
+                                },
+                                {
+                                    enemies: [
+                                        stingFae1Data.enemyId,
+                                        stingFae1Data.enemyId,
+                                        stingFae1Data.enemyId,
+                                        stingFae1Data.enemyId,
+                                    ],
+                                    probability: 0.09,
+                                },
+                                {
+                                    enemies: [
+                                        stingFae1Data.enemyId,
+                                        groundMothData.enemyId,
+                                        stingFae2Data.enemyId,
+                                    ],
+                                    probability: 0.08,
                                 },
                             ],
                         },
@@ -248,20 +386,16 @@ export const actCconfigAlternatives = [
                         config: {
                             enemies: [
                                 {
-                                    enemies: [1, 1], // TODO: StingFae1, StingFae2
-                                    probability: 0.25,
+                                    enemies: [thornWolfData.enemyId],
+                                    probability: 33.3,
                                 },
                                 {
-                                    enemies: [1, 1], // TODO: BarkCharger, BarkCharger
-                                    probability: 0.25,
+                                    enemies: [queenOrchidData.enemyId],
+                                    probability: 33.3,
                                 },
                                 {
-                                    enemies: [1],
-                                    probability: 0.25,
-                                },
-                                {
-                                    enemies: [1], // TODO: MimicFrog (1 or 2)
-                                    probability: 0.25,
+                                    enemies: [ancientOneData.enemyId],
+                                    probability: 33.3,
                                 },
                             ],
                         },
@@ -278,20 +412,77 @@ export const actCconfigAlternatives = [
                         config: {
                             enemies: [
                                 {
-                                    enemies: [1, 1], // TODO: StingFae1, StingFae2
-                                    probability: 0.25,
+                                    enemies: [
+                                        mimicFrog1Data.enemyId,
+                                        mimicFrog1Data.enemyId,
+                                    ], // TODO: Mimic Frog 2
+                                    probability: 0.12,
                                 },
                                 {
-                                    enemies: [1, 1], // TODO: BarkCharger, BarkCharger
-                                    probability: 0.25,
+                                    enemies: [groundMothData.enemyId],
+                                    probability: 0.11,
                                 },
                                 {
-                                    enemies: [1],
-                                    probability: 0.25,
+                                    enemies: [
+                                        stingFae1Data.enemyId,
+                                        stingFae2Data.enemyId,
+                                        swampGoblin1Data.enemyId,
+                                    ],
+                                    probability: 0.11,
                                 },
                                 {
-                                    enemies: [1], // TODO: MimicFrog (1 or 2)
-                                    probability: 0.25,
+                                    enemies: [
+                                        barkChargerData.enemyId,
+                                        barkChargerData.enemyId,
+                                        barkChargerData.enemyId,
+                                    ],
+                                    probability: 0.1,
+                                },
+                                {
+                                    enemies: [
+                                        swampGoblin2Data.enemyId,
+                                        swampGoblin2Data.enemyId,
+                                        swampGoblin1Data.enemyId,
+                                    ],
+                                    probability: 0.1,
+                                },
+                                {
+                                    enemies: [
+                                        sporeMongerData.enemyId,
+                                        trapelicanData.enemyId,
+                                    ],
+                                    probability: 0.1,
+                                },
+                                {
+                                    enemies: [
+                                        trapelicanData.enemyId,
+                                        mimicFrog1Data.enemyId,
+                                    ],
+                                    probability: 0.1,
+                                },
+                                {
+                                    enemies: [
+                                        barkChargerData.enemyId,
+                                        swampGoblin2Data.enemyId,
+                                    ],
+                                    probability: 0.09,
+                                },
+                                {
+                                    enemies: [
+                                        stingFae1Data.enemyId,
+                                        stingFae1Data.enemyId,
+                                        stingFae1Data.enemyId,
+                                        stingFae1Data.enemyId,
+                                    ],
+                                    probability: 0.09,
+                                },
+                                {
+                                    enemies: [
+                                        stingFae1Data.enemyId,
+                                        groundMothData.enemyId,
+                                        stingFae2Data.enemyId,
+                                    ],
+                                    probability: 0.08,
                                 },
                             ],
                         },
@@ -303,20 +494,16 @@ export const actCconfigAlternatives = [
                         config: {
                             enemies: [
                                 {
-                                    enemies: [1, 1], // TODO: StingFae1, StingFae2
-                                    probability: 0.25,
+                                    enemies: [thornWolfData.enemyId],
+                                    probability: 33.3,
                                 },
                                 {
-                                    enemies: [1, 1], // TODO: BarkCharger, BarkCharger
-                                    probability: 0.25,
+                                    enemies: [queenOrchidData.enemyId],
+                                    probability: 33.3,
                                 },
                                 {
-                                    enemies: [1],
-                                    probability: 0.25,
-                                },
-                                {
-                                    enemies: [1], // TODO: MimicFrog (1 or 2)
-                                    probability: 0.25,
+                                    enemies: [ancientOneData.enemyId],
+                                    probability: 33.3,
                                 },
                             ],
                         },
@@ -379,20 +566,12 @@ export const actCconfigAlternatives = [
                         config: {
                             enemies: [
                                 {
-                                    enemies: [1, 1], // TODO: StingFae1, StingFae2
-                                    probability: 0.25,
+                                    enemies: [treantData.enemyId],
+                                    probability: 0.5,
                                 },
                                 {
-                                    enemies: [1, 1], // TODO: BarkCharger, BarkCharger
-                                    probability: 0.25,
-                                },
-                                {
-                                    enemies: [1],
-                                    probability: 0.25,
-                                },
-                                {
-                                    enemies: [1], // TODO: MimicFrog (1 or 2)
-                                    probability: 0.25,
+                                    enemies: [fungalBruteData.enemyId],
+                                    probability: 0.5,
                                 },
                             ],
                         },
