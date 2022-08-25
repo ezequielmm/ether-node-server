@@ -47,10 +47,10 @@ export class GetStatusesAction {
 
         // Then, we get the enemies and its statuses and add
         // all to the array
-        enemies.forEach(({ enemyId, statuses: { buff, debuff } }) => {
+        enemies.forEach(({ id, statuses: { buff, debuff } }) => {
             response.push({
                 targetEntity: TargetEntityEnum.Enemy,
-                id: enemyId,
+                id,
                 statuses: [
                     ...StatusGenerator.formatStatusesToArray(buff),
                     ...StatusGenerator.formatStatusesToArray(debuff),
