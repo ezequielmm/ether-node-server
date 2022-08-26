@@ -1,4 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { CardSelectionScreenOriginPileEnum } from 'src/game/components/cardSelectionScreen/cardSelectionScreen.enum';
+import { CardSelectionScreenService } from 'src/game/components/cardSelectionScreen/cardSelectionScreen.service';
 import {
     StandardResponse,
     SWARAction,
@@ -8,13 +10,8 @@ import { EffectDecorator } from '../effects.decorator';
 import { EffectDTO, EffectHandler } from '../effects.interface';
 import { chooseCardEffect } from './constants';
 
-export enum TakeCardFromPileEnum {
-    Discard = 'discard',
-    Draw = 'draw',
-}
-
 export interface ChooseCardArgs {
-    takeFromPile: TakeCardFromPileEnum;
+    originPile: CardSelectionScreenOriginPileEnum;
 }
 
 @EffectDecorator({
@@ -24,10 +21,14 @@ export interface ChooseCardArgs {
 export class ChooseCardEffect implements EffectHandler {
     private readonly logger: Logger = new Logger(ChooseCardEffect.name);
 
+    constructor(
+        private readonly cardSelectionScreenService: CardSelectionScreenService,
+    ) {}
+
     async handle(payload: EffectDTO<ChooseCardArgs>): Promise<void> {
         const {
             ctx: { client, expedition },
-            args: { takeFromPile, currentValue: cardsToTake },
+            args: { originPile, currentValue: cardsToTake },
         } = payload;
 
         // Here we query the desired deck based on the card played
@@ -39,11 +40,16 @@ export class ChooseCardEffect implements EffectHandler {
             },
         } = expedition;
 
-        const cardList = cards[takeFromPile];
+        const cardList =
+            originPile === CardSelectionScreenOriginPileEnum.Discard
+                ? cards.discard
+                : cards.draw;
+
+        console.log(originPile);
 
         // Now we send a message to the frontend to choose a card from that list
         this.logger.debug(
-            `Client ${client.id} will take ${cardsToTake} cards from the ${takeFromPile} pile`,
+            `Client ${client.id} will take ${cardsToTake} cards from the ${originPile} pile`,
         );
 
         client.emit(
@@ -54,11 +60,21 @@ export class ChooseCardEffect implements EffectHandler {
                     action: SWARAction.ShowCardDialog,
                     data: {
                         cards: cardList,
-                        takeFromPile,
                         cardsToTake,
                     },
                 }),
             ),
         );
+
+        // Here we create an item on the card selection screen collection
+        // to make sure that we only receive the desired data
+        await this.cardSelectionScreenService.create({
+            clientId: client.id,
+            cardIds: cardList.map(({ id }) => {
+                return id;
+            }),
+            originPile,
+            amount: cardsToTake,
+        });
     }
 }

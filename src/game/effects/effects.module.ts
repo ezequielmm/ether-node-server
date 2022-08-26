@@ -1,5 +1,6 @@
 import { forwardRef, Module } from '@nestjs/common';
 import { ActionModule } from '../action/action.module';
+import { CardSelectionScreenModule } from '../components/cardSelectionScreen/cardSelectionScreen.module';
 import { CombatQueueModule } from '../components/combatQueue/combatQueue.module';
 import { EnemyModule } from '../components/enemy/enemy.module';
 import { ExpeditionModule } from '../components/expedition/expedition.module';
@@ -34,6 +35,7 @@ import { TwistTheBladeEffect } from './twistTheBlade/twistTheBlade.effect';
         PlayerModule,
         CombatQueueModule,
         HistoryModule,
+        CardSelectionScreenModule,
     ],
     providers: [
         EffectService,

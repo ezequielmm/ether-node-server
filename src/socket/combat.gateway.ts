@@ -8,17 +8,10 @@ import { EndPlayerTurnProcess } from 'src/game/process/endPlayerTurn.process';
 import { ExpeditionService } from 'src/game/components/expedition/expedition.service';
 import { CombatTurnEnum } from 'src/game/components/expedition/expedition.enum';
 import { EndEnemyTurnProcess } from 'src/game/process/endEnemyTurn.process';
-import { TakeCardFromPileEnum } from 'src/game/effects/chooseCard/chooseCard.effect';
-import { MoveCardAction } from 'src/game/action/moveCard.action';
 
 interface ICardPlayed {
     cardId: CardId;
     targetId?: TargetId;
-}
-
-interface IMoveCard {
-    cardIds: string[];
-    takeFromPile: TakeCardFromPileEnum;
 }
 
 @WebSocketGateway({
@@ -34,7 +27,6 @@ export class CombatGateway {
         private readonly endPlayerTurnProcess: EndPlayerTurnProcess,
         private readonly endEnemyTurnProcess: EndEnemyTurnProcess,
         private readonly expeditionService: ExpeditionService,
-        private readonly moveCardAction: MoveCardAction,
     ) {}
 
     @SubscribeMessage('EndTurn')
@@ -86,7 +78,5 @@ export class CombatGateway {
         this.logger.debug(
             `Client ${client.id} trigger message "MoveCard": ${payload}`,
         );
-
-        const { cardIds, takeFromPile }: IMoveCard = JSON.parse(payload);
     }
 }

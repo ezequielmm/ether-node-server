@@ -1,5 +1,5 @@
-import { TakeCardFromPileEnum } from 'src/game/effects/chooseCard/chooseCard.effect';
 import { chooseCardEffect } from 'src/game/effects/chooseCard/constants';
+import { CardSelectionScreenOriginPileEnum } from '../../cardSelectionScreen/cardSelectionScreen.enum';
 import { CardRarityEnum, CardTargetedEnum, CardTypeEnum } from '../card.enum';
 import { Card } from '../card.schema';
 
@@ -19,7 +19,7 @@ export const FrontflipCard: Card = {
                 target: CardTargetedEnum.Player,
                 args: {
                     value: 1,
-                    takeFromPile: TakeCardFromPileEnum.Draw,
+                    originPile: CardSelectionScreenOriginPileEnum.Draw,
                 },
             },
         ],
@@ -45,7 +45,7 @@ export const FrontflipCardUpgraded: Card = {
                 target: CardTargetedEnum.Player,
                 args: {
                     value: 2,
-                    takeFromPile: TakeCardFromPileEnum.Draw,
+                    originPile: CardSelectionScreenOriginPileEnum.Draw,
                 },
             },
         ],
