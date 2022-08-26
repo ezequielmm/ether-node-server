@@ -8,10 +8,17 @@ import { EndPlayerTurnProcess } from 'src/game/process/endPlayerTurn.process';
 import { ExpeditionService } from 'src/game/components/expedition/expedition.service';
 import { CombatTurnEnum } from 'src/game/components/expedition/expedition.enum';
 import { EndEnemyTurnProcess } from 'src/game/process/endEnemyTurn.process';
+import { TakeCardFromPileEnum } from 'src/game/effects/chooseCard/chooseCard.effect';
+import { MoveCardAction } from 'src/game/action/moveCard.action';
 
-interface CardPlayedInterface {
+interface ICardPlayed {
     cardId: CardId;
     targetId?: TargetId;
+}
+
+interface IMoveCard {
+    cardIds: string[];
+    takeFromPile: TakeCardFromPileEnum;
 }
 
 @WebSocketGateway({
@@ -27,6 +34,7 @@ export class CombatGateway {
         private readonly endPlayerTurnProcess: EndPlayerTurnProcess,
         private readonly endEnemyTurnProcess: EndEnemyTurnProcess,
         private readonly expeditionService: ExpeditionService,
+        private readonly moveCardAction: MoveCardAction,
     ) {}
 
     @SubscribeMessage('EndTurn')
@@ -64,12 +72,21 @@ export class CombatGateway {
             `Client ${client.id} trigger message "CardPlayed": ${payload}`,
         );
 
-        const { cardId, targetId }: CardPlayedInterface = JSON.parse(payload);
+        const { cardId, targetId }: ICardPlayed = JSON.parse(payload);
 
         await this.cardPlayedAction.handle({
             client,
             cardId,
             selectedEnemyId: targetId,
         });
+    }
+
+    @SubscribeMessage('MoveCard')
+    async handleMoveCard(client: Socket, payload: string): Promise<void> {
+        this.logger.debug(
+            `Client ${client.id} trigger message "MoveCard": ${payload}`,
+        );
+
+        const { cardIds, takeFromPile }: IMoveCard = JSON.parse(payload);
     }
 }
