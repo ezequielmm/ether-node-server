@@ -112,7 +112,7 @@ export class CardPlayedAction {
                 cardEnergyCost,
                 availableEnergy,
             );
-            console.log('qqqq2', canPlayCard);
+
             // next we inform the player that is not possible to play the card
             if (!canPlayCard) {
                 this.sendNotEnoughEnergyMessage(message);
@@ -147,7 +147,7 @@ export class CardPlayedAction {
                         cardId,
                     });
                 }
-                console.log('qqqq1');
+
                 await this.effectService.applyAll({
                     ctx,
                     source,

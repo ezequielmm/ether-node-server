@@ -9,6 +9,10 @@ import { CounterCard, CounterCardUpgraded } from './data/counter.card';
 import { DefenseCard, DefenseCardUpgraded } from './data/defend.card';
 import { DivineGiftCard, DivineGiftCardUpgraded } from './data/divineGift.card';
 import { DoubleDownCard, DoubleDownCardUpgraded } from './data/doubleDown.card';
+import {
+    ExecutionersBlowCard,
+    ExecutionersBlowCardUpgraded,
+} from './data/executionersBlow.card';
 import { FadeCard, FadeCardUpgraded } from './data/fade.card';
 import { FeintCard, FeintCardUpgraded } from './data/feint.card';
 import {
@@ -42,6 +46,10 @@ import {
 } from './data/invokeBlessing.card';
 import { KegChugCard, KegChugCardUpgraded } from './data/kegChug.card';
 import { KindleCard, KindleCardUpgraded } from './data/kindle.card';
+import {
+    KnightsResolveCard,
+    KnightsResolveCardUpgraded,
+} from './data/knightsResolve.card';
 import { LastResortCard, LastResortCardUpgraded } from './data/lastResort.card';
 import { LungeCard, LungeCardUpgraded } from './data/lunge.card';
 import {
@@ -59,6 +67,10 @@ import { Refocus, RefocusUpgraded } from './data/refocus.card';
 import { RepositionCard, RepositionCardUpgraded } from './data/reposition.card';
 import { ShakeItOffCard, ShakeItOffCardUpgraded } from './data/shakeItOff.card';
 import { ShieldBashCard, ShieldBashCardUpgraded } from './data/shieldBash.card';
+import {
+    ShieldPlantCard,
+    ShieldPlantCardUpgraded,
+} from './data/shieldPlant.card';
 import { SiphonCard, SiphonCardUpgraded } from './data/siphon.card';
 import { SpikeArmorCard, SpikeArmorCardUpgraded } from './data/spikeArmor.card';
 import {
@@ -166,4 +178,10 @@ export const data: Card[] = [
     AdeptCardUpgraded,
     DivineGiftCard,
     DivineGiftCardUpgraded,
+    ExecutionersBlowCard,
+    ExecutionersBlowCardUpgraded,
+    KnightsResolveCard,
+    KnightsResolveCardUpgraded,
+    ShieldPlantCard,
+    ShieldPlantCardUpgraded,
 ];

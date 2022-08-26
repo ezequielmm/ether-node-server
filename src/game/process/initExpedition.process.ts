@@ -76,6 +76,7 @@ export class InitExpeditionProcess {
         const deck = !customDeck ? characterDeck : customDeck.cards;
 
         // Get all the cards
+
         const cards = await this.cardService.findCardsById(cardIds);
 
         // Filter the card ids and make a new array
