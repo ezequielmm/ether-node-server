@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
-import { CombatQueueOriginTypeEnum } from './combatQueue.enum';
+import { ExpeditionEntity } from '../interfaces';
 import { ICombatQueueTarget } from './combatQueue.interface';
 
 export type CombatQueueDocument = CombatQueue & Document;
@@ -13,13 +13,11 @@ export class CombatQueue {
     clientId: string;
 
     @Prop()
-    originType: CombatQueueOriginTypeEnum;
-
-    @Prop()
-    originId: string;
-
-    @Prop({ type: Object })
-    targets?: ICombatQueueTarget[];
+    queue: {
+        originType: ExpeditionEntity['type'];
+        originId: string;
+        targets?: ICombatQueueTarget[];
+    }[];
 }
 
 export const CombatQueueSchema = SchemaFactory.createForClass(CombatQueue);
