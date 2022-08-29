@@ -1,7 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { CreateCardSelectionScreenDTO } from './cardSelectionScreen.interface';
+import {
+    CreateCardSelectionScreenDTO,
+    IFindCardSelectionScreen,
+} from './cardSelectionScreen.interface';
 import {
     CardSelectionScreen,
     CardSelectionScreenDocument,
@@ -22,5 +25,11 @@ export class CardSelectionScreenService {
 
     async deleteByClientId(clientId: string): Promise<void> {
         await this.cardSelectionScreen.deleteMany({ clientId });
+    }
+
+    async findOne(
+        payload: IFindCardSelectionScreen,
+    ): Promise<CardSelectionScreenDocument> {
+        return await this.cardSelectionScreen.findOne(payload).lean();
     }
 }

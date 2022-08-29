@@ -8,10 +8,15 @@ import { EndPlayerTurnProcess } from 'src/game/process/endPlayerTurn.process';
 import { ExpeditionService } from 'src/game/components/expedition/expedition.service';
 import { CombatTurnEnum } from 'src/game/components/expedition/expedition.enum';
 import { EndEnemyTurnProcess } from 'src/game/process/endEnemyTurn.process';
+import { CardSelectionScreenService } from 'src/game/components/cardSelectionScreen/cardSelectionScreen.service';
 
 interface ICardPlayed {
     cardId: CardId;
     targetId?: TargetId;
+}
+
+interface IMoveCard {
+    cardsToTake: string[];
 }
 
 @WebSocketGateway({
@@ -27,6 +32,7 @@ export class CombatGateway {
         private readonly endPlayerTurnProcess: EndPlayerTurnProcess,
         private readonly endEnemyTurnProcess: EndEnemyTurnProcess,
         private readonly expeditionService: ExpeditionService,
+        private readonly cardSelectionService: CardSelectionScreenService,
     ) {}
 
     @SubscribeMessage('EndTurn')
@@ -78,5 +84,15 @@ export class CombatGateway {
         this.logger.debug(
             `Client ${client.id} trigger message "MoveCard": ${payload}`,
         );
+
+        const { cardsToTake }: IMoveCard = JSON.parse(payload);
+
+        // Get card selection item
+        const { cardIds, originPile, amount } =
+            await this.cardSelectionService.findOne({
+                client_id: client.id,
+            });
+
+        // Check if we are receiving more cards than we are expecting
     }
 }
