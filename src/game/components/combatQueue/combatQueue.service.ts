@@ -86,7 +86,7 @@ export class CombatQueueService {
         await this.deleteCombatQueueByClientId(client.id);
     }
 
-    @OnEvent('onAttachStatus')
+    @OnEvent('onAttachStatus', { async: true, promisify: true })
     async onAttachStatus(args: {
         ctx: Context;
         source: ExpeditionEntity;
@@ -95,27 +95,48 @@ export class CombatQueueService {
     }): Promise<void> {
         const { ctx, source, target, status } = args;
 
-        await this.push({
-            ctx,
-            source,
-            target,
-            args: {
-                effectType: CombatQueueTargetEffectTypeEnum.Status,
-                healthDelta: 0,
-                finalHealth: 0,
-                defenseDelta: 0,
-                finalDefense: 0,
-                statuses: [
-                    {
-                        name: status.name,
-                        counter: status.args.value,
-                        description: StatusGenerator.generateDescription(
-                            status.name,
-                            status.args.value,
-                        ),
-                    },
-                ],
-            },
+        const statusInfo = {
+            name: status.name,
+            counter: status.args.value,
+            description: StatusGenerator.generateDescription(
+                status.name,
+                status.args.value,
+            ),
+        };
+
+        // Check if exists status attached to target
+        const isStatusQueueCreated = await this.combatQueue.exists({
+            clientId: ctx.client.id,
+            'queue.targets.effectType': CombatQueueTargetEffectTypeEnum.Status,
         });
+
+        if (isStatusQueueCreated) {
+            return this.combatQueue.findOneAndUpdate(
+                {
+                    clientId: ctx.client.id,
+                    'queue.targets.effectType':
+                        CombatQueueTargetEffectTypeEnum.Status,
+                },
+                {
+                    $push: {
+                        'queue.$[].targets.$.statuses': statusInfo,
+                    },
+                },
+            );
+        } else {
+            return this.push({
+                ctx,
+                source,
+                target,
+                args: {
+                    effectType: CombatQueueTargetEffectTypeEnum.Status,
+                    healthDelta: 0,
+                    finalHealth: 0,
+                    defenseDelta: 0,
+                    finalDefense: 0,
+                    statuses: [statusInfo],
+                },
+            });
+        }
     }
 }
