@@ -91,6 +91,7 @@ export class CardPlayedAction {
                 expedition,
             };
 
+            this.logger.debug(`Started combat queue for client ${client.id}`);
             await this.combatQueueService.start(ctx);
 
             // If everything goes right, we get the card information from
@@ -191,6 +192,7 @@ export class CardPlayedAction {
 
                 this.sendUpdateEnergyMessage(newEnergy, energyMax);
 
+                this.logger.debug(`Ended combat queue for client ${client.id}`);
                 await this.combatQueueService.end(ctx);
 
                 await this.statusService.trigger(
