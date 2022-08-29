@@ -45,8 +45,6 @@ export class ChooseCardEffect implements EffectHandler {
                 ? cards.discard
                 : cards.draw;
 
-        console.log(originPile);
-
         // Now we send a message to the frontend to choose a card from that list
         this.logger.debug(
             `Client ${client.id} will take ${cardsToTake} cards from the ${originPile} pile`,

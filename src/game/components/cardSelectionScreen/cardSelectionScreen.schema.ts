@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
+import { CardSelectionScreenOriginPileEnum } from './cardSelectionScreen.enum';
 
 export type CardSelectionScreenDocument = CardSelectionScreen & Document;
 
@@ -14,7 +15,7 @@ export class CardSelectionScreen {
     cardIds: string[];
 
     @Prop()
-    originPile: string;
+    originPile: CardSelectionScreenOriginPileEnum;
 
     @Prop()
     amount: number;
