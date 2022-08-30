@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { EnemyService } from 'src/game/components/enemy/enemy.service';
 import { IExpeditionCurrentNodeDataEnemy } from 'src/game/components/expedition/expedition.interface';
 import { StatusEventDTO, StatusEventHandler } from '../interfaces';
@@ -10,11 +10,15 @@ import { stunned } from './constants';
 })
 @Injectable()
 export class StunnedStatus implements StatusEventHandler {
+    private readonly logger = new Logger(StunnedStatus.name);
+
     async handler(dto: StatusEventDTO): Promise<any> {
         const { target, args } = dto;
         const enemy = args.enemy as IExpeditionCurrentNodeDataEnemy;
 
         if (EnemyService.isEnemy(target) && target.value.id == enemy.id) {
+            this.logger.debug(`Stunned ${enemy.name}:${enemy.id}`);
+
             // Remove effects of the enemy's intentions in memory
             for (const intention of enemy.currentScript.intentions) {
                 intention.effects = [];

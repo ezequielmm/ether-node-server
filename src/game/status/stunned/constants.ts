@@ -1,4 +1,4 @@
-import { EVENT_BEFORE_ENEMIES_TURN_START } from 'src/game/constants';
+import { EVENT_BEFORE_ENEMY_INTENTIONS } from 'src/game/constants';
 import {
     StatusEvent,
     StatusStartsAt,
@@ -11,5 +11,5 @@ export const stunned: StatusEvent = {
     startsAt: StatusStartsAt.Instantly,
     type: StatusType.Buff,
     trigger: StatusTrigger.Event,
-    event: EVENT_BEFORE_ENEMIES_TURN_START,
+    event: EVENT_BEFORE_ENEMY_INTENTIONS,
 };

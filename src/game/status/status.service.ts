@@ -70,6 +70,7 @@ export class StatusService {
 
             // Loop through the events and trigger the handlers
             for (const event of events) {
+                this.logger.debug(`Triggering event ${event}`);
                 await this.trigger(ctx, event, rest);
             }
         });

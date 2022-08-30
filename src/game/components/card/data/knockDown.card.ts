@@ -10,7 +10,7 @@ export const KnockDownCard: Card = {
     cardType: CardTypeEnum.Attack,
     pool: 'knight',
     energy: 2,
-    description: `Deal ${damageEffect.name} damage. If your last 2 cards played were attacks, Stun your enemy`,
+    description: `Deal {${damageEffect.name}} damage. If your last 2 cards played were attacks, Stun your enemy`,
     keywords: [],
     properties: {
         effects: [
@@ -42,7 +42,7 @@ export const KnockDownCardUpgraded: Card = {
     cardType: CardTypeEnum.Attack,
     pool: 'knight',
     energy: 2,
-    description: `Deal ${damageEffect.name} damage. If your last 2 cards played were attacks, Stun your enemy`,
+    description: `Deal {${damageEffect.name}} damage. If your last 2 cards played were attacks, Stun your enemy`,
     keywords: [],
     properties: {
         effects: [

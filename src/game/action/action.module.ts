@@ -3,6 +3,7 @@ import { EnemyModule } from '../components/enemy/enemy.module';
 import { ExpeditionModule } from '../components/expedition/expedition.module';
 import { PlayerModule } from '../components/player/player.module';
 import { EffectModule } from '../effects/effects.module';
+import { HistoryModule } from '../history/history.module';
 import { ProcessModule } from '../process/process.module';
 import { StatusModule } from '../status/status.module';
 import { CardPlayedAction } from './cardPlayed.action';
@@ -29,6 +30,7 @@ import { SetCombatTurnAction } from './setCombatTurn.action';
         forwardRef(() => StatusModule),
         PlayerModule,
         forwardRef(() => EnemyModule),
+        HistoryModule,
     ],
     providers: [
         FullSyncAction,
