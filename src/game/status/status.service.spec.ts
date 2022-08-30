@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import { getModelToken } from '@nestjs/mongoose';
 import { Test } from '@nestjs/testing';
 import { Socket } from 'socket.io';
@@ -98,6 +99,8 @@ describe('StatusService', () => {
     let statusEventA: StatusEventA;
     let effectDTO: EffectDTO;
 
+    const mockEventEmitter2 = new EventEmitter2();
+
     beforeEach(async () => {
         const module = await Test.createTestingModule({
             providers: [
@@ -117,6 +120,10 @@ describe('StatusService', () => {
                     useValue: {},
                 },
                 ProviderService,
+                {
+                    provide: EventEmitter2,
+                    useValue: mockEventEmitter2,
+                },
             ],
         }).compile();
 

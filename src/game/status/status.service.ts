@@ -83,7 +83,7 @@ export class StatusService {
      * @param {Object} dto Dto parameters
      */
     public async attach(dto: AttachDTO): Promise<void> {
-        const { ctx, statuses, source: source, targetId } = dto;
+        const { ctx, statuses, source, targetId } = dto;
 
         for (const status of statuses) {
             const targets = this.expeditionService.getEntitiesByType(
@@ -439,6 +439,7 @@ export class StatusService {
             source = {
                 type: CardTargetedEnum.Player,
                 value: {
+                    id: expedition.playerId,
                     globalState: expedition.playerState,
                     combatState: expedition.currentNode.data.player,
                 },
@@ -480,6 +481,7 @@ export class StatusService {
             target: {
                 type: CardTargetedEnum.Player,
                 value: {
+                    id: expedition.playerId,
                     globalState: expedition.playerState,
                     combatState: expedition.currentNode.data.player,
                 },

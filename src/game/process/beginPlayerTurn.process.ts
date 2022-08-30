@@ -41,6 +41,8 @@ export class BeginPlayerTurnProcess {
     async handle(payload: BeginPlayerTurnDTO): Promise<void> {
         const { client } = payload;
 
+        this.logger.debug(`Beginning player ${client.id} turn`);
+
         // Get previous round
         const expedition = await this.expeditionService.findOne({
             clientId: client.id,

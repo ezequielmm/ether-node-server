@@ -34,16 +34,21 @@ export class GetEnemiesAction {
             clientId,
         });
 
-        return enemies.map((enemy) => ({
-            id: enemy.id,
-            enemyId: enemy.enemyId,
-            defense: enemy.defense,
-            name: enemy.name,
-            type: enemy.type,
-            category: enemy.category,
-            size: enemy.size,
-            hpCurrent: enemy.hpCurrent,
-            hpMax: enemy.hpMax,
-        }));
+        // Now we return the enemies that have their hpCurrent > 0
+        return enemies
+            .filter(({ hpCurrent }) => {
+                return hpCurrent > 0;
+            })
+            .map((enemy) => ({
+                id: enemy.id,
+                enemyId: enemy.enemyId,
+                defense: enemy.defense,
+                name: enemy.name,
+                type: enemy.type,
+                category: enemy.category,
+                size: enemy.size,
+                hpCurrent: enemy.hpCurrent,
+                hpMax: enemy.hpMax,
+            }));
     }
 }

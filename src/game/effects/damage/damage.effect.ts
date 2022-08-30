@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
+import { CombatQueueTargetEffectTypeEnum } from 'src/game/components/combatQueue/combatQueue.enum';
+import { CombatQueueService } from 'src/game/components/combatQueue/combatQueue.service';
 import { EnemyService } from 'src/game/components/enemy/enemy.service';
 import { PlayerService } from 'src/game/components/player/player.service';
 import { isNotUndefined } from 'src/utils';
@@ -23,11 +25,13 @@ export class DamageEffect implements EffectHandler {
         private readonly playerService: PlayerService,
         private readonly enemyService: EnemyService,
         private readonly eventEmitter: EventEmitter2,
+        private readonly combatQueueService: CombatQueueService,
     ) {}
 
     async handle(payload: EffectDTO<DamageArgs>): Promise<void> {
         const {
             ctx,
+            source,
             target,
             args: {
                 currentValue,
@@ -36,7 +40,6 @@ export class DamageEffect implements EffectHandler {
                 useEnergyAsMultiplier,
                 useEnergyAsValue,
             },
-            combatQueueId,
         } = payload;
 
         const {
@@ -44,6 +47,11 @@ export class DamageEffect implements EffectHandler {
                 combatState: { energy, defense },
             },
         } = this.playerService.get(ctx);
+
+        let oldHp = 0;
+        let newHp = 0;
+        let oldDefense = 0;
+        let newDefense = 0;
 
         // Check targeted type
         if (EnemyService.isEnemy(target)) {
@@ -54,12 +62,13 @@ export class DamageEffect implements EffectHandler {
                 (useEnergyAsMultiplier ? energy : 1) *
                 (useDefense ? multiplier * defense : 1);
 
-            await this.enemyService.damage(
-                ctx,
-                target.value.id,
-                damage,
-                combatQueueId,
-            );
+            oldHp = target.value.hpCurrent;
+            oldDefense = target.value.defense;
+
+            await this.enemyService.damage(ctx, target.value.id, damage);
+
+            newHp = target.value.hpCurrent;
+            newDefense = target.value.defense;
         }
 
         if (PlayerService.isPlayer(target)) {
@@ -70,7 +79,34 @@ export class DamageEffect implements EffectHandler {
                 ? energy
                 : currentValue;
 
-            await this.playerService.damage(ctx, damage, combatQueueId);
+            oldHp = target.value.combatState.hpCurrent;
+            oldDefense = target.value.combatState.defense;
+
+            await this.playerService.damage(ctx, damage);
+
+            newHp = target.value.combatState.hpCurrent;
+            newDefense = target.value.combatState.defense;
         }
+
+        // Add the damage to the combat queue
+        await this.combatQueueService.push({
+            ctx,
+            source,
+            target,
+            args: {
+                effectType: CombatQueueTargetEffectTypeEnum.Damage,
+                healthDelta: newHp - oldHp,
+                defenseDelta: newDefense - oldDefense,
+                finalHealth: newHp,
+                finalDefense: newDefense,
+                statuses: [],
+            },
+        });
+
+        // Emit the event
+        await this.eventEmitter.emitAsync('entity.damage', {
+            ctx,
+            entity: target,
+        });
     }
 }

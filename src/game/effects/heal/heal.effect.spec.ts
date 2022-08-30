@@ -64,9 +64,7 @@ describe('HealEffect', () => {
 
     // Mock combat queue service
     const mockCombatQueueService = {
-        addTargetsToCombatQueue: jest
-            .fn()
-            .mockImplementation(() => Promise.resolve()),
+        push: jest.fn().mockImplementation(() => Promise.resolve()),
     };
 
     beforeEach(async () => {
@@ -88,7 +86,7 @@ describe('HealEffect', () => {
 
         mockPlayerService.setHp.mockClear();
         mockEnemyService.setHp.mockClear();
-        mockCombatQueueService.addTargetsToCombatQueue.mockClear();
+        mockCombatQueueService.push.mockClear();
     });
 
     it('should be defined', () => {
@@ -106,7 +104,6 @@ describe('HealEffect', () => {
                     currentValue: 5,
                     value: 5,
                 },
-                combatQueueId: '555',
             });
 
             expect(mockPlayerService.setHp).toHaveBeenCalledWith(mockCtx, 80);
@@ -122,7 +119,6 @@ describe('HealEffect', () => {
                     currentValue: 10,
                     value: 10,
                 },
-                combatQueueId: '555',
             });
 
             expect(mockPlayerService.setHp).toHaveBeenCalledWith(mockCtx, 80);
@@ -140,7 +136,6 @@ describe('HealEffect', () => {
                     currentValue: 5,
                     value: 5,
                 },
-                combatQueueId: '555',
             });
 
             expect(mockEnemyService.setHp).toHaveBeenCalledWith(
@@ -160,7 +155,6 @@ describe('HealEffect', () => {
                     currentValue: 10,
                     value: 10,
                 },
-                combatQueueId: '555',
             });
 
             expect(mockEnemyService.setHp).toHaveBeenCalledWith(

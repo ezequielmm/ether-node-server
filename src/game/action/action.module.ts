@@ -1,4 +1,5 @@
 import { forwardRef, Module } from '@nestjs/common';
+import { CombatQueueModule } from '../components/combatQueue/combatQueue.module';
 import { EnemyModule } from '../components/enemy/enemy.module';
 import { ExpeditionModule } from '../components/expedition/expedition.module';
 import { PlayerModule } from '../components/player/player.module';
@@ -31,6 +32,7 @@ import { SetCombatTurnAction } from './setCombatTurn.action';
         PlayerModule,
         forwardRef(() => EnemyModule),
         HistoryModule,
+        CombatQueueModule,
     ],
     providers: [
         FullSyncAction,

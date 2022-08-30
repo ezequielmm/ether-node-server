@@ -3,6 +3,7 @@ import { EventEmitter2 } from '@nestjs/event-emitter';
 import { isEmpty } from 'lodash';
 import { Socket } from 'socket.io';
 import { CardTargetedEnum } from '../components/card/card.enum';
+import { CombatQueueService } from '../components/combatQueue/combatQueue.service';
 import { ExpeditionEnemy } from '../components/enemy/enemy.interface';
 import { CombatTurnEnum } from '../components/expedition/expedition.enum';
 import { ExpeditionService } from '../components/expedition/expedition.service';
@@ -33,10 +34,13 @@ export class BeginEnemyTurnProcess {
         private readonly expeditionService: ExpeditionService,
         private readonly effectService: EffectService,
         private readonly eventEmitter: EventEmitter2,
+        private readonly combatQueueService: CombatQueueService,
     ) {}
 
     async handle(payload: BeginEnemyTurnDTO): Promise<void> {
         const { client } = payload;
+
+        this.logger.debug(`Beginning enemies turn`);
 
         this.client = client;
 
@@ -58,6 +62,8 @@ export class BeginEnemyTurnProcess {
             client: this.client,
             expedition,
         };
+
+        await this.combatQueueService.start(ctx);
 
         await this.eventEmitter.emitAsync(EVENT_BEFORE_ENEMIES_TURN_START, {
             ctx,
@@ -97,6 +103,8 @@ export class BeginEnemyTurnProcess {
         await this.eventEmitter.emitAsync(EVENT_AFTER_ENEMIES_TURN_START, {
             ctx,
         });
+
+        await this.combatQueueService.end(ctx);
     }
 
     private async sendUpdatedEnemiesData(): Promise<void> {
@@ -119,7 +127,21 @@ export class BeginEnemyTurnProcess {
                 StandardResponse.respond({
                     message_type: SWARMessageType.EnemyAffected,
                     action: SWARAction.UpdateEnemy,
-                    data: enemiesUpdated,
+                    data: enemiesUpdated
+                        .filter(({ hpCurrent }) => {
+                            return hpCurrent > 0;
+                        })
+                        .map((enemy) => ({
+                            id: enemy.id,
+                            enemyId: enemy.enemyId,
+                            defense: enemy.defense,
+                            name: enemy.name,
+                            type: enemy.type,
+                            category: enemy.category,
+                            size: enemy.size,
+                            hpCurrent: enemy.hpCurrent,
+                            hpMax: enemy.hpMax,
+                        })),
                 }),
             ),
         );
