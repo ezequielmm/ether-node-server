@@ -44,6 +44,8 @@ export enum SWARAction {
     BeginEncounter = 'begin_encounter',
     BeginTreasure = 'begin_treasure',
     BeginMerchant = 'begin_merchant',
+    ShowPlayerDeck = 'show_player_deck',
+    IncreasePlayerHealth = 'increase_player_health',
 }
 
 interface SWARPayload {
