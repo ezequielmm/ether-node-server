@@ -133,7 +133,7 @@ export class PlayerService {
         const player = this.get(ctx);
 
         const currentDefense = player.value.combatState.defense;
-        const currentHp = player.value.globalState.hpCurrent;
+        const currentHp = player.value.combatState.hpCurrent;
 
         let newDefense = 0;
         let newHp = currentHp;

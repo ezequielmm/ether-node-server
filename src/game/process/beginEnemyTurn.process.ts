@@ -3,6 +3,7 @@ import { EventEmitter2 } from '@nestjs/event-emitter';
 import { isEmpty } from 'lodash';
 import { Socket } from 'socket.io';
 import { CardTargetedEnum } from '../components/card/card.enum';
+import { CombatQueueService } from '../components/combatQueue/combatQueue.service';
 import { ExpeditionEnemy } from '../components/enemy/enemy.interface';
 import { CombatTurnEnum } from '../components/expedition/expedition.enum';
 import { ExpeditionService } from '../components/expedition/expedition.service';
@@ -31,6 +32,7 @@ export class BeginEnemyTurnProcess {
         private readonly effectService: EffectService,
         private readonly statusService: StatusService,
         private readonly eventEmitter: EventEmitter2,
+        private readonly combatQueueService: CombatQueueService,
     ) {}
 
     async handle(payload: BeginEnemyTurnDTO): Promise<void> {
@@ -58,6 +60,8 @@ export class BeginEnemyTurnProcess {
             client: this.client,
             expedition,
         };
+
+        await this.combatQueueService.start(ctx);
 
         await this.eventEmitter.emitAsync('enemy:before-start-turn', { ctx });
         await this.statusService.trigger(ctx, StatusEventType.OnEnemyTurnStart);
@@ -89,6 +93,8 @@ export class BeginEnemyTurnProcess {
 
         await this.sendUpdatedEnemiesData();
         await this.eventEmitter.emitAsync('enemy:after-start-turn', { ctx });
+
+        await this.combatQueueService.end(ctx);
     }
 
     private async sendUpdatedEnemiesData(): Promise<void> {
