@@ -117,17 +117,21 @@ export class BeginEnemyTurnProcess {
                 StandardResponse.respond({
                     message_type: SWARMessageType.EnemyAffected,
                     action: SWARAction.UpdateEnemy,
-                    data: enemiesUpdated.map((enemy) => ({
-                        id: enemy.id,
-                        enemyId: enemy.enemyId,
-                        defense: enemy.defense,
-                        name: enemy.name,
-                        type: enemy.type,
-                        category: enemy.category,
-                        size: enemy.size,
-                        hpCurrent: enemy.hpCurrent,
-                        hpMax: enemy.hpMax,
-                    })),
+                    data: enemiesUpdated
+                        .filter(({ hpCurrent }) => {
+                            return hpCurrent > 0;
+                        })
+                        .map((enemy) => ({
+                            id: enemy.id,
+                            enemyId: enemy.enemyId,
+                            defense: enemy.defense,
+                            name: enemy.name,
+                            type: enemy.type,
+                            category: enemy.category,
+                            size: enemy.size,
+                            hpCurrent: enemy.hpCurrent,
+                            hpMax: enemy.hpMax,
+                        })),
                 }),
             ),
         );
