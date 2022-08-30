@@ -11,12 +11,14 @@ import { Context } from '../components/interfaces';
 import { PlayerService } from '../components/player/player.service';
 import { SettingsService } from '../components/settings/settings.service';
 import {
+    EVENT_AFTER_PLAYER_TURN_START,
+    EVENT_BEFORE_PLAYER_TURN_START,
+} from '../constants';
+import {
     SWARAction,
     StandardResponse,
     SWARMessageType,
 } from '../standardResponse/standardResponse';
-import { StatusEventType } from '../status/interfaces';
-import { StatusService } from '../status/status.service';
 
 interface BeginPlayerTurnDTO {
     client: Socket;
@@ -32,7 +34,6 @@ export class BeginPlayerTurnProcess {
         private readonly enemyService: EnemyService,
         private readonly settingsService: SettingsService,
         private readonly drawCardAction: DrawCardAction,
-        private readonly statusService: StatusService,
         private readonly eventEmitter: EventEmitter2,
         private readonly getPlayerInfoAction: GetPlayerInfoAction,
     ) {}
@@ -58,6 +59,10 @@ export class BeginPlayerTurnProcess {
             client,
             expedition: expedition as ExpeditionDocument,
         };
+
+        await this.eventEmitter.emitAsync(EVENT_BEFORE_PLAYER_TURN_START, {
+            ctx,
+        });
 
         // Update round and entity playing
         await this.expeditionService.setCombatTurn({
@@ -115,13 +120,6 @@ export class BeginPlayerTurnProcess {
 
         await this.enemyService.calculateNewIntentions(ctx);
 
-        await this.eventEmitter.emitAsync('player:before-start-turn', { ctx });
-
-        await this.statusService.trigger(
-            ctx,
-            StatusEventType.OnPlayerTurnStart,
-        );
-
         // Send updated player information
         const playerInfo = await this.getPlayerInfoAction.handle(client.id);
 
@@ -136,6 +134,8 @@ export class BeginPlayerTurnProcess {
             ),
         );
 
-        await this.eventEmitter.emitAsync('player:after-start-turn', { ctx });
+        await this.eventEmitter.emitAsync(EVENT_AFTER_PLAYER_TURN_START, {
+            ctx,
+        });
     }
 }

@@ -11,7 +11,7 @@ export const resolve: StatusEffect = {
     name: 'resolve',
     type: StatusType.Buff,
     direction: StatusDirection.Outgoing,
-    startsAt: StatusStartsAt.NextTurn,
+    startsAt: StatusStartsAt.NextPlayerTurn,
     trigger: StatusTrigger.Effect,
     effects: [damageEffect],
 };

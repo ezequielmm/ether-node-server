@@ -43,6 +43,7 @@ import {
 } from './data/invokeBlessing.card';
 import { KegChugCard, KegChugCardUpgraded } from './data/kegChug.card';
 import { KindleCard, KindleCardUpgraded } from './data/kindle.card';
+import { KnockDownCard, KnockDownCardUpgraded } from './data/knockDown.card';
 import { LastResortCard, LastResortCardUpgraded } from './data/lastResort.card';
 import { LungeCard, LungeCardUpgraded } from './data/lunge.card';
 import { OnARollCard, OnARollCardUpgraded } from './data/onARoll.card';
@@ -187,4 +188,6 @@ export const data: Card[] = [
     AnticipateCardUpgraded,
     TwistTheBladeCard,
     TwistTheBladeCardUpgraded,
+    KnockDownCard,
+    KnockDownCardUpgraded,
 ];

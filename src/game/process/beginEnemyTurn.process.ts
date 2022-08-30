@@ -7,14 +7,17 @@ import { ExpeditionEnemy } from '../components/enemy/enemy.interface';
 import { CombatTurnEnum } from '../components/expedition/expedition.enum';
 import { ExpeditionService } from '../components/expedition/expedition.service';
 import { Context } from '../components/interfaces';
+import {
+    EVENT_AFTER_ENEMIES_TURN_START,
+    EVENT_BEFORE_ENEMIES_TURN_START,
+    EVENT_BEFORE_ENEMY_INTENTIONS,
+} from '../constants';
 import { EffectService } from '../effects/effects.service';
 import {
     SWARAction,
     StandardResponse,
     SWARMessageType,
 } from '../standardResponse/standardResponse';
-import { StatusEventType } from '../status/interfaces';
-import { StatusService } from '../status/status.service';
 
 interface BeginEnemyTurnDTO {
     client: Socket;
@@ -29,7 +32,6 @@ export class BeginEnemyTurnProcess {
     constructor(
         private readonly expeditionService: ExpeditionService,
         private readonly effectService: EffectService,
-        private readonly statusService: StatusService,
         private readonly eventEmitter: EventEmitter2,
     ) {}
 
@@ -57,8 +59,9 @@ export class BeginEnemyTurnProcess {
             expedition,
         };
 
-        await this.eventEmitter.emitAsync('enemy:before-start-turn', { ctx });
-        await this.statusService.trigger(ctx, StatusEventType.OnEnemyTurnStart);
+        await this.eventEmitter.emitAsync(EVENT_BEFORE_ENEMIES_TURN_START, {
+            ctx,
+        });
 
         // Then we loop over them and get their intentions and effects
         for (const enemy of enemies) {
@@ -70,6 +73,11 @@ export class BeginEnemyTurnProcess {
                 type: CardTargetedEnum.Enemy,
                 value: enemy,
             };
+
+            await this.eventEmitter.emitAsync(EVENT_BEFORE_ENEMY_INTENTIONS, {
+                ctx,
+                enemy,
+            });
 
             for (const intention of intentions) {
                 const { effects } = intention;
@@ -86,7 +94,9 @@ export class BeginEnemyTurnProcess {
         }
 
         await this.sendUpdatedEnemiesData();
-        await this.eventEmitter.emitAsync('enemy:after-start-turn', { ctx });
+        await this.eventEmitter.emitAsync(EVENT_AFTER_ENEMIES_TURN_START, {
+            ctx,
+        });
     }
 
     private async sendUpdatedEnemiesData(): Promise<void> {

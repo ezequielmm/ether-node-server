@@ -72,11 +72,5 @@ export class DamageEffect implements EffectHandler {
 
             await this.playerService.damage(ctx, damage, combatQueueId);
         }
-
-        // Emit the event
-        await this.eventEmitter.emitAsync('entity.damage', {
-            ctx,
-            entity: target,
-        });
     }
 }
