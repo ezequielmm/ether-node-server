@@ -6,6 +6,7 @@ import {
     CardPlayErrorMessages,
 } from '../components/card/card.enum';
 import { CardId, getCardIdField } from '../components/card/card.type';
+import { CombatQueueService } from '../components/combatQueue/combatQueue.service';
 import { ExpeditionDocument } from '../components/expedition/expedition.schema';
 import { ExpeditionService } from '../components/expedition/expedition.service';
 import { Context } from '../components/interfaces';
@@ -51,6 +52,7 @@ export class CardPlayedAction {
         private readonly exhaustCardAction: ExhaustCardAction,
         private readonly endPlayerTurnProcess: EndPlayerTurnProcess,
         private readonly playerService: PlayerService,
+        private readonly combatQueueService: CombatQueueService,
     ) {}
 
     async handle(payload: CardPlayedDTO): Promise<void> {
@@ -88,6 +90,9 @@ export class CardPlayedAction {
                 client,
                 expedition,
             };
+
+            this.logger.debug(`Started combat queue for client ${client.id}`);
+            await this.combatQueueService.start(ctx);
 
             // If everything goes right, we get the card information from
             // the player hand pile
@@ -186,6 +191,9 @@ export class CardPlayedAction {
                 );
 
                 this.sendUpdateEnergyMessage(newEnergy, energyMax);
+
+                this.logger.debug(`Ended combat queue for client ${client.id}`);
+                await this.combatQueueService.end(ctx);
 
                 await this.statusService.trigger(
                     ctx,

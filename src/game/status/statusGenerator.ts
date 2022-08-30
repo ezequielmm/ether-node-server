@@ -17,7 +17,7 @@ export class StatusGenerator {
         });
     }
 
-    private static generateDescription(name: string, counter: number): string {
+    public static generateDescription(name: string, counter: number): string {
         switch (name) {
             case 'resolve':
                 return `Burn does ${counter} points of damage at the end of each round`;
