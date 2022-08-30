@@ -26,6 +26,8 @@ export class EndEnemyTurnProcess {
     ) {}
 
     async handle(payload: EndEnemyTurnDTO): Promise<void> {
+        this.logger.debug(`Ending enemies turn`);
+
         const { ctx } = payload;
         const { client } = ctx;
 

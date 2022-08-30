@@ -36,6 +36,8 @@ export class BeginEnemyTurnProcess {
     async handle(payload: BeginEnemyTurnDTO): Promise<void> {
         const { client } = payload;
 
+        this.logger.debug(`Beginning enemies turn`);
+
         this.client = client;
 
         const expedition = await this.expeditionService.setCombatTurn({
