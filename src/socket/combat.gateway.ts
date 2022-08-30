@@ -114,5 +114,8 @@ export class CombatGateway {
             cardIds: newCardList,
             originPile,
         });
+
+        // Now we remove the info from the database
+        await this.cardSelectionService.deleteByClientId(client.id);
     }
 }
