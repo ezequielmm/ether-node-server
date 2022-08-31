@@ -87,7 +87,13 @@ export class EndCombatProcess {
             {
                 clientId: ctx.client.id,
             },
-            { status: ExpeditionStatusEnum.Defeated },
+            {
+                $set: {
+                    status: ExpeditionStatusEnum.Defeated,
+                },
+            },
         );
+
+        this.logger.debug(`Combat ended for client ${ctx.client.id}`);
     }
 }
