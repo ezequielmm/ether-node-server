@@ -21,7 +21,7 @@ export class CardDescriptionFormatter {
         statuses.forEach(({ name, args: { value } }) => {
             card.description = card.description
                 .replace(`{${name}}`, value.toString())
-                .replace(`[${name}]`, `<color=#0066cc>${name}`);
+                .replace(`[${name}]`, `<color=#0066cc>${name}</color>`);
         });
 
         // Finally we return the card with the next description

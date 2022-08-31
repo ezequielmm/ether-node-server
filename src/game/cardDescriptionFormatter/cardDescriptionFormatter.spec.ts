@@ -73,6 +73,6 @@ describe('Card Description Formatter', () => {
     it('should update the description with status value', () => {
         const result = CardDescriptionFormatter.process(statusCard);
 
-        expect(result).toBe('Gain 1 <color=#0066cc>regenerate');
+        expect(result).toBe('Gain 1 <color=#0066cc>regenerate</color>');
     });
 });
