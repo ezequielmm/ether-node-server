@@ -43,7 +43,6 @@ import {
     StatusStartsAt,
     StatusTrigger,
 } from './interfaces';
-import * as colors from 'colors/safe';
 
 @Injectable()
 export class StatusService {
@@ -72,7 +71,7 @@ export class StatusService {
             // Loop through the events and trigger the handlers
             for (const event of events) {
                 this.logger.debug(
-                    `Triggering event ${colors.blue(colors.bold(event))}`,
+                    `Triggering event ${event}`,
                 );
                 await this.trigger(ctx, event, rest);
             }
