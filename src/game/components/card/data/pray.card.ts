@@ -10,8 +10,7 @@ export const PrayCard: Card = {
     cardType: CardTypeEnum.Skill,
     pool: 'knight',
     energy: 0,
-    description:
-        'At the beginning of your next turn gain 1 [Resolve] and 1 [Fortitude].',
+    description: `At the beginning of your next turn gain {${resolve.name}} [${resolve.name}] and {${fortitude.name}} [${fortitude.name}]`,
     keywords: [],
     properties: {
         effects: [],
@@ -43,8 +42,7 @@ export const PrayCardUpgraded: Card = {
     cardType: CardTypeEnum.Skill,
     pool: 'knight',
     energy: 0,
-    description:
-        'At the beginning of your next two turns gain 1 [Resolve] and 1 [Fortitude].',
+    description: `At the beginning of your next turn gain {${resolve.name}} [${resolve.name}] and {${fortitude.name}} [${fortitude.name}]`,
     keywords: [],
     properties: {
         effects: [],
