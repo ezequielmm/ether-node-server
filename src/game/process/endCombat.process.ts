@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
 import { EnemyService } from '../components/enemy/enemy.service';
+import { ExpeditionStatusEnum } from '../components/expedition/expedition.enum';
 import { ExpeditionService } from '../components/expedition/expedition.service';
 import { Context, ExpeditionEntity } from '../components/interfaces';
 import { PlayerService } from '../components/player/player.service';
@@ -32,7 +33,7 @@ export class EndCombatProcess {
         if (this.playerService.isDead(ctx)) {
             this.logger.debug('Player is dead. Ending combat');
             await this.endCombat(ctx);
-            this.emitPlayerDefeated(ctx);
+            await this.emitPlayerDefeated(ctx);
         }
 
         if (this.enemyService.isAllDead(ctx)) {
@@ -71,16 +72,23 @@ export class EndCombatProcess {
         );
     }
 
-    private emitPlayerDefeated(ctx: Context) {
+    private async emitPlayerDefeated(ctx: Context): Promise<void> {
         ctx.client.emit(
             'PutData',
             JSON.stringify(
                 StandardResponse.respond({
                     message_type: SWARMessageType.EndCombat,
                     action: SWARAction.PlayerDefeated,
-                    data: {},
+                    data: null,
                 }),
             ),
+        );
+
+        await this.expeditionService.updateByFilter(
+            {
+                clientId: ctx.client.id,
+            },
+            { status: ExpeditionStatusEnum.Defeated },
         );
     }
 }
