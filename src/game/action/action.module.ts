@@ -19,6 +19,7 @@ import { GetEnergyAction } from './getEnergy.action';
 import { GetPlayerDeckAction } from './getPlayerDeck.action';
 import { GetPlayerInfoAction } from './getPlayerInfo.action';
 import { GetStatusesAction } from './getStatuses.action';
+import { MoveCardAction } from './moveCard.action';
 import { SetCombatTurnAction } from './setCombatTurn.action';
 
 @Module({
@@ -47,6 +48,7 @@ import { SetCombatTurnAction } from './setCombatTurn.action';
         DrawCardAction,
         GetPlayerDeckAction,
         GetCurrentStepAction,
+        MoveCardAction,
     ],
     exports: [
         FullSyncAction,
@@ -63,6 +65,7 @@ import { SetCombatTurnAction } from './setCombatTurn.action';
         DrawCardAction,
         GetPlayerDeckAction,
         GetCurrentStepAction,
+        MoveCardAction,
     ],
 })
 export class ActionModule {}
