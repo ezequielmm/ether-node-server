@@ -94,6 +94,8 @@ export class EndCombatProcess {
             },
         );
 
+        await this.combatQueueService.end(ctx);
+
         this.logger.debug(`Combat ended for client ${ctx.client.id}`);
     }
 }
