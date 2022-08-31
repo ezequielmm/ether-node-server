@@ -16,7 +16,7 @@ export enum SWARMessageType {
     EncounterUpdate = 'encounter_update',
     TreasureUpdate = 'treasure_update',
     MerchantUpdate = 'merchant_update',
-    EndNode = 'EndNode',
+    EndNode = 'end_node',
 }
 
 export enum SWARAction {
