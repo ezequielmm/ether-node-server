@@ -16,6 +16,7 @@ export enum SWARMessageType {
     EncounterUpdate = 'encounter_update',
     TreasureUpdate = 'treasure_update',
     MerchantUpdate = 'merchant_update',
+    EndNode = 'EndNode',
 }
 
 export enum SWARAction {
@@ -24,7 +25,7 @@ export enum SWARAction {
     BeginCombat = 'begin_combat',
     EndTurn = 'end_turn',
     EnemiesDefeated = 'enemies_defeated',
-    PlayerDefeated = 'player_defeated',
+    PlayerDefeated = 'players q_defeated',
     SelectAnotherReward = 'select_another_reward',
     ShowMap = 'show_map',
     UpdatePlayerState = 'update_player_state',
