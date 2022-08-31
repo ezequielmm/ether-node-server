@@ -45,24 +45,26 @@ export class CombatGateway {
             clientId: client.id,
         });
 
-        const {
-            currentNode: {
-                data: { playing },
-            },
-        } = expedition;
+        if (expedition.currentNode) {
+            const {
+                currentNode: {
+                    data: { playing },
+                },
+            } = expedition;
 
-        switch (playing) {
-            case CombatTurnEnum.Player:
-                await this.endPlayerTurnProcess.handle({ client });
-                break;
-            case CombatTurnEnum.Enemy:
-                await this.endEnemyTurnProcess.handle({
-                    ctx: {
-                        client,
-                        expedition,
-                    },
-                });
-                break;
+            switch (playing) {
+                case CombatTurnEnum.Player:
+                    await this.endPlayerTurnProcess.handle({ client });
+                    break;
+                case CombatTurnEnum.Enemy:
+                    await this.endEnemyTurnProcess.handle({
+                        ctx: {
+                            client,
+                            expedition,
+                        },
+                    });
+                    break;
+            }
         }
     }
 
