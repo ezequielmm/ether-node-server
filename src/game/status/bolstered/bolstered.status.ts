@@ -4,6 +4,7 @@ import { isEqual, reject } from 'lodash';
 import { EnemyService } from 'src/game/components/enemy/enemy.service';
 import { Context } from 'src/game/components/interfaces';
 import { PlayerService } from 'src/game/components/player/player.service';
+import { EVENT_BEFORE_PLAYER_TURN_END } from 'src/game/constants';
 import { StatusService } from 'src/game/status/status.service';
 import { StatusEventDTO, StatusEventHandler } from '../interfaces';
 import { StatusDecorator } from '../status.decorator';
@@ -44,7 +45,7 @@ export class BolsteredStatus implements StatusEventHandler {
         }
     }
 
-    @OnEvent('player:before-end-turn', { async: true })
+    @OnEvent(EVENT_BEFORE_PLAYER_TURN_END, { async: true })
     async remove(args: { ctx: Context }): Promise<void> {
         const { ctx } = args;
         const statuses = this.statusService.getAllByName(ctx, bolstered.name);

@@ -102,11 +102,5 @@ export class DamageEffect implements EffectHandler {
                 statuses: [],
             },
         });
-
-        // Emit the event
-        await this.eventEmitter.emitAsync('entity.damage', {
-            ctx,
-            entity: target,
-        });
     }
 }
