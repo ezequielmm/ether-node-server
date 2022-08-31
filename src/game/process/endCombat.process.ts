@@ -93,5 +93,7 @@ export class EndCombatProcess {
                 },
             },
         );
+
+        this.logger.debug(`Combat ended for client ${ctx.client.id}`);
     }
 }

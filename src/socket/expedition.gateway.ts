@@ -121,6 +121,12 @@ export class ExpeditionGateway {
 
             const mapToSave = newMap.getMap;
 
+            await this.expeditionService.updateById(expedition._id, {
+                $set: {
+                    map: mapToSave,
+                },
+            });
+
             return JSON.stringify(
                 StandardResponse.respond({
                     message_type: SWARMessageType.EndNode,
