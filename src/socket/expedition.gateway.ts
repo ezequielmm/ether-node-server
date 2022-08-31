@@ -41,4 +41,11 @@ export class ExpeditionGateway {
             });
         }
     }
+
+    @SubscribeMessage('ContinueExpedition')
+    async handleContinueExpedition(client: Socket): Promise<void> {
+        this.logger.debug(`Client ${client.id} will advance to the next node`);
+
+        // Here we get the updated expedition
+    }
 }
