@@ -17,3 +17,5 @@ export const EVENT_BEFORE_STATUS_ATTACH = 'beforeStatusAttach';
 export const EVENT_AFTER_STATUS_ATTACH = 'afterStatusAttach';
 
 export const EVENT_BEFORE_ENEMY_INTENTIONS = 'beforeEnemyIntentions';
+
+export const EVENT_AFTER_DAMAGE_EFFECT = 'damageEffect';
