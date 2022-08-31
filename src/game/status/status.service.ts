@@ -1,4 +1,5 @@
 import { forwardRef, Inject, Injectable, Logger } from '@nestjs/common';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import { InjectModel } from '@nestjs/mongoose';
 import { cloneDeep, compact, filter, find, matches } from 'lodash';
 import { Model } from 'mongoose';
@@ -58,6 +59,7 @@ export class StatusService {
         private readonly playerService: PlayerService,
         @Inject(forwardRef(() => EnemyService))
         private readonly enemyService: EnemyService,
+        private readonly eventEmitter: EventEmitter2,
     ) {}
 
     /**
@@ -67,7 +69,7 @@ export class StatusService {
      * @param {Object} dto Dto parameters
      */
     public async attach(dto: AttachDTO): Promise<void> {
-        const { ctx, statuses, source: source, targetId } = dto;
+        const { ctx, statuses, source, targetId } = dto;
 
         for (const status of statuses) {
             const targets = this.expeditionService.getEntitiesByType(
@@ -84,6 +86,12 @@ export class StatusService {
                 };
 
                 await this.trigger(ctx, StatusEventType.OnAttachStatus, args);
+                await this.eventEmitter.emitAsync('onAttachStatus', {
+                    ctx,
+                    source,
+                    target,
+                    status,
+                });
 
                 switch (target.type) {
                     case CardTargetedEnum.Player:
@@ -432,6 +440,7 @@ export class StatusService {
             source = {
                 type: CardTargetedEnum.Player,
                 value: {
+                    id: expedition.playerId,
                     globalState: expedition.playerState,
                     combatState: expedition.currentNode.data.player,
                 },
@@ -473,6 +482,7 @@ export class StatusService {
             target: {
                 type: CardTargetedEnum.Player,
                 value: {
+                    id: expedition.playerId,
                     globalState: expedition.playerState,
                     combatState: expedition.currentNode.data.player,
                 },

@@ -98,6 +98,7 @@ export const mimicFrog1Data: Enemy = {
                     value: 5,
                     status: [
                         {
+                            // TODO: Check if this is the correct status to add
                             name: resolve.name,
                             args: {
                                 attachTo: CardTargetedEnum.Player,
