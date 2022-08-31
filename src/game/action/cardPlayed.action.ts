@@ -1,4 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import { Socket } from 'socket.io';
 import { CardKeywordPipeline } from '../cardKeywordPipeline/cardKeywordPipeline';
 import {
@@ -11,18 +12,16 @@ import { ExpeditionDocument } from '../components/expedition/expedition.schema';
 import { ExpeditionService } from '../components/expedition/expedition.service';
 import { Context } from '../components/interfaces';
 import { PlayerService } from '../components/player/player.service';
+import { EVENT_AFTER_CARD_PLAY, EVENT_BEFORE_CARD_PLAY } from '../constants';
 import { EffectService } from '../effects/effects.service';
 import { TargetId } from '../effects/effects.types';
+import { HistoryService } from '../history/history.service';
 import { EndPlayerTurnProcess } from '../process/endPlayerTurn.process';
 import {
     StandardResponse,
     SWARMessageType,
     SWARAction,
 } from '../standardResponse/standardResponse';
-import {
-    OnBeginCardPlayEventArgs,
-    StatusEventType,
-} from '../status/interfaces';
 import { StatusService } from '../status/status.service';
 import { DiscardCardAction } from './discardCard.action';
 import { ExhaustCardAction } from './exhaustCard.action';
@@ -53,6 +52,8 @@ export class CardPlayedAction {
         private readonly endPlayerTurnProcess: EndPlayerTurnProcess,
         private readonly playerService: PlayerService,
         private readonly combatQueueService: CombatQueueService,
+        private readonly historyService: HistoryService,
+        private readonly eventEmitter: EventEmitter2,
     ) {}
 
     async handle(payload: CardPlayedDTO): Promise<void> {
@@ -125,18 +126,22 @@ export class CardPlayedAction {
                 const sourceReference =
                     this.statusService.getReferenceFromEntity(source);
 
-                const onBeginCardPlayEventArgs: OnBeginCardPlayEventArgs = {
+                this.historyService.register({
+                    clientId: this.client.id,
+                    registry: {
+                        type: 'card',
+                        source,
+                        card,
+                    },
+                });
+
+                await this.eventEmitter.emitAsync(EVENT_BEFORE_CARD_PLAY, {
+                    ctx,
                     card,
                     cardSource: source,
                     cardSourceReference: sourceReference,
                     cardTargetId: selectedEnemyId,
-                };
-
-                await this.statusService.trigger(
-                    ctx,
-                    StatusEventType.OnBeginCardPlay,
-                    onBeginCardPlayEventArgs,
-                );
+                });
 
                 // if the card can be played, we update the energy, apply the effects
                 // and move the card to the desired pile
@@ -195,11 +200,13 @@ export class CardPlayedAction {
                 this.logger.debug(`Ended combat queue for client ${client.id}`);
                 await this.combatQueueService.end(ctx);
 
-                await this.statusService.trigger(
+                await this.eventEmitter.emitAsync(EVENT_AFTER_CARD_PLAY, {
                     ctx,
-                    StatusEventType.OnEndCardPlay,
-                    onBeginCardPlayEventArgs,
-                );
+                    card,
+                    cardSource: source,
+                    cardSourceReference: sourceReference,
+                    cardTargetId: selectedEnemyId,
+                });
 
                 if (endTurn)
                     await this.endPlayerTurnProcess.handle({

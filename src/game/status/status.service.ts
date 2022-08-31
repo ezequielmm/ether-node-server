@@ -1,7 +1,7 @@
 import { forwardRef, Inject, Injectable, Logger } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { InjectModel } from '@nestjs/mongoose';
-import { cloneDeep, compact, filter, find, matches } from 'lodash';
+import { cloneDeep, compact, filter, find, isArray, matches } from 'lodash';
 import { Model } from 'mongoose';
 import { CardTargetedEnum } from '../components/card/card.enum';
 import { ExpeditionEnemy } from '../components/enemy/enemy.interface';
@@ -15,15 +15,17 @@ import {
 import { ExpeditionService } from '../components/expedition/expedition.service';
 import { Context, ExpeditionEntity } from '../components/interfaces';
 import { PlayerService } from '../components/player/player.service';
+import {
+    EVENT_AFTER_STATUS_ATTACH,
+    EVENT_BEFORE_STATUS_ATTACH,
+} from '../constants';
 import { EffectDTO } from '../effects/effects.interface';
 import { ProviderContainer } from '../provider/interfaces';
 import { ProviderService } from '../provider/provider.service';
 import { STATUS_METADATA_KEY } from './contants';
 import {
-    AttachedStatus,
     AttachDTO,
     EnemyReferenceDTO,
-    JsonStatus,
     MutateEffectArgsDTO,
     PlayerReferenceDTO,
     EntityReferenceDTO,
@@ -36,12 +38,10 @@ import {
     StatusEvent,
     StatusEventDTO,
     StatusEventHandler,
-    StatusEventType,
     StatusHandler,
     StatusMetadata,
     StatusStartsAt,
     StatusTrigger,
-    OnAttachStatusEventArgs,
 } from './interfaces';
 
 @Injectable()
@@ -60,7 +60,21 @@ export class StatusService {
         @Inject(forwardRef(() => EnemyService))
         private readonly enemyService: EnemyService,
         private readonly eventEmitter: EventEmitter2,
-    ) {}
+    ) {
+        // Use event emitter to listen to events and trigger the handlers
+        this.eventEmitter.onAny(async (event, args) => {
+            const { ctx, ...rest } = args;
+
+            // Check if the event is array of events
+            const events = isArray(event) ? event : [event];
+
+            // Loop through the events and trigger the handlers
+            for (const event of events) {
+                this.logger.debug(`Triggering event ${event}`);
+                await this.trigger(ctx, event, rest);
+            }
+        });
+    }
 
     /**
      * Attach the statuses to the designated entities based on
@@ -80,17 +94,11 @@ export class StatusService {
             );
 
             for (const target of targets) {
-                const args: OnAttachStatusEventArgs = {
-                    status,
-                    targetId,
-                };
-
-                await this.trigger(ctx, StatusEventType.OnAttachStatus, args);
-                await this.eventEmitter.emitAsync('onAttachStatus', {
+                await this.eventEmitter.emitAsync(EVENT_BEFORE_STATUS_ATTACH, {
                     ctx,
-                    source,
-                    target,
                     status,
+                    target,
+                    targetId,
                 });
 
                 switch (target.type) {
@@ -112,6 +120,12 @@ export class StatusService {
                         );
                         break;
                 }
+
+                await this.eventEmitter.emitAsync(EVENT_AFTER_STATUS_ATTACH, {
+                    ctx,
+                    status,
+                    targetId,
+                });
             }
         }
     }
@@ -276,7 +290,7 @@ export class StatusService {
 
     public async trigger(
         ctx: Context,
-        event: StatusEventType,
+        event: string,
         args = {},
     ): Promise<void> {
         const { expedition } = ctx;
@@ -292,14 +306,25 @@ export class StatusService {
                 const statuses = collection[type];
                 const statusesToRemove: Status[] = [];
                 for (const status of statuses) {
-                    const container = this.findHandlerContainer<
-                        StatusEvent,
-                        StatusEventHandler
-                    >({
-                        name: status.name,
-                        trigger: StatusTrigger.Event,
-                        event,
-                    });
+                    const container =
+                        this.findHandlerContainer<
+                            StatusEvent,
+                            StatusEventHandler
+                        >({
+                            name: status.name,
+                            trigger: StatusTrigger.Event,
+                            // Find all handlers that match the unique event name
+                            event,
+                        }) ||
+                        this.findHandlerContainer<
+                            StatusEvent,
+                            StatusEventHandler
+                        >({
+                            name: status.name,
+                            trigger: StatusTrigger.Event,
+                            // Find all handlers that match the event name in array of events
+                            event: [event],
+                        });
 
                     if (!container) continue;
 
@@ -322,6 +347,7 @@ export class StatusService {
                     const dto: StatusEventDTO = {
                         ctx,
                         source,
+                        event,
                         target: entityCollection.target,
                         status,
                         args,
@@ -335,7 +361,7 @@ export class StatusService {
                         },
                     };
 
-                    await instance.enemyHandler(dto);
+                    await instance.handler(dto);
                 }
 
                 if (statusesToRemove.length > 0) {
@@ -359,36 +385,9 @@ export class StatusService {
         currentRound: number,
     ): boolean {
         return !(
-            startsAt == StatusStartsAt.NextTurn && addedInRound == currentRound
+            startsAt == StatusStartsAt.NextPlayerTurn &&
+            addedInRound == currentRound
         );
-    }
-
-    private convertStatusToAttached(
-        jsonStatus: JsonStatus,
-        currentRound: number,
-        sourceReference: EntityReferenceDTO,
-    ): {
-        status: AttachedStatus;
-        container: ProviderContainer<StatusMetadata, StatusHandler>;
-    } {
-        const container = this.findHandlerContainer({ name: jsonStatus.name });
-
-        if (!container)
-            throw new Error(`Status ${jsonStatus.name} does not exist`);
-
-        const status: AttachedStatus = {
-            name: jsonStatus.name,
-            addedInRound: currentRound,
-            sourceReference,
-            args: {
-                value: jsonStatus.args.value,
-            },
-        };
-
-        return {
-            status,
-            container,
-        };
     }
 
     public findHandlerContainer<S extends Status, H extends StatusHandler>(

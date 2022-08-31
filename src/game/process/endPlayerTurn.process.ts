@@ -5,13 +5,12 @@ import { DiscardAllCardsAction } from '../action/discardAllCards.action';
 import { CombatTurnEnum } from '../components/expedition/expedition.enum';
 import { ExpeditionService } from '../components/expedition/expedition.service';
 import { Context } from '../components/interfaces';
+import { EVENT_AFTER_PLAYER_TURN_END } from '../constants';
 import {
     SWARAction,
     StandardResponse,
     SWARMessageType,
 } from '../standardResponse/standardResponse';
-import { StatusEventType } from '../status/interfaces';
-import { StatusService } from '../status/status.service';
 import { BeginEnemyTurnProcess } from './beginEnemyTurn.process';
 
 interface EndPlayerTurnDTO {
@@ -25,7 +24,6 @@ export class EndPlayerTurnProcess {
     constructor(
         private readonly discardAllCardsAction: DiscardAllCardsAction,
         private readonly beginEnemyTurnProcess: BeginEnemyTurnProcess,
-        private readonly statusService: StatusService,
         private readonly expeditionService: ExpeditionService,
         private readonly eventEmitter: EventEmitter2,
     ) {}
@@ -66,9 +64,7 @@ export class EndPlayerTurnProcess {
             SWARMessageTypeToSend: SWARMessageType.EndTurn,
         });
 
-        await this.statusService.trigger(ctx, StatusEventType.OnTurnEnd);
+        await this.eventEmitter.emitAsync(EVENT_AFTER_PLAYER_TURN_END, { ctx });
         await this.beginEnemyTurnProcess.handle({ client });
-
-        await this.eventEmitter.emitAsync('player:after-end-turn', { ctx });
     }
 }
