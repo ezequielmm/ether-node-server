@@ -32,7 +32,6 @@ export class EndCombatProcess {
 
         if (this.playerService.isDead(ctx)) {
             this.logger.debug('Player is dead. Ending combat');
-            await this.endCombat(ctx);
             await this.emitPlayerDefeated(ctx);
         }
 
@@ -54,7 +53,7 @@ export class EndCombatProcess {
             },
         });
 
-        this.logger.debug('Combat ended');
+        this.logger.debug(`Combat ended for client ${ctx.client.id}`);
     }
 
     private emitEnemiesDefeated(ctx: Context) {
