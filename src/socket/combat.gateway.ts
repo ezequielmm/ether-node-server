@@ -45,7 +45,7 @@ export class CombatGateway {
             clientId: client.id,
         });
 
-        if (expedition.currentNode) {
+        if (expedition.currentNode !== null) {
             const {
                 currentNode: {
                     data: { playing },
