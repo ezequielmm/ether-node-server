@@ -52,13 +52,7 @@ export class EffectService {
 
     public async apply(dto: ApplyDTO) {
         const { ctx, source, target, effect } = dto;
-
         const { client } = ctx;
-
-        if (ctx.expedition.currentNode.completed) {
-            this.logger.debug(`Combat ended, skipping effect ${effect.effect}`);
-            return;
-        }
 
         // Register the effect in the history
         this.historyService.register({
@@ -95,6 +89,14 @@ export class EffectService {
         });
 
         for (let i = 0; i < times; i++) {
+            // Check if the combat has ended
+            if (this.expeditionService.isCurrentCombatEnded(ctx)) {
+                this.logger.debug(
+                    `Combat ended, skipping effect ${effect.effect}`,
+                );
+                return;
+            }
+
             // Send the queue id to the effects to add the target
             this.logger.debug(`Effect ${name} applied to ${target.type}`);
             const handler = this.findHandlerByName(name);

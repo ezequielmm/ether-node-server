@@ -5,7 +5,10 @@ import { DiscardAllCardsAction } from '../action/discardAllCards.action';
 import { CombatTurnEnum } from '../components/expedition/expedition.enum';
 import { ExpeditionService } from '../components/expedition/expedition.service';
 import { Context } from '../components/interfaces';
-import { EVENT_AFTER_PLAYER_TURN_END } from '../constants';
+import {
+    EVENT_AFTER_PLAYER_TURN_END,
+    EVENT_BEFORE_PLAYER_TURN_END,
+} from '../constants';
 import {
     SWARAction,
     StandardResponse,
@@ -57,7 +60,9 @@ export class EndPlayerTurnProcess {
             expedition,
         };
 
-        await this.eventEmitter.emitAsync('player:before-end-turn', { ctx });
+        await this.eventEmitter.emitAsync(EVENT_BEFORE_PLAYER_TURN_END, {
+            ctx,
+        });
 
         await this.discardAllCardsAction.handle({
             client,

@@ -8,12 +8,12 @@ import {
     EVENT_BEFORE_ENEMIES_TURN_START,
     EVENT_BEFORE_PLAYER_TURN_START,
 } from 'src/game/constants';
-import { StatusCollection, StatusEventHandler } from '../interfaces';
+import { StatusCollection } from '../interfaces';
 import { StatusService } from '../status.service';
 import { intercept } from './constants';
 
 @Injectable()
-export class InterceptEvent implements StatusEventHandler {
+export class InterceptEvent {
     private readonly logger = new Logger(InterceptEvent.name);
 
     constructor(
@@ -23,7 +23,7 @@ export class InterceptEvent implements StatusEventHandler {
     ) {}
 
     @OnEvent(EVENT_BEFORE_ENEMIES_TURN_START, { async: true })
-    async handler(args: { ctx: Context }): Promise<void> {
+    async onEnemiesTurnEnd(args: { ctx: Context }): Promise<void> {
         const { ctx } = args;
         const enemies = this.enemyService.getAll(ctx);
 
@@ -33,7 +33,7 @@ export class InterceptEvent implements StatusEventHandler {
     }
 
     @OnEvent(EVENT_BEFORE_PLAYER_TURN_START, { async: true })
-    async playerHandler(args: { ctx: Context }): Promise<void> {
+    async onPlayerTurnStart(args: { ctx: Context }): Promise<void> {
         const { ctx } = args;
         const player = this.playerService.get(ctx);
         const {

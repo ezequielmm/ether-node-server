@@ -127,7 +127,7 @@ export const mimicFrog1Data: Enemy = {
                     value: 13,
                     effects: [
                         {
-                            effect: damageEffect.name,
+                            effect: defenseEffect.name,
                             target: CardTargetedEnum.Self,
                             args: {
                                 value: 13,

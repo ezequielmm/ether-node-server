@@ -166,7 +166,7 @@ export class CardPlayedAction {
 
                 // After applying the effects, check if the current
                 // combat has ended and if so, skip all next steps
-                if (ctx.expedition.currentNode.completed) {
+                if (this.expeditionService.isCurrentCombatEnded(ctx)) {
                     this.logger.debug(
                         'Current node is completed. Skipping next actions',
                     );

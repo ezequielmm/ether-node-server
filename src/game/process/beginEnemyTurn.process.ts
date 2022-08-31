@@ -95,6 +95,13 @@ export class BeginEnemyTurnProcess {
                         effects,
                         selectedEnemy: enemy.id,
                     });
+
+                    if (this.expeditionService.isCurrentCombatEnded(ctx)) {
+                        this.logger.debug(
+                            'Combat ended, skipping rest of enemies, intentions and effects',
+                        );
+                        return;
+                    }
                 }
             }
         }
