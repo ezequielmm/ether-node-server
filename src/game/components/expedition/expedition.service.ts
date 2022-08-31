@@ -62,7 +62,7 @@ export class ExpeditionService {
      * @returns If the expedition was updated
      */
     async updateById(
-        id: any,
+        id: string,
         query: UpdateQuery<ExpeditionDocument>,
     ): Promise<boolean> {
         // Using udpateOne to save a bit of time and bandwidth
