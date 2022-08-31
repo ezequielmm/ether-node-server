@@ -68,6 +68,10 @@ export class CombatQueueService {
             clientId: client.id,
         });
 
+        if (!combatQueues) {
+            return;
+        }
+
         client.emit(
             'PutData',
             JSON.stringify(

@@ -1,19 +1,16 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
+import { CombatQueueService } from '../components/combatQueue/combatQueue.service';
 import { EnemyService } from '../components/enemy/enemy.service';
 import { ExpeditionService } from '../components/expedition/expedition.service';
-import { Context, ExpeditionEntity } from '../components/interfaces';
+import { Context } from '../components/interfaces';
 import { PlayerService } from '../components/player/player.service';
+import { EVENT_AFTER_DAMAGE_EFFECT } from '../constants';
 import {
     StandardResponse,
     SWARAction,
     SWARMessageType,
 } from '../standardResponse/standardResponse';
-
-export interface EntityDamageEvent {
-    ctx: Context;
-    entity: ExpeditionEntity;
-}
 
 @Injectable()
 export class EndCombatProcess {
@@ -23,10 +20,11 @@ export class EndCombatProcess {
         private readonly playerService: PlayerService,
         private readonly enemyService: EnemyService,
         private readonly expeditionService: ExpeditionService,
+        private readonly combatQueueService: CombatQueueService,
     ) {}
 
-    @OnEvent('entity.*', { async: true })
-    async handle(payload: EntityDamageEvent): Promise<void> {
+    @OnEvent(EVENT_AFTER_DAMAGE_EFFECT, { async: true })
+    async handle(payload): Promise<void> {
         const { ctx } = payload;
 
         if (this.playerService.isDead(ctx)) {
@@ -52,6 +50,8 @@ export class EndCombatProcess {
                 'currentNode.showRewards': true,
             },
         });
+
+        await this.combatQueueService.end(ctx);
 
         this.logger.debug('Combat ended');
     }

@@ -43,7 +43,7 @@ export class PlayerService {
      * @returns If the player is dead
      */
     public isDead(ctx: Context): boolean {
-        return ctx.expedition.playerState.hpCurrent <= 0;
+        return ctx.expedition.currentNode.data.player.hpCurrent <= 0;
     }
 
     /**

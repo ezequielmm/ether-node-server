@@ -316,4 +316,10 @@ export class ExpeditionService {
 
         return targets;
     }
+
+    public isCurrentCombatEnded(ctx: Context): boolean {
+        return (
+            this.playerService.isDead(ctx) || this.enemyService.isAllDead(ctx)
+        );
+    }
 }
