@@ -19,10 +19,9 @@ export class CardDescriptionFormatter {
         // Next we loop over all the statuses to find the value on the text
         // and update it with the correct value
         statuses.forEach(({ name, args: { value } }) => {
-            card.description = card.description.replace(
-                `{${name}}`,
-                value.toString(),
-            );
+            card.description = card.description
+                .replace(`{${name}}`, value.toString())
+                .replace(`[${name}]`, `<color=#0066cc>${name}`);
         });
 
         // Finally we return the card with the next description

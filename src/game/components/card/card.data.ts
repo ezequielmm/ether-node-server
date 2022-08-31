@@ -2,6 +2,7 @@ import { Card } from './card.schema';
 import { AdeptCard, AdeptCardUpgraded } from './data/adept.card';
 import { AnticipateCard, AnticipateCardUpgraded } from './data/anticipate.card';
 import { AttackCard, AttackCardUpgraded } from './data/attack.card';
+import { BackflipCard, BackflipCardUpgraded } from './data/backflip.card';
 import { BackHandCard, BackHandCardUpgraded } from './data/backhand.card';
 import { BlusterCard, BlusterCardUpgraded } from './data/bluster.card';
 import { BolsterCard, BolsterCardUpgraded } from './data/bolster.card';
@@ -20,6 +21,7 @@ import { FineEdgeCard, FineEdgeCardUpgraded } from './data/fineEdge.card';
 import { FirstMoveCard, FirstMoveCardUpgraded } from './data/firstMove.card';
 import { FlurryCard, FlurryCardUpgraded } from './data/flurry.card';
 import { ForceFieldCard, ForceFieldCardUpgraded } from './data/forceField.card';
+import { FrontflipCard, FrontflipCardUpgraded } from './data/frontflip.card';
 import {
     GiveNoGroundCard,
     GiveNoGroundCardUpgraded,
@@ -190,4 +192,8 @@ export const data: Card[] = [
     TwistTheBladeCardUpgraded,
     KnockDownCard,
     KnockDownCardUpgraded,
+    BackflipCard,
+    BackflipCardUpgraded,
+    FrontflipCard,
+    FrontflipCardUpgraded,
 ];
