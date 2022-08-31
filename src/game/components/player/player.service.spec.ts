@@ -88,6 +88,7 @@ describe('PlayerService', () => {
 
             expect(isPlayer).toBe(true);
         });
+
         it('should return false if the target is not the player', () => {
             const isPlayer = PlayerService.isPlayer({
                 type: CardTargetedEnum.Enemy,
@@ -100,7 +101,7 @@ describe('PlayerService', () => {
 
     describe('isDead', () => {
         it('should return true if the player is dead', () => {
-            mockContext.expedition.playerState.hpCurrent = 0;
+            mockContext.expedition.currentNode.data.player.hpCurrent = 0;
             const isDead = playerService.isDead(mockContext);
 
             expect(isDead).toBe(true);
