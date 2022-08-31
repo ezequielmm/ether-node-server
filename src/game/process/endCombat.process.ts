@@ -72,6 +72,8 @@ export class EndCombatProcess {
     }
 
     private async emitPlayerDefeated(ctx: Context): Promise<void> {
+        await this.combatQueueService.end(ctx);
+
         ctx.client.emit(
             'PutData',
             JSON.stringify(
@@ -93,8 +95,6 @@ export class EndCombatProcess {
                 },
             },
         );
-
-        await this.combatQueueService.end(ctx);
 
         this.logger.debug(`Combat ended for client ${ctx.client.id}`);
     }
