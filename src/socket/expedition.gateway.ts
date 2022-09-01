@@ -116,7 +116,6 @@ export class ExpeditionGateway {
             const newMap = restoreMap(oldMap);
 
             newMap.activeNode = newMap.fullCurrentMap.get(node.id);
-            newMap.activeNode.select(newMap);
             newMap.activeNode.complete(newMap);
 
             const mapToSave = newMap.getMap;
