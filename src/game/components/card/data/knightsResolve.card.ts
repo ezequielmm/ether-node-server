@@ -20,6 +20,7 @@ export const KnightsResolveCard: Card = {
         effects: [
             {
                 effect: defenseEffect.name,
+                times: 2, //For X still not able to understand what i need to do here.
                 args: {
                     attachTo: CardTargetedEnum.Player,
                     value: 6,
