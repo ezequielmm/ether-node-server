@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+import { EVENT_BEFORE_STATUS_ATTACH } from 'src/game/constants';
 import {
     StandardResponse,
     SWARAction,
@@ -90,7 +91,7 @@ export class CombatQueueService {
         await this.deleteCombatQueueByClientId(client.id);
     }
 
-    @OnEvent('onAttachStatus', { async: true, promisify: true })
+    @OnEvent(EVENT_BEFORE_STATUS_ATTACH, { async: true, promisify: true })
     async onAttachStatus(args: {
         ctx: Context;
         source: ExpeditionEntity;

@@ -70,9 +70,7 @@ export class StatusService {
 
             // Loop through the events and trigger the handlers
             for (const event of events) {
-                this.logger.debug(
-                    `Triggering event ${event}`,
-                );
+                this.logger.debug(`Triggering event ${event}`);
                 await this.trigger(ctx, event, rest);
             }
         });
@@ -98,8 +96,9 @@ export class StatusService {
             for (const target of targets) {
                 await this.eventEmitter.emitAsync(EVENT_BEFORE_STATUS_ATTACH, {
                     ctx,
-                    status,
+                    source,
                     target,
+                    status,
                     targetId,
                 });
 
@@ -125,7 +124,9 @@ export class StatusService {
 
                 await this.eventEmitter.emitAsync(EVENT_AFTER_STATUS_ATTACH, {
                     ctx,
+                    source,
                     status,
+                    target,
                     targetId,
                 });
             }
