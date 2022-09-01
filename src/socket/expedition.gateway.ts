@@ -65,7 +65,6 @@ export class ExpeditionGateway {
         });
 
         // If the node is combat we process to move on without the rewards
-
         const nodeTypes = Object.values(ExpeditionMapNodeTypeEnum);
         const combatNodes = nodeTypes.filter(
             (node) => node.search('combat') !== -1,
@@ -114,9 +113,10 @@ export class ExpeditionGateway {
             // This will be for now combat nodes (merchant, camp, etc)
             const { map: oldMap } = expedition;
 
-            const newMap = restoreMap(oldMap, client.id);
+            const newMap = restoreMap(oldMap);
 
             newMap.activeNode = newMap.fullCurrentMap.get(node.id);
+            newMap.activeNode.select(newMap);
             newMap.activeNode.complete(newMap);
 
             const mapToSave = newMap.getMap;
