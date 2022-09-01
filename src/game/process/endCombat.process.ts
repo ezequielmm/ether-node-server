@@ -25,9 +25,7 @@ export class EndCombatProcess {
     ) {}
 
     @OnEvent(EVENT_AFTER_DAMAGE_EFFECT, { async: true })
-    async handle(payload): Promise<void> {
-        const { ctx } = payload;
-
+    async handle(ctx: Context): Promise<void> {
         if (this.playerService.isDead(ctx)) {
             this.logger.debug('Player is dead. Ending combat');
             await this.emitPlayerDefeated(ctx);
@@ -41,6 +39,8 @@ export class EndCombatProcess {
     }
 
     private async endCombat(ctx: Context): Promise<void> {
+        await this.combatQueueService.end(ctx);
+
         const {
             expedition: { _id: expeditionId },
         } = ctx;
@@ -50,8 +50,6 @@ export class EndCombatProcess {
                 'currentNode.showRewards': true,
             },
         });
-
-        await this.combatQueueService.end(ctx);
 
         this.logger.debug(`Combat ended for client ${ctx.client.id}`);
     }
