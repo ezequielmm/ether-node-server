@@ -18,6 +18,7 @@ import { EndEnemyTurnProcess } from './endEnemyTurn.process';
 import { EndPlayerTurnProcess } from './endPlayerTurn.process';
 import { InitCombatProcess } from './initCombat.process';
 import { InitExpeditionProcess } from './initExpedition.process';
+import { InitNodeProcess } from './initNode.process';
 import { NodeSelectedProcess } from './nodeSelected.process';
 import { SendEnemyIntentProcess } from './sendEnemyIntents.process';
 
@@ -46,6 +47,7 @@ import { SendEnemyIntentProcess } from './sendEnemyIntents.process';
         BeginEnemyTurnProcess,
         BeginPlayerTurnProcess,
         EndCombatProcess,
+        InitNodeProcess,
     ],
     exports: [
         SendEnemyIntentProcess,
@@ -58,6 +60,7 @@ import { SendEnemyIntentProcess } from './sendEnemyIntents.process';
         BeginEnemyTurnProcess,
         BeginPlayerTurnProcess,
         EndCombatProcess,
+        InitNodeProcess,
     ],
 })
 export class ProcessModule {}
