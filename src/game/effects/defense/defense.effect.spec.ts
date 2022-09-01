@@ -195,7 +195,6 @@ describe('DefenseEffect', () => {
                     useDiscardPileAsValue: false,
                     multiplier: 1,
                 },
-                combatQueueId: '555',
             });
 
             expect(mockPlayerService.setDefense).toHaveBeenCalledWith(

@@ -9,6 +9,7 @@ import {
     SWARAction,
 } from '../standardResponse/standardResponse';
 import { InitCombatProcess } from './initCombat.process';
+import { InitNodeProcess } from './initNode.process';
 
 @Injectable()
 export class NodeSelectedProcess {
@@ -17,6 +18,7 @@ export class NodeSelectedProcess {
     constructor(
         private readonly expeditionService: ExpeditionService,
         private readonly initCombatProcess: InitCombatProcess,
+        private readonly initNodeProcess: InitNodeProcess,
     ) {}
 
     async handle(client: Socket, node_id: number): Promise<string> {
@@ -97,6 +99,8 @@ export class NodeSelectedProcess {
                 case ExpeditionMapNodeTypeEnum.Camp:
                 case ExpeditionMapNodeTypeEnum.CampHouse:
                 case ExpeditionMapNodeTypeEnum.CampRegular:
+                    await this.initNodeProcess.process(client, node);
+
                     return JSON.stringify(
                         StandardResponse.respond({
                             message_type: SWARMessageType.CampUpdate,
@@ -105,6 +109,8 @@ export class NodeSelectedProcess {
                         }),
                     );
                 case ExpeditionMapNodeTypeEnum.Encounter:
+                    await this.initNodeProcess.process(client, node);
+
                     return JSON.stringify(
                         StandardResponse.respond({
                             message_type: SWARMessageType.EncounterUpdate,
@@ -113,6 +119,8 @@ export class NodeSelectedProcess {
                         }),
                     );
                 case ExpeditionMapNodeTypeEnum.Treasure:
+                    await this.initNodeProcess.process(client, node);
+
                     return JSON.stringify(
                         StandardResponse.respond({
                             message_type: SWARMessageType.TreasureUpdate,
@@ -121,6 +129,8 @@ export class NodeSelectedProcess {
                         }),
                     );
                 case ExpeditionMapNodeTypeEnum.Merchant:
+                    await this.initNodeProcess.process(client, node);
+
                     return JSON.stringify(
                         StandardResponse.respond({
                             message_type: SWARMessageType.MerchantUpdate,

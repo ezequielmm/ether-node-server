@@ -89,7 +89,6 @@ describe('DamageEffect', () => {
                     currentValue: 4,
                     initialValue: 4,
                 },
-                combatQueueId: '555',
             });
             expect(mockPlayerService.damage).toHaveBeenCalledWith(mockCtx, 4);
         });
