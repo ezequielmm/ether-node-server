@@ -9,6 +9,7 @@ import { CounterCard, CounterCardUpgraded } from './data/counter.card';
 import { DefenseCard, DefenseCardUpgraded } from './data/defend.card';
 import { DivineGiftCard, DivineGiftCardUpgraded } from './data/divineGift.card';
 import { DoubleDownCard, DoubleDownCardUpgraded } from './data/doubleDown.card';
+import { EnflameCard, EnflameCardUpgraded } from './data/enflame.card';
 import {
     ExecutionersBlowCard,
     ExecutionersBlowCardUpgraded,
@@ -72,6 +73,7 @@ import {
     ShieldPlantCardUpgraded,
 } from './data/shieldPlant.card';
 import { SiphonCard, SiphonCardUpgraded } from './data/siphon.card';
+import { SparkCard, SparkCardUpgraded } from './data/Spark.card';
 import { SpikeArmorCard, SpikeArmorCardUpgraded } from './data/spikeArmor.card';
 import {
     TasteOfBloodCard,
@@ -81,6 +83,7 @@ import {
     TightenGripCard,
     TightenGripCardUpgraded,
 } from './data/tightenGrip.card';
+import { TorchCard, TorchCardUpgraded } from './data/torch.card';
 import { TurtleCard, TurtleCardUpgraded } from './data/turtle.card';
 import {
     UltraLethalityCard,
@@ -184,4 +187,10 @@ export const data: Card[] = [
     KnightsResolveCardUpgraded,
     ShieldPlantCard,
     ShieldPlantCardUpgraded,
+    SparkCard,
+    SparkCardUpgraded,
+    TorchCard,
+    TorchCardUpgraded,
+    EnflameCard,
+    EnflameCardUpgraded,
 ];
