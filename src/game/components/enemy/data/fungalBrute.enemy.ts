@@ -17,7 +17,7 @@ export const fungalBruteData: Enemy = {
     size: EnemySizeEnum.Giant,
     description:
         'Massive, stomping fungal organism that stomps the ground, causing an area of damage where the ground shakes around him. Additionally, he can send large toxic spores flying around him and the knights have to dodge them or prepare to be paralyzed and stomped on.',
-    healthRange: [140, 140],
+    healthRange: [99999, 99999],
     scripts: [
         {
             intentions: [
