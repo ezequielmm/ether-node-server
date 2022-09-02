@@ -1,17 +1,19 @@
 //TRIED TO IMPLEMENT EFFECT FOR UNDERSTANDING THIS PART..
 
+import { burn } from '../burn/constants';
 import {
-    StatusEvent,
-    StatusEventType,
+    StatusDirection,
+    StatusEffect,
     StatusStartsAt,
     StatusTrigger,
     StatusType,
 } from '../interfaces';
 
-export const enflamed: StatusEvent = {
+export const enflamed: StatusEffect = {
     name: 'enflamed',
-    type: StatusType.Buff,
+    type: StatusType.Debuff,
     startsAt: StatusStartsAt.Instantly,
-    trigger: StatusTrigger.Event,
-    event: StatusEventType.OnAttachStatus,
+    trigger: StatusTrigger.Effect,
+    direction: StatusDirection.Outgoing,
+    effects: [burn],
 };
