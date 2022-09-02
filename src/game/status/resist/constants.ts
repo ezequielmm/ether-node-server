@@ -1,6 +1,6 @@
+import { EVENT_BEFORE_STATUS_ATTACH } from 'src/game/constants';
 import {
     StatusEvent,
-    StatusEventType,
     StatusStartsAt,
     StatusTrigger,
     StatusType,
@@ -10,6 +10,6 @@ export const resist: StatusEvent = {
     name: 'resist',
     type: StatusType.Buff,
     trigger: StatusTrigger.Event,
-    event: StatusEventType.OnAttachStatus,
+    event: EVENT_BEFORE_STATUS_ATTACH,
     startsAt: StatusStartsAt.Instantly,
 };

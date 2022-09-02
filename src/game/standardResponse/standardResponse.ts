@@ -16,6 +16,7 @@ export enum SWARMessageType {
     EncounterUpdate = 'encounter_update',
     TreasureUpdate = 'treasure_update',
     MerchantUpdate = 'merchant_update',
+    EndNode = 'end_node',
 }
 
 export enum SWARAction {
@@ -24,17 +25,12 @@ export enum SWARAction {
     BeginCombat = 'begin_combat',
     EndTurn = 'end_turn',
     EnemiesDefeated = 'enemies_defeated',
-    PlayerDefeated = 'player_defeated',
+    PlayerDefeated = 'players_defeated',
     SelectAnotherReward = 'select_another_reward',
     ShowMap = 'show_map',
     UpdatePlayerState = 'update_player_state',
     MapUpdate = 'map_update',
-    PlayCard = 'play_card',
-    CardUnplayable = 'card_unplayable',
     InvalidCard = 'invalid_card',
-    UnplayableCard = 'unplayable_card',
-    UpdateEnemyIntents = 'update_enemy_intents',
-    InvalidEnemy = 'invalid_enemy',
     InsufficientEnergy = 'insufficient_energy',
     UpdateEnergy = 'update_energy',
     MoveCard = 'move_card',
@@ -49,6 +45,7 @@ export enum SWARAction {
     BeginEncounter = 'begin_encounter',
     BeginTreasure = 'begin_treasure',
     BeginMerchant = 'begin_merchant',
+    ShowCardDialog = 'show_card_dialog',
 }
 
 interface SWARPayload {

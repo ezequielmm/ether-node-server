@@ -17,7 +17,7 @@ export class AnticipatingStatus implements StatusEventHandler {
         private readonly enemyService: EnemyService,
     ) {}
 
-    async enemyHandler(dto: StatusEventDTO): Promise<any> {
+    async handler(dto: StatusEventDTO): Promise<any> {
         const { ctx, status, target } = dto;
 
         this.logger.debug(

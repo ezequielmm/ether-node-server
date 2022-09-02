@@ -18,7 +18,7 @@ export const treantData: Enemy = {
     size: EnemySizeEnum.Giant,
     description:
         'An elemental giant with a terrifying giant hand that reaches for knights and CRUSHES them, or claws the ground to send a shockwave of dirt and rocks their way',
-    healthRange: [160, 160],
+    healthRange: [99999, 99999],
     scripts: [
         {
             intentions: [
@@ -81,13 +81,13 @@ export const treantData: Enemy = {
                 {
                     type: EnemyIntentionType.Attack,
                     target: CardTargetedEnum.Player,
-                    value: 5,
+                    value: 6969,
                     effects: [
                         {
                             effect: damageEffect.name,
                             target: CardTargetedEnum.Player,
                             args: {
-                                value: 5,
+                                value: 6969,
                             },
                         },
                     ],
@@ -95,13 +95,13 @@ export const treantData: Enemy = {
                 {
                     type: EnemyIntentionType.Attack,
                     target: CardTargetedEnum.Player,
-                    value: 5,
+                    value: 6969,
                     effects: [
                         {
                             effect: damageEffect.name,
                             target: CardTargetedEnum.Player,
                             args: {
-                                value: 5,
+                                value: 6969,
                             },
                         },
                     ],
@@ -123,13 +123,13 @@ export const treantData: Enemy = {
                 {
                     type: EnemyIntentionType.Attack,
                     target: CardTargetedEnum.Player,
-                    value: 5,
+                    value: 6969,
                     effects: [
                         {
                             effect: damageEffect.name,
                             target: CardTargetedEnum.Player,
                             args: {
-                                value: 5,
+                                value: 6969,
                             },
                         },
                     ],
@@ -137,13 +137,13 @@ export const treantData: Enemy = {
                 {
                     type: EnemyIntentionType.Attack,
                     target: CardTargetedEnum.Player,
-                    value: 5,
+                    value: 6969,
                     effects: [
                         {
                             effect: damageEffect.name,
                             target: CardTargetedEnum.Player,
                             args: {
-                                value: 5,
+                                value: 6969,
                             },
                         },
                     ],
@@ -151,13 +151,13 @@ export const treantData: Enemy = {
                 {
                     type: EnemyIntentionType.Attack,
                     target: CardTargetedEnum.Player,
-                    value: 5,
+                    value: 6969,
                     effects: [
                         {
                             effect: damageEffect.name,
                             target: CardTargetedEnum.Player,
                             args: {
-                                value: 5,
+                                value: 6969,
                             },
                         },
                     ],

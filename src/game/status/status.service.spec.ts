@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import { getModelToken } from '@nestjs/mongoose';
 import { Test } from '@nestjs/testing';
 import { Socket } from 'socket.io';
@@ -9,6 +10,7 @@ import {
 } from '../components/expedition/expedition.schema';
 import { ExpeditionService } from '../components/expedition/expedition.service';
 import { PlayerService } from '../components/player/player.service';
+import { EVENT_BEFORE_ENEMY_TURN_END } from '../constants';
 import { damageEffect } from '../effects/damage/constants';
 import { EffectDTO } from '../effects/effects.interface';
 import { ProviderService } from '../provider/provider.service';
@@ -21,7 +23,6 @@ import {
     StatusEffectHandler,
     StatusEventDTO,
     StatusEventHandler,
-    StatusEventType,
     StatusType,
 } from './interfaces';
 import { resolve } from './resolve/constants';
@@ -88,7 +89,7 @@ class StatusC implements StatusEffectHandler {
 @Injectable()
 class StatusEventA implements StatusEventHandler {
     args: any;
-    async enemyHandler(args: StatusEventDTO): Promise<any> {
+    async handler(args: StatusEventDTO): Promise<any> {
         this.args = args.status.args;
     }
 }
@@ -97,6 +98,8 @@ describe('StatusService', () => {
     let service: StatusService;
     let statusEventA: StatusEventA;
     let effectDTO: EffectDTO;
+
+    const mockEventEmitter2 = new EventEmitter2();
 
     beforeEach(async () => {
         const module = await Test.createTestingModule({
@@ -117,6 +120,10 @@ describe('StatusService', () => {
                     useValue: {},
                 },
                 ProviderService,
+                {
+                    provide: EventEmitter2,
+                    useValue: mockEventEmitter2,
+                },
             ],
         }).compile();
 
@@ -308,7 +315,7 @@ describe('StatusService', () => {
                     },
                 } as ExpeditionDocument,
             },
-            StatusEventType.OnTurnEnd,
+            EVENT_BEFORE_ENEMY_TURN_END,
         );
 
         statusEventA.args = { value: 22 };

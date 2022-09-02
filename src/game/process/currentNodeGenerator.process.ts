@@ -1,7 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { randomUUID } from 'crypto';
 import { random } from 'lodash';
-import { getRandomBetween, removeCardsFromPile } from 'src/utils';
+import {
+    getRandomBetween,
+    getRandomItemByWeight,
+    removeCardsFromPile,
+} from 'src/utils';
 import { EnemyService } from '../components/enemy/enemy.service';
 import { EnemyId } from '../components/enemy/enemy.type';
 import {
@@ -118,15 +122,22 @@ export class CurrentNodeGeneratorProcess {
     private getCurrentNode(): IExpeditionCurrentNode {
         return {
             nodeId: this.node.id,
-            completed: true,
+            completed: false,
             nodeType: this.node.type,
             showRewards: false,
         };
     }
 
     private async getEnemies(): Promise<IExpeditionCurrentNodeDataEnemy[]> {
+        const enemyGroup = getRandomItemByWeight<EnemyId[]>(
+            this.node.private_data.enemies.map(({ enemies }) => enemies),
+            this.node.private_data.enemies.map(
+                ({ probability }) => probability,
+            ),
+        );
+
         return await Promise.all(
-            this.node.private_data.enemies.map(async (enemyId: EnemyId) => {
+            enemyGroup.map(async (enemyId: EnemyId) => {
                 const enemy = await this.enemyService.findById(enemyId);
 
                 const newHealth = getRandomBetween(
@@ -135,7 +146,7 @@ export class CurrentNodeGeneratorProcess {
                 );
 
                 return {
-                    id: enemy._id.toString(),
+                    id: randomUUID(),
                     defense: 0,
                     name: enemy.name,
                     enemyId: enemy.enemyId,

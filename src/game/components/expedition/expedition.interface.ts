@@ -40,8 +40,18 @@ export interface IExpeditionNode {
     readonly status: ExpeditionMapNodeStatusEnum;
     readonly exits: number[];
     readonly enter: number[];
-    readonly private_data: any;
-    state?: any;
+    readonly private_data: {
+        enemies?: {
+            enemies: number[];
+            probability: number;
+        }[];
+    };
+    readonly state?: {
+        enemies?: {
+            enemies: number[];
+            probability: number;
+        }[];
+    };
 }
 
 export class IExpeditionPlayerStateDeckCard extends Card {

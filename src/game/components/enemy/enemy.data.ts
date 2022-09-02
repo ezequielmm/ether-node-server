@@ -12,6 +12,7 @@ import { stingFae1Data } from './data/stingFae1.enemy';
 import { thornWolfData } from './data/thornWolf.enemy';
 import { trapelicanData } from './data/trapelican.enemy';
 import { treantData } from './data/treant.enemy';
+import { stingFae2Data } from './data/stingFae2.enemy';
 
 export const data: Enemy[] = [
     sporeMongerData,
@@ -24,6 +25,7 @@ export const data: Enemy[] = [
     mimicFrog1Data,
     queenOrchidData,
     stingFae1Data,
+    stingFae2Data,
     thornWolfData,
     trapelicanData,
     treantData,

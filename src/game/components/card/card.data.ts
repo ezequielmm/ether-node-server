@@ -2,6 +2,7 @@ import { Card } from './card.schema';
 import { AdeptCard, AdeptCardUpgraded } from './data/adept.card';
 import { AnticipateCard, AnticipateCardUpgraded } from './data/anticipate.card';
 import { AttackCard, AttackCardUpgraded } from './data/attack.card';
+import { BackflipCard, BackflipCardUpgraded } from './data/backflip.card';
 import { BackHandCard, BackHandCardUpgraded } from './data/backhand.card';
 import { BlusterCard, BlusterCardUpgraded } from './data/bluster.card';
 import { BolsterCard, BolsterCardUpgraded } from './data/bolster.card';
@@ -20,6 +21,7 @@ import { FineEdgeCard, FineEdgeCardUpgraded } from './data/fineEdge.card';
 import { FirstMoveCard, FirstMoveCardUpgraded } from './data/firstMove.card';
 import { FlurryCard, FlurryCardUpgraded } from './data/flurry.card';
 import { ForceFieldCard, ForceFieldCardUpgraded } from './data/forceField.card';
+import { FrontflipCard, FrontflipCardUpgraded } from './data/frontflip.card';
 import {
     GiveNoGroundCard,
     GiveNoGroundCardUpgraded,
@@ -43,6 +45,7 @@ import {
 } from './data/invokeBlessing.card';
 import { KegChugCard, KegChugCardUpgraded } from './data/kegChug.card';
 import { KindleCard, KindleCardUpgraded } from './data/kindle.card';
+import { KnockDownCard, KnockDownCardUpgraded } from './data/knockDown.card';
 import { LastResortCard, LastResortCardUpgraded } from './data/lastResort.card';
 import { LungeCard, LungeCardUpgraded } from './data/lunge.card';
 import { OnARollCard, OnARollCardUpgraded } from './data/onARoll.card';
@@ -187,4 +190,10 @@ export const data: Card[] = [
     AnticipateCardUpgraded,
     TwistTheBladeCard,
     TwistTheBladeCardUpgraded,
+    KnockDownCard,
+    KnockDownCardUpgraded,
+    BackflipCard,
+    BackflipCardUpgraded,
+    FrontflipCard,
+    FrontflipCardUpgraded,
 ];

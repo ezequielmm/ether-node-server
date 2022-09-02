@@ -1,6 +1,9 @@
 import {
+    EVENT_BEFORE_ENEMIES_TURN_START,
+    EVENT_BEFORE_PLAYER_TURN_START,
+} from 'src/game/constants';
+import {
     StatusEvent,
-    StatusEventType,
     StatusStartsAt,
     StatusTrigger,
     StatusType,
@@ -11,5 +14,5 @@ export const regenerate: StatusEvent = {
     type: StatusType.Buff,
     startsAt: StatusStartsAt.Instantly,
     trigger: StatusTrigger.Event,
-    event: StatusEventType.OnTurnEnd,
+    event: [EVENT_BEFORE_PLAYER_TURN_START, EVENT_BEFORE_ENEMIES_TURN_START],
 };
