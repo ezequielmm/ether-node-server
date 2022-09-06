@@ -47,7 +47,7 @@ export class DiscardAllCardsAction {
             };
         });
 
-        this.logger.log(
+        this.logger.debug(
             `Sent message PutData to client ${client.id}: ${SWARAction.MoveCard}`,
         );
 

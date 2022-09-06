@@ -1,6 +1,7 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { forwardRef, Inject, Injectable, Logger } from '@nestjs/common';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import { InjectModel } from '@nestjs/mongoose';
-import { cloneDeep, compact, filter, find, matches } from 'lodash';
+import { cloneDeep, compact, filter, find, isArray, matches } from 'lodash';
 import { Model } from 'mongoose';
 import { CardTargetedEnum } from '../components/card/card.enum';
 import { ExpeditionEnemy } from '../components/enemy/enemy.interface';
@@ -14,20 +15,20 @@ import {
 import { ExpeditionService } from '../components/expedition/expedition.service';
 import { Context, ExpeditionEntity } from '../components/interfaces';
 import { PlayerService } from '../components/player/player.service';
+import {
+    EVENT_AFTER_STATUS_ATTACH,
+    EVENT_BEFORE_STATUS_ATTACH,
+} from '../constants';
 import { EffectDTO } from '../effects/effects.interface';
 import { ProviderContainer } from '../provider/interfaces';
 import { ProviderService } from '../provider/provider.service';
 import { STATUS_METADATA_KEY } from './contants';
 import {
-    AttachedStatus,
     AttachDTO,
-    AttachToEnemyDTO,
-    AttachToPlayerDTO,
     EnemyReferenceDTO,
-    JsonStatus,
     MutateEffectArgsDTO,
     PlayerReferenceDTO,
-    SourceEntityReferenceDTO,
+    EntityReferenceDTO,
     Status,
     StatusCollection,
     StatusDirection,
@@ -37,12 +38,10 @@ import {
     StatusEvent,
     StatusEventDTO,
     StatusEventHandler,
-    StatusEventType,
     StatusHandler,
     StatusMetadata,
     StatusStartsAt,
     StatusTrigger,
-    OnAttachStatusEventArgs,
 } from './interfaces';
 
 @Injectable()
@@ -54,90 +53,82 @@ export class StatusService {
         @InjectModel(Expedition.name)
         private readonly expedition: Model<ExpeditionDocument>,
         private readonly providerService: ProviderService,
+        @Inject(forwardRef(() => ExpeditionService))
         private readonly expeditionService: ExpeditionService,
-    ) {}
+        @Inject(forwardRef(() => PlayerService))
+        private readonly playerService: PlayerService,
+        @Inject(forwardRef(() => EnemyService))
+        private readonly enemyService: EnemyService,
+        private readonly eventEmitter: EventEmitter2,
+    ) {
+        // Use event emitter to listen to events and trigger the handlers
+        this.eventEmitter.onAny(async (event, args) => {
+            const { ctx, ...rest } = args;
 
-    // TODO: Move to EnemyService
-    private async attachToEnemy(dto: AttachToEnemyDTO): Promise<void> {
-        const { ctx, enemyId, status, currentRound } = dto;
+            // Check if the event is array of events
+            const events = isArray(event) ? event : [event];
 
-        const { status: attachedStatus, container: provider } =
-            this.convertStatusToAttached(
-                status,
-                currentRound,
-                dto.sourceReference,
-            );
-
-        await this.expeditionService.updateByFilter(
-            {
-                _id: ctx.expedition._id,
-                [`currentNode.data.enemies.${enemyIdField(enemyId)}`]: enemyId,
-            },
-            {
-                $push: {
-                    [`currentNode.data.enemies.$.statuses.${provider.metadata.status.type}`]:
-                        attachedStatus,
-                },
-            },
-        );
-
-        this.logger.debug(`Attached status ${status.name} to enemy ${enemyId}`);
+            // Loop through the events and trigger the handlers
+            for (const event of events) {
+                this.logger.debug(`Triggering event ${event}`);
+                await this.trigger(ctx, event, rest);
+            }
+        });
     }
 
-    // TODO: Move to PlayService
-    private async attachToPlayer(dto: AttachToPlayerDTO): Promise<void> {
-        const { ctx, status, currentRound } = dto;
-
-        const { status: attachedStatus, container: provider } =
-            this.convertStatusToAttached(
-                status,
-                currentRound,
-                dto.sourceReference,
-            );
-
-        await this.expeditionService.updateByFilter(
-            {
-                _id: ctx.expedition._id,
-            },
-            {
-                $push: {
-                    [`currentNode.data.player.statuses.${provider.metadata.status.type}`]:
-                        attachedStatus,
-                },
-            },
-        );
-
-        this.logger.debug(`Attached status ${status.name} to player`);
-    }
-
+    /**
+     * Attach the statuses to the designated entities based on
+     * the property *attachTo* of each status.
+     *
+     * @param {Object} dto Dto parameters
+     */
     public async attach(dto: AttachDTO): Promise<void> {
-        const { ctx, statuses, currentRound, sourceReference, targetId } = dto;
+        const { ctx, statuses, source, targetId } = dto;
 
         for (const status of statuses) {
-            const args: OnAttachStatusEventArgs = {
-                status,
+            const targets = this.expeditionService.getEntitiesByType(
+                ctx,
+                status.args.attachTo,
+                source,
                 targetId,
-            };
-            await this.trigger(ctx, StatusEventType.OnAttachStatus, args);
-            // TODO: Add attachTo.Self case
-            switch (status.args.attachTo) {
-                case CardTargetedEnum.Player:
-                    await this.attachToPlayer({
-                        ctx,
-                        sourceReference,
-                        status,
-                        currentRound,
-                    });
-                    break;
-                case CardTargetedEnum.Enemy:
-                    await this.attachToEnemy({
-                        ctx,
-                        status,
-                        sourceReference,
-                        enemyId: targetId,
-                        currentRound,
-                    });
-                    break;
+            );
+
+            for (const target of targets) {
+                await this.eventEmitter.emitAsync(EVENT_BEFORE_STATUS_ATTACH, {
+                    ctx,
+                    source,
+                    target,
+                    status,
+                    targetId,
+                });
+
+                switch (target.type) {
+                    case CardTargetedEnum.Player:
+                        await this.playerService.attach(
+                            ctx,
+                            source,
+                            status.name,
+                            status.args,
+                        );
+                        break;
+                    case CardTargetedEnum.Enemy:
+                        await this.enemyService.attach(
+                            ctx,
+                            targetId,
+                            source,
+                            status.name,
+                            status.args,
+                        );
+                        break;
+                }
+
+                await this.eventEmitter.emitAsync(EVENT_AFTER_STATUS_ATTACH, {
+                    ctx,
+                    source,
+                    status,
+                    target,
+                    targetId,
+                });
             }
         }
     }
@@ -302,7 +293,7 @@ export class StatusService {
 
     public async trigger(
         ctx: Context,
-        event: StatusEventType,
+        event: string,
         args = {},
     ): Promise<void> {
         const { expedition } = ctx;
@@ -318,14 +309,25 @@ export class StatusService {
                 const statuses = collection[type];
                 const statusesToRemove: Status[] = [];
                 for (const status of statuses) {
-                    const container = this.findHandlerContainer<
-                        StatusEvent,
-                        StatusEventHandler
-                    >({
-                        name: status.name,
-                        trigger: StatusTrigger.Event,
-                        event,
-                    });
+                    const container =
+                        this.findHandlerContainer<
+                            StatusEvent,
+                            StatusEventHandler
+                        >({
+                            name: status.name,
+                            trigger: StatusTrigger.Event,
+                            // Find all handlers that match the unique event name
+                            event,
+                        }) ||
+                        this.findHandlerContainer<
+                            StatusEvent,
+                            StatusEventHandler
+                        >({
+                            name: status.name,
+                            trigger: StatusTrigger.Event,
+                            // Find all handlers that match the event name in array of events
+                            event: [event],
+                        });
 
                     if (!container) continue;
 
@@ -348,6 +350,7 @@ export class StatusService {
                     const dto: StatusEventDTO = {
                         ctx,
                         source,
+                        event,
                         target: entityCollection.target,
                         status,
                         args,
@@ -361,7 +364,7 @@ export class StatusService {
                         },
                     };
 
-                    await instance.enemyHandler(dto);
+                    await instance.handler(dto);
                 }
 
                 if (statusesToRemove.length > 0) {
@@ -385,36 +388,9 @@ export class StatusService {
         currentRound: number,
     ): boolean {
         return !(
-            startsAt == StatusStartsAt.NextTurn && addedInRound == currentRound
+            startsAt == StatusStartsAt.NextPlayerTurn &&
+            addedInRound == currentRound
         );
-    }
-
-    private convertStatusToAttached(
-        jsonStatus: JsonStatus,
-        currentRound: number,
-        sourceReference: SourceEntityReferenceDTO,
-    ): {
-        status: AttachedStatus;
-        container: ProviderContainer<StatusMetadata, StatusHandler>;
-    } {
-        const container = this.findHandlerContainer({ name: jsonStatus.name });
-
-        if (!container)
-            throw new Error(`Status ${jsonStatus.name} does not exist`);
-
-        const status: AttachedStatus = {
-            name: jsonStatus.name,
-            addedInRound: currentRound,
-            sourceReference,
-            args: {
-                value: jsonStatus.args.value,
-            },
-        };
-
-        return {
-            status,
-            container,
-        };
     }
 
     public findHandlerContainer<S extends Status, H extends StatusHandler>(
@@ -436,21 +412,29 @@ export class StatusService {
         return container;
     }
 
+    public getMetadataByName(name: string): StatusMetadata {
+        const container = this.findHandlerContainer({ name });
+
+        if (!container) throw new Error(`Status ${name} does not exist`);
+
+        return container.metadata;
+    }
+
     private isPlayerReference(
-        reference: SourceEntityReferenceDTO,
+        reference: EntityReferenceDTO,
     ): reference is PlayerReferenceDTO {
         return reference.type == CardTargetedEnum.Player;
     }
 
     private isEnemyReference(
-        reference: SourceEntityReferenceDTO,
+        reference: EntityReferenceDTO,
     ): reference is EnemyReferenceDTO {
         return reference.type == CardTargetedEnum.Enemy;
     }
 
     public getSourceFromReference(
         expedition: Expedition,
-        reference: SourceEntityReferenceDTO,
+        reference: EntityReferenceDTO,
     ): ExpeditionEntity {
         let source: ExpeditionEntity;
 
@@ -458,6 +442,7 @@ export class StatusService {
             source = {
                 type: CardTargetedEnum.Player,
                 value: {
+                    id: expedition.playerId,
                     globalState: expedition.playerState,
                     combatState: expedition.currentNode.data.player,
                 },
@@ -475,9 +460,10 @@ export class StatusService {
         return source;
     }
 
-    public getReferenceFromSource(
+    // TODO: Move to player and enemy service respectively
+    public getReferenceFromEntity(
         source: ExpeditionEntity,
-    ): SourceEntityReferenceDTO {
+    ): EntityReferenceDTO {
         if (PlayerService.isPlayer(source)) {
             return {
                 type: CardTargetedEnum.Player,
@@ -498,6 +484,7 @@ export class StatusService {
             target: {
                 type: CardTargetedEnum.Player,
                 value: {
+                    id: expedition.playerId,
                     globalState: expedition.playerState,
                     combatState: expedition.currentNode.data.player,
                 },
@@ -505,6 +492,14 @@ export class StatusService {
             statuses: expedition.currentNode.data.player.statuses,
         });
 
+        collection.push(...this.getAllFromEnemies(ctx));
+
+        return collection;
+    }
+
+    private getAllFromEnemies(ctx: Context): StatusesGlobalCollection {
+        const collection: StatusesGlobalCollection = [];
+        const { expedition } = ctx;
         for (const enemy of expedition.currentNode.data.enemies) {
             collection.push({
                 target: {
@@ -514,7 +509,6 @@ export class StatusService {
                 statuses: enemy.statuses,
             });
         }
-
         return collection;
     }
 

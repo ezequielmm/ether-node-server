@@ -1,17 +1,15 @@
-import { defenseEffect } from 'src/game/effects/defense/constants';
+import { EVENT_BEFORE_PLAYER_TURN_START } from 'src/game/constants';
 import {
-    StatusDirection,
-    StatusEffect,
+    StatusEvent,
     StatusStartsAt,
     StatusTrigger,
     StatusType,
 } from '../interfaces';
 
-export const gifted: StatusEffect = {
+export const gifted: StatusEvent = {
     name: 'gifted',
     type: StatusType.Buff,
-    direction: StatusDirection.Incoming,
-    startsAt: StatusStartsAt.NextTurn,
-    trigger: StatusTrigger.Effect,
-    effects: [defenseEffect],
+    startsAt: StatusStartsAt.Instantly,
+    trigger: StatusTrigger.Event,
+    event: EVENT_BEFORE_PLAYER_TURN_START,
 };

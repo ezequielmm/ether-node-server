@@ -1,20 +1,17 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
+import { CombatQueueService } from '../components/combatQueue/combatQueue.service';
 import { EnemyService } from '../components/enemy/enemy.service';
+import { ExpeditionStatusEnum } from '../components/expedition/expedition.enum';
 import { ExpeditionService } from '../components/expedition/expedition.service';
-import { Context, ExpeditionEntity } from '../components/interfaces';
+import { Context } from '../components/interfaces';
 import { PlayerService } from '../components/player/player.service';
-import { restoreMap } from '../map/app';
+import { EVENT_AFTER_DAMAGE_EFFECT } from '../constants';
 import {
     StandardResponse,
     SWARAction,
     SWARMessageType,
 } from '../standardResponse/standardResponse';
-
-export interface EntityDamageEvent {
-    ctx: Context;
-    entity: ExpeditionEntity;
-}
 
 @Injectable()
 export class EndCombatProcess {
@@ -24,16 +21,14 @@ export class EndCombatProcess {
         private readonly playerService: PlayerService,
         private readonly enemyService: EnemyService,
         private readonly expeditionService: ExpeditionService,
+        private readonly combatQueueService: CombatQueueService,
     ) {}
 
-    @OnEvent('entity.*', { async: true })
-    async handle(payload: EntityDamageEvent): Promise<void> {
-        const { ctx } = payload;
-
+    @OnEvent(EVENT_AFTER_DAMAGE_EFFECT, { async: true })
+    async handle({ ctx }): Promise<void> {
         if (this.playerService.isDead(ctx)) {
             this.logger.debug('Player is dead. Ending combat');
-            await this.endCombat(ctx);
-            this.emitPlayerDefeated(ctx);
+            await this.emitPlayerDefeated(ctx);
         }
 
         if (this.enemyService.isAllDead(ctx)) {
@@ -44,37 +39,19 @@ export class EndCombatProcess {
     }
 
     private async endCombat(ctx: Context): Promise<void> {
-        const { expedition, client } = ctx;
+        await this.combatQueueService.end(ctx);
 
-        const map = restoreMap(expedition.map, client.id);
-
-        map.activeNode = map.fullCurrentMap.get(expedition.currentNode.nodeId);
-        map.activeNode.complete(map);
-
-        expedition.currentNode.completed = true;
-        expedition.map = map.getMap;
-
-        // Get the final health and update it on the player state
         const {
-            currentNode: {
-                data: {
-                    player: { hpCurrent, hpMax },
-                },
-            },
-        } = expedition;
+            expedition: { _id: expeditionId },
+        } = ctx;
 
-        await this.expeditionService.updateById(expedition._id, {
+        await this.expeditionService.updateById(expeditionId, {
             $set: {
-                map: map.getMap,
-                'currentNode.completed': true,
-                'currentNode.player': null,
-                'currentNode.enemies': null,
-                'playerState.hpCurrent': hpCurrent,
-                'playerState.hpMax': hpMax,
+                'currentNode.showRewards': true,
             },
         });
 
-        this.logger.debug('Combat ended');
+        this.logger.debug(`Combat ended for client ${ctx.client.id}`);
     }
 
     private emitEnemiesDefeated(ctx: Context) {
@@ -92,16 +69,31 @@ export class EndCombatProcess {
         );
     }
 
-    private emitPlayerDefeated(ctx: Context) {
+    private async emitPlayerDefeated(ctx: Context): Promise<void> {
+        await this.combatQueueService.end(ctx);
+
         ctx.client.emit(
             'PutData',
             JSON.stringify(
                 StandardResponse.respond({
                     message_type: SWARMessageType.EndCombat,
                     action: SWARAction.PlayerDefeated,
-                    data: {},
+                    data: null,
                 }),
             ),
         );
+
+        await this.expeditionService.updateByFilter(
+            {
+                clientId: ctx.client.id,
+            },
+            {
+                $set: {
+                    status: ExpeditionStatusEnum.Defeated,
+                },
+            },
+        );
+
+        this.logger.debug(`Combat ended for client ${ctx.client.id}`);
     }
 }

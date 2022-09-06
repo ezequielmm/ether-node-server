@@ -1,3 +1,4 @@
+import { Logger } from '@nestjs/common';
 import { SubscribeMessage, WebSocketGateway } from '@nestjs/websockets';
 import { Socket } from 'socket.io';
 import { IExpeditionNodeReward } from 'src/game/components/expedition/expedition.enum';
@@ -14,6 +15,8 @@ import {
     },
 })
 export class RewardGateway {
+    private readonly logger: Logger = new Logger(RewardGateway.name);
+
     constructor(private readonly expeditionService: ExpeditionService) {}
 
     @SubscribeMessage('RewardSelected')
@@ -21,21 +24,27 @@ export class RewardGateway {
         client: Socket,
         rewardId: string,
     ): Promise<string> {
+        this.logger.debug(`Client ${client.id} choose reward id: ${rewardId}`);
+
         // Get the updated expedition
+        const expedition = await this.expeditionService.findOne({
+            clientId: client.id,
+        });
+
         const {
-            _id,
+            _id: expeditionId,
             currentNode: {
                 completed: nodeIsCompleted,
                 data: { rewards },
             },
-            map,
-        } = await this.expeditionService.findOne({
-            clientId: client.id,
-        });
+        } = expedition;
 
         // Check if the node is completed
-        if (nodeIsCompleted)
-            throw new Error('Node already completed, cannot select reward');
+        if (nodeIsCompleted) {
+            this.logger.debug('Node already completed, cannot select reward');
+
+            return '';
+        }
 
         // check if the reward that we are receiving is correct and exists
         const reward = rewards.find(({ id }) => {
@@ -51,7 +60,7 @@ export class RewardGateway {
         // Next we save the reward on the expedition
         await this.expeditionService.updateByFilter(
             {
-                _id,
+                expeditionId,
                 'currentNode.data.rewards.id': rewardId,
             },
             {
@@ -64,7 +73,7 @@ export class RewardGateway {
         // Now we apply the redward to the user profile
         switch (reward.type) {
             case IExpeditionNodeReward.Gold:
-                await this.expeditionService.updateById(_id, {
+                await this.expeditionService.updateById(expeditionId, {
                     $inc: {
                         'playerState.gold': reward.amount,
                     },
@@ -77,22 +86,12 @@ export class RewardGateway {
             return id !== rewardId && taken === false;
         });
 
-        if (pendingRewards.length === 0) {
-            return JSON.stringify(
-                StandardResponse.respond({
-                    message_type: SWARMessageType.EndCombat,
-                    action: SWARAction.ShowMap,
-                    data: map,
-                }),
-            );
-        } else {
-            return JSON.stringify(
-                StandardResponse.respond({
-                    message_type: SWARMessageType.EndCombat,
-                    action: SWARAction.SelectAnotherReward,
-                    data: pendingRewards,
-                }),
-            );
-        }
+        return JSON.stringify(
+            StandardResponse.respond({
+                message_type: SWARMessageType.EndCombat,
+                action: SWARAction.SelectAnotherReward,
+                data: pendingRewards,
+            }),
+        );
     }
 }

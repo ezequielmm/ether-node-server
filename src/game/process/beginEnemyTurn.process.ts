@@ -3,18 +3,22 @@ import { EventEmitter2 } from '@nestjs/event-emitter';
 import { isEmpty } from 'lodash';
 import { Socket } from 'socket.io';
 import { CardTargetedEnum } from '../components/card/card.enum';
+import { CombatQueueService } from '../components/combatQueue/combatQueue.service';
 import { ExpeditionEnemy } from '../components/enemy/enemy.interface';
 import { CombatTurnEnum } from '../components/expedition/expedition.enum';
 import { ExpeditionService } from '../components/expedition/expedition.service';
 import { Context } from '../components/interfaces';
+import {
+    EVENT_AFTER_ENEMIES_TURN_START,
+    EVENT_BEFORE_ENEMIES_TURN_START,
+    EVENT_BEFORE_ENEMY_INTENTIONS,
+} from '../constants';
 import { EffectService } from '../effects/effects.service';
 import {
     SWARAction,
     StandardResponse,
     SWARMessageType,
 } from '../standardResponse/standardResponse';
-import { StatusEventType } from '../status/interfaces';
-import { StatusService } from '../status/status.service';
 
 interface BeginEnemyTurnDTO {
     client: Socket;
@@ -29,12 +33,14 @@ export class BeginEnemyTurnProcess {
     constructor(
         private readonly expeditionService: ExpeditionService,
         private readonly effectService: EffectService,
-        private readonly statusService: StatusService,
         private readonly eventEmitter: EventEmitter2,
+        private readonly combatQueueService: CombatQueueService,
     ) {}
 
     async handle(payload: BeginEnemyTurnDTO): Promise<void> {
         const { client } = payload;
+
+        this.logger.debug(`Beginning enemies turn`);
 
         this.client = client;
 
@@ -57,11 +63,14 @@ export class BeginEnemyTurnProcess {
             expedition,
         };
 
-        await this.eventEmitter.emitAsync('enemy:before-start-turn', { ctx });
-        await this.statusService.trigger(ctx, StatusEventType.OnEnemyTurnStart);
+        await this.combatQueueService.start(ctx);
+
+        await this.eventEmitter.emitAsync(EVENT_BEFORE_ENEMIES_TURN_START, {
+            ctx,
+        });
 
         // Then we loop over them and get their intentions and effects
-        enemies.forEach((enemy) => {
+        for (const enemy of enemies) {
             const {
                 currentScript: { intentions },
             } = enemy;
@@ -71,7 +80,12 @@ export class BeginEnemyTurnProcess {
                 value: enemy,
             };
 
-            intentions.forEach(async (intention) => {
+            await this.eventEmitter.emitAsync(EVENT_BEFORE_ENEMY_INTENTIONS, {
+                ctx,
+                enemy,
+            });
+
+            for (const intention of intentions) {
                 const { effects } = intention;
 
                 if (!isEmpty(effects)) {
@@ -81,12 +95,23 @@ export class BeginEnemyTurnProcess {
                         effects,
                         selectedEnemy: enemy.id,
                     });
+
+                    if (this.expeditionService.isCurrentCombatEnded(ctx)) {
+                        this.logger.debug(
+                            'Combat ended, skipping rest of enemies, intentions and effects',
+                        );
+                        return;
+                    }
                 }
-            });
-        });
+            }
+        }
 
         await this.sendUpdatedEnemiesData();
-        await this.eventEmitter.emitAsync('enemy:after-start-turn', { ctx });
+        await this.eventEmitter.emitAsync(EVENT_AFTER_ENEMIES_TURN_START, {
+            ctx,
+        });
+
+        await this.combatQueueService.end(ctx);
     }
 
     private async sendUpdatedEnemiesData(): Promise<void> {
@@ -99,7 +124,7 @@ export class BeginEnemyTurnProcess {
         });
 
         // Send enemies updated
-        this.logger.log(
+        this.logger.debug(
             `Sent message PutData to client ${this.client.id}: ${SWARAction.UpdateEnemy}`,
         );
 
@@ -109,14 +134,28 @@ export class BeginEnemyTurnProcess {
                 StandardResponse.respond({
                     message_type: SWARMessageType.EnemyAffected,
                     action: SWARAction.UpdateEnemy,
-                    data: enemiesUpdated,
+                    data: enemiesUpdated
+                        .filter(({ hpCurrent }) => {
+                            return hpCurrent > 0;
+                        })
+                        .map((enemy) => ({
+                            id: enemy.id,
+                            enemyId: enemy.enemyId,
+                            defense: enemy.defense,
+                            name: enemy.name,
+                            type: enemy.type,
+                            category: enemy.category,
+                            size: enemy.size,
+                            hpCurrent: enemy.hpCurrent,
+                            hpMax: enemy.hpMax,
+                        })),
                 }),
             ),
         );
     }
 
     private sendCombatTurnChange(): void {
-        this.logger.log(
+        this.logger.debug(
             `Sent message PutData to client ${this.client.id}: ${SWARAction.ChangeTurn}`,
         );
 

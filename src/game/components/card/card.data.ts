@@ -1,6 +1,8 @@
 import { Card } from './card.schema';
 import { AdeptCard, AdeptCardUpgraded } from './data/adept.card';
+import { AnticipateCard, AnticipateCardUpgraded } from './data/anticipate.card';
 import { AttackCard, AttackCardUpgraded } from './data/attack.card';
+import { BackflipCard, BackflipCardUpgraded } from './data/backflip.card';
 import { BackHandCard, BackHandCardUpgraded } from './data/backhand.card';
 import { BlusterCard, BlusterCardUpgraded } from './data/bluster.card';
 import { BolsterCard, BolsterCardUpgraded } from './data/bolster.card';
@@ -24,6 +26,7 @@ import { FineEdgeCard, FineEdgeCardUpgraded } from './data/fineEdge.card';
 import { FirstMoveCard, FirstMoveCardUpgraded } from './data/firstMove.card';
 import { FlurryCard, FlurryCardUpgraded } from './data/flurry.card';
 import { ForceFieldCard, ForceFieldCardUpgraded } from './data/forceField.card';
+import { FrontflipCard, FrontflipCardUpgraded } from './data/frontflip.card';
 import {
     GiveNoGroundCard,
     GiveNoGroundCardUpgraded,
@@ -56,8 +59,10 @@ import {
     lastReminderCard,
     LastReminderCardUpgraded,
 } from './data/lastReminder.card';
+import { KnockDownCard, KnockDownCardUpgraded } from './data/knockDown.card';
 import { LastResortCard, LastResortCardUpgraded } from './data/lastResort.card';
 import { LungeCard, LungeCardUpgraded } from './data/lunge.card';
+import { OnARollCard, OnARollCardUpgraded } from './data/onARoll.card';
 import {
     PerfectTimingCard,
     PerfectTimingCardUpgraded,
@@ -72,11 +77,16 @@ import { RecoverCard, RecoverCardUpgraded } from './data/recover.data';
 import { Refocus, RefocusUpgraded } from './data/refocus.card';
 import { RepositionCard, RepositionCardUpgraded } from './data/reposition.card';
 import { ShakeItOffCard, ShakeItOffCardUpgraded } from './data/shakeItOff.card';
+import {
+    SharpenBladeCard,
+    SharpenBladeCardUpgraded,
+} from './data/sharpenBlade.card';
 import { ShieldBashCard, ShieldBashCardUpgraded } from './data/shieldBash.card';
 import {
     ShieldPlantCard,
     ShieldPlantCardUpgraded,
 } from './data/shieldPlant.card';
+import { ShoutCard, ShoutCardUpgraded } from './data/shout.card';
 import { SiphonCard, SiphonCardUpgraded } from './data/siphon.card';
 import { SparkCard, SparkCardUpgraded } from './data/Spark.card';
 import { SpikeArmorCard, SpikeArmorCardUpgraded } from './data/spikeArmor.card';
@@ -90,6 +100,10 @@ import {
 } from './data/tightenGrip.card';
 import { TorchCard, TorchCardUpgraded } from './data/torch.card';
 import { TurtleCard, TurtleCardUpgraded } from './data/turtle.card';
+import {
+    TwistTheBladeCard,
+    TwistTheBladeCardUpgraded,
+} from './data/twistTheBlade.card';
 import {
     UltraLethalityCard,
     UltraLethalityCardUpgraded,
@@ -201,4 +215,20 @@ export const data: Card[] = [
     GmCard,
     lastReminderCard,
     LastReminderCardUpgraded,
+    SharpenBladeCard,
+    SharpenBladeCardUpgraded,
+    OnARollCard,
+    OnARollCardUpgraded,
+    ShoutCard,
+    ShoutCardUpgraded,
+    AnticipateCard,
+    AnticipateCardUpgraded,
+    TwistTheBladeCard,
+    TwistTheBladeCardUpgraded,
+    KnockDownCard,
+    KnockDownCardUpgraded,
+    BackflipCard,
+    BackflipCardUpgraded,
+    FrontflipCard,
+    FrontflipCardUpgraded,
 ];

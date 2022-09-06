@@ -5,7 +5,6 @@ import { Model } from 'mongoose';
 import { damageEffect } from 'src/game/effects/damage/constants';
 import { defenseEffect } from 'src/game/effects/defense/constants';
 import { CardTargetedEnum } from '../card/card.enum';
-import { CombatQueueService } from '../combatQueue/combatQueue.service';
 import { IExpeditionCurrentNodeDataEnemy } from '../expedition/expedition.interface';
 import { ExpeditionService } from '../expedition/expedition.service';
 import { Context } from '../interfaces';
@@ -20,6 +19,7 @@ import { Enemy, EnemyDocument } from './enemy.schema';
 import { EnemyService } from './enemy.service';
 import { enemySelector } from './enemy.type';
 import * as MockedSocket from 'socket.io-mock';
+import { StatusService } from 'src/game/status/status.service';
 
 describe('EnemyService', () => {
     let enemyService: EnemyService;
@@ -31,12 +31,6 @@ describe('EnemyService', () => {
     const mockExpeditionService = {
         updateById: jest.fn().mockImplementation(() => Promise.resolve()),
         updateByFilter: jest.fn().mockResolvedValue(true),
-    };
-
-    const mockCombatQueueService = {
-        addTargetsToCombatQueue: jest
-            .fn()
-            .mockImplementation(() => Promise.resolve()),
     };
 
     const mockEnemy = {
@@ -209,8 +203,8 @@ describe('EnemyService', () => {
                 },
                 EnemyService,
                 {
-                    provide: CombatQueueService,
-                    useValue: mockCombatQueueService,
+                    provide: StatusService,
+                    useValue: {},
                 },
             ],
         }).compile();
@@ -434,7 +428,7 @@ describe('EnemyService', () => {
         it('should invalidate defense without change the hp', async () => {
             const enemy = enemyService.get(mockCtx, '1');
 
-            await enemyService.damage(mockCtx, enemy.value.id, 5, '1');
+            await enemyService.damage(mockCtx, enemy.value.id, 5);
 
             expect(spyOnSetHp).toHaveBeenCalledWith(
                 mockCtx,
@@ -456,7 +450,7 @@ describe('EnemyService', () => {
         it('should invalidate defense and change the hp', async () => {
             const enemy = enemyService.get(mockCtx, '1');
 
-            await enemyService.damage(mockCtx, enemy.value.id, 10, '1');
+            await enemyService.damage(mockCtx, enemy.value.id, 10);
 
             expect(spyOnSetHp).toHaveBeenCalledWith(mockCtx, enemy.value.id, 5);
             expect(spyOnSetDefense).toHaveBeenCalledWith(
@@ -467,14 +461,12 @@ describe('EnemyService', () => {
 
             expect(enemy).toHaveProperty('value.hpCurrent', 5);
             expect(enemy).toHaveProperty('value.defense', 0);
-
-            // TODO combatQueueService.addTargetsToCombatQueue
         });
 
         it('should invalidate defense and change the hp to 0', async () => {
             const enemy = enemyService.get(mockCtx, '1');
 
-            await enemyService.damage(mockCtx, enemy.value.id, 20, '1');
+            await enemyService.damage(mockCtx, enemy.value.id, 20);
 
             expect(spyOnSetHp).toHaveBeenCalledWith(mockCtx, enemy.value.id, 0);
             expect(spyOnSetDefense).toHaveBeenCalledWith(
@@ -485,8 +477,6 @@ describe('EnemyService', () => {
 
             expect(enemy).toHaveProperty('value.hpCurrent', 0);
             expect(enemy).toHaveProperty('value.defense', 0);
-
-            // TODO combatQueueService.addTargetsToCombatQueue
         });
     });
 
@@ -517,4 +507,6 @@ describe('EnemyService', () => {
             );
         });
     });
+
+    // TODO: Add attach tests
 });

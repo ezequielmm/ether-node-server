@@ -17,7 +17,7 @@ export class StatusGenerator {
         });
     }
 
-    private static generateDescription(name: string, counter: number): string {
+    public static generateDescription(name: string, counter: number): string {
         switch (name) {
             case 'resolve':
                 return `Burn does ${counter} points of damage at the end of each round`;
@@ -30,7 +30,7 @@ export class StatusGenerator {
             case 'fortitude':
                 return `Defense cards gain ${counter} additional points`;
             case 'heraldDelayed':
-                return `“Next turn, all attacks will do double damage`;
+                return `Next turn, all attacks will do double damage`;
             case 'imbued':
                 return `The next card you play will trigger twice`;
             case 'regenerate':

@@ -1,10 +1,5 @@
-import { ExpeditionService } from 'src/game/components/expedition/expedition.service';
 import { EffectService } from 'src/game/effects/effects.service';
-import {
-    OnBeginCardPlayEventArgs,
-    StatusEventDTO,
-    StatusEventHandler,
-} from '../interfaces';
+import { StatusEventDTO, StatusEventHandler } from '../interfaces';
 import { StatusDecorator } from '../status.decorator';
 import { StatusService } from '../status.service';
 import { imbued } from './constants';
@@ -16,29 +11,17 @@ export class ImbuedStatus implements StatusEventHandler {
     constructor(
         private readonly statusService: StatusService,
         private readonly effectService: EffectService,
-        private readonly expeditionService: ExpeditionService,
     ) {}
 
-    async enemyHandler(
-        dto: StatusEventDTO<OnBeginCardPlayEventArgs>,
-    ): Promise<void> {
+    async handler(dto: StatusEventDTO): Promise<void> {
         const {
             ctx,
-            args: {
-                card,
-                cardSource: source,
-                cardSourceReference: sourceReference,
-                cardTargetId: targetId,
-            },
+            args: { card, cardSource: source, cardTargetId: targetId },
         } = dto;
 
         const {
             properties: { effects, statuses },
         } = card;
-
-        const expedition = await this.expeditionService.findOne({
-            clientId: dto.ctx.expedition.clientId,
-        });
 
         await this.effectService.applyAll({
             ctx,
@@ -50,8 +33,7 @@ export class ImbuedStatus implements StatusEventHandler {
         await this.statusService.attach({
             ctx: dto.ctx,
             statuses,
-            currentRound: expedition.currentNode.data.round,
-            sourceReference,
+            source,
             targetId,
         });
 

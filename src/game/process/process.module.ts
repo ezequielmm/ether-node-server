@@ -2,6 +2,7 @@ import { forwardRef, Module } from '@nestjs/common';
 import { ActionModule } from '../action/action.module';
 import { CardModule } from '../components/card/card.module';
 import { CharacterModule } from '../components/character/character.module';
+import { CombatQueueModule } from '../components/combatQueue/combatQueue.module';
 import { CustomDeckModule } from '../components/customDeck/customDeck.module';
 import { EnemyModule } from '../components/enemy/enemy.module';
 import { ExpeditionModule } from '../components/expedition/expedition.module';
@@ -17,21 +18,23 @@ import { EndEnemyTurnProcess } from './endEnemyTurn.process';
 import { EndPlayerTurnProcess } from './endPlayerTurn.process';
 import { InitCombatProcess } from './initCombat.process';
 import { InitExpeditionProcess } from './initExpedition.process';
+import { InitNodeProcess } from './initNode.process';
 import { NodeSelectedProcess } from './nodeSelected.process';
 import { SendEnemyIntentProcess } from './sendEnemyIntents.process';
 
 @Module({
     imports: [
-        ExpeditionModule,
+        forwardRef(() => ExpeditionModule),
         SettingsModule,
-        EnemyModule,
+        forwardRef(() => EnemyModule),
         forwardRef(() => ActionModule),
         CardModule,
         CharacterModule,
-        StatusModule,
+        forwardRef(() => StatusModule),
         PlayerModule,
-        EffectModule,
+        forwardRef(() => EffectModule),
         CustomDeckModule,
+        CombatQueueModule,
     ],
     providers: [
         SendEnemyIntentProcess,
@@ -44,6 +47,7 @@ import { SendEnemyIntentProcess } from './sendEnemyIntents.process';
         BeginEnemyTurnProcess,
         BeginPlayerTurnProcess,
         EndCombatProcess,
+        InitNodeProcess,
     ],
     exports: [
         SendEnemyIntentProcess,
@@ -56,6 +60,7 @@ import { SendEnemyIntentProcess } from './sendEnemyIntents.process';
         BeginEnemyTurnProcess,
         BeginPlayerTurnProcess,
         EndCombatProcess,
+        InitNodeProcess,
     ],
 })
 export class ProcessModule {}

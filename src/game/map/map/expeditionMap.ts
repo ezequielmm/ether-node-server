@@ -71,6 +71,14 @@ class ExpeditionMap {
         });
     }
 
+    public disableAllNodesExcept(nodeId: number) {
+        this.map.forEach((node) => {
+            if (node.id !== nodeId) {
+                node.setDisable();
+            }
+        });
+    }
+
     private createAct0(): void {
         const act0 = new Map();
         const royalA = nodeFactory(
