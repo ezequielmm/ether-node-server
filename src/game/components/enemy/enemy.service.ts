@@ -12,14 +12,11 @@ import {
     ENEMY_CURRENT_SCRIPT_PATH,
     ENEMY_DEFENSE_PATH,
     ENEMY_HP_CURRENT_PATH,
+    ENEMY_STATUSES_PATH,
 } from './constants';
 import { getRandomItemByWeight } from 'src/utils';
-import { CombatQueueService } from '../combatQueue/combatQueue.service';
-import { ICombatQueueTarget } from '../combatQueue/combatQueue.interface';
-import {
-    CombatQueueTargetEffectTypeEnum,
-    CombatQueueTargetTypeEnum,
-} from '../combatQueue/combatQueue.enum';
+import { AttachedStatus, Status } from 'src/game/status/interfaces';
+import { StatusService } from 'src/game/status/status.service';
 
 @Injectable()
 export class EnemyService {
@@ -29,7 +26,8 @@ export class EnemyService {
         @InjectModel(Enemy.name) private readonly enemy: Model<EnemyDocument>,
         @Inject(forwardRef(() => ExpeditionService))
         private readonly expeditionService: ExpeditionService,
-        private readonly combatQueueService: CombatQueueService,
+        @Inject(forwardRef(() => StatusService))
+        private readonly statusService: StatusService,
     ) {}
 
     /**
@@ -195,23 +193,10 @@ export class EnemyService {
         ctx: Context,
         id: EnemyId,
         damage: number,
-        combatQueueId: string,
     ): Promise<number> {
         const { value: enemy } = this.get(ctx, id);
 
         const { client } = ctx;
-
-        // Here we create the target for the combat queue
-        const combatQueueTarget: ICombatQueueTarget = {
-            effectType: CombatQueueTargetEffectTypeEnum.Damage,
-            targetType: CombatQueueTargetTypeEnum.Enemy,
-            targetId: enemy.id,
-            defenseDelta: 0,
-            finalDefense: 0,
-            healthDelta: 0,
-            finalHealth: 0,
-            statuses: [],
-        };
 
         // First we check if the enemy has defense
         if (enemy.defense > 0) {
@@ -222,32 +207,15 @@ export class EnemyService {
             // and use the remaining value to reduce to the health
             // and the set the defense to 0
             if (newDefense < 0) {
-                enemy.hpCurrent = Math.max(
-                    0,
-                    enemy.hpCurrent - Math.abs(newDefense),
-                );
+                enemy.hpCurrent = Math.max(0, enemy.hpCurrent + newDefense);
                 enemy.defense = 0;
-
-                // Update attackQueue Details
-                combatQueueTarget.defenseDelta = -damage;
-                combatQueueTarget.finalDefense = enemy.defense;
-                combatQueueTarget.healthDelta = -newDefense;
-                combatQueueTarget.finalHealth = enemy.hpCurrent;
             } else {
                 // Otherwise, we update the defense with the new value
                 enemy.defense = newDefense;
-
-                // Update attackQueue Details
-                combatQueueTarget.defenseDelta = -damage;
-                combatQueueTarget.finalDefense = newDefense;
             }
         } else {
             // Otherwise, we apply the damage to the enemy's health
             enemy.hpCurrent = Math.max(0, enemy.hpCurrent - damage);
-
-            // Update attackQueue Details
-            combatQueueTarget.healthDelta = -damage;
-            combatQueueTarget.finalHealth = enemy.hpCurrent;
         }
 
         this.logger.debug(
@@ -256,11 +224,6 @@ export class EnemyService {
 
         await this.setHp(ctx, id, enemy.hpCurrent);
         await this.setDefense(ctx, id, enemy.defense);
-
-        // Save the details to the Attack Queue
-        await this.combatQueueService.addTargetsToCombatQueue(combatQueueId, [
-            combatQueueTarget,
-        ]);
 
         return enemy.hpCurrent;
     }
@@ -298,7 +261,9 @@ export class EnemyService {
 
             enemy.value.currentScript = nextScript;
 
-            this.logger.debug(`Calculated new script for ${enemy.value.id}`);
+            this.logger.debug(
+                `Calculated new script for enemy ${enemy.value.id}`,
+            );
         }
     }
 
@@ -309,5 +274,58 @@ export class EnemyService {
      */
     async findEnemiesById(enemies: number[]): Promise<EnemyDocument[]> {
         return await this.enemy.find({ enemyId: { $in: enemies } }).lean();
+    }
+
+    /**
+     * Attach a status to an enemy
+     *
+     * @param ctx Context
+     * @param id Enemy id
+     * @param source Source of the status (Who is attacking)
+     * @param status Status to attach
+     * @param [args = { value: 1 }] Arguments to pass to the status
+     *
+     * @returns Attached status
+     * @throws Error if the status is not found
+     */
+    async attach(
+        ctx: Context,
+        id: EnemyId,
+        source: ExpeditionEntity,
+        name: Status['name'],
+        args: AttachedStatus['args'] = { value: 1 },
+    ): Promise<AttachedStatus> {
+        const enemy = this.get(ctx, id);
+        // Get metadata to determine the type of status to attach
+        const metadata = this.statusService.getMetadataByName(name);
+
+        // Create the status to attach
+        const status: AttachedStatus = {
+            name,
+            args,
+            sourceReference: {
+                type: source.type,
+                id: source.value['id'],
+            },
+            addedInRound: ctx.expedition.currentNode.data.round,
+        };
+
+        // Attach the status to the enemy
+        enemy.value.statuses[metadata.status.type].push(status);
+
+        // Save the status to the database
+        await this.expeditionService.updateByFilter(
+            {
+                _id: ctx.expedition._id,
+                ...enemySelector(enemy.value.id),
+            },
+            {
+                [ENEMY_STATUSES_PATH]: enemy.value.statuses,
+            },
+        );
+
+        this.logger.debug(`Status ${name} attached to enemy ${id}`);
+
+        return status;
     }
 }

@@ -10,7 +10,7 @@ import {
 export const drained: StatusEffect = {
     name: 'drained',
     type: StatusType.Debuff,
-    startsAt: StatusStartsAt.NextTurn,
+    startsAt: StatusStartsAt.NextPlayerTurn,
     trigger: StatusTrigger.Effect,
     direction: StatusDirection.Incoming,
     effects: [energyEffect],

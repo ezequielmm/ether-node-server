@@ -7,11 +7,7 @@ import { isNotUndefined } from 'src/utils';
 import { PlayerService } from 'src/game/components/player/player.service';
 import { EnemyService } from 'src/game/components/enemy/enemy.service';
 import { CombatQueueService } from 'src/game/components/combatQueue/combatQueue.service';
-import {
-    CombatQueueTargetEffectTypeEnum,
-    CombatQueueTargetTypeEnum,
-} from 'src/game/components/combatQueue/combatQueue.enum';
-import { ICombatQueueTarget } from 'src/game/components/combatQueue/combatQueue.interface';
+import { CombatQueueTargetEffectTypeEnum } from 'src/game/components/combatQueue/combatQueue.enum';
 
 export interface DefenseArgs {
     useEnemies: boolean;
@@ -34,6 +30,7 @@ export class DefenseEffect implements EffectHandler {
     async handle(payload: EffectDTO<DefenseArgs>): Promise<void> {
         const {
             ctx,
+            source,
             target,
             args: {
                 currentValue,
@@ -42,7 +39,6 @@ export class DefenseEffect implements EffectHandler {
                 multiplier,
                 useAttackingEnemies,
             },
-            combatQueueId,
         } = payload;
 
         let newDefense = currentValue;
@@ -55,7 +51,6 @@ export class DefenseEffect implements EffectHandler {
             const {
                 value: {
                     combatState: { defense: currentDefense },
-                    globalState: { playerId },
                 },
             } = target;
 
@@ -110,57 +105,49 @@ export class DefenseEffect implements EffectHandler {
 
             const defenseCalculated = newDefense + currentDefense;
 
-            // Here we create the target for the combat queue
-            const combatQueueTarget: ICombatQueueTarget = {
-                effectType: CombatQueueTargetEffectTypeEnum.Defense,
-                targetType: CombatQueueTargetTypeEnum.Player,
-                targetId: playerId,
-                defenseDelta: newDefense,
-                finalDefense: defenseCalculated,
-                healthDelta: 0,
-                finalHealth: 0,
-                statuses: [],
-            };
-
             await this.playerService.setDefense(ctx, defenseCalculated);
-
-            await this.combatQueueService.addTargetsToCombatQueue(
-                combatQueueId,
-                [combatQueueTarget],
-            );
+            await this.combatQueueService.push({
+                ctx,
+                source,
+                target,
+                args: {
+                    effectType: CombatQueueTargetEffectTypeEnum.Defense,
+                    defenseDelta: newDefense,
+                    finalDefense: defenseCalculated,
+                    healthDelta: 0,
+                    finalHealth: 0,
+                    statuses: [],
+                },
+            });
         }
 
         // Apply if the enemy is the target
         if (EnemyService.isEnemy(target)) {
             // Get the current defense value from the enemy
             const {
-                value: { defense: currentDefense, id },
+                value: { defense: currentDefense },
             } = target;
 
             const defenseCalculated = currentDefense + newDefense;
-
-            // Here we create the target for the combat queue
-            const combatQueueTarget: ICombatQueueTarget = {
-                effectType: CombatQueueTargetEffectTypeEnum.Defense,
-                targetType: CombatQueueTargetTypeEnum.Enemy,
-                targetId: id,
-                defenseDelta: newDefense,
-                finalDefense: defenseCalculated,
-                healthDelta: 0,
-                finalHealth: 0,
-                statuses: [],
-            };
 
             await this.enemyService.setDefense(
                 ctx,
                 target.value.id,
                 defenseCalculated,
             );
-
-            await this.combatQueueService.addTargetsToCombatQueue(
-                combatQueueId,
-                [combatQueueTarget],
-            );
+            await this.combatQueueService.push({
+                ctx,
+                source,
+                target,
+                args: {
+                    effectType: CombatQueueTargetEffectTypeEnum.Defense,
+                    defenseDelta: newDefense,
+                    finalDefense: defenseCalculated,
+                    healthDelta: 0,
+                    finalHealth: 0,
+                    statuses: [],
+                },
+            });
         }
     }
 }

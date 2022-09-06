@@ -1,6 +1,6 @@
+import { EVENT_BEFORE_CARD_PLAY } from 'src/game/constants';
 import {
     StatusEvent,
-    StatusEventType,
     StatusStartsAt,
     StatusTrigger,
     StatusType,
@@ -9,7 +9,7 @@ import {
 export const imbued: StatusEvent = {
     name: 'imbued',
     trigger: StatusTrigger.Event,
-    event: StatusEventType.OnEndCardPlay,
+    event: EVENT_BEFORE_CARD_PLAY,
     type: StatusType.Buff,
     startsAt: StatusStartsAt.Instantly,
 };

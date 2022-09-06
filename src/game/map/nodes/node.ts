@@ -69,7 +69,7 @@ class Node implements IExpeditionNode {
     }
 
     public select(expeditionMap: ExpeditionMap): void {
-        expeditionMap.disableAllNodes();
+        expeditionMap.disableAllNodesExcept(this.id);
         this.setActive();
         expeditionMap.activeNode = this;
         this.complete(expeditionMap);

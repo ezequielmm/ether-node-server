@@ -37,6 +37,7 @@ export class Expedition {
         nodeId: number;
         nodeType: ExpeditionMapNodeTypeEnum;
         completed: boolean;
+        showRewards: boolean;
         data?: {
             round: number;
             playing: CombatTurnEnum;

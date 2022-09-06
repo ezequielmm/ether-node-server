@@ -54,7 +54,7 @@ export class InitExpeditionProcess {
             status: ExpeditionStatusEnum.InProgress,
         });
 
-        this.logger.log(`Created expedition for player id: ${playerId}`);
+        this.logger.debug(`Created expedition for player id: ${playerId}`);
     }
 
     private async generatePlayerDeck(

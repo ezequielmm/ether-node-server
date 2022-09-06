@@ -17,7 +17,6 @@ export interface EffectDTO<
     readonly ctx: Context;
     readonly source: ExpeditionEntity;
     readonly target?: ExpeditionEntity;
-    readonly combatQueueId?: string;
     args: {
         readonly initialValue: number;
         currentValue: number;
