@@ -12,6 +12,9 @@ import { stingFae1Data } from './data/stingFae1.enemy';
 import { thornWolfData } from './data/thornWolf.enemy';
 import { trapelicanData } from './data/trapelican.enemy';
 import { treantData } from './data/treant.enemy';
+import { blueSporelingData } from './data/blueSporeling.enemy';
+import { redSporelingData } from './data/redSporeling.enemy';
+import { yellowSporelingData } from './data/yellowSporeling.enemy';
 import { stingFae2Data } from './data/stingFae2.enemy';
 
 export const data: Enemy[] = [
@@ -29,4 +32,7 @@ export const data: Enemy[] = [
     thornWolfData,
     trapelicanData,
     treantData,
+    blueSporelingData,
+    redSporelingData,
+    yellowSporelingData,
 ];
