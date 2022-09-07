@@ -36,5 +36,9 @@ export const KnightCharacter: Character = {
             cardId: 24, // Pray
             amount: 1,
         },
+        {
+            cardId: 155, // Pray
+            amount: 1,
+        },
     ],
 };
