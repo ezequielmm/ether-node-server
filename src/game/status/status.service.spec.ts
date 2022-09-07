@@ -10,7 +10,7 @@ import {
 } from '../components/expedition/expedition.schema';
 import { ExpeditionService } from '../components/expedition/expedition.service';
 import { PlayerService } from '../components/player/player.service';
-import { EVENT_BEFORE_ENEMY_TURN_END } from '../constants';
+import { EVENT_BEFORE_ENEMIES_TURN_END } from '../constants';
 import { damageEffect } from '../effects/damage/constants';
 import { EffectDTO } from '../effects/effects.interface';
 import { ProviderService } from '../provider/provider.service';
@@ -89,7 +89,7 @@ class StatusC implements StatusEffectHandler {
 @Injectable()
 class StatusEventA implements StatusEventHandler {
     args: any;
-    async handler(args: StatusEventDTO): Promise<any> {
+    async onEnemiesTurnStart(args: StatusEventDTO): Promise<any> {
         this.args = args.status.args;
     }
 }
@@ -315,7 +315,7 @@ describe('StatusService', () => {
                     },
                 } as ExpeditionDocument,
             },
-            EVENT_BEFORE_ENEMY_TURN_END,
+            EVENT_BEFORE_ENEMIES_TURN_END,
         );
 
         statusEventA.args = { value: 22 };

@@ -239,7 +239,7 @@ export interface StatusEffectHandler {
  */
 export interface StatusEventHandler {
     // TODO: Define the args
-    handler(args: StatusEventDTO): Promise<any>;
+    onEnemiesTurnStart(args: StatusEventDTO): Promise<any>;
 }
 
 export type StatusHandler = StatusEffectHandler | StatusEventHandler;

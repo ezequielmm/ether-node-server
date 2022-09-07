@@ -364,7 +364,7 @@ export class StatusService {
                         },
                     };
 
-                    await instance.handler(dto);
+                    await instance.onEnemiesTurnStart(dto);
                 }
 
                 if (statusesToRemove.length > 0) {
@@ -382,7 +382,7 @@ export class StatusService {
         }
     }
 
-    private isActive(
+    public isActive(
         startsAt: StatusStartsAt,
         addedInRound: number,
         currentRound: number,
