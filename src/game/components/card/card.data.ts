@@ -202,14 +202,12 @@ export const data: Card[] = [
     KnightsResolveCardUpgraded,
     ShieldPlantCard,
     ShieldPlantCardUpgraded,
-<<<<<<< HEAD
     SparkCard,
     SparkCardUpgraded,
     TorchCard,
     TorchCardUpgraded,
     EnflameCard,
     EnflameCardUpgraded,
-=======
     SharpenBladeCard,
     SharpenBladeCardUpgraded,
     OnARollCard,
@@ -227,5 +225,4 @@ export const data: Card[] = [
     FrontflipCard,
     FrontflipCardUpgraded,
     BurnedCard,
->>>>>>> ca230e16b50fe336b930daaeb38becd6f93a6e00
 ];
