@@ -1,4 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import { Socket } from 'socket.io';
 import { CardKeywordPipeline } from '../cardKeywordPipeline/cardKeywordPipeline';
 import {
@@ -6,22 +7,21 @@ import {
     CardPlayErrorMessages,
 } from '../components/card/card.enum';
 import { CardId, getCardIdField } from '../components/card/card.type';
+import { CombatQueueService } from '../components/combatQueue/combatQueue.service';
 import { ExpeditionDocument } from '../components/expedition/expedition.schema';
 import { ExpeditionService } from '../components/expedition/expedition.service';
 import { Context } from '../components/interfaces';
 import { PlayerService } from '../components/player/player.service';
+import { EVENT_AFTER_CARD_PLAY, EVENT_BEFORE_CARD_PLAY } from '../constants';
 import { EffectService } from '../effects/effects.service';
 import { TargetId } from '../effects/effects.types';
+import { HistoryService } from '../history/history.service';
 import { EndPlayerTurnProcess } from '../process/endPlayerTurn.process';
 import {
     StandardResponse,
     SWARMessageType,
     SWARAction,
 } from '../standardResponse/standardResponse';
-import {
-    OnBeginCardPlayEventArgs,
-    StatusEventType,
-} from '../status/interfaces';
 import { StatusService } from '../status/status.service';
 import { DiscardCardAction } from './discardCard.action';
 import { ExhaustCardAction } from './exhaustCard.action';
@@ -29,7 +29,7 @@ import { ExhaustCardAction } from './exhaustCard.action';
 interface CardPlayedDTO {
     readonly client: Socket;
     readonly cardId: CardId;
-    readonly targetId: TargetId;
+    readonly selectedEnemyId: TargetId;
 }
 
 interface ICanPlayCard {
@@ -51,10 +51,13 @@ export class CardPlayedAction {
         private readonly exhaustCardAction: ExhaustCardAction,
         private readonly endPlayerTurnProcess: EndPlayerTurnProcess,
         private readonly playerService: PlayerService,
+        private readonly combatQueueService: CombatQueueService,
+        private readonly historyService: HistoryService,
+        private readonly eventEmitter: EventEmitter2,
     ) {}
 
     async handle(payload: CardPlayedDTO): Promise<void> {
-        const { client, cardId, targetId } = payload;
+        const { client, cardId, selectedEnemyId } = payload;
 
         this.client = client;
 
@@ -80,7 +83,6 @@ export class CardPlayedAction {
                             energy: availableEnergy,
                             cards: { hand },
                         },
-                        round,
                     },
                 },
             } = expedition;
@@ -89,6 +91,9 @@ export class CardPlayedAction {
                 client,
                 expedition,
             };
+
+            this.logger.debug(`Started combat queue for client ${client.id}`);
+            await this.combatQueueService.start(ctx);
 
             // If everything goes right, we get the card information from
             // the player hand pile
@@ -119,20 +124,24 @@ export class CardPlayedAction {
             } else {
                 const source = this.playerService.get(ctx);
                 const sourceReference =
-                    this.statusService.getReferenceFromSource(source);
+                    this.statusService.getReferenceFromEntity(source);
 
-                const onBeginCardPlayEventArgs: OnBeginCardPlayEventArgs = {
+                this.historyService.register({
+                    clientId: this.client.id,
+                    registry: {
+                        type: 'card',
+                        source,
+                        card,
+                    },
+                });
+
+                await this.eventEmitter.emitAsync(EVENT_BEFORE_CARD_PLAY, {
+                    ctx,
                     card,
                     cardSource: source,
                     cardSourceReference: sourceReference,
-                    cardTargetId: targetId,
-                };
-
-                await this.statusService.trigger(
-                    ctx,
-                    StatusEventType.OnBeginCardPlay,
-                    onBeginCardPlayEventArgs,
-                );
+                    cardTargetId: selectedEnemyId,
+                });
 
                 // if the card can be played, we update the energy, apply the effects
                 // and move the card to the desired pile
@@ -152,12 +161,12 @@ export class CardPlayedAction {
                     ctx,
                     source,
                     effects,
-                    selectedEnemy: targetId,
+                    selectedEnemy: selectedEnemyId,
                 });
 
                 // After applying the effects, check if the current
                 // combat has ended and if so, skip all next steps
-                if (ctx.expedition.currentNode.completed) {
+                if (this.expeditionService.isCurrentCombatEnded(ctx)) {
                     this.logger.debug(
                         'Current node is completed. Skipping next actions',
                     );
@@ -167,9 +176,8 @@ export class CardPlayedAction {
                 await this.statusService.attach({
                     ctx,
                     statuses,
-                    currentRound: round,
-                    sourceReference,
-                    targetId,
+                    targetId: selectedEnemyId,
+                    source,
                 });
 
                 const {
@@ -189,11 +197,16 @@ export class CardPlayedAction {
 
                 this.sendUpdateEnergyMessage(newEnergy, energyMax);
 
-                await this.statusService.trigger(
+                this.logger.debug(`Ended combat queue for client ${client.id}`);
+                await this.combatQueueService.end(ctx);
+
+                await this.eventEmitter.emitAsync(EVENT_AFTER_CARD_PLAY, {
                     ctx,
-                    StatusEventType.OnEndCardPlay,
-                    onBeginCardPlayEventArgs,
-                );
+                    card,
+                    cardSource: source,
+                    cardSourceReference: sourceReference,
+                    cardTargetId: selectedEnemyId,
+                });
 
                 if (endTurn)
                     await this.endPlayerTurnProcess.handle({
@@ -255,7 +268,7 @@ export class CardPlayedAction {
     }
 
     private sendNotEnoughEnergyMessage(message: string): void {
-        this.logger.log(
+        this.logger.debug(
             `Sent message ErrorMessage to client ${this.client.id}: ${SWARAction.InsufficientEnergy}`,
         );
 
@@ -272,7 +285,7 @@ export class CardPlayedAction {
     }
 
     private sendUpdateEnergyMessage(energy: number, energyMax: number): void {
-        this.logger.log(
+        this.logger.debug(
             `Sent message PutData to client ${this.client.id}: ${SWARAction.UpdateEnergy}`,
         );
 

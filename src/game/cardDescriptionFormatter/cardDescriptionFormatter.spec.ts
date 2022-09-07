@@ -45,7 +45,7 @@ describe('Card Description Formatter', () => {
         cardType: CardTypeEnum.Power,
         pool: 'knight',
         energy: 1,
-        description: `Gain {${regenerate.name}} Regenerate`,
+        description: `Gain {${regenerate.name}} [${regenerate.name}]`,
         keywords: [],
         properties: {
             effects: [],
@@ -73,6 +73,6 @@ describe('Card Description Formatter', () => {
     it('should update the description with status value', () => {
         const result = CardDescriptionFormatter.process(statusCard);
 
-        expect(result).toBe('Gain 1 Regenerate');
+        expect(result).toBe('Gain 1 <color=#0066cc>regenerate</color>');
     });
 });

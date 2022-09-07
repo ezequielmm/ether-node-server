@@ -14,6 +14,7 @@ import { ExpeditionMapNodeTypeEnum } from 'src/game/components/expedition/expedi
 import { InitCombatProcess } from 'src/game/process/initCombat.process';
 import { PlayerService } from 'src/game/components/player/player.service';
 import { CombatQueueService } from 'src/game/components/combatQueue/combatQueue.service';
+import { CardSelectionScreenService } from 'src/game/components/cardSelectionScreen/cardSelectionScreen.service';
 
 @WebSocketGateway({
     cors: {
@@ -32,19 +33,20 @@ export class SocketGateway
         private readonly initCombatProcess: InitCombatProcess,
         private readonly playerService: PlayerService,
         private readonly combatQueueService: CombatQueueService,
+        private readonly cardSelectionScreenService: CardSelectionScreenService,
     ) {}
 
     afterInit(): void {
-        this.logger.log(`Socket Initiated`);
+        this.logger.debug(`Socket Initiated`);
     }
 
     async handleConnection(client: Socket): Promise<void> {
-        this.logger.log(`Client attempting a connection: ${client.id}`);
+        this.logger.debug(`Client attempting a connection: ${client.id}`);
 
         const { authorization } = client.handshake.headers;
 
         if (!isValidAuthToken(authorization)) {
-            this.logger.log(`Client has an invalid auth token: ${client.id}`);
+            this.logger.debug(`Client has an invalid auth token: ${client.id}`);
             client.disconnect(true);
         }
 
@@ -61,13 +63,14 @@ export class SocketGateway
             });
 
             if (expedition) {
-                this.logger.log(`Client connected: ${client.id}`);
+                this.logger.debug(`Client connected: ${client.id}`);
 
                 const { currentNode } = expedition;
 
                 // Here we check if the player is in a node already
                 if (currentNode !== undefined) {
                     const { nodeType, nodeId } = currentNode;
+
                     const nodeTypes = Object.values(ExpeditionMapNodeTypeEnum);
                     const combatNodes = nodeTypes.filter(
                         (node) => node.search('combat') !== -1,
@@ -86,10 +89,7 @@ export class SocketGateway
                             });
 
                         await this.playerService.setHp(
-                            {
-                                client,
-                                expedition,
-                            },
+                            { client, expedition },
                             hpCurrent,
                         );
 
@@ -99,24 +99,30 @@ export class SocketGateway
 
                 await this.fullsyncAction.handle(client);
             } else {
-                this.logger.log(
+                this.logger.debug(
                     `There is no expedition in progress for this player: ${client.id}`,
                 );
 
                 client.disconnect(true);
             }
         } catch (e) {
-            this.logger.log(e.message);
-            this.logger.log(e.stack);
+            this.logger.debug(e.message);
+            this.logger.debug(e.stack);
             client.disconnect(true);
         }
     }
 
     async handleDisconnect(client: Socket): Promise<void> {
-        this.logger.log(`Client disconnected: ${client.id}`);
+        this.logger.debug(`Client disconnected: ${client.id}`);
 
-        this.logger.log(`Deleted combat queue for client ${client.id}`);
-
+        // Clear Combat queue
         await this.combatQueueService.deleteCombatQueueByClientId(client.id);
+        this.logger.debug(`Deleted combat queue for client ${client.id}`);
+
+        // Clear Card Selection Queue
+        await this.cardSelectionScreenService.deleteByClientId(client.id);
+        this.logger.debug(
+            `Deleted card selection screen items for client ${client.id}`,
+        );
     }
 }

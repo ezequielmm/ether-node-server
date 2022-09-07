@@ -12,4 +12,5 @@ export enum CombatQueueTargetEffectTypeEnum {
     Damage = 'damage',
     Defense = 'defense',
     Heal = 'heal',
+    Status = 'status',
 }

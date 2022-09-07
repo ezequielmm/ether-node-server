@@ -1,12 +1,16 @@
 import { Injectable } from '@nestjs/common';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import { getModelToken } from '@nestjs/mongoose';
 import { Test } from '@nestjs/testing';
 import { Socket } from 'socket.io';
+import { EnemyService } from '../components/enemy/enemy.service';
 import {
     Expedition,
     ExpeditionDocument,
 } from '../components/expedition/expedition.schema';
 import { ExpeditionService } from '../components/expedition/expedition.service';
+import { PlayerService } from '../components/player/player.service';
+import { EVENT_BEFORE_ENEMY_TURN_END } from '../constants';
 import { damageEffect } from '../effects/damage/constants';
 import { EffectDTO } from '../effects/effects.interface';
 import { ProviderService } from '../provider/provider.service';
@@ -14,12 +18,11 @@ import { burn } from './burn/constants';
 import { fortitude } from './fortitude/constants';
 import { heraldDelayed } from './heraldDelayed/constants';
 import {
-    SourceEntityReferenceDTO,
+    EntityReferenceDTO,
     StatusEffectDTO,
     StatusEffectHandler,
     StatusEventDTO,
     StatusEventHandler,
-    StatusEventType,
     StatusType,
 } from './interfaces';
 import { resolve } from './resolve/constants';
@@ -86,7 +89,7 @@ class StatusC implements StatusEffectHandler {
 @Injectable()
 class StatusEventA implements StatusEventHandler {
     args: any;
-    async enemyHandler(args: StatusEventDTO): Promise<any> {
+    async handler(args: StatusEventDTO): Promise<any> {
         this.args = args.status.args;
     }
 }
@@ -95,6 +98,8 @@ describe('StatusService', () => {
     let service: StatusService;
     let statusEventA: StatusEventA;
     let effectDTO: EffectDTO;
+
+    const mockEventEmitter2 = new EventEmitter2();
 
     beforeEach(async () => {
         const module = await Test.createTestingModule({
@@ -106,7 +111,19 @@ describe('StatusService', () => {
                 StatusEventA,
                 { provide: getModelToken(Expedition.name), useValue: {} },
                 { provide: ExpeditionService, useValue: {} },
+                {
+                    provide: EnemyService,
+                    useValue: {},
+                },
+                {
+                    provide: PlayerService,
+                    useValue: {},
+                },
                 ProviderService,
+                {
+                    provide: EventEmitter2,
+                    useValue: mockEventEmitter2,
+                },
             ],
         }).compile();
 
@@ -137,7 +154,7 @@ describe('StatusService', () => {
                     {
                         name: resolve.name,
                         addedInRound: 1,
-                        sourceReference: {} as SourceEntityReferenceDTO,
+                        sourceReference: {} as EntityReferenceDTO,
                         args: {
                             value: null,
                         },
@@ -167,7 +184,7 @@ describe('StatusService', () => {
                     {
                         name: resolve.name,
                         addedInRound: 1,
-                        sourceReference: {} as SourceEntityReferenceDTO,
+                        sourceReference: {} as EntityReferenceDTO,
                         args: {
                             value: null,
                         },
@@ -197,7 +214,7 @@ describe('StatusService', () => {
                     {
                         name: fortitude.name,
                         addedInRound: 1,
-                        sourceReference: {} as SourceEntityReferenceDTO,
+                        sourceReference: {} as EntityReferenceDTO,
                         args: {
                             value: null,
                         },
@@ -205,7 +222,7 @@ describe('StatusService', () => {
                     {
                         name: resolve.name,
                         addedInRound: 1,
-                        sourceReference: {} as SourceEntityReferenceDTO,
+                        sourceReference: {} as EntityReferenceDTO,
                         args: {
                             value: null,
                         },
@@ -235,7 +252,7 @@ describe('StatusService', () => {
                     {
                         name: fortitude.name,
                         addedInRound: 1,
-                        sourceReference: {} as SourceEntityReferenceDTO,
+                        sourceReference: {} as EntityReferenceDTO,
                         args: {
                             value: null,
                         },
@@ -243,7 +260,7 @@ describe('StatusService', () => {
                     {
                         name: resolve.name,
                         addedInRound: 1,
-                        sourceReference: {} as SourceEntityReferenceDTO,
+                        sourceReference: {} as EntityReferenceDTO,
                         args: {
                             value: null,
                         },
@@ -251,7 +268,7 @@ describe('StatusService', () => {
                     {
                         name: heraldDelayed.name,
                         addedInRound: 1,
-                        sourceReference: {} as SourceEntityReferenceDTO,
+                        sourceReference: {} as EntityReferenceDTO,
                         args: {
                             value: null,
                         },
@@ -298,7 +315,7 @@ describe('StatusService', () => {
                     },
                 } as ExpeditionDocument,
             },
-            StatusEventType.OnTurnEnd,
+            EVENT_BEFORE_ENEMY_TURN_END,
         );
 
         statusEventA.args = { value: 22 };

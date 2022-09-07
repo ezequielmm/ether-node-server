@@ -21,7 +21,7 @@ export class GetStatusesAction {
         // First we get the expedition to the player's id and the
         // rest of the information from the current node
         const {
-            playerId,
+            playerState: { playerId },
             currentNode: {
                 data: {
                     player: {
@@ -47,10 +47,10 @@ export class GetStatusesAction {
 
         // Then, we get the enemies and its statuses and add
         // all to the array
-        enemies.forEach(({ enemyId, statuses: { buff, debuff } }) => {
+        enemies.forEach(({ id, statuses: { buff, debuff } }) => {
             response.push({
                 targetEntity: TargetEntityEnum.Enemy,
-                id: enemyId,
+                id,
                 statuses: [
                     ...StatusGenerator.formatStatusesToArray(buff),
                     ...StatusGenerator.formatStatusesToArray(debuff),

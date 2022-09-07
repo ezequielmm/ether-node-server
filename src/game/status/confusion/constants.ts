@@ -16,7 +16,7 @@ import {
 export const confusion: StatusEffect = {
     name: 'confusion',
     type: StatusType.Debuff,
-    startsAt: StatusStartsAt.NextTurn,
+    startsAt: StatusStartsAt.NextPlayerTurn,
     trigger: StatusTrigger.Effect,
     direction: StatusDirection.Outgoing,
     // TODO: Create a way to specify all effects insteand of define one by one
