@@ -5,7 +5,6 @@ import { EnemyService } from 'src/game/components/enemy/enemy.service';
 import { Context, ExpeditionEntity } from 'src/game/components/interfaces';
 import { PlayerService } from 'src/game/components/player/player.service';
 import {
-    EVENT_BEFORE_ENEMIES_TURN_START,
     EVENT_BEFORE_ENEMIES_TURN_END,
     EVENT_BEFORE_PLAYER_TURN_END,
 } from 'src/game/constants';
