@@ -1,12 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { find } from 'lodash';
-import { CardTargetedEnum } from '../components/card/card.enum';
-import {
-    CombatQueueOriginTypeEnum,
-    CombatQueueTargetEffectTypeEnum,
-} from '../components/combatQueue/combatQueue.enum';
-import { CombatQueueDocument } from '../components/combatQueue/combatQueue.schema';
-import { CombatQueueService } from '../components/combatQueue/combatQueue.service';
 import { ExpeditionService } from '../components/expedition/expedition.service';
 import { HistoryService } from '../history/history.service';
 import { ProviderContainer } from '../provider/interfaces';
@@ -31,7 +24,6 @@ export class EffectService {
     constructor(
         private readonly providerService: ProviderService,
         private readonly statusService: StatusService,
-        private readonly combatQueueService: CombatQueueService,
         private readonly expeditionService: ExpeditionService,
         private readonly historyService: HistoryService,
     ) {}
@@ -60,13 +52,7 @@ export class EffectService {
 
     public async apply(dto: ApplyDTO) {
         const { ctx, source, target, effect } = dto;
-
         const { client } = ctx;
-
-        if (ctx.expedition.currentNode.completed) {
-            this.logger.debug(`Combat ended, skipping effect ${effect.effect}`);
-            return;
-        }
 
         // Register the effect in the history
         this.historyService.register({
@@ -103,58 +89,18 @@ export class EffectService {
         });
 
         for (let i = 0; i < times; i++) {
-            let combatQueue: CombatQueueDocument = null;
-
-            // Initialize the combat queue if the effect is damage,
-            // heal or defense only
-
-            if (
-                Object.values(CombatQueueTargetEffectTypeEnum).includes(
-                    name as CombatQueueTargetEffectTypeEnum,
-                )
-            ) {
-                combatQueue = await this.combatQueueService.create({
-                    clientId: client.id,
-                    originType:
-                        source.type === CardTargetedEnum.Player
-                            ? CombatQueueOriginTypeEnum.Player
-                            : CombatQueueOriginTypeEnum.Enemy,
-                    originId:
-                        source.type === CardTargetedEnum.Player
-                            ? source.value.globalState.playerId
-                            : source.value.id,
-                });
-
-                this.logger.debug(`Created Combat Queue`);
-            }
-            // Send the queue id to the effects to add the target
-            effectDTO = {
-                ...effectDTO,
-                ...(combatQueue && {
-                    combatQueueId: combatQueue._id.toString(),
-                }),
-            };
-
-            this.logger.debug(`Effect ${name} applied to ${target.type}`);
-
-            const handler = this.findHandlerByName(name);
-
-            await handler.handle(effectDTO);
-
-            // If we have a combat queue initiated, we run the queue
-            if (combatQueue) {
-                // Send the combat queue to the client
-                this.logger.debug(`Sent combat queue to client ${client.id}`);
-                await this.combatQueueService.sendQueueToClient(client);
-
-                // Clear the queue
+            // Check if the combat has ended
+            if (this.expeditionService.isCurrentCombatEnded(ctx)) {
                 this.logger.debug(
-                    `Cleared combat queue to client ${client.id}`,
+                    `Combat ended, skipping effect ${effect.effect}`,
                 );
-                await this.combatQueueService.deleteCombatQueueByClientId(
-                    client.id,
-                );
+                return;
             }
+
+            // Send the queue id to the effects to add the target
+            this.logger.debug(`Effect ${name} applied to ${target.type}`);
+            const handler = this.findHandlerByName(name);
+            await handler.handle(effectDTO);
         }
     }
 

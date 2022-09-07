@@ -1,7 +1,6 @@
 import { Test } from '@nestjs/testing';
 import { get } from 'lodash';
 import { CardTargetedEnum } from '../card/card.enum';
-import { CombatQueueService } from '../combatQueue/combatQueue.service';
 import { ExpeditionEnemy } from '../enemy/enemy.interface';
 import { ExpeditionDocument } from '../expedition/expedition.schema';
 import { ExpeditionService } from '../expedition/expedition.service';
@@ -27,12 +26,6 @@ describe('PlayerService', () => {
     let spyOnSetHp: jest.SpyInstance;
     let spyOnSetDefense: jest.SpyInstance;
 
-    const mockCombatQueueService = {
-        addTargetsToCombatQueue: jest
-            .fn()
-            .mockImplementation(() => Promise.resolve()),
-    };
-
     const mockEventEmitter2 = new MockedSocket();
 
     beforeEach(async () => {
@@ -43,10 +36,6 @@ describe('PlayerService', () => {
                     useValue: mockExpeditionService,
                 },
                 PlayerService,
-                {
-                    provide: CombatQueueService,
-                    useValue: mockCombatQueueService,
-                },
                 {
                     provide: StatusService,
                     useValue: {},
@@ -80,7 +69,6 @@ describe('PlayerService', () => {
 
         spyOnSetHp = jest.spyOn(playerService, 'setHp');
         spyOnSetDefense = jest.spyOn(playerService, 'setDefense');
-        mockCombatQueueService.addTargetsToCombatQueue.mockClear();
     });
 
     it('should be defined', () => {
@@ -92,6 +80,7 @@ describe('PlayerService', () => {
             const isPlayer = PlayerService.isPlayer({
                 type: CardTargetedEnum.Player,
                 value: {
+                    id: 1,
                     globalState: mockContext.expedition.playerState,
                     combatState: mockContext.expedition.currentNode.data.player,
                 },
@@ -99,6 +88,7 @@ describe('PlayerService', () => {
 
             expect(isPlayer).toBe(true);
         });
+
         it('should return false if the target is not the player', () => {
             const isPlayer = PlayerService.isPlayer({
                 type: CardTargetedEnum.Enemy,
@@ -111,7 +101,7 @@ describe('PlayerService', () => {
 
     describe('isDead', () => {
         it('should return true if the player is dead', () => {
-            mockContext.expedition.playerState.hpCurrent = 0;
+            mockContext.expedition.currentNode.data.player.hpCurrent = 0;
             const isDead = playerService.isDead(mockContext);
 
             expect(isDead).toBe(true);
@@ -199,7 +189,7 @@ describe('PlayerService', () => {
         it('should update the player health', async () => {
             mockContext.expedition.currentNode.data.player.defense = 0;
 
-            await playerService.damage(mockContext, 10, '1');
+            await playerService.damage(mockContext, 10);
 
             expect(spyOnSetDefense).toHaveBeenCalledWith(mockContext, 0);
             expect(spyOnSetHp).toHaveBeenCalledWith(mockContext, 70);
@@ -208,21 +198,10 @@ describe('PlayerService', () => {
                 70,
             );
             expect(get(mockContext.expedition, PLAYER_DEFENSE_PATH)).toBe(0);
-            expect(
-                mockCombatQueueService.addTargetsToCombatQueue,
-            ).toHaveBeenCalledWith('1', [
-                expect.objectContaining({
-                    defenseDelta: 0,
-                    effectType: 'damage',
-                    finalDefense: 0,
-                    finalHealth: 70,
-                    healthDelta: -10,
-                }),
-            ]);
         });
 
         it('should update the player health', async () => {
-            await playerService.damage(mockContext, 0, '1');
+            await playerService.damage(mockContext, 0);
 
             expect(spyOnSetDefense).toHaveBeenCalledWith(mockContext, 5);
             expect(spyOnSetHp).toHaveBeenCalledWith(mockContext, 80);
@@ -231,38 +210,16 @@ describe('PlayerService', () => {
                 80,
             );
             expect(get(mockContext.expedition, PLAYER_DEFENSE_PATH)).toBe(5);
-            expect(
-                mockCombatQueueService.addTargetsToCombatQueue,
-            ).toHaveBeenCalledWith('1', [
-                expect.objectContaining({
-                    defenseDelta: -0,
-                    effectType: 'damage',
-                    finalDefense: 5,
-                    finalHealth: 0,
-                    healthDelta: 0,
-                }),
-            ]);
         });
 
         it('should update the player health to 0 if the damage is greater than the current health', async () => {
-            await playerService.damage(mockContext, 85, '1');
+            await playerService.damage(mockContext, 85);
 
             expect(spyOnSetDefense).toHaveBeenCalledWith(mockContext, 0);
             expect(spyOnSetHp).toHaveBeenCalledWith(mockContext, 0);
 
             expect(get(mockContext.expedition, PLAYER_CURRENT_HP_PATH)).toBe(0);
             expect(get(mockContext.expedition, PLAYER_DEFENSE_PATH)).toBe(0);
-            expect(
-                mockCombatQueueService.addTargetsToCombatQueue,
-            ).toHaveBeenCalledWith('1', [
-                expect.objectContaining({
-                    defenseDelta: -85,
-                    effectType: 'damage',
-                    finalDefense: 0,
-                    finalHealth: 0,
-                    healthDelta: -80,
-                }),
-            ]);
         });
     });
 

@@ -128,9 +128,7 @@ describe('DefenseEffect', () => {
 
     // Mock combat queue service
     const mockCombatQueueService = {
-        addTargetsToCombatQueue: jest
-            .fn()
-            .mockImplementation(() => Promise.resolve()),
+        push: jest.fn().mockImplementation(() => Promise.resolve()),
     };
 
     beforeEach(async () => {
@@ -153,7 +151,7 @@ describe('DefenseEffect', () => {
         mockPlayerService.get.mockClear();
         mockPlayerService.setDefense.mockClear();
         mockEnemyService.setDefense.mockClear();
-        mockCombatQueueService.addTargetsToCombatQueue.mockClear();
+        mockCombatQueueService.push.mockClear();
     });
 
     it('should be defined', () => {
@@ -174,7 +172,6 @@ describe('DefenseEffect', () => {
                     useDiscardPileAsValue: false,
                     multiplier: 1,
                 },
-                combatQueueId: '555',
             });
 
             expect(mockPlayerService.setDefense).toHaveBeenCalledWith(
@@ -198,7 +195,6 @@ describe('DefenseEffect', () => {
                     useDiscardPileAsValue: false,
                     multiplier: 1,
                 },
-                combatQueueId: '555',
             });
 
             expect(mockPlayerService.setDefense).toHaveBeenCalledWith(
@@ -275,7 +271,6 @@ describe('DefenseEffect', () => {
                     useDiscardPileAsValue: false,
                     multiplier: 1,
                 },
-                combatQueueId: '555',
             });
 
             expect(mockPlayerService.setDefense).toHaveBeenCalledWith(
@@ -297,7 +292,6 @@ describe('DefenseEffect', () => {
                     useDiscardPileAsValue: false,
                     multiplier: 1,
                 },
-                combatQueueId: '555',
             });
 
             expect(mockPlayerService.setDefense).toHaveBeenCalledWith(
@@ -319,7 +313,6 @@ describe('DefenseEffect', () => {
                     useDiscardPileAsValue: true,
                     multiplier: 1,
                 },
-                combatQueueId: '555',
             });
 
             expect(mockPlayerService.setDefense).toHaveBeenCalledWith(
@@ -343,7 +336,6 @@ describe('DefenseEffect', () => {
                     useDiscardPileAsValue: false,
                     multiplier: 1,
                 },
-                combatQueueId: '555',
             });
 
             expect(mockEnemyService.setDefense).toHaveBeenCalledWith(
@@ -372,7 +364,6 @@ describe('DefenseEffect', () => {
                     useDiscardPileAsValue: false,
                     multiplier: 1,
                 },
-                combatQueueId: '555',
             });
 
             expect(mockEnemyService.setDefense).toHaveBeenCalledWith(

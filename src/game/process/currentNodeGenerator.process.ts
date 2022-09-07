@@ -122,7 +122,7 @@ export class CurrentNodeGeneratorProcess {
     private getCurrentNode(): IExpeditionCurrentNode {
         return {
             nodeId: this.node.id,
-            completed: true,
+            completed: false,
             nodeType: this.node.type,
             showRewards: false,
         };

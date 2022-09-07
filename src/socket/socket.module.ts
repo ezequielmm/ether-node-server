@@ -13,6 +13,7 @@ import { CombatQueueModule } from 'src/game/components/combatQueue/combatQueue.m
 import { GetDataGateway } from './getData.gateway';
 import { RewardGateway } from './reward.gateway';
 import { CampGateway } from './camp.gateway';
+import { CardSelectionScreenModule } from 'src/game/components/cardSelectionScreen/cardSelectionScreen.module';
 
 @Module({
     imports: [
@@ -24,6 +25,7 @@ import { CampGateway } from './camp.gateway';
         CharacterModule,
         PlayerModule,
         CombatQueueModule,
+        CardSelectionScreenModule,
     ],
     providers: [
         SocketGateway,

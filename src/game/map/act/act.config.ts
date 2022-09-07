@@ -72,13 +72,13 @@ export const actCconfigAlternatives = [
                 {
                     type: 'encounter',
                     subType: 'encounter',
-                    chance: 19,
+                    chance: 15,
                     config: {},
                 },
                 {
                     type: 'merchant',
                     subType: 'merchant',
-                    chance: 1,
+                    chance: 5,
                     config: {},
                 },
             ],

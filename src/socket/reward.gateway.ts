@@ -3,7 +3,6 @@ import { SubscribeMessage, WebSocketGateway } from '@nestjs/websockets';
 import { Socket } from 'socket.io';
 import { IExpeditionNodeReward } from 'src/game/components/expedition/expedition.enum';
 import { ExpeditionService } from 'src/game/components/expedition/expedition.service';
-import { restoreMap } from 'src/game/map/app';
 import {
     StandardResponse,
     SWARMessageType,
@@ -92,55 +91,6 @@ export class RewardGateway {
                 message_type: SWARMessageType.EndCombat,
                 action: SWARAction.SelectAnotherReward,
                 data: pendingRewards,
-            }),
-        );
-    }
-
-    @SubscribeMessage('ContinueExpedition')
-    async handleContinueExpedition(client: Socket): Promise<string> {
-        this.logger.debug(
-            `Client ${client.id} will continue with the expedition`,
-        );
-
-        // Get the updated expedition
-        const expedition = await this.expeditionService.findOne({
-            clientId: client.id,
-        });
-
-        const {
-            map: oldMap,
-            currentNode: {
-                nodeId,
-                data: {
-                    player: { hpCurrent, hpMax },
-                },
-            },
-        } = expedition;
-
-        const newMap = restoreMap(oldMap, client.id);
-
-        newMap.activeNode = newMap.fullCurrentMap.get(nodeId);
-        newMap.activeNode.complete(newMap);
-
-        const mapToSave = newMap.getMap;
-
-        this.logger.debug(`Player ${client.id} completed the node ${nodeId}`);
-
-        await this.expeditionService.updateById(expedition._id, {
-            $set: {
-                map: mapToSave,
-                'currentNode.completed': true,
-                'currentNode.showRewards': false,
-                'playerState.hpCurrent': hpCurrent,
-                'playerState.hpMax': hpMax,
-            },
-        });
-
-        return JSON.stringify(
-            StandardResponse.respond({
-                message_type: SWARMessageType.EndCombat,
-                action: SWARAction.ShowMap,
-                data: mapToSave,
             }),
         );
     }

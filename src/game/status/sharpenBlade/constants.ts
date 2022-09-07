@@ -1,6 +1,6 @@
+import { EVENT_BEFORE_PLAYER_TURN_START } from 'src/game/constants';
 import {
     StatusEvent,
-    StatusEventType,
     StatusStartsAt,
     StatusTrigger,
     StatusType,
@@ -10,6 +10,6 @@ export const sharpenBlade: StatusEvent = {
     name: 'Sharpen Blade',
     type: StatusType.Buff,
     trigger: StatusTrigger.Event,
-    event: StatusEventType.OnPlayerTurnStart,
+    event: EVENT_BEFORE_PLAYER_TURN_START,
     startsAt: StatusStartsAt.Instantly,
 };

@@ -31,6 +31,7 @@ import { SiphoningStatus } from './siphoning/siphoning.status';
 import { SpikesStatus } from './spikes/spikes.status';
 import { SpiritedStatus } from './spirited/spirited.status';
 import { StatusService } from './status.service';
+import { StunnedStatus } from './stunned/stunned.status';
 import { TasteOfBloodBuffStatus } from './tasteOfBlood/tasteOfBlood.buff.status';
 import { TasteOfBloodDebuffStatus } from './tasteOfBlood/tasteOfBlood.debuff.status';
 import { TurtlingStatus } from './turtling/turtling.status';
@@ -42,7 +43,7 @@ import { TurtlingStatus } from './turtling/turtling.status';
         forwardRef(() => EffectModule),
         forwardRef(() => EnemyModule),
         forwardRef(() => PlayerModule),
-        CardModule,
+        forwardRef(() => CardModule),
     ],
     providers: [
         StatusService,
@@ -76,6 +77,7 @@ import { TurtlingStatus } from './turtling/turtling.status';
         FatigueStatus,
         SharpenBladeStatus,
         AnticipatingStatus,
+        StunnedStatus,
     ],
     exports: [StatusService],
 })

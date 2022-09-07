@@ -8,10 +8,16 @@ import { EndPlayerTurnProcess } from 'src/game/process/endPlayerTurn.process';
 import { ExpeditionService } from 'src/game/components/expedition/expedition.service';
 import { CombatTurnEnum } from 'src/game/components/expedition/expedition.enum';
 import { EndEnemyTurnProcess } from 'src/game/process/endEnemyTurn.process';
+import { CardSelectionScreenService } from 'src/game/components/cardSelectionScreen/cardSelectionScreen.service';
+import { MoveCardAction } from 'src/game/action/moveCard.action';
 
-interface CardPlayedInterface {
+interface ICardPlayed {
     cardId: CardId;
     targetId?: TargetId;
+}
+
+interface IMoveCard {
+    cardsToTake: string[];
 }
 
 @WebSocketGateway({
@@ -27,6 +33,8 @@ export class CombatGateway {
         private readonly endPlayerTurnProcess: EndPlayerTurnProcess,
         private readonly endEnemyTurnProcess: EndEnemyTurnProcess,
         private readonly expeditionService: ExpeditionService,
+        private readonly cardSelectionService: CardSelectionScreenService,
+        private readonly moveCardAction: MoveCardAction,
     ) {}
 
     @SubscribeMessage('EndTurn')
@@ -37,24 +45,26 @@ export class CombatGateway {
             clientId: client.id,
         });
 
-        const {
-            currentNode: {
-                data: { playing },
-            },
-        } = expedition;
+        if (expedition.currentNode !== null) {
+            const {
+                currentNode: {
+                    data: { playing },
+                },
+            } = expedition;
 
-        switch (playing) {
-            case CombatTurnEnum.Player:
-                await this.endPlayerTurnProcess.handle({ client });
-                break;
-            case CombatTurnEnum.Enemy:
-                await this.endEnemyTurnProcess.handle({
-                    ctx: {
-                        client,
-                        expedition,
-                    },
-                });
-                break;
+            switch (playing) {
+                case CombatTurnEnum.Player:
+                    await this.endPlayerTurnProcess.handle({ client });
+                    break;
+                case CombatTurnEnum.Enemy:
+                    await this.endEnemyTurnProcess.handle({
+                        ctx: {
+                            client,
+                            expedition,
+                        },
+                    });
+                    break;
+            }
         }
     }
 
@@ -64,12 +74,50 @@ export class CombatGateway {
             `Client ${client.id} trigger message "CardPlayed": ${payload}`,
         );
 
-        const { cardId, targetId }: CardPlayedInterface = JSON.parse(payload);
+        const { cardId, targetId }: ICardPlayed = JSON.parse(payload);
 
         await this.cardPlayedAction.handle({
             client,
             cardId,
             selectedEnemyId: targetId,
         });
+    }
+
+    @SubscribeMessage('MoveCard')
+    async handleMoveCard(client: Socket, payload: string): Promise<void> {
+        this.logger.debug(
+            `Client ${client.id} trigger message "MoveCard": ${payload}`,
+        );
+
+        // query the information received by the frontend
+        const { cardsToTake }: IMoveCard = JSON.parse(payload);
+
+        // Get card selection item
+        const {
+            cardIds: cardsAvailable,
+            originPile,
+            amount,
+        } = await this.cardSelectionService.findOne({
+            client_id: client.id,
+        });
+
+        // Here we validate that the frontend is sending us
+        // the correct amount of cards to take, if not, we
+        // only take the amount required, starting from the
+        // first element
+        const newCardList = cardsToTake
+            .filter((cardId) => cardsAvailable.includes(cardId))
+            .slice(0, amount);
+
+        // With the right card to take, we call the move card action
+        // with the right ids and the pile to take the cards
+        await this.moveCardAction.handle({
+            client,
+            cardIds: newCardList,
+            originPile,
+        });
+
+        // Now we remove the info from the database
+        await this.cardSelectionService.deleteByClientId(client.id);
     }
 }
