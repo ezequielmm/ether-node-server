@@ -32,7 +32,6 @@ import {
     GiveNoGroundCard,
     GiveNoGroundCardUpgraded,
 } from './data/giveNoGround.card';
-import { GmCard } from './data/gm.card';
 import { GNCard, GNCardUpgraded } from './data/gn.card';
 import { HeadButtCard, HeadButtCardUpgraded } from './data/headButt.card';
 import {
@@ -56,10 +55,6 @@ import {
     KnightsResolveCard,
     KnightsResolveCardUpgraded,
 } from './data/knightsResolve.card';
-import {
-    lastReminderCard,
-    LastReminderCardUpgraded,
-} from './data/lastReminder.card';
 import { KnockDownCard, KnockDownCardUpgraded } from './data/knockDown.card';
 import { LastResortCard, LastResortCardUpgraded } from './data/lastResort.card';
 import { LungeCard, LungeCardUpgraded } from './data/lunge.card';
@@ -213,9 +208,6 @@ export const data: Card[] = [
     TorchCardUpgraded,
     EnflameCard,
     EnflameCardUpgraded,
-    GmCard,
-    lastReminderCard,
-    LastReminderCardUpgraded,
     SharpenBladeCard,
     SharpenBladeCardUpgraded,
     OnARollCard,
