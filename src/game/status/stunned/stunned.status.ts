@@ -12,7 +12,7 @@ import { stunned } from './constants';
 export class StunnedStatus implements StatusEventHandler {
     private readonly logger = new Logger(StunnedStatus.name);
 
-    async onEnemiesTurnStart(dto: StatusEventDTO): Promise<any> {
+    async handle(dto: StatusEventDTO): Promise<any> {
         const { target, args } = dto;
         const enemy = args.enemy as IExpeditionCurrentNodeDataEnemy;
 
