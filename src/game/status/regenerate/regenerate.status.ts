@@ -18,7 +18,7 @@ import { regenerate } from './contants';
 export class RegenerateStatus implements StatusEventHandler {
     constructor(private readonly effectService: EffectService) {}
 
-    async handler(dto: StatusEventDTO): Promise<void> {
+    async onEnemiesTurnStart(dto: StatusEventDTO): Promise<void> {
         const { ctx, source, target, status } = dto;
 
         if (

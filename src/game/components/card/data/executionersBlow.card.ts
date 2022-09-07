@@ -20,6 +20,13 @@ export const ExecutionersBlowCard: Card = {
                     value: 11,
                 },
             },
+            {
+                effect: damageEffect.name,
+                target: CardTargetedEnum.None,
+                args: {
+                    value: 0,
+                },
+            },
         ],
         statuses: [],
     },

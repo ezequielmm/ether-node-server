@@ -13,7 +13,7 @@ export class ImbuedStatus implements StatusEventHandler {
         private readonly effectService: EffectService,
     ) {}
 
-    async handler(dto: StatusEventDTO): Promise<void> {
+    async onEnemiesTurnStart(dto: StatusEventDTO): Promise<void> {
         const {
             ctx,
             args: { card, cardSource: source, cardTargetId: targetId },
