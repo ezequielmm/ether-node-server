@@ -13,7 +13,7 @@ import { resist } from './constants';
 export class ResistStatus implements StatusEventHandler {
     constructor(private readonly statusService: StatusService) {}
 
-    async handler(dto: StatusEventDTO): Promise<void> {
+    async onEnemiesTurnStart(dto: StatusEventDTO): Promise<void> {
         const { status, target } = dto.args;
         const { metadata } = this.statusService.findHandlerContainer({
             name: status.name,

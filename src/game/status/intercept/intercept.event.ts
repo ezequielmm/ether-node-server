@@ -23,7 +23,7 @@ export class InterceptEvent {
     ) {}
 
     @OnEvent(EVENT_BEFORE_ENEMIES_TURN_START, { async: true })
-    async onEnemiesTurnEnd(args: { ctx: Context }): Promise<void> {
+    async onEnemiesTurnStart(args: { ctx: Context }): Promise<void> {
         const { ctx } = args;
         const enemies = this.enemyService.getAll(ctx);
 
