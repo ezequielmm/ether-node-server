@@ -57,7 +57,7 @@ export class CardPlayedAction {
     ) {}
 
     async handle(payload: CardPlayedDTO): Promise<void> {
-        const { client, cardId, selectedEnemyId: selectedEnemyId } = payload;
+        const { client, cardId, selectedEnemyId } = payload;
 
         this.client = client;
 

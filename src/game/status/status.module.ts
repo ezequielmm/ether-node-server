@@ -46,7 +46,7 @@ import { TurtlingStatus } from './turtling/turtling.status';
         forwardRef(() => EffectModule),
         forwardRef(() => EnemyModule),
         forwardRef(() => PlayerModule),
-        CardModule,
+        forwardRef(() => CardModule),
     ],
     providers: [
         StatusService,
