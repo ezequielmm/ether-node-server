@@ -8,12 +8,12 @@ import {
     EVENT_BEFORE_ENEMIES_TURN_START,
     EVENT_BEFORE_PLAYER_TURN_START,
 } from 'src/game/constants';
-import { StatusCollection, StatusEventHandler } from '../interfaces';
+import { StatusCollection } from '../interfaces';
 import { StatusService } from '../status.service';
 import { forceField } from './contants';
 
 @Injectable()
-export class ForceFieldEvent implements StatusEventHandler {
+export class ForceFieldEvent {
     private readonly logger = new Logger(ForceFieldEvent.name);
 
     constructor(

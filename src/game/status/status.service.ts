@@ -1,7 +1,7 @@
 import { forwardRef, Inject, Injectable, Logger } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { InjectModel } from '@nestjs/mongoose';
-import { cloneDeep, compact, filter, find, isArray, matches } from 'lodash';
+import { compact, filter, find, isArray, matches } from 'lodash';
 import { Model } from 'mongoose';
 import { CardTargetedEnum } from '../components/card/card.enum';
 import { ExpeditionEnemy } from '../components/enemy/enemy.interface';
@@ -303,7 +303,7 @@ export class StatusService {
 
         for (const entityCollection of statusGlobalCollection) {
             let isUpdate = false;
-            const collection = cloneDeep(entityCollection.statuses);
+            const collection = entityCollection.statuses;
 
             for (const type in collection) {
                 const statuses = collection[type];
@@ -364,7 +364,7 @@ export class StatusService {
                         },
                     };
 
-                    await instance.onEnemiesTurnStart(dto);
+                    await instance.handle(dto);
                 }
 
                 if (statusesToRemove.length > 0) {

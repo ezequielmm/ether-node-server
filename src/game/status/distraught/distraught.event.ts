@@ -8,15 +8,12 @@ import {
     EVENT_BEFORE_ENEMIES_TURN_START,
     EVENT_BEFORE_PLAYER_TURN_START,
 } from 'src/game/constants';
-import {
-    StatusCollection,
-    StatusEventHandler,
-} from 'src/game/status/interfaces';
+import { StatusCollection } from 'src/game/status/interfaces';
 import { StatusService } from 'src/game/status/status.service';
 import { distraught } from './constants';
 
 @Injectable()
-export class DistraughtEvent implements StatusEventHandler {
+export class DistraughtEvent {
     private readonly logger = new Logger(DistraughtEvent.name);
 
     constructor(

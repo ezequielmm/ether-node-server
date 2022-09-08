@@ -1,4 +1,5 @@
 import { fortitude } from 'src/game/status/fortitude/constants';
+import { prayingStatus } from 'src/game/status/praying/constants';
 import { resolve } from 'src/game/status/resolve/constants';
 import { CardRarityEnum, CardTypeEnum, CardTargetedEnum } from '../card.enum';
 import { Card } from '../card.schema';
@@ -10,23 +11,16 @@ export const PrayCard: Card = {
     cardType: CardTypeEnum.Skill,
     pool: 'knight',
     energy: 0,
-    description: `At the beginning of your next turn gain {${resolve.name}} [${resolve.name}] and {${fortitude.name}} [${fortitude.name}]`,
+    description: `At the beginning of your next turn gain 1 [${resolve.name}] and 1 [${fortitude.name}]`,
     keywords: [],
     properties: {
         effects: [],
         statuses: [
             {
-                name: resolve.name,
+                name: prayingStatus.name,
                 args: {
-                    value: 1,
                     attachTo: CardTargetedEnum.Player,
-                },
-            },
-            {
-                name: fortitude.name,
-                args: {
                     value: 1,
-                    attachTo: CardTargetedEnum.Player,
                 },
             },
         ],
@@ -42,23 +36,16 @@ export const PrayCardUpgraded: Card = {
     cardType: CardTypeEnum.Skill,
     pool: 'knight',
     energy: 0,
-    description: `At the beginning of your next turn gain {${resolve.name}} [${resolve.name}] and {${fortitude.name}} [${fortitude.name}]`,
+    description: `At the beginning of your next turn gain 1 [${resolve.name}] and 1 [${fortitude.name}]`,
     keywords: [],
     properties: {
         effects: [],
         statuses: [
             {
-                name: resolve.name,
+                name: prayingStatus.name,
                 args: {
-                    value: 2,
                     attachTo: CardTargetedEnum.Player,
-                },
-            },
-            {
-                name: fortitude.name,
-                args: {
                     value: 2,
-                    attachTo: CardTargetedEnum.Player,
                 },
             },
         ],
