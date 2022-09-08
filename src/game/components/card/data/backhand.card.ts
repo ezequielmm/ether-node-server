@@ -51,6 +51,7 @@ export const BackHandCardUpgraded: Card = {
         effects: [
             {
                 effect: damageEffect.name,
+                target: CardTargetedEnum.Enemy,
                 args: {
                     value: 14,
                 },
