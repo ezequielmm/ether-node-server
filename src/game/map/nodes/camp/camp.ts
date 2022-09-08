@@ -26,7 +26,7 @@ class Camp extends Node {
         });
 
         const { hp_max, hp_current } = expedition.player_state;
-        const new_hp = Math.max(hp_max, hp_current + hp_max * 0.3);
+        const new_hp = Math.max(hp_max, hp_current + hp_current * 0.3);
 
         await expeditionService.update(
             { client_id: clientId, status: ExpeditionStatusEnum.InProgress },
