@@ -114,7 +114,6 @@ export class ExpeditionGateway {
             const { map: oldMap } = expedition;
 
             const newMap = restoreMap(oldMap);
-
             newMap.activeNode = newMap.fullCurrentMap.get(node.id);
             newMap.activeNode.complete(newMap);
 
