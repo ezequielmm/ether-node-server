@@ -24,7 +24,7 @@ export class SharpenBladeStatus implements StatusEventHandler {
         private readonly expeditionService: ExpeditionService,
     ) {}
 
-    async handler(dto: StatusEventDTO<Record<string, any>>): Promise<any> {
+    async handle(dto: StatusEventDTO<Record<string, any>>): Promise<any> {
         const { ctx, status } = dto;
         const card = await this.cardService.findById(
             status.args['upgraded']

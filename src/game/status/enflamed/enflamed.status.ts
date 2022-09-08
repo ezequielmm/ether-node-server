@@ -1,8 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { JsonEffect } from 'src/game/effects/effects.interface';
-import { EffectService } from 'src/game/effects/effects.service';
-import { energyEffect } from 'src/game/effects/energy/constants';
-import { StatusEventDTO, StatusEventHandler } from '../interfaces';
+import { DamageArgs } from 'src/game/effects/damage/damage.effect';
+import { EffectDTO } from 'src/game/effects/effects.interface';
+import { StatusEffectDTO, StatusEffectHandler } from '../interfaces';
 import { StatusDecorator } from '../status.decorator';
 import { enflamed } from './contants';
 
@@ -10,22 +9,18 @@ import { enflamed } from './contants';
     status: enflamed,
 })
 @Injectable()
-export class EnflamedStatus implements StatusEventHandler {
-    constructor(private readonly effectService: EffectService) {}
+export class EnflamedStatus implements StatusEffectHandler {
+    async preview(
+        args: StatusEffectDTO<DamageArgs>,
+    ): Promise<EffectDTO<DamageArgs>> {
+        return this.handle(args);
+    }
 
-    async enemyHandler(dto: StatusEventDTO): Promise<void> {
-        const effect: JsonEffect = {
-            effect: energyEffect.name,
-            args: {
-                value: dto.status.args.value,
-            },
-        };
+    async handle(
+        dto: StatusEffectDTO<DamageArgs>,
+    ): Promise<EffectDTO<DamageArgs>> {
+        // const args = dto.status.args;
 
-        await this.effectService.apply({
-            ctx: dto.ctx,
-            source: dto.source,
-            target: dto.target,
-            effect,
-        });
+        return dto.effectDTO;
     }
 }

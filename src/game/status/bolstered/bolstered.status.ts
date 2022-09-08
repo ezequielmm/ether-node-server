@@ -22,7 +22,7 @@ export class BolsteredStatus implements StatusEventHandler {
         private readonly statusService: StatusService,
     ) {}
 
-    async handler(args: StatusEventDTO): Promise<void> {
+    async handle(args: StatusEventDTO): Promise<void> {
         const {
             target,
             ctx,

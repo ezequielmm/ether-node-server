@@ -8,15 +8,12 @@ import {
     EVENT_BEFORE_ENEMIES_TURN_START,
     EVENT_BEFORE_PLAYER_TURN_START,
 } from 'src/game/constants';
-import {
-    StatusCollection,
-    StatusEventHandler,
-} from 'src/game/status/interfaces';
+import { StatusCollection } from 'src/game/status/interfaces';
 import { StatusService } from 'src/game/status/status.service';
 import { distraught } from './constants';
 
 @Injectable()
-export class DistraughtEvent implements StatusEventHandler {
+export class DistraughtEvent {
     private readonly logger = new Logger(DistraughtEvent.name);
 
     constructor(
@@ -26,7 +23,7 @@ export class DistraughtEvent implements StatusEventHandler {
     ) {}
 
     @OnEvent(EVENT_BEFORE_ENEMIES_TURN_START, { async: true })
-    async handler(args: { ctx: Context }): Promise<void> {
+    async onEnemiesTurnStart(args: { ctx: Context }): Promise<void> {
         const { ctx } = args;
         const enemies = this.enemyService.getAll(ctx);
 
@@ -36,7 +33,7 @@ export class DistraughtEvent implements StatusEventHandler {
     }
 
     @OnEvent(EVENT_BEFORE_PLAYER_TURN_START, { async: true })
-    async playerHandler(args: { ctx: Context }): Promise<void> {
+    async onPlayerTurnStart(args: { ctx: Context }): Promise<void> {
         const { ctx } = args;
         const player = this.playerService.get(ctx);
         const statuses = player.value.combatState.statuses;
