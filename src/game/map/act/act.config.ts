@@ -65,7 +65,7 @@ export const actCconfigAlternatives = [
                 // },
                 {
                     type: 'camp',
-                    subType: 'camp',
+                    subType: 'camp_regular',
                     chance: 10,
                     config: {},
                 },
