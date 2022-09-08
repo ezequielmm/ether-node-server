@@ -114,7 +114,6 @@ export class ExpeditionGateway {
             const { map: oldMap } = expedition;
 
             const newMap = restoreMap(oldMap);
-
             newMap.activeNode = newMap.fullCurrentMap.get(node.id);
             newMap.activeNode.complete(newMap);
 
@@ -131,7 +130,7 @@ export class ExpeditionGateway {
                 StandardResponse.respond({
                     message_type: SWARMessageType.EndNode,
                     action: SWARAction.ShowMap,
-                    data: mapToSave,
+                    data: null,
                 }),
             );
         }

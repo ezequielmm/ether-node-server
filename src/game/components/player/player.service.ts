@@ -168,7 +168,6 @@ export class PlayerService {
      *
      * @param ctx Context
      * @param source Source of the status (Who is attacking)
-     * @param status Status to attach
      * @param [args = { value: 1 }] Arguments to pass to the status
      *
      * @returns Attached status
