@@ -130,7 +130,7 @@ export class ExpeditionGateway {
                 StandardResponse.respond({
                     message_type: SWARMessageType.EndNode,
                     action: SWARAction.ShowMap,
-                    data: mapToSave,
+                    data: null,
                 }),
             );
         }

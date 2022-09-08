@@ -12,7 +12,7 @@ export enum SWARMessageType {
     PlayerAffected = 'player_affected',
     EndTurn = 'end_turn',
     BeginTurn = 'begin_turn',
-    CampUpdate = 'camp_update ',
+    CampUpdate = 'camp_update',
     EncounterUpdate = 'encounter_update',
     TreasureUpdate = 'treasure_update',
     MerchantUpdate = 'merchant_update',
