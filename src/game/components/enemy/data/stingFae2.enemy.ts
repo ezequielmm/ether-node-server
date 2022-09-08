@@ -11,7 +11,7 @@ import { Enemy } from '../enemy.schema';
 
 export const stingFae2Data: Enemy = {
     enemyId: 17,
-    name: 'StingFae',
+    name: 'StingFae2',
     type: EnemyTypeEnum.Fae,
     category: EnemyCategoryEnum.Basic,
     size: EnemySizeEnum.Small,
