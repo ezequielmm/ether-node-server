@@ -2,7 +2,6 @@ import {
     ExpeditionMapNodeTypeEnum,
     ExpeditionStatusEnum,
 } from 'src/game/components/expedition/expedition.enum';
-import { Activity } from 'src/game/elements/prototypes/activity';
 import { getApp } from 'src/main';
 import Node from '../node';
 
@@ -21,14 +20,13 @@ class Camp extends Node {
     protected async rest(clientId: string) {
         const app = getApp();
         const expeditionService = await app.get('ExpeditionService');
-        const gameManagerService = await app.get('GameManagerService');
 
         const expedition = await expeditionService.findOne({
             client_id: clientId,
         });
 
         const { hp_max, hp_current } = expedition.player_state;
-        const new_hp = Math.max(hp_max, hp_current + hp_max * 0.3);
+        const new_hp = Math.max(hp_max, hp_current + hp_current * 0.3);
 
         await expeditionService.update(
             { client_id: clientId, status: ExpeditionStatusEnum.InProgress },
@@ -38,17 +36,6 @@ class Camp extends Node {
                     hp_current: new_hp,
                 },
             },
-        );
-
-        await gameManagerService.logActivity(
-            clientId,
-            new Activity('player_state', undefined, 'rest', undefined, [
-                {
-                    mod: 'set',
-                    key: 'player_state.hp_current',
-                    val: new_hp,
-                },
-            ]),
         );
     }
 }

@@ -12,6 +12,8 @@ import { PlayerModule } from 'src/game/components/player/player.module';
 import { CombatQueueModule } from 'src/game/components/combatQueue/combatQueue.module';
 import { GetDataGateway } from './getData.gateway';
 import { RewardGateway } from './reward.gateway';
+import { CampGateway } from './camp.gateway';
+import { CardSelectionScreenModule } from 'src/game/components/cardSelectionScreen/cardSelectionScreen.module';
 
 @Module({
     imports: [
@@ -23,6 +25,7 @@ import { RewardGateway } from './reward.gateway';
         CharacterModule,
         PlayerModule,
         CombatQueueModule,
+        CardSelectionScreenModule,
     ],
     providers: [
         SocketGateway,
@@ -30,6 +33,7 @@ import { RewardGateway } from './reward.gateway';
         ExpeditionGateway,
         GetDataGateway,
         RewardGateway,
+        CampGateway,
     ],
 })
 export class SocketModule {}

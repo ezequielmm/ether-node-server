@@ -4,6 +4,10 @@ import { filter } from 'lodash';
 import { EnemyService } from 'src/game/components/enemy/enemy.service';
 import { Context, ExpeditionEntity } from 'src/game/components/interfaces';
 import { PlayerService } from 'src/game/components/player/player.service';
+import {
+    EVENT_BEFORE_ENEMIES_TURN_START,
+    EVENT_BEFORE_PLAYER_TURN_START,
+} from 'src/game/constants';
 import { DamageArgs } from 'src/game/effects/damage/damage.effect';
 import { EffectDTO } from 'src/game/effects/effects.interface';
 import {
@@ -46,7 +50,7 @@ export class FatigueStatus implements StatusEffectHandler {
         return args.effectDTO;
     }
 
-    @OnEvent('enemy:before-start-turn', { async: true })
+    @OnEvent(EVENT_BEFORE_ENEMIES_TURN_START, { async: true })
     async enemyHandler(args: { ctx: Context }): Promise<void> {
         const { ctx } = args;
         const enemies = this.enemyService.getAll(ctx);
@@ -56,7 +60,7 @@ export class FatigueStatus implements StatusEffectHandler {
         }
     }
 
-    @OnEvent('player:before-start-turn', { async: true })
+    @OnEvent(EVENT_BEFORE_PLAYER_TURN_START, { async: true })
     async playerHandler(args: { ctx: Context }): Promise<void> {
         const { ctx } = args;
         const player = this.playerService.get(ctx);

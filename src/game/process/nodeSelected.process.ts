@@ -9,6 +9,7 @@ import {
     SWARAction,
 } from '../standardResponse/standardResponse';
 import { InitCombatProcess } from './initCombat.process';
+import { InitNodeProcess } from './initNode.process';
 
 @Injectable()
 export class NodeSelectedProcess {
@@ -17,6 +18,7 @@ export class NodeSelectedProcess {
     constructor(
         private readonly expeditionService: ExpeditionService,
         private readonly initCombatProcess: InitCombatProcess,
+        private readonly initNodeProcess: InitNodeProcess,
     ) {}
 
     async handle(client: Socket, node_id: number): Promise<string> {
@@ -97,6 +99,8 @@ export class NodeSelectedProcess {
                 case ExpeditionMapNodeTypeEnum.Camp:
                 case ExpeditionMapNodeTypeEnum.CampHouse:
                 case ExpeditionMapNodeTypeEnum.CampRegular:
+                    await this.initNodeProcess.process(client, node);
+
                     return JSON.stringify(
                         StandardResponse.respond({
                             message_type: SWARMessageType.CampUpdate,
@@ -105,6 +109,8 @@ export class NodeSelectedProcess {
                         }),
                     );
                 case ExpeditionMapNodeTypeEnum.Encounter:
+                    await this.initNodeProcess.process(client, node);
+
                     return JSON.stringify(
                         StandardResponse.respond({
                             message_type: SWARMessageType.EncounterUpdate,
@@ -113,6 +119,8 @@ export class NodeSelectedProcess {
                         }),
                     );
                 case ExpeditionMapNodeTypeEnum.Treasure:
+                    await this.initNodeProcess.process(client, node);
+
                     return JSON.stringify(
                         StandardResponse.respond({
                             message_type: SWARMessageType.TreasureUpdate,
@@ -121,6 +129,8 @@ export class NodeSelectedProcess {
                         }),
                     );
                 case ExpeditionMapNodeTypeEnum.Merchant:
+                    await this.initNodeProcess.process(client, node);
+
                     return JSON.stringify(
                         StandardResponse.respond({
                             message_type: SWARMessageType.MerchantUpdate,
@@ -129,7 +139,7 @@ export class NodeSelectedProcess {
                         }),
                     );
             }
-        } else {
+        } else if (node.isActive) {
             const nodeTypes = Object.values(ExpeditionMapNodeTypeEnum);
             const combatNodes = nodeTypes.filter(
                 (node) => node.search('combat') !== -1,
@@ -153,11 +163,56 @@ export class NodeSelectedProcess {
                     ),
                 );
             } else {
-                this.logger.error('Selected node is not available');
-                client.emit('ErrorMessage', {
-                    message: `An Error has ocurred selecting the node`,
-                });
+                switch (node.type) {
+                    case ExpeditionMapNodeTypeEnum.Camp:
+                    case ExpeditionMapNodeTypeEnum.CampHouse:
+                    case ExpeditionMapNodeTypeEnum.CampRegular:
+                        await this.initNodeProcess.process(client, node);
+
+                        return JSON.stringify(
+                            StandardResponse.respond({
+                                message_type: SWARMessageType.CampUpdate,
+                                action: SWARAction.BeginCamp,
+                                data: null,
+                            }),
+                        );
+                    case ExpeditionMapNodeTypeEnum.Encounter:
+                        await this.initNodeProcess.process(client, node);
+
+                        return JSON.stringify(
+                            StandardResponse.respond({
+                                message_type: SWARMessageType.EncounterUpdate,
+                                action: SWARAction.BeginEncounter,
+                                data: null,
+                            }),
+                        );
+                    case ExpeditionMapNodeTypeEnum.Treasure:
+                        await this.initNodeProcess.process(client, node);
+
+                        return JSON.stringify(
+                            StandardResponse.respond({
+                                message_type: SWARMessageType.TreasureUpdate,
+                                action: SWARAction.BeginTreasure,
+                                data: null,
+                            }),
+                        );
+                    case ExpeditionMapNodeTypeEnum.Merchant:
+                        await this.initNodeProcess.process(client, node);
+
+                        return JSON.stringify(
+                            StandardResponse.respond({
+                                message_type: SWARMessageType.MerchantUpdate,
+                                action: SWARAction.BeginMerchant,
+                                data: null,
+                            }),
+                        );
+                }
             }
+        } else {
+            this.logger.error('Selected node is not available');
+            client.emit('ErrorMessage', {
+                message: `An Error has ocurred selecting the node`,
+            });
         }
     }
 }

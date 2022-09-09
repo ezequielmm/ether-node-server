@@ -15,7 +15,7 @@ export class GiftedStatus implements StatusEventHandler {
         private readonly enemyService: EnemyService,
     ) {}
 
-    async enemyHandler(dto: StatusEventDTO<Record<string, any>>): Promise<any> {
+    async handle(dto: StatusEventDTO<Record<string, any>>): Promise<any> {
         const { ctx, target, status } = dto;
 
         if (PlayerService.isPlayer(target)) {

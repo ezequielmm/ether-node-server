@@ -1,10 +1,3 @@
-import { damageEffect } from 'src/game/effects/damage/constants';
-import { defenseEffect } from 'src/game/effects/defense/constants';
-import { doubleBurn } from 'src/game/effects/doubleBurn/constants';
-import { drawCardEffect } from 'src/game/effects/drawCard/constants';
-import { energyEffect } from 'src/game/effects/energy/constants';
-import { healEffect } from 'src/game/effects/heal/constants';
-import { removeDefenseEffect } from 'src/game/effects/removeDefense/constants';
 import {
     StatusDirection,
     StatusEffect,
@@ -13,20 +6,20 @@ import {
     StatusType,
 } from '../interfaces';
 
+import * as glob from 'glob';
+import { Effect } from 'src/game/effects/effects.interface';
+
 export const confusion: StatusEffect = {
     name: 'confusion',
     type: StatusType.Debuff,
-    startsAt: StatusStartsAt.NextTurn,
+    startsAt: StatusStartsAt.NextPlayerTurn,
     trigger: StatusTrigger.Effect,
     direction: StatusDirection.Outgoing,
-    // TODO: Create a way to specify all effects insteand of define one by one
-    effects: [
-        damageEffect,
-        defenseEffect,
-        doubleBurn,
-        drawCardEffect,
-        energyEffect,
-        healEffect,
-        removeDefenseEffect,
-    ],
+    // Require all effects in the effects folder
+    effects: glob
+        .sync(__dirname + '/../../effects/**/constants.js')
+        .flatMap((file) =>
+            // eslint-disable-next-line @typescript-eslint/no-var-requires
+            Object.values(require(file)),
+        ) as unknown[] as Effect[],
 };

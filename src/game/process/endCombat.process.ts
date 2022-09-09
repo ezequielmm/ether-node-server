@@ -1,19 +1,17 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
+import { CombatQueueService } from '../components/combatQueue/combatQueue.service';
 import { EnemyService } from '../components/enemy/enemy.service';
+import { ExpeditionStatusEnum } from '../components/expedition/expedition.enum';
 import { ExpeditionService } from '../components/expedition/expedition.service';
-import { Context, ExpeditionEntity } from '../components/interfaces';
+import { Context } from '../components/interfaces';
 import { PlayerService } from '../components/player/player.service';
+import { EVENT_AFTER_DAMAGE_EFFECT } from '../constants';
 import {
     StandardResponse,
     SWARAction,
     SWARMessageType,
 } from '../standardResponse/standardResponse';
-
-export interface EntityDamageEvent {
-    ctx: Context;
-    entity: ExpeditionEntity;
-}
 
 @Injectable()
 export class EndCombatProcess {
@@ -23,16 +21,14 @@ export class EndCombatProcess {
         private readonly playerService: PlayerService,
         private readonly enemyService: EnemyService,
         private readonly expeditionService: ExpeditionService,
+        private readonly combatQueueService: CombatQueueService,
     ) {}
 
-    @OnEvent('entity.*', { async: true })
-    async handle(payload: EntityDamageEvent): Promise<void> {
-        const { ctx } = payload;
-
+    @OnEvent(EVENT_AFTER_DAMAGE_EFFECT, { async: true })
+    async handle({ ctx }): Promise<void> {
         if (this.playerService.isDead(ctx)) {
             this.logger.debug('Player is dead. Ending combat');
-            await this.endCombat(ctx);
-            this.emitPlayerDefeated(ctx);
+            await this.emitPlayerDefeated(ctx);
         }
 
         if (this.enemyService.isAllDead(ctx)) {
@@ -43,6 +39,8 @@ export class EndCombatProcess {
     }
 
     private async endCombat(ctx: Context): Promise<void> {
+        await this.combatQueueService.end(ctx);
+
         const {
             expedition: { _id: expeditionId },
         } = ctx;
@@ -53,7 +51,7 @@ export class EndCombatProcess {
             },
         });
 
-        this.logger.debug('Combat ended');
+        this.logger.debug(`Combat ended for client ${ctx.client.id}`);
     }
 
     private emitEnemiesDefeated(ctx: Context) {
@@ -71,16 +69,31 @@ export class EndCombatProcess {
         );
     }
 
-    private emitPlayerDefeated(ctx: Context) {
+    private async emitPlayerDefeated(ctx: Context): Promise<void> {
+        await this.combatQueueService.end(ctx);
+
         ctx.client.emit(
             'PutData',
             JSON.stringify(
                 StandardResponse.respond({
                     message_type: SWARMessageType.EndCombat,
                     action: SWARAction.PlayerDefeated,
-                    data: {},
+                    data: null,
                 }),
             ),
         );
+
+        await this.expeditionService.updateByFilter(
+            {
+                clientId: ctx.client.id,
+            },
+            {
+                $set: {
+                    status: ExpeditionStatusEnum.Defeated,
+                },
+            },
+        );
+
+        this.logger.debug(`Combat ended for client ${ctx.client.id}`);
     }
 }

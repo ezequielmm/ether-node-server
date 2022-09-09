@@ -1,6 +1,5 @@
 import { CardTargetedEnum } from '../components/card/card.enum';
 import { EnemyId } from '../components/enemy/enemy.type';
-import { IExpeditionPlayerStateDeckCard } from '../components/expedition/expedition.interface';
 import { Context, ExpeditionEntity } from '../components/interfaces';
 import { Effect, EffectDTO } from '../effects/effects.interface';
 import { TargetId } from '../effects/effects.types';
@@ -17,7 +16,7 @@ export enum StatusDirection {
 
 export enum StatusStartsAt {
     Instantly = 'instantly',
-    NextTurn = 'nextTurn',
+    NextPlayerTurn = 'nextPlayerTurn',
 }
 
 export enum StatusTrigger {
@@ -90,27 +89,16 @@ export interface StatusEffect extends StatusBase {
     effects: Effect[];
 }
 
-export enum StatusEventType {
-    OnPlayerTurnStart = 'onPlayerTurnStart',
-    OnEnemyTurnStart = 'onEnemyTurnStart',
-    OnTurnEnd = 'onTurnEnd',
-    OnBeginCardPlay = 'onBeginCardPlay',
-    OnEndCardPlay = 'onEndCardPlay',
-    OnAttachStatus = 'onAttachStatus',
-}
 export interface StatusEvent extends StatusBase {
     trigger: StatusTrigger.Event;
 
     /**
      * The event that triggers the status.
-     * @type {StatusEventType}
+     * @type {string}
      * @memberof Status
-     * @property {StatusEventType} OnTurnStart - The status is triggered on the start of the turn.
-     * @property {StatusEventType} OnTurnEnd - The status is triggered on the end of the turn.
-     * @example 'onTurnStart'
-     * @example 'onTurnEnd'
+     * @see /src/game/constants.ts for available events.
      */
-    event: StatusEventType;
+    event: string | string[];
 }
 
 export type Status = StatusEffect | StatusEvent;
@@ -180,20 +168,57 @@ export interface StatusEffectDTO<
 }
 
 export interface StatusEventDTO<Args = Record<string, any>> {
+    /**
+     * Context
+     * @type {Context}
+     * @memberof StatusEventDTO
+     */
     readonly ctx: Context;
+
+    /**
+     * Event name
+     * @type {string}
+     * @memberof StatusEventDTO
+     * @example 'beforePlayerTurnStart'
+     */
+    readonly event: string;
+
+    /**
+     * Who attached the status.
+     * @type {ExpeditionEntity}
+     * @memberof StatusEventDTO
+     * @example { id: '1', type: 'player' }
+     * @example { id: '1', type: 'enemy' }
+     */
     readonly source: ExpeditionEntity;
+
+    /**
+     * To whom the status was attached.
+     * @type {ExpeditionEntity}
+     * @memberof StatusEventDTO
+     * @example { id: '1', type: 'player' }
+     * @example { id: '1', type: 'enemy' }
+     */
     readonly target: ExpeditionEntity;
+
+    /**
+     * Status information
+     * @type {AttachedStatus}
+     * @memberof StatusEventDTO
+     * @example { name: 'resolve', addedInRound: 1, sourceReference: { id: '1', type: 'player' }, args: { value: 1 } }
+     */
     readonly status: AttachedStatus;
+
+    /**
+     * Event arguments
+     * @type {Args}
+     * @memberof StatusEventDTO
+     * @example { value: 1 }
+     */
     readonly args: Args;
+
     update(args: AttachedStatus['args']): void;
     remove(): void;
-}
-
-export interface OnBeginCardPlayEventArgs {
-    card: IExpeditionPlayerStateDeckCard;
-    cardSource: ExpeditionEntity;
-    cardSourceReference: EntityReferenceDTO;
-    cardTargetId: TargetId;
 }
 
 /**
@@ -214,12 +239,7 @@ export interface StatusEffectHandler {
  */
 export interface StatusEventHandler {
     // TODO: Define the args
-    enemyHandler(args: StatusEventDTO): Promise<any>;
-}
-
-export interface OnAttachStatusEventArgs {
-    status: JsonStatus;
-    targetId: TargetId;
+    handle(args: StatusEventDTO): Promise<any>;
 }
 
 export type StatusHandler = StatusEffectHandler | StatusEventHandler;

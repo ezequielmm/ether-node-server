@@ -203,17 +203,13 @@ export class DrawCardAction {
             if (isNotUndefined(useEnemiesConfusedAsValue)) {
                 // First we initialize a boolean for the confused
                 // enemies
-                let hasConfusedEnemies = false;
 
                 // Next go to all the enemies and check if we have
                 // at least one enemy confused
-                enemies.forEach(({ statuses: { debuff } }) => {
-                    hasConfusedEnemies = debuff.some((item) => {
-                        return item.name === confusion.name;
-                    });
-
-                    if (hasConfusedEnemies) return;
-                });
+                const hasConfusedEnemies = enemies.some(
+                    ({ statuses: { debuff } }) =>
+                        debuff.some((item) => item.name === confusion.name),
+                );
 
                 // If it does, we modify the cost for the cards to 0
                 if (hasConfusedEnemies)

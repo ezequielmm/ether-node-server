@@ -1,9 +1,5 @@
 import { EffectService } from 'src/game/effects/effects.service';
-import {
-    OnBeginCardPlayEventArgs,
-    StatusEventDTO,
-    StatusEventHandler,
-} from '../interfaces';
+import { StatusEventDTO, StatusEventHandler } from '../interfaces';
 import { StatusDecorator } from '../status.decorator';
 import { StatusService } from '../status.service';
 import { imbued } from './constants';
@@ -17,9 +13,7 @@ export class ImbuedStatus implements StatusEventHandler {
         private readonly effectService: EffectService,
     ) {}
 
-    async enemyHandler(
-        dto: StatusEventDTO<OnBeginCardPlayEventArgs>,
-    ): Promise<void> {
+    async handle(dto: StatusEventDTO): Promise<void> {
         const {
             ctx,
             args: { card, cardSource: source, cardTargetId: targetId },

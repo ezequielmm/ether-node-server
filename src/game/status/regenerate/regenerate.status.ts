@@ -1,5 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { JsonEffect } from 'src/game/effects/effects.interface';
+import { EnemyService } from 'src/game/components/enemy/enemy.service';
+import { PlayerService } from 'src/game/components/player/player.service';
+import {
+    EVENT_BEFORE_ENEMIES_TURN_START,
+    EVENT_BEFORE_PLAYER_TURN_START,
+} from 'src/game/constants';
 import { EffectService } from 'src/game/effects/effects.service';
 import { healEffect } from 'src/game/effects/heal/constants';
 import { StatusEventDTO, StatusEventHandler } from '../interfaces';
@@ -13,19 +18,26 @@ import { regenerate } from './contants';
 export class RegenerateStatus implements StatusEventHandler {
     constructor(private readonly effectService: EffectService) {}
 
-    async enemyHandler(dto: StatusEventDTO): Promise<void> {
-        const effect: JsonEffect = {
-            effect: healEffect.name,
-            args: {
-                value: dto.status.args.value,
-            },
-        };
+    async handle(dto: StatusEventDTO): Promise<void> {
+        const { ctx, source, target, status } = dto;
 
-        await this.effectService.apply({
-            ctx: dto.ctx,
-            source: dto.source,
-            target: dto.target,
-            effect,
-        });
+        if (
+            (dto.event == EVENT_BEFORE_PLAYER_TURN_START &&
+                PlayerService.isPlayer(target)) ||
+            (dto.event == EVENT_BEFORE_ENEMIES_TURN_START &&
+                EnemyService.isEnemy(target))
+        ) {
+            await this.effectService.apply({
+                ctx: ctx,
+                source: source,
+                target: target,
+                effect: {
+                    effect: healEffect.name,
+                    args: {
+                        value: status.args.value,
+                    },
+                },
+            });
+        }
     }
 }

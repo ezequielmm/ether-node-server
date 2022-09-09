@@ -2,7 +2,7 @@ export enum EnemyTypeEnum {
     Spirit = 'spirit',
     Plant = 'plant',
     Beast = 'beast',
-    Fey = 'fey',
+    Fae = 'fae',
     Undead = 'undead',
     Clockwork = 'clockwork',
     Eldritch = 'eldritch',
@@ -19,8 +19,8 @@ export enum EnemySizeEnum {
     Tiny = 'tiny',
     Small = 'small',
     Medium = 'medium',
-    MediumWide = 'medium-mide',
-    Large = 'marge',
+    MediumWide = 'medium-wide',
+    Large = 'large',
     Giant = 'giant',
 }
 

@@ -1,6 +1,6 @@
+import { EVENT_BEFORE_ENEMIES_TURN_END } from 'src/game/constants';
 import {
     StatusEvent,
-    StatusEventType,
     StatusStartsAt,
     StatusTrigger,
     StatusType,
@@ -11,5 +11,5 @@ export const burn: StatusEvent = {
     type: StatusType.Debuff,
     startsAt: StatusStartsAt.Instantly,
     trigger: StatusTrigger.Event,
-    event: StatusEventType.OnTurnEnd,
+    event: EVENT_BEFORE_ENEMIES_TURN_END,
 };
