@@ -28,7 +28,7 @@ import { SendEnemyIntentProcess } from './sendEnemyIntents.process';
         SettingsModule,
         forwardRef(() => EnemyModule),
         forwardRef(() => ActionModule),
-        CardModule,
+        forwardRef(() => CardModule),
         CharacterModule,
         forwardRef(() => StatusModule),
         PlayerModule,

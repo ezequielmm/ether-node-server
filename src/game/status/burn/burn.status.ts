@@ -16,7 +16,7 @@ export class BurnStatus implements StatusEventHandler {
         private readonly effectService: EffectService,
     ) {}
 
-    async handler(dto: StatusEventDTO): Promise<void> {
+    async handle(dto: StatusEventDTO): Promise<void> {
         const effect: JsonEffect = {
             effect: damageEffect.name,
             args: {

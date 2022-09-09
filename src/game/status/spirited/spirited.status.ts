@@ -13,7 +13,7 @@ import { spirited } from './contants';
 export class SpiritedStatus implements StatusEventHandler {
     constructor(private readonly effectService: EffectService) {}
 
-    async handler(dto: StatusEventDTO): Promise<void> {
+    async handle(dto: StatusEventDTO): Promise<void> {
         const effect: JsonEffect = {
             effect: energyEffect.name,
             args: {
