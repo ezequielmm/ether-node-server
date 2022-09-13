@@ -1,4 +1,4 @@
-import { EVENT_AFTER_CARD_PLAY } from 'src/game/constants';
+import { EVENT_BEFORE_CARD_PLAY } from 'src/game/constants';
 import {
     StatusEvent,
     StatusStartsAt,
@@ -8,8 +8,8 @@ import {
 
 export const bolstered: StatusEvent = {
     name: 'bolstered',
-    startsAt: StatusStartsAt.NextPlayerTurn,
+    startsAt: StatusStartsAt.Instantly,
     trigger: StatusTrigger.Event,
-    event: EVENT_AFTER_CARD_PLAY,
+    event: EVENT_BEFORE_CARD_PLAY,
     type: StatusType.Buff,
 };
