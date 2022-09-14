@@ -28,7 +28,7 @@ export class DistraughtEvent {
         const enemies = this.enemyService.getAll(ctx);
 
         for (const enemy of enemies) {
-            await this.updateStraughts(ctx, enemy.value.statuses, enemy);
+            await this.remove(ctx, enemy.value.statuses, enemy);
         }
     }
 
@@ -38,15 +38,15 @@ export class DistraughtEvent {
         const player = this.playerService.get(ctx);
         const statuses = player.value.combatState.statuses;
 
-        await this.updateStraughts(ctx, statuses, player);
+        await this.remove(ctx, statuses, player);
     }
 
-    private async updateStraughts(
+    private async remove(
         ctx: Context,
         collection: StatusCollection,
         entity: ExpeditionEntity,
     ): Promise<void> {
-        const distraughts = filter(collection.debuff, {
+        const distraughts = filter(collection[distraught.type], {
             name: distraught.name,
         });
 

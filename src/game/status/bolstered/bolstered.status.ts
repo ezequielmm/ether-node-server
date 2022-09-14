@@ -72,7 +72,6 @@ export class BolsteredStatus implements StatusEventHandler {
         for (const status of statuses) {
             const buffStatuses = reject(status.statuses.buff, {
                 name: bolstered.name,
-                addedInRound: ctx.expedition.currentNode.data.round - 1,
             });
 
             if (isEqual(buffStatuses, status.statuses.buff)) {

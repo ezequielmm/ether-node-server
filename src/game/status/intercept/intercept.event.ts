@@ -50,7 +50,9 @@ export class InterceptEvent {
         collection: StatusCollection,
         entity: ExpeditionEntity,
     ): Promise<void> {
-        const intercepts = filter(collection.buff, { name: intercept.name });
+        const intercepts = filter(collection[intercept.type], {
+            name: intercept.name,
+        });
 
         const interceptsToRemove = [];
 

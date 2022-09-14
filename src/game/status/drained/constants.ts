@@ -1,17 +1,15 @@
-import { energyEffect } from 'src/game/effects/energy/constants';
+import { EVENT_BEFORE_PLAYER_TURN_START } from 'src/game/constants';
 import {
-    StatusDirection,
-    StatusEffect,
+    StatusEvent,
     StatusStartsAt,
     StatusTrigger,
     StatusType,
 } from '../interfaces';
 
-export const drained: StatusEffect = {
+export const drained: StatusEvent = {
     name: 'drained',
     type: StatusType.Debuff,
-    startsAt: StatusStartsAt.NextPlayerTurn,
-    trigger: StatusTrigger.Effect,
-    direction: StatusDirection.Incoming,
-    effects: [energyEffect],
+    startsAt: StatusStartsAt.Instantly,
+    trigger: StatusTrigger.Event,
+    event: EVENT_BEFORE_PLAYER_TURN_START,
 };

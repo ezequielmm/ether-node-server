@@ -12,7 +12,7 @@ import { Effect } from 'src/game/effects/effects.interface';
 export const confusion: StatusEffect = {
     name: 'confusion',
     type: StatusType.Debuff,
-    startsAt: StatusStartsAt.NextPlayerTurn,
+    startsAt: StatusStartsAt.Instantly,
     trigger: StatusTrigger.Effect,
     direction: StatusDirection.Outgoing,
     // Require all effects in the effects folder

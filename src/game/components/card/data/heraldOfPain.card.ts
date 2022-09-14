@@ -1,4 +1,5 @@
 import { heraldDelayed } from 'src/game/status/heraldDelayed/constants';
+import { nextPlayerTurnStatus } from 'src/game/status/nextPlayerTurn/constants';
 import { CardRarityEnum, CardTypeEnum, CardTargetedEnum } from '../card.enum';
 import { Card } from '../card.schema';
 
@@ -15,10 +16,14 @@ export const HeraldOfPainCard: Card = {
         effects: [],
         statuses: [
             {
-                name: heraldDelayed.name,
+                name: nextPlayerTurnStatus.name,
                 args: {
-                    value: 1,
+                    value: Number.NaN,
                     attachTo: CardTargetedEnum.Player,
+                    statusName: heraldDelayed.name,
+                    statusArgs: {
+                        value: 1,
+                    },
                 },
             },
         ],
@@ -40,10 +45,14 @@ export const HeraldOfPainCardUpgraded: Card = {
         effects: [],
         statuses: [
             {
-                name: heraldDelayed.name,
+                name: nextPlayerTurnStatus.name,
                 args: {
-                    value: 1,
+                    value: Number.NaN,
                     attachTo: CardTargetedEnum.Player,
+                    statusName: heraldDelayed.name,
+                    statusArgs: {
+                        value: 1,
+                    },
                 },
             },
         ],

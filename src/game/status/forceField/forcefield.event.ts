@@ -28,25 +28,27 @@ export class ForceFieldEvent {
         const enemies = this.enemyService.getAll(ctx);
 
         for (const enemy of enemies) {
-            await this.updateForceFields(ctx, enemy.value.statuses, enemy);
+            await this.remove(ctx, enemy.value.statuses, enemy);
         }
     }
 
     @OnEvent(EVENT_BEFORE_PLAYER_TURN_START, { async: true })
-    async onPlayerTurnEnd(args: { ctx: Context }): Promise<void> {
+    async onPlayerTurnStart(args: { ctx: Context }): Promise<void> {
         const { ctx } = args;
         const player = this.playerService.get(ctx);
         const statuses = player.value.combatState.statuses;
 
-        await this.updateForceFields(ctx, statuses, player);
+        await this.remove(ctx, statuses, player);
     }
 
-    private async updateForceFields(
+    private async remove(
         ctx: Context,
         collection: StatusCollection,
         entity: ExpeditionEntity,
     ): Promise<void> {
-        const forceFields = filter(collection.buff, { name: forceField.name });
+        const forceFields = filter(collection[forceField.type], {
+            name: forceField.name,
+        });
 
         const forceFieldsToRemove = [];
 

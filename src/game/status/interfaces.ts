@@ -148,8 +148,8 @@ export interface AttachedStatus {
     readonly sourceReference: EntityReferenceDTO;
 
     args: {
-        value: any;
-    };
+        value?: any;
+    } & Record<string, any>;
 }
 
 export interface StatusCollection {

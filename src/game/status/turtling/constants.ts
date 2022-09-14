@@ -1,17 +1,15 @@
-import { defenseEffect } from '../../effects/defense/constants';
+import { EVENT_BEFORE_PLAYER_TURN_END } from 'src/game/constants';
 import {
-    StatusDirection,
     StatusStartsAt,
     StatusType,
-    StatusEffect,
     StatusTrigger,
+    StatusEvent,
 } from '../interfaces';
 
-export const turtling: StatusEffect = {
+export const turtling: StatusEvent = {
     name: 'turtling',
     type: StatusType.Buff,
-    direction: StatusDirection.Incoming,
-    startsAt: StatusStartsAt.NextPlayerTurn,
-    trigger: StatusTrigger.Effect,
-    effects: [defenseEffect],
+    startsAt: StatusStartsAt.Instantly,
+    trigger: StatusTrigger.Event,
+    event: EVENT_BEFORE_PLAYER_TURN_END,
 };
