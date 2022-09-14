@@ -52,6 +52,7 @@ export interface StatusBase {
      * @property {StatusStartsAt} NextTurn - The status starts on the next turn.
      * @example 'instantly'
      * @example 'nextTurn'
+     * @deprecated Use nextPlayerTurn status instead if you want to start the status on the next player turn.
      */
     startsAt: StatusStartsAt;
 
