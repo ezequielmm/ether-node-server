@@ -1,5 +1,6 @@
 import { forwardRef, Module } from '@nestjs/common';
 import { CardModule } from '../components/card/card.module';
+import { CombatQueueModule } from '../components/combatQueue/combatQueue.module';
 import { EnemyModule } from '../components/enemy/enemy.module';
 import { ExpeditionModule } from '../components/expedition/expedition.module';
 import { PlayerModule } from '../components/player/player.module';
@@ -46,6 +47,7 @@ import { TurtlingStatus } from './turtling/turtling.status';
         forwardRef(() => EnemyModule),
         forwardRef(() => PlayerModule),
         forwardRef(() => CardModule),
+        CombatQueueModule,
     ],
     providers: [
         StatusService,
