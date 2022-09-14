@@ -42,7 +42,7 @@ export const DivineGiftCardUpgraded: Card = {
             {
                 name: gifted.name,
                 args: {
-                    value: 4,
+                    value: 7,
                     attachTo: CardTargetedEnum.Player,
                 },
             },
