@@ -15,6 +15,7 @@ import { CombatQueueTargetEffectTypeEnum } from './combatQueue.enum';
 import { CreateCombatQueueDTO, PushActionDTO } from './combatQueue.interface';
 import { CombatQueue, CombatQueueDocument } from './combatQueue.schema';
 import * as cliColor from 'cli-color';
+import { nextPlayerTurnStatus } from 'src/game/status/nextPlayerTurn/constants';
 
 @Injectable()
 export class CombatQueueService {
@@ -104,6 +105,13 @@ export class CombatQueueService {
         status: JsonStatus;
     }): Promise<void> {
         const { ctx, source, target, status } = args;
+
+        // Ignore if the status is nextPlayerTurnStatus.
+        // This is because nextPlayerTurnStatus is an internal status that is used to trigger the next player's turn.
+        // We don't want to add this status to the combat queue.
+        if (status.name == nextPlayerTurnStatus.name) {
+            return;
+        }
 
         const statusInfo = {
             name: status.name,
