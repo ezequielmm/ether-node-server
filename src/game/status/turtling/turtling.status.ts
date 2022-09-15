@@ -44,7 +44,7 @@ export class TurtlingStatus implements StatusEventHandler {
             target,
             args: {
                 effectType: CombatQueueTargetEffectTypeEnum.Defense,
-                defenseDelta: status.args.value,
+                defenseDelta: finalDefense,
                 finalDefense: finalDefense,
                 healthDelta: undefined,
                 finalHealth: undefined,
