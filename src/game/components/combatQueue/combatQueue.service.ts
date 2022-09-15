@@ -14,7 +14,7 @@ import { Context, ExpeditionEntity } from '../interfaces';
 import { CombatQueueTargetEffectTypeEnum } from './combatQueue.enum';
 import { CreateCombatQueueDTO, PushActionDTO } from './combatQueue.interface';
 import { CombatQueue, CombatQueueDocument } from './combatQueue.schema';
-import cliColor from 'cli-color';
+import * as cliColor from 'cli-color';
 
 @Injectable()
 export class CombatQueueService {
@@ -76,7 +76,7 @@ export class CombatQueueService {
             return;
         }
 
-        this.logger.debug(cliColor.blue('Sending combat queue to client'));
+        this.logger.debug(cliColor.blue('Sending combat queue to client 📮'));
 
         client.emit(
             'PutData',
