@@ -28,7 +28,12 @@ export class DistraughtEvent {
         const enemies = this.enemyService.getAll(ctx);
 
         for (const enemy of enemies) {
-            await this.remove(ctx, enemy.value.statuses, enemy);
+            await this.statusService.decreaseCounterAndRemove(
+                ctx,
+                enemy.value.statuses,
+                enemy,
+                distraught,
+            );
         }
     }
 
@@ -38,48 +43,11 @@ export class DistraughtEvent {
         const player = this.playerService.get(ctx);
         const statuses = player.value.combatState.statuses;
 
-        await this.remove(ctx, statuses, player);
-    }
-
-    private async remove(
-        ctx: Context,
-        collection: StatusCollection,
-        entity: ExpeditionEntity,
-    ): Promise<void> {
-        const distraughts = filter(collection[distraught.type], {
-            name: distraught.name,
-        });
-
-        const distraughtsToRemove = [];
-
-        // If there are no distraughts, return
-        if (distraughts.length === 0) return;
-
-        for (const status of distraughts) {
-            // Decremement the value of the status
-            status.args.value--;
-
-            if (status.args.value === 0) {
-                // If the value is 0, remove the status
-                distraughtsToRemove.push(status);
-                this.logger.debug(`Removing status ${status.name}`);
-            } else {
-                this.logger.debug(
-                    `Decreasing distraught status value to ${status.args.value}`,
-                );
-            }
-        }
-
-        // Remove the distraughts that are 0
-        collection.debuff = collection.debuff.filter(
-            (status) => !distraughtsToRemove.includes(status),
-        );
-
-        // Update the entity
-        await this.statusService.updateStatuses(
-            entity,
-            ctx.expedition,
-            collection,
+        await this.statusService.decreaseCounterAndRemove(
+            ctx,
+            statuses,
+            player,
+            distraught,
         );
     }
 }

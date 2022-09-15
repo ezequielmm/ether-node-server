@@ -28,7 +28,12 @@ export class InterceptEvent {
         const enemies = this.enemyService.getAll(ctx);
 
         for (const enemy of enemies) {
-            await this.updateIntercepts(ctx, enemy.value.statuses, enemy);
+            await this.statusService.decreaseCounterAndRemove(
+                ctx,
+                enemy.value.statuses,
+                enemy,
+                intercept,
+            );
         }
     }
 
@@ -42,43 +47,11 @@ export class InterceptEvent {
             },
         } = player;
 
-        await this.updateIntercepts(ctx, statuses, player);
-    }
-
-    private async updateIntercepts(
-        ctx: Context,
-        collection: StatusCollection,
-        entity: ExpeditionEntity,
-    ): Promise<void> {
-        const intercepts = filter(collection[intercept.type], {
-            name: intercept.name,
-        });
-
-        const interceptsToRemove = [];
-
-        if (intercepts.length === 0) return;
-
-        for (const status of intercepts) {
-            status.args.value--;
-
-            if (status.args.value === 0) {
-                interceptsToRemove.push(status);
-                this.logger.debug(`Removing status ${status.name}`);
-            } else {
-                this.logger.debug(
-                    `Decreasing intercept status value to ${status.args.value}`,
-                );
-            }
-        }
-
-        collection.buff = collection.buff.filter(
-            (status) => !interceptsToRemove.includes(status),
-        );
-
-        await this.statusService.updateStatuses(
-            entity,
-            ctx.expedition,
-            collection,
+        await this.statusService.decreaseCounterAndRemove(
+            ctx,
+            statuses,
+            player,
+            intercept,
         );
     }
 }

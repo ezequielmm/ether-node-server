@@ -29,10 +29,11 @@ export class TasteOfBloodBuffStatus extends HeraldDelayedStatus {
         const enemies = this.enemyService.getAll(ctx);
 
         for (const enemy of enemies) {
-            await this.removeTasteOfBloodBuffStatuses(
+            await this.statusService.decreaseCounterAndRemove(
                 ctx,
                 enemy.value.statuses,
                 enemy,
+                tasteOfBloodBuff,
             );
         }
     }
@@ -43,51 +44,11 @@ export class TasteOfBloodBuffStatus extends HeraldDelayedStatus {
         const player = this.playerService.get(ctx);
         const statuses = player.value.combatState.statuses;
 
-        await this.removeTasteOfBloodBuffStatuses(ctx, statuses, player);
-    }
-
-    private async removeTasteOfBloodBuffStatuses(
-        ctx: Context,
-        collection: StatusCollection,
-        entity: ExpeditionEntity,
-    ): Promise<void> {
-        const heraldDelayedCollection = filter(
-            collection[tasteOfBloodBuff.type],
-            {
-                name: tasteOfBloodBuff.name,
-            },
-        );
-
-        const distraughtsToRemove = [];
-
-        // If there are no distraughts, return
-        if (heraldDelayedCollection.length === 0) return;
-
-        for (const status of heraldDelayedCollection) {
-            // Decremement the value of the status
-            status.args.value--;
-
-            if (status.args.value === 0) {
-                // If the value is 0, remove the status
-                distraughtsToRemove.push(status);
-                this.logger.debug(`Removing status ${status.name}`);
-            } else {
-                this.logger.debug(
-                    `Decreasing ${status.name} status value to ${status.args.value}`,
-                );
-            }
-        }
-
-        // Remove the distraughts that are 0
-        collection.debuff = collection.debuff.filter(
-            (status) => !distraughtsToRemove.includes(status),
-        );
-
-        // Update the entity
-        await this.statusService.updateStatuses(
-            entity,
-            ctx.expedition,
-            collection,
+        await this.statusService.decreaseCounterAndRemove(
+            ctx,
+            statuses,
+            player,
+            tasteOfBloodBuff,
         );
     }
 }

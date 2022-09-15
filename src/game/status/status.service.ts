@@ -43,6 +43,7 @@ import {
     StatusStartsAt,
     StatusTrigger,
 } from './interfaces';
+import * as cliColor from 'cli-color';
 
 @Injectable()
 export class StatusService {
@@ -520,5 +521,48 @@ export class StatusService {
         statuses.push(...filter(global, { statuses: { debuff: [{ name }] } }));
 
         return compact(statuses);
+    }
+
+    public async decreaseCounterAndRemove(
+        ctx: Context,
+        collection: StatusCollection,
+        entity: ExpeditionEntity,
+        status: Status,
+    ): Promise<void> {
+        const statusCollection = filter(collection[status.type], {
+            name: status.name,
+        });
+
+        const statusesToRemove = [];
+
+        // If there are no distraughts, return
+        if (statusCollection.length === 0) return;
+
+        for (const status of statusCollection) {
+            // Decremement the value of the status
+            status.args.value--;
+
+            if (status.args.value === 0) {
+                // If the value is 0, remove the status
+                statusesToRemove.push(status);
+                this.logger.debug(
+                    cliColor.red(`Removing status ${status.name}`),
+                );
+            } else {
+                this.logger.debug(
+                    cliColor.red(
+                        `Decreasing ${status.name} status value to ${status.args.value}`,
+                    ),
+                );
+            }
+        }
+
+        // Remove the distraughts that are 0
+        collection[status.type] = collection[status.type].filter(
+            (status) => !statusesToRemove.includes(status),
+        );
+
+        // Update the entity
+        await this.updateStatuses(entity, ctx.expedition, collection);
     }
 }

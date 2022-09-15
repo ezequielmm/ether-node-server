@@ -28,7 +28,12 @@ export class ForceFieldEvent {
         const enemies = this.enemyService.getAll(ctx);
 
         for (const enemy of enemies) {
-            await this.remove(ctx, enemy.value.statuses, enemy);
+            await this.statusService.decreaseCounterAndRemove(
+                ctx,
+                enemy.value.statuses,
+                enemy,
+                forceField,
+            );
         }
     }
 
@@ -38,44 +43,11 @@ export class ForceFieldEvent {
         const player = this.playerService.get(ctx);
         const statuses = player.value.combatState.statuses;
 
-        await this.remove(ctx, statuses, player);
-    }
-
-    private async remove(
-        ctx: Context,
-        collection: StatusCollection,
-        entity: ExpeditionEntity,
-    ): Promise<void> {
-        const forceFields = filter(collection[forceField.type], {
-            name: forceField.name,
-        });
-
-        const forceFieldsToRemove = [];
-
-        if (forceFields.length === 0) return;
-
-        for (const status of forceFields) {
-            status.args.value--;
-
-            if (status.args.value === 0) {
-                forceFieldsToRemove.push(status);
-                this.logger.debug(`Removing status ${status.name}`);
-            } else {
-                this.logger.debug(
-                    `Decreasing force field status value to ${status.args.value}`,
-                );
-            }
-        }
-
-        collection.buff = collection.buff.filter(
-            (status) => !forceFieldsToRemove.includes(status),
-        );
-
-        // Update the entity
-        await this.statusService.updateStatuses(
-            entity,
-            ctx.expedition,
-            collection,
+        await this.statusService.decreaseCounterAndRemove(
+            ctx,
+            statuses,
+            player,
+            forceField,
         );
     }
 }

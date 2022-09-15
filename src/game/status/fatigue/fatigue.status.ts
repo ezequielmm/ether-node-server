@@ -56,7 +56,12 @@ export class FatigueStatus implements StatusEffectHandler {
         const enemies = this.enemyService.getAll(ctx);
 
         for (const enemy of enemies) {
-            await this.update(ctx, enemy.value.statuses, enemy);
+            await this.statusService.decreaseCounterAndRemove(
+                ctx,
+                enemy.value.statuses,
+                enemy,
+                fatigue,
+            );
         }
     }
 
@@ -70,44 +75,11 @@ export class FatigueStatus implements StatusEffectHandler {
             },
         } = player;
 
-        await this.update(ctx, statuses, player);
-    }
-
-    private async update(
-        ctx: Context,
-        collection: StatusCollection,
-        entity: ExpeditionEntity,
-    ): Promise<void> {
-        const statuses = filter(collection.debuff, { name: fatigue.name });
-        const statusesToRemove = [];
-
-        if (statuses.length === 0) return;
-
-        for (const status of statuses) {
-            // Skip statuses added in the current turn
-            if (status.addedInRound === ctx.expedition.currentNode.data.round)
-                continue;
-
-            status.args.value--;
-
-            if (status.args.value === 0) {
-                statusesToRemove.push(status);
-                this.logger.debug(`Removing status ${status.name}`);
-            } else {
-                this.logger.debug(
-                    `Decreasing ${fatigue.name} status value to ${status.args.value}`,
-                );
-            }
-        }
-
-        collection.buff = collection.buff.filter(
-            (status) => !statusesToRemove.includes(status),
-        );
-
-        await this.statusService.updateStatuses(
-            entity,
-            ctx.expedition,
-            collection,
+        await this.statusService.decreaseCounterAndRemove(
+            ctx,
+            statuses,
+            player,
+            fatigue,
         );
     }
 }
