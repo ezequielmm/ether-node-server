@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { Socket } from 'socket.io';
 import { DiscardAllCardsAction } from '../action/discardAllCards.action';
+import { CombatQueueService } from '../components/combatQueue/combatQueue.service';
 import { CombatTurnEnum } from '../components/expedition/expedition.enum';
 import { ExpeditionService } from '../components/expedition/expedition.service';
 import { Context } from '../components/interfaces';
@@ -29,6 +30,7 @@ export class EndPlayerTurnProcess {
         private readonly beginEnemyTurnProcess: BeginEnemyTurnProcess,
         private readonly expeditionService: ExpeditionService,
         private readonly eventEmitter: EventEmitter2,
+        private readonly combatQueueService: CombatQueueService,
     ) {}
 
     async handle(payload: EndPlayerTurnDTO): Promise<void> {
@@ -60,6 +62,8 @@ export class EndPlayerTurnProcess {
             expedition,
         };
 
+        await this.combatQueueService.start(ctx);
+
         await this.eventEmitter.emitAsync(EVENT_BEFORE_PLAYER_TURN_END, {
             ctx,
         });
@@ -70,6 +74,9 @@ export class EndPlayerTurnProcess {
         });
 
         await this.eventEmitter.emitAsync(EVENT_AFTER_PLAYER_TURN_END, { ctx });
+
+        await this.combatQueueService.end(ctx);
+
         await this.beginEnemyTurnProcess.handle({ client });
     }
 }

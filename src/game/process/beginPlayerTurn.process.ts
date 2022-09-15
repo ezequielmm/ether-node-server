@@ -64,6 +64,7 @@ export class BeginPlayerTurnProcess {
             expedition: expedition as ExpeditionDocument,
         };
 
+        await this.combatQueueService.start(ctx);
         await this.eventEmitter.emitAsync(EVENT_BEFORE_PLAYER_TURN_START, {
             ctx,
         });
@@ -139,7 +140,6 @@ export class BeginPlayerTurnProcess {
         );
 
         // Send possible actions related to the statuses attached to the player at the beginning of the turn
-        await this.combatQueueService.start(ctx);
         await this.eventEmitter.emitAsync(EVENT_AFTER_PLAYER_TURN_START, {
             ctx,
         });
