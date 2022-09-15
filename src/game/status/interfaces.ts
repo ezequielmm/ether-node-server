@@ -216,7 +216,7 @@ export interface StatusEventDTO<Args = Record<string, any>> {
      * @memberof StatusEventDTO
      * @example { value: 1 }
      */
-    readonly args: Args;
+    readonly eventArgs: Args;
 
     update(args: AttachedStatus['args']): void;
     remove(): void;

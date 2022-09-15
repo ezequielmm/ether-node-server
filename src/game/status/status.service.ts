@@ -353,7 +353,7 @@ export class StatusService {
                         event,
                         target: entityCollection.target,
                         status,
-                        args,
+                        eventArgs: args,
                         update(args) {
                             status.args = args;
                             isUpdate = true;

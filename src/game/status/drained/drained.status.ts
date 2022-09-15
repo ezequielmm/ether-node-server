@@ -19,7 +19,7 @@ export class DrainedStatus implements StatusEventHandler {
     ) {}
 
     async handle(dto: StatusEventDTO<Record<string, any>>): Promise<any> {
-        const { ctx, source, target, args, remove } = dto;
+        const { ctx, source, target, eventArgs: args, remove } = dto;
 
         let finalDefense: number;
 

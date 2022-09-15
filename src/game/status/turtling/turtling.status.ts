@@ -17,24 +17,24 @@ export class TurtlingStatus implements StatusEventHandler {
     ) {}
 
     async handle(dto: StatusEventDTO<Record<string, any>>): Promise<any> {
-        const { ctx, target, args, update, remove } = dto;
+        const { ctx, target, status, update, remove } = dto;
 
         let finalDefense: number;
         if (PlayerService.isPlayer(target)) {
-            finalDefense = target.value.combatState.defense + args.value;
+            finalDefense = target.value.combatState.defense + status.args.value;
             this.playerService.setDefense(ctx, finalDefense);
         } else if (EnemyService.isEnemy(target)) {
-            finalDefense = target.value.defense + args.value;
+            finalDefense = target.value.defense + status.args.value;
             this.enemyService.setDefense(ctx, target.value.id, finalDefense);
         }
 
-        args.value--;
+        status.args.value--;
 
-        if (args.value <= 0) {
+        if (status.args.value <= 0) {
             remove();
         } else {
             update({
-                value: args.value,
+                value: status.args.value,
             });
         }
 
@@ -44,7 +44,7 @@ export class TurtlingStatus implements StatusEventHandler {
             target,
             args: {
                 effectType: CombatQueueTargetEffectTypeEnum.Defense,
-                defenseDelta: args.value,
+                defenseDelta: status.args.value,
                 finalDefense: finalDefense,
                 healthDelta: undefined,
                 finalHealth: undefined,

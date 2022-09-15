@@ -14,7 +14,7 @@ export class ResistStatus implements StatusEventHandler {
     constructor(private readonly statusService: StatusService) {}
 
     async handle(dto: StatusEventDTO): Promise<void> {
-        const { status, target } = dto.args;
+        const { status, target } = dto.eventArgs;
         const { metadata } = this.statusService.findHandlerContainer({
             name: status.name,
         });
