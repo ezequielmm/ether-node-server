@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
@@ -14,9 +14,12 @@ import { Context, ExpeditionEntity } from '../interfaces';
 import { CombatQueueTargetEffectTypeEnum } from './combatQueue.enum';
 import { CreateCombatQueueDTO, PushActionDTO } from './combatQueue.interface';
 import { CombatQueue, CombatQueueDocument } from './combatQueue.schema';
+import cliColor from 'cli-color';
 
 @Injectable()
 export class CombatQueueService {
+    private readonly logger = new Logger(CombatQueueService.name);
+
     constructor(
         @InjectModel(CombatQueue.name)
         private readonly combatQueue: Model<CombatQueueDocument>,
@@ -72,6 +75,8 @@ export class CombatQueueService {
         if (!combatQueues) {
             return;
         }
+
+        this.logger.debug(cliColor.blue('Sending combat queue to client'));
 
         client.emit(
             'PutData',
