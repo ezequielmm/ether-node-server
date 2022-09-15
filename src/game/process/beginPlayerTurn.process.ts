@@ -3,6 +3,7 @@ import { EventEmitter2 } from '@nestjs/event-emitter';
 import { Socket } from 'socket.io';
 import { DrawCardAction } from '../action/drawCard.action';
 import { GetPlayerInfoAction } from '../action/getPlayerInfo.action';
+import { CombatQueueService } from '../components/combatQueue/combatQueue.service';
 import { EnemyService } from '../components/enemy/enemy.service';
 import { CombatTurnEnum } from '../components/expedition/expedition.enum';
 import { ExpeditionDocument } from '../components/expedition/expedition.schema';
@@ -36,6 +37,7 @@ export class BeginPlayerTurnProcess {
         private readonly drawCardAction: DrawCardAction,
         private readonly eventEmitter: EventEmitter2,
         private readonly getPlayerInfoAction: GetPlayerInfoAction,
+        private readonly combatQueueService: CombatQueueService,
     ) {}
 
     async handle(payload: BeginPlayerTurnDTO): Promise<void> {
@@ -136,8 +138,11 @@ export class BeginPlayerTurnProcess {
             ),
         );
 
+        // Send possible actions related to the statuses attached to the player at the beginning of the turn
+        await this.combatQueueService.start(ctx);
         await this.eventEmitter.emitAsync(EVENT_AFTER_PLAYER_TURN_START, {
             ctx,
         });
+        await this.combatQueueService.end(ctx);
     }
 }
