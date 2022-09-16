@@ -50,6 +50,10 @@ export class ConfusionStatus implements StatusEffectHandler {
         // This change is unique to this status
         set(dto.effectDTO, 'target', newTarget);
 
+        this.logger.debug(
+            `Confused effect changed target from ${target.type} to ${newTarget.type}`,
+        );
+
         // Confuse statuses
         // NOTE: This is a in memory change, it is not necessary to save the expedition
         this.confuseStatuses(source);
