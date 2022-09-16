@@ -43,60 +43,26 @@ export class CombatQueueService {
     async push(dto: PushActionDTO): Promise<void> {
         const { ctx, source, target, args } = dto;
 
-        // Check if the combat queue origin is already in the queue
-        const originAlreadyInQueue = await this.combatQueue.exists({
-            clientId: ctx.client.id,
-            queue: {
-                $elemMatch: {
-                    originType: source.type,
-                    originId: source.value.id,
+        await this.combatQueue.findOneAndUpdate(
+            {
+                clientId: ctx.client.id,
+            },
+            {
+                $push: {
+                    queue: {
+                        originType: source.type,
+                        originId: source.value.id,
+                        targets: [
+                            {
+                                targetType: target.type,
+                                targetId: target.value.id,
+                                ...args,
+                            },
+                        ],
+                    },
                 },
             },
-        });
-
-        if (originAlreadyInQueue) {
-            await this.combatQueue.findOneAndUpdate(
-                {
-                    clientId: ctx.client.id,
-                    queue: {
-                        $elemMatch: {
-                            originType: source.type,
-                            originId: source.value.id,
-                        },
-                    },
-                },
-                {
-                    $push: {
-                        'queue.$.targets': {
-                            targetType: target.type,
-                            targetId: target.value.id,
-                            ...args,
-                        },
-                    },
-                },
-            );
-        } else {
-            await this.combatQueue.findOneAndUpdate(
-                {
-                    clientId: ctx.client.id,
-                },
-                {
-                    $push: {
-                        queue: {
-                            originType: source.type,
-                            originId: source.value.id,
-                            targets: [
-                                {
-                                    targetType: target.type,
-                                    targetId: target.value.id,
-                                    ...args,
-                                },
-                            ],
-                        },
-                    },
-                },
-            );
-        }
+        );
     }
 
     async end(ctx: Context): Promise<void> {
