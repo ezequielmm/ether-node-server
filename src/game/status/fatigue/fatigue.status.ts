@@ -1,8 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
-import { filter } from 'lodash';
 import { EnemyService } from 'src/game/components/enemy/enemy.service';
-import { Context, ExpeditionEntity } from 'src/game/components/interfaces';
+import { Context } from 'src/game/components/interfaces';
 import { PlayerService } from 'src/game/components/player/player.service';
 import {
     EVENT_BEFORE_ENEMIES_TURN_START,
@@ -10,11 +9,7 @@ import {
 } from 'src/game/constants';
 import { DamageArgs } from 'src/game/effects/damage/damage.effect';
 import { EffectDTO } from 'src/game/effects/effects.interface';
-import {
-    StatusCollection,
-    StatusEffectDTO,
-    StatusEffectHandler,
-} from '../interfaces';
+import { StatusEffectDTO, StatusEffectHandler } from '../interfaces';
 import { StatusDecorator } from '../status.decorator';
 import { StatusService } from '../status.service';
 import { fatigue } from './constants';

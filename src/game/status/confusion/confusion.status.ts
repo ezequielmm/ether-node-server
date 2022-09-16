@@ -1,12 +1,11 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { filter, set } from 'lodash';
+import { set } from 'lodash';
 import { CardTargetedEnum } from 'src/game/components/card/card.enum';
 import { EnemyService } from 'src/game/components/enemy/enemy.service';
 import { Context, ExpeditionEntity } from 'src/game/components/interfaces';
 import { PlayerService } from 'src/game/components/player/player.service';
 import {
     JsonStatus,
-    StatusCollection,
     StatusEffectDTO,
     StatusEffectHandler,
 } from '../interfaces';
