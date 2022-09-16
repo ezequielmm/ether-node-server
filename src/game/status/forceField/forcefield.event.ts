@@ -20,7 +20,7 @@ export class ForceFieldEvent {
         private readonly playerService: PlayerService,
     ) {}
 
-    @OnEvent(EVENT_BEFORE_ENEMIES_TURN_START, { async: true })
+    @OnEvent(EVENT_BEFORE_ENEMIES_TURN_START)
     async onEnemiesTurnStart(args: { ctx: Context }): Promise<void> {
         const { ctx } = args;
         const enemies = this.enemyService.getAll(ctx);
@@ -35,7 +35,7 @@ export class ForceFieldEvent {
         }
     }
 
-    @OnEvent(EVENT_BEFORE_PLAYER_TURN_START, { async: true })
+    @OnEvent(EVENT_BEFORE_PLAYER_TURN_START)
     async onPlayerTurnStart(args: { ctx: Context }): Promise<void> {
         const { ctx } = args;
         const player = this.playerService.get(ctx);

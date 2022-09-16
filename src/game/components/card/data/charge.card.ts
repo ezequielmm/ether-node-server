@@ -23,7 +23,7 @@ export const ChargeCard: Card = {
         ],
         statuses: [],
     },
-    showPointer: true,
+    showPointer: false,
     isUpgraded: false,
 };
 
@@ -48,6 +48,6 @@ export const ChargeCardUpgraded: Card = {
         ],
         statuses: [],
     },
-    showPointer: true,
+    showPointer: false,
     isUpgraded: true,
 };

@@ -94,7 +94,7 @@ export class ConfusionStatus implements StatusEffectHandler {
         });
     }
 
-    @OnEvent(EVENT_BEFORE_ENEMIES_TURN_END, { async: true })
+    @OnEvent(EVENT_BEFORE_ENEMIES_TURN_END)
     async onEnemiesTurnStart(args: { ctx: Context }): Promise<void> {
         const { ctx } = args;
         const enemies = this.enemyService.getAll(ctx);
@@ -109,7 +109,7 @@ export class ConfusionStatus implements StatusEffectHandler {
         }
     }
 
-    @OnEvent(EVENT_BEFORE_ENEMIES_TURN_END, { async: true })
+    @OnEvent(EVENT_BEFORE_ENEMIES_TURN_END)
     async onPlayerTurnStart(args: { ctx: Context }): Promise<void> {
         const { ctx } = args;
         const player = this.playerService.get(ctx);
