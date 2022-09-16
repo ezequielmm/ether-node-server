@@ -15,7 +15,6 @@ import { CombatQueueTargetEffectTypeEnum } from './combatQueue.enum';
 import { CreateCombatQueueDTO, PushActionDTO } from './combatQueue.interface';
 import { CombatQueue, CombatQueueDocument } from './combatQueue.schema';
 import * as cliColor from 'cli-color';
-import { nextPlayerTurnStatus } from 'src/game/status/nextPlayerTurn/constants';
 
 @Injectable()
 export class CombatQueueService {

@@ -71,7 +71,6 @@ export class StatusService {
 
             // Loop through the events and trigger the handlers
             for (const event of events) {
-                this.logger.debug(`Triggering event ${event}`);
                 await this.trigger(ctx, event, rest);
             }
         });
@@ -100,7 +99,7 @@ export class StatusService {
                     source,
                     target,
                     status,
-                    targetId,
+                    targetId: target.value.id,
                 });
 
                 switch (target.type) {
@@ -115,7 +114,7 @@ export class StatusService {
                     case CardTargetedEnum.Enemy:
                         await this.enemyService.attach(
                             ctx,
-                            targetId,
+                            target.value.id,
                             source,
                             status.name,
                             status.args,
