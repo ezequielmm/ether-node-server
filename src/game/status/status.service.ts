@@ -127,7 +127,7 @@ export class StatusService {
                     source,
                     status,
                     target,
-                    targetId,
+                    targetId: target.value.id,
                 });
             }
         }
