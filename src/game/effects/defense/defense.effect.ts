@@ -135,6 +135,7 @@ export class DefenseEffect implements EffectHandler {
                 target.value.id,
                 defenseCalculated,
             );
+
             await this.combatQueueService.push({
                 ctx,
                 source,

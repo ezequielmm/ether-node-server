@@ -55,7 +55,6 @@ export class BeginPlayerTurnProcess {
                 data: {
                     round,
                     player: { handSize, defense: currentDefense },
-                    enemies,
                 },
             },
         } = expedition;
@@ -99,11 +98,6 @@ export class BeginPlayerTurnProcess {
 
         // Reset defense for the player
         if (currentDefense > 0) await this.playerService.setDefense(ctx, 0);
-
-        // Reset defense enemies for the enemies
-        enemies.forEach(async (enemy) => {
-            await this.enemyService.setDefense(ctx, enemy.id, 0);
-        });
 
         // Set player energy to default values
         await this.playerService.setEnergy(ctx, initialEnergy);
