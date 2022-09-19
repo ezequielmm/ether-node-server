@@ -59,19 +59,17 @@ export class MoveCardAction {
 
         client.emit(
             'PutData',
-            JSON.stringify(
-                StandardResponse.respond({
-                    message_type: SWARMessageType.PlayerAffected,
-                    action: SWARAction.MoveCard,
-                    data: cardsToMove.map(({ id }) => {
-                        return {
-                            source: originPile,
-                            destination: 'hand',
-                            id,
-                        };
-                    }),
+            StandardResponse.respond({
+                message_type: SWARMessageType.PlayerAffected,
+                action: SWARAction.MoveCard,
+                data: cardsToMove.map(({ id }) => {
+                    return {
+                        source: originPile,
+                        destination: 'hand',
+                        id,
+                    };
                 }),
-            ),
+            }),
         );
 
         // Now we actually update the piles on the database

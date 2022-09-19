@@ -46,13 +46,11 @@ export class EndEnemyTurnProcess {
 
         client.emit(
             'PutData',
-            JSON.stringify(
-                StandardResponse.respond({
-                    message_type: SWARMessageType.EndTurn,
-                    action: SWARAction.ChangeTurn,
-                    data: CombatTurnEnum.Enemy,
-                }),
-            ),
+            StandardResponse.respond({
+                message_type: SWARMessageType.EndTurn,
+                action: SWARAction.ChangeTurn,
+                data: CombatTurnEnum.Enemy,
+            }),
         );
 
         await this.eventEmitter.emitAsync(EVENT_AFTER_ENEMIES_TURN_END, {

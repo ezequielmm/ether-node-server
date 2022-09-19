@@ -18,7 +18,6 @@ let app: INestApplication;
 async function bootstrap() {
     const certFilePath = process.env.SSL_CERT_PATH;
     const keyFilePath = process.env.SSL_KEY_PATH;
-    const localUrl = process.env.LOCAL_URL || 'http://localhost:3000';
 
     if (certFilePath && keyFilePath) {
         if (existsSync(certFilePath) && existsSync(keyFilePath)) {
@@ -59,7 +58,6 @@ async function bootstrap() {
             .setDescription('API routes')
             .setVersion('1.0')
             .addBearerAuth()
-            .addServer(localUrl, 'Local Server')
             .build();
 
         const document = SwaggerModule.createDocument(app, config);

@@ -106,19 +106,17 @@ export class DrawCardAction {
 
             client.emit(
                 'PutData',
-                JSON.stringify(
-                    StandardResponse.respond({
-                        message_type: SWARMessageTypeToSend,
-                        action: SWARAction.MoveCard,
-                        data: cardsToMoveToHand.map(({ id }) => {
-                            return {
-                                source: 'draw',
-                                destination: 'hand',
-                                id,
-                            };
-                        }),
+                StandardResponse.respond({
+                    message_type: SWARMessageTypeToSend,
+                    action: SWARAction.MoveCard,
+                    data: cardsToMoveToHand.map(({ id }) => {
+                        return {
+                            source: 'draw',
+                            destination: 'hand',
+                            id,
+                        };
                     }),
-                ),
+                }),
             );
 
             // Now we check if we have to take cards from the discard pile
@@ -138,19 +136,17 @@ export class DrawCardAction {
 
                 client.emit(
                     'PutData',
-                    JSON.stringify(
-                        StandardResponse.respond({
-                            message_type: SWARMessageTypeToSend,
-                            action: SWARAction.MoveCard,
-                            data: discardPile.map(({ id }) => {
-                                return {
-                                    source: 'discard',
-                                    destination: 'draw',
-                                    id,
-                                };
-                            }),
+                    StandardResponse.respond({
+                        message_type: SWARMessageTypeToSend,
+                        action: SWARAction.MoveCard,
+                        data: discardPile.map(({ id }) => {
+                            return {
+                                source: 'discard',
+                                destination: 'draw',
+                                id,
+                            };
                         }),
-                    ),
+                    }),
                 );
 
                 newDiscard = [];
@@ -181,19 +177,17 @@ export class DrawCardAction {
 
                 client.emit(
                     'PutData',
-                    JSON.stringify(
-                        StandardResponse.respond({
-                            message_type: SWARMessageTypeToSend,
-                            action: SWARAction.MoveCard,
-                            data: restOfCardsToTake.map(({ id }) => {
-                                return {
-                                    source: 'draw',
-                                    destination: 'hand',
-                                    id,
-                                };
-                            }),
+                    StandardResponse.respond({
+                        message_type: SWARMessageTypeToSend,
+                        action: SWARAction.MoveCard,
+                        data: restOfCardsToTake.map(({ id }) => {
+                            return {
+                                source: 'draw',
+                                destination: 'hand',
+                                id,
+                            };
                         }),
-                    ),
+                    }),
                 );
             }
 

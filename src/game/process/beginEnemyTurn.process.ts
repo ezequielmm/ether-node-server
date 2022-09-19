@@ -130,27 +130,25 @@ export class BeginEnemyTurnProcess {
 
         this.client.emit(
             'PutData',
-            JSON.stringify(
-                StandardResponse.respond({
-                    message_type: SWARMessageType.EnemyAffected,
-                    action: SWARAction.UpdateEnemy,
-                    data: enemiesUpdated
-                        .filter(({ hpCurrent }) => {
-                            return hpCurrent > 0;
-                        })
-                        .map((enemy) => ({
-                            id: enemy.id,
-                            enemyId: enemy.enemyId,
-                            defense: enemy.defense,
-                            name: enemy.name,
-                            type: enemy.type,
-                            category: enemy.category,
-                            size: enemy.size,
-                            hpCurrent: enemy.hpCurrent,
-                            hpMax: enemy.hpMax,
-                        })),
-                }),
-            ),
+            StandardResponse.respond({
+                message_type: SWARMessageType.EnemyAffected,
+                action: SWARAction.UpdateEnemy,
+                data: enemiesUpdated
+                    .filter(({ hpCurrent }) => {
+                        return hpCurrent > 0;
+                    })
+                    .map((enemy) => ({
+                        id: enemy.id,
+                        enemyId: enemy.enemyId,
+                        defense: enemy.defense,
+                        name: enemy.name,
+                        type: enemy.type,
+                        category: enemy.category,
+                        size: enemy.size,
+                        hpCurrent: enemy.hpCurrent,
+                        hpMax: enemy.hpMax,
+                    })),
+            }),
         );
     }
 
@@ -161,13 +159,11 @@ export class BeginEnemyTurnProcess {
 
         this.client.emit(
             'PutData',
-            JSON.stringify(
-                StandardResponse.respond({
-                    message_type: SWARMessageType.BeginTurn,
-                    action: SWARAction.ChangeTurn,
-                    data: CombatTurnEnum.Enemy,
-                }),
-            ),
+            StandardResponse.respond({
+                message_type: SWARMessageType.BeginTurn,
+                action: SWARAction.ChangeTurn,
+                data: CombatTurnEnum.Enemy,
+            }),
         );
     }
 }

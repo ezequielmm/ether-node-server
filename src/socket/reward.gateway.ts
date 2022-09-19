@@ -83,12 +83,10 @@ export class RewardGateway {
             return id !== rewardId && taken === false;
         });
 
-        return JSON.stringify(
-            StandardResponse.respond({
-                message_type: SWARMessageType.EndCombat,
-                action: SWARAction.SelectAnotherReward,
-                data: pendingRewards,
-            }),
-        );
+        return StandardResponse.respond({
+            message_type: SWARMessageType.EndCombat,
+            action: SWARAction.SelectAnotherReward,
+            data: pendingRewards,
+        });
     }
 }
