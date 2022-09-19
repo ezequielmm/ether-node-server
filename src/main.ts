@@ -12,9 +12,11 @@ import { existsSync, readFileSync } from 'fs';
 import { IoAdapter } from '@nestjs/platform-socket.io';
 
 let app: INestApplication;
+
 async function bootstrap() {
     const certFilePath = process.env.SSL_CERT_PATH;
     const keyFilePath = process.env.SSL_KEY_PATH;
+    const localUrl = process.env.LOCAL_URL || 'http://localhost:3000';
 
     if (certFilePath && keyFilePath) {
         if (existsSync(certFilePath) && existsSync(keyFilePath)) {
@@ -43,8 +45,6 @@ async function bootstrap() {
         type: VersioningType.URI,
     });
 
-    const localUrl = process.env.LOCAL_URL || 'http://localhost:3000';
-
     // Enable Swagger for API docs
     const config = new DocumentBuilder()
         .setTitle('KOTE Gameplay Service')
@@ -52,7 +52,6 @@ async function bootstrap() {
         .setVersion('1.0')
         .addBearerAuth()
         .addServer(localUrl, 'Local Server')
-        .addServer(process.env.GATEWAY_URL, 'Gateway URL')
         .build();
 
     const document = SwaggerModule.createDocument(app, config);
@@ -61,10 +60,8 @@ async function bootstrap() {
     // Enable GZIP Compression
     app.use(compression());
 
+    // Starts server
     await app.listen(3000);
 }
-bootstrap();
 
-export function getApp(): INestApplication {
-    return app;
-}
+bootstrap();

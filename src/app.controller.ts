@@ -1,14 +1,24 @@
-import { Controller, Get, Redirect, VERSION_NEUTRAL } from '@nestjs/common';
+import { Controller, Get, Res, VERSION_NEUTRAL } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { ApiExcludeController } from '@nestjs/swagger';
+import { Response } from 'express';
+import { serverEnvironments } from './utils';
 
 @ApiExcludeController()
 @Controller({
     version: VERSION_NEUTRAL,
 })
 export class AppController {
-    @Redirect('/api')
+    constructor(private readonly configService: ConfigService) {}
+
     @Get()
-    handleIndex() {
-        return { app: 'Game Service' };
+    handleIndex(@Res() res: Response) {
+        const env = this.configService.get<serverEnvironments>('NODE_ENV');
+
+        if (env === serverEnvironments.development) {
+            res.redirect('/api');
+        } else {
+            res.status(200).json({ app: 'Kote Game Service' });
+        }
     }
 }
