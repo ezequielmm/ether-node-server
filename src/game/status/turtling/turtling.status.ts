@@ -22,10 +22,10 @@ export class TurtlingStatus implements StatusEventHandler {
         let finalDefense: number;
         if (PlayerService.isPlayer(target)) {
             finalDefense = target.value.combatState.defense * 2;
-            this.playerService.setDefense(ctx, finalDefense);
+            await this.playerService.setDefense(ctx, finalDefense);
         } else if (EnemyService.isEnemy(target)) {
             finalDefense = target.value.defense * 2;
-            this.enemyService.setDefense(ctx, target.value.id, finalDefense);
+            await this.enemyService.setDefense(ctx, target.value.id, finalDefense);
         }
 
         status.args.value--;

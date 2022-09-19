@@ -8,12 +8,9 @@ import {
     SWARMessageType,
     SWARAction,
 } from 'src/game/standardResponse/standardResponse';
+import { corsSocketSettings } from './socket.enum';
 
-@WebSocketGateway({
-    cors: {
-        origin: '*',
-    },
-})
+@WebSocketGateway(corsSocketSettings)
 export class RewardGateway {
     private readonly logger: Logger = new Logger(RewardGateway.name);
 

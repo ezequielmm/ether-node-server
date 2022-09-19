@@ -10,6 +10,7 @@ import { CombatTurnEnum } from 'src/game/components/expedition/expedition.enum';
 import { EndEnemyTurnProcess } from 'src/game/process/endEnemyTurn.process';
 import { CardSelectionScreenService } from 'src/game/components/cardSelectionScreen/cardSelectionScreen.service';
 import { MoveCardAction } from 'src/game/action/moveCard.action';
+import { corsSocketSettings } from './socket.enum';
 
 interface ICardPlayed {
     cardId: CardId;
@@ -20,11 +21,7 @@ interface IMoveCard {
     cardsToTake: string[];
 }
 
-@WebSocketGateway({
-    cors: {
-        origin: '*',
-    },
-})
+@WebSocketGateway(corsSocketSettings)
 export class CombatGateway {
     private readonly logger: Logger = new Logger(CombatGateway.name);
 

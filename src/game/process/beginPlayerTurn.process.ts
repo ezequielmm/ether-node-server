@@ -98,7 +98,7 @@ export class BeginPlayerTurnProcess {
         // Reset defense
         if (currentDefense > 0) await this.playerService.setDefense(ctx, 0);
 
-        this.playerService.setEnergy(ctx, initialEnergy);
+        await this.playerService.setEnergy(ctx, initialEnergy);
 
         // Send new energy amount
         this.logger.debug(
