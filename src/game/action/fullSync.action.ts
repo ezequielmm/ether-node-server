@@ -31,26 +31,22 @@ export class FullSyncAction {
 
         client.emit(
             'ExpeditionMap',
-            JSON.stringify(
-                StandardResponse.respond({
-                    message_type: SWARMessageType.MapUpdate,
-                    action: SWARAction.ShowMap,
-                    data: map,
-                }),
-            ),
+            StandardResponse.respond({
+                message_type: SWARMessageType.MapUpdate,
+                action: SWARAction.ShowMap,
+                data: map,
+            }),
         );
 
         this.logger.debug(`Sent message PlayerState to client ${client.id}`);
 
         client.emit(
             'PlayerState',
-            JSON.stringify(
-                StandardResponse.respond({
-                    message_type: SWARMessageType.PlayerStateUpdate,
-                    action: SWARAction.UpdatePlayerState,
-                    data: { playerState },
-                }),
-            ),
+            StandardResponse.respond({
+                message_type: SWARMessageType.PlayerStateUpdate,
+                action: SWARAction.UpdatePlayerState,
+                data: { playerState },
+            }),
         );
     }
 }

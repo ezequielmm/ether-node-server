@@ -44,13 +44,11 @@ export class EndPlayerTurnProcess {
 
         client.emit(
             'PutData',
-            JSON.stringify(
-                StandardResponse.respond({
-                    message_type: SWARMessageType.EndTurn,
-                    action: SWARAction.ChangeTurn,
-                    data: CombatTurnEnum.Player,
-                }),
-            ),
+            StandardResponse.respond({
+                message_type: SWARMessageType.EndTurn,
+                action: SWARAction.ChangeTurn,
+                data: CombatTurnEnum.Player,
+            }),
         );
 
         const expedition = await this.expeditionService.findOne({

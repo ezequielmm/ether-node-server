@@ -99,13 +99,11 @@ export class ExpeditionGateway {
                 },
             });
 
-            return JSON.stringify(
-                StandardResponse.respond({
-                    message_type: SWARMessageType.EndCombat,
-                    action: SWARAction.ShowMap,
-                    data: mapToSave,
-                }),
-            );
+            return StandardResponse.respond({
+                message_type: SWARMessageType.EndCombat,
+                action: SWARAction.ShowMap,
+                data: mapToSave,
+            });
         } else {
             // This will be for now combat nodes (merchant, camp, etc)
             const { map: oldMap } = expedition;
@@ -123,13 +121,11 @@ export class ExpeditionGateway {
                 },
             });
 
-            return JSON.stringify(
-                StandardResponse.respond({
-                    message_type: SWARMessageType.EndNode,
-                    action: SWARAction.ShowMap,
-                    data: null,
-                }),
-            );
+            return StandardResponse.respond({
+                message_type: SWARMessageType.EndNode,
+                action: SWARAction.ShowMap,
+                data: null,
+            });
         }
     }
 }

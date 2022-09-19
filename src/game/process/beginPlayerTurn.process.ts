@@ -45,7 +45,7 @@ export class BeginPlayerTurnProcess {
 
         this.logger.debug(`Beginning player ${client.id} turn`);
 
-        // Get previous round
+        // Get ongoing expedition
         const expedition = await this.expeditionService.findOne({
             clientId: client.id,
         });
@@ -59,12 +59,15 @@ export class BeginPlayerTurnProcess {
             },
         } = expedition;
 
+        // Create player context
         const ctx: Context = {
             client,
             expedition: expedition as ExpeditionDocument,
         };
 
+        // Start the combat queue
         await this.combatQueueService.start(ctx);
+
         await this.eventEmitter.emitAsync(EVENT_BEFORE_PLAYER_TURN_START, {
             ctx,
         });
@@ -82,22 +85,21 @@ export class BeginPlayerTurnProcess {
 
         client.emit(
             'PutData',
-            JSON.stringify(
-                StandardResponse.respond({
-                    message_type: SWARMessageType.BeginTurn,
-                    action: SWARAction.ChangeTurn,
-                    data: CombatTurnEnum.Player,
-                }),
-            ),
+            StandardResponse.respond({
+                message_type: SWARMessageType.BeginTurn,
+                action: SWARAction.ChangeTurn,
+                data: CombatTurnEnum.Player,
+            }),
         );
 
         // Reset energy
         const { initialEnergy, maxEnergy } =
             await this.settingsService.getSettings();
 
-        // Reset defense
+        // Reset defense for the player
         if (currentDefense > 0) await this.playerService.setDefense(ctx, 0);
 
+        // Set player energy to default values
         await this.playerService.setEnergy(ctx, initialEnergy);
 
         // Send new energy amount
@@ -107,13 +109,11 @@ export class BeginPlayerTurnProcess {
 
         client.emit(
             'PutData',
-            JSON.stringify(
-                StandardResponse.respond({
-                    message_type: SWARMessageType.PlayerAffected,
-                    action: SWARAction.UpdateEnergy,
-                    data: [initialEnergy, maxEnergy],
-                }),
-            ),
+            StandardResponse.respond({
+                message_type: SWARMessageType.PlayerAffected,
+                action: SWARAction.UpdateEnergy,
+                data: [initialEnergy, maxEnergy],
+            }),
         );
 
         await this.drawCardAction.handle({
@@ -130,19 +130,19 @@ export class BeginPlayerTurnProcess {
 
         client.emit(
             'PutData',
-            JSON.stringify(
-                StandardResponse.respond({
-                    message_type: SWARMessageType.PlayerAffected,
-                    action: SWARAction.UpdatePlayer,
-                    data: playerInfo,
-                }),
-            ),
+            StandardResponse.respond({
+                message_type: SWARMessageType.PlayerAffected,
+                action: SWARAction.UpdatePlayer,
+                data: playerInfo,
+            }),
         );
 
         // Send possible actions related to the statuses attached to the player at the beginning of the turn
         await this.eventEmitter.emitAsync(EVENT_AFTER_PLAYER_TURN_START, {
             ctx,
         });
+
+        // Complete combat queue
         await this.combatQueueService.end(ctx);
     }
 }
