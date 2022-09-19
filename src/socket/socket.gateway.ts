@@ -128,5 +128,10 @@ export class SocketGateway
         this.logger.debug(
             `Deleted card selection screen items for client ${client.id}`,
         );
+
+        // Log amount of clients connected
+        this.logger.verbose(
+            `Clients connected: ${this.server.engine.clientsConnected}`,
+        );
     }
 }
