@@ -72,9 +72,7 @@ export class CombatQueueService {
             clientId: client.id,
         });
 
-        if (!combatQueues) {
-            return;
-        }
+        if (!combatQueues) return;
 
         const data = combatQueues.queue.map(
             ({ originType, originId, targets }) => {
