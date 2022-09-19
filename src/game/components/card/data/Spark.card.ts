@@ -50,5 +50,5 @@ export const SparkCardUpgraded: Card = {
         ],
     },
     showPointer: true,
-    isUpgraded: false,
+    isUpgraded: true,
 };

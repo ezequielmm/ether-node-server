@@ -1,10 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { set } from 'lodash';
 import { CardTargetedEnum } from 'src/game/components/card/card.enum';
 import { EnemyService } from 'src/game/components/enemy/enemy.service';
-import { ExpeditionEntity } from 'src/game/components/interfaces';
+import { Context, ExpeditionEntity } from 'src/game/components/interfaces';
 import { PlayerService } from 'src/game/components/player/player.service';
-import { EffectDTO } from 'src/game/effects/effects.interface';
 import {
     JsonStatus,
     StatusEffectDTO,
@@ -12,15 +11,21 @@ import {
 } from '../interfaces';
 import { StatusDecorator } from '../status.decorator';
 import { confusion } from './constants';
+import { OnEvent } from '@nestjs/event-emitter';
+import { EVENT_BEFORE_ENEMIES_TURN_END } from 'src/game/constants';
+import { EffectDTO } from 'src/game/effects/effects.interface';
+import { StatusService } from '../status.service';
 
 @StatusDecorator({
     status: confusion,
 })
 @Injectable()
 export class ConfusionStatus implements StatusEffectHandler {
+    private readonly logger = new Logger(ConfusionStatus.name);
     constructor(
         private readonly enemyService: EnemyService,
         private readonly playerService: PlayerService,
+        private readonly statusService: StatusService,
     ) {}
 
     async preview(args: StatusEffectDTO): Promise<EffectDTO> {
@@ -32,13 +37,6 @@ export class ConfusionStatus implements StatusEffectHandler {
             effectDTO: { source, target },
             ctx,
         } = dto;
-        const { expedition } = ctx;
-
-        // If the round is over, the status will be removed
-        if (expedition.currentNode.data.round > dto.status.addedInRound + 1) {
-            dto.remove();
-            return dto.effectDTO;
-        }
 
         let newTarget: ExpeditionEntity;
 
@@ -51,6 +49,10 @@ export class ConfusionStatus implements StatusEffectHandler {
         // Set using lodash to avoid typescript readonly error
         // This change is unique to this status
         set(dto.effectDTO, 'target', newTarget);
+
+        this.logger.debug(
+            `Confused effect changed target from ${target.type} to ${newTarget.type}`,
+        );
 
         // Confuse statuses
         // NOTE: This is a in memory change, it is not necessary to save the expedition
@@ -90,5 +92,34 @@ export class ConfusionStatus implements StatusEffectHandler {
                     break;
             }
         });
+    }
+
+    @OnEvent(EVENT_BEFORE_ENEMIES_TURN_END)
+    async onEnemiesTurnStart(args: { ctx: Context }): Promise<void> {
+        const { ctx } = args;
+        const enemies = this.enemyService.getAll(ctx);
+
+        for (const enemy of enemies) {
+            await this.statusService.decreaseCounterAndRemove(
+                ctx,
+                enemy.value.statuses,
+                enemy,
+                confusion,
+            );
+        }
+    }
+
+    @OnEvent(EVENT_BEFORE_ENEMIES_TURN_END)
+    async onPlayerTurnStart(args: { ctx: Context }): Promise<void> {
+        const { ctx } = args;
+        const player = this.playerService.get(ctx);
+        const statuses = player.value.combatState.statuses;
+
+        await this.statusService.decreaseCounterAndRemove(
+            ctx,
+            statuses,
+            player,
+            confusion,
+        );
     }
 }

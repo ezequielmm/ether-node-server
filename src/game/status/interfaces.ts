@@ -52,6 +52,7 @@ export interface StatusBase {
      * @property {StatusStartsAt} NextTurn - The status starts on the next turn.
      * @example 'instantly'
      * @example 'nextTurn'
+     * @deprecated Use nextPlayerTurn status instead if you want to start the status on the next player turn.
      */
     startsAt: StatusStartsAt;
 
@@ -148,8 +149,8 @@ export interface AttachedStatus {
     readonly sourceReference: EntityReferenceDTO;
 
     args: {
-        value: any;
-    };
+        value?: any;
+    } & Record<string, any>;
 }
 
 export interface StatusCollection {
@@ -215,7 +216,7 @@ export interface StatusEventDTO<Args = Record<string, any>> {
      * @memberof StatusEventDTO
      * @example { value: 1 }
      */
-    readonly args: Args;
+    readonly eventArgs: Args;
 
     update(args: AttachedStatus['args']): void;
     remove(): void;

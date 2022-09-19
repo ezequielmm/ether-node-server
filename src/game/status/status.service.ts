@@ -43,6 +43,7 @@ import {
     StatusStartsAt,
     StatusTrigger,
 } from './interfaces';
+import * as cliColor from 'cli-color';
 
 @Injectable()
 export class StatusService {
@@ -70,7 +71,6 @@ export class StatusService {
 
             // Loop through the events and trigger the handlers
             for (const event of events) {
-                this.logger.debug(`Triggering event ${event}`);
                 await this.trigger(ctx, event, rest);
             }
         });
@@ -99,7 +99,7 @@ export class StatusService {
                     source,
                     target,
                     status,
-                    targetId,
+                    targetId: target.value.id,
                 });
 
                 switch (target.type) {
@@ -114,7 +114,7 @@ export class StatusService {
                     case CardTargetedEnum.Enemy:
                         await this.enemyService.attach(
                             ctx,
-                            targetId,
+                            target.value.id,
                             source,
                             status.name,
                             status.args,
@@ -127,7 +127,7 @@ export class StatusService {
                     source,
                     status,
                     target,
-                    targetId,
+                    targetId: target.value.id,
                 });
             }
         }
@@ -353,7 +353,7 @@ export class StatusService {
                         event,
                         target: entityCollection.target,
                         status,
-                        args,
+                        eventArgs: args,
                         update(args) {
                             status.args = args;
                             isUpdate = true;
@@ -520,5 +520,48 @@ export class StatusService {
         statuses.push(...filter(global, { statuses: { debuff: [{ name }] } }));
 
         return compact(statuses);
+    }
+
+    public async decreaseCounterAndRemove(
+        ctx: Context,
+        collection: StatusCollection,
+        entity: ExpeditionEntity,
+        status: Status,
+    ): Promise<void> {
+        const statusCollection = filter(collection[status.type], {
+            name: status.name,
+        });
+
+        const statusesToRemove = [];
+
+        // If there are no distraughts, return
+        if (statusCollection.length === 0) return;
+
+        for (const status of statusCollection) {
+            // Decremement the value of the status
+            status.args.value--;
+
+            if (status.args.value === 0) {
+                // If the value is 0, remove the status
+                statusesToRemove.push(status);
+                this.logger.debug(
+                    cliColor.red(`Removing status ${status.name}`),
+                );
+            } else {
+                this.logger.debug(
+                    cliColor.red(
+                        `Decreasing ${status.name} status value to ${status.args.value}`,
+                    ),
+                );
+            }
+        }
+
+        // Remove the distraughts that are 0
+        collection[status.type] = collection[status.type].filter(
+            (status) => !statusesToRemove.includes(status),
+        );
+
+        // Update the entity
+        await this.updateStatuses(entity, ctx.expedition, collection);
     }
 }

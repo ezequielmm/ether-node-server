@@ -11,7 +11,7 @@ export const heraldDelayed: StatusEffect = {
     name: 'heraldDelayed',
     type: StatusType.Buff,
     direction: StatusDirection.Outgoing,
-    startsAt: StatusStartsAt.NextPlayerTurn,
+    startsAt: StatusStartsAt.Instantly,
     trigger: StatusTrigger.Effect,
     effects: [damageEffect],
 };

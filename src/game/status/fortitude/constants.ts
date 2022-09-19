@@ -11,7 +11,7 @@ export const fortitude: StatusEffect = {
     name: 'fortitude',
     type: StatusType.Buff,
     direction: StatusDirection.Incoming,
-    startsAt: StatusStartsAt.NextPlayerTurn,
+    startsAt: StatusStartsAt.Instantly,
     trigger: StatusTrigger.Effect,
     effects: [defenseEffect],
 };

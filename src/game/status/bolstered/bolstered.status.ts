@@ -64,7 +64,7 @@ export class BolsteredStatus implements StatusEventHandler {
         });
     }
 
-    @OnEvent(EVENT_BEFORE_PLAYER_TURN_END, { async: true })
+    @OnEvent(EVENT_BEFORE_PLAYER_TURN_END)
     async remove(args: { ctx: Context }): Promise<void> {
         const { ctx } = args;
         const statuses = this.statusService.getAllByName(ctx, bolstered.name);
@@ -72,7 +72,6 @@ export class BolsteredStatus implements StatusEventHandler {
         for (const status of statuses) {
             const buffStatuses = reject(status.statuses.buff, {
                 name: bolstered.name,
-                addedInRound: ctx.expedition.currentNode.data.round - 1,
             });
 
             if (isEqual(buffStatuses, status.statuses.buff)) {

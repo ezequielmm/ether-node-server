@@ -25,6 +25,7 @@ import { HeraldDelayedStatus } from './heraldDelayed/heraldDelayed.status';
 import { ImbuedStatus } from './imbued/imbued.status';
 import { InterceptEvent } from './intercept/intercept.event';
 import { InterceptStatus } from './intercept/intercept.status';
+import { NextPlayerTurnStatus } from './nextPlayerTurn/nextPlayerTurn.status';
 import { PrayingStatus } from './praying/praying.status';
 import { RegenerateStatus } from './regenerate/regenerate.status';
 import { ResistStatus } from './resist/resist.status';
@@ -84,6 +85,7 @@ import { TurtlingStatus } from './turtling/turtling.status';
         AnticipatingStatus,
         StunnedStatus,
         PrayingStatus,
+        NextPlayerTurnStatus,
     ],
     exports: [StatusService],
 })
