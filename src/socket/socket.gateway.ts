@@ -3,9 +3,10 @@ import {
     OnGatewayDisconnect,
     OnGatewayInit,
     WebSocketGateway,
+    WebSocketServer,
 } from '@nestjs/websockets';
 import { Logger } from '@nestjs/common';
-import { Socket } from 'socket.io';
+import { Server, Socket } from 'socket.io';
 import { isValidAuthToken } from 'src/utils';
 import { AuthGatewayService } from 'src/authGateway/authGateway.service';
 import { ExpeditionService } from 'src/game/components/expedition/expedition.service';
@@ -22,6 +23,8 @@ export class SocketGateway
     implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
 {
     private readonly logger: Logger = new Logger(SocketGateway.name);
+
+    @WebSocketServer() server: Server;
 
     constructor(
         private readonly authGatewayService: AuthGatewayService,
@@ -95,6 +98,10 @@ export class SocketGateway
                 }
 
                 await this.fullsyncAction.handle(client);
+
+                this.logger.verbose(
+                    `Clients connected: ${this.server.engine.clientsConnected}`,
+                );
             } else {
                 this.logger.debug(
                     `There is no expedition in progress for this player: ${client.id}`,
@@ -120,6 +127,11 @@ export class SocketGateway
         await this.cardSelectionScreenService.deleteByClientId(client.id);
         this.logger.debug(
             `Deleted card selection screen items for client ${client.id}`,
+        );
+
+        // Log amount of clients connected
+        this.logger.verbose(
+            `Clients connected: ${this.server.engine.clientsConnected}`,
         );
     }
 }
