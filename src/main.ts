@@ -10,6 +10,8 @@ import { TransformDataResource } from './interceptors/TransformDataResource.inte
 import * as compression from 'compression';
 import { existsSync, readFileSync } from 'fs';
 import { IoAdapter } from '@nestjs/platform-socket.io';
+import { ConfigService } from '@nestjs/config';
+import { serverEnvironments } from './utils';
 
 let app: INestApplication;
 
@@ -45,17 +47,24 @@ async function bootstrap() {
         type: VersioningType.URI,
     });
 
-    // Enable Swagger for API docs
-    const config = new DocumentBuilder()
-        .setTitle('KOTE Gameplay Service')
-        .setDescription('API routes')
-        .setVersion('1.0')
-        .addBearerAuth()
-        .addServer(localUrl, 'Local Server')
-        .build();
+    // Get configService
+    const configService = app.get(ConfigService);
 
-    const document = SwaggerModule.createDocument(app, config);
-    SwaggerModule.setup('api', app, document);
+    // Enable Swagger for API docs for dev only
+    const env = configService.get<serverEnvironments>('NODE_ENV');
+
+    if (env === serverEnvironments.development) {
+        const config = new DocumentBuilder()
+            .setTitle('KOTE Gameplay Service')
+            .setDescription('API routes')
+            .setVersion('1.0')
+            .addBearerAuth()
+            .addServer(localUrl, 'Local Server')
+            .build();
+
+        const document = SwaggerModule.createDocument(app, config);
+        SwaggerModule.setup('api', app, document);
+    }
 
     // Enable GZIP Compression
     app.use(compression());
