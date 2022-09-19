@@ -100,7 +100,7 @@ export class SocketGateway
                 await this.fullsyncAction.handle(client);
 
                 this.logger.verbose(
-                    `Clients connected: ${this.server.engine.clientsConnected}`,
+                    `Clients connected: ${this.server.engine.clientsCount}`,
                 );
             } else {
                 this.logger.debug(
@@ -131,7 +131,7 @@ export class SocketGateway
 
         // Log amount of clients connected
         this.logger.verbose(
-            `Clients connected: ${this.server.engine.clientsConnected}`,
+            `Clients connected: ${this.server.engine.clientsCount}`,
         );
     }
 }
