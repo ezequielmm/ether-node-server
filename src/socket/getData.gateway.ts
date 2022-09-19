@@ -13,13 +13,9 @@ import {
     StandardResponse,
     SWARMessageType,
 } from 'src/game/standardResponse/standardResponse';
-import { DataWSRequestTypesEnum } from './socket.enum';
+import { corsSocketSettings, DataWSRequestTypesEnum } from './socket.enum';
 
-@WebSocketGateway({
-    cors: {
-        origin: '*',
-    },
-})
+@WebSocketGateway(corsSocketSettings)
 export class GetDataGateway {
     private readonly logger: Logger = new Logger(GetDataGateway.name);
 

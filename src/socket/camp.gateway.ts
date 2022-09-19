@@ -7,12 +7,9 @@ import {
     SWARAction,
     SWARMessageType,
 } from 'src/game/standardResponse/standardResponse';
+import { corsSocketSettings } from './socket.enum';
 
-@WebSocketGateway({
-    cors: {
-        origin: '*',
-    },
-})
+@WebSocketGateway(corsSocketSettings)
 export class CampGateway {
     private readonly logger: Logger = new Logger(CampGateway.name);
 

@@ -1,5 +1,6 @@
 import { forwardRef, Module } from '@nestjs/common';
 import { CardModule } from '../components/card/card.module';
+import { CombatQueueModule } from '../components/combatQueue/combatQueue.module';
 import { EnemyModule } from '../components/enemy/enemy.module';
 import { ExpeditionModule } from '../components/expedition/expedition.module';
 import { PlayerModule } from '../components/player/player.module';
@@ -24,6 +25,7 @@ import { HeraldDelayedStatus } from './heraldDelayed/heraldDelayed.status';
 import { ImbuedStatus } from './imbued/imbued.status';
 import { InterceptEvent } from './intercept/intercept.event';
 import { InterceptStatus } from './intercept/intercept.status';
+import { NextPlayerTurnStatus } from './nextPlayerTurn/nextPlayerTurn.status';
 import { PrayingStatus } from './praying/praying.status';
 import { RegenerateStatus } from './regenerate/regenerate.status';
 import { ResistStatus } from './resist/resist.status';
@@ -46,6 +48,7 @@ import { TurtlingStatus } from './turtling/turtling.status';
         forwardRef(() => EnemyModule),
         forwardRef(() => PlayerModule),
         forwardRef(() => CardModule),
+        CombatQueueModule,
     ],
     providers: [
         StatusService,
@@ -82,6 +85,7 @@ import { TurtlingStatus } from './turtling/turtling.status';
         AnticipatingStatus,
         StunnedStatus,
         PrayingStatus,
+        NextPlayerTurnStatus,
     ],
     exports: [StatusService],
 })

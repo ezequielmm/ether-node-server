@@ -23,7 +23,7 @@ export const IntimidateCard: Card = {
             },
         ],
     },
-    showPointer: false,
+    showPointer: true,
     isUpgraded: false,
 };
 

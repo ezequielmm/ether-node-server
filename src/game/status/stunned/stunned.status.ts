@@ -13,7 +13,7 @@ export class StunnedStatus implements StatusEventHandler {
     private readonly logger = new Logger(StunnedStatus.name);
 
     async handle(dto: StatusEventDTO): Promise<any> {
-        const { target, args } = dto;
+        const { target, eventArgs: args } = dto;
         const enemy = args.enemy as IExpeditionCurrentNodeDataEnemy;
 
         if (EnemyService.isEnemy(target) && target.value.id == enemy.id) {

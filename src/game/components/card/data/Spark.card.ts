@@ -43,12 +43,12 @@ export const SparkCardUpgraded: Card = {
             {
                 name: burn.name,
                 args: {
-                    attachTo: CardTargetedEnum.None,
+                    attachTo: CardTargetedEnum.Enemy,
                     value: 2,
                 },
             },
         ],
     },
     showPointer: true,
-    isUpgraded: false,
+    isUpgraded: true,
 };

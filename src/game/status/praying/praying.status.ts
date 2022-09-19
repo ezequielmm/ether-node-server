@@ -5,6 +5,7 @@ import { fortitude } from '../fortitude/constants';
 import { StatusEventDTO, StatusEventHandler } from '../interfaces';
 import { resolve } from '../resolve/constants';
 import { StatusDecorator } from '../status.decorator';
+import { StatusService } from '../status.service';
 import { prayingStatus } from './constants';
 
 @StatusDecorator({
@@ -15,19 +16,33 @@ export class PrayingStatus implements StatusEventHandler {
     constructor(
         private readonly playerService: PlayerService,
         private readonly enemyService: EnemyService,
+        private readonly statuService: StatusService,
     ) {}
 
     async handle(dto: StatusEventDTO): Promise<any> {
-        const { ctx, update, remove, status, target } = dto;
+        const { ctx, update, remove, status, source, target } = dto;
 
-        if (PlayerService.isPlayer(target)) {
-            await this.playerService.attach(ctx, target, resolve.name);
-            await this.playerService.attach(ctx, target, fortitude.name);
-        } else if (EnemyService.isEnemy(target)) {
-            const id = target.value.id;
-            await this.enemyService.attach(ctx, id, target, resolve.name);
-            await this.enemyService.attach(ctx, id, target, fortitude.name);
-        }
+        await this.statuService.attach({
+            ctx,
+            source,
+            statuses: [
+                {
+                    name: fortitude.name,
+                    args: {
+                        value: 1,
+                        attachTo: target.type,
+                    },
+                },
+                {
+                    name: resolve.name,
+                    args: {
+                        value: 1,
+                        attachTo: target.type,
+                    },
+                },
+            ],
+            targetId: target.value.id,
+        });
 
         // Decrease counter
         status.args.value--;

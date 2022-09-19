@@ -3,6 +3,7 @@ import { CardTypeEnum } from 'src/game/components/card/card.enum';
 import { EnemyService } from 'src/game/components/enemy/enemy.service';
 import { HistoryService } from 'src/game/history/history.service';
 import { CardRegistry } from 'src/game/history/interfaces';
+import { StatusService } from 'src/game/status/status.service';
 import { stunned } from 'src/game/status/stunned/constants';
 import { EffectDecorator } from '../effects.decorator';
 import { EffectDTO, EffectHandler } from '../effects.interface';
@@ -14,7 +15,7 @@ import { knockDown } from './constants';
 export class KnockDownEffect implements EffectHandler {
     constructor(
         private readonly historyService: HistoryService,
-        private readonly enemyService: EnemyService,
+        private readonly statusService: StatusService,
     ) {}
 
     async handle(dto: EffectDTO): Promise<void> {
@@ -39,12 +40,20 @@ export class KnockDownEffect implements EffectHandler {
             lastCard.card.cardType === CardTypeEnum.Attack &&
             secondLastCard.card.cardType === CardTypeEnum.Attack
         ) {
-            await this.enemyService.attach(
+            await this.statusService.attach({
                 ctx,
-                target.value.id,
                 source,
-                stunned.name,
-            );
+                statuses: [
+                    {
+                        name: stunned.name,
+                        args: {
+                            value: 1,
+                            attachTo: target.type,
+                        },
+                    },
+                ],
+                targetId: target.value.id,
+            });
         }
     }
 }

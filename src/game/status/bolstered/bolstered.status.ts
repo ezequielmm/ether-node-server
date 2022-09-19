@@ -1,6 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
 import { isEqual, reject } from 'lodash';
+import { CombatQueueTargetEffectTypeEnum } from 'src/game/components/combatQueue/combatQueue.enum';
+import { CombatQueueService } from 'src/game/components/combatQueue/combatQueue.service';
 import { EnemyService } from 'src/game/components/enemy/enemy.service';
 import { Context } from 'src/game/components/interfaces';
 import { PlayerService } from 'src/game/components/player/player.service';
@@ -20,10 +22,12 @@ export class BolsteredStatus implements StatusEventHandler {
         private readonly playerService: PlayerService,
         private readonly enemyService: EnemyService,
         private readonly statusService: StatusService,
+        private readonly combatQueueService: CombatQueueService,
     ) {}
 
     async handle(args: StatusEventDTO): Promise<void> {
         const {
+            source,
             target,
             ctx,
             status: {
@@ -31,21 +35,36 @@ export class BolsteredStatus implements StatusEventHandler {
             },
         } = args;
 
+        let finalDefesense: number;
+
         if (PlayerService.isPlayer(target)) {
-            await this.playerService.setDefense(
-                ctx,
-                target.value.combatState.defense + value,
-            );
+            finalDefesense = target.value.combatState.defense + value;
+            await this.playerService.setDefense(ctx, finalDefesense);
         } else if (EnemyService.isEnemy(target)) {
+            finalDefesense = target.value.defense + value;
             await this.enemyService.setDefense(
                 ctx,
                 target.value.id,
                 target.value.defense + value,
             );
         }
+
+        await this.combatQueueService.push({
+            ctx,
+            source,
+            target,
+            args: {
+                effectType: CombatQueueTargetEffectTypeEnum.Defense,
+                defenseDelta: value,
+                finalDefense: finalDefesense,
+                healthDelta: undefined,
+                finalHealth: undefined,
+                statuses: [],
+            },
+        });
     }
 
-    @OnEvent(EVENT_BEFORE_PLAYER_TURN_END, { async: true })
+    @OnEvent(EVENT_BEFORE_PLAYER_TURN_END)
     async remove(args: { ctx: Context }): Promise<void> {
         const { ctx } = args;
         const statuses = this.statusService.getAllByName(ctx, bolstered.name);
@@ -53,7 +72,6 @@ export class BolsteredStatus implements StatusEventHandler {
         for (const status of statuses) {
             const buffStatuses = reject(status.statuses.buff, {
                 name: bolstered.name,
-                addedInRound: ctx.expedition.currentNode.data.round - 1,
             });
 
             if (isEqual(buffStatuses, status.statuses.buff)) {
