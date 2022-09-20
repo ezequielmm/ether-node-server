@@ -18,9 +18,10 @@ export class ExecutionersBlowEffect implements EffectHandler {
     ) {}
 
     async handle(dto: EffectDTO): Promise<void> {
-        const { ctx, target } = dto;
-
-        const { client } = ctx;
+        const {
+            ctx: { client },
+            target,
+        } = dto;
 
         // First we check if the target is an enemy and if the
         // target is dead
