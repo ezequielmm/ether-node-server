@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { isEmpty } from 'lodash';
 import { Socket } from 'socket.io';
+import { ChangeTurnAction } from '../action/changeTurn.action';
 import { CardTargetedEnum } from '../components/card/card.enum';
 import { CombatQueueService } from '../components/combatQueue/combatQueue.service';
 import { ExpeditionEnemy } from '../components/enemy/enemy.interface';
@@ -35,6 +36,7 @@ export class BeginEnemyTurnProcess {
         private readonly effectService: EffectService,
         private readonly eventEmitter: EventEmitter2,
         private readonly combatQueueService: CombatQueueService,
+        private readonly changeTurnAction: ChangeTurnAction,
     ) {}
 
     async handle(payload: BeginEnemyTurnDTO): Promise<void> {
@@ -44,13 +46,17 @@ export class BeginEnemyTurnProcess {
 
         this.client = client;
 
+        // Set combat turn change
+        this.changeTurnAction.handle({
+            client: this.client,
+            type: SWARMessageType.BeginTurn,
+            entity: CombatTurnEnum.Enemy,
+        });
+
         const expedition = await this.expeditionService.setCombatTurn({
             clientId: this.client.id,
             playing: CombatTurnEnum.Enemy,
         });
-
-        // Set combat turn change
-        this.sendCombatTurnChange();
 
         const {
             currentNode: {
@@ -148,21 +154,6 @@ export class BeginEnemyTurnProcess {
                         hpCurrent: enemy.hpCurrent,
                         hpMax: enemy.hpMax,
                     })),
-            }),
-        );
-    }
-
-    private sendCombatTurnChange(): void {
-        this.logger.debug(
-            `Sent message PutData to client ${this.client.id}: ${SWARAction.ChangeTurn}`,
-        );
-
-        this.client.emit(
-            'PutData',
-            StandardResponse.respond({
-                message_type: SWARMessageType.BeginTurn,
-                action: SWARAction.ChangeTurn,
-                data: CombatTurnEnum.Enemy,
             }),
         );
     }
