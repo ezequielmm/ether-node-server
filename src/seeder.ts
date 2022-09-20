@@ -21,12 +21,17 @@ import {
     SettingsSchema,
 } from './game/components/settings/settings.schema';
 import { SettingsSeeder } from './game/components/settings/settings.seeder';
-import { ConfigService } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { composeMongooseModuleOptions } from './dbConfiguration';
 
 seeder({
     imports: [
         MongooseModule.forRootAsync({
+            imports: [
+                ConfigModule.forRoot({
+                    cache: true,
+                }),
+            ],
             inject: [ConfigService],
             useFactory: (configService: ConfigService) => {
                 const uri = configService.get<string>('MONGODB_URL');
