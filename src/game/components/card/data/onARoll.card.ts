@@ -1,5 +1,5 @@
 import { damageEffect } from 'src/game/effects/damage/constants';
-import { onARoll } from 'src/game/effects/onARoll/constants';
+import { onARollEffect } from 'src/game/effects/onARoll/constants';
 import { CardRarityEnum, CardTypeEnum, CardTargetedEnum } from '../card.enum';
 import { Card } from '../card.schema';
 
@@ -11,7 +11,7 @@ export const OnARollCard: Card = {
     pool: 'knight',
     energy: 2,
     description: `Deal {${damageEffect.name}} damage. 
-    If this kills target, Gain {${onARoll.name}} energy.`,
+    If this kills target, Gain {${onARollEffect.name}} energy.`,
     keywords: [],
     properties: {
         effects: [
@@ -23,7 +23,7 @@ export const OnARollCard: Card = {
                 },
             },
             {
-                effect: onARoll.name,
+                effect: onARollEffect.name,
                 target: CardTargetedEnum.Enemy,
                 args: {
                     value: 2,
@@ -44,7 +44,7 @@ export const OnARollCardUpgraded: Card = {
     pool: 'knight',
     energy: 2,
     description: `Deal {${damageEffect.name}} damage. 
-    If this kills target, Gain {${onARoll.name}} energy.`,
+    If this kills target, Gain {${onARollEffect.name}} energy.`,
     keywords: [],
     properties: {
         effects: [
@@ -56,7 +56,7 @@ export const OnARollCardUpgraded: Card = {
                 },
             },
             {
-                effect: onARoll.name,
+                effect: onARollEffect.name,
                 target: CardTargetedEnum.Enemy,
                 args: {
                     value: 2,
