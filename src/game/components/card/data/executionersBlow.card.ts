@@ -51,5 +51,5 @@ export const ExecutionersBlowCardUpgraded: Card = {
         statuses: [],
     },
     showPointer: true,
-    isUpgraded: false,
+    isUpgraded: true,
 };

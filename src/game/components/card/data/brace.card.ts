@@ -58,5 +58,5 @@ export const BraceCardUpgraded: Card = {
         statuses: [],
     },
     showPointer: true,
-    isUpgraded: false,
+    isUpgraded: true,
 };
