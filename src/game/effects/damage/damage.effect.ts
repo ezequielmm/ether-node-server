@@ -1,11 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { GetEnergyAction } from 'src/game/action/getEnergy.action';
+import { MoveCardAction } from 'src/game/action/moveCard.action';
+import { CardSelectionScreenOriginPileEnum } from 'src/game/components/cardSelectionScreen/cardSelectionScreen.enum';
 import { CombatQueueTargetEffectTypeEnum } from 'src/game/components/combatQueue/combatQueue.enum';
 import { CombatQueueService } from 'src/game/components/combatQueue/combatQueue.service';
 import { EnemyService } from 'src/game/components/enemy/enemy.service';
 import { PlayerService } from 'src/game/components/player/player.service';
 import { EVENT_AFTER_DAMAGE_EFFECT } from 'src/game/constants';
+import { HistoryService } from 'src/game/history/history.service';
+import { CardRegistry } from 'src/game/history/interfaces';
 import { isNotUndefined } from 'src/utils';
 import { EffectDecorator } from '../effects.decorator';
 import { EffectDTO, EffectHandler } from '../effects.interface';
@@ -21,6 +25,7 @@ export interface DamageArgs {
     onARoll?: {
         energyToRestore: number;
     };
+    returnCardIfEnemyIsDefeated: boolean;
 }
 
 @EffectDecorator({
@@ -35,6 +40,8 @@ export class DamageEffect implements EffectHandler {
         private readonly combatQueueService: CombatQueueService,
         private readonly effectService: EffectService,
         private readonly getEnergyAction: GetEnergyAction,
+        private readonly moveCardAction: MoveCardAction,
+        private readonly historyService: HistoryService,
     ) {}
 
     async handle(payload: EffectDTO<DamageArgs>): Promise<void> {
@@ -49,6 +56,7 @@ export class DamageEffect implements EffectHandler {
                 useEnergyAsMultiplier,
                 useEnergyAsValue,
                 onARoll,
+                returnCardIfEnemyIsDefeated,
             },
         } = payload;
 
@@ -98,6 +106,26 @@ export class DamageEffect implements EffectHandler {
                     });
 
                     await this.getEnergyAction.handle(ctx.client.id);
+                }
+
+                // If the enemy is defeated, we send back executioners blow
+                // back to the hand
+                if (isNotUndefined(returnCardIfEnemyIsDefeated)) {
+                    const { card } = this.historyService.findLast(
+                        ctx.client.id,
+                        {
+                            type: 'card',
+                        },
+                    ) as CardRegistry;
+
+                    console.log({ card });
+
+                    await this.moveCardAction.handle({
+                        client: ctx.client,
+                        cardIds: [card.id],
+                        originPile: CardSelectionScreenOriginPileEnum.Discard,
+                        cardIsFree: true,
+                    });
                 }
             }
         }
