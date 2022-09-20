@@ -24,7 +24,7 @@ export class MoveCardAction {
 
     async handle(payload: IMoveCardDTO): Promise<void> {
         // First we deestructure the payload and get the data
-        const { cardIds, originPile, client } = payload;
+        const { cardIds, originPile, client, cardIsFree } = payload;
 
         // Now we get the current node information
         const {
@@ -35,23 +35,20 @@ export class MoveCardAction {
             clientId: client.id,
         });
 
-        // Now we set a variable for the card pile that we
-        // are going to use
+        // Now we set a variable for the cardfrom where we
+        // are going to take the cards
         let deckPile = cards[originPile];
 
-        // Now we take the cards by its id
-        let cardsToMove = deckPile.filter(({ id }) => {
-            return cardIds.includes(id);
-        });
-
-        // Is we receive a parameter to set the cost to 0
-        // we handle that here
-        if (isNotUndefined(payload.cardIsFree)) {
-            cardsToMove = cardsToMove.map((card) => {
-                card.energy = 0;
+        // Now we take the cards by its id and check if we have to
+        // change their cost down to 0
+        const cardsToMove = deckPile
+            .filter(({ id }) => {
+                return cardIds.includes(id);
+            })
+            .map((card) => {
+                if (isNotUndefined(cardIsFree)) card.energy = 0;
                 return card;
             });
-        }
 
         // Now we remove the cards from the desired pile
         // to update the piles
