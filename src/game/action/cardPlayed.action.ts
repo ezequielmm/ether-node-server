@@ -122,6 +122,10 @@ export class CardPlayedAction {
             if (!canPlayCard) {
                 this.sendNotEnoughEnergyMessage(message);
             } else {
+                this.logger.verbose(
+                    `Player ${client.id} played card: ${card.name}`,
+                );
+
                 const source = this.playerService.get(ctx);
                 const sourceReference =
                     this.statusService.getReferenceFromEntity(source);

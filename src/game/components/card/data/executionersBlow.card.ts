@@ -18,13 +18,7 @@ export const ExecutionersBlowCard: Card = {
                 target: CardTargetedEnum.Enemy,
                 args: {
                     value: 11,
-                },
-            },
-            {
-                effect: damageEffect.name,
-                target: CardTargetedEnum.None,
-                args: {
-                    value: 0,
+                    returnCardIfEnemyIsDefeated: true,
                 },
             },
         ],
@@ -50,11 +44,12 @@ export const ExecutionersBlowCardUpgraded: Card = {
                 target: CardTargetedEnum.Enemy,
                 args: {
                     value: 15,
+                    returnCardIfEnemyIsDefeated: true,
                 },
             },
         ],
         statuses: [],
     },
     showPointer: true,
-    isUpgraded: false,
+    isUpgraded: true,
 };
