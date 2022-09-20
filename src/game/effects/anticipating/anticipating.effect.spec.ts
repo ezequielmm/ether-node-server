@@ -54,7 +54,7 @@ describe('AnticipatingEffect', () => {
                     name: anticipatingStatus.name,
                     args: {
                         attachTo: target.type,
-                        value: target.value.combatState.defense,
+                        counter: target.value.combatState.defense,
                     },
                 },
             ],
@@ -79,7 +79,7 @@ describe('AnticipatingEffect', () => {
                     name: anticipatingStatus.name,
                     args: {
                         attachTo: target.type,
-                        value: target.value.defense,
+                        counter: target.value.defense,
                     },
                 },
             ],
