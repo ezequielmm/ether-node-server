@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
+import { GetEnergyAction } from 'src/game/action/getEnergy.action';
 import { CombatQueueTargetEffectTypeEnum } from 'src/game/components/combatQueue/combatQueue.enum';
 import { CombatQueueService } from 'src/game/components/combatQueue/combatQueue.service';
 import { EnemyService } from 'src/game/components/enemy/enemy.service';
@@ -8,6 +9,8 @@ import { EVENT_AFTER_DAMAGE_EFFECT } from 'src/game/constants';
 import { isNotUndefined } from 'src/utils';
 import { EffectDecorator } from '../effects.decorator';
 import { EffectDTO, EffectHandler } from '../effects.interface';
+import { EffectService } from '../effects.service';
+import { energyEffect } from '../energy/constants';
 import { damageEffect } from './constants';
 
 export interface DamageArgs {
@@ -15,6 +18,9 @@ export interface DamageArgs {
     multiplier?: number;
     useEnergyAsValue?: boolean;
     useEnergyAsMultiplier?: boolean;
+    onARoll?: {
+        energyToRestore: number;
+    };
 }
 
 @EffectDecorator({
@@ -27,6 +33,8 @@ export class DamageEffect implements EffectHandler {
         private readonly enemyService: EnemyService,
         private readonly eventEmitter: EventEmitter2,
         private readonly combatQueueService: CombatQueueService,
+        private readonly effectService: EffectService,
+        private readonly getEnergyAction: GetEnergyAction,
     ) {}
 
     async handle(payload: EffectDTO<DamageArgs>): Promise<void> {
@@ -40,6 +48,7 @@ export class DamageEffect implements EffectHandler {
                 multiplier,
                 useEnergyAsMultiplier,
                 useEnergyAsValue,
+                onARoll,
             },
         } = payload;
 
@@ -70,6 +79,27 @@ export class DamageEffect implements EffectHandler {
 
             newHp = target.value.hpCurrent;
             newDefense = target.value.defense;
+
+            // Here we check if the enemy was defeated to run the on a roll
+            // effect only if the enemy's health is 0
+            if (newHp == 0) {
+                if (onARoll && onARoll.energyToRestore) {
+                    await this.effectService.apply({
+                        ctx,
+                        source: source,
+                        target: source,
+                        effect: {
+                            effect: energyEffect.name,
+                            target: source.type,
+                            args: {
+                                value: onARoll.energyToRestore,
+                            },
+                        },
+                    });
+
+                    await this.getEnergyAction.handle(ctx.client.id);
+                }
+            }
         }
 
         if (PlayerService.isPlayer(target)) {

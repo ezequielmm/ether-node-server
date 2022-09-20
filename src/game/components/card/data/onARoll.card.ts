@@ -1,5 +1,4 @@
 import { damageEffect } from 'src/game/effects/damage/constants';
-import { onARollEffect } from 'src/game/effects/onARoll/constants';
 import { CardRarityEnum, CardTypeEnum, CardTargetedEnum } from '../card.enum';
 import { Card } from '../card.schema';
 
@@ -10,8 +9,7 @@ export const OnARollCard: Card = {
     cardType: CardTypeEnum.Attack,
     pool: 'knight',
     energy: 2,
-    description: `Deal {${damageEffect.name}} damage. 
-    If this kills target, Gain {${onARollEffect.name}} energy.`,
+    description: `Deal {${damageEffect.name}} damage. If this kills target, Gain 2 energy.`,
     keywords: [],
     properties: {
         effects: [
@@ -20,13 +18,9 @@ export const OnARollCard: Card = {
                 target: CardTargetedEnum.Enemy,
                 args: {
                     value: 10,
-                },
-            },
-            {
-                effect: onARollEffect.name,
-                target: CardTargetedEnum.Enemy,
-                args: {
-                    value: 2,
+                    onARoll: {
+                        energyToRestore: 2,
+                    },
                 },
             },
         ],
@@ -43,8 +37,7 @@ export const OnARollCardUpgraded: Card = {
     cardType: CardTypeEnum.Attack,
     pool: 'knight',
     energy: 2,
-    description: `Deal {${damageEffect.name}} damage. 
-    If this kills target, Gain {${onARollEffect.name}} energy.`,
+    description: `Deal {${damageEffect.name}} damage. If this kills target, Gain 2 energy.`,
     keywords: [],
     properties: {
         effects: [
@@ -53,13 +46,9 @@ export const OnARollCardUpgraded: Card = {
                 target: CardTargetedEnum.Enemy,
                 args: {
                     value: 16,
-                },
-            },
-            {
-                effect: onARollEffect.name,
-                target: CardTargetedEnum.Enemy,
-                args: {
-                    value: 2,
+                    onARoll: {
+                        energyToRestore: 2,
+                    },
                 },
             },
         ],
