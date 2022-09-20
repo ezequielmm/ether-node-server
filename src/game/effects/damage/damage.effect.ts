@@ -118,8 +118,6 @@ export class DamageEffect implements EffectHandler {
                         },
                     ) as CardRegistry;
 
-                    console.log({ card });
-
                     await this.moveCardAction.handle({
                         client: ctx.client,
                         cardIds: [card.id],
