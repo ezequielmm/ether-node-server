@@ -36,8 +36,6 @@ async function bootstrap() {
         });
     }
 
-    app.useLogger(app.get(Logger));
-
     app.useWebSocketAdapter(new IoAdapter(app));
 
     //Enable Validation
@@ -68,6 +66,10 @@ async function bootstrap() {
 
         const document = SwaggerModule.createDocument(app, config);
         SwaggerModule.setup('api', app, document);
+    }
+
+    if (env === serverEnvironments.production) {
+        app.useLogger(app.get(Logger));
     }
 
     // Enable GZIP Compression
