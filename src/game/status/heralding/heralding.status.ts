@@ -12,14 +12,14 @@ import { EffectDTO } from '../../effects/effects.interface';
 import { StatusEffectHandler, StatusEffectDTO } from '../interfaces';
 import { StatusDecorator } from '../status.decorator';
 import { StatusService } from '../status.service';
-import { heraldDelayed } from './constants';
+import { heraldingStatus } from './constants';
 
 @StatusDecorator({
-    status: heraldDelayed,
+    status: heraldingStatus,
 })
 @Injectable()
-export class HeraldDelayedStatus implements StatusEffectHandler {
-    protected readonly logger = new Logger(HeraldDelayedStatus.name);
+export class HeraldingStatus implements StatusEffectHandler {
+    protected readonly logger = new Logger(HeraldingStatus.name);
 
     constructor(
         protected readonly playerService: PlayerService,
@@ -50,7 +50,7 @@ export class HeraldDelayedStatus implements StatusEffectHandler {
                 ctx,
                 enemy.value.statuses,
                 enemy,
-                heraldDelayed,
+                heraldingStatus,
             );
         }
     }
@@ -65,7 +65,7 @@ export class HeraldDelayedStatus implements StatusEffectHandler {
             ctx,
             statuses,
             player,
-            heraldDelayed,
+            heraldingStatus,
         );
     }
 }

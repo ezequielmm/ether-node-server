@@ -6,6 +6,7 @@ import { MongooseModule, MongooseModuleOptions } from '@nestjs/mongoose';
 import { ConfigurationService } from './config/configuration.service';
 import { SocketModule } from './socket/socket.module';
 import { EventEmitterModule } from '@nestjs/event-emitter';
+import { LoggerModule } from 'nestjs-pino';
 
 @Module({
     imports: [
@@ -26,6 +27,14 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
         }),
         EventEmitterModule.forRoot({
             wildcard: true,
+        }),
+        LoggerModule.forRoot({
+            pinoHttp: {
+                transport:
+                    process.env.NODE_ENV !== 'production'
+                        ? { target: 'pino-pretty' }
+                        : undefined,
+            },
         }),
     ],
     controllers: [AppController],

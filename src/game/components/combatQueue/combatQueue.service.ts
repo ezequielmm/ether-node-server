@@ -14,7 +14,7 @@ import { Context, ExpeditionEntity } from '../interfaces';
 import { CombatQueueTargetEffectTypeEnum } from './combatQueue.enum';
 import { CreateCombatQueueDTO, PushActionDTO } from './combatQueue.interface';
 import { CombatQueue, CombatQueueDocument } from './combatQueue.schema';
-import * as cliColor from 'cli-color';
+import { isEmpty } from 'lodash';
 
 @Injectable()
 export class CombatQueueService {
@@ -80,9 +80,14 @@ export class CombatQueueService {
             },
         );
 
-        this.logger.debug(cliColor.blue('Sending combat queue to client 📮'));
-        this.logger.debug(
-            cliColor.blue(JSON.stringify(combatQueues.queue, null, 2)),
+        // Avoid sending empty combat queue to client
+        if (isEmpty(data)) return;
+
+        this.logger.log(
+            {
+                combatQueue: data,
+            },
+            'Sending combat queue to client',
         );
 
         client.emit(
@@ -96,6 +101,7 @@ export class CombatQueueService {
             ),
         );
 
+        // Clear combat queue
         await this.deleteCombatQueueByClientId(client.id);
     }
 
