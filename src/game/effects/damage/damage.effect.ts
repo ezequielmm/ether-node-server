@@ -25,7 +25,7 @@ export interface DamageArgs {
     onARoll?: {
         energyToRestore: number;
     };
-    returnCardIfEnemyIsDefeated: boolean;
+    returnCardIfEnemyIsDefeated?: boolean;
 }
 
 @EffectDecorator({
