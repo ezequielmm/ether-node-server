@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { Socket } from 'socket.io';
+import { ChangeTurnAction } from '../action/changeTurn.action';
 import { DrawCardAction } from '../action/drawCard.action';
 import { GetPlayerInfoAction } from '../action/getPlayerInfo.action';
 import { CombatQueueService } from '../components/combatQueue/combatQueue.service';
@@ -38,6 +39,7 @@ export class BeginPlayerTurnProcess {
         private readonly eventEmitter: EventEmitter2,
         private readonly getPlayerInfoAction: GetPlayerInfoAction,
         private readonly combatQueueService: CombatQueueService,
+        private readonly changeTurnAction: ChangeTurnAction,
     ) {}
 
     async handle(payload: BeginPlayerTurnDTO): Promise<void> {
@@ -55,7 +57,6 @@ export class BeginPlayerTurnProcess {
                 data: {
                     round,
                     player: { handSize, defense: currentDefense },
-                    enemies,
                 },
             },
         } = expedition;
@@ -80,18 +81,12 @@ export class BeginPlayerTurnProcess {
             newRound: round + 1,
         });
 
-        this.logger.debug(
-            `Sent message PutData to client ${client.id}: ${SWARAction.ChangeTurn}`,
-        );
-
-        client.emit(
-            'PutData',
-            StandardResponse.respond({
-                message_type: SWARMessageType.BeginTurn,
-                action: SWARAction.ChangeTurn,
-                data: CombatTurnEnum.Player,
-            }),
-        );
+        // Send change turn message
+        this.changeTurnAction.handle({
+            client,
+            type: SWARMessageType.BeginTurn,
+            entity: CombatTurnEnum.Player,
+        });
 
         // Reset energy
         const { initialEnergy, maxEnergy } =
@@ -99,11 +94,6 @@ export class BeginPlayerTurnProcess {
 
         // Reset defense for the player
         if (currentDefense > 0) await this.playerService.setDefense(ctx, 0);
-
-        // Reset defense enemies for the enemies
-        enemies.forEach(async (enemy) => {
-            await this.enemyService.setDefense(ctx, enemy.id, 0);
-        });
 
         // Set player energy to default values
         await this.playerService.setEnergy(ctx, initialEnergy);

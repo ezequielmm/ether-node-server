@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
+import { ChangeTurnAction } from '../action/changeTurn.action';
 import { CombatQueueService } from '../components/combatQueue/combatQueue.service';
 import { CombatTurnEnum } from '../components/expedition/expedition.enum';
 import { Context } from '../components/interfaces';
@@ -7,11 +8,7 @@ import {
     EVENT_AFTER_ENEMIES_TURN_END,
     EVENT_BEFORE_ENEMIES_TURN_END,
 } from '../constants';
-import {
-    SWARAction,
-    StandardResponse,
-    SWARMessageType,
-} from '../standardResponse/standardResponse';
+import { SWARMessageType } from '../standardResponse/standardResponse';
 import { BeginPlayerTurnProcess } from './beginPlayerTurn.process';
 
 interface EndEnemyTurnDTO {
@@ -26,6 +23,7 @@ export class EndEnemyTurnProcess {
         private readonly beingPlayerTurnProcess: BeginPlayerTurnProcess,
         private readonly eventEmitter: EventEmitter2,
         private readonly combatQueueService: CombatQueueService,
+        private readonly changeTurnAction: ChangeTurnAction,
     ) {}
 
     async handle(payload: EndEnemyTurnDTO): Promise<void> {
@@ -40,18 +38,11 @@ export class EndEnemyTurnProcess {
             ctx,
         });
 
-        this.logger.debug(
-            `Sent message PutData to client ${client.id}: ${SWARAction.ChangeTurn}`,
-        );
-
-        client.emit(
-            'PutData',
-            StandardResponse.respond({
-                message_type: SWARMessageType.EndTurn,
-                action: SWARAction.ChangeTurn,
-                data: CombatTurnEnum.Enemy,
-            }),
-        );
+        this.changeTurnAction.handle({
+            client,
+            type: SWARMessageType.EndTurn,
+            entity: CombatTurnEnum.Enemy,
+        });
 
         await this.eventEmitter.emitAsync(EVENT_AFTER_ENEMIES_TURN_END, {
             ctx,

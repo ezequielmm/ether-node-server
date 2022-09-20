@@ -106,6 +106,7 @@ export class DefenseEffect implements EffectHandler {
             const defenseCalculated = newDefense + currentDefense;
 
             await this.playerService.setDefense(ctx, defenseCalculated);
+
             await this.combatQueueService.push({
                 ctx,
                 source,
@@ -135,6 +136,7 @@ export class DefenseEffect implements EffectHandler {
                 target.value.id,
                 defenseCalculated,
             );
+
             await this.combatQueueService.push({
                 ctx,
                 source,
