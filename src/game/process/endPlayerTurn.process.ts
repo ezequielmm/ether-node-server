@@ -4,6 +4,7 @@ import { Socket } from 'socket.io';
 import { ChangeTurnAction } from '../action/changeTurn.action';
 import { DiscardAllCardsAction } from '../action/discardAllCards.action';
 import { CombatQueueService } from '../components/combatQueue/combatQueue.service';
+import { EnemyService } from '../components/enemy/enemy.service';
 import { CombatTurnEnum } from '../components/expedition/expedition.enum';
 import { ExpeditionService } from '../components/expedition/expedition.service';
 import { Context } from '../components/interfaces';
@@ -29,6 +30,7 @@ export class EndPlayerTurnProcess {
         private readonly eventEmitter: EventEmitter2,
         private readonly combatQueueService: CombatQueueService,
         private readonly changeTurnAction: ChangeTurnAction,
+        private readonly enemyService: EnemyService,
     ) {}
 
     async handle(payload: EndPlayerTurnDTO): Promise<void> {
@@ -50,6 +52,17 @@ export class EndPlayerTurnProcess {
             client,
             expedition,
         };
+
+        // Reset defense for the enemies
+        const {
+            currentNode: {
+                data: { enemies },
+            },
+        } = expedition;
+
+        enemies.forEach(async (enemy) => {
+            await this.enemyService.setDefense(ctx, enemy.id, 0);
+        });
 
         await this.combatQueueService.start(ctx);
 
