@@ -1,6 +1,11 @@
 import { removeDebuff } from 'src/game/effects/removeDebuff/contants';
 import { resist } from 'src/game/status/resist/constants';
-import { CardRarityEnum, CardTypeEnum, CardTargetedEnum } from '../card.enum';
+import {
+    CardRarityEnum,
+    CardTypeEnum,
+    CardTargetedEnum,
+    CardEnergyEnum,
+} from '../card.enum';
 import { Card } from '../card.schema';
 
 export const Refocus: Card = {
@@ -9,7 +14,7 @@ export const Refocus: Card = {
     rarity: CardRarityEnum.Legendary,
     cardType: CardTypeEnum.Skill,
     pool: 'knight',
-    energy: -1,
+    energy: CardEnergyEnum.All,
     description: `Remove 1 debuff\nGain X Resist`,
     keywords: [],
     properties: {
@@ -38,11 +43,11 @@ export const Refocus: Card = {
 
 export const RefocusUpgraded: Card = {
     cardId: 158,
-    name: 'Re-focus',
+    name: 'Re-focus+',
     rarity: CardRarityEnum.Legendary,
     cardType: CardTypeEnum.Skill,
     pool: 'knight',
-    energy: -1,
+    energy: CardEnergyEnum.All,
     description: `Remove all debuffs\nGain X Resist`,
     keywords: [],
     properties: {

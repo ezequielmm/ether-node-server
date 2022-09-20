@@ -73,13 +73,11 @@ export class GetDataGateway {
                     break;
             }
 
-            return JSON.stringify(
-                StandardResponse.respond({
-                    message_type: SWARMessageType.GenericData,
-                    action: types,
-                    data,
-                }),
-            );
+            return StandardResponse.respond({
+                message_type: SWARMessageType.GenericData,
+                action: types,
+                data,
+            });
         } catch (e) {
             this.logger.error(e.message);
 

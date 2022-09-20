@@ -42,13 +42,11 @@ export class CampGateway {
 
         // Now we return the message to let the frontend know the new
         // health
-        return JSON.stringify(
-            StandardResponse.respond({
-                message_type: SWARMessageType.CampUpdate,
-                action: SWARAction.IncreasePlayerHealth,
-                data: { newHp },
-            }),
-        );
+        return StandardResponse.respond({
+            message_type: SWARMessageType.CampUpdate,
+            action: SWARAction.IncreasePlayerHealth,
+            data: { newHp },
+        });
     }
 
     @SubscribeMessage('ShowUpgradeCard')
@@ -64,12 +62,10 @@ export class CampGateway {
             clientId: client.id,
         });
 
-        return JSON.stringify(
-            StandardResponse.respond({
-                message_type: SWARMessageType.CampUpdate,
-                action: SWARAction.ShowPlayerDeck,
-                data: { cards },
-            }),
-        );
+        return StandardResponse.respond({
+            message_type: SWARMessageType.CampUpdate,
+            action: SWARAction.ShowPlayerDeck,
+            data: { cards },
+        });
     }
 }

@@ -257,13 +257,11 @@ export class CardPlayedAction {
 
         this.client.emit(
             'ErrorMessage',
-            JSON.stringify(
-                StandardResponse.respond({
-                    message_type: SWARMessageType.Error,
-                    action: SWARAction.InvalidCard,
-                    data: null,
-                }),
-            ),
+            StandardResponse.respond({
+                message_type: SWARMessageType.Error,
+                action: SWARAction.InvalidCard,
+                data: null,
+            }),
         );
     }
 
@@ -274,13 +272,11 @@ export class CardPlayedAction {
 
         this.client.emit(
             'ErrorMessage',
-            JSON.stringify(
-                StandardResponse.respond({
-                    message_type: SWARMessageType.Error,
-                    action: SWARAction.InsufficientEnergy,
-                    data: message,
-                }),
-            ),
+            StandardResponse.respond({
+                message_type: SWARMessageType.Error,
+                action: SWARAction.InsufficientEnergy,
+                data: message,
+            }),
         );
     }
 
@@ -291,13 +287,11 @@ export class CardPlayedAction {
 
         this.client.emit(
             'PutData',
-            JSON.stringify(
-                StandardResponse.respond({
-                    message_type: SWARMessageType.PlayerAffected,
-                    action: SWARAction.UpdateEnergy,
-                    data: [energy, energyMax],
-                }),
-            ),
+            StandardResponse.respond({
+                message_type: SWARMessageType.PlayerAffected,
+                action: SWARAction.UpdateEnergy,
+                data: [energy, energyMax],
+            }),
         );
     }
 }

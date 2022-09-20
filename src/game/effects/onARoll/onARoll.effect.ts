@@ -4,10 +4,10 @@ import { EffectDecorator } from '../effects.decorator';
 import { EffectDTO, EffectHandler } from '../effects.interface';
 import { EffectService } from '../effects.service';
 import { energyEffect } from '../energy/constants';
-import { onARoll } from './constants';
+import { onARollEffect } from './constants';
 
 @EffectDecorator({
-    effect: onARoll,
+    effect: onARollEffect,
 })
 @Injectable()
 export class OnARollEffect implements EffectHandler {
@@ -18,7 +18,11 @@ export class OnARollEffect implements EffectHandler {
 
     async handle(dto: EffectDTO): Promise<void> {
         const { ctx, source, target, args } = dto;
+
+        // First we check if the target is an enemy and if the
+        // target is dead
         if (EnemyService.isEnemy(target) && this.enemyService.isDead(target)) {
+            // if is dead, we apply energy back to the player
             await this.effectService.apply({
                 ctx,
                 source: source,

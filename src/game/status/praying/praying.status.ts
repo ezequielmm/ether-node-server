@@ -1,6 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { EnemyService } from 'src/game/components/enemy/enemy.service';
-import { PlayerService } from 'src/game/components/player/player.service';
 import { fortitude } from '../fortitude/constants';
 import { StatusEventDTO, StatusEventHandler } from '../interfaces';
 import { resolve } from '../resolve/constants';
@@ -13,11 +11,7 @@ import { prayingStatus } from './constants';
 })
 @Injectable()
 export class PrayingStatus implements StatusEventHandler {
-    constructor(
-        private readonly playerService: PlayerService,
-        private readonly enemyService: EnemyService,
-        private readonly statuService: StatusService,
-    ) {}
+    constructor(private readonly statuService: StatusService) {}
 
     async handle(dto: StatusEventDTO): Promise<any> {
         const { ctx, update, remove, status, source, target } = dto;

@@ -53,13 +53,11 @@ export class DiscardAllCardsAction {
 
         client.emit(
             'PutData',
-            JSON.stringify(
-                StandardResponse.respond({
-                    message_type: SWARMessageTypeToSend,
-                    action: SWARAction.MoveCard,
-                    data: cardMoves,
-                }),
-            ),
+            StandardResponse.respond({
+                message_type: SWARMessageTypeToSend,
+                action: SWARAction.MoveCard,
+                data: cardMoves,
+            }),
         );
     }
 }

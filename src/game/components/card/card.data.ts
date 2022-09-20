@@ -12,7 +12,6 @@ import { CounterCard, CounterCardUpgraded } from './data/counter.card';
 import { DefenseCard, DefenseCardUpgraded } from './data/defend.card';
 import { DivineGiftCard, DivineGiftCardUpgraded } from './data/divineGift.card';
 import { DoubleDownCard, DoubleDownCardUpgraded } from './data/doubleDown.card';
-import { EnflameCard, EnflameCardUpgraded } from './data/enflame.card';
 import {
     ExecutionersBlowCard,
     ExecutionersBlowCardUpgraded,
@@ -206,8 +205,6 @@ export const data: Card[] = [
     SparkCardUpgraded,
     TorchCard,
     TorchCardUpgraded,
-    EnflameCard,
-    EnflameCardUpgraded,
     SharpenBladeCard,
     SharpenBladeCardUpgraded,
     OnARollCard,

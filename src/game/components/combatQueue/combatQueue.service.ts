@@ -92,13 +92,11 @@ export class CombatQueueService {
 
         client.emit(
             'PutData',
-            JSON.stringify(
-                StandardResponse.respond({
-                    message_type: SWARMessageType.CombatUpdate,
-                    action: SWARAction.CombatQueue,
-                    data,
-                }),
-            ),
+            StandardResponse.respond({
+                message_type: SWARMessageType.CombatUpdate,
+                action: SWARAction.CombatQueue,
+                data,
+            }),
         );
 
         // Clear combat queue

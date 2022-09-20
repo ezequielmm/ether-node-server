@@ -8,6 +8,7 @@ import { HistoryModule } from '../history/history.module';
 import { ProcessModule } from '../process/process.module';
 import { StatusModule } from '../status/status.module';
 import { CardPlayedAction } from './cardPlayed.action';
+import { ChangeTurnAction } from './changeTurn.action';
 import { DiscardAllCardsAction } from './discardAllCards.action';
 import { DiscardCardAction } from './discardCard.action';
 import { DrawCardAction } from './drawCard.action';
@@ -51,6 +52,7 @@ import { SetCombatTurnAction } from './setCombatTurn.action';
         GetPlayerDeckAction,
         GetCurrentStepAction,
         MoveCardAction,
+        ChangeTurnAction,
     ],
     exports: [
         FullSyncAction,
@@ -68,6 +70,7 @@ import { SetCombatTurnAction } from './setCombatTurn.action';
         GetPlayerDeckAction,
         GetCurrentStepAction,
         MoveCardAction,
+        ChangeTurnAction,
     ],
 })
 export class ActionModule {}
