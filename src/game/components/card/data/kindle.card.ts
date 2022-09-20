@@ -27,7 +27,7 @@ export const KindleCard: Card = {
                 name: burn.name,
                 args: {
                     attachTo: CardTargetedEnum.Enemy,
-                    value: 1,
+                    counter: 1,
                 },
             },
         ],
@@ -60,7 +60,7 @@ export const KindleCardUpgraded: Card = {
                 name: burn.name,
                 args: {
                     attachTo: CardTargetedEnum.Enemy,
-                    value: 2,
+                    counter: 2,
                 },
             },
         ],

@@ -29,7 +29,7 @@ export class SpikesStatus implements StatusEffectHandler {
             effect: {
                 effect: damageEffect.name,
                 args: {
-                    value: dto.status.args.value,
+                    value: dto.status.args.counter,
                 },
             },
         };

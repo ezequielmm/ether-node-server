@@ -28,7 +28,7 @@ export const BackHandCard: Card = {
                 name: distraught.name,
                 args: {
                     attachTo: CardTargetedEnum.Enemy,
-                    value: 1,
+                    counter: 1,
                 },
             },
         ],
@@ -62,7 +62,7 @@ export const BackHandCardUpgraded: Card = {
                 name: distraught.name,
                 args: {
                     attachTo: CardTargetedEnum.Enemy,
-                    value: 2,
+                    counter: 2,
                 },
             },
         ],

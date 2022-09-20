@@ -39,7 +39,7 @@ export class AnticipatingEffect implements EffectHandler {
                     name: anticipatingStatus.name,
                     args: {
                         attachTo: target.type,
-                        value: defense,
+                        counter: defense,
                     },
                 },
             ],

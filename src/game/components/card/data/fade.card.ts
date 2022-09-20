@@ -17,7 +17,7 @@ export const FadeCard: Card = {
             {
                 name: dodge.name,
                 args: {
-                    value: 1,
+                    counter: 1,
                     attachTo: CardTargetedEnum.Player,
                 },
             },
@@ -42,7 +42,7 @@ export const FadeCardUpgraded: Card = {
             {
                 name: dodge.name,
                 args: {
-                    value: 2,
+                    counter: 2,
                     attachTo: CardTargetedEnum.Player,
                 },
             },

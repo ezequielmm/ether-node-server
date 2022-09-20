@@ -31,7 +31,7 @@ export const treantData: Enemy = {
                             name: resolve.name,
                             args: {
                                 attachTo: CardTargetedEnum.Self,
-                                value: 5,
+                                counter: 5,
                             },
                         },
                     ],
@@ -214,7 +214,7 @@ export const treantData: Enemy = {
                             name: resolve.name,
                             args: {
                                 attachTo: CardTargetedEnum.Self,
-                                value: 1,
+                                counter: 1,
                             },
                         },
                     ],

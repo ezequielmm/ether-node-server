@@ -96,7 +96,7 @@ export const trapelicanData: Enemy = {
                             name: resolve.name,
                             args: {
                                 attachTo: CardTargetedEnum.Player,
-                                value: 1,
+                                counter: 1,
                             },
                         },
                     ],
@@ -110,7 +110,7 @@ export const trapelicanData: Enemy = {
                             name: resolve.name,
                             args: {
                                 attachTo: CardTargetedEnum.Self,
-                                value: 1,
+                                counter: 1,
                             },
                         },
                     ],

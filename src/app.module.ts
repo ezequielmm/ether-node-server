@@ -23,6 +23,7 @@ import { composeMongooseModuleOptions } from './dbConfiguration';
         }),
         EventEmitterModule.forRoot({
             wildcard: true,
+            maxListeners: 100,
         }),
         LoggerModule.forRoot({
             pinoHttp: {

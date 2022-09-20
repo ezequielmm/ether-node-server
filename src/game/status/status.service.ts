@@ -42,6 +42,7 @@ import {
     StatusMetadata,
     StatusStartsAt,
     StatusTrigger,
+    AttachedStatus,
 } from './interfaces';
 import * as cliColor from 'cli-color';
 
@@ -102,9 +103,10 @@ export class StatusService {
                     targetId: target.value.id,
                 });
 
+                let finalStatus: AttachedStatus;
                 switch (target.type) {
                     case CardTargetedEnum.Player:
-                        await this.playerService.attach(
+                        finalStatus = await this.playerService.attach(
                             ctx,
                             source,
                             status.name,
@@ -112,7 +114,7 @@ export class StatusService {
                         );
                         break;
                     case CardTargetedEnum.Enemy:
-                        await this.enemyService.attach(
+                        finalStatus = await this.enemyService.attach(
                             ctx,
                             target.value.id,
                             source,
@@ -125,7 +127,7 @@ export class StatusService {
                 await this.eventEmitter.emitAsync(EVENT_AFTER_STATUS_ATTACH, {
                     ctx,
                     source,
-                    status,
+                    status: finalStatus,
                     target,
                     targetId: target.value.id,
                 });
@@ -539,9 +541,9 @@ export class StatusService {
 
         for (const status of statusCollection) {
             // Decremement the value of the status
-            status.args.value--;
+            status.args.counter--;
 
-            if (status.args.value === 0) {
+            if (status.args.counter === 0) {
                 // If the value is 0, remove the status
                 statusesToRemove.push(status);
                 this.logger.debug(
@@ -550,7 +552,7 @@ export class StatusService {
             } else {
                 this.logger.debug(
                     cliColor.red(
-                        `Decreasing ${status.name} status value to ${status.args.value}`,
+                        `Decreasing ${status.name} status value to ${status.args.counter}`,
                     ),
                 );
             }

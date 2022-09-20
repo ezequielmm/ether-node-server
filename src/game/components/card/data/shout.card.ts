@@ -18,14 +18,14 @@ export const ShoutCard: Card = {
             {
                 name: fatigue.name,
                 args: {
-                    value: 1,
+                    counter: 1,
                     attachTo: CardTargetedEnum.Enemy,
                 },
             },
             {
                 name: resolve.name,
                 args: {
-                    value: 1,
+                    counter: 1,
                     attachTo: CardTargetedEnum.Self,
                 },
             },
@@ -50,14 +50,14 @@ export const ShoutCardUpgraded: Card = {
             {
                 name: fatigue.name,
                 args: {
-                    value: 2,
+                    counter: 2,
                     attachTo: CardTargetedEnum.Enemy,
                 },
             },
             {
                 name: resolve.name,
                 args: {
-                    value: 2,
+                    counter: 2,
                     attachTo: CardTargetedEnum.Self,
                 },
             },

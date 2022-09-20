@@ -22,8 +22,8 @@ export class ResistStatus implements StatusEventHandler {
         if (metadata.status.type == StatusType.Debuff) {
             if (isEqual(target, dto.target)) {
                 status.args.attachTo = CardTargetedEnum.None;
-                dto.status.args.value--;
-                if (dto.status.args.value == 0) {
+                dto.status.args.counter--;
+                if (dto.status.args.counter == 0) {
                     dto.remove();
                 } else {
                     dto.update(dto.status.args);

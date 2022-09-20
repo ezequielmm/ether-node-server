@@ -1,5 +1,6 @@
 import { damageEffect } from 'src/game/effects/damage/constants';
 import {
+    StatusCounterType,
     StatusDirection,
     StatusEffect,
     StatusStartsAt,
@@ -10,6 +11,7 @@ import {
 export const forceField: StatusEffect = {
     name: 'forceField',
     type: StatusType.Buff,
+    counterType: StatusCounterType.None,
     direction: StatusDirection.Incoming,
     startsAt: StatusStartsAt.Instantly,
     trigger: StatusTrigger.Effect,

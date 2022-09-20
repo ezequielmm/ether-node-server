@@ -17,7 +17,7 @@ export const DivineGiftCard: Card = {
             {
                 name: gifted.name,
                 args: {
-                    value: 4,
+                    counter: 4,
                     attachTo: CardTargetedEnum.Player,
                 },
             },
@@ -42,7 +42,7 @@ export const DivineGiftCardUpgraded: Card = {
             {
                 name: gifted.name,
                 args: {
-                    value: 7,
+                    counter: 7,
                     attachTo: CardTargetedEnum.Player,
                 },
             },

@@ -156,7 +156,7 @@ describe('StatusService', () => {
                         addedInRound: 1,
                         sourceReference: {} as EntityReferenceDTO,
                         args: {
-                            value: null,
+                            counter: null,
                         },
                     },
                 ],
@@ -186,7 +186,7 @@ describe('StatusService', () => {
                         addedInRound: 1,
                         sourceReference: {} as EntityReferenceDTO,
                         args: {
-                            value: null,
+                            counter: null,
                         },
                     },
                     {
@@ -194,7 +194,7 @@ describe('StatusService', () => {
                         addedInRound: 1,
                         sourceReference: {} as EntityReferenceDTO,
                         args: {
-                            value: null,
+                            counter: null,
                         },
                     },
                 ],
@@ -224,7 +224,7 @@ describe('StatusService', () => {
                         addedInRound: 1,
                         sourceReference: {} as EntityReferenceDTO,
                         args: {
-                            value: null,
+                            counter: null,
                         },
                     },
                     {
@@ -232,7 +232,7 @@ describe('StatusService', () => {
                         addedInRound: 1,
                         sourceReference: {} as EntityReferenceDTO,
                         args: {
-                            value: null,
+                            counter: null,
                         },
                     },
                     {
@@ -240,7 +240,7 @@ describe('StatusService', () => {
                         addedInRound: 1,
                         sourceReference: {} as EntityReferenceDTO,
                         args: {
-                            value: null,
+                            counter: null,
                         },
                     },
                 ],
@@ -274,7 +274,7 @@ describe('StatusService', () => {
                                                 type: 'player',
                                             },
                                             args: {
-                                                value: 22,
+                                                counter: 22,
                                             },
                                         },
                                     ],

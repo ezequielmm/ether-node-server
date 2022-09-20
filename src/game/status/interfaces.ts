@@ -19,6 +19,13 @@ export enum StatusStartsAt {
     NextPlayerTurn = 'nextPlayerTurn',
 }
 
+export enum StatusCounterType {
+    Duration = 'duration',
+    Counter = 'counter',
+    Intensity = 'intensity',
+    None = 'none',
+}
+
 export enum StatusTrigger {
     Effect = 'effect',
     Event = 'event',
@@ -43,6 +50,26 @@ export interface StatusBase {
      * @property {StatusType} Debuff - The status is a debuff.
      */
     type: StatusType;
+
+    /**
+     * Counter type of the status.
+     *
+     * @type {StatusCounter}
+     *
+     * @memberof Status
+     *
+     * @property {StatusCounter} Duration - The status has a duration counter.
+     * @property {StatusCounter} Counter - The status has a counter.
+     * @property {StatusCounter} Intensity - The status has an intensity counter.
+     * @property {StatusCounter} None - The status does not have a counter.
+     *
+     * @example 'duration'
+     * @example 'counter'
+     * @example 'intensity'
+     * @example 'none'
+     *
+     */
+    counterType: StatusCounterType;
 
     /**
      * The status starts at.
@@ -116,7 +143,7 @@ export interface StatusMetadata<T extends Status = Status> {
 export interface JsonStatus {
     name: string;
     args: {
-        value: number;
+        counter: number;
         attachTo: CardTargetedEnum;
     } & Record<string, any>;
 }
@@ -149,7 +176,7 @@ export interface AttachedStatus {
     readonly sourceReference: EntityReferenceDTO;
 
     args: {
-        value?: any;
+        counter?: number;
     } & Record<string, any>;
 }
 

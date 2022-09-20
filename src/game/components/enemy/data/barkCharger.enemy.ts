@@ -86,7 +86,7 @@ export const barkChargerData: Enemy = {
                             name: resolve.name,
                             args: {
                                 attachTo: CardTargetedEnum.Self,
-                                value: 2,
+                                counter: 2,
                             },
                         },
                     ],

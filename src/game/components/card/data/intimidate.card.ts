@@ -18,7 +18,7 @@ export const IntimidateCard: Card = {
                 name: confusion.name,
                 args: {
                     attachTo: CardTargetedEnum.Enemy,
-                    value: 1,
+                    counter: 1,
                 },
             },
         ],
@@ -43,7 +43,7 @@ export const IntimidateCardUpgraded: Card = {
                 name: confusion.name,
                 args: {
                     attachTo: CardTargetedEnum.AllEnemies,
-                    value: 1,
+                    counter: 1,
                 },
             },
         ],

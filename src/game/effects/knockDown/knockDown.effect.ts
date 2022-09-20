@@ -47,7 +47,7 @@ export class KnockDownEffect implements EffectHandler {
                     {
                         name: stunned.name,
                         args: {
-                            value: 1,
+                            counter: 1,
                             attachTo: target.type,
                         },
                     },

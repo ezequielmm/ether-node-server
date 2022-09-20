@@ -9,7 +9,7 @@ export interface IStatusesList {
 
 export class StatusGenerator {
     static formatStatusesToArray(items: AttachedStatus[]): IStatusesList[] {
-        return items.map(({ name, args: { value: counter } }) => {
+        return items.map(({ name, args: { counter: counter } }) => {
             return {
                 name,
                 counter,

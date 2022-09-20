@@ -23,14 +23,14 @@ export class PrayingStatus implements StatusEventHandler {
                 {
                     name: fortitude.name,
                     args: {
-                        value: 1,
+                        counter: 1,
                         attachTo: target.type,
                     },
                 },
                 {
                     name: resolve.name,
                     args: {
-                        value: 1,
+                        counter: 1,
                         attachTo: target.type,
                     },
                 },
@@ -39,10 +39,10 @@ export class PrayingStatus implements StatusEventHandler {
         });
 
         // Decrease counter
-        status.args.value--;
+        status.args.counter--;
 
         // Remove status if counter is 0
-        if (status.args.value === 0) {
+        if (status.args.counter === 0) {
             remove();
         } else {
             update(status.args);

@@ -18,7 +18,7 @@ export const SharpenBladeCard: Card = {
                 name: sharpenBlade.name,
                 args: {
                     attachTo: CardTargetedEnum.Player,
-                    value: 1,
+                    counter: 1,
                 },
             },
         ],
@@ -43,7 +43,7 @@ export const SharpenBladeCardUpgraded: Card = {
                 name: sharpenBlade.name,
                 args: {
                     attachTo: CardTargetedEnum.Player,
-                    value: 1,
+                    counter: 1,
                     upgraded: true,
                 },
             },

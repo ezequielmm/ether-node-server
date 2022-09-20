@@ -1,5 +1,6 @@
 import { EVENT_BEFORE_CARD_PLAY } from 'src/game/constants';
 import {
+    StatusCounterType,
     StatusEvent,
     StatusStartsAt,
     StatusTrigger,
@@ -12,4 +13,5 @@ export const bolstered: StatusEvent = {
     trigger: StatusTrigger.Event,
     event: EVENT_BEFORE_CARD_PLAY,
     type: StatusType.Buff,
+    counterType: StatusCounterType.Intensity,
 };

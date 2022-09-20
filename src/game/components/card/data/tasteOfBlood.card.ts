@@ -21,14 +21,14 @@ export const TasteOfBloodCard: Card = {
             {
                 name: tasteOfBloodBuff.name,
                 args: {
-                    value: 2,
+                    counter: 2,
                     attachTo: CardTargetedEnum.Player,
                 },
             },
             {
                 name: tasteOfBloodDebuff.name,
                 args: {
-                    value: 2,
+                    counter: 2,
                     attachTo: CardTargetedEnum.Player,
                 },
             },
@@ -54,14 +54,14 @@ export const TasteOfBloodCardUpgraded: Card = {
             {
                 name: tasteOfBloodBuff.name,
                 args: {
-                    value: 2,
+                    counter: 2,
                     attachTo: CardTargetedEnum.Player,
                 },
             },
             {
                 name: tasteOfBloodDebuff.name,
                 args: {
-                    value: 2,
+                    counter: 2,
                     attachTo: CardTargetedEnum.Player,
                 },
             },

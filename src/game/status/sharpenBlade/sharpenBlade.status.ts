@@ -34,7 +34,7 @@ export class SharpenBladeStatus implements StatusEventHandler {
 
         const cards: IExpeditionPlayerStateDeckCard[] = [];
 
-        for (let i = 0; i < status.args.value; i++) {
+        for (let i = 0; i < status.args.counter; i++) {
             cards.push({
                 cardId: card.cardId,
                 id: randomUUID(),

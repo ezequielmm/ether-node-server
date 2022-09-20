@@ -15,7 +15,11 @@ import {
     ENEMY_STATUSES_PATH,
 } from './constants';
 import { getRandomItemByWeight } from 'src/utils';
-import { AttachedStatus, Status } from 'src/game/status/interfaces';
+import {
+    AttachedStatus,
+    Status,
+    StatusCounterType,
+} from 'src/game/status/interfaces';
 import { StatusService } from 'src/game/status/status.service';
 
 @Injectable()
@@ -293,25 +297,48 @@ export class EnemyService {
         id: EnemyId,
         source: ExpeditionEntity,
         name: Status['name'],
-        args: AttachedStatus['args'] = { value: 1 },
+        args: AttachedStatus['args'] = { counter: 1 },
     ): Promise<AttachedStatus> {
         const enemy = this.get(ctx, id);
         // Get metadata to determine the type of status to attach
         const metadata = this.statusService.getMetadataByName(name);
 
-        // Create the status to attach
-        const status: AttachedStatus = {
+        // Check if the status is already attached
+        const oldStatus = find(enemy.value.statuses[metadata.status.type], {
             name,
-            args,
-            sourceReference: {
-                type: source.type,
-                id: source.value['id'],
-            },
-            addedInRound: ctx.expedition.currentNode.data.round,
-        };
+        });
 
-        // Attach the status to the enemy
-        enemy.value.statuses[metadata.status.type].push(status);
+        let finalStatusAttached: AttachedStatus;
+        if (oldStatus) {
+            // If the status is already attached, we update it
+            if (metadata.status.counterType != StatusCounterType.None) {
+                // If the status has a counter, we increment it
+                oldStatus.args.counter++;
+                this.logger.log(
+                    `Status ${name} counter incremented to ${oldStatus.args.counter}`,
+                );
+            } else {
+                this.logger.log(`Status ${name} has no counter`);
+            }
+
+            finalStatusAttached = oldStatus;
+        } else {
+            // Create the status to attach
+            const status: AttachedStatus = {
+                name,
+                args,
+                sourceReference: {
+                    type: source.type,
+                    id: source.value['id'],
+                },
+                addedInRound: ctx.expedition.currentNode.data.round,
+            };
+
+            // Attach the status to the enemy
+            enemy.value.statuses[metadata.status.type].push(status);
+
+            finalStatusAttached = status;
+        }
 
         // Save the status to the database
         await this.expeditionService.updateByFilter(
@@ -326,6 +353,6 @@ export class EnemyService {
 
         this.logger.debug(`Status ${name} attached to enemy ${id}`);
 
-        return status;
+        return finalStatusAttached;
     }
 }
