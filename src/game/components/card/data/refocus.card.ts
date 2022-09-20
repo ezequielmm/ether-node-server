@@ -41,35 +41,4 @@ export const Refocus: Card = {
     isUpgraded: false,
 };
 
-export const RefocusUpgraded: Card = {
-    cardId: 158,
-    name: 'Re-focus+',
-    rarity: CardRarityEnum.Legendary,
-    cardType: CardTypeEnum.Skill,
-    pool: 'knight',
-    energy: CardEnergyEnum.All,
-    description: `Remove all debuffs\nGain X Resist`,
-    keywords: [],
-    properties: {
-        effects: [
-            {
-                effect: removeDebuff.name,
-                target: CardTargetedEnum.Player,
-                args: {
-                    value: Number.POSITIVE_INFINITY,
-                },
-            },
-        ],
-        statuses: [
-            {
-                name: resist.name,
-                args: {
-                    attachTo: CardTargetedEnum.Player,
-                    value: 1,
-                },
-            },
-        ],
-    },
-    showPointer: false,
-    isUpgraded: true,
-};
+// TODO: Add refocus - id: 158
