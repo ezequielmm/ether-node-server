@@ -4,7 +4,6 @@ import { ApiModule } from './api/api.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { SocketModule } from './socket/socket.module';
 import { EventEmitterModule } from '@nestjs/event-emitter';
-import { LoggerModule } from 'nestjs-pino';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { composeMongooseModuleOptions } from './dbConfiguration';
 
@@ -23,14 +22,6 @@ import { composeMongooseModuleOptions } from './dbConfiguration';
         }),
         EventEmitterModule.forRoot({
             wildcard: true,
-        }),
-        LoggerModule.forRoot({
-            pinoHttp: {
-                transport:
-                    process.env.NODE_ENV !== 'production'
-                        ? { target: 'pino-pretty' }
-                        : undefined,
-            },
         }),
     ],
     controllers: [AppController],
