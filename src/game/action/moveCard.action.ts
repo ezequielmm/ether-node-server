@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Socket } from 'socket.io';
-import { removeCardsFromPile } from 'src/utils';
+import { isNotUndefined, removeCardsFromPile } from 'src/utils';
 import { CardSelectionScreenOriginPileEnum } from '../components/cardSelectionScreen/cardSelectionScreen.enum';
 import { ExpeditionService } from '../components/expedition/expedition.service';
 import {
@@ -13,6 +13,7 @@ interface IMoveCardDTO {
     readonly client: Socket;
     readonly cardIds: string[];
     readonly originPile: CardSelectionScreenOriginPileEnum;
+    readonly cardIsFree?: boolean;
 }
 
 @Injectable()
@@ -39,9 +40,18 @@ export class MoveCardAction {
         let deckPile = cards[originPile];
 
         // Now we take the cards by its id
-        const cardsToMove = deckPile.filter(({ id }) => {
+        let cardsToMove = deckPile.filter(({ id }) => {
             return cardIds.includes(id);
         });
+
+        // Is we receive a parameter to set the cost to 0
+        // we handle that here
+        if (isNotUndefined(payload.cardIsFree)) {
+            cardsToMove = cardsToMove.map((card) => {
+                card.energy = 0;
+                return card;
+            });
+        }
 
         // Now we remove the cards from the desired pile
         // to update the piles

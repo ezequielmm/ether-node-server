@@ -1,4 +1,5 @@
 import { damageEffect } from 'src/game/effects/damage/constants';
+import { executionersBlowEffect } from 'src/game/effects/executionersBlow/contants';
 import { CardRarityEnum, CardTargetedEnum, CardTypeEnum } from '../card.enum';
 import { Card } from '../card.schema';
 
@@ -21,10 +22,10 @@ export const ExecutionersBlowCard: Card = {
                 },
             },
             {
-                effect: damageEffect.name,
-                target: CardTargetedEnum.None,
+                effect: executionersBlowEffect.name,
+                target: CardTargetedEnum.Enemy,
                 args: {
-                    value: 0,
+                    value: 1,
                 },
             },
         ],
@@ -50,6 +51,13 @@ export const ExecutionersBlowCardUpgraded: Card = {
                 target: CardTargetedEnum.Enemy,
                 args: {
                     value: 15,
+                },
+            },
+            {
+                effect: executionersBlowEffect.name,
+                target: CardTargetedEnum.Enemy,
+                args: {
+                    value: 1,
                 },
             },
         ],
