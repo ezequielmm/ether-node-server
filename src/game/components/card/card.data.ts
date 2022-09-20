@@ -6,6 +6,7 @@ import { BackflipCard, BackflipCardUpgraded } from './data/backflip.card';
 import { BackHandCard, BackHandCardUpgraded } from './data/backhand.card';
 import { BlusterCard, BlusterCardUpgraded } from './data/bluster.card';
 import { BolsterCard, BolsterCardUpgraded } from './data/bolster.card';
+import { BraceCard, BraceCardUpgraded } from './data/brace.card';
 import { BurnedCard } from './data/burned.card';
 import { ChargeCard, ChargeCardUpgraded } from './data/charge.card';
 import { CounterCard, CounterCardUpgraded } from './data/counter.card';
@@ -71,6 +72,7 @@ import {
 import { RecoverCard, RecoverCardUpgraded } from './data/recover.data';
 import { Refocus } from './data/refocus.card';
 import { RepositionCard, RepositionCardUpgraded } from './data/reposition.card';
+import { RoundHouseCard, RoundHouseCardUpgraded } from './data/roundHouse.card';
 import { ShakeItOffCard, ShakeItOffCardUpgraded } from './data/shakeItOff.card';
 import {
     SharpenBladeCard,
@@ -221,4 +223,8 @@ export const data: Card[] = [
     FrontflipCard,
     FrontflipCardUpgraded,
     BurnedCard,
+    RoundHouseCard,
+    RoundHouseCardUpgraded,
+    BraceCard,
+    BraceCardUpgraded,
 ];
