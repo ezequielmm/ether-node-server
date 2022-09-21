@@ -87,7 +87,9 @@ export class DefenseEffect implements EffectHandler {
                     },
                 } = expedition;
 
-                newDefense = newDefense * discard.length * multiplier;
+                const discardAmount = discard.length;
+
+                newDefense = newDefense * discardAmount * multiplier;
             }
 
             // Check if the card uses the enemies that are attacking next turn as
