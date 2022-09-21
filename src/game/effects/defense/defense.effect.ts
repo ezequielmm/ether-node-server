@@ -56,7 +56,7 @@ export class DefenseEffect implements EffectHandler {
                 },
             } = target;
 
-            // Check if the card uses the amount of enemies as
+            // Check if the card uses the amount of enemies alive as
             // value to calculate the defense amount to apply
             if (isNotUndefined(useEnemies)) {
                 const {
