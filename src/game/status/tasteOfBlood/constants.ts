@@ -3,7 +3,6 @@ import {
     StatusCounterType,
     StatusDirection,
     StatusEffect,
-    StatusStartsAt,
     StatusTrigger,
     StatusType,
 } from '../interfaces';
@@ -13,7 +12,6 @@ export const tasteOfBloodBuff: StatusEffect = {
     type: StatusType.Buff,
     counterType: StatusCounterType.Duration,
     direction: StatusDirection.Outgoing,
-    startsAt: StatusStartsAt.Instantly,
     trigger: StatusTrigger.Effect,
     effects: [damageEffect],
 };
@@ -23,7 +21,6 @@ export const tasteOfBloodDebuff: StatusEffect = {
     type: StatusType.Debuff,
     counterType: StatusCounterType.Duration,
     direction: StatusDirection.Incoming,
-    startsAt: StatusStartsAt.Instantly,
     trigger: StatusTrigger.Effect,
     effects: [damageEffect],
 };

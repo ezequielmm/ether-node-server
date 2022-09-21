@@ -16,9 +16,9 @@ export const BolsterCard: Card = {
         statuses: [
             {
                 name: bolstered.name,
+                attachTo: CardTargetedEnum.Player,
                 args: {
                     counter: 2,
-                    attachTo: CardTargetedEnum.Player,
                 },
             },
         ],
@@ -41,9 +41,9 @@ export const BolsterCardUpgraded: Card = {
         statuses: [
             {
                 name: bolstered.name,
+                attachTo: CardTargetedEnum.Player,
                 args: {
                     counter: 3,
-                    attachTo: CardTargetedEnum.Player,
                 },
             },
         ],

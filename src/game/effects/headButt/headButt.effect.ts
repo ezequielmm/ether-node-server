@@ -18,11 +18,9 @@ export class HeadButtEffect implements EffectHandler {
         const { target, source, ctx } = dto;
 
         let defense = 0;
-        let targetId: string = null;
 
         if (EnemyService.isEnemy(target)) {
             defense = target.value.defense;
-            targetId = target.value.id;
         } else if (PlayerService.isPlayer(target)) {
             defense = target.value.combatState.defense;
         }
@@ -30,17 +28,12 @@ export class HeadButtEffect implements EffectHandler {
         if (defense === 0) {
             await this.statusService.attach({
                 ctx,
-                statuses: [
-                    {
-                        name: confusion.name,
-                        args: {
-                            attachTo: target.type,
-                            counter: 1,
-                        },
-                    },
-                ],
                 source,
-                targetId,
+                target,
+                statusName: confusion.name,
+                statusArgs: {
+                    counter: 1,
+                },
             });
         }
     }

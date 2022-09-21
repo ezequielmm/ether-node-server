@@ -14,11 +14,6 @@ export enum StatusDirection {
     Outgoing = 'outgoing',
 }
 
-export enum StatusStartsAt {
-    Instantly = 'instantly',
-    NextPlayerTurn = 'nextPlayerTurn',
-}
-
 export enum StatusCounterType {
     Duration = 'duration',
     Counter = 'counter',
@@ -70,18 +65,6 @@ export interface StatusBase {
      *
      */
     counterType: StatusCounterType;
-
-    /**
-     * The status starts at.
-     * @type {StatusStartsAt}
-     * @memberof Status
-     * @property {StatusStartsAt} Instantly - The status starts immediately.
-     * @property {StatusStartsAt} NextTurn - The status starts on the next turn.
-     * @example 'instantly'
-     * @example 'nextTurn'
-     * @deprecated Use nextPlayerTurn status instead if you want to start the status on the next player turn.
-     */
-    startsAt: StatusStartsAt;
 
     /**
      * Trigger of the status.
@@ -139,13 +122,17 @@ export interface StatusMetadata<T extends Status = Status> {
     status: T;
 }
 
+export type StatusName = string;
+
+export interface StatusArgs extends Record<string, any> {
+    counter: number;
+}
+
 /** It is used to declare the status information in the card. */
 export interface JsonStatus {
-    name: string;
-    args: {
-        counter: number;
-        attachTo: CardTargetedEnum;
-    } & Record<string, any>;
+    name: StatusName;
+    attachTo: CardTargetedEnum;
+    args: StatusArgs;
 }
 
 /** It is used to declare the status information in the attached target. */
@@ -275,7 +262,7 @@ export type StatusHandler = StatusEffectHandler | StatusEventHandler;
 /**
  * DTO for attach set of status.
  */
-export interface AttachDTO {
+export interface AttachAllDTO {
     /**
      * Context
      * @type {Context}
@@ -305,6 +292,14 @@ export interface AttachDTO {
      * @example '1'
      */
     targetId?: TargetId;
+}
+
+export interface AttachDTO {
+    ctx: Context;
+    source: ExpeditionEntity;
+    target: ExpeditionEntity;
+    statusName: StatusName;
+    statusArgs: StatusArgs;
 }
 
 export interface AttachToPlayerDTO {

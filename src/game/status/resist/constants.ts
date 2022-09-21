@@ -2,7 +2,6 @@ import { EVENT_BEFORE_STATUS_ATTACH } from 'src/game/constants';
 import {
     StatusCounterType,
     StatusEvent,
-    StatusStartsAt,
     StatusTrigger,
     StatusType,
 } from '../interfaces';
@@ -13,5 +12,4 @@ export const resist: StatusEvent = {
     counterType: StatusCounterType.Counter,
     trigger: StatusTrigger.Event,
     event: EVENT_BEFORE_STATUS_ATTACH,
-    startsAt: StatusStartsAt.Instantly,
 };

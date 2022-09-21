@@ -34,16 +34,11 @@ export class AnticipatingEffect implements EffectHandler {
         await this.statusService.attach({
             ctx,
             source,
-            statuses: [
-                {
-                    name: anticipatingStatus.name,
-                    args: {
-                        attachTo: target.type,
-                        counter: defense,
-                    },
-                },
-            ],
-            targetId: target.value.id,
+            target,
+            statusName: anticipatingStatus.name,
+            statusArgs: {
+                counter: defense,
+            },
         });
     }
 }

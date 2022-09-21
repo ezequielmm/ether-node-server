@@ -17,8 +17,8 @@ export const SparkCard: Card = {
         statuses: [
             {
                 name: burn.name,
+                attachTo: CardTargetedEnum.Enemy,
                 args: {
-                    attachTo: CardTargetedEnum.Enemy,
                     counter: 2,
                 },
             },
@@ -42,8 +42,8 @@ export const SparkCardUpgraded: Card = {
         statuses: [
             {
                 name: burn.name,
+                attachTo: CardTargetedEnum.Enemy,
                 args: {
-                    attachTo: CardTargetedEnum.Enemy,
                     counter: 2,
                 },
             },

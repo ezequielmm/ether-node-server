@@ -16,8 +16,8 @@ export const TightenGripCard: Card = {
         statuses: [
             {
                 name: imbued.name,
+                attachTo: CardTargetedEnum.Player,
                 args: {
-                    attachTo: CardTargetedEnum.Player,
                     counter: Number.NaN,
                 },
             },
@@ -41,8 +41,8 @@ export const TightenGripCardUpgraded: Card = {
         statuses: [
             {
                 name: imbued.name,
+                attachTo: CardTargetedEnum.Player,
                 args: {
-                    attachTo: CardTargetedEnum.Player,
                     counter: Number.NaN,
                 },
             },

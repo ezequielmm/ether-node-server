@@ -3,7 +3,6 @@ import {
     StatusCounterType,
     StatusDirection,
     StatusEffect,
-    StatusStartsAt,
     StatusTrigger,
     StatusType,
 } from '../interfaces';
@@ -15,5 +14,4 @@ export const spikesStatus: StatusEffect = {
     effects: [damageEffect],
     type: StatusType.Buff,
     counterType: StatusCounterType.Intensity,
-    startsAt: StatusStartsAt.Instantly,
 };

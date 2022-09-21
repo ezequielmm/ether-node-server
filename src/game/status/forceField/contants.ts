@@ -3,7 +3,6 @@ import {
     StatusCounterType,
     StatusDirection,
     StatusEffect,
-    StatusStartsAt,
     StatusTrigger,
     StatusType,
 } from '../interfaces';
@@ -13,7 +12,6 @@ export const forceField: StatusEffect = {
     type: StatusType.Buff,
     counterType: StatusCounterType.None,
     direction: StatusDirection.Incoming,
-    startsAt: StatusStartsAt.Instantly,
     trigger: StatusTrigger.Effect,
     effects: [damageEffect],
 };

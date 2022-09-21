@@ -5,7 +5,6 @@ import {
     StatusCounterType,
     StatusDirection,
     StatusEffect,
-    StatusStartsAt,
     StatusTrigger,
     StatusType,
 } from '../interfaces';
@@ -14,7 +13,6 @@ export const enflamed: StatusEffect = {
     name: 'enflamed',
     type: StatusType.Debuff,
     counterType: StatusCounterType.Intensity,
-    startsAt: StatusStartsAt.Instantly,
     trigger: StatusTrigger.Effect,
     direction: StatusDirection.Outgoing,
     effects: [burn],

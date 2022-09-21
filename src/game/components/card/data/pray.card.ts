@@ -1,6 +1,4 @@
-import { fortitude } from 'src/game/status/fortitude/constants';
 import { prayingStatus } from 'src/game/status/praying/constants';
-import { resolve } from 'src/game/status/resolve/constants';
 import { CardRarityEnum, CardTypeEnum, CardTargetedEnum } from '../card.enum';
 import { Card } from '../card.schema';
 
@@ -18,8 +16,8 @@ export const PrayCard: Card = {
         statuses: [
             {
                 name: prayingStatus.name,
+                attachTo: CardTargetedEnum.Player,
                 args: {
-                    attachTo: CardTargetedEnum.Player,
                     counter: 1,
                 },
             },
@@ -43,8 +41,8 @@ export const PrayCardUpgraded: Card = {
         statuses: [
             {
                 name: prayingStatus.name,
+                attachTo: CardTargetedEnum.Player,
                 args: {
-                    attachTo: CardTargetedEnum.Player,
                     counter: 2,
                 },
             },

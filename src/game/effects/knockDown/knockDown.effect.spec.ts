@@ -81,16 +81,11 @@ describe('KnockDownEffect', () => {
         expect(statusService.attach).toHaveBeenCalledWith({
             ctx,
             source,
-            statuses: [
-                {
-                    name: stunned.name,
-                    args: {
-                        counter: 1,
-                        attachTo: target.type,
-                    },
-                },
-            ],
-            targetId: target.value.id,
+            target,
+            statusName: stunned.name,
+            statusArgs: {
+                counter: 1,
+            },
         });
     });
 

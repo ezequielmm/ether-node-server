@@ -17,16 +17,16 @@ export const ShoutCard: Card = {
         statuses: [
             {
                 name: fatigue.name,
+                attachTo: CardTargetedEnum.Enemy,
                 args: {
                     counter: 1,
-                    attachTo: CardTargetedEnum.Enemy,
                 },
             },
             {
                 name: resolve.name,
+                attachTo: CardTargetedEnum.Self,
                 args: {
                     counter: 1,
-                    attachTo: CardTargetedEnum.Self,
                 },
             },
         ],
@@ -49,16 +49,16 @@ export const ShoutCardUpgraded: Card = {
         statuses: [
             {
                 name: fatigue.name,
+                attachTo: CardTargetedEnum.Enemy,
                 args: {
                     counter: 2,
-                    attachTo: CardTargetedEnum.Enemy,
                 },
             },
             {
                 name: resolve.name,
+                attachTo: CardTargetedEnum.Self,
                 args: {
                     counter: 2,
-                    attachTo: CardTargetedEnum.Self,
                 },
             },
         ],

@@ -16,8 +16,8 @@ export const SharpenBladeCard: Card = {
         statuses: [
             {
                 name: sharpenBlade.name,
+                attachTo: CardTargetedEnum.Player,
                 args: {
-                    attachTo: CardTargetedEnum.Player,
                     counter: 1,
                 },
             },
@@ -41,8 +41,8 @@ export const SharpenBladeCardUpgraded: Card = {
         statuses: [
             {
                 name: sharpenBlade.name,
+                attachTo: CardTargetedEnum.Player,
                 args: {
-                    attachTo: CardTargetedEnum.Player,
                     counter: 1,
                     upgraded: true,
                 },

@@ -3,7 +3,6 @@ import {
     StatusCounterType,
     StatusDirection,
     StatusEffect,
-    StatusStartsAt,
     StatusTrigger,
     StatusType,
 } from '../interfaces';
@@ -11,7 +10,6 @@ import {
 export const fatigue: StatusEffect = {
     name: 'fatigue',
     effects: [damageEffect],
-    startsAt: StatusStartsAt.Instantly,
     type: StatusType.Debuff,
     counterType: StatusCounterType.Duration,
     direction: StatusDirection.Outgoing,

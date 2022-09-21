@@ -25,9 +25,9 @@ export const BraceCard: Card = {
         statuses: [
             {
                 name: resolve.name,
+                attachTo: CardTargetedEnum.Self,
                 args: {
                     counter: 1,
-                    attachTo: CardTargetedEnum.Self,
                 },
             },
         ],

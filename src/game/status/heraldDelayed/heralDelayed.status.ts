@@ -17,17 +17,12 @@ export class HeralDelayedStatus implements StatusEventHandler {
 
         await this.statusService.attach({
             ctx,
-            statuses: [
-                {
-                    name: heraldingStatus.name,
-                    args: {
-                        attachTo: target.type,
-                        counter: 1,
-                    },
-                },
-            ],
             source,
-            targetId: target.value.id,
+            target,
+            statusName: heraldingStatus.name,
+            statusArgs: {
+                counter: 1,
+            },
         });
 
         remove();

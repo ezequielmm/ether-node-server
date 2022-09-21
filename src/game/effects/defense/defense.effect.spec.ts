@@ -170,6 +170,7 @@ describe('DefenseEffect', () => {
                     useEnemies: false,
                     useAttackingEnemies: false,
                     useDiscardPileAsValue: false,
+                    useEnergyAsMultiplier: false,
                     multiplier: 1,
                 },
             });
@@ -193,6 +194,7 @@ describe('DefenseEffect', () => {
                     useEnemies: false,
                     useAttackingEnemies: false,
                     useDiscardPileAsValue: false,
+                    useEnergyAsMultiplier: false,
                     multiplier: 1,
                 },
             });
@@ -269,6 +271,7 @@ describe('DefenseEffect', () => {
                     useEnemies: true,
                     useAttackingEnemies: false,
                     useDiscardPileAsValue: false,
+                    useEnergyAsMultiplier: false,
                     multiplier: 1,
                 },
             });
@@ -290,6 +293,7 @@ describe('DefenseEffect', () => {
                     useEnemies: false,
                     useAttackingEnemies: true,
                     useDiscardPileAsValue: false,
+                    useEnergyAsMultiplier: false,
                     multiplier: 1,
                 },
             });
@@ -311,6 +315,7 @@ describe('DefenseEffect', () => {
                     useEnemies: false,
                     useAttackingEnemies: false,
                     useDiscardPileAsValue: true,
+                    useEnergyAsMultiplier: false,
                     multiplier: 1,
                 },
             });
@@ -334,6 +339,7 @@ describe('DefenseEffect', () => {
                     useEnemies: false,
                     useAttackingEnemies: false,
                     useDiscardPileAsValue: false,
+                    useEnergyAsMultiplier: false,
                     multiplier: 1,
                 },
             });
@@ -362,6 +368,7 @@ describe('DefenseEffect', () => {
                     useEnemies: false,
                     useAttackingEnemies: false,
                     useDiscardPileAsValue: false,
+                    useEnergyAsMultiplier: false,
                     multiplier: 1,
                 },
             });

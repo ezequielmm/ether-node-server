@@ -1,7 +1,6 @@
 import { damageEffect } from 'src/game/effects/damage/constants';
 import {
     StatusDirection,
-    StatusStartsAt,
     StatusType,
     StatusEffect,
     StatusTrigger,
@@ -13,7 +12,6 @@ export const heraldingStatus: StatusEffect = {
     type: StatusType.Buff,
     counterType: StatusCounterType.None,
     direction: StatusDirection.Outgoing,
-    startsAt: StatusStartsAt.Instantly,
     trigger: StatusTrigger.Effect,
     effects: [damageEffect],
 };

@@ -120,11 +120,12 @@ export class EffectService {
         } = dto;
         let { dto: effectDTO } = dto;
 
-        const outgoingStatuses = this.statusService.findEffectStatuses(
+        const outgoingStatuses = this.statusService.findStatusesByDirection(
             source,
             StatusDirection.Outgoing,
         );
-        const incomingStatuses = this.statusService.findEffectStatuses(
+
+        const incomingStatuses = this.statusService.findStatusesByDirection(
             target,
             StatusDirection.Incoming,
         );
@@ -160,7 +161,7 @@ export class EffectService {
         } = dto;
         let { dto: effectDTO } = dto;
 
-        const outgoingStatuses = this.statusService.findEffectStatuses(
+        const outgoingStatuses = this.statusService.findStatusesByDirection(
             source,
             StatusDirection.Outgoing,
         );

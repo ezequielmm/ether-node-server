@@ -30,8 +30,8 @@ export const Refocus: Card = {
         statuses: [
             {
                 name: resist.name,
+                attachTo: CardTargetedEnum.Player,
                 args: {
-                    attachTo: CardTargetedEnum.Player,
                     counter: 1,
                 },
             },
