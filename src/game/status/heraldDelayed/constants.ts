@@ -1,17 +1,15 @@
-import { damageEffect } from 'src/game/effects/damage/constants';
+import { EVENT_AFTER_PLAYER_TURN_START } from 'src/game/constants';
 import {
-    StatusDirection,
-    StatusStartsAt,
-    StatusType,
-    StatusEffect,
+    StatusCounterType,
+    StatusEvent,
     StatusTrigger,
+    StatusType,
 } from '../interfaces';
 
-export const heraldDelayed: StatusEffect = {
+export const heraldDelayedStatus: StatusEvent = {
     name: 'heraldDelayed',
     type: StatusType.Buff,
-    direction: StatusDirection.Outgoing,
-    startsAt: StatusStartsAt.NextPlayerTurn,
-    trigger: StatusTrigger.Effect,
-    effects: [damageEffect],
+    counterType: StatusCounterType.None,
+    trigger: StatusTrigger.Event,
+    event: EVENT_AFTER_PLAYER_TURN_START,
 };

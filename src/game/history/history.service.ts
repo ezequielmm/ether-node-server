@@ -3,6 +3,7 @@ import * as _ from 'lodash';
 import { DeepPartial } from 'src/utils';
 import { ClientId } from '../components/expedition/expedition.type';
 import {
+    CardRegistry,
     EffectRegistry,
     HistoryDictionary,
     RegisterEffectDTO,
@@ -50,14 +51,14 @@ export class HistoryService {
      * @param registry Match registry
      * @returns Returns the last registry that matches the registry
      */
-    findLast(
+    findLast<T extends EffectRegistry | CardRegistry = EffectRegistry>(
         clientId: ClientId,
-        registry: DeepPartial<EffectRegistry>,
-    ): EffectRegistry | undefined {
+        registry: DeepPartial<T>,
+    ): T | undefined {
         // Get the history of the client
         const history = this.get(clientId);
 
-        return _.findLast(history, registry) as EffectRegistry;
+        return _.findLast(history, registry) as T;
     }
 
     isEffect(registry: Registry): registry is EffectRegistry {

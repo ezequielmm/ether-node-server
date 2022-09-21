@@ -16,7 +16,7 @@ import { EffectDTO } from '../effects/effects.interface';
 import { ProviderService } from '../provider/provider.service';
 import { burn } from './burn/constants';
 import { fortitude } from './fortitude/constants';
-import { heraldDelayed } from './heraldDelayed/constants';
+import { heraldingStatus } from './heralding/constants';
 import {
     EntityReferenceDTO,
     StatusEffectDTO,
@@ -66,7 +66,7 @@ class StatusB implements StatusEffectHandler {
 }
 
 @StatusDecorator({
-    status: heraldDelayed,
+    status: heraldingStatus,
 })
 @Injectable()
 class StatusC implements StatusEffectHandler {
@@ -156,7 +156,7 @@ describe('StatusService', () => {
                         addedInRound: 1,
                         sourceReference: {} as EntityReferenceDTO,
                         args: {
-                            value: null,
+                            counter: null,
                         },
                     },
                 ],
@@ -169,36 +169,6 @@ describe('StatusService', () => {
         });
 
         expect(result.args.status).toBe('A');
-    });
-
-    it('should avoid to call status handle by effect name at the same turn', async () => {
-        const result = await service.mutate({
-            ctx: {
-                client: undefined,
-                expedition: {
-                    currentNode: { data: { round: 1 } },
-                } as ExpeditionDocument,
-            },
-            collection: {
-                [StatusType.Buff]: [
-                    {
-                        name: resolve.name,
-                        addedInRound: 1,
-                        sourceReference: {} as EntityReferenceDTO,
-                        args: {
-                            value: null,
-                        },
-                    },
-                ],
-                [StatusType.Debuff]: [],
-            },
-            collectionOwner: undefined,
-            effect: damageEffect.name,
-            effectDTO: effectDTO,
-            preview: false,
-        });
-
-        expect(result.args.status).toBe(undefined);
     });
 
     it('should call multiple status handle by effect name', async () => {
@@ -216,7 +186,7 @@ describe('StatusService', () => {
                         addedInRound: 1,
                         sourceReference: {} as EntityReferenceDTO,
                         args: {
-                            value: null,
+                            counter: null,
                         },
                     },
                     {
@@ -224,7 +194,7 @@ describe('StatusService', () => {
                         addedInRound: 1,
                         sourceReference: {} as EntityReferenceDTO,
                         args: {
-                            value: null,
+                            counter: null,
                         },
                     },
                 ],
@@ -254,7 +224,7 @@ describe('StatusService', () => {
                         addedInRound: 1,
                         sourceReference: {} as EntityReferenceDTO,
                         args: {
-                            value: null,
+                            counter: null,
                         },
                     },
                     {
@@ -262,15 +232,15 @@ describe('StatusService', () => {
                         addedInRound: 1,
                         sourceReference: {} as EntityReferenceDTO,
                         args: {
-                            value: null,
+                            counter: null,
                         },
                     },
                     {
-                        name: heraldDelayed.name,
+                        name: heraldingStatus.name,
                         addedInRound: 1,
                         sourceReference: {} as EntityReferenceDTO,
                         args: {
-                            value: null,
+                            counter: null,
                         },
                     },
                 ],
@@ -304,7 +274,7 @@ describe('StatusService', () => {
                                                 type: 'player',
                                             },
                                             args: {
-                                                value: 22,
+                                                counter: 22,
                                             },
                                         },
                                     ],

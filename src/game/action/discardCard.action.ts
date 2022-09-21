@@ -86,19 +86,17 @@ export class DiscardCardAction {
 
         client.emit(
             'PutData',
-            JSON.stringify(
-                StandardResponse.respond({
-                    message_type: SWARMessageType.PlayerAffected,
-                    action: SWARAction.MoveCard,
-                    data: [
-                        {
-                            source: 'hand',
-                            destination: 'discard',
-                            id: cardId,
-                        },
-                    ],
-                }),
-            ),
+            StandardResponse.respond({
+                message_type: SWARMessageType.PlayerAffected,
+                action: SWARAction.MoveCard,
+                data: [
+                    {
+                        source: 'hand',
+                        destination: 'discard',
+                        id: cardId,
+                    },
+                ],
+            }),
         );
     }
 }

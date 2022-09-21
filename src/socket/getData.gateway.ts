@@ -13,13 +13,9 @@ import {
     StandardResponse,
     SWARMessageType,
 } from 'src/game/standardResponse/standardResponse';
-import { DataWSRequestTypesEnum } from './socket.enum';
+import { corsSocketSettings, DataWSRequestTypesEnum } from './socket.enum';
 
-@WebSocketGateway({
-    cors: {
-        origin: '*',
-    },
-})
+@WebSocketGateway(corsSocketSettings)
 export class GetDataGateway {
     private readonly logger: Logger = new Logger(GetDataGateway.name);
 
@@ -77,13 +73,11 @@ export class GetDataGateway {
                     break;
             }
 
-            return JSON.stringify(
-                StandardResponse.respond({
-                    message_type: SWARMessageType.GenericData,
-                    action: types,
-                    data,
-                }),
-            );
+            return StandardResponse.respond({
+                message_type: SWARMessageType.GenericData,
+                action: types,
+                data,
+            });
         } catch (e) {
             this.logger.error(e.message);
 

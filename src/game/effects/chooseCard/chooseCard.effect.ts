@@ -52,16 +52,14 @@ export class ChooseCardEffect implements EffectHandler {
 
         client.emit(
             'PutData',
-            JSON.stringify(
-                StandardResponse.respond({
-                    message_type: SWARMessageType.CombatUpdate,
-                    action: SWARAction.ShowCardDialog,
-                    data: {
-                        cards: cardList,
-                        cardsToTake,
-                    },
-                }),
-            ),
+            StandardResponse.respond({
+                message_type: SWARMessageType.CombatUpdate,
+                action: SWARAction.ShowCardDialog,
+                data: {
+                    cards: cardList,
+                    cardsToTake,
+                },
+            }),
         );
 
         // Here we create an item on the card selection screen collection

@@ -55,7 +55,7 @@ describe('DoubleResolveEffect', () => {
                             {
                                 name: resolve.name,
                                 args: {
-                                    value: 2,
+                                    counter: 2,
                                 },
                             },
                         ],
@@ -64,7 +64,7 @@ describe('DoubleResolveEffect', () => {
             },
         };
         await doubleResolveEffect.handle({ ctx, source, target, args });
-        expect(target.value.combatState.statuses.buff[0].args.value).toBe(4);
+        expect(target.value.combatState.statuses.buff[0].args.counter).toBe(4);
         expect(statusService.updateStatuses).toHaveBeenCalledWith(
             target,
             ctx.expedition,
@@ -73,7 +73,7 @@ describe('DoubleResolveEffect', () => {
                     {
                         name: resolve.name,
                         args: {
-                            value: 4,
+                            counter: 4,
                         },
                     },
                 ],

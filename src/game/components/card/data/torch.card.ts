@@ -25,9 +25,9 @@ export const TorchCard: Card = {
         statuses: [
             {
                 name: burn.name,
+                attachTo: CardTargetedEnum.Enemy,
                 args: {
-                    attachTo: CardTargetedEnum.Enemy,
-                    value: 2,
+                    counter: 2,
                 },
             },
         ],
@@ -58,9 +58,9 @@ export const TorchCardUpgraded: Card = {
         statuses: [
             {
                 name: burn.name,
+                attachTo: CardTargetedEnum.Enemy,
                 args: {
-                    attachTo: CardTargetedEnum.Enemy,
-                    value: 3,
+                    counter: 3,
                 },
             },
         ],

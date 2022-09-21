@@ -14,9 +14,11 @@ export enum StatusDirection {
     Outgoing = 'outgoing',
 }
 
-export enum StatusStartsAt {
-    Instantly = 'instantly',
-    NextPlayerTurn = 'nextPlayerTurn',
+export enum StatusCounterType {
+    Duration = 'duration',
+    Counter = 'counter',
+    Intensity = 'intensity',
+    None = 'none',
 }
 
 export enum StatusTrigger {
@@ -45,15 +47,24 @@ export interface StatusBase {
     type: StatusType;
 
     /**
-     * The status starts at.
-     * @type {StatusStartsAt}
+     * Counter type of the status.
+     *
+     * @type {StatusCounter}
+     *
      * @memberof Status
-     * @property {StatusStartsAt} Instantly - The status starts immediately.
-     * @property {StatusStartsAt} NextTurn - The status starts on the next turn.
-     * @example 'instantly'
-     * @example 'nextTurn'
+     *
+     * @property {StatusCounter} Duration - The status has a duration counter.
+     * @property {StatusCounter} Counter - The status has a counter.
+     * @property {StatusCounter} Intensity - The status has an intensity counter.
+     * @property {StatusCounter} None - The status does not have a counter.
+     *
+     * @example 'duration'
+     * @example 'counter'
+     * @example 'intensity'
+     * @example 'none'
+     *
      */
-    startsAt: StatusStartsAt;
+    counterType: StatusCounterType;
 
     /**
      * Trigger of the status.
@@ -111,13 +122,17 @@ export interface StatusMetadata<T extends Status = Status> {
     status: T;
 }
 
+export type StatusName = string;
+
+export interface StatusArgs extends Record<string, any> {
+    counter: number;
+}
+
 /** It is used to declare the status information in the card. */
 export interface JsonStatus {
-    name: string;
-    args: {
-        value: number;
-        attachTo: CardTargetedEnum;
-    } & Record<string, any>;
+    name: StatusName;
+    attachTo: CardTargetedEnum;
+    args: StatusArgs;
 }
 
 /** It is used to declare the status information in the attached target. */
@@ -148,8 +163,8 @@ export interface AttachedStatus {
     readonly sourceReference: EntityReferenceDTO;
 
     args: {
-        value: any;
-    };
+        counter?: number;
+    } & Record<string, any>;
 }
 
 export interface StatusCollection {
@@ -215,7 +230,7 @@ export interface StatusEventDTO<Args = Record<string, any>> {
      * @memberof StatusEventDTO
      * @example { value: 1 }
      */
-    readonly args: Args;
+    readonly eventArgs: Args;
 
     update(args: AttachedStatus['args']): void;
     remove(): void;
@@ -247,7 +262,7 @@ export type StatusHandler = StatusEffectHandler | StatusEventHandler;
 /**
  * DTO for attach set of status.
  */
-export interface AttachDTO {
+export interface AttachAllDTO {
     /**
      * Context
      * @type {Context}
@@ -277,6 +292,14 @@ export interface AttachDTO {
      * @example '1'
      */
     targetId?: TargetId;
+}
+
+export interface AttachDTO {
+    ctx: Context;
+    source: ExpeditionEntity;
+    target: ExpeditionEntity;
+    statusName: StatusName;
+    statusArgs: StatusArgs;
 }
 
 export interface AttachToPlayerDTO {

@@ -16,7 +16,7 @@ export class ImbuedStatus implements StatusEventHandler {
     async handle(dto: StatusEventDTO): Promise<void> {
         const {
             ctx,
-            args: { card, cardSource: source, cardTargetId: targetId },
+            eventArgs: { card, cardSource: source, cardTargetId: targetId },
         } = dto;
 
         const {
@@ -30,7 +30,7 @@ export class ImbuedStatus implements StatusEventHandler {
             selectedEnemy: targetId,
         });
 
-        await this.statusService.attach({
+        await this.statusService.attachAll({
             ctx: dto.ctx,
             statuses,
             source,

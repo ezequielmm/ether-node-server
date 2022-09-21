@@ -1,4 +1,4 @@
-import { heraldDelayed } from 'src/game/status/heraldDelayed/constants';
+import { heraldDelayedStatus } from 'src/game/status/heraldDelayed/constants';
 import { CardRarityEnum, CardTypeEnum, CardTargetedEnum } from '../card.enum';
 import { Card } from '../card.schema';
 
@@ -15,10 +15,10 @@ export const HeraldOfPainCard: Card = {
         effects: [],
         statuses: [
             {
-                name: heraldDelayed.name,
+                name: heraldDelayedStatus.name,
+                attachTo: CardTargetedEnum.Player,
                 args: {
-                    value: 1,
-                    attachTo: CardTargetedEnum.Player,
+                    counter: Number.NaN,
                 },
             },
         ],
@@ -40,10 +40,10 @@ export const HeraldOfPainCardUpgraded: Card = {
         effects: [],
         statuses: [
             {
-                name: heraldDelayed.name,
+                name: heraldDelayedStatus.name,
+                attachTo: CardTargetedEnum.Player,
                 args: {
-                    value: 1,
-                    attachTo: CardTargetedEnum.Player,
+                    counter: Number.NaN,
                 },
             },
         ],

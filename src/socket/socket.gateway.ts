@@ -3,9 +3,10 @@ import {
     OnGatewayDisconnect,
     OnGatewayInit,
     WebSocketGateway,
+    WebSocketServer,
 } from '@nestjs/websockets';
 import { Logger } from '@nestjs/common';
-import { Socket } from 'socket.io';
+import { Server, Socket } from 'socket.io';
 import { isValidAuthToken } from 'src/utils';
 import { AuthGatewayService } from 'src/authGateway/authGateway.service';
 import { ExpeditionService } from 'src/game/components/expedition/expedition.service';
@@ -15,16 +16,15 @@ import { InitCombatProcess } from 'src/game/process/initCombat.process';
 import { PlayerService } from 'src/game/components/player/player.service';
 import { CombatQueueService } from 'src/game/components/combatQueue/combatQueue.service';
 import { CardSelectionScreenService } from 'src/game/components/cardSelectionScreen/cardSelectionScreen.service';
+import { corsSocketSettings } from './socket.enum';
 
-@WebSocketGateway({
-    cors: {
-        origin: '*',
-    },
-})
+@WebSocketGateway(corsSocketSettings)
 export class SocketGateway
     implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
 {
     private readonly logger: Logger = new Logger(SocketGateway.name);
+
+    @WebSocketServer() server: Server;
 
     constructor(
         private readonly authGatewayService: AuthGatewayService,
@@ -98,6 +98,10 @@ export class SocketGateway
                 }
 
                 await this.fullsyncAction.handle(client);
+
+                this.logger.verbose(
+                    `Clients connected: ${this.server.engine.clientsCount}`,
+                );
             } else {
                 this.logger.debug(
                     `There is no expedition in progress for this player: ${client.id}`,
@@ -123,6 +127,11 @@ export class SocketGateway
         await this.cardSelectionScreenService.deleteByClientId(client.id);
         this.logger.debug(
             `Deleted card selection screen items for client ${client.id}`,
+        );
+
+        // Log amount of clients connected
+        this.logger.verbose(
+            `Clients connected: ${this.server.engine.clientsCount}`,
         );
     }
 }

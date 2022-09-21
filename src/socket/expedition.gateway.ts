@@ -11,12 +11,9 @@ import {
     SWARMessageType,
     SWARAction,
 } from 'src/game/standardResponse/standardResponse';
+import { corsSocketSettings } from './socket.enum';
 
-@WebSocketGateway({
-    cors: {
-        origin: '*',
-    },
-})
+@WebSocketGateway(corsSocketSettings)
 export class ExpeditionGateway {
     private readonly logger: Logger = new Logger(ExpeditionGateway.name);
 
@@ -102,13 +99,11 @@ export class ExpeditionGateway {
                 },
             });
 
-            return JSON.stringify(
-                StandardResponse.respond({
-                    message_type: SWARMessageType.EndCombat,
-                    action: SWARAction.ShowMap,
-                    data: mapToSave,
-                }),
-            );
+            return StandardResponse.respond({
+                message_type: SWARMessageType.EndCombat,
+                action: SWARAction.ShowMap,
+                data: mapToSave,
+            });
         } else {
             // This will be for now combat nodes (merchant, camp, etc)
             const { map: oldMap } = expedition;
@@ -126,13 +121,11 @@ export class ExpeditionGateway {
                 },
             });
 
-            return JSON.stringify(
-                StandardResponse.respond({
-                    message_type: SWARMessageType.EndNode,
-                    action: SWARAction.ShowMap,
-                    data: null,
-                }),
-            );
+            return StandardResponse.respond({
+                message_type: SWARMessageType.EndNode,
+                action: SWARAction.ShowMap,
+                data: null,
+            });
         }
     }
 }

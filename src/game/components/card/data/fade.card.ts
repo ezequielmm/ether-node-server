@@ -16,9 +16,9 @@ export const FadeCard: Card = {
         statuses: [
             {
                 name: dodge.name,
+                attachTo: CardTargetedEnum.Player,
                 args: {
-                    value: 1,
-                    attachTo: CardTargetedEnum.Player,
+                    counter: 1,
                 },
             },
         ],
@@ -41,9 +41,9 @@ export const FadeCardUpgraded: Card = {
         statuses: [
             {
                 name: dodge.name,
+                attachTo: CardTargetedEnum.Player,
                 args: {
-                    value: 2,
-                    attachTo: CardTargetedEnum.Player,
+                    counter: 2,
                 },
             },
         ],

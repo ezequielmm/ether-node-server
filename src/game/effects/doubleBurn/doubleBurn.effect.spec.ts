@@ -55,7 +55,7 @@ describe('DoubleBurnEffect', () => {
                             {
                                 name: burn.name,
                                 args: {
-                                    value: 2,
+                                    counter: 2,
                                 },
                             },
                         ],
@@ -64,7 +64,9 @@ describe('DoubleBurnEffect', () => {
             },
         };
         await doubleBurnEffect.handle({ ctx, source, target, args });
-        expect(target.value.combatState.statuses.debuff[0].args.value).toBe(4);
+        expect(target.value.combatState.statuses.debuff[0].args.counter).toBe(
+            4,
+        );
         expect(statusService.updateStatuses).toHaveBeenCalledWith(
             target,
             ctx.expedition,

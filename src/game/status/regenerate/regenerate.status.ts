@@ -34,7 +34,7 @@ export class RegenerateStatus implements StatusEventHandler {
                 effect: {
                     effect: healEffect.name,
                     args: {
-                        value: status.args.value,
+                        value: status.args.counter,
                     },
                 },
             });

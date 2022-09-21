@@ -1,8 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { EVENT_BEFORE_STATUS_ATTACH } from 'src/game/constants';
+import { EVENT_AFTER_STATUS_ATTACH } from 'src/game/constants';
 import {
     StandardResponse,
     SWARAction,
@@ -14,9 +14,12 @@ import { Context, ExpeditionEntity } from '../interfaces';
 import { CombatQueueTargetEffectTypeEnum } from './combatQueue.enum';
 import { CreateCombatQueueDTO, PushActionDTO } from './combatQueue.interface';
 import { CombatQueue, CombatQueueDocument } from './combatQueue.schema';
+import { isEmpty } from 'lodash';
 
 @Injectable()
 export class CombatQueueService {
+    private readonly logger = new Logger(CombatQueueService.name);
+
     constructor(
         @InjectModel(CombatQueue.name)
         private readonly combatQueue: Model<CombatQueueDocument>,
@@ -48,11 +51,11 @@ export class CombatQueueService {
                 $push: {
                     queue: {
                         originType: source.type,
-                        originId: source.value.id.toString(),
+                        originId: source.value.id,
                         targets: [
                             {
                                 targetType: target.type,
-                                targetId: target.value.id.toString(),
+                                targetId: target.value.id,
                                 ...args,
                             },
                         ],
@@ -69,29 +72,38 @@ export class CombatQueueService {
             clientId: client.id,
         });
 
-        if (!combatQueues) {
-            return;
-        }
+        if (!combatQueues) return;
+
+        const data = combatQueues.queue.map(
+            ({ originType, originId, targets }) => {
+                return { originType, originId, targets };
+            },
+        );
+
+        // Avoid sending empty combat queue to client
+        if (isEmpty(data)) return;
+
+        this.logger.log(
+            {
+                combatQueue: data,
+            },
+            'Sending combat queue to client',
+        );
 
         client.emit(
             'PutData',
-            JSON.stringify(
-                StandardResponse.respond({
-                    message_type: SWARMessageType.CombatUpdate,
-                    action: SWARAction.CombatQueue,
-                    data: combatQueues.queue.map(
-                        ({ originType, originId, targets }) => {
-                            return { originType, originId, targets };
-                        },
-                    ),
-                }),
-            ),
+            StandardResponse.respond({
+                message_type: SWARMessageType.CombatUpdate,
+                action: SWARAction.CombatQueue,
+                data,
+            }),
         );
 
+        // Clear combat queue
         await this.deleteCombatQueueByClientId(client.id);
     }
 
-    @OnEvent(EVENT_BEFORE_STATUS_ATTACH, { async: true, promisify: true })
+    @OnEvent(EVENT_AFTER_STATUS_ATTACH)
     async onAttachStatus(args: {
         ctx: Context;
         source: ExpeditionEntity;
@@ -102,46 +114,25 @@ export class CombatQueueService {
 
         const statusInfo = {
             name: status.name,
-            counter: status.args.value,
+            counter: status.args.counter,
             description: StatusGenerator.generateDescription(
                 status.name,
-                status.args.value,
+                status.args.counter,
             ),
         };
 
-        // Check if exists status attached to target
-        const isStatusQueueCreated = await this.combatQueue.exists({
-            clientId: ctx.client.id,
-            'queue.targets.effectType': CombatQueueTargetEffectTypeEnum.Status,
+        return this.push({
+            ctx,
+            source,
+            target,
+            args: {
+                effectType: CombatQueueTargetEffectTypeEnum.Status,
+                healthDelta: 0,
+                finalHealth: 0,
+                defenseDelta: 0,
+                finalDefense: 0,
+                statuses: [statusInfo],
+            },
         });
-
-        if (isStatusQueueCreated) {
-            return this.combatQueue.findOneAndUpdate(
-                {
-                    clientId: ctx.client.id,
-                    'queue.targets.effectType':
-                        CombatQueueTargetEffectTypeEnum.Status,
-                },
-                {
-                    $push: {
-                        'queue.$[].targets.$.statuses': statusInfo,
-                    },
-                },
-            );
-        } else {
-            return this.push({
-                ctx,
-                source,
-                target,
-                args: {
-                    effectType: CombatQueueTargetEffectTypeEnum.Status,
-                    healthDelta: 0,
-                    finalHealth: 0,
-                    defenseDelta: 0,
-                    finalDefense: 0,
-                    statuses: [statusInfo],
-                },
-            });
-        }
     }
 }

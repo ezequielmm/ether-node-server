@@ -22,7 +22,7 @@ export class ResolveStatus implements StatusEffectHandler {
         const effectDTO = dto.effectDTO;
 
         effectDTO.args.currentValue = Math.max(
-            effectDTO.args.currentValue + dto.status.args.value,
+            effectDTO.args.currentValue + dto.status.args.counter,
             0,
         );
 

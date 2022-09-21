@@ -110,9 +110,9 @@ export const groundMothData: Enemy = {
                     status: [
                         {
                             name: resolve.name,
+                            attachTo: CardTargetedEnum.Self,
                             args: {
-                                attachTo: CardTargetedEnum.Self,
-                                value: 3,
+                                counter: 3,
                             },
                         },
                     ],

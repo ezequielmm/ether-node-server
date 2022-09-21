@@ -14,6 +14,7 @@ export interface DefenseArgs {
     multiplier?: number;
     useDiscardPileAsValue: boolean;
     useAttackingEnemies: boolean;
+    useEnergyAsMultiplier: boolean;
 }
 
 @EffectDecorator({
@@ -38,6 +39,7 @@ export class DefenseEffect implements EffectHandler {
                 useDiscardPileAsValue,
                 multiplier,
                 useAttackingEnemies,
+                useEnergyAsMultiplier,
             },
         } = payload;
 
@@ -54,7 +56,7 @@ export class DefenseEffect implements EffectHandler {
                 },
             } = target;
 
-            // Check if the card uses the amount of enemies as
+            // Check if the card uses the amount of enemies alive as
             // value to calculate the defense amount to apply
             if (isNotUndefined(useEnemies)) {
                 const {
@@ -63,7 +65,13 @@ export class DefenseEffect implements EffectHandler {
                     },
                 } = expedition;
 
-                newDefense *= enemies.length;
+                // Now we remove the enemies that are defeated
+                // hpCurrent = 0
+                const enemiesAlive = enemies.filter(({ hpCurrent }) => {
+                    return hpCurrent > 0;
+                });
+
+                newDefense *= enemiesAlive.length;
             }
 
             // Check if the card uses the amount of cards from the
@@ -79,7 +87,9 @@ export class DefenseEffect implements EffectHandler {
                     },
                 } = expedition;
 
-                newDefense = newDefense * discard.length * multiplier;
+                const discardAmount = discard.length;
+
+                newDefense = newDefense * discardAmount * multiplier;
             }
 
             // Check if the card uses the enemies that are attacking next turn as
@@ -103,9 +113,24 @@ export class DefenseEffect implements EffectHandler {
                 newDefense *= enemiesAttacking;
             }
 
+            // Here we check if the card uses the energy available for the player
+            // and use as multipler for the defense
+            if (isNotUndefined(useEnergyAsMultiplier)) {
+                const {
+                    currentNode: {
+                        data: {
+                            player: { energy },
+                        },
+                    },
+                } = expedition;
+
+                newDefense *= energy;
+            }
+
             const defenseCalculated = newDefense + currentDefense;
 
             await this.playerService.setDefense(ctx, defenseCalculated);
+
             await this.combatQueueService.push({
                 ctx,
                 source,
@@ -135,6 +160,7 @@ export class DefenseEffect implements EffectHandler {
                 target.value.id,
                 defenseCalculated,
             );
+
             await this.combatQueueService.push({
                 ctx,
                 source,

@@ -20,16 +20,16 @@ export const TasteOfBloodCard: Card = {
         statuses: [
             {
                 name: tasteOfBloodBuff.name,
+                attachTo: CardTargetedEnum.Player,
                 args: {
-                    value: 2,
-                    attachTo: CardTargetedEnum.Player,
+                    counter: 2,
                 },
             },
             {
                 name: tasteOfBloodDebuff.name,
+                attachTo: CardTargetedEnum.Player,
                 args: {
-                    value: 2,
-                    attachTo: CardTargetedEnum.Player,
+                    counter: 2,
                 },
             },
         ],
@@ -53,16 +53,16 @@ export const TasteOfBloodCardUpgraded: Card = {
         statuses: [
             {
                 name: tasteOfBloodBuff.name,
+                attachTo: CardTargetedEnum.Player,
                 args: {
-                    value: 2,
-                    attachTo: CardTargetedEnum.Player,
+                    counter: 2,
                 },
             },
             {
                 name: tasteOfBloodDebuff.name,
+                attachTo: CardTargetedEnum.Player,
                 args: {
-                    value: 2,
-                    attachTo: CardTargetedEnum.Player,
+                    counter: 2,
                 },
             },
         ],

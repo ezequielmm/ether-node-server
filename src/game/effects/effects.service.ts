@@ -97,6 +97,14 @@ export class EffectService {
                 return;
             }
 
+            // Check if the target is dead, if so, skip the effect
+            if (this.expeditionService.isEntityDead(ctx, target)) {
+                this.logger.debug(
+                    `Target is dead, skipping effect ${effect.effect}`,
+                );
+                return;
+            }
+
             // Send the queue id to the effects to add the target
             this.logger.debug(`Effect ${name} applied to ${target.type}`);
             const handler = this.findHandlerByName(name);
@@ -112,11 +120,12 @@ export class EffectService {
         } = dto;
         let { dto: effectDTO } = dto;
 
-        const outgoingStatuses = this.statusService.findEffectStatuses(
+        const outgoingStatuses = this.statusService.findStatusesByDirection(
             source,
             StatusDirection.Outgoing,
         );
-        const incomingStatuses = this.statusService.findEffectStatuses(
+
+        const incomingStatuses = this.statusService.findStatusesByDirection(
             target,
             StatusDirection.Incoming,
         );
@@ -152,7 +161,7 @@ export class EffectService {
         } = dto;
         let { dto: effectDTO } = dto;
 
-        const outgoingStatuses = this.statusService.findEffectStatuses(
+        const outgoingStatuses = this.statusService.findStatusesByDirection(
             source,
             StatusDirection.Outgoing,
         );

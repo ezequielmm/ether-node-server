@@ -1,10 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { EnemyService } from 'src/game/components/enemy/enemy.service';
-import { PlayerService } from 'src/game/components/player/player.service';
 import { fortitude } from '../fortitude/constants';
 import { StatusEventDTO, StatusEventHandler } from '../interfaces';
 import { resolve } from '../resolve/constants';
 import { StatusDecorator } from '../status.decorator';
+import { StatusService } from '../status.service';
 import { prayingStatus } from './constants';
 
 @StatusDecorator({
@@ -12,28 +11,36 @@ import { prayingStatus } from './constants';
 })
 @Injectable()
 export class PrayingStatus implements StatusEventHandler {
-    constructor(
-        private readonly playerService: PlayerService,
-        private readonly enemyService: EnemyService,
-    ) {}
+    constructor(private readonly statuService: StatusService) {}
 
     async handle(dto: StatusEventDTO): Promise<any> {
-        const { ctx, update, remove, status, target } = dto;
+        const { ctx, update, remove, status, source, target } = dto;
 
-        if (PlayerService.isPlayer(target)) {
-            await this.playerService.attach(ctx, target, resolve.name);
-            await this.playerService.attach(ctx, target, fortitude.name);
-        } else if (EnemyService.isEnemy(target)) {
-            const id = target.value.id;
-            await this.enemyService.attach(ctx, id, target, resolve.name);
-            await this.enemyService.attach(ctx, id, target, fortitude.name);
-        }
+        await this.statuService.attach({
+            ctx,
+            source,
+            target,
+            statusName: fortitude.name,
+            statusArgs: {
+                counter: 1,
+            },
+        });
+
+        await this.statuService.attach({
+            ctx,
+            source,
+            target,
+            statusName: resolve.name,
+            statusArgs: {
+                counter: 1,
+            },
+        });
 
         // Decrease counter
-        status.args.value--;
+        status.args.counter--;
 
         // Remove status if counter is 0
-        if (status.args.value === 0) {
+        if (status.args.counter === 0) {
             remove();
         } else {
             update(status.args);

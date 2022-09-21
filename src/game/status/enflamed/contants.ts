@@ -2,9 +2,9 @@
 
 import { burn } from '../burn/constants';
 import {
+    StatusCounterType,
     StatusDirection,
     StatusEffect,
-    StatusStartsAt,
     StatusTrigger,
     StatusType,
 } from '../interfaces';
@@ -12,7 +12,7 @@ import {
 export const enflamed: StatusEffect = {
     name: 'enflamed',
     type: StatusType.Debuff,
-    startsAt: StatusStartsAt.Instantly,
+    counterType: StatusCounterType.Intensity,
     trigger: StatusTrigger.Effect,
     direction: StatusDirection.Outgoing,
     effects: [burn],

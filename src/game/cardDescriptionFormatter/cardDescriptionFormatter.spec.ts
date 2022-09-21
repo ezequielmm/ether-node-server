@@ -52,9 +52,9 @@ describe('Card Description Formatter', () => {
             statuses: [
                 {
                     name: regenerate.name,
+                    attachTo: CardTargetedEnum.Player,
                     args: {
-                        attachTo: CardTargetedEnum.Player,
-                        value: 1,
+                        counter: 1,
                     },
                 },
             ],

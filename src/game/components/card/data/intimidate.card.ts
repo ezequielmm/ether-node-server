@@ -16,14 +16,14 @@ export const IntimidateCard: Card = {
         statuses: [
             {
                 name: confusion.name,
+                attachTo: CardTargetedEnum.Enemy,
                 args: {
-                    attachTo: CardTargetedEnum.Enemy,
-                    value: 1,
+                    counter: 1,
                 },
             },
         ],
     },
-    showPointer: false,
+    showPointer: true,
     isUpgraded: false,
 };
 
@@ -41,9 +41,9 @@ export const IntimidateCardUpgraded: Card = {
         statuses: [
             {
                 name: confusion.name,
+                attachTo: CardTargetedEnum.AllEnemies,
                 args: {
-                    attachTo: CardTargetedEnum.AllEnemies,
-                    value: 1,
+                    counter: 1,
                 },
             },
         ],

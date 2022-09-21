@@ -15,7 +15,7 @@ export const ShieldPlantCard: Card = {
     cardType: CardTypeEnum.Defend,
     pool: 'knight',
     energy: CardEnergyEnum.All,
-    description: `Gain {${defenseEffect.name}} defense per energy. Exhaust `,
+    description: `Gain {${defenseEffect.name}} defense per energy. Exhaust`,
     keywords: [CardKeywordEnum.Exhaust],
     properties: {
         effects: [
@@ -40,7 +40,7 @@ export const ShieldPlantCardUpgraded: Card = {
     cardType: CardTypeEnum.Defend,
     pool: 'knight',
     energy: CardEnergyEnum.All,
-    description: `Gain {${defenseEffect.name}} defense per energy. `,
+    description: `Gain {${defenseEffect.name}} defense per energy.`,
     keywords: [],
     properties: {
         effects: [

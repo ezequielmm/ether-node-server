@@ -8,12 +8,9 @@ import {
     SWARMessageType,
     SWARAction,
 } from 'src/game/standardResponse/standardResponse';
+import { corsSocketSettings } from './socket.enum';
 
-@WebSocketGateway({
-    cors: {
-        origin: '*',
-    },
-})
+@WebSocketGateway(corsSocketSettings)
 export class RewardGateway {
     private readonly logger: Logger = new Logger(RewardGateway.name);
 
@@ -86,12 +83,10 @@ export class RewardGateway {
             return id !== rewardId && taken === false;
         });
 
-        return JSON.stringify(
-            StandardResponse.respond({
-                message_type: SWARMessageType.EndCombat,
-                action: SWARAction.SelectAnotherReward,
-                data: pendingRewards,
-            }),
-        );
+        return StandardResponse.respond({
+            message_type: SWARMessageType.EndCombat,
+            action: SWARAction.SelectAnotherReward,
+            data: pendingRewards,
+        });
     }
 }

@@ -322,4 +322,12 @@ export class ExpeditionService {
             this.playerService.isDead(ctx) || this.enemyService.isAllDead(ctx)
         );
     }
+
+    public isEntityDead(ctx: Context, target: ExpeditionEntity): boolean {
+        if (PlayerService.isPlayer(target)) {
+            return this.playerService.isDead(ctx);
+        } else if (EnemyService.isEnemy(target)) {
+            return this.enemyService.isDead(target);
+        }
+    }
 }

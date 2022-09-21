@@ -24,7 +24,7 @@ export class EndCombatProcess {
         private readonly combatQueueService: CombatQueueService,
     ) {}
 
-    @OnEvent(EVENT_AFTER_DAMAGE_EFFECT, { async: true })
+    @OnEvent(EVENT_AFTER_DAMAGE_EFFECT)
     async handle({ ctx }): Promise<void> {
         if (this.playerService.isDead(ctx)) {
             this.logger.debug('Player is dead. Ending combat');
@@ -57,15 +57,13 @@ export class EndCombatProcess {
     private emitEnemiesDefeated(ctx: Context) {
         ctx.client.emit(
             'PutData',
-            JSON.stringify(
-                StandardResponse.respond({
-                    message_type: SWARMessageType.EndCombat,
-                    action: SWARAction.EnemiesDefeated,
-                    data: {
-                        rewards: ctx.expedition.currentNode.data.rewards,
-                    },
-                }),
-            ),
+            StandardResponse.respond({
+                message_type: SWARMessageType.EndCombat,
+                action: SWARAction.EnemiesDefeated,
+                data: {
+                    rewards: ctx.expedition.currentNode.data.rewards,
+                },
+            }),
         );
     }
 
@@ -74,13 +72,11 @@ export class EndCombatProcess {
 
         ctx.client.emit(
             'PutData',
-            JSON.stringify(
-                StandardResponse.respond({
-                    message_type: SWARMessageType.EndCombat,
-                    action: SWARAction.PlayerDefeated,
-                    data: null,
-                }),
-            ),
+            StandardResponse.respond({
+                message_type: SWARMessageType.EndCombat,
+                action: SWARAction.PlayerDefeated,
+                data: null,
+            }),
         );
 
         await this.expeditionService.updateByFilter(

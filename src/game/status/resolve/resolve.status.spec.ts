@@ -23,7 +23,7 @@ describe('ResolveStatus', () => {
                 },
                 addedInRound: 1,
                 args: {
-                    value: 2,
+                    counter: 2,
                 },
             },
             effectDTO: {
@@ -50,7 +50,7 @@ describe('ResolveStatus', () => {
                 },
                 addedInRound: 1,
                 args: {
-                    value: -5,
+                    counter: -5,
                 },
             },
             effectDTO: {

@@ -1,58 +1,72 @@
 import { Injectable } from '@nestjs/common';
+import { OnEvent } from '@nestjs/event-emitter';
 import { EnemyService } from 'src/game/components/enemy/enemy.service';
+import { Context } from 'src/game/components/interfaces';
 import { PlayerService } from 'src/game/components/player/player.service';
-import { DamageArgs } from 'src/game/effects/damage/damage.effect';
-import { EffectDTO } from 'src/game/effects/effects.interface';
-import { StatusEffectDTO, StatusEffectHandler } from '../interfaces';
+import {
+    EVENT_BEFORE_ENEMIES_TURN_START,
+    EVENT_BEFORE_PLAYER_TURN_START,
+} from 'src/game/constants';
+import { defenseEffect } from 'src/game/effects/defense/constants';
+import { EffectService } from 'src/game/effects/effects.service';
+import { confusion } from '../confusion/constants';
+import { StatusEventDTO, StatusEventHandler } from '../interfaces';
 import { StatusDecorator } from '../status.decorator';
+import { StatusService } from '../status.service';
 import { siphoning } from './constants';
 
 @StatusDecorator({
     status: siphoning,
 })
 @Injectable()
-export class SiphoningStatus implements StatusEffectHandler {
+export class SiphoningStatus implements StatusEventHandler {
     constructor(
+        private readonly effectService: EffectService,
         private readonly playerService: PlayerService,
         private readonly enemyService: EnemyService,
+        private readonly statusService: StatusService,
     ) {}
 
-    async preview(
-        args: StatusEffectDTO<DamageArgs>,
-    ): Promise<EffectDTO<DamageArgs>> {
-        return args.effectDTO;
+    async handle(dto: StatusEventDTO): Promise<void> {
+        await this.effectService.apply({
+            ctx: dto.ctx,
+            source: dto.source,
+            target: dto.target,
+            effect: {
+                effect: defenseEffect.name,
+                args: {
+                    value: dto.eventArgs.damageDealt,
+                },
+            },
+        });
     }
 
-    async handle(
-        dto: StatusEffectDTO<DamageArgs>,
-    ): Promise<EffectDTO<DamageArgs>> {
-        const {
-            ctx,
-            effectDTO: { args, source },
-            remove,
-        } = dto;
+    @OnEvent(EVENT_BEFORE_ENEMIES_TURN_START)
+    async onEnemiesTurnStart(args: { ctx: Context }): Promise<void> {
+        const { ctx } = args;
+        const enemies = this.enemyService.getAll(ctx);
 
-        if (ctx.expedition.currentNode.data.round > dto.status.addedInRound) {
-            remove();
-            return dto.effectDTO;
-        }
-
-        const newDefense = args.currentValue;
-
-        if (PlayerService.isPlayer(source)) {
-            const defense = source.value.combatState.defense;
-
-            await this.playerService.setDefense(ctx, defense + newDefense);
-        } else if (EnemyService.isEnemy(source)) {
-            const defense = source.value.defense;
-
-            await this.enemyService.setDefense(
+        for (const enemy of enemies) {
+            await this.statusService.decreaseCounterAndRemove(
                 ctx,
-                source.value.id,
-                defense + newDefense,
+                enemy.value.statuses,
+                enemy,
+                confusion,
             );
         }
+    }
 
-        return dto.effectDTO;
+    @OnEvent(EVENT_BEFORE_PLAYER_TURN_START)
+    async onPlayerTurnStart(args: { ctx: Context }): Promise<void> {
+        const { ctx } = args;
+        const player = this.playerService.get(ctx);
+        const statuses = player.value.combatState.statuses;
+
+        await this.statusService.decreaseCounterAndRemove(
+            ctx,
+            statuses,
+            player,
+            siphoning,
+        );
     }
 }
