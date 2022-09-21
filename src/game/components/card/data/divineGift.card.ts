@@ -16,9 +16,9 @@ export const DivineGiftCard: Card = {
         statuses: [
             {
                 name: gifted.name,
+                attachTo: CardTargetedEnum.Player,
                 args: {
                     counter: 4,
-                    attachTo: CardTargetedEnum.Player,
                 },
             },
         ],
@@ -41,9 +41,9 @@ export const DivineGiftCardUpgraded: Card = {
         statuses: [
             {
                 name: gifted.name,
+                attachTo: CardTargetedEnum.Player,
                 args: {
                     counter: 7,
-                    attachTo: CardTargetedEnum.Player,
                 },
             },
         ],

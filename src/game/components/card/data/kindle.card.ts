@@ -1,3 +1,4 @@
+import { attachStatusEffect } from 'src/game/effects/attachStatus/constants';
 import { doubleBurn } from 'src/game/effects/doubleBurn/constants';
 import { burn } from 'src/game/status/burn/constants';
 import { CardRarityEnum, CardTypeEnum, CardTargetedEnum } from '../card.enum';
@@ -15,6 +16,17 @@ export const KindleCard: Card = {
     properties: {
         effects: [
             {
+                effect: attachStatusEffect.name,
+                target: CardTargetedEnum.Enemy,
+                args: {
+                    value: Number.NaN,
+                    statusName: burn.name,
+                    statusArgs: {
+                        counter: 1,
+                    },
+                },
+            },
+            {
                 effect: doubleBurn.name,
                 target: CardTargetedEnum.AllEnemies,
                 args: {
@@ -22,15 +34,16 @@ export const KindleCard: Card = {
                 },
             },
         ],
-        statuses: [
-            {
-                name: burn.name,
-                args: {
-                    attachTo: CardTargetedEnum.Enemy,
-                    counter: 1,
-                },
-            },
-        ],
+        statuses: [],
+        // statuses: [
+        //     {
+        //         name: burn.name,
+        //         attachTo: CardTargetedEnum.Enemy,
+        //         args: {
+        //             counter: 1,
+        //         },
+        //     },
+        // ],
     },
     showPointer: true,
     isUpgraded: false,
@@ -48,6 +61,17 @@ export const KindleCardUpgraded: Card = {
     properties: {
         effects: [
             {
+                effect: attachStatusEffect.name,
+                target: CardTargetedEnum.Enemy,
+                args: {
+                    value: Number.NaN,
+                    statusName: burn.name,
+                    statusArgs: {
+                        counter: 2,
+                    },
+                },
+            },
+            {
                 effect: doubleBurn.name,
                 target: CardTargetedEnum.AllEnemies,
                 args: {
@@ -56,13 +80,13 @@ export const KindleCardUpgraded: Card = {
             },
         ],
         statuses: [
-            {
-                name: burn.name,
-                args: {
-                    attachTo: CardTargetedEnum.Enemy,
-                    counter: 2,
-                },
-            },
+            // {
+            //     name: burn.name,
+            //     attachTo: CardTargetedEnum.Enemy,
+            //     args: {
+            //         counter: 2,
+            //     },
+            // },
         ],
     },
     showPointer: true,

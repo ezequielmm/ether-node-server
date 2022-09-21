@@ -1,7 +1,6 @@
 import { defenseEffect } from '../../effects/defense/constants';
 import {
     StatusDirection,
-    StatusStartsAt,
     StatusType,
     StatusEffect,
     StatusTrigger,
@@ -13,7 +12,6 @@ export const fortitude: StatusEffect = {
     type: StatusType.Buff,
     counterType: StatusCounterType.Intensity,
     direction: StatusDirection.Incoming,
-    startsAt: StatusStartsAt.Instantly,
     trigger: StatusTrigger.Effect,
     effects: [defenseEffect],
 };

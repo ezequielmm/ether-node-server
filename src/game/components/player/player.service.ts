@@ -201,7 +201,7 @@ export class PlayerService {
             // If the status is already attached, we update it
             if (metadata.status.counterType != StatusCounterType.None) {
                 // If the status has a counter, we increment it
-                oldStatus.args.counter++;
+                oldStatus.args.counter += args.counter;
                 this.logger.log(
                     `Status ${name} counter incremented to ${oldStatus.args.counter}`,
                 );

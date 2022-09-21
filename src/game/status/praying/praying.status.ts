@@ -19,23 +19,21 @@ export class PrayingStatus implements StatusEventHandler {
         await this.statuService.attach({
             ctx,
             source,
-            statuses: [
-                {
-                    name: fortitude.name,
-                    args: {
-                        counter: 1,
-                        attachTo: target.type,
-                    },
-                },
-                {
-                    name: resolve.name,
-                    args: {
-                        counter: 1,
-                        attachTo: target.type,
-                    },
-                },
-            ],
-            targetId: target.value.id,
+            target,
+            statusName: fortitude.name,
+            statusArgs: {
+                counter: 1,
+            },
+        });
+
+        await this.statuService.attach({
+            ctx,
+            source,
+            target,
+            statusName: resolve.name,
+            statusArgs: {
+                counter: 1,
+            },
         });
 
         // Decrease counter

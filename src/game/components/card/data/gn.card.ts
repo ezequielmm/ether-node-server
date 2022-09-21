@@ -25,22 +25,31 @@ export const GNCard: Card = {
         statuses: [
             {
                 name: resolve.name,
+                attachTo: CardTargetedEnum.Player,
                 args: {
-                    attachTo: CardTargetedEnum.Player,
                     counter: 1,
                 },
             },
             {
                 name: fortitude.name,
-                args: { attachTo: CardTargetedEnum.Player, counter: 1 },
+                attachTo: CardTargetedEnum.Player,
+                args: {
+                    counter: 1,
+                },
             },
             {
                 name: spirited.name,
-                args: { attachTo: CardTargetedEnum.Player, counter: 1 },
+                attachTo: CardTargetedEnum.Player,
+                args: {
+                    counter: 1,
+                },
             },
             {
                 name: spikesStatus.name,
-                args: { attachTo: CardTargetedEnum.Player, counter: 1 },
+                attachTo: CardTargetedEnum.Player,
+                args: {
+                    counter: 1,
+                },
             },
         ],
     },
@@ -63,22 +72,31 @@ export const GNCardUpgraded: Card = {
         statuses: [
             {
                 name: resolve.name,
+                attachTo: CardTargetedEnum.Player,
                 args: {
-                    attachTo: CardTargetedEnum.Player,
                     counter: 1,
                 },
             },
             {
                 name: fortitude.name,
-                args: { attachTo: CardTargetedEnum.Player, counter: 1 },
+                attachTo: CardTargetedEnum.Player,
+                args: {
+                    counter: 1,
+                },
             },
             {
                 name: spirited.name,
-                args: { attachTo: CardTargetedEnum.Player, counter: 1 },
+                attachTo: CardTargetedEnum.Player,
+                args: {
+                    counter: 1,
+                },
             },
             {
                 name: spikesStatus.name,
-                args: { attachTo: CardTargetedEnum.Player, counter: 1 },
+                attachTo: CardTargetedEnum.Player,
+                args: {
+                    counter: 1,
+                },
             },
         ],
     },

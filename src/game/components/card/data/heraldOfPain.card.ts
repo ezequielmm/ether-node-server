@@ -16,9 +16,9 @@ export const HeraldOfPainCard: Card = {
         statuses: [
             {
                 name: heraldDelayedStatus.name,
+                attachTo: CardTargetedEnum.Player,
                 args: {
                     counter: Number.NaN,
-                    attachTo: CardTargetedEnum.Player,
                 },
             },
         ],
@@ -41,9 +41,9 @@ export const HeraldOfPainCardUpgraded: Card = {
         statuses: [
             {
                 name: heraldDelayedStatus.name,
+                attachTo: CardTargetedEnum.Player,
                 args: {
                     counter: Number.NaN,
-                    attachTo: CardTargetedEnum.Player,
                 },
             },
         ],

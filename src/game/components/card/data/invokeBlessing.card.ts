@@ -16,8 +16,8 @@ export const InvokeBlessingCard: Card = {
         statuses: [
             {
                 name: regenerate.name,
+                attachTo: CardTargetedEnum.Player,
                 args: {
-                    attachTo: CardTargetedEnum.Player,
                     counter: 1,
                 },
             },
@@ -41,8 +41,8 @@ export const InvokeBlessingCardUpgraded: Card = {
         statuses: [
             {
                 name: regenerate.name,
+                attachTo: CardTargetedEnum.Player,
                 args: {
-                    attachTo: CardTargetedEnum.Player,
                     counter: 1,
                 },
             },

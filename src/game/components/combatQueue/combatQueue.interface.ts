@@ -5,10 +5,10 @@ import { CombatQueue } from './combatQueue.schema';
 
 export interface ICombatQueueArgs {
     effectType: CombatQueueTargetEffectTypeEnum;
-    healthDelta: number;
-    finalHealth: number;
-    defenseDelta: number;
-    finalDefense: number;
+    healthDelta?: number;
+    finalHealth?: number;
+    defenseDelta?: number;
+    finalDefense?: number;
     statuses: IStatusesList[];
 }
 

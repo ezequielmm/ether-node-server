@@ -3,7 +3,6 @@ import {
     Status,
     StatusCounterType,
     StatusDirection,
-    StatusStartsAt,
     StatusTrigger,
     StatusType,
 } from '../interfaces';
@@ -13,7 +12,6 @@ export const dodge: Status = {
     type: StatusType.Buff,
     counterType: StatusCounterType.Counter,
     direction: StatusDirection.Incoming,
-    startsAt: StatusStartsAt.Instantly,
     trigger: StatusTrigger.Effect,
     effects: [damageEffect],
 };

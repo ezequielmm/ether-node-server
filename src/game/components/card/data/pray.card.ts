@@ -16,8 +16,8 @@ export const PrayCard: Card = {
         statuses: [
             {
                 name: prayingStatus.name,
+                attachTo: CardTargetedEnum.Player,
                 args: {
-                    attachTo: CardTargetedEnum.Player,
                     counter: 1,
                 },
             },
@@ -41,8 +41,8 @@ export const PrayCardUpgraded: Card = {
         statuses: [
             {
                 name: prayingStatus.name,
+                attachTo: CardTargetedEnum.Player,
                 args: {
-                    attachTo: CardTargetedEnum.Player,
                     counter: 2,
                 },
             },

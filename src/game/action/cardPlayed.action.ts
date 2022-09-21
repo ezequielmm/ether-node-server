@@ -177,7 +177,7 @@ export class CardPlayedAction {
                     return;
                 }
 
-                await this.statusService.attach({
+                await this.statusService.attachAll({
                     ctx,
                     statuses,
                     targetId: selectedEnemyId,

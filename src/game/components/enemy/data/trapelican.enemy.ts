@@ -94,8 +94,8 @@ export const trapelicanData: Enemy = {
                     status: [
                         {
                             name: resolve.name,
+                            attachTo: CardTargetedEnum.Player,
                             args: {
-                                attachTo: CardTargetedEnum.Player,
                                 counter: 1,
                             },
                         },
@@ -108,8 +108,8 @@ export const trapelicanData: Enemy = {
                     status: [
                         {
                             name: resolve.name,
+                            attachTo: CardTargetedEnum.Self,
                             args: {
-                                attachTo: CardTargetedEnum.Self,
                                 counter: 1,
                             },
                         },

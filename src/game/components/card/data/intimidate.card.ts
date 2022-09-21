@@ -16,8 +16,8 @@ export const IntimidateCard: Card = {
         statuses: [
             {
                 name: confusion.name,
+                attachTo: CardTargetedEnum.Enemy,
                 args: {
-                    attachTo: CardTargetedEnum.Enemy,
                     counter: 1,
                 },
             },
@@ -41,8 +41,8 @@ export const IntimidateCardUpgraded: Card = {
         statuses: [
             {
                 name: confusion.name,
+                attachTo: CardTargetedEnum.AllEnemies,
                 args: {
-                    attachTo: CardTargetedEnum.AllEnemies,
                     counter: 1,
                 },
             },

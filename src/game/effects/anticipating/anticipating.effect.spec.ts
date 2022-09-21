@@ -49,16 +49,11 @@ describe('AnticipatingEffect', () => {
         expect(statusService.attach).toHaveBeenCalledWith({
             ctx,
             source,
-            statuses: [
-                {
-                    name: anticipatingStatus.name,
-                    args: {
-                        attachTo: target.type,
-                        counter: target.value.combatState.defense,
-                    },
-                },
-            ],
-            targetId: target.value.id,
+            target,
+            statusName: anticipatingStatus.name,
+            statusArgs: {
+                counter: target.value.combatState.defense,
+            },
         });
     });
 
@@ -74,16 +69,11 @@ describe('AnticipatingEffect', () => {
         expect(statusService.attach).toHaveBeenCalledWith({
             ctx,
             source,
-            statuses: [
-                {
-                    name: anticipatingStatus.name,
-                    args: {
-                        attachTo: target.type,
-                        counter: target.value.defense,
-                    },
-                },
-            ],
-            targetId: target.value.id,
+            target,
+            statusName: anticipatingStatus.name,
+            statusArgs: {
+                counter: target.value.defense,
+            },
         });
     });
 });

@@ -16,9 +16,9 @@ export const TurtleCard: Card = {
         statuses: [
             {
                 name: turtling.name,
+                attachTo: CardTargetedEnum.Player,
                 args: {
                     counter: 1,
-                    attachTo: CardTargetedEnum.Player,
                 },
             },
         ],
@@ -41,9 +41,9 @@ export const TurtleCardUpgraded: Card = {
         statuses: [
             {
                 name: turtling.name,
+                attachTo: CardTargetedEnum.Player,
                 args: {
                     counter: 2,
-                    attachTo: CardTargetedEnum.Player,
                 },
             },
         ],

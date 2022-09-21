@@ -16,8 +16,8 @@ export const InterceptCard: Card = {
         statuses: [
             {
                 name: intercept.name,
+                attachTo: CardTargetedEnum.Player,
                 args: {
-                    attachTo: CardTargetedEnum.Player,
                     counter: 1,
                 },
             },
@@ -41,8 +41,8 @@ export const InterceptCardUpgraded: Card = {
         statuses: [
             {
                 name: intercept.name,
+                attachTo: CardTargetedEnum.Player,
                 args: {
-                    attachTo: CardTargetedEnum.Player,
                     counter: 2,
                 },
             },

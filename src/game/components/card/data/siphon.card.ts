@@ -17,8 +17,8 @@ export const SiphonCard: Card = {
         statuses: [
             {
                 name: siphoning.name,
+                attachTo: CardTargetedEnum.Player,
                 args: {
-                    attachTo: CardTargetedEnum.Player,
                     counter: 1,
                 },
             },
@@ -43,8 +43,8 @@ export const SiphonCardUpgraded: Card = {
         statuses: [
             {
                 name: siphoning.name,
+                attachTo: CardTargetedEnum.Player,
                 args: {
-                    attachTo: CardTargetedEnum.Player,
                     counter: 1,
                 },
             },
