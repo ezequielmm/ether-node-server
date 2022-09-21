@@ -26,7 +26,7 @@ export const BraceCard: Card = {
             {
                 name: resolve.name,
                 args: {
-                    value: 1,
+                    counter: 1,
                     attachTo: CardTargetedEnum.Self,
                 },
             },
