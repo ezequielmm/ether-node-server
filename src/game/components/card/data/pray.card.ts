@@ -1,6 +1,4 @@
-import { fortitude } from 'src/game/status/fortitude/constants';
 import { prayingStatus } from 'src/game/status/praying/constants';
-import { resolve } from 'src/game/status/resolve/constants';
 import { CardRarityEnum, CardTypeEnum, CardTargetedEnum } from '../card.enum';
 import { Card } from '../card.schema';
 
@@ -36,7 +34,7 @@ export const PrayCardUpgraded: Card = {
     cardType: CardTypeEnum.Skill,
     pool: 'knight',
     energy: 1,
-    description: `At the beginning of your next two tu267733rns gain 1 <color=#0066cc>Resolve</color> and 1 <color=#0066cc>Fortitude</color>`,
+    description: `At the beginning of your next two turns gain 1 <color=#0066cc>Resolve</color> and 1 <color=#0066cc>Fortitude</color>`,
     keywords: [],
     properties: {
         effects: [],
