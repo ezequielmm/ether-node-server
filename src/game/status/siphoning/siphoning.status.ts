@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { EnemyService } from 'src/game/components/enemy/enemy.service';
-import { PlayerService } from 'src/game/components/player/player.service';
 import { DamageArgs } from 'src/game/effects/damage/damage.effect';
+import { defenseEffect } from 'src/game/effects/defense/constants';
 import { EffectDTO } from 'src/game/effects/effects.interface';
+import { EffectService } from 'src/game/effects/effects.service';
 import { StatusEffectDTO, StatusEffectHandler } from '../interfaces';
 import { StatusDecorator } from '../status.decorator';
 import { siphoning } from './constants';
@@ -12,10 +12,7 @@ import { siphoning } from './constants';
 })
 @Injectable()
 export class SiphoningStatus implements StatusEffectHandler {
-    constructor(
-        private readonly playerService: PlayerService,
-        private readonly enemyService: EnemyService,
-    ) {}
+    constructor(private readonly effectService: EffectService) {}
 
     async preview(
         args: StatusEffectDTO<DamageArgs>,
@@ -37,21 +34,21 @@ export class SiphoningStatus implements StatusEffectHandler {
             return dto.effectDTO;
         }
 
+        // set the amount of defense we are going to get
         const newDefense = args.currentValue;
 
-        if (PlayerService.isPlayer(source)) {
-            const defense = source.value.combatState.defense;
-
-            await this.playerService.setDefense(ctx, defense + newDefense);
-        } else if (EnemyService.isEnemy(source)) {
-            const defense = source.value.defense;
-
-            await this.enemyService.setDefense(
-                ctx,
-                source.value.id,
-                defense + newDefense,
-            );
-        }
+        // Trigger the effectService and send a defense effect
+        await this.effectService.apply({
+            ctx,
+            source,
+            target: source,
+            effect: {
+                effect: defenseEffect.name,
+                args: {
+                    value: newDefense,
+                },
+            },
+        });
 
         return dto.effectDTO;
     }

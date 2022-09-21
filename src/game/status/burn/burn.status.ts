@@ -1,6 +1,5 @@
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { damageEffect } from 'src/game/effects/damage/constants';
-import { JsonEffect } from '../../effects/effects.interface';
 import { EffectService } from '../../effects/effects.service';
 import { StatusEventDTO, StatusEventHandler } from '../interfaces';
 import { StatusDecorator } from '../status.decorator';
@@ -17,18 +16,16 @@ export class BurnStatus implements StatusEventHandler {
     ) {}
 
     async handle(dto: StatusEventDTO): Promise<void> {
-        const effect: JsonEffect = {
-            effect: damageEffect.name,
-            args: {
-                value: dto.status.args.counter,
-            },
-        };
-
         await this.effectService.apply({
             ctx: dto.ctx,
             source: dto.source,
             target: dto.target,
-            effect,
+            effect: {
+                effect: damageEffect.name,
+                args: {
+                    value: dto.status.args.counter,
+                },
+            },
         });
 
         dto.status.args.counter++;
