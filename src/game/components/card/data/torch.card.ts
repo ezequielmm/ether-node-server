@@ -27,7 +27,7 @@ export const TorchCard: Card = {
                 name: burn.name,
                 args: {
                     attachTo: CardTargetedEnum.Enemy,
-                    value: 2,
+                    counter: 2,
                 },
             },
         ],
@@ -60,7 +60,7 @@ export const TorchCardUpgraded: Card = {
                 name: burn.name,
                 args: {
                     attachTo: CardTargetedEnum.Enemy,
-                    value: 3,
+                    counter: 3,
                 },
             },
         ],

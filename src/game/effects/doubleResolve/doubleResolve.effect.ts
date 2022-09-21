@@ -38,7 +38,7 @@ export class DoubleResolveEffect implements EffectHandler {
 
         // Double resolve
         resolveStatuses.forEach((status) => {
-            status.args.value *= 2;
+            status.args.counter *= 2;
         });
 
         await this.statusService.updateStatuses(

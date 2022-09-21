@@ -22,6 +22,7 @@ import { composeMongooseModuleOptions } from './dbConfiguration';
         }),
         EventEmitterModule.forRoot({
             wildcard: true,
+            maxListeners: 100,
         }),
     ],
     controllers: [AppController],

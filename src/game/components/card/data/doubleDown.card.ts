@@ -16,7 +16,7 @@ export const DoubleDownCard: Card = {
         statuses: [
             {
                 name: doubleDown.name,
-                args: { attachTo: CardTargetedEnum.Player, value: 2 },
+                args: { attachTo: CardTargetedEnum.Player, counter: 2 },
             },
         ],
     },
@@ -38,7 +38,7 @@ export const DoubleDownCardUpgraded: Card = {
         statuses: [
             {
                 name: doubleDown.name,
-                args: { attachTo: CardTargetedEnum.Player, value: 3 },
+                args: { attachTo: CardTargetedEnum.Player, counter: 3 },
             },
         ],
     },

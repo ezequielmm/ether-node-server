@@ -21,16 +21,16 @@ export class AnticipatingStatus implements StatusEventHandler {
         const { ctx, status, target } = dto;
 
         this.logger.debug(
-            `Restoring ${status.args.value} defense to ${target.type}`,
+            `Restoring ${status.args.counter} defense to ${target.type}`,
         );
 
         if (PlayerService.isPlayer(target)) {
-            await this.playerService.setDefense(ctx, status.args.value);
+            await this.playerService.setDefense(ctx, status.args.counter);
         } else if (EnemyService.isEnemy(target)) {
             await this.enemyService.setDefense(
                 ctx,
                 target.value.id,
-                status.args.value,
+                status.args.counter,
             );
         }
 

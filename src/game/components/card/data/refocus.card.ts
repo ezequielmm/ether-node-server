@@ -32,7 +32,7 @@ export const Refocus: Card = {
                 name: resist.name,
                 args: {
                     attachTo: CardTargetedEnum.Player,
-                    value: 1,
+                    counter: 1,
                 },
             },
         ],

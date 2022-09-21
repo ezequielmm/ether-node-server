@@ -22,7 +22,7 @@ export class HeralDelayedStatus implements StatusEventHandler {
                     name: heraldingStatus.name,
                     args: {
                         attachTo: target.type,
-                        value: 1,
+                        counter: 1,
                     },
                 },
             ],

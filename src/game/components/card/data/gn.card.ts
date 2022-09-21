@@ -27,20 +27,20 @@ export const GNCard: Card = {
                 name: resolve.name,
                 args: {
                     attachTo: CardTargetedEnum.Player,
-                    value: 1,
+                    counter: 1,
                 },
             },
             {
                 name: fortitude.name,
-                args: { attachTo: CardTargetedEnum.Player, value: 1 },
+                args: { attachTo: CardTargetedEnum.Player, counter: 1 },
             },
             {
                 name: spirited.name,
-                args: { attachTo: CardTargetedEnum.Player, value: 1 },
+                args: { attachTo: CardTargetedEnum.Player, counter: 1 },
             },
             {
                 name: spikesStatus.name,
-                args: { attachTo: CardTargetedEnum.Player, value: 1 },
+                args: { attachTo: CardTargetedEnum.Player, counter: 1 },
             },
         ],
     },
@@ -65,20 +65,20 @@ export const GNCardUpgraded: Card = {
                 name: resolve.name,
                 args: {
                     attachTo: CardTargetedEnum.Player,
-                    value: 1,
+                    counter: 1,
                 },
             },
             {
                 name: fortitude.name,
-                args: { attachTo: CardTargetedEnum.Player, value: 1 },
+                args: { attachTo: CardTargetedEnum.Player, counter: 1 },
             },
             {
                 name: spirited.name,
-                args: { attachTo: CardTargetedEnum.Player, value: 1 },
+                args: { attachTo: CardTargetedEnum.Player, counter: 1 },
             },
             {
                 name: spikesStatus.name,
-                args: { attachTo: CardTargetedEnum.Player, value: 1 },
+                args: { attachTo: CardTargetedEnum.Player, counter: 1 },
             },
         ],
     },

@@ -19,7 +19,7 @@ export const SpikeArmorCard: Card = {
                 name: spikesStatus.name,
                 args: {
                     attachTo: CardTargetedEnum.Enemy,
-                    value: 3,
+                    counter: 3,
                 },
             },
         ],
@@ -44,7 +44,7 @@ export const SpikeArmorCardUpgraded: Card = {
                 name: spikesStatus.name,
                 args: {
                     attachTo: CardTargetedEnum.Enemy,
-                    value: 5,
+                    counter: 5,
                 },
             },
         ],

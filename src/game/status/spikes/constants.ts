@@ -1,5 +1,6 @@
 import { damageEffect } from 'src/game/effects/damage/constants';
 import {
+    StatusCounterType,
     StatusDirection,
     StatusEffect,
     StatusStartsAt,
@@ -13,5 +14,6 @@ export const spikesStatus: StatusEffect = {
     direction: StatusDirection.Incoming,
     effects: [damageEffect],
     type: StatusType.Buff,
+    counterType: StatusCounterType.Intensity,
     startsAt: StatusStartsAt.Instantly,
 };

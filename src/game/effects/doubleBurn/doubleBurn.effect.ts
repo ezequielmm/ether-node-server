@@ -32,7 +32,7 @@ export class DoubleBurnEffect implements EffectHandler {
 
         const burnStatuses = filter(statuses.debuff, { name: burn.name });
 
-        forEach(burnStatuses, (status) => (status.args.value *= 2));
+        forEach(burnStatuses, (status) => (status.args.counter *= 2));
 
         if (burnStatuses.length) {
             await this.statusService.updateStatuses(

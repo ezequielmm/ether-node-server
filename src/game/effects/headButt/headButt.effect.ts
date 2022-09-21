@@ -35,7 +35,7 @@ export class HeadButtEffect implements EffectHandler {
                         name: confusion.name,
                         args: {
                             attachTo: target.type,
-                            value: 1,
+                            counter: 1,
                         },
                     },
                 ],

@@ -18,7 +18,7 @@ export const InterceptCard: Card = {
                 name: intercept.name,
                 args: {
                     attachTo: CardTargetedEnum.Player,
-                    value: 1,
+                    counter: 1,
                 },
             },
         ],
@@ -43,7 +43,7 @@ export const InterceptCardUpgraded: Card = {
                 name: intercept.name,
                 args: {
                     attachTo: CardTargetedEnum.Player,
-                    value: 2,
+                    counter: 2,
                 },
             },
         ],

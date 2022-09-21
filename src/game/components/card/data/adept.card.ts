@@ -17,7 +17,7 @@ export const AdeptCard: Card = {
             {
                 name: gifted.name,
                 args: {
-                    value: 3,
+                    counter: 3,
                     attachTo: CardTargetedEnum.Player,
                 },
             },
@@ -42,7 +42,7 @@ export const AdeptCardUpgraded: Card = {
             {
                 name: gifted.name,
                 args: {
-                    value: 5,
+                    counter: 5,
                     attachTo: CardTargetedEnum.Player,
                 },
             },

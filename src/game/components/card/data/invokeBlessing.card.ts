@@ -18,7 +18,7 @@ export const InvokeBlessingCard: Card = {
                 name: regenerate.name,
                 args: {
                     attachTo: CardTargetedEnum.Player,
-                    value: 1,
+                    counter: 1,
                 },
             },
         ],
@@ -43,7 +43,7 @@ export const InvokeBlessingCardUpgraded: Card = {
                 name: regenerate.name,
                 args: {
                     attachTo: CardTargetedEnum.Player,
-                    value: 1,
+                    counter: 1,
                 },
             },
         ],

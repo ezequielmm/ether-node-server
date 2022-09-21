@@ -26,7 +26,7 @@ export const BlusterCard: Card = {
             {
                 name: drained.name,
                 args: {
-                    value: 1,
+                    counter: 1,
                     attachTo: CardTargetedEnum.Player,
                 },
             },
@@ -59,7 +59,7 @@ export const BlusterCardUpgraded: Card = {
             {
                 name: drained.name,
                 args: {
-                    value: 1,
+                    counter: 1,
                     attachTo: CardTargetedEnum.Player,
                 },
             },

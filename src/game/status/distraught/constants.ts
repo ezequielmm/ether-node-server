@@ -1,8 +1,7 @@
-import { EVENT_BEFORE_ENEMIES_TURN_START } from 'src/game/constants';
 import {
+    StatusCounterType,
     StatusDirection,
     StatusEffect,
-    StatusEvent,
     StatusStartsAt,
     StatusTrigger,
     StatusType,
@@ -16,12 +15,5 @@ export const distraught: StatusEffect = {
     effects: [damageEffect],
     direction: StatusDirection.Incoming,
     type: StatusType.Debuff,
-};
-
-export const distraughtUpdater: StatusEvent = {
-    trigger: StatusTrigger.Event,
-    event: EVENT_BEFORE_ENEMIES_TURN_START,
-    name: 'distraughtUpdater',
-    type: StatusType.Debuff,
-    startsAt: StatusStartsAt.Instantly,
+    counterType: StatusCounterType.Duration,
 };

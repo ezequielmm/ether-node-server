@@ -25,16 +25,20 @@ export class TurtlingStatus implements StatusEventHandler {
             await this.playerService.setDefense(ctx, finalDefense);
         } else if (EnemyService.isEnemy(target)) {
             finalDefense = target.value.defense * 2;
-            await this.enemyService.setDefense(ctx, target.value.id, finalDefense);
+            await this.enemyService.setDefense(
+                ctx,
+                target.value.id,
+                finalDefense,
+            );
         }
 
-        status.args.value--;
+        status.args.counter--;
 
-        if (status.args.value <= 0) {
+        if (status.args.counter <= 0) {
             remove();
         } else {
             update({
-                value: status.args.value,
+                counter: status.args.counter,
             });
         }
 

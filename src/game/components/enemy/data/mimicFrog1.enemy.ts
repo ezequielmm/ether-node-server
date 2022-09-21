@@ -102,7 +102,7 @@ export const mimicFrog1Data: Enemy = {
                             name: resolve.name,
                             args: {
                                 attachTo: CardTargetedEnum.Player,
-                                value: 2,
+                                counter: 2,
                             },
                         },
                     ],

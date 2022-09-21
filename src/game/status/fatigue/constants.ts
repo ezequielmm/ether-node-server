@@ -1,5 +1,6 @@
 import { damageEffect } from 'src/game/effects/damage/constants';
 import {
+    StatusCounterType,
     StatusDirection,
     StatusEffect,
     StatusStartsAt,
@@ -12,6 +13,7 @@ export const fatigue: StatusEffect = {
     effects: [damageEffect],
     startsAt: StatusStartsAt.Instantly,
     type: StatusType.Debuff,
+    counterType: StatusCounterType.Duration,
     direction: StatusDirection.Outgoing,
     trigger: StatusTrigger.Effect,
 };

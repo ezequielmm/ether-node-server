@@ -85,7 +85,7 @@ describe('KnockDownEffect', () => {
                 {
                     name: stunned.name,
                     args: {
-                        value: 1,
+                        counter: 1,
                         attachTo: target.type,
                     },
                 },
