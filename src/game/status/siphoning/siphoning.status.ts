@@ -1,8 +1,18 @@
 import { Injectable } from '@nestjs/common';
+import { OnEvent } from '@nestjs/event-emitter';
+import { EnemyService } from 'src/game/components/enemy/enemy.service';
+import { Context } from 'src/game/components/interfaces';
+import { PlayerService } from 'src/game/components/player/player.service';
+import {
+    EVENT_BEFORE_ENEMIES_TURN_END,
+    EVENT_BEFORE_PLAYER_TURN_END,
+} from 'src/game/constants';
 import { defenseEffect } from 'src/game/effects/defense/constants';
 import { EffectService } from 'src/game/effects/effects.service';
+import { confusion } from '../confusion/constants';
 import { StatusEventDTO, StatusEventHandler } from '../interfaces';
 import { StatusDecorator } from '../status.decorator';
+import { StatusService } from '../status.service';
 import { siphoning } from './constants';
 
 @StatusDecorator({
@@ -10,7 +20,12 @@ import { siphoning } from './constants';
 })
 @Injectable()
 export class SiphoningStatus implements StatusEventHandler {
-    constructor(private readonly effectService: EffectService) {}
+    constructor(
+        private readonly effectService: EffectService,
+        private readonly playerService: PlayerService,
+        private readonly enemyService: EnemyService,
+        private readonly statusService: StatusService,
+    ) {}
 
     async handle(dto: StatusEventDTO): Promise<void> {
         await this.effectService.apply({
@@ -24,8 +39,34 @@ export class SiphoningStatus implements StatusEventHandler {
                 },
             },
         });
+    }
 
-        dto.status.args.counter--;
-        dto.update(dto.status.args);
+    @OnEvent(EVENT_BEFORE_ENEMIES_TURN_END)
+    async onEnemiesTurnStart(args: { ctx: Context }): Promise<void> {
+        const { ctx } = args;
+        const enemies = this.enemyService.getAll(ctx);
+
+        for (const enemy of enemies) {
+            await this.statusService.decreaseCounterAndRemove(
+                ctx,
+                enemy.value.statuses,
+                enemy,
+                confusion,
+            );
+        }
+    }
+
+    @OnEvent(EVENT_BEFORE_PLAYER_TURN_END)
+    async onPlayerTurnEnd(args: { ctx: Context }): Promise<void> {
+        const { ctx } = args;
+        const player = this.playerService.get(ctx);
+        const statuses = player.value.combatState.statuses;
+
+        await this.statusService.decreaseCounterAndRemove(
+            ctx,
+            statuses,
+            player,
+            siphoning,
+        );
     }
 }
