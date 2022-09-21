@@ -1,24 +1,24 @@
 import { damageEffect } from 'src/game/effects/damage/constants';
-import { CardRarityEnum, CardTargetedEnum, CardTypeEnum } from '../card.enum';
+import { CardRarityEnum, CardTypeEnum, CardTargetedEnum } from '../card.enum';
 import { Card } from '../card.schema';
 
-export const ExecutionersBlowCard: Card = {
-    cardId: 155,
-    name: 'Executioner’s Blow',
-    rarity: CardRarityEnum.Legendary,
+export const RoundHouseCard: Card = {
+    cardId: 127,
+    name: 'Roundhouse',
+    rarity: CardRarityEnum.Rare,
     cardType: CardTypeEnum.Attack,
     pool: 'knight',
     energy: 2,
-    description: `Deal {${damageEffect.name}} damage. If this kills an enemy, return it to your hand and it costs 0 this turn.`,
+    description: `Deal {${damageEffect.name}} damage twice.`,
     keywords: [],
     properties: {
         effects: [
             {
                 effect: damageEffect.name,
                 target: CardTargetedEnum.Enemy,
+                times: 2,
                 args: {
-                    value: 11,
-                    returnCardIfEnemyIsDefeated: true,
+                    value: 7,
                 },
             },
         ],
@@ -28,23 +28,23 @@ export const ExecutionersBlowCard: Card = {
     isUpgraded: false,
 };
 
-export const ExecutionersBlowCardUpgraded: Card = {
-    cardId: 156,
-    name: 'Executioner’s Blow+',
-    rarity: CardRarityEnum.Legendary,
+export const RoundHouseCardUpgraded: Card = {
+    cardId: 128,
+    name: 'Roundhouse+',
+    rarity: CardRarityEnum.Rare,
     cardType: CardTypeEnum.Attack,
     pool: 'knight',
     energy: 2,
-    description: `Deal {${damageEffect.name}} damage. If this kills an enemy, return it to your hand and it costs 0 this turn.`,
+    description: `Deal {${damageEffect.name}} damage twice.`,
     keywords: [],
     properties: {
         effects: [
             {
                 effect: damageEffect.name,
                 target: CardTargetedEnum.Enemy,
+                times: 2,
                 args: {
-                    value: 15,
-                    returnCardIfEnemyIsDefeated: true,
+                    value: 10,
                 },
             },
         ],

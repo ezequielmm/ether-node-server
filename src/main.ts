@@ -10,7 +10,6 @@ import { TransformDataResource } from './interceptors/TransformDataResource.inte
 import * as compression from 'compression';
 import { existsSync, readFileSync } from 'fs';
 import { IoAdapter } from '@nestjs/platform-socket.io';
-import { Logger } from 'nestjs-pino';
 import { ConfigService } from '@nestjs/config';
 import { serverEnvironments } from './utils';
 
@@ -23,7 +22,6 @@ async function bootstrap() {
     if (certFilePath && keyFilePath) {
         if (existsSync(certFilePath) && existsSync(keyFilePath)) {
             app = await NestFactory.create(AppModule, {
-                bufferLogs: true,
                 httpsOptions: {
                     cert: readFileSync(certFilePath),
                     key: readFileSync(keyFilePath),
@@ -31,12 +29,8 @@ async function bootstrap() {
             });
         }
     } else {
-        app = await NestFactory.create(AppModule, {
-            bufferLogs: true,
-        });
+        app = await NestFactory.create(AppModule);
     }
-
-    app.useLogger(app.get(Logger));
 
     app.useWebSocketAdapter(new IoAdapter(app));
 

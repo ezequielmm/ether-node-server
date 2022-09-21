@@ -21,7 +21,6 @@ import { FlurryEffect } from './flurry/flurry.effect';
 import { HeadButtEffect } from './headButt/headButt.effect';
 import { HealEffect } from './heal/heal.effect';
 import { KnockDownEffect } from './knockDown/knockDown.effect';
-import { OnARollEffect } from './onARoll/onARoll.effect';
 import { RemoveDebuffEffect } from './removeDebuff/removeDebuff.effect';
 import { RemoveDefenseEffect } from './removeDefense/removeDefense.effect';
 import { RepositionEffect } from './reposition/reposition.effect';
@@ -57,7 +56,6 @@ import { TwistTheBladeEffect } from './twistTheBlade/twistTheBlade.effect';
         TwistTheBladeEffect,
         KnockDownEffect,
         ChooseCardEffect,
-        OnARollEffect,
     ],
     exports: [EffectService],
 })

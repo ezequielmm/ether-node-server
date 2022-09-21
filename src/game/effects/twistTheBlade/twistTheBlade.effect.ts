@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { EnemyService } from 'src/game/components/enemy/enemy.service';
 import { PlayerService } from 'src/game/components/player/player.service';
 import { HistoryService } from 'src/game/history/history.service';
+import { EffectRegistry } from 'src/game/history/interfaces';
 import { StatusService } from 'src/game/status/status.service';
 import { damageEffect } from '../damage/constants';
 import { EffectDecorator } from '../effects.decorator';
@@ -29,7 +30,7 @@ export class TwistTheBladeEffect implements EffectHandler {
                 effect: { effect: damageEffect.name },
                 source: this.statusService.getReferenceFromEntity(dto.source),
             },
-        );
+        ) as EffectRegistry;
 
         if (!lastDamageEffect) {
             this.logger.debug(`No damage effect found, skipping`);
@@ -38,15 +39,14 @@ export class TwistTheBladeEffect implements EffectHandler {
 
         let newDamageValue = lastDamageEffect.effect.args.value;
         let targetDefense = 0;
+
         if (PlayerService.isPlayer(dto.target)) {
             targetDefense = dto.target.value.combatState.defense;
         } else if (EnemyService.isEnemy(dto.target)) {
             targetDefense = dto.target.value.defense;
         }
 
-        if (targetDefense > 0) {
-            newDamageValue *= 2;
-        }
+        if (targetDefense > 0) newDamageValue *= 2;
 
         await this.effectService.apply({
             ctx: dto.ctx,
