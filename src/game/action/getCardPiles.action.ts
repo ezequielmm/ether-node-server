@@ -12,6 +12,7 @@ interface IGetDeck {
     cardType: CardTypeEnum;
     isUpgraded: boolean;
     pool: string;
+    showPointer: boolean;
 }
 
 interface GetCardPilesResponse {
@@ -60,6 +61,7 @@ export class GetCardPilesAction {
             cardType: card.cardType,
             isUpgraded: card.isUpgraded,
             pool: card.pool,
+            showPointer: card.showPointer,
         }));
     }
 }
