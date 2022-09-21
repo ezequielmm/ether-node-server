@@ -74,7 +74,8 @@ export class DamageEffect implements EffectHandler {
         // Check targeted type
         if (EnemyService.isEnemy(target)) {
             // First we check if we have to deal a multiplier
-            // using the remaining energy of the player
+            // using the remaining energy of the player or
+            // the current amount of defense that the player has
             const damage =
                 currentValue *
                 (useEnergyAsMultiplier ? energy : 1) *

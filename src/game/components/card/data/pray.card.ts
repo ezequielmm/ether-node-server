@@ -36,7 +36,7 @@ export const PrayCardUpgraded: Card = {
     cardType: CardTypeEnum.Skill,
     pool: 'knight',
     energy: 1,
-    description: `At the beginning of your next two turns gain 1 <color=#0066cc>Resolve</color> and 1 <color=#0066cc>Fortitude</color>`,
+    description: `At the beginning of your next two tu267733rns gain 1 <color=#0066cc>Resolve</color> and 1 <color=#0066cc>Fortitude</color>`,
     keywords: [],
     properties: {
         effects: [],

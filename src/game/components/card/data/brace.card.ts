@@ -32,7 +32,7 @@ export const BraceCard: Card = {
             },
         ],
     },
-    showPointer: true,
+    showPointer: false,
     isUpgraded: false,
 };
 
@@ -57,6 +57,6 @@ export const BraceCardUpgraded: Card = {
         ],
         statuses: [],
     },
-    showPointer: true,
+    showPointer: false,
     isUpgraded: true,
 };
