@@ -1,4 +1,4 @@
-import { forwardRef, Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { damageEffect } from 'src/game/effects/damage/constants';
 import { EffectService } from '../../effects/effects.service';
 import { StatusEventDTO, StatusEventHandler } from '../interfaces';
@@ -10,10 +10,7 @@ import { burn } from './constants';
 })
 @Injectable()
 export class BurnStatus implements StatusEventHandler {
-    constructor(
-        @Inject(forwardRef(() => EffectService))
-        private readonly effectService: EffectService,
-    ) {}
+    constructor(private readonly effectService: EffectService) {}
 
     async handle(dto: StatusEventDTO): Promise<void> {
         await this.effectService.apply({

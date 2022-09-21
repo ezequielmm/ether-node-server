@@ -1,19 +1,17 @@
-import { damageEffect } from 'src/game/effects/damage/constants';
+import { EVENT_AFTER_DAMAGE_EFFECT } from 'src/game/constants';
 import {
     StatusCounterType,
-    StatusDirection,
-    StatusEffect,
+    StatusEvent,
     StatusStartsAt,
     StatusTrigger,
     StatusType,
 } from '../interfaces';
 
-export const siphoning: StatusEffect = {
+export const siphoning: StatusEvent = {
     name: 'siphoning',
     type: StatusType.Buff,
-    counterType: StatusCounterType.None,
-    direction: StatusDirection.Outgoing,
+    counterType: StatusCounterType.Duration,
     startsAt: StatusStartsAt.Instantly,
-    trigger: StatusTrigger.Effect,
-    effects: [damageEffect],
+    trigger: StatusTrigger.Event,
+    event: EVENT_AFTER_DAMAGE_EFFECT,
 };
