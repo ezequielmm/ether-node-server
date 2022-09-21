@@ -11,6 +11,7 @@ interface IGetPlayerDeck {
     cardType: CardTypeEnum;
     isUpgraded: boolean;
     pool: string;
+    showPointer: boolean;
 }
 
 @Injectable()
@@ -33,6 +34,7 @@ export class GetPlayerDeckAction {
             cardType: card.cardType,
             isUpgraded: card.isUpgraded,
             pool: card.pool,
+            showPointer: card.showPointer,
         }));
     }
 }
