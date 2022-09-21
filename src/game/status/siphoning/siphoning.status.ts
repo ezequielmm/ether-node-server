@@ -4,8 +4,8 @@ import { EnemyService } from 'src/game/components/enemy/enemy.service';
 import { Context } from 'src/game/components/interfaces';
 import { PlayerService } from 'src/game/components/player/player.service';
 import {
-    EVENT_BEFORE_ENEMIES_TURN_END,
-    EVENT_BEFORE_PLAYER_TURN_END,
+    EVENT_BEFORE_ENEMIES_TURN_START,
+    EVENT_BEFORE_PLAYER_TURN_START,
 } from 'src/game/constants';
 import { defenseEffect } from 'src/game/effects/defense/constants';
 import { EffectService } from 'src/game/effects/effects.service';
@@ -41,7 +41,7 @@ export class SiphoningStatus implements StatusEventHandler {
         });
     }
 
-    @OnEvent(EVENT_BEFORE_ENEMIES_TURN_END)
+    @OnEvent(EVENT_BEFORE_ENEMIES_TURN_START)
     async onEnemiesTurnStart(args: { ctx: Context }): Promise<void> {
         const { ctx } = args;
         const enemies = this.enemyService.getAll(ctx);
@@ -56,8 +56,8 @@ export class SiphoningStatus implements StatusEventHandler {
         }
     }
 
-    @OnEvent(EVENT_BEFORE_PLAYER_TURN_END)
-    async onPlayerTurnEnd(args: { ctx: Context }): Promise<void> {
+    @OnEvent(EVENT_BEFORE_PLAYER_TURN_START)
+    async onPlayerTurnStart(args: { ctx: Context }): Promise<void> {
         const { ctx } = args;
         const player = this.playerService.get(ctx);
         const statuses = player.value.combatState.statuses;
