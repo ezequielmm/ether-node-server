@@ -8,14 +8,13 @@ import { barkChargerData } from './data/barkCharger.enemy';
 import { fungalBruteData } from './data/fungalBrute.enemy';
 import { mimicFrog1Data } from './data/mimicFrog1.enemy';
 import { queenOrchidData } from './data/queenOrchid.enemy';
-import { stingFae1Data } from './data/stingFae1.enemy';
+import { stingFaeData } from './data/stingFae.enemy';
 import { thornWolfData } from './data/thornWolf.enemy';
 import { trapelicanData } from './data/trapelican.enemy';
 import { treantData } from './data/treant.enemy';
 import { blueSporelingData } from './data/blueSporeling.enemy';
 import { redSporelingData } from './data/redSporeling.enemy';
 import { yellowSporelingData } from './data/yellowSporeling.enemy';
-import { stingFae2Data } from './data/stingFae2.enemy';
 
 export const data: Enemy[] = [
     sporeMongerData,
@@ -27,8 +26,7 @@ export const data: Enemy[] = [
     fungalBruteData,
     mimicFrog1Data,
     queenOrchidData,
-    stingFae1Data,
-    stingFae2Data,
+    stingFaeData,
     thornWolfData,
     trapelicanData,
     treantData,

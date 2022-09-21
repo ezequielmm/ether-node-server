@@ -1,29 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { ExpeditionService } from 'src/game/components/expedition/expedition.service';
-import { CardRarityEnum, CardTypeEnum } from '../components/card/card.enum';
 import { IExpeditionPlayerStateDeckCard } from '../components/expedition/expedition.interface';
-import { JsonStatus } from '../status/interfaces';
-
-interface IGetDeck {
-    id: string;
-    name: string;
-    description: string;
-    rarity: CardRarityEnum;
-    energy: number;
-    cardType: CardTypeEnum;
-    isUpgraded: boolean;
-    pool: string;
-    showPointer: boolean;
-    properties: {
-        statuses: JsonStatus[];
-    };
-}
 
 interface GetCardPilesResponse {
-    hand: IGetDeck[];
-    draw: IGetDeck[];
-    discard: IGetDeck[];
-    exhausted: IGetDeck[];
+    hand: IExpeditionPlayerStateDeckCard[];
+    draw: IExpeditionPlayerStateDeckCard[];
+    discard: IExpeditionPlayerStateDeckCard[];
+    exhausted: IExpeditionPlayerStateDeckCard[];
     energy: number;
     energyMax: number;
 }
@@ -45,30 +28,6 @@ export class GetCardPilesAction {
             clientId,
         });
 
-        return {
-            draw: this.formatCard(draw),
-            discard: this.formatCard(discard),
-            exhausted: this.formatCard(exhausted),
-            hand: this.formatCard(hand),
-            energy,
-            energyMax,
-        };
-    }
-
-    private formatCard(deck: IExpeditionPlayerStateDeckCard[]): IGetDeck[] {
-        return deck.map((card) => ({
-            id: card.id,
-            name: card.name,
-            description: card.description,
-            rarity: card.rarity,
-            energy: card.energy,
-            cardType: card.cardType,
-            isUpgraded: card.isUpgraded,
-            pool: card.pool,
-            showPointer: card.showPointer,
-            properties: {
-                statuses: card.properties.statuses,
-            },
-        }));
+        return { draw, discard, energy, energyMax, exhausted, hand };
     }
 }
