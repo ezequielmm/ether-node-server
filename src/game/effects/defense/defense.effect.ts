@@ -14,6 +14,7 @@ export interface DefenseArgs {
     multiplier?: number;
     useDiscardPileAsValue: boolean;
     useAttackingEnemies: boolean;
+    useEnergyAsMultiplier: boolean;
 }
 
 @EffectDecorator({
@@ -38,6 +39,7 @@ export class DefenseEffect implements EffectHandler {
                 useDiscardPileAsValue,
                 multiplier,
                 useAttackingEnemies,
+                useEnergyAsMultiplier,
             },
         } = payload;
 
@@ -101,6 +103,20 @@ export class DefenseEffect implements EffectHandler {
                 });
 
                 newDefense *= enemiesAttacking;
+            }
+
+            // Here we check if the card uses the energy available for the player
+            // and use as multipler for the defense
+            if (isNotUndefined(useEnergyAsMultiplier)) {
+                const {
+                    currentNode: {
+                        data: {
+                            player: { energy },
+                        },
+                    },
+                } = expedition;
+
+                newDefense *= energy;
             }
 
             const defenseCalculated = newDefense + currentDefense;

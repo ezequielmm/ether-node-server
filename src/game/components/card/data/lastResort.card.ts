@@ -22,7 +22,7 @@ export const LastResortCard: Card = {
                 effect: damageEffect.name,
                 target: CardTargetedEnum.Player,
                 args: {
-                    value: 0,
+                    value: 1,
                     useEnergyAsValue: true,
                 },
             },
@@ -56,7 +56,7 @@ export const LastResortCardUpgraded: Card = {
                 effect: damageEffect.name,
                 target: CardTargetedEnum.Player,
                 args: {
-                    value: 0,
+                    value: 1,
                     useEnergyAsValue: true,
                 },
             },
