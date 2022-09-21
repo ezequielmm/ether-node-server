@@ -163,6 +163,7 @@ export class DamageEffect implements EffectHandler {
 
         await this.eventEmitter.emitAsync(EVENT_AFTER_DAMAGE_EFFECT, {
             ctx,
+            damageDealt: currentValue,
         });
     }
 }
