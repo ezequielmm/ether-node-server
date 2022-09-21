@@ -1,6 +1,4 @@
-import { fortitude } from 'src/game/status/fortitude/constants';
 import { prayingStatus } from 'src/game/status/praying/constants';
-import { resolve } from 'src/game/status/resolve/constants';
 import { CardRarityEnum, CardTypeEnum, CardTargetedEnum } from '../card.enum';
 import { Card } from '../card.schema';
 
@@ -10,17 +8,17 @@ export const PrayCard: Card = {
     rarity: CardRarityEnum.Common,
     cardType: CardTypeEnum.Skill,
     pool: 'knight',
-    energy: 0,
-    description: `At the beginning of your next turn gain 1 [${resolve.name}] and 1 [${fortitude.name}]`,
+    energy: 1,
+    description: `At the beginning of your next turn gain 1 <color=#0066cc>Resolve</color> and 1 <color=#0066cc>Fortitude</color>`,
     keywords: [],
     properties: {
         effects: [],
         statuses: [
             {
                 name: prayingStatus.name,
+                attachTo: CardTargetedEnum.Player,
                 args: {
-                    attachTo: CardTargetedEnum.Player,
-                    value: 1,
+                    counter: 1,
                 },
             },
         ],
@@ -35,17 +33,17 @@ export const PrayCardUpgraded: Card = {
     rarity: CardRarityEnum.Common,
     cardType: CardTypeEnum.Skill,
     pool: 'knight',
-    energy: 0,
-    description: `At the beginning of your next turn gain 1 [${resolve.name}] and 1 [${fortitude.name}]`,
+    energy: 1,
+    description: `At the beginning of your next two turns gain 1 <color=#0066cc>Resolve</color> and 1 <color=#0066cc>Fortitude</color>`,
     keywords: [],
     properties: {
         effects: [],
         statuses: [
             {
                 name: prayingStatus.name,
+                attachTo: CardTargetedEnum.Player,
                 args: {
-                    attachTo: CardTargetedEnum.Player,
-                    value: 2,
+                    counter: 2,
                 },
             },
         ],

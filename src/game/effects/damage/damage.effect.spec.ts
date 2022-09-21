@@ -1,6 +1,8 @@
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { Test } from '@nestjs/testing';
 import * as MockedSocket from 'socket.io-mock';
+import { GetEnergyAction } from 'src/game/action/getEnergy.action';
+import { MoveCardAction } from 'src/game/action/moveCard.action';
 import { CombatQueueService } from 'src/game/components/combatQueue/combatQueue.service';
 import { ExpeditionEnemy } from 'src/game/components/enemy/enemy.interface';
 import { EnemyService } from 'src/game/components/enemy/enemy.service';
@@ -8,7 +10,9 @@ import { ExpeditionDocument } from 'src/game/components/expedition/expedition.sc
 import { Context } from 'src/game/components/interfaces';
 import { ExpeditionPlayer } from 'src/game/components/player/interfaces';
 import { PlayerService } from 'src/game/components/player/player.service';
+import { HistoryService } from 'src/game/history/history.service';
 import { CardTargetedEnum } from '../../components/card/card.enum';
+import { EffectService } from '../effects.service';
 import { DamageEffect } from './damage.effect';
 
 describe('DamageEffect', () => {
@@ -64,6 +68,22 @@ describe('DamageEffect', () => {
                 {
                     provide: CombatQueueService,
                     useValue: mockCombatQueueService,
+                },
+                {
+                    provide: EffectService,
+                    useValue: {},
+                },
+                {
+                    provide: GetEnergyAction,
+                    useValue: {},
+                },
+                {
+                    provide: MoveCardAction,
+                    useValue: {},
+                },
+                {
+                    provide: HistoryService,
+                    useValue: {},
                 },
             ],
         }).compile();

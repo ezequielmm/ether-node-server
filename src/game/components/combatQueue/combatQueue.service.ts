@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { EVENT_BEFORE_STATUS_ATTACH } from 'src/game/constants';
+import { EVENT_AFTER_STATUS_ATTACH } from 'src/game/constants';
 import {
     StandardResponse,
     SWARAction,
@@ -14,7 +14,7 @@ import { Context, ExpeditionEntity } from '../interfaces';
 import { CombatQueueTargetEffectTypeEnum } from './combatQueue.enum';
 import { CreateCombatQueueDTO, PushActionDTO } from './combatQueue.interface';
 import { CombatQueue, CombatQueueDocument } from './combatQueue.schema';
-import * as cliColor from 'cli-color';
+import { isEmpty } from 'lodash';
 
 @Injectable()
 export class CombatQueueService {
@@ -80,26 +80,30 @@ export class CombatQueueService {
             },
         );
 
-        this.logger.debug(cliColor.blue('Sending combat queue to client 📮'));
-        this.logger.debug(
-            cliColor.blue(JSON.stringify(combatQueues.queue, null, 2)),
+        // Avoid sending empty combat queue to client
+        if (isEmpty(data)) return;
+
+        this.logger.log(
+            {
+                combatQueue: data,
+            },
+            'Sending combat queue to client',
         );
 
         client.emit(
             'PutData',
-            JSON.stringify(
-                StandardResponse.respond({
-                    message_type: SWARMessageType.CombatUpdate,
-                    action: SWARAction.CombatQueue,
-                    data,
-                }),
-            ),
+            StandardResponse.respond({
+                message_type: SWARMessageType.CombatUpdate,
+                action: SWARAction.CombatQueue,
+                data,
+            }),
         );
 
+        // Clear combat queue
         await this.deleteCombatQueueByClientId(client.id);
     }
 
-    @OnEvent(EVENT_BEFORE_STATUS_ATTACH, { async: true, promisify: true })
+    @OnEvent(EVENT_AFTER_STATUS_ATTACH)
     async onAttachStatus(args: {
         ctx: Context;
         source: ExpeditionEntity;
@@ -110,10 +114,10 @@ export class CombatQueueService {
 
         const statusInfo = {
             name: status.name,
-            counter: status.args.value,
+            counter: status.args.counter,
             description: StatusGenerator.generateDescription(
                 status.name,
-                status.args.value,
+                status.args.counter,
             ),
         };
 

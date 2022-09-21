@@ -23,10 +23,11 @@ export class GiftedStatus implements StatusEventHandler {
 
         let finalDefense: number;
         if (PlayerService.isPlayer(target)) {
-            finalDefense = target.value.combatState.defense + status.args.value;
+            finalDefense =
+                target.value.combatState.defense + status.args.counter;
             await this.playerService.setDefense(ctx, finalDefense);
         } else if (EnemyService.isEnemy(target)) {
-            finalDefense = target.value.defense + status.args.value;
+            finalDefense = target.value.defense + status.args.counter;
             await this.enemyService.setDefense(
                 ctx,
                 target.value.id,
@@ -40,7 +41,7 @@ export class GiftedStatus implements StatusEventHandler {
             target,
             args: {
                 effectType: CombatQueueTargetEffectTypeEnum.Defense,
-                defenseDelta: status.args.value,
+                defenseDelta: status.args.counter,
                 finalDefense,
                 healthDelta: undefined,
                 finalHealth: undefined,

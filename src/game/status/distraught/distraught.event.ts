@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
 import { EnemyService } from 'src/game/components/enemy/enemy.service';
 import { Context } from 'src/game/components/interfaces';
@@ -12,8 +12,6 @@ import { distraught } from './constants';
 
 @Injectable()
 export class DistraughtEvent {
-    private readonly logger = new Logger(DistraughtEvent.name);
-
     constructor(
         private readonly statusService: StatusService,
         private readonly enemyService: EnemyService,

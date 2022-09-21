@@ -48,15 +48,11 @@ describe('HeadButEffect', () => {
         expect(statusService.attach).toHaveBeenCalledWith({
             ctx,
             source,
-            statuses: [
-                {
-                    name: confusion.name,
-                    args: {
-                        attachTo: target.type,
-                        value: 1,
-                    },
-                },
-            ],
+            target,
+            statusName: confusion.name,
+            statusArgs: {
+                counter: 1,
+            },
         });
     });
 

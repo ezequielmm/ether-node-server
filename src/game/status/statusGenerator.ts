@@ -1,3 +1,4 @@
+import { heraldingStatus } from './heralding/constants';
 import { AttachedStatus } from './interfaces';
 
 export interface IStatusesList {
@@ -8,7 +9,7 @@ export interface IStatusesList {
 
 export class StatusGenerator {
     static formatStatusesToArray(items: AttachedStatus[]): IStatusesList[] {
-        return items.map(({ name, args: { value: counter } }) => {
+        return items.map(({ name, args: { counter: counter } }) => {
             return {
                 name,
                 counter,
@@ -18,6 +19,7 @@ export class StatusGenerator {
     }
 
     public static generateDescription(name: string, counter: number): string {
+        // TODO Add description property to status type and remove this switch
         switch (name) {
             case 'resolve':
                 return `Burn does ${counter} points of damage at the end of each round`;
@@ -46,6 +48,8 @@ export class StatusGenerator {
                 return `All attacks by and against you will do double damage`;
             case 'turtling':
                 return `Double the effect of all Defense gained from cards`;
+            case heraldingStatus.name:
+                return `All attacks this turn will do double damage`;
             default:
                 return `Unknown Intentions`;
         }

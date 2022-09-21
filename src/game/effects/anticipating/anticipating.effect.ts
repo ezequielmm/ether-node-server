@@ -14,11 +14,7 @@ import { anticipatingEffect } from './constants';
 export class AnticipatingEffect implements EffectHandler {
     private readonly logger: Logger = new Logger(AnticipatingEffect.name);
 
-    constructor(
-        private readonly statusService: StatusService,
-        private readonly playerService: PlayerService,
-        private readonly enemyService: EnemyService,
-    ) {}
+    constructor(private readonly statusService: StatusService) {}
 
     async handle(dto: EffectDTO): Promise<void> {
         const { ctx, source, target } = dto;
@@ -38,16 +34,11 @@ export class AnticipatingEffect implements EffectHandler {
         await this.statusService.attach({
             ctx,
             source,
-            statuses: [
-                {
-                    name: anticipatingStatus.name,
-                    args: {
-                        attachTo: target.type,
-                        value: defense,
-                    },
-                },
-            ],
-            targetId: target.value.id,
+            target,
+            statusName: anticipatingStatus.name,
+            statusArgs: {
+                counter: defense,
+            },
         });
     }
 }

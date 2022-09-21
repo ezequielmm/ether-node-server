@@ -26,9 +26,9 @@ export const BackHandCard: Card = {
         statuses: [
             {
                 name: distraught.name,
+                attachTo: CardTargetedEnum.Enemy,
                 args: {
-                    attachTo: CardTargetedEnum.Enemy,
-                    value: 1,
+                    counter: 1,
                 },
             },
         ],
@@ -60,9 +60,9 @@ export const BackHandCardUpgraded: Card = {
         statuses: [
             {
                 name: distraught.name,
+                attachTo: CardTargetedEnum.Enemy,
                 args: {
-                    attachTo: CardTargetedEnum.Enemy,
-                    value: 2,
+                    counter: 2,
                 },
             },
         ],

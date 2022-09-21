@@ -23,17 +23,10 @@ export class NextPlayerTurnStatus implements StatusEventHandler {
 
         await this.statusService.attach({
             ctx,
-            statuses: [
-                {
-                    name: status.args.statusName,
-                    args: {
-                        attachTo: target.type,
-                        ...status.args.statusArgs,
-                    },
-                },
-            ],
             source,
-            targetId: target.value.id,
+            target,
+            statusName: status.args.statusName,
+            statusArgs: status.args.statusArgs,
         });
 
         remove();

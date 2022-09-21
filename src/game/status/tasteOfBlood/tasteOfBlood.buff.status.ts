@@ -5,7 +5,7 @@ import {
     EVENT_BEFORE_ENEMIES_TURN_START,
     EVENT_BEFORE_PLAYER_TURN_START,
 } from 'src/game/constants';
-import { HeraldDelayedStatus } from '../heraldDelayed/heraldDelayed.status';
+import { HeraldingStatus } from '../heralding/heralding.status';
 import { StatusDecorator } from '../status.decorator';
 import { tasteOfBloodBuff } from './constants';
 
@@ -20,7 +20,7 @@ import { tasteOfBloodBuff } from './constants';
     status: tasteOfBloodBuff,
 })
 @Injectable()
-export class TasteOfBloodBuffStatus extends HeraldDelayedStatus {
+export class TasteOfBloodBuffStatus extends HeraldingStatus {
     @OnEvent(EVENT_BEFORE_ENEMIES_TURN_START)
     async onEnemiesTurnEnd(args: { ctx: Context }): Promise<void> {
         const { ctx } = args;

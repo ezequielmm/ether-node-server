@@ -1,7 +1,5 @@
 import { seeder } from 'nestjs-seeder';
-import { MongooseModule, MongooseModuleOptions } from '@nestjs/mongoose';
-import { ConfigurationModule } from './config/configuration.module';
-import { ConfigurationService } from './config/configuration.service';
+import { MongooseModule } from '@nestjs/mongoose';
 import { Card, CardSchema } from './game/components/card/card.schema';
 import { CardSeeder } from './game/components/card/card.seeder';
 import { CharacterSeeder } from './game/components/character/character.seeder';
@@ -23,19 +21,22 @@ import {
     SettingsSchema,
 } from './game/components/settings/settings.schema';
 import { SettingsSeeder } from './game/components/settings/settings.seeder';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { composeMongooseModuleOptions } from './dbConfiguration';
 
 seeder({
     imports: [
         MongooseModule.forRootAsync({
-            imports: [ConfigurationModule],
-            inject: [ConfigurationService],
-            useFactory: (configurationService: ConfigurationService) => {
-                const options: MongooseModuleOptions = {
-                    uri: configurationService.connectionString,
-                    useNewUrlParser: true,
-                    useUnifiedTopology: true,
-                };
-                return options;
+            imports: [
+                ConfigModule.forRoot({
+                    cache: true,
+                }),
+            ],
+            inject: [ConfigService],
+            useFactory: (configService: ConfigService) => {
+                const uri = configService.get<string>('MONGODB_URL');
+
+                return composeMongooseModuleOptions(uri);
             },
         }),
         MongooseModule.forFeature([

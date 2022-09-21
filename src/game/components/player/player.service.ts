@@ -1,6 +1,10 @@
 import { forwardRef, Inject, Injectable, Logger } from '@nestjs/common';
-import { set } from 'lodash';
-import { AttachedStatus, Status } from 'src/game/status/interfaces';
+import { find, set } from 'lodash';
+import {
+    AttachedStatus,
+    Status,
+    StatusCounterType,
+} from 'src/game/status/interfaces';
 import { StatusService } from 'src/game/status/status.service';
 import { CardTargetedEnum } from '../card/card.enum';
 import { ExpeditionService } from '../expedition/expedition.service';
@@ -177,25 +181,54 @@ export class PlayerService {
         ctx: Context,
         source: ExpeditionEntity,
         name: Status['name'],
-        args: AttachedStatus['args'] = { value: 1 },
+        args: AttachedStatus['args'] = { counter: 1 },
     ): Promise<AttachedStatus> {
         const player = this.get(ctx);
         // Get metadata to determine the type of status to attach
         const metadata = this.statusService.getMetadataByName(name);
 
-        // Create the status to attach
-        const status: AttachedStatus = {
-            name,
-            args,
-            sourceReference: {
-                type: source.type,
-                id: source.value['id'],
+        // Check if the status is already attached
+        const oldStatus = find(
+            player.value.combatState.statuses[metadata.status.type],
+            {
+                name,
             },
-            addedInRound: ctx.expedition.currentNode.data.round,
-        };
+        );
 
-        // Attach the status to the player
-        player.value.combatState.statuses[metadata.status.type].push(status);
+        let finalStatusAttached: AttachedStatus;
+        if (oldStatus) {
+            this.logger.log('Status already attached, incrementing counter');
+            // If the status is already attached, we update it
+            if (metadata.status.counterType != StatusCounterType.None) {
+                // If the status has a counter, we increment it
+                oldStatus.args.counter += args.counter;
+                this.logger.log(
+                    `Status ${name} counter incremented to ${oldStatus.args.counter}`,
+                );
+            } else {
+                this.logger.log(`Status ${name} has no counter`);
+            }
+
+            finalStatusAttached = oldStatus;
+        } else {
+            // Create the status to attach
+            const status: AttachedStatus = {
+                name,
+                args,
+                sourceReference: {
+                    type: source.type,
+                    id: source.value['id'],
+                },
+                addedInRound: ctx.expedition.currentNode.data.round,
+            };
+
+            // Attach the status to the player
+            player.value.combatState.statuses[metadata.status.type].push(
+                status,
+            );
+
+            finalStatusAttached = status;
+        }
 
         // Save the status to the database
         await this.expeditionService.updateByFilter(
@@ -209,6 +242,6 @@ export class PlayerService {
 
         this.logger.debug(`Status ${name} attached to player`);
 
-        return status;
+        return finalStatusAttached;
     }
 }

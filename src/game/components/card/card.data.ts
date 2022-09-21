@@ -6,13 +6,13 @@ import { BackflipCard, BackflipCardUpgraded } from './data/backflip.card';
 import { BackHandCard, BackHandCardUpgraded } from './data/backhand.card';
 import { BlusterCard, BlusterCardUpgraded } from './data/bluster.card';
 import { BolsterCard, BolsterCardUpgraded } from './data/bolster.card';
+import { BraceCard, BraceCardUpgraded } from './data/brace.card';
 import { BurnedCard } from './data/burned.card';
 import { ChargeCard, ChargeCardUpgraded } from './data/charge.card';
 import { CounterCard, CounterCardUpgraded } from './data/counter.card';
 import { DefenseCard, DefenseCardUpgraded } from './data/defend.card';
 import { DivineGiftCard, DivineGiftCardUpgraded } from './data/divineGift.card';
 import { DoubleDownCard, DoubleDownCardUpgraded } from './data/doubleDown.card';
-import { EnflameCard, EnflameCardUpgraded } from './data/enflame.card';
 import {
     ExecutionersBlowCard,
     ExecutionersBlowCardUpgraded,
@@ -70,8 +70,9 @@ import {
     QuickToAdaptCardUpgraded,
 } from './data/quickToAdapt.card';
 import { RecoverCard, RecoverCardUpgraded } from './data/recover.data';
-import { Refocus, RefocusUpgraded } from './data/refocus.card';
+import { Refocus } from './data/refocus.card';
 import { RepositionCard, RepositionCardUpgraded } from './data/reposition.card';
+import { RoundHouseCard, RoundHouseCardUpgraded } from './data/roundHouse.card';
 import { ShakeItOffCard, ShakeItOffCardUpgraded } from './data/shakeItOff.card';
 import {
     SharpenBladeCard,
@@ -179,7 +180,6 @@ export const data: Card[] = [
     FlurryCard,
     FlurryCardUpgraded,
     Refocus,
-    RefocusUpgraded,
     BackHandCard,
     BackHandCardUpgraded,
     UltraLethalityCard,
@@ -206,8 +206,6 @@ export const data: Card[] = [
     SparkCardUpgraded,
     TorchCard,
     TorchCardUpgraded,
-    EnflameCard,
-    EnflameCardUpgraded,
     SharpenBladeCard,
     SharpenBladeCardUpgraded,
     OnARollCard,
@@ -225,4 +223,8 @@ export const data: Card[] = [
     FrontflipCard,
     FrontflipCardUpgraded,
     BurnedCard,
+    RoundHouseCard,
+    RoundHouseCardUpgraded,
+    BraceCard,
+    BraceCardUpgraded,
 ];

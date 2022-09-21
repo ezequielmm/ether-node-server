@@ -56,12 +56,8 @@ interface SWARPayload {
     data: any;
 }
 
-interface SWARResponse {
-    data: SWARPayload;
-}
-
 export class StandardResponse {
-    static respond(payload: SWARPayload): SWARResponse {
-        return { data: payload };
+    static respond(payload: SWARPayload): string {
+        return JSON.stringify({ data: payload });
     }
 }

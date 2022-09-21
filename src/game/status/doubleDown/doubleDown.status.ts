@@ -16,7 +16,7 @@ export class DoubleDownStatus implements StatusEffectHandler {
         const {
             effectDTO,
             status: {
-                args: { value },
+                args: { counter: value },
             },
         } = dto;
         effectDTO.args.currentValue *= value;
@@ -29,7 +29,7 @@ export class DoubleDownStatus implements StatusEffectHandler {
         const {
             effectDTO,
             status: {
-                args: { value },
+                args: { counter: value },
             },
             remove,
         } = dto;

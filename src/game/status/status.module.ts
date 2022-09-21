@@ -21,7 +21,8 @@ import { ForceFieldEvent } from './forceField/forcefield.event';
 import { ForceFieldStatus } from './forceField/forceField.status';
 import { FortitudeStatus } from './fortitude/fortitude.status';
 import { GiftedStatus } from './gifted/gifted.status';
-import { HeraldDelayedStatus } from './heraldDelayed/heraldDelayed.status';
+import { HeralDelayedStatus } from './heraldDelayed/heralDelayed.status';
+import { HeraldingStatus } from './heralding/heralding.status';
 import { ImbuedStatus } from './imbued/imbued.status';
 import { InterceptEvent } from './intercept/intercept.event';
 import { InterceptStatus } from './intercept/intercept.status';
@@ -55,7 +56,8 @@ import { TurtlingStatus } from './turtling/turtling.status';
         TurtlingStatus,
         ResolveStatus,
         FortitudeStatus,
-        HeraldDelayedStatus,
+        HeralDelayedStatus,
+        HeraldingStatus,
         TasteOfBloodBuffStatus,
         TasteOfBloodDebuffStatus,
         BurnStatus,

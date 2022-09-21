@@ -1,7 +1,7 @@
 import {
+    StatusCounterType,
     StatusDirection,
     StatusEffect,
-    StatusStartsAt,
     StatusTrigger,
     StatusType,
 } from '../interfaces';
@@ -12,7 +12,7 @@ import { Effect } from 'src/game/effects/effects.interface';
 export const confusion: StatusEffect = {
     name: 'confusion',
     type: StatusType.Debuff,
-    startsAt: StatusStartsAt.Instantly,
+    counterType: StatusCounterType.None,
     trigger: StatusTrigger.Effect,
     direction: StatusDirection.Outgoing,
     // Require all effects in the effects folder

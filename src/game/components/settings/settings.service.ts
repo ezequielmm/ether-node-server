@@ -12,8 +12,17 @@ export class SettingsService {
         private readonly settings: Model<SettingsDocument>,
         private readonly eventEmitter: EventEmitter2,
     ) {
-        this.eventEmitter.prependAny((eventName) => {
-            this.logger.debug(`Event: ${eventName} emitted ⛳`);
+        this.eventEmitter.prependAny((eventName, args) => {
+            const { ctx, ...rest } = args as unknown as {
+                ctx: any;
+            };
+            this.logger.log(
+                {
+                    eventName,
+                    eventArgs: rest,
+                },
+                'Event emitted',
+            );
         });
     }
 

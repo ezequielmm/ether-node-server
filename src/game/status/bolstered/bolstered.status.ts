@@ -31,7 +31,7 @@ export class BolsteredStatus implements StatusEventHandler {
             target,
             ctx,
             status: {
-                args: { value },
+                args: { counter: value },
             },
         } = args;
 

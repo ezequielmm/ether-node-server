@@ -1,14 +1,12 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { CardTargetedEnum } from 'src/game/components/card/card.enum';
-import { EnemyService } from 'src/game/components/enemy/enemy.service';
-import { PlayerService } from 'src/game/components/player/player.service';
 import { anticipatingStatus } from 'src/game/status/anticipating/constants';
+import { StatusService } from 'src/game/status/status.service';
 import { AnticipatingEffect } from './anticipating.effect';
 
 describe('AnticipatingEffect', () => {
     let anticipatingEffect: AnticipatingEffect;
-    let playerService: PlayerService;
-    let enemyService: EnemyService;
+    let statusService: StatusService;
     let ctx: any;
     let source: any;
     let target: any;
@@ -19,13 +17,7 @@ describe('AnticipatingEffect', () => {
             providers: [
                 AnticipatingEffect,
                 {
-                    provide: PlayerService,
-                    useValue: {
-                        attach: jest.fn(),
-                    },
-                },
-                {
-                    provide: EnemyService,
+                    provide: StatusService,
                     useValue: {
                         attach: jest.fn(),
                     },
@@ -34,8 +26,7 @@ describe('AnticipatingEffect', () => {
         }).compile();
 
         anticipatingEffect = module.get<AnticipatingEffect>(AnticipatingEffect);
-        playerService = module.get<PlayerService>(PlayerService);
-        enemyService = module.get<EnemyService>(EnemyService);
+        statusService = module.get<StatusService>(StatusService);
         ctx = {};
         source = {};
         target = {};
@@ -55,14 +46,15 @@ describe('AnticipatingEffect', () => {
             },
         };
         await anticipatingEffect.handle({ ctx, source, target, args });
-        expect(playerService.attach).toHaveBeenCalledWith(
+        expect(statusService.attach).toHaveBeenCalledWith({
             ctx,
             source,
-            anticipatingStatus.name,
-            {
-                value: 10,
+            target,
+            statusName: anticipatingStatus.name,
+            statusArgs: {
+                counter: target.value.combatState.defense,
             },
-        );
+        });
     });
 
     it('should attach anticipating status to enemy', async () => {
@@ -74,14 +66,14 @@ describe('AnticipatingEffect', () => {
             },
         };
         await anticipatingEffect.handle({ ctx, source, target, args });
-        expect(enemyService.attach).toHaveBeenCalledWith(
+        expect(statusService.attach).toHaveBeenCalledWith({
             ctx,
-            'enemyId',
             source,
-            anticipatingStatus.name,
-            {
-                value: 10,
+            target,
+            statusName: anticipatingStatus.name,
+            statusArgs: {
+                counter: target.value.defense,
             },
-        );
+        });
     });
 });

@@ -18,7 +18,7 @@ export const ShakeItOffCard: Card = {
                 effect: defenseEffect.name,
                 target: CardTargetedEnum.Player,
                 args: {
-                    value: 0,
+                    value: 1, // Defense is calculated on the effect
                     useDiscardPileAsValue: true,
                     multiplier: 1,
                 },
@@ -46,7 +46,7 @@ export const ShakeItOffCardUpgraded: Card = {
                 effect: defenseEffect.name,
                 target: CardTargetedEnum.Player,
                 args: {
-                    value: 0,
+                    value: 1, // Defense is calculated on the effect
                     useDiscardPileAsValue: true,
                     multiplier: 2,
                 },

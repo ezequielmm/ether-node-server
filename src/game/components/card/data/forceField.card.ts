@@ -21,7 +21,8 @@ export const ForceFieldCard: Card = {
         statuses: [
             {
                 name: forceField.name,
-                args: { attachTo: CardTargetedEnum.Player, value: 1 },
+                attachTo: CardTargetedEnum.Player,
+                args: { counter: 1 },
             },
         ],
     },
@@ -43,7 +44,8 @@ export const ForceFieldCardUpgraded: Card = {
         statuses: [
             {
                 name: forceField.name,
-                args: { attachTo: CardTargetedEnum.Player, value: 1 },
+                attachTo: CardTargetedEnum.Player,
+                args: { counter: 1 },
             },
         ],
     },

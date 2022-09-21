@@ -5,8 +5,7 @@ import { groundMothData } from 'src/game/components/enemy/data/groundmoth.enemy'
 import { mimicFrog1Data } from 'src/game/components/enemy/data/mimicFrog1.enemy';
 import { queenOrchidData } from 'src/game/components/enemy/data/queenOrchid.enemy';
 import { sporeMongerData } from 'src/game/components/enemy/data/sporeMonger.enemy';
-import { stingFae1Data } from 'src/game/components/enemy/data/stingFae1.enemy';
-import { stingFae2Data } from 'src/game/components/enemy/data/stingFae2.enemy';
+import { stingFaeData } from 'src/game/components/enemy/data/stingFae.enemy';
 import { swampGoblin1Data } from 'src/game/components/enemy/data/swampGoblin1.enemy';
 import { swampGoblin2Data } from 'src/game/components/enemy/data/swampGoblin2.enemy';
 import { thornWolfData } from 'src/game/components/enemy/data/thornWolf.enemy';
@@ -40,8 +39,8 @@ export const actCconfigAlternatives = [
                         enemies: [
                             {
                                 enemies: [
-                                    stingFae1Data.enemyId,
-                                    stingFae1Data.enemyId,
+                                    stingFaeData.enemyId,
+                                    stingFaeData.enemyId,
                                 ],
                                 probability: 0.25,
                             },
@@ -95,8 +94,8 @@ export const actCconfigAlternatives = [
                             enemies: [
                                 {
                                     enemies: [
-                                        stingFae1Data.enemyId,
-                                        stingFae2Data.enemyId,
+                                        stingFaeData.enemyId,
+                                        stingFaeData.enemyId,
                                     ],
                                     probability: 0.25,
                                 },
@@ -131,8 +130,8 @@ export const actCconfigAlternatives = [
                             enemies: [
                                 {
                                     enemies: [
-                                        stingFae1Data.enemyId,
-                                        stingFae2Data.enemyId,
+                                        stingFaeData.enemyId,
+                                        stingFaeData.enemyId,
                                     ],
                                     probability: 0.25,
                                 },
@@ -167,8 +166,8 @@ export const actCconfigAlternatives = [
                             enemies: [
                                 {
                                     enemies: [
-                                        stingFae1Data.enemyId,
-                                        stingFae2Data.enemyId,
+                                        stingFaeData.enemyId,
+                                        stingFaeData.enemyId,
                                     ],
                                     probability: 0.25,
                                 },
@@ -214,8 +213,8 @@ export const actCconfigAlternatives = [
                                 },
                                 {
                                     enemies: [
-                                        stingFae1Data.enemyId,
-                                        stingFae2Data.enemyId,
+                                        stingFaeData.enemyId,
+                                        stingFaeData.enemyId,
                                         swampGoblin1Data.enemyId,
                                     ],
                                     probability: 0.11,
@@ -259,18 +258,18 @@ export const actCconfigAlternatives = [
                                 },
                                 {
                                     enemies: [
-                                        stingFae1Data.enemyId,
-                                        stingFae1Data.enemyId,
-                                        stingFae1Data.enemyId,
-                                        stingFae1Data.enemyId,
+                                        stingFaeData.enemyId,
+                                        stingFaeData.enemyId,
+                                        stingFaeData.enemyId,
+                                        stingFaeData.enemyId,
                                     ],
                                     probability: 0.09,
                                 },
                                 {
                                     enemies: [
-                                        stingFae1Data.enemyId,
+                                        stingFaeData.enemyId,
                                         groundMothData.enemyId,
-                                        stingFae2Data.enemyId,
+                                        stingFaeData.enemyId,
                                     ],
                                     probability: 0.08,
                                 },
@@ -322,8 +321,8 @@ export const actCconfigAlternatives = [
                                 },
                                 {
                                     enemies: [
-                                        stingFae1Data.enemyId,
-                                        stingFae2Data.enemyId,
+                                        stingFaeData.enemyId,
+                                        stingFaeData.enemyId,
                                         swampGoblin1Data.enemyId,
                                     ],
                                     probability: 0.11,
@@ -367,18 +366,18 @@ export const actCconfigAlternatives = [
                                 },
                                 {
                                     enemies: [
-                                        stingFae1Data.enemyId,
-                                        stingFae1Data.enemyId,
-                                        stingFae1Data.enemyId,
-                                        stingFae1Data.enemyId,
+                                        stingFaeData.enemyId,
+                                        stingFaeData.enemyId,
+                                        stingFaeData.enemyId,
+                                        stingFaeData.enemyId,
                                     ],
                                     probability: 0.09,
                                 },
                                 {
                                     enemies: [
-                                        stingFae1Data.enemyId,
+                                        stingFaeData.enemyId,
                                         groundMothData.enemyId,
-                                        stingFae2Data.enemyId,
+                                        stingFaeData.enemyId,
                                     ],
                                     probability: 0.08,
                                 },
@@ -430,8 +429,8 @@ export const actCconfigAlternatives = [
                                 },
                                 {
                                     enemies: [
-                                        stingFae1Data.enemyId,
-                                        stingFae2Data.enemyId,
+                                        stingFaeData.enemyId,
+                                        stingFaeData.enemyId,
                                         swampGoblin1Data.enemyId,
                                     ],
                                     probability: 0.11,
@@ -475,18 +474,18 @@ export const actCconfigAlternatives = [
                                 },
                                 {
                                     enemies: [
-                                        stingFae1Data.enemyId,
-                                        stingFae1Data.enemyId,
-                                        stingFae1Data.enemyId,
-                                        stingFae1Data.enemyId,
+                                        stingFaeData.enemyId,
+                                        stingFaeData.enemyId,
+                                        stingFaeData.enemyId,
+                                        stingFaeData.enemyId,
                                     ],
                                     probability: 0.09,
                                 },
                                 {
                                     enemies: [
-                                        stingFae1Data.enemyId,
+                                        stingFaeData.enemyId,
                                         groundMothData.enemyId,
-                                        stingFae2Data.enemyId,
+                                        stingFaeData.enemyId,
                                     ],
                                     probability: 0.08,
                                 },

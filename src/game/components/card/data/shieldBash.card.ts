@@ -17,7 +17,7 @@ export const ShieldBashCard: Card = {
                 effect: damageEffect.name,
                 target: CardTargetedEnum.Enemy,
                 args: {
-                    value: 1,
+                    value: 1, // Value is calculated in the effect
                     useDefense: true,
                     multiplier: 1,
                 },

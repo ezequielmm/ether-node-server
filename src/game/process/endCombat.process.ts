@@ -57,15 +57,13 @@ export class EndCombatProcess {
     private emitEnemiesDefeated(ctx: Context) {
         ctx.client.emit(
             'PutData',
-            JSON.stringify(
-                StandardResponse.respond({
-                    message_type: SWARMessageType.EndCombat,
-                    action: SWARAction.EnemiesDefeated,
-                    data: {
-                        rewards: ctx.expedition.currentNode.data.rewards,
-                    },
-                }),
-            ),
+            StandardResponse.respond({
+                message_type: SWARMessageType.EndCombat,
+                action: SWARAction.EnemiesDefeated,
+                data: {
+                    rewards: ctx.expedition.currentNode.data.rewards,
+                },
+            }),
         );
     }
 
@@ -74,13 +72,11 @@ export class EndCombatProcess {
 
         ctx.client.emit(
             'PutData',
-            JSON.stringify(
-                StandardResponse.respond({
-                    message_type: SWARMessageType.EndCombat,
-                    action: SWARAction.PlayerDefeated,
-                    data: null,
-                }),
-            ),
+            StandardResponse.respond({
+                message_type: SWARMessageType.EndCombat,
+                action: SWARAction.PlayerDefeated,
+                data: null,
+            }),
         );
 
         await this.expeditionService.updateByFilter(

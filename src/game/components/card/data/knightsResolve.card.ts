@@ -20,10 +20,10 @@ export const KnightsResolveCard: Card = {
         effects: [
             {
                 effect: defenseEffect.name,
-                times: 2, //For X still not able to understand what i need to do here.
+                target: CardTargetedEnum.Player,
                 args: {
-                    attachTo: CardTargetedEnum.Player,
                     value: 6,
+                    useEnergyAsMultiplier: true,
                 },
             },
         ],
@@ -46,15 +46,15 @@ export const KnightsResolveCardUpgraded: Card = {
         effects: [
             {
                 effect: defenseEffect.name,
-                target: CardTargetedEnum.RandomEnemy,
-                times: 2, //For X still not able to understand what i need to do here.
+                target: CardTargetedEnum.Player,
                 args: {
                     value: 9,
+                    useEnergyAsMultiplier: true,
                 },
             },
         ],
         statuses: [],
     },
     showPointer: false,
-    isUpgraded: false,
+    isUpgraded: true,
 };

@@ -1,31 +1,28 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { ApiModule } from './api/api.module';
-import { ConfigurationModule } from './config/configuration.module';
-import { MongooseModule, MongooseModuleOptions } from '@nestjs/mongoose';
-import { ConfigurationService } from './config/configuration.service';
+import { MongooseModule } from '@nestjs/mongoose';
 import { SocketModule } from './socket/socket.module';
 import { EventEmitterModule } from '@nestjs/event-emitter';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { composeMongooseModuleOptions } from './dbConfiguration';
 
 @Module({
     imports: [
         ApiModule,
-        ConfigurationModule,
+        ConfigModule.forRoot({ isGlobal: true, cache: true }),
         SocketModule,
         MongooseModule.forRootAsync({
-            imports: [ConfigurationModule],
-            inject: [ConfigurationService],
-            useFactory: (configurationService: ConfigurationService) => {
-                const options: MongooseModuleOptions = {
-                    uri: configurationService.connectionString,
-                    useNewUrlParser: true,
-                    useUnifiedTopology: true,
-                };
-                return options;
+            inject: [ConfigService],
+            useFactory: (configService: ConfigService) => {
+                const uri = configService.get<string>('MONGODB_URL');
+
+                return composeMongooseModuleOptions(uri);
             },
         }),
         EventEmitterModule.forRoot({
             wildcard: true,
+            maxListeners: 100,
         }),
     ],
     controllers: [AppController],

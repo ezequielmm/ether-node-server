@@ -133,8 +133,16 @@ export function isNotUndefined(value: boolean | undefined | null): boolean {
     return !!value;
 }
 
+/**
+ * Type definition for Deep partials
+ */
 export type DeepPartial<T> = T extends object
     ? {
           [P in keyof T]?: DeepPartial<T[P]>;
       }
     : T;
+
+export enum serverEnvironments {
+    development = 'development',
+    production = 'production',
+}

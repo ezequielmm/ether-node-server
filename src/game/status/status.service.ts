@@ -24,7 +24,7 @@ import { ProviderContainer } from '../provider/interfaces';
 import { ProviderService } from '../provider/provider.service';
 import { STATUS_METADATA_KEY } from './contants';
 import {
-    AttachDTO,
+    AttachAllDTO,
     EnemyReferenceDTO,
     MutateEffectArgsDTO,
     PlayerReferenceDTO,
@@ -40,8 +40,9 @@ import {
     StatusEventHandler,
     StatusHandler,
     StatusMetadata,
-    StatusStartsAt,
     StatusTrigger,
+    AttachedStatus,
+    AttachDTO,
 } from './interfaces';
 import * as cliColor from 'cli-color';
 
@@ -82,65 +83,84 @@ export class StatusService {
      *
      * @param {Object} dto Dto parameters
      */
-    public async attach(dto: AttachDTO): Promise<void> {
+    public async attachAll(dto: AttachAllDTO): Promise<void> {
         const { ctx, statuses, source, targetId } = dto;
 
         for (const status of statuses) {
+            const { attachTo } = status;
             const targets = this.expeditionService.getEntitiesByType(
                 ctx,
-                status.args.attachTo,
+                attachTo,
                 source,
                 targetId,
             );
 
             for (const target of targets) {
-                await this.eventEmitter.emitAsync(EVENT_BEFORE_STATUS_ATTACH, {
+                await this.attach({
                     ctx,
                     source,
                     target,
-                    status,
-                    targetId: target.value.id,
-                });
-
-                switch (target.type) {
-                    case CardTargetedEnum.Player:
-                        await this.playerService.attach(
-                            ctx,
-                            source,
-                            status.name,
-                            status.args,
-                        );
-                        break;
-                    case CardTargetedEnum.Enemy:
-                        await this.enemyService.attach(
-                            ctx,
-                            target.value.id,
-                            source,
-                            status.name,
-                            status.args,
-                        );
-                        break;
-                }
-
-                await this.eventEmitter.emitAsync(EVENT_AFTER_STATUS_ATTACH, {
-                    ctx,
-                    source,
-                    status,
-                    target,
-                    targetId: target.value.id,
+                    statusName: status.name,
+                    statusArgs: status.args,
                 });
             }
         }
     }
 
+    /**
+     * Attach the status to the designated entity.
+     * This method will trigger the event *beforeStatusAttach* and *afterStatusAttach*
+     * before and after the status is attached.
+     *
+     * @param dto Dto parameters
+     */
+    public async attach(dto: AttachDTO) {
+        const { ctx, source, target, statusName, statusArgs } = dto;
+
+        await this.eventEmitter.emitAsync(EVENT_BEFORE_STATUS_ATTACH, {
+            ctx,
+            source,
+            target,
+            status: {
+                name: statusName,
+                args: statusArgs,
+            },
+            targetId: target.value.id,
+        });
+
+        let finalStatus: AttachedStatus;
+        switch (target.type) {
+            case CardTargetedEnum.Player:
+                finalStatus = await this.playerService.attach(
+                    ctx,
+                    source,
+                    statusName,
+                    statusArgs,
+                );
+                break;
+            case CardTargetedEnum.Enemy:
+                finalStatus = await this.enemyService.attach(
+                    ctx,
+                    target.value.id,
+                    source,
+                    statusName,
+                    statusArgs,
+                );
+                break;
+        }
+
+        await this.eventEmitter.emitAsync(EVENT_AFTER_STATUS_ATTACH, {
+            ctx,
+            source,
+            status: finalStatus,
+            target,
+            targetId: target.value.id,
+        });
+    }
+
     public async mutate(dto: MutateEffectArgsDTO): Promise<EffectDTO> {
         const { ctx, collectionOwner, collection, effect, preview } = dto;
         const { expedition } = ctx;
-        const {
-            currentNode: {
-                data: { round },
-            },
-        } = expedition;
         let { effectDTO } = dto;
         let isUpdate = false;
 
@@ -159,16 +179,7 @@ export class StatusService {
 
                 if (!container) continue;
 
-                const metadata = container.metadata;
                 const instance = container.instance as StatusEffectHandler;
-
-                const isActive = this.isActive(
-                    metadata.status.startsAt,
-                    status.addedInRound,
-                    round,
-                );
-
-                if (!isActive) continue;
 
                 effectDTO = await instance[preview ? 'preview' : 'handle']({
                     ctx,
@@ -197,7 +208,7 @@ export class StatusService {
         return effectDTO;
     }
 
-    public findEffectStatuses(
+    public findStatusesByDirection(
         entity: ExpeditionEntity,
         direction: StatusDirection,
     ): StatusCollection {
@@ -297,8 +308,6 @@ export class StatusService {
         args = {},
     ): Promise<void> {
         const { expedition } = ctx;
-        const { currentNode } = expedition;
-
         const statusGlobalCollection = await this.getAll(ctx);
 
         for (const entityCollection of statusGlobalCollection) {
@@ -331,16 +340,7 @@ export class StatusService {
 
                     if (!container) continue;
 
-                    const metadata = container.metadata;
                     const instance = container.instance;
-
-                    const isActive = this.isActive(
-                        metadata.status.startsAt,
-                        status.addedInRound,
-                        currentNode.data.round,
-                    );
-
-                    if (!isActive) continue;
 
                     const source = this.getSourceFromReference(
                         expedition,
@@ -380,17 +380,6 @@ export class StatusService {
                     collection,
                 );
         }
-    }
-
-    public isActive(
-        startsAt: StatusStartsAt,
-        addedInRound: number,
-        currentRound: number,
-    ): boolean {
-        return !(
-            startsAt == StatusStartsAt.NextPlayerTurn &&
-            addedInRound == currentRound
-        );
     }
 
     public findHandlerContainer<S extends Status, H extends StatusHandler>(
@@ -539,9 +528,9 @@ export class StatusService {
 
         for (const status of statusCollection) {
             // Decremement the value of the status
-            status.args.value--;
+            status.args.counter--;
 
-            if (status.args.value === 0) {
+            if (status.args.counter === 0) {
                 // If the value is 0, remove the status
                 statusesToRemove.push(status);
                 this.logger.debug(
@@ -550,7 +539,7 @@ export class StatusService {
             } else {
                 this.logger.debug(
                     cliColor.red(
-                        `Decreasing ${status.name} status value to ${status.args.value}`,
+                        `Decreasing ${status.name} status value to ${status.args.counter}`,
                     ),
                 );
             }

@@ -16,9 +16,9 @@ export const AdeptCard: Card = {
         statuses: [
             {
                 name: gifted.name,
+                attachTo: CardTargetedEnum.Player,
                 args: {
-                    value: 3,
-                    attachTo: CardTargetedEnum.Player,
+                    counter: 3,
                 },
             },
         ],
@@ -41,9 +41,9 @@ export const AdeptCardUpgraded: Card = {
         statuses: [
             {
                 name: gifted.name,
+                attachTo: CardTargetedEnum.Player,
                 args: {
-                    value: 5,
-                    attachTo: CardTargetedEnum.Player,
+                    counter: 5,
                 },
             },
         ],

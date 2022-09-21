@@ -122,6 +122,10 @@ export class CardPlayedAction {
             if (!canPlayCard) {
                 this.sendNotEnoughEnergyMessage(message);
             } else {
+                this.logger.verbose(
+                    `Player ${client.id} played card: ${card.name}`,
+                );
+
                 const source = this.playerService.get(ctx);
                 const sourceReference =
                     this.statusService.getReferenceFromEntity(source);
@@ -173,7 +177,7 @@ export class CardPlayedAction {
                     return;
                 }
 
-                await this.statusService.attach({
+                await this.statusService.attachAll({
                     ctx,
                     statuses,
                     targetId: selectedEnemyId,
@@ -257,13 +261,11 @@ export class CardPlayedAction {
 
         this.client.emit(
             'ErrorMessage',
-            JSON.stringify(
-                StandardResponse.respond({
-                    message_type: SWARMessageType.Error,
-                    action: SWARAction.InvalidCard,
-                    data: null,
-                }),
-            ),
+            StandardResponse.respond({
+                message_type: SWARMessageType.Error,
+                action: SWARAction.InvalidCard,
+                data: null,
+            }),
         );
     }
 
@@ -274,13 +276,11 @@ export class CardPlayedAction {
 
         this.client.emit(
             'ErrorMessage',
-            JSON.stringify(
-                StandardResponse.respond({
-                    message_type: SWARMessageType.Error,
-                    action: SWARAction.InsufficientEnergy,
-                    data: message,
-                }),
-            ),
+            StandardResponse.respond({
+                message_type: SWARMessageType.Error,
+                action: SWARAction.InsufficientEnergy,
+                data: message,
+            }),
         );
     }
 
@@ -291,13 +291,11 @@ export class CardPlayedAction {
 
         this.client.emit(
             'PutData',
-            JSON.stringify(
-                StandardResponse.respond({
-                    message_type: SWARMessageType.PlayerAffected,
-                    action: SWARAction.UpdateEnergy,
-                    data: [energy, energyMax],
-                }),
-            ),
+            StandardResponse.respond({
+                message_type: SWARMessageType.PlayerAffected,
+                action: SWARAction.UpdateEnergy,
+                data: [energy, energyMax],
+            }),
         );
     }
 }

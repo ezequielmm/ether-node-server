@@ -43,16 +43,11 @@ export class KnockDownEffect implements EffectHandler {
             await this.statusService.attach({
                 ctx,
                 source,
-                statuses: [
-                    {
-                        name: stunned.name,
-                        args: {
-                            value: 1,
-                            attachTo: target.type,
-                        },
-                    },
-                ],
-                targetId: target.value.id,
+                target,
+                statusName: stunned.name,
+                statusArgs: {
+                    counter: 1,
+                },
             });
         }
     }
