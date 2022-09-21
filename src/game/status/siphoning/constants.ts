@@ -10,7 +10,7 @@ import {
 export const siphoning: StatusEvent = {
     name: 'siphoning',
     type: StatusType.Buff,
-    counterType: StatusCounterType.Duration,
+    counterType: StatusCounterType.Counter,
     startsAt: StatusStartsAt.Instantly,
     trigger: StatusTrigger.Event,
     event: EVENT_AFTER_DAMAGE_EFFECT,
