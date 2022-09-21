@@ -65,7 +65,13 @@ export class DefenseEffect implements EffectHandler {
                     },
                 } = expedition;
 
-                newDefense *= enemies.length;
+                // Now we remove the enemies that are defeated
+                // hpCurrent = 0
+                const enemiesAlive = enemies.filter(({ hpCurrent }) => {
+                    return hpCurrent > 0;
+                });
+
+                newDefense *= enemiesAlive.length;
             }
 
             // Check if the card uses the amount of cards from the
