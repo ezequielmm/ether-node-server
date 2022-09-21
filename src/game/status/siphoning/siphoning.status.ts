@@ -19,10 +19,14 @@ export class SiphoningStatus implements StatusEventHandler {
             target: dto.target,
             effect: {
                 effect: defenseEffect.name,
+                target: dto.target,
                 args: {
                     value: dto.eventArgs.damageDealt,
                 },
             },
         });
+
+        dto.status.args.counter--;
+        dto.update(dto.status.args);
     }
 }
