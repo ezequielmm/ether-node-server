@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { ExpeditionService } from 'src/game/components/expedition/expedition.service';
 import { CardRarityEnum, CardTypeEnum } from '../components/card/card.enum';
 import { IExpeditionPlayerStateDeckCard } from '../components/expedition/expedition.interface';
+import { JsonStatus } from '../status/interfaces';
 
 interface IGetDeck {
     id: string;
@@ -13,6 +14,9 @@ interface IGetDeck {
     isUpgraded: boolean;
     pool: string;
     showPointer: boolean;
+    properties: {
+        statuses: JsonStatus[];
+    };
 }
 
 interface GetCardPilesResponse {
@@ -62,6 +66,9 @@ export class GetCardPilesAction {
             isUpgraded: card.isUpgraded,
             pool: card.pool,
             showPointer: card.showPointer,
+            properties: {
+                statuses: card.properties.statuses,
+            },
         }));
     }
 }
