@@ -32,9 +32,7 @@ export class DoubleResolveEffect implements EffectHandler {
             name: resolve.name,
         });
 
-        if (isEmpty(resolveStatuses)) {
-            return;
-        }
+        if (isEmpty(resolveStatuses)) return;
 
         // Double resolve
         resolveStatuses.forEach((status) => {

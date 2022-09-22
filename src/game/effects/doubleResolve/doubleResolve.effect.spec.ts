@@ -22,12 +22,6 @@ describe('DoubleResolveEffect', () => {
                         updateStatuses: jest.fn(),
                     },
                 },
-                {
-                    provide: StatusService,
-                    useValue: {
-                        updateStatuses: jest.fn(),
-                    },
-                },
             ],
         }).compile();
 
