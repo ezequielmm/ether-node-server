@@ -85,7 +85,7 @@ export class InitExpeditionProcess {
                 deck.forEach(({ cardId, amount }) => {
                     if (card.cardId === cardId) {
                         this.logger.debug(
-                            `Added ${amount} cards of ${card.name} to ${email} deck`,
+                            `Added ${amount} ${card.name} cards to ${email} deck`,
                         );
                         for (let i = 1; i <= amount; i++) {
                             newDeckCards.push(card);
