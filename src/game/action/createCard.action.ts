@@ -1,9 +1,14 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { randomUUID } from 'crypto';
 import { Socket } from 'socket.io';
 import { CardDescriptionFormatter } from '../cardDescriptionFormatter/cardDescriptionFormatter';
 import { CardService } from '../components/card/card.service';
 import { ExpeditionService } from '../components/expedition/expedition.service';
+import {
+    StandardResponse,
+    SWARAction,
+    SWARMessageType,
+} from '../standardResponse/standardResponse';
 
 interface CreateCardDTO {
     cardsToAdd: number[];
@@ -13,6 +18,8 @@ interface CreateCardDTO {
 
 @Injectable()
 export class CreateCardAction {
+    private readonly logger: Logger = new Logger(CreateCardAction.name);
+
     constructor(
         private readonly expeditionService: ExpeditionService,
         private readonly cardService: CardService,
@@ -48,6 +55,24 @@ export class CreateCardAction {
             [destination]: [...newCards, ...destinationDeck],
         });
 
-        // Send message to the frontend to 
+        // Send message to the frontend to comunicate the new cards
+        this.logger.debug(
+            `Added ${newCards.length} new cards to player ${client.id} deck`,
+        );
+
+        client.emit(
+            'PutData',
+            StandardResponse.respond({
+                message_type: SWARMessageType.PlayerAffected,
+                action: SWARAction.MoveCard,
+                data: newCards.map(({ id }) => {
+                    return {
+                        source: null,
+                        destination: 'hand',
+                        id,
+                    };
+                }),
+            }),
+        );
     }
 }

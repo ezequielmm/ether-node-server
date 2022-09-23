@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { CreateCardAction } from 'src/game/action/createCard.action';
 import { PlayerService } from 'src/game/components/player/player.service';
 import { StatusEventDTO, StatusEventHandler } from '../interfaces';
 import { StatusDecorator } from '../status.decorator';
@@ -9,12 +10,23 @@ import { armoredUp } from './contants';
 })
 @Injectable()
 export class ArmoredUpStatus implements StatusEventHandler {
-    constructor(private readonly playerService: PlayerService) {}
+    constructor(private readonly createCardAction: CreateCardAction) {}
 
     async handle(dto: StatusEventDTO): Promise<void> {
-        const { target } = dto;
+        const {
+            target,
+            ctx: { client },
+            status: {
+                args: { cardsToAdd },
+            },
+        } = dto;
 
         if (PlayerService.isPlayer(target)) {
+            await this.createCardAction.handle({
+                client,
+                cardsToAdd,
+                destination: 'hand',
+            });
         }
     }
 }

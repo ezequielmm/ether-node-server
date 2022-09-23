@@ -96,21 +96,10 @@ export class InitExpeditionProcess {
                 return newDeckCards;
             }, [])
             .map((card) => {
-                return {
-                    cardId: card.cardId,
-                    id: randomUUID(),
-                    name: card.name,
-                    description: CardDescriptionFormatter.process(card),
-                    rarity: card.rarity,
-                    energy: card.energy,
-                    cardType: card.cardType,
-                    pool: card.pool,
-                    properties: card.properties,
-                    keywords: card.keywords,
-                    isTemporary: false,
-                    showPointer: card.showPointer,
-                    isUpgraded: card.isUpgraded,
-                };
+                card.id = randomUUID();
+                card.description = CardDescriptionFormatter.process(card);
+                card.isTemporary = false;
+                return card;
             });
     }
 }
