@@ -97,6 +97,10 @@ import {
     TightenGripCard,
     TightenGripCardUpgraded,
 } from './data/tightenGrip.card';
+import {
+    TightenStrapsCard,
+    TightenStrapsCardUpgraded,
+} from './data/tightenStraps.card';
 import { TorchCard, TorchCardUpgraded } from './data/torch.card';
 import { TurtleCard, TurtleCardUpgraded } from './data/turtle.card';
 import {
@@ -233,4 +237,6 @@ export const data: Card[] = [
     BulkUpCardUpgraded,
     ArmorUpCard,
     ArmorUpCardUpgraded,
+    TightenStrapsCard,
+    TightenStrapsCardUpgraded,
 ];

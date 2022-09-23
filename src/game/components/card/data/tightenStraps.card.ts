@@ -28,7 +28,7 @@ export const TightenStrapsCard: Card = {
     isUpgraded: false,
 };
 
-export const TightenGripCardUpgraded: Card = {
+export const TightenStrapsCardUpgraded: Card = {
     cardId: 72,
     name: 'Tighten Straps+',
     rarity: CardRarityEnum.Common,
