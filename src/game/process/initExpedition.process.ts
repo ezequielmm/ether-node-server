@@ -85,7 +85,7 @@ export class InitExpeditionProcess {
                 deck.forEach(({ cardId, amount }) => {
                     if (card.cardId === cardId) {
                         this.logger.debug(
-                            `Added ${amount} cards of ${card.name} to ${email} deck`,
+                            `Added ${amount} ${card.name} cards to ${email} deck`,
                         );
                         for (let i = 1; i <= amount; i++) {
                             newDeckCards.push(card);
@@ -96,21 +96,10 @@ export class InitExpeditionProcess {
                 return newDeckCards;
             }, [])
             .map((card) => {
-                return {
-                    cardId: card.cardId,
-                    id: randomUUID(),
-                    name: card.name,
-                    description: CardDescriptionFormatter.process(card),
-                    rarity: card.rarity,
-                    energy: card.energy,
-                    cardType: card.cardType,
-                    pool: card.pool,
-                    properties: card.properties,
-                    keywords: card.keywords,
-                    isTemporary: false,
-                    showPointer: card.showPointer,
-                    isUpgraded: card.isUpgraded,
-                };
+                card.id = randomUUID();
+                card.description = CardDescriptionFormatter.process(card);
+                card.isTemporary = false;
+                return card;
             });
     }
 }

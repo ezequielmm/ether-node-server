@@ -1,4 +1,5 @@
 import { forwardRef, Module } from '@nestjs/common';
+import { ActionModule } from '../action/action.module';
 import { CardModule } from '../components/card/card.module';
 import { CombatQueueModule } from '../components/combatQueue/combatQueue.module';
 import { EnemyModule } from '../components/enemy/enemy.module';
@@ -7,6 +8,7 @@ import { PlayerModule } from '../components/player/player.module';
 import { EffectModule } from '../effects/effects.module';
 import { ProviderModule } from '../provider/provider.module';
 import { AnticipatingStatus } from './anticipating/anticipating.status';
+import { ArmoredUpStatus } from './armoredUp/armoredUp.status';
 import { BolsteredStatus } from './bolstered/bolstered.status';
 import { BurnStatus } from './burn/burn.status';
 import { ConfusionStatus } from './confusion/confusion.status';
@@ -43,13 +45,14 @@ import { TurtlingStatus } from './turtling/turtling.status';
 
 @Module({
     imports: [
-        ProviderModule,
         forwardRef(() => ExpeditionModule),
         forwardRef(() => EffectModule),
         forwardRef(() => EnemyModule),
         forwardRef(() => PlayerModule),
         forwardRef(() => CardModule),
+        forwardRef(() => ActionModule),
         CombatQueueModule,
+        ProviderModule,
     ],
     providers: [
         StatusService,
@@ -88,6 +91,7 @@ import { TurtlingStatus } from './turtling/turtling.status';
         StunnedStatus,
         PrayingStatus,
         NextPlayerTurnStatus,
+        ArmoredUpStatus,
     ],
     exports: [StatusService],
 })

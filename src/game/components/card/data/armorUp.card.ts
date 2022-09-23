@@ -1,26 +1,26 @@
-import { damageEffect } from 'src/game/effects/damage/constants';
+import { defenseEffect } from 'src/game/effects/defense/constants';
 import {
     CardRarityEnum,
     CardTypeEnum,
-    CardKeywordEnum,
     CardTargetedEnum,
+    CardKeywordEnum,
 } from '../card.enum';
 import { Card } from '../card.schema';
 
-export const FineEdgeCard: Card = {
-    cardId: 171,
-    name: 'Fine Edge',
+export const ArmorUpCard: Card = {
+    cardId: 173,
+    name: 'Armor Up',
     rarity: CardRarityEnum.Special,
-    cardType: CardTypeEnum.Attack,
+    cardType: CardTypeEnum.Skill,
     pool: 'knight',
     energy: 0,
-    description: `Deal {${damageEffect.name}} damage. Exhaust`,
+    description: `Gain {${defenseEffect.name}} Defense. Exhaust`,
     keywords: [CardKeywordEnum.Exhaust],
     properties: {
         effects: [
             {
-                effect: damageEffect.name,
-                target: CardTargetedEnum.Enemy,
+                effect: defenseEffect.name,
+                target: CardTargetedEnum.Player,
                 args: {
                     value: 5,
                 },
@@ -28,24 +28,24 @@ export const FineEdgeCard: Card = {
         ],
         statuses: [],
     },
-    showPointer: true,
+    showPointer: false,
     isUpgraded: false,
 };
 
-export const FineEdgeCardUpgraded: Card = {
-    cardId: 172,
-    name: 'Fine Edge+',
+export const ArmorUpCardUpgraded: Card = {
+    cardId: 174,
+    name: 'Armor Up+',
     rarity: CardRarityEnum.Special,
-    cardType: CardTypeEnum.Attack,
+    cardType: CardTypeEnum.Skill,
     pool: 'knight',
     energy: 0,
-    description: `Deal {${damageEffect.name}} damage. Exhaust`,
+    description: `Gain {${defenseEffect.name}} Defense. Exhaust`,
     keywords: [CardKeywordEnum.Exhaust],
     properties: {
         effects: [
             {
-                effect: damageEffect.name,
-                target: CardTargetedEnum.Enemy,
+                effect: defenseEffect.name,
+                target: CardTargetedEnum.Player,
                 args: {
                     value: 7,
                 },
@@ -53,6 +53,6 @@ export const FineEdgeCardUpgraded: Card = {
         ],
         statuses: [],
     },
-    showPointer: true,
+    showPointer: false,
     isUpgraded: false,
 };

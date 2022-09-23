@@ -1,12 +1,14 @@
 import { Card } from './card.schema';
 import { AdeptCard, AdeptCardUpgraded } from './data/adept.card';
 import { AnticipateCard, AnticipateCardUpgraded } from './data/anticipate.card';
+import { ArmorUpCard, ArmorUpCardUpgraded } from './data/armorUp.card';
 import { AttackCard, AttackCardUpgraded } from './data/attack.card';
 import { BackflipCard, BackflipCardUpgraded } from './data/backflip.card';
 import { BackHandCard, BackHandCardUpgraded } from './data/backhand.card';
 import { BlusterCard, BlusterCardUpgraded } from './data/bluster.card';
 import { BolsterCard, BolsterCardUpgraded } from './data/bolster.card';
 import { BraceCard, BraceCardUpgraded } from './data/brace.card';
+import { BulkUpCard, BulkUpCardUpgraded } from './data/bulkUp.card';
 import { BurnedCard } from './data/burned.card';
 import { ChargeCard, ChargeCardUpgraded } from './data/charge.card';
 import { CounterCard, CounterCardUpgraded } from './data/counter.card';
@@ -95,6 +97,10 @@ import {
     TightenGripCard,
     TightenGripCardUpgraded,
 } from './data/tightenGrip.card';
+import {
+    TightenStrapsCard,
+    TightenStrapsCardUpgraded,
+} from './data/tightenStraps.card';
 import { TorchCard, TorchCardUpgraded } from './data/torch.card';
 import { TurtleCard, TurtleCardUpgraded } from './data/turtle.card';
 import {
@@ -227,4 +233,10 @@ export const data: Card[] = [
     RoundHouseCardUpgraded,
     BraceCard,
     BraceCardUpgraded,
+    BulkUpCard,
+    BulkUpCardUpgraded,
+    ArmorUpCard,
+    ArmorUpCardUpgraded,
+    TightenStrapsCard,
+    TightenStrapsCardUpgraded,
 ];

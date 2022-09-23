@@ -16,7 +16,7 @@ import { drained } from './constants';
 export class DrainedStatus implements StatusEventHandler {
     constructor(private readonly playerService: PlayerService) {}
 
-    async handle(dto: StatusEventDTO<Record<string, any>>): Promise<any> {
+    async handle(dto: StatusEventDTO): Promise<void> {
         const { ctx, target, status, remove } = dto;
 
         if (PlayerService.isPlayer(target)) {
