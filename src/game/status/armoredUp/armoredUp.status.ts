@@ -26,6 +26,7 @@ export class ArmoredUpStatus implements StatusEventHandler {
                 client,
                 cardsToAdd,
                 destination: 'hand',
+                sendSWARResponse: true,
             });
         }
     }

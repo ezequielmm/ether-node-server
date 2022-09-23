@@ -14,6 +14,7 @@ interface CreateCardDTO {
     cardsToAdd: number[];
     client: Socket;
     destination: 'hand' | 'discard';
+    sendSWARResponse: boolean;
 }
 
 @Injectable()
@@ -26,7 +27,7 @@ export class CreateCardAction {
     ) {}
 
     async handle(dto: CreateCardDTO): Promise<void> {
-        const { client, cardsToAdd, destination } = dto;
+        const { client, cardsToAdd, destination, sendSWARResponse } = dto;
 
         // Get the current decks for the player
         const {
@@ -55,24 +56,28 @@ export class CreateCardAction {
             [destination]: [...newCards, ...destinationDeck],
         });
 
-        // Send message to the frontend to comunicate the new cards
-        this.logger.debug(
-            `Added ${newCards.length} new cards to player ${client.id} deck`,
-        );
+        // Here we check if we need to send a "PlayerAffected" message
+        // to the frontend at the moment
+        if (sendSWARResponse) {
+            // Send message to the frontend to comunicate the new cards
+            this.logger.debug(
+                `Added ${newCards.length} new cards to player ${client.id} deck`,
+            );
 
-        client.emit(
-            'PutData',
-            StandardResponse.respond({
-                message_type: SWARMessageType.PlayerAffected,
-                action: SWARAction.MoveCard,
-                data: newCards.map(({ id }) => {
-                    return {
-                        source: null,
-                        destination: 'hand',
-                        id,
-                    };
+            client.emit(
+                'PutData',
+                StandardResponse.respond({
+                    message_type: SWARMessageType.PlayerAffected,
+                    action: SWARAction.MoveCard,
+                    data: newCards.map(({ id }) => {
+                        return {
+                            source: null,
+                            destination: 'hand',
+                            id,
+                        };
+                    }),
                 }),
-            }),
-        );
+            );
+        }
     }
 }
