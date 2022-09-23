@@ -111,6 +111,7 @@ import {
     UltraLethalityCard,
     UltraLethalityCardUpgraded,
 } from './data/ultraLethality.card';
+import { WrathCard, WrathCardUpgraded } from './data/wrath.card';
 
 export const data: Card[] = [
     AttackCard,
@@ -239,4 +240,6 @@ export const data: Card[] = [
     ArmorUpCardUpgraded,
     TightenStrapsCard,
     TightenStrapsCardUpgraded,
+    WrathCard,
+    WrathCardUpgraded,
 ];
