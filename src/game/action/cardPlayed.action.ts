@@ -237,7 +237,7 @@ export class CardPlayedAction {
 
         // If the card has a cost of -1, this means that the card will use all the available
         // energy that the player has, also the player energy needs to be more than 0
-        if (cardEnergyCost === CardEnergyEnum.All && availableEnergy > 0)
+        if (cardEnergyCost === CardEnergyEnum.All)
             return {
                 canPlayCard: true,
             };
