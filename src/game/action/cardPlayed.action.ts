@@ -147,6 +147,13 @@ export class CardPlayedAction {
                     cardTargetId: selectedEnemyId,
                 });
 
+                await this.effectService.applyAll({
+                    ctx,
+                    source,
+                    effects,
+                    selectedEnemy: selectedEnemyId,
+                });
+
                 // if the card can be played, we update the energy, apply the effects
                 // and move the card to the desired pile
                 if (exhaust) {
@@ -160,13 +167,6 @@ export class CardPlayedAction {
                         cardId,
                     });
                 }
-
-                await this.effectService.applyAll({
-                    ctx,
-                    source,
-                    effects,
-                    selectedEnemy: selectedEnemyId,
-                });
 
                 // After applying the effects, check if the current
                 // combat has ended and if so, skip all next steps
@@ -192,7 +192,10 @@ export class CardPlayedAction {
                     clientId: client.id,
                 });
 
-                const newEnergy = energy - cardEnergyCost;
+                const newEnergy =
+                    cardEnergyCost === CardEnergyEnum.All
+                        ? 0
+                        : energy - cardEnergyCost;
 
                 await this.playerService.setEnergy(
                     { client, expedition: expedition as ExpeditionDocument },
@@ -234,7 +237,7 @@ export class CardPlayedAction {
 
         // If the card has a cost of -1, this means that the card will use all the available
         // energy that the player has, also the player energy needs to be more than 0
-        if (cardEnergyCost === CardEnergyEnum.All && availableEnergy > 0)
+        if (cardEnergyCost === CardEnergyEnum.All)
             return {
                 canPlayCard: true,
             };

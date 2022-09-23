@@ -1,4 +1,5 @@
 import { forwardRef, Module } from '@nestjs/common';
+import { CardModule } from '../components/card/card.module';
 import { CombatQueueModule } from '../components/combatQueue/combatQueue.module';
 import { EnemyModule } from '../components/enemy/enemy.module';
 import { ExpeditionModule } from '../components/expedition/expedition.module';
@@ -9,6 +10,7 @@ import { ProcessModule } from '../process/process.module';
 import { StatusModule } from '../status/status.module';
 import { CardPlayedAction } from './cardPlayed.action';
 import { ChangeTurnAction } from './changeTurn.action';
+import { CreateCardAction } from './createCard.action';
 import { DiscardAllCardsAction } from './discardAllCards.action';
 import { DiscardCardAction } from './discardCard.action';
 import { DrawCardAction } from './drawCard.action';
@@ -27,12 +29,12 @@ import { SetCombatTurnAction } from './setCombatTurn.action';
 @Module({
     imports: [
         forwardRef(() => ExpeditionModule),
-        ActionModule,
         forwardRef(() => ProcessModule),
         forwardRef(() => EffectModule),
         forwardRef(() => StatusModule),
-        PlayerModule,
         forwardRef(() => EnemyModule),
+        forwardRef(() => CardModule),
+        PlayerModule,
         HistoryModule,
         CombatQueueModule,
     ],
@@ -53,6 +55,7 @@ import { SetCombatTurnAction } from './setCombatTurn.action';
         GetCurrentStepAction,
         MoveCardAction,
         ChangeTurnAction,
+        CreateCardAction,
     ],
     exports: [
         FullSyncAction,
@@ -71,6 +74,7 @@ import { SetCombatTurnAction } from './setCombatTurn.action';
         GetCurrentStepAction,
         MoveCardAction,
         ChangeTurnAction,
+        CreateCardAction,
     ],
 })
 export class ActionModule {}
