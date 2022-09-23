@@ -4,7 +4,7 @@ import { CardRarityEnum, CardTypeEnum, CardTargetedEnum } from '../card.enum';
 import { Card } from '../card.schema';
 
 export const SpikeArmorCard: Card = {
-    cardId: 70,
+    cardId: 69,
     name: 'Spike Armor',
     rarity: CardRarityEnum.Common,
     cardType: CardTypeEnum.Skill,
@@ -29,7 +29,7 @@ export const SpikeArmorCard: Card = {
 };
 
 export const SpikeArmorCardUpgraded: Card = {
-    cardId: 71,
+    cardId: 70,
     name: 'Spike Armor+',
     rarity: CardRarityEnum.Common,
     cardType: CardTypeEnum.Skill,

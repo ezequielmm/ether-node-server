@@ -6,10 +6,10 @@ import {
     StatusType,
 } from '../interfaces';
 
-export const drained: StatusEvent = {
-    name: 'drained',
-    type: StatusType.Debuff,
-    counterType: StatusCounterType.Intensity,
+export const armoredUp: StatusEvent = {
+    name: 'armoredUp',
+    type: StatusType.Buff,
+    counterType: StatusCounterType.None,
     trigger: StatusTrigger.Event,
     event: EVENT_AFTER_PLAYER_TURN_START,
 };

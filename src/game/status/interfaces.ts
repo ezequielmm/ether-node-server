@@ -164,6 +164,8 @@ export interface AttachedStatus {
 
     args: {
         counter?: number;
+        // This is for armored up status
+        cardsToAdd?: number[];
     } & Record<string, any>;
 }
 
