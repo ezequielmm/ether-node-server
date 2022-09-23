@@ -192,7 +192,10 @@ export class CardPlayedAction {
                     clientId: client.id,
                 });
 
-                const newEnergy = energy - cardEnergyCost;
+                const newEnergy =
+                    cardEnergyCost === CardEnergyEnum.All
+                        ? 0
+                        : energy - cardEnergyCost;
 
                 await this.playerService.setEnergy(
                     { client, expedition: expedition as ExpeditionDocument },
