@@ -21,9 +21,10 @@ export const ShieldPlantCard: Card = {
         effects: [
             {
                 effect: defenseEffect.name,
-                target: CardTargetedEnum.RandomEnemy,
+                target: CardTargetedEnum.Player,
                 args: {
                     value: 8,
+                    useEnergyAsMultiplier: true,
                 },
             },
         ],
@@ -46,14 +47,15 @@ export const ShieldPlantCardUpgraded: Card = {
         effects: [
             {
                 effect: defenseEffect.name,
-                target: CardTargetedEnum.RandomEnemy,
+                target: CardTargetedEnum.Player,
                 args: {
                     value: 8,
+                    useEnergyAsMultiplier: true,
                 },
             },
         ],
         statuses: [],
     },
     showPointer: false,
-    isUpgraded: false,
+    isUpgraded: true,
 };
