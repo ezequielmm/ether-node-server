@@ -15,7 +15,7 @@ export class CampGateway {
 
     constructor(private readonly expeditionService: ExpeditionService) {}
 
-    @SubscribeMessage('RecoverHealth')
+    @SubscribeMessage('CampRecoverHealth')
     async handleRecoverHealth(client: Socket): Promise<string> {
         this.logger.debug(
             `Client ${client.id} trigger message "RecoverHealth"`,
@@ -49,15 +49,14 @@ export class CampGateway {
         });
     }
 
-    @SubscribeMessage('ShowUpgradeCard')
-    async handleShowUpgradeCard(client: Socket): Promise<string> {
+    @SubscribeMessage('CampShowPlayerDeck')
+    async handleShowPlayerDeck(client: Socket): Promise<string> {
         this.logger.debug(
             `Client ${client.id} trigger message "ShowUpgradeCard"`,
         );
 
         // First we get the cards from the deck and send them to the
         // frontend
-
         const { cards } = await this.expeditionService.getPlayerState({
             clientId: client.id,
         });
@@ -67,5 +66,10 @@ export class CampGateway {
             action: SWARAction.ShowPlayerDeck,
             data: { cards },
         });
+    }
+
+    @SubscribeMessage('CampUpgradeCard')
+    async handleUpgradeCard(client: Socket, cardId: string): Promise<void> {
+        // We take the incoming card ID
     }
 }
