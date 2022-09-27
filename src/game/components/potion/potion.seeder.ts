@@ -1,8 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { DataFactory, Seeder } from 'nestjs-seeder';
+import { Seeder } from 'nestjs-seeder';
 import { Potion, PotionDocument } from './potion.schema';
 import { Model } from 'mongoose';
+import { healingPotion } from './data/healing.potion';
 
 @Injectable()
 export class PotionSeeder implements Seeder {
@@ -12,8 +13,7 @@ export class PotionSeeder implements Seeder {
     ) {}
 
     async seed(): Promise<any> {
-        const potions = DataFactory.createForClass(Potion).generate(15);
-        return this.potion.insertMany(potions);
+        return this.potion.insertMany([healingPotion]);
     }
 
     async drop(): Promise<any> {
