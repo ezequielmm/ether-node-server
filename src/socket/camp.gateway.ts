@@ -1,8 +1,7 @@
 import { Logger } from '@nestjs/common';
 import { SubscribeMessage, WebSocketGateway } from '@nestjs/websockets';
-import { randomUUID } from 'crypto';
 import { Socket } from 'socket.io';
-import { CardService } from 'src/game/components/card/card.service';
+import { UpgradeCardAction } from 'src/game/action/upgradeCard.action';
 import { ExpeditionService } from 'src/game/components/expedition/expedition.service';
 import {
     StandardResponse,
@@ -17,7 +16,7 @@ export class CampGateway {
 
     constructor(
         private readonly expeditionService: ExpeditionService,
-        private readonly cardService: CardService,
+        private readonly upgradeCardAction: UpgradeCardAction,
     ) {}
 
     @SubscribeMessage('CampRecoverHealth')
@@ -75,43 +74,11 @@ export class CampGateway {
 
     @SubscribeMessage('CampUpgradeCard')
     async handleUpgradeCard(client: Socket, cardId: string): Promise<void> {
-        // First we get the player deck to confirm that the card exists
-        const playerDeck = await this.expeditionService.getDeckCards({
-            clientId: client.id,
+        await this.upgradeCardAction.handle({
+            client,
+            cardId,
         });
 
-        // Now we check if the card id provided by the frontend exists
-        // On the player's deck and is not already upgraded
-        const cardToUpgrade = playerDeck.find((card) => {
-            return card.id === cardId && !card.isUpgraded;
-        });
-
-        if (cardToUpgrade !== null) {
-            // is cardToUpgrade is not null, it means that the card exists and we can upgrade it
-            // Now we deeestructure the card object to get the id of the upgraded card
-            const { upgradedCardId } = cardToUpgrade;
-
-            // Now we search for it on the database and copy it to the deck
-            const newCard = await this.cardService.findById(upgradedCardId);
-
-            // Now we create the new card on the player's deck and remove the old card
-            playerDeck.push({
-                id: randomUUID(),
-                isTemporary: false,
-                ...newCard,
-            });
-
-            const newDeck = playerDeck.filter((card) => {
-                return card.id !== cardId;
-            });
-
-            // Now we update the deck on the database
-            await this.expeditionService.updatePlayerDeck({
-                clientId: client.id,
-                deck: newDeck,
-            });
-
-            // TODO: how to inform the frontend the new changes
-        }
+        // TODO: how to inform the frontend the new changes
     }
 }
