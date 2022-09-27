@@ -4,6 +4,7 @@ import { Seeder } from 'nestjs-seeder';
 import { Potion, PotionDocument } from './potion.schema';
 import { Model } from 'mongoose';
 import { healingPotion } from './data/healing.potion';
+import { defensePotion } from './data/defense.potion';
 
 @Injectable()
 export class PotionSeeder implements Seeder {
@@ -13,7 +14,7 @@ export class PotionSeeder implements Seeder {
     ) {}
 
     async seed(): Promise<any> {
-        return this.potion.insertMany([healingPotion]);
+        return this.potion.insertMany([healingPotion, defensePotion]);
     }
 
     async drop(): Promise<any> {
