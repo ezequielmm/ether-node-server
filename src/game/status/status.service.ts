@@ -161,7 +161,6 @@ export class StatusService {
 
     public async mutate(dto: MutateEffectArgsDTO): Promise<EffectDTO> {
         const { ctx, collectionOwner, collection, effect, preview } = dto;
-        const { expedition } = ctx;
         let { effectDTO } = dto;
         let isUpdate = false;
 

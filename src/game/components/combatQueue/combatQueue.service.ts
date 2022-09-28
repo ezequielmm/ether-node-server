@@ -11,7 +11,7 @@ import {
     SWARAction,
     SWARMessageType,
 } from 'src/game/standardResponse/standardResponse';
-import { AttachedStatus, JsonStatus } from 'src/game/status/interfaces';
+import { AttachedStatus } from 'src/game/status/interfaces';
 import {
     IStatusesList,
     StatusGenerator,
