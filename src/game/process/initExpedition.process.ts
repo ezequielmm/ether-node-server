@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { randomUUID } from 'crypto';
+import { getTimestampInSeconds } from 'src/utils';
 import { CardDescriptionFormatter } from '../cardDescriptionFormatter/cardDescriptionFormatter';
 import { CardService } from '../components/card/card.service';
 import { CharacterClassEnum } from '../components/character/character.enum';
@@ -41,6 +42,7 @@ export class InitExpeditionProcess {
         await this.expeditionService.create({
             playerId,
             map,
+            mapSeedId: getTimestampInSeconds(),
             playerState: {
                 playerId: randomUUID(),
                 playerName,
