@@ -90,8 +90,11 @@ export class DamageEffect implements EffectHandler {
             newDefense = target.value.defense;
 
             // Here we check if the enemy was defeated to run the on a roll
+            // or executioner's blow
             // effect only if the enemy's health is 0
-            if (newHp == 0) {
+            if (newHp === 0) {
+                // If we have on a roll effect, we return energy when the
+                // enemy es defeated
                 if (onARoll && onARoll.energyToRestore) {
                     await this.effectService.apply({
                         ctx,
