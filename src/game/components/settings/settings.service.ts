@@ -19,7 +19,7 @@ export class SettingsService {
             this.logger.log(
                 {
                     eventName,
-                    eventArgs: rest,
+                    // eventArgs: rest,
                 },
                 'Event emitted',
             );

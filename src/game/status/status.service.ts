@@ -16,6 +16,7 @@ import { ExpeditionService } from '../components/expedition/expedition.service';
 import { Context, ExpeditionEntity } from '../components/interfaces';
 import { PlayerService } from '../components/player/player.service';
 import {
+    EVENT_AFTER_STATUSES_UPDATE,
     EVENT_AFTER_STATUS_ATTACH,
     EVENT_BEFORE_STATUS_ATTACH,
 } from '../constants';
@@ -203,7 +204,7 @@ export class StatusService {
         }
 
         if (isUpdate)
-            await this.updateStatuses(collectionOwner, expedition, collection);
+            await this.updateStatuses(ctx, collectionOwner, collection);
 
         return effectDTO;
     }
@@ -251,15 +252,23 @@ export class StatusService {
     }
 
     public async updateStatuses(
-        source: ExpeditionEntity,
-        expedition: Expedition,
+        ctx: Context,
+        target: ExpeditionEntity,
         collection: StatusCollection,
     ) {
-        if (PlayerService.isPlayer(source)) {
+        const { expedition } = ctx;
+
+        if (PlayerService.isPlayer(target)) {
             await this.updatePlayerStatuses(expedition, collection);
-        } else if (EnemyService.isEnemy(source)) {
-            await this.updateEnemyStatuses(expedition, source, collection);
+        } else if (EnemyService.isEnemy(target)) {
+            await this.updateEnemyStatuses(expedition, target, collection);
         }
+
+        await this.eventEmitter.emitAsync(EVENT_AFTER_STATUSES_UPDATE, {
+            ctx,
+            source: target,
+            target,
+        });
     }
 
     public async updateEnemyStatuses(
@@ -375,8 +384,8 @@ export class StatusService {
             }
             if (isUpdate)
                 await this.updateStatuses(
+                    ctx,
                     entityCollection.target,
-                    expedition,
                     collection,
                 );
         }
@@ -551,6 +560,6 @@ export class StatusService {
         );
 
         // Update the entity
-        await this.updateStatuses(entity, ctx.expedition, collection);
+        await this.updateStatuses(ctx, entity, collection);
     }
 }

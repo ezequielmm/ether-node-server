@@ -86,8 +86,8 @@ export class BolsteredStatus implements StatusEventHandler {
             );
 
             await this.statusService.updateStatuses(
+                ctx,
                 status.target,
-                ctx.expedition,
                 status.statuses,
             );
         }
