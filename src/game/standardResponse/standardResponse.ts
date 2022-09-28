@@ -52,6 +52,7 @@ export enum SWARAction {
 
 interface SWARPayload {
     message_type: SWARMessageType;
+    seed?: number;
     action: SWARAction | string;
     data: any;
 }

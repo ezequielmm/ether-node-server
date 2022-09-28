@@ -27,6 +27,9 @@ export class Expedition {
     playerId: number;
 
     @Prop()
+    mapSeedId?: number;
+
+    @Prop()
     map: IExpeditionNode[];
 
     @Prop({ type: Object })

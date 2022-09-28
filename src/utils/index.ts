@@ -142,7 +142,17 @@ export type DeepPartial<T> = T extends object
       }
     : T;
 
+/**
+ * Enum for server environments
+ */
 export enum serverEnvironments {
     development = 'development',
     production = 'production',
+}
+
+/**
+ * Returns the current UNIX timestamp in seconds
+ */
+export function getTimestampInSeconds(): number {
+    return Math.floor(Date.now() / 1000);
 }
