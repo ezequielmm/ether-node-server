@@ -45,6 +45,7 @@ import {
     HeraldOfPainCardUpgraded,
 } from './data/heraldOfPain.card';
 import { HiltPunchCard, HiltPunchCardUpgraded } from './data/hiltPunch.card';
+import { ImbueCard, ImbueCardUpgraded } from './data/imbue.card';
 import { InterceptCard, InterceptCardUpgraded } from './data/intercept.card';
 import { IntimidateCard, IntimidateCardUpgraded } from './data/intimidate.card';
 import {
@@ -242,4 +243,6 @@ export const data: Card[] = [
     TightenStrapsCardUpgraded,
     WrathCard,
     WrathCardUpgraded,
+    ImbueCard,
+    ImbueCardUpgraded,
 ];
