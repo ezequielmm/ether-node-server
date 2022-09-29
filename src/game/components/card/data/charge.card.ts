@@ -2,7 +2,6 @@ import { damageEffect } from 'src/game/effects/damage/constants';
 import { CardRarityEnum, CardTypeEnum, CardTargetedEnum } from '../card.enum';
 import { Card } from '../card.schema';
 
-
 export const ChargeCardUpgraded: Card = {
     cardId: 20,
     name: 'Charge+',

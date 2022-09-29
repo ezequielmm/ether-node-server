@@ -4,8 +4,6 @@ import { burn } from 'src/game/status/burn/constants';
 import { CardRarityEnum, CardTypeEnum, CardTargetedEnum } from '../card.enum';
 import { Card } from '../card.schema';
 
-
-
 export const KindleCardUpgraded: Card = {
     cardId: 92,
     name: 'Kindle+',

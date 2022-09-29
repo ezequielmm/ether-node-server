@@ -2,8 +2,6 @@ import { regenerate } from 'src/game/status/regenerate/contants';
 import { CardRarityEnum, CardTypeEnum, CardTargetedEnum } from '../card.enum';
 import { Card } from '../card.schema';
 
-
-
 export const InvokeBlessingCardUpgraded: Card = {
     cardId: 80,
     name: 'Invoke Blessing+',

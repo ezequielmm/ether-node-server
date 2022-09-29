@@ -13,7 +13,7 @@ export class SettingsService {
         private readonly eventEmitter: EventEmitter2,
     ) {
         this.eventEmitter.prependAny((eventName, args) => {
-            const { ctx, ...rest } = args as unknown as {
+            const { ...rest } = args as unknown as {
                 ctx: any;
             };
             this.logger.log(

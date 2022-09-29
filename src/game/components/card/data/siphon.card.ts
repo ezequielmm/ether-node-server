@@ -2,8 +2,6 @@ import { siphoning } from 'src/game/status/siphoning/constants';
 import { CardRarityEnum, CardTypeEnum, CardTargetedEnum } from '../card.enum';
 import { Card } from '../card.schema';
 
-
-
 export const SiphonCardUpgraded: Card = {
     cardId: 78,
     name: 'Siphon+',

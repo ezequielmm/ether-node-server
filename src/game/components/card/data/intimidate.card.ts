@@ -2,7 +2,6 @@ import { confusion } from 'src/game/status/confusion/constants';
 import { CardRarityEnum, CardTypeEnum, CardTargetedEnum } from '../card.enum';
 import { Card } from '../card.schema';
 
-
 export const IntimidateCardUpgraded: Card = {
     cardId: 26,
     name: 'Intimidate+',

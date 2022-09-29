@@ -3,8 +3,6 @@ import { headButt } from 'src/game/effects/headButt/constants';
 import { CardRarityEnum, CardTypeEnum, CardTargetedEnum } from '../card.enum';
 import { Card } from '../card.schema';
 
-
-
 export const HeadButtCardUpgraded: Card = {
     cardId: 34,
     name: 'Head Butt+',

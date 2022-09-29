@@ -7,8 +7,6 @@ import {
 } from '../card.enum';
 import { Card } from '../card.schema';
 
-
-
 export const FlurryCardUpgraded: Card = {
     cardId: 84,
     name: 'Flurry+',

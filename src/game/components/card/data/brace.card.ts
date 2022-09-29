@@ -3,7 +3,6 @@ import { resolve } from 'src/game/status/resolve/constants';
 import { CardRarityEnum, CardTypeEnum, CardTargetedEnum } from '../card.enum';
 import { Card } from '../card.schema';
 
-
 export const BraceCardUpgraded: Card = {
     cardId: 6,
     name: 'Brace+',

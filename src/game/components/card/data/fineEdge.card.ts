@@ -7,7 +7,6 @@ import {
 } from '../card.enum';
 import { Card } from '../card.schema';
 
-
 export const FineEdgeCardUpgraded: Card = {
     cardId: 172,
     name: 'Fine Edge+',

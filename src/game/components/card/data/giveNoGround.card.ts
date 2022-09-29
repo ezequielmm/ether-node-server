@@ -2,8 +2,6 @@ import { defenseEffect } from 'src/game/effects/defense/constants';
 import { CardRarityEnum, CardTypeEnum, CardTargetedEnum } from '../card.enum';
 import { Card } from '../card.schema';
 
-
-
 export const GiveNoGroundCardUpgraded: Card = {
     cardId: 130,
     name: 'Give no Ground+',
@@ -55,5 +53,4 @@ export const GiveNoGroundCard: Card = {
     showPointer: false,
     isUpgraded: false,
     upgradedCardId: GiveNoGroundCardUpgraded.cardId,
-
 };

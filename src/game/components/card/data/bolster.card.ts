@@ -2,7 +2,6 @@ import { bolstered } from 'src/game/status/bolstered/constants';
 import { CardRarityEnum, CardTargetedEnum, CardTypeEnum } from '../card.enum';
 import { Card } from '../card.schema';
 
-
 export const BolsterCardUpgraded: Card = {
     cardId: 48,
     name: 'Bolster',

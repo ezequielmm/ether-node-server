@@ -2,8 +2,6 @@ import { damageEffect } from 'src/game/effects/damage/constants';
 import { CardRarityEnum, CardTypeEnum, CardTargetedEnum } from '../card.enum';
 import { Card } from '../card.schema';
 
-
-
 export const ShieldBashCardUpgraded: Card = {
     cardId: 30,
     name: 'Shield Bash+',

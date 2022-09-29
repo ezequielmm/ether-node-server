@@ -2,8 +2,6 @@ import { energyEffect } from 'src/game/effects/energy/constants';
 import { CardRarityEnum, CardTypeEnum, CardTargetedEnum } from '../card.enum';
 import { Card } from '../card.schema';
 
-
-
 export const FirstMoveCardUpgraded: Card = {
     cardId: 10,
     name: 'First Move+',

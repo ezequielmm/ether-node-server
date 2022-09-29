@@ -2,8 +2,6 @@ import { healEffect } from 'src/game/effects/heal/constants';
 import { CardRarityEnum, CardTypeEnum, CardTargetedEnum } from '../card.enum';
 import { Card } from '../card.schema';
 
-
-
 export const HeavenGraceCardUpgraded: Card = {
     cardId: 76,
     name: 'Heaven’s Grace+',

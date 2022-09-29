@@ -7,8 +7,6 @@ import {
 } from '../card.enum';
 import { Card } from '../card.schema';
 
-
-
 export const KnightsResolveCardUpgraded: Card = {
     cardId: 62,
     name: 'Knights Resolve+',

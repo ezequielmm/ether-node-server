@@ -7,7 +7,6 @@ import {
 } from '../card.enum';
 import { Card } from '../card.schema';
 
-
 export const ForceFieldCardUpgraded: Card = {
     cardId: 152,
     name: 'Force Field+',

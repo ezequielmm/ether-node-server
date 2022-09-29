@@ -2,8 +2,6 @@ import { defenseEffect } from 'src/game/effects/defense/constants';
 import { CardRarityEnum, CardTypeEnum, CardTargetedEnum } from '../card.enum';
 import { Card } from '../card.schema';
 
-
-
 export const PlantFeetCardUpgraded: Card = {
     cardId: 22,
     name: 'Plant Feet+',

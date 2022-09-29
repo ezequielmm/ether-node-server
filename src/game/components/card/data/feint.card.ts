@@ -2,8 +2,6 @@ import { removeDefenseEffect } from 'src/game/effects/removeDefense/constants';
 import { CardRarityEnum, CardTypeEnum, CardTargetedEnum } from '../card.enum';
 import { Card } from '../card.schema';
 
-
-
 export const FeintCardUpgraded: Card = {
     cardId: 46,
     name: 'Feint+',

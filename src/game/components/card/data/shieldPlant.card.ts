@@ -8,8 +8,6 @@ import {
 } from '../card.enum';
 import { Card } from '../card.schema';
 
-
-
 export const ShieldPlantCardUpgraded: Card = {
     cardId: 110,
     name: 'Shield Plant+',

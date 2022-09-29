@@ -2,7 +2,6 @@ import { drawCardEffect } from 'src/game/effects/drawCard/constants';
 import { CardRarityEnum, CardTypeEnum, CardTargetedEnum } from '../card.enum';
 import { Card } from '../card.schema';
 
-
 export const KegChugCardUpgraded: Card = {
     cardId: 28,
     name: 'Keg Chug+',
@@ -53,4 +52,3 @@ export const KegChugCard: Card = {
     isUpgraded: false,
     upgradedCardId: KegChugCardUpgraded.cardId,
 };
-

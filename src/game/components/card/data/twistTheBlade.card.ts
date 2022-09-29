@@ -2,8 +2,6 @@ import { twistTheBlade } from 'src/game/effects/twistTheBlade/constants';
 import { CardRarityEnum, CardTypeEnum, CardTargetedEnum } from '../card.enum';
 import { Card } from '../card.schema';
 
-
-
 export const TwistTheBladeCardUpgraded: Card = {
     cardId: 162,
     name: 'Twist the Blade+',

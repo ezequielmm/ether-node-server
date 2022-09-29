@@ -3,7 +3,6 @@ import { drained } from 'src/game/status/drained/constants';
 import { CardRarityEnum, CardTargetedEnum, CardTypeEnum } from '../card.enum';
 import { Card } from '../card.schema';
 
-
 export const BlusterCardUpgraded: Card = {
     cardId: 64,
     name: 'Bluster+',
