@@ -9,6 +9,7 @@ import { CombatQueueService } from 'src/game/components/combatQueue/combatQueue.
 
 export interface HealArgs {
     value: number;
+    percentage: number;
 }
 
 @EffectDecorator({
@@ -27,9 +28,12 @@ export class HealEffect implements EffectHandler {
             ctx,
             source,
             target,
-            args: { currentValue: hpToAdd },
+            args: { currentValue: hpToAdd, percentage },
         } = payload;
 
+        // hpToAdd is the amount of hp to add to the hpCurrent value
+
+        // Here we check is the target to heal is the player
         if (PlayerService.isPlayer(target)) {
             const {
                 value: {
@@ -37,7 +41,12 @@ export class HealEffect implements EffectHandler {
                 },
             } = target;
 
-            const newHp = Math.min(hpMax, hpCurrent + hpToAdd);
+            const newHp = this.calculateHp(
+                hpMax,
+                hpCurrent,
+                hpToAdd,
+                percentage,
+            );
 
             await this.playerService.setHp(ctx, newHp);
 
@@ -56,14 +65,21 @@ export class HealEffect implements EffectHandler {
             });
         }
 
+        // And here we check is the target to heal is the enemy
         if (EnemyService.isEnemy(target)) {
             const {
                 value: { hpCurrent, hpMax },
             } = target;
 
-            const newHp = Math.min(hpMax, hpCurrent + hpToAdd);
+            const newHp = this.calculateHp(
+                hpMax,
+                hpCurrent,
+                hpToAdd,
+                percentage,
+            );
 
             await this.enemyService.setHp(ctx, target.value.id, newHp);
+
             await this.combatQueueService.push({
                 ctx,
                 source,
@@ -78,5 +94,22 @@ export class HealEffect implements EffectHandler {
                 },
             });
         }
+    }
+
+    private calculateHp(
+        hpMax: number,
+        hpCurrent: number,
+        hpToAdd: number,
+        percentage: number,
+    ): number {
+        let newHealth = hpCurrent + hpToAdd;
+
+        /// Here we check if we have a percentega to check
+        if (percentage > 0) {
+            // if we have a percentage we recover the percentege of max hp
+            newHealth = hpCurrent + hpCurrent * percentage;
+        }
+
+        return Math.floor(Math.min(hpMax, newHealth));
     }
 }
