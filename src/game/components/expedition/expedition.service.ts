@@ -16,6 +16,7 @@ import {
     UpdateClientIdDTO,
     UpdateExpeditionDTO,
     UpdateHandPilesDTO,
+    UpdatePlayerDeckDTO,
 } from './expedition.dto';
 import { ExpeditionStatusEnum } from './expedition.enum';
 import {
@@ -246,16 +247,18 @@ export class ExpeditionService {
 
         const clientField = getClientIdField(clientId);
 
+        const objectRoute = 'currentNode.data.player.cards';
+
         const piles = {
-            ...(hand && { 'currentNode.data.player.cards.hand': hand }),
+            ...(hand && { [`${objectRoute}.hand`]: hand }),
             ...(exhausted && {
-                'currentNode.data.player.cards.exhausted': exhausted,
+                [`${objectRoute}.exhausted`]: exhausted,
             }),
             ...(draw && {
-                'currentNode.data.player.cards.draw': draw,
+                [`${objectRoute}.draw`]: draw,
             }),
             ...(discard && {
-                'currentNode.data.player.cards.discard': discard,
+                [`${objectRoute}.discard`]: discard,
             }),
         };
 
@@ -329,5 +332,26 @@ export class ExpeditionService {
         } else if (EnemyService.isEnemy(target)) {
             return this.enemyService.isDead(target);
         }
+    }
+
+    async updatePlayerDeck(payload: UpdatePlayerDeckDTO): Promise<Expedition> {
+        const { clientId, deck } = payload;
+
+        const clientField = getClientIdField(clientId);
+
+        return await this.expedition
+            .findOneAndUpdate(
+                {
+                    [clientField]: clientId,
+                    status: ExpeditionStatusEnum.InProgress,
+                },
+                {
+                    $set: {
+                        'playerState.cards': deck,
+                    },
+                },
+                { new: true },
+            )
+            .lean();
     }
 }
