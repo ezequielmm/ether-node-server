@@ -147,13 +147,6 @@ export class CardPlayedAction {
                     cardTargetId: selectedEnemyId,
                 });
 
-                await this.effectService.applyAll({
-                    ctx,
-                    source,
-                    effects,
-                    selectedEnemy: selectedEnemyId,
-                });
-
                 // if the card can be played, we update the energy, apply the effects
                 // and move the card to the desired pile
                 if (exhaust) {
@@ -167,6 +160,13 @@ export class CardPlayedAction {
                         cardId,
                     });
                 }
+
+                await this.effectService.applyAll({
+                    ctx,
+                    source,
+                    effects,
+                    selectedEnemy: selectedEnemyId,
+                });
 
                 // After applying the effects, check if the current
                 // combat has ended and if so, skip all next steps
