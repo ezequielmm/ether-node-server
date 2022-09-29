@@ -50,6 +50,9 @@ export class Card {
 
     @Prop({ default: false })
     isUpgraded: boolean;
+
+    @Prop()
+    upgradedCardId?: number;
 }
 
 export const CardSchema = SchemaFactory.createForClass(Card);
