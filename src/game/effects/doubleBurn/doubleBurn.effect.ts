@@ -23,10 +23,7 @@ export class DoubleBurnEffect implements EffectHandler {
     ) {}
 
     async handle(dto: EffectDTO): Promise<void> {
-        const {
-            target,
-            ctx: { expedition },
-        } = dto;
+        const { target, ctx } = dto;
 
         let statuses: StatusCollection;
 
@@ -41,11 +38,7 @@ export class DoubleBurnEffect implements EffectHandler {
         forEach(burnStatuses, (status) => (status.args.counter *= 2));
 
         if (burnStatuses.length) {
-            await this.statusService.updateStatuses(
-                target,
-                expedition,
-                statuses,
-            );
+            await this.statusService.updateStatuses(ctx, target, statuses);
 
             await this.combatQueueService.push({
                 ctx: dto.ctx,

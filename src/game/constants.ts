@@ -16,6 +16,9 @@ export const EVENT_AFTER_CARD_PLAY = 'afterCardPlay';
 export const EVENT_BEFORE_STATUS_ATTACH = 'beforeStatusAttach';
 export const EVENT_AFTER_STATUS_ATTACH = 'afterStatusAttach';
 
+export const EVENT_BEFORE_STATUSES_UPDATE = 'beforeStatusesUpdate';
+export const EVENT_AFTER_STATUSES_UPDATE = 'afterStatusesUpdate';
+
 export const EVENT_BEFORE_ENEMY_INTENTIONS = 'beforeEnemyIntentions';
 
 export const EVENT_AFTER_DAMAGE_EFFECT = 'damageEffect';
