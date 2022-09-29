@@ -3,44 +3,7 @@ import { doubleResolve } from 'src/game/effects/doubleResolve/constants';
 import { CardRarityEnum, CardTypeEnum, CardTargetedEnum } from '../card.enum';
 import { Card } from '../card.schema';
 
-export const UltraLethalityCard: Card = {
-    cardId: 147,
-    name: 'Ultra Lethality',
-    rarity: CardRarityEnum.Legendary,
-    cardType: CardTypeEnum.Attack,
-    pool: 'knight',
-    energy: 2,
-    description: `Deal {${damageEffect.name}} damage twice, with double the effect of Resolve`,
-    keywords: [],
-    properties: {
-        effects: [
-            {
-                effect: damageEffect.name,
-                target: CardTargetedEnum.Enemy,
-                args: {
-                    value: 10,
-                },
-            },
-            {
-                effect: damageEffect.name,
-                target: CardTargetedEnum.Enemy,
-                args: {
-                    value: 10,
-                },
-            },
-            {
-                effect: doubleResolve.name,
-                target: CardTargetedEnum.Player,
-                args: {
-                    value: Number.NaN,
-                },
-            },
-        ],
-        statuses: [],
-    },
-    showPointer: true,
-    isUpgraded: false,
-};
+
 
 export const UltraLethalityCardUpgraded: Card = {
     cardId: 148,
@@ -79,4 +42,44 @@ export const UltraLethalityCardUpgraded: Card = {
     },
     showPointer: true,
     isUpgraded: false,
+};
+
+export const UltraLethalityCard: Card = {
+    cardId: 147,
+    name: 'Ultra Lethality',
+    rarity: CardRarityEnum.Legendary,
+    cardType: CardTypeEnum.Attack,
+    pool: 'knight',
+    energy: 2,
+    description: `Deal {${damageEffect.name}} damage twice, with double the effect of Resolve`,
+    keywords: [],
+    properties: {
+        effects: [
+            {
+                effect: damageEffect.name,
+                target: CardTargetedEnum.Enemy,
+                args: {
+                    value: 10,
+                },
+            },
+            {
+                effect: damageEffect.name,
+                target: CardTargetedEnum.Enemy,
+                args: {
+                    value: 10,
+                },
+            },
+            {
+                effect: doubleResolve.name,
+                target: CardTargetedEnum.Player,
+                args: {
+                    value: Number.NaN,
+                },
+            },
+        ],
+        statuses: [],
+    },
+    showPointer: true,
+    isUpgraded: false,
+    upgradedCardId: UltraLethalityCardUpgraded.cardId,
 };

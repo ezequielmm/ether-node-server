@@ -3,6 +3,32 @@ import { resolve } from 'src/game/status/resolve/constants';
 import { CardRarityEnum, CardTypeEnum, CardTargetedEnum } from '../card.enum';
 import { Card } from '../card.schema';
 
+
+export const BraceCardUpgraded: Card = {
+    cardId: 6,
+    name: 'Brace+',
+    rarity: CardRarityEnum.Starter,
+    cardType: CardTypeEnum.Defend,
+    pool: 'knight',
+    energy: 2,
+    description: `Gain 11 Defense`,
+    keywords: [],
+    properties: {
+        effects: [
+            {
+                effect: defenseEffect.name,
+                target: CardTargetedEnum.Player,
+                args: {
+                    value: 11,
+                },
+            },
+        ],
+        statuses: [],
+    },
+    showPointer: false,
+    isUpgraded: true,
+};
+
 export const BraceCard: Card = {
     cardId: 5,
     name: 'Brace',
@@ -34,29 +60,5 @@ export const BraceCard: Card = {
     },
     showPointer: false,
     isUpgraded: false,
-};
-
-export const BraceCardUpgraded: Card = {
-    cardId: 6,
-    name: 'Brace+',
-    rarity: CardRarityEnum.Starter,
-    cardType: CardTypeEnum.Defend,
-    pool: 'knight',
-    energy: 2,
-    description: `Gain 11 Defense`,
-    keywords: [],
-    properties: {
-        effects: [
-            {
-                effect: defenseEffect.name,
-                target: CardTargetedEnum.Player,
-                args: {
-                    value: 11,
-                },
-            },
-        ],
-        statuses: [],
-    },
-    showPointer: false,
-    isUpgraded: true,
+    upgradedCardId: BraceCardUpgraded.cardId,
 };

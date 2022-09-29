@@ -2,30 +2,6 @@ import { resolve } from 'src/game/status/resolve/constants';
 import { CardRarityEnum, CardTypeEnum, CardTargetedEnum } from '../card.enum';
 import { Card } from '../card.schema';
 
-export const BulkUpCard: Card = {
-    cardId: 57,
-    name: 'Bulk Up',
-    rarity: CardRarityEnum.Common,
-    cardType: CardTypeEnum.Power,
-    pool: 'knight',
-    energy: 2,
-    description: `Gain 2 Resolve`,
-    keywords: [],
-    properties: {
-        effects: [],
-        statuses: [
-            {
-                name: resolve.name,
-                attachTo: CardTargetedEnum.Player,
-                args: {
-                    counter: 2,
-                },
-            },
-        ],
-    },
-    showPointer: false,
-    isUpgraded: false,
-};
 
 export const BulkUpCardUpgraded: Card = {
     cardId: 58,
@@ -50,4 +26,30 @@ export const BulkUpCardUpgraded: Card = {
     },
     showPointer: false,
     isUpgraded: true,
+};
+
+export const BulkUpCard: Card = {
+    cardId: 57,
+    name: 'Bulk Up',
+    rarity: CardRarityEnum.Common,
+    cardType: CardTypeEnum.Power,
+    pool: 'knight',
+    energy: 2,
+    description: `Gain 2 Resolve`,
+    keywords: [],
+    properties: {
+        effects: [],
+        statuses: [
+            {
+                name: resolve.name,
+                attachTo: CardTargetedEnum.Player,
+                args: {
+                    counter: 2,
+                },
+            },
+        ],
+    },
+    showPointer: false,
+    isUpgraded: false,
+    upgradedCardId: BulkUpCardUpgraded.cardId,
 };
