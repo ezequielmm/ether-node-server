@@ -2,31 +2,6 @@ import { imbued } from 'src/game/status/imbued/constants';
 import { CardRarityEnum, CardTypeEnum, CardTargetedEnum } from '../card.enum';
 import { Card } from '../card.schema';
 
-export const ImbueCard: Card = {
-    cardId: 149,
-    name: 'Imbue',
-    rarity: CardRarityEnum.Legendary,
-    cardType: CardTypeEnum.Skill,
-    pool: 'knight',
-    energy: 1,
-    description: `Your next card this turn is played twice`,
-    keywords: [],
-    properties: {
-        effects: [],
-        statuses: [
-            {
-                name: imbued.name,
-                attachTo: CardTargetedEnum.Player,
-                args: {
-                    counter: Number.NaN,
-                },
-            },
-        ],
-    },
-    showPointer: false,
-    isUpgraded: false,
-};
-
 export const ImbueCardUpgraded: Card = {
     cardId: 150,
     name: 'Imbue+',
@@ -51,3 +26,31 @@ export const ImbueCardUpgraded: Card = {
     showPointer: false,
     isUpgraded: true,
 };
+
+export const ImbueCard: Card = {
+    cardId: 149,
+    name: 'Imbue',
+    rarity: CardRarityEnum.Legendary,
+    cardType: CardTypeEnum.Skill,
+    pool: 'knight',
+    energy: 1,
+    description: `Your next card this turn is played twice`,
+    keywords: [],
+    properties: {
+        effects: [],
+        statuses: [
+            {
+                name: imbued.name,
+                attachTo: CardTargetedEnum.Player,
+                args: {
+                    counter: Number.NaN,
+                },
+            },
+        ],
+    },
+    showPointer: false,
+    isUpgraded: false,
+    upgradedCardId: ImbueCardUpgraded.cardId
+};
+
+
