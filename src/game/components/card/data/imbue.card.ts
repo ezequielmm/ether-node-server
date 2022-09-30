@@ -52,5 +52,3 @@ export const ImbueCard: Card = {
     isUpgraded: false,
     upgradedCardId: ImbueCardUpgraded.cardId
 };
-
-
