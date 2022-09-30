@@ -1,6 +1,7 @@
 import { Logger } from '@nestjs/common';
 import { SubscribeMessage, WebSocketGateway } from '@nestjs/websockets';
 import { Socket } from 'socket.io';
+import { UpgradeCardAction } from 'src/game/action/upgradeCard.action';
 import { ExpeditionService } from 'src/game/components/expedition/expedition.service';
 import {
     StandardResponse,
@@ -13,9 +14,12 @@ import { corsSocketSettings } from './socket.enum';
 export class CampGateway {
     private readonly logger: Logger = new Logger(CampGateway.name);
 
-    constructor(private readonly expeditionService: ExpeditionService) {}
+    constructor(
+        private readonly expeditionService: ExpeditionService,
+        private readonly upgradeCardAction: UpgradeCardAction,
+    ) {}
 
-    @SubscribeMessage('RecoverHealth')
+    @SubscribeMessage('CampRecoverHealth')
     async handleRecoverHealth(client: Socket): Promise<string> {
         this.logger.debug(
             `Client ${client.id} trigger message "RecoverHealth"`,
@@ -49,15 +53,14 @@ export class CampGateway {
         });
     }
 
-    @SubscribeMessage('ShowUpgradeCard')
-    async handleShowUpgradeCard(client: Socket): Promise<string> {
+    @SubscribeMessage('CampShowPlayerDeck')
+    async handleShowPlayerDeck(client: Socket): Promise<string> {
         this.logger.debug(
             `Client ${client.id} trigger message "ShowUpgradeCard"`,
         );
 
         // First we get the cards from the deck and send them to the
         // frontend
-
         const { cards } = await this.expeditionService.getPlayerState({
             clientId: client.id,
         });
@@ -67,5 +70,15 @@ export class CampGateway {
             action: SWARAction.ShowPlayerDeck,
             data: { cards },
         });
+    }
+
+    @SubscribeMessage('CampUpgradeCard')
+    async handleUpgradeCard(client: Socket, cardId: string): Promise<void> {
+        await this.upgradeCardAction.handle({
+            client,
+            cardId,
+        });
+
+        // TODO: how to inform the frontend the new changes
     }
 }
