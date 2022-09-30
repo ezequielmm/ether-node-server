@@ -50,5 +50,5 @@ export const ImbueCard: Card = {
     },
     showPointer: false,
     isUpgraded: false,
-    upgradedCardId: ImbueCardUpgraded.cardId
+    upgradedCardId: ImbueCardUpgraded.cardId,
 };
