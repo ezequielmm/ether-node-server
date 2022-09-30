@@ -64,7 +64,7 @@ export const actCconfigAlternatives = [
                 },
                 {
                     type: 'camp',
-                    subType: 'regular',
+                    subType: 'camp_regular',
                     chance: 10,
                     config: {},
                 },
@@ -119,7 +119,7 @@ export const actCconfigAlternatives = [
                     },
                     {
                         type: 'camp',
-                        subType: 'regular',
+                        subType: 'camp_regular',
                         chance: 30,
                         config: {},
                     },
@@ -161,7 +161,7 @@ export const actCconfigAlternatives = [
                     },
                     {
                         type: 'camp',
-                        subType: 'regular',
+                        subType: 'camp_regular',
                         chance: 30,
                         config: {},
                     },
@@ -311,7 +311,7 @@ export const actCconfigAlternatives = [
                     },
                     {
                         type: 'camp',
-                        subType: 'regular',
+                        subType: 'camp_regular',
                         chance: 40,
                         config: {},
                     },
