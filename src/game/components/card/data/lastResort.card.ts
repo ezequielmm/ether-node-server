@@ -7,8 +7,6 @@ import {
 } from '../card.enum';
 import { Card } from '../card.schema';
 
-
-
 export const LastResortCardUpgraded: Card = {
     cardId: 142,
     name: 'Last Resort+',

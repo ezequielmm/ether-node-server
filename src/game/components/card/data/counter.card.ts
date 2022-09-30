@@ -3,8 +3,6 @@ import { defenseEffect } from 'src/game/effects/defense/constants';
 import { CardRarityEnum, CardTypeEnum, CardTargetedEnum } from '../card.enum';
 import { Card } from '../card.schema';
 
-
-
 export const CounterCardUpgraded: Card = {
     cardId: 8,
     name: 'Counter+',

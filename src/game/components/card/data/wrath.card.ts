@@ -3,8 +3,6 @@ import { resolve } from 'src/game/status/resolve/constants';
 import { CardRarityEnum, CardTargetedEnum, CardTypeEnum } from '../card.enum';
 import { Card } from '../card.schema';
 
-
-
 export const WrathCardUpgraded: Card = {
     cardId: 117,
     name: 'Wrath+',

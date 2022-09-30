@@ -2,8 +2,6 @@ import { damageEffect } from 'src/game/effects/damage/constants';
 import { CardRarityEnum, CardTypeEnum, CardTargetedEnum } from '../card.enum';
 import { Card } from '../card.schema';
 
-
-
 export const RoundHouseCardUpgraded: Card = {
     cardId: 128,
     name: 'Roundhouse+',
@@ -29,7 +27,6 @@ export const RoundHouseCardUpgraded: Card = {
     showPointer: true,
     isUpgraded: true,
 };
-
 
 export const RoundHouseCard: Card = {
     cardId: 127,

@@ -3,7 +3,6 @@ import { CardSelectionScreenOriginPileEnum } from '../../cardSelectionScreen/car
 import { CardRarityEnum, CardTargetedEnum, CardTypeEnum } from '../card.enum';
 import { Card } from '../card.schema';
 
-
 export const BackflipCardUpgraded: Card = {
     cardId: 122,
     name: 'Backflip+',

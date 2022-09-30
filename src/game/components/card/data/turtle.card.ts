@@ -2,8 +2,6 @@ import { turtling } from 'src/game/status/turtling/constants';
 import { CardRarityEnum, CardTypeEnum, CardTargetedEnum } from '../card.enum';
 import { Card } from '../card.schema';
 
-
-
 export const TurtleCardUpgraded: Card = {
     cardId: 16,
     name: 'Turtle+',

@@ -2,8 +2,6 @@ import { gifted } from 'src/game/status/gifted/constants';
 import { CardRarityEnum, CardTargetedEnum, CardTypeEnum } from '../card.enum';
 import { Card } from '../card.schema';
 
-
-
 export const DivineGiftCardUpgraded: Card = {
     cardId: 52,
     name: 'Divine Gift+',

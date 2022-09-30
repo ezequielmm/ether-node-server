@@ -7,7 +7,6 @@ import {
 } from '../card.enum';
 import { Card } from '../card.schema';
 
-
 export const FineEdgeCardUpgraded: Card = {
     cardId: 172,
     name: 'Fine Edge+',
@@ -30,7 +29,7 @@ export const FineEdgeCardUpgraded: Card = {
         statuses: [],
     },
     showPointer: true,
-    isUpgraded: false,
+    isUpgraded: true,
 };
 
 export const FineEdgeCard: Card = {

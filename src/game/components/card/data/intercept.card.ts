@@ -2,8 +2,6 @@ import { intercept } from 'src/game/status/intercept/constants';
 import { CardRarityEnum, CardTargetedEnum, CardTypeEnum } from '../card.enum';
 import { Card } from '../card.schema';
 
-
-
 export const InterceptCardUpgraded: Card = {
     cardId: 50,
     name: 'Intercept+',

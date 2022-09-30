@@ -2,8 +2,6 @@ import { sharpenBlade } from 'src/game/status/sharpenBlade/constants';
 import { CardRarityEnum, CardTypeEnum, CardTargetedEnum } from '../card.enum';
 import { Card } from '../card.schema';
 
-
-
 export const SharpenBladeCardUpgraded: Card = {
     cardId: 56,
     name: 'Sharpen Blade',
@@ -27,7 +25,7 @@ export const SharpenBladeCardUpgraded: Card = {
         ],
     },
     showPointer: false,
-    isUpgraded: false,
+    isUpgraded: true,
 };
 
 export const SharpenBladeCard: Card = {

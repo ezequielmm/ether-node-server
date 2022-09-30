@@ -3,8 +3,6 @@ import { knockDown } from 'src/game/effects/knockDown/constants';
 import { CardRarityEnum, CardTypeEnum, CardTargetedEnum } from '../card.enum';
 import { Card } from '../card.schema';
 
-
-
 export const KnockDownCardUpgraded: Card = {
     cardId: 108,
     name: 'Knock Down+',

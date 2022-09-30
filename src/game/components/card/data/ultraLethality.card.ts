@@ -3,8 +3,6 @@ import { doubleResolve } from 'src/game/effects/doubleResolve/constants';
 import { CardRarityEnum, CardTypeEnum, CardTargetedEnum } from '../card.enum';
 import { Card } from '../card.schema';
 
-
-
 export const UltraLethalityCardUpgraded: Card = {
     cardId: 148,
     name: 'Ultra Lethality+',

@@ -3,8 +3,6 @@ import { burn } from 'src/game/status/burn/constants';
 import { CardRarityEnum, CardTypeEnum, CardTargetedEnum } from '../card.enum';
 import { Card } from '../card.schema';
 
-
-
 export const TorchCardUpgraded: Card = {
     cardId: 90,
     name: 'Torch+',

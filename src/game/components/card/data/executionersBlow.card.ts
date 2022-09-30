@@ -2,8 +2,6 @@ import { damageEffect } from 'src/game/effects/damage/constants';
 import { CardRarityEnum, CardTargetedEnum, CardTypeEnum } from '../card.enum';
 import { Card } from '../card.schema';
 
-
-
 export const ExecutionersBlowCardUpgraded: Card = {
     cardId: 156,
     name: 'Executioner’s Blow+',

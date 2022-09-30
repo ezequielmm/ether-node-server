@@ -2,8 +2,6 @@ import { drawCardEffect } from 'src/game/effects/drawCard/constants';
 import { CardRarityEnum, CardTypeEnum, CardTargetedEnum } from '../card.enum';
 import { Card } from '../card.schema';
 
-
-
 export const RecoverCardUpgraded: Card = {
     cardId: 44,
     name: 'Recover+',

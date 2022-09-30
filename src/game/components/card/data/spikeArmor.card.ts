@@ -3,8 +3,6 @@ import { spikesStatus } from 'src/game/status/spikes/constants';
 import { CardRarityEnum, CardTypeEnum, CardTargetedEnum } from '../card.enum';
 import { Card } from '../card.schema';
 
-
-
 export const SpikeArmorCardUpgraded: Card = {
     cardId: 70,
     name: 'Spike Armor+',

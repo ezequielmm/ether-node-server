@@ -1,10 +1,7 @@
-
 import { fatigue } from 'src/game/status/fatigue/constants';
 import { resolve } from 'src/game/status/resolve/constants';
 import { CardRarityEnum, CardTypeEnum, CardTargetedEnum } from '../card.enum';
 import { Card } from '../card.schema';
-
-
 
 export const ShoutCardUpgraded: Card = {
     cardId: 66,

@@ -2,8 +2,6 @@ import { dodge } from 'src/game/status/dodge/constants';
 import { CardRarityEnum, CardTypeEnum, CardTargetedEnum } from '../card.enum';
 import { Card } from '../card.schema';
 
-
-
 export const FadeCardUpgraded: Card = {
     cardId: 42,
     name: 'Fade+',

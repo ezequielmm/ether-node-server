@@ -2,7 +2,6 @@ import { repositionEffect } from 'src/game/effects/reposition/contants';
 import { CardRarityEnum, CardTypeEnum, CardTargetedEnum } from '../card.enum';
 import { Card } from '../card.schema';
 
-
 export const RepositionCardUpgraded: Card = {
     cardId: 126,
     name: 'Reposition',
@@ -25,7 +24,7 @@ export const RepositionCardUpgraded: Card = {
         statuses: [],
     },
     showPointer: false,
-    isUpgraded: false,
+    isUpgraded: true,
 };
 
 export const RepositionCard: Card = {

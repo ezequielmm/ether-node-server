@@ -2,8 +2,6 @@ import { imbued } from 'src/game/status/imbued/constants';
 import { CardRarityEnum, CardTypeEnum, CardTargetedEnum } from '../card.enum';
 import { Card } from '../card.schema';
 
-
-
 export const TightenGripCardUpgraded: Card = {
     cardId: 112,
     name: 'Tighten Grip+',

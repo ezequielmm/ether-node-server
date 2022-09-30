@@ -10,8 +10,6 @@ import {
 } from '../card.enum';
 import { Card } from '../card.schema';
 
-
-
 export const GNCardUpgraded: Card = {
     cardId: 120,
     name: 'GN+',

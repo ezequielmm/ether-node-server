@@ -3,7 +3,6 @@ import { distraught } from 'src/game/status/distraught/constants';
 import { CardRarityEnum, CardTypeEnum, CardTargetedEnum } from '../card.enum';
 import { Card } from '../card.schema';
 
-
 export const BackHandCardUpgraded: Card = {
     cardId: 68,
     name: 'Backhand+',

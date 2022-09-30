@@ -2,8 +2,6 @@ import { prayingStatus } from 'src/game/status/praying/constants';
 import { CardRarityEnum, CardTypeEnum, CardTargetedEnum } from '../card.enum';
 import { Card } from '../card.schema';
 
-
-
 export const PrayCardUpgraded: Card = {
     cardId: 24,
     name: 'Pray+',
@@ -26,7 +24,7 @@ export const PrayCardUpgraded: Card = {
         ],
     },
     showPointer: false,
-    isUpgraded: false,
+    isUpgraded: true,
 };
 
 export const PrayCard: Card = {

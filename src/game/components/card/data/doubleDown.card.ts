@@ -2,8 +2,6 @@ import { doubleDown } from 'src/game/status/doubleDown/contants';
 import { CardRarityEnum, CardTypeEnum, CardTargetedEnum } from '../card.enum';
 import { Card } from '../card.schema';
 
-
-
 export const DoubleDownCardUpgraded: Card = {
     cardId: 114,
     name: 'Double Down+',

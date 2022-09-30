@@ -5,8 +5,6 @@ import {
 import { CardRarityEnum, CardTypeEnum, CardTargetedEnum } from '../card.enum';
 import { Card } from '../card.schema';
 
-
-
 export const TasteOfBloodCardUpgraded: Card = {
     cardId: 106,
     name: 'Taste of Blood+',

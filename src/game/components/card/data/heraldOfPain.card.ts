@@ -2,8 +2,6 @@ import { heraldDelayedStatus } from 'src/game/status/heraldDelayed/constants';
 import { CardRarityEnum, CardTypeEnum, CardTargetedEnum } from '../card.enum';
 import { Card } from '../card.schema';
 
-
-
 export const HeraldOfPainCardUpgraded: Card = {
     cardId: 96,
     name: 'Herald of Pain+',

@@ -2,8 +2,6 @@ import { armoredUp } from 'src/game/status/armoredUp/contants';
 import { CardRarityEnum, CardTypeEnum, CardTargetedEnum } from '../card.enum';
 import { Card } from '../card.schema';
 
-
-
 export const TightenStrapsCardUpgraded: Card = {
     cardId: 72,
     name: 'Tighten Straps+',
