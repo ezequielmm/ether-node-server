@@ -39,10 +39,6 @@ export class DoubleResolveEffect implements EffectHandler {
             status.args.counter *= 2;
         });
 
-        await this.statusService.updateStatuses(
-            target,
-            dto.ctx.expedition,
-            statuses,
-        );
+        await this.statusService.updateStatuses(dto.ctx, target, statuses);
     }
 }

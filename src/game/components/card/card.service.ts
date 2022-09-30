@@ -8,7 +8,7 @@ import { EVENT_BEFORE_PLAYER_TURN_END } from 'src/game/constants';
 import { Context } from '../interfaces';
 import { CardKeywordEnum, CardTypeEnum } from './card.enum';
 import { Card, CardDocument } from './card.schema';
-import { CardId } from './card.type';
+import { CardId, getCardIdField } from './card.type';
 
 @Injectable()
 export class CardService {
@@ -27,9 +27,8 @@ export class CardService {
     }
 
     async findById(id: CardId): Promise<CardDocument> {
-        return typeof id === 'string'
-            ? this.card.findById(id).lean()
-            : this.card.findOne({ cardId: id }).lean();
+        const field = getCardIdField(id);
+        return this.card.findOne({ [field]: id }).lean();
     }
 
     async findCardsById(cards: number[]): Promise<CardDocument[]> {
@@ -37,7 +36,7 @@ export class CardService {
     }
 
     @OnEvent(EVENT_BEFORE_PLAYER_TURN_END)
-    async onBeforePlayerTurnEnd(payload) {
+    async onBeforePlayerTurnEnd(payload: { ctx: Context }) {
         const ctx = payload.ctx as Context;
 
         const fadeCards = filter(
