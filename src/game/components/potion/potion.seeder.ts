@@ -5,6 +5,7 @@ import { Potion, PotionDocument } from './potion.schema';
 import { Model } from 'mongoose';
 import { healingPotion } from './data/healing.potion';
 import { defensePotion } from './data/defense.potion';
+import { springWaterFlask } from './data/springWaterFlask.potion';
 
 @Injectable()
 export class PotionSeeder implements Seeder {
@@ -14,7 +15,11 @@ export class PotionSeeder implements Seeder {
     ) {}
 
     async seed(): Promise<any> {
-        return this.potion.insertMany([healingPotion, defensePotion]);
+        return this.potion.insertMany([
+            healingPotion,
+            defensePotion,
+            springWaterFlask,
+        ]);
     }
 
     async drop(): Promise<any> {
