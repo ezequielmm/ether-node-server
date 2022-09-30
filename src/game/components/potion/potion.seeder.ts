@@ -10,6 +10,7 @@ import { spiritElixir } from './data/spiritElixir.potion';
 import { potionOfLevitation } from './data/potion0fLevitation.potion';
 import { ichorDraft } from './data/IchorDraft.potion';
 import { damagePotion } from './data/damage.potion';
+import { brainTonic } from './data/brainTonic.potion';
 
 @Injectable()
 export class PotionSeeder implements Seeder {
@@ -27,6 +28,7 @@ export class PotionSeeder implements Seeder {
             potionOfLevitation,
             ichorDraft,
             damagePotion,
+            brainTonic,
         ]);
     }
 
