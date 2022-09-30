@@ -6,6 +6,7 @@ import { Model } from 'mongoose';
 import { healingPotion } from './data/healing.potion';
 import { defensePotion } from './data/defense.potion';
 import { springWaterFlask } from './data/springWaterFlask.potion';
+import { spiritElixir } from './data/spiritElixir.potion';
 
 @Injectable()
 export class PotionSeeder implements Seeder {
@@ -19,6 +20,7 @@ export class PotionSeeder implements Seeder {
             healingPotion,
             defensePotion,
             springWaterFlask,
+            spiritElixir,
         ]);
     }
 
