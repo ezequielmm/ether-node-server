@@ -24,7 +24,7 @@ export const RepositionCardUpgraded: Card = {
         statuses: [],
     },
     showPointer: false,
-    isUpgraded: false,
+    isUpgraded: true,
 };
 
 export const RepositionCard: Card = {

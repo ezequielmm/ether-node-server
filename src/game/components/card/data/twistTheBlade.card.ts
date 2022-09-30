@@ -24,7 +24,7 @@ export const TwistTheBladeCardUpgraded: Card = {
         statuses: [],
     },
     showPointer: true,
-    isUpgraded: false,
+    isUpgraded: true,
 };
 
 export const TwistTheBladeCard: Card = {

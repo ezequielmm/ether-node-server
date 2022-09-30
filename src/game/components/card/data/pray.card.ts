@@ -24,7 +24,7 @@ export const PrayCardUpgraded: Card = {
         ],
     },
     showPointer: false,
-    isUpgraded: false,
+    isUpgraded: true,
 };
 
 export const PrayCard: Card = {

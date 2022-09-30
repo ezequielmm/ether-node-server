@@ -29,7 +29,7 @@ export const FineEdgeCardUpgraded: Card = {
         statuses: [],
     },
     showPointer: true,
-    isUpgraded: false,
+    isUpgraded: true,
 };
 
 export const FineEdgeCard: Card = {

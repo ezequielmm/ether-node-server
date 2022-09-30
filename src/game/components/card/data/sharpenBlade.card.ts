@@ -25,7 +25,7 @@ export const SharpenBladeCardUpgraded: Card = {
         ],
     },
     showPointer: false,
-    isUpgraded: false,
+    isUpgraded: true,
 };
 
 export const SharpenBladeCard: Card = {
