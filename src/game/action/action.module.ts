@@ -25,6 +25,7 @@ import { GetPlayerInfoAction } from './getPlayerInfo.action';
 import { GetStatusesAction } from './getStatuses.action';
 import { MoveCardAction } from './moveCard.action';
 import { SetCombatTurnAction } from './setCombatTurn.action';
+import { UpgradeCardAction } from './upgradeCard.action';
 
 @Module({
     imports: [
@@ -56,6 +57,7 @@ import { SetCombatTurnAction } from './setCombatTurn.action';
         MoveCardAction,
         ChangeTurnAction,
         CreateCardAction,
+        UpgradeCardAction,
     ],
     exports: [
         FullSyncAction,
@@ -75,6 +77,7 @@ import { SetCombatTurnAction } from './setCombatTurn.action';
         MoveCardAction,
         ChangeTurnAction,
         CreateCardAction,
+        UpgradeCardAction,
     ],
 })
 export class ActionModule {}

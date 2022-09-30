@@ -45,6 +45,7 @@ import {
     HeraldOfPainCardUpgraded,
 } from './data/heraldOfPain.card';
 import { HiltPunchCard, HiltPunchCardUpgraded } from './data/hiltPunch.card';
+import { ImbueCard, ImbueCardUpgraded } from './data/imbue.card';
 import { InterceptCard, InterceptCardUpgraded } from './data/intercept.card';
 import { IntimidateCard, IntimidateCardUpgraded } from './data/intimidate.card';
 import {
@@ -59,6 +60,7 @@ import {
 } from './data/knightsResolve.card';
 import { KnockDownCard, KnockDownCardUpgraded } from './data/knockDown.card';
 import { LastResortCard, LastResortCardUpgraded } from './data/lastResort.card';
+import { LevitateCard, LevitateCardUpgraded } from './data/levitate.card';
 import { LungeCard, LungeCardUpgraded } from './data/lunge.card';
 import { OnARollCard, OnARollCardUpgraded } from './data/onARoll.card';
 import {
@@ -242,4 +244,8 @@ export const data: Card[] = [
     TightenStrapsCardUpgraded,
     WrathCard,
     WrathCardUpgraded,
+    LevitateCard,
+    LevitateCardUpgraded,
+    ImbueCard,
+    ImbueCardUpgraded,
 ];
