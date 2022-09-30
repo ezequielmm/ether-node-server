@@ -1,24 +1,24 @@
-import { resolve } from 'src/game/status/resolve/constants';
+import { dodge } from 'src/game/status/dodge/constants';
 import { CardRarityEnum, CardTypeEnum, CardTargetedEnum } from '../card.enum';
 import { Card } from '../card.schema';
 
-export const BulkUpCardUpgraded: Card = {
-    cardId: 58,
-    name: 'Brace+',
-    rarity: CardRarityEnum.Starter,
-    cardType: CardTypeEnum.Defend,
-    pool: 'Bulk Up',
-    energy: 2,
-    description: `Gain 3 Resolve`,
+export const LevitateCardUpgraded: Card = {
+    cardId: 138,
+    name: 'Levitate+',
+    rarity: CardRarityEnum.Rare,
+    cardType: CardTypeEnum.Skill,
+    pool: 'knight',
+    energy: 0,
+    description: `Gain 1 Dodge`,
     keywords: [],
     properties: {
         effects: [],
         statuses: [
             {
-                name: resolve.name,
+                name: dodge.name,
                 attachTo: CardTargetedEnum.Player,
                 args: {
-                    counter: 3,
+                    counter: 1,
                 },
             },
         ],
@@ -27,28 +27,28 @@ export const BulkUpCardUpgraded: Card = {
     isUpgraded: true,
 };
 
-export const BulkUpCard: Card = {
-    cardId: 57,
-    name: 'Bulk Up',
-    rarity: CardRarityEnum.Common,
-    cardType: CardTypeEnum.Power,
+export const LevitateCard: Card = {
+    cardId: 137,
+    name: 'Levitate',
+    rarity: CardRarityEnum.Rare,
+    cardType: CardTypeEnum.Skill,
     pool: 'knight',
-    energy: 2,
-    description: `Gain 2 Resolve`,
+    energy: 1,
+    description: `Gain 1 Dodge`,
     keywords: [],
     properties: {
         effects: [],
         statuses: [
             {
-                name: resolve.name,
+                name: dodge.name,
                 attachTo: CardTargetedEnum.Player,
                 args: {
-                    counter: 2,
+                    counter: 1,
                 },
             },
         ],
     },
     showPointer: false,
     isUpgraded: false,
-    upgradedCardId: BulkUpCardUpgraded.cardId,
+    upgradedCardId: LevitateCardUpgraded.cardId,
 };

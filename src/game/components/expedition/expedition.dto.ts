@@ -54,10 +54,6 @@ export interface UpdateHandPilesDTO extends BaseDTO {
     draw?: IExpeditionPlayerStateDeckCard[];
 }
 
-export interface SetPlayerDefenseDTO extends BaseDTO {
-    value: number;
-}
-
-export interface UpdatePlayerHealthDTO extends BaseDTO {
-    hpCurrent: number;
+export interface UpdatePlayerDeckDTO extends BaseDTO {
+    deck: IExpeditionPlayerStateDeckCard[];
 }

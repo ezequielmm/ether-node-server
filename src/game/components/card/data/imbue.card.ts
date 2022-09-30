@@ -2,14 +2,14 @@ import { imbued } from 'src/game/status/imbued/constants';
 import { CardRarityEnum, CardTypeEnum, CardTargetedEnum } from '../card.enum';
 import { Card } from '../card.schema';
 
-export const TightenGripCardUpgraded: Card = {
-    cardId: 112,
-    name: 'Tighten Grip+',
-    rarity: CardRarityEnum.Rare,
+export const ImbueCardUpgraded: Card = {
+    cardId: 150,
+    name: 'Imbue+',
+    rarity: CardRarityEnum.Legendary,
     cardType: CardTypeEnum.Skill,
     pool: 'knight',
     energy: 0,
-    description: `Play your next card twice`,
+    description: `Your next card this turn is played twice`,
     keywords: [],
     properties: {
         effects: [],
@@ -27,14 +27,14 @@ export const TightenGripCardUpgraded: Card = {
     isUpgraded: true,
 };
 
-export const TightenGripCard: Card = {
-    cardId: 111,
-    name: 'Tighten Grip',
-    rarity: CardRarityEnum.Rare,
+export const ImbueCard: Card = {
+    cardId: 149,
+    name: 'Imbue',
+    rarity: CardRarityEnum.Legendary,
     cardType: CardTypeEnum.Skill,
     pool: 'knight',
     energy: 1,
-    description: `Play your next card twice`,
+    description: `Your next card this turn is played twice`,
     keywords: [],
     properties: {
         effects: [],
@@ -50,5 +50,5 @@ export const TightenGripCard: Card = {
     },
     showPointer: false,
     isUpgraded: false,
-    upgradedCardId: TightenGripCardUpgraded.cardId,
+    upgradedCardId: ImbueCardUpgraded.cardId,
 };
