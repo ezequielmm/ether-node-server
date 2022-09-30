@@ -7,6 +7,7 @@ import { healingPotion } from './data/healing.potion';
 import { defensePotion } from './data/defense.potion';
 import { springWaterFlask } from './data/springWaterFlask.potion';
 import { spiritElixir } from './data/spiritElixir.potion';
+import { potionOfLevitation } from './data/potion0fLevitation.potion';
 
 @Injectable()
 export class PotionSeeder implements Seeder {
@@ -21,6 +22,7 @@ export class PotionSeeder implements Seeder {
             defensePotion,
             springWaterFlask,
             spiritElixir,
+            potionOfLevitation,
         ]);
     }
 
