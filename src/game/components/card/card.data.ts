@@ -3,6 +3,10 @@ import { AdeptCard, AdeptCardUpgraded } from './data/adept.card';
 import { AnticipateCard, AnticipateCardUpgraded } from './data/anticipate.card';
 import { ArmorUpCard, ArmorUpCardUpgraded } from './data/armorUp.card';
 import { AttackCard, AttackCardUpgraded } from './data/attack.card';
+import {
+    AutonomousWeaponCard,
+    AutonomousWeaponCardUpgraded,
+} from './data/autonomousWeapon.card';
 import { BackflipCard, BackflipCardUpgraded } from './data/backflip.card';
 import { BackHandCard, BackHandCardUpgraded } from './data/backhand.card';
 import { BlusterCard, BlusterCardUpgraded } from './data/bluster.card';
@@ -248,4 +252,6 @@ export const data: Card[] = [
     LevitateCardUpgraded,
     ImbueCard,
     ImbueCardUpgraded,
+    AutonomousWeaponCard,
+    AutonomousWeaponCardUpgraded,
 ];

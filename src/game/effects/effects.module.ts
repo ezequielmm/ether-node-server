@@ -10,6 +10,7 @@ import { ProviderModule } from '../provider/provider.module';
 import { StatusModule } from '../status/status.module';
 import { AnticipatingEffect } from './anticipating/anticipating.effect';
 import { AttachStatusEffect } from './attachStatus/attachStatus.effect';
+import { AutonomousWeaponEffect } from './autonomousWeapon/autonomousWeapon.effect';
 import { ChooseCardEffect } from './chooseCard/chooseCard.effect';
 import { DamageEffect } from './damage/damage.effect';
 import { DefenseEffect } from './defense/defense.effect';
@@ -58,6 +59,7 @@ import { TwistTheBladeEffect } from './twistTheBlade/twistTheBlade.effect';
         KnockDownEffect,
         ChooseCardEffect,
         AttachStatusEffect,
+        AutonomousWeaponEffect,
     ],
     exports: [EffectService],
 })
