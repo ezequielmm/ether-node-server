@@ -59,6 +59,10 @@ import {
     KnightsResolveCardUpgraded,
 } from './data/knightsResolve.card';
 import { KnockDownCard, KnockDownCardUpgraded } from './data/knockDown.card';
+import {
+    LastReminderCard,
+    LastReminderCardUpgraded,
+} from './data/lastReminder.card';
 import { LastResortCard, LastResortCardUpgraded } from './data/lastResort.card';
 import { LevitateCard, LevitateCardUpgraded } from './data/levitate.card';
 import { LungeCard, LungeCardUpgraded } from './data/lunge.card';
@@ -248,4 +252,6 @@ export const data: Card[] = [
     LevitateCardUpgraded,
     ImbueCard,
     ImbueCardUpgraded,
+    LastReminderCard,
+    LastReminderCardUpgraded,
 ];
