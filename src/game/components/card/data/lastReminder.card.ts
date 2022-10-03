@@ -1,5 +1,6 @@
 import { damageEffect } from 'src/game/effects/damage/constants';
 import { defenseEffect } from 'src/game/effects/defense/constants';
+import { lastReminderEffect } from 'src/game/effects/lastReminder/constants';
 import { CardRarityEnum, CardTargetedEnum, CardTypeEnum } from '../card.enum';
 import { Card } from '../card.schema';
 
@@ -27,6 +28,11 @@ export const LastReminderCardUpgraded: Card = {
                 args: {
                     value: 7,
                 },
+            },
+            {
+                effect: lastReminderEffect.name,
+                target: CardTargetedEnum.Enemy,
+                args: { value: 2 },
             },
         ],
         statuses: [],
@@ -59,6 +65,11 @@ export const LastReminderCard: Card = {
                 args: {
                     value: 11,
                 },
+            },
+            {
+                effect: lastReminderEffect.name,
+                target: CardTargetedEnum.Enemy,
+                args: { value: 1 },
             },
         ],
         statuses: [],
