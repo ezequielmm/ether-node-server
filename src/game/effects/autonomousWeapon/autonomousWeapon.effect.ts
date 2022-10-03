@@ -27,12 +27,10 @@ export class AutonomousWeaponEffect implements EffectHandler {
             card: {},
         });
 
-        if (!card) {
+        if (!card)
             throw new Error('Card Autonomous Weapon not found in history');
-        }
 
-        const discard = ctx.expedition.currentNode.data.player.cards.discard;
-        const draw = ctx.expedition.currentNode.data.player.cards.draw;
+        const { discard, draw } = ctx.expedition.currentNode.data.player.cards;
 
         // Add the card to the draw pile
         draw.push(card.card);
