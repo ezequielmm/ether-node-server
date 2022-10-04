@@ -3,8 +3,7 @@ import { PotionRarityEnum, PotionTargetEnum } from '../potion.enum';
 import { Potion } from '../potion.schema';
 
 export const spiritVialPotion: Potion = {
-    // TODO: Declare potionId
-    potionId: Number.NaN,
+    potionId: 8,
     name: 'Spirit Vial',
     rarity: PotionRarityEnum.Uncommon,
     description: 'Gain 1 Energy each turn',
