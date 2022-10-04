@@ -33,15 +33,12 @@ export class FatigueStatus implements StatusEffectHandler {
     async handle(
         args: StatusEffectDTO<DamageArgs>,
     ): Promise<EffectDTO<DamageArgs>> {
+        const damage = Math.floor(args.effectDTO.args.currentValue * 0.75);
         this.logger.debug(
-            `Reducing damage by 25% due to ${fatigue.name} from ${
-                args.effectDTO.args.currentValue
-            } to ${Math.floor(args.effectDTO.args.currentValue * 0.75)}`,
+            `Reducing damage by 25% due to ${fatigue.name} from ${args.effectDTO.args.currentValue} to ${damage}`,
         );
 
-        args.effectDTO.args.currentValue = Math.floor(
-            args.effectDTO.args.currentValue * 0.75,
-        );
+        args.effectDTO.args.currentValue = damage;
         return args.effectDTO;
     }
 
