@@ -16,7 +16,6 @@ export const damagePotion: Potion = {
             },
         },
     ],
-    statuses: [],
     usableOutsideCombat: false,
     showPointer: true,
 };

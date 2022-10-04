@@ -1,7 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 import { JsonEffect } from 'src/game/effects/effects.interface';
-import { JsonStatus } from 'src/game/status/interfaces';
 import { PotionRarityEnum } from './potion.enum';
 
 export type PotionDocument = Potion & Document;
@@ -24,9 +23,6 @@ export class Potion {
 
     @Prop()
     effects: JsonEffect[];
-
-    @Prop()
-    statuses: JsonStatus[];
 
     @Prop()
     usableOutsideCombat: boolean;

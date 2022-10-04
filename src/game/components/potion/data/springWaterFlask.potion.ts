@@ -16,7 +16,6 @@ export const springWaterFlask: Potion = {
             },
         },
     ],
-    statuses: [],
     usableOutsideCombat: true,
     showPointer: false,
 };

@@ -1,3 +1,4 @@
+import { attachStatusEffect } from 'src/game/effects/attachStatus/constants';
 import { spirited } from 'src/game/status/spirited/contants';
 import { PotionRarityEnum, PotionTargetEnum } from '../potion.enum';
 import { Potion } from '../potion.schema';
@@ -7,16 +8,18 @@ export const spiritVialPotion: Potion = {
     name: 'Spirit Vial',
     rarity: PotionRarityEnum.Uncommon,
     description: 'Gain 1 Energy each turn',
-    statuses: [
+    effects: [
         {
-            name: spirited.name,
-            attachTo: PotionTargetEnum.Player,
+            effect: attachStatusEffect.name,
+            target: PotionTargetEnum.Player,
             args: {
-                counter: 1,
+                statusName: spirited.name,
+                statusArgs: {
+                    counter: 1,
+                },
             },
         },
     ],
-    effects: [],
     usableOutsideCombat: false,
     showPointer: false,
 };
