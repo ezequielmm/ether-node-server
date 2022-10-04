@@ -28,7 +28,7 @@ export interface JsonEffect {
     target?: CardTargetedEnum;
     times?: number;
     args: {
-        value: number;
+        value?: number;
     } & Record<string, any>;
 }
 
