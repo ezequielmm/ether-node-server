@@ -7,7 +7,7 @@ import {
     StatusType,
 } from '../interfaces';
 
-export const resolve: StatusEffect = {
+export const resolveStatus: StatusEffect = {
     name: 'resolve',
     type: StatusType.Buff,
     counterType: StatusCounterType.Intensity,

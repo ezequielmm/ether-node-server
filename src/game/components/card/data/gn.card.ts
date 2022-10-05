@@ -1,5 +1,5 @@
 import { fortitude } from 'src/game/status/fortitude/constants';
-import { resolve } from 'src/game/status/resolve/constants';
+import { resolveStatus } from 'src/game/status/resolve/constants';
 import { spikesStatus } from 'src/game/status/spikes/constants';
 import { spirited } from 'src/game/status/spirited/contants';
 import {
@@ -24,7 +24,7 @@ export const GNCardUpgraded: Card = {
         effects: [],
         statuses: [
             {
-                name: resolve.name,
+                name: resolveStatus.name,
                 attachTo: CardTargetedEnum.Player,
                 args: {
                     counter: 1,
@@ -71,7 +71,7 @@ export const GNCard: Card = {
         effects: [],
         statuses: [
             {
-                name: resolve.name,
+                name: resolveStatus.name,
                 attachTo: CardTargetedEnum.Player,
                 args: {
                     counter: 1,

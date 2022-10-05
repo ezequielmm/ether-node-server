@@ -1,4 +1,4 @@
-import { resolve } from 'src/game/status/resolve/constants';
+import { resolveStatus } from 'src/game/status/resolve/constants';
 import { CardRarityEnum, CardTypeEnum, CardTargetedEnum } from '../card.enum';
 import { Card } from '../card.schema';
 
@@ -15,7 +15,7 @@ export const BulkUpCardUpgraded: Card = {
         effects: [],
         statuses: [
             {
-                name: resolve.name,
+                name: resolveStatus.name,
                 attachTo: CardTargetedEnum.Player,
                 args: {
                     counter: 3,
@@ -40,7 +40,7 @@ export const BulkUpCard: Card = {
         effects: [],
         statuses: [
             {
-                name: resolve.name,
+                name: resolveStatus.name,
                 attachTo: CardTargetedEnum.Player,
                 args: {
                     counter: 2,

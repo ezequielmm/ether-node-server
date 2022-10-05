@@ -1,5 +1,5 @@
 import { defenseEffect } from 'src/game/effects/defense/constants';
-import { resolve } from 'src/game/status/resolve/constants';
+import { resolveStatus } from 'src/game/status/resolve/constants';
 import { CardRarityEnum, CardTypeEnum, CardTargetedEnum } from '../card.enum';
 import { Card } from '../card.schema';
 
@@ -49,7 +49,7 @@ export const BraceCard: Card = {
         ],
         statuses: [
             {
-                name: resolve.name,
+                name: resolveStatus.name,
                 attachTo: CardTargetedEnum.Self,
                 args: {
                     counter: 1,
