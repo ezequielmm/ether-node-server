@@ -1,12 +1,13 @@
 import { Logger } from '@nestjs/common';
 import { SubscribeMessage, WebSocketGateway } from '@nestjs/websockets';
 import { Socket } from 'socket.io';
-import { UpgradeCardAction } from 'src/game/action/upgradeCard.action';
+import { ExpeditionDocument } from 'src/game/components/expedition/expedition.schema';
 import { ExpeditionService } from 'src/game/components/expedition/expedition.service';
+import { PlayerService } from 'src/game/components/player/player.service';
 import {
     StandardResponse,
-    SWARAction,
     SWARMessageType,
+    SWARAction,
 } from 'src/game/standardResponse/standardResponse';
 import { corsSocketSettings } from './socket.enum';
 
@@ -16,69 +17,49 @@ export class CampGateway {
 
     constructor(
         private readonly expeditionService: ExpeditionService,
-        private readonly upgradeCardAction: UpgradeCardAction,
+        private readonly playerService: PlayerService,
     ) {}
 
     @SubscribeMessage('CampRecoverHealth')
-    async handleRecoverHealth(client: Socket): Promise<string> {
+    async handleRecoverHealth(client: Socket): Promise<void> {
         this.logger.debug(
             `Client ${client.id} trigger message "RecoverHealth"`,
         );
 
         // First we get the actual player state to get the
         // actual health and max health for the player
-        const { hpCurrent, hpMax } =
-            await this.expeditionService.getPlayerState({
-                clientId: client.id,
-            });
+        const expedition = await this.expeditionService.findOne({
+            clientId: client.id,
+        });
+
+        const {
+            playerState: { hpCurrent, hpMax },
+        } = expedition;
 
         // Now we calculate the new health for the player
         // Here we increase the health by 30% or set it to the
         // hpMax value is the result is higher than hpMax
         const newHp = Math.floor(Math.min(hpMax, hpCurrent + hpCurrent * 0.3));
 
-        // now we update the current hp for the player, as is just update
-        // we do it on the player state directly
-        await this.expeditionService.updateByFilter(
-            { clientId: client.id },
-            { playerState: { hpCurrent: newHp } },
+        // Now we update the current hp for the player
+        await this.playerService.setHp(
+            { client, expedition: expedition as ExpeditionDocument },
+            newHp,
         );
 
-        // Now we return the message to let the frontend know the new
-        // health
-        return StandardResponse.respond({
-            message_type: SWARMessageType.CampUpdate,
-            action: SWARAction.IncreasePlayerHealth,
-            data: { newHp },
-        });
-    }
-
-    @SubscribeMessage('CampShowPlayerDeck')
-    async handleShowPlayerDeck(client: Socket): Promise<string> {
-        this.logger.debug(
-            `Client ${client.id} trigger message "ShowUpgradeCard"`,
-        );
-
-        // First we get the cards from the deck and send them to the
-        // frontend
-        const { cards } = await this.expeditionService.getPlayerState({
+        const { playerState } = await this.expeditionService.findOne({
             clientId: client.id,
         });
 
-        return StandardResponse.respond({
-            message_type: SWARMessageType.CampUpdate,
-            action: SWARAction.ShowPlayerDeck,
-            data: { cards },
-        });
-    }
+        this.logger.debug(`Sent message PlayerState to client ${client.id}`);
 
-    @SubscribeMessage('CampUpgradeCard')
-    async handleUpgradeCard(client: Socket, cardId: string): Promise<void> {
-        await this.upgradeCardAction.handle({
-            client,
-            cardId,
-        });
-
-        // TODO: how to inform the frontend the new changes
+        client.emit(
+            'PlayerState',
+            StandardResponse.respond({
+                message_type: SWARMessageType.PlayerStateUpdate,
+                action: SWARAction.UpdatePlayerState,
+                data: { playerState },
+            }),
+        );
     }
 }
