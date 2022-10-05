@@ -13,6 +13,7 @@ import {
     PLAYER_CURRENT_HP_PATH,
     PLAYER_DEFENSE_PATH,
     PLAYER_ENERGY_PATH,
+    PLAYER_STATE_HP_CURRENT_PATH,
     PLAYER_STATUSES_PATH,
 } from './contants';
 import { ExpeditionPlayer } from './interfaces';
@@ -119,6 +120,23 @@ export class PlayerService {
         });
 
         set(ctx.expedition, PLAYER_CURRENT_HP_PATH, newHp);
+        this.logger.debug(`Player hp set to ${newHp}`);
+
+        return newHp;
+    }
+
+    /**
+     * Set the player's global hp
+     */
+    public async setGlobalHp(ctx: Context, hp: number): Promise<number> {
+        const player = this.get(ctx);
+        const newHp = Math.min(hp, player.value.globalState.hpMax);
+
+        await this.expeditionService.updateById(ctx.expedition._id, {
+            [PLAYER_STATE_HP_CURRENT_PATH]: newHp,
+        });
+
+        set(ctx.expedition, PLAYER_STATE_HP_CURRENT_PATH, newHp);
         this.logger.debug(`Player hp set to ${newHp}`);
 
         return newHp;
