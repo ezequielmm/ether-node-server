@@ -11,6 +11,10 @@ import { potionOfLevitation } from './data/potion0fLevitation.potion';
 import { ichorDraft } from './data/IchorDraft.potion';
 import { damagePotion } from './data/damage.potion';
 import { brainTonic } from './data/brainTonic.potion';
+import { spiritVialPotion } from './data/spiritVial.potion';
+import { arcaneBrewPotion } from './data/arcaneBrew.potion';
+import { terrorGasPotion } from './data/terrorGas.potion';
+import { weaknessGasPotion } from './data/weaknessGas.potion';
 
 @Injectable()
 export class PotionSeeder implements Seeder {
@@ -29,6 +33,10 @@ export class PotionSeeder implements Seeder {
             ichorDraft,
             damagePotion,
             brainTonic,
+            spiritVialPotion,
+            arcaneBrewPotion,
+            terrorGasPotion,
+            weaknessGasPotion,
         ]);
     }
 
