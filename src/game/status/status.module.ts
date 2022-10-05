@@ -33,6 +33,7 @@ import { PrayingStatus } from './praying/praying.status';
 import { RegenerateStatus } from './regenerate/regenerate.status';
 import { ResistStatus } from './resist/resist.status';
 import { ResolveStatus } from './resolve/resolve.status';
+import { ResolveExpiresStatus } from './resolveExpires/resolveExpires.status';
 import { SharpenBladeStatus } from './sharpenBlade/sharpenBlade.status';
 import { SiphoningStatus } from './siphoning/siphoning.status';
 import { SpikesStatus } from './spikes/spikes.status';
@@ -92,6 +93,7 @@ import { TurtlingStatus } from './turtling/turtling.status';
         PrayingStatus,
         NextPlayerTurnStatus,
         ArmoredUpStatus,
+        ResolveExpiresStatus,
     ],
     exports: [StatusService],
 })

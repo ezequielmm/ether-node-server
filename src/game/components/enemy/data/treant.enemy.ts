@@ -1,4 +1,4 @@
-import { resolve } from 'src/game/status/resolve/constants';
+import { resolveStatus } from 'src/game/status/resolve/constants';
 import { damageEffect } from 'src/game/effects/damage/constants';
 import { defenseEffect } from 'src/game/effects/defense/constants';
 import { CardTargetedEnum } from '../../card/card.enum';
@@ -28,7 +28,7 @@ export const treantData: Enemy = {
                     value: 5,
                     status: [
                         {
-                            name: resolve.name,
+                            name: resolveStatus.name,
                             attachTo: CardTargetedEnum.Self,
                             args: {
                                 counter: 5,
@@ -211,7 +211,7 @@ export const treantData: Enemy = {
                     value: 1,
                     status: [
                         {
-                            name: resolve.name,
+                            name: resolveStatus.name,
                             attachTo: CardTargetedEnum.Self,
                             args: {
                                 counter: 1,

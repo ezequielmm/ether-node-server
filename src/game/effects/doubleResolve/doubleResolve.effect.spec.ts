@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { CardTargetedEnum } from 'src/game/components/card/card.enum';
-import { resolve } from 'src/game/status/resolve/constants';
+import { resolveStatus } from 'src/game/status/resolve/constants';
 import { StatusService } from 'src/game/status/status.service';
 import { DoubleResolveEffect } from './doubleResolve.effect';
 
@@ -47,7 +47,7 @@ describe('DoubleResolveEffect', () => {
                     statuses: {
                         buff: [
                             {
-                                name: resolve.name,
+                                name: resolveStatus.name,
                                 args: {
                                     counter: 2,
                                 },
@@ -65,7 +65,7 @@ describe('DoubleResolveEffect', () => {
             {
                 buff: [
                     {
-                        name: resolve.name,
+                        name: resolveStatus.name,
                         args: {
                             counter: 4,
                         },

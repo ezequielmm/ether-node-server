@@ -3,10 +3,10 @@ import { DamageArgs } from '../../effects/damage/damage.effect';
 import { EffectDTO } from '../../effects/effects.interface';
 import { StatusEffectDTO, StatusEffectHandler } from '../interfaces';
 import { StatusDecorator } from '../status.decorator';
-import { resolve } from './constants';
+import { resolveStatus } from './constants';
 
 @StatusDecorator({
-    status: resolve,
+    status: resolveStatus,
 })
 @Injectable()
 export class ResolveStatus implements StatusEffectHandler {

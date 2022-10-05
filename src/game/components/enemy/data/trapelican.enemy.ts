@@ -1,4 +1,4 @@
-import { resolve } from 'src/game/status/resolve/constants';
+import { resolveStatus } from 'src/game/status/resolve/constants';
 import { damageEffect } from 'src/game/effects/damage/constants';
 import { defenseEffect } from 'src/game/effects/defense/constants';
 import { CardTargetedEnum } from '../../card/card.enum';
@@ -93,7 +93,7 @@ export const trapelicanData: Enemy = {
                     value: 1,
                     status: [
                         {
-                            name: resolve.name,
+                            name: resolveStatus.name,
                             attachTo: CardTargetedEnum.Player,
                             args: {
                                 counter: 1,
@@ -107,7 +107,7 @@ export const trapelicanData: Enemy = {
                     value: 1,
                     status: [
                         {
-                            name: resolve.name,
+                            name: resolveStatus.name,
                             attachTo: CardTargetedEnum.Self,
                             args: {
                                 counter: 1,

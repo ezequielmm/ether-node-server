@@ -1,5 +1,5 @@
 import { fortitude } from 'src/game/status/fortitude/constants';
-import { resolve } from 'src/game/status/resolve/constants';
+import { resolveStatus } from 'src/game/status/resolve/constants';
 import { CardRarityEnum, CardTargetedEnum, CardTypeEnum } from '../card.enum';
 import { Card } from '../card.schema';
 
@@ -16,7 +16,7 @@ export const WrathCardUpgraded: Card = {
         effects: [],
         statuses: [
             {
-                name: resolve.name,
+                name: resolveStatus.name,
                 attachTo: CardTargetedEnum.Player,
                 args: {
                     counter: 2,
@@ -48,7 +48,7 @@ export const WrathCard: Card = {
         effects: [],
         statuses: [
             {
-                name: resolve.name,
+                name: resolveStatus.name,
                 attachTo: CardTargetedEnum.Player,
                 args: {
                     counter: 1,
