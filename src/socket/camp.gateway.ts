@@ -42,7 +42,7 @@ export class CampGateway {
         const newHp = Math.floor(Math.min(hpMax, hpCurrent + hpCurrent * 0.3));
 
         // Now we update the current hp for the player
-        await this.playerService.setHp(
+        await this.playerService.setGlobalHp(
             { client, expedition: expedition as ExpeditionDocument },
             newHp,
         );
