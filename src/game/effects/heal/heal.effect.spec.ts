@@ -103,6 +103,7 @@ describe('HealEffect', () => {
                     initialValue: 5,
                     currentValue: 5,
                     value: 5,
+                    percentage: 0,
                 },
             });
 
@@ -118,6 +119,7 @@ describe('HealEffect', () => {
                     initialValue: 10,
                     currentValue: 10,
                     value: 10,
+                    percentage: 0,
                 },
             });
 
@@ -135,6 +137,7 @@ describe('HealEffect', () => {
                     initialValue: 5,
                     currentValue: 5,
                     value: 5,
+                    percentage: 0,
                 },
             });
 
@@ -154,6 +157,7 @@ describe('HealEffect', () => {
                     initialValue: 10,
                     currentValue: 10,
                     value: 10,
+                    percentage: 0,
                 },
             });
 
