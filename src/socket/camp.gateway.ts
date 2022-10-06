@@ -24,7 +24,7 @@ export class CampGateway {
     @SubscribeMessage('CampRecoverHealth')
     async handleRecoverHealth(client: Socket): Promise<void> {
         this.logger.debug(
-            `Client ${client.id} trigger message "RecoverHealth"`,
+            `Client ${client.id} trigger message "CampRecoverHealth"`,
         );
 
         // First we get the actual player state to get the
