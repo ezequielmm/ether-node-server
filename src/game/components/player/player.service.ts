@@ -66,7 +66,7 @@ export class PlayerService {
                 id: expedition.playerId,
                 globalState: expedition.playerState,
                 ...(expedition.currentNode &&
-                    expedition.currentNode.data.player && {
+                    expedition.currentNode.data.player !== undefined && {
                         combatState: expedition.currentNode.data.player,
                     }),
             },
