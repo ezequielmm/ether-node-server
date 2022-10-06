@@ -17,6 +17,7 @@ import {
     PLAYER_STATUSES_PATH,
 } from './contants';
 import { ExpeditionPlayer } from './interfaces';
+import { isNotUndefined } from '../../../utils';
 
 @Injectable()
 export class PlayerService {
@@ -65,7 +66,7 @@ export class PlayerService {
             value: {
                 id: expedition.playerId,
                 globalState: expedition.playerState,
-                ...(expedition.currentNode !== undefined && {
+                ...(!!expedition.currentNode && {
                     combatState: expedition.currentNode.data.player,
                 }),
             },
