@@ -7,8 +7,8 @@ import { Context } from 'src/game/components/interfaces';
 import { PlayerService } from 'src/game/components/player/player.service';
 import {
     StandardResponse,
-    SWARMessageType,
     SWARAction,
+    SWARMessageType,
 } from 'src/game/standardResponse/standardResponse';
 import { corsSocketSettings } from './socket.enum';
 
@@ -58,6 +58,16 @@ export class CampGateway {
                 message_type: SWARMessageType.PlayerStateUpdate,
                 action: SWARAction.UpdatePlayerState,
                 data: { playerState: ctx.expedition.playerState },
+            }),
+        );
+
+        // Send message to finish the node and change the button text
+        client.emit(
+            'PutData',
+            StandardResponse.respond({
+                message_type: SWARMessageType.CampUpdate,
+                action: SWARAction.FinishCamp,
+                data: null,
             }),
         );
     }
