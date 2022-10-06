@@ -52,6 +52,7 @@ export class InitExpeditionProcess {
                 gold: character.initialGold,
                 cards,
                 createdAt: new Date(),
+                potions: [],
             },
             status: ExpeditionStatusEnum.InProgress,
         });

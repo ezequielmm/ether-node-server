@@ -8,7 +8,7 @@ import { CombatQueueService } from '../components/combatQueue/combatQueue.servic
 import { ExpeditionEnemy } from '../components/enemy/enemy.interface';
 import { CombatTurnEnum } from '../components/expedition/expedition.enum';
 import { ExpeditionService } from '../components/expedition/expedition.service';
-import { Context } from '../components/interfaces';
+import { GameContext } from '../components/interfaces';
 import {
     EVENT_AFTER_ENEMIES_TURN_START,
     EVENT_BEFORE_ENEMIES_TURN_START,
@@ -64,7 +64,7 @@ export class BeginEnemyTurnProcess {
             },
         } = expedition;
 
-        const ctx: Context = {
+        const ctx: GameContext = {
             client: this.client,
             expedition,
         };

@@ -28,10 +28,11 @@ import {
 import { generateMap, restoreMap } from 'src/game/map/app';
 import { ClientId, getClientIdField } from './expedition.type';
 import { CardTargetedEnum } from '../card/card.enum';
-import { Context, ExpeditionEntity } from '../interfaces';
+import { GameContext, ExpeditionEntity } from '../interfaces';
 import { PlayerService } from '../player/player.service';
 import { EnemyService } from '../enemy/enemy.service';
 import { EnemyId } from '../enemy/enemy.type';
+import { Socket } from 'socket.io';
 
 @Injectable()
 export class ExpeditionService {
@@ -41,6 +42,15 @@ export class ExpeditionService {
         private readonly playerService: PlayerService,
         private readonly enemyService: EnemyService,
     ) {}
+
+    async getGameContext(client: Socket): Promise<GameContext> {
+        const expedition = await this.findOne({ clientId: client.id });
+
+        return {
+            expedition,
+            client,
+        };
+    }
 
     async findOne(payload: FindOneExpeditionDTO): Promise<ExpeditionDocument> {
         return await this.expedition
@@ -287,7 +297,7 @@ export class ExpeditionService {
      * @throws Error if the type is not found
      */
     public getEntitiesByType(
-        ctx: Context,
+        ctx: GameContext,
         type: CardTargetedEnum,
         source: ExpeditionEntity,
         selectedEnemy: EnemyId,
@@ -320,13 +330,13 @@ export class ExpeditionService {
         return targets;
     }
 
-    public isCurrentCombatEnded(ctx: Context): boolean {
+    public isCurrentCombatEnded(ctx: GameContext): boolean {
         return (
             this.playerService.isDead(ctx) || this.enemyService.isAllDead(ctx)
         );
     }
 
-    public isEntityDead(ctx: Context, target: ExpeditionEntity): boolean {
+    public isEntityDead(ctx: GameContext, target: ExpeditionEntity): boolean {
         if (PlayerService.isPlayer(target)) {
             return this.playerService.isDead(ctx);
         } else if (EnemyService.isEnemy(target)) {

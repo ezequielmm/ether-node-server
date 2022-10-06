@@ -1,7 +1,7 @@
 import { CardTargetedEnum } from '../components/card/card.enum';
 import { EnemyId } from '../components/enemy/enemy.type';
 import { Expedition } from '../components/expedition/expedition.schema';
-import { Context, ExpeditionEntity } from '../components/interfaces';
+import { GameContext, ExpeditionEntity } from '../components/interfaces';
 
 export interface Effect {
     name: string;
@@ -14,7 +14,7 @@ export interface EffectMetadata {
 export interface EffectDTO<
     Args extends Record<string, any> = Record<string, any>,
 > {
-    readonly ctx: Context;
+    readonly ctx: GameContext;
     readonly source: ExpeditionEntity;
     readonly target?: ExpeditionEntity;
     args: {
@@ -37,21 +37,21 @@ export interface EffectHandler {
 }
 
 export interface ApplyAllDTO {
-    ctx: Context;
+    ctx: GameContext;
     source: ExpeditionEntity;
     effects: JsonEffect[];
     selectedEnemy?: EnemyId;
 }
 
 export interface ApplyDTO {
-    ctx: Context;
+    ctx: GameContext;
     source: ExpeditionEntity;
     target: ExpeditionEntity;
     effect: JsonEffect;
 }
 
 export interface FindTargetsDTO {
-    ctx: Context;
+    ctx: GameContext;
     source: ExpeditionEntity;
     effect: JsonEffect;
     selectedEnemy?: EnemyId;
@@ -63,7 +63,7 @@ export interface ExtractTargetsDTO {
 }
 
 export interface MutateDTO {
-    ctx: Context;
+    ctx: GameContext;
     dto: EffectDTO;
     effect: Effect['name'];
 }

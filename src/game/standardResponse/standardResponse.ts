@@ -17,6 +17,10 @@ export enum SWARMessageType {
     TreasureUpdate = 'treasure_update',
     MerchantUpdate = 'merchant_update',
     EndNode = 'end_node',
+    PotionNotUsableOutsideCombat = 'potion_not_usable_outside_combat',
+    PotionNotInInventory = 'potion_not_in_inventory',
+    PotionNotFoundInDatabase = 'potion_not_found_in_database',
+    PotionMaxCountReached = 'potion_max_count_reached',
 }
 
 export enum SWARAction {
@@ -48,6 +52,7 @@ export enum SWARAction {
     ShowPlayerDeck = 'show_player_deck',
     IncreasePlayerHealth = 'increase_player_health',
     ShowCardDialog = 'show_card_dialog',
+    ShowInvalidPotion = 'show_invalid_potion',
 }
 
 interface SWARPayload {

@@ -8,7 +8,7 @@ import {
 import { StatusService } from 'src/game/status/status.service';
 import { CardTargetedEnum } from '../card/card.enum';
 import { ExpeditionService } from '../expedition/expedition.service';
-import { Context, ExpeditionEntity } from '../interfaces';
+import { GameContext, ExpeditionEntity } from '../interfaces';
 import {
     PLAYER_CURRENT_HP_PATH,
     PLAYER_DEFENSE_PATH,
@@ -46,7 +46,7 @@ export class PlayerService {
      * @param ctx Context
      * @returns If the player is dead
      */
-    public isDead(ctx: Context): boolean {
+    public isDead(ctx: GameContext): boolean {
         return ctx.expedition.currentNode.data.player.hpCurrent <= 0;
     }
 
@@ -56,7 +56,7 @@ export class PlayerService {
      * @param ctx Context
      * @returns The player
      */
-    public get(ctx: Context): ExpeditionPlayer {
+    public get(ctx: GameContext): ExpeditionPlayer {
         const { expedition } = ctx;
         return {
             type: CardTargetedEnum.Player,
@@ -74,7 +74,10 @@ export class PlayerService {
      * @param ctx Context
      * @param defense Defense to set
      */
-    public async setDefense(ctx: Context, defense: number): Promise<number> {
+    public async setDefense(
+        ctx: GameContext,
+        defense: number,
+    ): Promise<number> {
         await this.expeditionService.updateById(ctx.expedition._id, {
             [PLAYER_DEFENSE_PATH]: defense,
         });
@@ -92,7 +95,7 @@ export class PlayerService {
      * @param energy New energy value
      * @returns Return the new energy value
      */
-    public async setEnergy(ctx: Context, energy: number): Promise<number> {
+    public async setEnergy(ctx: GameContext, energy: number): Promise<number> {
         await this.expeditionService.updateById(ctx.expedition._id, {
             [PLAYER_ENERGY_PATH]: energy,
         });
@@ -110,7 +113,7 @@ export class PlayerService {
      * @param hp New hp value
      * @returns Return the new hp value
      */
-    public async setHp(ctx: Context, hp: number): Promise<number> {
+    public async setHp(ctx: GameContext, hp: number): Promise<number> {
         const player = this.get(ctx);
         const newHp = Math.min(hp, player.value.globalState.hpMax);
 
@@ -131,7 +134,7 @@ export class PlayerService {
      * @param damage Damage to apply
      * @returns The new hp of the player
      */
-    public async damage(ctx: Context, damage: number): Promise<number> {
+    public async damage(ctx: GameContext, damage: number): Promise<number> {
         // First we get the attackQueue if we have one
 
         const player = this.get(ctx);
@@ -178,7 +181,7 @@ export class PlayerService {
      * @throws Error if the status is not found
      */
     async attach(
-        ctx: Context,
+        ctx: GameContext,
         source: ExpeditionEntity,
         name: Status['name'],
         args: AttachedStatus['args'] = { counter: 1 },

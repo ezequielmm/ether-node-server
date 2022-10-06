@@ -6,7 +6,7 @@ import { CombatTurnEnum } from '../components/expedition/expedition.enum';
 import { IExpeditionNode } from '../components/expedition/expedition.interface';
 import { ExpeditionDocument } from '../components/expedition/expedition.schema';
 import { ExpeditionService } from '../components/expedition/expedition.service';
-import { Context } from '../components/interfaces';
+import { GameContext } from '../components/interfaces';
 import { CurrentNodeGeneratorProcess } from './currentNodeGenerator.process';
 
 @Injectable()
@@ -29,7 +29,7 @@ export class InitCombatProcess {
             currentNode,
         });
 
-        const ctx: Context = {
+        const ctx: GameContext = {
             client,
             expedition: expedition as ExpeditionDocument,
         };

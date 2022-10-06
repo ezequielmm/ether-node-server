@@ -10,7 +10,7 @@ import { CardId, getCardIdField } from '../components/card/card.type';
 import { CombatQueueService } from '../components/combatQueue/combatQueue.service';
 import { ExpeditionDocument } from '../components/expedition/expedition.schema';
 import { ExpeditionService } from '../components/expedition/expedition.service';
-import { Context } from '../components/interfaces';
+import { GameContext } from '../components/interfaces';
 import { PlayerService } from '../components/player/player.service';
 import { EVENT_AFTER_CARD_PLAY, EVENT_BEFORE_CARD_PLAY } from '../constants';
 import { EffectService } from '../effects/effects.service';
@@ -87,7 +87,7 @@ export class CardPlayedAction {
                 },
             } = expedition;
 
-            const ctx: Context = {
+            const ctx: GameContext = {
                 client,
                 expedition,
             };

@@ -3,7 +3,7 @@ import { ExpeditionEnemy } from './enemy/enemy.interface';
 import { ExpeditionDocument } from './expedition/expedition.schema';
 import { ExpeditionPlayer } from './player/interfaces';
 
-export interface Context {
+export interface GameContext {
     readonly client: Socket;
     readonly expedition: ExpeditionDocument;
 }

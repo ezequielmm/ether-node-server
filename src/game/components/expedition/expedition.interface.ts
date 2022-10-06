@@ -20,7 +20,7 @@ export interface IExpeditionPlayerState {
     hpMax: number;
     hpCurrent: number;
     gold: number;
-    potions?: [];
+    potions?: number[];
     trinkets?: [];
     createdAt: Date;
     cards: IExpeditionPlayerStateDeckCard[];

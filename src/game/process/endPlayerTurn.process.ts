@@ -7,7 +7,7 @@ import { CombatQueueService } from '../components/combatQueue/combatQueue.servic
 import { EnemyService } from '../components/enemy/enemy.service';
 import { CombatTurnEnum } from '../components/expedition/expedition.enum';
 import { ExpeditionService } from '../components/expedition/expedition.service';
-import { Context } from '../components/interfaces';
+import { GameContext } from '../components/interfaces';
 import {
     EVENT_AFTER_PLAYER_TURN_END,
     EVENT_BEFORE_PLAYER_TURN_END,
@@ -48,7 +48,7 @@ export class EndPlayerTurnProcess {
             clientId: client.id,
         });
 
-        const ctx: Context = {
+        const ctx: GameContext = {
             client,
             expedition,
         };

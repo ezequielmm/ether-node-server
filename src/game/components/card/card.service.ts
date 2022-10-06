@@ -5,7 +5,7 @@ import { filter } from 'lodash';
 import { Model } from 'mongoose';
 import { CardPlayedAction } from 'src/game/action/cardPlayed.action';
 import { EVENT_BEFORE_PLAYER_TURN_END } from 'src/game/constants';
-import { Context } from '../interfaces';
+import { GameContext } from '../interfaces';
 import { CardKeywordEnum, CardTypeEnum } from './card.enum';
 import { Card, CardDocument } from './card.schema';
 import { CardId, getCardIdField } from './card.type';
@@ -36,8 +36,8 @@ export class CardService {
     }
 
     @OnEvent(EVENT_BEFORE_PLAYER_TURN_END)
-    async onBeforePlayerTurnEnd(payload: { ctx: Context }) {
-        const ctx = payload.ctx as Context;
+    async onBeforePlayerTurnEnd(payload: { ctx: GameContext }) {
+        const ctx = payload.ctx as GameContext;
 
         const fadeCards = filter(
             ctx.expedition.currentNode.data.player.cards.hand,

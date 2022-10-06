@@ -1,5 +1,5 @@
 import { CardTargetedEnum } from 'src/game/components/card/card.enum';
-import { Context } from 'src/game/components/interfaces';
+import { GameContext } from 'src/game/components/interfaces';
 import { ExpeditionPlayer } from 'src/game/components/player/interfaces';
 import { EnergyEffect } from './energy.effect';
 import * as MockedSocket from 'socket.io-mock';
@@ -28,7 +28,7 @@ describe('EnergyEffect', () => {
     } as ExpeditionPlayer;
 
     // Mock context
-    const mockCtx: Context = {
+    const mockCtx: GameContext = {
         client: new MockedSocket(),
         expedition: {
             currentNode: {

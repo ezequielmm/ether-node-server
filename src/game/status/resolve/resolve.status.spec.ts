@@ -1,5 +1,5 @@
 import { CardTargetedEnum } from 'src/game/components/card/card.enum';
-import { Context } from 'src/game/components/interfaces';
+import { GameContext } from 'src/game/components/interfaces';
 import { DamageArgs } from '../../effects/damage/damage.effect';
 import { EffectDTO } from '../../effects/effects.interface';
 import { StatusEffectDTO } from '../interfaces';
@@ -7,7 +7,7 @@ import { resolveStatus } from './constants';
 import { ResolveStatus } from './resolve.status';
 
 describe('ResolveStatus', () => {
-    const mockCtx: Context = {
+    const mockCtx: GameContext = {
         client: undefined,
         expedition: undefined,
     };

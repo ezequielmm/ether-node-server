@@ -181,6 +181,12 @@ export class CurrentNodeGeneratorProcess {
                 amount,
                 taken: false,
             },
+            {
+                id: randomUUID(),
+                type: IExpeditionNodeReward.Potion,
+                amount: random(1, 13),
+                taken: false,
+            },
         ];
     }
 }
