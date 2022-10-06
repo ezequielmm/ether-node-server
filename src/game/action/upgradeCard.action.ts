@@ -34,7 +34,7 @@ export class UpgradeCardAction {
 
         if (cardToUpgrade !== null) {
             // is cardToUpgrade is not null, it means that the card exists and we can upgrade it
-            // Now we deeestructure the card object to get the id of the upgraded card
+            // Now we deestructure the card object to get the id of the upgraded card
             const { upgradedCardId } = cardToUpgrade;
 
             // Now we search for it on the database and copy it to the deck

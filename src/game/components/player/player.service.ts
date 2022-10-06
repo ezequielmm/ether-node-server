@@ -13,9 +13,11 @@ import {
     PLAYER_CURRENT_HP_PATH,
     PLAYER_DEFENSE_PATH,
     PLAYER_ENERGY_PATH,
+    PLAYER_STATE_HP_CURRENT_PATH,
     PLAYER_STATUSES_PATH,
 } from './contants';
 import { ExpeditionPlayer } from './interfaces';
+import { isNotUndefined } from '../../../utils';
 
 @Injectable()
 export class PlayerService {
@@ -58,12 +60,15 @@ export class PlayerService {
      */
     public get(ctx: Context): ExpeditionPlayer {
         const { expedition } = ctx;
+
         return {
             type: CardTargetedEnum.Player,
             value: {
                 id: expedition.playerId,
                 globalState: expedition.playerState,
-                combatState: expedition.currentNode.data.player,
+                ...(expedition.currentNode.data !== undefined && {
+                    combatState: expedition.currentNode.data.player,
+                }),
             },
         };
     }
@@ -125,6 +130,23 @@ export class PlayerService {
     }
 
     /**
+     * Set the player's global hp
+     */
+    public async setGlobalHp(ctx: Context, hp: number): Promise<number> {
+        const player = this.get(ctx);
+        const newHp = Math.min(hp, player.value.globalState.hpMax);
+
+        await this.expeditionService.updateById(ctx.expedition._id, {
+            [PLAYER_STATE_HP_CURRENT_PATH]: newHp,
+        });
+
+        set(ctx.expedition, PLAYER_STATE_HP_CURRENT_PATH, newHp);
+        this.logger.debug(`Player hp set to ${newHp}`);
+
+        return newHp;
+    }
+
+    /**
      * Apply damage to the player
      *
      * @param ctx Context
@@ -172,6 +194,7 @@ export class PlayerService {
      *
      * @param ctx Context
      * @param source Source of the status (Who is attacking)
+     * @param name
      * @param [args = { value: 1 }] Arguments to pass to the status
      *
      * @returns Attached status
