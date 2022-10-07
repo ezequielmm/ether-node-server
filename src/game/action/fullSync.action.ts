@@ -7,7 +7,6 @@ import {
     SWARMessageType,
     SWARAction,
 } from '../standardResponse/standardResponse';
-import { IExpeditionPlayerStateDeckCard } from '../components/expedition/expedition.interface';
 
 @Injectable()
 export class FullSyncAction {
@@ -26,7 +25,7 @@ export class FullSyncAction {
                 ErrorBehavior.ReturnToMainMenu,
             );
 
-        const { map, playerState, mapSeedId } = expedition || {};
+        const { map, playerState, mapSeedId, playerId } = expedition || {};
 
         this.logger.debug(`Sent message ExpeditionMap to client ${client.id}`);
 
@@ -48,15 +47,18 @@ export class FullSyncAction {
                 message_type: SWARMessageType.PlayerStateUpdate,
                 action: SWARAction.UpdatePlayerState,
                 data: {
-                    id: playerState.playerId,
-                    playerName: playerState.playerName,
-                    characterClass: playerState.characterClass,
-                    hpMax: playerState.hpMax,
-                    hpCurrent: playerState.hpCurrent,
-                    gold: playerState.gold,
-                    cards: playerState.cards,
-                    potions: [],
-                    trinkets: [],
+                    playerState: {
+                        id: playerState.playerId,
+                        playerId,
+                        playerName: playerState.playerName,
+                        characterClass: playerState.characterClass,
+                        hpMax: playerState.hpMax,
+                        hpCurrent: playerState.hpCurrent,
+                        gold: playerState.gold,
+                        cards: playerState.cards,
+                        potions: [],
+                        trinkets: [],
+                    },
                 },
             }),
         );
