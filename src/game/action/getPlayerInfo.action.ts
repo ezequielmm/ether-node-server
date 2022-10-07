@@ -4,6 +4,7 @@ import { IExpeditionPlayerStateDeckCard } from '../components/expedition/expedit
 
 export interface PlayerInfoResponse {
     id: string;
+    playerId: number;
     playerName: string;
     characterClass: string;
     hpCurrent: number;
@@ -21,7 +22,14 @@ export class GetPlayerInfoAction {
 
     async handle(clientId: string): Promise<PlayerInfoResponse> {
         const {
-            playerState: { playerName, characterClass, gold, cards, playerId },
+            playerId,
+            playerState: {
+                playerName,
+                characterClass,
+                gold,
+                cards,
+                playerId: id,
+            },
             currentNode: {
                 data: {
                     player: { energy, energyMax, defense, hpCurrent, hpMax },
@@ -32,7 +40,8 @@ export class GetPlayerInfoAction {
         });
 
         return {
-            id: playerId,
+            id,
+            playerId,
             playerName,
             characterClass,
             hpCurrent,
