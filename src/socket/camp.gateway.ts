@@ -57,7 +57,17 @@ export class CampGateway {
             StandardResponse.respond({
                 message_type: SWARMessageType.PlayerStateUpdate,
                 action: SWARAction.UpdatePlayerState,
-                data: { playerState: ctx.expedition.playerState },
+                data: {
+                    id: ctx.expedition.playerState.playerId,
+                    playerName: ctx.expedition.playerState.playerName,
+                    characterClass: ctx.expedition.playerState.characterClass,
+                    hpMax: ctx.expedition.playerState.hpMax,
+                    hpCurrent: ctx.expedition.playerState.hpCurrent,
+                    gold: ctx.expedition.playerState.gold,
+                    cards: ctx.expedition.playerState.cards,
+                    potions: [],
+                    trinkets: [],
+                },
             }),
         );
 

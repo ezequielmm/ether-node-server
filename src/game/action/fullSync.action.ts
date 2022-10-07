@@ -7,6 +7,7 @@ import {
     SWARMessageType,
     SWARAction,
 } from '../standardResponse/standardResponse';
+import { IExpeditionPlayerStateDeckCard } from '../components/expedition/expedition.interface';
 
 @Injectable()
 export class FullSyncAction {
@@ -46,7 +47,17 @@ export class FullSyncAction {
             StandardResponse.respond({
                 message_type: SWARMessageType.PlayerStateUpdate,
                 action: SWARAction.UpdatePlayerState,
-                data: { playerState },
+                data: {
+                    id: playerState.playerId,
+                    playerName: playerState.playerName,
+                    characterClass: playerState.characterClass,
+                    hpMax: playerState.hpMax,
+                    hpCurrent: playerState.hpCurrent,
+                    gold: playerState.gold,
+                    cards: playerState.cards,
+                    potions: [],
+                    trinkets: [],
+                },
             }),
         );
     }
