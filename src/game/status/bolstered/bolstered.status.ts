@@ -4,7 +4,7 @@ import { isEqual, reject } from 'lodash';
 import { CombatQueueTargetEffectTypeEnum } from 'src/game/components/combatQueue/combatQueue.enum';
 import { CombatQueueService } from 'src/game/components/combatQueue/combatQueue.service';
 import { EnemyService } from 'src/game/components/enemy/enemy.service';
-import { Context } from 'src/game/components/interfaces';
+import { GameContext } from 'src/game/components/interfaces';
 import { PlayerService } from 'src/game/components/player/player.service';
 import { EVENT_BEFORE_PLAYER_TURN_END } from 'src/game/constants';
 import { StatusService } from 'src/game/status/status.service';
@@ -65,7 +65,7 @@ export class BolsteredStatus implements StatusEventHandler {
     }
 
     @OnEvent(EVENT_BEFORE_PLAYER_TURN_END)
-    async remove(args: { ctx: Context }): Promise<void> {
+    async remove(args: { ctx: GameContext }): Promise<void> {
         const { ctx } = args;
         const statuses = this.statusService.getAllByName(ctx, bolstered.name);
 

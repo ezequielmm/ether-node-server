@@ -6,13 +6,13 @@ import { EffectService } from '../effects.service';
 import { TwistTheBladeEffect } from './twistTheBlade.effect';
 import * as MockedSocket from 'socket.io-mock';
 import { ExpeditionDocument } from 'src/game/components/expedition/expedition.schema';
-import { Context } from 'src/game/components/interfaces';
+import { GameContext } from 'src/game/components/interfaces';
 import { ExpeditionPlayer } from 'src/game/components/player/interfaces';
 import { ExpeditionEnemy } from 'src/game/components/enemy/enemy.interface';
 import { damageEffect } from '../damage/constants';
 
 describe('TwistTheBlade', () => {
-    const mockCtx: Context = {
+    const mockCtx: GameContext = {
         client: new MockedSocket(),
         expedition: {} as unknown as ExpeditionDocument,
     };

@@ -8,7 +8,7 @@ import {
 import { ExpeditionPlayer } from 'src/game/components/player/interfaces';
 import * as MockedSocket from 'socket.io-mock';
 import { ExpeditionDocument } from 'src/game/components/expedition/expedition.schema';
-import { Context } from 'src/game/components/interfaces';
+import { GameContext } from 'src/game/components/interfaces';
 import { SWARMessageType } from 'src/game/standardResponse/standardResponse';
 import { EnemyIntentionType } from 'src/game/components/enemy/enemy.enum';
 
@@ -32,7 +32,7 @@ describe('DrawCardEffect', () => {
     } as ExpeditionPlayer;
 
     // Mock context
-    const mockCtx: Context = {
+    const mockCtx: GameContext = {
         client: new MockedSocket(),
         expedition: {
             currentNode: {

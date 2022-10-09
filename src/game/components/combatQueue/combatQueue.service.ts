@@ -16,7 +16,7 @@ import {
     IStatusesList,
     StatusGenerator,
 } from 'src/game/status/statusGenerator';
-import { Context, ExpeditionEntity } from '../interfaces';
+import { GameContext, ExpeditionEntity } from '../interfaces';
 import { CombatQueueTargetEffectTypeEnum } from './combatQueue.enum';
 import { CreateCombatQueueDTO, PushActionDTO } from './combatQueue.interface';
 import { CombatQueue, CombatQueueDocument } from './combatQueue.schema';
@@ -32,7 +32,7 @@ export class CombatQueueService {
         private readonly combatQueue: Model<CombatQueueDocument>,
     ) {}
 
-    async start(ctx: Context): Promise<void> {
+    async start(ctx: GameContext): Promise<void> {
         await this.create({
             clientId: ctx.client.id,
             queue: [],
@@ -72,7 +72,7 @@ export class CombatQueueService {
         );
     }
 
-    async end(ctx: Context): Promise<void> {
+    async end(ctx: GameContext): Promise<void> {
         const { client } = ctx;
 
         const combatQueues = await this.combatQueue.findOne({
@@ -112,7 +112,7 @@ export class CombatQueueService {
 
     @OnEvent(EVENT_AFTER_STATUS_ATTACH)
     async onAttachStatus(args: {
-        ctx: Context;
+        ctx: GameContext;
         source: ExpeditionEntity;
         target: ExpeditionEntity;
     }): Promise<void> {
@@ -121,7 +121,7 @@ export class CombatQueueService {
 
     @OnEvent(EVENT_AFTER_STATUSES_UPDATE)
     async onStatusesUpdate(args: {
-        ctx: Context;
+        ctx: GameContext;
         source: ExpeditionEntity;
         target: ExpeditionEntity;
     }): Promise<void> {
@@ -129,7 +129,7 @@ export class CombatQueueService {
     }
 
     private async addStatusesToCombatQueue(args: {
-        ctx: Context;
+        ctx: GameContext;
         source: ExpeditionEntity;
         target: ExpeditionEntity;
     }) {
@@ -146,7 +146,7 @@ export class CombatQueueService {
     }
 
     public async pushStatuses(
-        ctx: Context,
+        ctx: GameContext,
         source: ExpeditionEntity,
         target: ExpeditionEntity,
         statuses: AttachedStatus[],

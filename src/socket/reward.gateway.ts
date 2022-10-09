@@ -3,6 +3,7 @@ import { SubscribeMessage, WebSocketGateway } from '@nestjs/websockets';
 import { Socket } from 'socket.io';
 import { IExpeditionNodeReward } from 'src/game/components/expedition/expedition.enum';
 import { ExpeditionService } from 'src/game/components/expedition/expedition.service';
+import { PotionService } from 'src/game/components/potion/potion.service';
 import {
     StandardResponse,
     SWARMessageType,
@@ -14,19 +15,23 @@ import { corsSocketSettings } from './socket.enum';
 export class RewardGateway {
     private readonly logger: Logger = new Logger(RewardGateway.name);
 
-    constructor(private readonly expeditionService: ExpeditionService) {}
+    constructor(
+        private readonly expeditionService: ExpeditionService,
+        private readonly potionService: PotionService,
+    ) {}
 
     @SubscribeMessage('RewardSelected')
     async handleRewardSelected(
         client: Socket,
         rewardId: string,
     ): Promise<string> {
-        this.logger.debug(`Client ${client.id} choose reward id: ${rewardId}`);
+        // Get the game context
+        const ctx = await this.expeditionService.getGameContext(client);
 
         // Get the updated expedition
-        const expedition = await this.expeditionService.findOne({
-            clientId: client.id,
-        });
+        const expedition = ctx.expedition;
+
+        this.logger.debug(`Client ${client.id} choose reward id: ${rewardId}`);
 
         const {
             _id: expeditionId,
@@ -54,6 +59,20 @@ export class RewardGateway {
         // Now we set that we took the reward
         reward.taken = true;
 
+        // Now we apply the redward to the user profile
+        switch (reward.type) {
+            case IExpeditionNodeReward.Gold:
+                await this.expeditionService.updateById(expeditionId, {
+                    $inc: {
+                        'playerState.gold': reward.amount,
+                    },
+                });
+                break;
+            case IExpeditionNodeReward.Potion:
+                await this.potionService.add(ctx, reward.amount);
+                break;
+        }
+
         // Next we save the reward on the expedition
         await this.expeditionService.updateByFilter(
             {
@@ -66,17 +85,6 @@ export class RewardGateway {
                 },
             },
         );
-
-        // Now we apply the redward to the user profile
-        switch (reward.type) {
-            case IExpeditionNodeReward.Gold:
-                await this.expeditionService.updateById(expeditionId, {
-                    $inc: {
-                        'playerState.gold': reward.amount,
-                    },
-                });
-                break;
-        }
 
         // Now we get the rewards that are pending to be taken
         const pendingRewards = rewards.filter(({ id, taken }) => {

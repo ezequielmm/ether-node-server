@@ -13,7 +13,7 @@ import {
     ExpeditionDocument,
 } from '../components/expedition/expedition.schema';
 import { ExpeditionService } from '../components/expedition/expedition.service';
-import { Context, ExpeditionEntity } from '../components/interfaces';
+import { GameContext, ExpeditionEntity } from '../components/interfaces';
 import { PlayerService } from '../components/player/player.service';
 import {
     EVENT_AFTER_STATUSES_UPDATE,
@@ -251,7 +251,7 @@ export class StatusService {
     }
 
     public async updateStatuses(
-        ctx: Context,
+        ctx: GameContext,
         target: ExpeditionEntity,
         collection: StatusCollection,
     ) {
@@ -311,7 +311,7 @@ export class StatusService {
     }
 
     public async trigger(
-        ctx: Context,
+        ctx: GameContext,
         event: string,
         args = {},
     ): Promise<void> {
@@ -473,7 +473,7 @@ export class StatusService {
         }
     }
 
-    getAll(ctx: Context): StatusesGlobalCollection {
+    getAll(ctx: GameContext): StatusesGlobalCollection {
         const { expedition } = ctx;
         const collection: StatusesGlobalCollection = [];
 
@@ -494,7 +494,7 @@ export class StatusService {
         return collection;
     }
 
-    private getAllFromEnemies(ctx: Context): StatusesGlobalCollection {
+    private getAllFromEnemies(ctx: GameContext): StatusesGlobalCollection {
         const collection: StatusesGlobalCollection = [];
         const { expedition } = ctx;
         for (const enemy of expedition.currentNode.data.enemies) {
@@ -509,7 +509,7 @@ export class StatusService {
         return collection;
     }
 
-    getAllByName(ctx: Context, name: string): StatusesGlobalCollection {
+    getAllByName(ctx: GameContext, name: string): StatusesGlobalCollection {
         const global = this.getAll(ctx);
         const statuses: StatusesGlobalCollection = [];
 
@@ -520,7 +520,7 @@ export class StatusService {
     }
 
     public async decreaseCounterAndRemove(
-        ctx: Context,
+        ctx: GameContext,
         collection: StatusCollection,
         entity: ExpeditionEntity,
         status: Status,

@@ -4,7 +4,7 @@ import { CardTargetedEnum } from '../card/card.enum';
 import { ExpeditionEnemy } from '../enemy/enemy.interface';
 import { ExpeditionDocument } from '../expedition/expedition.schema';
 import { ExpeditionService } from '../expedition/expedition.service';
-import { Context } from '../interfaces';
+import { GameContext } from '../interfaces';
 import {
     PLAYER_DEFENSE_PATH,
     PLAYER_ENERGY_PATH,
@@ -22,7 +22,7 @@ describe('PlayerService', () => {
 
     let playerService: PlayerService;
 
-    let mockContext: Context;
+    let mockContext: GameContext;
 
     let spyOnSetHp: jest.SpyInstance;
     let spyOnSetDefense: jest.SpyInstance;

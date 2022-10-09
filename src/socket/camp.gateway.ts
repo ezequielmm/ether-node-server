@@ -3,7 +3,7 @@ import { SubscribeMessage, WebSocketGateway } from '@nestjs/websockets';
 import { Socket } from 'socket.io';
 import { ExpeditionDocument } from 'src/game/components/expedition/expedition.schema';
 import { ExpeditionService } from 'src/game/components/expedition/expedition.service';
-import { Context } from 'src/game/components/interfaces';
+import { GameContext } from 'src/game/components/interfaces';
 import { PlayerService } from 'src/game/components/player/player.service';
 import {
     StandardResponse,
@@ -42,7 +42,7 @@ export class CampGateway {
         // hpMax value is the result is higher than hpMax
         const newHp = Math.floor(Math.min(hpMax, hpCurrent + hpCurrent * 0.3));
 
-        const ctx: Context = {
+        const ctx: GameContext = {
             client,
             expedition: expedition as ExpeditionDocument,
         };

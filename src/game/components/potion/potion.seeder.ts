@@ -33,6 +33,8 @@ export class PotionSeeder implements Seeder {
             brainTonic,
             spiritVialPotion,
             arcaneBrewPotion,
+            // terrorGasPotion,
+            // weaknessGasPotion,
         ]);
     }
 

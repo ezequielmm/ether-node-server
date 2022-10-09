@@ -1,5 +1,5 @@
 import { IStatusesList } from 'src/game/status/statusGenerator';
-import { Context, ExpeditionEntity } from '../interfaces';
+import { GameContext, ExpeditionEntity } from '../interfaces';
 import { CombatQueueTargetEffectTypeEnum } from './combatQueue.enum';
 import { CombatQueue } from './combatQueue.schema';
 
@@ -18,7 +18,7 @@ export interface ICombatQueueTarget extends ICombatQueueArgs {
 }
 
 export interface PushActionDTO {
-    ctx: Context;
+    ctx: GameContext;
     source: ExpeditionEntity;
     target: ExpeditionEntity;
     args: ICombatQueueArgs;
