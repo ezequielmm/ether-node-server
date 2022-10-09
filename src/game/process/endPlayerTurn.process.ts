@@ -60,9 +60,9 @@ export class EndPlayerTurnProcess {
             },
         } = expedition;
 
-        enemies.forEach(async (enemy) => {
-            await this.enemyService.setDefense(ctx, enemy.id, 0);
-        });
+        for (const { id } of enemies) {
+            await this.enemyService.setDefense(ctx, id, 0);
+        }
 
         await this.combatQueueService.start(ctx);
 

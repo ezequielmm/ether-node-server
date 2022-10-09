@@ -3,11 +3,12 @@ import { SubscribeMessage, WebSocketGateway } from '@nestjs/websockets';
 import { Socket } from 'socket.io';
 import { ExpeditionDocument } from 'src/game/components/expedition/expedition.schema';
 import { ExpeditionService } from 'src/game/components/expedition/expedition.service';
+import { GameContext } from 'src/game/components/interfaces';
 import { PlayerService } from 'src/game/components/player/player.service';
 import {
     StandardResponse,
-    SWARMessageType,
     SWARAction,
+    SWARMessageType,
 } from 'src/game/standardResponse/standardResponse';
 import { corsSocketSettings } from './socket.enum';
 
@@ -23,7 +24,7 @@ export class CampGateway {
     @SubscribeMessage('CampRecoverHealth')
     async handleRecoverHealth(client: Socket): Promise<void> {
         this.logger.debug(
-            `Client ${client.id} trigger message "RecoverHealth"`,
+            `Client ${client.id} trigger message "CampRecoverHealth"`,
         );
 
         // First we get the actual player state to get the
@@ -41,15 +42,13 @@ export class CampGateway {
         // hpMax value is the result is higher than hpMax
         const newHp = Math.floor(Math.min(hpMax, hpCurrent + hpCurrent * 0.3));
 
-        // Now we update the current hp for the player
-        await this.playerService.setHp(
-            { client, expedition: expedition as ExpeditionDocument },
-            newHp,
-        );
+        const ctx: GameContext = {
+            client,
+            expedition: expedition as ExpeditionDocument,
+        };
 
-        const { playerState } = await this.expeditionService.findOne({
-            clientId: client.id,
-        });
+        // Now we update the current hp for the player
+        await this.playerService.setGlobalHp(ctx, newHp);
 
         this.logger.debug(`Sent message PlayerState to client ${client.id}`);
 
@@ -58,7 +57,31 @@ export class CampGateway {
             StandardResponse.respond({
                 message_type: SWARMessageType.PlayerStateUpdate,
                 action: SWARAction.UpdatePlayerState,
-                data: { playerState },
+                data: {
+                    playerState: {
+                        id: ctx.expedition.playerState.playerId,
+                        playerId: ctx.expedition.playerId,
+                        playerName: ctx.expedition.playerState.playerName,
+                        characterClass:
+                            ctx.expedition.playerState.characterClass,
+                        hpMax: ctx.expedition.playerState.hpMax,
+                        hpCurrent: ctx.expedition.playerState.hpCurrent,
+                        gold: ctx.expedition.playerState.gold,
+                        cards: ctx.expedition.playerState.cards,
+                        potions: [],
+                        trinkets: [],
+                    },
+                },
+            }),
+        );
+
+        // Send message to finish the node and change the button text
+        client.emit(
+            'PutData',
+            StandardResponse.respond({
+                message_type: SWARMessageType.CampUpdate,
+                action: SWARAction.FinishCamp,
+                data: null,
             }),
         );
     }

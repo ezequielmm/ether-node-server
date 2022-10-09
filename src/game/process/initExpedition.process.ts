@@ -64,7 +64,7 @@ export class InitExpeditionProcess {
         character: CharacterDocument,
         email: string,
     ): Promise<IExpeditionPlayerStateDeckCard[]> {
-        // We deestructure the cards from the character
+        // We destructure the cards from the character
         const { cards: characterDeck } = character;
 
         // Now we get any custom deck that we have available
@@ -79,7 +79,6 @@ export class InitExpeditionProcess {
         const deck = !customDeck ? characterDeck : customDeck.cards;
 
         // Get all the cards
-
         const cards = await this.cardService.findCardsById(cardIds);
 
         // Filter the card ids and make a new array
@@ -98,11 +97,20 @@ export class InitExpeditionProcess {
 
                 return newDeckCards;
             }, [])
-            .map((card) => {
-                card.id = randomUUID();
-                card.description = CardDescriptionFormatter.process(card);
-                card.isTemporary = false;
-                return card;
-            });
+            .map((card) => ({
+                id: randomUUID(),
+                cardId: card.cardId,
+                name: card.name,
+                cardType: card.cardType,
+                energy: card.energy,
+                description: CardDescriptionFormatter.process(card),
+                isTemporary: false,
+                rarity: card.rarity,
+                properties: card.properties,
+                keywords: card.keywords,
+                showPointer: card.showPointer,
+                pool: card.pool,
+                isUpgraded: card.isUpgraded,
+            }));
     }
 }
