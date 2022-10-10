@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
 import { EnemyService } from 'src/game/components/enemy/enemy.service';
-import { Context } from 'src/game/components/interfaces';
+import { GameContext } from 'src/game/components/interfaces';
 import { PlayerService } from 'src/game/components/player/player.service';
 import {
     EVENT_BEFORE_ENEMIES_TURN_START,
@@ -33,20 +33,17 @@ export class FatigueStatus implements StatusEffectHandler {
     async handle(
         args: StatusEffectDTO<DamageArgs>,
     ): Promise<EffectDTO<DamageArgs>> {
+        const damage = Math.floor(args.effectDTO.args.currentValue * 0.75);
         this.logger.debug(
-            `Reducing damage by 25% due to ${fatigue.name} from ${
-                args.effectDTO.args.currentValue
-            } to ${Math.floor(args.effectDTO.args.currentValue * 0.75)}`,
+            `Reducing damage by 25% due to ${fatigue.name} from ${args.effectDTO.args.currentValue} to ${damage}`,
         );
 
-        args.effectDTO.args.currentValue = Math.floor(
-            args.effectDTO.args.currentValue * 0.75,
-        );
+        args.effectDTO.args.currentValue = damage;
         return args.effectDTO;
     }
 
     @OnEvent(EVENT_BEFORE_ENEMIES_TURN_START)
-    async onEnemiesTurnStart(args: { ctx: Context }): Promise<void> {
+    async onEnemiesTurnStart(args: { ctx: GameContext }): Promise<void> {
         const { ctx } = args;
         const enemies = this.enemyService.getAll(ctx);
 
@@ -61,7 +58,7 @@ export class FatigueStatus implements StatusEffectHandler {
     }
 
     @OnEvent(EVENT_BEFORE_PLAYER_TURN_START)
-    async onPlayerTurnStart(args: { ctx: Context }): Promise<void> {
+    async onPlayerTurnStart(args: { ctx: GameContext }): Promise<void> {
         const { ctx } = args;
         const player = this.playerService.get(ctx);
         const {

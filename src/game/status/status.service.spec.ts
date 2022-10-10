@@ -25,12 +25,12 @@ import {
     StatusEventHandler,
     StatusType,
 } from './interfaces';
-import { resolve } from './resolve/constants';
+import { resolveStatus } from './resolve/constants';
 import { StatusDecorator } from './status.decorator';
 import { StatusService } from './status.service';
 
 @StatusDecorator({
-    status: resolve,
+    status: resolveStatus,
 })
 @Injectable()
 class StatusA implements StatusEffectHandler {
@@ -152,7 +152,7 @@ describe('StatusService', () => {
             collection: {
                 [StatusType.Buff]: [
                     {
-                        name: resolve.name,
+                        name: resolveStatus.name,
                         addedInRound: 1,
                         sourceReference: {} as EntityReferenceDTO,
                         args: {
@@ -190,7 +190,7 @@ describe('StatusService', () => {
                         },
                     },
                     {
-                        name: resolve.name,
+                        name: resolveStatus.name,
                         addedInRound: 1,
                         sourceReference: {} as EntityReferenceDTO,
                         args: {
@@ -228,7 +228,7 @@ describe('StatusService', () => {
                         },
                     },
                     {
-                        name: resolve.name,
+                        name: resolveStatus.name,
                         addedInRound: 1,
                         sourceReference: {} as EntityReferenceDTO,
                         args: {

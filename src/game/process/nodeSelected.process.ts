@@ -36,10 +36,10 @@ export class NodeSelectedProcess {
             const selectedNode = expeditionMap.fullCurrentMap.get(node_id);
             selectedNode.select(expeditionMap);
 
-            const { map: newMap } = await this.expeditionService.update(
-                client.id,
-                { map: expeditionMap.getMap },
-            );
+            const { map: newMap, mapSeedId } =
+                (await this.expeditionService.update(client.id, {
+                    map: expeditionMap.getMap,
+                })) || {};
 
             switch (node.type) {
                 case ExpeditionMapNodeTypeEnum.Portal:
@@ -47,6 +47,7 @@ export class NodeSelectedProcess {
 
                     return StandardResponse.respond({
                         message_type: SWARMessageType.MapUpdate,
+                        seed: mapSeedId,
                         action: SWARAction.ExtendMap,
                         data: newMap,
                     });
@@ -61,6 +62,7 @@ export class NodeSelectedProcess {
 
                     return StandardResponse.respond({
                         message_type: SWARMessageType.MapUpdate,
+                        seed: mapSeedId,
                         action: SWARAction.ActivatePortal,
                         data: newMap,
                     });
@@ -85,6 +87,7 @@ export class NodeSelectedProcess {
 
                     return StandardResponse.respond({
                         message_type: SWARMessageType.MapUpdate,
+                        seed: mapSeedId,
                         action: SWARAction.MapUpdate,
                         data: newMap,
                     });

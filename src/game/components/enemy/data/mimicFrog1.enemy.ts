@@ -1,4 +1,4 @@
-import { resolve } from 'src/game/status/resolve/constants';
+import { resolveStatus } from 'src/game/status/resolve/constants';
 import { damageEffect } from 'src/game/effects/damage/constants';
 import { defenseEffect } from 'src/game/effects/defense/constants';
 import { CardTargetedEnum } from '../../card/card.enum';
@@ -99,7 +99,7 @@ export const mimicFrog1Data: Enemy = {
                     status: [
                         {
                             // TODO: Check if this is the correct status to add
-                            name: resolve.name,
+                            name: resolveStatus.name,
                             attachTo: CardTargetedEnum.Player,
                             args: {
                                 counter: 2,

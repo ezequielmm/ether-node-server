@@ -1,6 +1,6 @@
 import { damageEffect } from 'src/game/effects/damage/constants';
 import { defenseEffect } from 'src/game/effects/defense/constants';
-import { resolve } from 'src/game/status/resolve/constants';
+import { resolveStatus } from 'src/game/status/resolve/constants';
 import { CardTargetedEnum } from '../../card/card.enum';
 import {
     EnemyTypeEnum,
@@ -109,7 +109,7 @@ export const groundMothData: Enemy = {
                     value: 5,
                     status: [
                         {
-                            name: resolve.name,
+                            name: resolveStatus.name,
                             attachTo: CardTargetedEnum.Self,
                             args: {
                                 counter: 3,

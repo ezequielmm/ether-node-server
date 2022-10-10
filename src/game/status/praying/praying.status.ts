@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { fortitude } from '../fortitude/constants';
 import { StatusEventDTO, StatusEventHandler } from '../interfaces';
-import { resolve } from '../resolve/constants';
+import { resolveStatus } from '../resolve/constants';
 import { StatusDecorator } from '../status.decorator';
 import { StatusService } from '../status.service';
 import { prayingStatus } from './constants';
@@ -30,7 +30,7 @@ export class PrayingStatus implements StatusEventHandler {
             ctx,
             source,
             target,
-            statusName: resolve.name,
+            statusName: resolveStatus.name,
             statusArgs: {
                 counter: 1,
             },

@@ -11,11 +11,11 @@ import { Enemy } from '../enemy.schema';
 
 export const stingFaeData: Enemy = {
     enemyId: 10,
-    name: 'StingFae',
+    name: 'StingFae1',
     type: EnemyTypeEnum.Fae,
     category: EnemyCategoryEnum.Basic,
     size: EnemySizeEnum.Small,
-    description: ' ',
+    description: '',
     healthRange: [9, 15],
     scripts: [
         {

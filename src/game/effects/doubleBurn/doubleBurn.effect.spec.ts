@@ -4,6 +4,7 @@ import { EnemyService } from 'src/game/components/enemy/enemy.service';
 import { burn } from 'src/game/status/burn/constants';
 import { StatusService } from 'src/game/status/status.service';
 import { DoubleBurnEffect } from './doubleBurn.effect';
+import { CombatQueueService } from '../../components/combatQueue/combatQueue.service';
 
 describe('DoubleBurnEffect', () => {
     let doubleBurnEffect: DoubleBurnEffect;
@@ -12,6 +13,10 @@ describe('DoubleBurnEffect', () => {
     let source: any;
     let target: any;
     let args: any;
+
+    const mockCombatQueueService = {
+        push: jest.fn().mockResolvedValue(undefined),
+    };
 
     beforeEach(async () => {
         const module: TestingModule = await Test.createTestingModule({
@@ -22,6 +27,10 @@ describe('DoubleBurnEffect', () => {
                     useValue: {
                         updateStatuses: jest.fn(),
                     },
+                },
+                {
+                    provide: CombatQueueService,
+                    useValue: mockCombatQueueService,
                 },
                 {
                     provide: EnemyService,

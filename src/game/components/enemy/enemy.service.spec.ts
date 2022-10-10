@@ -7,7 +7,7 @@ import { defenseEffect } from 'src/game/effects/defense/constants';
 import { CardTargetedEnum } from '../card/card.enum';
 import { IExpeditionCurrentNodeDataEnemy } from '../expedition/expedition.interface';
 import { ExpeditionService } from '../expedition/expedition.service';
-import { Context } from '../interfaces';
+import { GameContext } from '../interfaces';
 import {
     ENEMY_CURRENT_SCRIPT_PATH,
     ENEMY_DEFENSE_PATH,
@@ -23,7 +23,7 @@ import { StatusService } from 'src/game/status/status.service';
 
 describe('EnemyService', () => {
     let enemyService: EnemyService;
-    let mockCtx: Context;
+    let mockCtx: GameContext;
     let mockEnemyModel: Model<EnemyDocument>;
     let spyOnSetHp: jest.SpyInstance;
     let spyOnSetDefense: jest.SpyInstance;
@@ -225,7 +225,7 @@ describe('EnemyService', () => {
                     },
                 },
             },
-        } as unknown as Context;
+        } as unknown as GameContext;
 
         mockExpeditionEnemyA = cloneDeep(mockExpeditionEnemyA);
         mockExpeditionEnemyB = cloneDeep(mockExpeditionEnemyB);

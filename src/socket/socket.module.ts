@@ -14,6 +14,7 @@ import { GetDataGateway } from './getData.gateway';
 import { RewardGateway } from './reward.gateway';
 import { CampGateway } from './camp.gateway';
 import { CardSelectionScreenModule } from 'src/game/components/cardSelectionScreen/cardSelectionScreen.module';
+import { PotionModule } from 'src/game/components/potion/potion.module';
 
 @Module({
     imports: [
@@ -26,6 +27,7 @@ import { CardSelectionScreenModule } from 'src/game/components/cardSelectionScre
         PlayerModule,
         CombatQueueModule,
         CardSelectionScreenModule,
+        PotionModule,
     ],
     providers: [
         SocketGateway,

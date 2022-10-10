@@ -3,7 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Enemy, EnemyDocument } from './enemy.schema';
 import { Model } from 'mongoose';
 import { EnemyId, enemyIdField, enemySelector } from './enemy.type';
-import { Context, ExpeditionEntity } from '../interfaces';
+import { GameContext, ExpeditionEntity } from '../interfaces';
 import { ExpeditionEnemy } from './enemy.interface';
 import { CardTargetedEnum } from '../card/card.enum';
 import { find, sample } from 'lodash';
@@ -60,7 +60,7 @@ export class EnemyService {
      * @param ctx Context
      * @returns If all enemies are dead
      */
-    public isAllDead(ctx: Context): boolean {
+    public isAllDead(ctx: GameContext): boolean {
         return this.getAll(ctx).every((enemy) => this.isDead(enemy));
     }
 
@@ -82,7 +82,7 @@ export class EnemyService {
      * @param ctx Context
      * @returns Enemies
      */
-    public getAll(ctx: Context): ExpeditionEnemy[] {
+    public getAll(ctx: GameContext): ExpeditionEnemy[] {
         const { expedition } = ctx;
 
         if (!expedition.currentNode?.data?.enemies)
@@ -101,7 +101,7 @@ export class EnemyService {
      * @param id Enemy id
      * @returns Enemy
      */
-    public get(ctx: Context, id: EnemyId): ExpeditionEnemy {
+    public get(ctx: GameContext, id: EnemyId): ExpeditionEnemy {
         const enemies = this.getAll(ctx);
 
         return find(enemies, {
@@ -117,7 +117,7 @@ export class EnemyService {
      * @param ctx Context
      * @returns Random enemy
      */
-    public getRandom(ctx: Context): ExpeditionEnemy {
+    public getRandom(ctx: GameContext): ExpeditionEnemy {
         const enemies = this.getAll(ctx);
 
         return sample(enemies);
@@ -132,7 +132,7 @@ export class EnemyService {
      * @returns Defense value
      */
     public async setDefense(
-        ctx: Context,
+        ctx: GameContext,
         id: EnemyId,
         defense: number,
     ): Promise<number> {
@@ -163,7 +163,11 @@ export class EnemyService {
      * @param hp Health value
      * @returns Health value
      */
-    public async setHp(ctx: Context, id: EnemyId, hp: number): Promise<number> {
+    public async setHp(
+        ctx: GameContext,
+        id: EnemyId,
+        hp: number,
+    ): Promise<number> {
         const enemy = this.get(ctx, id);
 
         const newHp = Math.min(hp, enemy.value.hpMax);
@@ -194,7 +198,7 @@ export class EnemyService {
      * @returns New health value
      */
     public async damage(
-        ctx: Context,
+        ctx: GameContext,
         id: EnemyId,
         damage: number,
     ): Promise<number> {
@@ -237,7 +241,7 @@ export class EnemyService {
      *
      * @param ctx Context
      */
-    async calculateNewIntentions(ctx: Context): Promise<void> {
+    async calculateNewIntentions(ctx: GameContext): Promise<void> {
         const enemies = this.getAll(ctx);
 
         for (const enemy of enemies) {
@@ -293,7 +297,7 @@ export class EnemyService {
      * @throws Error if the status is not found
      */
     async attach(
-        ctx: Context,
+        ctx: GameContext,
         id: EnemyId,
         source: ExpeditionEntity,
         name: Status['name'],

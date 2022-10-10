@@ -1,7 +1,10 @@
 import { Logger } from '@nestjs/common';
 import { SubscribeMessage, WebSocketGateway } from '@nestjs/websockets';
 import { Socket } from 'socket.io';
+import { ExpeditionDocument } from 'src/game/components/expedition/expedition.schema';
 import { ExpeditionService } from 'src/game/components/expedition/expedition.service';
+import { GameContext } from 'src/game/components/interfaces';
+import { PlayerService } from 'src/game/components/player/player.service';
 import {
     StandardResponse,
     SWARAction,
@@ -13,59 +16,73 @@ import { corsSocketSettings } from './socket.enum';
 export class CampGateway {
     private readonly logger: Logger = new Logger(CampGateway.name);
 
-    constructor(private readonly expeditionService: ExpeditionService) {}
+    constructor(
+        private readonly expeditionService: ExpeditionService,
+        private readonly playerService: PlayerService,
+    ) {}
 
-    @SubscribeMessage('RecoverHealth')
-    async handleRecoverHealth(client: Socket): Promise<string> {
+    @SubscribeMessage('CampRecoverHealth')
+    async handleRecoverHealth(client: Socket): Promise<void> {
         this.logger.debug(
-            `Client ${client.id} trigger message "RecoverHealth"`,
+            `Client ${client.id} trigger message "CampRecoverHealth"`,
         );
 
         // First we get the actual player state to get the
         // actual health and max health for the player
-        const { hpCurrent, hpMax } =
-            await this.expeditionService.getPlayerState({
-                clientId: client.id,
-            });
+        const expedition = await this.expeditionService.findOne({
+            clientId: client.id,
+        });
+
+        const {
+            playerState: { hpCurrent, hpMax },
+        } = expedition;
 
         // Now we calculate the new health for the player
         // Here we increase the health by 30% or set it to the
         // hpMax value is the result is higher than hpMax
         const newHp = Math.floor(Math.min(hpMax, hpCurrent + hpCurrent * 0.3));
 
-        // now we update the current hp for the player, as is just update
-        // we do it on the player state directly
-        await this.expeditionService.updateByFilter(
-            { clientId: client.id },
-            { playerState: { hpCurrent: newHp } },
+        const ctx: GameContext = {
+            client,
+            expedition: expedition as ExpeditionDocument,
+        };
+
+        // Now we update the current hp for the player
+        await this.playerService.setGlobalHp(ctx, newHp);
+
+        this.logger.debug(`Sent message PlayerState to client ${client.id}`);
+
+        client.emit(
+            'PlayerState',
+            StandardResponse.respond({
+                message_type: SWARMessageType.PlayerStateUpdate,
+                action: SWARAction.UpdatePlayerState,
+                data: {
+                    playerState: {
+                        id: ctx.expedition.playerState.playerId,
+                        playerId: ctx.expedition.playerId,
+                        playerName: ctx.expedition.playerState.playerName,
+                        characterClass:
+                            ctx.expedition.playerState.characterClass,
+                        hpMax: ctx.expedition.playerState.hpMax,
+                        hpCurrent: ctx.expedition.playerState.hpCurrent,
+                        gold: ctx.expedition.playerState.gold,
+                        cards: ctx.expedition.playerState.cards,
+                        potions: [],
+                        trinkets: [],
+                    },
+                },
+            }),
         );
 
-        // Now we return the message to let the frontend know the new
-        // health
-        return StandardResponse.respond({
-            message_type: SWARMessageType.CampUpdate,
-            action: SWARAction.IncreasePlayerHealth,
-            data: { newHp },
-        });
-    }
-
-    @SubscribeMessage('ShowUpgradeCard')
-    async handleShowUpgradeCard(client: Socket): Promise<string> {
-        this.logger.debug(
-            `Client ${client.id} trigger message "ShowUpgradeCard"`,
+        // Send message to finish the node and change the button text
+        client.emit(
+            'PutData',
+            StandardResponse.respond({
+                message_type: SWARMessageType.CampUpdate,
+                action: SWARAction.FinishCamp,
+                data: null,
+            }),
         );
-
-        // First we get the cards from the deck and send them to the
-        // frontend
-
-        const { cards } = await this.expeditionService.getPlayerState({
-            clientId: client.id,
-        });
-
-        return StandardResponse.respond({
-            message_type: SWARMessageType.CampUpdate,
-            action: SWARAction.ShowPlayerDeck,
-            data: { cards },
-        });
     }
 }

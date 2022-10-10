@@ -71,13 +71,13 @@ export const actCconfigAlternatives = [
                 {
                     type: 'encounter',
                     subType: 'encounter',
-                    chance: 15,
+                    chance: 19,
                     config: {},
                 },
                 {
                     type: 'merchant',
                     subType: 'merchant',
-                    chance: 5,
+                    chance: 1,
                     config: {},
                 },
             ],
@@ -89,7 +89,7 @@ export const actCconfigAlternatives = [
                     {
                         type: 'combat',
                         subType: 'combat_standard',
-                        chance: 40,
+                        chance: 70,
                         config: {
                             enemies: [
                                 {
@@ -117,6 +117,12 @@ export const actCconfigAlternatives = [
                             ],
                         },
                     },
+                    {
+                        type: 'camp',
+                        subType: 'camp_regular',
+                        chance: 30,
+                        config: {},
+                    },
                 ],
             },
             1: {
@@ -125,7 +131,7 @@ export const actCconfigAlternatives = [
                     {
                         type: 'combat',
                         subType: 'combat_standard',
-                        chance: 40,
+                        chance: 70,
                         config: {
                             enemies: [
                                 {
@@ -152,6 +158,12 @@ export const actCconfigAlternatives = [
                                 },
                             ],
                         },
+                    },
+                    {
+                        type: 'camp',
+                        subType: 'camp_regular',
+                        chance: 30,
+                        config: {},
                     },
                 ],
             },
@@ -296,6 +308,12 @@ export const actCconfigAlternatives = [
                                 },
                             ],
                         },
+                    },
+                    {
+                        type: 'camp',
+                        subType: 'camp_regular',
+                        chance: 40,
+                        config: {},
                     },
                 ],
             },

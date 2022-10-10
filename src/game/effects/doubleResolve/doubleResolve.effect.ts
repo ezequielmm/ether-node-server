@@ -3,7 +3,7 @@ import { filter, isEmpty } from 'lodash';
 import { EnemyService } from 'src/game/components/enemy/enemy.service';
 import { PlayerService } from 'src/game/components/player/player.service';
 import { StatusCollection } from 'src/game/status/interfaces';
-import { resolve } from 'src/game/status/resolve/constants';
+import { resolveStatus } from 'src/game/status/resolve/constants';
 import { StatusService } from 'src/game/status/status.service';
 import { EffectDecorator } from '../effects.decorator';
 import { EffectDTO, EffectHandler } from '../effects.interface';
@@ -29,7 +29,7 @@ export class DoubleResolveEffect implements EffectHandler {
         }
 
         const resolveStatuses = filter(statuses.buff, {
-            name: resolve.name,
+            name: resolveStatus.name,
         });
 
         if (isEmpty(resolveStatuses)) return;
@@ -39,10 +39,6 @@ export class DoubleResolveEffect implements EffectHandler {
             status.args.counter *= 2;
         });
 
-        await this.statusService.updateStatuses(
-            target,
-            dto.ctx.expedition,
-            statuses,
-        );
+        await this.statusService.updateStatuses(dto.ctx, target, statuses);
     }
 }

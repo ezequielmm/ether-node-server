@@ -3,6 +3,10 @@ import { AdeptCard, AdeptCardUpgraded } from './data/adept.card';
 import { AnticipateCard, AnticipateCardUpgraded } from './data/anticipate.card';
 import { ArmorUpCard, ArmorUpCardUpgraded } from './data/armorUp.card';
 import { AttackCard, AttackCardUpgraded } from './data/attack.card';
+import {
+    AutonomousWeaponCard,
+    AutonomousWeaponCardUpgraded,
+} from './data/autonomousWeapon.card';
 import { BackflipCard, BackflipCardUpgraded } from './data/backflip.card';
 import { BackHandCard, BackHandCardUpgraded } from './data/backhand.card';
 import { BlusterCard, BlusterCardUpgraded } from './data/bluster.card';
@@ -45,6 +49,7 @@ import {
     HeraldOfPainCardUpgraded,
 } from './data/heraldOfPain.card';
 import { HiltPunchCard, HiltPunchCardUpgraded } from './data/hiltPunch.card';
+import { ImbueCard, ImbueCardUpgraded } from './data/imbue.card';
 import { InterceptCard, InterceptCardUpgraded } from './data/intercept.card';
 import { IntimidateCard, IntimidateCardUpgraded } from './data/intimidate.card';
 import {
@@ -58,7 +63,12 @@ import {
     KnightsResolveCardUpgraded,
 } from './data/knightsResolve.card';
 import { KnockDownCard, KnockDownCardUpgraded } from './data/knockDown.card';
+import {
+    LastReminderCard,
+    LastReminderCardUpgraded,
+} from './data/lastReminder.card';
 import { LastResortCard, LastResortCardUpgraded } from './data/lastResort.card';
+import { LevitateCard, LevitateCardUpgraded } from './data/levitate.card';
 import { LungeCard, LungeCardUpgraded } from './data/lunge.card';
 import { OnARollCard, OnARollCardUpgraded } from './data/onARoll.card';
 import {
@@ -242,4 +252,12 @@ export const data: Card[] = [
     TightenStrapsCardUpgraded,
     WrathCard,
     WrathCardUpgraded,
+    LevitateCard,
+    LevitateCardUpgraded,
+    ImbueCard,
+    ImbueCardUpgraded,
+    LastReminderCard,
+    LastReminderCardUpgraded,
+    AutonomousWeaponCard,
+    AutonomousWeaponCardUpgraded,
 ];

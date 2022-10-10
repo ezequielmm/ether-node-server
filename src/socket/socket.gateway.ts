@@ -29,7 +29,7 @@ export class SocketGateway
     constructor(
         private readonly authGatewayService: AuthGatewayService,
         private readonly expeditionService: ExpeditionService,
-        private readonly fullsyncAction: FullSyncAction,
+        private readonly fullSyncAction: FullSyncAction,
         private readonly initCombatProcess: InitCombatProcess,
         private readonly playerService: PlayerService,
         private readonly combatQueueService: CombatQueueService,
@@ -97,7 +97,7 @@ export class SocketGateway
                     }
                 }
 
-                await this.fullsyncAction.handle(client);
+                await this.fullSyncAction.handle(client);
 
                 this.logger.verbose(
                     `Clients connected: ${this.server.engine.clientsCount}`,

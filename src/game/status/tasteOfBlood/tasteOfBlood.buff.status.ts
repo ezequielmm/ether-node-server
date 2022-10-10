@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
-import { Context } from 'src/game/components/interfaces';
+import { GameContext } from 'src/game/components/interfaces';
 import {
     EVENT_BEFORE_ENEMIES_TURN_START,
     EVENT_BEFORE_PLAYER_TURN_START,
@@ -22,7 +22,7 @@ import { tasteOfBloodBuff } from './constants';
 @Injectable()
 export class TasteOfBloodBuffStatus extends HeraldingStatus {
     @OnEvent(EVENT_BEFORE_ENEMIES_TURN_START)
-    async onEnemiesTurnEnd(args: { ctx: Context }): Promise<void> {
+    async onEnemiesTurnEnd(args: { ctx: GameContext }): Promise<void> {
         const { ctx } = args;
         const enemies = this.enemyService.getAll(ctx);
 
@@ -37,7 +37,7 @@ export class TasteOfBloodBuffStatus extends HeraldingStatus {
     }
 
     @OnEvent(EVENT_BEFORE_PLAYER_TURN_START)
-    async onPlayerTurnEnd(args: { ctx: Context }): Promise<void> {
+    async onPlayerTurnEnd(args: { ctx: GameContext }): Promise<void> {
         const { ctx } = args;
         const player = this.playerService.get(ctx);
         const statuses = player.value.combatState.statuses;
