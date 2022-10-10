@@ -134,7 +134,7 @@ export class PotionService {
             return;
         }
 
-        await this.expeditionService.updateById(ctx.expedition.id, {
+        await this.expeditionService.updateById(ctx.expedition._id, {
             playerState: {
                 potions: [...ctx.expedition.playerState.potions, potionId],
             },

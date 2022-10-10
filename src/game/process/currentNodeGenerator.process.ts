@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { randomUUID } from 'crypto';
-import { random } from 'lodash';
+import { random, sample } from 'lodash';
 import {
     getRandomBetween,
     getRandomItemByWeight,
@@ -20,6 +20,19 @@ import {
     IExpeditionReward,
 } from '../components/expedition/expedition.interface';
 import { ExpeditionService } from '../components/expedition/expedition.service';
+import { arcaneBrewPotion } from '../components/potion/data/arcaneBrew.potion';
+import { brainTonic } from '../components/potion/data/brainTonic.potion';
+import { damagePotion } from '../components/potion/data/damage.potion';
+import { defensePotion } from '../components/potion/data/defense.potion';
+import { healingPotion } from '../components/potion/data/healing.potion';
+import { ichorDraft } from '../components/potion/data/IchorDraft.potion';
+import { mistyPhialPotion } from '../components/potion/data/mistyPhial.potion';
+import { phantomPhialPotion } from '../components/potion/data/phantomPhial.potion';
+import { philterOfRedemptionPotion } from '../components/potion/data/philterOfRedemption.potion';
+import { potionOfLevitation } from '../components/potion/data/potion0fLevitation.potion';
+import { spiritElixir } from '../components/potion/data/spiritElixir.potion';
+import { spiritVialPotion } from '../components/potion/data/spiritVial.potion';
+import { springWaterFlask } from '../components/potion/data/springWaterFlask.potion';
 import { SettingsService } from '../components/settings/settings.service';
 import { StatusType } from '../status/interfaces';
 
@@ -181,12 +194,26 @@ export class CurrentNodeGeneratorProcess {
                 amount,
                 taken: false,
             },
-            /*{
+            {
                 id: randomUUID(),
                 type: IExpeditionNodeReward.Potion,
-                amount: 1, // Lets keep it at one for now
+                amount: sample([
+                    healingPotion,
+                    defensePotion,
+                    springWaterFlask,
+                    spiritElixir,
+                    potionOfLevitation,
+                    ichorDraft,
+                    damagePotion,
+                    brainTonic,
+                    spiritVialPotion,
+                    arcaneBrewPotion,
+                    mistyPhialPotion,
+                    phantomPhialPotion,
+                    philterOfRedemptionPotion,
+                ]).potionId,
                 taken: false,
-            },*/
+            },
         ];
     }
 }
