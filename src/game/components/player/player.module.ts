@@ -1,4 +1,5 @@
 import { forwardRef, Module } from '@nestjs/common';
+import { HistoryModule } from 'src/game/history/history.module';
 import { StatusModule } from 'src/game/status/status.module';
 import { CombatQueueModule } from '../combatQueue/combatQueue.module';
 import { ExpeditionModule } from '../expedition/expedition.module';
@@ -9,6 +10,7 @@ import { PlayerService } from './player.service';
         CombatQueueModule,
         forwardRef(() => ExpeditionModule),
         forwardRef(() => StatusModule),
+        HistoryModule,
     ],
     providers: [PlayerService],
     exports: [PlayerService],

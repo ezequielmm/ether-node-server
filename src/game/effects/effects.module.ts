@@ -24,6 +24,7 @@ import { HeadButtEffect } from './headButt/headButt.effect';
 import { HealEffect } from './heal/heal.effect';
 import { KnockDownEffect } from './knockDown/knockDown.effect';
 import { LastReminderEffect } from './lastReminder/lastReminder.effect';
+import { PhilterOfRedemptionEffect } from './philterOfRedemption/philterOfRedemption.effect';
 import { RemoveDebuffEffect } from './removeDebuff/removeDebuff.effect';
 import { RemoveDefenseEffect } from './removeDefense/removeDefense.effect';
 import { RepositionEffect } from './reposition/reposition.effect';
@@ -62,6 +63,7 @@ import { TwistTheBladeEffect } from './twistTheBlade/twistTheBlade.effect';
         AttachStatusEffect,
         LastReminderEffect,
         AutonomousWeaponEffect,
+        PhilterOfRedemptionEffect,
     ],
     exports: [EffectService],
 })

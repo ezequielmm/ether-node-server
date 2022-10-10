@@ -1,5 +1,6 @@
 import { forwardRef, Inject, Injectable, Logger } from '@nestjs/common';
 import { find, set } from 'lodash';
+import { HistoryService } from 'src/game/history/history.service';
 import {
     AttachedStatus,
     Status,
@@ -27,6 +28,7 @@ export class PlayerService {
         private readonly expeditionService: ExpeditionService,
         @Inject(forwardRef(() => StatusService))
         private readonly statusService: StatusService,
+        private readonly historyService: HistoryService,
     ) {}
 
     /**
@@ -187,6 +189,17 @@ export class PlayerService {
         // Update the player's defense and new health
         await this.setDefense(ctx, newDefense);
         await this.setHp(ctx, newHp);
+
+        // Add damage to history
+        this.historyService.register({
+            clientId: ctx.client.id,
+            registry: {
+                type: 'damage',
+                damage,
+                turn: ctx.expedition.currentNode.data.round,
+                target: player,
+            },
+        });
 
         return newHp;
     }
