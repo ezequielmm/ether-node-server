@@ -5,9 +5,9 @@ import { EntityReferenceDTO } from '../status/interfaces';
 
 export interface Registry {
     // Entity reference consume less space than the whole entity.
-    source: EntityReferenceDTO;
+    source?: EntityReferenceDTO;
     target?: EntityReferenceDTO;
-    type: 'status' | 'effect' | 'card';
+    type: 'status' | 'effect' | 'card' | 'damage';
 }
 
 export interface EffectRegistry extends Registry {
@@ -20,9 +20,15 @@ export interface CardRegistry extends Registry {
     card: IExpeditionPlayerStateDeckCard;
 }
 
+export interface DamageRegistry extends Registry {
+    type: 'damage';
+    damage: number;
+    turn: number;
+}
+
 export interface RegisterEffectDTO {
     clientId: ClientId;
-    registry: CardRegistry | EffectRegistry;
+    registry: CardRegistry | EffectRegistry | DamageRegistry;
 }
 
 export type HistoryDictionary = Map<ClientId, Registry[]>;

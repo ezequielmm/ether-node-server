@@ -7,7 +7,7 @@ import {
 } from '../interfaces';
 
 export const prayingStatus: StatusEvent = {
-    name: 'Praying',
+    name: 'praying',
     trigger: StatusTrigger.Event,
     type: StatusType.Buff,
     counterType: StatusCounterType.Duration,

@@ -11,6 +11,7 @@ import { AnticipatingStatus } from './anticipating/anticipating.status';
 import { ArmoredUpStatus } from './armoredUp/armoredUp.status';
 import { BolsteredStatus } from './bolstered/bolstered.status';
 import { BurnStatus } from './burn/burn.status';
+import { ClearHeadedStatus } from './clearHeaded/clearHeaded.status';
 import { ConfusionStatus } from './confusion/confusion.status';
 import { DistraughtEvent } from './distraught/distraught.event';
 import { DistraughtStatus } from './distraught/distraught.status';
@@ -33,6 +34,7 @@ import { PrayingStatus } from './praying/praying.status';
 import { RegenerateStatus } from './regenerate/regenerate.status';
 import { ResistStatus } from './resist/resist.status';
 import { ResolveStatus } from './resolve/resolve.status';
+import { ResolveExpiresStatus } from './resolveExpires/resolveExpires.status';
 import { SharpenBladeStatus } from './sharpenBlade/sharpenBlade.status';
 import { SiphoningStatus } from './siphoning/siphoning.status';
 import { SpikesStatus } from './spikes/spikes.status';
@@ -92,6 +94,8 @@ import { TurtlingStatus } from './turtling/turtling.status';
         PrayingStatus,
         NextPlayerTurnStatus,
         ArmoredUpStatus,
+        ResolveExpiresStatus,
+        ClearHeadedStatus,
     ],
     exports: [StatusService],
 })

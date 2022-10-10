@@ -2,19 +2,26 @@ import { Injectable, Logger } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { EVENT_AFTER_STATUS_ATTACH } from 'src/game/constants';
+import {
+    EVENT_AFTER_STATUSES_UPDATE,
+    EVENT_AFTER_STATUS_ATTACH,
+} from 'src/game/constants';
 import {
     StandardResponse,
     SWARAction,
     SWARMessageType,
 } from 'src/game/standardResponse/standardResponse';
-import { JsonStatus } from 'src/game/status/interfaces';
-import { StatusGenerator } from 'src/game/status/statusGenerator';
-import { Context, ExpeditionEntity } from '../interfaces';
+import { AttachedStatus } from 'src/game/status/interfaces';
+import {
+    IStatusesList,
+    StatusGenerator,
+} from 'src/game/status/statusGenerator';
+import { GameContext, ExpeditionEntity } from '../interfaces';
 import { CombatQueueTargetEffectTypeEnum } from './combatQueue.enum';
 import { CreateCombatQueueDTO, PushActionDTO } from './combatQueue.interface';
 import { CombatQueue, CombatQueueDocument } from './combatQueue.schema';
 import { isEmpty } from 'lodash';
+import { PlayerService } from '../player/player.service';
 
 @Injectable()
 export class CombatQueueService {
@@ -25,7 +32,7 @@ export class CombatQueueService {
         private readonly combatQueue: Model<CombatQueueDocument>,
     ) {}
 
-    async start(ctx: Context): Promise<void> {
+    async start(ctx: GameContext): Promise<void> {
         await this.create({
             clientId: ctx.client.id,
             queue: [],
@@ -65,7 +72,7 @@ export class CombatQueueService {
         );
     }
 
-    async end(ctx: Context): Promise<void> {
+    async end(ctx: GameContext): Promise<void> {
         const { client } = ctx;
 
         const combatQueues = await this.combatQueue.findOne({
@@ -105,23 +112,58 @@ export class CombatQueueService {
 
     @OnEvent(EVENT_AFTER_STATUS_ATTACH)
     async onAttachStatus(args: {
-        ctx: Context;
+        ctx: GameContext;
         source: ExpeditionEntity;
         target: ExpeditionEntity;
-        status: JsonStatus;
     }): Promise<void> {
-        const { ctx, source, target, status } = args;
+        await this.addStatusesToCombatQueue(args);
+    }
 
-        const statusInfo = {
-            name: status.name,
-            counter: status.args.counter,
-            description: StatusGenerator.generateDescription(
-                status.name,
-                status.args.counter,
-            ),
-        };
+    @OnEvent(EVENT_AFTER_STATUSES_UPDATE)
+    async onStatusesUpdate(args: {
+        ctx: GameContext;
+        source: ExpeditionEntity;
+        target: ExpeditionEntity;
+    }): Promise<void> {
+        await this.addStatusesToCombatQueue(args);
+    }
 
-        return this.push({
+    private async addStatusesToCombatQueue(args: {
+        ctx: GameContext;
+        source: ExpeditionEntity;
+        target: ExpeditionEntity;
+    }) {
+        const { ctx, source, target } = args;
+
+        const statuses = PlayerService.isPlayer(target)
+            ? target.value.combatState.statuses
+            : target.value.statuses;
+
+        await this.pushStatuses(ctx, source, target, [
+            ...statuses.buff,
+            ...statuses.debuff,
+        ]);
+    }
+
+    public async pushStatuses(
+        ctx: GameContext,
+        source: ExpeditionEntity,
+        target: ExpeditionEntity,
+        statuses: AttachedStatus[],
+    ): Promise<void> {
+        const statusesInfo: IStatusesList[] = [];
+        for (const status of statuses) {
+            statusesInfo.push({
+                name: status.name,
+                counter: status.args.counter,
+                description: StatusGenerator.generateDescription(
+                    status.name,
+                    status.args.counter,
+                ),
+            });
+        }
+
+        await this.push({
             ctx,
             source,
             target,
@@ -131,7 +173,7 @@ export class CombatQueueService {
                 finalHealth: 0,
                 defenseDelta: 0,
                 finalDefense: 0,
-                statuses: [statusInfo],
+                statuses: statusesInfo,
             },
         });
     }

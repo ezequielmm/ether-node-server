@@ -25,7 +25,7 @@ export class FullSyncAction {
                 ErrorBehavior.ReturnToMainMenu,
             );
 
-        const { map, playerState } = expedition;
+        const { map, playerState, mapSeedId, playerId } = expedition || {};
 
         this.logger.debug(`Sent message ExpeditionMap to client ${client.id}`);
 
@@ -33,6 +33,7 @@ export class FullSyncAction {
             'ExpeditionMap',
             StandardResponse.respond({
                 message_type: SWARMessageType.MapUpdate,
+                seed: mapSeedId,
                 action: SWARAction.ShowMap,
                 data: map,
             }),
@@ -45,7 +46,20 @@ export class FullSyncAction {
             StandardResponse.respond({
                 message_type: SWARMessageType.PlayerStateUpdate,
                 action: SWARAction.UpdatePlayerState,
-                data: { playerState },
+                data: {
+                    playerState: {
+                        id: playerState.playerId,
+                        playerId,
+                        playerName: playerState.playerName,
+                        characterClass: playerState.characterClass,
+                        hpMax: playerState.hpMax,
+                        hpCurrent: playerState.hpCurrent,
+                        gold: playerState.gold,
+                        cards: playerState.cards,
+                        potions: [],
+                        trinkets: [],
+                    },
+                },
             }),
         );
     }

@@ -1,4 +1,4 @@
-import { PartialType } from '@nestjs/mapped-types';
+import { DeepPartial } from 'src/utils';
 import { CardId } from '../card/card.type';
 import { CombatTurnEnum } from './expedition.enum';
 import {
@@ -15,7 +15,7 @@ interface BaseDTO {
 export type FindOneExpeditionDTO = BaseDTO;
 export type playerHasAnExpeditionDTO = BaseDTO;
 export class CreateExpeditionDTO extends Expedition implements BaseDTO {}
-export class UpdateExpeditionDTO extends PartialType(CreateExpeditionDTO) {}
+export type UpdateExpeditionDTO = DeepPartial<CreateExpeditionDTO>;
 export class UpdateClientIdDTO {
     readonly clientId: string;
     readonly playerId: number;
@@ -54,10 +54,6 @@ export interface UpdateHandPilesDTO extends BaseDTO {
     draw?: IExpeditionPlayerStateDeckCard[];
 }
 
-export interface SetPlayerDefenseDTO extends BaseDTO {
-    value: number;
-}
-
-export interface UpdatePlayerHealthDTO extends BaseDTO {
-    hpCurrent: number;
+export interface UpdatePlayerDeckDTO extends BaseDTO {
+    deck: IExpeditionPlayerStateDeckCard[];
 }

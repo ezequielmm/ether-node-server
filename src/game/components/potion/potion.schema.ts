@@ -1,8 +1,6 @@
-import { Faker } from '@faker-js/faker';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
-import { Factory } from 'nestjs-seeder';
-import { getRandomEnumValue } from 'src/utils';
+import { JsonEffect } from 'src/game/effects/effects.interface';
 import { PotionRarityEnum } from './potion.enum';
 
 export type PotionDocument = Potion & Document;
@@ -11,21 +9,26 @@ export type PotionDocument = Potion & Document;
     collection: 'potions',
 })
 export class Potion {
-    @Factory((faker: Faker) => faker.name.findName())
-    @Prop(() => 'potion')
+    @Prop()
+    potionId: number;
+
+    @Prop()
     name: string;
 
-    @Factory(() => true)
-    @Prop()
-    usable: boolean;
-
-    @Factory(() => getRandomEnumValue(PotionRarityEnum))
     @Prop()
     rarity: PotionRarityEnum;
 
-    @Factory('Future description')
     @Prop()
     description: string;
+
+    @Prop()
+    effects: JsonEffect[];
+
+    @Prop()
+    usableOutsideCombat: boolean;
+
+    @Prop({ default: false })
+    showPointer: boolean;
 }
 
 export const PotionSchema = SchemaFactory.createForClass(Potion);

@@ -9,7 +9,7 @@ import { EnemyService } from '../components/enemy/enemy.service';
 import { CombatTurnEnum } from '../components/expedition/expedition.enum';
 import { ExpeditionDocument } from '../components/expedition/expedition.schema';
 import { ExpeditionService } from '../components/expedition/expedition.service';
-import { Context } from '../components/interfaces';
+import { GameContext } from '../components/interfaces';
 import { PlayerService } from '../components/player/player.service';
 import { SettingsService } from '../components/settings/settings.service';
 import {
@@ -62,7 +62,7 @@ export class BeginPlayerTurnProcess {
         } = expedition;
 
         // Create player context
-        const ctx: Context = {
+        const ctx: GameContext = {
             client,
             expedition: expedition as ExpeditionDocument,
         };

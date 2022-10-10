@@ -7,7 +7,7 @@ import { CombatQueueService } from 'src/game/components/combatQueue/combatQueue.
 import { ExpeditionEnemy } from 'src/game/components/enemy/enemy.interface';
 import { EnemyService } from 'src/game/components/enemy/enemy.service';
 import { ExpeditionDocument } from 'src/game/components/expedition/expedition.schema';
-import { Context } from 'src/game/components/interfaces';
+import { GameContext } from 'src/game/components/interfaces';
 import { ExpeditionPlayer } from 'src/game/components/player/interfaces';
 import { PlayerService } from 'src/game/components/player/player.service';
 import { HistoryService } from 'src/game/history/history.service';
@@ -33,7 +33,7 @@ describe('DamageEffect', () => {
         value: { id: '123' },
     } as ExpeditionEnemy;
 
-    const mockCtx: Context = {
+    const mockCtx: GameContext = {
         client: new MockedSocket(),
         expedition: {
             currentNode: {

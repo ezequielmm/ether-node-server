@@ -2,31 +2,6 @@ import { removeDefenseEffect } from 'src/game/effects/removeDefense/constants';
 import { CardRarityEnum, CardTypeEnum, CardTargetedEnum } from '../card.enum';
 import { Card } from '../card.schema';
 
-export const FeintCard: Card = {
-    cardId: 45,
-    name: 'Feint',
-    rarity: CardRarityEnum.Uncommon,
-    cardType: CardTypeEnum.Skill,
-    pool: 'knight',
-    energy: 1,
-    description: `Remove all Defense from an enemy`,
-    keywords: [],
-    properties: {
-        effects: [
-            {
-                effect: removeDefenseEffect.name,
-                target: CardTargetedEnum.AllEnemies,
-                args: {
-                    value: 0,
-                },
-            },
-        ],
-        statuses: [],
-    },
-    showPointer: false,
-    isUpgraded: false,
-};
-
 export const FeintCardUpgraded: Card = {
     cardId: 46,
     name: 'Feint+',
@@ -50,4 +25,30 @@ export const FeintCardUpgraded: Card = {
     },
     showPointer: false,
     isUpgraded: true,
+};
+
+export const FeintCard: Card = {
+    cardId: 45,
+    name: 'Feint',
+    rarity: CardRarityEnum.Uncommon,
+    cardType: CardTypeEnum.Skill,
+    pool: 'knight',
+    energy: 1,
+    description: `Remove all Defense from an enemy`,
+    keywords: [],
+    properties: {
+        effects: [
+            {
+                effect: removeDefenseEffect.name,
+                target: CardTargetedEnum.AllEnemies,
+                args: {
+                    value: 0,
+                },
+            },
+        ],
+        statuses: [],
+    },
+    showPointer: false,
+    isUpgraded: false,
+    upgradedCardId: FeintCardUpgraded.cardId,
 };

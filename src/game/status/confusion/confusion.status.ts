@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { set } from 'lodash';
 import { CardTargetedEnum } from 'src/game/components/card/card.enum';
 import { EnemyService } from 'src/game/components/enemy/enemy.service';
-import { Context, ExpeditionEntity } from 'src/game/components/interfaces';
+import { GameContext, ExpeditionEntity } from 'src/game/components/interfaces';
 import { PlayerService } from 'src/game/components/player/player.service';
 import {
     JsonStatus,
@@ -95,7 +95,7 @@ export class ConfusionStatus implements StatusEffectHandler {
     }
 
     @OnEvent(EVENT_BEFORE_ENEMIES_TURN_END)
-    async onEnemiesTurnStart(args: { ctx: Context }): Promise<void> {
+    async onEnemiesTurnStart(args: { ctx: GameContext }): Promise<void> {
         const { ctx } = args;
         const enemies = this.enemyService.getAll(ctx);
 
@@ -110,7 +110,7 @@ export class ConfusionStatus implements StatusEffectHandler {
     }
 
     @OnEvent(EVENT_BEFORE_ENEMIES_TURN_END)
-    async onPlayerTurnStart(args: { ctx: Context }): Promise<void> {
+    async onPlayerTurnStart(args: { ctx: GameContext }): Promise<void> {
         const { ctx } = args;
         const player = this.playerService.get(ctx);
         const statuses = player.value.combatState.statuses;

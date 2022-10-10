@@ -3,7 +3,7 @@ import {
     CardTargetedEnum,
     CardTypeEnum,
 } from 'src/game/components/card/card.enum';
-import { Context } from 'src/game/components/interfaces';
+import { GameContext } from 'src/game/components/interfaces';
 import { ExpeditionPlayer } from 'src/game/components/player/interfaces';
 import { DefenseEffect } from './defense.effect';
 import * as MockedSocket from 'socket.io-mock';
@@ -104,7 +104,7 @@ describe('DefenseEffect', () => {
     } as ExpeditionEnemy;
 
     // Mock context
-    const mockCtx: Context = {
+    const mockCtx: GameContext = {
         client: new MockedSocket(),
         expedition: {
             currentNode: {

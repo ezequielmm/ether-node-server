@@ -1,6 +1,6 @@
 import { CardTargetedEnum } from '../components/card/card.enum';
 import { EnemyId } from '../components/enemy/enemy.type';
-import { Context, ExpeditionEntity } from '../components/interfaces';
+import { GameContext, ExpeditionEntity } from '../components/interfaces';
 import { Effect, EffectDTO } from '../effects/effects.interface';
 import { TargetId } from '../effects/effects.types';
 
@@ -177,7 +177,7 @@ export interface StatusCollection {
 export interface StatusEffectDTO<
     T extends Record<string, any> = Record<string, any>,
 > {
-    readonly ctx: Context;
+    readonly ctx: GameContext;
     readonly status: AttachedStatus;
     readonly effectDTO: EffectDTO<T>;
     update(args: AttachedStatus['args']): void;
@@ -187,10 +187,10 @@ export interface StatusEffectDTO<
 export interface StatusEventDTO<Args = Record<string, any>> {
     /**
      * Context
-     * @type {Context}
+     * @type {GameContext}
      * @memberof StatusEventDTO
      */
-    readonly ctx: Context;
+    readonly ctx: GameContext;
 
     /**
      * Event name
@@ -267,10 +267,10 @@ export type StatusHandler = StatusEffectHandler | StatusEventHandler;
 export interface AttachAllDTO {
     /**
      * Context
-     * @type {Context}
+     * @type {GameContext}
      * @memberof AttachDTO
      */
-    ctx: Context;
+    ctx: GameContext;
 
     /**
      * Set of status to attach.
@@ -297,7 +297,7 @@ export interface AttachAllDTO {
 }
 
 export interface AttachDTO {
-    ctx: Context;
+    ctx: GameContext;
     source: ExpeditionEntity;
     target: ExpeditionEntity;
     statusName: StatusName;
@@ -305,14 +305,14 @@ export interface AttachDTO {
 }
 
 export interface AttachToPlayerDTO {
-    readonly ctx: Context;
+    readonly ctx: GameContext;
     readonly sourceReference: EntityReferenceDTO;
     readonly status: JsonStatus;
     readonly currentRound: number;
 }
 
 export interface AttachToEnemyDTO {
-    readonly ctx: Context;
+    readonly ctx: GameContext;
     readonly sourceReference: EntityReferenceDTO;
     readonly status: JsonStatus;
     readonly enemyId: EnemyId;
@@ -336,7 +336,7 @@ export type StatusesGlobalCollection = {
 }[];
 
 export interface MutateEffectArgsDTO {
-    ctx: Context;
+    ctx: GameContext;
     collectionOwner: ExpeditionEntity;
     collection: StatusCollection;
     effect: Effect['name'];

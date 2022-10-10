@@ -4,7 +4,7 @@ import { CombatQueueService } from '../components/combatQueue/combatQueue.servic
 import { EnemyService } from '../components/enemy/enemy.service';
 import { ExpeditionStatusEnum } from '../components/expedition/expedition.enum';
 import { ExpeditionService } from '../components/expedition/expedition.service';
-import { Context } from '../components/interfaces';
+import { GameContext } from '../components/interfaces';
 import { PlayerService } from '../components/player/player.service';
 import { EVENT_AFTER_DAMAGE_EFFECT } from '../constants';
 import {
@@ -38,7 +38,7 @@ export class EndCombatProcess {
         }
     }
 
-    private async endCombat(ctx: Context): Promise<void> {
+    private async endCombat(ctx: GameContext): Promise<void> {
         await this.combatQueueService.end(ctx);
 
         const {
@@ -54,7 +54,7 @@ export class EndCombatProcess {
         this.logger.debug(`Combat ended for client ${ctx.client.id}`);
     }
 
-    private emitEnemiesDefeated(ctx: Context) {
+    private emitEnemiesDefeated(ctx: GameContext) {
         ctx.client.emit(
             'PutData',
             StandardResponse.respond({
@@ -67,7 +67,7 @@ export class EndCombatProcess {
         );
     }
 
-    private async emitPlayerDefeated(ctx: Context): Promise<void> {
+    private async emitPlayerDefeated(ctx: GameContext): Promise<void> {
         await this.combatQueueService.end(ctx);
 
         ctx.client.emit(

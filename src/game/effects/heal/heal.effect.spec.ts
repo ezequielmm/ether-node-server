@@ -9,7 +9,7 @@ import { Test } from '@nestjs/testing';
 import { CombatQueueService } from 'src/game/components/combatQueue/combatQueue.service';
 import { EnemyService } from 'src/game/components/enemy/enemy.service';
 import { PlayerService } from 'src/game/components/player/player.service';
-import { Context } from 'src/game/components/interfaces';
+import { GameContext } from 'src/game/components/interfaces';
 
 describe('HealEffect', () => {
     // Set effect to test
@@ -41,7 +41,7 @@ describe('HealEffect', () => {
     } as ExpeditionEnemy;
 
     // Mock context
-    const mockCtx: Context = {
+    const mockCtx: GameContext = {
         client: new MockedSocket(),
         expedition: {
             currentNode: {
@@ -103,6 +103,7 @@ describe('HealEffect', () => {
                     initialValue: 5,
                     currentValue: 5,
                     value: 5,
+                    percentage: 0,
                 },
             });
 
@@ -118,6 +119,7 @@ describe('HealEffect', () => {
                     initialValue: 10,
                     currentValue: 10,
                     value: 10,
+                    percentage: 0,
                 },
             });
 
@@ -135,6 +137,7 @@ describe('HealEffect', () => {
                     initialValue: 5,
                     currentValue: 5,
                     value: 5,
+                    percentage: 0,
                 },
             });
 
@@ -154,6 +157,7 @@ describe('HealEffect', () => {
                     initialValue: 10,
                     currentValue: 10,
                     value: 10,
+                    percentage: 0,
                 },
             });
 

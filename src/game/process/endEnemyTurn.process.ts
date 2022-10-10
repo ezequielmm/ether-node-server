@@ -3,7 +3,7 @@ import { EventEmitter2 } from '@nestjs/event-emitter';
 import { ChangeTurnAction } from '../action/changeTurn.action';
 import { CombatQueueService } from '../components/combatQueue/combatQueue.service';
 import { CombatTurnEnum } from '../components/expedition/expedition.enum';
-import { Context } from '../components/interfaces';
+import { GameContext } from '../components/interfaces';
 import {
     EVENT_AFTER_ENEMIES_TURN_END,
     EVENT_BEFORE_ENEMIES_TURN_END,
@@ -12,7 +12,7 @@ import { SWARMessageType } from '../standardResponse/standardResponse';
 import { BeginPlayerTurnProcess } from './beginPlayerTurn.process';
 
 interface EndEnemyTurnDTO {
-    ctx: Context;
+    ctx: GameContext;
 }
 
 @Injectable()

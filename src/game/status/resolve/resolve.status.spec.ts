@@ -1,13 +1,13 @@
 import { CardTargetedEnum } from 'src/game/components/card/card.enum';
-import { Context } from 'src/game/components/interfaces';
+import { GameContext } from 'src/game/components/interfaces';
 import { DamageArgs } from '../../effects/damage/damage.effect';
 import { EffectDTO } from '../../effects/effects.interface';
 import { StatusEffectDTO } from '../interfaces';
-import { resolve } from './constants';
+import { resolveStatus } from './constants';
 import { ResolveStatus } from './resolve.status';
 
 describe('ResolveStatus', () => {
-    const mockCtx: Context = {
+    const mockCtx: GameContext = {
         client: undefined,
         expedition: undefined,
     };
@@ -17,7 +17,7 @@ describe('ResolveStatus', () => {
         const dto: StatusEffectDTO<DamageArgs> = {
             ctx: mockCtx,
             status: {
-                name: resolve.name,
+                name: resolveStatus.name,
                 sourceReference: {
                     type: CardTargetedEnum.Player,
                 },
@@ -44,7 +44,7 @@ describe('ResolveStatus', () => {
         const dto: StatusEffectDTO<DamageArgs> = {
             ctx: mockCtx,
             status: {
-                name: resolve.name,
+                name: resolveStatus.name,
                 sourceReference: {
                     type: CardTargetedEnum.Player,
                 },
