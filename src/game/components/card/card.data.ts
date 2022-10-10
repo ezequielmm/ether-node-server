@@ -99,6 +99,7 @@ import { ShoutCard, ShoutCardUpgraded } from './data/shout.card';
 import { SiphonCard, SiphonCardUpgraded } from './data/siphon.card';
 import { SparkCard, SparkCardUpgraded } from './data/Spark.card';
 import { SpikeArmorCard, SpikeArmorCardUpgraded } from './data/spikeArmor.card';
+import { StunnedCard } from './data/stunned.card';
 import {
     TasteOfBloodCard,
     TasteOfBloodCardUpgraded,
@@ -121,6 +122,7 @@ import {
     UltraLethalityCard,
     UltraLethalityCardUpgraded,
 } from './data/ultraLethality.card';
+import { WoundedCard } from './data/wounded.card';
 import { WrathCard, WrathCardUpgraded } from './data/wrath.card';
 
 export const data: Card[] = [
@@ -260,4 +262,6 @@ export const data: Card[] = [
     LastReminderCardUpgraded,
     AutonomousWeaponCard,
     AutonomousWeaponCardUpgraded,
+    StunnedCard,
+    WoundedCard,
 ];
