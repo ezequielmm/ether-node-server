@@ -6,12 +6,10 @@ import { PlayerService } from 'src/game/components/player/player.service';
 import { EnemyService } from 'src/game/components/enemy/enemy.service';
 import { CombatQueueTargetEffectTypeEnum } from 'src/game/components/combatQueue/combatQueue.enum';
 import { CombatQueueService } from 'src/game/components/combatQueue/combatQueue.service';
-
 export interface HealArgs {
     value: number;
     percentage: number;
 }
-
 @EffectDecorator({
     effect: healEffect,
 })

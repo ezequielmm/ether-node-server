@@ -9,6 +9,7 @@ import {
     PLAYER_DEFENSE_PATH,
     PLAYER_ENERGY_PATH,
     PLAYER_CURRENT_HP_PATH,
+    PLAYER_STATE_HP_CURRENT_PATH,
 } from './contants';
 import { PlayerService } from './player.service';
 import * as MockedSocket from 'socket.io-mock';
@@ -169,6 +170,21 @@ describe('PlayerService', () => {
             expect(get(mockContext.expedition, PLAYER_CURRENT_HP_PATH)).toBe(
                 10,
             );
+        });
+
+        it('should update the player global health', async () => {
+            await playerService.setGlobalHp(mockContext, 10);
+
+            expect(mockExpeditionService.updateById).toHaveBeenCalledWith(
+                mockContext.expedition.id,
+                {
+                    [PLAYER_STATE_HP_CURRENT_PATH]: 10,
+                },
+            );
+
+            expect(
+                get(mockContext.expedition, PLAYER_STATE_HP_CURRENT_PATH),
+            ).toBe(10);
         });
 
         it('should heal to max hp', async () => {
