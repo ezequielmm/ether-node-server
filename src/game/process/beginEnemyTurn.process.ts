@@ -60,9 +60,13 @@ export class BeginEnemyTurnProcess {
 
         const {
             currentNode: {
-                data: { enemies },
+                data: { enemies: allEnemies },
             },
         } = expedition;
+
+        const enemies = allEnemies.filter(({ hpCurrent }) => {
+            return hpCurrent > 0;
+        });
 
         const ctx: GameContext = {
             client: this.client,
