@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { randomUUID } from 'crypto';
-import { random, sample } from 'lodash';
+import { pick, random, sample } from 'lodash';
 import {
     getRandomBetween,
     getRandomItemByWeight,
@@ -17,7 +17,9 @@ import {
     IExpeditionCurrentNode,
     IExpeditionCurrentNodeDataEnemy,
     IExpeditionNode,
-    IExpeditionReward,
+    BaseReward,
+    GoldReward,
+    Reward,
 } from '../components/expedition/expedition.interface';
 import { ExpeditionService } from '../components/expedition/expedition.service';
 import { arcaneBrewPotion } from '../components/potion/data/arcaneBrew.potion';
@@ -33,6 +35,7 @@ import { potionOfLevitation } from '../components/potion/data/potion0fLevitation
 import { spiritElixir } from '../components/potion/data/spiritElixir.potion';
 import { spiritVialPotion } from '../components/potion/data/spiritVial.potion';
 import { springWaterFlask } from '../components/potion/data/springWaterFlask.potion';
+import { PotionService } from '../components/potion/potion.service';
 import { SettingsService } from '../components/settings/settings.service';
 import { StatusType } from '../status/interfaces';
 
@@ -45,6 +48,7 @@ export class CurrentNodeGeneratorProcess {
         private readonly expeditionService: ExpeditionService,
         private readonly settingsService: SettingsService,
         private readonly enemyService: EnemyService,
+        private readonly potionService: PotionService,
     ) {}
 
     async getCurrentNodeData(
@@ -97,8 +101,7 @@ export class CurrentNodeGeneratorProcess {
         });
 
         const enemies = await this.getEnemies();
-
-        const rewards = this.getRewards();
+        const rewards = await this.getRewards();
 
         return {
             nodeId: this.node.id,
@@ -177,7 +180,7 @@ export class CurrentNodeGeneratorProcess {
         );
     }
 
-    private getRewards(): IExpeditionReward[] {
+    private async getRewards(): Promise<Reward[]> {
         const amount =
             this.node.type == ExpeditionMapNodeTypeEnum.Combat
                 ? random(10, 20)
@@ -186,6 +189,8 @@ export class CurrentNodeGeneratorProcess {
                 : this.node.type == ExpeditionMapNodeTypeEnum.CombatBoss
                 ? random(95, 105)
                 : 0;
+
+        const potion = await this.potionService.getRandomPotion();
 
         return [
             {
@@ -197,22 +202,8 @@ export class CurrentNodeGeneratorProcess {
             {
                 id: randomUUID(),
                 type: IExpeditionNodeReward.Potion,
-                amount: sample([
-                    healingPotion,
-                    defensePotion,
-                    springWaterFlask,
-                    spiritElixir,
-                    potionOfLevitation,
-                    ichorDraft,
-                    damagePotion,
-                    brainTonic,
-                    spiritVialPotion,
-                    arcaneBrewPotion,
-                    mistyPhialPotion,
-                    phantomPhialPotion,
-                    philterOfRedemptionPotion,
-                ]).potionId,
                 taken: false,
+                potion: pick(potion, ['potionId', 'name', 'description']),
             },
         ];
     }
