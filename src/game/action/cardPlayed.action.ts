@@ -100,6 +100,18 @@ export class CardPlayedAction {
                 return card[field] === cardId;
             });
 
+            const source = this.playerService.get(ctx);
+            const sourceReference =
+                this.statusService.getReferenceFromEntity(source);
+
+            await this.eventEmitter.emitAsync(EVENT_BEFORE_CARD_PLAY, {
+                ctx,
+                card,
+                cardSource: source,
+                cardSourceReference: sourceReference,
+                cardTargetId: selectedEnemyId,
+            });
+
             const {
                 energy: cardEnergyCost,
                 properties: { effects, statuses },
@@ -145,6 +157,7 @@ export class CardPlayedAction {
                             type: 'card',
                             source,
                             card,
+                            round: ctx.expedition.currentNode.data.round,
                         },
                     });
 
