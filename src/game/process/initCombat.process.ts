@@ -7,7 +7,7 @@ import { IExpeditionNode } from '../components/expedition/expedition.interface';
 import { ExpeditionDocument } from '../components/expedition/expedition.schema';
 import { ExpeditionService } from '../components/expedition/expedition.service';
 import { GameContext } from '../components/interfaces';
-import { CurrentNodeGeneratorProcess } from './CurrentNodeGeneratorProcess';
+import { CurrentNodeGeneratorProcess } from './currentNodeGenerator.process';
 
 @Injectable()
 export class InitCombatProcess {

@@ -13,7 +13,7 @@ import { EffectModule } from '../effects/effects.module';
 import { StatusModule } from '../status/status.module';
 import { BeginEnemyTurnProcess } from './beginEnemyTurn.process';
 import { BeginPlayerTurnProcess } from './beginPlayerTurn.process';
-import { CurrentNodeGeneratorProcess } from './CurrentNodeGeneratorProcess';
+import { CurrentNodeGeneratorProcess } from './currentNodeGenerator.process';
 import { EndCombatProcess } from './endCombat.process';
 import { EndEnemyTurnProcess } from './endEnemyTurn.process';
 import { EndPlayerTurnProcess } from './endPlayerTurn.process';
