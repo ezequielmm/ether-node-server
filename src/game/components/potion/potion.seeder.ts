@@ -16,6 +16,7 @@ import { arcaneBrewPotion } from './data/arcaneBrew.potion';
 import { mistyPhialPotion } from './data/mistyPhial.potion';
 import { phantomPhialPotion } from './data/phantomPhial.potion';
 import { philterOfRedemptionPotion } from './data/philterOfRedemption.potion';
+import { pavaRootPotion } from './data/pavaRoot.potion';
 
 @Injectable()
 export class PotionSeeder implements Seeder {
@@ -39,6 +40,7 @@ export class PotionSeeder implements Seeder {
             mistyPhialPotion,
             phantomPhialPotion,
             philterOfRedemptionPotion,
+            pavaRootPotion,
         ]);
     }
 
