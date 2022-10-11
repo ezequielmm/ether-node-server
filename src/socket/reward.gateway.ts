@@ -69,7 +69,7 @@ export class RewardGateway {
                 });
                 break;
             case IExpeditionNodeReward.Potion:
-                await this.potionService.add(ctx, reward.amount);
+                await this.potionService.add(ctx, reward.potion.potionId);
                 break;
         }
 
@@ -94,7 +94,9 @@ export class RewardGateway {
         return StandardResponse.respond({
             message_type: SWARMessageType.EndCombat,
             action: SWARAction.SelectAnotherReward,
-            data: pendingRewards,
+            data: {
+                rewards: pendingRewards,
+            },
         });
     }
 }

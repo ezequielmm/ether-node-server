@@ -76,12 +76,27 @@ export interface IExpeditionCurrentNodeDataEnemy {
     currentScript?: EnemyScript;
 }
 
-export interface IExpeditionReward {
+export interface BaseReward {
     id: string;
     type: IExpeditionNodeReward;
-    amount: number;
     taken: boolean;
 }
+
+export interface GoldReward extends BaseReward {
+    type: IExpeditionNodeReward.Gold;
+    amount: number;
+}
+
+export interface PotionReward extends BaseReward {
+    type: IExpeditionNodeReward.Potion;
+    potion: {
+        potionId: number;
+        name: string;
+        description: string;
+    };
+}
+
+export type Reward = GoldReward | PotionReward;
 
 export interface IExpeditionStatusResponse {
     readonly hasExpedition: boolean;
