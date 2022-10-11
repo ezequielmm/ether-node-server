@@ -103,6 +103,18 @@ export class CardPlayedAction {
                 return card[field] === cardId;
             });
 
+            const source = this.playerService.get(ctx);
+            const sourceReference =
+                this.statusService.getReferenceFromEntity(source);
+
+            await this.eventEmitter.emitAsync(EVENT_BEFORE_CARD_PLAY, {
+                ctx,
+                card,
+                cardSource: source,
+                cardSourceReference: sourceReference,
+                cardTargetId: selectedEnemyId,
+            });
+
             const {
                 energy: cardEnergyCost,
                 properties: { effects, statuses },
@@ -126,25 +138,14 @@ export class CardPlayedAction {
                     `Player ${client.id} played card: ${card.name}`,
                 );
 
-                const source = this.playerService.get(ctx);
-                const sourceReference =
-                    this.statusService.getReferenceFromEntity(source);
-
                 this.historyService.register({
                     clientId: this.client.id,
                     registry: {
                         type: 'card',
                         source,
                         card,
+                        round: ctx.expedition.currentNode.data.round,
                     },
-                });
-
-                await this.eventEmitter.emitAsync(EVENT_BEFORE_CARD_PLAY, {
-                    ctx,
-                    card,
-                    cardSource: source,
-                    cardSourceReference: sourceReference,
-                    cardTargetId: selectedEnemyId,
                 });
 
                 // if the card can be played, we update the energy, apply the effects
