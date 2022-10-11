@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { EffectModule } from 'src/game/effects/effects.module';
 import { ExpeditionModule } from '../expedition/expedition.module';
@@ -9,7 +9,7 @@ import { PotionService } from './potion.service';
 
 @Module({
     imports: [
-        ExpeditionModule,
+        forwardRef(() => ExpeditionModule),
         EffectModule,
         PlayerModule,
         MongooseModule.forFeature([

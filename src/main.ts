@@ -62,10 +62,10 @@ async function bootstrap() {
 
         const document = SwaggerModule.createDocument(app, config);
         SwaggerModule.setup('api', app, document);
+    } else {
+        // Enable GZIP Compression
+        app.use(compression());
     }
-
-    // Enable GZIP Compression
-    app.use(compression());
 
     // Starts server
     await app.listen(3000);
