@@ -140,4 +140,12 @@ export class PotionService {
             },
         });
     }
+
+    public async getRandomPotion(): Promise<PotionDocument> {
+        const [potion] = await this.potion
+            .aggregate<PotionDocument>([{ $sample: { size: 1 } }])
+            .exec();
+
+        return potion;
+    }
 }

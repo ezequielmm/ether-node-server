@@ -11,7 +11,7 @@ import {
     IExpeditionNode,
     IExpeditionPlayerState,
     IExpeditionPlayerStateDeckCard,
-    IExpeditionReward,
+    Reward,
 } from './expedition.interface';
 
 export type ExpeditionDocument = Expedition & Document;
@@ -63,7 +63,7 @@ export class Expedition {
                 };
             };
             enemies: IExpeditionCurrentNodeDataEnemy[];
-            rewards: IExpeditionReward[];
+            rewards: Reward[];
         };
     };
 
