@@ -10,6 +10,7 @@ import {
     SWARMessageType,
 } from '../standardResponse/standardResponse';
 import { confusion } from '../status/confusion/constants';
+import { CardService } from '../components/card/card.service';
 
 interface DrawCardDTO {
     readonly client: Socket;
@@ -23,7 +24,10 @@ interface DrawCardDTO {
 export class DrawCardAction {
     private readonly logger: Logger = new Logger(DrawCardAction.name);
 
-    constructor(private readonly expeditionService: ExpeditionService) {}
+    constructor(
+        private readonly expeditionService: ExpeditionService,
+        private readonly cardService: CardService,
+    ) {}
 
     async handle(payload: DrawCardDTO): Promise<void> {
         const {
@@ -214,6 +218,12 @@ export class DrawCardAction {
 
             // Move the cards to the hand pile
             const newHand = [...hand, ...cardsToMoveToHand];
+
+            // Reset the energy of the cards in the hand
+            for (const card of newHand) {
+                const { energy } = await this.cardService.findById(card.cardId);
+                card.energy = energy;
+            }
 
             // Update piles
             await this.expeditionService.updateHandPiles({
