@@ -45,6 +45,7 @@ export class PotionSeeder implements Seeder {
             dewDropElixirPotion,
         ]);
     }
+
     async drop(): Promise<any> {
         return this.potion.deleteMany({});
     }
