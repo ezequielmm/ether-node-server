@@ -69,13 +69,11 @@ export class MoveCardAction {
             StandardResponse.respond({
                 message_type: SWARMessageType.PlayerAffected,
                 action: SWARAction.MoveCard,
-                data: cardsToMove.map(({ id }) => {
-                    return {
-                        source: originPile,
-                        destination: 'hand',
-                        id,
-                    };
-                }),
+                data: cardsToMove.map(({ id }) => ({
+                    source: originPile,
+                    destination: 'hand',
+                    id,
+                })),
             }),
         );
 

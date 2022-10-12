@@ -13,9 +13,9 @@ import { IoAdapter } from '@nestjs/platform-socket.io';
 import { ConfigService } from '@nestjs/config';
 import { serverEnvironments } from './utils';
 
-let app: INestApplication;
-
 async function bootstrap() {
+    let app: INestApplication;
+
     const certFilePath = process.env.SSL_CERT_PATH;
     const keyFilePath = process.env.SSL_KEY_PATH;
 
