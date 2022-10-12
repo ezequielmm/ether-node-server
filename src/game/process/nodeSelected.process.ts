@@ -36,10 +36,13 @@ export class NodeSelectedProcess {
             const selectedNode = expeditionMap.fullCurrentMap.get(node_id);
             selectedNode.select(expeditionMap);
 
-            const { map: newMap, mapSeedId } =
-                (await this.expeditionService.update(client.id, {
-                    map: expeditionMap.getMap,
-                })) || {};
+            const {
+                map: newMap,
+                mapSeedId,
+                playerState: { cards },
+            } = (await this.expeditionService.update(client.id, {
+                map: expeditionMap.getMap,
+            })) || {};
 
             switch (node.type) {
                 case ExpeditionMapNodeTypeEnum.Portal:
@@ -96,10 +99,14 @@ export class NodeSelectedProcess {
                 case ExpeditionMapNodeTypeEnum.CampRegular:
                     await this.initNodeProcess.process(client, node);
 
+                    const cardsToUpgrade = cards.filter(({ isUpgraded }) => {
+                        return !isUpgraded;
+                    });
+
                     return StandardResponse.respond({
                         message_type: SWARMessageType.CampUpdate,
                         action: SWARAction.BeginCamp,
-                        data: null,
+                        data: { cardsToUpgrade },
                     });
                 case ExpeditionMapNodeTypeEnum.Encounter:
                     await this.initNodeProcess.process(client, node);
