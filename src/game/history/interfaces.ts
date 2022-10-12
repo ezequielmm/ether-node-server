@@ -18,6 +18,7 @@ export interface EffectRegistry extends Registry {
 export interface CardRegistry extends Registry {
     type: 'card';
     card: IExpeditionPlayerStateDeckCard;
+    round: number;
 }
 
 export interface DamageRegistry extends Registry {

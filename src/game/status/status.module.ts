@@ -6,6 +6,7 @@ import { EnemyModule } from '../components/enemy/enemy.module';
 import { ExpeditionModule } from '../components/expedition/expedition.module';
 import { PlayerModule } from '../components/player/player.module';
 import { EffectModule } from '../effects/effects.module';
+import { HistoryModule } from '../history/history.module';
 import { ProviderModule } from '../provider/provider.module';
 import { AnticipatingStatus } from './anticipating/anticipating.status';
 import { ArmoredUpStatus } from './armoredUp/armoredUp.status';
@@ -13,6 +14,7 @@ import { BolsteredStatus } from './bolstered/bolstered.status';
 import { BurnStatus } from './burn/burn.status';
 import { ClearHeadedStatus } from './clearHeaded/clearHeaded.status';
 import { ConfusionStatus } from './confusion/confusion.status';
+import { DewDropStatus } from './dewDrop/dewDrop.status';
 import { DistraughtEvent } from './distraught/distraught.event';
 import { DistraughtStatus } from './distraught/distraught.status';
 import { DodgeStatus } from './dodge/dodge.status';
@@ -55,6 +57,7 @@ import { TurtlingStatus } from './turtling/turtling.status';
         forwardRef(() => ActionModule),
         CombatQueueModule,
         ProviderModule,
+        HistoryModule,
     ],
     providers: [
         StatusService,
@@ -96,6 +99,7 @@ import { TurtlingStatus } from './turtling/turtling.status';
         ArmoredUpStatus,
         ResolveExpiresStatus,
         ClearHeadedStatus,
+        DewDropStatus,
     ],
     exports: [StatusService],
 })

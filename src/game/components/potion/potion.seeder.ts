@@ -17,6 +17,7 @@ import { mistyPhialPotion } from './data/mistyPhial.potion';
 import { phantomPhialPotion } from './data/phantomPhial.potion';
 import { philterOfRedemptionPotion } from './data/philterOfRedemption.potion';
 import { pavaRootPotion } from './data/pavaRoot.potion';
+import { dewDropElixirPotion } from './data/dewDropElixir.potion';
 
 @Injectable()
 export class PotionSeeder implements Seeder {
@@ -41,9 +42,9 @@ export class PotionSeeder implements Seeder {
             phantomPhialPotion,
             philterOfRedemptionPotion,
             pavaRootPotion,
+            dewDropElixirPotion,
         ]);
     }
-
     async drop(): Promise<any> {
         return this.potion.deleteMany({});
     }
