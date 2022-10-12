@@ -96,7 +96,19 @@ export interface PotionReward extends BaseReward {
     };
 }
 
-export type Reward = GoldReward | PotionReward;
+export interface CardPreview {
+    cardId: number;
+    name: string;
+    description: string;
+    energy: number;
+}
+
+export interface CardReward extends BaseReward {
+    type: IExpeditionNodeReward.Card;
+    card: CardPreview;
+}
+
+export type Reward = GoldReward | PotionReward | CardReward;
 
 export interface IExpeditionStatusResponse {
     readonly hasExpedition: boolean;
