@@ -48,6 +48,7 @@ export enum SWARAction {
     ShowCardDialog = 'show_card_dialog',
     ShowInvalidPotion = 'show_invalid_potion',
     FinishCamp = 'finish_camp',
+    UpgradablePair = 'upgradable_pair',
 }
 
 interface SWARPayload {
