@@ -135,9 +135,7 @@ export class PotionService {
         }
 
         await this.expeditionService.updateById(ctx.expedition._id, {
-            playerState: {
-                potions: [...ctx.expedition.playerState.potions, potionId],
-            },
+            $push: { 'playerState.potions': potionId },
         });
     }
 

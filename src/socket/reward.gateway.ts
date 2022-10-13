@@ -1,6 +1,7 @@
 import { Logger } from '@nestjs/common';
 import { SubscribeMessage, WebSocketGateway } from '@nestjs/websockets';
 import { Socket } from 'socket.io';
+import { CardService } from 'src/game/components/card/card.service';
 import { IExpeditionNodeReward } from 'src/game/components/expedition/expedition.enum';
 import { ExpeditionService } from 'src/game/components/expedition/expedition.service';
 import { PotionService } from 'src/game/components/potion/potion.service';
@@ -18,6 +19,7 @@ export class RewardGateway {
     constructor(
         private readonly expeditionService: ExpeditionService,
         private readonly potionService: PotionService,
+        private readonly cardService: CardService,
     ) {}
 
     @SubscribeMessage('RewardSelected')
@@ -70,6 +72,9 @@ export class RewardGateway {
                 break;
             case IExpeditionNodeReward.Potion:
                 await this.potionService.add(ctx, reward.potion.potionId);
+                break;
+            case IExpeditionNodeReward.Card:
+                await this.cardService.addCardToDeck(ctx, reward.card.cardId);
                 break;
         }
 

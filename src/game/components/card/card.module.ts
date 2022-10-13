@@ -1,6 +1,7 @@
 import { forwardRef, Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ActionModule } from 'src/game/action/action.module';
+import { ExpeditionModule } from '../expedition/expedition.module';
 import { Card, CardSchema } from './card.schema';
 import { CardService } from './card.service';
 
@@ -13,6 +14,7 @@ import { CardService } from './card.service';
             },
         ]),
         forwardRef(() => ActionModule),
+        forwardRef(() => ExpeditionModule),
     ],
     providers: [CardService],
     exports: [CardService],
