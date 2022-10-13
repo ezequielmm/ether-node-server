@@ -26,7 +26,7 @@ export class UpgradeCardGateway {
     async handleCardUpgradeSelected(
         client: Socket,
         cardId: string,
-    ): Promise<void> {
+    ): Promise<string> {
         this.logger.debug(
             `Client ${client.id} trigger message "CardUpgradeSelected": cardId: ${cardId}`,
         );
@@ -76,21 +76,18 @@ export class UpgradeCardGateway {
         };
 
         // Finally we send the pair to the frontend
-        client.emit(
-            'PutData',
-            StandardResponse.respond({
-                message_type: SWARMessageType.GenericData,
-                action: SWARAction.UpgradablePair,
-                data: {
-                    originalCard,
-                    upgradedCard,
-                },
-            }),
-        );
+        return StandardResponse.respond({
+            message_type: SWARMessageType.GenericData,
+            action: SWARAction.UpgradablePair,
+            data: {
+                originalCard,
+                upgradedCard,
+            },
+        });
     }
 
     @SubscribeMessage('UpgradeCard')
-    async handleUpgradeCard(client: Socket, cardId: string): Promise<void> {
+    async handleUpgradeCard(client: Socket, cardId: string): Promise<string> {
         this.logger.debug(
             `Client ${client.id} trigger message "UpgradeCard": cardId: ${cardId}`,
         );
@@ -157,21 +154,6 @@ export class UpgradeCardGateway {
             deck: newDeck,
         });
 
-        // next we send a message to the frontned to showw the animation
-        client.emit(
-            'PutData',
-            StandardResponse.respond({
-                message_type: SWARMessageType.CardUpgrade,
-                action: SWARAction.ConfirmUpgrade,
-                data: {
-                    cardIdToDelete: originalCard.id,
-                    newCard: upgradedCard,
-                },
-            }),
-        );
-
-        // TODO: add validation to confirm if the user can upgrade more cards
-
         client.emit(
             'PutData',
             StandardResponse.respond({
@@ -180,6 +162,18 @@ export class UpgradeCardGateway {
                 data: {},
             }),
         );
+
+        // next we send a message to the frontned to showw the animation
+        return StandardResponse.respond({
+            message_type: SWARMessageType.CardUpgrade,
+            action: SWARAction.ConfirmUpgrade,
+            data: {
+                cardIdToDelete: originalCard.id,
+                newCard: upgradedCard,
+            },
+        });
+
+        // TODO: add validation to confirm if the user can upgrade more cards
     }
 
     private sendInvalidCardMessage(client: Socket): void {
