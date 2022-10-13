@@ -15,6 +15,7 @@ import { RewardGateway } from './reward.gateway';
 import { CampGateway } from './camp.gateway';
 import { CardSelectionScreenModule } from 'src/game/components/cardSelectionScreen/cardSelectionScreen.module';
 import { PotionModule } from 'src/game/components/potion/potion.module';
+import { UpgradeCardGateway } from './upgradeCard.gateway';
 
 @Module({
     imports: [
@@ -36,6 +37,7 @@ import { PotionModule } from 'src/game/components/potion/potion.module';
         GetDataGateway,
         RewardGateway,
         CampGateway,
+        UpgradeCardGateway,
     ],
 })
 export class SocketModule {}
