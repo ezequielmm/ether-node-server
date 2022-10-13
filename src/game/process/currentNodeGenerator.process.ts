@@ -234,7 +234,7 @@ export class CurrentNodeGeneratorProcess {
                     'description',
                     'energy',
                     'rarity',
-                    'type',
+                    'cardType',
                 ]) as unknown as CardPreview,
                 taken: false,
             });
