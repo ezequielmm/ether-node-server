@@ -111,6 +111,7 @@ export class InitExpeditionProcess {
                 showPointer: card.showPointer,
                 pool: card.pool,
                 isUpgraded: card.isUpgraded,
+                upgradedCardId: card?.upgradedCardId,
             }));
     }
 }
