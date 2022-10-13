@@ -1,4 +1,5 @@
 import { AttachedStatus, StatusType } from 'src/game/status/interfaces';
+import { CardRarityEnum, CardTypeEnum } from '../card/card.enum';
 import { Card } from '../card/card.schema';
 import {
     EnemyTypeEnum,
@@ -101,6 +102,8 @@ export interface CardPreview {
     name: string;
     description: string;
     energy: number;
+    rarity: CardRarityEnum;
+    type: CardTypeEnum;
 }
 
 export interface CardReward extends BaseReward {

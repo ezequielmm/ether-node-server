@@ -52,6 +52,9 @@ export class CardService {
         const newCard = await this.findById(cardId);
         const deck = ctx.expedition.playerState.cards;
 
+        delete newCard._id;
+        delete newCard.__v;
+
         deck.push({
             id: randomUUID(),
             isTemporary: false,
