@@ -34,11 +34,11 @@ export class CurrentNodeGeneratorProcess {
     private node: IExpeditionNode;
     private clientId: string;
 
-    private readonly cardRewardByNodeType: Map<
+    private readonly cardRewardByNodeSubType: Map<
         ExpeditionMapNodeTypeEnum,
         number[]
     > = new Map([
-        [ExpeditionMapNodeTypeEnum.Encounter, [0.6, 0.37, 0.03, 0.0]],
+        [ExpeditionMapNodeTypeEnum.CombatStandard, [0.6, 0.37, 0.03, 0.0]],
         [ExpeditionMapNodeTypeEnum.CombatElite, [0.5, 0.38, 0.09, 0.03]],
         [ExpeditionMapNodeTypeEnum.CombatBoss, [0.0, 0.0, 0.8, 0.2]],
     ]);
@@ -233,6 +233,8 @@ export class CurrentNodeGeneratorProcess {
                     'name',
                     'description',
                     'energy',
+                    'rarity',
+                    'type',
                 ]) as unknown as CardPreview,
                 taken: false,
             });
@@ -241,7 +243,7 @@ export class CurrentNodeGeneratorProcess {
         return cards;
     }
     private isCardRewardAvailable(): boolean {
-        for (const type of this.cardRewardByNodeType.keys()) {
+        for (const type of this.cardRewardByNodeSubType.keys()) {
             if (type === this.node.subType) {
                 return true;
             }
@@ -258,7 +260,7 @@ export class CurrentNodeGeneratorProcess {
                 CardRarityEnum.Rare,
                 CardRarityEnum.Legendary,
             ],
-            this.cardRewardByNodeType.get(this.node.subType),
+            this.cardRewardByNodeSubType.get(this.node.subType),
         );
         return this.cardService.getRandomCard(rarity);
     }

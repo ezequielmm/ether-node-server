@@ -15,11 +15,9 @@ export enum SWARMessageType {
     TreasureUpdate = 'treasure_update',
     MerchantUpdate = 'merchant_update',
     EndNode = 'end_node',
-    PotionNotUsableOutsideCombat = 'potion_not_usable_outside_combat',
-    PotionNotInInventory = 'potion_not_in_inventory',
-    PotionNotFoundInDatabase = 'potion_not_found_in_database',
-    PotionMaxCountReached = 'potion_max_count_reached',
     CardUpgrade = 'card_upgrade',
+    UsePotion = 'use_potion',
+    AddPotion = 'add_potion',
 }
 
 export enum SWARAction {
@@ -51,6 +49,10 @@ export enum SWARAction {
     FinishCamp = 'finish_camp',
     UpgradablePair = 'upgradable_pair',
     ConfirmUpgrade = 'confirm_upgrade',
+    PotionNotUsableOutsideCombat = 'potion_not_usable_outside_combat',
+    PotionNotInInventory = 'potion_not_in_inventory',
+    PotionNotFoundInDatabase = 'potion_not_found_in_database',
+    PotionMaxCountReached = 'potion_max_count_reached',
 }
 
 interface SWARPayload {

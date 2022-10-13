@@ -44,8 +44,8 @@ export class PotionService {
             ctx.client.emit(
                 'PutData',
                 StandardResponse.respond({
-                    message_type: SWARMessageType.PotionNotInInventory,
-                    action: SWARAction.ShowInvalidPotion,
+                    message_type: SWARMessageType.UsePotion,
+                    action: SWARAction.PotionNotInInventory,
                     data: { potionId },
                 }),
             );
@@ -64,8 +64,8 @@ export class PotionService {
             ctx.client.emit(
                 'PutData',
                 StandardResponse.respond({
-                    message_type: SWARMessageType.PotionNotUsableOutsideCombat,
-                    action: SWARAction.ShowInvalidPotion,
+                    message_type: SWARMessageType.UsePotion,
+                    action: SWARAction.PotionNotUsableOutsideCombat,
                     data: { potionId },
                 }),
             );
@@ -111,8 +111,8 @@ export class PotionService {
             ctx.client.emit(
                 'PutData',
                 StandardResponse.respond({
-                    message_type: SWARMessageType.PotionMaxCountReached,
-                    action: SWARAction.ShowInvalidPotion,
+                    message_type: SWARMessageType.AddPotion,
+                    action: SWARAction.PotionMaxCountReached,
                     data: { potionId },
                 }),
             );
@@ -126,8 +126,8 @@ export class PotionService {
             ctx.client.emit(
                 'PutData',
                 StandardResponse.respond({
-                    message_type: SWARMessageType.PotionNotFoundInDatabase,
-                    action: SWARAction.ShowInvalidPotion,
+                    message_type: SWARMessageType.AddPotion,
+                    action: SWARAction.PotionNotFoundInDatabase,
                     data: { potionId },
                 }),
             );

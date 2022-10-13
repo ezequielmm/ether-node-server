@@ -35,7 +35,7 @@ export class RewardGateway {
 
         this.logger.debug(`Client ${client.id} choose reward id: ${rewardId}`);
 
-        const {
+        let {
             _id: expeditionId,
             currentNode: {
                 completed: nodeIsCompleted,
@@ -73,20 +73,27 @@ export class RewardGateway {
             case IExpeditionNodeReward.Potion:
                 await this.potionService.add(ctx, reward.potion.potionId);
                 break;
-            case IExpeditionNodeReward.Card:
+            case IExpeditionNodeReward.Card: {
                 await this.cardService.addCardToDeck(ctx, reward.card.cardId);
+                // Disable all other card rewards
+                rewards = rewards.map((r) => {
+                    if (r.type === IExpeditionNodeReward.Card) {
+                        r.taken = true;
+                    }
+                    return r;
+                });
                 break;
+            }
         }
 
         // Next we save the reward on the expedition
         await this.expeditionService.updateByFilter(
             {
                 expeditionId,
-                'currentNode.data.rewards.id': rewardId,
             },
             {
                 $set: {
-                    'currentNode.data.rewards.$.taken': true,
+                    'currentNode.data.rewards': rewards,
                 },
             },
         );
