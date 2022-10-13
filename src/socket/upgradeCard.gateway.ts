@@ -88,8 +88,7 @@ export class UpgradeCardGateway {
             message_type: SWARMessageType.CardUpgrade,
             action: SWARAction.UpgradablePair,
             data: {
-                originalCard,
-                upgradedCard,
+                deck: [originalCard, upgradedCard],
             },
         });
     }
