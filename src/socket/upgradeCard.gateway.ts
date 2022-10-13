@@ -48,8 +48,6 @@ export class UpgradeCardGateway {
             return id === cardId;
         });
 
-        console.log({ originalCard });
-
         // Here we check that the card can be upgraded
         if (originalCard.isUpgraded) {
             this.logger.debug(`Card is already upgraded: ${cardId}`);
@@ -69,8 +67,6 @@ export class UpgradeCardGateway {
             return;
         }
 
-        console.log({ upgradedCardData });
-
         const upgradedCard: IExpeditionPlayerStateDeckCard = {
             id: randomUUID(),
             cardId: upgradedCardData.cardId,
@@ -89,7 +85,7 @@ export class UpgradeCardGateway {
 
         // Finally we send the pair to the frontend
         return StandardResponse.respond({
-            message_type: SWARMessageType.GenericData,
+            message_type: SWARMessageType.CardUpgrade,
             action: SWARAction.UpgradablePair,
             data: {
                 originalCard,
