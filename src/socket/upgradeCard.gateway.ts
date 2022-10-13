@@ -48,6 +48,8 @@ export class UpgradeCardGateway {
             return id === cardId;
         });
 
+        console.log({ originalCard });
+
         // Here we check that the card can be upgraded
         if (originalCard.isUpgraded) {
             this.logger.debug(`Card is already upgraded: ${cardId}`);
@@ -60,6 +62,14 @@ export class UpgradeCardGateway {
         const upgradedCardData = await this.cardService.findById(
             originalCard.upgradedCardId,
         );
+
+        if (!upgradedCardData) {
+            this.logger.debug(`Upgrade not found: ${cardId}`);
+            this.sendInvalidCardMessage(client);
+            return;
+        }
+
+        console.log({ upgradedCardData });
 
         const upgradedCard: IExpeditionPlayerStateDeckCard = {
             id: randomUUID(),
