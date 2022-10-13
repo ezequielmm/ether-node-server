@@ -26,12 +26,13 @@ export class UpgradeCardGateway {
     async handleCardUpgradeSelected(
         client: Socket,
         cardId: string,
-    ): Promise<void> {
+    ): Promise<string> {
         this.logger.debug(
             `Client ${client.id} trigger message "CardUpgradeSelected": cardId: ${cardId}`,
         );
 
         if (!cardId || cardId === '') {
+            this.logger.debug(`Card is invalid: ${cardId}`);
             this.sendInvalidCardMessage(client);
             return;
         }
@@ -49,6 +50,7 @@ export class UpgradeCardGateway {
 
         // Here we check that the card can be upgraded
         if (originalCard.isUpgraded) {
+            this.logger.debug(`Card is already upgraded: ${cardId}`);
             this.sendInvalidCardMessage(client);
             return;
         }
@@ -58,6 +60,12 @@ export class UpgradeCardGateway {
         const upgradedCardData = await this.cardService.findById(
             originalCard.upgradedCardId,
         );
+
+        if (!upgradedCardData) {
+            this.logger.debug(`Upgrade not found: ${cardId}`);
+            this.sendInvalidCardMessage(client);
+            return;
+        }
 
         const upgradedCard: IExpeditionPlayerStateDeckCard = {
             id: randomUUID(),
@@ -76,21 +84,17 @@ export class UpgradeCardGateway {
         };
 
         // Finally we send the pair to the frontend
-        client.emit(
-            'PutData',
-            StandardResponse.respond({
-                message_type: SWARMessageType.GenericData,
-                action: SWARAction.UpgradablePair,
-                data: {
-                    originalCard,
-                    upgradedCard,
-                },
-            }),
-        );
+        return StandardResponse.respond({
+            message_type: SWARMessageType.CardUpgrade,
+            action: SWARAction.UpgradablePair,
+            data: {
+                deck: [originalCard, upgradedCard],
+            },
+        });
     }
 
     @SubscribeMessage('UpgradeCard')
-    async handleUpgradeCard(client: Socket, cardId: string): Promise<void> {
+    async handleUpgradeCard(client: Socket, cardId: string): Promise<string> {
         this.logger.debug(
             `Client ${client.id} trigger message "UpgradeCard": cardId: ${cardId}`,
         );
@@ -157,21 +161,6 @@ export class UpgradeCardGateway {
             deck: newDeck,
         });
 
-        // next we send a message to the frontned to showw the animation
-        client.emit(
-            'PutData',
-            StandardResponse.respond({
-                message_type: SWARMessageType.CardUpgrade,
-                action: SWARAction.ConfirmUpgrade,
-                data: {
-                    cardIdToDelete: originalCard.id,
-                    newCard: upgradedCard,
-                },
-            }),
-        );
-
-        // TODO: add validation to confirm if the user can upgrade more cards
-
         client.emit(
             'PutData',
             StandardResponse.respond({
@@ -180,6 +169,18 @@ export class UpgradeCardGateway {
                 data: {},
             }),
         );
+
+        // next we send a message to the frontned to showw the animation
+        return StandardResponse.respond({
+            message_type: SWARMessageType.CardUpgrade,
+            action: SWARAction.ConfirmUpgrade,
+            data: {
+                cardIdToDelete: originalCard.id,
+                newCard: upgradedCard,
+            },
+        });
+
+        // TODO: add validation to confirm if the user can upgrade more cards
     }
 
     private sendInvalidCardMessage(client: Socket): void {

@@ -1,3 +1,8 @@
+import { AttackCard } from '../../card/data/attack.card';
+import { BraceCard } from '../../card/data/brace.card';
+import { CounterCard } from '../../card/data/counter.card';
+import { DefenseCard } from '../../card/data/defend.card';
+import { FindWeaknessCard } from '../../card/data/findWeakness.card';
 import { CharacterClassEnum } from '../character.enum';
 import { Character } from '../character.schema';
 
@@ -9,35 +14,23 @@ export const KnightCharacter: Character = {
     characterClass: CharacterClassEnum.Knight,
     cards: [
         {
-            cardId: 1, // Attack
-            amount: 2,
+            cardId: AttackCard.cardId,
+            amount: 4,
         },
         {
-            cardId: 3, // Defend
-            amount: 2,
+            cardId: DefenseCard.cardId,
+            amount: 4,
         },
         {
-            cardId: 75, // Heaven’s Grace
+            cardId: BraceCard.cardId,
             amount: 1,
         },
         {
-            cardId: 9, // First Move
+            cardId: CounterCard.cardId,
             amount: 1,
         },
         {
-            cardId: 27, // Keg Chug
-            amount: 1,
-        },
-        {
-            cardId: 13, // Lunge
-            amount: 2,
-        },
-        {
-            cardId: 24, // Pray
-            amount: 1,
-        },
-        {
-            cardId: 155, // Pray
+            cardId: FindWeaknessCard.cardId,
             amount: 1,
         },
     ],
