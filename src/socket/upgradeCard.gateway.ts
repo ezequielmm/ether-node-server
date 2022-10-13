@@ -32,6 +32,7 @@ export class UpgradeCardGateway {
         );
 
         if (!cardId || cardId === '') {
+            this.logger.debug(`Card is invalid: ${cardId}`);
             this.sendInvalidCardMessage(client);
             return;
         }
@@ -49,6 +50,7 @@ export class UpgradeCardGateway {
 
         // Here we check that the card can be upgraded
         if (originalCard.isUpgraded) {
+            this.logger.debug(`Card is already upgraded: ${cardId}`);
             this.sendInvalidCardMessage(client);
             return;
         }
