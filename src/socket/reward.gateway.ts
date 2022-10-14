@@ -88,16 +88,11 @@ export class RewardGateway {
         }
 
         // Next we save the reward on the expedition
-        await this.expeditionService.updateByFilter(
-            {
-                id: expedition._id,
+        await this.expeditionService.updateById(expedition._id, {
+            $set: {
+                'currentNode.data.rewards': rewards,
             },
-            {
-                $set: {
-                    'currentNode.data.rewards': rewards,
-                },
-            },
-        );
+        });
 
         // Now we get the rewards that are pending to be taken
         const pendingRewards = filter(rewards, {
