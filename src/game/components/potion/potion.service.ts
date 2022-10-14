@@ -105,7 +105,7 @@ export class PotionService {
         });
     }
 
-    public async add(ctx: GameContext, potionId: number): Promise<void> {
+    public async add(ctx: GameContext, potionId: number): Promise<boolean> {
         // Validate max potion count
         if (ctx.expedition.playerState.potions.length >= 3) {
             ctx.client.emit(
@@ -116,7 +116,7 @@ export class PotionService {
                     data: { potionId },
                 }),
             );
-            return;
+            return false;
         }
 
         // Check if potion exists
@@ -131,12 +131,14 @@ export class PotionService {
                     data: { potionId },
                 }),
             );
-            return;
+            return false;
         }
 
         await this.expeditionService.updateById(ctx.expedition._id, {
             $push: { 'playerState.potions': potionId },
         });
+
+        return true;
     }
 
     public async getRandomPotion(): Promise<PotionDocument> {
