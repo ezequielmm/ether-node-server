@@ -72,7 +72,10 @@ export class RewardGateway {
                 });
                 break;
             case IExpeditionNodeReward.Potion:
-                await this.potionService.add(ctx, reward.potion.potionId);
+                reward.taken = await this.potionService.add(
+                    ctx,
+                    reward.potion.potionId,
+                );
                 break;
             case IExpeditionNodeReward.Card: {
                 await this.cardService.addCardToDeck(ctx, reward.card.cardId);
