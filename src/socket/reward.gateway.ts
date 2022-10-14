@@ -90,7 +90,7 @@ export class RewardGateway {
         // Next we save the reward on the expedition
         await this.expeditionService.updateByFilter(
             {
-                expeditionId,
+                id: expedition._id,
             },
             {
                 $set: {
