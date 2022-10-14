@@ -104,6 +104,7 @@ export interface CardPreview {
     energy: number;
     rarity: CardRarityEnum;
     type: CardTypeEnum;
+    pool: string;
 }
 
 export interface CardReward extends BaseReward {
