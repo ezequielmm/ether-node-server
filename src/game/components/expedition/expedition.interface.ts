@@ -7,12 +7,18 @@ import {
     EnemySizeEnum,
 } from '../enemy/enemy.enum';
 import { EnemyScript } from '../enemy/enemy.interface';
+import { Potion } from '../potion/potion.schema';
 import {
     ExpeditionMapNodeTypeEnum,
     ExpeditionMapNodeStatusEnum,
     IExpeditionNodeReward,
 } from './expedition.enum';
 import { Expedition } from './expedition.schema';
+
+export interface PotionInstance {
+    id: string;
+    potion: Potion;
+}
 
 export interface IExpeditionPlayerState {
     playerId: string;
@@ -21,7 +27,7 @@ export interface IExpeditionPlayerState {
     hpMax: number;
     hpCurrent: number;
     gold: number;
-    potions?: number[];
+    potions: PotionInstance[];
     trinkets?: [];
     createdAt: Date;
     cards: IExpeditionPlayerStateDeckCard[];

@@ -30,7 +30,7 @@ export class PotionGateway {
     }
 
     @SubscribeMessage('RemovePotion')
-    async remove(client: Socket, potionId: number): Promise<void> {
+    async remove(client: Socket, potionId: string): Promise<void> {
         const ctx = await this.expeditionService.getGameContext(client);
         await this.potionService.remove(ctx, potionId);
     }
