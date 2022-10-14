@@ -1,5 +1,6 @@
 import { Logger } from '@nestjs/common';
 import { SubscribeMessage, WebSocketGateway } from '@nestjs/websockets';
+import { filter } from 'lodash';
 import { Socket } from 'socket.io';
 import { CardService } from 'src/game/components/card/card.service';
 import { IExpeditionNodeReward } from 'src/game/components/expedition/expedition.enum';
@@ -99,8 +100,8 @@ export class RewardGateway {
         );
 
         // Now we get the rewards that are pending to be taken
-        const pendingRewards = rewards.filter(({ id, taken }) => {
-            return id !== rewardId && taken === false;
+        const pendingRewards = filter(rewards, {
+            taken: false,
         });
 
         return StandardResponse.respond({
