@@ -56,7 +56,7 @@ export class FullSyncAction {
                         hpCurrent: playerState.hpCurrent,
                         gold: playerState.gold,
                         cards: playerState.cards,
-                        potions: [],
+                        potions: playerState.potions,
                         trinkets: [],
                     },
                 },

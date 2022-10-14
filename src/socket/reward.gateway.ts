@@ -2,6 +2,7 @@ import { Logger } from '@nestjs/common';
 import { SubscribeMessage, WebSocketGateway } from '@nestjs/websockets';
 import { filter } from 'lodash';
 import { Socket } from 'socket.io';
+import { FullSyncAction } from 'src/game/action/fullSync.action';
 import { CardService } from 'src/game/components/card/card.service';
 import { IExpeditionNodeReward } from 'src/game/components/expedition/expedition.enum';
 import { ExpeditionService } from 'src/game/components/expedition/expedition.service';
@@ -21,6 +22,7 @@ export class RewardGateway {
         private readonly expeditionService: ExpeditionService,
         private readonly potionService: PotionService,
         private readonly cardService: CardService,
+        private readonly fullSyncAction: FullSyncAction,
     ) {}
 
     @SubscribeMessage('RewardSelected')
@@ -89,6 +91,8 @@ export class RewardGateway {
                 break;
             }
         }
+
+        await this.fullSyncAction.handle(client);
 
         // Next we save the reward on the expedition
         await this.expeditionService.updateById(expedition._id, {
