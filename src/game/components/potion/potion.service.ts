@@ -13,14 +13,11 @@ import {
     SWARMessageType,
 } from 'src/game/standardResponse/standardResponse';
 import { TargetId } from 'src/game/effects/effects.types';
-<<<<<<< HEAD
 import { CardRarityEnum } from '../card/card.enum';
 import { PotionRarityEnum } from './potion.enum';
-=======
 import { find } from 'lodash';
 import { PotionInstance } from '../expedition/expedition.interface';
 import { randomUUID } from 'crypto';
->>>>>>> develop
 
 @Injectable()
 export class PotionService {
