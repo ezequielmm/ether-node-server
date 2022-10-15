@@ -19,6 +19,7 @@ import { CounterCard, CounterCardUpgraded } from './data/counter.card';
 import { DefenseCard, DefenseCardUpgraded } from './data/defend.card';
 import { DivineGiftCard, DivineGiftCardUpgraded } from './data/divineGift.card';
 import { DoubleDownCard, DoubleDownCardUpgraded } from './data/doubleDown.card';
+import { EnnuiCard } from './data/ennui.card';
 import {
     ExecutionersBlowCard,
     ExecutionersBlowCardUpgraded,
@@ -266,4 +267,5 @@ export const data: Card[] = [
     StunnedCard,
     WoundedCard,
     MossCard,
+    EnnuiCard,
 ];
