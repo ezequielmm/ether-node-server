@@ -10,6 +10,7 @@ export interface Item {
     coin: number;
     type: 'cards' | 'neutral_cards ' | 'trinkets' | 'potions';
 }
+
 export interface FindOneMerchantDTO {
     itemId?: number;
 }
