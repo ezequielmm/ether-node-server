@@ -10,6 +10,7 @@ import { PlayerModule } from '../components/player/player.module';
 import { PotionModule } from '../components/potion/potion.module';
 import { SettingsModule } from '../components/settings/settings.module';
 import { EffectModule } from '../effects/effects.module';
+import { MerchantModule } from '../merchant/merchant.module';
 import { StatusModule } from '../status/status.module';
 import { BeginEnemyTurnProcess } from './beginEnemyTurn.process';
 import { BeginPlayerTurnProcess } from './beginPlayerTurn.process';
@@ -19,6 +20,7 @@ import { EndEnemyTurnProcess } from './endEnemyTurn.process';
 import { EndPlayerTurnProcess } from './endPlayerTurn.process';
 import { InitCombatProcess } from './initCombat.process';
 import { InitExpeditionProcess } from './initExpedition.process';
+import { InitMerchantProcess } from './initMerchant.process';
 import { InitNodeProcess } from './initNode.process';
 import { NodeSelectedProcess } from './nodeSelected.process';
 import { SendEnemyIntentProcess } from './sendEnemyIntents.process';
@@ -28,6 +30,7 @@ import { SendEnemyIntentProcess } from './sendEnemyIntents.process';
         forwardRef(() => ExpeditionModule),
         SettingsModule,
         forwardRef(() => EnemyModule),
+        forwardRef(() => MerchantModule),
         forwardRef(() => ActionModule),
         forwardRef(() => CardModule),
         CharacterModule,
@@ -50,6 +53,7 @@ import { SendEnemyIntentProcess } from './sendEnemyIntents.process';
         BeginPlayerTurnProcess,
         EndCombatProcess,
         InitNodeProcess,
+        InitMerchantProcess,
     ],
     exports: [
         SendEnemyIntentProcess,
@@ -63,6 +67,7 @@ import { SendEnemyIntentProcess } from './sendEnemyIntents.process';
         BeginPlayerTurnProcess,
         EndCombatProcess,
         InitNodeProcess,
+        InitMerchantProcess,
     ],
 })
 export class ProcessModule {}

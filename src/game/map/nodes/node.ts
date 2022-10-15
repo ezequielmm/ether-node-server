@@ -76,6 +76,10 @@ class Node implements IExpeditionNode {
         this.stateInitialize();
     }
 
+    public setPrivate_data(private_data) {
+        this.private_data = private_data;
+    }
+
     public complete(expeditionMap: ExpeditionMap): void {
         this.setComplete();
         this.openExitsNodes(expeditionMap);

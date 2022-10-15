@@ -19,6 +19,7 @@ export enum SWARMessageType {
     PotionNotInInventory = 'potion_not_in_inventory',
     PotionNotFoundInDatabase = 'potion_not_found_in_database',
     PotionMaxCountReached = 'potion_max_count_reached',
+    PurchaseSuccess = 'purchase_success',
 }
 
 export enum SWARAction {
@@ -48,6 +49,8 @@ export enum SWARAction {
     ShowCardDialog = 'show_card_dialog',
     ShowInvalidPotion = 'show_invalid_potion',
     FinishCamp = 'finish_camp',
+    MerchantUpdate = 'merchant_update',
+    ItemPurchasedWithSuccess = 'Item_purchased_with_success',
 }
 
 interface SWARPayload {

@@ -6,7 +6,7 @@ import { Model } from 'mongoose';
 import { CardPlayedAction } from 'src/game/action/cardPlayed.action';
 import { EVENT_BEFORE_PLAYER_TURN_END } from 'src/game/constants';
 import { GameContext } from '../interfaces';
-import { CardKeywordEnum, CardTypeEnum } from './card.enum';
+import { CardKeywordEnum, CardRarityEnum, CardTypeEnum } from './card.enum';
 import { Card, CardDocument } from './card.schema';
 import { CardId, getCardIdField } from './card.type';
 
@@ -33,6 +33,40 @@ export class CardService {
 
     async findCardsById(cards: number[]): Promise<CardDocument[]> {
         return this.card.find({ cardId: { $in: cards } }).lean();
+    }
+
+    async randomCards(
+        limit: number,
+        card_type: CardTypeEnum,
+    ): Promise<CardDocument[]> {
+        const count = await this.card.countDocuments({
+            $and: [
+                {
+                    $or: [
+                        { rarity: CardRarityEnum.Common },
+                        { rarity: CardRarityEnum.Uncommon },
+                        { rarity: CardRarityEnum.Rare },
+                    ],
+                },
+                { cardType: card_type },
+            ],
+        });
+        const random = Math.floor(Math.random() * count);
+        return this.card
+            .find({
+                $and: [
+                    {
+                        $or: [
+                            { rarity: CardRarityEnum.Common },
+                            { rarity: CardRarityEnum.Uncommon },
+                            { rarity: CardRarityEnum.Rare },
+                        ],
+                    },
+                    { cardType: card_type },
+                ],
+            })
+            .limit(limit)
+            .skip(random);
     }
 
     @OnEvent(EVENT_BEFORE_PLAYER_TURN_END)

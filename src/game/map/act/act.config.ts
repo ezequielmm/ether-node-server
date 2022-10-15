@@ -111,6 +111,19 @@ export const actCconfigAlternatives = [
                             ],
                         },
                     },
+
+                    {
+                        type: 'merchant',
+                        subType: 'merchant',
+                        chance: 80,
+                        config: {},
+                    },
+                    {
+                        type: 'merchant',
+                        subType: 'merchant',
+                        chance: 20,
+                        config: {},
+                    },
                 ],
             },
             1: {
