@@ -1,6 +1,8 @@
+import { addCardEffect } from 'src/game/effects/addCard/contants';
 import { damageEffect } from 'src/game/effects/damage/constants';
 import { defenseEffect } from 'src/game/effects/defense/constants';
 import { CardTargetedEnum } from '../../card/card.enum';
+import { StunnedCard } from '../../card/data/stunned.card';
 import {
     EnemyTypeEnum,
     EnemyCategoryEnum,
@@ -17,35 +19,35 @@ export const fungalBruteData: Enemy = {
     size: EnemySizeEnum.Giant,
     description:
         'Massive, stomping fungal organism that stomps the ground, causing an area of damage where the ground shakes around him. Additionally, he can send large toxic spores flying around him and the knights have to dodge them or prepare to be paralyzed and stomped on.',
-    healthRange: [99999, 99999],
+    healthRange: [999, 999],
     scripts: [
         {
             intentions: [
                 {
-                    type: EnemyIntentionType.Defend, //  Need to integrate Defend All
+                    type: EnemyIntentionType.Defend,
                     target: CardTargetedEnum.Self,
-                    value: 6,
+                    value: 4,
                     effects: [
                         {
                             effect: defenseEffect.name,
                             target: CardTargetedEnum.Self,
                             args: {
-                                value: 6,
+                                value: 4,
                             },
                         },
                     ],
                 },
                 {
-                    type: EnemyIntentionType.Defend,
-                    target: CardTargetedEnum.Self,
-                    value: 1,
-                    //  This effect 'cardAdd' was not developed so I have added x one
+                    type: EnemyIntentionType.Stun,
+                    target: CardTargetedEnum.Player,
+                    value: 2,
                     effects: [
                         {
-                            effect: defenseEffect.name,
-                            target: CardTargetedEnum.Self,
+                            effect: addCardEffect.name,
+                            target: CardTargetedEnum.Player,
                             args: {
-                                value: 1,
+                                value: 2,
+                                cardId: StunnedCard.cardId,
                             },
                         },
                     ],
@@ -110,7 +112,7 @@ export const fungalBruteData: Enemy = {
                 },
                 {
                     probability: 0.5,
-                    scriptIndex: 3, // Need to integrate [If Sporelings=0] Script 4: Spawn; [If Sporelings > 0] Script 5: Cultivate
+                    scriptIndex: 3,
                 },
             ],
         },

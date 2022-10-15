@@ -8,6 +8,7 @@ import { GetEnergyAction } from 'src/game/action/getEnergy.action';
 import { GetPlayerDeckAction } from 'src/game/action/getPlayerDeck.action';
 import { GetPlayerInfoAction } from 'src/game/action/getPlayerInfo.action';
 import { GetStatusesAction } from 'src/game/action/getStatuses.action';
+import { GetUpgradableCardsAction } from 'src/game/action/getUpgradableCards.action';
 import { SendEnemyIntentProcess } from 'src/game/process/sendEnemyIntents.process';
 import {
     StandardResponse,
@@ -28,6 +29,7 @@ export class GetDataGateway {
         private readonly getEnemiesAction: GetEnemiesAction,
         private readonly getPlayerInfoAction: GetPlayerInfoAction,
         private readonly getCurrentStepAction: GetCurrentStepAction,
+        private readonly getUpgradableCards: GetUpgradableCardsAction,
     ) {}
 
     @SubscribeMessage('GetData')
@@ -70,6 +72,10 @@ export class GetDataGateway {
 
                 case DataWSRequestTypesEnum.CurrentNode:
                     data = await this.getCurrentStepAction.handle(client.id);
+                    break;
+
+                case DataWSRequestTypesEnum.UpgradableCards:
+                    data = await this.getUpgradableCards.handle(client.id);
                     break;
             }
 

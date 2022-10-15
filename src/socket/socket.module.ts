@@ -17,6 +17,7 @@ import { CardSelectionScreenModule } from 'src/game/components/cardSelectionScre
 import { PotionModule } from 'src/game/components/potion/potion.module';
 import { MerchantGateway } from './merchant.gateway';
 import { MerchantModule } from 'src/game/merchant/merchant.module';
+import { UpgradeCardGateway } from './upgradeCard.gateway';
 
 @Module({
     imports: [
@@ -40,6 +41,7 @@ import { MerchantModule } from 'src/game/merchant/merchant.module';
         RewardGateway,
         CampGateway,
         MerchantGateway,
+        UpgradeCardGateway,
     ],
 })
 export class SocketModule {}

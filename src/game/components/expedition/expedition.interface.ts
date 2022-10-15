@@ -1,4 +1,5 @@
 import { AttachedStatus, StatusType } from 'src/game/status/interfaces';
+import { CardRarityEnum, CardTypeEnum } from '../card/card.enum';
 import { Card } from '../card/card.schema';
 import {
     EnemyTypeEnum,
@@ -6,12 +7,18 @@ import {
     EnemySizeEnum,
 } from '../enemy/enemy.enum';
 import { EnemyScript } from '../enemy/enemy.interface';
+import { Potion } from '../potion/potion.schema';
 import {
     ExpeditionMapNodeTypeEnum,
     ExpeditionMapNodeStatusEnum,
     IExpeditionNodeReward,
 } from './expedition.enum';
 import { Expedition } from './expedition.schema';
+
+export interface PotionInstance {
+    id: string;
+    potion: Potion;
+}
 
 export interface IExpeditionPlayerState {
     playerId: string;
@@ -20,7 +27,7 @@ export interface IExpeditionPlayerState {
     hpMax: number;
     hpCurrent: number;
     gold: number;
-    potions?: number[];
+    potions: PotionInstance[];
     trinkets?: [];
     createdAt: Date;
     cards: IExpeditionPlayerStateDeckCard[];
@@ -96,7 +103,22 @@ export interface PotionReward extends BaseReward {
     };
 }
 
-export type Reward = GoldReward | PotionReward;
+export interface CardPreview {
+    cardId: number;
+    name: string;
+    description: string;
+    energy: number;
+    rarity: CardRarityEnum;
+    type: CardTypeEnum;
+    pool: string;
+}
+
+export interface CardReward extends BaseReward {
+    type: IExpeditionNodeReward.Card;
+    card: CardPreview;
+}
+
+export type Reward = GoldReward | PotionReward | CardReward;
 
 export interface IExpeditionStatusResponse {
     readonly hasExpedition: boolean;

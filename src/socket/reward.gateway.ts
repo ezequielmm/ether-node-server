@@ -1,6 +1,9 @@
 import { Logger } from '@nestjs/common';
 import { SubscribeMessage, WebSocketGateway } from '@nestjs/websockets';
+import { filter } from 'lodash';
 import { Socket } from 'socket.io';
+import { FullSyncAction } from 'src/game/action/fullSync.action';
+import { CardService } from 'src/game/components/card/card.service';
 import { IExpeditionNodeReward } from 'src/game/components/expedition/expedition.enum';
 import { ExpeditionService } from 'src/game/components/expedition/expedition.service';
 import { PotionService } from 'src/game/components/potion/potion.service';
@@ -18,6 +21,8 @@ export class RewardGateway {
     constructor(
         private readonly expeditionService: ExpeditionService,
         private readonly potionService: PotionService,
+        private readonly cardService: CardService,
+        private readonly fullSyncAction: FullSyncAction,
     ) {}
 
     @SubscribeMessage('RewardSelected')
@@ -33,7 +38,7 @@ export class RewardGateway {
 
         this.logger.debug(`Client ${client.id} choose reward id: ${rewardId}`);
 
-        const {
+        let {
             _id: expeditionId,
             currentNode: {
                 completed: nodeIsCompleted,
@@ -69,26 +74,36 @@ export class RewardGateway {
                 });
                 break;
             case IExpeditionNodeReward.Potion:
-                await this.potionService.add(ctx, reward.potion.potionId);
+                reward.taken = await this.potionService.add(
+                    ctx,
+                    reward.potion.potionId,
+                );
                 break;
+            case IExpeditionNodeReward.Card: {
+                await this.cardService.addCardToDeck(ctx, reward.card.cardId);
+                // Disable all other card rewards
+                rewards = rewards.map((r) => {
+                    if (r.type === IExpeditionNodeReward.Card) {
+                        r.taken = true;
+                    }
+                    return r;
+                });
+                break;
+            }
         }
 
+        await this.fullSyncAction.handle(client);
+
         // Next we save the reward on the expedition
-        await this.expeditionService.updateByFilter(
-            {
-                expeditionId,
-                'currentNode.data.rewards.id': rewardId,
+        await this.expeditionService.updateById(expedition._id, {
+            $set: {
+                'currentNode.data.rewards': rewards,
             },
-            {
-                $set: {
-                    'currentNode.data.rewards.$.taken': true,
-                },
-            },
-        );
+        });
 
         // Now we get the rewards that are pending to be taken
-        const pendingRewards = rewards.filter(({ id, taken }) => {
-            return id !== rewardId && taken === false;
+        const pendingRewards = filter(rewards, {
+            taken: false,
         });
 
         return StandardResponse.respond({
