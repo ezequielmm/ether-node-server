@@ -8,7 +8,7 @@ export interface Item {
     _id: string;
     item: Card | Trinket | Potion;
     coin: number;
-    type: 'cards' | 'neutral_cards ' | 'trinkets' | 'potions';
+    type: 'cards' | 'neutral_cards' | 'trinkets' | 'potions';
 }
 
 export interface FindOneMerchantDTO {
@@ -17,5 +17,5 @@ export interface FindOneMerchantDTO {
 
 export interface selectedItem {
     id: number | string;
-    type: 'cards' | 'neutral_cards ' | 'trinkets' | 'potions';
+    type: 'cards' | 'neutral_cards' | 'trinkets' | 'potions';
 }

@@ -59,7 +59,7 @@ export class CardService {
             ],
         });
         const random = Math.floor(Math.random() * count);
-        return this.card
+        return await this.card
             .find({
                 $and: [
                     {
@@ -110,6 +110,15 @@ export class CardService {
         this.expeditionService.updatePlayerDeck({
             deck: newDeck,
         });
+    }
+    async getRandomCardOfType(cardType: CardTypeEnum): Promise<CardDocument> {
+        const count = await this.card.countDocuments({ cardType });
+
+        const random = Math.floor(Math.random() * count);
+
+        const card = await this.card.find({ cardType }).limit(1).skip(random);
+
+        return card[0] ? card[0] : null;
     }
 
     @OnEvent(EVENT_BEFORE_PLAYER_TURN_END)

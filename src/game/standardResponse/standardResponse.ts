@@ -23,6 +23,8 @@ export enum SWARMessageType {
     CardUpgrade = 'card_upgrade',
     UsePotion = 'use_potion',
     AddPotion = 'add_potion',
+    OpenTreasure = 'open_treasure',
+    TreasureNodeUpdate = 'treasure_node_update',
 }
 
 export enum SWARAction {
@@ -60,6 +62,8 @@ export enum SWARAction {
     PotionNotInInventory = 'potion_not_in_inventory',
     PotionNotFoundInDatabase = 'potion_not_found_in_database',
     PotionMaxCountReached = 'potion_max_count_reached',
+    OpenTreasure = 'open_treasure',
+    TreasureNodeUpdate = 'treasure_node_update',
 }
 
 interface SWARPayload {

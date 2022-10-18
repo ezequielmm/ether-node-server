@@ -10,7 +10,9 @@ import {
 } from '../standardResponse/standardResponse';
 import { InitCombatProcess } from './initCombat.process';
 import { InitMerchantProcess } from './initMerchant.process';
+
 import { InitNodeProcess } from './initNode.process';
+import { InitTreasureProcess } from './initTreasure.process';
 
 @Injectable()
 export class NodeSelectedProcess {
@@ -21,6 +23,7 @@ export class NodeSelectedProcess {
         private readonly initCombatProcess: InitCombatProcess,
         private readonly initNodeProcess: InitNodeProcess,
         private readonly initMerchantProcess: InitMerchantProcess,
+        private readonly initTreasureProcess: InitTreasureProcess,
     ) {}
 
     async handle(client: Socket, node_id: number): Promise<string> {
@@ -112,12 +115,15 @@ export class NodeSelectedProcess {
                         data: null,
                     });
                 case ExpeditionMapNodeTypeEnum.Treasure:
-                    await this.initNodeProcess.process(client, node);
+                    const data = await this.initTreasureProcess.process(
+                        client,
+                        node,
+                    );
 
                     return StandardResponse.respond({
                         message_type: SWARMessageType.TreasureUpdate,
                         action: SWARAction.BeginTreasure,
-                        data: null,
+                        data,
                     });
                 case ExpeditionMapNodeTypeEnum.Merchant:
                     await this.initMerchantProcess.process(client, node);
@@ -170,12 +176,15 @@ export class NodeSelectedProcess {
                             data: null,
                         });
                     case ExpeditionMapNodeTypeEnum.Treasure:
-                        await this.initNodeProcess.process(client, node);
+                        const data = await this.initTreasureProcess.process(
+                            client,
+                            node,
+                        );
 
                         return StandardResponse.respond({
                             message_type: SWARMessageType.TreasureUpdate,
                             action: SWARAction.BeginTreasure,
-                            data: null,
+                            data,
                         });
                     case ExpeditionMapNodeTypeEnum.Merchant:
                         await this.initMerchantProcess.process(client, node);

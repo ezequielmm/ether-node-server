@@ -49,7 +49,7 @@ export class PotionService {
             ],
         });
         const random = Math.floor(Math.random() * count);
-        return this.potion
+        return await this.potion
             .find({
                 $and: [
                     {

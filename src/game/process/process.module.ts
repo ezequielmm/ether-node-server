@@ -12,6 +12,7 @@ import { SettingsModule } from '../components/settings/settings.module';
 import { EffectModule } from '../effects/effects.module';
 import { MerchantModule } from '../merchant/merchant.module';
 import { StatusModule } from '../status/status.module';
+import { TreasureModule } from '../treasure/treasure.module';
 import { BeginEnemyTurnProcess } from './beginEnemyTurn.process';
 import { BeginPlayerTurnProcess } from './beginPlayerTurn.process';
 import { CurrentNodeGeneratorProcess } from './currentNodeGenerator.process';
@@ -22,6 +23,7 @@ import { InitCombatProcess } from './initCombat.process';
 import { InitExpeditionProcess } from './initExpedition.process';
 import { InitMerchantProcess } from './initMerchant.process';
 import { InitNodeProcess } from './initNode.process';
+import { InitTreasureProcess } from './initTreasure.process';
 import { NodeSelectedProcess } from './nodeSelected.process';
 import { SendEnemyIntentProcess } from './sendEnemyIntents.process';
 
@@ -31,6 +33,7 @@ import { SendEnemyIntentProcess } from './sendEnemyIntents.process';
         SettingsModule,
         forwardRef(() => EnemyModule),
         forwardRef(() => MerchantModule),
+        forwardRef(() => TreasureModule),
         forwardRef(() => ActionModule),
         forwardRef(() => CardModule),
         CharacterModule,
@@ -54,6 +57,7 @@ import { SendEnemyIntentProcess } from './sendEnemyIntents.process';
         EndCombatProcess,
         InitNodeProcess,
         InitMerchantProcess,
+        InitTreasureProcess,
     ],
     exports: [
         SendEnemyIntentProcess,
@@ -68,6 +72,7 @@ import { SendEnemyIntentProcess } from './sendEnemyIntents.process';
         EndCombatProcess,
         InitNodeProcess,
         InitMerchantProcess,
+        InitTreasureProcess,
     ],
 })
 export class ProcessModule {}
