@@ -13,6 +13,8 @@ import {
     SWARMessageType,
 } from 'src/game/standardResponse/standardResponse';
 import { TargetId } from 'src/game/effects/effects.types';
+import { CardRarityEnum } from '../card/card.enum';
+import { PotionRarityEnum } from './potion.enum';
 import { find } from 'lodash';
 import { PotionInstance } from '../expedition/expedition.interface';
 import { randomUUID } from 'crypto';
@@ -33,6 +35,34 @@ export class PotionService {
 
     async findByPotionId(potionId: number): Promise<PotionDocument> {
         return this.potion.findOne({ potionId });
+    }
+    async randomPotion(limit: number): Promise<PotionDocument[]> {
+        const count = await this.potion.countDocuments({
+            $and: [
+                {
+                    $or: [
+                        { rarity: PotionRarityEnum.Common },
+                        { rarity: PotionRarityEnum.Uncommon },
+                        { rarity: PotionRarityEnum.Rare },
+                    ],
+                },
+            ],
+        });
+        const random = Math.floor(Math.random() * count);
+        return await this.potion
+            .find({
+                $and: [
+                    {
+                        $or: [
+                            { rarity: CardRarityEnum.Common },
+                            { rarity: CardRarityEnum.Uncommon },
+                            { rarity: CardRarityEnum.Rare },
+                        ],
+                    },
+                ],
+            })
+            .limit(limit)
+            .skip(random);
     }
 
     async use(

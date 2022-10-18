@@ -48,12 +48,14 @@ export interface IExpeditionNode {
     readonly exits: number[];
     readonly enter: number[];
     readonly private_data: {
+        treasure?: any;
         enemies?: {
             enemies: number[];
             probability: number;
         }[];
     };
     readonly state?: {
+        treasure?: any;
         enemies?: {
             enemies: number[];
             probability: number;

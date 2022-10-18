@@ -42,6 +42,39 @@ export class CardService {
         return this.card.find({ cardId: { $in: cards } }).lean();
     }
 
+    async randomCards(
+        limit: number,
+        card_type: CardTypeEnum,
+    ): Promise<CardDocument[]> {
+        const count = await this.card.countDocuments({
+            $and: [
+                {
+                    $or: [
+                        { rarity: CardRarityEnum.Common },
+                        { rarity: CardRarityEnum.Uncommon },
+                        { rarity: CardRarityEnum.Rare },
+                    ],
+                },
+                { cardType: card_type },
+            ],
+        });
+        const random = Math.floor(Math.random() * count);
+        return await this.card
+            .find({
+                $and: [
+                    {
+                        $or: [
+                            { rarity: CardRarityEnum.Common },
+                            { rarity: CardRarityEnum.Uncommon },
+                            { rarity: CardRarityEnum.Rare },
+                        ],
+                    },
+                    { cardType: card_type },
+                ],
+            })
+            .limit(limit)
+            .skip(random);
+    }
     async getRandomCard(rarity: CardRarityEnum): Promise<CardDocument> {
         const cards = await this.findByRarity(rarity);
         const randomCard = cards[Math.floor(Math.random() * cards.length)];
@@ -77,6 +110,15 @@ export class CardService {
         this.expeditionService.updatePlayerDeck({
             deck: newDeck,
         });
+    }
+    async getRandomCardOfType(cardType: CardTypeEnum): Promise<CardDocument> {
+        const count = await this.card.countDocuments({ cardType });
+
+        const random = Math.floor(Math.random() * count);
+
+        const card = await this.card.find({ cardType }).limit(1).skip(random);
+
+        return card[0] ? card[0] : null;
     }
 
     @OnEvent(EVENT_BEFORE_PLAYER_TURN_END)
