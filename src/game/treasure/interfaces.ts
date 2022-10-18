@@ -1,4 +1,4 @@
-import { LargeChest, MediumChest, SmallChest } from './Treasure.enum';
+import { LargeChest, MediumChest, SmallChest } from './treasure.enum';
 
 export interface TreasureInterface {
     name: LargeChest.name | MediumChest.name | SmallChest.name;
