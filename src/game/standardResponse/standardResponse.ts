@@ -64,6 +64,7 @@ export enum SWARAction {
     PotionMaxCountReached = 'potion_max_count_reached',
     OpenTreasure = 'open_treasure',
     TreasureNodeUpdate = 'treasure_node_update',
+    HealAmount = 'heal_amount',
 }
 
 interface SWARPayload {

@@ -74,8 +74,16 @@ export class CampGateway {
                 },
             }),
         );
+        client.emit(
+            'CampRecoverHealth',
+            StandardResponse.respond({
+                message_type: SWARMessageType.CampUpdate,
+                action: SWARAction.HealAmount,
+                data: { HpRecover: newHp - hpCurrent },
+            }),
+        );
 
-        // Send message to finish the node and change the button text
+        //Send message to finish the node and change the button text
         client.emit(
             'PutData',
             StandardResponse.respond({
