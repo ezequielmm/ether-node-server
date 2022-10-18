@@ -28,6 +28,7 @@ import { KnockDownEffect } from './knockDown/knockDown.effect';
 import { LastReminderEffect } from './lastReminder/lastReminder.effect';
 import { PavaRootEffect } from './pavaRoot/pavaRoot.effect';
 import { PhilterOfRedemptionEffect } from './philterOfRedemption/philterOfRedemption.effect';
+import { RemoveConfusionEffect } from './removeConfusion/removeConfusion.effect';
 import { RemoveDebuffEffect } from './removeDebuff/removeDebuff.effect';
 import { RemoveDefenseEffect } from './removeDefense/removeDefense.effect';
 import { RepositionEffect } from './reposition/reposition.effect';
@@ -70,6 +71,7 @@ import { TwistTheBladeEffect } from './twistTheBlade/twistTheBlade.effect';
         PhilterOfRedemptionEffect,
         AddCardEffect,
         PavaRootEffect,
+        RemoveConfusionEffect,
     ],
     exports: [EffectService],
 })
