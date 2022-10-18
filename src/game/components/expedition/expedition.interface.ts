@@ -15,9 +15,8 @@ import {
 } from './expedition.enum';
 import { Expedition } from './expedition.schema';
 
-export interface PotionInstance {
+export interface PotionInstance extends Potion {
     id: string;
-    potion: Potion;
 }
 
 export interface IExpeditionPlayerState {

@@ -67,25 +67,23 @@ export class PotionService {
 
     async use(
         ctx: GameContext,
-        instanceId: string,
+        potionUniqueId: string,
         targetId: TargetId,
     ): Promise<void> {
-        const potionInstance = this.findFromInventory(ctx, instanceId);
+        const potion = this.findFromInventory(ctx, potionUniqueId);
 
         // Check if potion is available
-        if (!potionInstance) {
+        if (!potion) {
             ctx.client.emit(
                 'PutData',
                 StandardResponse.respond({
                     message_type: SWARMessageType.UsePotion,
                     action: SWARAction.PotionNotInInventory,
-                    data: { potionId: instanceId },
+                    data: { potionId: potionUniqueId },
                 }),
             );
             return;
         }
-
-        const { potion } = potionInstance;
 
         const inCombat =
             ctx.expedition.currentNode.nodeType ===
@@ -98,7 +96,7 @@ export class PotionService {
                 StandardResponse.respond({
                     message_type: SWARMessageType.UsePotion,
                     action: SWARAction.PotionNotUsableOutsideCombat,
-                    data: { potionId: instanceId },
+                    data: { potionId: potionUniqueId },
                 }),
             );
             return;
@@ -115,20 +113,23 @@ export class PotionService {
         });
 
         // Once potion is used, remove it from the player's inventory
-        await this.remove(ctx, instanceId);
+        await this.remove(ctx, potionUniqueId);
     }
 
     private findFromInventory(
         ctx: GameContext,
-        instanceId: string,
+        potionUniqueId: string,
     ): PotionInstance {
-        return find(ctx.expedition.playerState.potions, { id: instanceId });
+        return find(ctx.expedition.playerState.potions, { id: potionUniqueId });
     }
 
-    public async remove(ctx: GameContext, instanceId: string): Promise<void> {
+    public async remove(
+        ctx: GameContext,
+        potionUniqueId: string,
+    ): Promise<void> {
         // Remove potion from player's inventory
         const potions = ctx.expedition.playerState.potions.filter(
-            (potion) => potion.id !== instanceId,
+            (potion) => potion.id !== potionUniqueId,
         );
 
         // Update in memory state
@@ -176,7 +177,7 @@ export class PotionService {
             $push: {
                 'playerState.potions': {
                     id: randomUUID(),
-                    potion: potionData,
+                    ...potionData,
                 },
             },
         });
