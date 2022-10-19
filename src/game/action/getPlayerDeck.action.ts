@@ -4,6 +4,7 @@ import { ExpeditionService } from '../components/expedition/expedition.service';
 
 interface IGetPlayerDeck {
     id: string;
+    cardId: number;
     name: string;
     description: string;
     rarity: CardRarityEnum;
@@ -26,6 +27,7 @@ export class GetPlayerDeckAction {
 
         return cards.map((card) => ({
             id: card.id,
+            cardId: card.cardId,
             name: card.name,
             description: card.description,
             rarity: card.rarity,
