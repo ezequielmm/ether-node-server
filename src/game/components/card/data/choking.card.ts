@@ -1,4 +1,6 @@
+import { attachStatusEffect } from 'src/game/effects/attachStatus/constants';
 import { damageEffect } from 'src/game/effects/damage/constants';
+import { feebleStatus } from 'src/game/status/feeble/constants';
 import {
     CardKeywordEnum,
     CardRarityEnum,
@@ -7,28 +9,31 @@ import {
 } from '../card.enum';
 import { Card } from '../card.schema';
 
-export const BurnedCard: Card = {
-    cardId: 503,
-    name: 'Burned',
+export const ChokingCard: Card = {
+    cardId: 506,
+    name: 'Choking',
     rarity: CardRarityEnum.Special,
     cardType: CardTypeEnum.Status,
     pool: 'knight',
-    energy: 0,
-    description: `Will deal {${damageEffect.name}} damage to player if in hand at end of turn`,
-    keywords: [CardKeywordEnum.Fade, CardKeywordEnum.Unplayable],
+    energy: 1,
+    description: 'If in hand at end of turn, gain 2 Feeble\nExhaust',
+    keywords: [CardKeywordEnum.Exhaust],
     properties: {
         effects: [
             {
-                effect: damageEffect.name,
+                effect: attachStatusEffect.name,
                 target: CardTargetedEnum.Player,
                 args: {
-                    value: 2,
+                    statusName: feebleStatus.name,
+                    statusArgs: {
+                        counter: 2,
+                    },
                 },
             },
         ],
         statuses: [],
     },
-    showPointer: true,
+    showPointer: false,
     isUpgraded: false,
     triggerAtEndOfTurn: true,
 };

@@ -8,7 +8,7 @@ import { CardPlayedAction } from 'src/game/action/cardPlayed.action';
 import { EVENT_BEFORE_PLAYER_TURN_END } from 'src/game/constants';
 import { ExpeditionService } from '../expedition/expedition.service';
 import { GameContext } from '../interfaces';
-import { CardKeywordEnum, CardRarityEnum, CardTypeEnum } from './card.enum';
+import { CardRarityEnum, CardTypeEnum } from './card.enum';
 import { Card, CardDocument } from './card.schema';
 import { CardId, getCardIdField } from './card.type';
 
@@ -128,14 +128,14 @@ export class CardService {
         const fadeCards = filter(
             ctx.expedition.currentNode.data.player.cards.hand,
             {
-                keywords: [CardKeywordEnum.Fade],
+                triggerAtEndOfTurn: true,
             },
         );
 
         if (fadeCards.length) {
             for (const card of fadeCards) {
                 this.logger.debug(
-                    `Auto playing fade card ${card.cardId}:${card.name}`,
+                    `Auto playing card ${card.cardId}:${card.name}`,
                 );
                 await this.cardPlayedAction.handle({
                     client: ctx.client,

@@ -15,6 +15,7 @@ import { BraceCard, BraceCardUpgraded } from './data/brace.card';
 import { BulkUpCard, BulkUpCardUpgraded } from './data/bulkUp.card';
 import { BurnedCard } from './data/burned.card';
 import { ChargeCard, ChargeCardUpgraded } from './data/charge.card';
+import { ChokingCard } from './data/choking.card';
 import { CounterCard, CounterCardUpgraded } from './data/counter.card';
 import { DefenseCard, DefenseCardUpgraded } from './data/defend.card';
 import { DivineGiftCard, DivineGiftCardUpgraded } from './data/divineGift.card';
@@ -266,4 +267,5 @@ export const data: Card[] = [
     StunnedCard,
     WoundedCard,
     MossCard,
+    ChokingCard,
 ];

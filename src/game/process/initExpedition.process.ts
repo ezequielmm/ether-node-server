@@ -112,6 +112,7 @@ export class InitExpeditionProcess {
                 pool: card.pool,
                 isUpgraded: card.isUpgraded,
                 upgradedCardId: card?.upgradedCardId,
+                triggerAtEndOfTurn: card.triggerAtEndOfTurn,
             }));
     }
 }
