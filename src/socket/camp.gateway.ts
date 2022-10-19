@@ -19,7 +19,7 @@ export class CampGateway {
     constructor(
         private readonly expeditionService: ExpeditionService,
         private readonly playerService: PlayerService,
-    ) {}
+    ) { }
 
     @SubscribeMessage('CampRecoverHealth')
     async handleRecoverHealth(client: Socket): Promise<void> {
@@ -79,7 +79,7 @@ export class CampGateway {
             StandardResponse.respond({
                 message_type: SWARMessageType.CampUpdate,
                 action: SWARAction.HealAmount,
-                data: { HpRecover: newHp - hpCurrent },
+                data: { healed: newHp - hpCurrent },
             }),
         );
 
