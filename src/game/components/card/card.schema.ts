@@ -53,6 +53,9 @@ export class Card {
 
     @Prop()
     upgradedCardId?: number;
+
+    @Prop()
+    triggerAtEndOfTurn?: boolean;
 }
 
 export const CardSchema = SchemaFactory.createForClass(Card);
