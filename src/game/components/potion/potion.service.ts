@@ -18,6 +18,7 @@ import { PotionRarityEnum } from './potion.enum';
 import { find } from 'lodash';
 import { PotionInstance } from '../expedition/expedition.interface';
 import { randomUUID } from 'crypto';
+import { getPotionIdField, PotionId } from './potion.type';
 
 @Injectable()
 export class PotionService {
@@ -35,6 +36,10 @@ export class PotionService {
 
     async findByPotionId(potionId: number): Promise<PotionDocument> {
         return this.potion.findOne({ potionId });
+    }
+    async findById(id: PotionId): Promise<PotionDocument> {
+        const field = getPotionIdField(id);
+        return this.potion.findOne({ [field]: id }).lean();
     }
     async randomPotion(limit: number): Promise<PotionDocument[]> {
         const count = await this.potion.countDocuments({

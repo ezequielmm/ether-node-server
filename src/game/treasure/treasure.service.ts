@@ -32,7 +32,7 @@ export class TreasureService {
         private readonly potionService: PotionService,
         @Inject(forwardRef(() => CardService))
         private readonly cardService: CardService,
-    ) { }
+    ) {}
 
     random(min: number, max: number): number {
         return Math.floor(Math.random() * (max - min)) + min;
@@ -190,16 +190,16 @@ export class TreasureService {
         } else if (
             randomTrinketRarityChance > trinketChanceUncommon &&
             randomTrinketRarityChance <=
-            trinketChanceUncommon + trinketChanceRare
+                trinketChanceUncommon + trinketChanceRare
         ) {
             result.trinket = await this.trinketService.findOneRandomTrinket(
                 TrinketRarityEnum.Rare,
             );
         } else if (
             randomTrinketRarityChance >
-            trinketChanceUncommon + trinketChanceRare &&
+                trinketChanceUncommon + trinketChanceRare &&
             randomTrinketRarityChance <=
-            trinketChanceUncommon + trinketChanceRare + trinketChanceCommon
+                trinketChanceUncommon + trinketChanceRare + trinketChanceCommon
         ) {
             result.trinket = await this.trinketService.findOneRandomTrinket(
                 TrinketRarityEnum.Common,

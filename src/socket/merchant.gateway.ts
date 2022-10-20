@@ -22,4 +22,12 @@ export class MerchantGateway {
 
         await this.merchantService.handle(client, selected);
     }
+    @SubscribeMessage('MerchantData')
+    async merchantData(client: Socket): Promise<void> {
+        this.logger.debug(
+            `Client ${client.id} get merchant data "MerchantData"`,
+        );
+
+        await this.merchantService.merchantData(client);
+    }
 }
