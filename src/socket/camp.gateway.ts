@@ -36,7 +36,7 @@ export class CampGateway {
         // Now we calculate the new health for the player
         // Here we increase the health by 30% or set it to the
         // hpMax value is the result is higher than hpMax
-        const newHp = Math.floor(Math.min(hpMax, hpCurrent + hpCurrent * 0.3));
+        const newHp = Math.floor(Math.min(hpMax, hpCurrent + hpMax * 0.3));
 
         // Now we update the current hp for the player
         await this.playerService.setGlobalHp(ctx, newHp);
