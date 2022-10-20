@@ -14,7 +14,7 @@ export class FullSyncAction {
 
     constructor(private readonly expeditionService: ExpeditionService) {}
 
-    async handle(client: Socket): Promise<void> {
+    async handle(client: Socket, sendShowMap: boolean = true): Promise<void> {
         const expedition = await this.expeditionService.findOne({
             clientId: client.id,
         });
@@ -29,15 +29,17 @@ export class FullSyncAction {
 
         this.logger.debug(`Sent message ExpeditionMap to client ${client.id}`);
 
-        client.emit(
-            'ExpeditionMap',
-            StandardResponse.respond({
-                message_type: SWARMessageType.MapUpdate,
-                seed: mapSeedId,
-                action: SWARAction.ShowMap,
-                data: map,
-            }),
-        );
+        if (sendShowMap) {
+            client.emit(
+                'ExpeditionMap',
+                StandardResponse.respond({
+                    message_type: SWARMessageType.MapUpdate,
+                    seed: mapSeedId,
+                    action: SWARAction.ShowMap,
+                    data: map,
+                }),
+            );
+        }
 
         this.logger.debug(`Sent message PlayerState to client ${client.id}`);
 

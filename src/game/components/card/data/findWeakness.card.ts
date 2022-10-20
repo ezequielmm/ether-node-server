@@ -16,9 +16,9 @@ export const FindWeaknessCardUpgraded: Card = {
             {
                 effect: damageEffect.name,
                 target: CardTargetedEnum.Enemy,
+                times: 1,
                 args: {
                     value: 1,
-                    times: 1,
                     doubleValuesWhenPlayed: true,
                 },
             },
@@ -43,9 +43,9 @@ export const FindWeaknessCard: Card = {
             {
                 effect: damageEffect.name,
                 target: CardTargetedEnum.Enemy,
+                times: 1,
                 args: {
                     value: 1,
-                    times: 1,
                     doubleValuesWhenPlayed: true,
                 },
             },
