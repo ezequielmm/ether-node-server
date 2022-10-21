@@ -50,6 +50,7 @@ export enum SWARAction {
     BeginCamp = 'begin_camp',
     BeginEncounter = 'begin_encounter',
     BeginTreasure = 'begin_treasure',
+    TreasureData = 'treasure_data',
     BeginMerchant = 'begin_merchant',
     ShowCardDialog = 'show_card_dialog',
     ShowInvalidPotion = 'show_invalid_potion',
