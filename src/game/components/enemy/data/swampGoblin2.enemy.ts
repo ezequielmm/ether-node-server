@@ -1,4 +1,5 @@
 import { damageEffect } from 'src/game/effects/damage/constants';
+import { resolveStatus } from 'src/game/status/resolve/constants';
 import { CardTargetedEnum } from '../../card/card.enum';
 import {
     EnemyTypeEnum,
@@ -21,6 +22,30 @@ export const swampGoblin2Data: Enemy = {
         {
             intentions: [
                 {
+                    type: EnemyIntentionType.Buff,
+                    target: CardTargetedEnum.Self,
+                    value: 2,
+                    status: [
+                        {
+                            name: resolveStatus.name,
+                            attachTo: CardTargetedEnum.Self,
+                            args: {
+                                counter: 3,
+                            },
+                        },
+                    ],
+                },
+            ],
+            next: [
+                {
+                    probability: 1,
+                    scriptIndex: 1,
+                },
+            ],
+        },
+        {
+            intentions: [
+                {
                     type: EnemyIntentionType.Attack,
                     target: CardTargetedEnum.Player,
                     value: 8,
@@ -38,11 +63,11 @@ export const swampGoblin2Data: Enemy = {
             next: [
                 {
                     probability: 0.7,
-                    scriptIndex: 1,
+                    scriptIndex: 0,
                 },
                 {
                     probability: 0.3,
-                    scriptIndex: 3,
+                    scriptIndex: 1,
                 },
             ],
         },

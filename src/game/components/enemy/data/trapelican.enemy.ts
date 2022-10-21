@@ -9,6 +9,7 @@ import {
     EnemyIntentionType,
 } from '../enemy.enum';
 import { Enemy } from '../enemy.schema';
+import { feebleStatus } from 'src/game/status/feeble/constants';
 
 export const trapelicanData: Enemy = {
     enemyId: 12,
@@ -93,7 +94,7 @@ export const trapelicanData: Enemy = {
                     value: 1,
                     status: [
                         {
-                            name: resolveStatus.name,
+                            name: feebleStatus.name,
                             attachTo: CardTargetedEnum.Player,
                             args: {
                                 counter: 1,
