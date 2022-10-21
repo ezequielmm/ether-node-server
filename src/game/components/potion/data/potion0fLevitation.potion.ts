@@ -3,7 +3,7 @@ import { PotionRarityEnum, PotionTargetEnum } from '../potion.enum';
 import { Potion } from '../potion.schema';
 
 export const potionOfLevitation: Potion = {
-    potionId: 8,
+    potionId: 21,
     name: 'Potion of Levitation',
     rarity: PotionRarityEnum.Rare,
     description: 'Gain 1 Dodge',

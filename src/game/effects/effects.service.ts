@@ -68,7 +68,7 @@ export class EffectService {
         const {
             effect: name,
             times = 1,
-            args: { value, ...args },
+            args: { value, ...args } = {},
         } = effect;
 
         let effectDTO: EffectDTO = {

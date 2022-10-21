@@ -1,9 +1,7 @@
 import { Logger } from '@nestjs/common';
 import { SubscribeMessage, WebSocketGateway } from '@nestjs/websockets';
 import { Socket } from 'socket.io';
-import { ExpeditionDocument } from 'src/game/components/expedition/expedition.schema';
 import { ExpeditionService } from 'src/game/components/expedition/expedition.service';
-import { GameContext } from 'src/game/components/interfaces';
 import { PlayerService } from 'src/game/components/player/player.service';
 import {
     StandardResponse,
@@ -22,30 +20,23 @@ export class CampGateway {
     ) {}
 
     @SubscribeMessage('CampRecoverHealth')
-    async handleRecoverHealth(client: Socket): Promise<void> {
+    async handleRecoverHealth(client: Socket): Promise<string> {
         this.logger.debug(
             `Client ${client.id} trigger message "CampRecoverHealth"`,
         );
 
         // First we get the actual player state to get the
         // actual health and max health for the player
-        const expedition = await this.expeditionService.findOne({
-            clientId: client.id,
-        });
+        const ctx = await this.expeditionService.getGameContext(client);
 
         const {
             playerState: { hpCurrent, hpMax },
-        } = expedition;
+        } = ctx.expedition;
 
         // Now we calculate the new health for the player
         // Here we increase the health by 30% or set it to the
         // hpMax value is the result is higher than hpMax
-        const newHp = Math.floor(Math.min(hpMax, hpCurrent + hpCurrent * 0.3));
-
-        const ctx: GameContext = {
-            client,
-            expedition: expedition as ExpeditionDocument,
-        };
+        const newHp = Math.floor(Math.min(hpMax, hpCurrent + hpMax * 0.3));
 
         // Now we update the current hp for the player
         await this.playerService.setGlobalHp(ctx, newHp);
@@ -75,7 +66,7 @@ export class CampGateway {
             }),
         );
 
-        // Send message to finish the node and change the button text
+        //Send message to finish the node and change the button text
         client.emit(
             'PutData',
             StandardResponse.respond({
@@ -84,5 +75,11 @@ export class CampGateway {
                 data: null,
             }),
         );
+
+        return StandardResponse.respond({
+            message_type: SWARMessageType.CampUpdate,
+            action: SWARAction.HealAmount,
+            data: { healed: newHp - hpCurrent },
+        });
     }
 }

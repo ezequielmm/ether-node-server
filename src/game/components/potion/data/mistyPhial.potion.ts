@@ -1,3 +1,4 @@
+import { attachStatusEffect } from 'src/game/effects/attachStatus/constants';
 import { removeConfusionEffect } from 'src/game/effects/removeConfusion/constants';
 import { clearHeadedStatus } from 'src/game/status/clearHeaded/constants';
 import { PotionRarityEnum, PotionTargetEnum } from '../potion.enum';
@@ -15,8 +16,11 @@ export const mistyPhialPotion: Potion = {
             target: PotionTargetEnum.Player,
         },
         {
-            effect: clearHeadedStatus.name,
+            effect: attachStatusEffect.name,
             target: PotionTargetEnum.Player,
+            args: {
+                statusName: clearHeadedStatus.name,
+            },
         },
     ],
     usableOutsideCombat: false,

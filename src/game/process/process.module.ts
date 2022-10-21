@@ -7,9 +7,12 @@ import { CustomDeckModule } from '../components/customDeck/customDeck.module';
 import { EnemyModule } from '../components/enemy/enemy.module';
 import { ExpeditionModule } from '../components/expedition/expedition.module';
 import { PlayerModule } from '../components/player/player.module';
+import { PotionModule } from '../components/potion/potion.module';
 import { SettingsModule } from '../components/settings/settings.module';
 import { EffectModule } from '../effects/effects.module';
+import { MerchantModule } from '../merchant/merchant.module';
 import { StatusModule } from '../status/status.module';
+import { TreasureModule } from '../treasure/treasure.module';
 import { BeginEnemyTurnProcess } from './beginEnemyTurn.process';
 import { BeginPlayerTurnProcess } from './beginPlayerTurn.process';
 import { CurrentNodeGeneratorProcess } from './currentNodeGenerator.process';
@@ -18,7 +21,9 @@ import { EndEnemyTurnProcess } from './endEnemyTurn.process';
 import { EndPlayerTurnProcess } from './endPlayerTurn.process';
 import { InitCombatProcess } from './initCombat.process';
 import { InitExpeditionProcess } from './initExpedition.process';
+import { InitMerchantProcess } from './initMerchant.process';
 import { InitNodeProcess } from './initNode.process';
+import { InitTreasureProcess } from './initTreasure.process';
 import { NodeSelectedProcess } from './nodeSelected.process';
 import { SendEnemyIntentProcess } from './sendEnemyIntents.process';
 
@@ -27,6 +32,8 @@ import { SendEnemyIntentProcess } from './sendEnemyIntents.process';
         forwardRef(() => ExpeditionModule),
         SettingsModule,
         forwardRef(() => EnemyModule),
+        forwardRef(() => MerchantModule),
+        forwardRef(() => TreasureModule),
         forwardRef(() => ActionModule),
         forwardRef(() => CardModule),
         CharacterModule,
@@ -35,6 +42,7 @@ import { SendEnemyIntentProcess } from './sendEnemyIntents.process';
         forwardRef(() => EffectModule),
         CustomDeckModule,
         CombatQueueModule,
+        forwardRef(() => PotionModule),
     ],
     providers: [
         SendEnemyIntentProcess,
@@ -48,6 +56,8 @@ import { SendEnemyIntentProcess } from './sendEnemyIntents.process';
         BeginPlayerTurnProcess,
         EndCombatProcess,
         InitNodeProcess,
+        InitMerchantProcess,
+        InitTreasureProcess,
     ],
     exports: [
         SendEnemyIntentProcess,
@@ -61,6 +71,8 @@ import { SendEnemyIntentProcess } from './sendEnemyIntents.process';
         BeginPlayerTurnProcess,
         EndCombatProcess,
         InitNodeProcess,
+        InitMerchantProcess,
+        InitTreasureProcess,
     ],
 })
 export class ProcessModule {}

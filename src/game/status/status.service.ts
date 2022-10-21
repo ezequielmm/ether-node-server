@@ -194,6 +194,10 @@ export class StatusService {
                         isUpdate = true;
                     },
                 });
+
+                this.logger.debug(
+                    `Mutating effect ${effect} with status ${status.name} | ${effectDTO.args.initialValue} ➭ ${effectDTO.args.currentValue}`,
+                );
             }
             if (statusesToRemove.length > 0) {
                 collection[type] = statuses.filter(

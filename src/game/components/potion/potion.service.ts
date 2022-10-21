@@ -13,6 +13,11 @@ import {
     SWARMessageType,
 } from 'src/game/standardResponse/standardResponse';
 import { TargetId } from 'src/game/effects/effects.types';
+import { CardRarityEnum } from '../card/card.enum';
+import { PotionRarityEnum } from './potion.enum';
+import { find } from 'lodash';
+import { PotionInstance } from '../expedition/expedition.interface';
+import { randomUUID } from 'crypto';
 
 @Injectable()
 export class PotionService {
@@ -29,44 +34,69 @@ export class PotionService {
     }
 
     async findByPotionId(potionId: number): Promise<PotionDocument> {
-        return this.potion.findOne({ potionId }).lean();
+        return this.potion.findOne({ potionId });
+    }
+    async randomPotion(limit: number): Promise<PotionDocument[]> {
+        const count = await this.potion.countDocuments({
+            $and: [
+                {
+                    $or: [
+                        { rarity: PotionRarityEnum.Common },
+                        { rarity: PotionRarityEnum.Uncommon },
+                        { rarity: PotionRarityEnum.Rare },
+                    ],
+                },
+            ],
+        });
+        const random = Math.floor(Math.random() * count);
+        return await this.potion
+            .find({
+                $and: [
+                    {
+                        $or: [
+                            { rarity: CardRarityEnum.Common },
+                            { rarity: CardRarityEnum.Uncommon },
+                            { rarity: CardRarityEnum.Rare },
+                        ],
+                    },
+                ],
+            })
+            .limit(limit)
+            .skip(random);
     }
 
     async use(
         ctx: GameContext,
-        potionId: number,
+        potionUniqueId: string,
         targetId: TargetId,
     ): Promise<void> {
-        const isInInventory = this.isInInventory(ctx, potionId);
+        const potion = this.findFromInventory(ctx, potionUniqueId);
 
         // Check if potion is available
-        if (!isInInventory) {
+        if (!potion) {
             ctx.client.emit(
                 'PutData',
                 StandardResponse.respond({
-                    message_type: SWARMessageType.PotionNotInInventory,
-                    action: SWARAction.ShowInvalidPotion,
-                    data: { potionId },
+                    message_type: SWARMessageType.UsePotion,
+                    action: SWARAction.PotionNotInInventory,
+                    data: { potionId: potionUniqueId },
                 }),
             );
             return;
         }
 
-        // Get potion info
-        const potion = await this.findByPotionId(potionId);
-
         const inCombat =
-            ctx.expedition.currentNode.nodeType !==
+            ctx.expedition.currentNode.nodeType ===
             ExpeditionMapNodeTypeEnum.Combat;
 
         // Check if potion is usable in the current context
-        if (!inCombat && potion.usableOutsideCombat) {
+        if (!inCombat && !potion.usableOutsideCombat) {
             ctx.client.emit(
                 'PutData',
                 StandardResponse.respond({
-                    message_type: SWARMessageType.PotionNotUsableOutsideCombat,
-                    action: SWARAction.ShowInvalidPotion,
-                    data: { potionId },
+                    message_type: SWARMessageType.UsePotion,
+                    action: SWARAction.PotionNotUsableOutsideCombat,
+                    data: { potionId: potionUniqueId },
                 }),
             );
             return;
@@ -83,17 +113,23 @@ export class PotionService {
         });
 
         // Once potion is used, remove it from the player's inventory
-        await this.remove(ctx, potionId);
+        await this.remove(ctx, potionUniqueId);
     }
 
-    private isInInventory(ctx: GameContext, potionId: number) {
-        return ctx.expedition.playerState.potions.find((id) => id === potionId);
+    private findFromInventory(
+        ctx: GameContext,
+        potionUniqueId: string,
+    ): PotionInstance {
+        return find(ctx.expedition.playerState.potions, { id: potionUniqueId });
     }
 
-    public async remove(ctx: GameContext, potionId: number): Promise<void> {
+    public async remove(
+        ctx: GameContext,
+        potionUniqueId: string,
+    ): Promise<void> {
         // Remove potion from player's inventory
         const potions = ctx.expedition.playerState.potions.filter(
-            (id) => id !== potionId,
+            (potion) => potion.id !== potionUniqueId,
         );
 
         // Update in memory state
@@ -105,18 +141,18 @@ export class PotionService {
         });
     }
 
-    public async add(ctx: GameContext, potionId: number): Promise<void> {
+    public async add(ctx: GameContext, potionId: number): Promise<boolean> {
         // Validate max potion count
         if (ctx.expedition.playerState.potions.length >= 3) {
             ctx.client.emit(
                 'PutData',
                 StandardResponse.respond({
-                    message_type: SWARMessageType.PotionMaxCountReached,
-                    action: SWARAction.ShowInvalidPotion,
+                    message_type: SWARMessageType.AddPotion,
+                    action: SWARAction.PotionMaxCountReached,
                     data: { potionId },
                 }),
             );
-            return;
+            return false;
         }
 
         // Check if potion exists
@@ -126,18 +162,34 @@ export class PotionService {
             ctx.client.emit(
                 'PutData',
                 StandardResponse.respond({
-                    message_type: SWARMessageType.PotionNotFoundInDatabase,
-                    action: SWARAction.ShowInvalidPotion,
+                    message_type: SWARMessageType.AddPotion,
+                    action: SWARAction.PotionNotFoundInDatabase,
                     data: { potionId },
                 }),
             );
-            return;
+            return false;
         }
 
-        await this.expeditionService.updateById(ctx.expedition.id, {
-            playerState: {
-                potions: [...ctx.expedition.playerState.potions, potionId],
+        // remove _id and __v from potion
+        const { _id, __v, ...potionData } = potion.toObject();
+
+        await this.expeditionService.updateById(ctx.expedition._id, {
+            $push: {
+                'playerState.potions': {
+                    id: randomUUID(),
+                    ...potionData,
+                },
             },
         });
+
+        return true;
+    }
+
+    public async getRandomPotion(): Promise<PotionDocument> {
+        const [potion] = await this.potion
+            .aggregate<PotionDocument>([{ $sample: { size: 1 } }])
+            .exec();
+
+        return potion;
     }
 }

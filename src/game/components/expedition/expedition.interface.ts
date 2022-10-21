@@ -1,4 +1,5 @@
 import { AttachedStatus, StatusType } from 'src/game/status/interfaces';
+import { CardRarityEnum, CardTypeEnum } from '../card/card.enum';
 import { Card } from '../card/card.schema';
 import {
     EnemyTypeEnum,
@@ -6,12 +7,17 @@ import {
     EnemySizeEnum,
 } from '../enemy/enemy.enum';
 import { EnemyScript } from '../enemy/enemy.interface';
+import { Potion } from '../potion/potion.schema';
 import {
     ExpeditionMapNodeTypeEnum,
     ExpeditionMapNodeStatusEnum,
     IExpeditionNodeReward,
 } from './expedition.enum';
 import { Expedition } from './expedition.schema';
+
+export interface PotionInstance extends Potion {
+    id: string;
+}
 
 export interface IExpeditionPlayerState {
     playerId: string;
@@ -20,7 +26,7 @@ export interface IExpeditionPlayerState {
     hpMax: number;
     hpCurrent: number;
     gold: number;
-    potions?: number[];
+    potions: PotionInstance[];
     trinkets?: [];
     createdAt: Date;
     cards: IExpeditionPlayerStateDeckCard[];
@@ -41,12 +47,14 @@ export interface IExpeditionNode {
     readonly exits: number[];
     readonly enter: number[];
     readonly private_data: {
+        treasure?: any;
         enemies?: {
             enemies: number[];
             probability: number;
         }[];
     };
     readonly state?: {
+        treasure?: any;
         enemies?: {
             enemies: number[];
             probability: number;
@@ -76,12 +84,42 @@ export interface IExpeditionCurrentNodeDataEnemy {
     currentScript?: EnemyScript;
 }
 
-export interface IExpeditionReward {
+export interface BaseReward {
     id: string;
     type: IExpeditionNodeReward;
-    amount: number;
     taken: boolean;
 }
+
+export interface GoldReward extends BaseReward {
+    type: IExpeditionNodeReward.Gold;
+    amount: number;
+}
+
+export interface PotionReward extends BaseReward {
+    type: IExpeditionNodeReward.Potion;
+    potion: {
+        potionId: number;
+        name: string;
+        description: string;
+    };
+}
+
+export interface CardPreview {
+    cardId: number;
+    name: string;
+    description: string;
+    energy: number;
+    rarity: CardRarityEnum;
+    type: CardTypeEnum;
+    pool: string;
+}
+
+export interface CardReward extends BaseReward {
+    type: IExpeditionNodeReward.Card;
+    card: CardPreview;
+}
+
+export type Reward = GoldReward | PotionReward | CardReward;
 
 export interface IExpeditionStatusResponse {
     readonly hasExpedition: boolean;

@@ -22,7 +22,7 @@ export class StatusGenerator {
         // TODO Add description property to status type and remove this switch
         switch (name) {
             case 'resolve':
-                return `Burn does ${counter} points of damage at the end of each round`;
+                return `Increases all Attack damage by ${counter} per instance`;
             case 'confusion':
                 return `For ${counter} turns, all actions will be redirected to random targets`;
             case 'dodge':

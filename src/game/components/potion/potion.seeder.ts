@@ -13,9 +13,10 @@ import { damagePotion } from './data/damage.potion';
 import { brainTonic } from './data/brainTonic.potion';
 import { spiritVialPotion } from './data/spiritVial.potion';
 import { arcaneBrewPotion } from './data/arcaneBrew.potion';
-import { mistyPhialPotion } from './data/mistyPhial.potion';
 import { phantomPhialPotion } from './data/phantomPhial.potion';
 import { philterOfRedemptionPotion } from './data/philterOfRedemption.potion';
+import { pavaRootPotion } from './data/pavaRoot.potion';
+import { dewDropElixirPotion } from './data/dewDropElixir.potion';
 
 @Injectable()
 export class PotionSeeder implements Seeder {
@@ -36,9 +37,11 @@ export class PotionSeeder implements Seeder {
             brainTonic,
             spiritVialPotion,
             arcaneBrewPotion,
-            mistyPhialPotion,
-            phantomPhialPotion,
             philterOfRedemptionPotion,
+            dewDropElixirPotion,
+            // TODO: Fix cost effect for these potions
+            // pavaRootPotion,
+            // phantomPhialPotion,
         ]);
     }
 

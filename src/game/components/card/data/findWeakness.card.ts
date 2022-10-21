@@ -5,7 +5,7 @@ import { Card } from '../card.schema';
 export const FindWeaknessCardUpgraded: Card = {
     cardId: 12,
     name: 'Find Weakness+',
-    rarity: CardRarityEnum.Common,
+    rarity: CardRarityEnum.Starter,
     cardType: CardTypeEnum.Attack,
     pool: 'knight',
     energy: 0,
@@ -16,9 +16,9 @@ export const FindWeaknessCardUpgraded: Card = {
             {
                 effect: damageEffect.name,
                 target: CardTargetedEnum.Enemy,
+                times: 1,
                 args: {
                     value: 1,
-                    times: 1,
                     doubleValuesWhenPlayed: true,
                 },
             },
@@ -32,7 +32,7 @@ export const FindWeaknessCardUpgraded: Card = {
 export const FindWeaknessCard: Card = {
     cardId: 11,
     name: 'Find Weakness',
-    rarity: CardRarityEnum.Uncommon,
+    rarity: CardRarityEnum.Starter,
     cardType: CardTypeEnum.Attack,
     pool: 'knight',
     energy: 1,
@@ -43,9 +43,9 @@ export const FindWeaknessCard: Card = {
             {
                 effect: damageEffect.name,
                 target: CardTargetedEnum.Enemy,
+                times: 1,
                 args: {
                     value: 1,
-                    times: 1,
                     doubleValuesWhenPlayed: true,
                 },
             },

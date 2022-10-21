@@ -5,7 +5,7 @@ import { Card } from '../card.schema';
 export const FirstMoveCardUpgraded: Card = {
     cardId: 10,
     name: 'First Move+',
-    rarity: CardRarityEnum.Starter,
+    rarity: CardRarityEnum.Uncommon,
     cardType: CardTypeEnum.Skill,
     pool: 'knight',
     energy: 0,
@@ -30,7 +30,7 @@ export const FirstMoveCardUpgraded: Card = {
 export const FirstMoveCard: Card = {
     cardId: 9,
     name: 'First Move',
-    rarity: CardRarityEnum.Starter,
+    rarity: CardRarityEnum.Uncommon,
     cardType: CardTypeEnum.Skill,
     pool: 'knight',
     energy: 1,

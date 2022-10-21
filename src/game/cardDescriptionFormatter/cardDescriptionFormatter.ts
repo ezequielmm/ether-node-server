@@ -13,7 +13,7 @@ export class CardDescriptionFormatter {
         effects.forEach(({ effect: name, args: { value } }) => {
             card.description = card.description.replace(
                 `{${name}}`,
-                value.toString(),
+                value?.toString(),
             );
         });
 

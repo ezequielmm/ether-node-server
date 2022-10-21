@@ -23,9 +23,32 @@ import { GetEnergyAction } from './getEnergy.action';
 import { GetPlayerDeckAction } from './getPlayerDeck.action';
 import { GetPlayerInfoAction } from './getPlayerInfo.action';
 import { GetStatusesAction } from './getStatuses.action';
+import { GetUpgradableCardsAction } from './getUpgradableCards.action';
 import { MoveCardAction } from './moveCard.action';
 import { SetCombatTurnAction } from './setCombatTurn.action';
 import { UpgradeCardAction } from './upgradeCard.action';
+
+const actions = [
+    FullSyncAction,
+    SetCombatTurnAction,
+    GetEnergyAction,
+    GetCardPilesAction,
+    GetEnemiesAction,
+    GetPlayerInfoAction,
+    CardPlayedAction,
+    DiscardCardAction,
+    DiscardAllCardsAction,
+    ExhaustCardAction,
+    GetStatusesAction,
+    DrawCardAction,
+    GetPlayerDeckAction,
+    GetCurrentStepAction,
+    MoveCardAction,
+    ChangeTurnAction,
+    CreateCardAction,
+    UpgradeCardAction,
+    GetUpgradableCardsAction,
+];
 
 @Module({
     imports: [
@@ -39,45 +62,7 @@ import { UpgradeCardAction } from './upgradeCard.action';
         HistoryModule,
         CombatQueueModule,
     ],
-    providers: [
-        FullSyncAction,
-        SetCombatTurnAction,
-        GetEnergyAction,
-        GetCardPilesAction,
-        GetEnemiesAction,
-        GetPlayerInfoAction,
-        CardPlayedAction,
-        DiscardCardAction,
-        DiscardAllCardsAction,
-        ExhaustCardAction,
-        GetStatusesAction,
-        DrawCardAction,
-        GetPlayerDeckAction,
-        GetCurrentStepAction,
-        MoveCardAction,
-        ChangeTurnAction,
-        CreateCardAction,
-        UpgradeCardAction,
-    ],
-    exports: [
-        FullSyncAction,
-        SetCombatTurnAction,
-        GetEnergyAction,
-        GetCardPilesAction,
-        GetEnemiesAction,
-        GetPlayerInfoAction,
-        CardPlayedAction,
-        DiscardCardAction,
-        DiscardAllCardsAction,
-        ExhaustCardAction,
-        GetStatusesAction,
-        DrawCardAction,
-        GetPlayerDeckAction,
-        GetCurrentStepAction,
-        MoveCardAction,
-        ChangeTurnAction,
-        CreateCardAction,
-        UpgradeCardAction,
-    ],
+    providers: actions,
+    exports: actions,
 })
 export class ActionModule {}

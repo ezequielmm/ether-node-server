@@ -1,6 +1,7 @@
 import { createParamDecorator } from '@nestjs/common';
 import { SubscribeMessage, WebSocketGateway } from '@nestjs/websockets';
 import { Socket } from 'socket.io';
+import { FullSyncAction } from 'src/game/action/fullSync.action';
 import { corsSocketSettings } from 'src/socket/socket.enum';
 import { ExpeditionService } from '../expedition/expedition.service';
 import { PotionService } from './potion.service';
@@ -14,6 +15,7 @@ export class PotionGateway {
     constructor(
         private readonly expeditionService: ExpeditionService,
         private readonly potionService: PotionService,
+        private readonly fullSyncAction: FullSyncAction,
     ) {}
 
     @SubscribeMessage('UsePotion')
@@ -27,11 +29,14 @@ export class PotionGateway {
             parsedPayload.potionId,
             parsedPayload.targetId,
         );
+
+        await this.fullSyncAction.handle(client, false);
     }
 
     @SubscribeMessage('RemovePotion')
-    async remove(client: Socket, potionId: number): Promise<void> {
+    async remove(client: Socket, potionId: string): Promise<void> {
         const ctx = await this.expeditionService.getGameContext(client);
         await this.potionService.remove(ctx, potionId);
+        await this.fullSyncAction.handle(client, false);
     }
 }

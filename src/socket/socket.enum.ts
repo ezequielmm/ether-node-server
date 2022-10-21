@@ -10,6 +10,7 @@ export enum DataWSRequestTypesEnum {
     EnemyIntents = 'EnemyIntents',
     PlayerDeck = 'PlayerDeck',
     CurrentNode = 'CurrentNode',
+    UpgradableCards = 'UpgradableCards',
 }
 
 export const corsSocketSettings = {

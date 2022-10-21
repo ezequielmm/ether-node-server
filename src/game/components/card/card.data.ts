@@ -15,6 +15,7 @@ import { BraceCard, BraceCardUpgraded } from './data/brace.card';
 import { BulkUpCard, BulkUpCardUpgraded } from './data/bulkUp.card';
 import { BurnedCard } from './data/burned.card';
 import { ChargeCard, ChargeCardUpgraded } from './data/charge.card';
+import { ChokingCard } from './data/choking.card';
 import { CounterCard, CounterCardUpgraded } from './data/counter.card';
 import { DefenseCard, DefenseCardUpgraded } from './data/defend.card';
 import { DivineGiftCard, DivineGiftCardUpgraded } from './data/divineGift.card';
@@ -70,6 +71,7 @@ import {
 import { LastResortCard, LastResortCardUpgraded } from './data/lastResort.card';
 import { LevitateCard, LevitateCardUpgraded } from './data/levitate.card';
 import { LungeCard, LungeCardUpgraded } from './data/lunge.card';
+import { MossCard } from './data/moss.card';
 import { OnARollCard, OnARollCardUpgraded } from './data/onARoll.card';
 import {
     PerfectTimingCard,
@@ -99,6 +101,7 @@ import { ShoutCard, ShoutCardUpgraded } from './data/shout.card';
 import { SiphonCard, SiphonCardUpgraded } from './data/siphon.card';
 import { SparkCard, SparkCardUpgraded } from './data/Spark.card';
 import { SpikeArmorCard, SpikeArmorCardUpgraded } from './data/spikeArmor.card';
+import { StunnedCard } from './data/stunned.card';
 import {
     TasteOfBloodCard,
     TasteOfBloodCardUpgraded,
@@ -121,6 +124,7 @@ import {
     UltraLethalityCard,
     UltraLethalityCardUpgraded,
 } from './data/ultraLethality.card';
+import { WoundedCard } from './data/wounded.card';
 import { WrathCard, WrathCardUpgraded } from './data/wrath.card';
 
 export const data: Card[] = [
@@ -186,8 +190,8 @@ export const data: Card[] = [
     SpikeArmorCardUpgraded,
     RepositionCard,
     RepositionCardUpgraded,
-    RecoverCard,
-    RecoverCardUpgraded,
+    // RecoverCard,
+    // RecoverCardUpgraded,
     TightenGripCard,
     TightenGripCardUpgraded,
     KegChugCard,
@@ -213,8 +217,8 @@ export const data: Card[] = [
     AdeptCardUpgraded,
     DivineGiftCard,
     DivineGiftCardUpgraded,
-    ExecutionersBlowCard,
-    ExecutionersBlowCardUpgraded,
+    // ExecutionersBlowCard,
+    // ExecutionersBlowCardUpgraded,
     KnightsResolveCard,
     KnightsResolveCardUpgraded,
     ShieldPlantCard,
@@ -223,8 +227,8 @@ export const data: Card[] = [
     SparkCardUpgraded,
     TorchCard,
     TorchCardUpgraded,
-    SharpenBladeCard,
-    SharpenBladeCardUpgraded,
+    // SharpenBladeCard,
+    // SharpenBladeCardUpgraded,
     OnARollCard,
     OnARollCardUpgraded,
     ShoutCard,
@@ -235,10 +239,10 @@ export const data: Card[] = [
     TwistTheBladeCardUpgraded,
     KnockDownCard,
     KnockDownCardUpgraded,
-    BackflipCard,
-    BackflipCardUpgraded,
-    FrontflipCard,
-    FrontflipCardUpgraded,
+    // BackflipCard,
+    // BackflipCardUpgraded,
+    // FrontflipCard,
+    // FrontflipCardUpgraded,
     BurnedCard,
     RoundHouseCard,
     RoundHouseCardUpgraded,
@@ -248,8 +252,8 @@ export const data: Card[] = [
     BulkUpCardUpgraded,
     ArmorUpCard,
     ArmorUpCardUpgraded,
-    TightenStrapsCard,
-    TightenStrapsCardUpgraded,
+    // TightenStrapsCard,
+    // TightenStrapsCardUpgraded,
     WrathCard,
     WrathCardUpgraded,
     LevitateCard,
@@ -260,4 +264,8 @@ export const data: Card[] = [
     LastReminderCardUpgraded,
     AutonomousWeaponCard,
     AutonomousWeaponCardUpgraded,
+    StunnedCard,
+    WoundedCard,
+    MossCard,
+    ChokingCard,
 ];

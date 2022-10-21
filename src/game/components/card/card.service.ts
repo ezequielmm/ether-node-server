@@ -1,12 +1,14 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
 import { InjectModel } from '@nestjs/mongoose';
+import { randomUUID } from 'crypto';
 import { filter } from 'lodash';
 import { Model } from 'mongoose';
 import { CardPlayedAction } from 'src/game/action/cardPlayed.action';
 import { EVENT_BEFORE_PLAYER_TURN_END } from 'src/game/constants';
+import { ExpeditionService } from '../expedition/expedition.service';
 import { GameContext } from '../interfaces';
-import { CardKeywordEnum, CardTypeEnum } from './card.enum';
+import { CardRarityEnum, CardTypeEnum } from './card.enum';
 import { Card, CardDocument } from './card.schema';
 import { CardId, getCardIdField } from './card.type';
 
@@ -16,6 +18,7 @@ export class CardService {
     constructor(
         @InjectModel(Card.name) private readonly card: Model<CardDocument>,
         private readonly cardPlayedAction: CardPlayedAction,
+        private readonly expeditionService: ExpeditionService,
     ) {}
 
     async findAll(): Promise<CardDocument[]> {
@@ -24,6 +27,10 @@ export class CardService {
 
     async findByType(card_type: CardTypeEnum): Promise<CardDocument[]> {
         return this.card.find({ card_type }).lean();
+    }
+
+    async findByRarity(rarity: CardRarityEnum): Promise<CardDocument[]> {
+        return this.card.find({ rarity }).lean();
     }
 
     async findById(id: CardId): Promise<CardDocument> {
@@ -35,6 +42,85 @@ export class CardService {
         return this.card.find({ cardId: { $in: cards } }).lean();
     }
 
+    async randomCards(
+        limit: number,
+        card_type: CardTypeEnum,
+    ): Promise<CardDocument[]> {
+        const count = await this.card.countDocuments({
+            $and: [
+                {
+                    $or: [
+                        { rarity: CardRarityEnum.Common },
+                        { rarity: CardRarityEnum.Uncommon },
+                        { rarity: CardRarityEnum.Rare },
+                    ],
+                },
+                { cardType: card_type },
+            ],
+        });
+        const random = Math.floor(Math.random() * count);
+        return await this.card
+            .find({
+                $and: [
+                    {
+                        $or: [
+                            { rarity: CardRarityEnum.Common },
+                            { rarity: CardRarityEnum.Uncommon },
+                            { rarity: CardRarityEnum.Rare },
+                        ],
+                    },
+                    { cardType: card_type },
+                ],
+            })
+            .limit(limit)
+            .skip(random);
+    }
+    async getRandomCard(rarity: CardRarityEnum): Promise<CardDocument> {
+        const cards = await this.findByRarity(rarity);
+        const randomCard = cards[Math.floor(Math.random() * cards.length)];
+        return randomCard;
+    }
+
+    async addCardToDeck(ctx: GameContext, cardId: number): Promise<void> {
+        const newCard = await this.findById(cardId);
+        const deck = ctx.expedition.playerState.cards;
+
+        delete newCard._id;
+        delete newCard.__v;
+
+        deck.push({
+            id: randomUUID(),
+            isTemporary: false,
+            ...newCard,
+        });
+
+        this.logger.debug(`Adding card ${cardId} to deck`);
+
+        await this.expeditionService.updatePlayerDeck({
+            clientId: ctx.client.id,
+            deck,
+        });
+    }
+
+    async removeCardFromDeck(ctx: GameContext, cardId: string): Promise<void> {
+        const deck = ctx.expedition.playerState.cards;
+
+        const newDeck = filter(deck, (card) => card.id !== cardId);
+
+        this.expeditionService.updatePlayerDeck({
+            deck: newDeck,
+        });
+    }
+    async getRandomCardOfType(cardType: CardTypeEnum): Promise<CardDocument> {
+        const count = await this.card.countDocuments({ cardType });
+
+        const random = Math.floor(Math.random() * count);
+
+        const card = await this.card.find({ cardType }).limit(1).skip(random);
+
+        return card[0] ? card[0] : null;
+    }
+
     @OnEvent(EVENT_BEFORE_PLAYER_TURN_END)
     async onBeforePlayerTurnEnd(payload: { ctx: GameContext }) {
         const ctx = payload.ctx as GameContext;
@@ -42,14 +128,14 @@ export class CardService {
         const fadeCards = filter(
             ctx.expedition.currentNode.data.player.cards.hand,
             {
-                keywords: [CardKeywordEnum.Fade],
+                triggerAtEndOfTurn: true,
             },
         );
 
         if (fadeCards.length) {
             for (const card of fadeCards) {
                 this.logger.debug(
-                    `Auto playing fade card ${card.cardId}:${card.name}`,
+                    `Auto playing card ${card.cardId}:${card.name}`,
                 );
                 await this.cardPlayedAction.handle({
                     client: ctx.client,
