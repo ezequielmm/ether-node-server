@@ -3,7 +3,7 @@ import { PotionRarityEnum, PotionTargetEnum } from '../potion.enum';
 import { Potion } from '../potion.schema';
 
 export const spiritElixir: Potion = {
-    potionId: 7,
+    potionId: 24,
     name: 'Spirit Elixir',
     rarity: PotionRarityEnum.Rare,
     description: 'Gain 2 Energy each round',

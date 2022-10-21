@@ -12,7 +12,10 @@ import {
 import { StatusDecorator } from '../status.decorator';
 import { confusion } from './constants';
 import { OnEvent } from '@nestjs/event-emitter';
-import { EVENT_BEFORE_ENEMIES_TURN_END } from 'src/game/constants';
+import {
+    EVENT_BEFORE_ENEMIES_TURN_END,
+    EVENT_BEFORE_PLAYER_TURN_END,
+} from 'src/game/constants';
 import { EffectDTO } from 'src/game/effects/effects.interface';
 import { StatusService } from '../status.service';
 
@@ -109,7 +112,7 @@ export class ConfusionStatus implements StatusEffectHandler {
         }
     }
 
-    @OnEvent(EVENT_BEFORE_ENEMIES_TURN_END)
+    @OnEvent(EVENT_BEFORE_PLAYER_TURN_END)
     async onPlayerTurnStart(args: { ctx: GameContext }): Promise<void> {
         const { ctx } = args;
         const player = this.playerService.get(ctx);

@@ -13,9 +13,9 @@ import { IoAdapter } from '@nestjs/platform-socket.io';
 import { ConfigService } from '@nestjs/config';
 import { serverEnvironments } from './utils';
 
-let app: INestApplication;
-
 async function bootstrap() {
+    let app: INestApplication;
+
     const certFilePath = process.env.SSL_CERT_PATH;
     const keyFilePath = process.env.SSL_KEY_PATH;
 
@@ -62,10 +62,10 @@ async function bootstrap() {
 
         const document = SwaggerModule.createDocument(app, config);
         SwaggerModule.setup('api', app, document);
+    } else {
+        // Enable GZIP Compression
+        app.use(compression());
     }
-
-    // Enable GZIP Compression
-    app.use(compression());
 
     // Starts server
     await app.listen(3000);

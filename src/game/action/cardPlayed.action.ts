@@ -92,9 +92,6 @@ export class CardPlayedAction {
                 expedition,
             };
 
-            this.logger.debug(`Started combat queue for client ${client.id}`);
-            await this.combatQueueService.start(ctx);
-
             // If everything goes right, we get the card information from
             // the player hand pile
             const card = hand.find((card) => {
@@ -103,122 +100,153 @@ export class CardPlayedAction {
                 return card[field] === cardId;
             });
 
+            const source = this.playerService.get(ctx);
+            const sourceReference =
+                this.statusService.getReferenceFromEntity(source);
+
+            await this.eventEmitter.emitAsync(EVENT_BEFORE_CARD_PLAY, {
+                ctx,
+                card,
+                cardSource: source,
+                cardSourceReference: sourceReference,
+                cardTargetId: selectedEnemyId,
+            });
+
             const {
                 energy: cardEnergyCost,
                 properties: { effects, statuses },
                 keywords,
             } = card;
 
-            const { exhaust, endTurn } = CardKeywordPipeline.process(keywords);
+            const { exhaust, endTurn, unplayable } =
+                CardKeywordPipeline.process(keywords);
 
-            // Next we make sure that the card can be played and the user has
-            // enough energy
-            const { canPlayCard, message } = this.canPlayerPlayCard(
-                cardEnergyCost,
-                availableEnergy,
-            );
-
-            // next we inform the player that is not possible to play the card
-            if (!canPlayCard) {
-                this.sendNotEnoughEnergyMessage(message);
+            // Here we check if the card has a keyword for unplayable
+            if (unplayable) {
+                this.sendNotEnoughEnergyMessage(
+                    CardPlayErrorMessages.UnplayableCard,
+                );
             } else {
-                this.logger.verbose(
-                    `Player ${client.id} played card: ${card.name}`,
+                this.logger.debug(
+                    `Started combat queue for client ${client.id}`,
+                );
+                await this.combatQueueService.start(ctx);
+
+                // Next we make sure that the card can be played and the user has
+                // enough energy
+                const { canPlayCard, message } = this.canPlayerPlayCard(
+                    cardEnergyCost,
+                    availableEnergy,
                 );
 
-                const source = this.playerService.get(ctx);
-                const sourceReference =
-                    this.statusService.getReferenceFromEntity(source);
-
-                this.historyService.register({
-                    clientId: this.client.id,
-                    registry: {
-                        type: 'card',
-                        source,
-                        card,
-                    },
-                });
-
-                await this.eventEmitter.emitAsync(EVENT_BEFORE_CARD_PLAY, {
-                    ctx,
-                    card,
-                    cardSource: source,
-                    cardSourceReference: sourceReference,
-                    cardTargetId: selectedEnemyId,
-                });
-
-                // if the card can be played, we update the energy, apply the effects
-                // and move the card to the desired pile
-                if (exhaust) {
-                    await this.exhaustCardAction.handle({
-                        client: this.client,
-                        cardId,
-                    });
+                // next we inform the player that is not possible to play the card
+                if (!canPlayCard) {
+                    this.sendNotEnoughEnergyMessage(message);
                 } else {
-                    await this.discardCardAction.handle({
-                        client: this.client,
-                        cardId,
-                    });
-                }
-
-                await this.effectService.applyAll({
-                    ctx,
-                    source,
-                    effects,
-                    selectedEnemy: selectedEnemyId,
-                });
-
-                // After applying the effects, check if the current
-                // combat has ended and if so, skip all next steps
-                if (this.expeditionService.isCurrentCombatEnded(ctx)) {
-                    this.logger.debug(
-                        'Current node is completed. Skipping next actions',
+                    this.logger.verbose(
+                        `Player ${client.id} played card: ${card.name}`,
                     );
-                    return;
-                }
 
-                await this.statusService.attachAll({
-                    ctx,
-                    statuses,
-                    targetId: selectedEnemyId,
-                    source,
-                });
+                    const source = this.playerService.get(ctx);
+                    const sourceReference =
+                        this.statusService.getReferenceFromEntity(source);
 
-                const {
-                    data: {
-                        player: { energy, energyMax },
-                    },
-                } = await this.expeditionService.getCurrentNode({
-                    clientId: client.id,
-                });
-
-                const newEnergy =
-                    cardEnergyCost === CardEnergyEnum.All
-                        ? 0
-                        : energy - cardEnergyCost;
-
-                await this.playerService.setEnergy(
-                    { client, expedition: expedition as ExpeditionDocument },
-                    newEnergy,
-                );
-
-                this.sendUpdateEnergyMessage(newEnergy, energyMax);
-
-                this.logger.debug(`Ended combat queue for client ${client.id}`);
-                await this.combatQueueService.end(ctx);
-
-                await this.eventEmitter.emitAsync(EVENT_AFTER_CARD_PLAY, {
-                    ctx,
-                    card,
-                    cardSource: source,
-                    cardSourceReference: sourceReference,
-                    cardTargetId: selectedEnemyId,
-                });
-
-                if (endTurn)
-                    await this.endPlayerTurnProcess.handle({
-                        client: this.client,
+                    this.historyService.register({
+                        clientId: this.client.id,
+                        registry: {
+                            type: 'card',
+                            source,
+                            card,
+                            round: ctx.expedition.currentNode.data.round,
+                        },
                     });
+
+                    await this.eventEmitter.emitAsync(EVENT_BEFORE_CARD_PLAY, {
+                        ctx,
+                        card,
+                        cardSource: source,
+                        cardSourceReference: sourceReference,
+                        cardTargetId: selectedEnemyId,
+                    });
+
+                    // if the card can be played, we update the energy, apply the effects
+                    // and move the card to the desired pile
+                    if (exhaust) {
+                        await this.exhaustCardAction.handle({
+                            client: this.client,
+                            cardId,
+                        });
+                    } else {
+                        await this.discardCardAction.handle({
+                            client: this.client,
+                            cardId,
+                        });
+                    }
+
+                    await this.effectService.applyAll({
+                        ctx,
+                        source,
+                        effects,
+                        selectedEnemy: selectedEnemyId,
+                    });
+
+                    // After applying the effects, check if the current
+                    // combat has ended and if so, skip all next steps
+                    if (this.expeditionService.isCurrentCombatEnded(ctx)) {
+                        this.logger.debug(
+                            'Current node is completed. Skipping next actions',
+                        );
+                        return;
+                    }
+
+                    await this.statusService.attachAll({
+                        ctx,
+                        statuses,
+                        targetId: selectedEnemyId,
+                        source,
+                    });
+
+                    const {
+                        data: {
+                            player: { energy, energyMax },
+                        },
+                    } = await this.expeditionService.getCurrentNode({
+                        clientId: client.id,
+                    });
+
+                    const newEnergy =
+                        cardEnergyCost === CardEnergyEnum.All
+                            ? 0
+                            : energy - cardEnergyCost;
+
+                    await this.playerService.setEnergy(
+                        {
+                            client,
+                            expedition: expedition as ExpeditionDocument,
+                        },
+                        newEnergy,
+                    );
+
+                    this.sendUpdateEnergyMessage(newEnergy, energyMax);
+
+                    this.logger.debug(
+                        `Ended combat queue for client ${client.id}`,
+                    );
+                    await this.combatQueueService.end(ctx);
+
+                    await this.eventEmitter.emitAsync(EVENT_AFTER_CARD_PLAY, {
+                        ctx,
+                        card,
+                        cardSource: source,
+                        cardSourceReference: sourceReference,
+                        cardTargetId: selectedEnemyId,
+                    });
+
+                    if (endTurn)
+                        await this.endPlayerTurnProcess.handle({
+                            client: this.client,
+                        });
+                }
             }
         }
     }

@@ -90,12 +90,7 @@ export class CombatQueueService {
         // Avoid sending empty combat queue to client
         if (isEmpty(data)) return;
 
-        this.logger.log(
-            {
-                combatQueue: data,
-            },
-            'Sending combat queue to client',
-        );
+        this.logger.log(`Sending combat queue to client ${client.id}`);
 
         client.emit(
             'PutData',

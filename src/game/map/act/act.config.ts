@@ -34,7 +34,7 @@ export const actCconfigAlternatives = [
                 {
                     type: 'combat',
                     subType: 'combat_standard',
-                    chance: 80,
+                    chance: 70,
                     config: {
                         enemies: [
                             {
@@ -63,6 +63,12 @@ export const actCconfigAlternatives = [
                     },
                 },
                 {
+                    type: 'camp',
+                    subType: 'camp_regular',
+                    chance: 10,
+                    config: {},
+                },
+                {
                     type: 'encounter',
                     subType: 'encounter',
                     chance: 19,
@@ -83,7 +89,7 @@ export const actCconfigAlternatives = [
                     {
                         type: 'combat',
                         subType: 'combat_standard',
-                        chance: 100,
+                        chance: 70,
                         config: {
                             enemies: [
                                 {
@@ -110,6 +116,12 @@ export const actCconfigAlternatives = [
                                 },
                             ],
                         },
+                    },
+                    {
+                        type: 'camp',
+                        subType: 'camp_regular',
+                        chance: 30,
+                        config: {},
                     },
                 ],
             },

@@ -1,4 +1,4 @@
-import { EVENT_BEFORE_PLAYER_TURN_START } from 'src/game/constants';
+import { EVENT_AFTER_PLAYER_TURN_START } from 'src/game/constants';
 import {
     StatusCounterType,
     StatusEvent,
@@ -11,5 +11,5 @@ export const spirited: StatusEvent = {
     type: StatusType.Buff,
     counterType: StatusCounterType.Intensity,
     trigger: StatusTrigger.Event,
-    event: EVENT_BEFORE_PLAYER_TURN_START,
+    event: EVENT_AFTER_PLAYER_TURN_START,
 };

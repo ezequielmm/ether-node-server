@@ -3,7 +3,7 @@ import { CardTargetedEnum } from 'src/game/components/card/card.enum';
 import { confusion } from '../confusion/constants';
 import { StatusEventDTO, StatusEventHandler } from '../interfaces';
 import { StatusDecorator } from '../status.decorator';
-import { clearHeadedStatus } from './constants.1';
+import { clearHeadedStatus } from './constants';
 
 @StatusDecorator({
     status: clearHeadedStatus,

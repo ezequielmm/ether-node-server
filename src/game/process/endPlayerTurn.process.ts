@@ -53,12 +53,16 @@ export class EndPlayerTurnProcess {
             expedition,
         };
 
-        // Reset defense for the enemies
+        // Reset defense for the enemies that are alive
         const {
             currentNode: {
-                data: { enemies },
+                data: { enemies: allEnemies },
             },
         } = expedition;
+
+        const enemies = allEnemies.filter(({ hpCurrent }) => {
+            return hpCurrent > 0;
+        });
 
         for (const { id } of enemies) {
             await this.enemyService.setDefense(ctx, id, 0);
