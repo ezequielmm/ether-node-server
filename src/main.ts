@@ -1,8 +1,4 @@
-import {
-    INestApplication,
-    ValidationPipe,
-    VersioningType,
-} from '@nestjs/common';
+import { ValidationPipe, VersioningType } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
@@ -12,16 +8,18 @@ import { existsSync, readFileSync } from 'fs';
 import { IoAdapter } from '@nestjs/platform-socket.io';
 import { ConfigService } from '@nestjs/config';
 import { serverEnvironments } from './utils';
+import { NestExpressApplication } from '@nestjs/platform-express';
+import { join } from 'path';
 
 async function bootstrap() {
-    let app: INestApplication;
+    let app: NestExpressApplication;
 
     const certFilePath = process.env.SSL_CERT_PATH;
     const keyFilePath = process.env.SSL_KEY_PATH;
 
     if (certFilePath && keyFilePath) {
         if (existsSync(certFilePath) && existsSync(keyFilePath)) {
-            app = await NestFactory.create(AppModule, {
+            app = await NestFactory.create<NestExpressApplication>(AppModule, {
                 httpsOptions: {
                     cert: readFileSync(certFilePath),
                     key: readFileSync(keyFilePath),
@@ -29,7 +27,7 @@ async function bootstrap() {
             });
         }
     } else {
-        app = await NestFactory.create(AppModule);
+        app = await NestFactory.create<NestExpressApplication>(AppModule);
     }
 
     app.useWebSocketAdapter(new IoAdapter(app));
@@ -53,6 +51,7 @@ async function bootstrap() {
     const env = configService.get<serverEnvironments>('NODE_ENV');
 
     if (env === serverEnvironments.development) {
+        // Enable OpenAPI for testing
         const config = new DocumentBuilder()
             .setTitle('KOTE Gameplay Service')
             .setDescription('API routes')
@@ -62,6 +61,9 @@ async function bootstrap() {
 
         const document = SwaggerModule.createDocument(app, config);
         SwaggerModule.setup('api', app, document);
+
+        // Enable views for local socket client testing
+        app.setBaseViewsDir(join(__dirname, '..', 'views'));
     } else {
         // Enable GZIP Compression
         app.use(compression());
