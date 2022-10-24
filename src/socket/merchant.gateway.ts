@@ -33,7 +33,7 @@ export class MerchantGateway {
     @SubscribeMessage('CardUpgrade')
     async cardUpgrade(client: Socket, payload: string): Promise<void> {
         this.logger.debug(
-            `Client ${client.id} get merchant data "MerchantData"`,
+            `Client ${client.id} get merchant data "CardUpgrade"`,
         );
         const { cardId } = JSON.parse(payload);
 
@@ -42,7 +42,7 @@ export class MerchantGateway {
     @SubscribeMessage('CardDestroy')
     async cardDestroy(client: Socket, payload: string): Promise<void> {
         this.logger.debug(
-            `Client ${client.id} get merchant data "MerchantData"`,
+            `Client ${client.id} get merchant data "CardDestroy"`,
         );
         const { cardId } = JSON.parse(payload);
 
