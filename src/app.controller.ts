@@ -12,11 +12,22 @@ export class AppController {
     constructor(private readonly configService: ConfigService) {}
 
     @Get()
-    handleIndex(@Res() res: Response) {
+    handleIndex(@Res() res: Response): void {
         const env = this.configService.get<serverEnvironments>('NODE_ENV');
 
         if (env === serverEnvironments.development) {
             res.redirect('/api');
+        } else {
+            res.status(200).json({ app: 'Kote Game Service' });
+        }
+    }
+
+    @Get('client')
+    handleClient(@Res() res: Response): void {
+        const env = this.configService.get<serverEnvironments>('NODE_ENV');
+
+        if (env === serverEnvironments.development) {
+            return res.render('index', {});
         } else {
             res.status(200).json({ app: 'Kote Game Service' });
         }

@@ -64,6 +64,7 @@ async function bootstrap() {
 
         // Enable views for local socket client testing
         app.setBaseViewsDir(join(__dirname, '..', 'views'));
+        app.setViewEngine('hbs');
     } else {
         // Enable GZIP Compression
         app.use(compression());
