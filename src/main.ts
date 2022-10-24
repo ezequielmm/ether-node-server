@@ -63,6 +63,7 @@ async function bootstrap() {
         SwaggerModule.setup('api', app, document);
 
         // Enable views for local socket client testing
+        app.useStaticAssets(join(__dirname, '..', 'public'));
         app.setBaseViewsDir(join(__dirname, '..', 'views'));
         app.setViewEngine('hbs');
     } else {

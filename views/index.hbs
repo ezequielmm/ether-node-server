@@ -10,18 +10,42 @@
         />
     </head>
     <body>
-        <div class='container'>
+        <div class='container mt-3'>
             <div class='row'>
-                <div class="col-6">
+                <div class='col-6'>
+                    <label for='authToken'>Bearer Auth Token</label>
+                    <div class='input-group'>
+                        <input
+                            type='text'
+                            id='authToken'
+                            name='authToken'
+                            class='form-control'
+                            value=''
+                            placeholder='Bearer auth token...'
+                        />
+                        <div class='input-group-append'>
+                            <button
+                                type='button'
+                                class='btn btn-primary'
+                                id='btnConnectToSocket'
+                            >
+                                Connect to Socket
+                            </button>
+                        </div>
+                    </div>
                 </div>
-                <div class="col-6">
+                <div class='col-6'>
                 </div>
             </div>
         </div>
+        <script
+            src='https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js'
+        ></script>
         <script
             src='https://cdn.socket.io/4.5.3/socket.io.min.js'
             integrity='sha384-WPFUvHkB1aHA5TDSZi6xtDgkF0wXJcIIxXhC6h8OT8EH3fC5PWro5pWJ1THjcfEi'
             crossorigin='anonymous'
         ></script>
+        <script src='index.js'></script>
     </body>
 </html>
