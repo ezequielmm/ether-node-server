@@ -1,10 +1,16 @@
 import { forwardRef, Inject, Injectable, Logger } from '@nestjs/common';
+import { randomUUID } from 'crypto';
 import { Socket } from 'socket.io';
+import { CardDescriptionFormatter } from '../cardDescriptionFormatter/cardDescriptionFormatter';
 import { CardRarityEnum, CardTypeEnum } from '../components/card/card.enum';
 import { CardDocument } from '../components/card/card.schema';
 import { CardService } from '../components/card/card.service';
+import { CardId, getCardIdField } from '../components/card/card.type';
 import { ExpeditionMapNodeTypeEnum } from '../components/expedition/expedition.enum';
-import { IExpeditionPlayerState } from '../components/expedition/expedition.interface';
+import {
+    IExpeditionPlayerState,
+    IExpeditionPlayerStateDeckCard,
+} from '../components/expedition/expedition.interface';
 import { ExpeditionService } from '../components/expedition/expedition.service';
 import { PotionRarityEnum } from '../components/potion/potion.enum';
 import { PotionService } from '../components/potion/potion.service';
@@ -334,12 +340,16 @@ export class MerchantService {
             clientId: client.id,
             nodeId,
         });
+        const playerCard = await this.playerCards(client);
+        const cardUpgrade = playerCard.filter((card) => !card.isUpgraded);
 
         const data = {
             cards: [],
             neutral_cards: [],
             trinkets: [],
             potions: [],
+            playerCard,
+            cardUpgrade,
         };
         for (let i = 0; i < cards.length; i++) {
             const card = await this.cardService.findById(cards[i].id);
@@ -364,6 +374,160 @@ export class MerchantService {
                 message_type: SWARMessageType.GenericData,
                 action: SWARAction.MerchantData,
                 data,
+            }),
+        );
+    }
+    async playerCards(client: Socket) {
+        const { cards } = await this.expeditionService.getPlayerState({
+            clientId: client.id,
+        });
+
+        return cards;
+    }
+    async cardUpgrade(client: Socket, cardId: CardId) {
+        const playerState = await this.expeditionService.getPlayerState({
+            clientId: client.id,
+        });
+        const upgradedPrice = 75 + 25 * playerState.cardUpgradeCount;
+        if (playerState.gold < upgradedPrice) {
+            client.emit('ErrorMessage', {
+                message: `Not enough gold`,
+            });
+            return;
+        }
+
+        const card = await this.cardService.findById(cardId);
+
+        if (card) {
+            for (let i = 0; i < playerState.cards.length; i++) {
+                if (card.cardId == playerState.cards[i].cardId) {
+                    break;
+                } else if (i === playerState.cards.length - 1) {
+                    client.emit('ErrorMessage', {
+                        message: `Card not fount`,
+                    });
+                    return;
+                }
+            }
+        } else {
+            client.emit('ErrorMessage', {
+                message: `Card not fount`,
+            });
+            return;
+        }
+        if (!card.isUpgraded && !card.upgradedCardId) {
+            client.emit('ErrorMessage', {
+                message: `Card not upgraded`,
+            });
+            return;
+        }
+        const upgradedCardData = await this.cardService.findById(
+            card.upgradedCardId,
+        );
+
+        const upgradedCard: IExpeditionPlayerStateDeckCard = {
+            id: randomUUID(),
+            cardId: upgradedCardData.cardId,
+            name: upgradedCardData.name,
+            cardType: upgradedCardData.cardType,
+            energy: upgradedCardData.energy,
+            description: CardDescriptionFormatter.process(upgradedCardData),
+            isTemporary: false,
+            rarity: upgradedCardData.rarity,
+            properties: upgradedCardData.properties,
+            keywords: upgradedCardData.keywords,
+            showPointer: upgradedCardData.showPointer,
+            pool: upgradedCardData.pool,
+            isUpgraded: upgradedCardData.isUpgraded,
+        };
+        const id = getCardIdField(cardId);
+        let isUpgraded = false;
+        const newCard = playerState.cards.map((item) => {
+            if (item[id] == card[id] && !isUpgraded) {
+                isUpgraded = true;
+                return upgradedCard;
+            } else {
+                return item;
+            }
+        });
+
+        const newGold = playerState.gold - upgradedPrice;
+        const newCardUpgradeCount = playerState.cardUpgradeCount + 1;
+
+        const newPlayerState = {
+            ...playerState,
+            cards: newCard,
+            gold: newGold,
+            cardUpgradeCount: newCardUpgradeCount,
+        };
+
+        await this.expeditionService.updateByFilter(
+            { clientId: client.id },
+            {
+                $set: {
+                    playerState: newPlayerState,
+                },
+            },
+        );
+
+        client.emit(
+            'CardUpgrade',
+            StandardResponse.respond({
+                message_type: SWARMessageType.CardUpgrade,
+                action: SWARAction.CardUpgrade,
+                data: null,
+            }),
+        );
+    }
+    async cardDestroy(client: Socket, cardId: CardId) {
+        const playerState = await this.expeditionService.getPlayerState({
+            clientId: client.id,
+        });
+        const destroyPrice = 75 + 25 * playerState.cardDestroyCount;
+        if (playerState.gold < destroyPrice) {
+            client.emit('ErrorMessage', {
+                message: `Not enough gold`,
+            });
+            return;
+        }
+
+        const card = await this.cardService.findById(cardId);
+
+        let cardIndex: number = null;
+
+        if (card) {
+            for (let i = 0; i < playerState.cards.length; i++) {
+                if (card.cardId == playerState.cards[i].cardId) {
+                    cardIndex = i;
+                    break;
+                }
+            }
+        }
+        if (cardIndex === null) {
+            client.emit('ErrorMessage', {
+                message: `Card not fount`,
+            });
+            return;
+        }
+        playerState.cards.splice(cardIndex, 1);
+        playerState.cardDestroyCount = playerState.cardDestroyCount + 1;
+        playerState.gold = playerState.gold - destroyPrice;
+
+        await this.expeditionService.updateByFilter(
+            { clientId: client.id },
+            {
+                $set: {
+                    playerState,
+                },
+            },
+        );
+
+        client.emit(
+            'CardDestroy',
+            StandardResponse.respond({
+                message_type: SWARMessageType.CardDestroy,
+                action: SWARAction.CardDestroy,
+                data: null,
             }),
         );
     }

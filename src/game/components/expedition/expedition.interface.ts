@@ -32,6 +32,8 @@ export interface IExpeditionPlayerState {
     createdAt: Date;
     cards: IExpeditionPlayerStateDeckCard[];
     stoppedAt?: Date;
+    cardUpgradeCount: number;
+    cardDestroyCount: number;
 }
 
 export interface IExpeditionNode {

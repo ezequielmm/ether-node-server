@@ -86,41 +86,53 @@ export const actCconfigAlternatives = [
             0: {
                 nodes: [3, 5],
                 node_options: [
+                    // {
+                    //     type: 'combat',
+                    //     subType: 'combat_standard',
+                    //     chance: 70,
+                    //     config: {
+                    //         enemies: [
+                    //             {
+                    //                 enemies: [
+                    //                     stingFaeData.enemyId,
+                    //                     stingFaeData.enemyId,
+                    //                 ],
+                    //                 probability: 0.25,
+                    //             },
+                    //             {
+                    //                 enemies: [
+                    //                     barkChargerData.enemyId,
+                    //                     barkChargerData.enemyId,
+                    //                 ],
+                    //                 probability: 0.25,
+                    //             },
+                    //             {
+                    //                 enemies: [sporeMongerData.enemyId],
+                    //                 probability: 0.25,
+                    //             },
+                    //             {
+                    //                 enemies: [mimicFrog1Data.enemyId],
+                    //                 probability: 0.25,
+                    //             },
+                    //         ],
+                    //     },
+                    // },
+                    // {
+                    //     type: 'camp',
+                    //     subType: 'camp_regular',
+                    //     chance: 30,
+                    //     config: {},
+                    // },
                     {
-                        type: 'combat',
-                        subType: 'combat_standard',
-                        chance: 70,
-                        config: {
-                            enemies: [
-                                {
-                                    enemies: [
-                                        stingFaeData.enemyId,
-                                        stingFaeData.enemyId,
-                                    ],
-                                    probability: 0.25,
-                                },
-                                {
-                                    enemies: [
-                                        barkChargerData.enemyId,
-                                        barkChargerData.enemyId,
-                                    ],
-                                    probability: 0.25,
-                                },
-                                {
-                                    enemies: [sporeMongerData.enemyId],
-                                    probability: 0.25,
-                                },
-                                {
-                                    enemies: [mimicFrog1Data.enemyId],
-                                    probability: 0.25,
-                                },
-                            ],
-                        },
+                        type: 'merchant',
+                        subType: 'merchant',
+                        chance: 80,
+                        config: {},
                     },
                     {
-                        type: 'camp',
-                        subType: 'camp_regular',
-                        chance: 30,
+                        type: 'merchant',
+                        subType: 'merchant',
+                        chance: 20,
                         config: {},
                     },
                 ],
