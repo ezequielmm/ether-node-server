@@ -38,6 +38,14 @@ $(document).ready(function () {
         socket.on('ExpeditionMap', (response) => {
             showJSON(response);
         });
+
+        socket.on('PutData', (response) => {
+            showJSON(response);
+        });
+
+        socket.on('ErrorMessage', (response) => {
+            showJSON(response);
+        });
     });
 
     $('#btnSyncExpedition').click(function () {
@@ -48,6 +56,46 @@ $(document).ready(function () {
         const nodeId = document.getElementById('nodeId').value;
 
         socket.emit('NodeSelected', parseInt(nodeId), (response) => {
+            showJSON(response);
+        });
+    });
+
+    $('#btnPlayCard').click(function () {
+        const cardId = document.getElementById('cardId').value;
+        const targetId = document.getElementById('targetId').value;
+
+        socket.emit(
+            'CardPlayed',
+            JSON.stringify({
+                cardId,
+                targetId,
+            }),
+            (response) => {
+                showJSON(response);
+            },
+        );
+    });
+
+    $('#btnContinueExpedition').click(function () {
+        socket.emit('ContinueExpedition', (response) => {
+            showJSON(response);
+        });
+    });
+
+    $('#btnClearConsole').click(function () {
+        $('#logData').html('');
+    });
+
+    $('#btnGetData').click(function () {
+        const key = document.getElementById('getData').value;
+
+        socket.emit('GetData', key, (response) => {
+            showJSON(response);
+        });
+    });
+
+    $('#btnCampRecoverHealth').click(function () {
+        socket.emit('CampRecoverHealth', key, (response) => {
             showJSON(response);
         });
     });

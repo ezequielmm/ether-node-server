@@ -79,8 +79,94 @@
                             </div>
                         </div>
                     </div>
+                    <div class='form-group'>
+                        <button
+                            type='button'
+                            class='btn btn-primary'
+                            id='btnContinueExpedition'
+                        >
+                            Continue Expedition
+                        </button>
+                    </div>
+                    <div class='form-group'>
+                        <label for='cardId'>Card Id</label>
+                        <input
+                            type='text'
+                            id='cardId'
+                            class='form-control'
+                            value=''
+                            placeholder='Card ID to play...'
+                        />
+                    </div>
+                    <div class='form-group'>
+                        <label for='targetId'>Target Id (optional)</label>
+                        <input
+                            type='text'
+                            id='targetId'
+                            class='form-control'
+                            value=''
+                            placeholder='Target ID (optional)...'
+                        />
+                    </div>
+                    <div class='form-group'>
+                        <button
+                            type='button'
+                            class='btn btn-primary'
+                            id='btnPlayCard'
+                        >
+                            Play Card
+                        </button>
+                    </div>
+                    <div class='form-group'>
+                        <label for='getData'>Get Data Keys</label>
+                        <div class='input-group'>
+                            <select id='getData' class='form-control'>
+                                <option value='Energy'>Energy</option>
+                                <option value='Health'>Health</option>
+                                <option value='Players'>Players</option>
+                                <option value='CardsPiles'>CardsPiles</option>
+                                <option value='Enemies'>Enemies</option>
+                                <option value='Potions'>Potions</option>
+                                <option value='Trinkets'>Trinkets</option>
+                                <option value='Statuses'>Statuses</option>
+                                <option
+                                    value='EnemyIntents'
+                                >EnemyIntents</option>
+                                <option value='PlayerDeck'>PlayerDeck</option>
+                                <option value='CurrentNode'>CurrentNode</option>
+                                <option
+                                    value='UpgradableCards'
+                                >UpgradableCards</option>
+                            </select>
+                            <div class='input-group-append'>
+                                <button
+                                    type='button'
+                                    class='btn btn-primary'
+                                    id='btnGetData'
+                                >
+                                    Get Data
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class='form-group'>
+                        <button type='button' class='btn btn-primary' id="btnCampRecoverHealth">
+                            Recover health in camp (only in camp)
+                        </button>
+                    </div>
                 </div>
-                <div class='col-md-6' id='logData'></div>
+                <div class='col-md-6'>
+                    <div class='form-group'>
+                        <button
+                            type='button'
+                            class='btn btn-primary btn-block'
+                            id='btnClearConsole'
+                        >
+                            Clear Console
+                        </button>
+                    </div>
+                    <div id='logData'></div>
+                </div>
                 <input type='hidden' id='socketUrl' value='{{socketUrl}}' />
             </div>
         </div>
