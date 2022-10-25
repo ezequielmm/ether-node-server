@@ -15,9 +15,8 @@ import {
 } from './expedition.enum';
 import { Expedition } from './expedition.schema';
 
-export interface PotionInstance {
+export interface PotionInstance extends Potion {
     id: string;
-    potion: Potion;
 }
 
 export interface IExpeditionPlayerState {
@@ -48,12 +47,14 @@ export interface IExpeditionNode {
     readonly exits: number[];
     readonly enter: number[];
     readonly private_data: {
+        treasure?: any;
         enemies?: {
             enemies: number[];
             probability: number;
         }[];
     };
     readonly state?: {
+        treasure?: any;
         enemies?: {
             enemies: number[];
             probability: number;

@@ -18,6 +18,8 @@ import { PotionModule } from 'src/game/components/potion/potion.module';
 import { MerchantGateway } from './merchant.gateway';
 import { MerchantModule } from 'src/game/merchant/merchant.module';
 import { UpgradeCardGateway } from './upgradeCard.gateway';
+import { TreasureGateway } from './treasure.gateway';
+import { TreasureModule } from 'src/game/treasure/treasure.module';
 
 @Module({
     imports: [
@@ -32,6 +34,7 @@ import { UpgradeCardGateway } from './upgradeCard.gateway';
         CardSelectionScreenModule,
         PotionModule,
         MerchantModule,
+        TreasureModule,
     ],
     providers: [
         SocketGateway,
@@ -42,6 +45,7 @@ import { UpgradeCardGateway } from './upgradeCard.gateway';
         CampGateway,
         MerchantGateway,
         UpgradeCardGateway,
+        TreasureGateway,
     ],
 })
 export class SocketModule {}

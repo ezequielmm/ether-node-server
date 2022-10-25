@@ -8,7 +8,7 @@ import { CardPlayedAction } from 'src/game/action/cardPlayed.action';
 import { EVENT_BEFORE_PLAYER_TURN_END } from 'src/game/constants';
 import { ExpeditionService } from '../expedition/expedition.service';
 import { GameContext } from '../interfaces';
-import { CardKeywordEnum, CardRarityEnum, CardTypeEnum } from './card.enum';
+import { CardRarityEnum, CardTypeEnum } from './card.enum';
 import { Card, CardDocument } from './card.schema';
 import { CardId, getCardIdField } from './card.type';
 
@@ -59,7 +59,7 @@ export class CardService {
             ],
         });
         const random = Math.floor(Math.random() * count);
-        return this.card
+        return await this.card
             .find({
                 $and: [
                     {
@@ -111,6 +111,15 @@ export class CardService {
             deck: newDeck,
         });
     }
+    async getRandomCardOfType(cardType: CardTypeEnum): Promise<CardDocument> {
+        const count = await this.card.countDocuments({ cardType });
+
+        const random = Math.floor(Math.random() * count);
+
+        const card = await this.card.find({ cardType }).limit(1).skip(random);
+
+        return card[0] ? card[0] : null;
+    }
 
     @OnEvent(EVENT_BEFORE_PLAYER_TURN_END)
     async onBeforePlayerTurnEnd(payload: { ctx: GameContext }) {
@@ -119,14 +128,14 @@ export class CardService {
         const fadeCards = filter(
             ctx.expedition.currentNode.data.player.cards.hand,
             {
-                keywords: [CardKeywordEnum.Fade],
+                triggerAtEndOfTurn: true,
             },
         );
 
         if (fadeCards.length) {
             for (const card of fadeCards) {
                 this.logger.debug(
-                    `Auto playing fade card ${card.cardId}:${card.name}`,
+                    `Auto playing card ${card.cardId}:${card.name}`,
                 );
                 await this.cardPlayedAction.handle({
                     client: ctx.client,

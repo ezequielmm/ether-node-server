@@ -18,5 +18,5 @@ export const dewDropElixirPotion: Potion = {
         },
     ],
     usableOutsideCombat: false,
-    showPointer: true,
+    showPointer: false,
 };

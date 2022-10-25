@@ -27,7 +27,7 @@ export class TrinketService {
             ],
         });
         const random = Math.floor(Math.random() * count);
-        return this.trinket
+        return await this.trinket
             .find({
                 $and: [
                     {
@@ -41,5 +41,15 @@ export class TrinketService {
             })
             .limit(limit)
             .skip(random);
+    }
+    async findOneRandomTrinket(rarity: string): Promise<TrinketDocument> {
+        const count = await this.trinket.countDocuments({ rarity });
+        const random = Math.floor(Math.random() * count);
+        const trinket = await this.trinket
+            .find({ rarity })
+            .limit(1)
+            .skip(random);
+
+        return trinket[0] ? trinket[0] : null;
     }
 }
