@@ -27,7 +27,9 @@ export class AppController {
         const env = this.configService.get<serverEnvironments>('NODE_ENV');
 
         if (env === serverEnvironments.development) {
-            return res.render('index', {});
+            const socketUrl =
+                this.configService.get<string>('SOCKET_SERVER_URL');
+            return res.render('index', { socketUrl });
         } else {
             res.status(200).json({ app: 'Kote Game Service' });
         }
