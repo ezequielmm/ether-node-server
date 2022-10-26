@@ -8,6 +8,7 @@ import { IExpeditionPlayerState } from '../components/expedition/expedition.inte
 import { ExpeditionService } from '../components/expedition/expedition.service';
 import { PotionRarityEnum } from '../components/potion/potion.enum';
 import { PotionService } from '../components/potion/potion.service';
+import { TrinketRarityEnum } from '../components/trinket/trinket.enum';
 import { TrinketService } from '../components/trinket/trinket.service';
 import {
     StandardResponse,
@@ -260,21 +261,21 @@ export class MerchantService {
             let coin: number = null;
 
             switch (trinket[i].rarity) {
-                case PotionRarityEnum.Common:
+                case TrinketRarityEnum.Common:
                     coin = this.random(
                         TrinketCommon.minCoin,
                         TrinketCommon.maxCoin,
                     );
 
                     break;
-                case PotionRarityEnum.Uncommon:
+                case TrinketRarityEnum.Uncommon:
                     coin = this.random(
                         TrinketUncommon.minCoin,
                         TrinketUncommon.maxCoin,
                     );
 
                     break;
-                case PotionRarityEnum.Rare:
+                case TrinketRarityEnum.Rare:
                     coin = this.random(
                         TrinketRare.minCoin,
                         TrinketRare.maxCoin,
