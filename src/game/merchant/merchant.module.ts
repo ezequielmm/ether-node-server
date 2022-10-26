@@ -9,8 +9,8 @@ import { ExpeditionModule } from '../components/expedition/expedition.module';
     imports: [
         forwardRef(() => ExpeditionModule),
         forwardRef(() => CardModule),
-        forwardRef(() => PotionModule),
-        forwardRef(() => TrinketModule),
+        PotionModule,
+        TrinketModule,
     ],
     providers: [MerchantService],
     exports: [MerchantService],
