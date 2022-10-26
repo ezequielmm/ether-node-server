@@ -9,6 +9,8 @@ import {
 } from '../enemy.enum';
 import { Enemy } from '../enemy.schema';
 import { fatigue } from 'src/game/status/fatigue/constants';
+import { StunnedCard } from '../../card/data/stunned.card';
+import { addCardEffect } from 'src/game/effects/addCard/contants';
 
 export const mimicFrog1Data: Enemy = {
     enemyId: 8,
@@ -20,6 +22,7 @@ export const mimicFrog1Data: Enemy = {
     healthRange: [22, 28],
     scripts: [
         {
+            //
             intentions: [
                 {
                     type: EnemyIntentionType.Attack,
@@ -36,16 +39,16 @@ export const mimicFrog1Data: Enemy = {
                     ],
                 },
                 {
-                    type: EnemyIntentionType.Defend,
-                    target: CardTargetedEnum.Self,
-                    value: 1,
-                    //  This effect 'cardAdd' was not developed so I have added x one
+                    type: EnemyIntentionType.Stun,
+                    target: CardTargetedEnum.Player,
+                    value: 2,
                     effects: [
                         {
-                            effect: defenseEffect.name,
-                            target: CardTargetedEnum.Self,
+                            effect: addCardEffect.name,
+                            target: CardTargetedEnum.Player,
                             args: {
-                                value: 1,
+                                value: 2,
+                                cardId: StunnedCard.cardId,
                             },
                         },
                     ],

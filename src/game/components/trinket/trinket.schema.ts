@@ -1,8 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
-import { Factory } from 'nestjs-seeder';
-import { Faker } from '@faker-js/faker';
-import { getRandomBetween, getRandomEnumValue } from '../../../utils';
+import { JsonEffect } from 'src/game/effects/effects.interface';
 import { TrinketRarityEnum } from './trinket.enum';
 
 export type TrinketDocument = Trinket & Document;
@@ -11,21 +9,17 @@ export type TrinketDocument = Trinket & Document;
     collection: 'trinkets',
 })
 export class Trinket {
-    @Factory((faker: Faker) => faker.name.findName())
     @Prop()
     name: string;
 
-    @Factory(() => {
-        return getRandomEnumValue(TrinketRarityEnum);
-    })
     @Prop()
-    rarity: string;
+    rarity: TrinketRarityEnum;
 
-    @Factory(() => {
-        return getRandomBetween(50, 100);
-    })
     @Prop()
-    coinCost: number;
+    description: string;
+
+    @Prop()
+    effects: JsonEffect[];
 }
 
 export const TrinketSchema = SchemaFactory.createForClass(Trinket);
