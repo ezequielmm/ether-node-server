@@ -1,5 +1,5 @@
 import { damageEffect } from 'src/game/effects/damage/constants';
-import { defenseEffect } from 'src/game/effects/defense/constants';
+import { distraught } from 'src/game/status/distraught/constants';
 import { CardTargetedEnum } from '../../card/card.enum';
 import {
     EnemyTypeEnum,
@@ -21,16 +21,15 @@ export const yellowSporelingData: Enemy = {
         {
             intentions: [
                 {
-                    type: EnemyIntentionType.Defend,
+                    type: EnemyIntentionType.Debuff,
                     target: CardTargetedEnum.Player,
                     value: 2,
-                    // TODO: Create Distraught Status and use it here
-                    effects: [
+                    status: [
                         {
-                            effect: defenseEffect.name,
-                            target: CardTargetedEnum.Player,
+                            name: distraught.name,
+                            attachTo: CardTargetedEnum.Player,
                             args: {
-                                value: 2,
+                                counter: 2,
                             },
                         },
                     ],

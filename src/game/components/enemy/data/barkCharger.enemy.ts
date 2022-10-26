@@ -37,7 +37,7 @@ export const barkChargerData: Enemy = {
                 },
                 {
                     type: EnemyIntentionType.Defend,
-                    target: CardTargetedEnum.Player,
+                    target: CardTargetedEnum.Self,
                     value: 5,
                     effects: [
                         {
@@ -78,7 +78,7 @@ export const barkChargerData: Enemy = {
                     ],
                 },
                 {
-                    type: EnemyIntentionType.Defend,
+                    type: EnemyIntentionType.Buff,
                     target: CardTargetedEnum.Self,
                     value: 5,
                     status: [

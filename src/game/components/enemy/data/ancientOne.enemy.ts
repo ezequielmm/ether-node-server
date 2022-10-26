@@ -24,13 +24,13 @@ export const ancientOneData: Enemy = {
                 {
                     type: EnemyIntentionType.Debuff,
                     target: CardTargetedEnum.Player,
-                    value: -1,
+                    value: 2,
                     effects: [
                         {
                             effect: damageEffect.name,
                             target: CardTargetedEnum.Player,
                             args: {
-                                value: -1,
+                                value: 2,
                             },
                         },
                     ],
