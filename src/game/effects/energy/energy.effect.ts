@@ -3,6 +3,11 @@ import { energyEffect } from './constants';
 import { EffectDecorator } from '../effects.decorator';
 import { EffectDTO, EffectHandler } from '../effects.interface';
 import { PlayerService } from 'src/game/components/player/player.service';
+import {
+    StandardResponse,
+    SWARAction,
+    SWARMessageType,
+} from 'src/game/standardResponse/standardResponse';
 
 @EffectDecorator({
     effect: energyEffect,
@@ -35,5 +40,17 @@ export class EnergyEffect implements EffectHandler {
 
         // Set the new energy value to the expedition
         await this.playerService.setEnergy(ctx, newEnergy);
+
+        ctx.client.emit(
+            'PutData',
+            StandardResponse.respond({
+                message_type: SWARMessageType.PlayerAffected,
+                action: SWARAction.UpdateEnergy,
+                data: [
+                    newEnergy,
+                    ctx.expedition.currentNode.data.player.energyMax,
+                ],
+            }),
+        );
     }
 }

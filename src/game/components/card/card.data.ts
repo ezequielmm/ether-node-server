@@ -7,12 +7,13 @@ import {
     AutonomousWeaponCard,
     AutonomousWeaponCardUpgraded,
 } from './data/autonomousWeapon.card';
-import { BackflipCard, BackflipCardUpgraded } from './data/backflip.card';
+// import { BackflipCard, BackflipCardUpgraded } from './data/backflip.card';
 import { BackHandCard, BackHandCardUpgraded } from './data/backhand.card';
 import { BlusterCard, BlusterCardUpgraded } from './data/bluster.card';
 import { BolsterCard, BolsterCardUpgraded } from './data/bolster.card';
 import { BraceCard, BraceCardUpgraded } from './data/brace.card';
 import { BulkUpCard, BulkUpCardUpgraded } from './data/bulkUp.card';
+import { BulliedCard } from './data/bullied.card';
 import { BurnedCard } from './data/burned.card';
 import { ChargeCard, ChargeCardUpgraded } from './data/charge.card';
 import { ChokingCard } from './data/choking.card';
@@ -20,10 +21,11 @@ import { CounterCard, CounterCardUpgraded } from './data/counter.card';
 import { DefenseCard, DefenseCardUpgraded } from './data/defend.card';
 import { DivineGiftCard, DivineGiftCardUpgraded } from './data/divineGift.card';
 import { DoubleDownCard, DoubleDownCardUpgraded } from './data/doubleDown.card';
-import {
-    ExecutionersBlowCard,
-    ExecutionersBlowCardUpgraded,
-} from './data/executionersBlow.card';
+import { EnnuiCard } from './data/ennui.card';
+// import {
+//     ExecutionersBlowCard,
+//     ExecutionersBlowCardUpgraded,
+// } from './data/executionersBlow.card';
 import { FadeCard, FadeCardUpgraded } from './data/fade.card';
 import { FeintCard, FeintCardUpgraded } from './data/feint.card';
 import {
@@ -34,7 +36,7 @@ import { FineEdgeCard, FineEdgeCardUpgraded } from './data/fineEdge.card';
 import { FirstMoveCard, FirstMoveCardUpgraded } from './data/firstMove.card';
 import { FlurryCard, FlurryCardUpgraded } from './data/flurry.card';
 import { ForceFieldCard, ForceFieldCardUpgraded } from './data/forceField.card';
-import { FrontflipCard, FrontflipCardUpgraded } from './data/frontflip.card';
+// import { FrontflipCard, FrontflipCardUpgraded } from './data/frontflip.card';
 import {
     GiveNoGroundCard,
     GiveNoGroundCardUpgraded,
@@ -83,15 +85,15 @@ import {
     QuickToAdaptCard,
     QuickToAdaptCardUpgraded,
 } from './data/quickToAdapt.card';
-import { RecoverCard, RecoverCardUpgraded } from './data/recover.data';
+// import { RecoverCard, RecoverCardUpgraded } from './data/recover.data';
 import { Refocus } from './data/refocus.card';
 import { RepositionCard, RepositionCardUpgraded } from './data/reposition.card';
 import { RoundHouseCard, RoundHouseCardUpgraded } from './data/roundHouse.card';
 import { ShakeItOffCard, ShakeItOffCardUpgraded } from './data/shakeItOff.card';
-import {
-    SharpenBladeCard,
-    SharpenBladeCardUpgraded,
-} from './data/sharpenBlade.card';
+// import {
+//     SharpenBladeCard,
+//     SharpenBladeCardUpgraded,
+// } from './data/sharpenBlade.card';
 import { ShieldBashCard, ShieldBashCardUpgraded } from './data/shieldBash.card';
 import {
     ShieldPlantCard,
@@ -110,10 +112,10 @@ import {
     TightenGripCard,
     TightenGripCardUpgraded,
 } from './data/tightenGrip.card';
-import {
-    TightenStrapsCard,
-    TightenStrapsCardUpgraded,
-} from './data/tightenStraps.card';
+// import {
+//     TightenStrapsCard,
+//     TightenStrapsCardUpgraded,
+// } from './data/tightenStraps.card';
 import { TorchCard, TorchCardUpgraded } from './data/torch.card';
 import { TurtleCard, TurtleCardUpgraded } from './data/turtle.card';
 import {
@@ -190,8 +192,8 @@ export const data: Card[] = [
     SpikeArmorCardUpgraded,
     RepositionCard,
     RepositionCardUpgraded,
-    RecoverCard,
-    RecoverCardUpgraded,
+    // RecoverCard,
+    // RecoverCardUpgraded,
     TightenGripCard,
     TightenGripCardUpgraded,
     KegChugCard,
@@ -217,8 +219,8 @@ export const data: Card[] = [
     AdeptCardUpgraded,
     DivineGiftCard,
     DivineGiftCardUpgraded,
-    ExecutionersBlowCard,
-    ExecutionersBlowCardUpgraded,
+    // ExecutionersBlowCard,
+    // ExecutionersBlowCardUpgraded,
     KnightsResolveCard,
     KnightsResolveCardUpgraded,
     ShieldPlantCard,
@@ -227,8 +229,8 @@ export const data: Card[] = [
     SparkCardUpgraded,
     TorchCard,
     TorchCardUpgraded,
-    SharpenBladeCard,
-    SharpenBladeCardUpgraded,
+    // SharpenBladeCard,
+    // SharpenBladeCardUpgraded,
     OnARollCard,
     OnARollCardUpgraded,
     ShoutCard,
@@ -239,10 +241,10 @@ export const data: Card[] = [
     TwistTheBladeCardUpgraded,
     KnockDownCard,
     KnockDownCardUpgraded,
-    BackflipCard,
-    BackflipCardUpgraded,
-    FrontflipCard,
-    FrontflipCardUpgraded,
+    // BackflipCard,
+    // BackflipCardUpgraded,
+    // FrontflipCard,
+    // FrontflipCardUpgraded,
     BurnedCard,
     RoundHouseCard,
     RoundHouseCardUpgraded,
@@ -252,8 +254,8 @@ export const data: Card[] = [
     BulkUpCardUpgraded,
     ArmorUpCard,
     ArmorUpCardUpgraded,
-    TightenStrapsCard,
-    TightenStrapsCardUpgraded,
+    // TightenStrapsCard,
+    // TightenStrapsCardUpgraded,
     WrathCard,
     WrathCardUpgraded,
     LevitateCard,
@@ -267,5 +269,7 @@ export const data: Card[] = [
     StunnedCard,
     WoundedCard,
     MossCard,
+    EnnuiCard,
+    BulliedCard,
     ChokingCard,
 ];
