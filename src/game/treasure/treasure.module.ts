@@ -3,6 +3,7 @@ import { CardModule } from '../components/card/card.module';
 import { ExpeditionModule } from '../components/expedition/expedition.module';
 import { PotionModule } from '../components/potion/potion.module';
 import { TrinketModule } from '../components/trinket/trinket.module';
+import { ProcessModule } from '../process/process.module';
 
 import { TreasureService } from './treasure.service';
 
@@ -12,6 +13,7 @@ import { TreasureService } from './treasure.service';
         forwardRef(() => PotionModule),
         forwardRef(() => TrinketModule),
         forwardRef(() => CardModule),
+        forwardRef(() => ProcessModule),
     ],
 
     providers: [TreasureService],
