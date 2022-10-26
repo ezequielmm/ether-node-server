@@ -63,7 +63,7 @@ export const groundMothData: Enemy = {
             intentions: [
                 {
                     type: EnemyIntentionType.Defend,
-                    target: CardTargetedEnum.Enemy,
+                    target: CardTargetedEnum.Self,
                     value: 6,
                     effects: [
                         {
@@ -92,13 +92,13 @@ export const groundMothData: Enemy = {
                 {
                     type: EnemyIntentionType.Attack,
                     target: CardTargetedEnum.Player,
-                    value: 11,
+                    value: 10,
                     effects: [
                         {
                             effect: damageEffect.name,
                             target: CardTargetedEnum.Player,
                             args: {
-                                value: 1,
+                                value: 10,
                             },
                         },
                     ],

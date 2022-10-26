@@ -1,6 +1,8 @@
+import { addCardEffect } from 'src/game/effects/addCard/contants';
 import { damageEffect } from 'src/game/effects/damage/constants';
 import { defenseEffect } from 'src/game/effects/defense/constants';
 import { CardTargetedEnum } from '../../card/card.enum';
+import { ChokingCard } from '../../card/data/choking.card';
 import {
     EnemyTypeEnum,
     EnemyCategoryEnum,
@@ -71,6 +73,31 @@ export const swampGoblin1Data: Enemy = {
                 },
                 {
                     probability: 0.3,
+                    scriptIndex: 1,
+                },
+            ],
+        },
+        {
+            intentions: [
+                {
+                    type: EnemyIntentionType.Stun,
+                    target: CardTargetedEnum.Player,
+                    value: 1,
+                    effects: [
+                        {
+                            effect: addCardEffect.name,
+                            target: CardTargetedEnum.Player,
+                            args: {
+                                value: 1,
+                                cardId: ChokingCard.cardId,
+                            },
+                        },
+                    ],
+                },
+            ],
+            next: [
+                {
+                    probability: 1,
                     scriptIndex: 1,
                 },
             ],
