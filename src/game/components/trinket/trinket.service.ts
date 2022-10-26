@@ -14,6 +14,7 @@ export class TrinketService {
     async findAll(): Promise<TrinketDocument[]> {
         return this.trinket.find().lean();
     }
+
     async randomTrinket(limit: number): Promise<TrinketDocument[]> {
         const count = await this.trinket.countDocuments({
             $and: [
@@ -26,7 +27,9 @@ export class TrinketService {
                 },
             ],
         });
+
         const random = Math.floor(Math.random() * count);
+
         return await this.trinket
             .find({
                 $and: [
@@ -42,6 +45,7 @@ export class TrinketService {
             .limit(limit)
             .skip(random);
     }
+
     async findOneRandomTrinket(rarity: string): Promise<TrinketDocument> {
         const count = await this.trinket.countDocuments({ rarity });
         const random = Math.floor(Math.random() * count);

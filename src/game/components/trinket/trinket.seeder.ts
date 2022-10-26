@@ -1,8 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { DataFactory, Seeder } from 'nestjs-seeder';
+import { Seeder } from 'nestjs-seeder';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Trinket, TrinketDocument } from './trinket.schema';
+import { StrongCoffeeTrinket } from './data/strongCoffee.trinket';
+import { TomeOfWisdomTrinket } from './data/tomeOfWisdom.trinket';
 
 @Injectable()
 export class TrinketSeeder implements Seeder {
@@ -12,8 +14,10 @@ export class TrinketSeeder implements Seeder {
     ) {}
 
     async seed(): Promise<any> {
-        const trinkets = DataFactory.createForClass(Trinket).generate(5);
-        return this.trinket.insertMany(trinkets);
+        return this.trinket.insertMany([
+            StrongCoffeeTrinket,
+            TomeOfWisdomTrinket,
+        ]);
     }
 
     async drop(): Promise<any> {
