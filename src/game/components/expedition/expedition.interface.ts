@@ -9,6 +9,7 @@ import {
 } from '../enemy/enemy.enum';
 import { EnemyScript } from '../enemy/enemy.interface';
 import { Potion } from '../potion/potion.schema';
+import { Trinket } from '../trinket/trinket.schema';
 import {
     ExpeditionMapNodeTypeEnum,
     ExpeditionMapNodeStatusEnum,
@@ -20,6 +21,9 @@ export interface PotionInstance extends Potion {
     id: string;
 }
 
+export interface TrinketInstance extends Trinket {
+    id: string;
+}
 export interface IExpeditionPlayerState {
     playerId: string;
     playerName: string;
@@ -28,7 +32,7 @@ export interface IExpeditionPlayerState {
     hpCurrent: number;
     gold: number;
     potions: PotionInstance[];
-    trinkets?: [];
+    trinkets: TrinketInstance[];
     createdAt: Date;
     cards: IExpeditionPlayerStateDeckCard[];
     stoppedAt?: Date;

@@ -13,9 +13,9 @@ import { damagePotion } from './data/damage.potion';
 import { brainTonic } from './data/brainTonic.potion';
 import { spiritVialPotion } from './data/spiritVial.potion';
 import { arcaneBrewPotion } from './data/arcaneBrew.potion';
-import { phantomPhialPotion } from './data/phantomPhial.potion';
+// import { phantomPhialPotion } from './data/phantomPhial.potion';
 import { philterOfRedemptionPotion } from './data/philterOfRedemption.potion';
-import { pavaRootPotion } from './data/pavaRoot.potion';
+// import { pavaRootPotion } from './data/pavaRoot.potion';
 import { dewDropElixirPotion } from './data/dewDropElixir.potion';
 
 @Injectable()

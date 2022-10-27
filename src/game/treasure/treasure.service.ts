@@ -1,5 +1,6 @@
-import { forwardRef, Inject, Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { Socket } from 'socket.io';
+import { getRandomBetween } from 'src/utils';
 import { CardTypeEnum } from '../components/card/card.enum';
 import { CardService } from '../components/card/card.service';
 import { stingFaeData } from '../components/enemy/data/stingFae.enemy';
@@ -26,21 +27,14 @@ import {
 
 @Injectable()
 export class TreasureService {
-    private readonly logger = new Logger(TreasureService.name);
     constructor(
-        @Inject(forwardRef(() => ExpeditionService))
         private readonly expeditionService: ExpeditionService,
-        @Inject(forwardRef(() => TrinketService))
         private readonly trinketService: TrinketService,
         private readonly potionService: PotionService,
-        @Inject(forwardRef(() => CardService))
         private readonly cardService: CardService,
         private readonly initCombatProcess: InitCombatProcess,
     ) {}
 
-    random(min: number, max: number): number {
-        return Math.floor(Math.random() * (max - min)) + min;
-    }
     async handle(client: Socket) {
         const { nodeId, nodeType } =
             await this.expeditionService.getCurrentNode({
@@ -149,6 +143,7 @@ export class TreasureService {
             }),
         );
     }
+
     async handChest(
         coinChance: number,
         maxCoin: number,
@@ -172,13 +167,13 @@ export class TreasureService {
             trappedType: null,
             trappedText: null,
         };
-        const randomCoinChance = this.random(1, 100);
+        const randomCoinChance = getRandomBetween(1, 100);
 
         if (randomCoinChance <= coinChance) {
-            result.coin = this.random(minCoin, maxCoin);
+            result.coin = getRandomBetween(minCoin, maxCoin);
         }
 
-        const randomTrinketRarityChance = this.random(1, 100);
+        const randomTrinketRarityChance = getRandomBetween(1, 100);
 
         if (randomTrinketRarityChance <= trinketChanceUncommon) {
             result.trinket = await this.trinketService.findOneRandomTrinket(
@@ -203,7 +198,7 @@ export class TreasureService {
             );
         }
 
-        const randomPotionChance = this.random(1, 100);
+        const randomPotionChance = getRandomBetween(1, 100);
 
         if (randomPotionChance <= potionChance) {
             result.potion = await this.potionService.getRandomPotion();
@@ -221,7 +216,7 @@ export class TreasureService {
         if (result.potion) {
             newPlayerState.potions.push(result.potion);
         }
-        const randomTrappedChance = this.random(1, 100);
+        const randomTrappedChance = getRandomBetween(1, 100);
 
         if (randomTrappedChance <= trappedChance) {
             result.trappedText = trappedText;
@@ -264,7 +259,7 @@ export class TreasureService {
     }
 
     generateTreasure(): TreasureInterface {
-        const chance: number = this.random(1, 100);
+        const chance: number = getRandomBetween(1, 100);
 
         if (chance <= LargeChest.chance) {
             return {

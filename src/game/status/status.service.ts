@@ -46,6 +46,21 @@ import {
     AttachDTO,
 } from './interfaces';
 import * as cliColor from 'cli-color';
+import { TargetId } from '../effects/effects.types';
+
+export interface AfterStatusAttachEvent {
+    ctx: GameContext;
+    target: ExpeditionEntity;
+    targetId: TargetId;
+    source: ExpeditionEntity;
+    status: AttachedStatus;
+}
+export interface AfterStatusesUpdateEvent {
+    ctx: GameContext;
+    source: ExpeditionEntity;
+    target: ExpeditionEntity;
+    collection: StatusCollection;
+}
 
 @Injectable()
 export class StatusService {
@@ -150,13 +165,18 @@ export class StatusService {
                 break;
         }
 
-        await this.eventEmitter.emitAsync(EVENT_AFTER_STATUS_ATTACH, {
+        const afterStatusAttachEvent: AfterStatusAttachEvent = {
             ctx,
             source,
             status: finalStatus,
             target,
             targetId: target.value.id,
-        });
+        };
+
+        await this.eventEmitter.emitAsync(
+            EVENT_AFTER_STATUS_ATTACH,
+            afterStatusAttachEvent,
+        );
     }
 
     public async mutate(dto: MutateEffectArgsDTO): Promise<EffectDTO> {
@@ -267,11 +287,17 @@ export class StatusService {
             await this.updateEnemyStatuses(expedition, target, collection);
         }
 
-        await this.eventEmitter.emitAsync(EVENT_AFTER_STATUSES_UPDATE, {
+        const afterStatusesUpdateEvent: AfterStatusesUpdateEvent = {
             ctx,
             source: target,
             target,
-        });
+            collection,
+        };
+
+        await this.eventEmitter.emitAsync(
+            EVENT_AFTER_STATUSES_UPDATE,
+            afterStatusesUpdateEvent,
+        );
     }
 
     public async updateEnemyStatuses(
@@ -419,6 +445,11 @@ export class StatusService {
         if (!container) throw new Error(`Status ${name} does not exist`);
 
         return container.metadata;
+    }
+
+    public isStatusEffect(name: string): boolean {
+        const metadata = this.getMetadataByName(name);
+        return metadata.status.trigger == StatusTrigger.Effect;
     }
 
     private isPlayerReference(
