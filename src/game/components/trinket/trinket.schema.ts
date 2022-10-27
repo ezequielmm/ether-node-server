@@ -10,6 +10,9 @@ export type TrinketDocument = Trinket & Document;
 })
 export class Trinket {
     @Prop()
+    trinketId: number;
+
+    @Prop()
     name: string;
 
     @Prop()

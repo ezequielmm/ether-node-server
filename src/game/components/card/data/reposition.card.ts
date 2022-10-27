@@ -4,7 +4,7 @@ import { Card } from '../card.schema';
 
 export const RepositionCardUpgraded: Card = {
     cardId: 126,
-    name: 'Reposition',
+    name: 'Reposition+',
     rarity: CardRarityEnum.Rare,
     cardType: CardTypeEnum.Skill,
     pool: 'knight',

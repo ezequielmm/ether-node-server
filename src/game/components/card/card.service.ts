@@ -35,6 +35,7 @@ import {
     SWARMessageType,
 } from 'src/game/standardResponse/standardResponse';
 import { CardDescriptionFormatter } from 'src/game/cardDescriptionFormatter/cardDescriptionFormatter';
+import { getRandomNumber } from 'src/utils';
 
 @Injectable()
 export class CardService {
@@ -84,7 +85,9 @@ export class CardService {
                 { cardType: card_type },
             ],
         });
-        const random = Math.floor(Math.random() * count);
+
+        const random = getRandomNumber(count);
+
         return await this.card
             .find({
                 $and: [
@@ -101,6 +104,7 @@ export class CardService {
             .limit(limit)
             .skip(random);
     }
+
     async getRandomCard(rarity: CardRarityEnum): Promise<CardDocument> {
         const cards = await this.findByRarity(rarity);
         const randomCard = cards[Math.floor(Math.random() * cards.length)];
@@ -137,10 +141,11 @@ export class CardService {
             deck: newDeck,
         });
     }
+
     async getRandomCardOfType(cardType: CardTypeEnum): Promise<CardDocument> {
         const count = await this.card.countDocuments({ cardType });
 
-        const random = Math.floor(Math.random() * count);
+        const random = getRandomNumber(count);
 
         const card = await this.card.find({ cardType }).limit(1).skip(random);
 
@@ -189,9 +194,9 @@ export class CardService {
             for (const type in collection) {
                 const statuses = collection[type] as AttachedStatus[];
 
-		// NOTE: At the moment there is no a way to check which 
-		// status was updated in the collection, for this case we trigger sync
-		// for all statuses
+                // NOTE: At the moment there is no a way to check which
+                // status was updated in the collection, for this case we trigger sync
+                // for all statuses
                 for (const status of statuses) {
                     await this.syncAllCardsByStatusMutated(ctx, status);
                 }
@@ -223,7 +228,7 @@ export class CardService {
 
                 for (const card of cards) {
                     const originalCard = await this.findById(card.cardId);
-                    let originalDescription = originalCard.description;
+                    const originalDescription = originalCard.description;
 
                     const effects = originalCard.properties.effects.filter(
                         (effect) =>
