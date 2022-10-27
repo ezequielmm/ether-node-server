@@ -185,20 +185,20 @@ export class MerchantService {
             switch (card[i].rarity) {
                 case CardRarityEnum.Common:
                     price = getRandomBetween(
-                        CardCommon.minCoin,
-                        CardCommon.maxCoin,
+                        CardCommon.minPrice,
+                        CardCommon.maxPrice,
                     );
                     break;
                 case CardRarityEnum.Uncommon:
                     price = getRandomBetween(
-                        CardUncommon.minCoin,
-                        CardUncommon.maxCoin,
+                        CardUncommon.minPrice,
+                        CardUncommon.maxPrice,
                     );
                     break;
                 case CardRarityEnum.Rare:
                     price = getRandomBetween(
-                        CardRare.minCoin,
-                        CardRare.maxCoin,
+                        CardRare.minPrice,
+                        CardRare.maxPrice,
                     );
                     break;
             }
@@ -230,20 +230,20 @@ export class MerchantService {
             switch (potions[i].rarity) {
                 case PotionRarityEnum.Common:
                     price = getRandomBetween(
-                        PotionCommon.minCoin,
-                        PotionCommon.maxCoin,
+                        PotionCommon.minPrice,
+                        PotionCommon.maxPrice,
                     );
                     break;
                 case PotionRarityEnum.Uncommon:
                     price = getRandomBetween(
-                        PotionUncommon.minCoin,
-                        PotionUncommon.maxCoin,
+                        PotionUncommon.minPrice,
+                        PotionUncommon.maxPrice,
                     );
                     break;
                 case PotionRarityEnum.Rare:
                     price = getRandomBetween(
-                        PotionRare.minCoin,
-                        PotionRare.maxCoin,
+                        PotionRare.minPrice,
+                        PotionRare.maxPrice,
                     );
                     break;
             }
@@ -265,22 +265,22 @@ export class MerchantService {
             switch (trinket[i].rarity) {
                 case TrinketRarityEnum.Common:
                     price = getRandomBetween(
-                        TrinketCommon.minCoin,
-                        TrinketCommon.maxCoin,
+                        TrinketCommon.minPrice,
+                        TrinketCommon.maxPrice,
                     );
 
                     break;
                 case TrinketRarityEnum.Uncommon:
                     price = getRandomBetween(
-                        TrinketUncommon.minCoin,
-                        TrinketUncommon.maxCoin,
+                        TrinketUncommon.minPrice,
+                        TrinketUncommon.maxPrice,
                     );
 
                     break;
                 case TrinketRarityEnum.Rare:
                     price = getRandomBetween(
-                        TrinketRare.minCoin,
-                        TrinketRare.maxCoin,
+                        TrinketRare.minPrice,
+                        TrinketRare.maxPrice,
                     );
                     break;
             }
@@ -343,7 +343,7 @@ export class MerchantService {
             return;
         }
         const {
-            private_data: { cards, neutral_cards, trinkets, potions },
+            private_data: { cards, trinkets, potions },
         } = await this.expeditionService.getExpeditionMapNode({
             clientId: client.id,
             nodeId,
@@ -448,8 +448,11 @@ export class MerchantService {
             pool: upgradedCardData.pool,
             isUpgraded: upgradedCardData.isUpgraded,
         };
+
         const id = getCardIdField(cardId);
+
         let isUpgraded = false;
+
         const newCard = playerState.cards.map((item) => {
             if (item[id] == card[id] && !isUpgraded) {
                 isUpgraded = true;

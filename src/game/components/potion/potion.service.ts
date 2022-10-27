@@ -181,7 +181,9 @@ export class PotionService {
         }
 
         // remove _id and __v from potion
-        const { _id, __v, ...potionData } = potion.toObject();
+        const potionData = potion.toObject();
+        delete potionData._id;
+        delete potionData.__v;
 
         await this.expeditionService.updateById(ctx.expedition._id, {
             $push: {
