@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+import { getRandomBetween, getRandomNumber } from 'src/utils';
 import { TrinketRarityEnum } from './trinket.enum';
 import { Trinket, TrinketDocument } from './trinket.schema';
 
@@ -28,7 +29,7 @@ export class TrinketService {
             ],
         });
 
-        const random = Math.floor(Math.random() * count);
+        const random = getRandomNumber(count);
 
         return await this.trinket
             .find({
@@ -48,7 +49,7 @@ export class TrinketService {
 
     async findOneRandomTrinket(rarity: string): Promise<TrinketDocument> {
         const count = await this.trinket.countDocuments({ rarity });
-        const random = Math.floor(Math.random() * count);
+        const random = getRandomNumber(count);
         const trinket = await this.trinket
             .find({ rarity })
             .limit(1)

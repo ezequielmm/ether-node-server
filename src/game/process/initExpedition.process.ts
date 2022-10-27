@@ -53,6 +53,7 @@ export class InitExpeditionProcess {
                 cards,
                 createdAt: new Date(),
                 potions: [],
+                trinkets: [],
             },
             status: ExpeditionStatusEnum.InProgress,
         });
