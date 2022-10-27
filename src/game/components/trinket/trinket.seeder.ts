@@ -3,8 +3,8 @@ import { Seeder } from 'nestjs-seeder';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Trinket, TrinketDocument } from './trinket.schema';
-import { StrongCoffeeTrinket } from './data/strongCoffee.trinket';
-import { TomeOfWisdomTrinket } from './data/tomeOfWisdom.trinket';
+import { WildCucumberTrinket } from './data/wildCucumber.trinket';
+import { PineReinTrinket } from './data/pineResin.trinket';
 
 @Injectable()
 export class TrinketSeeder implements Seeder {
@@ -14,10 +14,7 @@ export class TrinketSeeder implements Seeder {
     ) {}
 
     async seed(): Promise<any> {
-        return this.trinket.insertMany([
-            StrongCoffeeTrinket,
-            TomeOfWisdomTrinket,
-        ]);
+        return this.trinket.insertMany([WildCucumberTrinket, PineReinTrinket]);
     }
 
     async drop(): Promise<any> {

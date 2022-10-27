@@ -1,9 +1,10 @@
 import { TrinketRarityEnum } from '../trinket.enum';
 import { Trinket } from '../trinket.schema';
 
-export const TomeOfWisdomTrinket: Trinket = {
-    name: 'Tome of Wisdom',
+export const PineReinTrinket: Trinket = {
+    trinketId: 2,
+    name: 'Pine Resin',
     rarity: TrinketRarityEnum.Common,
-    description: 'At the start of combat, draw 2 cards',
+    description: 'When taking unblocked damage, reduce damage by 1',
     effects: [],
 };

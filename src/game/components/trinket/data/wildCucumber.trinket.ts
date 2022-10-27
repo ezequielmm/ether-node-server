@@ -1,9 +1,10 @@
 import { TrinketRarityEnum } from '../trinket.enum';
 import { Trinket } from '../trinket.schema';
 
-export const StrongCoffeeTrinket: Trinket = {
-    name: 'Strong Coffee',
+export const WildCucumberTrinket: Trinket = {
+    trinketId: 1,
+    name: 'Wild Cucumber',
     rarity: TrinketRarityEnum.Common,
-    description: 'Every 3 turns, gain 1 Energy',
+    description: 'On pickup, upgrade 1 Attack card',
     effects: [],
 };
