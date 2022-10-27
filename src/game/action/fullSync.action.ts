@@ -59,7 +59,7 @@ export class FullSyncAction {
                         gold: playerState.gold,
                         cards: playerState.cards,
                         potions: playerState.potions,
-                        trinkets: [],
+                        trinkets: playerState.trinkets,
                     },
                 },
             }),
