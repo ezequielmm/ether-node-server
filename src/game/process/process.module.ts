@@ -9,6 +9,7 @@ import { ExpeditionModule } from '../components/expedition/expedition.module';
 import { PlayerModule } from '../components/player/player.module';
 import { PotionModule } from '../components/potion/potion.module';
 import { SettingsModule } from '../components/settings/settings.module';
+import { TrinketModule } from '../components/trinket/trinket.module';
 import { EffectModule } from '../effects/effects.module';
 import { MerchantModule } from '../merchant/merchant.module';
 import { StatusModule } from '../status/status.module';
@@ -43,6 +44,7 @@ import { SendEnemyIntentProcess } from './sendEnemyIntents.process';
         CustomDeckModule,
         CombatQueueModule,
         forwardRef(() => PotionModule),
+        TrinketModule,
     ],
     providers: [
         SendEnemyIntentProcess,

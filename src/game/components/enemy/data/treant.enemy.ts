@@ -9,6 +9,9 @@ import {
     EnemyIntentionType,
 } from '../enemy.enum';
 import { Enemy } from '../enemy.schema';
+import { addCardEffect } from 'src/game/effects/addCard/contants';
+import { StunnedCard } from '../../card/data/stunned.card';
+import { spikesStatus } from 'src/game/status/spikes/constants';
 
 export const treantData: Enemy = {
     enemyId: 13,
@@ -81,13 +84,13 @@ export const treantData: Enemy = {
                 {
                     type: EnemyIntentionType.Attack,
                     target: CardTargetedEnum.Player,
-                    value: 6969,
+                    value: 5,
                     effects: [
                         {
                             effect: damageEffect.name,
                             target: CardTargetedEnum.Player,
                             args: {
-                                value: 6969,
+                                value: 5,
                             },
                         },
                     ],
@@ -95,13 +98,13 @@ export const treantData: Enemy = {
                 {
                     type: EnemyIntentionType.Attack,
                     target: CardTargetedEnum.Player,
-                    value: 6969,
+                    value: 5,
                     effects: [
                         {
                             effect: damageEffect.name,
                             target: CardTargetedEnum.Player,
                             args: {
-                                value: 6969,
+                                value: 5,
                             },
                         },
                     ],
@@ -123,13 +126,13 @@ export const treantData: Enemy = {
                 {
                     type: EnemyIntentionType.Attack,
                     target: CardTargetedEnum.Player,
-                    value: 6969,
+                    value: 5,
                     effects: [
                         {
                             effect: damageEffect.name,
                             target: CardTargetedEnum.Player,
                             args: {
-                                value: 6969,
+                                value: 5,
                             },
                         },
                     ],
@@ -137,13 +140,13 @@ export const treantData: Enemy = {
                 {
                     type: EnemyIntentionType.Attack,
                     target: CardTargetedEnum.Player,
-                    value: 6969,
+                    value: 5,
                     effects: [
                         {
                             effect: damageEffect.name,
                             target: CardTargetedEnum.Player,
                             args: {
-                                value: 6969,
+                                value: 5,
                             },
                         },
                     ],
@@ -151,13 +154,13 @@ export const treantData: Enemy = {
                 {
                     type: EnemyIntentionType.Attack,
                     target: CardTargetedEnum.Player,
-                    value: 6969,
+                    value: 5,
                     effects: [
                         {
                             effect: damageEffect.name,
                             target: CardTargetedEnum.Player,
                             args: {
-                                value: 6969,
+                                value: 5,
                             },
                         },
                     ],
@@ -177,16 +180,16 @@ export const treantData: Enemy = {
         {
             intentions: [
                 {
-                    type: EnemyIntentionType.Defend,
-                    target: CardTargetedEnum.Self,
-                    value: 5,
-                    //  This effect 'Summon ' was not developed so I have added x one
+                    type: EnemyIntentionType.Stun,
+                    target: CardTargetedEnum.Player,
+                    value: 3,
                     effects: [
                         {
-                            effect: defenseEffect.name,
-                            target: CardTargetedEnum.Self,
+                            effect: addCardEffect.name,
+                            target: CardTargetedEnum.Player,
                             args: {
-                                value: 5,
+                                value: 3,
+                                cardId: StunnedCard.cardId,
                             },
                         },
                     ],
@@ -211,7 +214,7 @@ export const treantData: Enemy = {
                     value: 1,
                     status: [
                         {
-                            name: resolveStatus.name,
+                            name: spikesStatus.name,
                             attachTo: CardTargetedEnum.Self,
                             args: {
                                 counter: 1,

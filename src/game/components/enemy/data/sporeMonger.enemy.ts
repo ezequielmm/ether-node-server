@@ -1,5 +1,6 @@
 import { damageEffect } from 'src/game/effects/damage/constants';
 import { defenseEffect } from 'src/game/effects/defense/constants';
+import { feebleStatus } from 'src/game/status/feeble/constants';
 import { CardTargetedEnum } from '../../card/card.enum';
 import {
     EnemyCategoryEnum,
@@ -88,16 +89,15 @@ export const sporeMongerData: Enemy = {
                     ],
                 },
                 {
-                    type: EnemyIntentionType.Attack,
+                    type: EnemyIntentionType.Debuff,
                     target: CardTargetedEnum.Player,
                     value: 2,
-                    // TODO: Create Feeble Status and use it here
-                    effects: [
+                    status: [
                         {
-                            effect: damageEffect.name,
-                            target: CardTargetedEnum.Player,
+                            name: feebleStatus.name,
+                            attachTo: CardTargetedEnum.Player,
                             args: {
-                                value: 2,
+                                counter: 2,
                             },
                         },
                     ],

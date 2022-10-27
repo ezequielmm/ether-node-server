@@ -1,6 +1,8 @@
+import { addCardEffect } from 'src/game/effects/addCard/contants';
 import { damageEffect } from 'src/game/effects/damage/constants';
 import { defenseEffect } from 'src/game/effects/defense/constants';
 import { CardTargetedEnum } from '../../card/card.enum';
+import { StunnedCard } from '../../card/data/stunned.card';
 import {
     EnemyTypeEnum,
     EnemyCategoryEnum,
@@ -46,47 +48,47 @@ export const stingFaeData: Enemy = {
                 },
             ],
         },
-        {
-            intentions: [
-                {
-                    type: EnemyIntentionType.Attack,
-                    target: CardTargetedEnum.Player,
-                    value: 2,
-                    effects: [
-                        {
-                            effect: damageEffect.name,
-                            target: CardTargetedEnum.Player,
-                            times: 3,
-                            args: {
-                                value: 2,
-                            },
-                        },
-                    ],
-                },
-            ],
-            next: [
-                {
-                    probability: 0.5,
-                    scriptIndex: 2,
-                },
-                {
-                    probability: 0.5,
-                    scriptIndex: 3,
-                },
-            ],
-        },
+        // {
+        //     intentions: [
+        //         {
+        //             type: EnemyIntentionType.Attack,
+        //             target: CardTargetedEnum.Player,
+        //             value: 2,
+        //             effects: [
+        //                 {
+        //                     effect: damageEffect.name,
+        //                     target: CardTargetedEnum.Player,
+        //                     times: 3,
+        //                     args: {
+        //                         value: 2,
+        //                     },
+        //                 },
+        //             ],
+        //         },
+        //     ],
+        //     next: [
+        //         {
+        //             probability: 0.5,
+        //             scriptIndex: 2,
+        //         },
+        //         {
+        //             probability: 0.5,
+        //             scriptIndex: 3,
+        //         },
+        //     ],
+        // },
         {
             intentions: [
                 {
                     type: EnemyIntentionType.Defend,
                     target: CardTargetedEnum.Self,
-                    value: 4,
+                    value: 5,
                     effects: [
                         {
                             effect: defenseEffect.name,
                             target: CardTargetedEnum.Self,
                             args: {
-                                value: 4,
+                                value: 5,
                             },
                         },
                     ],
@@ -95,7 +97,7 @@ export const stingFaeData: Enemy = {
             next: [
                 {
                     probability: 0.5,
-                    scriptIndex: 1,
+                    scriptIndex: 0,
                 },
                 {
                     probability: 0.5,
@@ -158,16 +160,16 @@ export const stingFaeData: Enemy = {
         {
             intentions: [
                 {
-                    type: EnemyIntentionType.Defend,
-                    target: CardTargetedEnum.Self,
-                    value: 5,
-                    //  This effect 'cardAdd' was not developed so I have added x one
+                    type: EnemyIntentionType.Stun,
+                    target: CardTargetedEnum.Player,
+                    value: 1,
                     effects: [
                         {
-                            effect: defenseEffect.name,
-                            target: CardTargetedEnum.Self,
+                            effect: addCardEffect.name,
+                            target: CardTargetedEnum.Player,
                             args: {
-                                value: 5,
+                                value: 1,
+                                cardId: StunnedCard.cardId,
                             },
                         },
                     ],

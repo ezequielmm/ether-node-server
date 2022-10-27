@@ -92,7 +92,7 @@ export class RewardGateway {
             }
         }
 
-        await this.fullSyncAction.handle(client);
+        await this.fullSyncAction.handle(client, false);
 
         // Next we save the reward on the expedition
         await this.expeditionService.updateById(expedition._id, {

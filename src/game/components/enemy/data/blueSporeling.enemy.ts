@@ -1,5 +1,5 @@
 import { damageEffect } from 'src/game/effects/damage/constants';
-import { defenseEffect } from 'src/game/effects/defense/constants';
+import { fatigue } from 'src/game/status/fatigue/constants';
 import { CardTargetedEnum } from '../../card/card.enum';
 import {
     EnemyTypeEnum,
@@ -24,13 +24,12 @@ export const blueSporelingData: Enemy = {
                     type: EnemyIntentionType.Defend,
                     target: CardTargetedEnum.Player,
                     value: 2,
-                    // TODO: Create Fatigue Status and use it here
-                    effects: [
+                    status: [
                         {
-                            effect: defenseEffect.name,
-                            target: CardTargetedEnum.Player,
+                            name: fatigue.name,
+                            attachTo: CardTargetedEnum.Player,
                             args: {
-                                value: 2,
+                                counter: 2,
                             },
                         },
                     ],
