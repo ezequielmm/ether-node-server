@@ -18,6 +18,7 @@ import { PotionRarityEnum } from './potion.enum';
 import { find } from 'lodash';
 import { PotionInstance } from '../expedition/expedition.interface';
 import { randomUUID } from 'crypto';
+import { getPotionIdField, PotionId } from './potion.type';
 import { getRandomNumber } from 'src/utils';
 
 @Injectable()
@@ -36,6 +37,11 @@ export class PotionService {
 
     async findByPotionId(potionId: number): Promise<PotionDocument> {
         return this.potion.findOne({ potionId });
+    }
+
+    async findById(id: PotionId): Promise<PotionDocument> {
+        const field = getPotionIdField(id);
+        return this.potion.findOne({ [field]: id }).lean();
     }
 
     async randomPotion(limit: number): Promise<PotionDocument[]> {
@@ -175,7 +181,9 @@ export class PotionService {
         }
 
         // remove _id and __v from potion
-        const { _id, __v, ...potionData } = potion.toObject();
+        const potionData = potion.toObject();
+        delete potionData._id;
+        delete potionData.__v;
 
         await this.expeditionService.updateById(ctx.expedition._id, {
             $push: {

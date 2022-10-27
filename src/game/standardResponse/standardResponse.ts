@@ -26,6 +26,7 @@ export enum SWARMessageType {
     AddPotion = 'add_potion',
     OpenTreasure = 'open_treasure',
     TreasureNodeUpdate = 'treasure_node_update',
+    CardDestroy = 'card_destroy',
 }
 
 export enum SWARAction {
@@ -52,11 +53,13 @@ export enum SWARAction {
     BeginCamp = 'begin_camp',
     BeginEncounter = 'begin_encounter',
     BeginTreasure = 'begin_treasure',
+    TreasureData = 'treasure_data',
     BeginMerchant = 'begin_merchant',
     ShowCardDialog = 'show_card_dialog',
     ShowInvalidPotion = 'show_invalid_potion',
     FinishCamp = 'finish_camp',
     MerchantUpdate = 'merchant_update',
+    MerchantData = 'merchant_data',
     ItemPurchasedWithSuccess = 'Item_purchased_with_success',
     UpgradablePair = 'upgradable_pair',
     ConfirmUpgrade = 'confirm_upgrade',
@@ -67,6 +70,8 @@ export enum SWARAction {
     OpenTreasure = 'open_treasure',
     TreasureNodeUpdate = 'treasure_node_update',
     HealAmount = 'heal_amount',
+    CardUpgrade = 'card_upgrade',
+    CardDestroy = 'card_destroy',
 }
 
 interface SWARPayload {

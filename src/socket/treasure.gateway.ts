@@ -16,4 +16,13 @@ export class TreasureGateway {
 
         await this.treasureService.handle(client);
     }
+
+    @SubscribeMessage('TreasureData')
+    async merchantData(client: Socket): Promise<void> {
+        this.logger.debug(
+            `Client ${client.id} get treasure data "TreasureData"`,
+        );
+
+        await this.treasureService.treasureData(client);
+    }
 }

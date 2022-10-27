@@ -51,6 +51,5 @@ export class InitTreasureProcess {
                 data: treasure,
             }),
         );
-        return { treasure };
     }
 }

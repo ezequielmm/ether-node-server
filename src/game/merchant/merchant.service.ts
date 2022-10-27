@@ -1,11 +1,17 @@
-import { Injectable } from '@nestjs/common';
+import { randomUUID } from 'crypto';
 import { Socket } from 'socket.io';
+import { CardDescriptionFormatter } from '../cardDescriptionFormatter/cardDescriptionFormatter';
+import { Injectable } from '@nestjs/common';
 import { getRandomBetween } from 'src/utils';
 import { CardRarityEnum, CardTypeEnum } from '../components/card/card.enum';
 import { CardDocument } from '../components/card/card.schema';
 import { CardService } from '../components/card/card.service';
+import { CardId, getCardIdField } from '../components/card/card.type';
 import { ExpeditionMapNodeTypeEnum } from '../components/expedition/expedition.enum';
-import { IExpeditionPlayerState } from '../components/expedition/expedition.interface';
+import {
+    IExpeditionPlayerState,
+    IExpeditionPlayerStateDeckCard,
+} from '../components/expedition/expedition.interface';
 import { ExpeditionService } from '../components/expedition/expedition.service';
 import { PotionRarityEnum } from '../components/potion/potion.enum';
 import { PotionService } from '../components/potion/potion.service';
@@ -60,39 +66,29 @@ export class MerchantService {
 
         let item: Item;
 
-        if (typeof id === 'string') {
-            const data = node.private_data[type];
+        const data = node.private_data[type];
 
-            for (let i = 0; i < data.length; i++) {
-                if (id === data[i]._id.toString()) {
-                    item = data[i];
-                }
-            }
-
-            if (!item) {
-                client.emit('ErrorMessage', {
-                    message: `Invalid id`,
-                });
-                return;
-            }
-        } else {
-            item = node.private_data[type][id];
-
-            if (!item) {
-                client.emit('ErrorMessage', {
-                    message: `Invalid id`,
-                });
-                return;
+        for (let i = 0; i < data.length; i++) {
+            if (id == data[i].id.toString()) {
+                item = data[i];
             }
         }
+
+        if (!item) {
+            client.emit('ErrorMessage', {
+                message: `Invalid id`,
+            });
+            return;
+        }
+
         const expedition = await this.expeditionService.findOne({
             clientId: client.id,
         });
         const { playerState, _id } = expedition || {};
 
-        if (playerState.gold < item.coin) {
+        if (playerState.gold < item.price) {
             client.emit('ErrorMessage', {
-                message: `Not enough coins`,
+                message: `Not enough golds`,
             });
             return;
         }
@@ -124,10 +120,11 @@ export class MerchantService {
         playerState: IExpeditionPlayerState,
         _id: string,
     ) {
+        const card = await this.cardService.findById(item.id);
         const newPlayerState = {
             ...playerState,
-            gold: playerState.gold - item.coin,
-            cards: [...playerState.cards, item.item],
+            gold: playerState.gold - item.price,
+            cards: [...playerState.cards, card],
         };
 
         await this.expeditionService.updateById(_id, {
@@ -142,10 +139,11 @@ export class MerchantService {
         playerState: IExpeditionPlayerState,
         _id: string,
     ) {
+        const potion = await this.potionService.findById(item.id);
         const newPlayerState = {
             ...playerState,
-            gold: playerState.gold - item.coin,
-            potions: [...playerState.potions, item.item],
+            gold: playerState.gold - item.price,
+            potions: [...playerState.potions, potion],
         };
 
         await this.expeditionService.updateById(_id, {
@@ -180,33 +178,35 @@ export class MerchantService {
         ];
 
         const cardsForPlayer: Item[] = [];
+
         for (let i = 0; i < card.length; i++) {
-            let coin: number = null;
+            let price: number = null;
 
             switch (card[i].rarity) {
                 case CardRarityEnum.Common:
-                    coin = getRandomBetween(
-                        CardCommon.minCoin,
-                        CardCommon.maxCoin,
+                    price = getRandomBetween(
+                        CardCommon.minPrice,
+                        CardCommon.maxPrice,
                     );
                     break;
                 case CardRarityEnum.Uncommon:
-                    coin = getRandomBetween(
-                        CardUncommon.minCoin,
-                        CardUncommon.maxCoin,
+                    price = getRandomBetween(
+                        CardUncommon.minPrice,
+                        CardUncommon.maxPrice,
                     );
                     break;
                 case CardRarityEnum.Rare:
-                    coin = getRandomBetween(CardRare.minCoin, CardRare.maxCoin);
+                    price = getRandomBetween(
+                        CardRare.minPrice,
+                        CardRare.maxPrice,
+                    );
                     break;
             }
+
             cardsForPlayer.push({
                 isSale: false,
-                itemId: i,
-                _id: card[i]._id,
-                item: card[i],
-                coin,
-                type: ItemsTypeEnum.CardsForPlayer,
+                id: card[i].cardId,
+                price,
             });
         }
 
@@ -214,7 +214,7 @@ export class MerchantService {
         cardsForPlayer[randomIndex] = {
             ...cardsForPlayer[randomIndex],
             isSale: true,
-            coin: Math.floor(cardsForPlayer[randomIndex].coin / 2),
+            price: Math.floor(cardsForPlayer[randomIndex].price / 2),
         };
 
         return cardsForPlayer;
@@ -223,37 +223,36 @@ export class MerchantService {
     async potions(): Promise<Item[]> {
         const potions = await this.potionService.randomPotion(5);
         const randomPotion: Item[] = [];
+
         for (let i = 0; i < potions.length; i++) {
-            let coin: number = null;
+            let price: number = null;
 
             switch (potions[i].rarity) {
                 case PotionRarityEnum.Common:
-                    coin = getRandomBetween(
-                        PotionCommon.minCoin,
-                        PotionCommon.maxCoin,
+                    price = getRandomBetween(
+                        PotionCommon.minPrice,
+                        PotionCommon.maxPrice,
                     );
                     break;
                 case PotionRarityEnum.Uncommon:
-                    coin = getRandomBetween(
-                        PotionUncommon.minCoin,
-                        PotionUncommon.maxCoin,
+                    price = getRandomBetween(
+                        PotionUncommon.minPrice,
+                        PotionUncommon.maxPrice,
                     );
                     break;
                 case PotionRarityEnum.Rare:
-                    coin = getRandomBetween(
-                        PotionRare.minCoin,
-                        PotionRare.maxCoin,
+                    price = getRandomBetween(
+                        PotionRare.minPrice,
+                        PotionRare.maxPrice,
                     );
                     break;
             }
             randomPotion.push({
-                itemId: i,
-                _id: potions[i]._id,
-                item: potions[i],
-                coin,
-                type: ItemsTypeEnum.RandomPotions,
+                id: potions[i].potionId,
+                price,
             });
         }
+
         return randomPotion;
     }
 
@@ -261,36 +260,33 @@ export class MerchantService {
         const trinket = await this.trinketService.randomTrinket(5);
         const randomTrinket: Item[] = [];
         for (let i = 0; i < trinket.length; i++) {
-            let coin: number = null;
+            let price: number = null;
 
             switch (trinket[i].rarity) {
                 case TrinketRarityEnum.Common:
-                    coin = getRandomBetween(
-                        TrinketCommon.minCoin,
-                        TrinketCommon.maxCoin,
+                    price = getRandomBetween(
+                        TrinketCommon.minPrice,
+                        TrinketCommon.maxPrice,
                     );
 
                     break;
                 case TrinketRarityEnum.Uncommon:
-                    coin = getRandomBetween(
-                        TrinketUncommon.minCoin,
-                        TrinketUncommon.maxCoin,
+                    price = getRandomBetween(
+                        TrinketUncommon.minPrice,
+                        TrinketUncommon.maxPrice,
                     );
 
                     break;
                 case TrinketRarityEnum.Rare:
-                    coin = getRandomBetween(
-                        TrinketRare.minCoin,
-                        TrinketRare.maxCoin,
+                    price = getRandomBetween(
+                        TrinketRare.minPrice,
+                        TrinketRare.maxPrice,
                     );
                     break;
             }
             randomTrinket.push({
-                itemId: i,
-                _id: trinket[i]._id,
-                item: trinket[i],
-                coin,
-                type: ItemsTypeEnum.RandomTrinkets,
+                id: trinket[i]._id,
+                price,
             });
         }
         return randomTrinket;
@@ -331,6 +327,218 @@ export class MerchantService {
                         trinkets: [],
                     },
                 },
+            }),
+        );
+    }
+    async merchantData(client: Socket) {
+        const { nodeId, nodeType } =
+            await this.expeditionService.getCurrentNode({
+                clientId: client.id,
+            });
+
+        if (nodeType !== ExpeditionMapNodeTypeEnum.Merchant) {
+            client.emit('ErrorMessage', {
+                message: `You are not in the merchant node`,
+            });
+            return;
+        }
+        const {
+            private_data: { cards, trinkets, potions },
+        } = await this.expeditionService.getExpeditionMapNode({
+            clientId: client.id,
+            nodeId,
+        });
+        const playerCard = await this.playerCards(client);
+        const cardUpgrade = playerCard.filter((card) => !card.isUpgraded);
+
+        const data = {
+            cards: [],
+            neutral_cards: [],
+            trinkets: [],
+            potions: [],
+            playerCard,
+            cardUpgrade,
+        };
+        for (let i = 0; i < cards.length; i++) {
+            const card = await this.cardService.findById(cards[i].id);
+            const price: number = cards[i].price;
+            const isSale: boolean = cards[i].isSale;
+            data.cards.push({ ...card, price, isSale });
+        }
+        for (let i = 0; i < potions.length; i++) {
+            const potion = await this.potionService.findById(potions[i].id);
+            const price: number = potions[i].price;
+            data.potions.push({ ...potion, price });
+        }
+        for (let i = 0; i < trinkets.length; i++) {
+            const trinket = await this.trinketService.findById(trinkets[i].id);
+            const price: number = trinkets[i].price;
+            data.trinkets.push({ ...trinket, price });
+        }
+
+        client.emit(
+            'MerchantData',
+            StandardResponse.respond({
+                message_type: SWARMessageType.GenericData,
+                action: SWARAction.MerchantData,
+                data,
+            }),
+        );
+    }
+    async playerCards(client: Socket) {
+        const { cards } = await this.expeditionService.getPlayerState({
+            clientId: client.id,
+        });
+
+        return cards;
+    }
+    async cardUpgrade(client: Socket, cardId: CardId) {
+        const playerState = await this.expeditionService.getPlayerState({
+            clientId: client.id,
+        });
+        const upgradedPrice = 75 + 25 * playerState.cardUpgradeCount;
+        if (playerState.gold < upgradedPrice) {
+            client.emit('ErrorMessage', {
+                message: `Not enough gold`,
+            });
+            return;
+        }
+
+        const card = await this.cardService.findById(cardId);
+
+        if (card) {
+            for (let i = 0; i < playerState.cards.length; i++) {
+                if (card.cardId == playerState.cards[i].cardId) {
+                    break;
+                } else if (i === playerState.cards.length - 1) {
+                    client.emit('ErrorMessage', {
+                        message: `Card not fount`,
+                    });
+                    return;
+                }
+            }
+        } else {
+            client.emit('ErrorMessage', {
+                message: `Card not fount`,
+            });
+            return;
+        }
+        if (!card.isUpgraded && !card.upgradedCardId) {
+            client.emit('ErrorMessage', {
+                message: `Card not upgraded`,
+            });
+            return;
+        }
+        const upgradedCardData = await this.cardService.findById(
+            card.upgradedCardId,
+        );
+
+        const upgradedCard: IExpeditionPlayerStateDeckCard = {
+            id: randomUUID(),
+            cardId: upgradedCardData.cardId,
+            name: upgradedCardData.name,
+            cardType: upgradedCardData.cardType,
+            energy: upgradedCardData.energy,
+            description: CardDescriptionFormatter.process(upgradedCardData),
+            isTemporary: false,
+            rarity: upgradedCardData.rarity,
+            properties: upgradedCardData.properties,
+            keywords: upgradedCardData.keywords,
+            showPointer: upgradedCardData.showPointer,
+            pool: upgradedCardData.pool,
+            isUpgraded: upgradedCardData.isUpgraded,
+        };
+
+        const id = getCardIdField(cardId);
+
+        let isUpgraded = false;
+
+        const newCard = playerState.cards.map((item) => {
+            if (item[id] == card[id] && !isUpgraded) {
+                isUpgraded = true;
+                return upgradedCard;
+            } else {
+                return item;
+            }
+        });
+
+        const newGold = playerState.gold - upgradedPrice;
+        const newCardUpgradeCount = playerState.cardUpgradeCount + 1;
+
+        const newPlayerState = {
+            ...playerState,
+            cards: newCard,
+            gold: newGold,
+            cardUpgradeCount: newCardUpgradeCount,
+        };
+
+        await this.expeditionService.updateByFilter(
+            { clientId: client.id },
+            {
+                $set: {
+                    playerState: newPlayerState,
+                },
+            },
+        );
+
+        client.emit(
+            'CardUpgrade',
+            StandardResponse.respond({
+                message_type: SWARMessageType.CardUpgrade,
+                action: SWARAction.CardUpgrade,
+                data: null,
+            }),
+        );
+    }
+    async cardDestroy(client: Socket, cardId: CardId) {
+        const playerState = await this.expeditionService.getPlayerState({
+            clientId: client.id,
+        });
+        const destroyPrice = 75 + 25 * playerState.cardDestroyCount;
+        if (playerState.gold < destroyPrice) {
+            client.emit('ErrorMessage', {
+                message: `Not enough gold`,
+            });
+            return;
+        }
+
+        const card = await this.cardService.findById(cardId);
+
+        let cardIndex: number = null;
+
+        if (card) {
+            for (let i = 0; i < playerState.cards.length; i++) {
+                if (card.cardId == playerState.cards[i].cardId) {
+                    cardIndex = i;
+                    break;
+                }
+            }
+        }
+        if (cardIndex === null) {
+            client.emit('ErrorMessage', {
+                message: `Card not fount`,
+            });
+            return;
+        }
+        playerState.cards.splice(cardIndex, 1);
+        playerState.cardDestroyCount = playerState.cardDestroyCount + 1;
+        playerState.gold = playerState.gold - destroyPrice;
+
+        await this.expeditionService.updateByFilter(
+            { clientId: client.id },
+            {
+                $set: {
+                    playerState,
+                },
+            },
+        );
+
+        client.emit(
+            'CardDestroy',
+            StandardResponse.respond({
+                message_type: SWARMessageType.CardDestroy,
+                action: SWARAction.CardDestroy,
+                data: null,
             }),
         );
     }

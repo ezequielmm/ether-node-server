@@ -1,3 +1,4 @@
+import { Item } from 'src/game/merchant/interfaces';
 import { AttachedStatus, StatusType } from 'src/game/status/interfaces';
 import { CardRarityEnum, CardTypeEnum } from '../card/card.enum';
 import { Card } from '../card/card.schema';
@@ -35,6 +36,8 @@ export interface IExpeditionPlayerState {
     createdAt: Date;
     cards: IExpeditionPlayerStateDeckCard[];
     stoppedAt?: Date;
+    cardUpgradeCount: number;
+    cardDestroyCount: number;
 }
 
 export interface IExpeditionNode {
@@ -51,6 +54,10 @@ export interface IExpeditionNode {
     readonly exits: number[];
     readonly enter: number[];
     readonly private_data: {
+        cards?: Item[];
+        neutral_cards?: Item[];
+        trinkets?: Item[];
+        potions?: Item[];
         treasure?: any;
         enemies?: {
             enemies: number[];
