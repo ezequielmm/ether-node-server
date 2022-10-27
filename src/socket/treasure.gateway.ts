@@ -25,4 +25,12 @@ export class TreasureGateway {
 
         await this.treasureService.treasureData(client);
     }
+    @SubscribeMessage('CombatEncounter')
+    async combatEncounter(client: Socket): Promise<void> {
+        this.logger.debug(
+            `Client ${client.id} get treasure data "CombatEncounter"`,
+        );
+
+        await this.treasureService.combatEncounter(client);
+    }
 }

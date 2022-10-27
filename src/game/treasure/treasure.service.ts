@@ -3,12 +3,15 @@ import { Socket } from 'socket.io';
 import { getRandomBetween } from 'src/utils';
 import { CardTypeEnum } from '../components/card/card.enum';
 import { CardService } from '../components/card/card.service';
+import { stingFaeData } from '../components/enemy/data/stingFae.enemy';
 import { ExpeditionMapNodeTypeEnum } from '../components/expedition/expedition.enum';
 import { ExpeditionService } from '../components/expedition/expedition.service';
 import { PotionService } from '../components/potion/potion.service';
 import { TrinketRarityEnum } from '../components/trinket/trinket.enum';
 import { TrinketService } from '../components/trinket/trinket.service';
 import { restoreMap } from '../map/app';
+import nodeFactory from '../map/nodes';
+import { InitCombatProcess } from '../process/initCombat.process';
 import {
     StandardResponse,
     SWARAction,
@@ -29,6 +32,7 @@ export class TreasureService {
         private readonly trinketService: TrinketService,
         private readonly potionService: PotionService,
         private readonly cardService: CardService,
+        private readonly initCombatProcess: InitCombatProcess,
     ) {}
 
     async handle(client: Socket) {
@@ -55,6 +59,7 @@ export class TreasureService {
             });
             return;
         }
+
         switch (treasure.type) {
             case LargeChest.type:
                 await this.handChest(
@@ -70,6 +75,8 @@ export class TreasureService {
                     LargeChest.trappedType,
                     LargeChest.trappedValue,
                     LargeChest.trappedText,
+                    treasure,
+                    nodeId,
                 );
                 break;
             case MediumChest.type:
@@ -86,6 +93,8 @@ export class TreasureService {
                     MediumChest.trappedType,
                     MediumChest.trappedValue,
                     MediumChest.trappedText,
+                    treasure,
+                    nodeId,
                 );
                 break;
             case SmallChest.type:
@@ -102,26 +111,14 @@ export class TreasureService {
                     SmallChest.trappedType,
                     SmallChest.trappedValue,
                     SmallChest.trappedText,
+                    treasure,
+                    nodeId,
                 );
                 break;
         }
 
         const { playerState, playerId } = await this.expeditionService.findOne({
             clientId: client.id,
-        });
-        const map = await this.expeditionService.getExpeditionMap({
-            clientId: client.id,
-        });
-        const expeditionMap = restoreMap(map);
-
-        const selectedNode = expeditionMap.fullCurrentMap.get(nodeId);
-
-        selectedNode.setPrivate_data({
-            treasure: { ...treasure, isOpen: true },
-        });
-
-        await this.expeditionService.update(client.id, {
-            map: expeditionMap.getMap,
         });
 
         client.emit(
@@ -160,15 +157,15 @@ export class TreasureService {
         trappedType: string,
         trappedValue: number,
         trappedText: string,
+        treasure: any,
+        nodeId: number,
     ) {
         const result = {
             coin: 0,
             trinket: null,
             potion: null,
-            trapped: {
-                trappedType: null,
-                trappedText: null,
-            },
+            trappedType: null,
+            trappedText: null,
         };
         const randomCoinChance = getRandomBetween(1, 100);
 
@@ -206,7 +203,7 @@ export class TreasureService {
         if (randomPotionChance <= potionChance) {
             result.potion = await this.potionService.getRandomPotion();
         }
-        const { _id, playerState } = await this.expeditionService.findOne({
+        const { playerState } = await this.expeditionService.findOne({
             clientId: client.id,
         });
 
@@ -214,31 +211,43 @@ export class TreasureService {
             ...playerState,
             gold: playerState.gold + result.coin,
         };
+        const newPrivateData = { ...treasure, isOpen: true };
+
         if (result.potion) {
             newPlayerState.potions.push(result.potion);
         }
         const randomTrappedChance = getRandomBetween(1, 100);
 
         if (randomTrappedChance <= trappedChance) {
+            result.trappedText = trappedText;
+            result.trappedType = trappedType;
+            newPrivateData.trappedType = trappedType;
             if (trappedType === TrappedType.CurseCard) {
-                result.trapped.trappedText = trappedText;
-                result.trapped.trappedType = trappedType;
                 const card: any = await this.cardService.getRandomCardOfType(
                     CardTypeEnum.Curse,
                 );
-                newPlayerState.cards.push(card);
+                if (card) newPlayerState.cards.push(card);
             } else if (trappedType === TrappedType.Damage) {
-                result.trapped.trappedText = trappedText;
-                result.trapped.trappedType = trappedType;
                 newPlayerState.hpCurrent = playerState.hpCurrent - trappedValue;
             }
         }
 
-        await this.expeditionService.updateById(_id, {
-            $set: {
-                playerState: newPlayerState,
-            },
+        const map = await this.expeditionService.getExpeditionMap({
+            clientId: client.id,
         });
+        const expeditionMap = restoreMap(map);
+
+        const selectedNode = expeditionMap.fullCurrentMap.get(nodeId);
+
+        selectedNode.setPrivate_data({
+            treasure: newPrivateData,
+        });
+
+        await this.expeditionService.update(client.id, {
+            map: expeditionMap.getMap,
+            playerState: newPlayerState,
+        });
+
         client.emit(
             'OpenChest',
             StandardResponse.respond({
@@ -257,6 +266,7 @@ export class TreasureService {
                 name: LargeChest.name,
                 type: LargeChest.type,
                 isOpen: false,
+                trappedType: null,
             };
         } else if (
             chance > LargeChest.chance &&
@@ -266,12 +276,14 @@ export class TreasureService {
                 name: MediumChest.name,
                 type: MediumChest.type,
                 isOpen: false,
+                trappedType: null,
             };
         } else {
             return {
                 name: SmallChest.name,
                 type: SmallChest.type,
                 isOpen: false,
+                trappedType: null,
             };
         }
     }
@@ -281,9 +293,9 @@ export class TreasureService {
                 clientId: client.id,
             });
 
-        if (nodeType !== ExpeditionMapNodeTypeEnum.Merchant) {
+        if (nodeType !== ExpeditionMapNodeTypeEnum.Treasure) {
             client.emit('ErrorMessage', {
-                message: `You are not in the merchant node`,
+                message: `You are not in the treasure node`,
             });
             return;
         }
@@ -300,6 +312,77 @@ export class TreasureService {
                 message_type: SWARMessageType.GenericData,
                 action: SWARAction.TreasureData,
                 data: treasure,
+            }),
+        );
+    }
+    async combatEncounter(client: Socket) {
+        const { nodeId, nodeType } =
+            await this.expeditionService.getCurrentNode({
+                clientId: client.id,
+            });
+
+        if (nodeType !== ExpeditionMapNodeTypeEnum.Treasure) {
+            client.emit('ErrorMessage', {
+                message: `You are not in the treasure node`,
+            });
+            return;
+        }
+
+        const { id, act, step, exits, enter, private_data } =
+            await this.expeditionService.getExpeditionMapNode({
+                clientId: client.id,
+                nodeId,
+            });
+
+        if (private_data.treasure.trappedType !== TrappedType.Node) {
+            client.emit('ErrorMessage', {
+                message: `Wrong event state`,
+            });
+            return;
+        }
+        const newNode = nodeFactory(
+            id,
+            act,
+            step,
+            ExpeditionMapNodeTypeEnum.Combat,
+            ExpeditionMapNodeTypeEnum.CombatStandard,
+            {
+                enemies: [
+                    {
+                        enemies: [stingFaeData.enemyId, stingFaeData.enemyId],
+                        probability: 1,
+                    },
+                ],
+            },
+        );
+
+        newNode.exits = exits;
+        newNode.enter = enter;
+
+        const map = await this.expeditionService.getExpeditionMap({
+            clientId: client.id,
+        });
+        const expeditionMap = restoreMap(map);
+        expeditionMap.fullCurrentMap.set(id, newNode);
+
+        const selectedNode = expeditionMap.fullCurrentMap.get(id);
+        selectedNode.select(expeditionMap);
+
+        await this.expeditionService.update(client.id, {
+            map: expeditionMap.getMap,
+        });
+        const node = await this.expeditionService.getExpeditionMapNode({
+            clientId: client.id,
+            nodeId: id,
+        });
+        await this.initCombatProcess.process(client, node);
+
+        client.emit(
+            'InitCombat',
+            StandardResponse.respond({
+                message_type: SWARMessageType.CombatUpdate,
+                action: SWARAction.BeginCombat,
+                data: null,
             }),
         );
     }
