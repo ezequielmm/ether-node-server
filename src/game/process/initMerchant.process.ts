@@ -4,11 +4,11 @@ import { IExpeditionNode } from '../components/expedition/expedition.interface';
 import { ExpeditionService } from '../components/expedition/expedition.service';
 import { restoreMap } from '../map/app';
 import { MerchantService } from '../merchant/merchant.service';
-import {
-    StandardResponse,
-    SWARAction,
-    SWARMessageType,
-} from '../standardResponse/standardResponse';
+// import {
+//     StandardResponse,
+//     SWARAction,
+//     SWARMessageType,
+// } from '../standardResponse/standardResponse';
 import { CurrentNodeGeneratorProcess } from './currentNodeGenerator.process';
 
 @Injectable()
@@ -39,7 +39,7 @@ export class InitMerchantProcess {
 
         selectedNode.setPrivate_data({
             cards,
-            neutral_cards: [],
+            neutralCards: [],
             trinkets,
             potions,
         });
@@ -49,18 +49,18 @@ export class InitMerchantProcess {
             map: expeditionMap.getMap,
         });
 
-        client.emit(
-            'MerchantUpdate',
-            StandardResponse.respond({
-                message_type: SWARMessageType.MerchantUpdate,
-                action: SWARAction.MerchantUpdate,
-                data: {
-                    cards,
-                    neutral_cards: [],
-                    trinkets,
-                    potions,
-                },
-            }),
-        );
+        // client.emit(
+        //     'MerchantUpdate',
+        //     StandardResponse.respond({
+        //         message_type: SWARMessageType.MerchantUpdate,
+        //         action: SWARAction.MerchantUpdate,
+        //         data: {
+        //             cards,
+        //             neutralCards: [],
+        //             trinkets,
+        //             potions,
+        //         },
+        //     }),
+        // );
     }
 }
