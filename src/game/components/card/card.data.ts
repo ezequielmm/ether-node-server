@@ -75,6 +75,7 @@ import { LevitateCard, LevitateCardUpgraded } from './data/levitate.card';
 import { LungeCard, LungeCardUpgraded } from './data/lunge.card';
 import { MossCard } from './data/moss.card';
 import { OnARollCard, OnARollCardUpgraded } from './data/onARoll.card';
+import { ParryCard, ParryCardUpgraded } from './data/parry.card';
 import {
     PerfectTimingCard,
     PerfectTimingCardUpgraded,
@@ -272,4 +273,6 @@ export const data: Card[] = [
     EnnuiCard,
     BulliedCard,
     ChokingCard,
+    ParryCard,
+    ParryCardUpgraded,
 ];
