@@ -1,7 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
+import { randomUUID } from 'crypto';
 import { Model } from 'mongoose';
+import {
+    StandardResponse,
+    SWARMessageType,
+    SWARAction,
+} from 'src/game/standardResponse/standardResponse';
 import { getRandomNumber } from 'src/utils';
+import { ExpeditionService } from '../expedition/expedition.service';
+import { GameContext } from '../interfaces';
 import { TrinketRarityEnum } from './trinket.enum';
 import { Trinket, TrinketDocument } from './trinket.schema';
 import { getTrinketField, TrinketId } from './trinket.type';
@@ -11,6 +19,7 @@ export class TrinketService {
     constructor(
         @InjectModel(Trinket.name)
         private readonly trinket: Model<TrinketDocument>,
+        private readonly expeditionService: ExpeditionService,
     ) {}
 
     async findAll(): Promise<TrinketDocument[]> {
@@ -62,5 +71,37 @@ export class TrinketService {
             .skip(random);
 
         return trinket[0] ? trinket[0] : null;
+    }
+
+    public async add(ctx: GameContext, trinketId: number): Promise<boolean> {
+        const trinket = await this.findById(trinketId);
+
+        if (!trinket) {
+            ctx.client.emit(
+                'PutData',
+                StandardResponse.respond({
+                    message_type: SWARMessageType.AddTrinket,
+                    action: SWARAction.TrinketNotFoundInDatabase,
+                    data: { trinketId },
+                }),
+            );
+            return false;
+        }
+
+        // remove _id and __v from potion
+        const trinketData = trinket.toObject();
+        delete trinketData._id;
+        delete trinketData.__v;
+
+        await this.expeditionService.updateById(ctx.expedition._id, {
+            $push: {
+                'playerState.trinkets': {
+                    id: randomUUID(),
+                    ...trinketData,
+                },
+            },
+        });
+
+        return true;
     }
 }

@@ -7,6 +7,7 @@ import { CardService } from 'src/game/components/card/card.service';
 import { IExpeditionNodeReward } from 'src/game/components/expedition/expedition.enum';
 import { ExpeditionService } from 'src/game/components/expedition/expedition.service';
 import { PotionService } from 'src/game/components/potion/potion.service';
+import { TrinketService } from 'src/game/components/trinket/trinket.service';
 import {
     StandardResponse,
     SWARMessageType,
@@ -23,6 +24,7 @@ export class RewardGateway {
         private readonly potionService: PotionService,
         private readonly cardService: CardService,
         private readonly fullSyncAction: FullSyncAction,
+        private readonly trinketService: TrinketService,
     ) {}
 
     @SubscribeMessage('RewardSelected')
@@ -38,10 +40,13 @@ export class RewardGateway {
 
         this.logger.debug(`Client ${client.id} choose reward id: ${rewardId}`);
 
-        let {
+        const {
             _id: expeditionId,
+            currentNode: { completed: nodeIsCompleted },
+        } = expedition;
+
+        let {
             currentNode: {
-                completed: nodeIsCompleted,
                 data: { rewards },
             },
         } = expedition;
@@ -49,7 +54,6 @@ export class RewardGateway {
         // Check if the node is completed
         if (nodeIsCompleted) {
             this.logger.debug('Node already completed, cannot select reward');
-
             return '';
         }
 
@@ -79,7 +83,7 @@ export class RewardGateway {
                     reward.potion.potionId,
                 );
                 break;
-            case IExpeditionNodeReward.Card: {
+            case IExpeditionNodeReward.Card:
                 await this.cardService.addCardToDeck(ctx, reward.card.cardId);
                 // Disable all other card rewards
                 rewards = rewards.map((r) => {
@@ -89,7 +93,12 @@ export class RewardGateway {
                     return r;
                 });
                 break;
-            }
+            case IExpeditionNodeReward.Trinket:
+                reward.taken = await this.trinketService.add(
+                    ctx,
+                    reward.trinket.trinketId,
+                );
+                break;
         }
 
         await this.fullSyncAction.handle(client, false);
