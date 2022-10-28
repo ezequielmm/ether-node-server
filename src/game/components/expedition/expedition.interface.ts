@@ -115,6 +115,15 @@ export interface PotionReward extends BaseReward {
     };
 }
 
+export interface TrinketReward extends BaseReward {
+    type: IExpeditionNodeReward.Trinket;
+    trinket: {
+        trinketId: number;
+        name: string;
+        description: string;
+    };
+}
+
 export interface CardPreview {
     cardId: number;
     name: string;
@@ -130,7 +139,7 @@ export interface CardReward extends BaseReward {
     card: CardPreview;
 }
 
-export type Reward = GoldReward | PotionReward | CardReward;
+export type Reward = GoldReward | PotionReward | CardReward | TrinketReward;
 
 export interface IExpeditionStatusResponse {
     readonly hasExpedition: boolean;

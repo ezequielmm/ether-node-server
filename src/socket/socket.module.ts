@@ -20,6 +20,7 @@ import { MerchantModule } from 'src/game/merchant/merchant.module';
 import { UpgradeCardGateway } from './upgradeCard.gateway';
 import { TreasureGateway } from './treasure.gateway';
 import { TreasureModule } from 'src/game/treasure/treasure.module';
+import { TrinketModule } from 'src/game/components/trinket/trinket.module';
 
 @Module({
     imports: [
@@ -35,6 +36,7 @@ import { TreasureModule } from 'src/game/treasure/treasure.module';
         PotionModule,
         MerchantModule,
         TreasureModule,
+        TrinketModule,
     ],
     providers: [
         SocketGateway,

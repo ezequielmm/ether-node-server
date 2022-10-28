@@ -1,5 +1,6 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
+import { ExpeditionModule } from '../expedition/expedition.module';
 import { Trinket, TrinketSchema } from './trinket.schema';
 import { TrinketService } from './trinket.service';
 
@@ -11,6 +12,7 @@ import { TrinketService } from './trinket.service';
                 schema: TrinketSchema,
             },
         ]),
+        forwardRef(() => ExpeditionModule),
     ],
     providers: [TrinketService],
     exports: [TrinketService],
