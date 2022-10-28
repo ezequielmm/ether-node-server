@@ -58,7 +58,7 @@ export enum SWARAction {
     FinishCamp = 'finish_camp',
     MerchantUpdate = 'merchant_update',
     MerchantData = 'merchant_data',
-    ItemPurchasedWithSuccess = 'Item_purchased_with_success',
+    PurchaseSuccess = 'purchase_success',
     UpgradablePair = 'upgradable_pair',
     ConfirmUpgrade = 'confirm_upgrade',
     PotionNotUsableOutsideCombat = 'potion_not_usable_outside_combat',

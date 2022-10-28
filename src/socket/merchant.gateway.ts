@@ -11,15 +11,13 @@ export class MerchantGateway {
 
     constructor(private readonly merchantService: MerchantService) {}
 
-    @SubscribeMessage('MerchantAction')
+    @SubscribeMessage('MerchantBuy')
     async handleItemsSelected(
         client: Socket,
         selected: selectedItem,
     ): Promise<void> {
-        this.logger.debug(
-            `Client ${client.id} trigger message "merchantAction"`,
-        );
-        this.merchantService.merchantAction(client, selected);
+        this.logger.debug(`Client ${client.id} trigger message "MerchantBuy"`);
+        this.merchantService.merchantBuy(client, selected);
     }
     @SubscribeMessage('MerchantData')
     async merchantData(client: Socket): Promise<void> {

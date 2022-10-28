@@ -53,8 +53,7 @@ export class MerchantService {
         return Math.floor(Math.random() * (max - min)) + min;
     }
 
-    merchantAction(client: Socket, selectedItem: selectedItem) {
-        console.log(selectedItem.type);
+    merchantBuy(client: Socket, selectedItem: selectedItem) {
         switch (selectedItem.type) {
             case ItemsTypeEnum.CardsForPlayer:
             case ItemsTypeEnum.RandomTrinkets:
@@ -62,16 +61,16 @@ export class MerchantService {
                 this.handle(client, selectedItem);
                 break;
             case ItemsTypeEnum.Destroy:
-                this.cardDestroy(client, selectedItem.id);
+                this.cardDestroy(client, selectedItem.targetId);
                 break;
             case ItemsTypeEnum.Upgrade:
-                this.cardUpgrade(client, selectedItem.id);
+                this.cardUpgrade(client, selectedItem.targetId);
                 return;
         }
     }
 
     async handle(client: Socket, selectedItem: selectedItem) {
-        const { id, type } = selectedItem;
+        const { targetId, type } = selectedItem;
         const { nodeType, nodeId } =
             await this.expeditionService.getCurrentNode({
                 clientId: client.id,
@@ -93,16 +92,27 @@ export class MerchantService {
 
         let itemIndex: number;
 
-        const data = node.private_data[type];
+        let data: Item[];
 
+        switch (type) {
+            case ItemsTypeEnum.CardsForPlayer:
+                data = node.private_data.cards;
+                break;
+            case ItemsTypeEnum.RandomTrinkets:
+                data = node.private_data.trinkets;
+                break;
+            case ItemsTypeEnum.RandomPotions:
+                data = node.private_data.potions;
+                break;
+        }
         for (let i = 0; i < data.length; i++) {
-            if (typeof id == 'string') {
-                if (id == data[i].id) {
+            if (typeof targetId == 'string') {
+                if (targetId == data[i].id) {
                     item = data[i];
                     itemIndex = i;
                 }
-            } else if (typeof id == 'number') {
-                if (id == data[i].itemId) {
+            } else if (typeof targetId == 'number') {
+                if (targetId == data[i].itemId) {
                     item = data[i];
                     itemIndex = i;
                 }
@@ -147,7 +157,31 @@ export class MerchantService {
                 });
                 return;
         }
-        this.success(client, nodeId, itemIndex, type, node.private_data);
+        const map = await this.expeditionService.getExpeditionMap({
+            clientId: client.id,
+        });
+        const expeditionMap = restoreMap(map);
+
+        const selectedNode = expeditionMap.fullCurrentMap.get(nodeId);
+
+        switch (type) {
+            case ItemsTypeEnum.CardsForPlayer:
+                node.private_data.cards[itemIndex].isSold = true;
+                break;
+            case ItemsTypeEnum.RandomTrinkets:
+                node.private_data.trinkets[itemIndex].isSold = true;
+                break;
+            case ItemsTypeEnum.RandomPotions:
+                node.private_data.potions[itemIndex].isSold = true;
+                break;
+        }
+
+        selectedNode.setPrivate_data(node.private_data);
+
+        await this.expeditionService.update(client.id, {
+            map: expeditionMap.getMap,
+        });
+        this.success(client);
     }
     async handleCard(
         item: Item,
@@ -339,35 +373,16 @@ export class MerchantService {
         }
         return randomTrinket;
     }
-    async success(
-        client: Socket,
-        nodeId: number,
-        itemIndex: number,
-        type: any,
-        private_data: any,
-    ) {
-        const map = await this.expeditionService.getExpeditionMap({
-            clientId: client.id,
-        });
-        const expeditionMap = restoreMap(map);
-
-        const selectedNode = expeditionMap.fullCurrentMap.get(nodeId);
-        private_data[type][itemIndex].isSold = true;
-
-        selectedNode.setPrivate_data(private_data);
-
-        await this.expeditionService.update(client.id, {
-            map: expeditionMap.getMap,
-        });
+    async success(client: Socket) {
         const expedition = await this.expeditionService.findOne({
             clientId: client.id,
         });
         const { playerState, playerId } = expedition || {};
         client.emit(
-            'MerchantAction',
+            'MerchantBuy',
             StandardResponse.respond({
-                message_type: SWARMessageType.PurchaseSuccess,
-                action: SWARAction.ItemPurchasedWithSuccess,
+                message_type: SWARMessageType.MapUpdate,
+                action: SWARAction.PurchaseSuccess,
                 data: null,
             }),
         );
@@ -407,7 +422,7 @@ export class MerchantService {
             return;
         }
         const {
-            private_data: { cards, neutralCards, trinkets, potions },
+            private_data: { cards, trinkets, potions },
         } = await this.expeditionService.getExpeditionMapNode({
             clientId: client.id,
             nodeId,
@@ -604,17 +619,9 @@ export class MerchantService {
             },
         );
 
-        client.emit(
-            'MerchantAction',
-            StandardResponse.respond({
-                message_type: SWARMessageType.CardUpgrade,
-                action: SWARAction.CardUpgrade,
-                data: null,
-            }),
-        );
+        this.success(client);
     }
     async cardDestroy(client: Socket, cardId: CardId) {
-        console.log(cardId);
         const playerState = await this.expeditionService.getPlayerState({
             clientId: client.id,
         });
@@ -657,13 +664,6 @@ export class MerchantService {
             },
         );
 
-        client.emit(
-            'MerchantAction',
-            StandardResponse.respond({
-                message_type: SWARMessageType.CardDestroy,
-                action: SWARAction.CardDestroy,
-                data: null,
-            }),
-        );
+        this.success(client);
     }
 }

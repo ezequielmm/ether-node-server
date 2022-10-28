@@ -14,12 +14,6 @@ export interface ItemId {
 }
 
 export interface selectedItem {
-    id: number | string;
-    type:
-        | 'cards'
-        | 'neutralCards'
-        | 'trinkets'
-        | 'potions'
-        | 'destroy'
-        | 'upgrade';
+    targetId: number | string;
+    type: 'upgrade' | 'remove' | 'card' | 'trinket' | 'potion';
 }

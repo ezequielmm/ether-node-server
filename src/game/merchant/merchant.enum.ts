@@ -1,9 +1,9 @@
 export enum ItemsTypeEnum {
-    CardsForPlayer = 'cards',
-    NeutralCards = 'neutralCards',
-    RandomTrinkets = 'trinkets',
-    RandomPotions = 'potions',
-    Destroy = 'destroy',
+    CardsForPlayer = 'card',
+    NeutralCards = 'neutralCard',
+    RandomTrinkets = 'trinket',
+    RandomPotions = 'potion',
+    Destroy = 'remove',
     Upgrade = 'upgrade',
 }
 
