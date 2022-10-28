@@ -1,8 +1,9 @@
 export interface Item {
     isSale?: boolean;
-    id: number | string;
+    id: string;
     cost: number;
     isSold: boolean;
+    itemId: number;
 }
 
 export interface FindOneMerchantDTO {
@@ -16,7 +17,7 @@ export interface selectedItem {
     id: number | string;
     type:
         | 'cards'
-        | 'neutral_cards'
+        | 'neutralCards'
         | 'trinkets'
         | 'potions'
         | 'destroy'
