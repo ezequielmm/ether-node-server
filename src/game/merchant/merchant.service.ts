@@ -55,9 +55,9 @@ export class MerchantService {
 
     merchantBuy(client: Socket, selectedItem: selectedItem) {
         switch (selectedItem.type) {
-            case ItemsTypeEnum.CardsForPlayer:
-            case ItemsTypeEnum.RandomTrinkets:
-            case ItemsTypeEnum.RandomPotions:
+            case ItemsTypeEnum.Card:
+            case ItemsTypeEnum.Trinket:
+            case ItemsTypeEnum.Potion:
                 this.handle(client, selectedItem);
                 break;
             case ItemsTypeEnum.Destroy:
@@ -95,13 +95,13 @@ export class MerchantService {
         let data: Item[];
 
         switch (type) {
-            case ItemsTypeEnum.CardsForPlayer:
+            case ItemsTypeEnum.Card:
                 data = node.private_data.cards;
                 break;
-            case ItemsTypeEnum.RandomTrinkets:
+            case ItemsTypeEnum.Trinket:
                 data = node.private_data.trinkets;
                 break;
-            case ItemsTypeEnum.RandomPotions:
+            case ItemsTypeEnum.Potion:
                 data = node.private_data.potions;
                 break;
         }
@@ -139,10 +139,10 @@ export class MerchantService {
         }
 
         switch (type) {
-            case ItemsTypeEnum.CardsForPlayer:
+            case ItemsTypeEnum.Card:
                 await this.handleCard(item, playerState, _id);
                 break;
-            case ItemsTypeEnum.RandomPotions:
+            case ItemsTypeEnum.Potion:
                 if (playerState.potions.length > 2) {
                     client.emit('ErrorMessage', {
                         message: `You cannot carry any more potions. Discard or use one to buy a potion.`,
@@ -151,7 +151,7 @@ export class MerchantService {
                 }
                 await this.handlePotions(item, playerState, _id);
                 break;
-            case ItemsTypeEnum.RandomTrinkets:
+            case ItemsTypeEnum.Trinket:
                 client.emit('ErrorMessage', {
                     message: `Not allowed element`,
                 });
@@ -165,13 +165,14 @@ export class MerchantService {
         const selectedNode = expeditionMap.fullCurrentMap.get(nodeId);
 
         switch (type) {
-            case ItemsTypeEnum.CardsForPlayer:
+            case ItemsTypeEnum.Card:
                 node.private_data.cards[itemIndex].isSold = true;
                 break;
-            case ItemsTypeEnum.RandomTrinkets:
-                node.private_data.trinkets[itemIndex].isSold = true;
-                break;
-            case ItemsTypeEnum.RandomPotions:
+            // TODO
+            // case ItemsTypeEnum.Trinket:
+            //     node.private_data.trinkets[itemIndex].isSold = true;
+            //     break;
+            case ItemsTypeEnum.Potion:
                 node.private_data.potions[itemIndex].isSold = true;
                 break;
         }
@@ -483,7 +484,7 @@ export class MerchantService {
                 cost: cards[i].cost,
                 isSold: cards[i].isSold,
                 isSale: cards[i].isSale,
-                type: ItemsTypeEnum.NeutralCards,
+                type: ItemsTypeEnum.Card,
                 id: cards[i].id,
                 item: { ...card, id: cards[i].id, isTemporary: false },
             });
@@ -496,7 +497,7 @@ export class MerchantService {
                 itemId: potion.potionId,
                 cost: potions[i].cost,
                 isSold: potions[i].isSold,
-                type: ItemsTypeEnum.RandomPotions,
+                type: ItemsTypeEnum.Potion,
                 id: potions[i].id,
                 item: { ...potion, id: potions[i].id },
             });
@@ -511,7 +512,7 @@ export class MerchantService {
                 itemId: i, //TODO change to trinkets id when it will be ready
                 cost: potions[i].cost,
                 isSold: potions[i].isSold,
-                type: ItemsTypeEnum.RandomTrinkets,
+                type: ItemsTypeEnum.Trinket,
                 id: trinkets[i].id,
                 item: { ...trinket, id: trinkets[i].id },
             });

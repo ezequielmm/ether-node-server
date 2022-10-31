@@ -1,3 +1,5 @@
+import { ItemsTypeEnum } from './merchant.enum';
+
 export interface Item {
     isSale?: boolean;
     id: string;
@@ -15,5 +17,10 @@ export interface ItemId {
 
 export interface selectedItem {
     targetId: number | string;
-    type: 'upgrade' | 'remove' | 'card' | 'trinket' | 'potion';
+    type:
+        | ItemsTypeEnum.Upgrade
+        | ItemsTypeEnum.Destroy
+        | ItemsTypeEnum.Card
+        | ItemsTypeEnum.Potion
+        | ItemsTypeEnum.Trinket;
 }
