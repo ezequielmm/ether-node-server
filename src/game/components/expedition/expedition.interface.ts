@@ -55,7 +55,7 @@ export interface IExpeditionNode {
     readonly enter: number[];
     readonly private_data: {
         cards?: Item[];
-        neutral_cards?: Item[];
+        neutralCards?: Item[];
         trinkets?: Item[];
         potions?: Item[];
         treasure?: any;

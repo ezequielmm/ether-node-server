@@ -11,16 +11,13 @@ export class MerchantGateway {
 
     constructor(private readonly merchantService: MerchantService) {}
 
-    @SubscribeMessage('PurchaseItem')
+    @SubscribeMessage('MerchantBuy')
     async handleItemsSelected(
         client: Socket,
         selected: selectedItem,
     ): Promise<void> {
-        this.logger.debug(
-            `Client ${client.id} trigger message "ItemsSelected"`,
-        );
-
-        await this.merchantService.handle(client, selected);
+        this.logger.debug(`Client ${client.id} trigger message "MerchantBuy"`);
+        this.merchantService.merchantBuy(client, selected);
     }
     @SubscribeMessage('MerchantData')
     async merchantData(client: Socket): Promise<void> {
@@ -29,23 +26,5 @@ export class MerchantGateway {
         );
 
         await this.merchantService.merchantData(client);
-    }
-    @SubscribeMessage('CardUpgrade')
-    async cardUpgrade(client: Socket, payload: string): Promise<void> {
-        this.logger.debug(
-            `Client ${client.id} get merchant data "CardUpgrade"`,
-        );
-        const { cardId } = JSON.parse(payload);
-
-        await this.merchantService.cardUpgrade(client, cardId);
-    }
-    @SubscribeMessage('CardDestroy')
-    async cardDestroy(client: Socket, payload: string): Promise<void> {
-        this.logger.debug(
-            `Client ${client.id} get merchant data "CardDestroy"`,
-        );
-        const { cardId } = JSON.parse(payload);
-
-        await this.merchantService.cardDestroy(client, cardId);
     }
 }
