@@ -117,7 +117,7 @@ export class ExpeditionGateway {
             await this.expeditionService.updateById(expedition._id, {
                 $set: {
                     map: mapToSave,
-                    'currentNode.completed': true,
+                    'currentNode.completed': false,
                 },
             });
 
