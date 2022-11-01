@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Socket } from 'socket.io';
-import { isNotUndefined, removeCardsFromPile } from 'src/utils';
+import { removeCardsFromPile } from 'src/utils';
 import { CardSelectionScreenOriginPileEnum } from '../components/cardSelectionScreen/cardSelectionScreen.enum';
 import { IExpeditionPlayerStateDeckCard } from '../components/expedition/expedition.interface';
 import { ExpeditionService } from '../components/expedition/expedition.service';
@@ -73,7 +73,7 @@ export class MoveCardToHandAction {
                     source: originPile,
                     destination: 'hand',
                     id,
-                    card: data
+                    card: data,
                 })),
             }),
         );

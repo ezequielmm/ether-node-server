@@ -1,6 +1,5 @@
 export enum ItemsTypeEnum {
     Card = 'card',
-    NeutralCards = 'neutralCard',
     Trinket = 'trinket',
     Potion = 'potion',
     Destroy = 'remove',
