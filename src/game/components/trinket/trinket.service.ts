@@ -88,16 +88,15 @@ export class TrinketService {
             return false;
         }
 
-        // remove _id and __v from potion
-        const trinketData = trinket.toObject();
-        delete trinketData._id;
-        delete trinketData.__v;
+        // remove _id and __v from trinket
+        delete trinket._id;
+        delete trinket.__v;
 
         await this.expeditionService.updateById(ctx.expedition._id, {
             $push: {
                 'playerState.trinkets': {
                     id: randomUUID(),
-                    ...trinketData,
+                    ...trinket,
                 },
             },
         });

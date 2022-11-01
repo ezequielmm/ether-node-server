@@ -99,4 +99,16 @@ $(document).ready(function () {
             showJSON(response);
         });
     });
+
+    $('#btnEndTurn').click(function () {
+        socket.emit('EndTurn');
+    });
+
+    $('#btnSelectReward').click(function () {
+        const rewardId = document.getElementById('rewardId').value;
+
+        socket.emit('RewardSelected', rewardId, (response) => {
+            showJSON(response);
+        });
+    });
 });
