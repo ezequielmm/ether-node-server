@@ -112,6 +112,10 @@ export class CombatGateway {
             client,
             cardIds: newCardList,
             originPile,
+            callback: (card) => {
+                card.energy = 0;
+                return card;
+            },
         });
 
         // Now we remove the info from the database

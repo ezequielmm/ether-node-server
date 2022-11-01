@@ -1,4 +1,3 @@
-import { damageEffect } from 'src/game/effects/damage/constants';
 import { phantomPhialEffect } from 'src/game/effects/phantomPhial/constants';
 import { PotionRarityEnum, PotionTargetEnum } from '../potion.enum';
 import { Potion } from '../potion.schema';
