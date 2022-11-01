@@ -17,10 +17,5 @@ export interface ItemId {
 
 export interface selectedItem {
     targetId: number | string;
-    type:
-        | ItemsTypeEnum.Upgrade
-        | ItemsTypeEnum.Destroy
-        | ItemsTypeEnum.Card
-        | ItemsTypeEnum.Potion
-        | ItemsTypeEnum.Trinket;
+    type: ItemsTypeEnum;
 }
