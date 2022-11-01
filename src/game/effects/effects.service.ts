@@ -89,6 +89,8 @@ export class EffectService {
         });
 
         for (let i = 0; i < times; i++) {
+            const { metadata, instance } = this.findContainerByName(name);
+
             // Check if the combat has ended
             if (this.expeditionService.isCurrentCombatEnded(ctx)) {
                 this.logger.debug(
@@ -98,7 +100,10 @@ export class EffectService {
             }
 
             // Check if the target is dead, if so, skip the effect
-            if (this.expeditionService.isEntityDead(ctx, target)) {
+            if (
+                this.expeditionService.isEntityDead(ctx, target) &&
+                !metadata.effect.ghost
+            ) {
                 this.logger.debug(
                     `Target is dead, skipping effect ${effect.effect}`,
                 );
@@ -107,8 +112,8 @@ export class EffectService {
 
             // Send the queue id to the effects to add the target
             this.logger.debug(`Effect ${name} applied to ${target.type}`);
-            const handler = this.findHandlerByName(name);
-            await handler.handle(effectDTO);
+
+            await instance.handle(effectDTO);
         }
     }
 
@@ -179,16 +184,20 @@ export class EffectService {
         return effectDTO;
     }
 
-    private findHandlerByName(name: string): EffectHandler {
+    private findContainerByName(
+        name: string,
+    ): ProviderContainer<EffectMetadata, EffectHandler> {
         this.handlers =
             this.handlers ||
             this.providerService.findByMetadataKey(EFFECT_METADATA_KEY);
 
-        const container = find(this.handlers, ['metadata.effect.name', name]);
+        const container = find(this.handlers, {
+            metadata: { effect: { name } },
+        });
 
         if (container === undefined)
-            throw new Error(`Effect handler ${name} not found`);
+            throw new Error(`Effect ${name} not found`);
 
-        return container.instance;
+        return container;
     }
 }

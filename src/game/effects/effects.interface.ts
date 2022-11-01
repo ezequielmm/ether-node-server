@@ -5,6 +5,7 @@ import { GameContext, ExpeditionEntity } from '../components/interfaces';
 
 export interface Effect {
     name: string;
+    ghost?: boolean;
 }
 
 export interface EffectMetadata {

@@ -73,6 +73,7 @@ export class MoveCardAction {
                     source: originPile,
                     destination: 'hand',
                     id,
+                    cardIsFree
                 })),
             }),
         );
