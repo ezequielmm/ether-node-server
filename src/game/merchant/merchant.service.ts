@@ -17,6 +17,7 @@ import { PotionRarityEnum } from '../components/potion/potion.enum';
 import { PotionService } from '../components/potion/potion.service';
 import { TrinketRarityEnum } from '../components/trinket/trinket.enum';
 import { TrinketService } from '../components/trinket/trinket.service';
+import { restoreMap } from '../map/app';
 import {
     StandardResponse,
     SWARAction,
@@ -45,8 +46,24 @@ export class MerchantService {
         private readonly trinketService: TrinketService,
     ) {}
 
+    merchantBuy(client: Socket, selectedItem: selectedItem) {
+        switch (selectedItem.type) {
+            case ItemsTypeEnum.Card:
+            case ItemsTypeEnum.Trinket:
+            case ItemsTypeEnum.Potion:
+                this.handle(client, selectedItem);
+                break;
+            case ItemsTypeEnum.Destroy:
+                this.cardDestroy(client, selectedItem.targetId);
+                break;
+            case ItemsTypeEnum.Upgrade:
+                this.cardUpgrade(client, selectedItem.targetId);
+                return;
+        }
+    }
+
     async handle(client: Socket, selectedItem: selectedItem) {
-        const { id, type } = selectedItem;
+        const { targetId, type } = selectedItem;
         const { nodeType, nodeId } =
             await this.expeditionService.getCurrentNode({
                 clientId: client.id,
@@ -66,11 +83,32 @@ export class MerchantService {
 
         let item: Item;
 
-        const data = node.private_data[type];
+        let itemIndex: number;
 
+        let data: Item[];
+
+        switch (type) {
+            case ItemsTypeEnum.Card:
+                data = node.private_data.cards;
+                break;
+            case ItemsTypeEnum.Trinket:
+                data = node.private_data.trinkets;
+                break;
+            case ItemsTypeEnum.Potion:
+                data = node.private_data.potions;
+                break;
+        }
         for (let i = 0; i < data.length; i++) {
-            if (id == data[i].id.toString()) {
-                item = data[i];
+            if (typeof targetId == 'string') {
+                if (targetId == data[i].id) {
+                    item = data[i];
+                    itemIndex = i;
+                }
+            } else if (typeof targetId == 'number') {
+                if (targetId == data[i].itemId) {
+                    item = data[i];
+                    itemIndex = i;
+                }
             }
         }
 
@@ -86,18 +124,18 @@ export class MerchantService {
         });
         const { playerState, _id } = expedition || {};
 
-        if (playerState.gold < item.price) {
+        if (playerState.gold < item.cost) {
             client.emit('ErrorMessage', {
-                message: `Not enough golds`,
+                message: `Not enough gold`,
             });
             return;
         }
 
         switch (type) {
-            case ItemsTypeEnum.CardsForPlayer:
+            case ItemsTypeEnum.Card:
                 await this.handleCard(item, playerState, _id);
                 break;
-            case ItemsTypeEnum.RandomPotions:
+            case ItemsTypeEnum.Potion:
                 if (playerState.potions.length > 2) {
                     client.emit('ErrorMessage', {
                         message: `You cannot carry any more potions. Discard or use one to buy a potion.`,
@@ -106,12 +144,37 @@ export class MerchantService {
                 }
                 await this.handlePotions(item, playerState, _id);
                 break;
-            case ItemsTypeEnum.RandomTrinkets:
+            case ItemsTypeEnum.Trinket:
                 client.emit('ErrorMessage', {
                     message: `Not allowed element`,
                 });
                 return;
         }
+        const map = await this.expeditionService.getExpeditionMap({
+            clientId: client.id,
+        });
+        const expeditionMap = restoreMap(map);
+
+        const selectedNode = expeditionMap.fullCurrentMap.get(nodeId);
+
+        switch (type) {
+            case ItemsTypeEnum.Card:
+                node.private_data.cards[itemIndex].isSold = true;
+                break;
+            // TODO
+            // case ItemsTypeEnum.Trinket:
+            //     node.private_data.trinkets[itemIndex].isSold = true;
+            //     break;
+            case ItemsTypeEnum.Potion:
+                node.private_data.potions[itemIndex].isSold = true;
+                break;
+        }
+
+        selectedNode.setPrivate_data(node.private_data);
+
+        await this.expeditionService.update(client.id, {
+            map: expeditionMap.getMap,
+        });
         this.success(client);
     }
 
@@ -120,11 +183,28 @@ export class MerchantService {
         playerState: IExpeditionPlayerState,
         _id: string,
     ) {
-        const card = await this.cardService.findById(item.id);
+        const card = await this.cardService.findById(item.itemId);
+
+        const newCard = {
+            id: item.id,
+            cardId: card.cardId,
+            name: card.name,
+            cardType: card.cardType,
+            energy: card.energy,
+            description: CardDescriptionFormatter.process(card),
+            isTemporary: false,
+            rarity: card.rarity,
+            properties: card.properties,
+            keywords: card.keywords,
+            showPointer: card.showPointer,
+            pool: card.pool,
+            isUpgraded: card.isUpgraded,
+        };
+
         const newPlayerState = {
             ...playerState,
-            gold: playerState.gold - item.price,
-            cards: [...playerState.cards, card],
+            gold: playerState.gold - item.cost,
+            cards: [...playerState.cards, newCard],
         };
 
         await this.expeditionService.updateById(_id, {
@@ -139,11 +219,13 @@ export class MerchantService {
         playerState: IExpeditionPlayerState,
         _id: string,
     ) {
-        const potion = await this.potionService.findById(item.id);
+        const potion = await this.potionService.findById(item.itemId);
+        delete potion._id;
+        delete potion.__v;
         const newPlayerState = {
             ...playerState,
-            gold: playerState.gold - item.price,
-            potions: [...playerState.potions, potion],
+            gold: playerState.gold - item.cost,
+            potions: [...playerState.potions, { ...potion, id: item.id }],
         };
 
         await this.expeditionService.updateById(_id, {
@@ -180,23 +262,23 @@ export class MerchantService {
         const cardsForPlayer: Item[] = [];
 
         for (let i = 0; i < card.length; i++) {
-            let price: number = null;
+            let cost: number = null;
 
             switch (card[i].rarity) {
                 case CardRarityEnum.Common:
-                    price = getRandomBetween(
+                    cost = getRandomBetween(
                         CardCommon.minPrice,
                         CardCommon.maxPrice,
                     );
                     break;
                 case CardRarityEnum.Uncommon:
-                    price = getRandomBetween(
+                    cost = getRandomBetween(
                         CardUncommon.minPrice,
                         CardUncommon.maxPrice,
                     );
                     break;
                 case CardRarityEnum.Rare:
-                    price = getRandomBetween(
+                    cost = getRandomBetween(
                         CardRare.minPrice,
                         CardRare.maxPrice,
                     );
@@ -205,8 +287,10 @@ export class MerchantService {
 
             cardsForPlayer.push({
                 isSale: false,
-                id: card[i].cardId,
-                price,
+                id: randomUUID(),
+                cost,
+                isSold: false,
+                itemId: card[i].cardId,
             });
         }
 
@@ -214,7 +298,7 @@ export class MerchantService {
         cardsForPlayer[randomIndex] = {
             ...cardsForPlayer[randomIndex],
             isSale: true,
-            price: Math.floor(cardsForPlayer[randomIndex].price / 2),
+            cost: Math.floor(cardsForPlayer[randomIndex].cost / 2),
         };
 
         return cardsForPlayer;
@@ -225,31 +309,33 @@ export class MerchantService {
         const randomPotion: Item[] = [];
 
         for (let i = 0; i < potions.length; i++) {
-            let price: number = null;
+            let cost: number = null;
 
             switch (potions[i].rarity) {
                 case PotionRarityEnum.Common:
-                    price = getRandomBetween(
+                    cost = getRandomBetween(
                         PotionCommon.minPrice,
                         PotionCommon.maxPrice,
                     );
                     break;
                 case PotionRarityEnum.Uncommon:
-                    price = getRandomBetween(
+                    cost = getRandomBetween(
                         PotionUncommon.minPrice,
                         PotionUncommon.maxPrice,
                     );
                     break;
                 case PotionRarityEnum.Rare:
-                    price = getRandomBetween(
+                    cost = getRandomBetween(
                         PotionRare.minPrice,
                         PotionRare.maxPrice,
                     );
                     break;
             }
             randomPotion.push({
-                id: potions[i].potionId,
-                price,
+                id: randomUUID(),
+                cost,
+                isSold: false,
+                itemId: potions[i].potionId,
             });
         }
 
@@ -260,33 +346,35 @@ export class MerchantService {
         const trinket = await this.trinketService.randomTrinket(5);
         const randomTrinket: Item[] = [];
         for (let i = 0; i < trinket.length; i++) {
-            let price: number = null;
+            let cost: number = null;
 
             switch (trinket[i].rarity) {
                 case TrinketRarityEnum.Common:
-                    price = getRandomBetween(
+                    cost = getRandomBetween(
                         TrinketCommon.minPrice,
                         TrinketCommon.maxPrice,
                     );
 
                     break;
                 case TrinketRarityEnum.Uncommon:
-                    price = getRandomBetween(
+                    cost = getRandomBetween(
                         TrinketUncommon.minPrice,
                         TrinketUncommon.maxPrice,
                     );
 
                     break;
                 case TrinketRarityEnum.Rare:
-                    price = getRandomBetween(
+                    cost = getRandomBetween(
                         TrinketRare.minPrice,
                         TrinketRare.maxPrice,
                     );
                     break;
             }
             randomTrinket.push({
-                id: trinket[i]._id,
-                price,
+                id: randomUUID(),
+                cost,
+                isSold: false,
+                itemId: i,
             });
         }
         return randomTrinket;
@@ -300,10 +388,10 @@ export class MerchantService {
         const { playerState, playerId } = expedition || {};
 
         client.emit(
-            'PurchaseItem',
+            'MerchantBuy',
             StandardResponse.respond({
-                message_type: SWARMessageType.PurchaseSuccess,
-                action: SWARAction.ItemPurchasedWithSuccess,
+                message_type: SWARMessageType.MapUpdate,
+                action: SWARAction.PurchaseSuccess,
                 data: null,
             }),
         );
@@ -348,32 +436,94 @@ export class MerchantService {
             clientId: client.id,
             nodeId,
         });
+        const playerState = await this.expeditionService.getPlayerState({
+            clientId: client.id,
+        });
         const playerCard = await this.playerCards(client);
-        const cardUpgrade = playerCard.filter((card) => !card.isUpgraded);
 
         const data = {
+            coins: playerState.gold,
+            shopkeeper: 1,
+            speechBubble: 'Hello',
+            upgradeableCards: [],
+            upgradedCards: [],
+            playerCards: playerCard,
+            upgradeCost: 75 + 25 * playerState.cardUpgradeCount,
+            destroyCost: 75 + 25 * playerState.cardDestroyCount,
             cards: [],
-            neutral_cards: [],
+            neutralCards: [],
             trinkets: [],
             potions: [],
-            playerCard,
-            cardUpgrade,
         };
+
+        for (let i = 0; i < playerCard.length; i++) {
+            if (!playerCard[i].isUpgraded) {
+                data.upgradeableCards.push(playerCard[i]);
+                const upgradedCardData = await this.cardService.findById(
+                    playerCard[i].upgradedCardId,
+                );
+
+                const upgradedCard: IExpeditionPlayerStateDeckCard = {
+                    id: randomUUID(),
+                    cardId: playerCard[i].cardId,
+                    name: upgradedCardData.name,
+                    cardType: upgradedCardData.cardType,
+                    energy: upgradedCardData.energy,
+                    description:
+                        CardDescriptionFormatter.process(upgradedCardData),
+                    isTemporary: false,
+                    rarity: upgradedCardData.rarity,
+                    properties: upgradedCardData.properties,
+                    keywords: upgradedCardData.keywords,
+                    showPointer: upgradedCardData.showPointer,
+                    pool: upgradedCardData.pool,
+                    isUpgraded: upgradedCardData.isUpgraded,
+                };
+                data.upgradedCards.push(upgradedCard);
+            }
+        }
+
         for (let i = 0; i < cards.length; i++) {
-            const card = await this.cardService.findById(cards[i].id);
-            const price: number = cards[i].price;
-            const isSale: boolean = cards[i].isSale;
-            data.cards.push({ ...card, price, isSale });
+            const card = await this.cardService.findById(cards[i].itemId);
+            delete card._id;
+            delete card.__v;
+            data.cards.push({
+                itemId: card.cardId,
+                cost: cards[i].cost,
+                isSold: cards[i].isSold,
+                isSale: cards[i].isSale,
+                type: ItemsTypeEnum.Card,
+                id: cards[i].id,
+                item: { ...card, id: cards[i].id, isTemporary: false },
+            });
         }
         for (let i = 0; i < potions.length; i++) {
-            const potion = await this.potionService.findById(potions[i].id);
-            const price: number = potions[i].price;
-            data.potions.push({ ...potion, price });
+            const potion = await this.potionService.findById(potions[i].itemId);
+            delete potion._id;
+            delete potion.__v;
+            data.potions.push({
+                itemId: potion.potionId,
+                cost: potions[i].cost,
+                isSold: potions[i].isSold,
+                type: ItemsTypeEnum.Potion,
+                id: potions[i].id,
+                item: { ...potion, id: potions[i].id },
+            });
         }
         for (let i = 0; i < trinkets.length; i++) {
-            const trinket = await this.trinketService.findById(trinkets[i].id);
-            const price: number = trinkets[i].price;
-            data.trinkets.push({ ...trinket, price });
+            const trinket = await this.trinketService.findById(
+                trinkets[i].itemId,
+            );
+            delete trinket._id;
+            delete trinket.__v;
+            data.trinkets.push({
+                itemId: i, //TODO change to trinkets id when it will be ready
+                cost: potions[i].cost,
+                isSold: potions[i].isSold,
+                type: ItemsTypeEnum.Trinket,
+                id: trinkets[i].id,
+                item: { ...trinket, id: trinkets[i].id },
+            });
         }
 
         client.emit(
@@ -412,20 +562,20 @@ export class MerchantService {
                     break;
                 } else if (i === playerState.cards.length - 1) {
                     client.emit('ErrorMessage', {
-                        message: `Card not fount`,
+                        message: `Card not in merchant offer`,
                     });
                     return;
                 }
             }
         } else {
             client.emit('ErrorMessage', {
-                message: `Card not fount`,
+                message: `Card not in merchant offer`,
             });
             return;
         }
         if (!card.isUpgraded && !card.upgradedCardId) {
             client.emit('ErrorMessage', {
-                message: `Card not upgraded`,
+                message: `Card could be not upgraded`,
             });
             return;
         }
@@ -435,7 +585,7 @@ export class MerchantService {
 
         const upgradedCard: IExpeditionPlayerStateDeckCard = {
             id: randomUUID(),
-            cardId: upgradedCardData.cardId,
+            cardId: card.cardId,
             name: upgradedCardData.name,
             cardType: upgradedCardData.cardType,
             energy: upgradedCardData.energy,
@@ -481,14 +631,7 @@ export class MerchantService {
             },
         );
 
-        client.emit(
-            'CardUpgrade',
-            StandardResponse.respond({
-                message_type: SWARMessageType.CardUpgrade,
-                action: SWARAction.CardUpgrade,
-                data: null,
-            }),
-        );
+        this.success(client);
     }
     async cardDestroy(client: Socket, cardId: CardId) {
         const playerState = await this.expeditionService.getPlayerState({
@@ -516,7 +659,7 @@ export class MerchantService {
         }
         if (cardIndex === null) {
             client.emit('ErrorMessage', {
-                message: `Card not fount`,
+                message: `Card not in merchant offer`,
             });
             return;
         }
@@ -533,13 +676,6 @@ export class MerchantService {
             },
         );
 
-        client.emit(
-            'CardDestroy',
-            StandardResponse.respond({
-                message_type: SWARMessageType.CardDestroy,
-                action: SWARAction.CardDestroy,
-                data: null,
-            }),
-        );
+        this.success(client);
     }
 }

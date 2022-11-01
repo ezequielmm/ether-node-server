@@ -1,8 +1,10 @@
 export enum ItemsTypeEnum {
-    CardsForPlayer = 'cards',
-    NeutralCards = 'neutral_cards',
-    RandomTrinkets = 'trinkets',
-    RandomPotions = 'potions',
+    Card = 'card',
+    NeutralCards = 'neutralCard',
+    Trinket = 'trinket',
+    Potion = 'potion',
+    Destroy = 'remove',
+    Upgrade = 'upgrade',
 }
 
 export enum CardCommon {
