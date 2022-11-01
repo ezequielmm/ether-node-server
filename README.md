@@ -24,7 +24,7 @@ NODE_ENV="development"
 | MONGODB_URL     | The mongo db url for local/remote database connection                   |
 | SSL_CERT_PATH   | The path for the `server.crt` file for SSL                              |
 | SSL_KEY_PATH    | The path for the `server.key` file for SSL                              |
-| GET_PROFILE_URL | API route to gte the user pfile on the auth service                     |
+| GET_PROFILE_URL | API route to get the user profile on the auth service                   |
 | NODE_ENV        | Environment where the service is running: `development` or `production` |
 
 Once the `.env` file is set, we can run `npm run seed` to seed the database with the initial data.
