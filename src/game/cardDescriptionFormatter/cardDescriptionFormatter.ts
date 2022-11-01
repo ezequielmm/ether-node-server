@@ -10,10 +10,10 @@ export class CardDescriptionFormatter {
 
         // Next we loop over all the effects to find the value on the text
         // and update it with the correct value
-        effects.forEach(({ effect: name, args: { value } }) => {
+        effects.forEach(({ effect: name, args }) => {
             card.description = card.description.replace(
                 `{${name}}`,
-                value?.toString(),
+                args?.value?.toString(),
             );
         });
 
