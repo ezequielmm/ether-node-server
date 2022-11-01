@@ -2,7 +2,7 @@ import { EventEmitter2 } from '@nestjs/event-emitter';
 import { Test } from '@nestjs/testing';
 import * as MockedSocket from 'socket.io-mock';
 import { GetEnergyAction } from 'src/game/action/getEnergy.action';
-import { MoveCardAction } from 'src/game/action/moveCard.action';
+import { MoveCardToHandAction } from 'src/game/action/moveCard.action';
 import { CombatQueueService } from 'src/game/components/combatQueue/combatQueue.service';
 import { ExpeditionEnemy } from 'src/game/components/enemy/enemy.interface';
 import { EnemyService } from 'src/game/components/enemy/enemy.service';
@@ -78,7 +78,7 @@ describe('DamageEffect', () => {
                     useValue: {},
                 },
                 {
-                    provide: MoveCardAction,
+                    provide: MoveCardToHandAction,
                     useValue: {},
                 },
                 {

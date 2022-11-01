@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import * as _ from 'lodash';
-import { MoveCardAction } from 'src/game/action/moveCard.action';
+import { MoveCardToHandAction } from 'src/game/action/moveCard.action';
 import { CardSelectionScreenOriginPileEnum } from 'src/game/components/cardSelectionScreen/cardSelectionScreen.enum';
 import { HistoryService } from 'src/game/history/history.service';
 import { CardRegistry } from 'src/game/history/interfaces';
@@ -14,7 +14,7 @@ import { phantomPhialEffect } from './constants';
 @Injectable()
 export class PhantomPhialEffect implements EffectHandler {
     constructor(
-        private readonly moveCardAction: MoveCardAction,
+        private readonly moveCardToHandAction: MoveCardToHandAction,
         private readonly historyService: HistoryService,
     ) {}
 
@@ -27,10 +27,13 @@ export class PhantomPhialEffect implements EffectHandler {
 
         const cardIds = _.map(_.compact(_.take(cardsPlayed, 2)), 'id');
 
-        await this.moveCardAction.handle({
+        await this.moveCardToHandAction.handle({
             client: ctx.client,
             cardIds,
-            cardIsFree: true,
+            callback: (card) => {
+                card.energy = 0;
+                return card;
+            },
             originPile: CardSelectionScreenOriginPileEnum.Discard,
         });
     }
