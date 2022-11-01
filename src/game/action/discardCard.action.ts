@@ -55,7 +55,7 @@ export class DiscardCardAction {
             // before moving it to the discard pile
             if (isNotUndefined(effect.args.doubleValuesWhenPlayed)) {
                 effect.args.value *= 2;
-                if (effect.args.times !== undefined) effect.args.times *= 2;
+                if (effect.times !== undefined) effect.times *= 2;
             }
 
             // Also we check if the card has to lower its values every time is used

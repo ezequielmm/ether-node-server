@@ -1,7 +1,8 @@
-import { forwardRef, Inject, Injectable, Logger } from '@nestjs/common';
 import { randomUUID } from 'crypto';
 import { Socket } from 'socket.io';
 import { CardDescriptionFormatter } from '../cardDescriptionFormatter/cardDescriptionFormatter';
+import { Injectable } from '@nestjs/common';
+import { getRandomBetween } from 'src/utils';
 import { CardRarityEnum, CardTypeEnum } from '../components/card/card.enum';
 import { CardDocument } from '../components/card/card.schema';
 import { CardService } from '../components/card/card.service';
@@ -14,6 +15,7 @@ import {
 import { ExpeditionService } from '../components/expedition/expedition.service';
 import { PotionRarityEnum } from '../components/potion/potion.enum';
 import { PotionService } from '../components/potion/potion.service';
+import { TrinketRarityEnum } from '../components/trinket/trinket.enum';
 import { TrinketService } from '../components/trinket/trinket.service';
 import { restoreMap } from '../map/app';
 import {
@@ -37,21 +39,12 @@ import {
 
 @Injectable()
 export class MerchantService {
-    private readonly logger = new Logger(MerchantService.name);
     constructor(
-        @Inject(forwardRef(() => ExpeditionService))
         private readonly expeditionService: ExpeditionService,
-        @Inject(forwardRef(() => CardService))
         private readonly cardService: CardService,
-        @Inject(forwardRef(() => PotionService))
         private readonly potionService: PotionService,
-        @Inject(forwardRef(() => TrinketService))
         private readonly trinketService: TrinketService,
     ) {}
-
-    random(min: number, max: number): number {
-        return Math.floor(Math.random() * (max - min)) + min;
-    }
 
     merchantBuy(client: Socket, selectedItem: selectedItem) {
         switch (selectedItem.type) {
@@ -184,6 +177,7 @@ export class MerchantService {
         });
         this.success(client);
     }
+
     async handleCard(
         item: Item,
         playerState: IExpeditionPlayerState,
@@ -219,6 +213,7 @@ export class MerchantService {
             },
         });
     }
+
     async handlePotions(
         item: Item,
         playerState: IExpeditionPlayerState,
@@ -239,6 +234,7 @@ export class MerchantService {
             },
         });
     }
+
     async card(): Promise<Item[]> {
         const attackCard = await this.cardService.randomCards(
             2,
@@ -264,26 +260,31 @@ export class MerchantService {
         ];
 
         const cardsForPlayer: Item[] = [];
+
         for (let i = 0; i < card.length; i++) {
             let cost: number = null;
 
             switch (card[i].rarity) {
                 case CardRarityEnum.Common:
-                    cost = this.random(
+                    cost = getRandomBetween(
                         CardCommon.minPrice,
                         CardCommon.maxPrice,
                     );
                     break;
                 case CardRarityEnum.Uncommon:
-                    cost = this.random(
+                    cost = getRandomBetween(
                         CardUncommon.minPrice,
                         CardUncommon.maxPrice,
                     );
                     break;
                 case CardRarityEnum.Rare:
-                    cost = this.random(CardRare.minPrice, CardRare.maxPrice);
+                    cost = getRandomBetween(
+                        CardRare.minPrice,
+                        CardRare.maxPrice,
+                    );
                     break;
             }
+
             cardsForPlayer.push({
                 isSale: false,
                 id: randomUUID(),
@@ -293,7 +294,7 @@ export class MerchantService {
             });
         }
 
-        const randomIndex: number = this.random(0, cardsForPlayer.length);
+        const randomIndex: number = getRandomBetween(0, cardsForPlayer.length);
         cardsForPlayer[randomIndex] = {
             ...cardsForPlayer[randomIndex],
             isSale: true,
@@ -302,27 +303,29 @@ export class MerchantService {
 
         return cardsForPlayer;
     }
+
     async potions(): Promise<Item[]> {
         const potions = await this.potionService.randomPotion(5);
         const randomPotion: Item[] = [];
+
         for (let i = 0; i < potions.length; i++) {
             let cost: number = null;
 
             switch (potions[i].rarity) {
                 case PotionRarityEnum.Common:
-                    cost = this.random(
+                    cost = getRandomBetween(
                         PotionCommon.minPrice,
                         PotionCommon.maxPrice,
                     );
                     break;
                 case PotionRarityEnum.Uncommon:
-                    cost = this.random(
+                    cost = getRandomBetween(
                         PotionUncommon.minPrice,
                         PotionUncommon.maxPrice,
                     );
                     break;
                 case PotionRarityEnum.Rare:
-                    cost = this.random(
+                    cost = getRandomBetween(
                         PotionRare.minPrice,
                         PotionRare.maxPrice,
                     );
@@ -335,8 +338,10 @@ export class MerchantService {
                 itemId: potions[i].potionId,
             });
         }
+
         return randomPotion;
     }
+
     async trinket(): Promise<Item[]> {
         const trinket = await this.trinketService.randomTrinket(5);
         const randomTrinket: Item[] = [];
@@ -344,22 +349,22 @@ export class MerchantService {
             let cost: number = null;
 
             switch (trinket[i].rarity) {
-                case PotionRarityEnum.Common:
-                    cost = this.random(
+                case TrinketRarityEnum.Common:
+                    cost = getRandomBetween(
                         TrinketCommon.minPrice,
                         TrinketCommon.maxPrice,
                     );
 
                     break;
-                case PotionRarityEnum.Uncommon:
-                    cost = this.random(
+                case TrinketRarityEnum.Uncommon:
+                    cost = getRandomBetween(
                         TrinketUncommon.minPrice,
                         TrinketUncommon.maxPrice,
                     );
 
                     break;
-                case PotionRarityEnum.Rare:
-                    cost = this.random(
+                case TrinketRarityEnum.Rare:
+                    cost = getRandomBetween(
                         TrinketRare.minPrice,
                         TrinketRare.maxPrice,
                     );
@@ -374,11 +379,14 @@ export class MerchantService {
         }
         return randomTrinket;
     }
+
     async success(client: Socket) {
         const expedition = await this.expeditionService.findOne({
             clientId: client.id,
         });
+
         const { playerState, playerId } = expedition || {};
+
         client.emit(
             'MerchantBuy',
             StandardResponse.respond({
@@ -590,8 +598,11 @@ export class MerchantService {
             pool: upgradedCardData.pool,
             isUpgraded: upgradedCardData.isUpgraded,
         };
+
         const id = getCardIdField(cardId);
+
         let isUpgraded = false;
+
         const newCard = playerState.cards.map((item) => {
             if (item[id] == card[id] && !isUpgraded) {
                 isUpgraded = true;

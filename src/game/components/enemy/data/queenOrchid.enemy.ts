@@ -1,6 +1,8 @@
+import { addCardEffect } from 'src/game/effects/addCard/contants';
 import { damageEffect } from 'src/game/effects/damage/constants';
-import { defenseEffect } from 'src/game/effects/defense/constants';
+import { feebleStatus } from 'src/game/status/feeble/constants';
 import { CardTargetedEnum } from '../../card/card.enum';
+import { ChokingCard } from '../../card/data/choking.card';
 import {
     EnemyTypeEnum,
     EnemyCategoryEnum,
@@ -22,16 +24,16 @@ export const queenOrchidData: Enemy = {
         {
             intentions: [
                 {
-                    type: EnemyIntentionType.Defend,
-                    target: CardTargetedEnum.Self,
-                    value: 1,
-                    //  This effect 'cardAdd' was not developed so I have added x one
+                    type: EnemyIntentionType.Debuff,
+                    target: CardTargetedEnum.Player,
+                    value: 2,
                     effects: [
                         {
-                            effect: defenseEffect.name,
-                            target: CardTargetedEnum.Self,
+                            effect: addCardEffect.name,
+                            target: CardTargetedEnum.Player,
                             args: {
                                 value: 1,
+                                cardId: ChokingCard.cardId,
                             },
                         },
                     ],
@@ -47,16 +49,15 @@ export const queenOrchidData: Enemy = {
         {
             intentions: [
                 {
-                    type: EnemyIntentionType.Defend,
-                    target: CardTargetedEnum.Self,
+                    type: EnemyIntentionType.Debuff,
+                    target: CardTargetedEnum.Player,
                     value: 2,
-                    //  This effect 'ApplyDebuff' was not developed so I have added x one
-                    effects: [
+                    status: [
                         {
-                            effect: damageEffect.name,
-                            target: CardTargetedEnum.Self,
+                            name: feebleStatus.name,
+                            attachTo: CardTargetedEnum.Player,
                             args: {
-                                value: 2,
+                                counter: 2,
                             },
                         },
                     ],

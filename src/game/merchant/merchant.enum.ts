@@ -12,26 +12,31 @@ export enum CardCommon {
     minPrice = 45,
     maxPrice = 55,
 }
+
 export enum CardUncommon {
     name = 'uncommon',
     minPrice = 68,
     maxPrice = 82,
 }
+
 export enum CardRare {
     name = 'rare',
     minPrice = 135,
     maxPrice = 165,
 }
+
 export enum PotionCommon {
     name = 'common',
     minPrice = 48,
     maxPrice = 52,
 }
+
 export enum PotionUncommon {
     name = 'uncommon',
     minPrice = 72,
     maxPrice = 78,
 }
+
 export enum PotionRare {
     name = 'rare',
     minPrice = 95,

@@ -25,6 +25,7 @@ export const thornWolfData: Enemy = {
                     type: EnemyIntentionType.Attack,
                     target: CardTargetedEnum.Player,
                     value: 15,
+                    //  This effect 'Summon ' was not developed so I have added 'damageEffect' one
                     effects: [
                         {
                             effect: damageEffect.name,
@@ -109,7 +110,7 @@ export const thornWolfData: Enemy = {
                     type: EnemyIntentionType.Buff,
                     target: CardTargetedEnum.Self,
                     value: 2,
-                    //  This effect 'Buff ' was not developed so I have added x one
+                    //  This effect 'Buff ' was not developed so I have added 'defenseEffect' one
                     effects: [
                         {
                             effect: defenseEffect.name,
@@ -138,7 +139,7 @@ export const thornWolfData: Enemy = {
                     type: EnemyIntentionType.Defend,
                     target: CardTargetedEnum.Self,
                     value: 5,
-                    //  This effect 'Summon ' was not developed so I have added x one
+                    //  This effect 'Summon ' was not developed so I have added 'defenseEffect' one
                     effects: [
                         {
                             effect: defenseEffect.name,
