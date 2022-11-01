@@ -7,7 +7,7 @@ For local development is recommended to have installed:
 -   Node 16 or higher
 -   Mongo DB (can be dockerized)
 
-To install we just need to run `npm run install`
+To install we just need to run `npm install`
 
 Then we run `cp .env.example .env` to create the `.env` file. Here is an example:
 
