@@ -81,6 +81,7 @@ import {
     PerfectTimingCardUpgraded,
 } from './data/perfectTiming.card';
 import { PlantFeetCard, PlantFeetCardUpgraded } from './data/plantFeet.card';
+import { PoisonedCard } from './data/poisoned.card';
 import { PrayCard, PrayCardUpgraded } from './data/pray.card';
 import {
     QuickToAdaptCard,
@@ -275,4 +276,5 @@ export const data: Card[] = [
     ChokingCard,
     ParryCard,
     ParryCardUpgraded,
+    PoisonedCard
 ];
