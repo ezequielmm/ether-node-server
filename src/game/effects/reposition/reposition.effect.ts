@@ -33,6 +33,7 @@ export class RepositionEffect implements EffectHandler {
                 },
             },
         } = payload;
+        const ctx = payload.ctx;
 
         // This is just to send the correct message type across the effect
         const SWARMessageTypeToSend = SWARMessageType.PlayerAffected;
@@ -50,7 +51,7 @@ export class RepositionEffect implements EffectHandler {
         // Now, we take the amount of cards we had on the hand pile
         // from the draw pile
         await this.drawCardAction.handle({
-            client,
+            ctx,
             amountToTake: cardsToDrawBack,
             cardType: undefined,
             SWARMessageTypeToSend,
