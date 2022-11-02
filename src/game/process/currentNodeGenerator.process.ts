@@ -257,6 +257,7 @@ export class CurrentNodeGeneratorProcess {
                     'rarity',
                     'cardType',
                     'pool',
+                    'isUpgraded',
                 ]) as unknown as CardPreview,
                 taken: false,
             });
