@@ -62,7 +62,7 @@ export class RewardGateway {
             return id === rewardId;
         });
 
-        // If the reward is inavlid we throw and exception
+        // If the reward is invalid we throw and exception
         if (!reward) throw new Error(`Reward ${rewardId} not found`);
 
         // Now we set that we took the reward
