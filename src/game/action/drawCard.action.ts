@@ -1,5 +1,4 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { Socket } from 'socket.io';
 import { isNotUndefined, removeCardsFromPile } from 'src/utils';
 import { CardTypeEnum } from '../components/card/card.enum';
 import { IExpeditionPlayerStateDeckCard } from '../components/expedition/expedition.interface';
@@ -11,13 +10,23 @@ import {
 } from '../standardResponse/standardResponse';
 import { confusion } from '../status/confusion/constants';
 import { CardService } from '../components/card/card.service';
+import { EventEmitter2 } from '@nestjs/event-emitter';
+import { EVENT_AFTER_DRAW_CARDS } from '../constants';
+import { GameContext } from '../components/interfaces';
 
 interface DrawCardDTO {
-    readonly client: Socket;
+    readonly ctx: GameContext;
     readonly amountToTake: number;
     readonly SWARMessageTypeToSend: SWARMessageType;
     readonly cardType?: CardTypeEnum;
     readonly useEnemiesConfusedAsValue?: boolean;
+}
+
+export interface AfterDrawCardEvent {
+    ctx: GameContext;
+    newHand: IExpeditionPlayerStateDeckCard[];
+    newDiscard: IExpeditionPlayerStateDeckCard[];
+    newDraw: IExpeditionPlayerStateDeckCard[];
 }
 
 @Injectable()
@@ -27,16 +36,19 @@ export class DrawCardAction {
     constructor(
         private readonly expeditionService: ExpeditionService,
         private readonly cardService: CardService,
+        private readonly eventEmitter2: EventEmitter2,
     ) {}
 
     async handle(payload: DrawCardDTO): Promise<void> {
         const {
-            client,
+            ctx,
             amountToTake,
             cardType,
             SWARMessageTypeToSend,
             useEnemiesConfusedAsValue,
         } = payload;
+
+        const { client } = ctx;
 
         const cardTypeFilter = cardType === undefined ? 'All' : cardType;
 
@@ -232,6 +244,18 @@ export class DrawCardAction {
                 draw: newDraw,
                 discard: newDiscard,
             });
+
+            const afterDrawCardsEvent: AfterDrawCardEvent = {
+                ctx,
+                newHand,
+                newDraw,
+                newDiscard,
+            };
+
+            await this.eventEmitter2.emitAsync(
+                EVENT_AFTER_DRAW_CARDS,
+                afterDrawCardsEvent,
+            );
         }
     }
 }
