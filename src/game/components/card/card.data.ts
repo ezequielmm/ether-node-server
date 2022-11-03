@@ -16,6 +16,7 @@ import { BulkUpCard, BulkUpCardUpgraded } from './data/bulkUp.card';
 import { BulliedCard } from './data/bullied.card';
 import { BurnedCard } from './data/burned.card';
 import { ChargeCard, ChargeCardUpgraded } from './data/charge.card';
+import { CharmedCard } from './data/charmed.card';
 import { ChokingCard } from './data/choking.card';
 import { CounterCard, CounterCardUpgraded } from './data/counter.card';
 import { DefenseCard, DefenseCardUpgraded } from './data/defend.card';
@@ -276,5 +277,6 @@ export const data: Card[] = [
     ChokingCard,
     ParryCard,
     ParryCardUpgraded,
-    PoisonedCard
+    PoisonedCard,
+    CharmedCard,
 ];

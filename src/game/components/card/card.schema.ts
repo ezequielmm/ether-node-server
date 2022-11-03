@@ -56,6 +56,9 @@ export class Card {
 
     @Prop()
     triggerAtEndOfTurn?: boolean;
+
+    @Prop()
+    triggerOnDrawn?: boolean;
 }
 
 export const CardSchema = SchemaFactory.createForClass(Card);
