@@ -80,7 +80,7 @@ export const barkChargerData: Enemy = {
                 {
                     type: EnemyIntentionType.Buff,
                     target: CardTargetedEnum.Self,
-                    value: 5,
+                    value: 2,
                     status: [
                         {
                             name: resolveStatus.name,
