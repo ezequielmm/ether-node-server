@@ -1,4 +1,3 @@
-import { resolveStatus } from 'src/game/status/resolve/constants';
 import { damageEffect } from 'src/game/effects/damage/constants';
 import { defenseEffect } from 'src/game/effects/defense/constants';
 import { CardTargetedEnum } from '../../card/card.enum';
@@ -10,6 +9,7 @@ import {
 } from '../enemy.enum';
 import { Enemy } from '../enemy.schema';
 import { feebleStatus } from 'src/game/status/feeble/constants';
+import { trapped } from 'src/game/status/trapped/constants';
 
 export const trapelicanData: Enemy = {
     enemyId: 12,
@@ -49,7 +49,7 @@ export const trapelicanData: Enemy = {
                 {
                     type: EnemyIntentionType.Attack,
                     target: CardTargetedEnum.Self,
-                    value: 3,
+                    value: 4,
                     effects: [
                         {
                             effect: defenseEffect.name,
@@ -108,7 +108,7 @@ export const trapelicanData: Enemy = {
                     value: 1,
                     status: [
                         {
-                            name: resolveStatus.name,
+                            name: trapped.name,
                             attachTo: CardTargetedEnum.Self,
                             args: {
                                 counter: 1,

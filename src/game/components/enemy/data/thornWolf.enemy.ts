@@ -1,5 +1,6 @@
 import { damageEffect } from 'src/game/effects/damage/constants';
 import { defenseEffect } from 'src/game/effects/defense/constants';
+import { spikesStatus } from 'src/game/status/spikes/constants';
 import { CardTargetedEnum } from '../../card/card.enum';
 import {
     EnemyTypeEnum,
@@ -110,13 +111,12 @@ export const thornWolfData: Enemy = {
                     type: EnemyIntentionType.Buff,
                     target: CardTargetedEnum.Self,
                     value: 2,
-                    //  This effect 'Buff ' was not developed so I have added 'defenseEffect' one
-                    effects: [
+                    status: [
                         {
-                            effect: defenseEffect.name,
-                            target: CardTargetedEnum.Self,
+                            name: spikesStatus.name,
+                            attachTo: CardTargetedEnum.Self,
                             args: {
-                                value: 2,
+                                counter: 2,
                             },
                         },
                     ],

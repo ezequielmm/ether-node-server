@@ -40,7 +40,6 @@ export const groundMothData: Enemy = {
                     type: EnemyIntentionType.Attack,
                     target: CardTargetedEnum.Player,
                     value: 5,
-                    // TODO: Create Feeble Status and use it here
                     effects: [
                         {
                             effect: damageEffect.name,
