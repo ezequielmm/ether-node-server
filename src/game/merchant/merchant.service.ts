@@ -374,7 +374,7 @@ export class MerchantService {
                 id: randomUUID(),
                 cost,
                 isSold: false,
-                itemId: i,
+                itemId: trinket[i].trinketId,
             });
         }
         return randomTrinket;
@@ -390,7 +390,7 @@ export class MerchantService {
         client.emit(
             'MerchantBuy',
             StandardResponse.respond({
-                message_type: SWARMessageType.MapUpdate,
+                message_type: SWARMessageType.MerchantUpdate,
                 action: SWARAction.PurchaseSuccess,
                 data: null,
             }),
@@ -497,6 +497,7 @@ export class MerchantService {
                 item: { ...card, id: cards[i].id, isTemporary: false },
             });
         }
+
         for (let i = 0; i < potions.length; i++) {
             const potion = await this.potionService.findById(potions[i].itemId);
             delete potion._id;
@@ -510,6 +511,7 @@ export class MerchantService {
                 item: { ...potion, id: potions[i].id },
             });
         }
+
         for (let i = 0; i < trinkets.length; i++) {
             const trinket = await this.trinketService.findById(
                 trinkets[i].itemId,
@@ -517,9 +519,9 @@ export class MerchantService {
             delete trinket._id;
             delete trinket.__v;
             data.trinkets.push({
-                itemId: i, //TODO change to trinkets id when it will be ready
-                cost: potions[i].cost,
-                isSold: potions[i].isSold,
+                itemId: trinket.trinketId,
+                cost: trinkets[i].cost,
+                isSold: trinkets[i].isSold,
                 type: ItemsTypeEnum.Trinket,
                 id: trinkets[i].id,
                 item: { ...trinket, id: trinkets[i].id },
