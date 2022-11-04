@@ -1,29 +1,26 @@
+import { Logger } from '@nestjs/common';
 import { connect, Socket } from 'socket.io-client';
-import {
-    DefaultEventsMap,
-    ReservedOrUserEventNames,
-    ReservedOrUserListener,
-} from 'socket.io/dist/typed-events';
+import { DefaultEventsMap } from 'socket.io/dist/typed-events';
 
 export class MockedClientSocket {
     socket: Socket<DefaultEventsMap, DefaultEventsMap>;
 
-    // add logger
+    private readonly logger: Logger = new Logger(MockedClientSocket.name);
 
     public connect(port: number): Promise<void> {
         return new Promise((resolve) => {
             this.socket = connect(`ws://[::1]:${port}`).on('connect', () => {
-                console.log('client connected');
+                Logger.debug('client connected');
                 resolve();
             });
         });
     }
 
-    public on(event: string, callback: any) {
+    public on(event: string, callback: any): void {
         this.socket.on(event, callback);
     }
 
-    public disconnect() {
-        console.log('');
+    public disconnect(): void {
+        this.socket.disconnect();
     }
 }
