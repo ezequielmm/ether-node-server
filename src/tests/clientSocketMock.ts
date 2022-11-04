@@ -2,10 +2,10 @@ import { Logger } from '@nestjs/common';
 import { connect, Socket } from 'socket.io-client';
 import { DefaultEventsMap } from 'socket.io/dist/typed-events';
 
-export class MockedClientSocket {
+export class ClientSocketMock {
     socket: Socket<DefaultEventsMap, DefaultEventsMap>;
 
-    private readonly logger: Logger = new Logger(MockedClientSocket.name);
+    private readonly logger: Logger = new Logger(ClientSocketMock.name);
 
     public connect(port: number): Promise<void> {
         return new Promise((resolve) => {

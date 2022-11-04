@@ -26,17 +26,17 @@ import { IoAdapter } from '@nestjs/platform-socket.io';
 import { Connection } from 'mongoose';
 import { INestApplication } from '@nestjs/common';
 
-import { MockedServerSocketGateway } from 'src/tests/mockedServerSocketGateway';
-import { MockedClientSocket } from 'src/tests/mockedclientsocket';
+import { ServerSocketGatewayMock } from 'src/tests/serverSocketGatewayMock';
+import { ClientSocketMock } from 'src/tests/clientSocketMock';
 
 describe('CardPlayedAction Action', () => {
     let module: TestingModule;
     let expeditionService: ExpeditionService;
     let cardPlayedAction: CardPlayedAction;
-    let mockedSocketGateway: MockedServerSocketGateway;
+    let mockedSocketGateway: ServerSocketGatewayMock;
     let connection: Connection;
     let app: INestApplication;
-    let clientSocket: MockedClientSocket;
+    let clientSocket: ClientSocketMock;
 
     beforeAll(async () => {
         module = await Test.createTestingModule({
@@ -90,15 +90,15 @@ describe('CardPlayedAction Action', () => {
                 },
                 ExpeditionService,
                 CardPlayedAction,
-                MockedServerSocketGateway,
+                ServerSocketGatewayMock,
             ],
         }).compile();
         expeditionService = module.get<ExpeditionService>(ExpeditionService);
         expect(expeditionService).toBeDefined();
         cardPlayedAction = module.get<CardPlayedAction>(CardPlayedAction);
         expect(cardPlayedAction).toBeDefined();
-        mockedSocketGateway = module.get<MockedServerSocketGateway>(
-            MockedServerSocketGateway,
+        mockedSocketGateway = module.get<ServerSocketGatewayMock>(
+            ServerSocketGatewayMock,
         );
         expect(mockedSocketGateway).toBeDefined();
 
@@ -110,7 +110,7 @@ describe('CardPlayedAction Action', () => {
 
         await app.init();
         const { port } = app.getHttpServer().listen().address();
-        clientSocket = new MockedClientSocket();
+        clientSocket = new ClientSocketMock();
         await clientSocket.connect(port);
     });
 

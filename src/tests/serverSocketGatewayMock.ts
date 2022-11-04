@@ -10,12 +10,10 @@ import { Server, Socket } from 'socket.io';
 import { Logger } from '@nestjs/common';
 
 @WebSocketGateway(corsSocketSettings)
-export class MockedServerSocketGateway
+export class ServerSocketGatewayMock
     implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
 {
-    private readonly logger: Logger = new Logger(
-        MockedServerSocketGateway.name,
-    );
+    private readonly logger: Logger = new Logger(ServerSocketGatewayMock.name);
 
     @WebSocketServer() server: Server;
     clientSocket: Socket;
