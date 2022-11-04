@@ -21,15 +21,25 @@ import { DiscardCardAction } from './discardCard.action';
 import { ExhaustCardAction } from './exhaustCard.action';
 import { EndPlayerTurnProcess } from '../process/endPlayerTurn.process';
 import { InMemoryMongo } from 'src/tests/inmemory.mongo';
+import { IoAdapter } from '@nestjs/platform-socket.io';
+
 import { Connection } from 'mongoose';
+import { INestApplication } from '@nestjs/common';
+
+import { ServerSocketGatewayMock } from 'src/tests/serverSocketGatewayMock';
+import { ClientSocketMock } from 'src/tests/clientSocketMock';
 
 describe('CardPlayedAction Action', () => {
+    let module: TestingModule;
     let expeditionService: ExpeditionService;
     let cardPlayedAction: CardPlayedAction;
+    let mockedSocketGateway: ServerSocketGatewayMock;
     let connection: Connection;
+    let app: INestApplication;
+    let clientSocket: ClientSocketMock;
 
-    beforeEach(async () => {
-        const module: TestingModule = await Test.createTestingModule({
+    beforeAll(async () => {
+        module = await Test.createTestingModule({
             imports: [
                 InMemoryMongo.forRootAsync(),
                 MongooseModule.forFeature([
@@ -80,16 +90,48 @@ describe('CardPlayedAction Action', () => {
                 },
                 ExpeditionService,
                 CardPlayedAction,
+                ServerSocketGatewayMock,
             ],
         }).compile();
-
         expeditionService = module.get<ExpeditionService>(ExpeditionService);
-        cardPlayedAction = module.get<CardPlayedAction>(CardPlayedAction);
         expect(expeditionService).toBeDefined();
+        cardPlayedAction = module.get<CardPlayedAction>(CardPlayedAction);
         expect(cardPlayedAction).toBeDefined();
+        mockedSocketGateway = module.get<ServerSocketGatewayMock>(
+            ServerSocketGatewayMock,
+        );
+        expect(mockedSocketGateway).toBeDefined();
 
         connection = await module.get(getConnectionToken());
         expect(connection).toBeDefined();
+
+        app = module.createNestApplication();
+        app.useWebSocketAdapter(new IoAdapter(app));
+
+        await app.init();
+        const { port } = app.getHttpServer().listen().address();
+        clientSocket = new ClientSocketMock();
+        await clientSocket.connect(port);
+    });
+
+    it('card does not exist', async () => {
+        await cardPlayedAction.handle({
+            client: mockedSocketGateway.clientSocket,
+            cardId: 'card_does_not_exist',
+            selectedEnemyId: '',
+        });
+
+        // if not resolving this promise we will get a timeout by jest
+        await new Promise<void>((resolve) => {
+            clientSocket.on('ErrorMessage', (message) => {
+                message = JSON.parse(message);
+                expect(message.data).toBeDefined();
+                expect(message.data.message_type).toBe('error');
+                expect(message.data.action).toBe('invalid_card');
+                expect(message.data.data).toBeNull();
+                resolve();
+            });
+        });
     });
 
     // TODO: The idea is to show you how you can create in-memory mongodb documents
@@ -107,10 +149,6 @@ describe('CardPlayedAction Action', () => {
         expect(expedition.status).toBe(ExpeditionStatusEnum.InProgress);
     });
 
-    it('card does not exist', async () => {
-        // TODO: call cardPlayedAction.handle() with a fake card
-    });
-
     it('unplayable card', async () => {
         // TODO: call cardPlayedAction.handle() with a unplayable
     });
@@ -124,6 +162,8 @@ describe('CardPlayedAction Action', () => {
     });
 
     afterAll(async () => {
+        clientSocket.disconnect();
         await connection.close();
+        await app.close();
     });
 });
