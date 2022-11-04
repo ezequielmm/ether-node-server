@@ -7,7 +7,7 @@ import {
     AutonomousWeaponCard,
     AutonomousWeaponCardUpgraded,
 } from './data/autonomousWeapon.card';
-// import { BackflipCard, BackflipCardUpgraded } from './data/backflip.card';
+import { BackflipCard, BackflipCardUpgraded } from './data/backflip.card';
 import { BackHandCard, BackHandCardUpgraded } from './data/backhand.card';
 import { BlusterCard, BlusterCardUpgraded } from './data/bluster.card';
 import { BolsterCard, BolsterCardUpgraded } from './data/bolster.card';
@@ -16,16 +16,17 @@ import { BulkUpCard, BulkUpCardUpgraded } from './data/bulkUp.card';
 import { BulliedCard } from './data/bullied.card';
 import { BurnedCard } from './data/burned.card';
 import { ChargeCard, ChargeCardUpgraded } from './data/charge.card';
+import { CharmedCard } from './data/charmed.card';
 import { ChokingCard } from './data/choking.card';
 import { CounterCard, CounterCardUpgraded } from './data/counter.card';
 import { DefenseCard, DefenseCardUpgraded } from './data/defend.card';
 import { DivineGiftCard, DivineGiftCardUpgraded } from './data/divineGift.card';
 import { DoubleDownCard, DoubleDownCardUpgraded } from './data/doubleDown.card';
 import { EnnuiCard } from './data/ennui.card';
-// import {
-//     ExecutionersBlowCard,
-//     ExecutionersBlowCardUpgraded,
-// } from './data/executionersBlow.card';
+import {
+    ExecutionersBlowCard,
+    ExecutionersBlowCardUpgraded,
+} from './data/executionersBlow.card';
 import { FadeCard, FadeCardUpgraded } from './data/fade.card';
 import { FeintCard, FeintCardUpgraded } from './data/feint.card';
 import {
@@ -36,7 +37,7 @@ import { FineEdgeCard, FineEdgeCardUpgraded } from './data/fineEdge.card';
 import { FirstMoveCard, FirstMoveCardUpgraded } from './data/firstMove.card';
 import { FlurryCard, FlurryCardUpgraded } from './data/flurry.card';
 import { ForceFieldCard, ForceFieldCardUpgraded } from './data/forceField.card';
-// import { FrontflipCard, FrontflipCardUpgraded } from './data/frontflip.card';
+import { FrontflipCard, FrontflipCardUpgraded } from './data/frontflip.card';
 import {
     GiveNoGroundCard,
     GiveNoGroundCardUpgraded,
@@ -81,6 +82,7 @@ import {
     PerfectTimingCardUpgraded,
 } from './data/perfectTiming.card';
 import { PlantFeetCard, PlantFeetCardUpgraded } from './data/plantFeet.card';
+import { PoisonedCard } from './data/poisoned.card';
 import { PrayCard, PrayCardUpgraded } from './data/pray.card';
 import {
     QuickToAdaptCard,
@@ -220,8 +222,8 @@ export const data: Card[] = [
     AdeptCardUpgraded,
     DivineGiftCard,
     DivineGiftCardUpgraded,
-    // ExecutionersBlowCard,
-    // ExecutionersBlowCardUpgraded,
+    ExecutionersBlowCard,
+    ExecutionersBlowCardUpgraded,
     KnightsResolveCard,
     KnightsResolveCardUpgraded,
     ShieldPlantCard,
@@ -242,10 +244,10 @@ export const data: Card[] = [
     TwistTheBladeCardUpgraded,
     KnockDownCard,
     KnockDownCardUpgraded,
-    // BackflipCard,
-    // BackflipCardUpgraded,
-    // FrontflipCard,
-    // FrontflipCardUpgraded,
+    BackflipCard,
+    BackflipCardUpgraded,
+    FrontflipCard,
+    FrontflipCardUpgraded,
     BurnedCard,
     RoundHouseCard,
     RoundHouseCardUpgraded,
@@ -275,4 +277,6 @@ export const data: Card[] = [
     ChokingCard,
     ParryCard,
     ParryCardUpgraded,
+    PoisonedCard,
+    CharmedCard,
 ];

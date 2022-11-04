@@ -58,7 +58,10 @@ export class CurrentNodeGeneratorProcess {
     private readonly trinketRewardByNodeSubType: Map<
         ExpeditionMapNodeTypeEnum,
         number[]
-    > = new Map([[ExpeditionMapNodeTypeEnum.CombatElite, [0.5, 0.33, 0.17]]]);
+    > = new Map([
+        [ExpeditionMapNodeTypeEnum.CombatElite, [0.5, 0.33, 0.17]],
+        [ExpeditionMapNodeTypeEnum.CombatStandard, [0.5, 0.33, 0.17]],
+    ]);
 
     constructor(
         private readonly expeditionService: ExpeditionService,
@@ -254,6 +257,7 @@ export class CurrentNodeGeneratorProcess {
                     'rarity',
                     'cardType',
                     'pool',
+                    'isUpgraded',
                 ]) as unknown as CardPreview,
                 taken: false,
             });

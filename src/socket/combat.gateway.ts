@@ -9,7 +9,7 @@ import { ExpeditionService } from 'src/game/components/expedition/expedition.ser
 import { CombatTurnEnum } from 'src/game/components/expedition/expedition.enum';
 import { EndEnemyTurnProcess } from 'src/game/process/endEnemyTurn.process';
 import { CardSelectionScreenService } from 'src/game/components/cardSelectionScreen/cardSelectionScreen.service';
-import { MoveCardAction } from 'src/game/action/moveCard.action';
+import { MoveCardToHandAction } from 'src/game/action/moveCard.action';
 import { corsSocketSettings } from './socket.enum';
 
 interface ICardPlayed {
@@ -31,7 +31,7 @@ export class CombatGateway {
         private readonly endEnemyTurnProcess: EndEnemyTurnProcess,
         private readonly expeditionService: ExpeditionService,
         private readonly cardSelectionService: CardSelectionScreenService,
-        private readonly moveCardAction: MoveCardAction,
+        private readonly moveCardAction: MoveCardToHandAction,
     ) {}
 
     @SubscribeMessage('EndTurn')
@@ -112,6 +112,10 @@ export class CombatGateway {
             client,
             cardIds: newCardList,
             originPile,
+            callback: (card) => {
+                card.energy = 0;
+                return card;
+            },
         });
 
         // Now we remove the info from the database

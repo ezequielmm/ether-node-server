@@ -26,14 +26,14 @@ export const queenOrchidData: Enemy = {
                 {
                     type: EnemyIntentionType.Debuff,
                     target: CardTargetedEnum.Player,
-                    value: 2,
+                    value: 1,
                     effects: [
                         {
                             effect: addCardEffect.name,
                             target: CardTargetedEnum.Player,
                             args: {
                                 value: 1,
-                                cardId: ChokingCard.cardId,
+                                cardId: ChokingCard.cardId, //
                             },
                         },
                     ],

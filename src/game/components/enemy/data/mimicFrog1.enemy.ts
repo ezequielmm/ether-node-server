@@ -22,7 +22,6 @@ export const mimicFrog1Data: Enemy = {
     healthRange: [22, 28],
     scripts: [
         {
-            //
             intentions: [
                 {
                     type: EnemyIntentionType.Attack,
@@ -98,10 +97,9 @@ export const mimicFrog1Data: Enemy = {
                 {
                     type: EnemyIntentionType.Debuff,
                     target: CardTargetedEnum.Player,
-                    value: 5,
+                    value: 2,
                     status: [
                         {
-                            // TODO: Check if this is the correct status to add
                             name: fatigue.name,
                             attachTo: CardTargetedEnum.Player,
                             args: {

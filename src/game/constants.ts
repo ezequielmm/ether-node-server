@@ -22,3 +22,5 @@ export const EVENT_AFTER_STATUSES_UPDATE = 'afterStatusesUpdate';
 export const EVENT_BEFORE_ENEMY_INTENTIONS = 'beforeEnemyIntentions';
 
 export const EVENT_AFTER_DAMAGE_EFFECT = 'damageEffect';
+
+export const EVENT_AFTER_DRAW_CARDS = 'afterDrawCards';

@@ -1,7 +1,11 @@
+import { ItemsTypeEnum } from './merchant.enum';
+
 export interface Item {
     isSale?: boolean;
-    id: number | string;
-    price: number;
+    id: string;
+    cost: number;
+    isSold: boolean;
+    itemId: number;
 }
 
 export interface FindOneMerchantDTO {
@@ -12,6 +16,6 @@ export interface ItemId {
 }
 
 export interface selectedItem {
-    id: number | string;
-    type: 'cards' | 'neutral_cards' | 'trinkets' | 'potions';
+    targetId: number | string;
+    type: ItemsTypeEnum;
 }
