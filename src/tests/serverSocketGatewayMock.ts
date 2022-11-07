@@ -18,9 +18,6 @@ export class ServerSocketGatewayMock
     @WebSocketServer() server: Server;
     clientSocket: Socket;
 
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
-    constructor() {}
-
     afterInit(): void {
         this.logger.debug('socket initialized');
     }

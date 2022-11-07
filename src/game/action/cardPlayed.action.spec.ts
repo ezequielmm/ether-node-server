@@ -20,7 +20,7 @@ import { HistoryService } from '../history/history.service';
 import { DiscardCardAction } from './discardCard.action';
 import { ExhaustCardAction } from './exhaustCard.action';
 import { EndPlayerTurnProcess } from '../process/endPlayerTurn.process';
-import { InMemoryMongo } from 'src/tests/inmemory.mongo';
+import { InMemoryMongoDB } from 'src/tests/inMemoryMongoDB';
 import { IoAdapter } from '@nestjs/platform-socket.io';
 
 import { Connection } from 'mongoose';
@@ -28,6 +28,7 @@ import { INestApplication } from '@nestjs/common';
 
 import { ServerSocketGatewayMock } from 'src/tests/serverSocketGatewayMock';
 import { ClientSocketMock } from 'src/tests/clientSocketMock';
+import { MongoMemoryServer } from 'mongodb-memory-server';
 
 describe('CardPlayedAction Action', () => {
     let module: TestingModule;
@@ -36,12 +37,15 @@ describe('CardPlayedAction Action', () => {
     let mockedSocketGateway: ServerSocketGatewayMock;
     let connection: Connection;
     let app: INestApplication;
-    let clientSocket: ClientSocketMock;
+    let serverPort: number;
+    let clientSockets: Array<ClientSocketMock>;
+    let mongod: MongoMemoryServer;
 
     beforeAll(async () => {
+        mongod = await InMemoryMongoDB.buildMongoMemoryServer();
         module = await Test.createTestingModule({
             imports: [
-                InMemoryMongo.forRootAsync(),
+                InMemoryMongoDB.forRootAsyncModule(mongod),
                 MongooseModule.forFeature([
                     { name: Enemy.name, schema: EnemySchema },
                     { name: Expedition.name, schema: ExpeditionSchema },
@@ -110,11 +114,15 @@ describe('CardPlayedAction Action', () => {
 
         await app.init();
         const { port } = app.getHttpServer().listen().address();
-        clientSocket = new ClientSocketMock();
-        await clientSocket.connect(port);
+        serverPort = port;
+        clientSockets = [];
     });
 
     it('card does not exist', async () => {
+        const clientSocket = new ClientSocketMock();
+        clientSockets.push(clientSocket);
+        await clientSocket.connect(serverPort);
+
         await cardPlayedAction.handle({
             client: mockedSocketGateway.clientSocket,
             cardId: 'card_does_not_exist',
@@ -162,7 +170,10 @@ describe('CardPlayedAction Action', () => {
     });
 
     afterAll(async () => {
-        clientSocket.disconnect();
+        clientSockets.forEach((cs) => {
+            cs.disconnect();
+        });
+        await mongod.stop();
         await connection.close();
         await app.close();
     });
