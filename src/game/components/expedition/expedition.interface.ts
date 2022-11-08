@@ -53,6 +53,7 @@ export interface IExpeditionNode {
     readonly status: ExpeditionMapNodeStatusEnum;
     readonly exits: number[];
     readonly enter: number[];
+    readonly title?: string;
     readonly private_data: {
         cards?: Item[];
         neutralCards?: Item[];
