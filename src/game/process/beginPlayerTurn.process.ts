@@ -113,7 +113,7 @@ export class BeginPlayerTurnProcess {
         );
 
         await this.drawCardAction.handle({
-            client,
+            ctx,
             amountToTake: handSize,
             cardType: undefined,
             SWARMessageTypeToSend: SWARMessageType.BeginTurn,

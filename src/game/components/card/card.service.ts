@@ -6,6 +6,7 @@ import { filter } from 'lodash';
 import { Model } from 'mongoose';
 import { CardPlayedAction } from 'src/game/action/cardPlayed.action';
 import {
+    EVENT_AFTER_DRAW_CARDS,
     EVENT_AFTER_STATUSES_UPDATE,
     EVENT_AFTER_STATUS_ATTACH,
     EVENT_BEFORE_PLAYER_TURN_END,
@@ -36,6 +37,7 @@ import {
 } from 'src/game/standardResponse/standardResponse';
 import { CardDescriptionFormatter } from 'src/game/cardDescriptionFormatter/cardDescriptionFormatter';
 import { getRandomNumber } from 'src/utils';
+import { AfterDrawCardEvent } from 'src/game/action/drawCard.action';
 
 @Injectable()
 export class CardService {
@@ -152,19 +154,41 @@ export class CardService {
         return card[0] ? card[0] : null;
     }
 
+    @OnEvent(EVENT_AFTER_DRAW_CARDS)
+    async onAfterDrawCards(payload: AfterDrawCardEvent) {
+        const { ctx, newHand } = payload;
+
+        const cards = filter(newHand, {
+            triggerOnDrawn: true,
+        });
+
+        if (cards.length) {
+            for (const card of cards) {
+                this.logger.debug(
+                    `Auto playing card ${card.cardId}:${card.name}`,
+                );
+                await this.cardPlayedAction.handle({
+                    client: ctx.client,
+                    cardId: card.id,
+                    selectedEnemyId: undefined,
+                });
+            }
+        }
+    }
+
     @OnEvent(EVENT_BEFORE_PLAYER_TURN_END)
     async onBeforePlayerTurnEnd(payload: { ctx: GameContext }) {
         const ctx = payload.ctx as GameContext;
 
-        const fadeCards = filter(
+        const cards = filter(
             ctx.expedition.currentNode.data.player.cards.hand,
             {
                 triggerAtEndOfTurn: true,
             },
         );
 
-        if (fadeCards.length) {
-            for (const card of fadeCards) {
+        if (cards.length) {
+            for (const card of cards) {
                 this.logger.debug(
                     `Auto playing card ${card.cardId}:${card.name}`,
                 );
