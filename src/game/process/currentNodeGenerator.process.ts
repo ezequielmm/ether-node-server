@@ -9,6 +9,7 @@ import {
 import { CardRarityEnum } from '../components/card/card.enum';
 import { CardDocument } from '../components/card/card.schema';
 import { CardService } from '../components/card/card.service';
+import { EnemyCategoryEnum } from '../components/enemy/enemy.enum';
 import { EnemyService } from '../components/enemy/enemy.service';
 import { EnemyId } from '../components/enemy/enemy.type';
 import {
@@ -175,10 +176,14 @@ export class CurrentNodeGeneratorProcess {
             enemyGroup.map(async (enemyId: EnemyId) => {
                 const enemy = await this.enemyService.findById(enemyId);
 
-                const newHealth = getRandomBetween(
+                let newHealth = getRandomBetween(
                     enemy.healthRange[0],
                     enemy.healthRange[1],
                 );
+
+                if (this.node.step >= 13 && this.node.step <= 19) {
+                    newHealth = Math.floor(newHealth * 1.5);
+                }
 
                 return {
                     id: randomUUID(),

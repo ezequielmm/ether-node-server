@@ -4,7 +4,7 @@ import { Enemy, EnemyDocument } from './enemy.schema';
 import { Model } from 'mongoose';
 import { EnemyId, enemyIdField, enemySelector } from './enemy.type';
 import { GameContext, ExpeditionEntity } from '../interfaces';
-import { ExpeditionEnemy } from './enemy.interface';
+import { EnemyScript, ExpeditionEnemy } from './enemy.interface';
 import { CardTargetedEnum } from '../card/card.enum';
 import { find, sample } from 'lodash';
 import { ExpeditionService } from '../expedition/expedition.service';
@@ -21,6 +21,8 @@ import {
     StatusCounterType,
 } from 'src/game/status/interfaces';
 import { StatusService } from 'src/game/status/status.service';
+import { EnemyIntentionType } from './enemy.enum';
+import { damageEffect } from 'src/game/effects/damage/constants';
 
 @Injectable()
 export class EnemyService {
@@ -257,6 +259,15 @@ export class EnemyService {
                   ]
                 : scripts[0];
 
+            // Increase damage for node from 14 to 20
+            const node = ctx.expedition.map.find(
+                (node) => node.id == ctx.expedition.currentNode.nodeId,
+            );
+
+            if (node.step >= 13 || node.step <= 19) {
+                this.increaseScriptDamage(nextScript);
+            }
+
             await this.expeditionService.updateByFilter(
                 {
                     _id: ctx.expedition._id,
@@ -273,6 +284,27 @@ export class EnemyService {
                 `Calculated new script for enemy ${enemy.value.id}`,
             );
         }
+    }
+
+    /**
+     * Increase damage for script
+     *
+     * @param script Script
+     * @param scale Scale to increase
+     */
+    private increaseScriptDamage(script: EnemyScript, scale: number = 1.5) {
+        script.intentions.forEach((intention) => {
+            if (intention.type == EnemyIntentionType.Attack) {
+                intention.value = Math.floor(intention.value * scale);
+                intention.effects.forEach((effect) => {
+                    if (effect.effect == damageEffect.name) {
+                        effect.args.value = Math.floor(
+                            effect.args.value * scale,
+                        );
+                    }
+                });
+            }
+        });
     }
 
     /**
