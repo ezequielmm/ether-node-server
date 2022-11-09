@@ -212,9 +212,44 @@ export const actCconfigAlternatives = [
                 nodes: [2, 4],
                 node_options: [
                     {
+                        type: 'merchant',
+                        subType: 'merchant',
+                        chance: 5,
+                        config: {},
+                    },
+
+                    {
+                        type: 'camp',
+                        subType: 'camp_regular',
+                        chance: 12,
+                        config: {},
+                    },
+
+                    {
+                        type: 'combat',
+                        subType: 'combat_elite',
+                        chance: 8,
+                        config: {
+                            enemies: [
+                                {
+                                    enemies: [thornWolfData.enemyId],
+                                    probability: 33.3,
+                                },
+                                {
+                                    enemies: [queenOrchidData.enemyId],
+                                    probability: 33.3,
+                                },
+                                {
+                                    enemies: [ancientOneData.enemyId],
+                                    probability: 33.3,
+                                },
+                            ],
+                        },
+                    },
+                    {
                         type: 'combat',
                         subType: 'combat_standard',
-                        chance: 100,
+                        chance: 75,
                         config: {
                             enemies: [
                                 {
@@ -322,7 +357,6 @@ export const actCconfigAlternatives = [
                     },
                 ],
             },
-            // TODO: Node 13
             {
                 nodes: 1,
                 node_options: [
@@ -334,15 +368,49 @@ export const actCconfigAlternatives = [
                     },
                 ],
             },
-
             // Node 14 to 20
             ..._.range(7).map(() => ({
                 nodes: [2, 4],
                 node_options: [
                     {
+                        type: 'merchant',
+                        subType: 'merchant',
+                        chance: 5,
+                        config: {},
+                    },
+
+                    {
+                        type: 'camp',
+                        subType: 'camp_regular',
+                        chance: 12,
+                        config: {},
+                    },
+
+                    {
+                        type: 'combat',
+                        subType: 'combat_elite',
+                        chance: 8,
+                        config: {
+                            enemies: [
+                                {
+                                    enemies: [thornWolfData.enemyId],
+                                    probability: 33.3,
+                                },
+                                {
+                                    enemies: [queenOrchidData.enemyId],
+                                    probability: 33.3,
+                                },
+                                {
+                                    enemies: [ancientOneData.enemyId],
+                                    probability: 33.3,
+                                },
+                            ],
+                        },
+                    },
+                    {
                         type: 'combat',
                         subType: 'combat_standard',
-                        chance: 100,
+                        chance: 75,
                         config: {
                             enemies: [
                                 {
