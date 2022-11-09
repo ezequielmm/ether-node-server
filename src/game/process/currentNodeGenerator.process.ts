@@ -6,6 +6,7 @@ import {
     getRandomItemByWeight,
     removeCardsFromPile,
 } from 'src/utils';
+import { CardDescriptionFormatter } from '../cardDescriptionFormatter/cardDescriptionFormatter';
 import { CardRarityEnum } from '../components/card/card.enum';
 import { CardDocument } from '../components/card/card.schema';
 import { CardService } from '../components/card/card.service';
@@ -246,19 +247,23 @@ export class CurrentNodeGeneratorProcess {
         for (let i = 0; i < 3; i++) {
             const card = await this.getRandomCardByNode();
 
+            const cardPreview = pick(card, [
+                'cardId',
+                'name',
+                'description',
+                'energy',
+                'rarity',
+                'cardType',
+                'pool',
+                'isUpgraded',
+            ]) as unknown as CardPreview;
+
+            cardPreview.description = CardDescriptionFormatter.process(card);
+
             cards.push({
                 id: randomUUID(),
                 type: IExpeditionNodeReward.Card,
-                card: pick(card, [
-                    'cardId',
-                    'name',
-                    'description',
-                    'energy',
-                    'rarity',
-                    'cardType',
-                    'pool',
-                    'isUpgraded',
-                ]) as unknown as CardPreview,
+                card: cardPreview,
                 taken: false,
             });
         }
