@@ -25,7 +25,6 @@ export enum SWARMessageType {
     UsePotion = 'use_potion',
     AddPotion = 'add_potion',
     AddTrinket = 'add_trinket',
-    OpenTreasure = 'open_treasure',
     TreasureNodeUpdate = 'treasure_node_update',
     CardDestroy = 'card_destroy',
 }
@@ -69,7 +68,7 @@ export enum SWARAction {
     PotionNotFoundInDatabase = 'potion_not_found_in_database',
     PotionMaxCountReached = 'potion_max_count_reached',
     TrinketNotFoundInDatabase = 'trinket_not_found_in_database',
-    OpenTreasure = 'open_treasure',
+    ChestResult = 'chest_result',
     TreasureNodeUpdate = 'treasure_node_update',
     HealAmount = 'heal_amount',
     CardUpgrade = 'card_upgrade',
