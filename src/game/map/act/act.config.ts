@@ -14,7 +14,7 @@ import { trapelicanData } from 'src/game/components/enemy/data/trapelican.enemy'
 import { treantData } from 'src/game/components/enemy/data/treant.enemy';
 
 export const actDefaults = {
-    stepsTotal: 22,
+    stepsTotal: 21,
     minNodesPerStep: 2,
     maxNodesPerStep: 6,
     minExitPerNode: 1,
@@ -24,7 +24,7 @@ export const actDefaults = {
 export const actCconfigAlternatives = [
     {
         act: 1,
-        steps: 22,
+        steps: 21,
         minNodesPerStep: 2,
         maxNodesPerStep: 4,
         minExitPerNode: 1,
@@ -323,7 +323,18 @@ export const actCconfigAlternatives = [
                 ],
             },
             // TODO: Node 13
-            null,
+            {
+                nodes: 1,
+                node_options: [
+                    {
+                        type: 'camp',
+                        subType: 'camp_regular',
+                        chance: 100,
+                        config: {},
+                    },
+                ],
+            },
+
             // Node 14 to 20
             ..._.range(7).map(() => ({
                 nodes: [2, 4],
@@ -422,9 +433,19 @@ export const actCconfigAlternatives = [
                     },
                 ],
             })),
-            // TODO: Node 21
-            null,
-            // Step 22
+            // Node 21
+            {
+                nodes: 1,
+                node_options: [
+                    {
+                        type: 'camp',
+                        subType: 'camp_regular',
+                        chance: 100,
+                        config: {},
+                    },
+                ],
+            },
+            // Node 22
             {
                 nodes: 1,
                 node_options: [
