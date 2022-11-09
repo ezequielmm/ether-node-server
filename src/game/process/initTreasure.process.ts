@@ -3,11 +3,6 @@ import { Socket } from 'socket.io';
 import { IExpeditionNode } from '../components/expedition/expedition.interface';
 import { ExpeditionService } from '../components/expedition/expedition.service';
 import { restoreMap } from '../map/app';
-// import {
-//     StandardResponse,
-//     SWARAction,
-//     SWARMessageType,
-// } from '../standardResponse/standardResponse';
 import { TreasureService } from '../treasure/treasure.service';
 import { CurrentNodeGeneratorProcess } from './currentNodeGenerator.process';
 
@@ -42,14 +37,5 @@ export class InitTreasureProcess {
             currentNode,
             map: expeditionMap.getMap,
         });
-
-        // client.emit(
-        //     'TreasureNodeUpdate',
-        //     StandardResponse.respond({
-        //         message_type: SWARMessageType.TreasureNodeUpdate,
-        //         action: SWARAction.TreasureNodeUpdate,
-        //         data: treasure,
-        //     }),
-        // );
     }
 }

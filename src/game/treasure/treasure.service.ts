@@ -249,10 +249,10 @@ export class TreasureService {
         });
 
         client.emit(
-            'OpenChest',
+            'ChestOpened',
             StandardResponse.respond({
-                message_type: SWARMessageType.OpenTreasure,
-                action: SWARAction.OpenTreasure,
+                message_type: SWARMessageType.GenericData,
+                action: SWARAction.ChestResult,
                 data: result,
             }),
         );
@@ -311,7 +311,7 @@ export class TreasureService {
             StandardResponse.respond({
                 message_type: SWARMessageType.GenericData,
                 action: SWARAction.TreasureData,
-                data: treasure,
+                data: treasure.type,
             }),
         );
     }

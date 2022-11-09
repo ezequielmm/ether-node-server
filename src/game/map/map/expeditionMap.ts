@@ -2,7 +2,10 @@ import Act from '../act/act';
 import Node from '../nodes/node';
 import nodeFactory from '../nodes/index';
 import { actCconfigAlternatives } from '../act/act.config';
-import { ExpeditionMapNodeTypeEnum } from 'src/game/components/expedition/expedition.enum';
+import {
+    ExpeditionMapNodeTypeEnum,
+    RoyalHouseTitles,
+} from 'src/game/components/expedition/expedition.enum';
 import { IExpeditionNode } from 'src/game/components/expedition/expedition.interface';
 
 class ExpeditionMap {
@@ -38,6 +41,7 @@ class ExpeditionMap {
                 node.type,
                 node.subType,
                 node.private_data,
+                node?.title,
             );
             nodeObj.exits = node.exits;
             nodeObj.enter = node.enter;
@@ -88,6 +92,7 @@ class ExpeditionMap {
             ExpeditionMapNodeTypeEnum.RoyalHouse,
             ExpeditionMapNodeTypeEnum.RoyalHouseA,
             {},
+            RoyalHouseTitles.Cynthienne,
         );
         const royalB = nodeFactory(
             2,
@@ -96,6 +101,7 @@ class ExpeditionMap {
             ExpeditionMapNodeTypeEnum.RoyalHouse,
             ExpeditionMapNodeTypeEnum.RoyalHouseB,
             {},
+            RoyalHouseTitles.Medici,
         );
         const royalC = nodeFactory(
             3,
@@ -104,6 +110,7 @@ class ExpeditionMap {
             ExpeditionMapNodeTypeEnum.RoyalHouse,
             ExpeditionMapNodeTypeEnum.RoyalHouseC,
             {},
+            RoyalHouseTitles.Brightflame,
         );
         const royalD = nodeFactory(
             4,
@@ -112,6 +119,7 @@ class ExpeditionMap {
             ExpeditionMapNodeTypeEnum.RoyalHouse,
             ExpeditionMapNodeTypeEnum.RoyalHouseD,
             {},
+            RoyalHouseTitles.Rhunn,
         );
         const portal = nodeFactory(
             5,
