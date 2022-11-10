@@ -292,7 +292,7 @@ export class EnemyService {
      * @param script Script
      * @param scale Scale to increase
      */
-    private increaseScriptDamage(script: EnemyScript, scale: number = 1.5) {
+    private increaseScriptDamage(script: EnemyScript, scale = 1.5) {
         script.intentions.forEach((intention) => {
             if (intention.type == EnemyIntentionType.Attack) {
                 intention.value = Math.floor(intention.value * scale);
