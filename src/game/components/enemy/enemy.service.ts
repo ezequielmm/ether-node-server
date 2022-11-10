@@ -23,6 +23,7 @@ import {
 import { StatusService } from 'src/game/status/status.service';
 import { EnemyIntentionType } from './enemy.enum';
 import { damageEffect } from 'src/game/effects/damage/constants';
+import { HARD_MODE_NODE_END, HARD_MODE_NODE_START } from 'src/game/constants';
 
 @Injectable()
 export class EnemyService {
@@ -264,7 +265,10 @@ export class EnemyService {
                 (node) => node.id == ctx.expedition.currentNode.nodeId,
             );
 
-            if (node.step >= 13 || node.step <= 19) {
+            if (
+                HARD_MODE_NODE_START <= node.step &&
+                node.step <= HARD_MODE_NODE_END
+            ) {
                 this.increaseScriptDamage(nextScript);
             }
 

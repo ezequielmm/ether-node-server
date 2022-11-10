@@ -32,6 +32,7 @@ import { SettingsService } from '../components/settings/settings.service';
 import { TrinketRarityEnum } from '../components/trinket/trinket.enum';
 import { TrinketDocument } from '../components/trinket/trinket.schema';
 import { TrinketService } from '../components/trinket/trinket.service';
+import { HARD_MODE_NODE_END, HARD_MODE_NODE_START } from '../constants';
 import { StatusType } from '../status/interfaces';
 
 @Injectable()
@@ -182,7 +183,10 @@ export class CurrentNodeGeneratorProcess {
                     enemy.healthRange[1],
                 );
 
-                if (this.node.step >= 13 && this.node.step <= 19) {
+                if (
+                    HARD_MODE_NODE_START <= this.node.step &&
+                    this.node.step <= HARD_MODE_NODE_END
+                ) {
                     newHealth = Math.floor(newHealth * 1.5);
                 }
 
