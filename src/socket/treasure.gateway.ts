@@ -10,7 +10,7 @@ export class TreasureGateway {
 
     constructor(private readonly treasureService: TreasureService) {}
 
-    @SubscribeMessage('OpenChest')
+    @SubscribeMessage('ChestOpened')
     async handleItemsSelected(client: Socket): Promise<void> {
         this.logger.debug(`Client ${client.id} trigger message "OpenTreasure"`);
 

@@ -69,3 +69,9 @@ export enum IExpeditionNodeReward {
     Potion = 'potion',
     Trinket = 'trinket',
 }
+export enum RoyalHouseTitles {
+    Cynthienne = 'House Cynthienne',
+    Medici = 'House Medici',
+    Brightflame = 'House Brightflame',
+    Rhunn = 'House Rhunn',
+}

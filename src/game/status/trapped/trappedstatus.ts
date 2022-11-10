@@ -1,37 +1,56 @@
 import { Injectable } from '@nestjs/common';
+import { OnEvent } from '@nestjs/event-emitter';
+import { EnemyService } from 'src/game/components/enemy/enemy.service';
+import { GameContext } from 'src/game/components/interfaces';
 import { PlayerService } from 'src/game/components/player/player.service';
-import {
-    StandardResponse,
-    SWARAction,
-    SWARMessageType,
-} from 'src/game/standardResponse/standardResponse';
-import { StatusEventDTO, StatusEventHandler } from '../interfaces';
+import { EVENT_BEFORE_ENEMIES_TURN_START } from 'src/game/constants';
+import { DamageArgs } from 'src/game/effects/damage/damage.effect';
+import { EffectDTO } from 'src/game/effects/effects.interface';
+
+import { StatusEffectDTO, StatusEffectHandler } from '../interfaces';
 import { StatusDecorator } from '../status.decorator';
+import { StatusService } from '../status.service';
 import { trapped } from './constants';
 
 @StatusDecorator({
     status: trapped,
 })
 @Injectable()
-export class TrappedStatus implements StatusEventHandler {
-    constructor(private readonly playerService: PlayerService) {}
+export class TrappedStatus implements StatusEffectHandler {
+    constructor(
+        private readonly enemyService: EnemyService,
+        private readonly playerService: PlayerService,
+        private readonly statusService: StatusService,
+    ) {}
 
-    async handle(dto: StatusEventDTO): Promise<void> {
-        const { ctx, status, remove } = dto;
+    async preview(
+        args: StatusEffectDTO<DamageArgs>,
+    ): Promise<EffectDTO<DamageArgs>> {
+        return this.handle(args);
+    }
 
-        await this.playerService.damage(ctx, 12 * status.args.counter);
+    async handle(
+        dto: StatusEffectDTO<DamageArgs>,
+    ): Promise<EffectDTO<DamageArgs>> {
+        const effectDTO = dto.effectDTO;
+        effectDTO.args.currentValue =
+            effectDTO.args.currentValue + 12 * dto.status.args.counter;
 
-        dto.ctx.client.emit(
-            'PutData',
-            StandardResponse.respond({
-                message_type: SWARMessageType.PlayerAffected,
-                action: SWARAction.UpdatePlayer,
-                data: {
-                    description: 'The enemy is hiding and waiting to strike.',
-                },
-            }),
-        );
+        return effectDTO;
+    }
 
-        remove();
+    @OnEvent(EVENT_BEFORE_ENEMIES_TURN_START)
+    async onEnemiesTurnStart(args: { ctx: GameContext }): Promise<void> {
+        const { ctx } = args;
+        const enemies = this.enemyService.getAll(ctx);
+
+        for (const enemy of enemies) {
+            await this.statusService.decreaseCounterAndRemove(
+                ctx,
+                enemy.value.statuses,
+                enemy,
+                trapped,
+            );
+        }
     }
 }
