@@ -6,7 +6,7 @@ import { EnemyId, enemyIdField, enemySelector } from './enemy.type';
 import { GameContext, ExpeditionEntity } from '../interfaces';
 import { EnemyScript, ExpeditionEnemy } from './enemy.interface';
 import { CardTargetedEnum } from '../card/card.enum';
-import { find, sample } from 'lodash';
+import { find, reject, sample } from 'lodash';
 import { ExpeditionService } from '../expedition/expedition.service';
 import {
     ENEMY_CURRENT_SCRIPT_PATH,
@@ -123,7 +123,14 @@ export class EnemyService {
     public getRandom(ctx: GameContext): ExpeditionEnemy {
         const enemies = this.getAll(ctx);
 
-        return sample(enemies);
+        return sample(
+            // Reject enemies that are dead
+            reject(enemies, {
+                value: {
+                    hpCurrent: 0,
+                },
+            }),
+        );
     }
 
     /**
