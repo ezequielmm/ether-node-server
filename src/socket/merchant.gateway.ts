@@ -19,12 +19,4 @@ export class MerchantGateway {
         this.logger.debug(`Client ${client.id} trigger message "MerchantBuy"`);
         this.merchantService.merchantBuy(client, selected);
     }
-    @SubscribeMessage('MerchantData')
-    async merchantData(client: Socket): Promise<void> {
-        this.logger.debug(
-            `Client ${client.id} get merchant data "MerchantData"`,
-        );
-
-        await this.merchantService.merchantData(client);
-    }
 }

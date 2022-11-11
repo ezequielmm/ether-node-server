@@ -5,6 +5,7 @@ import { GetCardPilesAction } from 'src/game/action/getCardPiles.action';
 import { GetCurrentStepAction } from 'src/game/action/getCurrentStep.action';
 import { GetEnemiesAction } from 'src/game/action/getEnemies.action';
 import { GetEnergyAction } from 'src/game/action/getEnergy.action';
+import { GetMerchantDataAction } from 'src/game/action/getMerchantData.action';
 import { GetPlayerDeckAction } from 'src/game/action/getPlayerDeck.action';
 import { GetPlayerInfoAction } from 'src/game/action/getPlayerInfo.action';
 import { GetStatusesAction } from 'src/game/action/getStatuses.action';
@@ -30,6 +31,7 @@ export class GetDataGateway {
         private readonly getPlayerInfoAction: GetPlayerInfoAction,
         private readonly getCurrentStepAction: GetCurrentStepAction,
         private readonly getUpgradableCards: GetUpgradableCardsAction,
+        private readonly getMerchantDataAction: GetMerchantDataAction,
     ) {}
 
     @SubscribeMessage('GetData')
@@ -37,6 +39,7 @@ export class GetDataGateway {
         this.logger.debug(
             `Client ${client.id} trigger message "GetData": ${types}`,
         );
+        console.log(types);
 
         try {
             let data = null;
@@ -77,8 +80,10 @@ export class GetDataGateway {
                 case DataWSRequestTypesEnum.UpgradableCards:
                     data = await this.getUpgradableCards.handle(client.id);
                     break;
+                case DataWSRequestTypesEnum.MerchantData:
+                    data = await this.getMerchantDataAction.handle(client.id);
+                    break;
             }
-
             return StandardResponse.respond({
                 message_type: SWARMessageType.GenericData,
                 action: types,

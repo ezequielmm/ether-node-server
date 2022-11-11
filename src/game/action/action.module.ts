@@ -4,6 +4,8 @@ import { CombatQueueModule } from '../components/combatQueue/combatQueue.module'
 import { EnemyModule } from '../components/enemy/enemy.module';
 import { ExpeditionModule } from '../components/expedition/expedition.module';
 import { PlayerModule } from '../components/player/player.module';
+import { PotionModule } from '../components/potion/potion.module';
+import { TrinketModule } from '../components/trinket/trinket.module';
 import { EffectModule } from '../effects/effects.module';
 import { HistoryModule } from '../history/history.module';
 import { ProcessModule } from '../process/process.module';
@@ -20,6 +22,7 @@ import { GetCardPilesAction } from './getCardPiles.action';
 import { GetCurrentStepAction } from './getCurrentStep.action';
 import { GetEnemiesAction } from './getEnemies.action';
 import { GetEnergyAction } from './getEnergy.action';
+import { GetMerchantDataAction } from './getMerchantData.action';
 import { GetPlayerDeckAction } from './getPlayerDeck.action';
 import { GetPlayerInfoAction } from './getPlayerInfo.action';
 import { GetStatusesAction } from './getStatuses.action';
@@ -48,6 +51,7 @@ const actions = [
     CreateCardAction,
     UpgradeCardAction,
     GetUpgradableCardsAction,
+    GetMerchantDataAction,
 ];
 
 @Module({
@@ -58,6 +62,8 @@ const actions = [
         forwardRef(() => StatusModule),
         forwardRef(() => EnemyModule),
         forwardRef(() => CardModule),
+        forwardRef(() => PotionModule),
+        forwardRef(() => TrinketModule),
         PlayerModule,
         HistoryModule,
         CombatQueueModule,
