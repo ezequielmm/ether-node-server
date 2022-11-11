@@ -26,6 +26,7 @@ import { GetMerchantDataAction } from './getMerchantData.action';
 import { GetPlayerDeckAction } from './getPlayerDeck.action';
 import { GetPlayerInfoAction } from './getPlayerInfo.action';
 import { GetStatusesAction } from './getStatuses.action';
+import { GetTreasureDataAction } from './getTreasureData.action';
 import { GetUpgradableCardsAction } from './getUpgradableCards.action';
 import { MoveCardToHandAction } from './moveCard.action';
 import { SetCombatTurnAction } from './setCombatTurn.action';
@@ -52,6 +53,7 @@ const actions = [
     UpgradeCardAction,
     GetUpgradableCardsAction,
     GetMerchantDataAction,
+    GetTreasureDataAction,
 ];
 
 @Module({

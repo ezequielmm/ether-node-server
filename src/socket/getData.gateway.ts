@@ -9,6 +9,7 @@ import { GetMerchantDataAction } from 'src/game/action/getMerchantData.action';
 import { GetPlayerDeckAction } from 'src/game/action/getPlayerDeck.action';
 import { GetPlayerInfoAction } from 'src/game/action/getPlayerInfo.action';
 import { GetStatusesAction } from 'src/game/action/getStatuses.action';
+import { GetTreasureDataAction } from 'src/game/action/getTreasureData.action';
 import { GetUpgradableCardsAction } from 'src/game/action/getUpgradableCards.action';
 import { SendEnemyIntentProcess } from 'src/game/process/sendEnemyIntents.process';
 import {
@@ -32,6 +33,7 @@ export class GetDataGateway {
         private readonly getCurrentStepAction: GetCurrentStepAction,
         private readonly getUpgradableCards: GetUpgradableCardsAction,
         private readonly getMerchantDataAction: GetMerchantDataAction,
+        private readonly getTreasureDataAction: GetTreasureDataAction,
     ) {}
 
     @SubscribeMessage('GetData')
@@ -82,6 +84,9 @@ export class GetDataGateway {
                     break;
                 case DataWSRequestTypesEnum.MerchantData:
                     data = await this.getMerchantDataAction.handle(client.id);
+                    break;
+                case DataWSRequestTypesEnum.TreasureData:
+                    data = await this.getTreasureDataAction.handle(client.id);
                     break;
             }
             return StandardResponse.respond({

@@ -12,6 +12,7 @@ export enum DataWSRequestTypesEnum {
     CurrentNode = 'CurrentNode',
     UpgradableCards = 'UpgradableCards',
     MerchantData = 'MerchantData',
+    TreasureData = 'TreasureData',
 }
 export const corsSocketSettings = {
     cors: {
