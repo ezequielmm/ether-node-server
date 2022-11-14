@@ -47,7 +47,7 @@ import {
     CombatQueueSchema,
 } from '../components/combatQueue/combatQueue.schema';
 import { ArmorUpCard } from '../components/card/data/armorUp.card';
-import { StandardResponse, SWARAction } from '../standardResponse/standardResponse';
+import { SWARAction } from '../standardResponse/standardResponse';
 
 // We use this mock instead the CardService to avoid using
 
