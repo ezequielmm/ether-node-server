@@ -41,6 +41,12 @@ import { CardSeeder } from '../components/card/card.seeder';
 import { CardService } from '../components/card/card.service';
 import { Card, CardDocument, CardSchema } from '../components/card/card.schema';
 import { CardId, getCardIdField } from '../components/card/card.type';
+import { ProviderService } from '../provider/provider.service';
+import {
+    CombatQueue,
+    CombatQueueSchema,
+} from '../components/combatQueue/combatQueue.schema';
+import { ArmorUpCard } from '../components/card/data/armorUp.card';
 
 @Injectable()
 class CardServiceMocked {
@@ -76,47 +82,30 @@ describe('CardPlayedAction Action', () => {
                     { name: Enemy.name, schema: EnemySchema },
                     { name: Expedition.name, schema: ExpeditionSchema },
                     { name: Card.name, schema: CardSchema },
+                    { name: CombatQueue.name, schema: CombatQueueSchema },
                 ]),
             ],
             providers: [
-                {
-                    provide: PlayerService,
-                    useValue: {},
-                },
-                {
-                    provide: EnemyService,
-                    useValue: {},
-                },
+                ProviderService,
+                PlayerService,
+                StatusService,
+                EventEmitter2,
+                CombatQueueService,
+                HistoryService,
+                ExhaustCardAction,
+                EnemyService,
                 {
                     provide: EffectService,
-                    useValue: {},
-                },
-                {
-                    provide: StatusService,
-                    useValue: {},
+                    useValue: {
+                        applyAll: jest.fn(),
+                    },
                 },
                 {
                     provide: DiscardCardAction,
                     useValue: {},
                 },
                 {
-                    provide: ExhaustCardAction,
-                    useValue: {},
-                },
-                {
                     provide: EndPlayerTurnProcess,
-                    useValue: {},
-                },
-                {
-                    provide: CombatQueueService,
-                    useValue: {},
-                },
-                {
-                    provide: HistoryService,
-                    useValue: {},
-                },
-                {
-                    provide: EventEmitter2,
                     useValue: {},
                 },
                 ExpeditionService,
@@ -185,7 +174,9 @@ describe('CardPlayedAction Action', () => {
             playerState: undefined,
             status: ExpeditionStatusEnum.InProgress,
         });
-        const expedition = await expeditionService.findOne({});
+        const expedition = await expeditionService.findOne({
+            clientId: 'the_client_id',
+        });
         expect(expedition).toBeDefined();
         expect(expedition.status).toBe(ExpeditionStatusEnum.InProgress);
     });
@@ -194,15 +185,15 @@ describe('CardPlayedAction Action', () => {
         // TODO: call cardPlayedAction.handle() with a unplayable
     });
 
-    it('exhaust card', async () => {
+    it('play exhaust card', async () => {
         const clientSocket = new ClientSocketMock();
         clientSockets.push(clientSocket);
         await clientSocket.connect(serverPort);
 
         const clientId = clientSocket.socket.id;
 
-        const attackCard = await cardService.findById(1);
-        console.log(attackCard);
+        const armorUpCard = await cardService.findById(ArmorUpCard.cardId);
+        expect(armorUpCard).toBeDefined();
 
         await expeditionService.create({
             clientId: clientId,
@@ -233,9 +224,9 @@ describe('CardPlayedAction Action', () => {
                         cards: {
                             hand: [
                                 {
-                                    id: attackCard.id,
+                                    id: armorUpCard.cardId,
                                     isTemporary: false,
-                                    ...attackCard,
+                                    ...armorUpCard,
                                 },
                             ],
                             draw: [],
@@ -250,13 +241,23 @@ describe('CardPlayedAction Action', () => {
         expect(expedition).toBeDefined();
         expect(expedition.status).toBe(ExpeditionStatusEnum.InProgress);
 
-        /*
+        // double check that the expedition has the armorUpCard on Hand
+
         await cardPlayedAction.handle({
             client: mockedSocketGateway.clientSocket,
-            cardId: 1, // then we solve this inserting attack card
-            selectedEnemyId: '',
+            cardId: armorUpCard.cardId,
+            selectedEnemyId: '', // should we put an enemy here?
         });
-        */
+
+        // we should check that expedition has a new exhausted card in exhausted pile
+
+        // mock effects
+
+        // check history
+
+        // check combat queue
+
+        // check put event from exhaustcard action
     });
 
     it('discard card', async () => {
