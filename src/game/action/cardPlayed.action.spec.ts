@@ -49,8 +49,8 @@ import {
 import { ArmorUpCard } from '../components/card/data/armorUp.card';
 import { SWARAction } from '../standardResponse/standardResponse';
 
-// We use this mock instead the CardService to avoid using
-
+// We use this simple card mock instead the CardService to avoid using
+// initializing all, and be able to use the CardDocument Model
 @Injectable()
 class CardServiceMocked {
     constructor(
@@ -150,6 +150,7 @@ describe('CardPlayedAction Action', () => {
         serverPort = port;
 
         cardService = module.get<CardServiceMocked>(CardServiceMocked);
+        expect(cardService).toBeDefined();
     });
 
     it('card does not exist', async () => {
