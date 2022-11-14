@@ -1,8 +1,16 @@
-import { MongooseModule, getConnectionToken } from '@nestjs/mongoose';
+import {
+    MongooseModule,
+    getConnectionToken,
+    InjectModel,
+} from '@nestjs/mongoose';
 import { TestingModule, Test } from '@nestjs/testing';
 
 import { Enemy, EnemySchema } from '../components/enemy/enemy.schema';
-import { ExpeditionStatusEnum } from '../components/expedition/expedition.enum';
+import {
+    CombatTurnEnum,
+    ExpeditionMapNodeTypeEnum,
+    ExpeditionStatusEnum,
+} from '../components/expedition/expedition.enum';
 import {
     Expedition,
     ExpeditionSchema,
@@ -23,12 +31,27 @@ import { EndPlayerTurnProcess } from '../process/endPlayerTurn.process';
 import { InMemoryMongoDB } from 'src/tests/inMemoryMongoDB';
 import { IoAdapter } from '@nestjs/platform-socket.io';
 
-import { Connection } from 'mongoose';
-import { INestApplication } from '@nestjs/common';
+import { Connection, Model } from 'mongoose';
+import { INestApplication, Injectable } from '@nestjs/common';
 
 import { ServerSocketGatewayMock } from 'src/tests/serverSocketGatewayMock';
 import { ClientSocketMock } from 'src/tests/clientSocketMock';
 import { MongoMemoryServer } from 'mongodb-memory-server';
+import { CardSeeder } from '../components/card/card.seeder';
+import { CardService } from '../components/card/card.service';
+import { Card, CardDocument, CardSchema } from '../components/card/card.schema';
+import { CardId, getCardIdField } from '../components/card/card.type';
+
+@Injectable()
+class CardServiceMocked {
+    constructor(
+        @InjectModel(Card.name) private readonly card: Model<CardDocument>,
+    ) {}
+    async findById(id: CardId): Promise<CardDocument> {
+        const field = getCardIdField(id);
+        return this.card.findOne({ [field]: id }).lean();
+    }
+}
 
 describe('CardPlayedAction Action', () => {
     let module: TestingModule;
@@ -40,8 +63,11 @@ describe('CardPlayedAction Action', () => {
     let serverPort: number;
     let clientSockets: Array<ClientSocketMock>;
     let mongod: MongoMemoryServer;
+    let cardService: CardServiceMocked;
 
     beforeAll(async () => {
+        clientSockets = [];
+
         mongod = await InMemoryMongoDB.buildMongoMemoryServer();
         module = await Test.createTestingModule({
             imports: [
@@ -49,6 +75,7 @@ describe('CardPlayedAction Action', () => {
                 MongooseModule.forFeature([
                     { name: Enemy.name, schema: EnemySchema },
                     { name: Expedition.name, schema: ExpeditionSchema },
+                    { name: Card.name, schema: CardSchema },
                 ]),
             ],
             providers: [
@@ -95,6 +122,8 @@ describe('CardPlayedAction Action', () => {
                 ExpeditionService,
                 CardPlayedAction,
                 ServerSocketGatewayMock,
+                CardSeeder,
+                CardServiceMocked,
             ],
         }).compile();
         expeditionService = module.get<ExpeditionService>(ExpeditionService);
@@ -105,6 +134,9 @@ describe('CardPlayedAction Action', () => {
             ServerSocketGatewayMock,
         );
         expect(mockedSocketGateway).toBeDefined();
+        const cardSeeder = module.get<CardSeeder>(CardSeeder);
+        expect(CardSeeder).toBeDefined();
+        await cardSeeder.seed();
 
         connection = await module.get(getConnectionToken());
         expect(connection).toBeDefined();
@@ -115,10 +147,11 @@ describe('CardPlayedAction Action', () => {
         await app.init();
         const { port } = app.getHttpServer().listen().address();
         serverPort = port;
-        clientSockets = [];
+
+        cardService = module.get<CardServiceMocked>(CardServiceMocked);
     });
 
-    it('card does not exist', async () => {
+    it.skip('card does not exist', async () => {
         const clientSocket = new ClientSocketMock();
         clientSockets.push(clientSocket);
         await clientSocket.connect(serverPort);
@@ -144,7 +177,7 @@ describe('CardPlayedAction Action', () => {
 
     // TODO: The idea is to show you how you can create in-memory mongodb documents
     // but we can think a way to seed the testing database -> e.g. re-using seeds
-    it('expedition should exist', async () => {
+    it.skip('expedition should exist', async () => {
         await expeditionService.create({
             clientId: 'the_client_id',
             playerId: 0,
@@ -157,12 +190,73 @@ describe('CardPlayedAction Action', () => {
         expect(expedition.status).toBe(ExpeditionStatusEnum.InProgress);
     });
 
-    it('unplayable card', async () => {
+    it.skip('unplayable card', async () => {
         // TODO: call cardPlayedAction.handle() with a unplayable
     });
 
     it('exhaust card', async () => {
-        // TODO: call cardPlayedAction.handle() with an exhausted card
+        const clientSocket = new ClientSocketMock();
+        clientSockets.push(clientSocket);
+        await clientSocket.connect(serverPort);
+
+        const clientId = clientSocket.socket.id;
+
+        const attackCard = await cardService.findById(1);
+        console.log(attackCard);
+
+        await expeditionService.create({
+            clientId: clientId,
+            playerId: 0,
+            map: [],
+            playerState: undefined,
+            status: ExpeditionStatusEnum.InProgress,
+            currentNode: {
+                nodeId: 0, // no idea
+                nodeType: ExpeditionMapNodeTypeEnum.Combat,
+                completed: false,
+                showRewards: true,
+                data: {
+                    round: 0,
+                    playing: CombatTurnEnum.Player,
+                    rewards: [],
+                    enemies: [],
+                    player: {
+                        energy: 3,
+                        handSize: 1,
+                        defense: 1,
+                        hpCurrent: 10,
+                        hpMax: 10,
+                        statuses: {
+                            buff: [],
+                            debuff: [],
+                        },
+                        cards: {
+                            hand: [
+                                {
+                                    id: attackCard.id,
+                                    isTemporary: false,
+                                    ...attackCard,
+                                },
+                            ],
+                            draw: [],
+                            discard: [],
+                            exhausted: [],
+                        },
+                    },
+                },
+            },
+        });
+        const expedition = await expeditionService.findOne({ clientId });
+        expect(expedition).toBeDefined();
+        expect(expedition.status).toBe(ExpeditionStatusEnum.InProgress);
+
+        /*
+        await cardPlayedAction.handle({
+            client: mockedSocketGateway.clientSocket,
+            cardId: 1, // then we solve this inserting attack card
+            selectedEnemyId: '',
+        });
+        */
     });
 
     it('discard card', async () => {
