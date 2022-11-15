@@ -28,7 +28,7 @@ import { GetPlayerInfoAction } from './getPlayerInfo.action';
 import { GetStatusesAction } from './getStatuses.action';
 import { GetTreasureDataAction } from './getTreasureData.action';
 import { GetUpgradableCardsAction } from './getUpgradableCards.action';
-import { MoveCardToHandAction } from './moveCard.action';
+import { MoveCardAction } from './moveCard.action';
 import { SetCombatTurnAction } from './setCombatTurn.action';
 import { UpgradeCardAction } from './upgradeCard.action';
 
@@ -47,7 +47,7 @@ const actions = [
     DrawCardAction,
     GetPlayerDeckAction,
     GetCurrentStepAction,
-    MoveCardToHandAction,
+    MoveCardAction,
     ChangeTurnAction,
     CreateCardAction,
     UpgradeCardAction,
