@@ -59,7 +59,10 @@ import { DefenseEffect } from '../effects/defense/defense.effect';
 import { CardTargetedEnum } from '../components/card/card.enum';
 import { DamageEffect } from '../effects/damage/damage.effect';
 import { GetEnergyAction } from './getEnergy.action';
-import { IntegrationTestServer } from 'src/tests/integrationTestServer';
+import {
+    DebugLogger,
+    IntegrationTestServer,
+} from 'src/tests/integrationTestServer';
 
 // We use this simple card mock instead the CardService to avoid using
 // initializing all, and be able to use the CardDocument Model
@@ -85,8 +88,8 @@ describe('CardPlayedAction Action', () => {
     let enemyService: EnemyService;
 
     beforeAll(async () => {
-        await its.start(
-            [
+        await its.start({
+            providers: [
                 ProviderService,
                 PlayerService,
                 StatusService,
@@ -111,13 +114,14 @@ describe('CardPlayedAction Action', () => {
                 EnemySeeder,
                 CardServiceMocked,
             ],
-            [
+            models: [
                 { name: Enemy.name, schema: EnemySchema },
                 { name: Expedition.name, schema: ExpeditionSchema },
                 { name: Card.name, schema: CardSchema },
                 { name: CombatQueue.name, schema: CombatQueueSchema },
             ],
-        );
+            logger: DebugLogger,
+        });
 
         expeditionService = its.getInjectable(ExpeditionService);
         cardPlayedAction = its.getInjectable(CardPlayedAction);
