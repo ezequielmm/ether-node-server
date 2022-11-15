@@ -22,7 +22,7 @@ export interface ItemId {
     id: number | string;
 }
 
-export interface selectedItem {
+export interface SelectedItem {
     targetId: number | string;
     type: ItemsTypeEnum;
 }

@@ -1,7 +1,7 @@
 import { randomUUID } from 'crypto';
 import { Socket } from 'socket.io';
 import { CardDescriptionFormatter } from '../cardDescriptionFormatter/cardDescriptionFormatter';
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { getRandomBetween } from 'src/utils';
 import { CardRarityEnum, CardTypeEnum } from '../components/card/card.enum';
 import { CardDocument } from '../components/card/card.schema';
@@ -22,7 +22,7 @@ import {
     SWARAction,
     SWARMessageType,
 } from '../standardResponse/standardResponse';
-import { Item, MerchantItems, selectedItem } from './interfaces';
+import { Item, MerchantItems, SelectedItem } from './interfaces';
 import {
     CardCommon,
     ItemsTypeEnum,
@@ -38,6 +38,7 @@ import {
 
 @Injectable()
 export class MerchantService {
+    private readonly logger: Logger = new Logger(MerchantService.name);
     constructor(
         private readonly expeditionService: ExpeditionService,
         private readonly cardService: CardService,
@@ -45,23 +46,27 @@ export class MerchantService {
         private readonly trinketService: TrinketService,
     ) {}
 
-    merchantBuy(client: Socket, selectedItem: selectedItem) {
+    async merchantBuy(
+        client: Socket,
+        selectedItem: SelectedItem,
+    ): Promise<void> {
         switch (selectedItem.type) {
             case ItemsTypeEnum.Card:
             case ItemsTypeEnum.Trinket:
             case ItemsTypeEnum.Potion:
-                this.handle(client, selectedItem);
+                await this.handle(client, selectedItem);
                 break;
             case ItemsTypeEnum.Destroy:
-                this.cardDestroy(client, selectedItem.targetId);
+                await this.cardDestroy(client, selectedItem.targetId);
                 break;
             case ItemsTypeEnum.Upgrade:
-                this.cardUpgrade(client, selectedItem.targetId);
-                return;
+                await this.cardUpgrade(client, selectedItem.targetId);
+                break;
         }
     }
 
-    async handle(client: Socket, selectedItem: selectedItem) {
+    async handle(client: Socket, selectedItem: SelectedItem): Promise<void> {
+        this.logger.log('handle', { selectedItem });
         const { targetId, type } = selectedItem;
 
         const {
@@ -153,7 +158,7 @@ export class MerchantService {
                 return;
         }
 
-        this.success(client);
+        await this.success(client);
     }
 
     async handleCard(
@@ -189,6 +194,7 @@ export class MerchantService {
         playerState: IExpeditionPlayerState,
         _id: string,
     ) {
+        this.logger.log('handlePotions', { item });
         const newPlayerState = {
             ...playerState,
             gold: playerState.gold - item.cost,
@@ -404,7 +410,7 @@ export class MerchantService {
         return itemsData;
     }
 
-    async success(client: Socket) {
+    async success(client: Socket): Promise<void> {
         const expedition = await this.expeditionService.findOne({
             clientId: client.id,
         });
