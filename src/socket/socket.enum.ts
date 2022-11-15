@@ -11,8 +11,9 @@ export enum DataWSRequestTypesEnum {
     PlayerDeck = 'PlayerDeck',
     CurrentNode = 'CurrentNode',
     UpgradableCards = 'UpgradableCards',
+    MerchantData = 'MerchantData',
+    TreasureData = 'TreasureData',
 }
-
 export const corsSocketSettings = {
     cors: {
         origin: '*',
