@@ -14,6 +14,7 @@ import {
 import { PlayerService } from './player.service';
 import * as MockedSocket from 'socket.io-mock';
 import { StatusService } from 'src/game/status/status.service';
+import { HistoryService } from 'src/game/history/history.service';
 
 describe('PlayerService', () => {
     const mockExpeditionService = {
@@ -41,10 +42,16 @@ describe('PlayerService', () => {
                     provide: StatusService,
                     useValue: {},
                 },
+                {
+                    provide: HistoryService,
+                    useValue: {
+                        register: jest.fn(),
+                    },
+                },
             ],
         }).compile();
 
-        playerService = module.get<PlayerService>(PlayerService);
+        playerService = module.get(PlayerService);
         mockContext = {
             client: mockEventEmitter2,
             expedition: {
