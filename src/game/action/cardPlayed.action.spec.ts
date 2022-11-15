@@ -33,7 +33,7 @@ import { InMemoryMongoDB } from 'src/tests/inMemoryMongoDB';
 import { IoAdapter } from '@nestjs/platform-socket.io';
 
 import { Connection, Model } from 'mongoose';
-import { INestApplication, Injectable } from '@nestjs/common';
+import { INestApplication, Injectable, Logger } from '@nestjs/common';
 
 import { ServerSocketGatewayMock } from 'src/tests/serverSocketGatewayMock';
 import { ClientSocketMock } from 'src/tests/clientSocketMock';
@@ -49,7 +49,9 @@ import {
 import { ArmorUpCard } from '../components/card/data/armorUp.card';
 import { SWARAction } from '../standardResponse/standardResponse';
 import { StunnedCard } from '../components/card/data/stunned.card';
-import { time } from 'console';
+import { AttackCard } from '../components/card/data/attack.card';
+import { EnemySeeder } from '../components/enemy/enemy.seeder';
+import { sporeMongerData } from '../components/enemy/data/sporeMonger.enemy';
 
 // We use this simple card mock instead the CardService to avoid using
 // initializing all, and be able to use the CardDocument Model
@@ -77,6 +79,7 @@ describe('CardPlayedAction Action', () => {
     let cardService: CardServiceMocked;
     let historyService: HistoryService;
     let combatQueueService: CombatQueueService;
+    let enemyService: EnemyService;
 
     beforeAll(async () => {
         clientSockets = [];
@@ -101,15 +104,12 @@ describe('CardPlayedAction Action', () => {
                 HistoryService,
                 ExhaustCardAction,
                 EnemyService,
+                DiscardCardAction,
                 {
                     provide: EffectService,
                     useValue: {
                         applyAll: jest.fn(),
                     },
-                },
-                {
-                    provide: DiscardCardAction,
-                    useValue: {},
                 },
                 {
                     provide: EndPlayerTurnProcess,
@@ -119,39 +119,47 @@ describe('CardPlayedAction Action', () => {
                 CardPlayedAction,
                 ServerSocketGatewayMock,
                 CardSeeder,
+                EnemySeeder,
                 CardServiceMocked,
             ],
         }).compile();
-        expeditionService = module.get<ExpeditionService>(ExpeditionService);
+
+        expeditionService = module.get(ExpeditionService);
         expect(expeditionService).toBeDefined();
-        cardPlayedAction = module.get<CardPlayedAction>(CardPlayedAction);
+        cardPlayedAction = module.get(CardPlayedAction);
         expect(cardPlayedAction).toBeDefined();
-        mockedSocketGateway = module.get<ServerSocketGatewayMock>(
-            ServerSocketGatewayMock,
-        );
+        mockedSocketGateway = module.get(ServerSocketGatewayMock);
         expect(mockedSocketGateway).toBeDefined();
 
-        historyService = module.get<HistoryService>(HistoryService);
+        historyService = module.get(HistoryService);
         expect(historyService).toBeDefined();
 
-        combatQueueService = module.get<CombatQueueService>(CombatQueueService);
+        combatQueueService = module.get(CombatQueueService);
         expect(combatQueueService).toBeDefined();
 
-        const cardSeeder = module.get<CardSeeder>(CardSeeder);
+        enemyService = module.get(EnemyService);
+        expect(enemyService).toBeDefined();
+
+        const cardSeeder = module.get(CardSeeder);
         expect(CardSeeder).toBeDefined();
         await cardSeeder.seed();
+
+        const enemySeeder = module.get(EnemySeeder);
+        expect(enemySeeder).toBeDefined();
+        await enemySeeder.seed();
 
         connection = await module.get(getConnectionToken());
         expect(connection).toBeDefined();
 
         app = module.createNestApplication();
+        app.useLogger(['debug']);
         app.useWebSocketAdapter(new IoAdapter(app));
 
         await app.init();
         const { port } = app.getHttpServer().listen().address();
         serverPort = port;
 
-        cardService = module.get<CardServiceMocked>(CardServiceMocked);
+        cardService = module.get(CardServiceMocked);
         expect(cardService).toBeDefined();
     });
 
@@ -218,7 +226,7 @@ describe('CardPlayedAction Action', () => {
             playerState: undefined,
             status: ExpeditionStatusEnum.InProgress,
             currentNode: {
-                nodeId: 0, // no idea
+                nodeId: 0,
                 nodeType: ExpeditionMapNodeTypeEnum.Combat,
                 completed: false,
                 showRewards: true,
@@ -226,7 +234,7 @@ describe('CardPlayedAction Action', () => {
                     round: 0,
                     playing: CombatTurnEnum.Player,
                     rewards: [],
-                    // we set no enemies in order to end the match right away
+                    // we set no enemies in order to end the game right away
                     enemies: [],
                     player: {
                         energy: 3,
@@ -266,6 +274,7 @@ describe('CardPlayedAction Action', () => {
         });
 
         // this is not ideal, we should think a better way to solve it
+        // because socketErrorMessage could be undefined
         await new Promise<void>((resolve) => setTimeout(resolve, 10));
 
         expect(socketErrorMessage).toBeDefined();
@@ -298,7 +307,7 @@ describe('CardPlayedAction Action', () => {
             playerState: undefined,
             status: ExpeditionStatusEnum.InProgress,
             currentNode: {
-                nodeId: 0, // no idea
+                nodeId: 0,
                 nodeType: ExpeditionMapNodeTypeEnum.Combat,
                 completed: false,
                 showRewards: true,
@@ -306,7 +315,7 @@ describe('CardPlayedAction Action', () => {
                     round: 0,
                     playing: CombatTurnEnum.Player,
                     rewards: [],
-                    // we set no enemies in order to end the match right away
+                    // we set no enemies in order to end the game right away
                     enemies: [],
                     player: {
                         energy: 3,
@@ -399,7 +408,86 @@ describe('CardPlayedAction Action', () => {
     });
 
     it('play to discard a card', async () => {
-        // TODO: call cardPlayedAction.handle()
+        const clientSocket = new ClientSocketMock();
+        clientSockets.push(clientSocket);
+        await clientSocket.connect(serverPort);
+
+        const clientId = clientSocket.socket.id;
+
+        const attackCard = await cardService.findById(AttackCard.cardId);
+        expect(attackCard).toBeDefined();
+
+        const sporeMongerEnemy = await enemyService.findById(
+            sporeMongerData.enemyId,
+        );
+        expect(sporeMongerEnemy).toBeDefined();
+
+        await expeditionService.create({
+            clientId: clientId,
+            playerId: 0,
+            map: [],
+            playerState: undefined,
+            status: ExpeditionStatusEnum.InProgress,
+            currentNode: {
+                nodeId: 0,
+                nodeType: ExpeditionMapNodeTypeEnum.Combat,
+                completed: false,
+                showRewards: true,
+                data: {
+                    round: 0,
+                    playing: CombatTurnEnum.Player,
+                    rewards: [],
+                    // we set no enemies in order to end the game right away
+                    enemies: [
+                        {
+                            id: sporeMongerEnemy.enemyId,
+                            defense: 1,
+                            hpCurrent: 1,
+                            hpMax: 1,
+                            currentScript: sporeMongerEnemy.scripts[0],
+                            statuses: {
+                                buff: [],
+                                debuff: [],
+                            },
+                            ...sporeMongerEnemy,
+                        },
+                    ],
+                    player: {
+                        energy: 3,
+                        handSize: 1,
+                        defense: 1,
+                        hpCurrent: 10,
+                        hpMax: 10,
+                        statuses: {
+                            buff: [],
+                            debuff: [],
+                        },
+                        cards: {
+                            hand: [
+                                {
+                                    id: attackCard.cardId,
+                                    isTemporary: false,
+                                    ...attackCard,
+                                },
+                            ],
+                            draw: [],
+                            discard: [],
+                            exhausted: [],
+                        },
+                    },
+                },
+            },
+        });
+
+        const expedition = await expeditionService.findOne({ clientId });
+        expect(expedition).toBeDefined();
+        expect(expedition.status).toBe(ExpeditionStatusEnum.InProgress);
+
+        await cardPlayedAction.handle({
+            client: mockedSocketGateway.clientSocket,
+            cardId: attackCard.cardId,
+            selectedEnemyId: sporeMongerEnemy.enemyId,
+        });
     });
 
     afterAll(async () => {
