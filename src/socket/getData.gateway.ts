@@ -41,8 +41,6 @@ export class GetDataGateway {
         this.logger.debug(
             `Client ${client.id} trigger message "GetData": ${types}`,
         );
-        console.log(types);
-
         try {
             let data = null;
 
