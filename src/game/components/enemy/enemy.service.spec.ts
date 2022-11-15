@@ -223,7 +223,9 @@ describe('EnemyService', () => {
                     data: {
                         enemies: [mockExpeditionEnemyA, mockExpeditionEnemyB],
                     },
+                    nodeId: 0,
                 },
+                map: [{ id: 0, step: 0 }],
             },
         } as unknown as GameContext;
 

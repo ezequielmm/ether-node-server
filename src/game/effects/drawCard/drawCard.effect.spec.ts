@@ -95,7 +95,7 @@ describe('DrawCardEffect', () => {
         });
 
         expect(mockDrawCardAction.handle).toHaveBeenCalledWith({
-            client: mockCtx.client,
+            ctx: mockCtx,
             amountToTake: 1,
             SWARMessageTypeToSend: SWARMessageType.PlayerAffected,
             useEnemiesConfusedAsValue: false,
@@ -117,7 +117,7 @@ describe('DrawCardEffect', () => {
         });
 
         expect(mockDrawCardAction.handle).toHaveBeenCalledWith({
-            client: mockCtx.client,
+            ctx: mockCtx,
             amountToTake: 2,
             cardType: CardTypeEnum.Defend,
             SWARMessageTypeToSend: SWARMessageType.PlayerAffected,
@@ -140,7 +140,7 @@ describe('DrawCardEffect', () => {
         });
 
         expect(mockDrawCardAction.handle).toHaveBeenCalledWith({
-            client: mockCtx.client,
+            ctx: mockCtx,
             amountToTake: 2,
             cardType: CardTypeEnum.Defend,
             SWARMessageTypeToSend: SWARMessageType.PlayerAffected,
@@ -166,7 +166,7 @@ describe('DrawCardEffect', () => {
         });
 
         expect(mockDrawCardAction.handle).toHaveBeenCalledWith({
-            client: mockCtx.client,
+            ctx: mockCtx,
             amountToTake: 1,
             cardType: CardTypeEnum.Defend,
             SWARMessageTypeToSend: SWARMessageType.PlayerAffected,
