@@ -59,6 +59,7 @@ import { DefenseEffect } from '../effects/defense/defense.effect';
 import { CardTargetedEnum } from '../components/card/card.enum';
 import { DamageEffect } from '../effects/damage/damage.effect';
 import { GetEnergyAction } from './getEnergy.action';
+import { IntegrationTestServer } from 'src/tests/integrationTestServer';
 
 // We use this simple card mock instead the CardService to avoid using
 // initializing all, and be able to use the CardDocument Model
@@ -74,35 +75,18 @@ class CardServiceMocked {
 }
 
 describe('CardPlayedAction Action', () => {
-    let module: TestingModule;
+    const its = new IntegrationTestServer();
     let expeditionService: ExpeditionService;
     let cardPlayedAction: CardPlayedAction;
     let mockedSocketGateway: ServerSocketGatewayMock;
-    let connection: Connection;
-    let app: INestApplication;
-    let serverPort: number;
-    let clientSockets: Array<ClientSocketMock>;
-    let mongod: MongoMemoryServer;
     let cardService: CardServiceMocked;
     let historyService: HistoryService;
     let combatQueueService: CombatQueueService;
     let enemyService: EnemyService;
 
     beforeAll(async () => {
-        clientSockets = [];
-
-        mongod = await InMemoryMongoDB.buildMongoMemoryServer();
-        module = await Test.createTestingModule({
-            imports: [
-                InMemoryMongoDB.forRootAsyncModule(mongod),
-                MongooseModule.forFeature([
-                    { name: Enemy.name, schema: EnemySchema },
-                    { name: Expedition.name, schema: ExpeditionSchema },
-                    { name: Card.name, schema: CardSchema },
-                    { name: CombatQueue.name, schema: CombatQueueSchema },
-                ]),
-            ],
-            providers: [
+        await its.start(
+            [
                 ProviderService,
                 PlayerService,
                 StatusService,
@@ -127,50 +111,30 @@ describe('CardPlayedAction Action', () => {
                 EnemySeeder,
                 CardServiceMocked,
             ],
-        }).compile();
+            [
+                { name: Enemy.name, schema: EnemySchema },
+                { name: Expedition.name, schema: ExpeditionSchema },
+                { name: Card.name, schema: CardSchema },
+                { name: CombatQueue.name, schema: CombatQueueSchema },
+            ],
+        );
 
-        expeditionService = module.get(ExpeditionService);
-        expect(expeditionService).toBeDefined();
-        cardPlayedAction = module.get(CardPlayedAction);
-        expect(cardPlayedAction).toBeDefined();
-        mockedSocketGateway = module.get(ServerSocketGatewayMock);
-        expect(mockedSocketGateway).toBeDefined();
+        expeditionService = its.getInjectable(ExpeditionService);
+        cardPlayedAction = its.getInjectable(CardPlayedAction);
+        mockedSocketGateway = its.getInjectable(ServerSocketGatewayMock);
+        historyService = its.getInjectable(HistoryService);
+        combatQueueService = its.getInjectable(CombatQueueService);
+        enemyService = its.getInjectable(EnemyService);
+        cardService = its.getInjectable(CardServiceMocked);
 
-        historyService = module.get(HistoryService);
-        expect(historyService).toBeDefined();
-
-        combatQueueService = module.get(CombatQueueService);
-        expect(combatQueueService).toBeDefined();
-
-        enemyService = module.get(EnemyService);
-        expect(enemyService).toBeDefined();
-
-        const cardSeeder = module.get(CardSeeder);
-        expect(CardSeeder).toBeDefined();
+        const cardSeeder = its.getInjectable(CardSeeder);
         await cardSeeder.seed();
-
-        const enemySeeder = module.get(EnemySeeder);
-        expect(enemySeeder).toBeDefined();
+        const enemySeeder = its.getInjectable(EnemySeeder);
         await enemySeeder.seed();
-
-        connection = await module.get(getConnectionToken());
-        expect(connection).toBeDefined();
-
-        app = module.createNestApplication();
-        app.useWebSocketAdapter(new IoAdapter(app));
-
-        await app.init();
-        const { port } = app.getHttpServer().listen().address();
-        serverPort = port;
-
-        cardService = module.get(CardServiceMocked);
-        expect(cardService).toBeDefined();
     });
 
     it('card does not exist', async () => {
-        const clientSocket = new ClientSocketMock();
-        clientSockets.push(clientSocket);
-        await clientSocket.connect(serverPort);
+        const clientSocket = await its.addNewSocketConnection();
 
         await cardPlayedAction.handle({
             client: mockedSocketGateway.clientSocket,
@@ -209,9 +173,7 @@ describe('CardPlayedAction Action', () => {
     });
 
     it('play an unplayable card', async () => {
-        const clientSocket = new ClientSocketMock();
-        clientSockets.push(clientSocket);
-        await clientSocket.connect(serverPort);
+        const clientSocket = await its.addNewSocketConnection();
 
         let socketErrorMessage;
         clientSocket.on('ErrorMessage', (message) => {
@@ -289,9 +251,7 @@ describe('CardPlayedAction Action', () => {
     });
 
     it('play exhaust card', async () => {
-        const clientSocket = new ClientSocketMock();
-        clientSockets.push(clientSocket);
-        await clientSocket.connect(serverPort);
+        const clientSocket = await its.addNewSocketConnection();
 
         let putDataMessage;
         clientSocket.on('PutData', (message) => {
@@ -418,10 +378,7 @@ describe('CardPlayedAction Action', () => {
     });
 
     it('play to discard a card', async () => {
-        const clientSocket = new ClientSocketMock();
-        clientSockets.push(clientSocket);
-        await clientSocket.connect(serverPort);
-
+        const clientSocket = await its.addNewSocketConnection();
         const clientId = clientSocket.socket.id;
 
         const putDataMessages = [];
@@ -582,11 +539,6 @@ describe('CardPlayedAction Action', () => {
     });
 
     afterAll(async () => {
-        clientSockets.forEach((cs) => {
-            cs.disconnect();
-        });
-        await mongod.stop();
-        await connection.close();
-        await app.close();
+        await its.stop();
     });
 });
