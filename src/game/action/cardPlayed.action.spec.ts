@@ -48,6 +48,8 @@ import {
 } from '../components/combatQueue/combatQueue.schema';
 import { ArmorUpCard } from '../components/card/data/armorUp.card';
 import { SWARAction } from '../standardResponse/standardResponse';
+import { StunnedCard } from '../components/card/data/stunned.card';
+import { time } from 'console';
 
 // We use this simple card mock instead the CardService to avoid using
 // initializing all, and be able to use the CardDocument Model
@@ -194,8 +196,83 @@ describe('CardPlayedAction Action', () => {
         expect(expedition.status).toBe(ExpeditionStatusEnum.InProgress);
     });
 
-    it('unplayable card', async () => {
-        // TODO: call cardPlayedAction.handle() with a unplayable
+    it('play an unplayable card', async () => {
+        const clientSocket = new ClientSocketMock();
+        clientSockets.push(clientSocket);
+        await clientSocket.connect(serverPort);
+
+        let socketErrorMessage;
+        clientSocket.on('ErrorMessage', (message) => {
+            socketErrorMessage = JSON.parse(message);
+        });
+
+        const clientId = clientSocket.socket.id;
+
+        const stunnedCard = await cardService.findById(StunnedCard.cardId);
+        expect(stunnedCard).toBeDefined();
+
+        await expeditionService.create({
+            clientId: clientId,
+            playerId: 0,
+            map: [],
+            playerState: undefined,
+            status: ExpeditionStatusEnum.InProgress,
+            currentNode: {
+                nodeId: 0, // no idea
+                nodeType: ExpeditionMapNodeTypeEnum.Combat,
+                completed: false,
+                showRewards: true,
+                data: {
+                    round: 0,
+                    playing: CombatTurnEnum.Player,
+                    rewards: [],
+                    // we set no enemies in order to end the match right away
+                    enemies: [],
+                    player: {
+                        energy: 3,
+                        handSize: 1,
+                        defense: 1,
+                        hpCurrent: 10,
+                        hpMax: 10,
+                        statuses: {
+                            buff: [],
+                            debuff: [],
+                        },
+                        cards: {
+                            hand: [
+                                {
+                                    id: stunnedCard.cardId,
+                                    isTemporary: false,
+                                    ...stunnedCard,
+                                },
+                            ],
+                            draw: [],
+                            discard: [],
+                            exhausted: [],
+                        },
+                    },
+                },
+            },
+        });
+
+        const expedition = await expeditionService.findOne({ clientId });
+        expect(expedition).toBeDefined();
+        expect(expedition.status).toBe(ExpeditionStatusEnum.InProgress);
+
+        await cardPlayedAction.handle({
+            client: mockedSocketGateway.clientSocket,
+            cardId: stunnedCard.cardId,
+            selectedEnemyId: '',
+        });
+
+        // this is not ideal, we should think a better way to solve it
+        await new Promise<void>((resolve) => setTimeout(resolve, 10));
+
+        expect(socketErrorMessage).toBeDefined();
+        expect(socketErrorMessage.data).toBeDefined();
+        expect(socketErrorMessage.data.message_type).toBe('error');
+        expect(socketErrorMessage.data.action).toBe('insufficient_energy');
+        expect(socketErrorMessage.data.data).toBe('This card is unplayable');
     });
 
     it('play exhaust card', async () => {
@@ -321,7 +398,7 @@ describe('CardPlayedAction Action', () => {
         expect(putDataMessage.data.data[0].id).toBe(armorUpCard.cardId);
     });
 
-    it('discard card', async () => {
+    it('play to discard a card', async () => {
         // TODO: call cardPlayedAction.handle()
     });
 
