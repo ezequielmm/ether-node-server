@@ -152,10 +152,14 @@ export class MerchantService {
                 );
                 break;
             case ItemsTypeEnum.Trinket:
-                client.emit('ErrorMessage', {
-                    message: `Not allowed element`,
-                });
-                return;
+                await this.handleTrinkets(
+                    merchantItems,
+                    item,
+                    itemIndex,
+                    playerState,
+                    _id,
+                );
+                break;
         }
 
         await this.success(client);
@@ -204,6 +208,32 @@ export class MerchantService {
             ...merchantItems,
         };
         mewMerchantItems.potions[itemIndex].isSold = true;
+
+        await this.expeditionService.updateById(_id, {
+            $set: {
+                playerState: newPlayerState,
+                'currentNode.merchantItems': mewMerchantItems,
+            },
+        });
+    }
+
+    async handleTrinkets(
+        merchantItems: MerchantItems,
+        item: Item,
+        itemIndex: number,
+        playerState: IExpeditionPlayerState,
+        _id: string,
+    ) {
+        const newPlayerState = {
+            ...playerState,
+            gold: playerState.gold - item.cost,
+            trinkets: [...playerState.trinkets, item.item],
+        };
+
+        const mewMerchantItems = {
+            ...merchantItems,
+        };
+        mewMerchantItems.trinkets[itemIndex].isSold = true;
 
         await this.expeditionService.updateById(_id, {
             $set: {
@@ -442,7 +472,7 @@ export class MerchantService {
                         gold: playerState.gold,
                         cards: playerState.cards,
                         potions: playerState.potions,
-                        trinkets: [],
+                        trinkets: playerState.trinkets,
                     },
                 },
             }),
