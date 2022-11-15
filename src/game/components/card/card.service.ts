@@ -39,7 +39,6 @@ import { CardDescriptionFormatter } from 'src/game/cardDescriptionFormatter/card
 import { getRandomNumber } from 'src/utils';
 import { AfterDrawCardEvent } from 'src/game/action/drawCard.action';
 import { MoveCardAction } from 'src/game/action/moveCard.action';
-import { CardSelectionScreenOriginPileEnum } from '../cardSelectionScreen/cardSelectionScreen.enum';
 
 @Injectable()
 export class CardService {
@@ -126,6 +125,7 @@ export class CardService {
         deck.push({
             id: randomUUID(),
             isTemporary: false,
+            description: CardDescriptionFormatter.process(newCard),
             ...newCard,
         });
 
