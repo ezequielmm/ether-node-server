@@ -120,7 +120,8 @@ describe('CardPlayedAction Action', () => {
                 { name: Card.name, schema: CardSchema },
                 { name: CombatQueue.name, schema: CombatQueueSchema },
             ],
-            logger: DebugLogger,
+            // uncomment if you want to see all logger logs
+            // logger: DebugLogger,
         });
 
         expeditionService = its.getInjectable(ExpeditionService);

@@ -62,7 +62,7 @@ export class IntegrationTestServer {
         this.app = this.module.createNestApplication();
         this.app.useWebSocketAdapter(new IoAdapter(this.app));
 
-        if (opt.logger) this.app.useLogger(this.app.get(DebugLogger));
+        if (opt.logger) this.app.useLogger(this.app.get(opt.logger as any));
 
         await this.app.init();
         const { port } = this.app.getHttpServer().listen().address();
