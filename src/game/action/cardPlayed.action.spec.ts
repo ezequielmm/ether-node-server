@@ -47,7 +47,10 @@ import {
     CombatQueueSchema,
 } from '../components/combatQueue/combatQueue.schema';
 import { ArmorUpCard } from '../components/card/data/armorUp.card';
-import { SWARAction } from '../standardResponse/standardResponse';
+import {
+    SWARAction,
+    SWARMessageType,
+} from '../standardResponse/standardResponse';
 import { StunnedCard } from '../components/card/data/stunned.card';
 import { AttackCard } from '../components/card/data/attack.card';
 import { EnemySeeder } from '../components/enemy/enemy.seeder';
@@ -413,6 +416,12 @@ describe('CardPlayedAction Action', () => {
 
         const clientId = clientSocket.socket.id;
 
+        let putDataMessage;
+        clientSocket.on('PutData', (message) => {
+            message = JSON.parse(message);
+            putDataMessage = message;
+        });
+
         const attackCard = await cardService.findById(AttackCard.cardId);
         expect(attackCard).toBeDefined();
 
@@ -453,6 +462,7 @@ describe('CardPlayedAction Action', () => {
                     ],
                     player: {
                         energy: 3,
+                        energyMax: 3,
                         handSize: 1,
                         defense: 1,
                         hpCurrent: 10,
@@ -514,6 +524,18 @@ describe('CardPlayedAction Action', () => {
 
         // check enemy energy
 
+        // this is not ideal, we should think a better way to solve it
+        // because socketErrorMessage could be undefined
+        await new Promise<void>((resolve) => setTimeout(resolve, 10));
+
+        expect(putDataMessage).toBeDefined();
+        expect(putDataMessage.data).toBeDefined();
+        expect(putDataMessage.data.message_type).toBe(
+            SWARMessageType.PlayerAffected,
+        );
+        expect(putDataMessage.data.action).toBe(SWARAction.UpdateEnergy);
+        expect(putDataMessage.data.data[0]).toBe(2);
+        expect(putDataMessage.data.data[1]).toBe(3);
     });
 
     afterAll(async () => {
