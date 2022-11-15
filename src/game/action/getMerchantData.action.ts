@@ -19,7 +19,7 @@ export class GetMerchantDataAction {
     async handle(clientId: string) {
         const {
             playerState,
-            playerState: { cards: playerCard },
+            playerState: { cards },
             currentNode: { merchantItems },
         } = await this.expeditionService.findOne({
             clientId,
@@ -31,7 +31,7 @@ export class GetMerchantDataAction {
             speechBubble: 'Hello',
             upgradeableCards: [],
             upgradedCards: [],
-            playerCards: playerCard,
+            playerCards: cards,
             upgradeCost: 75 + 25 * playerState.cardUpgradeCount,
             destroyCost: 75 + 25 * playerState.cardDestroyCount,
             cards: merchantItems.cards,
@@ -42,10 +42,10 @@ export class GetMerchantDataAction {
 
         const cardsId = [];
 
-        for (let i = 0; i < playerCard.length; i++) {
-            if (!playerCard[i].isUpgraded) {
-                data.upgradeableCards.push(playerCard[i]);
-                cardsId.push(playerCard[i].upgradedCardId);
+        for (let i = 0; i < cards.length; i++) {
+            if (!cards[i].isUpgraded) {
+                data.upgradeableCards.push(cards[i]);
+                cardsId.push(cards[i].upgradedCardId);
             }
         }
 
