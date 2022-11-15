@@ -26,7 +26,7 @@ import { IExpeditionPlayerStateDeckCard } from '../expedition/expedition.interfa
 import { ExpeditionService } from '../expedition/expedition.service';
 import { GameContext } from '../interfaces';
 import { PlayerService } from '../player/player.service';
-import { CardRarityEnum, CardTypeEnum } from './card.enum';
+import { CardKeywordEnum, CardRarityEnum, CardTypeEnum } from './card.enum';
 import { Card, CardDocument } from './card.schema';
 import { CardId, getCardIdField } from './card.type';
 import { EffectDTO } from '../../effects/effects.interface';
@@ -38,6 +38,8 @@ import {
 import { CardDescriptionFormatter } from 'src/game/cardDescriptionFormatter/cardDescriptionFormatter';
 import { getRandomNumber } from 'src/utils';
 import { AfterDrawCardEvent } from 'src/game/action/drawCard.action';
+import { MoveCardAction } from 'src/game/action/moveCard.action';
+import { CardSelectionScreenOriginPileEnum } from '../cardSelectionScreen/cardSelectionScreen.enum';
 
 @Injectable()
 export class CardService {
@@ -48,6 +50,7 @@ export class CardService {
         private readonly expeditionService: ExpeditionService,
         private readonly statusService: StatusService,
         private readonly playerService: PlayerService,
+        private readonly moveCardAction: MoveCardAction,
     ) {}
 
     async findAll(): Promise<CardDocument[]> {
@@ -199,6 +202,25 @@ export class CardService {
                 });
             }
         }
+    }
+
+    @OnEvent(EVENT_BEFORE_PLAYER_TURN_END)
+    async onMoveFadeCard(payload: { ctx: GameContext }) {
+        const { ctx } = payload;
+
+        const cards = filter(
+            ctx.expedition.currentNode.data.player.cards.hand,
+            {
+                keywords: [CardKeywordEnum.Fade],
+            },
+        );
+
+        await this.moveCardAction.handle({
+            client: ctx.client,
+            cardIds: cards.map((card) => card.id),
+            originPile: 'hand',
+            targetPile: 'exhausted',
+        });
     }
 
     @OnEvent(EVENT_AFTER_STATUS_ATTACH)

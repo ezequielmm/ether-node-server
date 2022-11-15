@@ -9,7 +9,7 @@ import { ExpeditionService } from 'src/game/components/expedition/expedition.ser
 import { CombatTurnEnum } from 'src/game/components/expedition/expedition.enum';
 import { EndEnemyTurnProcess } from 'src/game/process/endEnemyTurn.process';
 import { CardSelectionScreenService } from 'src/game/components/cardSelectionScreen/cardSelectionScreen.service';
-import { MoveCardToHandAction } from 'src/game/action/moveCard.action';
+import { MoveCardAction } from 'src/game/action/moveCard.action';
 import { corsSocketSettings } from './socket.enum';
 
 interface ICardPlayed {
@@ -31,7 +31,7 @@ export class CombatGateway {
         private readonly endEnemyTurnProcess: EndEnemyTurnProcess,
         private readonly expeditionService: ExpeditionService,
         private readonly cardSelectionService: CardSelectionScreenService,
-        private readonly moveCardAction: MoveCardToHandAction,
+        private readonly moveCardAction: MoveCardAction,
     ) {}
 
     @SubscribeMessage('EndTurn')

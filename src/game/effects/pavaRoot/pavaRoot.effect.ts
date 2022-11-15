@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { filter, sample } from 'lodash';
-import { MoveCardToHandAction } from 'src/game/action/moveCard.action';
+import { MoveCardAction } from 'src/game/action/moveCard.action';
 import { CardTypeEnum } from 'src/game/components/card/card.enum';
 import { CardSelectionScreenOriginPileEnum } from 'src/game/components/cardSelectionScreen/cardSelectionScreen.enum';
 import { EffectDecorator } from '../effects.decorator';
@@ -12,7 +12,7 @@ import { pavaRootEffect } from './constants';
 })
 @Injectable()
 export class PavaRootEffect implements EffectHandler {
-    constructor(private readonly moveCardToHandAction: MoveCardToHandAction) {}
+    constructor(private readonly moveCardToHandAction: MoveCardAction) {}
 
     async handle(dto: EffectDTO): Promise<void> {
         const { ctx } = dto;
