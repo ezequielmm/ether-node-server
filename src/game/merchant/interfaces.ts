@@ -1,11 +1,18 @@
+import {
+    IExpeditionPlayerStateDeckCard,
+    PotionInstance,
+    TrinketInstance,
+} from '../components/expedition/expedition.interface';
 import { ItemsTypeEnum } from './merchant.enum';
 
 export interface Item {
     isSale?: boolean;
     id: string;
-    cost: number;
     isSold: boolean;
     itemId: number;
+    cost: number;
+    type: ItemsTypeEnum;
+    item: IExpeditionPlayerStateDeckCard | PotionInstance | TrinketInstance;
 }
 
 export interface FindOneMerchantDTO {
@@ -15,7 +22,13 @@ export interface ItemId {
     id: number | string;
 }
 
-export interface selectedItem {
+export interface SelectedItem {
     targetId: number | string;
     type: ItemsTypeEnum;
+}
+
+export interface MerchantItems {
+    potions: Item[];
+    cards: Item[];
+    trinkets: Item[];
 }

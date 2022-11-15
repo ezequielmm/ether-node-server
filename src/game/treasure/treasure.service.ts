@@ -287,34 +287,6 @@ export class TreasureService {
             };
         }
     }
-    async treasureData(client: Socket) {
-        const { nodeId, nodeType } =
-            await this.expeditionService.getCurrentNode({
-                clientId: client.id,
-            });
-
-        if (nodeType !== ExpeditionMapNodeTypeEnum.Treasure) {
-            client.emit('ErrorMessage', {
-                message: `You are not in the treasure node`,
-            });
-            return;
-        }
-        const {
-            private_data: { treasure },
-        } = await this.expeditionService.getExpeditionMapNode({
-            clientId: client.id,
-            nodeId,
-        });
-
-        client.emit(
-            'TreasureData',
-            StandardResponse.respond({
-                message_type: SWARMessageType.GenericData,
-                action: SWARAction.TreasureData,
-                data: treasure.type,
-            }),
-        );
-    }
     async combatEncounter(client: Socket) {
         const { nodeId, nodeType } =
             await this.expeditionService.getCurrentNode({
