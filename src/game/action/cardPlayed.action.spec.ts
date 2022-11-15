@@ -22,7 +22,7 @@ import { EnemyService } from '../components/enemy/enemy.service';
 import { EffectService } from '../effects/effects.service';
 import { CardPlayedAction } from './cardPlayed.action';
 import { StatusService } from '../status/status.service';
-import { CardRegistry } from '../history/interfaces';
+import { CardRegistry, EffectRegistry } from '../history/interfaces';
 import { CombatQueueService } from '../components/combatQueue/combatQueue.service';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { HistoryService } from '../history/history.service';
@@ -33,7 +33,7 @@ import { InMemoryMongoDB } from 'src/tests/inMemoryMongoDB';
 import { IoAdapter } from '@nestjs/platform-socket.io';
 
 import { Connection, Model } from 'mongoose';
-import { INestApplication, Injectable } from '@nestjs/common';
+import { INestApplication, Injectable, Logger } from '@nestjs/common';
 
 import { ServerSocketGatewayMock } from 'src/tests/serverSocketGatewayMock';
 import { ClientSocketMock } from 'src/tests/clientSocketMock';
@@ -47,9 +47,18 @@ import {
     CombatQueueSchema,
 } from '../components/combatQueue/combatQueue.schema';
 import { ArmorUpCard } from '../components/card/data/armorUp.card';
-import { SWARAction } from '../standardResponse/standardResponse';
+import {
+    SWARAction,
+    SWARMessageType,
+} from '../standardResponse/standardResponse';
 import { StunnedCard } from '../components/card/data/stunned.card';
-import { time } from 'console';
+import { AttackCard } from '../components/card/data/attack.card';
+import { EnemySeeder } from '../components/enemy/enemy.seeder';
+import { sporeMongerData } from '../components/enemy/data/sporeMonger.enemy';
+import { DefenseEffect } from '../effects/defense/defense.effect';
+import { CardTargetedEnum } from '../components/card/card.enum';
+import { DamageEffect } from '../effects/damage/damage.effect';
+import { GetEnergyAction } from './getEnergy.action';
 
 // We use this simple card mock instead the CardService to avoid using
 // initializing all, and be able to use the CardDocument Model
@@ -77,6 +86,7 @@ describe('CardPlayedAction Action', () => {
     let cardService: CardServiceMocked;
     let historyService: HistoryService;
     let combatQueueService: CombatQueueService;
+    let enemyService: EnemyService;
 
     beforeAll(async () => {
         clientSockets = [];
@@ -101,16 +111,11 @@ describe('CardPlayedAction Action', () => {
                 HistoryService,
                 ExhaustCardAction,
                 EnemyService,
-                {
-                    provide: EffectService,
-                    useValue: {
-                        applyAll: jest.fn(),
-                    },
-                },
-                {
-                    provide: DiscardCardAction,
-                    useValue: {},
-                },
+                DiscardCardAction,
+                DefenseEffect,
+                GetEnergyAction,
+                DamageEffect,
+                EffectService,
                 {
                     provide: EndPlayerTurnProcess,
                     useValue: {},
@@ -119,27 +124,34 @@ describe('CardPlayedAction Action', () => {
                 CardPlayedAction,
                 ServerSocketGatewayMock,
                 CardSeeder,
+                EnemySeeder,
                 CardServiceMocked,
             ],
         }).compile();
-        expeditionService = module.get<ExpeditionService>(ExpeditionService);
+
+        expeditionService = module.get(ExpeditionService);
         expect(expeditionService).toBeDefined();
-        cardPlayedAction = module.get<CardPlayedAction>(CardPlayedAction);
+        cardPlayedAction = module.get(CardPlayedAction);
         expect(cardPlayedAction).toBeDefined();
-        mockedSocketGateway = module.get<ServerSocketGatewayMock>(
-            ServerSocketGatewayMock,
-        );
+        mockedSocketGateway = module.get(ServerSocketGatewayMock);
         expect(mockedSocketGateway).toBeDefined();
 
-        historyService = module.get<HistoryService>(HistoryService);
+        historyService = module.get(HistoryService);
         expect(historyService).toBeDefined();
 
-        combatQueueService = module.get<CombatQueueService>(CombatQueueService);
+        combatQueueService = module.get(CombatQueueService);
         expect(combatQueueService).toBeDefined();
 
-        const cardSeeder = module.get<CardSeeder>(CardSeeder);
+        enemyService = module.get(EnemyService);
+        expect(enemyService).toBeDefined();
+
+        const cardSeeder = module.get(CardSeeder);
         expect(CardSeeder).toBeDefined();
         await cardSeeder.seed();
+
+        const enemySeeder = module.get(EnemySeeder);
+        expect(enemySeeder).toBeDefined();
+        await enemySeeder.seed();
 
         connection = await module.get(getConnectionToken());
         expect(connection).toBeDefined();
@@ -151,7 +163,7 @@ describe('CardPlayedAction Action', () => {
         const { port } = app.getHttpServer().listen().address();
         serverPort = port;
 
-        cardService = module.get<CardServiceMocked>(CardServiceMocked);
+        cardService = module.get(CardServiceMocked);
         expect(cardService).toBeDefined();
     });
 
@@ -218,7 +230,7 @@ describe('CardPlayedAction Action', () => {
             playerState: undefined,
             status: ExpeditionStatusEnum.InProgress,
             currentNode: {
-                nodeId: 0, // no idea
+                nodeId: 0,
                 nodeType: ExpeditionMapNodeTypeEnum.Combat,
                 completed: false,
                 showRewards: true,
@@ -226,7 +238,7 @@ describe('CardPlayedAction Action', () => {
                     round: 0,
                     playing: CombatTurnEnum.Player,
                     rewards: [],
-                    // we set no enemies in order to end the match right away
+                    // we set no enemies in order to end the game right away
                     enemies: [],
                     player: {
                         energy: 3,
@@ -266,6 +278,7 @@ describe('CardPlayedAction Action', () => {
         });
 
         // this is not ideal, we should think a better way to solve it
+        // because socketErrorMessage could be undefined
         await new Promise<void>((resolve) => setTimeout(resolve, 10));
 
         expect(socketErrorMessage).toBeDefined();
@@ -282,8 +295,7 @@ describe('CardPlayedAction Action', () => {
 
         let putDataMessage;
         clientSocket.on('PutData', (message) => {
-            message = JSON.parse(message);
-            putDataMessage = message;
+            putDataMessage = JSON.parse(message);
         });
 
         const clientId = clientSocket.socket.id;
@@ -298,7 +310,7 @@ describe('CardPlayedAction Action', () => {
             playerState: undefined,
             status: ExpeditionStatusEnum.InProgress,
             currentNode: {
-                nodeId: 0, // no idea
+                nodeId: 0,
                 nodeType: ExpeditionMapNodeTypeEnum.Combat,
                 completed: false,
                 showRewards: true,
@@ -306,7 +318,7 @@ describe('CardPlayedAction Action', () => {
                     round: 0,
                     playing: CombatTurnEnum.Player,
                     rewards: [],
-                    // we set no enemies in order to end the match right away
+                    // we set no enemies in order to end the game right away
                     enemies: [],
                     player: {
                         energy: 3,
@@ -383,9 +395,16 @@ describe('CardPlayedAction Action', () => {
 
         history = historyService.get(clientId);
         expect(history).toBeDefined();
-        expect(history.length).toBe(1);
+        expect(history.length).toBe(2);
+
         expect(history[0].type).toBe('card');
         expect((history[0] as CardRegistry).card.id).toBe(armorUpCard.cardId);
+
+        expect(history[1].type).toBe('effect');
+        expect((history[1] as EffectRegistry).effect.effect).toBe('defense');
+        expect((history[1] as EffectRegistry).effect.target).toBe(
+            CardTargetedEnum.Player,
+        );
 
         // we started the queue and it has never ended because we finished the game
         combatQueue = await combatQueueService.findByClientId(clientId);
@@ -399,7 +418,167 @@ describe('CardPlayedAction Action', () => {
     });
 
     it('play to discard a card', async () => {
-        // TODO: call cardPlayedAction.handle()
+        const clientSocket = new ClientSocketMock();
+        clientSockets.push(clientSocket);
+        await clientSocket.connect(serverPort);
+
+        const clientId = clientSocket.socket.id;
+
+        const putDataMessages = [];
+        clientSocket.on('PutData', (message) => {
+            putDataMessages.push(JSON.parse(message));
+        });
+
+        const attackCard = await cardService.findById(AttackCard.cardId);
+        expect(attackCard).toBeDefined();
+
+        const sporeMongerEnemy = await enemyService.findById(
+            sporeMongerData.enemyId,
+        );
+        expect(sporeMongerEnemy).toBeDefined();
+
+        await expeditionService.create({
+            clientId: clientId,
+            playerId: 0,
+            map: [],
+            playerState: undefined,
+            status: ExpeditionStatusEnum.InProgress,
+            currentNode: {
+                nodeId: 0,
+                nodeType: ExpeditionMapNodeTypeEnum.Combat,
+                completed: false,
+                showRewards: true,
+                data: {
+                    round: 0,
+                    playing: CombatTurnEnum.Player,
+                    rewards: [],
+                    // we set no enemies in order to end the game right away
+                    enemies: [
+                        {
+                            id: sporeMongerEnemy.enemyId,
+                            defense: 0,
+                            hpCurrent: 10,
+                            hpMax: 10,
+                            currentScript: sporeMongerEnemy.scripts[0],
+                            statuses: {
+                                buff: [],
+                                debuff: [],
+                            },
+                            ...sporeMongerEnemy,
+                        },
+                    ],
+                    player: {
+                        energy: 3,
+                        energyMax: 3,
+                        handSize: 1,
+                        defense: 1,
+                        hpCurrent: 10,
+                        hpMax: 10,
+                        statuses: {
+                            buff: [],
+                            debuff: [],
+                        },
+                        cards: {
+                            hand: [
+                                {
+                                    id: attackCard.cardId,
+                                    isTemporary: false,
+                                    ...attackCard,
+                                },
+                            ],
+                            draw: [],
+                            discard: [],
+                            exhausted: [],
+                        },
+                    },
+                },
+            },
+        });
+
+        let expedition = await expeditionService.findOne({ clientId });
+        expect(expedition).toBeDefined();
+        expect(expedition.status).toBe(ExpeditionStatusEnum.InProgress);
+
+        expect(expedition.currentNode.data.player.cards.discard.length).toBe(0);
+        expect(expedition.currentNode.data.player.cards.draw.length).toBe(0);
+        expect(expedition.currentNode.data.player.cards.exhausted.length).toBe(
+            0,
+        );
+        expect(expedition.currentNode.data.player.cards.hand.length).toBe(1);
+
+        expect(expedition.currentNode.data.player.energy).toBe(3);
+
+        expect(expedition.currentNode.data.enemies[0].hpCurrent).toBe(10);
+
+        await cardPlayedAction.handle({
+            client: mockedSocketGateway.clientSocket,
+            cardId: attackCard.cardId,
+            selectedEnemyId: sporeMongerEnemy.enemyId,
+        });
+
+        expedition = await expeditionService.findOne({ clientId });
+
+        expect(expedition.currentNode.data.player.cards.discard.length).toBe(1);
+        expect(expedition.currentNode.data.player.cards.draw.length).toBe(0);
+        expect(expedition.currentNode.data.player.cards.exhausted.length).toBe(
+            0,
+        );
+        expect(expedition.currentNode.data.player.cards.hand.length).toBe(0);
+
+        expect(expedition.currentNode.data.enemies[0].hpCurrent).toBe(5);
+
+        expect(expedition.currentNode.data.player.energy).toBe(2);
+
+        // this is not ideal, we should think a better way to solve it
+        // because socketErrorMessage could be undefined
+        await new Promise<void>((resolve) => setTimeout(resolve, 10));
+
+        expect(putDataMessages.length).toBe(3);
+
+        const messageExpectedCases = [
+            {
+                expectedMessageType: SWARMessageType.PlayerAffected,
+                expectedAction: SWARAction.MoveCard,
+                expectedData: [
+                    { source: 'hand', destination: 'discard', id: 1 },
+                ],
+            },
+            {
+                expectedMessageType: SWARMessageType.PlayerAffected,
+                expectedAction: SWARAction.UpdateEnergy,
+                expectedData: [2, 3],
+            },
+            {
+                expectedMessageType: SWARMessageType.CombatUpdate,
+                expectedAction: SWARAction.CombatQueue,
+                expectedData: [
+                    {
+                        originId: 0,
+                        originType: 'player',
+                        targets: [
+                            {
+                                defenseDelta: 0,
+                                effectType: 'damage',
+                                finalDefense: 0,
+                                finalHealth: 5,
+                                healthDelta: -5,
+                                statuses: [],
+                                targetId: 1,
+                                targetType: 'enemy',
+                            },
+                        ],
+                    },
+                ],
+            },
+        ];
+
+        messageExpectedCases.forEach((mc, i) => {
+            const message = putDataMessages[i];
+            expect(message.data).toBeDefined();
+            expect(message.data.message_type).toBe(mc.expectedMessageType);
+            expect(message.data.action).toBe(mc.expectedAction);
+            expect(message.data.data).toMatchObject(mc.expectedData);
+        });
     });
 
     afterAll(async () => {
