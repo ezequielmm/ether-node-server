@@ -152,7 +152,6 @@ describe('CardPlayedAction Action', () => {
         expect(connection).toBeDefined();
 
         app = module.createNestApplication();
-        app.useLogger(['debug']);
         app.useWebSocketAdapter(new IoAdapter(app));
 
         await app.init();
@@ -479,15 +478,42 @@ describe('CardPlayedAction Action', () => {
             },
         });
 
-        const expedition = await expeditionService.findOne({ clientId });
+        let expedition = await expeditionService.findOne({ clientId });
         expect(expedition).toBeDefined();
         expect(expedition.status).toBe(ExpeditionStatusEnum.InProgress);
+
+        expect(expedition.currentNode.data.player.cards.discard.length).toBe(0);
+        expect(expedition.currentNode.data.player.cards.draw.length).toBe(0);
+        expect(expedition.currentNode.data.player.cards.exhausted.length).toBe(
+            0,
+        );
+        expect(expedition.currentNode.data.player.cards.hand.length).toBe(1);
+
+        expect(expedition.currentNode.data.player.energy).toBe(3);
 
         await cardPlayedAction.handle({
             client: mockedSocketGateway.clientSocket,
             cardId: attackCard.cardId,
             selectedEnemyId: sporeMongerEnemy.enemyId,
         });
+
+        expedition = await expeditionService.findOne({ clientId });
+
+        expect(expedition.currentNode.data.player.cards.discard.length).toBe(1);
+        expect(expedition.currentNode.data.player.cards.draw.length).toBe(0);
+        expect(expedition.currentNode.data.player.cards.exhausted.length).toBe(
+            0,
+        );
+        expect(expedition.currentNode.data.player.cards.hand.length).toBe(0);
+
+        // check statuses -> will do something with enemy hp
+
+        expect(expedition.currentNode.data.player.energy).toBe(2);
+
+        // check enemy hp ?
+
+        // check enemy energy
+
     });
 
     afterAll(async () => {
