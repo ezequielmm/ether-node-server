@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
+import { MerchantItems } from 'src/game/merchant/interfaces';
 import { AttachedStatus, StatusType } from 'src/game/status/interfaces';
 import {
     CombatTurnEnum,
@@ -65,6 +66,7 @@ export class Expedition {
             enemies: IExpeditionCurrentNodeDataEnemy[];
             rewards: Reward[];
         };
+        merchantItems?: MerchantItems;
     };
 
     @Prop({ default: ExpeditionStatusEnum.InProgress })

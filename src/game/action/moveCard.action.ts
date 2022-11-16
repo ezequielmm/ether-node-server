@@ -3,6 +3,7 @@ import { Socket } from 'socket.io';
 import { removeCardsFromPile } from 'src/utils';
 import { CardSelectionScreenOriginPileEnum } from '../components/cardSelectionScreen/cardSelectionScreen.enum';
 import { IExpeditionPlayerStateDeckCard } from '../components/expedition/expedition.interface';
+import { Expedition } from '../components/expedition/expedition.schema';
 import { ExpeditionService } from '../components/expedition/expedition.service';
 import {
     StandardResponse,
@@ -13,21 +14,28 @@ import {
 interface IMoveCardDTO {
     readonly client: Socket;
     readonly cardIds: string[];
-    readonly originPile: CardSelectionScreenOriginPileEnum;
+    readonly originPile: keyof Expedition['currentNode']['data']['player']['cards'];
+    readonly targetPile?: keyof Expedition['currentNode']['data']['player']['cards'];
     readonly callback?: (
         card: IExpeditionPlayerStateDeckCard,
     ) => IExpeditionPlayerStateDeckCard;
 }
 
 @Injectable()
-export class MoveCardToHandAction {
-    private readonly logger: Logger = new Logger(MoveCardToHandAction.name);
+export class MoveCardAction {
+    private readonly logger: Logger = new Logger(MoveCardAction.name);
 
     constructor(private readonly expeditionService: ExpeditionService) {}
 
     async handle(payload: IMoveCardDTO): Promise<void> {
         // First we deestructure the payload and get the data
-        const { cardIds, originPile, client, callback } = payload;
+        const {
+            cardIds,
+            originPile,
+            targetPile = 'hand',
+            client,
+            callback,
+        } = payload;
 
         // Now we get the current node information
         const {
@@ -71,7 +79,7 @@ export class MoveCardToHandAction {
                 action: SWARAction.MoveCard,
                 data: cardsToMove.map(({ id, ...data }) => ({
                     source: originPile,
-                    destination: 'hand',
+                    destination: targetPile,
                     id,
                     card: data,
                 })),
@@ -82,7 +90,7 @@ export class MoveCardToHandAction {
         await this.expeditionService.updateHandPiles({
             clientId: client.id,
             [originPile]: deckPile,
-            hand: [...cards.hand, ...cardsToMove],
+            [targetPile]: [...cards[targetPile], ...cardsToMove],
         });
     }
 }

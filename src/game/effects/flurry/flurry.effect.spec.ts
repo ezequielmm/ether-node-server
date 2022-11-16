@@ -1,5 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { set } from 'lodash';
+import { EnemyService } from 'src/game/components/enemy/enemy.service';
 import { PLAYER_ENERGY_PATH } from 'src/game/components/player/contants';
 import { EffectService } from '../effects.service';
 import { FlurryEffect } from './flurry.effect';
@@ -16,6 +17,10 @@ describe('FlurryEffect', () => {
         const module: TestingModule = await Test.createTestingModule({
             providers: [
                 FlurryEffect,
+                {
+                    provide: EnemyService,
+                    useValue: {},
+                },
                 {
                     provide: EffectService,
                     useValue: {

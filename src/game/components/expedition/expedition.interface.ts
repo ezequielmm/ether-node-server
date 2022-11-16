@@ -1,5 +1,6 @@
 import { Item } from 'src/game/merchant/interfaces';
 import { AttachedStatus, StatusType } from 'src/game/status/interfaces';
+import { TreasureInterface } from 'src/game/treasure/interfaces';
 import { CardRarityEnum, CardTypeEnum } from '../card/card.enum';
 import { Card } from '../card/card.schema';
 import {
@@ -59,7 +60,7 @@ export interface IExpeditionNode {
         neutralCards?: Item[];
         trinkets?: Item[];
         potions?: Item[];
-        treasure?: any;
+        treasure?: TreasureInterface;
         enemies?: {
             enemies: number[];
             probability: number;
