@@ -63,7 +63,7 @@ export class IntegrationTestServer {
         this.app = this.module.createNestApplication();
         this.app.useWebSocketAdapter(new IoAdapter(this.app));
 
-        if (opt.logger) this.app.useLogger(this.app.get(opt.logger as any));
+        this.setUpLogger(opt.logger);
 
         await this.app.init();
         const { port } = this.app.getHttpServer().listen().address();
@@ -73,6 +73,11 @@ export class IntegrationTestServer {
         expect(this.connection).toBeDefined();
 
         this.started = true;
+    }
+
+    private setUpLogger(logger: Provider<ConsoleLogger>): void {
+        if (!logger) return;
+        this.app.useLogger(this.app.get(logger as any));
     }
 
     getInjectable(modulee: any): any {

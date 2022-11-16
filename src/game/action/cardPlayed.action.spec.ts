@@ -61,7 +61,7 @@ class CardServiceMock {
     }
 }
 
-describe('CardPlayedAction Action', () => {
+describe('CardPlayedAction', () => {
     let its: IntegrationTestServer;
     let expeditionService: ExpeditionService;
     let cardPlayedAction: CardPlayedAction;
