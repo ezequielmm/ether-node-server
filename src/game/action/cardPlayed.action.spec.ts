@@ -51,7 +51,7 @@ import { Model } from 'mongoose';
 // We use this simple card mock instead the CardService to avoid using
 // initializing all, and be able to use the CardDocument Model
 @Injectable()
-class CardServiceMocked {
+class CardServiceMock {
     constructor(
         @InjectModel(Card.name) private readonly card: Model<CardDocument>,
     ) {}
@@ -62,16 +62,17 @@ class CardServiceMocked {
 }
 
 describe('CardPlayedAction Action', () => {
-    const its = new IntegrationTestServer();
+    let its: IntegrationTestServer;
     let expeditionService: ExpeditionService;
     let cardPlayedAction: CardPlayedAction;
     let mockedSocketGateway: ServerSocketGatewayMock;
-    let cardService: CardServiceMocked;
+    let cardService: CardServiceMock;
     let historyService: HistoryService;
     let combatQueueService: CombatQueueService;
     let enemyService: EnemyService;
 
     beforeAll(async () => {
+        its = new IntegrationTestServer();
         await its.start({
             providers: [
                 ProviderService,
@@ -96,7 +97,7 @@ describe('CardPlayedAction Action', () => {
                 ServerSocketGatewayMock,
                 CardSeeder,
                 EnemySeeder,
-                CardServiceMocked,
+                CardServiceMock,
             ],
             models: [
                 { name: Enemy.name, schema: EnemySchema },
@@ -114,7 +115,7 @@ describe('CardPlayedAction Action', () => {
         historyService = its.getInjectable(HistoryService);
         combatQueueService = its.getInjectable(CombatQueueService);
         enemyService = its.getInjectable(EnemyService);
-        cardService = its.getInjectable(CardServiceMocked);
+        cardService = its.getInjectable(CardServiceMock);
 
         const cardSeeder = its.getInjectable(CardSeeder);
         await cardSeeder.seed();
@@ -142,23 +143,6 @@ describe('CardPlayedAction Action', () => {
                 resolve();
             });
         });
-    });
-
-    // TODO: The idea is to show you how you can create in-memory mongodb documents
-    // but we can think a way to seed the testing database -> e.g. re-using seeds
-    it('expedition should exist', async () => {
-        await expeditionService.create({
-            clientId: 'the_client_id',
-            playerId: 0,
-            map: [],
-            playerState: undefined,
-            status: ExpeditionStatusEnum.InProgress,
-        });
-        const expedition = await expeditionService.findOne({
-            clientId: 'the_client_id',
-        });
-        expect(expedition).toBeDefined();
-        expect(expedition.status).toBe(ExpeditionStatusEnum.InProgress);
     });
 
     it('play an unplayable card', async () => {
