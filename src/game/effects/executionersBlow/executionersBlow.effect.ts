@@ -4,7 +4,7 @@ import { executionersBlowEffect } from './contants';
 import { EffectDecorator } from '../effects.decorator';
 import { EnemyService } from '../../components/enemy/enemy.service';
 import { HistoryService } from 'src/game/history/history.service';
-import { MoveCardToHandAction } from 'src/game/action/moveCard.action';
+import { MoveCardAction } from 'src/game/action/moveCard.action';
 import { CardSelectionScreenOriginPileEnum } from 'src/game/components/cardSelectionScreen/cardSelectionScreen.enum';
 import { CardRegistry } from 'src/game/history/interfaces';
 import {
@@ -27,7 +27,7 @@ export class ExecutionersBlowEffect implements EffectHandler {
     constructor(
         private readonly enemyService: EnemyService,
         private readonly historyService: HistoryService,
-        private readonly moveCardToHandAction: MoveCardToHandAction,
+        private readonly moveCardToHandAction: MoveCardAction,
         private readonly combatQueueService: CombatQueueService,
     ) {}
 

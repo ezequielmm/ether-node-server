@@ -25,22 +25,23 @@ export class InitMerchantProcess {
             clientId: client.id,
         });
         const expeditionMap = restoreMap(map);
-        const selectedNode = expeditionMap.fullCurrentMap.get(
-            currentNode.nodeId,
-        );
-        const potions = await this.merchantService.potions();
-        const cards = await this.merchantService.card();
-        const trinkets = await this.merchantService.trinket();
 
-        selectedNode.setPrivate_data({
-            cards,
-            neutralCards: [],
-            trinkets,
-            potions,
-        });
+        const potionItems = await this.merchantService.getPotions();
+
+        const cardItems = await this.merchantService.getCard();
+
+        const trinketItems = await this.merchantService.getTrinket();
 
         await this.expeditionService.update(client.id, {
-            currentNode,
+            currentNode: {
+                ...currentNode,
+                merchantItems: {
+                    potions: potionItems,
+                    cards: cardItems,
+                    trinkets: trinketItems,
+                },
+            },
+
             map: expeditionMap.getMap,
         });
     }
