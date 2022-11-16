@@ -40,6 +40,9 @@ export class ChooseCardEffect implements EffectHandler {
             },
         } = expedition;
 
+        // First we clear the previois card selection screen
+        await this.cardSelectionScreenService.deleteByClientId(client.id);
+
         const cardList =
             originPile === CardSelectionScreenOriginPileEnum.Discard
                 ? cards.discard
