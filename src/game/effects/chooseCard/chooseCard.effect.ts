@@ -68,8 +68,7 @@ export class ChooseCardEffect implements EffectHandler {
             clientId: client.id,
             cardIds: cardList.map(({ id }) => id),
             originPile,
-            amount: cardList.length,
-            takenCards: 0,
+            amountToTake: cardList.length,
         });
     }
 }
