@@ -249,7 +249,7 @@ export class TreasureService {
         });
 
         client.emit(
-            'ChestOpened',
+            'PutData',
             StandardResponse.respond({
                 message_type: SWARMessageType.GenericData,
                 action: SWARAction.ChestResult,
