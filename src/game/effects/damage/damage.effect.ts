@@ -1,13 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { GetEnergyAction } from 'src/game/action/getEnergy.action';
-import { MoveCardToHandAction } from 'src/game/action/moveCard.action';
 import { CombatQueueTargetEffectTypeEnum } from 'src/game/components/combatQueue/combatQueue.enum';
 import { CombatQueueService } from 'src/game/components/combatQueue/combatQueue.service';
 import { EnemyService } from 'src/game/components/enemy/enemy.service';
 import { PlayerService } from 'src/game/components/player/player.service';
 import { EVENT_AFTER_DAMAGE_EFFECT } from 'src/game/constants';
-import { HistoryService } from 'src/game/history/history.service';
 import { isNotUndefined } from 'src/utils';
 import { EffectDecorator } from '../effects.decorator';
 import { EffectDTO, EffectHandler } from '../effects.interface';

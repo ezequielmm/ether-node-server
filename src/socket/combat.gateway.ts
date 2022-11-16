@@ -9,8 +9,9 @@ import { ExpeditionService } from 'src/game/components/expedition/expedition.ser
 import { CombatTurnEnum } from 'src/game/components/expedition/expedition.enum';
 import { EndEnemyTurnProcess } from 'src/game/process/endEnemyTurn.process';
 import { CardSelectionScreenService } from 'src/game/components/cardSelectionScreen/cardSelectionScreen.service';
-import { MoveCardToHandAction } from 'src/game/action/moveCard.action';
+import { MoveCardAction } from 'src/game/action/moveCard.action';
 import { corsSocketSettings } from './socket.enum';
+import { CustomException, ErrorBehavior } from './custom.exception';
 
 interface ICardPlayed {
     cardId: CardId;
@@ -18,7 +19,7 @@ interface ICardPlayed {
 }
 
 interface IMoveCard {
-    cardsToTake: string[];
+    cardToTake: string;
 }
 
 @WebSocketGateway(corsSocketSettings)
@@ -31,7 +32,7 @@ export class CombatGateway {
         private readonly endEnemyTurnProcess: EndEnemyTurnProcess,
         private readonly expeditionService: ExpeditionService,
         private readonly cardSelectionService: CardSelectionScreenService,
-        private readonly moveCardAction: MoveCardToHandAction,
+        private readonly moveCardAction: MoveCardAction,
     ) {}
 
     @SubscribeMessage('EndTurn')
@@ -86,39 +87,52 @@ export class CombatGateway {
             `Client ${client.id} trigger message "MoveCard": ${payload}`,
         );
 
+        const clientId = client.id;
+
         // query the information received by the frontend
-        const { cardsToTake }: IMoveCard = JSON.parse(payload);
+        const { cardToTake } = JSON.parse(payload) as IMoveCard;
 
         // Get card selection item
-        const {
-            cardIds: cardsAvailable,
-            originPile,
-            amount,
-        } = await this.cardSelectionService.findOne({
-            client_id: client.id,
+        const cardSelection = await this.cardSelectionService.findOne({
+            clientId,
         });
 
-        // Here we validate that the frontend is sending us
-        // the correct amount of cards to take, if not, we
-        // only take the amount required, starting from the
-        // first element
-        const newCardList = cardsToTake
-            .filter((cardId) => cardsAvailable.includes(cardId))
-            .slice(0, amount);
+        if (!cardSelection)
+            throw new CustomException(
+                'Card selected is not available',
+                ErrorBehavior.ReturnToMainMenu,
+            );
 
-        // With the right card to take, we call the move card action
-        // with the right ids and the pile to take the cards
-        await this.moveCardAction.handle({
-            client,
-            cardIds: newCardList,
-            originPile,
-            callback: (card) => {
-                card.energy = 0;
-                return card;
-            },
-        });
+        // Check if the id provided exists in the list
+        if (cardSelection.cardIds.includes(cardToTake)) {
+            // With the right card to take, we call the move card action
+            // with the right ids and the pile to take the cards
+            await this.moveCardAction.handle({
+                client,
+                cardIds: [cardToTake],
+                originPile: cardSelection.originPile,
+                targetPile: 'hand',
+                callback: (card) => {
+                    card.energy = 0;
+                    return card;
+                },
+            });
 
-        // Now we remove the info from the database
-        await this.cardSelectionService.deleteByClientId(client.id);
+            const amountToTake = cardSelection.amountToTake--;
+
+            if (amountToTake > 0) {
+                // Now we remove the id taken from the list and update
+                // the custom deck
+                await this.cardSelectionService.update({
+                    clientId,
+                    cardIds: cardSelection.cardIds.filter((card) => {
+                        return card !== cardToTake;
+                    }),
+                    amountToTake,
+                });
+            } else {
+                await this.cardSelectionService.deleteByClientId(clientId);
+            }
+        }
     }
 }

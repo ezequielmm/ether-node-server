@@ -18,7 +18,7 @@ export class CardSelectionScreen {
     originPile: CardSelectionScreenOriginPileEnum;
 
     @Prop()
-    amount: number;
+    amountToTake: number;
 }
 
 export const CardSelectionScreenSchema =

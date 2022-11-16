@@ -30,5 +30,5 @@ export const PoisonedCard: Card = {
     },
     showPointer: false,
     isUpgraded: false,
-    triggerAtEndOfTurn: true
+    triggerAtEndOfTurn: true,
 };

@@ -77,8 +77,8 @@ describe('DoubleBurnEffect', () => {
             4,
         );
         expect(statusService.updateStatuses).toHaveBeenCalledWith(
+            ctx,
             target,
-            ctx.expedition,
             target.value.combatState.statuses,
         );
     });

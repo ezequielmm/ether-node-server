@@ -59,20 +59,16 @@ describe('DoubleResolveEffect', () => {
         };
         await doubleResolveEffect.handle({ ctx, source, target, args });
         expect(target.value.combatState.statuses.buff[0].args.counter).toBe(4);
-        expect(statusService.updateStatuses).toHaveBeenCalledWith(
-            target,
-            ctx.expedition,
-            {
-                buff: [
-                    {
-                        name: resolveStatus.name,
-                        args: {
-                            counter: 4,
-                        },
+        expect(statusService.updateStatuses).toHaveBeenCalledWith(ctx, target, {
+            buff: [
+                {
+                    name: resolveStatus.name,
+                    args: {
+                        counter: 4,
                     },
-                ],
-            },
-        );
+                },
+            ],
+        });
     });
 
     it('should not double resolve status value if not present', async () => {
