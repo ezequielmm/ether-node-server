@@ -45,7 +45,7 @@ describe('ChangeTurnAction', () => {
                 entity: CombatTurnEnum.Player,
             });
 
-            await new Promise<void>((resolve) => setTimeout(resolve, 1));
+            await new Promise<void>((resolve) => setTimeout(resolve, 5));
 
             expect(putDataMessage).toBeDefined();
             expect(putDataMessage.data).toBeDefined();
