@@ -34,7 +34,9 @@ import {
     TrinketCommon,
     TrinketUncommon,
     TrinketRare,
+    PurchaseFailureEnum,
 } from './merchant.enum';
+import { CustomException, ErrorBehavior } from 'src/socket/custom.exception';
 
 @Injectable()
 export class MerchantService {
@@ -81,12 +83,16 @@ export class MerchantService {
             client.emit('ErrorMessage', {
                 message: `You are not in the merchant node`,
             });
-            return;
+            throw new CustomException(
+                'You are not in the merchant node',
+                ErrorBehavior.ReturnToMainMenu,
+            );
         }
 
         let item: Item;
         let itemIndex: number;
         let data: Item[];
+
         switch (type) {
             case ItemsTypeEnum.Card:
                 data = merchantItems.cards;
@@ -98,6 +104,7 @@ export class MerchantService {
                 data = merchantItems.potions;
                 break;
         }
+
         for (let i = 0; i < data.length; i++) {
             if (typeof targetId == 'string') {
                 if (targetId == data[i].id) {
@@ -113,17 +120,19 @@ export class MerchantService {
         }
 
         if (!item) {
-            client.emit('ErrorMessage', {
-                message: `Invalid id`,
-            });
-            return;
+            this.failure(client, PurchaseFailureEnum.InvalidId);
+            throw new CustomException(
+                PurchaseFailureEnum.InvalidId,
+                ErrorBehavior.ReturnToMainMenu,
+            );
         }
 
         if (playerState.gold < item.cost) {
-            client.emit('ErrorMessage', {
-                message: `Not enough gold`,
-            });
-            return;
+            this.failure(client, PurchaseFailureEnum.NoEnoughGold);
+            throw new CustomException(
+                PurchaseFailureEnum.NoEnoughGold,
+                ErrorBehavior.ReturnToMainMenu,
+            );
         }
 
         switch (type) {
@@ -138,10 +147,11 @@ export class MerchantService {
                 break;
             case ItemsTypeEnum.Potion:
                 if (playerState.potions.length > 2) {
-                    client.emit('ErrorMessage', {
-                        message: `You cannot carry any more potions. Discard or use one to buy a potion.`,
-                    });
-                    return;
+                    this.failure(client, PurchaseFailureEnum.MaxPotionReached);
+                    throw new CustomException(
+                        PurchaseFailureEnum.MaxPotionReached,
+                        ErrorBehavior.ReturnToMainMenu,
+                    );
                 }
                 await this.handlePotions(
                     merchantItems,
@@ -479,6 +489,17 @@ export class MerchantService {
         );
     }
 
+    async failure(client: Socket, data: PurchaseFailureEnum): Promise<void> {
+        client.emit(
+            'PutData',
+            StandardResponse.respond({
+                message_type: SWARMessageType.MerchantUpdate,
+                action: SWARAction.PurchaseFailure,
+                data,
+            }),
+        );
+    }
+
     async playerCards(client: Socket) {
         const { cards } = await this.expeditionService.getPlayerState({
             clientId: client.id,
@@ -486,6 +507,7 @@ export class MerchantService {
 
         return cards;
     }
+
     async cardUpgrade(client: Socket, cardId: CardId) {
         const playerState = await this.expeditionService.getPlayerState({
             clientId: client.id,
@@ -577,6 +599,7 @@ export class MerchantService {
 
         this.success(client);
     }
+
     async cardDestroy(client: Socket, cardId: CardId) {
         const playerState = await this.expeditionService.getPlayerState({
             clientId: client.id,

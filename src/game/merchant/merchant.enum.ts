@@ -47,13 +47,21 @@ export enum TrinketCommon {
     minPrice = 143,
     maxPrice = 157,
 }
+
 export enum TrinketUncommon {
     name = 'uncommon',
     minPrice = 238,
     maxPrice = 262,
 }
+
 export enum TrinketRare {
     name = 'rare',
     minPrice = 285,
     maxPrice = 315,
+}
+
+export enum PurchaseFailureEnum {
+    NoEnoughGold = 'Not enough gold',
+    InvalidId = 'Invalid id',
+    MaxPotionReached = 'You cannot carry any more potions. Discard or use one to buy a potion.',
 }
