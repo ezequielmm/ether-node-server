@@ -19,6 +19,9 @@ export class CardSelectionScreen {
 
     @Prop()
     amount: number;
+
+    @Prop()
+    takenCards: number;
 }
 
 export const CardSelectionScreenSchema =

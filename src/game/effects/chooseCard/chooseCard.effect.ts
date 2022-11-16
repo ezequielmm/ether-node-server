@@ -62,15 +62,14 @@ export class ChooseCardEffect implements EffectHandler {
             }),
         );
 
-        // Here we create an item on the card selection screen collection
+        // Here we create the list of cards on the card selection screen collection
         // to make sure that we only receive the desired data
         await this.cardSelectionScreenService.create({
             clientId: client.id,
-            cardIds: cardList.map(({ id }) => {
-                return id;
-            }),
+            cardIds: cardList.map(({ id }) => id),
             originPile,
-            amount: cardsToTake,
+            amount: cardList.length,
+            takenCards: 0,
         });
     }
 }

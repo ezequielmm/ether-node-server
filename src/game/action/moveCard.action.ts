@@ -1,7 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Socket } from 'socket.io';
 import { removeCardsFromPile } from 'src/utils';
-import { CardSelectionScreenOriginPileEnum } from '../components/cardSelectionScreen/cardSelectionScreen.enum';
 import { IExpeditionPlayerStateDeckCard } from '../components/expedition/expedition.interface';
 import { Expedition } from '../components/expedition/expedition.schema';
 import { ExpeditionService } from '../components/expedition/expedition.service';
