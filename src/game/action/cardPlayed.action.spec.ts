@@ -286,10 +286,7 @@ describe('CardPlayedAction', () => {
 
         // double check that the expedition has the armorUpCard on Hand
         expect(expedition.currentNode).toBeDefined();
-        expect(expedition.currentNode.data).toBeDefined();
-        expect(expedition.currentNode.data.player).toBeDefined();
-        expect(expedition.currentNode.data.player.cards).toBeDefined();
-        expect(expedition.currentNode.data.player.cards.hand).toBeDefined();
+        expect(expedition.currentNode?.data?.player?.cards?.hand).toBeDefined();
         expect(expedition.currentNode.data.player.cards.discard.length).toBe(0);
         expect(expedition.currentNode.data.player.cards.draw.length).toBe(0);
         expect(expedition.currentNode.data.player.cards.exhausted.length).toBe(

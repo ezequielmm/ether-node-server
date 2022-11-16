@@ -26,7 +26,7 @@ describe('ChangeTurnAction', () => {
         mockedSocketGateway = its.getInjectable(ServerSocketGatewayMock);
     });
 
-    it('trigger change turn action', async () => {
+    it('handle change turn action', async () => {
         const clientSocket = await its.addNewSocketConnection();
         const cases: (SWARMessageType.BeginTurn | SWARMessageType.EndTurn)[] = [
             SWARMessageType.EndTurn,
@@ -39,13 +39,13 @@ describe('ChangeTurnAction', () => {
                 putDataMessage = JSON.parse(message);
             });
 
-            changeTurnAction.handle({
+            await changeTurnAction.handle({
                 client: mockedSocketGateway.clientSocket,
                 type: c,
                 entity: CombatTurnEnum.Player,
             });
 
-            await new Promise<void>((resolve) => setTimeout(resolve, 15));
+            await new Promise<void>((resolve) => setTimeout(resolve, 1));
 
             expect(putDataMessage).toBeDefined();
             expect(putDataMessage.data).toBeDefined();
