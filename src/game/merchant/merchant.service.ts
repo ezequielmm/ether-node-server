@@ -448,7 +448,7 @@ export class MerchantService {
         const { playerState, playerId } = expedition || {};
 
         client.emit(
-            'MerchantBuy',
+            'PutData',
             StandardResponse.respond({
                 message_type: SWARMessageType.MerchantUpdate,
                 action: SWARAction.PurchaseSuccess,
