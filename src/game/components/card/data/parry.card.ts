@@ -11,7 +11,7 @@ export const ParryCardUpgraded: Card = {
     cardType: CardTypeEnum.Defend,
     pool: 'knight',
     energy: 1,
-    description: `Deal {${defenseEffect.name}} defense. Gain {${fortitude.name}} fortitude.`,
+    description: `Gain {${defenseEffect.name}} defense. Gain {${fortitude.name}} fortitude.`,
     keywords: [],
     properties: {
         effects: [
@@ -44,7 +44,7 @@ export const ParryCard: Card = {
     cardType: CardTypeEnum.Defend,
     pool: 'knight',
     energy: 1,
-    description: `Deal {${defenseEffect.name}} defense. Gain {${fortitude.name}} fortitude.`,
+    description: `Gain {${defenseEffect.name}} defense. Gain {${fortitude.name}} fortitude.`,
     keywords: [],
     properties: {
         effects: [
