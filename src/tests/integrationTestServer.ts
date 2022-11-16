@@ -2,9 +2,6 @@ import {
     ConsoleLogger,
     INestApplication,
     Injectable,
-    Logger,
-    LoggerService,
-    LogLevel,
     Provider,
 } from '@nestjs/common';
 import { MongooseModule, getConnectionToken } from '@nestjs/mongoose';
@@ -14,10 +11,6 @@ import { MongoMemoryServer } from 'mongodb-memory-server';
 import { Connection } from 'mongoose';
 import { ClientSocketMock } from './clientSocketMock';
 import { InMemoryMongoDB } from './inMemoryMongoDB';
-
-/*
-    ADD Comments
-*/
 
 @Injectable()
 export class DebugLogger extends ConsoleLogger {
@@ -34,6 +27,14 @@ export interface IntegrationTestServerOptions {
     logger?: Provider<ConsoleLogger>;
 }
 
+/**
+ * It Creates a standard NestJS TestingModule where it setups
+ * an in Memory MongoDB server and an array of ClientSocketMock. This allows
+ * store Mongo documents by using the same Mongosee API and second simulate
+ * socket connections.
+ * @param IntegrationTestServerOptions set up your providers, MongoDB models,
+ * and an optional logger
+ */
 export class IntegrationTestServer {
     module: TestingModule;
     clientSockets: Array<ClientSocketMock>;

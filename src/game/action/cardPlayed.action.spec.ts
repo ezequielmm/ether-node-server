@@ -1,10 +1,4 @@
-import {
-    MongooseModule,
-    getConnectionToken,
-    InjectModel,
-} from '@nestjs/mongoose';
-import { TestingModule, Test } from '@nestjs/testing';
-
+import { InjectModel } from '@nestjs/mongoose';
 import { Enemy, EnemySchema } from '../components/enemy/enemy.schema';
 import {
     CombatTurnEnum,
@@ -16,7 +10,6 @@ import {
     ExpeditionSchema,
 } from '../components/expedition/expedition.schema';
 import { ExpeditionService } from '../components/expedition/expedition.service';
-
 import { PlayerService } from '../components/player/player.service';
 import { EnemyService } from '../components/enemy/enemy.service';
 import { EffectService } from '../effects/effects.service';
@@ -29,15 +22,7 @@ import { HistoryService } from '../history/history.service';
 import { DiscardCardAction } from './discardCard.action';
 import { ExhaustCardAction } from './exhaustCard.action';
 import { EndPlayerTurnProcess } from '../process/endPlayerTurn.process';
-import { InMemoryMongoDB } from 'src/tests/inMemoryMongoDB';
-import { IoAdapter } from '@nestjs/platform-socket.io';
-
-import { Connection, Model } from 'mongoose';
-import { INestApplication, Injectable, Logger } from '@nestjs/common';
-
 import { ServerSocketGatewayMock } from 'src/tests/serverSocketGatewayMock';
-import { ClientSocketMock } from 'src/tests/clientSocketMock';
-import { MongoMemoryServer } from 'mongodb-memory-server';
 import { CardSeeder } from '../components/card/card.seeder';
 import { Card, CardDocument, CardSchema } from '../components/card/card.schema';
 import { CardId, getCardIdField } from '../components/card/card.type';
@@ -59,10 +44,9 @@ import { DefenseEffect } from '../effects/defense/defense.effect';
 import { CardTargetedEnum } from '../components/card/card.enum';
 import { DamageEffect } from '../effects/damage/damage.effect';
 import { GetEnergyAction } from './getEnergy.action';
-import {
-    DebugLogger,
-    IntegrationTestServer,
-} from 'src/tests/integrationTestServer';
+import { IntegrationTestServer } from 'src/tests/integrationTestServer';
+import { Injectable } from '@nestjs/common';
+import { Model } from 'mongoose';
 
 // We use this simple card mock instead the CardService to avoid using
 // initializing all, and be able to use the CardDocument Model
