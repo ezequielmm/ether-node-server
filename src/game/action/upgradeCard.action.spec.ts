@@ -18,15 +18,14 @@ import { Card, CardSchema } from '../components/card/card.schema';
 import { IntegrationTestServer } from 'src/tests/integrationTestServer';
 import { CardService } from '../components/card/card.service';
 import { MoveCardAction } from './moveCard.action';
-import { SWARAction } from '../standardResponse/standardResponse';
 import { StunnedCard } from '../components/card/data/stunned.card';
-import { GetUpgradableCardsAction } from './getUpgradableCards.action';
+import { UpgradeCardAction } from './upgradeCard.action';
 
-describe('MoveCardAction', () => {
+describe('UpgradeCardAction', () => {
     let its: IntegrationTestServer;
     let mockedSocketGateway: ServerSocketGatewayMock;
     let expeditionService: ExpeditionService;
-    let moveCardAction: MoveCardAction;
+    let upgradeCardAction: UpgradeCardAction;
     let cardService: CardService;
 
     beforeAll(async () => {
@@ -49,11 +48,14 @@ describe('MoveCardAction', () => {
                     provide: StatusService,
                     useValue: {},
                 },
-                MoveCardAction,
+                {
+                    provide: MoveCardAction,
+                    useValue: {},
+                },
                 CardService,
                 ServerSocketGatewayMock,
                 ExpeditionService,
-                GetUpgradableCardsAction,
+                UpgradeCardAction,
                 CardSeeder,
             ],
             models: [
@@ -66,14 +68,14 @@ describe('MoveCardAction', () => {
 
         mockedSocketGateway = its.getInjectable(ServerSocketGatewayMock);
         expeditionService = its.getInjectable(ExpeditionService);
-        moveCardAction = its.getInjectable(MoveCardAction);
+        upgradeCardAction = its.getInjectable(UpgradeCardAction);
 
         const cardSeeder = its.getInjectable(CardSeeder);
         await cardSeeder.seed();
     });
 
-    it('move card from hand to discard pile', async () => {
-        const [clientSocket, messages] = await its.addNewSocketConnection();
+    it('upgrading card to make it temporary false', async () => {
+        const [clientSocket] = await its.addNewSocketConnection();
         const clientId = clientSocket.socket.id;
 
         const stunnedCard = await cardService.findById(StunnedCard.cardId);
@@ -83,7 +85,28 @@ describe('MoveCardAction', () => {
             clientId: clientId,
             playerId: 0,
             map: [],
-            playerState: undefined,
+            playerState: {
+                playerId: '1',
+                playerName: 'some_name',
+                characterClass: 'some_class',
+                hpMax: 1,
+                hpCurrent: 1,
+                gold: 1,
+                potions: [],
+                trinkets: [],
+                createdAt: new Date(),
+                cards: [
+                    {
+                        isUpgraded: false,
+                        upgradedCardId: stunnedCard.cardId,
+                        id: stunnedCard.cardId.toString(),
+                        isTemporary: true,
+                        ...stunnedCard,
+                    },
+                ],
+                cardUpgradeCount: 1,
+                cardDestroyCount: 1,
+            },
             status: ExpeditionStatusEnum.InProgress,
             currentNode: {
                 nodeId: 0,
@@ -107,13 +130,7 @@ describe('MoveCardAction', () => {
                             debuff: [],
                         },
                         cards: {
-                            hand: [
-                                {
-                                    id: stunnedCard.cardId.toString(),
-                                    isTemporary: false,
-                                    ...stunnedCard,
-                                },
-                            ],
+                            hand: [],
                             draw: [],
                             discard: [],
                             exhausted: [],
@@ -123,34 +140,19 @@ describe('MoveCardAction', () => {
             },
         });
 
-        const expedition = await expeditionService.findOne({ clientId });
+        let expedition = await expeditionService.findOne({ clientId });
         expect(expedition).toBeDefined();
 
-        expect(expedition.currentNode.data.player.cards.hand).toHaveLength(1);
-        expect(expedition.currentNode.data.player.cards.discard).toHaveLength(
-            0,
-        );
+        expect(expedition.playerState.cards).toHaveLength(1);
 
-        await moveCardAction.handle({
+        await upgradeCardAction.handle({
             client: mockedSocketGateway.clientSocket,
-            cardIds: [stunnedCard.cardId.toString()],
-            originPile: 'hand',
-            targetPile: 'discard',
+            cardId: stunnedCard.cardId.toString(),
         });
 
-        // MOVE CARD ACTION NOT WORKING!!!! Discard pile should be one and hand 0
-        expect(expedition.currentNode.data.player.cards.hand).toHaveLength(1);
-        expect(expedition.currentNode.data.player.cards.discard).toHaveLength(
-            0,
-        );
-
-        await clientSocket.waitMessages(messages, 1);
-        expect(messages).toHaveLength(1);
-        const message = messages[0];
-        expect(message.data.action).toBe(SWARAction.MoveCard);
-        expect(message.data.data).toMatchObject([
-            { destination: 'discard', id: '501' },
-        ]);
+        expedition = await expeditionService.findOne({ clientId });
+        expect(expedition.playerState.cards).toHaveLength(1);
+        expect(expedition.playerState.cards[0].isTemporary).toBeFalsy();
     });
 
     afterAll(async () => {

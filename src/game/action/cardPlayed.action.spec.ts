@@ -44,7 +44,7 @@ import { DefenseEffect } from '../effects/defense/defense.effect';
 import { CardTargetedEnum } from '../components/card/card.enum';
 import { DamageEffect } from '../effects/damage/damage.effect';
 import { GetEnergyAction } from './getEnergy.action';
-import { IntegrationTestServer } from 'src/tests/integrationTestServer';
+import { DebugLogger, IntegrationTestServer } from 'src/tests/integrationTestServer';
 import { CardServiceMock } from 'src/tests/cardServiceMock';
 
 describe('CardPlayedAction', () => {
@@ -433,7 +433,6 @@ describe('CardPlayedAction', () => {
 
         await clientSocket.waitMessages(messages, 3);
         expect(messages).toHaveLength(3);
-
         const messageExpectedCases = [
             {
                 expectedMessageType: SWARMessageType.PlayerAffected,
