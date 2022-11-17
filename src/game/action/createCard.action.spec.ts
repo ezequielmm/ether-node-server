@@ -99,14 +99,9 @@ describe('CreateCardAction', () => {
         await cardSeeder.seed();
     });
 
-    it('create cards and assign into player hand', async () => {
-        const clientSocket = await its.addNewSocketConnection();
+    it('assign all current cards in player hand', async () => {
+        const [clientSocket, messages] = await its.addNewSocketConnection();
         const clientId = clientSocket.socket.id;
-
-        let putDataMessage;
-        clientSocket.on('PutData', (message) => {
-            putDataMessage = JSON.parse(message);
-        });
 
         const cardsIds: number[] = data.map((c) => c.cardId);
 
@@ -169,13 +164,13 @@ describe('CreateCardAction', () => {
             cardsIds.length,
         );
 
-        await new Promise<void>((resolve) => setTimeout(resolve, 1));
+        await clientSocket.waitMessages(messages, 1);
+        expect(messages).toHaveLength(1);
 
-        expect(putDataMessage).toBeDefined();
-        expect(putDataMessage.data?.message_type).toBe(
-            SWARMessageType.PlayerAffected,
-        );
-        expect(putDataMessage.data?.action).toBe(SWARAction.MoveCard);
+        const message = messages[0];
+        expect(message).toBeDefined();
+        expect(message.data?.message_type).toBe(SWARMessageType.PlayerAffected);
+        expect(message.data?.action).toBe(SWARAction.MoveCard);
     });
 
     afterAll(async () => {
