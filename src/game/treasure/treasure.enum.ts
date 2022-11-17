@@ -51,3 +51,12 @@ export enum LargeChest {
     trappedValue = 1,
     trappedText = 'The chest suddenly sprouts limbs and teeth, and scrambles towards you',
 }
+
+export enum RewardType {
+    Gold = 'gold',
+    Card = 'card',
+    Potion = 'potion',
+    Trinket = 'trinket',
+    Combat = 'combat_encounter',
+    Damage = 'damage',
+}
