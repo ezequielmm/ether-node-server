@@ -22,6 +22,7 @@ import {
     SWARMessageType,
 } from '../standardResponse/standardResponse';
 import {
+    Trapped,
     TreasureInterface,
     TreasureReward,
     TreasureRewardData,
@@ -147,6 +148,14 @@ export class TreasureService {
 
         const rewards: TreasureReward[] = [];
 
+        const trapped: Trapped = {
+            trappedType: null,
+            trappedText: null,
+            monster_type: null,
+            damage: 0,
+            curse_card: null,
+        };
+
         const randomCoinChance = getRandomBetween(1, 100);
 
         if (randomCoinChance <= coinChance) {
@@ -250,33 +259,18 @@ export class TreasureService {
                     cardPreview.description =
                         CardDescriptionFormatter.process(card);
 
-                    rewards.push({
-                        id: randomUUID(),
-                        type: RewardType.Card,
-                        description: MediumChest.trappedText,
-                        card: cardPreview,
-                        taken: true,
-                    });
+                    trapped.trappedText = MediumChest.trappedText;
+
+                    trapped.curse_card = cardPreview;
 
                     break;
                 case TrappedType.Damage:
                     playerState.hpCurrent =
                         playerState.hpCurrent - SmallChest.trappedValue;
-                    rewards.push({
-                        id: randomUUID(),
-                        type: RewardType.Damage,
-                        description: SmallChest.trappedText,
-                        damage: SmallChest.trappedValue,
-                        taken: true,
-                    });
+                    trapped.damage = SmallChest.trappedValue;
                     break;
                 case TrappedType.Node:
-                    rewards.push({
-                        id: randomUUID(),
-                        type: RewardType.Combat,
-                        description: LargeChest.trappedText,
-                        taken: true,
-                    });
+                    // TODO
                     break;
             }
         }
@@ -303,6 +297,7 @@ export class TreasureService {
         this.success(client, playerState, playerId, {
             isOpen: true,
             rewards,
+            trapped,
         });
     }
 
