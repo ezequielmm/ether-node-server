@@ -32,20 +32,14 @@ import { DefenseEffect } from '../effects/defense/defense.effect';
 
 import { DamageEffect } from '../effects/damage/damage.effect';
 import { GetEnergyAction } from './getEnergy.action';
-import {
-    DebugLogger,
-    IntegrationTestServer,
-} from 'src/tests/integrationTestServer';
+import { IntegrationTestServer } from 'src/tests/integrationTestServer';
 import { CreateCardAction } from './createCard.action';
 import { CardService } from '../components/card/card.service';
 import { MoveCardAction } from './moveCard.action';
-import { data } from '../components/card/card.data';
 import {
     SWARAction,
     SWARMessageType,
 } from '../standardResponse/standardResponse';
-import { DiscardAllCardsAction } from './discardAllCards.action';
-import { CardServiceMock } from 'src/tests/cardServiceMock';
 import { AttackCard } from '../components/card/data/attack.card';
 import { AutonomousWeaponCard } from '../components/card/data/autonomousWeapon.card';
 import { DrawCardAction } from './drawCard.action';

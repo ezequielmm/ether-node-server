@@ -1,4 +1,3 @@
-import { InjectModel } from '@nestjs/mongoose';
 import { Enemy, EnemySchema } from '../components/enemy/enemy.schema';
 import {
     CombatTurnEnum,
@@ -24,8 +23,7 @@ import { ExhaustCardAction } from './exhaustCard.action';
 import { EndPlayerTurnProcess } from '../process/endPlayerTurn.process';
 import { ServerSocketGatewayMock } from 'src/tests/serverSocketGatewayMock';
 import { CardSeeder } from '../components/card/card.seeder';
-import { Card, CardDocument, CardSchema } from '../components/card/card.schema';
-import { CardId, getCardIdField } from '../components/card/card.type';
+import { Card, CardSchema } from '../components/card/card.schema';
 import { ProviderService } from '../provider/provider.service';
 import {
     CombatQueue,
@@ -44,7 +42,7 @@ import { DefenseEffect } from '../effects/defense/defense.effect';
 import { CardTargetedEnum } from '../components/card/card.enum';
 import { DamageEffect } from '../effects/damage/damage.effect';
 import { GetEnergyAction } from './getEnergy.action';
-import { DebugLogger, IntegrationTestServer } from 'src/tests/integrationTestServer';
+import { IntegrationTestServer } from 'src/tests/integrationTestServer';
 import { CardServiceMock } from 'src/tests/cardServiceMock';
 
 describe('CardPlayedAction', () => {
