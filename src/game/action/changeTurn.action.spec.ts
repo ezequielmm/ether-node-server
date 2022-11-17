@@ -20,7 +20,6 @@ describe('ChangeTurnAction', () => {
         await its.start({
             providers: [ChangeTurnAction, ServerSocketGatewayMock],
             models: [],
-            logger: DebugLogger,
         });
         changeTurnAction = its.getInjectable(ChangeTurnAction);
         mockedSocketGateway = its.getInjectable(ServerSocketGatewayMock);
