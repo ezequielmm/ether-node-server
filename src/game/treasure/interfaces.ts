@@ -69,6 +69,30 @@ export interface CardReward extends BaseReward {
         pool: string;
     };
 }
+export interface Trapped {
+    trappedType:
+        | null
+        | MediumChest.trappedType
+        | SmallChest.trappedType
+        | LargeChest.trappedType;
+
+    damage: number;
+    trappedText:
+        | null
+        | MediumChest.trappedText
+        | SmallChest.trappedText
+        | LargeChest.trappedText;
+    curse_card: null | {
+        cardId: number;
+        name: string;
+        description: string;
+        energy: number;
+        rarity: CardRarityEnum;
+        cardType: CardTypeEnum;
+        pool: string;
+    };
+    monster_type: null;
+}
 
 export type TreasureReward =
     | GoldReward
@@ -81,4 +105,5 @@ export type TreasureReward =
 export interface TreasureRewardData {
     isOpen: boolean;
     rewards: TreasureReward[];
+    trapped: Trapped;
 }

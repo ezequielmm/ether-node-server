@@ -31,7 +31,7 @@ export enum MediumChest {
     trinketChanceCommon = 0,
     potionChance = 15,
     trappedChance = 10,
-    trappedType = 'curse_card',
+    trappedType = 'card',
     trappedValue = 1,
     trappedText = 'An ancient curse falls upon you',
 }
