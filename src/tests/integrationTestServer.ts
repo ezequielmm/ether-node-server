@@ -97,6 +97,12 @@ export class IntegrationTestServer {
         clientSocket.on('ErrorMessage', (message) => {
             messages.push(JSON.parse(message));
         });
+        clientSocket.on('ExpeditionMap', (message) => {
+            messages.push(JSON.parse(message));
+        });
+        clientSocket.on('PlayerState', (message) => {
+            messages.push(JSON.parse(message));
+        });
         return [clientSocket, messages];
     }
 
