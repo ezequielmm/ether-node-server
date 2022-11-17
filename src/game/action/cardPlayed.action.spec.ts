@@ -1,10 +1,4 @@
-import {
-    MongooseModule,
-    getConnectionToken,
-    InjectModel,
-} from '@nestjs/mongoose';
-import { TestingModule, Test } from '@nestjs/testing';
-
+import { InjectModel } from '@nestjs/mongoose';
 import { Enemy, EnemySchema } from '../components/enemy/enemy.schema';
 import {
     CombatTurnEnum,
@@ -16,7 +10,6 @@ import {
     ExpeditionSchema,
 } from '../components/expedition/expedition.schema';
 import { ExpeditionService } from '../components/expedition/expedition.service';
-
 import { PlayerService } from '../components/player/player.service';
 import { EnemyService } from '../components/enemy/enemy.service';
 import { EffectService } from '../effects/effects.service';
@@ -29,15 +22,7 @@ import { HistoryService } from '../history/history.service';
 import { DiscardCardAction } from './discardCard.action';
 import { ExhaustCardAction } from './exhaustCard.action';
 import { EndPlayerTurnProcess } from '../process/endPlayerTurn.process';
-import { InMemoryMongoDB } from 'src/tests/inMemoryMongoDB';
-import { IoAdapter } from '@nestjs/platform-socket.io';
-
-import { Connection, Model } from 'mongoose';
-import { INestApplication, Injectable, Logger } from '@nestjs/common';
-
 import { ServerSocketGatewayMock } from 'src/tests/serverSocketGatewayMock';
-import { ClientSocketMock } from 'src/tests/clientSocketMock';
-import { MongoMemoryServer } from 'mongodb-memory-server';
 import { CardSeeder } from '../components/card/card.seeder';
 import { Card, CardDocument, CardSchema } from '../components/card/card.schema';
 import { CardId, getCardIdField } from '../components/card/card.type';
@@ -59,11 +44,14 @@ import { DefenseEffect } from '../effects/defense/defense.effect';
 import { CardTargetedEnum } from '../components/card/card.enum';
 import { DamageEffect } from '../effects/damage/damage.effect';
 import { GetEnergyAction } from './getEnergy.action';
+import { IntegrationTestServer } from 'src/tests/integrationTestServer';
+import { Injectable } from '@nestjs/common';
+import { Model } from 'mongoose';
 
 // We use this simple card mock instead the CardService to avoid using
 // initializing all, and be able to use the CardDocument Model
 @Injectable()
-class CardServiceMocked {
+class CardServiceMock {
     constructor(
         @InjectModel(Card.name) private readonly card: Model<CardDocument>,
     ) {}
@@ -74,34 +62,18 @@ class CardServiceMocked {
 }
 
 describe('CardPlayedAction Action', () => {
-    let module: TestingModule;
+    let its: IntegrationTestServer;
     let expeditionService: ExpeditionService;
     let cardPlayedAction: CardPlayedAction;
     let mockedSocketGateway: ServerSocketGatewayMock;
-    let connection: Connection;
-    let app: INestApplication;
-    let serverPort: number;
-    let clientSockets: Array<ClientSocketMock>;
-    let mongod: MongoMemoryServer;
-    let cardService: CardServiceMocked;
+    let cardService: CardServiceMock;
     let historyService: HistoryService;
     let combatQueueService: CombatQueueService;
     let enemyService: EnemyService;
 
     beforeAll(async () => {
-        clientSockets = [];
-
-        mongod = await InMemoryMongoDB.buildMongoMemoryServer();
-        module = await Test.createTestingModule({
-            imports: [
-                InMemoryMongoDB.forRootAsyncModule(mongod),
-                MongooseModule.forFeature([
-                    { name: Enemy.name, schema: EnemySchema },
-                    { name: Expedition.name, schema: ExpeditionSchema },
-                    { name: Card.name, schema: CardSchema },
-                    { name: CombatQueue.name, schema: CombatQueueSchema },
-                ]),
-            ],
+        its = new IntegrationTestServer();
+        await its.start({
             providers: [
                 ProviderService,
                 PlayerService,
@@ -125,52 +97,34 @@ describe('CardPlayedAction Action', () => {
                 ServerSocketGatewayMock,
                 CardSeeder,
                 EnemySeeder,
-                CardServiceMocked,
+                CardServiceMock,
             ],
-        }).compile();
+            models: [
+                { name: Enemy.name, schema: EnemySchema },
+                { name: Expedition.name, schema: ExpeditionSchema },
+                { name: Card.name, schema: CardSchema },
+                { name: CombatQueue.name, schema: CombatQueueSchema },
+            ],
+            // uncomment if you want to see all logger logs
+            // logger: DebugLogger,
+        });
 
-        expeditionService = module.get(ExpeditionService);
-        expect(expeditionService).toBeDefined();
-        cardPlayedAction = module.get(CardPlayedAction);
-        expect(cardPlayedAction).toBeDefined();
-        mockedSocketGateway = module.get(ServerSocketGatewayMock);
-        expect(mockedSocketGateway).toBeDefined();
+        expeditionService = its.getInjectable(ExpeditionService);
+        cardPlayedAction = its.getInjectable(CardPlayedAction);
+        mockedSocketGateway = its.getInjectable(ServerSocketGatewayMock);
+        historyService = its.getInjectable(HistoryService);
+        combatQueueService = its.getInjectable(CombatQueueService);
+        enemyService = its.getInjectable(EnemyService);
+        cardService = its.getInjectable(CardServiceMock);
 
-        historyService = module.get(HistoryService);
-        expect(historyService).toBeDefined();
-
-        combatQueueService = module.get(CombatQueueService);
-        expect(combatQueueService).toBeDefined();
-
-        enemyService = module.get(EnemyService);
-        expect(enemyService).toBeDefined();
-
-        const cardSeeder = module.get(CardSeeder);
-        expect(CardSeeder).toBeDefined();
+        const cardSeeder = its.getInjectable(CardSeeder);
         await cardSeeder.seed();
-
-        const enemySeeder = module.get(EnemySeeder);
-        expect(enemySeeder).toBeDefined();
+        const enemySeeder = its.getInjectable(EnemySeeder);
         await enemySeeder.seed();
-
-        connection = await module.get(getConnectionToken());
-        expect(connection).toBeDefined();
-
-        app = module.createNestApplication();
-        app.useWebSocketAdapter(new IoAdapter(app));
-
-        await app.init();
-        const { port } = app.getHttpServer().listen().address();
-        serverPort = port;
-
-        cardService = module.get(CardServiceMocked);
-        expect(cardService).toBeDefined();
     });
 
     it('card does not exist', async () => {
-        const clientSocket = new ClientSocketMock();
-        clientSockets.push(clientSocket);
-        await clientSocket.connect(serverPort);
+        const clientSocket = await its.addNewSocketConnection();
 
         await cardPlayedAction.handle({
             client: mockedSocketGateway.clientSocket,
@@ -191,27 +145,8 @@ describe('CardPlayedAction Action', () => {
         });
     });
 
-    // TODO: The idea is to show you how you can create in-memory mongodb documents
-    // but we can think a way to seed the testing database -> e.g. re-using seeds
-    it('expedition should exist', async () => {
-        await expeditionService.create({
-            clientId: 'the_client_id',
-            playerId: 0,
-            map: [],
-            playerState: undefined,
-            status: ExpeditionStatusEnum.InProgress,
-        });
-        const expedition = await expeditionService.findOne({
-            clientId: 'the_client_id',
-        });
-        expect(expedition).toBeDefined();
-        expect(expedition.status).toBe(ExpeditionStatusEnum.InProgress);
-    });
-
     it('play an unplayable card', async () => {
-        const clientSocket = new ClientSocketMock();
-        clientSockets.push(clientSocket);
-        await clientSocket.connect(serverPort);
+        const clientSocket = await its.addNewSocketConnection();
 
         let socketErrorMessage;
         clientSocket.on('ErrorMessage', (message) => {
@@ -289,9 +224,7 @@ describe('CardPlayedAction Action', () => {
     });
 
     it('play exhaust card', async () => {
-        const clientSocket = new ClientSocketMock();
-        clientSockets.push(clientSocket);
-        await clientSocket.connect(serverPort);
+        const clientSocket = await its.addNewSocketConnection();
 
         let putDataMessage;
         clientSocket.on('PutData', (message) => {
@@ -418,10 +351,7 @@ describe('CardPlayedAction Action', () => {
     });
 
     it('play to discard a card', async () => {
-        const clientSocket = new ClientSocketMock();
-        clientSockets.push(clientSocket);
-        await clientSocket.connect(serverPort);
-
+        const clientSocket = await its.addNewSocketConnection();
         const clientId = clientSocket.socket.id;
 
         const putDataMessages = [];
@@ -582,11 +512,6 @@ describe('CardPlayedAction Action', () => {
     });
 
     afterAll(async () => {
-        clientSockets.forEach((cs) => {
-            cs.disconnect();
-        });
-        await mongod.stop();
-        await connection.close();
-        await app.close();
+        await its.stop();
     });
 });
