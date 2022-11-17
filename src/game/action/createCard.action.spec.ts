@@ -146,7 +146,7 @@ describe('CreateCardAction', () => {
         expect(expedition).toBeDefined();
 
         expect(expedition.currentNode?.data?.player?.cards?.hand).toBeDefined();
-        expect(expedition.currentNode?.data?.player?.cards?.hand.length).toBe(
+        expect(expedition.currentNode?.data?.player?.cards?.hand).toHaveLength(
             0,
         );
 
@@ -160,7 +160,7 @@ describe('CreateCardAction', () => {
         expedition = await expeditionService.findOne({ clientId });
         expect(expedition).toBeDefined();
 
-        expect(expedition.currentNode?.data?.player?.cards?.hand.length).toBe(
+        expect(expedition.currentNode?.data?.player?.cards?.hand).toHaveLength(
             cardsIds.length,
         );
 

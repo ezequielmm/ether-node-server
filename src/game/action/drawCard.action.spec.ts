@@ -47,53 +47,74 @@ import {
 import { DiscardAllCardsAction } from './discardAllCards.action';
 import { CardServiceMock } from 'src/tests/cardServiceMock';
 import { AttackCard } from '../components/card/data/attack.card';
+import { AutonomousWeaponCard } from '../components/card/data/autonomousWeapon.card';
+import { DrawCardAction } from './drawCard.action';
 
-describe('DiscardAllCardsAction', () => {
+describe('DrawCardAction', () => {
     let its: IntegrationTestServer;
     let mockedSocketGateway: ServerSocketGatewayMock;
     let expeditionService: ExpeditionService;
-    let discardAllCardsAction: DiscardAllCardsAction;
-    let cardService: CardServiceMock;
+    let drawCardAction: DrawCardAction;
+    let cardService: CardService;
 
     beforeAll(async () => {
         its = new IntegrationTestServer();
         await its.start({
             providers: [
+                ProviderService,
+                PlayerService,
+                StatusService,
+                EventEmitter2,
+                CombatQueueService,
+                HistoryService,
+                ExhaustCardAction,
+                EnemyService,
+                DiscardCardAction,
+                DefenseEffect,
+                GetEnergyAction,
+                DamageEffect,
+                EffectService,
                 {
-                    provide: PlayerService,
+                    provide: EndPlayerTurnProcess,
                     useValue: {},
                 },
-                {
-                    provide: EnemyService,
-                    useValue: {},
-                },
-                CardServiceMock,
-                ServerSocketGatewayMock,
                 ExpeditionService,
-                DiscardAllCardsAction,
+                CardPlayedAction,
+                MoveCardAction,
+                ServerSocketGatewayMock,
+                CardService,
+                CreateCardAction,
                 CardSeeder,
+                DrawCardAction,
             ],
             models: [
                 { name: Expedition.name, schema: ExpeditionSchema },
                 { name: Card.name, schema: CardSchema },
+                { name: Enemy.name, schema: EnemySchema },
+                { name: CombatQueue.name, schema: CombatQueueSchema },
             ],
         });
 
-        cardService = its.getInjectable(CardServiceMock);
+        cardService = its.getInjectable(CardService);
         mockedSocketGateway = its.getInjectable(ServerSocketGatewayMock);
         expeditionService = its.getInjectable(ExpeditionService);
-        discardAllCardsAction = its.getInjectable(DiscardAllCardsAction);
+        drawCardAction = its.getInjectable(DrawCardAction);
 
         const cardSeeder = its.getInjectable(CardSeeder);
         await cardSeeder.seed();
     });
 
-    it('put two cards on hand and discard all', async () => {
+    it('draw a card from draw pile and discard pile', async () => {
         const [clientSocket, messages] = await its.addNewSocketConnection();
         const clientId = clientSocket.socket.id;
 
         const attackCard = await cardService.findById(AttackCard.cardId);
         expect(attackCard).toBeDefined();
+
+        const autonomousWeaponCard = await cardService.findById(
+            AutonomousWeaponCard.cardId,
+        );
+        expect(autonomousWeaponCard).toBeDefined();
 
         await expeditionService.create({
             clientId: clientId,
@@ -122,20 +143,21 @@ describe('DiscardAllCardsAction', () => {
                             debuff: [],
                         },
                         cards: {
-                            hand: [
-                                {
-                                    id: attackCard.cardId,
-                                    isTemporary: false,
-                                    ...attackCard,
-                                },
+                            hand: [],
+                            draw: [
                                 {
                                     id: attackCard.cardId,
                                     isTemporary: false,
                                     ...attackCard,
                                 },
                             ],
-                            draw: [],
-                            discard: [],
+                            discard: [
+                                {
+                                    id: autonomousWeaponCard.cardId,
+                                    isTemporary: false,
+                                    ...autonomousWeaponCard,
+                                },
+                            ],
                             exhausted: [],
                         },
                     },
@@ -147,6 +169,27 @@ describe('DiscardAllCardsAction', () => {
         expect(expedition).toBeDefined();
 
         expect(expedition.currentNode.data.player.cards.discard).toHaveLength(
+            1,
+        );
+        expect(expedition.currentNode.data.player.cards.draw).toHaveLength(1);
+        expect(expedition.currentNode.data.player.cards.exhausted).toHaveLength(
+            0,
+        );
+        expect(expedition.currentNode.data.player.cards.hand).toHaveLength(0);
+
+        await drawCardAction.handle({
+            ctx: {
+                client: mockedSocketGateway.clientSocket,
+                expedition,
+            },
+            amountToTake: 2,
+            SWARMessageTypeToSend: SWARMessageType.PlayerAffected,
+        });
+
+        expedition = await expeditionService.findOne({ clientId });
+        expect(expedition).toBeDefined();
+
+        expect(expedition.currentNode.data.player.cards.discard).toHaveLength(
             0,
         );
         expect(expedition.currentNode.data.player.cards.draw).toHaveLength(0);
@@ -155,31 +198,22 @@ describe('DiscardAllCardsAction', () => {
         );
         expect(expedition.currentNode.data.player.cards.hand).toHaveLength(2);
 
-        await discardAllCardsAction.handle({
-            client: mockedSocketGateway.clientSocket,
-            // ?????? we do not have en specific message to get back
-            SWARMessageTypeToSend: undefined,
-        });
-
-        expedition = await expeditionService.findOne({ clientId });
-        expect(expedition).toBeDefined();
-
-        expect(expedition.currentNode.data.player.cards.discard).toHaveLength(
-            2,
-        );
-        expect(expedition.currentNode.data.player.cards.draw).toHaveLength(0);
-        expect(expedition.currentNode.data.player.cards.exhausted).toHaveLength(
-            0,
-        );
-        expect(expedition.currentNode.data.player.cards.hand).toHaveLength(0);
-
-        await clientSocket.waitMessages(messages, 1);
-        expect(messages).toHaveLength(1);
-        const message = messages[0];
+        await clientSocket.waitMessages(messages, 3);
+        expect(messages).toHaveLength(3);
+        let message = messages[0];
         expect(message.data.action).toBe(SWARAction.MoveCard);
         expect(message.data.data).toMatchObject([
-            { destination: 'discard', id: 1, source: 'hand' },
-            { destination: 'discard', id: 1, source: 'hand' },
+            { destination: 'hand', id: 1, source: 'draw' },
+        ]);
+        message = messages[1];
+        expect(message.data.action).toBe(SWARAction.MoveCard);
+        expect(message.data.data).toMatchObject([
+            { destination: 'draw', id: 145, source: 'discard' },
+        ]);
+        message = messages[2];
+        expect(message.data.action).toBe(SWARAction.MoveCard);
+        expect(message.data.data).toMatchObject([
+            { destination: 'hand', id: 145, source: 'draw' },
         ]);
     });
 

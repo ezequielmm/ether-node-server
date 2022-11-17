@@ -187,7 +187,7 @@ describe('DiscardCardAction', () => {
         expect(expedition.currentNode.data.player.cards.hand).toHaveLength(1);
 
         await clientSocket.waitMessages(messages, 1);
-        expect(messages.length).toBe(1);
+        expect(messages).toHaveLength(1);
         const message = messages[0];
         expect(message.data.action).toBe(SWARAction.MoveCard);
         expect(message.data.data).toMatchObject([
