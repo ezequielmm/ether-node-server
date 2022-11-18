@@ -1,8 +1,3 @@
-export enum TrappedType {
-    Damage = 'damage',
-    CurseCard = 'curse_card',
-    Node = 'combat_encounter',
-}
 export enum SmallChest {
     name = 'Small Chest',
     chance = 50,
@@ -54,9 +49,6 @@ export enum LargeChest {
 
 export enum RewardType {
     Gold = 'gold',
-    Card = 'card',
     Potion = 'potion',
     Trinket = 'trinket',
-    Combat = 'combat_encounter',
-    Damage = 'damage',
 }

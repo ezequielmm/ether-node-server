@@ -4,7 +4,6 @@ import {
     MediumChest,
     RewardType,
     SmallChest,
-    TrappedType,
 } from './treasure.enum';
 
 export interface TreasureInterface {
@@ -13,9 +12,9 @@ export interface TreasureInterface {
     isOpen: boolean;
     trappedType:
         | null
-        | TrappedType.CurseCard
-        | TrappedType.Damage
-        | TrappedType.Node;
+        | LargeChest.trappedType
+        | MediumChest.trappedType
+        | SmallChest.trappedType;
 }
 
 export interface BaseReward {
@@ -29,16 +28,6 @@ export interface GoldReward extends BaseReward {
     amount: number;
 }
 
-export interface CombatReward extends BaseReward {
-    type: RewardType.Combat;
-    description: LargeChest.trappedText;
-}
-
-export interface DamageReward extends BaseReward {
-    type: RewardType.Damage;
-    description: SmallChest.trappedText;
-    damage: SmallChest.trappedValue;
-}
 export interface PotionReward extends BaseReward {
     type: RewardType.Potion;
     potion: {
@@ -56,19 +45,6 @@ export interface TrinketReward extends BaseReward {
     };
 }
 
-export interface CardReward extends BaseReward {
-    type: RewardType.Card;
-    description: MediumChest.trappedText;
-    card: {
-        cardId: number;
-        name: string;
-        description: string;
-        energy: number;
-        rarity: CardRarityEnum;
-        cardType: CardTypeEnum;
-        pool: string;
-    };
-}
 export interface Trapped {
     trappedType:
         | null
@@ -94,13 +70,7 @@ export interface Trapped {
     monster_type: null;
 }
 
-export type TreasureReward =
-    | GoldReward
-    | PotionReward
-    | CardReward
-    | TrinketReward
-    | CombatReward
-    | DamageReward;
+export type TreasureReward = GoldReward | PotionReward | TrinketReward;
 
 export interface TreasureRewardData {
     isOpen: boolean;
