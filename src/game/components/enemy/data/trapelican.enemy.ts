@@ -92,7 +92,7 @@ export const trapelicanData: Enemy = {
                     type: EnemyIntentionType.Buff,
                     target: CardTargetedEnum.Player,
                     value: 1,
-                    status: [
+                    statuses: [
                         {
                             name: feebleStatus.name,
                             attachTo: CardTargetedEnum.Player,
@@ -106,7 +106,7 @@ export const trapelicanData: Enemy = {
                     type: EnemyIntentionType.Debuff,
                     target: CardTargetedEnum.Player,
                     value: 1,
-                    status: [
+                    statuses: [
                         {
                             name: trapped.name,
                             attachTo: CardTargetedEnum.Self,

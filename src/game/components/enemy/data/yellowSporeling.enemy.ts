@@ -24,7 +24,7 @@ export const yellowSporelingData: Enemy = {
                     type: EnemyIntentionType.Debuff,
                     target: CardTargetedEnum.Player,
                     value: 2,
-                    status: [
+                    statuses: [
                         {
                             name: distraught.name,
                             attachTo: CardTargetedEnum.Player,

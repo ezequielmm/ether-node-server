@@ -111,7 +111,7 @@ export const thornWolfData: Enemy = {
                     type: EnemyIntentionType.Buff,
                     target: CardTargetedEnum.Self,
                     value: 2,
-                    status: [
+                    statuses: [
                         {
                             name: spikesStatus.name,
                             attachTo: CardTargetedEnum.Self,

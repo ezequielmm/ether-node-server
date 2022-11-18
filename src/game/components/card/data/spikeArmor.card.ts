@@ -3,6 +3,8 @@ import { spikesStatus } from 'src/game/status/spikes/constants';
 import { CardRarityEnum, CardTypeEnum, CardTargetedEnum } from '../card.enum';
 import { Card } from '../card.schema';
 
+const spikeArmorDamage = 3;
+const spikeArmorUpgradedDamage = 5;
 export const SpikeArmorCardUpgraded: Card = {
     cardId: 70,
     name: 'Spike Armor+',
@@ -13,13 +15,23 @@ export const SpikeArmorCardUpgraded: Card = {
     description: `Whenever you are attacked, deal {${damageEffect.name}} damage back to attacker`,
     keywords: [],
     properties: {
-        effects: [],
+        effects: [
+            {
+                // Effect only used to process the card description
+                effect: damageEffect.name,
+                // Target set to None
+                target: CardTargetedEnum.None,
+                args: {
+                    value: spikeArmorUpgradedDamage,
+                },
+            },
+        ],
         statuses: [
             {
                 name: spikesStatus.name,
-                attachTo: CardTargetedEnum.Enemy,
+                attachTo: CardTargetedEnum.Player,
                 args: {
-                    counter: 5,
+                    counter: spikeArmorUpgradedDamage,
                 },
             },
         ],
@@ -38,13 +50,23 @@ export const SpikeArmorCard: Card = {
     description: `Whenever you are attacked, deal {${damageEffect.name}} damage back to attacker`,
     keywords: [],
     properties: {
-        effects: [],
+        effects: [
+            {
+                // Effect only used to process the card description
+                effect: damageEffect.name,
+                // Target set to None
+                target: CardTargetedEnum.None,
+                args: {
+                    value: spikeArmorDamage,
+                },
+            },
+        ],
         statuses: [
             {
                 name: spikesStatus.name,
-                attachTo: CardTargetedEnum.Enemy,
+                attachTo: CardTargetedEnum.Player,
                 args: {
-                    counter: 3,
+                    counter: spikeArmorDamage,
                 },
             },
         ],

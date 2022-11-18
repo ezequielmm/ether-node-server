@@ -98,7 +98,7 @@ export class BeginEnemyTurnProcess {
             });
 
             for (const intention of intentions) {
-                const { effects, status } = intention;
+                const { effects, statuses } = intention;
 
                 if (!isEmpty(effects)) {
                     await this.effectService.applyAll({
@@ -108,12 +108,14 @@ export class BeginEnemyTurnProcess {
                         selectedEnemy: enemy.id,
                     });
 
-                    await this.statusService.attachAll({
-                        ctx,
-                        statuses: status,
-                        targetId: ctx.expedition.playerState.playerId,
-                        source,
-                    });
+                    if (statuses) {
+                        await this.statusService.attachAll({
+                            ctx,
+                            statuses,
+                            targetId: ctx.expedition.playerState.playerId,
+                            source,
+                        });
+                    }
 
                     if (this.expeditionService.isCurrentCombatEnded(ctx)) {
                         this.logger.debug(

@@ -68,7 +68,7 @@ export class ConfusionStatus implements StatusEffectHandler {
         let statuses: JsonStatus[] = [];
         if (EnemyService.isEnemy(source)) {
             statuses = source.value.currentScript.intentions.flatMap(
-                (intention) => intention.status || [],
+                (intention) => intention.statuses || [],
             );
         } else if (PlayerService.isPlayer(source)) {
             statuses = source.value.combatState.cards.hand.flatMap(
