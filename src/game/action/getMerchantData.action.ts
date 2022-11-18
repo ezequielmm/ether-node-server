@@ -4,16 +4,12 @@ import { CardDescriptionFormatter } from '../cardDescriptionFormatter/cardDescri
 import { CardService } from '../components/card/card.service';
 import { IExpeditionPlayerStateDeckCard } from '../components/expedition/expedition.interface';
 import { ExpeditionService } from '../components/expedition/expedition.service';
-import { PotionService } from '../components/potion/potion.service';
-import { TrinketService } from '../components/trinket/trinket.service';
 
 @Injectable()
 export class GetMerchantDataAction {
     constructor(
         private readonly expeditionService: ExpeditionService,
         private readonly cardService: CardService,
-        private readonly potionService: PotionService,
-        private readonly trinketService: TrinketService,
     ) {}
 
     async handle(clientId: string) {

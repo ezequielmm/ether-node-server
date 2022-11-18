@@ -9,5 +9,5 @@ export interface IFindCardSelectionScreenDTO {
 export interface UpdateCardSelectionScreenDTO {
     readonly clientId: string;
     readonly cardIds?: string[];
-    takenCards?: number;
+    readonly amountToTake?: number;
 }

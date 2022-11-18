@@ -111,15 +111,16 @@ export class CombatGateway {
                 client,
                 cardIds: [cardToTake],
                 originPile: cardSelection.originPile,
+                targetPile: 'hand',
                 callback: (card) => {
                     card.energy = 0;
                     return card;
                 },
             });
 
-            const takenCards = cardSelection.takenCards--;
+            const amountToTake = cardSelection.amountToTake--;
 
-            if (takenCards > 0) {
+            if (amountToTake > 0) {
                 // Now we remove the id taken from the list and update
                 // the custom deck
                 await this.cardSelectionService.update({
@@ -127,7 +128,7 @@ export class CombatGateway {
                     cardIds: cardSelection.cardIds.filter((card) => {
                         return card !== cardToTake;
                     }),
-                    takenCards,
+                    amountToTake,
                 });
             } else {
                 await this.cardSelectionService.deleteByClientId(clientId);

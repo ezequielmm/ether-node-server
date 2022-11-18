@@ -80,9 +80,11 @@ export class GetDataGateway {
                 case DataWSRequestTypesEnum.UpgradableCards:
                     data = await this.getUpgradableCards.handle(client.id);
                     break;
+
                 case DataWSRequestTypesEnum.MerchantData:
                     data = await this.getMerchantDataAction.handle(client.id);
                     break;
+
                 case DataWSRequestTypesEnum.TreasureData:
                     data = await this.getTreasureDataAction.handle(client.id);
                     break;
