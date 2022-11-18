@@ -25,7 +25,7 @@ export const swampGoblin2Data: Enemy = {
                     type: EnemyIntentionType.Buff,
                     target: CardTargetedEnum.Self,
                     value: 2,
-                    status: [
+                    statuses: [
                         {
                             name: resolveStatus.name,
                             attachTo: CardTargetedEnum.Self,

@@ -24,7 +24,7 @@ export const redSporelingData: Enemy = {
                     type: EnemyIntentionType.Debuff,
                     target: CardTargetedEnum.Player,
                     value: 2,
-                    status: [
+                    statuses: [
                         {
                             name: feebleStatus.name,
                             attachTo: CardTargetedEnum.Player,

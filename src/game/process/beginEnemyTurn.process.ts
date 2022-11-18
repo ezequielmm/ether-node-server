@@ -20,6 +20,7 @@ import {
     StandardResponse,
     SWARMessageType,
 } from '../standardResponse/standardResponse';
+import { StatusService } from '../status/status.service';
 
 interface BeginEnemyTurnDTO {
     client: Socket;
@@ -37,6 +38,7 @@ export class BeginEnemyTurnProcess {
         private readonly eventEmitter: EventEmitter2,
         private readonly combatQueueService: CombatQueueService,
         private readonly changeTurnAction: ChangeTurnAction,
+        private readonly statusService: StatusService,
     ) {}
 
     async handle(payload: BeginEnemyTurnDTO): Promise<void> {
@@ -96,7 +98,7 @@ export class BeginEnemyTurnProcess {
             });
 
             for (const intention of intentions) {
-                const { effects } = intention;
+                const { effects, statuses } = intention;
 
                 if (!isEmpty(effects)) {
                     await this.effectService.applyAll({
@@ -105,6 +107,15 @@ export class BeginEnemyTurnProcess {
                         effects,
                         selectedEnemy: enemy.id,
                     });
+
+                    if (statuses) {
+                        await this.statusService.attachAll({
+                            ctx,
+                            statuses,
+                            targetId: ctx.expedition.playerState.playerId,
+                            source,
+                        });
+                    }
 
                     if (this.expeditionService.isCurrentCombatEnded(ctx)) {
                         this.logger.debug(

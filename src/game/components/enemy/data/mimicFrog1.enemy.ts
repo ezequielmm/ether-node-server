@@ -98,7 +98,7 @@ export const mimicFrog1Data: Enemy = {
                     type: EnemyIntentionType.Debuff,
                     target: CardTargetedEnum.Player,
                     value: 2,
-                    status: [
+                    statuses: [
                         {
                             name: fatigue.name,
                             attachTo: CardTargetedEnum.Player,

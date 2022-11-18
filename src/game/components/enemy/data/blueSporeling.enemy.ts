@@ -24,7 +24,7 @@ export const blueSporelingData: Enemy = {
                     type: EnemyIntentionType.Defend,
                     target: CardTargetedEnum.Player,
                     value: 2,
-                    status: [
+                    statuses: [
                         {
                             name: fatigue.name,
                             attachTo: CardTargetedEnum.Player,

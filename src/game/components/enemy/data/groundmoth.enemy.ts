@@ -106,7 +106,7 @@ export const groundMothData: Enemy = {
                     type: EnemyIntentionType.Buff,
                     target: CardTargetedEnum.Self,
                     value: 5,
-                    status: [
+                    statuses: [
                         {
                             name: resolveStatus.name,
                             attachTo: CardTargetedEnum.Self,

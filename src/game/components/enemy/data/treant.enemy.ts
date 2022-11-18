@@ -29,7 +29,7 @@ export const treantData: Enemy = {
                     type: EnemyIntentionType.Buff,
                     target: CardTargetedEnum.Self,
                     value: 5,
-                    status: [
+                    statuses: [
                         {
                             name: resolveStatus.name,
                             attachTo: CardTargetedEnum.Self,
@@ -212,7 +212,7 @@ export const treantData: Enemy = {
                     type: EnemyIntentionType.Buff,
                     target: CardTargetedEnum.Self,
                     value: 1,
-                    status: [
+                    statuses: [
                         {
                             name: spikesStatus.name,
                             attachTo: CardTargetedEnum.Self,
