@@ -22,6 +22,7 @@ export const swampGoblin1Data: Enemy = {
     healthRange: [34, 40],
     scripts: [
         {
+            id: 1,
             intentions: [
                 {
                     type: EnemyIntentionType.Attack,
@@ -41,15 +42,16 @@ export const swampGoblin1Data: Enemy = {
             next: [
                 {
                     probability: 0.7,
-                    scriptIndex: 1,
+                    scriptId: 1,
                 },
                 {
                     probability: 0.3,
-                    scriptIndex: 3,
+                    scriptId: 3,
                 },
             ],
         },
         {
+            id: 2,
             intentions: [
                 {
                     type: EnemyIntentionType.Defend,
@@ -68,19 +70,20 @@ export const swampGoblin1Data: Enemy = {
             ],
             next: [
                 {
-                    probability: 0.7,
-                    scriptIndex: 3,
+                    probability: 0.3,
+                    scriptId: 1,
                 },
                 {
-                    probability: 0.3,
-                    scriptIndex: 1,
+                    probability: 0.7,
+                    scriptId: 3,
                 },
             ],
         },
         {
+            id: 3,
             intentions: [
                 {
-                    type: EnemyIntentionType.Stun,
+                    type: EnemyIntentionType.Debuff,
                     target: CardTargetedEnum.Player,
                     value: 1,
                     effects: [
@@ -90,6 +93,7 @@ export const swampGoblin1Data: Enemy = {
                             args: {
                                 value: 1,
                                 cardId: ChokingCard.cardId,
+                                destination: 'discard',
                             },
                         },
                     ],
@@ -98,7 +102,7 @@ export const swampGoblin1Data: Enemy = {
             next: [
                 {
                     probability: 1,
-                    scriptIndex: 1,
+                    scriptId: 1,
                 },
             ],
         },

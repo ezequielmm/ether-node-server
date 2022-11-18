@@ -259,12 +259,14 @@ export class EnemyService {
             const currentScript = enemy.value.currentScript;
 
             const nextScript = currentScript
-                ? scripts[
-                      getRandomItemByWeight(
-                          currentScript.next,
-                          currentScript.next.map((s) => s.probability),
-                      ).scriptIndex
-                  ]
+                ? scripts.find(
+                      (script) =>
+                          script.id ==
+                          getRandomItemByWeight(
+                              currentScript.next,
+                              currentScript.next.map((s) => s.probability),
+                          ).scriptId,
+                  )
                 : scripts[0];
 
             // Increase damage for node from 14 to 20

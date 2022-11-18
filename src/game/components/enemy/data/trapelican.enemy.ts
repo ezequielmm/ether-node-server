@@ -21,6 +21,36 @@ export const trapelicanData: Enemy = {
     healthRange: [26, 30],
     scripts: [
         {
+            id: 0,
+            intentions: [
+                {
+                    type: EnemyIntentionType.Debuff,
+                    target: CardTargetedEnum.Player,
+                    value: 1,
+                    statuses: [
+                        {
+                            name: trapped.name,
+                            attachTo: CardTargetedEnum.Self,
+                            args: {
+                                counter: 1,
+                            },
+                        },
+                    ],
+                },
+            ],
+            next: [
+                {
+                    probability: 0.7,
+                    scriptId: 1,
+                },
+                {
+                    probability: 0.3,
+                    scriptId: 2,
+                },
+            ],
+        },
+        {
+            id: 1,
             intentions: [
                 {
                     type: EnemyIntentionType.Attack,
@@ -40,14 +70,16 @@ export const trapelicanData: Enemy = {
             next: [
                 {
                     probability: 1,
-                    scriptIndex: 2,
+                    scriptId: 3,
                 },
             ],
         },
+
         {
+            id: 2,
             intentions: [
                 {
-                    type: EnemyIntentionType.Attack,
+                    type: EnemyIntentionType.Defend,
                     target: CardTargetedEnum.Self,
                     value: 4,
                     effects: [
@@ -61,7 +93,7 @@ export const trapelicanData: Enemy = {
                     ],
                 },
                 {
-                    type: EnemyIntentionType.Defend,
+                    type: EnemyIntentionType.Attack,
                     target: CardTargetedEnum.Player,
                     value: 3,
                     effects: [
@@ -78,15 +110,16 @@ export const trapelicanData: Enemy = {
             next: [
                 {
                     probability: 0.6,
-                    scriptIndex: 2,
+                    scriptId: 3,
                 },
                 {
                     probability: 0.4,
-                    scriptIndex: 0,
+                    scriptId: 1,
                 },
             ],
         },
         {
+            id: 3,
             intentions: [
                 {
                     type: EnemyIntentionType.Buff,
@@ -120,11 +153,11 @@ export const trapelicanData: Enemy = {
             next: [
                 {
                     probability: 0.7,
-                    scriptIndex: 0,
+                    scriptId: 1,
                 },
                 {
                     probability: 0.3,
-                    scriptIndex: 1,
+                    scriptId: 2,
                 },
             ],
         },

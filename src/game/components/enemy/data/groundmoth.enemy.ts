@@ -21,6 +21,7 @@ export const groundMothData: Enemy = {
     healthRange: [48, 56],
     scripts: [
         {
+            id: 1,
             intentions: [
                 {
                     type: EnemyIntentionType.Attack,
@@ -54,11 +55,12 @@ export const groundMothData: Enemy = {
             next: [
                 {
                     probability: 1,
-                    scriptIndex: 0,
+                    scriptId: 2,
                 },
             ],
         },
         {
+            id: 2,
             intentions: [
                 {
                     type: EnemyIntentionType.Defend,
@@ -77,16 +79,17 @@ export const groundMothData: Enemy = {
             ],
             next: [
                 {
-                    probability: 0.7,
-                    scriptIndex: 3,
+                    probability: 0.75,
+                    scriptId: 3,
                 },
                 {
-                    probability: 0.2,
-                    scriptIndex: 1,
+                    probability: 0.25,
+                    scriptId: 1,
                 },
             ],
         },
         {
+            id: 3,
             intentions: [
                 {
                     type: EnemyIntentionType.Attack,
@@ -120,7 +123,7 @@ export const groundMothData: Enemy = {
             next: [
                 {
                     probability: 1,
-                    scriptIndex: 0,
+                    scriptId: 1,
                 },
             ],
         },

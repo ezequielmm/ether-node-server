@@ -19,6 +19,7 @@ export const yellowSporelingData: Enemy = {
     healthRange: [12, 14],
     scripts: [
         {
+            id: 1,
             intentions: [
                 {
                     type: EnemyIntentionType.Debuff,
@@ -37,16 +38,17 @@ export const yellowSporelingData: Enemy = {
             ],
             next: [
                 {
-                    probability: 0.4,
-                    scriptIndex: 0,
+                    probability: 0.6,
+                    scriptId: 1,
                 },
                 {
-                    probability: 0.6,
-                    scriptIndex: 1,
+                    probability: 0.4,
+                    scriptId: 2,
                 },
             ],
         },
         {
+            id: 2,
             intentions: [
                 {
                     type: EnemyIntentionType.Attack,
@@ -66,11 +68,11 @@ export const yellowSporelingData: Enemy = {
             next: [
                 {
                     probability: 0.6,
-                    scriptIndex: 0,
+                    scriptId: 1,
                 },
                 {
                     probability: 0.4,
-                    scriptIndex: 1,
+                    scriptId: 2,
                 },
             ],
         },

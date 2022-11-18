@@ -21,6 +21,7 @@ export const sporeMongerData: Enemy = {
     healthRange: [42, 46],
     scripts: [
         {
+            id: 1,
             intentions: [
                 {
                     type: EnemyIntentionType.Attack,
@@ -40,15 +41,16 @@ export const sporeMongerData: Enemy = {
             next: [
                 {
                     probability: 0.5,
-                    scriptIndex: 1,
+                    scriptId: 2,
                 },
                 {
                     probability: 0.5,
-                    scriptIndex: 2,
+                    scriptId: 3,
                 },
             ],
         },
         {
+            id: 2,
             intentions: [
                 {
                     type: EnemyIntentionType.Defend,
@@ -68,11 +70,12 @@ export const sporeMongerData: Enemy = {
             next: [
                 {
                     probability: 1,
-                    scriptIndex: 2,
+                    scriptId: 3,
                 },
             ],
         },
         {
+            id: 3,
             intentions: [
                 {
                     type: EnemyIntentionType.Attack,
@@ -106,7 +109,7 @@ export const sporeMongerData: Enemy = {
             next: [
                 {
                     probability: 1,
-                    scriptIndex: 0,
+                    scriptId: 1,
                 },
             ],
         },

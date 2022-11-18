@@ -21,12 +21,14 @@ export const thornWolfData: Enemy = {
     healthRange: [85, 90],
     scripts: [
         {
+            id: 1,
             intentions: [
                 {
                     type: EnemyIntentionType.Attack,
                     target: CardTargetedEnum.Player,
                     value: 15,
                     //  This effect 'Summon ' was not developed so I have added 'damageEffect' one
+                    //  TODO: Add Summon effect
                     effects: [
                         {
                             effect: damageEffect.name,
@@ -41,15 +43,17 @@ export const thornWolfData: Enemy = {
             next: [
                 {
                     probability: 0.5,
-                    scriptIndex: 2,
+                    scriptId: 3,
                 },
                 {
+                    // TODO: Add dynamic calculation for next script id based on current combat context
                     probability: 0.5,
-                    scriptIndex: 3,
+                    scriptId: 4,
                 },
             ],
         },
         {
+            id: 2,
             intentions: [
                 {
                     type: EnemyIntentionType.Attack,
@@ -83,15 +87,16 @@ export const thornWolfData: Enemy = {
             next: [
                 {
                     probability: 0.5,
-                    scriptIndex: 2,
+                    scriptId: 3,
                 },
                 {
                     probability: 0.5,
-                    scriptIndex: 3,
+                    scriptId: 4,
                 },
             ],
         },
         {
+            id: 3,
             intentions: [
                 {
                     type: EnemyIntentionType.Buff,
@@ -125,21 +130,23 @@ export const thornWolfData: Enemy = {
             next: [
                 {
                     probability: 0.5,
-                    scriptIndex: 0,
+                    scriptId: 1,
                 },
                 {
                     probability: 0.5,
-                    scriptIndex: 1,
+                    scriptId: 2,
                 },
             ],
         },
         {
+            id: 4,
             intentions: [
                 {
                     type: EnemyIntentionType.Defend,
                     target: CardTargetedEnum.Self,
                     value: 5,
                     //  This effect 'Summon ' was not developed so I have added 'defenseEffect' one
+                    //  TODO: Replace defense effect with Summon effect once it is created
                     effects: [
                         {
                             effect: defenseEffect.name,
@@ -154,11 +161,11 @@ export const thornWolfData: Enemy = {
             next: [
                 {
                     probability: 0.5,
-                    scriptIndex: 0,
+                    scriptId: 1,
                 },
                 {
                     probability: 0.5,
-                    scriptIndex: 1,
+                    scriptId: 2,
                 },
             ],
         },

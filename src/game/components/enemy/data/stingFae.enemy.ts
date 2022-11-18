@@ -2,7 +2,7 @@ import { addCardEffect } from 'src/game/effects/addCard/contants';
 import { damageEffect } from 'src/game/effects/damage/constants';
 import { defenseEffect } from 'src/game/effects/defense/constants';
 import { CardTargetedEnum } from '../../card/card.enum';
-import { StunnedCard } from '../../card/data/stunned.card';
+import { PoisonedCard } from '../../card/data/poisoned.card';
 import {
     EnemyTypeEnum,
     EnemyCategoryEnum,
@@ -21,62 +21,7 @@ export const stingFaeData: Enemy = {
     healthRange: [9, 15],
     scripts: [
         {
-            intentions: [
-                {
-                    type: EnemyIntentionType.Attack,
-                    target: CardTargetedEnum.Player,
-                    value: 5,
-                    effects: [
-                        {
-                            effect: damageEffect.name,
-                            target: CardTargetedEnum.Player,
-                            args: {
-                                value: 5,
-                            },
-                        },
-                    ],
-                },
-            ],
-            next: [
-                {
-                    probability: 0.5,
-                    scriptIndex: 2,
-                },
-                {
-                    probability: 0.5,
-                    scriptIndex: 3,
-                },
-            ],
-        },
-        {
-            intentions: [
-                {
-                    type: EnemyIntentionType.Defend,
-                    target: CardTargetedEnum.Self,
-                    value: 5,
-                    effects: [
-                        {
-                            effect: defenseEffect.name,
-                            target: CardTargetedEnum.Self,
-                            args: {
-                                value: 5,
-                            },
-                        },
-                    ],
-                },
-            ],
-            next: [
-                {
-                    probability: 0.5,
-                    scriptIndex: 0,
-                },
-                {
-                    probability: 0.5,
-                    scriptIndex: 2,
-                },
-            ],
-        },
-        {
+            id: 1,
             intentions: [
                 {
                     type: EnemyIntentionType.Attack,
@@ -96,11 +41,12 @@ export const stingFaeData: Enemy = {
             next: [
                 {
                     probability: 1,
-                    scriptIndex: 1,
+                    scriptId: 2,
                 },
             ],
         },
         {
+            id: 2,
             intentions: [
                 {
                     type: EnemyIntentionType.Defend,
@@ -120,18 +66,19 @@ export const stingFaeData: Enemy = {
             next: [
                 {
                     probability: 0.5,
-                    scriptIndex: 0,
+                    scriptId: 1,
                 },
                 {
                     probability: 0.5,
-                    scriptIndex: 2,
+                    scriptId: 3,
                 },
             ],
         },
         {
+            id: 3,
             intentions: [
                 {
-                    type: EnemyIntentionType.Stun,
+                    type: EnemyIntentionType.Debuff,
                     target: CardTargetedEnum.Player,
                     value: 1,
                     effects: [
@@ -140,7 +87,7 @@ export const stingFaeData: Enemy = {
                             target: CardTargetedEnum.Player,
                             args: {
                                 value: 1,
-                                cardId: StunnedCard.cardId,
+                                cardId: PoisonedCard.cardId,
                             },
                         },
                     ],
@@ -149,11 +96,11 @@ export const stingFaeData: Enemy = {
             next: [
                 {
                     probability: 0.5,
-                    scriptIndex: 0,
+                    scriptId: 1,
                 },
                 {
                     probability: 0.5,
-                    scriptIndex: 1,
+                    scriptId: 2,
                 },
             ],
         },
