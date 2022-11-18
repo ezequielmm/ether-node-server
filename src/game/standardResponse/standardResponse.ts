@@ -2,6 +2,7 @@ export enum SWARMessageType {
     MapUpdate = 'map_update',
     CombatUpdate = 'combat_update',
     EndCombat = 'end_combat',
+    SelectReward = 'select_reward',
     PlayerStateUpdate = 'player_state_update',
     CardPlayed = 'card_played',
     Error = 'error',
