@@ -30,8 +30,8 @@ export interface IntegrationTestServerOptions {
 /**
  * It Creates a standard NestJS TestingModule where it setups
  * an in Memory MongoDB server and an array of ClientSocketMock. This allows
- * store Mongo documents by using the same Mongosee API and second simulate
- * socket connections.
+ * store Mongo documents by using the same Mongosee API and simulate
+ * socket connections
  * @param IntegrationTestServerOptions set up your providers, MongoDB models,
  * and an optional logger
  */
@@ -48,22 +48,22 @@ export class IntegrationTestServer {
         this.clientSockets = [];
     }
 
-    async start(opt: IntegrationTestServerOptions): Promise<void> {
+    async start(params: IntegrationTestServerOptions): Promise<void> {
         this.mongod = await InMemoryMongoDB.buildMongoMemoryServer();
         this.module = await Test.createTestingModule({
             imports: [
                 InMemoryMongoDB.forRootAsyncModule(this.mongod),
-                MongooseModule.forFeature(opt.models),
+                MongooseModule.forFeature(params.models),
             ],
-            providers: opt.logger
-                ? [opt.logger, ...opt.providers]
-                : opt.providers,
+            providers: params.logger
+                ? [params.logger, ...params.providers]
+                : params.providers,
         }).compile();
 
         this.app = this.module.createNestApplication();
         this.app.useWebSocketAdapter(new IoAdapter(this.app));
 
-        if (opt.logger) this.app.useLogger(this.app.get(opt.logger as any));
+        this.setUpLogger(params.logger);
 
         await this.app.init();
         const { port } = this.app.getHttpServer().listen().address();
@@ -75,17 +75,35 @@ export class IntegrationTestServer {
         this.started = true;
     }
 
+    private setUpLogger(logger: Provider<ConsoleLogger>): void {
+        if (!logger) return;
+        this.app.useLogger(this.app.get(logger as any));
+    }
+
     getInjectable(modulee: any): any {
         const injectable = this.module.get(modulee);
         expect(injectable).toBeDefined();
         return injectable;
     }
 
-    async addNewSocketConnection(): Promise<ClientSocketMock> {
+    async addNewSocketConnection(): Promise<[ClientSocketMock, any[]]> {
         const clientSocket = new ClientSocketMock();
         this.clientSockets.push(clientSocket);
         await clientSocket.connect(this.serverPort);
-        return clientSocket;
+        const messages = [];
+        clientSocket.on('PutData', (message) => {
+            messages.push(JSON.parse(message));
+        });
+        clientSocket.on('ErrorMessage', (message) => {
+            messages.push(JSON.parse(message));
+        });
+        clientSocket.on('ExpeditionMap', (message) => {
+            messages.push(JSON.parse(message));
+        });
+        clientSocket.on('PlayerState', (message) => {
+            messages.push(JSON.parse(message));
+        });
+        return [clientSocket, messages];
     }
 
     async stop() {

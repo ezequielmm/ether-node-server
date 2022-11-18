@@ -1,4 +1,3 @@
-import { InjectModel } from '@nestjs/mongoose';
 import { Enemy, EnemySchema } from '../components/enemy/enemy.schema';
 import {
     CombatTurnEnum,
@@ -24,8 +23,7 @@ import { ExhaustCardAction } from './exhaustCard.action';
 import { EndPlayerTurnProcess } from '../process/endPlayerTurn.process';
 import { ServerSocketGatewayMock } from 'src/tests/serverSocketGatewayMock';
 import { CardSeeder } from '../components/card/card.seeder';
-import { Card, CardDocument, CardSchema } from '../components/card/card.schema';
-import { CardId, getCardIdField } from '../components/card/card.type';
+import { Card, CardSchema } from '../components/card/card.schema';
 import { ProviderService } from '../provider/provider.service';
 import {
     CombatQueue,
@@ -45,23 +43,9 @@ import { CardTargetedEnum } from '../components/card/card.enum';
 import { DamageEffect } from '../effects/damage/damage.effect';
 import { GetEnergyAction } from './getEnergy.action';
 import { IntegrationTestServer } from 'src/tests/integrationTestServer';
-import { Injectable } from '@nestjs/common';
-import { Model } from 'mongoose';
+import { CardServiceMock } from 'src/tests/cardServiceMock';
 
-// We use this simple card mock instead the CardService to avoid using
-// initializing all, and be able to use the CardDocument Model
-@Injectable()
-class CardServiceMock {
-    constructor(
-        @InjectModel(Card.name) private readonly card: Model<CardDocument>,
-    ) {}
-    async findById(id: CardId): Promise<CardDocument> {
-        const field = getCardIdField(id);
-        return this.card.findOne({ [field]: id }).lean();
-    }
-}
-
-describe('CardPlayedAction Action', () => {
+describe('CardPlayedAction', () => {
     let its: IntegrationTestServer;
     let expeditionService: ExpeditionService;
     let cardPlayedAction: CardPlayedAction;
@@ -124,7 +108,7 @@ describe('CardPlayedAction Action', () => {
     });
 
     it('card does not exist', async () => {
-        const clientSocket = await its.addNewSocketConnection();
+        const [clientSocket, messages] = await its.addNewSocketConnection();
 
         await cardPlayedAction.handle({
             client: mockedSocketGateway.clientSocket,
@@ -132,26 +116,17 @@ describe('CardPlayedAction Action', () => {
             selectedEnemyId: '',
         });
 
-        // if not resolving this promise we will get a timeout by jest
-        await new Promise<void>((resolve) => {
-            clientSocket.on('ErrorMessage', (message) => {
-                message = JSON.parse(message);
-                expect(message.data).toBeDefined();
-                expect(message.data.message_type).toBe('error');
-                expect(message.data.action).toBe('invalid_card');
-                expect(message.data.data).toBeNull();
-                resolve();
-            });
-        });
+        await clientSocket.waitMessages(messages, 1);
+        expect(messages).toHaveLength(1);
+        const message = messages[0];
+        expect(message.data).toBeDefined();
+        expect(message.data.message_type).toBe('error');
+        expect(message.data.action).toBe('invalid_card');
+        expect(message.data.data).toBeNull();
     });
 
     it('play an unplayable card', async () => {
-        const clientSocket = await its.addNewSocketConnection();
-
-        let socketErrorMessage;
-        clientSocket.on('ErrorMessage', (message) => {
-            socketErrorMessage = JSON.parse(message);
-        });
+        const [clientSocket, messages] = await its.addNewSocketConnection();
 
         const clientId = clientSocket.socket.id;
 
@@ -212,25 +187,19 @@ describe('CardPlayedAction Action', () => {
             selectedEnemyId: '',
         });
 
-        // this is not ideal, we should think a better way to solve it
-        // because socketErrorMessage could be undefined
-        await new Promise<void>((resolve) => setTimeout(resolve, 10));
+        await clientSocket.waitMessages(messages, 1);
+        expect(messages).toHaveLength(1);
 
-        expect(socketErrorMessage).toBeDefined();
-        expect(socketErrorMessage.data).toBeDefined();
-        expect(socketErrorMessage.data.message_type).toBe('error');
-        expect(socketErrorMessage.data.action).toBe('insufficient_energy');
-        expect(socketErrorMessage.data.data).toBe('This card is unplayable');
+        const message = messages[0];
+        expect(message).toBeDefined();
+        expect(message.data).toBeDefined();
+        expect(message.data.message_type).toBe('error');
+        expect(message.data.action).toBe('insufficient_energy');
+        expect(message.data.data).toBe('This card is unplayable');
     });
 
     it('play exhaust card', async () => {
-        const clientSocket = await its.addNewSocketConnection();
-
-        let putDataMessage;
-        clientSocket.on('PutData', (message) => {
-            putDataMessage = JSON.parse(message);
-        });
-
+        const [clientSocket, messages] = await its.addNewSocketConnection();
         const clientId = clientSocket.socket.id;
 
         const armorUpCard = await cardService.findById(ArmorUpCard.cardId);
@@ -286,16 +255,15 @@ describe('CardPlayedAction Action', () => {
 
         // double check that the expedition has the armorUpCard on Hand
         expect(expedition.currentNode).toBeDefined();
-        expect(expedition.currentNode.data).toBeDefined();
-        expect(expedition.currentNode.data.player).toBeDefined();
-        expect(expedition.currentNode.data.player.cards).toBeDefined();
-        expect(expedition.currentNode.data.player.cards.hand).toBeDefined();
-        expect(expedition.currentNode.data.player.cards.discard.length).toBe(0);
-        expect(expedition.currentNode.data.player.cards.draw.length).toBe(0);
-        expect(expedition.currentNode.data.player.cards.exhausted.length).toBe(
+        expect(expedition.currentNode?.data?.player?.cards?.hand).toBeDefined();
+        expect(expedition.currentNode.data.player.cards.discard).toHaveLength(
             0,
         );
-        expect(expedition.currentNode.data.player.cards.hand.length).toBe(1);
+        expect(expedition.currentNode.data.player.cards.draw).toHaveLength(0);
+        expect(expedition.currentNode.data.player.cards.exhausted).toHaveLength(
+            0,
+        );
+        expect(expedition.currentNode.data.player.cards.hand).toHaveLength(1);
         expect(expedition.currentNode.data.player.cards.hand[0].cardId).toBe(
             armorUpCard.cardId,
         );
@@ -306,7 +274,7 @@ describe('CardPlayedAction Action', () => {
         let history = historyService.get(clientId);
 
         expect(history).toBeDefined();
-        expect(history.length).toBe(0);
+        expect(history).toHaveLength(0);
 
         await cardPlayedAction.handle({
             client: mockedSocketGateway.clientSocket,
@@ -318,8 +286,8 @@ describe('CardPlayedAction Action', () => {
         expedition = await expeditionService.findOne({ clientId });
         expect(expedition).toBeDefined();
         expect(expedition.status).toBe(ExpeditionStatusEnum.InProgress);
-        expect(expedition.currentNode.data.player.cards.hand.length).toBe(0);
-        expect(expedition.currentNode.data.player.cards.exhausted.length).toBe(
+        expect(expedition.currentNode.data.player.cards.hand).toHaveLength(0);
+        expect(expedition.currentNode.data.player.cards.exhausted).toHaveLength(
             1,
         );
         expect(
@@ -328,7 +296,7 @@ describe('CardPlayedAction Action', () => {
 
         history = historyService.get(clientId);
         expect(history).toBeDefined();
-        expect(history.length).toBe(2);
+        expect(history).toHaveLength(2);
 
         expect(history[0].type).toBe('card');
         expect((history[0] as CardRegistry).card.id).toBe(armorUpCard.cardId);
@@ -343,21 +311,19 @@ describe('CardPlayedAction Action', () => {
         combatQueue = await combatQueueService.findByClientId(clientId);
         expect(combatQueue).not.toBeNull();
 
-        expect(putDataMessage).toBeDefined();
-        expect(putDataMessage.data).toBeDefined();
-        expect(putDataMessage.data.action).toBe(SWARAction.MoveCard);
-        expect(putDataMessage.data.data.length).toBe(1);
-        expect(putDataMessage.data.data[0].id).toBe(armorUpCard.cardId);
+        await clientSocket.waitMessages(messages, 1);
+        expect(messages).toHaveLength(1);
+        const message = messages[0];
+        expect(message).toBeDefined();
+        expect(message.data).toBeDefined();
+        expect(message.data.action).toBe(SWARAction.MoveCard);
+        expect(message.data.data).toHaveLength(1);
+        expect(message.data.data[0].id).toBe(armorUpCard.cardId);
     });
 
     it('play to discard a card', async () => {
-        const clientSocket = await its.addNewSocketConnection();
+        const [clientSocket, messages] = await its.addNewSocketConnection();
         const clientId = clientSocket.socket.id;
-
-        const putDataMessages = [];
-        clientSocket.on('PutData', (message) => {
-            putDataMessages.push(JSON.parse(message));
-        });
 
         const attackCard = await cardService.findById(AttackCard.cardId);
         expect(attackCard).toBeDefined();
@@ -429,12 +395,14 @@ describe('CardPlayedAction Action', () => {
         expect(expedition).toBeDefined();
         expect(expedition.status).toBe(ExpeditionStatusEnum.InProgress);
 
-        expect(expedition.currentNode.data.player.cards.discard.length).toBe(0);
-        expect(expedition.currentNode.data.player.cards.draw.length).toBe(0);
-        expect(expedition.currentNode.data.player.cards.exhausted.length).toBe(
+        expect(expedition.currentNode.data.player.cards.discard).toHaveLength(
             0,
         );
-        expect(expedition.currentNode.data.player.cards.hand.length).toBe(1);
+        expect(expedition.currentNode.data.player.cards.draw).toHaveLength(0);
+        expect(expedition.currentNode.data.player.cards.exhausted).toHaveLength(
+            0,
+        );
+        expect(expedition.currentNode.data.player.cards.hand).toHaveLength(1);
 
         expect(expedition.currentNode.data.player.energy).toBe(3);
 
@@ -448,23 +416,21 @@ describe('CardPlayedAction Action', () => {
 
         expedition = await expeditionService.findOne({ clientId });
 
-        expect(expedition.currentNode.data.player.cards.discard.length).toBe(1);
-        expect(expedition.currentNode.data.player.cards.draw.length).toBe(0);
-        expect(expedition.currentNode.data.player.cards.exhausted.length).toBe(
+        expect(expedition.currentNode.data.player.cards.discard).toHaveLength(
+            1,
+        );
+        expect(expedition.currentNode.data.player.cards.draw).toHaveLength(0);
+        expect(expedition.currentNode.data.player.cards.exhausted).toHaveLength(
             0,
         );
-        expect(expedition.currentNode.data.player.cards.hand.length).toBe(0);
+        expect(expedition.currentNode.data.player.cards.hand).toHaveLength(0);
 
         expect(expedition.currentNode.data.enemies[0].hpCurrent).toBe(5);
 
         expect(expedition.currentNode.data.player.energy).toBe(2);
 
-        // this is not ideal, we should think a better way to solve it
-        // because socketErrorMessage could be undefined
-        await new Promise<void>((resolve) => setTimeout(resolve, 10));
-
-        expect(putDataMessages.length).toBe(3);
-
+        await clientSocket.waitMessages(messages, 3);
+        expect(messages).toHaveLength(3);
         const messageExpectedCases = [
             {
                 expectedMessageType: SWARMessageType.PlayerAffected,
@@ -503,7 +469,7 @@ describe('CardPlayedAction Action', () => {
         ];
 
         messageExpectedCases.forEach((mc, i) => {
-            const message = putDataMessages[i];
+            const message = messages[i];
             expect(message.data).toBeDefined();
             expect(message.data.message_type).toBe(mc.expectedMessageType);
             expect(message.data.action).toBe(mc.expectedAction);

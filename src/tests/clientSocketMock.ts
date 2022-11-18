@@ -20,6 +20,21 @@ export class ClientSocketMock {
         this.socket.on(event, callback);
     }
 
+    public waitMessages(
+        messages: any[],
+        amount: number,
+        timeout = 1,
+    ): Promise<void> {
+        return new Promise((resolve) => {
+            setTimeout(() => {
+                if (messages.length === amount) {
+                    return resolve();
+                }
+                this.waitMessages(messages, amount, timeout).then(resolve);
+            }, timeout);
+        });
+    }
+
     public disconnect(): void {
         this.socket.disconnect();
     }
