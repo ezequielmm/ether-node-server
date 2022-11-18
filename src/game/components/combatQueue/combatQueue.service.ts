@@ -32,6 +32,10 @@ export class CombatQueueService {
         private readonly combatQueue: Model<CombatQueueDocument>,
     ) {}
 
+    async findByClientId(clientId: string): Promise<CombatQueueDocument> {
+        return await this.combatQueue.findOne({ clientId });
+    }
+
     async start(ctx: GameContext): Promise<void> {
         await this.create({
             clientId: ctx.client.id,
