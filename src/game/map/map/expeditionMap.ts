@@ -7,6 +7,7 @@ import {
     RoyalHouseTitles,
 } from 'src/game/components/expedition/expedition.enum';
 import { IExpeditionNode } from 'src/game/components/expedition/expedition.interface';
+import buildActOne from '../act/act-one';
 
 class ExpeditionMap {
     public readonly clientId?: string;
@@ -163,11 +164,21 @@ class ExpeditionMap {
         // Clear currentStepnumber, nextStepnumber and newActMap to initial values.
         this.newActMap.clear();
         this.currentStepnumber = 0;
+        // TODO: Review Act class
         this.currentAct = new Act(actnumber, actConfigAlternatives);
-        for (let step = 0; step <= this.currentAct.stepsTotal; step += 1) {
-            const nodesToGenerate = this.nodesToGenerate();
-            this.addNodes(step, nodesToGenerate);
+
+        // for (let step = 0; step <= this.currentAct.stepsTotal; step += 1) {
+        //const nodesToGenerate = this.nodesToGenerate();
+        //this.addNodes(step, nodesToGenerate);
+        // }
+
+        if (actnumber == 1) {
+            const nodes: Node[] = buildActOne(this.previousNodeId++);
+            this.newActMap = new Map<number, Node>(
+                nodes.map((node) => [node.id, node]),
+            );
         }
+
         this.createConnections();
         this.MergeCurrentAndNewMap();
     }
