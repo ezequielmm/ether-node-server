@@ -1,8 +1,3 @@
-export enum TrappedType {
-    Damage = 'damage',
-    CurseCard = 'curse_card',
-    Node = 'combat_encounter',
-}
 export enum SmallChest {
     name = 'Small Chest',
     chance = 50,
@@ -31,7 +26,7 @@ export enum MediumChest {
     trinketChanceCommon = 0,
     potionChance = 15,
     trappedChance = 10,
-    trappedType = 'curse_card',
+    trappedType = 'card',
     trappedValue = 1,
     trappedText = 'An ancient curse falls upon you',
 }
@@ -50,4 +45,10 @@ export enum LargeChest {
     trappedType = 'combat_encounter',
     trappedValue = 1,
     trappedText = 'The chest suddenly sprouts limbs and teeth, and scrambles towards you',
+}
+
+export enum RewardType {
+    Gold = 'gold',
+    Potion = 'potion',
+    Trinket = 'trinket',
 }
