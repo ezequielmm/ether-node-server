@@ -25,4 +25,14 @@ export class TreasureGateway {
 
         await this.treasureService.combatEncounter(client);
     }
+
+    @SubscribeMessage('TreasureRewardSelected')
+    async TreasureRewardSelected(
+        client: Socket,
+        rewardId: string,
+    ): Promise<void> {
+        this.logger.debug(`Client ${client.id} choose reward id: ${rewardId}`);
+        console.log(rewardId, 'jjjj');
+        await this.treasureService.rewardSelected(client, rewardId);
+    }
 }
