@@ -20,6 +20,7 @@ export const swampGoblin2Data: Enemy = {
     healthRange: [38, 44],
     scripts: [
         {
+            id: 1,
             intentions: [
                 {
                     type: EnemyIntentionType.Buff,
@@ -39,11 +40,12 @@ export const swampGoblin2Data: Enemy = {
             next: [
                 {
                     probability: 1,
-                    scriptIndex: 1,
+                    scriptId: 2,
                 },
             ],
         },
         {
+            id: 2,
             intentions: [
                 {
                     type: EnemyIntentionType.Attack,
@@ -63,11 +65,11 @@ export const swampGoblin2Data: Enemy = {
             next: [
                 {
                     probability: 0.7,
-                    scriptIndex: 0,
+                    scriptId: 1,
                 },
                 {
                     probability: 0.3,
-                    scriptIndex: 1,
+                    scriptId: 2,
                 },
             ],
         },

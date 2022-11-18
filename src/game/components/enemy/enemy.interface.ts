@@ -14,10 +14,11 @@ export interface EnemyIntention {
 
 export interface EnemyNextScript {
     probability: number;
-    scriptIndex: number;
+    scriptId: number;
 }
 
 export interface EnemyScript {
+    id: number;
     intentions: EnemyIntention[];
     next: EnemyNextScript[];
 }

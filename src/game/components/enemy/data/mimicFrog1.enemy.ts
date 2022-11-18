@@ -22,6 +22,7 @@ export const mimicFrog1Data: Enemy = {
     healthRange: [22, 28],
     scripts: [
         {
+            id: 1,
             intentions: [
                 {
                     type: EnemyIntentionType.Attack,
@@ -56,15 +57,16 @@ export const mimicFrog1Data: Enemy = {
             next: [
                 {
                     probability: 0.5,
-                    scriptIndex: 2,
+                    scriptId: 3,
                 },
                 {
                     probability: 0.5,
-                    scriptIndex: 3,
+                    scriptId: 4,
                 },
             ],
         },
         {
+            id: 2,
             intentions: [
                 {
                     type: EnemyIntentionType.Attack,
@@ -84,15 +86,16 @@ export const mimicFrog1Data: Enemy = {
             next: [
                 {
                     probability: 0.6,
-                    scriptIndex: 3,
+                    scriptId: 4,
                 },
                 {
                     probability: 0.4,
-                    scriptIndex: 2,
+                    scriptId: 3,
                 },
             ],
         },
         {
+            id: 3,
             intentions: [
                 {
                     type: EnemyIntentionType.Debuff,
@@ -112,15 +115,16 @@ export const mimicFrog1Data: Enemy = {
             next: [
                 {
                     probability: 0.7,
-                    scriptIndex: 0,
+                    scriptId: 1,
                 },
                 {
                     probability: 0.3,
-                    scriptIndex: 1,
+                    scriptId: 2,
                 },
             ],
         },
         {
+            id: 4,
             intentions: [
                 {
                     type: EnemyIntentionType.Defend,
@@ -140,15 +144,15 @@ export const mimicFrog1Data: Enemy = {
             next: [
                 {
                     probability: 0.5,
-                    scriptIndex: 0,
+                    scriptId: 1,
                 },
                 {
                     probability: 0.25,
-                    scriptIndex: 1,
+                    scriptId: 2,
                 },
                 {
                     probability: 0.25,
-                    scriptIndex: 2,
+                    scriptId: 3,
                 },
             ],
         },

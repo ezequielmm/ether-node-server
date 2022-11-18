@@ -20,6 +20,7 @@ export const barkChargerData: Enemy = {
     healthRange: [10, 12],
     scripts: [
         {
+            id: 1,
             intentions: [
                 {
                     type: EnemyIntentionType.Attack,
@@ -53,15 +54,16 @@ export const barkChargerData: Enemy = {
             next: [
                 {
                     probability: 0.5,
-                    scriptIndex: 0,
+                    scriptId: 1,
                 },
                 {
                     probability: 0.5,
-                    scriptIndex: 1,
+                    scriptId: 2,
                 },
             ],
         },
         {
+            id: 2,
             intentions: [
                 {
                     type: EnemyIntentionType.Defend,
@@ -95,15 +97,16 @@ export const barkChargerData: Enemy = {
             next: [
                 {
                     probability: 0.9,
-                    scriptIndex: 2,
+                    scriptId: 3,
                 },
                 {
                     probability: 0.1,
-                    scriptIndex: 0,
+                    scriptId: 1,
                 },
             ],
         },
         {
+            id: 3,
             intentions: [
                 {
                     type: EnemyIntentionType.Attack,
@@ -123,7 +126,7 @@ export const barkChargerData: Enemy = {
             next: [
                 {
                     probability: 1,
-                    scriptIndex: 0,
+                    scriptId: 1,
                 },
             ],
         },

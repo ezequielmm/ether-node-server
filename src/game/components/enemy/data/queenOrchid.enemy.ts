@@ -22,6 +22,7 @@ export const queenOrchidData: Enemy = {
     healthRange: [70, 75],
     scripts: [
         {
+            id: 1,
             intentions: [
                 {
                     type: EnemyIntentionType.Debuff,
@@ -42,11 +43,12 @@ export const queenOrchidData: Enemy = {
             next: [
                 {
                     probability: 1,
-                    scriptIndex: 1,
+                    scriptId: 2,
                 },
             ],
         },
         {
+            id: 2,
             intentions: [
                 {
                     type: EnemyIntentionType.Debuff,
@@ -66,11 +68,12 @@ export const queenOrchidData: Enemy = {
             next: [
                 {
                     probability: 1,
-                    scriptIndex: 2,
+                    scriptId: 3,
                 },
             ],
         },
         {
+            id: 3,
             intentions: [
                 {
                     type: EnemyIntentionType.Attack,
@@ -90,11 +93,11 @@ export const queenOrchidData: Enemy = {
             next: [
                 {
                     probability: 0.5,
-                    scriptIndex: 0,
+                    scriptId: 1,
                 },
                 {
                     probability: 0.5,
-                    scriptIndex: 1,
+                    scriptId: 2,
                 },
             ],
         },

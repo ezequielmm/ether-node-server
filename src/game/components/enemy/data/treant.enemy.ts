@@ -24,6 +24,7 @@ export const treantData: Enemy = {
     healthRange: [160, 160],
     scripts: [
         {
+            id: 1,
             intentions: [
                 {
                     type: EnemyIntentionType.Buff,
@@ -43,15 +44,16 @@ export const treantData: Enemy = {
             next: [
                 {
                     probability: 0.5,
-                    scriptIndex: 1,
+                    scriptId: 2,
                 },
                 {
                     probability: 0.5,
-                    scriptIndex: 4,
+                    scriptId: 5,
                 },
             ],
         },
         {
+            id: 2,
             intentions: [
                 {
                     type: EnemyIntentionType.Attack,
@@ -71,15 +73,16 @@ export const treantData: Enemy = {
             next: [
                 {
                     probability: 0.8,
-                    scriptIndex: 2,
+                    scriptId: 3,
                 },
                 {
                     probability: 0.2,
-                    scriptIndex: 5,
+                    scriptId: 6,
                 },
             ],
         },
         {
+            id: 3,
             intentions: [
                 {
                     type: EnemyIntentionType.Attack,
@@ -91,62 +94,7 @@ export const treantData: Enemy = {
                             target: CardTargetedEnum.Player,
                             args: {
                                 value: 5,
-                            },
-                        },
-                    ],
-                },
-                {
-                    type: EnemyIntentionType.Attack,
-                    target: CardTargetedEnum.Player,
-                    value: 5,
-                    effects: [
-                        {
-                            effect: damageEffect.name,
-                            target: CardTargetedEnum.Player,
-                            args: {
-                                value: 5,
-                            },
-                        },
-                    ],
-                },
-            ],
-            next: [
-                {
-                    probability: 0.8,
-                    scriptIndex: 3,
-                },
-                {
-                    probability: 0.2,
-                    scriptIndex: 5,
-                },
-            ],
-        },
-        {
-            intentions: [
-                {
-                    type: EnemyIntentionType.Attack,
-                    target: CardTargetedEnum.Player,
-                    value: 5,
-                    effects: [
-                        {
-                            effect: damageEffect.name,
-                            target: CardTargetedEnum.Player,
-                            args: {
-                                value: 5,
-                            },
-                        },
-                    ],
-                },
-                {
-                    type: EnemyIntentionType.Attack,
-                    target: CardTargetedEnum.Player,
-                    value: 5,
-                    effects: [
-                        {
-                            effect: damageEffect.name,
-                            target: CardTargetedEnum.Player,
-                            args: {
-                                value: 5,
+                                multiplier: 2,
                             },
                         },
                     ],
@@ -169,15 +117,46 @@ export const treantData: Enemy = {
             next: [
                 {
                     probability: 0.8,
-                    scriptIndex: 4,
+                    scriptId: 4,
                 },
                 {
                     probability: 0.2,
-                    scriptIndex: 5,
+                    scriptId: 6,
                 },
             ],
         },
         {
+            id: 4,
+            intentions: [
+                {
+                    type: EnemyIntentionType.Attack,
+                    target: CardTargetedEnum.Player,
+                    value: 5,
+                    effects: [
+                        {
+                            effect: damageEffect.name,
+                            target: CardTargetedEnum.Player,
+                            args: {
+                                value: 5,
+                                multiplier: 3,
+                            },
+                        },
+                    ],
+                },
+            ],
+            next: [
+                {
+                    probability: 0.8,
+                    scriptId: 5,
+                },
+                {
+                    probability: 0.2,
+                    scriptId: 6,
+                },
+            ],
+        },
+        {
+            id: 5,
             intentions: [
                 {
                     type: EnemyIntentionType.Stun,
@@ -198,15 +177,16 @@ export const treantData: Enemy = {
             next: [
                 {
                     probability: 0.5,
-                    scriptIndex: 0,
+                    scriptId: 1,
                 },
                 {
                     probability: 0.5,
-                    scriptIndex: 1,
+                    scriptId: 6,
                 },
             ],
         },
         {
+            id: 6,
             intentions: [
                 {
                     type: EnemyIntentionType.Buff,
@@ -240,11 +220,11 @@ export const treantData: Enemy = {
             next: [
                 {
                     probability: 0.5,
-                    scriptIndex: 0,
+                    scriptId: 1,
                 },
                 {
                     probability: 0.5,
-                    scriptIndex: 1,
+                    scriptId: 2,
                 },
             ],
         },
