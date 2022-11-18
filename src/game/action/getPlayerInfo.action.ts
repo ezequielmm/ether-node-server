@@ -42,7 +42,11 @@ export class GetPlayerInfoAction {
                     cards,
                     playerId: id,
                 },
-                currentNode: {
+                currentNode,
+            } = expedition;
+
+            if (currentNode.data !== undefined) {
+                const {
                     data: {
                         player: {
                             defense,
@@ -52,22 +56,40 @@ export class GetPlayerInfoAction {
                             energyMax,
                         },
                     },
-                },
-            } = expedition;
+                } = currentNode;
 
-            return {
-                id,
-                playerId,
-                playerName,
-                characterClass,
-                hpCurrent,
-                hpMax,
-                gold,
-                energy,
-                energyMax,
-                defense,
-                cards,
-            };
+                return {
+                    id,
+                    playerId,
+                    playerName,
+                    characterClass,
+                    hpCurrent,
+                    hpMax,
+                    gold,
+                    energy,
+                    energyMax,
+                    defense,
+                    cards,
+                };
+            } else {
+                const {
+                    playerState: { hpCurrent, hpMax },
+                } = expedition;
+
+                return {
+                    id,
+                    playerId,
+                    playerName,
+                    characterClass,
+                    hpCurrent,
+                    hpMax,
+                    gold,
+                    energy: 0,
+                    energyMax: 0,
+                    defense: 0,
+                    cards,
+                };
+            }
         } else {
             const {
                 playerId,
