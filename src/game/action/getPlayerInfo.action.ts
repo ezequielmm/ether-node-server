@@ -1,7 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { ExpeditionService } from 'src/game/components/expedition/expedition.service';
 import { CustomException, ErrorBehavior } from 'src/socket/custom.exception';
-import { IExpeditionPlayerStateDeckCard } from '../components/expedition/expedition.interface';
+import {
+    IExpeditionPlayerState,
+    IExpeditionPlayerStateDeckCard,
+} from '../components/expedition/expedition.interface';
 
 export interface PlayerInfoResponse {
     id: string;
@@ -15,6 +18,8 @@ export interface PlayerInfoResponse {
     energyMax: number;
     defense: number;
     cards: IExpeditionPlayerStateDeckCard[];
+    potions: IExpeditionPlayerState['potions'];
+    trinkets: IExpeditionPlayerState['trinkets'];
 }
 
 @Injectable()
@@ -41,6 +46,8 @@ export class GetPlayerInfoAction {
                     gold,
                     cards,
                     playerId: id,
+                    potions,
+                    trinkets,
                 },
                 currentNode,
             } = expedition;
@@ -58,7 +65,7 @@ export class GetPlayerInfoAction {
                     },
                 } = currentNode;
 
-                return {
+                return this.returnResponse({
                     id,
                     playerId,
                     playerName,
@@ -70,13 +77,15 @@ export class GetPlayerInfoAction {
                     energyMax,
                     defense,
                     cards,
-                };
+                    potions,
+                    trinkets,
+                });
             } else {
                 const {
                     playerState: { hpCurrent, hpMax },
                 } = expedition;
 
-                return {
+                return this.returnResponse({
                     id,
                     playerId,
                     playerName,
@@ -88,7 +97,9 @@ export class GetPlayerInfoAction {
                     energyMax: 0,
                     defense: 0,
                     cards,
-                };
+                    potions,
+                    trinkets,
+                });
             }
         } else {
             const {
@@ -101,10 +112,12 @@ export class GetPlayerInfoAction {
                     playerId: id,
                     hpCurrent,
                     hpMax,
+                    potions,
+                    trinkets,
                 },
             } = expedition;
 
-            return {
+            return this.returnResponse({
                 id,
                 playerId,
                 playerName,
@@ -116,7 +129,13 @@ export class GetPlayerInfoAction {
                 energyMax: 0,
                 defense: 0,
                 cards,
-            };
+                potions,
+                trinkets,
+            });
         }
     }
+
+    private returnResponse = (
+        payload: PlayerInfoResponse,
+    ): PlayerInfoResponse => payload;
 }
