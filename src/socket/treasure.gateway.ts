@@ -25,6 +25,7 @@ export class TreasureGateway {
 
         await this.treasureService.combatEncounter(client);
     }
+
     @SubscribeMessage('TreasureRewardSelected')
     async TreasureRewardSelected(
         client: Socket,

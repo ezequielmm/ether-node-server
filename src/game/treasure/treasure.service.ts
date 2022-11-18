@@ -440,12 +440,13 @@ export class TreasureService {
             }),
         );
     }
+
     async rewardSelected(client: Socket, rewardId: string): Promise<void> {
         const ctx = await this.expeditionService.getGameContext(client);
 
         const expedition = ctx.expedition;
 
-        let {
+        const {
             currentNode: {
                 treasureData: { rewards, isOpen, trapped },
             },
