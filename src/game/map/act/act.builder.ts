@@ -82,7 +82,7 @@ export interface ActBuilder {
 }
 
 export class DefaultActBuilder implements ActBuilder {
-    private currentStep: number = -1;
+    private currentStep = -1;
     private readonly nodes: Node[] = [];
 
     constructor(

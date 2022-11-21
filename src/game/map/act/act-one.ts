@@ -80,7 +80,7 @@ const campNode: NodeConfig = {
     subType: ExpeditionMapNodeTypeEnum.CampRegular,
 };
 
-export default function (initialNodeId: number = 0) {
+export default function (initialNodeId = 0) {
     const actBuilder = new DefaultActBuilder(1, initialNodeId);
 
     actBuilder.addRandgeOfSteps(3, (step) => {

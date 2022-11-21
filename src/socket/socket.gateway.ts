@@ -65,18 +65,11 @@ export class SocketGateway
             if (expedition) {
                 this.logger.debug(`Client connected: ${client.id}`);
 
-                const { currentNode } = expedition;
-
                 // Here we check if the player is in a node already
-                if (currentNode !== undefined) {
-                    const { nodeType, nodeId } = currentNode;
+                if (expedition.currentNode !== undefined) {
+                    const { nodeType, nodeId } = expedition.currentNode;
 
-                    const nodeTypes = Object.values(ExpeditionMapNodeTypeEnum);
-                    const combatNodes = nodeTypes.filter(
-                        (node) => node.search('combat') !== -1,
-                    );
-
-                    if (combatNodes.includes(nodeType)) {
+                    if (nodeType === ExpeditionMapNodeTypeEnum.Combat) {
                         const node =
                             await this.expeditionService.getExpeditionMapNode({
                                 clientId: client.id,
