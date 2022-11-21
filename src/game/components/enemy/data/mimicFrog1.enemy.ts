@@ -11,6 +11,7 @@ import { Enemy } from '../enemy.schema';
 import { fatigue } from 'src/game/status/fatigue/constants';
 import { StunnedCard } from '../../card/data/stunned.card';
 import { addCardEffect } from 'src/game/effects/addCard/contants';
+import { attachStatusEffect } from 'src/game/effects/attachStatus/constants';
 
 export const mimicFrog1Data: Enemy = {
     enemyId: 8,
@@ -102,12 +103,15 @@ export const mimicFrog1Data: Enemy = {
                     type: EnemyIntentionType.Debuff,
                     target: CardTargetedEnum.Player,
                     value: 2,
-                    statuses: [
+                    effects: [
                         {
-                            name: fatigue.name,
-                            attachTo: CardTargetedEnum.Player,
+                            effect: attachStatusEffect.name,
+                            target: CardTargetedEnum.Player,
                             args: {
-                                counter: 2,
+                                statusName: fatigue.name,
+                                statusArgs: {
+                                    counter: 2,
+                                },
                             },
                         },
                     ],

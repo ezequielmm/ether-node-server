@@ -1,3 +1,4 @@
+import { attachStatusEffect } from 'src/game/effects/attachStatus/constants';
 import { damageEffect } from 'src/game/effects/damage/constants';
 import { defenseEffect } from 'src/game/effects/defense/constants';
 import { spikesStatus } from 'src/game/status/spikes/constants';
@@ -116,12 +117,15 @@ export const thornWolfData: Enemy = {
                     type: EnemyIntentionType.Buff,
                     target: CardTargetedEnum.Self,
                     value: 2,
-                    statuses: [
+                    effects: [
                         {
-                            name: spikesStatus.name,
-                            attachTo: CardTargetedEnum.Self,
+                            effect: attachStatusEffect.name,
+                            target: CardTargetedEnum.Self,
                             args: {
-                                counter: 2,
+                                statusName: spikesStatus.name,
+                                statusArgs: {
+                                    counter: 2,
+                                },
                             },
                         },
                     ],
