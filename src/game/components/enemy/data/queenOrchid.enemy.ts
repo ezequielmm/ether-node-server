@@ -1,4 +1,5 @@
 import { addCardEffect } from 'src/game/effects/addCard/contants';
+import { attachStatusEffect } from 'src/game/effects/attachStatus/constants';
 import { damageEffect } from 'src/game/effects/damage/constants';
 import { feebleStatus } from 'src/game/status/feeble/constants';
 import { CardTargetedEnum } from '../../card/card.enum';
@@ -55,12 +56,15 @@ export const queenOrchidData: Enemy = {
                     type: EnemyIntentionType.Debuff,
                     target: CardTargetedEnum.Player,
                     value: 2,
-                    statuses: [
+                    effects: [
                         {
-                            name: feebleStatus.name,
-                            attachTo: CardTargetedEnum.Player,
+                            effect: attachStatusEffect.name,
+                            target: CardTargetedEnum.Player,
                             args: {
-                                counter: 2,
+                                statusName: feebleStatus.name,
+                                statusArgs: {
+                                    counter: 2,
+                                },
                             },
                         },
                     ],

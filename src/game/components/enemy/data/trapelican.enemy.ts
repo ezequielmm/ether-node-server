@@ -10,6 +10,7 @@ import {
 import { Enemy } from '../enemy.schema';
 import { feebleStatus } from 'src/game/status/feeble/constants';
 import { trapped } from 'src/game/status/trapped/constants';
+import { attachStatusEffect } from 'src/game/effects/attachStatus/constants';
 
 export const trapelicanData: Enemy = {
     enemyId: 12,
@@ -27,12 +28,15 @@ export const trapelicanData: Enemy = {
                     type: EnemyIntentionType.Debuff,
                     target: CardTargetedEnum.Player,
                     value: 1,
-                    statuses: [
+                    effects: [
                         {
-                            name: trapped.name,
-                            attachTo: CardTargetedEnum.Self,
+                            effect: attachStatusEffect.name,
+                            target: CardTargetedEnum.Self,
                             args: {
-                                counter: 1,
+                                statusName: trapped.name,
+                                statusArgs: {
+                                    counter: 1,
+                                },
                             },
                         },
                     ],
@@ -125,12 +129,15 @@ export const trapelicanData: Enemy = {
                     type: EnemyIntentionType.Buff,
                     target: CardTargetedEnum.Player,
                     value: 1,
-                    statuses: [
+                    effects: [
                         {
-                            name: feebleStatus.name,
-                            attachTo: CardTargetedEnum.Player,
+                            effect: attachStatusEffect.name,
+                            target: CardTargetedEnum.Player,
                             args: {
-                                counter: 1,
+                                statusName: feebleStatus.name,
+                                statusArgs: {
+                                    counter: 1,
+                                },
                             },
                         },
                     ],
@@ -139,12 +146,15 @@ export const trapelicanData: Enemy = {
                     type: EnemyIntentionType.Debuff,
                     target: CardTargetedEnum.Player,
                     value: 1,
-                    statuses: [
+                    effects: [
                         {
-                            name: trapped.name,
-                            attachTo: CardTargetedEnum.Self,
+                            effect: attachStatusEffect.name,
+                            target: CardTargetedEnum.Self,
                             args: {
-                                counter: 1,
+                                statusName: trapped.name,
+                                statusArgs: {
+                                    counter: 1,
+                                },
                             },
                         },
                     ],
