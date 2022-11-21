@@ -111,4 +111,16 @@ $(document).ready(function () {
             showJSON(response);
         });
     });
+
+    $('#btnMoveCard').click(function () {
+        const cardId = document.getElementById('moveCard').value;
+
+        socket.emit(
+            'MoveCard',
+            JSON.stringify({ cardToTake: cardId }),
+            (response) => {
+                showJSON(response);
+            },
+        );
+    });
 });

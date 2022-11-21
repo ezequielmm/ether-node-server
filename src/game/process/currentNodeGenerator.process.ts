@@ -81,20 +81,9 @@ export class CurrentNodeGeneratorProcess {
         this.node = node;
         this.clientId = clientId;
 
-        const combatNodes = this.filterNodeTypes('combat');
-
-        return combatNodes.includes(node.type)
+        return this.node.type === ExpeditionMapNodeTypeEnum.Combat
             ? await this.getCombatCurrentNode()
             : this.getCurrentNode();
-    }
-
-    private getNodeTypes(): string[] {
-        return Object.values(ExpeditionMapNodeTypeEnum);
-    }
-
-    private filterNodeTypes(filterValue: string): string[] {
-        const nodesTypes = this.getNodeTypes();
-        return nodesTypes.filter((node) => node.search(filterValue) !== -1);
     }
 
     private async getCombatCurrentNode(): Promise<IExpeditionCurrentNode> {
