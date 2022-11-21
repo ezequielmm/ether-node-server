@@ -49,6 +49,7 @@ export const mimicFrog1Data: Enemy = {
                             args: {
                                 value: 2,
                                 cardId: StunnedCard.cardId,
+                                destination: 'draw',
                             },
                         },
                     ],

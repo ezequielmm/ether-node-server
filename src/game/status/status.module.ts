@@ -46,7 +46,7 @@ import { StatusService } from './status.service';
 import { StunnedStatus } from './stunned/stunned.status';
 import { TasteOfBloodBuffStatus } from './tasteOfBlood/tasteOfBlood.buff.status';
 import { TasteOfBloodDebuffStatus } from './tasteOfBlood/tasteOfBlood.debuff.status';
-import { TrappedStatus } from './trapped/trappedstatus';
+import { TrappedStatus } from './trapped/trapped.status';
 import { TurtlingStatus } from './turtling/turtling.status';
 
 @Module({
