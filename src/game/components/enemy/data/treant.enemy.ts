@@ -169,6 +169,7 @@ export const treantData: Enemy = {
                             args: {
                                 value: 3,
                                 cardId: StunnedCard.cardId,
+                                destination: 'draw',
                             },
                         },
                     ],

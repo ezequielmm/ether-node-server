@@ -49,6 +49,7 @@ export const fungalBruteData: Enemy = {
                             args: {
                                 value: 2,
                                 cardId: StunnedCard.cardId,
+                                destination: 'draw',
                             },
                         },
                     ],
