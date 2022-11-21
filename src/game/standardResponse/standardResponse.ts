@@ -44,6 +44,7 @@ export enum SWARAction {
     InvalidCard = 'invalid_card',
     InsufficientEnergy = 'insufficient_energy',
     UpdateEnergy = 'update_energy',
+    AddCard = 'add_card',
     MoveCard = 'move_card',
     UpdateCardDescription = 'update_card_description',
     UpdateEnemy = 'update_enemy',
