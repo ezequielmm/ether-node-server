@@ -63,7 +63,6 @@ export class NodeTypePool {
         ).flatMap((group, index) =>
             _.times(group.length, () => this.types[index].node),
         );
-        console.log('pool', this.pool.length);
 
         this.pool = _.shuffle(this.pool);
     }

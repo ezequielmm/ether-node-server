@@ -1,3 +1,4 @@
+import { attachStatusEffect } from 'src/game/effects/attachStatus/constants';
 import { spirited } from 'src/game/status/spirited/contants';
 import { PotionRarityEnum, PotionTargetEnum } from '../potion.enum';
 import { Potion } from '../potion.schema';
@@ -9,10 +10,13 @@ export const spiritElixir: Potion = {
     description: 'Gain 2 Energy each round',
     effects: [
         {
-            effect: spirited.name,
+            effect: attachStatusEffect.name,
             target: PotionTargetEnum.Player,
             args: {
-                value: 2,
+                statusName: spirited.name,
+                statusArgs: {
+                    counter: 2,
+                },
             },
         },
     ],

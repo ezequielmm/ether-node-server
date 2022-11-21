@@ -32,7 +32,7 @@ export class TreasureGateway {
         rewardId: string,
     ): Promise<void> {
         this.logger.debug(`Client ${client.id} choose reward id: ${rewardId}`);
-        console.log(rewardId, 'jjjj');
+
         await this.treasureService.rewardSelected(client, rewardId);
     }
 }
