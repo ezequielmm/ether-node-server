@@ -171,5 +171,19 @@ export const trapelicanData: Enemy = {
                 },
             ],
         },
+        {
+            id: 4,
+            intentions: [],
+            next: [
+                {
+                    probability: 0.3,
+                    scriptId: 1,
+                },
+                {
+                    probability: 0.7,
+                    scriptId: 2,
+                },
+            ],
+        },
     ],
 };
