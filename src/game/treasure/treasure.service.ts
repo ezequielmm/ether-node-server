@@ -1,14 +1,17 @@
 import { Injectable } from '@nestjs/common';
 import { randomUUID } from 'crypto';
-import { filter, pick } from 'lodash';
+import { pick } from 'lodash';
 import { Socket } from 'socket.io';
 import { getRandomBetween } from 'src/utils';
 import { CardDescriptionFormatter } from '../cardDescriptionFormatter/cardDescriptionFormatter';
 import { CardTypeEnum } from '../components/card/card.enum';
 import { CardService } from '../components/card/card.service';
 import { stingFaeData } from '../components/enemy/data/stingFae.enemy';
-import { ExpeditionMapNodeTypeEnum } from '../components/expedition/expedition.enum';
-import { IExpeditionPlayerState } from '../components/expedition/expedition.interface';
+import {
+    ExpeditionMapNodeTypeEnum,
+    IExpeditionNodeReward,
+} from '../components/expedition/expedition.enum';
+import { Reward } from '../components/expedition/expedition.interface';
 import { ExpeditionService } from '../components/expedition/expedition.service';
 import { PotionService } from '../components/potion/potion.service';
 import { TrinketRarityEnum } from '../components/trinket/trinket.enum';
@@ -21,18 +24,8 @@ import {
     SWARAction,
     SWARMessageType,
 } from '../standardResponse/standardResponse';
-import {
-    Trapped,
-    TreasureInterface,
-    TreasureReward,
-    TreasureRewardData,
-} from './interfaces';
-import {
-    LargeChest,
-    MediumChest,
-    RewardType,
-    SmallChest,
-} from './treasure.enum';
+import { Trapped, TreasureInterface } from './interfaces';
+import { LargeChest, MediumChest, SmallChest } from './treasure.enum';
 
 @Injectable()
 export class TreasureService {
@@ -45,7 +38,7 @@ export class TreasureService {
     ) {}
 
     async handle(client: Socket) {
-        const { nodeId, nodeType, treasureData } =
+        const { nodeId, nodeType } =
             await this.expeditionService.getCurrentNode({
                 clientId: client.id,
             });
@@ -62,17 +55,6 @@ export class TreasureService {
             clientId: client.id,
             nodeId,
         });
-        if (treasure.isOpen) {
-            client.emit(
-                'PutData',
-                StandardResponse.respond({
-                    message_type: SWARMessageType.GenericData,
-                    action: SWARAction.ChestResult,
-                    data: treasureData,
-                }),
-            );
-            return;
-        }
 
         switch (treasure.type) {
             case LargeChest.type:
@@ -143,12 +125,11 @@ export class TreasureService {
         treasure: any,
         nodeId: number,
     ) {
-        const { playerState, map, _id, playerId } =
-            await this.expeditionService.findOne({
-                clientId: client.id,
-            });
+        const { playerState, map, _id } = await this.expeditionService.findOne({
+            clientId: client.id,
+        });
 
-        const rewards: TreasureReward[] = [];
+        const rewards: Reward[] = [];
 
         const trapped: Trapped = {
             trappedType: null,
@@ -165,7 +146,7 @@ export class TreasureService {
 
             rewards.push({
                 id: randomUUID(),
-                type: RewardType.Gold,
+                type: IExpeditionNodeReward.Gold,
                 amount: coin,
                 taken: false,
             });
@@ -201,7 +182,7 @@ export class TreasureService {
         if (trinket) {
             rewards.push({
                 id: randomUUID(),
-                type: RewardType.Trinket,
+                type: IExpeditionNodeReward.Trinket,
                 taken: false,
                 trinket: pick(trinket, ['trinketId', 'name', 'description']),
             });
@@ -214,13 +195,13 @@ export class TreasureService {
 
             rewards.push({
                 id: randomUUID(),
-                type: RewardType.Potion,
+                type: IExpeditionNodeReward.Potion,
                 taken: false,
                 potion: pick(potion, ['potionId', 'name', 'description']),
             });
         }
 
-        const randomTrappedChance = getRandomBetween(1, 100);
+        const randomTrappedChance = getRandomBetween(1, 3);
 
         if (randomTrappedChance <= trappedChance) {
             trapped.trappedType = trappedType;
@@ -263,16 +244,44 @@ export class TreasureService {
 
                     trapped.curse_card = cardPreview;
 
+                    client.emit(
+                        'PutData',
+                        StandardResponse.respond({
+                            message_type: SWARMessageType.GenericData,
+                            action: SWARAction.ChestResult,
+                            data: {
+                                trappedText: trapped.trappedText,
+                                curse_card: trapped.curse_card,
+                                trappedType,
+                            },
+                        }),
+                    );
+
                     break;
                 case SmallChest.trappedType:
                     playerState.hpCurrent =
                         playerState.hpCurrent - SmallChest.trappedValue;
                     trapped.damage = SmallChest.trappedValue;
                     trapped.trappedText = SmallChest.trappedText;
+
+                    client.emit(
+                        'PutData',
+                        StandardResponse.respond({
+                            message_type: SWARMessageType.GenericData,
+                            action: SWARAction.ChestResult,
+                            data: {
+                                trappedText: trapped.trappedText,
+                                damage: trapped.damage,
+                                trappedType,
+                            },
+                        }),
+                    );
                     break;
                 case LargeChest.trappedType:
                     trapped.trappedText = LargeChest.trappedText;
-                    break;
+                    await this.combatEncounter(client, rewards, _id);
+
+                    return;
             }
         }
 
@@ -288,19 +297,22 @@ export class TreasureService {
             $set: {
                 map: expeditionMap.getMap,
                 playerState,
+                'currentNode.completed': false,
                 'currentNode.treasureData': {
-                    isOpen: true,
                     trapped,
                     rewards,
                 },
             },
         });
 
-        this.success(client, playerState, playerId, {
-            isOpen: true,
-            rewards,
-            trapped,
-        });
+        client.emit(
+            'PutData',
+            StandardResponse.respond({
+                message_type: SWARMessageType.GenericData,
+                action: SWARAction.ChestResult,
+                data: rewards,
+            }),
+        );
     }
 
     generateTreasure(): TreasureInterface {
@@ -310,7 +322,6 @@ export class TreasureService {
             return {
                 name: LargeChest.name,
                 type: LargeChest.type,
-                isOpen: false,
                 trappedType: LargeChest.trappedType,
             };
         } else if (
@@ -320,43 +331,27 @@ export class TreasureService {
             return {
                 name: MediumChest.name,
                 type: MediumChest.type,
-                isOpen: false,
                 trappedType: MediumChest.trappedType,
             };
         } else {
             return {
                 name: SmallChest.name,
                 type: SmallChest.type,
-                isOpen: false,
                 trappedType: SmallChest.trappedType,
             };
         }
     }
-    async combatEncounter(client: Socket) {
-        const { nodeId, nodeType } =
-            await this.expeditionService.getCurrentNode({
-                clientId: client.id,
-            });
+    async combatEncounter(client: Socket, rewards: Reward[], _id: string) {
+        const { nodeId } = await this.expeditionService.getCurrentNode({
+            clientId: client.id,
+        });
 
-        if (nodeType !== ExpeditionMapNodeTypeEnum.Treasure) {
-            client.emit('ErrorMessage', {
-                message: `You are not in the treasure node`,
-            });
-            return;
-        }
-
-        const { id, act, step, exits, enter, private_data } =
+        const { id, act, step, exits, enter } =
             await this.expeditionService.getExpeditionMapNode({
                 clientId: client.id,
                 nodeId,
             });
 
-        if (private_data.treasure.trappedType !== LargeChest.trappedType) {
-            client.emit('ErrorMessage', {
-                message: `Wrong event state`,
-            });
-            return;
-        }
         const newNode = nodeFactory(
             id,
             act,
@@ -388,6 +383,13 @@ export class TreasureService {
         await this.expeditionService.update(client.id, {
             map: expeditionMap.getMap,
         });
+
+        await this.expeditionService.updateById(_id, {
+            $set: {
+                map: expeditionMap.getMap,
+                'currentNode.data': rewards,
+            },
+        });
         const node = await this.expeditionService.getExpeditionMapNode({
             clientId: client.id,
             nodeId: id,
@@ -402,107 +404,5 @@ export class TreasureService {
                 data: null,
             }),
         );
-    }
-    success(
-        client: Socket,
-        playerState: IExpeditionPlayerState,
-        playerId: number,
-        data: TreasureRewardData,
-    ): void {
-        client.emit(
-            'PutData',
-            StandardResponse.respond({
-                message_type: SWARMessageType.GenericData,
-                action: SWARAction.ChestResult,
-                data,
-            }),
-        );
-
-        client.emit(
-            'PlayerState',
-            StandardResponse.respond({
-                message_type: SWARMessageType.PlayerStateUpdate,
-                action: SWARAction.UpdatePlayerState,
-                data: {
-                    playerState: {
-                        id: playerState.playerId,
-                        playerId,
-                        playerName: playerState.playerName,
-                        characterClass: playerState.characterClass,
-                        hpMax: playerState.hpMax,
-                        hpCurrent: playerState.hpCurrent,
-                        gold: playerState.gold,
-                        cards: playerState.cards,
-                        potions: playerState.potions,
-                        trinkets: playerState.trinkets,
-                    },
-                },
-            }),
-        );
-    }
-
-    async rewardSelected(client: Socket, rewardId: string): Promise<void> {
-        const ctx = await this.expeditionService.getGameContext(client);
-
-        const expedition = ctx.expedition;
-
-        const {
-            currentNode: {
-                treasureData: { rewards, isOpen, trapped },
-            },
-        } = expedition;
-
-        const reward = rewards.find(({ id }) => {
-            return id === rewardId;
-        });
-
-        if (!reward) throw new Error(`Reward ${rewardId} not found`);
-
-        reward.taken = true;
-
-        switch (reward.type) {
-            case RewardType.Gold:
-                await this.expeditionService.updateById(expedition._id, {
-                    $inc: {
-                        'playerState.gold': reward.amount,
-                    },
-                });
-                break;
-            case RewardType.Potion:
-                reward.taken = await this.potionService.add(
-                    ctx,
-                    reward.potion.potionId,
-                );
-                break;
-            case RewardType.Trinket:
-                reward.taken = await this.trinketService.add(
-                    ctx,
-                    reward.trinket.trinketId,
-                );
-                break;
-        }
-        await this.expeditionService.updateById(expedition._id, {
-            $set: {
-                'currentNode.treasureData.rewards': rewards,
-            },
-        });
-
-        const pendingRewards = filter(rewards, {
-            taken: false,
-        });
-
-        client.emit(
-            'PutData',
-            StandardResponse.respond({
-                message_type: SWARMessageType.SelectReward,
-                action: SWARAction.SelectAnotherReward,
-                data: {
-                    rewards: pendingRewards,
-                    isOpen,
-                    trapped,
-                },
-            }),
-        );
-        return;
     }
 }

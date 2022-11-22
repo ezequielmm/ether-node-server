@@ -2,7 +2,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 import { MerchantItems } from 'src/game/merchant/interfaces';
 import { AttachedStatus, StatusType } from 'src/game/status/interfaces';
-import { Trapped, TreasureReward } from 'src/game/treasure/interfaces';
+import { Trapped } from 'src/game/treasure/interfaces';
 import {
     CombatTurnEnum,
     ExpeditionMapNodeTypeEnum,
@@ -69,8 +69,7 @@ export class Expedition {
         };
         merchantItems?: MerchantItems;
         treasureData?: {
-            isOpen: boolean;
-            rewards: TreasureReward[];
+            rewards: Reward[];
             trapped: Trapped;
         };
     };
