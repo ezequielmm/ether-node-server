@@ -1,12 +1,13 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
+import { HydratedDocument } from 'mongoose';
 import { JsonEffect } from 'src/game/effects/effects.interface';
 import { PotionRarityEnum } from './potion.enum';
 
-export type PotionDocument = Potion & Document;
+export type PotionDocument = HydratedDocument<Potion>;
 
 @Schema({
     collection: 'potions',
+    versionKey: false,
 })
 export class Potion {
     @Prop()
@@ -15,7 +16,7 @@ export class Potion {
     @Prop()
     name: string;
 
-    @Prop()
+    @Prop({ type: String, enum: PotionRarityEnum })
     rarity: PotionRarityEnum;
 
     @Prop()
@@ -29,6 +30,9 @@ export class Potion {
 
     @Prop({ default: false })
     showPointer: boolean;
+
+    @Prop()
+    isActive: boolean;
 }
 
 export const PotionSchema = SchemaFactory.createForClass(Potion);

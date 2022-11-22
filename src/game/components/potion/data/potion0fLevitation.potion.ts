@@ -22,4 +22,5 @@ export const potionOfLevitation: Potion = {
     ],
     usableOutsideCombat: false,
     showPointer: false,
+    isActive: true,
 };

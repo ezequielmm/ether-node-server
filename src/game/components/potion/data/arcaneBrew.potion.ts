@@ -22,4 +22,5 @@ export const arcaneBrewPotion: Potion = {
     ],
     usableOutsideCombat: false,
     showPointer: false,
+    isActive: true,
 };

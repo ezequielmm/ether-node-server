@@ -72,7 +72,7 @@ export class MerchantService {
         const { targetId, type } = selectedItem;
 
         const {
-            _id,
+            id,
             playerState,
             currentNode: { merchantItems, nodeType },
         } = await this.expeditionService.findOne({
@@ -142,7 +142,7 @@ export class MerchantService {
                     item,
                     itemIndex,
                     playerState,
-                    _id,
+                    id,
                 );
                 break;
             case ItemsTypeEnum.Potion:
@@ -158,7 +158,7 @@ export class MerchantService {
                     item,
                     itemIndex,
                     playerState,
-                    _id,
+                    id,
                 );
                 break;
             case ItemsTypeEnum.Trinket:
@@ -167,7 +167,7 @@ export class MerchantService {
                     item,
                     itemIndex,
                     playerState,
-                    _id,
+                    id,
                 );
                 break;
         }
@@ -390,6 +390,7 @@ export class MerchantService {
                     usableOutsideCombat: potions[i].usableOutsideCombat,
                     showPointer: potions[i].showPointer,
                     id: data.id,
+                    isActive: true,
                 },
             });
         }

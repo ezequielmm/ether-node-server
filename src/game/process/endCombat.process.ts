@@ -42,7 +42,7 @@ export class EndCombatProcess {
         await this.combatQueueService.end(ctx);
 
         const {
-            expedition: { _id: expeditionId },
+            expedition: { id: expeditionId },
         } = ctx;
 
         await this.expeditionService.updateById(expeditionId, {

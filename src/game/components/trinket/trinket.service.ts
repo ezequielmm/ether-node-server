@@ -88,11 +88,7 @@ export class TrinketService {
             return false;
         }
 
-        // remove _id and __v from trinket
-        delete trinket._id;
-        delete trinket.__v;
-
-        await this.expeditionService.updateById(ctx.expedition._id, {
+        await this.expeditionService.updateById(ctx.expedition.id, {
             $push: {
                 'playerState.trinkets': {
                     id: randomUUID(),

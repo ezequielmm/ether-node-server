@@ -15,4 +15,5 @@ export const philterOfRedemptionPotion: Potion = {
     ],
     usableOutsideCombat: false,
     showPointer: false,
+    isActive: true,
 };

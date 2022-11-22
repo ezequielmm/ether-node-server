@@ -1,20 +1,21 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
+import { HydratedDocument } from 'mongoose';
 import { CardSelectionScreenOriginPileEnum } from './cardSelectionScreen.enum';
 
-export type CardSelectionScreenDocument = CardSelectionScreen & Document;
+export type CardSelectionScreenDocument = HydratedDocument<CardSelectionScreen>;
 
 @Schema({
     collection: 'cardSelectionScreens',
+    versionKey: false,
 })
 export class CardSelectionScreen {
     @Prop()
     clientId: string;
 
-    @Prop()
+    @Prop([String])
     cardIds: string[];
 
-    @Prop()
+    @Prop({ type: String, enum: CardSelectionScreenOriginPileEnum })
     originPile: CardSelectionScreenOriginPileEnum;
 
     @Prop()

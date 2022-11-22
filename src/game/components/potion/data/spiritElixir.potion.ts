@@ -22,4 +22,5 @@ export const spiritElixir: Potion = {
     ],
     usableOutsideCombat: false,
     showPointer: false,
+    isActive: true,
 };
