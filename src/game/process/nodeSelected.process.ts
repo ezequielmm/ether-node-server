@@ -132,12 +132,7 @@ export class NodeSelectedProcess {
                     });
             }
         } else if (node.isActive) {
-            const nodeTypes = Object.values(ExpeditionMapNodeTypeEnum);
-            const combatNodes = nodeTypes.filter(
-                (node) => node.search('combat') !== -1,
-            );
-
-            if (combatNodes.includes(node.type)) {
+            if (node.type === ExpeditionMapNodeTypeEnum.Combat) {
                 this.logger.debug(
                     `Sent message InitCombat to client ${client.id}`,
                 );

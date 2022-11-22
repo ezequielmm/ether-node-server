@@ -2,7 +2,6 @@ import { defenseEffect } from 'src/game/effects/defense/constants';
 import { fortitude } from 'src/game/status/fortitude/constants';
 import { CardRarityEnum, CardTargetedEnum, CardTypeEnum } from '../card.enum';
 import { Card } from '../card.schema';
-import { PrayCardUpgraded } from './pray.card';
 
 export const ParryCardUpgraded: Card = {
     cardId: 38,
@@ -68,5 +67,5 @@ export const ParryCard: Card = {
     },
     showPointer: false,
     isUpgraded: false,
-    upgradedCardId: PrayCardUpgraded.cardId,
+    upgradedCardId: ParryCardUpgraded.cardId,
 };

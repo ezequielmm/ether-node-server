@@ -12,6 +12,7 @@ import { Enemy } from '../enemy.schema';
 import { addCardEffect } from 'src/game/effects/addCard/contants';
 import { StunnedCard } from '../../card/data/stunned.card';
 import { spikesStatus } from 'src/game/status/spikes/constants';
+import { attachStatusEffect } from 'src/game/effects/attachStatus/constants';
 
 export const treantData: Enemy = {
     enemyId: 13,
@@ -30,12 +31,15 @@ export const treantData: Enemy = {
                     type: EnemyIntentionType.Buff,
                     target: CardTargetedEnum.Self,
                     value: 5,
-                    statuses: [
+                    effects: [
                         {
-                            name: resolveStatus.name,
-                            attachTo: CardTargetedEnum.Self,
+                            effect: attachStatusEffect.name,
+                            target: CardTargetedEnum.Self,
                             args: {
-                                counter: 5,
+                                statusName: resolveStatus.name,
+                                statusArgs: {
+                                    counter: 5,
+                                },
                             },
                         },
                     ],
@@ -169,6 +173,7 @@ export const treantData: Enemy = {
                             args: {
                                 value: 3,
                                 cardId: StunnedCard.cardId,
+                                destination: 'draw',
                             },
                         },
                     ],
@@ -192,12 +197,15 @@ export const treantData: Enemy = {
                     type: EnemyIntentionType.Buff,
                     target: CardTargetedEnum.Self,
                     value: 1,
-                    statuses: [
+                    effects: [
                         {
-                            name: spikesStatus.name,
-                            attachTo: CardTargetedEnum.Self,
+                            effect: attachStatusEffect.name,
+                            target: CardTargetedEnum.Self,
                             args: {
-                                counter: 1,
+                                name: spikesStatus.name,
+                                statusArgs: {
+                                    counter: 1,
+                                },
                             },
                         },
                     ],
