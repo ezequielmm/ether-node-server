@@ -11,7 +11,7 @@ export const trapped: StatusEffect = {
     name: 'trapped',
     type: StatusType.Buff,
     counterType: StatusCounterType.None,
-    direction: StatusDirection.Outgoing,
+    direction: StatusDirection.Incoming,
     trigger: StatusTrigger.Effect,
     effects: [damageEffect],
 };
