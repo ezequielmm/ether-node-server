@@ -244,19 +244,6 @@ export class TreasureService {
 
                     trapped.curse_card = cardPreview;
 
-                    client.emit(
-                        'PutData',
-                        StandardResponse.respond({
-                            message_type: SWARMessageType.GenericData,
-                            action: SWARAction.ChestResult,
-                            data: {
-                                trappedText: trapped.trappedText,
-                                curse_card: trapped.curse_card,
-                                trappedType,
-                            },
-                        }),
-                    );
-
                     break;
                 case SmallChest.trappedType:
                     playerState.hpCurrent =
@@ -264,18 +251,6 @@ export class TreasureService {
                     trapped.damage = SmallChest.trappedValue;
                     trapped.trappedText = SmallChest.trappedText;
 
-                    client.emit(
-                        'PutData',
-                        StandardResponse.respond({
-                            message_type: SWARMessageType.GenericData,
-                            action: SWARAction.ChestResult,
-                            data: {
-                                trappedText: trapped.trappedText,
-                                damage: trapped.damage,
-                                trappedType,
-                            },
-                        }),
-                    );
                     break;
                 case LargeChest.trappedType:
                     trapped.trappedText = LargeChest.trappedText;
@@ -310,7 +285,7 @@ export class TreasureService {
             StandardResponse.respond({
                 message_type: SWARMessageType.GenericData,
                 action: SWARAction.ChestResult,
-                data: rewards,
+                data: { rewards, trapped },
             }),
         );
     }
