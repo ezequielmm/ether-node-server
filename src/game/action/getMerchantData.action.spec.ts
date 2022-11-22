@@ -170,7 +170,6 @@ describe('GetMerchantDataAction', () => {
             neutralCards: [],
             playerCards: [
                 {
-                    __v: 0,
                     cardId: 501,
                     cardType: 'status',
                     description: '',
@@ -194,7 +193,6 @@ describe('GetMerchantDataAction', () => {
             upgradeCost: 100,
             upgradeableCards: [
                 {
-                    __v: 0,
                     cardId: 501,
                     cardType: 'status',
                     description: '',
