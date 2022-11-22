@@ -327,6 +327,7 @@ export class MerchantService {
                     showPointer: cards[i].showPointer,
                     isUpgraded: cards[i].isUpgraded,
                     upgradedCardId: cards[i].upgradedCardId,
+                    isActive: true,
                 },
             });
         }
@@ -563,6 +564,7 @@ export class MerchantService {
             showPointer: upgradedCardData.showPointer,
             pool: upgradedCardData.pool,
             isUpgraded: upgradedCardData.isUpgraded,
+            isActive: true,
         };
 
         const id = getCardIdField(cardId);

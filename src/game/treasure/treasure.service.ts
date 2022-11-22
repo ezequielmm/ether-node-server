@@ -226,6 +226,7 @@ export class TreasureService {
                         showPointer: card.showPointer,
                         isUpgraded: card.isUpgraded,
                         upgradedCardId: card.upgradedCardId,
+                        isActive: true,
                     });
                     const cardPreview = pick(card, [
                         'cardId',

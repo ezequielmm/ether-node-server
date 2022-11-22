@@ -27,6 +27,7 @@ export const BackflipCardUpgraded: Card = {
     },
     showPointer: false,
     isUpgraded: true,
+    isActive: true,
 };
 
 export const BackflipCard: Card = {
@@ -54,4 +55,5 @@ export const BackflipCard: Card = {
     showPointer: false,
     isUpgraded: false,
     upgradedCardId: BackflipCardUpgraded.cardId,
+    isActive: true,
 };

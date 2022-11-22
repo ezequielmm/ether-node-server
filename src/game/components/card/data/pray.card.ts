@@ -25,6 +25,7 @@ export const PrayCardUpgraded: Card = {
     },
     showPointer: false,
     isUpgraded: true,
+    isActive: true,
 };
 
 export const PrayCard: Card = {
@@ -51,4 +52,5 @@ export const PrayCard: Card = {
     showPointer: false,
     isUpgraded: false,
     upgradedCardId: PrayCardUpgraded.cardId,
+    isActive: true,
 };

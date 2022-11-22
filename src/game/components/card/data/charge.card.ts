@@ -25,6 +25,7 @@ export const ChargeCardUpgraded: Card = {
     },
     showPointer: false,
     isUpgraded: true,
+    isActive: true,
 };
 
 export const ChargeCard: Card = {
@@ -51,4 +52,5 @@ export const ChargeCard: Card = {
     showPointer: false,
     isUpgraded: false,
     upgradedCardId: ChargeCardUpgraded.cardId,
+    isActive: true,
 };

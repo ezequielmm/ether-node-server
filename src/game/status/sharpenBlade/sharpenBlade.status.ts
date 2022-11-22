@@ -51,6 +51,7 @@ export class SharpenBladeStatus implements StatusEventHandler {
                 isTemporary: false,
                 showPointer: card.showPointer,
                 isUpgraded: card.isUpgraded,
+                isActive: true,
             });
         }
 

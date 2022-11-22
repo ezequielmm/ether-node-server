@@ -34,6 +34,7 @@ export const AutonomousWeaponCardUpgraded: Card = {
     },
     showPointer: true,
     isUpgraded: true,
+    isActive: true,
 };
 
 export const AutonomousWeaponCard: Card = {
@@ -67,4 +68,5 @@ export const AutonomousWeaponCard: Card = {
     showPointer: true,
     isUpgraded: false,
     upgradedCardId: AutonomousWeaponCardUpgraded.cardId,
+    isActive: true,
 };

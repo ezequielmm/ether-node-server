@@ -27,6 +27,7 @@ export const HiltPunchCardUpgraded: Card = {
     },
     showPointer: true,
     isUpgraded: true,
+    isActive: true,
 };
 
 export const HiltPunchCard: Card = {
@@ -55,4 +56,5 @@ export const HiltPunchCard: Card = {
     showPointer: true,
     isUpgraded: false,
     upgradedCardId: HiltPunchCardUpgraded.cardId,
+    isActive: true,
 };

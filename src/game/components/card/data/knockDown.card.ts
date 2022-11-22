@@ -33,6 +33,7 @@ export const KnockDownCardUpgraded: Card = {
     },
     showPointer: true,
     isUpgraded: true,
+    isActive: true,
 };
 
 export const KnockDownCard: Card = {
@@ -66,4 +67,5 @@ export const KnockDownCard: Card = {
     showPointer: true,
     isUpgraded: false,
     upgradedCardId: KnockDownCardUpgraded.cardId,
+    isActive: true,
 };

@@ -25,7 +25,7 @@ export const ExecutionersBlowCardUpgraded: Card = {
                 effect: executionersBlowEffect.name,
                 target: CardTargetedEnum.Enemy,
                 args: {
-                    upgraded: true
+                    upgraded: true,
                 },
             },
         ],
@@ -33,6 +33,7 @@ export const ExecutionersBlowCardUpgraded: Card = {
     },
     showPointer: true,
     isUpgraded: true,
+    isActive: true,
 };
 
 export const ExecutionersBlowCard: Card = {
@@ -57,7 +58,7 @@ export const ExecutionersBlowCard: Card = {
                 effect: executionersBlowEffect.name,
                 target: CardTargetedEnum.Enemy,
                 args: {
-                    upgraded: false
+                    upgraded: false,
                 },
             },
         ],
@@ -66,4 +67,5 @@ export const ExecutionersBlowCard: Card = {
     showPointer: true,
     isUpgraded: false,
     upgradedCardId: ExecutionersBlowCardUpgraded.cardId,
+    isActive: true,
 };

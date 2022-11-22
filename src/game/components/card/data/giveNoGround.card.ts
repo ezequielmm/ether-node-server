@@ -26,6 +26,7 @@ export const GiveNoGroundCardUpgraded: Card = {
     },
     showPointer: false,
     isUpgraded: true,
+    isActive: true,
 };
 
 export const GiveNoGroundCard: Card = {
@@ -53,4 +54,5 @@ export const GiveNoGroundCard: Card = {
     showPointer: false,
     isUpgraded: false,
     upgradedCardId: GiveNoGroundCardUpgraded.cardId,
+    isActive: true,
 };

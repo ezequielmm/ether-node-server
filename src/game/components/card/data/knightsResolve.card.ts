@@ -31,6 +31,7 @@ export const KnightsResolveCardUpgraded: Card = {
     },
     showPointer: false,
     isUpgraded: true,
+    isActive: true,
 };
 
 export const KnightsResolveCard: Card = {
@@ -58,4 +59,5 @@ export const KnightsResolveCard: Card = {
     showPointer: false,
     isUpgraded: false,
     upgradedCardId: KnightsResolveCardUpgraded.cardId,
+    isActive: true,
 };

@@ -23,6 +23,7 @@ export const DoubleDownCardUpgraded: Card = {
     },
     showPointer: false,
     isUpgraded: true,
+    isActive: true,
 };
 
 export const DoubleDownCard: Card = {
@@ -47,4 +48,5 @@ export const DoubleDownCard: Card = {
     showPointer: false,
     isUpgraded: false,
     upgradedCardId: DoubleDownCardUpgraded.cardId,
+    isActive: true,
 };

@@ -25,6 +25,7 @@ export const IntimidateCardUpgraded: Card = {
     },
     showPointer: false,
     isUpgraded: true,
+    isActive: true,
 };
 
 export const IntimidateCard: Card = {
@@ -51,4 +52,5 @@ export const IntimidateCard: Card = {
     showPointer: true,
     isUpgraded: false,
     upgradedCardId: IntimidateCardUpgraded.cardId,
+    isActive: true,
 };

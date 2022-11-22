@@ -33,6 +33,7 @@ export const CounterCardUpgraded: Card = {
     },
     showPointer: true,
     isUpgraded: true,
+    isActive: true,
 };
 
 export const CounterCard: Card = {
@@ -66,4 +67,5 @@ export const CounterCard: Card = {
     showPointer: true,
     isUpgraded: false,
     upgradedCardId: CounterCardUpgraded.cardId,
+    isActive: true,
 };

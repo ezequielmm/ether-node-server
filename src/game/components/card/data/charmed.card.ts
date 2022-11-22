@@ -30,4 +30,5 @@ export const CharmedCard: Card = {
     },
     showPointer: false,
     isUpgraded: false,
+    isActive: true,
 };

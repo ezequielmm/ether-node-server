@@ -16,4 +16,5 @@ export const WoundedCard: Card = {
     },
     showPointer: false,
     isUpgraded: false,
+    isActive: true,
 };

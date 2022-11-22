@@ -34,18 +34,11 @@ export const KindleCardUpgraded: Card = {
                 },
             },
         ],
-        statuses: [
-            // {
-            //     name: burn.name,
-            //     attachTo: CardTargetedEnum.Enemy,
-            //     args: {
-            //         counter: 2,
-            //     },
-            // },
-        ],
+        statuses: [],
     },
     showPointer: true,
     isUpgraded: true,
+    isActive: true,
 };
 
 export const KindleCard: Card = {
@@ -79,17 +72,9 @@ export const KindleCard: Card = {
             },
         ],
         statuses: [],
-        // statuses: [
-        //     {
-        //         name: burn.name,
-        //         attachTo: CardTargetedEnum.Enemy,
-        //         args: {
-        //             counter: 1,
-        //         },
-        //     },
-        // ],
     },
     showPointer: true,
     isUpgraded: false,
     upgradedCardId: KindleCardUpgraded.cardId,
+    isActive: true,
 };
