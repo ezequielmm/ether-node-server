@@ -14,7 +14,7 @@ import { EnemyService } from '../components/enemy/enemy.service';
 import { ServerSocketGatewayMock } from 'src/tests/serverSocketGatewayMock';
 import { IntegrationTestServer } from 'src/tests/integrationTestServer';
 import { GetTreasureDataAction } from './getTreasureData.action';
-import { LargeChest, TrappedType } from '../treasure/treasure.enum';
+import { LargeChest } from '../treasure/treasure.enum';
 
 describe('GetTreasureDataAction', () => {
     let its: IntegrationTestServer;
@@ -68,8 +68,7 @@ describe('GetTreasureDataAction', () => {
                         treasure: {
                             name: LargeChest.name,
                             type: LargeChest.type,
-                            isOpen: false,
-                            trappedType: TrappedType.CurseCard,
+                            trappedType: LargeChest.trappedType,
                         },
                     },
                 },
