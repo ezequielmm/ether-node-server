@@ -134,6 +134,38 @@ export class EnemyService {
     }
 
     /**
+     * Sets the current script of an enemy
+     *
+     * @param ctx Context
+     * @param id Enemy id
+     * @param script Enemy script value
+     * @returns Enemy script value
+     */
+    public async setCurrentScript(
+        ctx: GameContext,
+        id: EnemyId,
+        script: EnemyScript,
+    ): Promise<EnemyScript> {
+        const enemy = this.get(ctx, id);
+
+        await this.expeditionService.updateByFilter(
+            {
+                _id: ctx.expedition._id,
+                ...enemySelector(enemy.value.id),
+            },
+            {
+                [ENEMY_CURRENT_SCRIPT_PATH]: script,
+            },
+        );
+
+        enemy.value.currentScript = script;
+
+        this.logger.debug(`Set script of enemy ${id} to ${script}`);
+
+        return script;
+    }
+
+    /**
      * Sets the defense of an enemy
      *
      * @param ctx Context
