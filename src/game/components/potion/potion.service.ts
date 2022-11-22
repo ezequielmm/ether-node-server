@@ -180,7 +180,6 @@ export class PotionService {
             return false;
         }
 
-        // remove id and __v from potion
         const potionData = potion.toObject();
 
         await this.expeditionService.updateById(ctx.expedition.id, {
