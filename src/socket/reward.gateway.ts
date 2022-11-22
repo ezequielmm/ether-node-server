@@ -8,6 +8,7 @@ import {
     ExpeditionMapNodeTypeEnum,
     IExpeditionNodeReward,
 } from 'src/game/components/expedition/expedition.enum';
+import { Reward } from 'src/game/components/expedition/expedition.interface';
 import { ExpeditionService } from 'src/game/components/expedition/expedition.service';
 import { PotionService } from 'src/game/components/potion/potion.service';
 import { TrinketService } from 'src/game/components/trinket/trinket.service';
@@ -44,11 +45,11 @@ export class RewardGateway {
         this.logger.debug(`Client ${client.id} choose reward id: ${rewardId}`);
 
         const {
-            _id: expeditionId,
+            id: expeditionId,
             currentNode: { completed: nodeIsCompleted, nodeType },
         } = expedition;
 
-        let rewards;
+        let rewards: Reward[] = [];
 
         if (nodeType === ExpeditionMapNodeTypeEnum.Treasure) {
             rewards = expedition.currentNode.treasureData.rewards;
@@ -91,11 +92,11 @@ export class RewardGateway {
             case IExpeditionNodeReward.Card:
                 await this.cardService.addCardToDeck(ctx, reward.card.cardId);
                 // Disable all other card rewards
-                rewards = rewards.map((r) => {
-                    if (r.type === IExpeditionNodeReward.Card) {
-                        r.taken = true;
+                rewards = rewards.map((reward) => {
+                    if (reward.type === IExpeditionNodeReward.Card) {
+                        reward.taken = true;
                     }
-                    return r;
+                    return reward;
                 });
                 break;
             case IExpeditionNodeReward.Trinket:
@@ -110,13 +111,13 @@ export class RewardGateway {
 
         // Next we save the reward on the expedition
         if (nodeType === ExpeditionMapNodeTypeEnum.Treasure) {
-            await this.expeditionService.updateById(expedition._id, {
+            await this.expeditionService.updateById(expedition.id, {
                 $set: {
                     'currentNode.treasureData.rewards': rewards,
                 },
             });
         } else {
-            await this.expeditionService.updateById(expedition._id, {
+            await this.expeditionService.updateById(expedition.id, {
                 $set: {
                     'currentNode.data.rewards': rewards,
                 },
@@ -127,6 +128,7 @@ export class RewardGateway {
         const pendingRewards = filter(rewards, {
             taken: false,
         });
+
         return StandardResponse.respond({
             message_type:
                 nodeType === ExpeditionMapNodeTypeEnum.Treasure
