@@ -1,3 +1,4 @@
+import { attachStatusEffect } from 'src/game/effects/attachStatus/constants';
 import { damageEffect } from 'src/game/effects/damage/constants';
 import { defenseEffect } from 'src/game/effects/defense/constants';
 import { resolveStatus } from 'src/game/status/resolve/constants';
@@ -109,12 +110,15 @@ export const groundMothData: Enemy = {
                     type: EnemyIntentionType.Buff,
                     target: CardTargetedEnum.Self,
                     value: 5,
-                    statuses: [
+                    effects: [
                         {
-                            name: resolveStatus.name,
-                            attachTo: CardTargetedEnum.Self,
+                            effect: attachStatusEffect.name,
+                            target: CardTargetedEnum.Self,
                             args: {
-                                counter: 3,
+                                statusName: resolveStatus.name,
+                                statusArgs: {
+                                    counter: 3,
+                                },
                             },
                         },
                     ],

@@ -9,6 +9,7 @@ import {
     EnemyIntentionType,
 } from '../enemy.enum';
 import { Enemy } from '../enemy.schema';
+import { attachStatusEffect } from 'src/game/effects/attachStatus/constants';
 
 export const barkChargerData: Enemy = {
     enemyId: 6,
@@ -83,12 +84,15 @@ export const barkChargerData: Enemy = {
                     type: EnemyIntentionType.Buff,
                     target: CardTargetedEnum.Self,
                     value: 2,
-                    statuses: [
+                    effects: [
                         {
-                            name: resolveStatus.name,
-                            attachTo: CardTargetedEnum.Self,
+                            effect: attachStatusEffect.name,
+                            target: CardTargetedEnum.Self,
                             args: {
-                                counter: 2,
+                                statusName: resolveStatus.name,
+                                statusArgs: {
+                                    counter: 2,
+                                },
                             },
                         },
                     ],
