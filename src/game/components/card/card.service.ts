@@ -53,15 +53,15 @@ export class CardService {
     ) {}
 
     async findAll(): Promise<CardDocument[]> {
-        return this.card.find().lean();
+        return this.card.find({ isActive: true }).lean();
     }
 
     async findByType(card_type: CardTypeEnum): Promise<CardDocument[]> {
-        return this.card.find({ card_type }).lean();
+        return this.card.find({ card_type, isActive: true }).lean();
     }
 
     async findByRarity(rarity: CardRarityEnum): Promise<CardDocument[]> {
-        return this.card.find({ rarity }).lean();
+        return this.card.find({ rarity, isActive: true }).lean();
     }
 
     async findById(id: CardId): Promise<CardDocument> {
@@ -86,7 +86,7 @@ export class CardService {
                         { rarity: CardRarityEnum.Rare },
                     ],
                 },
-                { cardType: card_type },
+                { cardType: card_type, isActive: true },
             ],
         });
 
@@ -102,7 +102,7 @@ export class CardService {
                             { rarity: CardRarityEnum.Rare },
                         ],
                     },
-                    { cardType: card_type },
+                    { cardType: card_type, isActive: true },
                 ],
             })
             .limit(limit)
@@ -149,7 +149,10 @@ export class CardService {
 
         const random = getRandomNumber(count);
 
-        const card = await this.card.find({ cardType }).limit(1).skip(random);
+        const card = await this.card
+            .find({ cardType, isActive: true })
+            .limit(1)
+            .skip(random);
 
         return card[0] ? card[0] : null;
     }

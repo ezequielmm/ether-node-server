@@ -13,7 +13,6 @@ import {
     SWARMessageType,
 } from 'src/game/standardResponse/standardResponse';
 import { TargetId } from 'src/game/effects/effects.types';
-import { CardRarityEnum } from '../card/card.enum';
 import { PotionRarityEnum } from './potion.enum';
 import { find } from 'lodash';
 import { PotionInstance } from '../expedition/expedition.interface';
@@ -32,7 +31,7 @@ export class PotionService {
     ) {}
 
     async findAll(): Promise<PotionDocument[]> {
-        return this.potion.find().lean();
+        return this.potion.find({ isActive: true }).lean();
     }
 
     async findByPotionId(potionId: number): Promise<PotionDocument> {
@@ -54,6 +53,7 @@ export class PotionService {
                         { rarity: PotionRarityEnum.Rare },
                     ],
                 },
+                { isActive: true },
             ],
         });
 
@@ -64,11 +64,12 @@ export class PotionService {
                 $and: [
                     {
                         $or: [
-                            { rarity: CardRarityEnum.Common },
-                            { rarity: CardRarityEnum.Uncommon },
-                            { rarity: CardRarityEnum.Rare },
+                            { rarity: PotionRarityEnum.Common },
+                            { rarity: PotionRarityEnum.Uncommon },
+                            { rarity: PotionRarityEnum.Rare },
                         ],
                     },
+                    { isActive: true },
                 ],
             })
             .limit(limit)

@@ -23,7 +23,7 @@ export class TrinketService {
     ) {}
 
     async findAll(): Promise<TrinketDocument[]> {
-        return this.trinket.find().lean();
+        return this.trinket.find({ isActive: true }).lean();
     }
 
     async findById(id: TrinketId): Promise<TrinketDocument> {
@@ -41,6 +41,7 @@ export class TrinketService {
                         { rarity: TrinketRarityEnum.Rare },
                     ],
                 },
+                { isActive: true },
             ],
         });
 
@@ -56,6 +57,7 @@ export class TrinketService {
                             { rarity: TrinketRarityEnum.Rare },
                         ],
                     },
+                    { isActive: true },
                 ],
             })
             .limit(limit)
@@ -66,7 +68,7 @@ export class TrinketService {
         const count = await this.trinket.countDocuments({ rarity });
         const random = getRandomNumber(count);
         const trinket = await this.trinket
-            .find({ rarity })
+            .find({ rarity, isActive: true })
             .limit(1)
             .skip(random);
 
