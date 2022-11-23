@@ -21,6 +21,14 @@ export const barkChargerData: Enemy = {
     healthRange: [10, 12],
     scripts: [
         {
+            id: 0,
+            intentions: [],
+            next: [
+                { probability: 0.5, scriptId: 1 },
+                { probability: 0.5, scriptId: 2 },
+            ],
+        },
+        {
             id: 1,
             intentions: [
                 {

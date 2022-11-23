@@ -22,6 +22,14 @@ export const groundMothData: Enemy = {
     healthRange: [48, 56],
     scripts: [
         {
+            id: 0,
+            intentions: [],
+            next: [
+                { scriptId: 1, probability: 0.5 },
+                { scriptId: 2, probability: 0.5 },
+            ],
+        },
+        {
             id: 1,
             intentions: [
                 {

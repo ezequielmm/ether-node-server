@@ -20,6 +20,22 @@ export const yellowSporelingData: Enemy = {
     healthRange: [12, 14],
     scripts: [
         {
+            id: 0,
+            intentions: [
+                // TODO: Create Summoned status
+            ],
+            next: [
+                {
+                    probability: 0.6,
+                    scriptId: 1,
+                },
+                {
+                    probability: 0.4,
+                    scriptId: 2,
+                },
+            ],
+        },
+        {
             id: 1,
             intentions: [
                 {
@@ -42,11 +58,11 @@ export const yellowSporelingData: Enemy = {
             ],
             next: [
                 {
-                    probability: 0.6,
+                    probability: 0.4,
                     scriptId: 1,
                 },
                 {
-                    probability: 0.4,
+                    probability: 0.6,
                     scriptId: 2,
                 },
             ],
