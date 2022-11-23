@@ -7,7 +7,7 @@ export const spiritElixir: Potion = {
     potionId: 24,
     name: 'Spirit Elixir',
     rarity: PotionRarityEnum.Rare,
-    description: 'Gain 2 Energy each round',
+    description: 'Gain 3 Energy each round',
     effects: [
         {
             effect: attachStatusEffect.name,
@@ -15,7 +15,7 @@ export const spiritElixir: Potion = {
             args: {
                 statusName: spirited.name,
                 statusArgs: {
-                    counter: 2,
+                    counter: 3,
                 },
             },
         },
