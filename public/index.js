@@ -123,4 +123,16 @@ $(document).ready(function () {
             },
         );
     });
+
+    $('#btnUsePotion').click(function () {
+        const potionId = document.getElementById('potionId').value;
+
+        socket.emit(
+            'UsePotion',
+            JSON.stringify({ potionId, targetId: null }),
+            (response) => {
+                showJSON(response);
+            },
+        );
+    });
 });

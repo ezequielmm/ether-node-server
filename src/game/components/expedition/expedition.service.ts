@@ -325,7 +325,7 @@ export class ExpeditionService {
                 break;
         }
 
-        if (!targets) throw new Error('Target ${type} not found');
+        if (!targets) throw new Error(`Target ${type} not found`);
 
         return targets;
     }

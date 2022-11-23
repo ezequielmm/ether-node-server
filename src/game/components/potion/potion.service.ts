@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Potion, PotionDocument } from './potion.schema';
 import { Model } from 'mongoose';
@@ -19,15 +19,20 @@ import { PotionInstance } from '../expedition/expedition.interface';
 import { randomUUID } from 'crypto';
 import { getPotionIdField, PotionId } from './potion.type';
 import { getRandomNumber } from 'src/utils';
+import { CustomException, ErrorBehavior } from 'src/socket/custom.exception';
+import { CombatQueueService } from '../combatQueue/combatQueue.service';
 
 @Injectable()
 export class PotionService {
+    private readonly logger: Logger = new Logger(PotionService.name);
+
     constructor(
         @InjectModel(Potion.name)
         private readonly potion: Model<PotionDocument>,
         private readonly effectService: EffectService,
         private readonly playerService: PlayerService,
         private readonly expeditionService: ExpeditionService,
+        private readonly combatQueueService: CombatQueueService,
     ) {}
 
     async findAll(): Promise<PotionDocument[]> {
@@ -93,7 +98,10 @@ export class PotionService {
                     data: { potionId: potionUniqueId },
                 }),
             );
-            return;
+            throw new CustomException(
+                'Potion not found',
+                ErrorBehavior.ReturnToMainMenu,
+            );
         }
 
         const inCombat =
@@ -110,10 +118,16 @@ export class PotionService {
                     data: { potionId: potionUniqueId },
                 }),
             );
-            return;
+            throw new CustomException(
+                `Potion can't be used outside combat`,
+                ErrorBehavior.ReturnToMainMenu,
+            );
         }
 
         const player = this.playerService.get(ctx);
+
+        this.logger.debug(`Started combat queue for client ${ctx.client.id}`);
+        await this.combatQueueService.start(ctx);
 
         // Apply potion effects
         await this.effectService.applyAll({
@@ -122,6 +136,8 @@ export class PotionService {
             effects: potion.effects,
             selectedEnemy: targetId,
         });
+
+        await this.combatQueueService.end(ctx);
 
         // Once potion is used, remove it from the player's inventory
         await this.remove(ctx, potionUniqueId);
@@ -150,6 +166,10 @@ export class PotionService {
         await this.expeditionService.updateById(ctx.expedition._id.toString(), {
             'playerState.potions': potions,
         });
+
+        this.logger.debug(
+            `Removed Potion ${potionUniqueId} from client ${ctx.client.id}`,
+        );
     }
 
     public async add(ctx: GameContext, potionId: number): Promise<boolean> {
