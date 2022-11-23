@@ -71,13 +71,16 @@ export class MerchantService {
         this.logger.log('handle', { selectedItem });
         const { targetId, type } = selectedItem;
 
-        const {
-            id,
-            playerState,
-            currentNode: { merchantItems, nodeType },
-        } = await this.expeditionService.findOne({
+        const expedition = await this.expeditionService.findOne({
             clientId: client.id,
         });
+
+        const {
+            playerState,
+            currentNode: { merchantItems, nodeType },
+        } = expedition;
+
+        const id = expedition._id.toString();
 
         if (nodeType !== ExpeditionMapNodeTypeEnum.Merchant) {
             client.emit('ErrorMessage', {
