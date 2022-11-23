@@ -202,7 +202,7 @@ export class TreasureService {
             });
         }
 
-        const randomTrappedChance = getRandomBetween(1, 3);
+        const randomTrappedChance = getRandomBetween(1, 100);
 
         if (randomTrappedChance <= trappedChance) {
             trapped.trappedType = trappedType;

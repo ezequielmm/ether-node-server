@@ -24,11 +24,13 @@ export class InitTreasureProcess {
         const map = await this.expeditionService.getExpeditionMap({
             clientId: client.id,
         });
+
         const expeditionMap = restoreMap(map);
 
         const selectedNode = expeditionMap.fullCurrentMap.get(
             currentNode.nodeId,
         );
+
         const treasure = this.treasureService.generateTreasure();
 
         selectedNode.setPrivate_data({ treasure });
