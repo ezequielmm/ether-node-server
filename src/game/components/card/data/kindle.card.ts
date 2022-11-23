@@ -11,7 +11,7 @@ export const KindleCardUpgraded: Card = {
     cardType: CardTypeEnum.Skill,
     pool: 'knight',
     energy: 1,
-    description: `Apply {${doubleBurn.name}} Burn\nDouble any Burn on all enemies`,
+    description: `Apply 2 Burn\nDouble any Burn on all enemies`,
     keywords: [],
     properties: {
         effects: [
@@ -48,7 +48,7 @@ export const KindleCard: Card = {
     cardType: CardTypeEnum.Skill,
     pool: 'knight',
     energy: 1,
-    description: `Apply {${doubleBurn.name}} Burn\nDouble any Burn on all enemies`,
+    description: `Apply 1 Burn\nDouble any Burn on all enemies`,
     keywords: [],
     properties: {
         effects: [
