@@ -45,17 +45,14 @@ export class RewardGateway {
         this.logger.debug(`Client ${client.id} choose reward id: ${rewardId}`);
 
         const {
-            id: expeditionId,
             currentNode: { completed: nodeIsCompleted, nodeType },
         } = expedition;
 
+        const expeditionId = expedition._id.toString();
+
         let rewards: Reward[] = [];
 
-        if (nodeType === ExpeditionMapNodeTypeEnum.Treasure) {
-            rewards = expedition.currentNode.treasureData.rewards;
-        } else {
-            rewards = expedition.currentNode.data.rewards;
-        }
+        rewards = expedition.currentNode.data.rewards;
 
         if (nodeIsCompleted) {
             // Check if the node is completed

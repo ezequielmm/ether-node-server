@@ -28,9 +28,6 @@ import {
 import { ExpeditionService } from '../components/expedition/expedition.service';
 import { PotionService } from '../components/potion/potion.service';
 import { SettingsService } from '../components/settings/settings.service';
-import { TrinketRarityEnum } from '../components/trinket/trinket.enum';
-import { TrinketDocument } from '../components/trinket/trinket.schema';
-import { TrinketService } from '../components/trinket/trinket.service';
 import { HARD_MODE_NODE_END, HARD_MODE_NODE_START } from '../constants';
 import { StatusType } from '../status/interfaces';
 
@@ -57,21 +54,12 @@ export class CurrentNodeGeneratorProcess {
         [ExpeditionMapNodeTypeEnum.CombatBoss, () => random(95, 105)],
     ]);
 
-    private readonly trinketRewardByNodeSubType: Map<
-        ExpeditionMapNodeTypeEnum,
-        number[]
-    > = new Map([
-        [ExpeditionMapNodeTypeEnum.CombatElite, [0.5, 0.33, 0.17]],
-        [ExpeditionMapNodeTypeEnum.CombatStandard, [0.5, 0.33, 0.17]],
-    ]);
-
     constructor(
         private readonly expeditionService: ExpeditionService,
         private readonly settingsService: SettingsService,
         private readonly enemyService: EnemyService,
         private readonly potionService: PotionService,
         private readonly cardService: CardService,
-        private readonly trinketService: TrinketService,
     ) {}
 
     async getCurrentNodeData(
@@ -267,14 +255,6 @@ export class CurrentNodeGeneratorProcess {
         return false;
     }
 
-    private isTrinketRewardAvailable(): boolean {
-        for (const type of this.trinketRewardByNodeSubType.keys()) {
-            if (type === this.node.subType) return true;
-        }
-
-        return false;
-    }
-
     private async getRandomCardByNode(): Promise<CardDocument> {
         const rarity = getRandomItemByWeight(
             [
@@ -286,17 +266,5 @@ export class CurrentNodeGeneratorProcess {
             this.cardRewardByNodeSubType.get(this.node.subType),
         );
         return this.cardService.getRandomCard(rarity);
-    }
-
-    private async getRandomTrinketByNode(): Promise<TrinketDocument> {
-        const rarity = getRandomItemByWeight(
-            [
-                TrinketRarityEnum.Common,
-                TrinketRarityEnum.Rare,
-                TrinketRarityEnum.Uncommon,
-            ],
-            this.trinketRewardByNodeSubType.get(this.node.subType),
-        );
-        return this.trinketService.findOneRandomTrinket(rarity);
     }
 }

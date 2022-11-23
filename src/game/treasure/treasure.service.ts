@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { randomUUID } from 'crypto';
 import { pick } from 'lodash';
 import { Socket } from 'socket.io';
+import { CustomException, ErrorBehavior } from 'src/socket/custom.exception';
 import { getRandomBetween } from 'src/utils';
 import { CardDescriptionFormatter } from '../cardDescriptionFormatter/cardDescriptionFormatter';
 import { CardTypeEnum } from '../components/card/card.enum';
@@ -47,8 +48,12 @@ export class TreasureService {
             client.emit('ErrorMessage', {
                 message: `You are not in the treasure node`,
             });
-            return;
+            throw new CustomException(
+                `Player is not supposed to be in this treasure node`,
+                ErrorBehavior.ReturnToMainMenu,
+            );
         }
+
         const {
             private_data: { treasure },
         } = await this.expeditionService.getExpeditionMapNode({
@@ -125,10 +130,13 @@ export class TreasureService {
         treasure: any,
         nodeId: number,
     ) {
-        const { playerState, map, id, playerId } =
-            await this.expeditionService.findOne({
-                clientId: client.id,
-            });
+        const expedition = await this.expeditionService.findOne({
+            clientId: client.id,
+        });
+
+        const { playerState, map, playerId } = expedition;
+
+        const id = expedition._id.toString();
 
         const rewards: Reward[] = [];
 
@@ -229,6 +237,7 @@ export class TreasureService {
                         upgradedCardId: card.upgradedCardId,
                         isActive: true,
                     });
+
                     const cardPreview = pick(card, [
                         'cardId',
                         'name',
