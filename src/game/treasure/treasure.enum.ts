@@ -14,6 +14,7 @@ export enum SmallChest {
     trappedValue = 5,
     trappedText = 'A bladed trap slices your hand for 5 Damage',
 }
+
 export enum MediumChest {
     name = 'Medium Chest',
     chance = 33,
@@ -30,6 +31,7 @@ export enum MediumChest {
     trappedValue = 1,
     trappedText = 'An ancient curse falls upon you',
 }
+
 export enum LargeChest {
     name = 'Large Chest',
     chance = 17,

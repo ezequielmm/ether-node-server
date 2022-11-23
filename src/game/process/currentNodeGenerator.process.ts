@@ -224,16 +224,7 @@ export class CurrentNodeGeneratorProcess {
             potion: pick(potion, ['potionId', 'name', 'description']),
         });
 
-        // Add trinket to rewards
-        if (this.isTrinketRewardAvailable()) {
-            const trinket = await this.getRandomTrinketByNode();
-            rewards.push({
-                id: randomUUID(),
-                type: IExpeditionNodeReward.Trinket,
-                taken: false,
-                trinket: pick(trinket, ['trinketId', 'name', 'description']),
-            });
-        }
+        // Removed trinkets for now
 
         return rewards;
     }

@@ -342,6 +342,7 @@ export class TreasureService {
             };
         }
     }
+
     async combatEncounter(client: Socket, rewards: Reward[], _id: string) {
         const { nodeId } = await this.expeditionService.getCurrentNode({
             clientId: client.id,
