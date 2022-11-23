@@ -111,13 +111,13 @@ export class RewardGateway {
 
         // Next we save the reward on the expedition
         if (nodeType === ExpeditionMapNodeTypeEnum.Treasure) {
-            await this.expeditionService.updateById(expedition.id, {
+            await this.expeditionService.updateById(expedition._id.toString(), {
                 $set: {
                     'currentNode.treasureData.rewards': rewards,
                 },
             });
         } else {
-            await this.expeditionService.updateById(expedition.id, {
+            await this.expeditionService.updateById(expedition._id.toString(), {
                 $set: {
                     'currentNode.data.rewards': rewards,
                 },

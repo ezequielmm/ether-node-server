@@ -89,7 +89,7 @@ export class ExpeditionGateway {
                 `Player ${client.id} completed the node ${nodeId}`,
             );
 
-            await this.expeditionService.updateById(expedition.id, {
+            await this.expeditionService.updateById(expedition._id.toString(), {
                 $set: {
                     map: mapToSave,
                     'currentNode.completed': true,
@@ -114,7 +114,7 @@ export class ExpeditionGateway {
 
             const mapToSave = newMap.getMap;
 
-            await this.expeditionService.updateById(expedition.id, {
+            await this.expeditionService.updateById(expedition._id.toString(), {
                 $set: {
                     map: mapToSave,
                     'currentNode.completed': false,

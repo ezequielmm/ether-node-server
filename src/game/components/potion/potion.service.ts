@@ -147,7 +147,7 @@ export class PotionService {
         ctx.expedition.playerState.potions = potions;
 
         // Update in database
-        await this.expeditionService.updateById(ctx.expedition.id, {
+        await this.expeditionService.updateById(ctx.expedition._id.toString(), {
             'playerState.potions': potions,
         });
     }
@@ -183,7 +183,7 @@ export class PotionService {
 
         const potionData = potion.toObject();
 
-        await this.expeditionService.updateById(ctx.expedition.id, {
+        await this.expeditionService.updateById(ctx.expedition._id.toString(), {
             $push: {
                 'playerState.potions': {
                     id: randomUUID(),

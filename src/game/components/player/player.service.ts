@@ -84,7 +84,7 @@ export class PlayerService {
         ctx: GameContext,
         defense: number,
     ): Promise<number> {
-        await this.expeditionService.updateById(ctx.expedition.id, {
+        await this.expeditionService.updateById(ctx.expedition._id.toString(), {
             [PLAYER_DEFENSE_PATH]: defense,
         });
 
@@ -102,7 +102,7 @@ export class PlayerService {
      * @returns Return the new energy value
      */
     public async setEnergy(ctx: GameContext, energy: number): Promise<number> {
-        await this.expeditionService.updateById(ctx.expedition.id, {
+        await this.expeditionService.updateById(ctx.expedition._id.toString(), {
             [PLAYER_ENERGY_PATH]: energy,
         });
 
@@ -123,7 +123,7 @@ export class PlayerService {
         const player = this.get(ctx);
         const newHp = Math.min(hp, player.value.globalState.hpMax);
 
-        await this.expeditionService.updateById(ctx.expedition.id, {
+        await this.expeditionService.updateById(ctx.expedition._id.toString(), {
             [PLAYER_CURRENT_HP_PATH]: newHp,
         });
 
@@ -140,7 +140,7 @@ export class PlayerService {
         const player = this.get(ctx);
         const newHp = Math.min(hp, player.value.globalState.hpMax);
 
-        await this.expeditionService.updateById(ctx.expedition.id, {
+        await this.expeditionService.updateById(ctx.expedition._id.toString(), {
             [PLAYER_STATE_HP_CURRENT_PATH]: newHp,
         });
 
@@ -271,7 +271,7 @@ export class PlayerService {
         // Save the status to the database
         await this.expeditionService.updateByFilter(
             {
-                id: ctx.expedition.id,
+                id: ctx.expedition._id.toString(),
             },
             {
                 [PLAYER_STATUSES_PATH]: player.value.combatState.statuses,

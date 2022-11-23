@@ -56,7 +56,7 @@ export class SharpenBladeStatus implements StatusEventHandler {
         }
 
         // Add the cards to the player hand
-        await this.expeditionService.updateById(ctx.expedition.id, {
+        await this.expeditionService.updateById(ctx.expedition._id.toString(), {
             $push: {
                 'currentNode.data.player.cards.hand': {
                     $each: cards,

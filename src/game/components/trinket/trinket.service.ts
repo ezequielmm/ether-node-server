@@ -90,7 +90,7 @@ export class TrinketService {
             return false;
         }
 
-        await this.expeditionService.updateById(ctx.expedition.id, {
+        await this.expeditionService.updateById(ctx.expedition._id.toString(), {
             $push: {
                 'playerState.trinkets': {
                     id: randomUUID(),

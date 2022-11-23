@@ -1,14 +1,9 @@
-import { createParamDecorator } from '@nestjs/common';
 import { SubscribeMessage, WebSocketGateway } from '@nestjs/websockets';
 import { Socket } from 'socket.io';
 import { FullSyncAction } from 'src/game/action/fullSync.action';
 import { corsSocketSettings } from 'src/socket/socket.enum';
 import { ExpeditionService } from '../expedition/expedition.service';
 import { PotionService } from './potion.service';
-
-export const JsonPayload = createParamDecorator((data: string) => {
-    return JSON.parse(data);
-});
 
 @WebSocketGateway(corsSocketSettings)
 export class PotionGateway {
