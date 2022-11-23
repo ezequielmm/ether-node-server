@@ -126,8 +126,12 @@ export class PotionService {
 
         const player = this.playerService.get(ctx);
 
-        this.logger.debug(`Started combat queue for client ${ctx.client.id}`);
-        await this.combatQueueService.start(ctx);
+        if (inCombat) {
+            this.logger.debug(
+                `Started combat queue for client ${ctx.client.id}`,
+            );
+            await this.combatQueueService.start(ctx);
+        }
 
         // Apply potion effects
         await this.effectService.applyAll({
@@ -137,7 +141,10 @@ export class PotionService {
             selectedEnemy: targetId,
         });
 
-        await this.combatQueueService.end(ctx);
+        if (inCombat) {
+            this.logger.debug(`Ended combat queue for client ${ctx.client.id}`);
+            await this.combatQueueService.end(ctx);
+        }
 
         // Once potion is used, remove it from the player's inventory
         await this.remove(ctx, potionUniqueId);
