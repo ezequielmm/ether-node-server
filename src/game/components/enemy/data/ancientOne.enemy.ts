@@ -20,6 +20,11 @@ export const ancientOneData: Enemy = {
     healthRange: [80, 85],
     scripts: [
         {
+            id: 0,
+            intentions: [],
+            next: [{ probability: 1, scriptId: 1 }],
+        },
+        {
             id: 1,
             intentions: [
                 {

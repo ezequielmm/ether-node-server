@@ -23,6 +23,14 @@ export const mimicFrog1Data: Enemy = {
     healthRange: [22, 28],
     scripts: [
         {
+            id: 0,
+            intentions: [],
+            next: [
+                { probability: 0.7, scriptId: 1 },
+                { probability: 0.3, scriptId: 2 },
+            ],
+        },
+        {
             id: 1,
             intentions: [
                 {

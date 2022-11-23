@@ -22,6 +22,14 @@ export const fungalBruteData: Enemy = {
     healthRange: [140, 140],
     scripts: [
         {
+            id: 0,
+            intentions: [],
+            next: [
+                { probability: 0.5, scriptId: 1 },
+                { probability: 0.5, scriptId: 2 },
+            ],
+        },
+        {
             id: 1,
             intentions: [
                 {
@@ -62,7 +70,7 @@ export const fungalBruteData: Enemy = {
                 },
                 {
                     probability: 0.5,
-                    scriptId: 3, // Need to integrate [If Sporelings=0] Script 4: Spawn; [If Sporelings > 0] Script 5: Cultivate
+                    scriptId: 4, // Need to integrate [If Sporelings=0] Script 4: Spawn; [If Sporelings > 0] Script 5: Cultivate
                 },
             ],
         },

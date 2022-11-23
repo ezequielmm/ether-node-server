@@ -25,6 +25,11 @@ export const treantData: Enemy = {
     healthRange: [160, 160],
     scripts: [
         {
+            id: 0,
+            intentions: [],
+            next: [{ probability: 1, scriptId: 1 }],
+        },
+        {
             id: 1,
             intentions: [
                 {
