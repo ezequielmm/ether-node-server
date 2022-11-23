@@ -1,7 +1,15 @@
 import { forwardRef, Inject, Injectable, Logger } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { InjectModel } from '@nestjs/mongoose';
-import { compact, filter, find, isArray, matches } from 'lodash';
+import {
+    compact,
+    filter,
+    find,
+    isArray,
+    matches,
+    reject,
+    isEqual,
+} from 'lodash';
 import { Model } from 'mongoose';
 import { CardTargetedEnum } from '../components/card/card.enum';
 import { ExpeditionEnemy } from '../components/enemy/enemy.interface';
@@ -595,5 +603,33 @@ export class StatusService {
 
         // Update the entity
         await this.updateStatuses(ctx, entity, collection);
+    }
+
+    public async removeStatus(args: {
+        ctx: GameContext;
+        entity: ExpeditionEntity;
+        status: Status;
+    }) {
+        const { ctx, entity, status } = args;
+
+        const statuses = PlayerService.isPlayer(entity)
+            ? entity.value.combatState.statuses
+            : entity.value.statuses;
+
+        const originalStatuses = statuses[status.type];
+        const finalStatuses = reject(originalStatuses, {
+            name: status.name,
+        });
+
+        if (isEqual(finalStatuses, originalStatuses)) {
+            return;
+        }
+
+        statuses[status.type] = finalStatuses;
+
+        // Update status collection
+        this.logger.debug(`Removing status ${status.name} from ${entity.type}`);
+
+        await this.updateStatuses(ctx, entity, statuses);
     }
 }

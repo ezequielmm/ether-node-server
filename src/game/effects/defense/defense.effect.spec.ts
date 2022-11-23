@@ -222,6 +222,7 @@ describe('DefenseEffect', () => {
                         [StatusType.Debuff]: [],
                     },
                     currentScript: {
+                        id: 123,
                         intentions: [
                             {
                                 type: EnemyIntentionType.Attack,
@@ -247,6 +248,7 @@ describe('DefenseEffect', () => {
                         [StatusType.Debuff]: [],
                     },
                     currentScript: {
+                        id: 123,
                         intentions: [
                             {
                                 type: EnemyIntentionType.Defend,

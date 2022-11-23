@@ -1,11 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
+import _ from 'lodash';
 import { EnemyService } from 'src/game/components/enemy/enemy.service';
 import { GameContext } from 'src/game/components/interfaces';
 import { PlayerService } from 'src/game/components/player/player.service';
 import { EVENT_BEFORE_ENEMIES_TURN_START } from 'src/game/constants';
+import { damageEffect } from 'src/game/effects/damage/constants';
 import { DamageArgs } from 'src/game/effects/damage/damage.effect';
 import { EffectDTO } from 'src/game/effects/effects.interface';
+import { EffectService } from 'src/game/effects/effects.service';
 
 import { StatusEffectDTO, StatusEffectHandler } from '../interfaces';
 import { StatusDecorator } from '../status.decorator';
@@ -19,8 +22,8 @@ import { trapped } from './constants';
 export class TrappedStatus implements StatusEffectHandler {
     constructor(
         private readonly enemyService: EnemyService,
-        private readonly playerService: PlayerService,
         private readonly statusService: StatusService,
+        private readonly effectService: EffectService,
     ) {}
 
     async preview(
@@ -32,9 +35,29 @@ export class TrappedStatus implements StatusEffectHandler {
     async handle(
         dto: StatusEffectDTO<DamageArgs>,
     ): Promise<EffectDTO<DamageArgs>> {
-        const effectDTO = dto.effectDTO;
-        effectDTO.args.currentValue =
-            effectDTO.args.currentValue + 12 * dto.status.args.counter;
+        const { ctx, effectDTO } = dto;
+        const { source, target } = effectDTO;
+
+        // Deal 12 damage to the player
+        await this.effectService.apply({
+            ctx,
+            source: target,
+            target: source,
+            effect: {
+                effect: damageEffect.name,
+                args: {
+                    value: 12,
+                },
+            },
+        });
+
+        if (EnemyService.isEnemy(target)) {
+            // Update the enemy's script to move to script 4
+            await this.enemyService.setCurrentScript(ctx, target.value.id, {
+                ...target.value.currentScript,
+                next: [{ probability: 1, scriptId: 4 }],
+            });
+        }
 
         return effectDTO;
     }
@@ -45,12 +68,11 @@ export class TrappedStatus implements StatusEffectHandler {
         const enemies = this.enemyService.getAll(ctx);
 
         for (const enemy of enemies) {
-            await this.statusService.decreaseCounterAndRemove(
+            await this.statusService.removeStatus({
                 ctx,
-                enemy.value.statuses,
-                enemy,
-                trapped,
-            );
+                entity: enemy,
+                status: trapped,
+            });
         }
     }
 }
