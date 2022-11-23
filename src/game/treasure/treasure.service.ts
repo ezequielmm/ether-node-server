@@ -161,42 +161,6 @@ export class TreasureService {
             });
         }
 
-        const randomTrinketRarityChance = getRandomBetween(1, 100);
-
-        let trinket = null;
-
-        if (randomTrinketRarityChance <= trinketChanceUncommon) {
-            trinket = await this.trinketService.findOneRandomTrinket(
-                TrinketRarityEnum.Uncommon,
-            );
-        } else if (
-            randomTrinketRarityChance > trinketChanceUncommon &&
-            randomTrinketRarityChance <=
-                trinketChanceUncommon + trinketChanceRare
-        ) {
-            trinket = await this.trinketService.findOneRandomTrinket(
-                TrinketRarityEnum.Rare,
-            );
-        } else if (
-            randomTrinketRarityChance >
-                trinketChanceUncommon + trinketChanceRare &&
-            randomTrinketRarityChance <=
-                trinketChanceUncommon + trinketChanceRare + trinketChanceCommon
-        ) {
-            trinket = await this.trinketService.findOneRandomTrinket(
-                TrinketRarityEnum.Common,
-            );
-        }
-
-        if (trinket) {
-            rewards.push({
-                id: randomUUID(),
-                type: IExpeditionNodeReward.Trinket,
-                taken: false,
-                trinket: pick(trinket, ['trinketId', 'name', 'description']),
-            });
-        }
-
         const randomPotionChance = getRandomBetween(1, 100);
 
         if (randomPotionChance <= potionChance) {
