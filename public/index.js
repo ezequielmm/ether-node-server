@@ -135,4 +135,17 @@ $(document).ready(function () {
             },
         );
     });
+
+    $('#btnMerchantBuy').click(function () {
+        const targetId = document.getElementById('itemId').value;
+        const type = document.getElementById('itemType').value;
+
+        socket.emit(
+            'MerchantBuy',
+            JSON.stringify({ targetId, type }),
+            (response) => {
+                showJSON(response);
+            },
+        );
+    });
 });
