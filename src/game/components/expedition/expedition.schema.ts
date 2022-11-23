@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
+import { HydratedDocument } from 'mongoose';
 import { MerchantItems } from 'src/game/merchant/interfaces';
 import { AttachedStatus, StatusType } from 'src/game/status/interfaces';
 import { Trapped } from 'src/game/treasure/interfaces';
@@ -16,10 +16,10 @@ import {
     Reward,
 } from './expedition.interface';
 
-export type ExpeditionDocument = Expedition & Document;
-
+export type ExpeditionDocument = HydratedDocument<Expedition>;
 @Schema({
     collection: 'expeditions',
+    versionKey: false,
 })
 export class Expedition {
     @Prop()
@@ -74,7 +74,11 @@ export class Expedition {
         };
     };
 
-    @Prop({ default: ExpeditionStatusEnum.InProgress })
+    @Prop({
+        default: ExpeditionStatusEnum.InProgress,
+        type: String,
+        enum: ExpeditionStatusEnum,
+    })
     status: ExpeditionStatusEnum;
 }
 

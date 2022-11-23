@@ -22,4 +22,5 @@ export const spiritVialPotion: Potion = {
     ],
     usableOutsideCombat: false,
     showPointer: false,
+    isActive: true,
 };

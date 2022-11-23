@@ -16,4 +16,5 @@ export const phantomPhialPotion: Potion = {
     ],
     usableOutsideCombat: false,
     showPointer: true,
+    isActive: true,
 };

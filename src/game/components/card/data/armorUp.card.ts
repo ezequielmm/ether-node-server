@@ -30,6 +30,7 @@ export const ArmorUpCardUpgraded: Card = {
     },
     showPointer: false,
     isUpgraded: false,
+    isActive: true,
 };
 
 export const ArmorUpCard: Card = {
@@ -56,4 +57,5 @@ export const ArmorUpCard: Card = {
     showPointer: false,
     isUpgraded: false,
     upgradedCardId: ArmorUpCardUpgraded.cardId,
+    isActive: true,
 };

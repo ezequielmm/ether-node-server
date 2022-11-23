@@ -33,6 +33,7 @@ export const WrathCardUpgraded: Card = {
     },
     showPointer: false,
     isUpgraded: true,
+    isActive: true,
 };
 
 export const WrathCard: Card = {
@@ -66,4 +67,5 @@ export const WrathCard: Card = {
     showPointer: false,
     isUpgraded: false,
     upgradedCardId: WrathCardUpgraded.cardId,
+    isActive: true,
 };

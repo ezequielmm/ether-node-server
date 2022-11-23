@@ -25,6 +25,7 @@ export const HeavenGraceCardUpgraded: Card = {
     },
     showPointer: false,
     isUpgraded: true,
+    isActive: true,
 };
 
 export const HeavenGraceCard: Card = {
@@ -51,4 +52,5 @@ export const HeavenGraceCard: Card = {
     showPointer: false,
     isUpgraded: false,
     upgradedCardId: HeavenGraceCardUpgraded.cardId,
+    isActive: true,
 };

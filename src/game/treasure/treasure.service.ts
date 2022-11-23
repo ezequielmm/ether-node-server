@@ -125,7 +125,7 @@ export class TreasureService {
         treasure: any,
         nodeId: number,
     ) {
-        const { playerState, map, _id, playerId } =
+        const { playerState, map, id, playerId } =
             await this.expeditionService.findOne({
                 clientId: client.id,
             });
@@ -227,6 +227,7 @@ export class TreasureService {
                         showPointer: card.showPointer,
                         isUpgraded: card.isUpgraded,
                         upgradedCardId: card.upgradedCardId,
+                        isActive: true,
                     });
                     const cardPreview = pick(card, [
                         'cardId',
@@ -255,7 +256,7 @@ export class TreasureService {
                     break;
                 case LargeChest.trappedType:
                     trapped.trappedText = LargeChest.trappedText;
-                    await this.combatEncounter(client, rewards, _id);
+                    await this.combatEncounter(client, rewards, id);
 
                     return;
             }
@@ -269,7 +270,7 @@ export class TreasureService {
             treasure: { ...treasure, isOpen: true },
         });
 
-        await this.expeditionService.updateById(_id, {
+        await this.expeditionService.updateById(id, {
             $set: {
                 map: expeditionMap.getMap,
                 playerState,

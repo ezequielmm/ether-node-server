@@ -25,6 +25,7 @@ export const RepositionCardUpgraded: Card = {
     },
     showPointer: false,
     isUpgraded: true,
+    isActive: true,
 };
 
 export const RepositionCard: Card = {
@@ -51,4 +52,5 @@ export const RepositionCard: Card = {
     showPointer: false,
     isUpgraded: false,
     upgradedCardId: RepositionCardUpgraded.cardId,
+    isActive: true,
 };

@@ -18,4 +18,5 @@ export const ichorDraft: Potion = {
     ],
     usableOutsideCombat: false,
     showPointer: false,
+    isActive: true,
 };

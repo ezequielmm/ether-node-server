@@ -33,6 +33,7 @@ export const ShoutCardUpgraded: Card = {
     },
     showPointer: true,
     isUpgraded: true,
+    isActive: true,
 };
 
 export const ShoutCard: Card = {
@@ -66,4 +67,5 @@ export const ShoutCard: Card = {
     showPointer: true,
     isUpgraded: false,
     upgradedCardId: ShoutCardUpgraded.cardId,
+    isActive: true,
 };

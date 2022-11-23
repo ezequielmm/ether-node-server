@@ -25,6 +25,7 @@ export const TwistTheBladeCardUpgraded: Card = {
     },
     showPointer: true,
     isUpgraded: true,
+    isActive: true,
 };
 
 export const TwistTheBladeCard: Card = {
@@ -51,4 +52,5 @@ export const TwistTheBladeCard: Card = {
     showPointer: true,
     isUpgraded: false,
     upgradedCardId: TwistTheBladeCardUpgraded.cardId,
+    isActive: true,
 };

@@ -16,4 +16,5 @@ export const EnnuiCard: Card = {
     },
     showPointer: false,
     isUpgraded: false,
+    isActive: true,
 };

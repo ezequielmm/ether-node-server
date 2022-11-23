@@ -67,6 +67,7 @@ export class AddCardEffect {
                 showPointer: card.showPointer,
                 pool: card.pool,
                 isUpgraded: card.isUpgraded,
+                isActive: true,
             }));
 
         // Now we save the cards on the destination deck

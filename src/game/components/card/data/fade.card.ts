@@ -25,6 +25,7 @@ export const FadeCardUpgraded: Card = {
     },
     showPointer: false,
     isUpgraded: true,
+    isActive: true,
 };
 
 export const FadeCard: Card = {
@@ -51,4 +52,5 @@ export const FadeCard: Card = {
     showPointer: false,
     isUpgraded: false,
     upgradedCardId: FadeCardUpgraded.cardId,
+    isActive: true,
 };

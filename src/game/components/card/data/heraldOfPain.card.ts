@@ -25,6 +25,7 @@ export const HeraldOfPainCardUpgraded: Card = {
     },
     showPointer: false,
     isUpgraded: true,
+    isActive: true,
 };
 
 export const HeraldOfPainCard: Card = {
@@ -51,4 +52,5 @@ export const HeraldOfPainCard: Card = {
     showPointer: false,
     isUpgraded: false,
     upgradedCardId: HeraldOfPainCardUpgraded.cardId,
+    isActive: true,
 };

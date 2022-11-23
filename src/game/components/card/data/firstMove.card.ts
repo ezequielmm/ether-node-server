@@ -25,6 +25,7 @@ export const FirstMoveCardUpgraded: Card = {
     },
     showPointer: false,
     isUpgraded: true,
+    isActive: true,
 };
 
 export const FirstMoveCard: Card = {
@@ -51,4 +52,5 @@ export const FirstMoveCard: Card = {
     showPointer: false,
     isUpgraded: false,
     upgradedCardId: FirstMoveCardUpgraded.cardId,
+    isActive: true,
 };

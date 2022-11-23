@@ -23,4 +23,5 @@ export const weaknessGasPotion: Potion = {
     ],
     usableOutsideCombat: false,
     showPointer: true,
+    isActive: true,
 };

@@ -16,4 +16,5 @@ export const BulliedCard: Card = {
     },
     showPointer: false,
     isUpgraded: false,
+    isActive: true,
 };

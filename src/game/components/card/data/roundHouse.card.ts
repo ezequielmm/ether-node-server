@@ -26,6 +26,7 @@ export const RoundHouseCardUpgraded: Card = {
     },
     showPointer: true,
     isUpgraded: true,
+    isActive: true,
 };
 
 export const RoundHouseCard: Card = {
@@ -53,4 +54,5 @@ export const RoundHouseCard: Card = {
     showPointer: true,
     isUpgraded: false,
     upgradedCardId: RoundHouseCardUpgraded.cardId,
+    isActive: true,
 };

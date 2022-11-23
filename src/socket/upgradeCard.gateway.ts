@@ -81,6 +81,7 @@ export class UpgradeCardGateway {
             showPointer: upgradedCardData.showPointer,
             pool: upgradedCardData.pool,
             isUpgraded: upgradedCardData.isUpgraded,
+            isActive: true,
         };
 
         // Finally we send the pair to the frontend
@@ -146,6 +147,7 @@ export class UpgradeCardGateway {
             showPointer: upgradedCardData.showPointer,
             pool: upgradedCardData.pool,
             isUpgraded: upgradedCardData.isUpgraded,
+            isActive: true,
         };
 
         // Now we set the card on the deck and remove the previous one

@@ -25,6 +25,7 @@ export const InterceptCardUpgraded: Card = {
     },
     showPointer: false,
     isUpgraded: true,
+    isActive: true,
 };
 
 export const InterceptCard: Card = {
@@ -51,4 +52,5 @@ export const InterceptCard: Card = {
     showPointer: false,
     isUpgraded: false,
     upgradedCardId: InterceptCardUpgraded.cardId,
+    isActive: true,
 };

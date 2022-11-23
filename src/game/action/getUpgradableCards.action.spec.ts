@@ -142,7 +142,6 @@ describe('GetUpgradableCardsAction', () => {
         const resp = await getUpgradableCardsAction.handle(clientId);
         expect(resp).toHaveLength(1);
         expect(resp[0]).toMatchObject({
-            __v: 0,
             cardId: 501,
             cardType: 'status',
             description: '',

@@ -1,9 +1,11 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { HydratedDocument } from 'mongoose';
 
-export type SettingsDocument = Settings & Document;
+export type SettingsDocument = HydratedDocument<Settings>;
 
 @Schema({
     collection: 'settings',
+    versionKey: false,
 })
 export class Settings {
     @Prop()

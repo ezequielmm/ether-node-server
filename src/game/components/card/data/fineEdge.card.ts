@@ -30,6 +30,7 @@ export const FineEdgeCardUpgraded: Card = {
     },
     showPointer: true,
     isUpgraded: true,
+    isActive: true,
 };
 
 export const FineEdgeCard: Card = {
@@ -56,4 +57,5 @@ export const FineEdgeCard: Card = {
     showPointer: true,
     isUpgraded: false,
     upgradedCardId: FineEdgeCardUpgraded.cardId,
+    isActive: true,
 };

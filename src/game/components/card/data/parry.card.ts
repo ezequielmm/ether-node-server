@@ -34,6 +34,7 @@ export const ParryCardUpgraded: Card = {
     },
     showPointer: false,
     isUpgraded: true,
+    isActive: true,
 };
 
 export const ParryCard: Card = {
@@ -68,4 +69,5 @@ export const ParryCard: Card = {
     showPointer: false,
     isUpgraded: false,
     upgradedCardId: ParryCardUpgraded.cardId,
+    isActive: true,
 };

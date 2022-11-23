@@ -23,4 +23,5 @@ export const terrorGasPotion: Potion = {
     ],
     usableOutsideCombat: false,
     showPointer: true,
+    isActive: true,
 };
