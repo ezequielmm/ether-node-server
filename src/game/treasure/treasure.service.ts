@@ -125,9 +125,10 @@ export class TreasureService {
         treasure: any,
         nodeId: number,
     ) {
-        const { playerState, map, id } = await this.expeditionService.findOne({
-            clientId: client.id,
-        });
+        const { playerState, map, id, playerId } =
+            await this.expeditionService.findOne({
+                clientId: client.id,
+            });
 
         const rewards: Reward[] = [];
 
@@ -289,6 +290,30 @@ export class TreasureService {
                 data: { rewards, trapped },
             }),
         );
+
+        if (trapped.damage || trapped.curse_card) {
+            client.emit(
+                'PlayerState',
+                StandardResponse.respond({
+                    message_type: SWARMessageType.PlayerStateUpdate,
+                    action: SWARAction.UpdatePlayerState,
+                    data: {
+                        playerState: {
+                            id: playerState.playerId,
+                            playerId,
+                            playerName: playerState.playerName,
+                            characterClass: playerState.characterClass,
+                            hpMax: playerState.hpMax,
+                            hpCurrent: playerState.hpCurrent,
+                            gold: playerState.gold,
+                            cards: playerState.cards,
+                            potions: playerState.potions,
+                            trinkets: playerState.trinkets,
+                        },
+                    },
+                }),
+            );
+        }
     }
 
     generateTreasure(): TreasureInterface {

@@ -8,12 +8,8 @@ import { CharacterDocument } from '../components/character/character.schema';
 import { CharacterService } from '../components/character/character.service';
 import { CustomDeckService } from '../components/customDeck/customDeck.service';
 import { ExpeditionStatusEnum } from '../components/expedition/expedition.enum';
-import {
-    IExpeditionPlayerStateDeckCard,
-    TrinketInstance,
-} from '../components/expedition/expedition.interface';
+import { IExpeditionPlayerStateDeckCard } from '../components/expedition/expedition.interface';
 import { ExpeditionService } from '../components/expedition/expedition.service';
-import { TrinketService } from '../components/trinket/trinket.service';
 
 interface InitExpeditionDTO {
     playerId: number;
@@ -30,7 +26,6 @@ export class InitExpeditionProcess {
         private readonly cardService: CardService,
         private readonly characterService: CharacterService,
         private readonly customDeckService: CustomDeckService,
-        private readonly trinketService: TrinketService,
     ) {}
 
     async handle(payload: InitExpeditionDTO): Promise<void> {
@@ -43,9 +38,6 @@ export class InitExpeditionProcess {
         const map = this.expeditionService.getMap();
 
         const cards = await this.generatePlayerDeck(character, email);
-
-        // Trinket initialization, temporary
-        const trinkets = await this.getTrinkets();
 
         await this.expeditionService.create({
             playerId,
@@ -63,7 +55,7 @@ export class InitExpeditionProcess {
                 potions: [],
                 cardUpgradeCount: 0,
                 cardDestroyCount: 0,
-                trinkets: trinkets,
+                trinkets: [],
             },
             status: ExpeditionStatusEnum.InProgress,
         });
@@ -126,18 +118,5 @@ export class InitExpeditionProcess {
                 triggerAtEndOfTurn: card.triggerAtEndOfTurn,
                 isActive: true,
             }));
-    }
-
-    private async getTrinkets(): Promise<TrinketInstance[]> {
-        const trinketsData = await this.trinketService.findAll();
-
-        return trinketsData.map((trinket) => ({
-            id: randomUUID(),
-            trinketId: trinket.trinketId,
-            name: trinket.name,
-            rarity: trinket.rarity,
-            description: trinket.description,
-            effects: trinket.effects,
-        }));
     }
 }
