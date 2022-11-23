@@ -39,6 +39,7 @@ export const LastResortCardUpgraded: Card = {
     },
     showPointer: true,
     isUpgraded: true,
+    isActive: true,
 };
 
 export const LastResortCard: Card = {
@@ -74,4 +75,5 @@ export const LastResortCard: Card = {
     showPointer: true,
     isUpgraded: false,
     upgradedCardId: LastResortCardUpgraded.cardId,
+    isActive: true,
 };

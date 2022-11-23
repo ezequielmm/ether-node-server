@@ -26,6 +26,7 @@ export const SparkCardUpgraded: Card = {
     },
     showPointer: true,
     isUpgraded: true,
+    isActive: true,
 };
 
 export const SparkCard: Card = {
@@ -52,4 +53,5 @@ export const SparkCard: Card = {
     showPointer: true,
     isUpgraded: false,
     upgradedCardId: SparkCardUpgraded.cardId,
+    isActive: true,
 };

@@ -26,6 +26,7 @@ export const QuickToAdaptCardUpgraded: Card = {
     },
     showPointer: false,
     isUpgraded: true,
+    isActive: true,
 };
 
 export const QuickToAdaptCard: Card = {
@@ -53,4 +54,5 @@ export const QuickToAdaptCard: Card = {
     showPointer: false,
     isUpgraded: false,
     upgradedCardId: QuickToAdaptCardUpgraded.cardId,
+    isActive: true,
 };

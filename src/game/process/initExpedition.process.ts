@@ -116,6 +116,7 @@ export class InitExpeditionProcess {
                 isUpgraded: card.isUpgraded,
                 upgradedCardId: card?.upgradedCardId,
                 triggerAtEndOfTurn: card.triggerAtEndOfTurn,
+                isActive: true,
             }));
     }
 }

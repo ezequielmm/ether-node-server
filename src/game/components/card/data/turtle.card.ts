@@ -25,6 +25,7 @@ export const TurtleCardUpgraded: Card = {
     },
     showPointer: false,
     isUpgraded: true,
+    isActive: true,
 };
 
 export const TurtleCard: Card = {
@@ -51,4 +52,5 @@ export const TurtleCard: Card = {
     showPointer: false,
     isUpgraded: false,
     upgradedCardId: TurtleCardUpgraded.cardId,
+    isActive: true,
 };

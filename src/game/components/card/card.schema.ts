@@ -1,13 +1,14 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
+import { HydratedDocument } from 'mongoose';
 import { JsonEffect } from 'src/game/effects/effects.interface';
 import { JsonStatus } from 'src/game/status/interfaces';
 import { CardRarityEnum, CardTypeEnum, CardKeywordEnum } from './card.enum';
 
-export type CardDocument = Card & Document;
+export type CardDocument = HydratedDocument<Card>;
 
 @Schema({
     collection: 'cards',
+    versionKey: false,
 })
 export class Card {
     @Prop({ unique: true })
@@ -16,10 +17,10 @@ export class Card {
     @Prop()
     name: string;
 
-    @Prop()
+    @Prop({ type: String, enum: CardRarityEnum })
     rarity: CardRarityEnum;
 
-    @Prop()
+    @Prop({ type: String, enum: CardTypeEnum })
     cardType: CardTypeEnum;
 
     @Prop()
@@ -37,7 +38,7 @@ export class Card {
         statuses: JsonStatus[];
     };
 
-    @Prop()
+    @Prop([String])
     keywords: CardKeywordEnum[];
 
     @Prop({ type: Object })
@@ -59,6 +60,9 @@ export class Card {
 
     @Prop()
     triggerOnDrawn?: boolean;
+
+    @Prop()
+    isActive: boolean;
 }
 
 export const CardSchema = SchemaFactory.createForClass(Card);

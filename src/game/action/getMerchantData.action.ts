@@ -72,6 +72,7 @@ export class GetMerchantDataAction {
                 showPointer: upgradeableCards[index].showPointer,
                 pool: upgradeableCards[index].pool,
                 isUpgraded: upgradeableCards[index].isUpgraded,
+                isActive: true,
             };
             data.upgradedCards.push(upgradedCard);
         }

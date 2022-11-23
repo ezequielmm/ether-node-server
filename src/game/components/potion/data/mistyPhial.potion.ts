@@ -25,4 +25,5 @@ export const mistyPhialPotion: Potion = {
     ],
     usableOutsideCombat: false,
     showPointer: false,
+    isActive: true,
 };

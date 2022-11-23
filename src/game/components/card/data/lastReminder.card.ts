@@ -39,6 +39,7 @@ export const LastReminderCardUpgraded: Card = {
     },
     showPointer: true,
     isUpgraded: true,
+    isActive: true,
 };
 
 export const LastReminderCard: Card = {
@@ -77,4 +78,5 @@ export const LastReminderCard: Card = {
     showPointer: true,
     isUpgraded: false,
     upgradedCardId: LastReminderCardUpgraded.cardId,
+    isActive: true,
 };

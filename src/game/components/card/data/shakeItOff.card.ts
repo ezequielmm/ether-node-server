@@ -28,6 +28,7 @@ export const ShakeItOffCardUpgraded: Card = {
     },
     showPointer: false,
     isUpgraded: true,
+    isActive: true,
 };
 
 export const ShakeItOffCard: Card = {
@@ -57,4 +58,5 @@ export const ShakeItOffCard: Card = {
     showPointer: false,
     isUpgraded: false,
     upgradedCardId: ShakeItOffCardUpgraded.cardId,
+    isActive: true,
 };

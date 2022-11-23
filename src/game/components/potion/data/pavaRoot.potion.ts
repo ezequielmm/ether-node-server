@@ -15,4 +15,5 @@ export const pavaRootPotion: Potion = {
     ],
     usableOutsideCombat: false,
     showPointer: true,
+    isActive: true,
 };

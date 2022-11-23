@@ -44,6 +44,7 @@ export const FlurryCardUpgraded: Card = {
     },
     showPointer: false,
     isUpgraded: true,
+    isActive: true,
 };
 
 export const FlurryCard: Card = {
@@ -84,4 +85,5 @@ export const FlurryCard: Card = {
     showPointer: false,
     isUpgraded: false,
     upgradedCardId: FlurryCardUpgraded.cardId,
+    isActive: true,
 };

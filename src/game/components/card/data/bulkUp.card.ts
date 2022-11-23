@@ -25,6 +25,7 @@ export const BulkUpCardUpgraded: Card = {
     },
     showPointer: false,
     isUpgraded: true,
+    isActive: true,
 };
 
 export const BulkUpCard: Card = {
@@ -51,4 +52,5 @@ export const BulkUpCard: Card = {
     showPointer: false,
     isUpgraded: false,
     upgradedCardId: BulkUpCardUpgraded.cardId,
+    isActive: true,
 };

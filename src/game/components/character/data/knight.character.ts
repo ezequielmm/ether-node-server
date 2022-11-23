@@ -12,6 +12,7 @@ export const KnightCharacter: Character = {
     initialHealth: 80,
     initialGold: 0,
     characterClass: CharacterClassEnum.Knight,
+    isActive: true,
     cards: [
         {
             cardId: AttackCard.cardId,

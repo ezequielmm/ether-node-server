@@ -18,4 +18,5 @@ export const brainTonic: Potion = {
     ],
     usableOutsideCombat: false,
     showPointer: false,
+    isActive: true,
 };

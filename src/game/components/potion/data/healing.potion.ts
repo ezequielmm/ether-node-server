@@ -19,4 +19,5 @@ export const healingPotion: Potion = {
     ],
     usableOutsideCombat: true,
     showPointer: false,
+    isActive: true,
 };

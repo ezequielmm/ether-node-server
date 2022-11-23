@@ -26,6 +26,7 @@ export const RecoverCardUpgraded: Card = {
     },
     showPointer: false,
     isUpgraded: true,
+    isActive: true,
 };
 
 export const RecoverCard: Card = {
@@ -53,4 +54,5 @@ export const RecoverCard: Card = {
     showPointer: false,
     isUpgraded: false,
     upgradedCardId: RecoverCardUpgraded.cardId,
+    isActive: true,
 };

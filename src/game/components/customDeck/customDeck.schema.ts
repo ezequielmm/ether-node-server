@@ -1,10 +1,11 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
+import { HydratedDocument } from 'mongoose';
 
-export type CustomDeckDocument = CustomDeck & Document;
+export type CustomDeckDocument = HydratedDocument<CustomDeck>;
 
 @Schema({
     collection: 'customDecks',
+    versionKey: false,
 })
 export class CustomDeck {
     @Prop()

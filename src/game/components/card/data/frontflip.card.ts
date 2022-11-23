@@ -27,6 +27,7 @@ export const FrontflipCardUpgraded: Card = {
     },
     showPointer: false,
     isUpgraded: true,
+    isActive: true,
 };
 
 export const FrontflipCard: Card = {
@@ -54,4 +55,5 @@ export const FrontflipCard: Card = {
     showPointer: false,
     isUpgraded: false,
     upgradedCardId: FrontflipCardUpgraded.cardId,
+    isActive: true,
 };

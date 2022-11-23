@@ -26,6 +26,7 @@ export const TightenStrapsCardUpgraded: Card = {
     },
     showPointer: false,
     isUpgraded: true,
+    isActive: true,
 };
 
 export const TightenStrapsCard: Card = {
@@ -53,4 +54,5 @@ export const TightenStrapsCard: Card = {
     showPointer: false,
     isUpgraded: false,
     upgradedCardId: TightenStrapsCardUpgraded.cardId,
+    isActive: true,
 };

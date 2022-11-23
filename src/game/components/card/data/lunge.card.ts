@@ -34,6 +34,7 @@ export const LungeCardUpgraded: Card = {
     },
     showPointer: true,
     isUpgraded: true,
+    isActive: true,
 };
 
 export const LungeCard: Card = {
@@ -68,4 +69,5 @@ export const LungeCard: Card = {
     showPointer: true,
     isUpgraded: false,
     upgradedCardId: LungeCardUpgraded.cardId,
+    isActive: true,
 };
