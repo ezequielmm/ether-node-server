@@ -91,12 +91,10 @@ export class EnemyService {
         if (!expedition.currentNode?.data?.enemies)
             throw new Error('Current node has no enemies');
 
-        return expedition.currentNode.data.enemies
-            .filter((enemy) => enemy.hpCurrent > 0)
-            .map((enemy) => ({
-                type: CardTargetedEnum.Enemy,
-                value: enemy,
-            }));
+        return expedition.currentNode.data.enemies.map((enemy) => ({
+            type: CardTargetedEnum.Enemy,
+            value: enemy,
+        }));
     }
 
     /**
