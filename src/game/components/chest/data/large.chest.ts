@@ -8,5 +8,5 @@ export const LargeChest: Chest = {
     coinChance: 50,
     minCoins: 45,
     maxCoins: 55,
-    potionChance: 15
+    potionChance: 15,
 };
