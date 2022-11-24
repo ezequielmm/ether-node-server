@@ -52,7 +52,11 @@ export class RewardGateway {
 
         let rewards: Reward[] = [];
 
-        rewards = expedition.currentNode.data.rewards;
+        if (nodeType === ExpeditionMapNodeTypeEnum.Treasure) {
+            rewards = expedition.currentNode.treasureData.rewards;
+        } else {
+            rewards = expedition.currentNode.data.rewards;
+        }
 
         if (nodeIsCompleted) {
             // Check if the node is completed
