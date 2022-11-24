@@ -41,6 +41,7 @@ export class GetDataGateway {
         this.logger.debug(
             `Client ${client.id} trigger message "GetData": ${types}`,
         );
+
         try {
             let data = null;
 
@@ -86,7 +87,7 @@ export class GetDataGateway {
                     break;
 
                 case DataWSRequestTypesEnum.TreasureData:
-                    data = await this.getTreasureDataAction.handle(client.id);
+                    data = await this.getTreasureDataAction.handle(client);
                     break;
             }
 

@@ -117,30 +117,18 @@ export class TreasureService {
                     },
                 },
             );
-
-            client.emit(
-                'PutData',
-                StandardResponse.respond({
-                    message_type: SWARMessageType.GenericData,
-                    action: SWARAction.ChestResult,
-                    data: {
-                        type: treasureData.type,
-                        rewards: treasureData.rewards,
-                    },
-                }),
-            );
-        } else {
-            client.emit(
-                'PutData',
-                StandardResponse.respond({
-                    message_type: SWARMessageType.GenericData,
-                    action: SWARAction.ChestResult,
-                    data: {
-                        type: treasureData.type,
-                        rewards: treasureData.rewards,
-                    },
-                }),
-            );
         }
+
+        client.emit(
+            'PutData',
+            StandardResponse.respond({
+                message_type: SWARMessageType.GenericData,
+                action: SWARAction.ChestResult,
+                data: {
+                    type: treasureData.type,
+                    rewards: treasureData.rewards,
+                },
+            }),
+        );
     }
 }

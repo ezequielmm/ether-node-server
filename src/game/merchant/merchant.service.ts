@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { randomUUID } from 'crypto';
+import { Socket } from 'socket.io';
 import { getRandomBetween } from 'src/utils';
 import { CardDescriptionFormatter } from '../cardDescriptionFormatter/cardDescriptionFormatter';
 import { CardRarityEnum, CardTypeEnum } from '../components/card/card.enum';
@@ -17,7 +18,7 @@ import {
     CardRare,
     CardUncommon,
 } from './merchant.enum';
-import { Item, MerchantItems } from './merchant.interface';
+import { Item, MerchantItems, SelectedItem } from './merchant.interface';
 
 @Injectable()
 export class MerchantService {
@@ -29,6 +30,8 @@ export class MerchantService {
         private readonly potionService: PotionService,
     ) {}
 
+    private client: Socket;
+
     async generateMerchant(): Promise<MerchantItems> {
         const potions = await this.getPotions();
         const cards = await this.getCards();
@@ -38,6 +41,18 @@ export class MerchantService {
             potions,
             trinkets: [],
         };
+    }
+
+    async processItem(
+        client: Socket,
+        selectedItem: SelectedItem,
+    ): Promise<void> {
+        switch (selectedItem.type) {
+            case ItemsTypeEnum.Card:
+            case ItemsTypeEnum.Trinket:
+            case ItemsTypeEnum.Potion:
+                break;
+        }
     }
 
     private async getPotions(): Promise<Item[]> {
