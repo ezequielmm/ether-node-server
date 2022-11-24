@@ -78,18 +78,12 @@ export class ExpeditionService {
     ): Promise<boolean> {
         // Using updateOne to save a bit of time and bandwidth
         // it is not necessary to return the updated document
-        const response = await this.expedition.updateOne(
-            {
-                _id: id,
-            },
-            query,
-            {
-                new: true,
-            },
-        );
+        const response = await this.expedition.findByIdAndUpdate(id, query, {
+            new: true,
+        });
 
         // Return if expedition was updated
-        return response.modifiedCount > 0;
+        return response !== null;
     }
 
     async updateByFilter(
