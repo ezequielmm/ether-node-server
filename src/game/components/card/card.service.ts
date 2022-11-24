@@ -57,11 +57,23 @@ export class CardService {
     }
 
     async findByType(card_type: CardTypeEnum): Promise<CardDocument[]> {
-        return this.card.find({ card_type, isActive: true }).lean();
+        return this.card
+            .find({
+                card_type,
+                isActive: true,
+                cardType: { $ne: CardTypeEnum.Status },
+            })
+            .lean();
     }
 
     async findByRarity(rarity: CardRarityEnum): Promise<CardDocument[]> {
-        return this.card.find({ rarity, isActive: true }).lean();
+        return this.card
+            .find({
+                rarity,
+                isActive: true,
+                cardType: { $ne: CardTypeEnum.Status },
+            })
+            .lean();
     }
 
     async findById(id: CardId): Promise<CardDocument> {
@@ -86,7 +98,10 @@ export class CardService {
                         { rarity: CardRarityEnum.Rare },
                     ],
                 },
-                { cardType: card_type, isActive: true },
+                {
+                    cardType: card_type,
+                    isActive: true,
+                },
             ],
         });
 
@@ -102,7 +117,10 @@ export class CardService {
                             { rarity: CardRarityEnum.Rare },
                         ],
                     },
-                    { cardType: card_type, isActive: true },
+                    {
+                        cardType: card_type,
+                        isActive: true,
+                    },
                 ],
             })
             .limit(limit)
