@@ -18,6 +18,5 @@ export class MerchantGateway {
         this.logger.debug(
             `Client ${client.id} trigger message "MerchantBuy": ${payload}`,
         );
-        await this.merchantService.merchantBuy(client, selected);
     }
 }

@@ -29,6 +29,8 @@ export class CurrentNodeGeneratorProcess {
                 return await this.getCombatCurrentNode();
             case ExpeditionMapNodeTypeEnum.Treasure:
                 return await this.getTreasureCurrentNode();
+            case ExpeditionMapNodeTypeEnum.Merchant:
+                return await this.getMerchantCurrentNode();
             default:
                 return this.getCurrentNode();
         }
@@ -56,6 +58,16 @@ export class CurrentNodeGeneratorProcess {
             nodeType: this.node.type,
             showRewards: false,
             treasureData,
+        };
+    }
+
+    private async getMerchantCurrentNode(): Promise<IExpeditionCurrentNode> {
+        return {
+            nodeId: this.node.id,
+            completed: false,
+            nodeType: this.node.type,
+            showRewards: false,
+            merchantItems: null,
         };
     }
 }
