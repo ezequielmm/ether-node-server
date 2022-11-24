@@ -321,7 +321,7 @@ export class EnemyService {
 
             await this.expeditionService.updateByFilter(
                 {
-                    _id: ctx.expedition.id,
+                    clientId: ctx.client.id,
                     ...enemySelector(enemy.value.id),
                 },
                 {
