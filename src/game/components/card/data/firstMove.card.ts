@@ -43,7 +43,7 @@ export const FirstMoveCard: Card = {
                 effect: energyEffect.name,
                 target: CardTargetedEnum.Player,
                 args: {
-                    value: 2,
+                    value: 1,
                 },
             },
         ],
