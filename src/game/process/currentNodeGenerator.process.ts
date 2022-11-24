@@ -5,6 +5,7 @@ import {
     IExpeditionCurrentNode,
     IExpeditionNode,
 } from '../components/expedition/expedition.interface';
+import { MerchantService } from '../merchant/merchant.service';
 import { TreasureService } from '../treasure/treasure.service';
 
 @Injectable()
@@ -15,6 +16,7 @@ export class CurrentNodeGeneratorProcess {
     constructor(
         private readonly treasureService: TreasureService,
         private readonly combatService: CombatService,
+        private readonly merchantService: MerchantService,
     ) {}
 
     async getCurrentNodeData(
@@ -62,12 +64,14 @@ export class CurrentNodeGeneratorProcess {
     }
 
     private async getMerchantCurrentNode(): Promise<IExpeditionCurrentNode> {
+        const merchantItems = await this.merchantService.generateMerchant();
+
         return {
             nodeId: this.node.id,
             completed: false,
             nodeType: this.node.type,
             showRewards: false,
-            merchantItems: null,
+            merchantItems,
         };
     }
 }

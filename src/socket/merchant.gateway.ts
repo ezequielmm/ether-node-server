@@ -3,7 +3,7 @@ import { Logger } from '@nestjs/common';
 import { Socket } from 'socket.io';
 import { corsSocketSettings } from './socket.enum';
 import { MerchantService } from 'src/game/merchant/merchant.service';
-import { SelectedItem } from 'src/game/merchant/interfaces';
+import { SelectedItem } from 'src/game/merchant/merchant.interface';
 
 @WebSocketGateway(corsSocketSettings)
 export class MerchantGateway {

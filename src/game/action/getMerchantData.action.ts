@@ -74,6 +74,7 @@ export class GetMerchantDataAction {
                 isUpgraded: upgradeableCards[index].isUpgraded,
                 isActive: true,
             };
+
             data.upgradedCards.push(upgradedCard);
         }
 
