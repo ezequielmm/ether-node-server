@@ -20,12 +20,10 @@ export class InitTreasureProcess {
         private readonly expeditionService: ExpeditionService,
     ) {}
 
-    private client: Socket;
     private clientId: string;
     private node: IExpeditionNode;
 
     async process(client: Socket, node: IExpeditionNode): Promise<string> {
-        this.client = client;
         this.clientId = client.id;
         this.node = node;
 
@@ -71,10 +69,18 @@ export class InitTreasureProcess {
     }
 
     private continueTreasure(): string {
-        return StandardResponse.respond({
-            message_type: SWARMessageType.TreasureUpdate,
-            action: SWARAction.ContinueTreasure,
-            data: null,
-        });
+        const { isOpen } = this.node.private_data.treasure;
+
+        return isOpen
+            ? StandardResponse.respond({
+                  message_type: SWARMessageType.TreasureUpdate,
+                  action: SWARAction.ContinueTreasure,
+                  data: null,
+              })
+            : StandardResponse.respond({
+                  message_type: SWARMessageType.TreasureUpdate,
+                  action: SWARAction.BeginTreasure,
+                  data: null,
+              });
     }
 }

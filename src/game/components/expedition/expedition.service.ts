@@ -76,7 +76,7 @@ export class ExpeditionService {
         id: string,
         query: UpdateQuery<ExpeditionDocument>,
     ): Promise<boolean> {
-        // Using udpateOne to save a bit of time and bandwidth
+        // Using updateOne to save a bit of time and bandwidth
         // it is not necessary to return the updated document
         const response = await this.expedition.updateOne(
             {
