@@ -115,13 +115,7 @@ export class NodeSelectedProcess {
                         data: null,
                     });
                 case ExpeditionMapNodeTypeEnum.Treasure:
-                    await this.initTreasureProcess.process(client, node);
-
-                    return StandardResponse.respond({
-                        message_type: SWARMessageType.TreasureUpdate,
-                        action: SWARAction.BeginTreasure,
-                        data: null,
-                    });
+                    return await this.initTreasureProcess.process(client, node);
                 case ExpeditionMapNodeTypeEnum.Merchant:
                     await this.initMerchantProcess.process(client, node);
 
@@ -168,13 +162,10 @@ export class NodeSelectedProcess {
                             data: null,
                         });
                     case ExpeditionMapNodeTypeEnum.Treasure:
-                        await this.initTreasureProcess.process(client, node);
-
-                        return StandardResponse.respond({
-                            message_type: SWARMessageType.TreasureUpdate,
-                            action: SWARAction.BeginTreasure,
-                            data: null,
-                        });
+                        return await this.initTreasureProcess.process(
+                            client,
+                            node,
+                        );
                     case ExpeditionMapNodeTypeEnum.Merchant:
                         await this.initMerchantProcess.process(client, node);
 

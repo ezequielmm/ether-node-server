@@ -69,9 +69,14 @@ export class CurrentNodeGeneratorProcess {
         this.node = node;
         this.clientId = clientId;
 
-        return this.node.type === ExpeditionMapNodeTypeEnum.Combat
-            ? await this.getCombatCurrentNode()
-            : this.getCurrentNode();
+        switch (this.node.type) {
+            case ExpeditionMapNodeTypeEnum.Combat:
+                return await this.getCombatCurrentNode();
+            case ExpeditionMapNodeTypeEnum.Treasure:
+
+            default:
+                return this.getCurrentNode();
+        }
     }
 
     private async getCombatCurrentNode(): Promise<IExpeditionCurrentNode> {

@@ -4,12 +4,8 @@ import { LargeChest, MediumChest, SmallChest } from './treasure.enum';
 
 export interface TreasureInterface {
     name: LargeChest.name | MediumChest.name | SmallChest.name;
-    type: LargeChest.type | MediumChest.type | SmallChest.type;
-    trappedType:
-        | null
-        | LargeChest.trappedType
-        | MediumChest.trappedType
-        | SmallChest.trappedType;
+    size: LargeChest.size | MediumChest.size | SmallChest.size;
+    isOpen: boolean;
 }
 
 export interface Trapped {
