@@ -27,7 +27,6 @@ export enum SWARMessageType {
     UsePotion = 'use_potion',
     AddPotion = 'add_potion',
     AddTrinket = 'add_trinket',
-    TreasureNodeUpdate = 'treasure_node_update',
     CardDestroy = 'card_destroy',
 }
 
