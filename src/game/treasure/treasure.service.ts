@@ -3,6 +3,7 @@ import { randomUUID } from 'crypto';
 import { pick } from 'lodash';
 import { Socket } from 'socket.io';
 import { getRandomBetween } from 'src/utils';
+import { Chest } from '../components/chest/chest.schema';
 import { ChestService } from '../components/chest/chest.service';
 import { IExpeditionNodeReward } from '../components/expedition/expedition.enum';
 import { Reward } from '../components/expedition/expedition.interface';
@@ -14,7 +15,7 @@ import {
     SWARMessageType,
 } from '../standardResponse/standardResponse';
 import { TreasureTypeEnum } from './treasure.enum';
-import { TreasureInterface } from './treasure.interfaces';
+import { TreasureInterface, TreasureTrappedData } from './treasure.interfaces';
 
 @Injectable()
 export class TreasureService {
@@ -55,10 +56,14 @@ export class TreasureService {
             });
         }
 
-        const type =
-            randomTrappedChance <= chest.trappedChance
-                ? chest.trappedType
-                : TreasureTypeEnum.NoTrap;
+        const isTrappedChest = this.isTrappedChest(
+            randomTrappedChance,
+            chest.trappedChance,
+        );
+
+        const type = isTrappedChest
+            ? chest.trappedType
+            : TreasureTypeEnum.NoTrap;
 
         return {
             name: chest.name,
@@ -66,6 +71,22 @@ export class TreasureService {
             isOpen: false,
             rewards,
             type,
+            ...(isTrappedChest && this.generateTrappedData(chest)),
+        };
+    }
+
+    private isTrappedChest = (
+        trappedChance: number,
+        chestTrappedChance: number,
+    ): boolean => trappedChance <= chestTrappedChance;
+
+    private generateTrappedData(chest: Chest): TreasureTrappedData {
+        return {
+            textToShow: chest.trappedText,
+            startsCombat: chest.trappedStartsCombat,
+            ...(chest.trappedType === TreasureTypeEnum.Damage && {
+                damageReceived: chest.trappedTypeValue,
+            }),
         };
     }
 
@@ -93,7 +114,9 @@ export class TreasureService {
                 StandardResponse.respond({
                     message_type: SWARMessageType.TreasureNodeUpdate,
                     action: SWARAction.ChestResult,
-                    data: treasureData.type,
+                    data: {
+                        type: treasureData.type,
+                    },
                 }),
             );
         } else {
@@ -102,7 +125,7 @@ export class TreasureService {
                 StandardResponse.respond({
                     message_type: SWARMessageType.TreasureNodeUpdate,
                     action: SWARAction.ChestResult,
-                    data: treasureData.type,
+                    data: { type: treasureData.type },
                 }),
             );
         }

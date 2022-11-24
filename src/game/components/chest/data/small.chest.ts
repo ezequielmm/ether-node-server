@@ -12,4 +12,7 @@ export const SmallChest: Chest = {
     potionChance: 5,
     trappedChance: 10,
     trappedType: TreasureTypeEnum.Damage,
+    trappedText: 'A bladed trap slices your hand for 5 Damage',
+    trappedTypeValue: 5,
+    trappedStartsCombat: false,
 };

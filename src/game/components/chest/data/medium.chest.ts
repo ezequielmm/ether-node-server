@@ -12,4 +12,7 @@ export const MediumChest: Chest = {
     potionChance: 10,
     trappedChance: 10,
     trappedType: TreasureTypeEnum.CurseCard,
+    trappedText: 'An ancient curse falls upon you',
+    trappedTypeValue: 1,
+    trappedStartsCombat: false,
 };

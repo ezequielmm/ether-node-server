@@ -7,4 +7,11 @@ export interface TreasureInterface {
     isOpen: boolean;
     rewards: Reward[];
     type: TreasureTypeEnum;
+    trappedData?: TreasureTrappedData;
+}
+
+export interface TreasureTrappedData {
+    textToShow: string;
+    startsCombat: boolean;
+    damageReceived?: number;
 }

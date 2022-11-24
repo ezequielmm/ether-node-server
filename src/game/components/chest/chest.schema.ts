@@ -36,6 +36,15 @@ export class Chest {
 
     @Prop({ type: String, enum: TreasureTypeEnum })
     trappedType: TreasureTypeEnum;
+
+    @Prop()
+    trappedText: string;
+
+    @Prop()
+    trappedTypeValue: number;
+
+    @Prop()
+    trappedStartsCombat: boolean;
 }
 
 export const ChestSchema = SchemaFactory.createForClass(Chest);

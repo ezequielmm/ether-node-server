@@ -12,4 +12,8 @@ export const LargeChest: Chest = {
     potionChance: 15,
     trappedChance: 10,
     trappedType: TreasureTypeEnum.Mimic,
+    trappedText:
+        'The chest suddenly sprouts limbs and teeth, and scrambles towards you',
+    trappedTypeValue: 1,
+    trappedStartsCombat: true,
 };
