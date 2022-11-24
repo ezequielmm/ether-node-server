@@ -6,7 +6,7 @@ import { EnemyId, enemyIdField, enemySelector } from './enemy.type';
 import { GameContext, ExpeditionEntity } from '../interfaces';
 import { EnemyScript, ExpeditionEnemy } from './enemy.interface';
 import { CardTargetedEnum } from '../card/card.enum';
-import { find, reject, sample } from 'lodash';
+import { find, reject, sample, isEmpty } from 'lodash';
 import { ExpeditionService } from '../expedition/expedition.service';
 import {
     ENEMY_CURRENT_SCRIPT_PATH,
@@ -289,17 +289,19 @@ export class EnemyService {
         for (const enemy of enemies) {
             const { scripts } = await this.findById(enemy.value.enemyId);
             const currentScript = enemy.value.currentScript;
+            let nextScript: EnemyScript;
 
-            const nextScript = currentScript
-                ? scripts.find(
-                      (script) =>
-                          script.id ==
-                          getRandomItemByWeight(
-                              currentScript.next,
-                              currentScript.next.map((s) => s.probability),
-                          ).scriptId,
-                  )
-                : scripts[0];
+            if (currentScript) {
+                nextScript = this.getNextScript(scripts, currentScript);
+            } else {
+                nextScript = scripts[0];
+
+                // If the first script does not have intentions,
+                // then it is used only to calculate the next possible script
+                if (isEmpty(nextScript.intentions)) {
+                    nextScript = this.getNextScript(scripts, nextScript);
+                }
+            }
 
             // Increase damage for node from 14 to 20
             const node = ctx.expedition.map.find(
@@ -315,7 +317,7 @@ export class EnemyService {
 
             await this.expeditionService.updateByFilter(
                 {
-                    _id: ctx.expedition._id,
+                    _id: ctx.expedition.id,
                     ...enemySelector(enemy.value.id),
                 },
                 {
@@ -328,7 +330,20 @@ export class EnemyService {
             this.logger.debug(
                 `Calculated new script for enemy ${enemy.value.id}`,
             );
+            this.logger.debug(`New script: ${JSON.stringify(nextScript)}`);
         }
+    }
+
+    private getNextScript(
+        scripts: EnemyScript[],
+        currentScript: EnemyScript,
+    ): EnemyScript {
+        return find(scripts, {
+            id: getRandomItemByWeight(
+                currentScript.next,
+                currentScript.next.map((s) => s.probability),
+            ).scriptId,
+        });
     }
 
     /**
