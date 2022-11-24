@@ -121,7 +121,7 @@ export class TreasureService {
             client.emit(
                 'PutData',
                 StandardResponse.respond({
-                    message_type: SWARMessageType.TreasureNodeUpdate,
+                    message_type: SWARMessageType.GenericData,
                     action: SWARAction.ChestResult,
                     data: {
                         type: treasureData.type,
@@ -133,7 +133,7 @@ export class TreasureService {
             client.emit(
                 'PutData',
                 StandardResponse.respond({
-                    message_type: SWARMessageType.TreasureNodeUpdate,
+                    message_type: SWARMessageType.GenericData,
                     action: SWARAction.ChestResult,
                     data: {
                         type: treasureData.type,
