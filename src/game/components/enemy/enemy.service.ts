@@ -286,7 +286,11 @@ export class EnemyService {
     async calculateNewIntentions(ctx: GameContext): Promise<void> {
         const enemies = this.getAll(ctx);
 
-        for (const enemy of enemies) {
+        const enemiesAlive = enemies.filter(
+            (enemy) => enemy.value.hpCurrent > 0,
+        );
+
+        for (const enemy of enemiesAlive) {
             const { scripts } = await this.findById(enemy.value.enemyId);
             const currentScript = enemy.value.currentScript;
             let nextScript: EnemyScript;
