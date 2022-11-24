@@ -234,6 +234,7 @@ export class PlayerService {
         );
 
         let finalStatusAttached: AttachedStatus;
+
         if (oldStatus) {
             this.logger.log('Status already attached, incrementing counter');
             // If the status is already attached, we update it
@@ -271,7 +272,7 @@ export class PlayerService {
         // Save the status to the database
         await this.expeditionService.updateByFilter(
             {
-                id: ctx.expedition._id.toString(),
+                clientId: ctx.client.id,
             },
             {
                 [PLAYER_STATUSES_PATH]: player.value.combatState.statuses,
