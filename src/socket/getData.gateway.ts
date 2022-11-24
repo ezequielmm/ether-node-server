@@ -97,6 +97,7 @@ export class GetDataGateway {
             });
         } catch (e) {
             this.logger.error(e.message);
+            this.logger.error(e.trace);
 
             client.emit('ErrorMessage', {
                 message: `An Error has ocurred getting ${types}`,
