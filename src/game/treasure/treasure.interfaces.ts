@@ -13,5 +13,5 @@ export interface TreasureInterface {
 export interface TreasureTrappedData {
     textToShow: string;
     startsCombat: boolean;
-    damageReceived?: number;
+    damage?: number;
 }

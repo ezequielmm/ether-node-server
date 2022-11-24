@@ -85,7 +85,7 @@ export class TreasureService {
             textToShow: chest.trappedText,
             startsCombat: chest.trappedStartsCombat,
             ...(chest.trappedType === TreasureTypeEnum.Damage && {
-                damageReceived: chest.trappedTypeValue,
+                damage: chest.trappedTypeValue,
             }),
         };
     }
