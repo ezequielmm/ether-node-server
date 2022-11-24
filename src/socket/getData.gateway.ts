@@ -89,6 +89,7 @@ export class GetDataGateway {
                     data = await this.getTreasureDataAction.handle(client.id);
                     break;
             }
+
             return StandardResponse.respond({
                 message_type: SWARMessageType.GenericData,
                 action: types,

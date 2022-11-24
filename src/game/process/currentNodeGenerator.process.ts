@@ -30,6 +30,7 @@ import { PotionService } from '../components/potion/potion.service';
 import { SettingsService } from '../components/settings/settings.service';
 import { HARD_MODE_NODE_END, HARD_MODE_NODE_START } from '../constants';
 import { StatusType } from '../status/interfaces';
+import { TreasureService } from '../treasure/treasure.service';
 
 @Injectable()
 export class CurrentNodeGeneratorProcess {
@@ -60,6 +61,7 @@ export class CurrentNodeGeneratorProcess {
         private readonly enemyService: EnemyService,
         private readonly potionService: PotionService,
         private readonly cardService: CardService,
+        private readonly treasureService: TreasureService,
     ) {}
 
     async getCurrentNodeData(
@@ -69,9 +71,14 @@ export class CurrentNodeGeneratorProcess {
         this.node = node;
         this.clientId = clientId;
 
-        return this.node.type === ExpeditionMapNodeTypeEnum.Combat
-            ? await this.getCombatCurrentNode()
-            : this.getCurrentNode();
+        switch (this.node.type) {
+            case ExpeditionMapNodeTypeEnum.Combat:
+                return await this.getCombatCurrentNode();
+            case ExpeditionMapNodeTypeEnum.Treasure:
+                return await this.getTreasureCurrentNode();
+            default:
+                return this.getCurrentNode();
+        }
     }
 
     private async getCombatCurrentNode(): Promise<IExpeditionCurrentNode> {
@@ -139,6 +146,18 @@ export class CurrentNodeGeneratorProcess {
             completed: false,
             nodeType: this.node.type,
             showRewards: false,
+        };
+    }
+
+    private async getTreasureCurrentNode(): Promise<IExpeditionCurrentNode> {
+        const treasureData = await this.treasureService.generateTreasure();
+
+        return {
+            nodeId: this.node.id,
+            completed: false,
+            nodeType: this.node.type,
+            showRewards: false,
+            treasureData,
         };
     }
 

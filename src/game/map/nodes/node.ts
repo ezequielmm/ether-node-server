@@ -75,8 +75,12 @@ class Node implements IExpeditionNode {
         expeditionMap.disableAllNodesExcept(this.id);
         this.setActive();
         expeditionMap.activeNode = this;
-        this.complete(expeditionMap);
-        this.stateInitialize();
+        if (
+            this.type === ExpeditionMapNodeTypeEnum.RoyalHouse ||
+            this.type === ExpeditionMapNodeTypeEnum.Portal
+        ) {
+            this.complete(expeditionMap);
+        }
     }
 
     public setPrivate_data(private_data) {
@@ -92,10 +96,6 @@ class Node implements IExpeditionNode {
         this.exits.forEach((exit) => {
             expeditionMap.fullCurrentMap.get(exit).setAvailable();
         });
-    }
-
-    protected stateInitialize() {
-        // TODO: add initialization
     }
 }
 

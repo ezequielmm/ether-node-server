@@ -148,4 +148,10 @@ $(document).ready(function () {
             },
         );
     });
+
+    $('#btnOpenChest').click(function () {
+        socket.emit('OpenChest', (response) => {
+            showJSON(response);
+        });
+    });
 });
