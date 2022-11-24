@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
+import { TreasureTypeEnum } from 'src/game/treasure/treasure.enum';
 import { ChestSizeEnum } from './chest.enum';
 
 export type ChestDocument = HydratedDocument<Chest>;
@@ -29,6 +30,12 @@ export class Chest {
 
     @Prop()
     potionChance: number;
+
+    @Prop()
+    trappedChance: number;
+
+    @Prop({ type: String, enum: TreasureTypeEnum })
+    trappedType: TreasureTypeEnum;
 }
 
 export const ChestSchema = SchemaFactory.createForClass(Chest);

@@ -8,6 +8,12 @@ import { IExpeditionNodeReward } from '../components/expedition/expedition.enum'
 import { Reward } from '../components/expedition/expedition.interface';
 import { ExpeditionService } from '../components/expedition/expedition.service';
 import { PotionService } from '../components/potion/potion.service';
+import {
+    StandardResponse,
+    SWARAction,
+    SWARMessageType,
+} from '../standardResponse/standardResponse';
+import { TreasureTypeEnum } from './treasure.enum';
 import { TreasureInterface } from './treasure.interfaces';
 
 @Injectable()
@@ -25,6 +31,7 @@ export class TreasureService {
 
         const randomCoinChance = getRandomBetween(1, 100);
         const randomPotionChance = getRandomBetween(1, 100);
+        const randomTrappedChance = getRandomBetween(1, 100);
 
         if (randomCoinChance <= chest.coinChance) {
             const coin = getRandomBetween(chest.minCoins, chest.maxCoins);
@@ -48,24 +55,56 @@ export class TreasureService {
             });
         }
 
+        const type =
+            randomTrappedChance <= chest.trappedChance
+                ? chest.trappedType
+                : TreasureTypeEnum.NoTrap;
+
         return {
             name: chest.name,
             size: chest.size,
             isOpen: false,
             rewards,
+            type,
         };
     }
 
     async openChest(client: Socket): Promise<void> {
-        await this.expeditionService.updateByFilter(
-            {
-                clientId: client.id,
-            },
-            {
-                $set: {
-                    'currentNode.treasureData.isOpen': true,
+        const currentNode = await this.expeditionService.getCurrentNode({
+            clientId: client.id,
+        });
+
+        const { treasureData } = currentNode;
+
+        if (!treasureData.isOpen) {
+            await this.expeditionService.updateByFilter(
+                {
+                    clientId: client.id,
                 },
-            },
-        );
+                {
+                    $set: {
+                        'currentNode.treasureData.isOpen': true,
+                    },
+                },
+            );
+
+            client.emit(
+                'PutData',
+                StandardResponse.respond({
+                    message_type: SWARMessageType.TreasureNodeUpdate,
+                    action: SWARAction.ChestResult,
+                    data: treasureData.type,
+                }),
+            );
+        } else {
+            client.emit(
+                'PutData',
+                StandardResponse.respond({
+                    message_type: SWARMessageType.TreasureNodeUpdate,
+                    action: SWARAction.ChestResult,
+                    data: treasureData.type,
+                }),
+            );
+        }
     }
 }
