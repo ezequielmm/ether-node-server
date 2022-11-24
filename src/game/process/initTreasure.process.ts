@@ -3,20 +3,17 @@ import { Socket } from 'socket.io';
 import { ExpeditionMapNodeStatusEnum } from '../components/expedition/expedition.enum';
 import { IExpeditionNode } from '../components/expedition/expedition.interface';
 import { ExpeditionService } from '../components/expedition/expedition.service';
-import { restoreMap } from '../map/app';
 import {
     StandardResponse,
     SWARMessageType,
     SWARAction,
 } from '../standardResponse/standardResponse';
-import { TreasureService } from '../treasure/treasure.service';
 import { CurrentNodeGeneratorProcess } from './currentNodeGenerator.process';
 
 @Injectable()
 export class InitTreasureProcess {
     constructor(
         private readonly currentNodeGeneratorProcess: CurrentNodeGeneratorProcess,
-        private readonly treasureService: TreasureService,
         private readonly expeditionService: ExpeditionService,
     ) {}
 
@@ -29,9 +26,9 @@ export class InitTreasureProcess {
 
         switch (node.status) {
             case ExpeditionMapNodeStatusEnum.Available:
-                return this.createTreasureData();
+                return await this.createTreasureData();
             case ExpeditionMapNodeStatusEnum.Active:
-                return this.continueTreasure();
+                return await this.continueTreasure();
         }
     }
 
@@ -42,23 +39,8 @@ export class InitTreasureProcess {
                 this.clientId,
             );
 
-        const map = await this.expeditionService.getExpeditionMap({
-            clientId: this.clientId,
-        });
-
-        const expeditionMap = restoreMap(map);
-
-        const selectedNode = expeditionMap.fullCurrentMap.get(
-            currentNode.nodeId,
-        );
-
-        const treasure = this.treasureService.generateTreasure();
-
-        selectedNode.setPrivate_data({ treasure });
-
         await this.expeditionService.update(this.clientId, {
             currentNode,
-            map: expeditionMap.getMap,
         });
 
         return StandardResponse.respond({
@@ -68,8 +50,12 @@ export class InitTreasureProcess {
         });
     }
 
-    private continueTreasure(): string {
-        const { isOpen } = this.node.private_data.treasure;
+    private async continueTreasure(): Promise<string> {
+        const {
+            treasureData: { isOpen },
+        } = await this.expeditionService.getCurrentNode({
+            clientId: this.clientId,
+        });
 
         return isOpen
             ? StandardResponse.respond({

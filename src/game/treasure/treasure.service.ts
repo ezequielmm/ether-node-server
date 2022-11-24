@@ -1,54 +1,54 @@
 import { Injectable } from '@nestjs/common';
+import { randomUUID } from 'crypto';
 import { Socket } from 'socket.io';
 import { getRandomBetween } from 'src/utils';
+import { ChestService } from '../components/chest/chest.service';
+import { IExpeditionNodeReward } from '../components/expedition/expedition.enum';
+import { Reward } from '../components/expedition/expedition.interface';
 import { ExpeditionService } from '../components/expedition/expedition.service';
-import { TreasureInterface } from './interfaces';
-import { LargeChest, MediumChest, SmallChest } from './treasure.enum';
+import { TreasureInterface } from './treasure.interfaces';
 
 @Injectable()
 export class TreasureService {
-    constructor(private readonly expeditionService: ExpeditionService) {}
+    constructor(
+        private readonly expeditionService: ExpeditionService,
+        private readonly chestService: ChestService,
+    ) {}
 
-    generateTreasure(): TreasureInterface {
-        const chance: number = getRandomBetween(1, 100);
+    async generateTreasure(): Promise<TreasureInterface> {
+        const chest = await this.chestService.getRandomChest();
 
-        if (chance <= LargeChest.chance) {
-            return {
-                name: LargeChest.name,
-                size: LargeChest.size,
-                isOpen: false,
-            };
-        } else if (
-            chance > LargeChest.chance &&
-            chance <= MediumChest.chance + LargeChest.chance
-        ) {
-            return {
-                name: MediumChest.name,
-                size: MediumChest.size,
-                isOpen: false,
-            };
-        } else {
-            return {
-                name: SmallChest.name,
-                size: SmallChest.size,
-                isOpen: false,
-            };
+        const rewards: Reward[] = [];
+
+        const randomCoinChance = getRandomBetween(1, 100);
+
+        if (randomCoinChance <= chest.coinChance) {
+            const coin = getRandomBetween(chest.minCoins, chest.maxCoins);
+
+            rewards.push({
+                id: randomUUID(),
+                type: IExpeditionNodeReward.Gold,
+                amount: coin,
+                taken: false,
+            });
         }
+
+        return {
+            name: chest.name,
+            size: chest.size,
+            isOpen: false,
+            rewards,
+        };
     }
 
     async openChest(client: Socket): Promise<void> {
-        const currentNode = await this.expeditionService.getCurrentNode({
-            clientId: client.id,
-        });
-
         await this.expeditionService.updateByFilter(
             {
                 clientId: client.id,
-                'map.id': currentNode.nodeId,
             },
             {
                 $set: {
-                    'map.$.private_data.treasure.isOpen': true,
+                    'currentNode.treasureData.isOpen': true,
                 },
             },
         );

@@ -2,6 +2,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
 import { MerchantItems } from 'src/game/merchant/interfaces';
 import { AttachedStatus, StatusType } from 'src/game/status/interfaces';
+import { TreasureInterface } from 'src/game/treasure/treasure.interfaces';
 import {
     CombatTurnEnum,
     ExpeditionMapNodeTypeEnum,
@@ -67,6 +68,7 @@ export class Expedition {
             rewards: Reward[];
         };
         merchantItems?: MerchantItems;
+        treasureData?: TreasureInterface;
     };
 
     @Prop({
