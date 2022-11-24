@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { randomUUID } from 'crypto';
 import { pick, random } from 'lodash';
-import { Socket } from 'socket.io';
 import {
     getRandomBetween,
     getRandomItemByWeight,
@@ -43,7 +42,7 @@ export class CombatService {
     ) {}
 
     private node: IExpeditionNode;
-    private client: Socket;
+    private clientId: string;
 
     private readonly cardRewardByNodeSubType: Map<
         ExpeditionMapNodeTypeEnum,
@@ -65,10 +64,10 @@ export class CombatService {
 
     async generate(
         node: IExpeditionNode,
-        client: Socket,
+        clientId: string,
     ): Promise<IExpeditionCurrentNode> {
         this.node = node;
-        this.client = client;
+        this.clientId = clientId;
 
         // Get initial player stats
         const { initialEnergy, maxEnergy, initialHandPileSize } =
@@ -77,7 +76,7 @@ export class CombatService {
         // Get current health
         const { hpCurrent, hpMax, cards } =
             await this.expeditionService.getPlayerState({
-                clientId: this.client.id,
+                clientId: this.clientId,
             });
 
         const handCards = cards

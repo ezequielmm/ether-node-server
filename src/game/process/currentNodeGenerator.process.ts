@@ -1,34 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { randomUUID } from 'crypto';
-import { pick, random } from 'lodash';
-import {
-    getRandomBetween,
-    getRandomItemByWeight,
-    removeCardsFromPile,
-} from 'src/utils';
-import { CardDescriptionFormatter } from '../cardDescriptionFormatter/cardDescriptionFormatter';
 import { CombatService } from '../combat/combat.service';
-import { CardRarityEnum } from '../components/card/card.enum';
-import { CardDocument } from '../components/card/card.schema';
-import { CardService } from '../components/card/card.service';
-import { EnemyService } from '../components/enemy/enemy.service';
-import { EnemyId } from '../components/enemy/enemy.type';
+import { ExpeditionMapNodeTypeEnum } from '../components/expedition/expedition.enum';
 import {
-    CombatTurnEnum,
-    ExpeditionMapNodeTypeEnum,
-    IExpeditionNodeReward,
-} from '../components/expedition/expedition.enum';
-import {
-    CardPreview,
-    CardReward,
     IExpeditionCurrentNode,
-    IExpeditionCurrentNodeDataEnemy,
     IExpeditionNode,
-    Reward,
 } from '../components/expedition/expedition.interface';
-import { ExpeditionService } from '../components/expedition/expedition.service';
-import { SettingsService } from '../components/settings/settings.service';
-import { StatusType } from '../status/interfaces';
 import { TreasureService } from '../treasure/treasure.service';
 
 @Injectable()
@@ -37,8 +13,6 @@ export class CurrentNodeGeneratorProcess {
     private clientId: string;
 
     constructor(
-        private readonly expeditionService: ExpeditionService,
-        private readonly settingsService: SettingsService,
         private readonly treasureService: TreasureService,
         private readonly combatService: CombatService,
     ) {}
@@ -60,7 +34,9 @@ export class CurrentNodeGeneratorProcess {
         }
     }
 
-    private async getCombatCurrentNode(): Promise<IExpeditionCurrentNode> {}
+    private async getCombatCurrentNode(): Promise<IExpeditionCurrentNode> {
+        return await this.combatService.generate(this.node, this.clientId);
+    }
 
     private getCurrentNode(): IExpeditionCurrentNode {
         return {
