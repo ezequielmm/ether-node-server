@@ -30,13 +30,13 @@ export enum CardTargetedEnum {
 }
 
 export enum CardKeywordEnum {
-    Exhaust = 'exhaust',
-    Innate = 'innate',
-    Fade = 'fade',
-    Retain = 'retain',
-    Unplayable = 'unplayable',
-    None = 'none',
-    EndTurn = 'endTurn',
+    Exhaust = 'exhaust', //	Can be played once, then removed until the end of combat
+    Innate = 'innate', // Always drawn in the first hand per combat
+    Fade = 'fade', // Automatically exhausted if in hand at end of turn
+    Retain = 'retain', // Not discarded if in hand at end of turn
+    Unplayable = 'unplayable', // Cannot be played
+    None = 'none', // The card will be moved to the Discard Pile (default value)
+    EndTurn = 'endTurn', // Ends the turn when played
 }
 
 export enum CardEnergyEnum {
