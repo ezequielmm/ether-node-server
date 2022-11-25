@@ -27,6 +27,7 @@ export const ShieldBashCardUpgraded: Card = {
     },
     showPointer: true,
     isUpgraded: true,
+    isActive: true,
 };
 
 export const ShieldBashCard: Card = {
@@ -55,4 +56,5 @@ export const ShieldBashCard: Card = {
     showPointer: true,
     isUpgraded: false,
     upgradedCardId: ShieldBashCardUpgraded.cardId,
+    isActive: true,
 };

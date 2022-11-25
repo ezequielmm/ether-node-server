@@ -25,6 +25,7 @@ function nodeFactory(
     type: ExpeditionMapNodeTypeEnum,
     subType: ExpeditionMapNodeTypeEnum,
     private_data: any,
+    title?: string,
 ):
     | CombatBoss
     | CombatElite
@@ -79,19 +80,59 @@ function nodeFactory(
             return new Portal(id, act, step, type, subType, private_data);
 
         case ExpeditionMapNodeTypeEnum.RoyalHouse:
-            return new RoyalHouse(id, act, step, type, subType, private_data);
+            return new RoyalHouse(
+                id,
+                act,
+                step,
+                type,
+                subType,
+                private_data,
+                title,
+            );
 
         case ExpeditionMapNodeTypeEnum.RoyalHouseA:
-            return new RoyalHouseA(id, act, step, type, subType, private_data);
+            return new RoyalHouseA(
+                id,
+                act,
+                step,
+                type,
+                subType,
+                private_data,
+                title,
+            );
 
         case ExpeditionMapNodeTypeEnum.RoyalHouseB:
-            return new RoyalHouseB(id, act, step, type, subType, private_data);
+            return new RoyalHouseB(
+                id,
+                act,
+                step,
+                type,
+                subType,
+                private_data,
+                title,
+            );
 
         case ExpeditionMapNodeTypeEnum.RoyalHouseC:
-            return new RoyalHouseC(id, act, step, type, subType, private_data);
+            return new RoyalHouseC(
+                id,
+                act,
+                step,
+                type,
+                subType,
+                private_data,
+                title,
+            );
 
         case ExpeditionMapNodeTypeEnum.RoyalHouseD:
-            return new RoyalHouseD(id, act, step, type, subType, private_data);
+            return new RoyalHouseD(
+                id,
+                act,
+                step,
+                type,
+                subType,
+                private_data,
+                title,
+            );
 
         case ExpeditionMapNodeTypeEnum.Event:
             return new Event(id, act, step, type, subType, private_data);

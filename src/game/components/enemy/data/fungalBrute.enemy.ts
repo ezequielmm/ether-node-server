@@ -19,9 +19,18 @@ export const fungalBruteData: Enemy = {
     size: EnemySizeEnum.Giant,
     description:
         'Massive, stomping fungal organism that stomps the ground, causing an area of damage where the ground shakes around him. Additionally, he can send large toxic spores flying around him and the knights have to dodge them or prepare to be paralyzed and stomped on.',
-    healthRange: [999, 999],
+    healthRange: [140, 140],
     scripts: [
         {
+            id: 0,
+            intentions: [],
+            next: [
+                { probability: 0.5, scriptId: 1 },
+                { probability: 0.5, scriptId: 2 },
+            ],
+        },
+        {
+            id: 1,
             intentions: [
                 {
                     type: EnemyIntentionType.Defend,
@@ -48,6 +57,7 @@ export const fungalBruteData: Enemy = {
                             args: {
                                 value: 2,
                                 cardId: StunnedCard.cardId,
+                                destination: 'draw',
                             },
                         },
                     ],
@@ -56,15 +66,16 @@ export const fungalBruteData: Enemy = {
             next: [
                 {
                     probability: 0.5,
-                    scriptIndex: 2,
+                    scriptId: 2,
                 },
                 {
                     probability: 0.5,
-                    scriptIndex: 3, // Need to integrate [If Sporelings=0] Script 4: Spawn; [If Sporelings > 0] Script 5: Cultivate
+                    scriptId: 4, // Need to integrate [If Sporelings=0] Script 4: Spawn; [If Sporelings > 0] Script 5: Cultivate
                 },
             ],
         },
         {
+            id: 2,
             intentions: [
                 {
                     type: EnemyIntentionType.Defend,
@@ -84,11 +95,12 @@ export const fungalBruteData: Enemy = {
             next: [
                 {
                     probability: 1,
-                    scriptIndex: 1,
+                    scriptId: 3,
                 },
             ],
         },
         {
+            id: 3,
             intentions: [
                 {
                     type: EnemyIntentionType.Attack,
@@ -108,11 +120,11 @@ export const fungalBruteData: Enemy = {
             next: [
                 {
                     probability: 0.5,
-                    scriptIndex: 1,
+                    scriptId: 2,
                 },
                 {
                     probability: 0.5,
-                    scriptIndex: 3,
+                    scriptId: 1, // TEMPORAL REDIRECTION
                 },
             ],
         },

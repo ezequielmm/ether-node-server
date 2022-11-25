@@ -6,6 +6,7 @@ import { SocketModule } from './socket/socket.module';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { composeMongooseModuleOptions } from './dbConfiguration';
+// import { DebugLogger } from './tests/integrationTestServer';
 
 @Module({
     imports: [

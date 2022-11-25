@@ -1,5 +1,7 @@
+import { attachStatusEffect } from 'src/game/effects/attachStatus/constants';
 import { damageEffect } from 'src/game/effects/damage/constants';
 import { defenseEffect } from 'src/game/effects/defense/constants';
+import { spikesStatus } from 'src/game/status/spikes/constants';
 import { CardTargetedEnum } from '../../card/card.enum';
 import {
     EnemyTypeEnum,
@@ -20,11 +22,22 @@ export const thornWolfData: Enemy = {
     healthRange: [85, 90],
     scripts: [
         {
+            id: 0,
+            intentions: [],
+            next: [
+                { probability: 0.5, scriptId: 1 },
+                { probability: 0.5, scriptId: 2 },
+            ],
+        },
+        {
+            id: 1,
             intentions: [
                 {
                     type: EnemyIntentionType.Attack,
                     target: CardTargetedEnum.Player,
                     value: 15,
+                    //  This effect 'Summon ' was not developed so I have added 'damageEffect' one
+                    //  TODO: Add Summon effect
                     effects: [
                         {
                             effect: damageEffect.name,
@@ -39,15 +52,17 @@ export const thornWolfData: Enemy = {
             next: [
                 {
                     probability: 0.5,
-                    scriptIndex: 2,
+                    scriptId: 3,
                 },
                 {
+                    // TODO: Add dynamic calculation for next script id based on current combat context
                     probability: 0.5,
-                    scriptIndex: 3,
+                    scriptId: 4,
                 },
             ],
         },
         {
+            id: 2,
             intentions: [
                 {
                     type: EnemyIntentionType.Attack,
@@ -81,15 +96,16 @@ export const thornWolfData: Enemy = {
             next: [
                 {
                     probability: 0.5,
-                    scriptIndex: 2,
+                    scriptId: 3,
                 },
                 {
                     probability: 0.5,
-                    scriptIndex: 3,
+                    scriptId: 4,
                 },
             ],
         },
         {
+            id: 3,
             intentions: [
                 {
                     type: EnemyIntentionType.Buff,
@@ -109,13 +125,15 @@ export const thornWolfData: Enemy = {
                     type: EnemyIntentionType.Buff,
                     target: CardTargetedEnum.Self,
                     value: 2,
-                    //  This effect 'Buff ' was not developed so I have added x one
                     effects: [
                         {
-                            effect: defenseEffect.name,
+                            effect: attachStatusEffect.name,
                             target: CardTargetedEnum.Self,
                             args: {
-                                value: 2,
+                                statusName: spikesStatus.name,
+                                statusArgs: {
+                                    counter: 2,
+                                },
                             },
                         },
                     ],
@@ -124,21 +142,23 @@ export const thornWolfData: Enemy = {
             next: [
                 {
                     probability: 0.5,
-                    scriptIndex: 0,
+                    scriptId: 1,
                 },
                 {
                     probability: 0.5,
-                    scriptIndex: 1,
+                    scriptId: 2,
                 },
             ],
         },
         {
+            id: 4,
             intentions: [
                 {
                     type: EnemyIntentionType.Defend,
                     target: CardTargetedEnum.Self,
                     value: 5,
-                    //  This effect 'Summon ' was not developed so I have added x one
+                    //  This effect 'Summon ' was not developed so I have added 'defenseEffect' one
+                    //  TODO: Replace defense effect with Summon effect once it is created
                     effects: [
                         {
                             effect: defenseEffect.name,
@@ -153,11 +173,11 @@ export const thornWolfData: Enemy = {
             next: [
                 {
                     probability: 0.5,
-                    scriptIndex: 0,
+                    scriptId: 1,
                 },
                 {
                     probability: 0.5,
-                    scriptIndex: 1,
+                    scriptId: 2,
                 },
             ],
         },

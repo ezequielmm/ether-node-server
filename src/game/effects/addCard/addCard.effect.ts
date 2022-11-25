@@ -5,6 +5,11 @@ import { CardService } from 'src/game/components/card/card.service';
 import { IExpeditionPlayerStateDeckCard } from 'src/game/components/expedition/expedition.interface';
 import { ExpeditionService } from 'src/game/components/expedition/expedition.service';
 import { PlayerService } from 'src/game/components/player/player.service';
+import {
+    StandardResponse,
+    SWARAction,
+    SWARMessageType,
+} from 'src/game/standardResponse/standardResponse';
 import { EffectDecorator } from '../effects.decorator';
 import { EffectDTO } from '../effects.interface';
 import { addCardEffect } from './contants';
@@ -62,6 +67,7 @@ export class AddCardEffect {
                 showPointer: card.showPointer,
                 pool: card.pool,
                 isUpgraded: card.isUpgraded,
+                isActive: true,
             }));
 
         // Now we save the cards on the destination deck
@@ -70,6 +76,17 @@ export class AddCardEffect {
             [destination]: [...cards[destination], ...cardsToAdd],
         });
 
-        // TODO: create SWAR message to send the frontend the new cards added
+        client.emit(
+            'PutData',
+            StandardResponse.respond({
+                message_type: SWARMessageType.PlayerAffected,
+                action: SWARAction.AddCard,
+                data: cardsToAdd.map((card) => ({
+                    destination,
+                    id: card.id,
+                    card,
+                })),
+            }),
+        );
     }
 }

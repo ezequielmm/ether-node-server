@@ -14,7 +14,7 @@ import { phantomPhialEffect } from './constants';
 @Injectable()
 export class PhantomPhialEffect implements EffectHandler {
     constructor(
-        private readonly moveCardAction: MoveCardAction,
+        private readonly moveCardToHandAction: MoveCardAction,
         private readonly historyService: HistoryService,
     ) {}
 
@@ -27,10 +27,13 @@ export class PhantomPhialEffect implements EffectHandler {
 
         const cardIds = _.map(_.compact(_.take(cardsPlayed, 2)), 'id');
 
-        await this.moveCardAction.handle({
+        await this.moveCardToHandAction.handle({
             client: ctx.client,
             cardIds,
-            cardIsFree: true,
+            callback: (card) => {
+                card.energy = 0;
+                return card;
+            },
             originPile: CardSelectionScreenOriginPileEnum.Discard,
         });
     }

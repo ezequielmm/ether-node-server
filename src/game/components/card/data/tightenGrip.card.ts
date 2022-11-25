@@ -25,6 +25,7 @@ export const TightenGripCardUpgraded: Card = {
     },
     showPointer: false,
     isUpgraded: true,
+    isActive: true,
 };
 
 export const TightenGripCard: Card = {
@@ -51,4 +52,5 @@ export const TightenGripCard: Card = {
     showPointer: false,
     isUpgraded: false,
     upgradedCardId: TightenGripCardUpgraded.cardId,
+    isActive: true,
 };

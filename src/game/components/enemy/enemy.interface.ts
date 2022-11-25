@@ -1,5 +1,4 @@
 import { JsonEffect } from 'src/game/effects/effects.interface';
-import { JsonStatus } from 'src/game/status/interfaces';
 import { CardTargetedEnum } from '../card/card.enum';
 import { IExpeditionCurrentNodeDataEnemy } from '../expedition/expedition.interface';
 import { EnemyIntentionType } from './enemy.enum';
@@ -9,15 +8,15 @@ export interface EnemyIntention {
     target: CardTargetedEnum;
     value: any;
     effects?: JsonEffect[];
-    status?: JsonStatus[];
 }
 
 export interface EnemyNextScript {
     probability: number;
-    scriptIndex: number;
+    scriptId: number;
 }
 
 export interface EnemyScript {
+    id: number;
     intentions: EnemyIntention[];
     next: EnemyNextScript[];
 }

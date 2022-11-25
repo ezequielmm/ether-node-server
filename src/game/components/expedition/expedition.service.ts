@@ -76,20 +76,14 @@ export class ExpeditionService {
         id: string,
         query: UpdateQuery<ExpeditionDocument>,
     ): Promise<boolean> {
-        // Using udpateOne to save a bit of time and bandwidth
+        // Using updateOne to save a bit of time and bandwidth
         // it is not necessary to return the updated document
-        const response = await this.expedition.updateOne(
-            {
-                _id: id,
-            },
-            query,
-            {
-                new: true,
-            },
-        );
+        const response = await this.expedition.findByIdAndUpdate(id, query, {
+            new: true,
+        });
 
         // Return if expedition was updated
-        return response.modifiedCount > 0;
+        return response !== null;
     }
 
     async updateByFilter(
@@ -325,7 +319,7 @@ export class ExpeditionService {
                 break;
         }
 
-        if (!targets) throw new Error('Target ${type} not found');
+        if (!targets) throw new Error(`Target ${type} not found`);
 
         return targets;
     }

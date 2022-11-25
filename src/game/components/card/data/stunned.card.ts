@@ -16,4 +16,5 @@ export const StunnedCard: Card = {
     },
     showPointer: false,
     isUpgraded: false,
+    isActive: true,
 };

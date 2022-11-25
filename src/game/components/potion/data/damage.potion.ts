@@ -18,4 +18,5 @@ export const damagePotion: Potion = {
     ],
     usableOutsideCombat: false,
     showPointer: true,
+    isActive: true,
 };

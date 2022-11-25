@@ -25,6 +25,7 @@ export const AttackCardUpgraded: Card = {
     },
     showPointer: true,
     isUpgraded: true,
+    isActive: true,
 };
 
 export const AttackCard: Card = {
@@ -51,4 +52,5 @@ export const AttackCard: Card = {
     showPointer: true,
     isUpgraded: false,
     upgradedCardId: AttackCardUpgraded.cardId,
+    isActive: true,
 };

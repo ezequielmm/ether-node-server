@@ -67,9 +67,9 @@ export class ConfusionStatus implements StatusEffectHandler {
     private confuseStatuses(source: ExpeditionEntity) {
         let statuses: JsonStatus[] = [];
         if (EnemyService.isEnemy(source)) {
-            statuses = source.value.currentScript.intentions.flatMap(
-                (intention) => intention.status || [],
-            );
+            // statuses = source.value.currentScript.intentions.flatMap(
+            // (intention) => intention.statuses || [],
+            // );
         } else if (PlayerService.isPlayer(source)) {
             statuses = source.value.combatState.cards.hand.flatMap(
                 (card) => card.properties.statuses,

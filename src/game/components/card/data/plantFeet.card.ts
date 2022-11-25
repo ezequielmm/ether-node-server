@@ -26,6 +26,7 @@ export const PlantFeetCardUpgraded: Card = {
     },
     showPointer: false,
     isUpgraded: false,
+    isActive: true,
 };
 
 export const PlantFeetCard: Card = {
@@ -53,4 +54,5 @@ export const PlantFeetCard: Card = {
     showPointer: false,
     isUpgraded: false,
     upgradedCardId: PlantFeetCardUpgraded.cardId,
+    isActive: true,
 };

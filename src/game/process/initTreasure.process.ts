@@ -1,56 +1,74 @@
 import { Injectable } from '@nestjs/common';
 import { Socket } from 'socket.io';
+import { ExpeditionMapNodeStatusEnum } from '../components/expedition/expedition.enum';
 import { IExpeditionNode } from '../components/expedition/expedition.interface';
 import { ExpeditionService } from '../components/expedition/expedition.service';
-import { restoreMap } from '../map/app';
 import {
     StandardResponse,
-    SWARAction,
     SWARMessageType,
+    SWARAction,
 } from '../standardResponse/standardResponse';
-import { TreasureService } from '../treasure/treasure.service';
 import { CurrentNodeGeneratorProcess } from './currentNodeGenerator.process';
 
 @Injectable()
 export class InitTreasureProcess {
     constructor(
         private readonly currentNodeGeneratorProcess: CurrentNodeGeneratorProcess,
-        private readonly treasureService: TreasureService,
         private readonly expeditionService: ExpeditionService,
     ) {}
 
-    async process(client: Socket, node: IExpeditionNode) {
+    private clientId: string;
+    private node: IExpeditionNode;
+
+    async process(client: Socket, node: IExpeditionNode): Promise<string> {
+        this.clientId = client.id;
+        this.node = node;
+
+        switch (node.status) {
+            case ExpeditionMapNodeStatusEnum.Available:
+                return await this.createTreasureData();
+            case ExpeditionMapNodeStatusEnum.Active:
+                return await this.continueTreasure();
+        }
+    }
+
+    private async createTreasureData(): Promise<string> {
         const currentNode =
             await this.currentNodeGeneratorProcess.getCurrentNodeData(
-                node,
-                client.id,
+                this.node,
+                this.clientId,
             );
 
-        const map = await this.expeditionService.getExpeditionMap({
-            clientId: client.id,
-        });
-        const expeditionMap = restoreMap(map);
-
-        const selectedNode = expeditionMap.fullCurrentMap.get(
-            currentNode.nodeId,
-        );
-        const treasure = this.treasureService.generateTreasure();
-
-        selectedNode.setPrivate_data({ treasure });
-
-        await this.expeditionService.update(client.id, {
+        await this.expeditionService.update(this.clientId, {
             currentNode,
-            map: expeditionMap.getMap,
         });
 
-        client.emit(
-            'TreasureNodeUpdate',
-            StandardResponse.respond({
-                message_type: SWARMessageType.TreasureNodeUpdate,
-                action: SWARAction.TreasureNodeUpdate,
-                data: treasure,
-            }),
-        );
-        return { treasure };
+        return StandardResponse.respond({
+            message_type: SWARMessageType.TreasureUpdate,
+            action: SWARAction.BeginTreasure,
+            data: null,
+        });
+    }
+
+    private async continueTreasure(): Promise<string> {
+        const {
+            treasureData: { isOpen },
+        } = await this.expeditionService.getCurrentNode({
+            clientId: this.clientId,
+        });
+
+        if (isOpen) {
+            return StandardResponse.respond({
+                message_type: SWARMessageType.TreasureUpdate,
+                action: SWARAction.ContinueTreasure,
+                data: null,
+            });
+        } else {
+            return StandardResponse.respond({
+                message_type: SWARMessageType.TreasureUpdate,
+                action: SWARAction.BeginTreasure,
+                data: null,
+            });
+        }
     }
 }

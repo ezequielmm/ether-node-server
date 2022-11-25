@@ -26,6 +26,7 @@ export const SharpenBladeCardUpgraded: Card = {
     },
     showPointer: false,
     isUpgraded: true,
+    isActive: true,
 };
 
 export const SharpenBladeCard: Card = {
@@ -52,4 +53,5 @@ export const SharpenBladeCard: Card = {
     showPointer: false,
     isUpgraded: false,
     upgradedCardId: SharpenBladeCardUpgraded.cardId,
+    isActive: true,
 };

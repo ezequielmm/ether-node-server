@@ -33,4 +33,5 @@ export const flaskOfResolvePotion: Potion = {
     ],
     usableOutsideCombat: false,
     showPointer: false,
+    isActive: true,
 };

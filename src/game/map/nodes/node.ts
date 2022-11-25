@@ -15,6 +15,7 @@ class Node implements IExpeditionNode {
     public exits: Array<number>;
     public enter: Array<number>;
     public state: any;
+    public title?: string;
     public private_data: any;
     constructor(
         id: number,
@@ -23,6 +24,7 @@ class Node implements IExpeditionNode {
         type: ExpeditionMapNodeTypeEnum,
         subType: ExpeditionMapNodeTypeEnum,
         private_data: any,
+        title?: string,
     ) {
         this.id = id;
         this.act = act;
@@ -34,6 +36,7 @@ class Node implements IExpeditionNode {
         this.status = ExpeditionMapNodeStatusEnum.Disabled;
         this.private_data = private_data;
         this.state = {};
+        if (title) this.title = title;
     }
 
     public get isActive(): boolean {
@@ -72,8 +75,12 @@ class Node implements IExpeditionNode {
         expeditionMap.disableAllNodesExcept(this.id);
         this.setActive();
         expeditionMap.activeNode = this;
-        this.complete(expeditionMap);
-        this.stateInitialize();
+        if (
+            this.type === ExpeditionMapNodeTypeEnum.RoyalHouse ||
+            this.type === ExpeditionMapNodeTypeEnum.Portal
+        ) {
+            this.complete(expeditionMap);
+        }
     }
 
     public setPrivate_data(private_data) {
@@ -89,10 +96,6 @@ class Node implements IExpeditionNode {
         this.exits.forEach((exit) => {
             expeditionMap.fullCurrentMap.get(exit).setAvailable();
         });
-    }
-
-    protected stateInitialize() {
-        // TODO: add initialization
     }
 }
 

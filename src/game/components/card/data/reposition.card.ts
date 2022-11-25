@@ -4,7 +4,7 @@ import { Card } from '../card.schema';
 
 export const RepositionCardUpgraded: Card = {
     cardId: 126,
-    name: 'Reposition',
+    name: 'Reposition+',
     rarity: CardRarityEnum.Rare,
     cardType: CardTypeEnum.Skill,
     pool: 'knight',
@@ -25,6 +25,7 @@ export const RepositionCardUpgraded: Card = {
     },
     showPointer: false,
     isUpgraded: true,
+    isActive: true,
 };
 
 export const RepositionCard: Card = {
@@ -51,4 +52,5 @@ export const RepositionCard: Card = {
     showPointer: false,
     isUpgraded: false,
     upgradedCardId: RepositionCardUpgraded.cardId,
+    isActive: true,
 };

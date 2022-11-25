@@ -28,6 +28,7 @@ export const ForceFieldCardUpgraded: Card = {
     },
     showPointer: false,
     isUpgraded: true,
+    isActive: true,
 };
 
 export const ForceFieldCard: Card = {
@@ -52,4 +53,5 @@ export const ForceFieldCard: Card = {
     showPointer: false,
     isUpgraded: false,
     upgradedCardId: ForceFieldCardUpgraded.cardId,
+    isActive: true,
 };

@@ -1,4 +1,3 @@
-import { resolveStatus } from 'src/game/status/resolve/constants';
 import { damageEffect } from 'src/game/effects/damage/constants';
 import { defenseEffect } from 'src/game/effects/defense/constants';
 import { CardTargetedEnum } from '../../card/card.enum';
@@ -9,6 +8,9 @@ import {
     EnemyIntentionType,
 } from '../enemy.enum';
 import { Enemy } from '../enemy.schema';
+import { feebleStatus } from 'src/game/status/feeble/constants';
+import { trapped } from 'src/game/status/trapped/constants';
+import { attachStatusEffect } from 'src/game/effects/attachStatus/constants';
 
 export const trapelicanData: Enemy = {
     enemyId: 12,
@@ -20,6 +22,39 @@ export const trapelicanData: Enemy = {
     healthRange: [26, 30],
     scripts: [
         {
+            id: 0,
+            intentions: [
+                {
+                    type: EnemyIntentionType.Debuff,
+                    target: CardTargetedEnum.Player,
+                    value: 1,
+                    effects: [
+                        {
+                            effect: attachStatusEffect.name,
+                            target: CardTargetedEnum.Self,
+                            args: {
+                                statusName: trapped.name,
+                                statusArgs: {
+                                    counter: 1,
+                                },
+                            },
+                        },
+                    ],
+                },
+            ],
+            next: [
+                {
+                    probability: 0.7,
+                    scriptId: 1,
+                },
+                {
+                    probability: 0.3,
+                    scriptId: 2,
+                },
+            ],
+        },
+        {
+            id: 1,
             intentions: [
                 {
                     type: EnemyIntentionType.Attack,
@@ -39,16 +74,18 @@ export const trapelicanData: Enemy = {
             next: [
                 {
                     probability: 1,
-                    scriptIndex: 2,
+                    scriptId: 3,
                 },
             ],
         },
+
         {
+            id: 2,
             intentions: [
                 {
-                    type: EnemyIntentionType.Attack,
+                    type: EnemyIntentionType.Defend,
                     target: CardTargetedEnum.Self,
-                    value: 3,
+                    value: 4,
                     effects: [
                         {
                             effect: defenseEffect.name,
@@ -60,7 +97,7 @@ export const trapelicanData: Enemy = {
                     ],
                 },
                 {
-                    type: EnemyIntentionType.Defend,
+                    type: EnemyIntentionType.Attack,
                     target: CardTargetedEnum.Player,
                     value: 3,
                     effects: [
@@ -77,26 +114,30 @@ export const trapelicanData: Enemy = {
             next: [
                 {
                     probability: 0.6,
-                    scriptIndex: 2,
+                    scriptId: 3,
                 },
                 {
                     probability: 0.4,
-                    scriptIndex: 0,
+                    scriptId: 1,
                 },
             ],
         },
         {
+            id: 3,
             intentions: [
                 {
                     type: EnemyIntentionType.Buff,
                     target: CardTargetedEnum.Player,
                     value: 1,
-                    status: [
+                    effects: [
                         {
-                            name: resolveStatus.name,
-                            attachTo: CardTargetedEnum.Player,
+                            effect: attachStatusEffect.name,
+                            target: CardTargetedEnum.Player,
                             args: {
-                                counter: 1,
+                                statusName: feebleStatus.name,
+                                statusArgs: {
+                                    counter: 1,
+                                },
                             },
                         },
                     ],
@@ -105,12 +146,15 @@ export const trapelicanData: Enemy = {
                     type: EnemyIntentionType.Debuff,
                     target: CardTargetedEnum.Player,
                     value: 1,
-                    status: [
+                    effects: [
                         {
-                            name: resolveStatus.name,
-                            attachTo: CardTargetedEnum.Self,
+                            effect: attachStatusEffect.name,
+                            target: CardTargetedEnum.Self,
                             args: {
-                                counter: 1,
+                                statusName: trapped.name,
+                                statusArgs: {
+                                    counter: 1,
+                                },
                             },
                         },
                     ],
@@ -119,11 +163,25 @@ export const trapelicanData: Enemy = {
             next: [
                 {
                     probability: 0.7,
-                    scriptIndex: 0,
+                    scriptId: 1,
                 },
                 {
                     probability: 0.3,
-                    scriptIndex: 1,
+                    scriptId: 2,
+                },
+            ],
+        },
+        {
+            id: 4,
+            intentions: [],
+            next: [
+                {
+                    probability: 0.3,
+                    scriptId: 1,
+                },
+                {
+                    probability: 0.7,
+                    scriptId: 2,
                 },
             ],
         },

@@ -1,4 +1,6 @@
+import { attachStatusEffect } from 'src/game/effects/attachStatus/constants';
 import { damageEffect } from 'src/game/effects/damage/constants';
+import { resolveStatus } from 'src/game/status/resolve/constants';
 import { CardTargetedEnum } from '../../card/card.enum';
 import {
     EnemyTypeEnum,
@@ -19,6 +21,43 @@ export const swampGoblin2Data: Enemy = {
     healthRange: [38, 44],
     scripts: [
         {
+            id: 0,
+            intentions: [],
+            next: [
+                { probability: 0.7, scriptId: 1 },
+                { probability: 0.3, scriptId: 2 },
+            ],
+        },
+        {
+            id: 1,
+            intentions: [
+                {
+                    type: EnemyIntentionType.Buff,
+                    target: CardTargetedEnum.Self,
+                    value: 2,
+                    effects: [
+                        {
+                            effect: attachStatusEffect.name,
+                            target: CardTargetedEnum.Self,
+                            args: {
+                                statusName: resolveStatus.name,
+                                statusArgs: {
+                                    counter: 3,
+                                },
+                            },
+                        },
+                    ],
+                },
+            ],
+            next: [
+                {
+                    probability: 1,
+                    scriptId: 2,
+                },
+            ],
+        },
+        {
+            id: 2,
             intentions: [
                 {
                     type: EnemyIntentionType.Attack,
@@ -38,11 +77,11 @@ export const swampGoblin2Data: Enemy = {
             next: [
                 {
                     probability: 0.7,
-                    scriptIndex: 1,
+                    scriptId: 1,
                 },
                 {
                     probability: 0.3,
-                    scriptIndex: 3,
+                    scriptId: 2,
                 },
             ],
         },

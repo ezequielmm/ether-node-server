@@ -12,7 +12,7 @@ export class CharacterService {
     ) {}
 
     async findAll(): Promise<CharacterDocument[]> {
-        return this.character.find().lean();
+        return this.character.find({ isActive: true }).lean();
     }
 
     async findOne(payload: GetCharacterDTO): Promise<CharacterDocument> {

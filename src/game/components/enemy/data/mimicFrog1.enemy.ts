@@ -9,6 +9,9 @@ import {
 } from '../enemy.enum';
 import { Enemy } from '../enemy.schema';
 import { fatigue } from 'src/game/status/fatigue/constants';
+import { StunnedCard } from '../../card/data/stunned.card';
+import { addCardEffect } from 'src/game/effects/addCard/contants';
+import { attachStatusEffect } from 'src/game/effects/attachStatus/constants';
 
 export const mimicFrog1Data: Enemy = {
     enemyId: 8,
@@ -20,6 +23,15 @@ export const mimicFrog1Data: Enemy = {
     healthRange: [22, 28],
     scripts: [
         {
+            id: 0,
+            intentions: [],
+            next: [
+                { probability: 0.7, scriptId: 1 },
+                { probability: 0.3, scriptId: 2 },
+            ],
+        },
+        {
+            id: 1,
             intentions: [
                 {
                     type: EnemyIntentionType.Attack,
@@ -36,16 +48,17 @@ export const mimicFrog1Data: Enemy = {
                     ],
                 },
                 {
-                    type: EnemyIntentionType.Defend,
-                    target: CardTargetedEnum.Self,
-                    value: 1,
-                    //  This effect 'cardAdd' was not developed so I have added x one
+                    type: EnemyIntentionType.Stun,
+                    target: CardTargetedEnum.Player,
+                    value: 2,
                     effects: [
                         {
-                            effect: defenseEffect.name,
-                            target: CardTargetedEnum.Self,
+                            effect: addCardEffect.name,
+                            target: CardTargetedEnum.Player,
                             args: {
-                                value: 1,
+                                value: 2,
+                                cardId: StunnedCard.cardId,
+                                destination: 'draw',
                             },
                         },
                     ],
@@ -54,15 +67,16 @@ export const mimicFrog1Data: Enemy = {
             next: [
                 {
                     probability: 0.5,
-                    scriptIndex: 2,
+                    scriptId: 3,
                 },
                 {
                     probability: 0.5,
-                    scriptIndex: 3,
+                    scriptId: 4,
                 },
             ],
         },
         {
+            id: 2,
             intentions: [
                 {
                     type: EnemyIntentionType.Attack,
@@ -82,27 +96,30 @@ export const mimicFrog1Data: Enemy = {
             next: [
                 {
                     probability: 0.6,
-                    scriptIndex: 3,
+                    scriptId: 4,
                 },
                 {
                     probability: 0.4,
-                    scriptIndex: 2,
+                    scriptId: 3,
                 },
             ],
         },
         {
+            id: 3,
             intentions: [
                 {
                     type: EnemyIntentionType.Debuff,
                     target: CardTargetedEnum.Player,
-                    value: 5,
-                    status: [
+                    value: 2,
+                    effects: [
                         {
-                            // TODO: Check if this is the correct status to add
-                            name: fatigue.name,
-                            attachTo: CardTargetedEnum.Player,
+                            effect: attachStatusEffect.name,
+                            target: CardTargetedEnum.Player,
                             args: {
-                                counter: 2,
+                                statusName: fatigue.name,
+                                statusArgs: {
+                                    counter: 2,
+                                },
                             },
                         },
                     ],
@@ -111,15 +128,16 @@ export const mimicFrog1Data: Enemy = {
             next: [
                 {
                     probability: 0.7,
-                    scriptIndex: 0,
+                    scriptId: 1,
                 },
                 {
                     probability: 0.3,
-                    scriptIndex: 1,
+                    scriptId: 2,
                 },
             ],
         },
         {
+            id: 4,
             intentions: [
                 {
                     type: EnemyIntentionType.Defend,
@@ -139,15 +157,15 @@ export const mimicFrog1Data: Enemy = {
             next: [
                 {
                     probability: 0.5,
-                    scriptIndex: 0,
+                    scriptId: 1,
                 },
                 {
                     probability: 0.25,
-                    scriptIndex: 1,
+                    scriptId: 2,
                 },
                 {
                     probability: 0.25,
-                    scriptIndex: 2,
+                    scriptId: 3,
                 },
             ],
         },

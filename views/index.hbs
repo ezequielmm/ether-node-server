@@ -1,0 +1,303 @@
+<html>
+    <head>
+        <meta charset='utf-8' />
+        <title>KOTE Socket Client</title>
+        <link
+            rel='stylesheet'
+            href='https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css'
+        />
+        <link rel='stylesheet' href='index.css' />
+        <script
+            src='https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.slim.min.js'
+        ></script>
+        <script
+            src='https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js'
+        ></script>
+        <script
+            src='https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js'
+        ></script>
+        <script
+            src='https://cdn.socket.io/4.5.3/socket.io.min.js'
+            integrity='sha384-WPFUvHkB1aHA5TDSZi6xtDgkF0wXJcIIxXhC6h8OT8EH3fC5PWro5pWJ1THjcfEi'
+            crossorigin='anonymous'
+        ></script>
+        <script src='index.js'></script>
+    </head>
+    <body>
+        <div class='container-fluid mt-3'>
+            <div class='row'>
+                <div class='col-md-6'>
+                    <div class='form-group'>
+                        <label for='authToken'>Bearer Auth Token</label>
+                        <div class='input-group'>
+                            <input
+                                type='text'
+                                id='authToken'
+                                class='form-control'
+                                value=''
+                                placeholder='Bearer auth token...'
+                            />
+                            <div class='input-group-append'>
+                                <button
+                                    type='button'
+                                    class='btn btn-primary'
+                                    id='btnConnectToSocket'
+                                >
+                                    Connect to Socket
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <hr />
+                    <div class='form-group'>
+                        <button
+                            type='button'
+                            class='btn btn-primary'
+                            id='btnSyncExpedition'
+                        >
+                            Sync Expedition
+                        </button>
+                    </div>
+                    <hr />
+                    <div class='form-group'>
+                        <label for='nodeId'>Select a node</label>
+                        <div class='input-group'>
+                            <input
+                                type='number'
+                                id='nodeId'
+                                min='1'
+                                class='form-control'
+                                value=''
+                                placeholder='Node id...'
+                            />
+                            <div class='input-group-append'>
+                                <button
+                                    type='button'
+                                    class='btn btn-primary'
+                                    id='btnSelectNode'
+                                >
+                                    Select Node
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <hr />
+                    <div class='form-group'>
+                        <button
+                            type='button'
+                            class='btn btn-primary'
+                            id='btnContinueExpedition'
+                        >
+                            Continue Expedition
+                        </button>
+                    </div>
+                    <hr />
+                    <div class='form-group'>
+                        <label for='cardId'>Card Id</label>
+                        <input
+                            type='text'
+                            id='cardId'
+                            class='form-control'
+                            value=''
+                            placeholder='Card ID to play...'
+                        />
+                    </div>
+                    <hr />
+                    <div class='form-group'>
+                        <label for='targetId'>Target Id (optional)</label>
+                        <input
+                            type='text'
+                            id='targetId'
+                            class='form-control'
+                            value=''
+                            placeholder='Target ID (optional)...'
+                        />
+                    </div>
+                    <hr />
+                    <div class='form-group'>
+                        <button
+                            type='button'
+                            class='btn btn-primary'
+                            id='btnPlayCard'
+                        >
+                            Play Card
+                        </button>
+                    </div>
+                    <hr />
+                    <div class='form-group'>
+                        <label for='getData'>Get Data Keys</label>
+                        <div class='input-group'>
+                            <select id='getData' class='form-control'>
+                                <option value='Energy'>Energy</option>
+                                <option value='Health'>Health</option>
+                                <option value='Players'>Players</option>
+                                <option value='CardsPiles'>CardsPiles</option>
+                                <option value='Enemies'>Enemies</option>
+                                <option value='Potions'>Potions</option>
+                                <option value='Trinkets'>Trinkets</option>
+                                <option value='Statuses'>Statuses</option>
+                                <option
+                                    value='EnemyIntents'
+                                >EnemyIntents</option>
+                                <option value='PlayerDeck'>PlayerDeck</option>
+                                <option value='CurrentNode'>CurrentNode</option>
+                                <option
+                                    value='UpgradableCards'
+                                >UpgradableCards</option>
+                                <option
+                                    value='TreasureData'
+                                >TreasureData</option>
+                                <option
+                                    value='MerchantData'
+                                >MerchantData</option>
+                            </select>
+                            <div class='input-group-append'>
+                                <button
+                                    type='button'
+                                    class='btn btn-primary'
+                                    id='btnGetData'
+                                >
+                                    Get Data
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <hr />
+                    <div class='form-group'>
+                        <button
+                            type='button'
+                            class='btn btn-primary'
+                            id='btnEndTurn'
+                        >
+                            End turn
+                        </button>
+                    </div>
+                    <hr />
+                    <div class='form-group'>
+                        <button
+                            type='button'
+                            class='btn btn-primary'
+                            id='btnCampRecoverHealth'
+                        >
+                            Recover health in camp (only in camp)
+                        </button>
+                    </div>
+                    <hr />
+                    <div class='form-group'>
+                        <label for='rewardId'>Select a Reward</label>
+                        <div class='input-group'>
+                            <input
+                                type='text'
+                                id='rewardId'
+                                class='form-control'
+                                value=''
+                                placeholder='Reward id...'
+                            />
+                            <div class='input-group-append'>
+                                <button
+                                    type='button'
+                                    class='btn btn-primary'
+                                    id='btnSelectReward'
+                                >
+                                    Select Reward
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <hr />
+                    <div class='form-group'>
+                        <label for='moveCard'>Move Card</label>
+                        <div class='input-group'>
+                            <input
+                                type='text'
+                                id='moveCard'
+                                class='form-control'
+                                value=''
+                                placeholder='Card id...'
+                            />
+                            <div class='input-group-append'>
+                                <button
+                                    type='button'
+                                    class='btn btn-primary'
+                                    id='btnMoveCard'
+                                >
+                                    Move Card
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <hr />
+                    <div class='form-group'>
+                        <label for='potionId'>Use Potion</label>
+                        <div class='input-group'>
+                            <input
+                                type='text'
+                                id='potionId'
+                                class='form-control'
+                                value=''
+                                placeholder='Potion Id...'
+                            />
+                            <div class='input-group-append'>
+                                <button
+                                    type='button'
+                                    class='btn btn-primary'
+                                    id='btnUsePotion'
+                                >
+                                    Use Potion
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <hr />
+                    <div class='form-group'>
+                        <label for='itemId'>Buy Item on Merchant</label>
+                        <div class='input-group'>
+                            <input
+                                type='text'
+                                id='itemId'
+                                class='form-control'
+                                value=''
+                                placeholder='Item Id...'
+                            />
+                            <select class='form-control' id='itemType'>
+                                <option value='potion'>Potion</option>
+                            </select>
+                            <div class='input-group-append'>
+                                <button
+                                    type='button'
+                                    class='btn btn-primary'
+                                    id='btnMerchantBuy'
+                                >
+                                    Buy Item
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <hr />
+                    <div class='form-group'>
+                        <button
+                            type='button'
+                            class='btn btn-primary'
+                            id='btnOpenChest'
+                        >
+                            Open Chest
+                        </button>
+                    </div>
+                </div>
+                <div class='col-md-6'>
+                    <div class='form-group'>
+                        <button
+                            type='button'
+                            class='btn btn-primary btn-block'
+                            id='btnClearConsole'
+                        >
+                            Clear Console
+                        </button>
+                    </div>
+                    <div id='logData'></div>
+                </div>
+                <input type='hidden' id='socketUrl' value='{{socketUrl}}' />
+            </div>
+        </div>
+    </body>
+</html>

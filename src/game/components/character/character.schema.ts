@@ -1,11 +1,12 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
+import { HydratedDocument } from 'mongoose';
 import { CharacterClassEnum } from './character.enum';
 
-export type CharacterDocument = Character & Document;
+export type CharacterDocument = HydratedDocument<Character>;
 
 @Schema({
     collection: 'characters',
+    versionKey: false,
 })
 export class Character {
     @Prop()
@@ -20,7 +21,7 @@ export class Character {
     @Prop()
     initialGold: number;
 
-    @Prop()
+    @Prop({ type: String, enum: CharacterClassEnum })
     characterClass: CharacterClassEnum;
 
     @Prop({ type: Object })
@@ -28,6 +29,9 @@ export class Character {
         cardId: number;
         amount: number;
     }[];
+
+    @Prop()
+    isActive: boolean;
 }
 
 export const CharacterSchema = SchemaFactory.createForClass(Character);

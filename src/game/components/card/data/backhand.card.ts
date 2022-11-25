@@ -35,6 +35,7 @@ export const BackHandCardUpgraded: Card = {
     },
     showPointer: true,
     isUpgraded: true,
+    isActive: true,
 };
 
 export const BackHandCard: Card = {
@@ -70,4 +71,5 @@ export const BackHandCard: Card = {
     showPointer: true,
     isUpgraded: false,
     upgradedCardId: BackHandCardUpgraded.cardId,
+    isActive: true,
 };

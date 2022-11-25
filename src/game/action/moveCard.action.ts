@@ -1,7 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Socket } from 'socket.io';
-import { isNotUndefined, removeCardsFromPile } from 'src/utils';
-import { CardSelectionScreenOriginPileEnum } from '../components/cardSelectionScreen/cardSelectionScreen.enum';
+import { removeCardsFromPile } from 'src/utils';
+import { IExpeditionPlayerStateDeckCard } from '../components/expedition/expedition.interface';
+import { Expedition } from '../components/expedition/expedition.schema';
 import { ExpeditionService } from '../components/expedition/expedition.service';
 import {
     StandardResponse,
@@ -12,8 +13,11 @@ import {
 interface IMoveCardDTO {
     readonly client: Socket;
     readonly cardIds: string[];
-    readonly originPile: CardSelectionScreenOriginPileEnum;
-    readonly cardIsFree?: boolean;
+    readonly originPile: keyof Expedition['currentNode']['data']['player']['cards'];
+    readonly targetPile?: keyof Expedition['currentNode']['data']['player']['cards'];
+    readonly callback?: (
+        card: IExpeditionPlayerStateDeckCard,
+    ) => IExpeditionPlayerStateDeckCard;
 }
 
 @Injectable()
@@ -24,7 +28,13 @@ export class MoveCardAction {
 
     async handle(payload: IMoveCardDTO): Promise<void> {
         // First we deestructure the payload and get the data
-        const { cardIds, originPile, client, cardIsFree } = payload;
+        const {
+            cardIds,
+            originPile,
+            targetPile = 'hand',
+            client,
+            callback,
+        } = payload;
 
         // Now we get the current node information
         const {
@@ -45,10 +55,7 @@ export class MoveCardAction {
             .filter(({ id }) => {
                 return cardIds.includes(id);
             })
-            .map((card) => {
-                if (isNotUndefined(cardIsFree)) card.energy = 0;
-                return card;
-            });
+            .map(callback || ((card) => card));
 
         // Now we remove the cards from the desired pile
         // to update the piles
@@ -69,10 +76,11 @@ export class MoveCardAction {
             StandardResponse.respond({
                 message_type: SWARMessageType.PlayerAffected,
                 action: SWARAction.MoveCard,
-                data: cardsToMove.map(({ id }) => ({
+                data: cardsToMove.map((card) => ({
                     source: originPile,
-                    destination: 'hand',
-                    id,
+                    destination: targetPile,
+                    id: card.id,
+                    card,
                 })),
             }),
         );
@@ -81,7 +89,7 @@ export class MoveCardAction {
         await this.expeditionService.updateHandPiles({
             clientId: client.id,
             [originPile]: deckPile,
-            hand: [...cards.hand, ...cardsToMove],
+            [targetPile]: [...cards[targetPile], ...cardsToMove],
         });
     }
 }

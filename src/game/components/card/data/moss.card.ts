@@ -16,4 +16,5 @@ export const MossCard: Card = {
     },
     showPointer: false,
     isUpgraded: false,
+    isActive: true,
 };

@@ -1,3 +1,4 @@
+import { attachStatusEffect } from 'src/game/effects/attachStatus/constants';
 import { damageEffect } from 'src/game/effects/damage/constants';
 import { defenseEffect } from 'src/game/effects/defense/constants';
 import { resolveStatus } from 'src/game/status/resolve/constants';
@@ -21,6 +22,15 @@ export const groundMothData: Enemy = {
     healthRange: [48, 56],
     scripts: [
         {
+            id: 0,
+            intentions: [],
+            next: [
+                { scriptId: 1, probability: 0.5 },
+                { scriptId: 2, probability: 0.5 },
+            ],
+        },
+        {
+            id: 1,
             intentions: [
                 {
                     type: EnemyIntentionType.Attack,
@@ -40,7 +50,6 @@ export const groundMothData: Enemy = {
                     type: EnemyIntentionType.Attack,
                     target: CardTargetedEnum.Player,
                     value: 5,
-                    // TODO: Create Feeble Status and use it here
                     effects: [
                         {
                             effect: damageEffect.name,
@@ -55,15 +64,16 @@ export const groundMothData: Enemy = {
             next: [
                 {
                     probability: 1,
-                    scriptIndex: 0,
+                    scriptId: 2,
                 },
             ],
         },
         {
+            id: 2,
             intentions: [
                 {
                     type: EnemyIntentionType.Defend,
-                    target: CardTargetedEnum.Enemy,
+                    target: CardTargetedEnum.Self,
                     value: 6,
                     effects: [
                         {
@@ -78,27 +88,28 @@ export const groundMothData: Enemy = {
             ],
             next: [
                 {
-                    probability: 0.7,
-                    scriptIndex: 3,
+                    probability: 0.75,
+                    scriptId: 3,
                 },
                 {
-                    probability: 0.2,
-                    scriptIndex: 1,
+                    probability: 0.25,
+                    scriptId: 1,
                 },
             ],
         },
         {
+            id: 3,
             intentions: [
                 {
                     type: EnemyIntentionType.Attack,
                     target: CardTargetedEnum.Player,
-                    value: 11,
+                    value: 10,
                     effects: [
                         {
                             effect: damageEffect.name,
                             target: CardTargetedEnum.Player,
                             args: {
-                                value: 1,
+                                value: 10,
                             },
                         },
                     ],
@@ -107,12 +118,15 @@ export const groundMothData: Enemy = {
                     type: EnemyIntentionType.Buff,
                     target: CardTargetedEnum.Self,
                     value: 5,
-                    status: [
+                    effects: [
                         {
-                            name: resolveStatus.name,
-                            attachTo: CardTargetedEnum.Self,
+                            effect: attachStatusEffect.name,
+                            target: CardTargetedEnum.Self,
                             args: {
-                                counter: 3,
+                                statusName: resolveStatus.name,
+                                statusArgs: {
+                                    counter: 3,
+                                },
                             },
                         },
                     ],
@@ -121,7 +135,7 @@ export const groundMothData: Enemy = {
             next: [
                 {
                     probability: 1,
-                    scriptIndex: 0,
+                    scriptId: 1,
                 },
             ],
         },

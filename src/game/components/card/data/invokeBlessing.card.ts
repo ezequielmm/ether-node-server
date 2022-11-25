@@ -25,6 +25,7 @@ export const InvokeBlessingCardUpgraded: Card = {
     },
     showPointer: false,
     isUpgraded: true,
+    isActive: true,
 };
 
 export const InvokeBlessingCard: Card = {
@@ -51,4 +52,5 @@ export const InvokeBlessingCard: Card = {
     showPointer: false,
     isUpgraded: false,
     upgradedCardId: InvokeBlessingCardUpgraded.cardId,
+    isActive: true,
 };

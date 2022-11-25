@@ -32,6 +32,7 @@ export const ShieldPlantCardUpgraded: Card = {
     },
     showPointer: false,
     isUpgraded: true,
+    isActive: true,
 };
 
 export const ShieldPlantCard: Card = {
@@ -59,4 +60,5 @@ export const ShieldPlantCard: Card = {
     showPointer: false,
     isUpgraded: false,
     upgradedCardId: ShieldPlantCardUpgraded.cardId,
+    isActive: true,
 };

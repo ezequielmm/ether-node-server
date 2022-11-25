@@ -26,6 +26,7 @@ export const PerfectTimingCardUpgraded: Card = {
     },
     showPointer: true,
     isUpgraded: true,
+    isActive: true,
 };
 
 export const PerfectTimingCard: Card = {
@@ -53,4 +54,5 @@ export const PerfectTimingCard: Card = {
     showPointer: true,
     isUpgraded: false,
     upgradedCardId: PerfectTimingCardUpgraded.cardId,
+    isActive: true,
 };

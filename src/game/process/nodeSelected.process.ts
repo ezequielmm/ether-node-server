@@ -115,32 +115,12 @@ export class NodeSelectedProcess {
                         data: null,
                     });
                 case ExpeditionMapNodeTypeEnum.Treasure:
-                    const data = await this.initTreasureProcess.process(
-                        client,
-                        node,
-                    );
-
-                    return StandardResponse.respond({
-                        message_type: SWARMessageType.TreasureUpdate,
-                        action: SWARAction.BeginTreasure,
-                        data,
-                    });
+                    return await this.initTreasureProcess.process(client, node);
                 case ExpeditionMapNodeTypeEnum.Merchant:
-                    await this.initMerchantProcess.process(client, node);
-
-                    return StandardResponse.respond({
-                        message_type: SWARMessageType.MerchantUpdate,
-                        action: SWARAction.BeginMerchant,
-                        data: null,
-                    });
+                    return this.initMerchantProcess.process(client, node);
             }
         } else if (node.isActive) {
-            const nodeTypes = Object.values(ExpeditionMapNodeTypeEnum);
-            const combatNodes = nodeTypes.filter(
-                (node) => node.search('combat') !== -1,
-            );
-
-            if (combatNodes.includes(node.type)) {
+            if (node.type === ExpeditionMapNodeTypeEnum.Combat) {
                 this.logger.debug(
                     `Sent message InitCombat to client ${client.id}`,
                 );
@@ -176,16 +156,10 @@ export class NodeSelectedProcess {
                             data: null,
                         });
                     case ExpeditionMapNodeTypeEnum.Treasure:
-                        const data = await this.initTreasureProcess.process(
+                        return await this.initTreasureProcess.process(
                             client,
                             node,
                         );
-
-                        return StandardResponse.respond({
-                            message_type: SWARMessageType.TreasureUpdate,
-                            action: SWARAction.BeginTreasure,
-                            data,
-                        });
                     case ExpeditionMapNodeTypeEnum.Merchant:
                         await this.initMerchantProcess.process(client, node);
 

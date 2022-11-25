@@ -31,4 +31,5 @@ export const BurnedCard: Card = {
     showPointer: true,
     isUpgraded: false,
     triggerAtEndOfTurn: true,
+    isActive: true,
 };

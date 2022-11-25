@@ -1,7 +1,15 @@
 import { forwardRef, Inject, Injectable, Logger } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { InjectModel } from '@nestjs/mongoose';
-import { compact, filter, find, isArray, matches } from 'lodash';
+import {
+    compact,
+    filter,
+    find,
+    isArray,
+    matches,
+    reject,
+    isEqual,
+} from 'lodash';
 import { Model } from 'mongoose';
 import { CardTargetedEnum } from '../components/card/card.enum';
 import { ExpeditionEnemy } from '../components/enemy/enemy.interface';
@@ -46,6 +54,21 @@ import {
     AttachDTO,
 } from './interfaces';
 import * as cliColor from 'cli-color';
+import { TargetId } from '../effects/effects.types';
+
+export interface AfterStatusAttachEvent {
+    ctx: GameContext;
+    target: ExpeditionEntity;
+    targetId: TargetId;
+    source: ExpeditionEntity;
+    status: AttachedStatus;
+}
+export interface AfterStatusesUpdateEvent {
+    ctx: GameContext;
+    source: ExpeditionEntity;
+    target: ExpeditionEntity;
+    collection: StatusCollection;
+}
 
 @Injectable()
 export class StatusService {
@@ -150,13 +173,18 @@ export class StatusService {
                 break;
         }
 
-        await this.eventEmitter.emitAsync(EVENT_AFTER_STATUS_ATTACH, {
+        const afterStatusAttachEvent: AfterStatusAttachEvent = {
             ctx,
             source,
             status: finalStatus,
             target,
             targetId: target.value.id,
-        });
+        };
+
+        await this.eventEmitter.emitAsync(
+            EVENT_AFTER_STATUS_ATTACH,
+            afterStatusAttachEvent,
+        );
     }
 
     public async mutate(dto: MutateEffectArgsDTO): Promise<EffectDTO> {
@@ -267,11 +295,17 @@ export class StatusService {
             await this.updateEnemyStatuses(expedition, target, collection);
         }
 
-        await this.eventEmitter.emitAsync(EVENT_AFTER_STATUSES_UPDATE, {
+        const afterStatusesUpdateEvent: AfterStatusesUpdateEvent = {
             ctx,
             source: target,
             target,
-        });
+            collection,
+        };
+
+        await this.eventEmitter.emitAsync(
+            EVENT_AFTER_STATUSES_UPDATE,
+            afterStatusesUpdateEvent,
+        );
     }
 
     public async updateEnemyStatuses(
@@ -421,6 +455,11 @@ export class StatusService {
         return container.metadata;
     }
 
+    public isStatusEffect(name: string): boolean {
+        const metadata = this.getMetadataByName(name);
+        return metadata.status.trigger == StatusTrigger.Effect;
+    }
+
     private isPlayerReference(
         reference: EntityReferenceDTO,
     ): reference is PlayerReferenceDTO {
@@ -564,5 +603,33 @@ export class StatusService {
 
         // Update the entity
         await this.updateStatuses(ctx, entity, collection);
+    }
+
+    public async removeStatus(args: {
+        ctx: GameContext;
+        entity: ExpeditionEntity;
+        status: Status;
+    }) {
+        const { ctx, entity, status } = args;
+
+        const statuses = PlayerService.isPlayer(entity)
+            ? entity.value.combatState.statuses
+            : entity.value.statuses;
+
+        const originalStatuses = statuses[status.type];
+        const finalStatuses = reject(originalStatuses, {
+            name: status.name,
+        });
+
+        if (isEqual(finalStatuses, originalStatuses)) {
+            return;
+        }
+
+        statuses[status.type] = finalStatuses;
+
+        // Update status collection
+        this.logger.debug(`Removing status ${status.name} from ${entity.type}`);
+
+        await this.updateStatuses(ctx, entity, statuses);
     }
 }

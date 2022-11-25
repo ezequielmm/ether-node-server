@@ -26,6 +26,7 @@ export const SiphonCardUpgraded: Card = {
     },
     showPointer: false,
     isUpgraded: true,
+    isActive: true,
 };
 
 export const SiphonCard: Card = {
@@ -53,4 +54,5 @@ export const SiphonCard: Card = {
     showPointer: false,
     isUpgraded: false,
     upgradedCardId: SiphonCardUpgraded.cardId,
+    isActive: true,
 };

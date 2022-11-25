@@ -1,3 +1,4 @@
+import * as _ from 'lodash';
 import { ancientOneData } from 'src/game/components/enemy/data/ancientOne.enemy';
 import { barkChargerData } from 'src/game/components/enemy/data/barkCharger.enemy';
 import { fungalBruteData } from 'src/game/components/enemy/data/fungalBrute.enemy';
@@ -13,7 +14,7 @@ import { trapelicanData } from 'src/game/components/enemy/data/trapelican.enemy'
 import { treantData } from 'src/game/components/enemy/data/treant.enemy';
 
 export const actDefaults = {
-    stepsTotal: 20,
+    stepsTotal: 21,
     minNodesPerStep: 2,
     maxNodesPerStep: 6,
     minExitPerNode: 1,
@@ -23,7 +24,7 @@ export const actDefaults = {
 export const actCconfigAlternatives = [
     {
         act: 1,
-        steps: 12,
+        steps: 21,
         minNodesPerStep: 2,
         maxNodesPerStep: 4,
         minExitPerNode: 1,
@@ -82,98 +83,33 @@ export const actCconfigAlternatives = [
                 },
             ],
         },
-        step_config: {
-            0: {
+        step_config: [
+            // Node 1
+            {
                 nodes: [3, 5],
                 node_options: [
                     {
-                        type: 'combat',
-                        subType: 'combat_standard',
-                        chance: 70,
-                        config: {
-                            enemies: [
-                                {
-                                    enemies: [
-                                        stingFaeData.enemyId,
-                                        stingFaeData.enemyId,
-                                    ],
-                                    probability: 0.25,
-                                },
-                                {
-                                    enemies: [
-                                        barkChargerData.enemyId,
-                                        barkChargerData.enemyId,
-                                    ],
-                                    probability: 0.25,
-                                },
-                                {
-                                    enemies: [sporeMongerData.enemyId],
-                                    probability: 0.25,
-                                },
-                                {
-                                    enemies: [mimicFrog1Data.enemyId],
-                                    probability: 0.25,
-                                },
-                            ],
-                        },
+                        type: 'treasure',
+                        subType: 'treasure',
+                        chance: 50,
+                        config: {},
                     },
                     {
-                        type: 'camp',
-                        subType: 'camp_regular',
-                        chance: 30,
+                        type: 'treasure',
+                        subType: 'treasure',
+                        chance: 50,
                         config: {},
                     },
                 ],
             },
-            1: {
+            // Node 2
+            {
                 nodes: [3, 5],
                 node_options: [
                     {
                         type: 'combat',
                         subType: 'combat_standard',
-                        chance: 70,
-                        config: {
-                            enemies: [
-                                {
-                                    enemies: [
-                                        stingFaeData.enemyId,
-                                        stingFaeData.enemyId,
-                                    ],
-                                    probability: 0.25,
-                                },
-                                {
-                                    enemies: [
-                                        barkChargerData.enemyId,
-                                        barkChargerData.enemyId,
-                                    ],
-                                    probability: 0.25,
-                                },
-                                {
-                                    enemies: [sporeMongerData.enemyId],
-                                    probability: 0.25,
-                                },
-                                {
-                                    enemies: [mimicFrog1Data.enemyId],
-                                    probability: 0.25,
-                                },
-                            ],
-                        },
-                    },
-                    {
-                        type: 'camp',
-                        subType: 'camp_regular',
-                        chance: 30,
-                        config: {},
-                    },
-                ],
-            },
-            2: {
-                nodes: [3, 5],
-                node_options: [
-                    {
-                        type: 'combat',
-                        subType: 'combat_standard',
-                        chance: 40,
+                        chance: 100,
                         config: {
                             enemies: [
                                 {
@@ -203,127 +139,90 @@ export const actCconfigAlternatives = [
                     },
                 ],
             },
-            3: {
+            // Node 3
+            {
                 nodes: [3, 5],
                 node_options: [
                     {
                         type: 'combat',
                         subType: 'combat_standard',
-                        chance: 40,
+                        chance: 100,
                         config: {
                             enemies: [
                                 {
                                     enemies: [
-                                        mimicFrog1Data.enemyId,
-                                        mimicFrog1Data.enemyId,
-                                    ], // TODO: Mimic Frog 2
-                                    probability: 0.12,
-                                },
-                                {
-                                    enemies: [groundMothData.enemyId],
-                                    probability: 0.11,
-                                },
-                                {
-                                    enemies: [
                                         stingFaeData.enemyId,
                                         stingFaeData.enemyId,
-                                        swampGoblin1Data.enemyId,
                                     ],
-                                    probability: 0.11,
+                                    probability: 0.25,
                                 },
                                 {
                                     enemies: [
                                         barkChargerData.enemyId,
                                         barkChargerData.enemyId,
-                                        barkChargerData.enemyId,
                                     ],
-                                    probability: 0.1,
+                                    probability: 0.25,
                                 },
                                 {
-                                    enemies: [
-                                        swampGoblin2Data.enemyId,
-                                        swampGoblin2Data.enemyId,
-                                        swampGoblin1Data.enemyId,
-                                    ],
-                                    probability: 0.1,
+                                    enemies: [sporeMongerData.enemyId],
+                                    probability: 0.25,
                                 },
                                 {
-                                    enemies: [
-                                        sporeMongerData.enemyId,
-                                        trapelicanData.enemyId,
-                                    ],
-                                    probability: 0.1,
-                                },
-                                {
-                                    enemies: [
-                                        trapelicanData.enemyId,
-                                        mimicFrog1Data.enemyId,
-                                    ],
-                                    probability: 0.1,
-                                },
-                                {
-                                    enemies: [
-                                        barkChargerData.enemyId,
-                                        swampGoblin2Data.enemyId,
-                                    ],
-                                    probability: 0.09,
-                                },
-                                {
-                                    enemies: [
-                                        stingFaeData.enemyId,
-                                        stingFaeData.enemyId,
-                                        stingFaeData.enemyId,
-                                        stingFaeData.enemyId,
-                                    ],
-                                    probability: 0.09,
-                                },
-                                {
-                                    enemies: [
-                                        stingFaeData.enemyId,
-                                        groundMothData.enemyId,
-                                        stingFaeData.enemyId,
-                                    ],
-                                    probability: 0.08,
+                                    enemies: [mimicFrog1Data.enemyId],
+                                    probability: 0.25,
                                 },
                             ],
                         },
-                    },
-                    {
-                        type: 'combat',
-                        subType: 'combat_elite',
-                        chance: 60,
-                        config: {
-                            enemies: [
-                                {
-                                    enemies: [thornWolfData.enemyId],
-                                    probability: 33.3,
-                                },
-                                {
-                                    enemies: [queenOrchidData.enemyId],
-                                    probability: 33.3,
-                                },
-                                {
-                                    enemies: [ancientOneData.enemyId],
-                                    probability: 33.3,
-                                },
-                            ],
-                        },
-                    },
-                    {
-                        type: 'camp',
-                        subType: 'camp_regular',
-                        chance: 40,
-                        config: {},
                     },
                 ],
             },
-            4: {
+            // Node 4 to 11
+            ..._.range(8).map(() => ({
                 nodes: [2, 4],
                 node_options: [
                     {
+                        type: 'merchant',
+                        subType: 'merchant',
+                        chance: 15,
+                        config: {},
+                    },
+                    {
+                        type: 'treasure',
+                        subType: 'treasure',
+                        chance: 15,
+                        config: {},
+                    },
+                    {
+                        type: 'camp',
+                        subType: 'camp_regular',
+                        chance: 10,
+                        config: {},
+                    },
+                    {
+                        type: 'combat',
+                        subType: 'combat_elite',
+                        chance: 10,
+                        config: {
+                            enemies: [
+                                {
+                                    enemies: [thornWolfData.enemyId],
+                                    probability: 33.3,
+                                },
+                                {
+                                    enemies: [queenOrchidData.enemyId],
+                                    probability: 33.3,
+                                },
+                                {
+                                    enemies: [ancientOneData.enemyId],
+                                    probability: 33.3,
+                                },
+                            ],
+                        },
+                    },
+                    {
                         type: 'combat',
                         subType: 'combat_standard',
-                        chance: 70,
+                        chance: 50,
                         config: {
                             enemies: [
                                 {
@@ -402,118 +301,73 @@ export const actCconfigAlternatives = [
                             ],
                         },
                     },
-                    {
-                        type: 'combat',
-                        subType: 'combat_elite',
-                        chance: 30,
-                        config: {
-                            enemies: [
-                                {
-                                    enemies: [thornWolfData.enemyId],
-                                    probability: 33.3,
-                                },
-                                {
-                                    enemies: [queenOrchidData.enemyId],
-                                    probability: 33.3,
-                                },
-                                {
-                                    enemies: [ancientOneData.enemyId],
-                                    probability: 33.3,
-                                },
-                            ],
-                        },
-                    },
                 ],
-            },
-            5: {
+            })),
+            // Node 12
+            {
                 nodes: [3, 5],
                 node_options: [
                     {
                         type: 'combat',
-                        subType: 'combat_standard',
-                        chance: 30,
+                        subType: 'combat_elite',
+                        chance: 100,
                         config: {
                             enemies: [
                                 {
-                                    enemies: [
-                                        mimicFrog1Data.enemyId,
-                                        mimicFrog1Data.enemyId,
-                                    ], // TODO: Mimic Frog 2
-                                    probability: 0.12,
+                                    enemies: [thornWolfData.enemyId],
+                                    probability: 33.3,
                                 },
                                 {
-                                    enemies: [groundMothData.enemyId],
-                                    probability: 0.11,
+                                    enemies: [queenOrchidData.enemyId],
+                                    probability: 33.3,
                                 },
                                 {
-                                    enemies: [
-                                        stingFaeData.enemyId,
-                                        stingFaeData.enemyId,
-                                        swampGoblin1Data.enemyId,
-                                    ],
-                                    probability: 0.11,
-                                },
-                                {
-                                    enemies: [
-                                        barkChargerData.enemyId,
-                                        barkChargerData.enemyId,
-                                        barkChargerData.enemyId,
-                                    ],
-                                    probability: 0.1,
-                                },
-                                {
-                                    enemies: [
-                                        swampGoblin2Data.enemyId,
-                                        swampGoblin2Data.enemyId,
-                                        swampGoblin1Data.enemyId,
-                                    ],
-                                    probability: 0.1,
-                                },
-                                {
-                                    enemies: [
-                                        sporeMongerData.enemyId,
-                                        trapelicanData.enemyId,
-                                    ],
-                                    probability: 0.1,
-                                },
-                                {
-                                    enemies: [
-                                        trapelicanData.enemyId,
-                                        mimicFrog1Data.enemyId,
-                                    ],
-                                    probability: 0.1,
-                                },
-                                {
-                                    enemies: [
-                                        barkChargerData.enemyId,
-                                        swampGoblin2Data.enemyId,
-                                    ],
-                                    probability: 0.09,
-                                },
-                                {
-                                    enemies: [
-                                        stingFaeData.enemyId,
-                                        stingFaeData.enemyId,
-                                        stingFaeData.enemyId,
-                                        stingFaeData.enemyId,
-                                    ],
-                                    probability: 0.09,
-                                },
-                                {
-                                    enemies: [
-                                        stingFaeData.enemyId,
-                                        groundMothData.enemyId,
-                                        stingFaeData.enemyId,
-                                    ],
-                                    probability: 0.08,
+                                    enemies: [ancientOneData.enemyId],
+                                    probability: 33.3,
                                 },
                             ],
                         },
                     },
+                ],
+            },
+            {
+                nodes: 1,
+                node_options: [
+                    {
+                        type: 'camp',
+                        subType: 'camp_regular',
+                        chance: 100,
+                        config: {},
+                    },
+                ],
+            },
+            // Node 14 to 20
+            ..._.range(7).map(() => ({
+                nodes: [2, 4],
+                node_options: [
+                    {
+                        type: 'merchant',
+                        subType: 'merchant',
+                        chance: 15,
+                        config: {},
+                    },
+                    {
+                        type: 'treasure',
+                        subType: 'treasure',
+                        chance: 15,
+                        config: {},
+                    },
+                    {
+                        type: 'camp',
+                        subType: 'camp_regular',
+                        chance: 10,
+                        config: {},
+                    },
+
                     {
                         type: 'combat',
                         subType: 'combat_elite',
-                        chance: 20,
+                        chance: 10,
                         config: {
                             enemies: [
                                 {
@@ -532,54 +386,113 @@ export const actCconfigAlternatives = [
                         },
                     },
                     {
-                        type: 'encounter',
-                        subType: 'encounter',
-                        chance: 40,
-                        config: {},
-                    },
-                    {
-                        type: 'merchant',
-                        subType: 'merchant',
-                        chance: 10,
-                        config: {},
+                        type: 'combat',
+                        subType: 'combat_standard',
+                        chance: 50,
+                        config: {
+                            enemies: [
+                                {
+                                    enemies: [
+                                        mimicFrog1Data.enemyId,
+                                        mimicFrog1Data.enemyId,
+                                        sporeMongerData.enemyId,
+                                    ],
+                                    probability: 0.12,
+                                },
+                                {
+                                    enemies: [
+                                        groundMothData.enemyId,
+                                        sporeMongerData.enemyId,
+                                    ],
+                                    probability: 0.11,
+                                },
+                                {
+                                    enemies: [
+                                        barkChargerData.enemyId,
+                                        barkChargerData.enemyId,
+                                        stingFaeData.enemyId,
+                                        stingFaeData.enemyId,
+                                    ],
+                                    probability: 0.11,
+                                },
+                                {
+                                    enemies: [
+                                        stingFaeData.enemyId,
+                                        stingFaeData.enemyId,
+                                        swampGoblin1Data.enemyId,
+                                        swampGoblin2Data.enemyId,
+                                    ],
+                                    probability: 0.1,
+                                },
+                                {
+                                    enemies: [
+                                        swampGoblin2Data.enemyId,
+                                        swampGoblin2Data.enemyId,
+                                        swampGoblin1Data.enemyId,
+                                        swampGoblin1Data.enemyId,
+                                    ],
+                                    probability: 0.1,
+                                },
+                                {
+                                    enemies: [
+                                        sporeMongerData.enemyId,
+                                        sporeMongerData.enemyId,
+                                        trapelicanData.enemyId,
+                                    ],
+                                    probability: 0.1,
+                                },
+                                {
+                                    enemies: [
+                                        trapelicanData.enemyId,
+                                        trapelicanData.enemyId,
+                                        mimicFrog1Data.enemyId,
+                                    ],
+                                    probability: 0.1,
+                                },
+                                {
+                                    enemies: [
+                                        barkChargerData.enemyId,
+                                        barkChargerData.enemyId,
+                                        swampGoblin2Data.enemyId,
+                                    ],
+                                    probability: 0.09,
+                                },
+                                {
+                                    enemies: [
+                                        stingFaeData.enemyId,
+                                        stingFaeData.enemyId,
+                                        stingFaeData.enemyId,
+                                        stingFaeData.enemyId,
+                                        stingFaeData.enemyId,
+                                    ],
+                                    probability: 0.09,
+                                },
+                                {
+                                    enemies: [
+                                        groundMothData.enemyId,
+                                        groundMothData.enemyId,
+                                    ],
+                                    probability: 0.08,
+                                },
+                            ],
+                        },
                     },
                 ],
-            },
-            6: {
-                nodes: 2,
+            })),
+            // Node 21
+            {
+                nodes: 1,
                 node_options: [
                     {
-                        type: 'merchant',
-                        subType: 'merchant',
-                        chance: 80,
-                        config: {},
-                    },
-                    {
-                        type: 'merchant',
-                        subType: 'merchant',
-                        chance: 20,
+                        type: 'camp',
+                        subType: 'camp_regular',
+                        chance: 100,
                         config: {},
                     },
                 ],
             },
-            7: {
-                nodes: [3, 4],
-                node_options: [
-                    {
-                        type: 'treasure',
-                        subType: 'treasure',
-                        chance: 30,
-                        config: {},
-                    },
-                    {
-                        type: 'treasure',
-                        subType: 'treasure',
-                        chance: 70,
-                        config: {},
-                    },
-                ],
-            },
-            12: {
+            // Node 22
+            {
                 nodes: 1,
                 node_options: [
                     {
@@ -604,6 +517,6 @@ export const actCconfigAlternatives = [
                     },
                 ],
             },
-        },
+        ],
     },
 ];

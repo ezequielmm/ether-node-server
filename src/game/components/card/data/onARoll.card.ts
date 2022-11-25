@@ -28,6 +28,7 @@ export const OnARollCardUpgraded: Card = {
     },
     showPointer: true,
     isUpgraded: true,
+    isActive: true,
 };
 
 export const OnARollCard: Card = {
@@ -57,4 +58,5 @@ export const OnARollCard: Card = {
     showPointer: true,
     isUpgraded: false,
     upgradedCardId: OnARollCardUpgraded.cardId,
+    isActive: true,
 };

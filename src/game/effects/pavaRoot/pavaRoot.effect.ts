@@ -12,7 +12,7 @@ import { pavaRootEffect } from './constants';
 })
 @Injectable()
 export class PavaRootEffect implements EffectHandler {
-    constructor(private readonly moveCardAction: MoveCardAction) {}
+    constructor(private readonly moveCardToHandAction: MoveCardAction) {}
 
     async handle(dto: EffectDTO): Promise<void> {
         const { ctx } = dto;
@@ -26,11 +26,14 @@ export class PavaRootEffect implements EffectHandler {
         );
 
         if (attackCard) {
-            await this.moveCardAction.handle({
+            await this.moveCardToHandAction.handle({
                 client: ctx.client,
                 cardIds: [attackCard.id],
                 originPile: CardSelectionScreenOriginPileEnum.Draw,
-                cardIsFree: true,
+                callback: (card) => {
+                    card.energy = 0;
+                    return card;
+                },
             });
         }
     }

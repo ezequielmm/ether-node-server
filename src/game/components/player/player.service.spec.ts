@@ -14,6 +14,7 @@ import {
 import { PlayerService } from './player.service';
 import * as MockedSocket from 'socket.io-mock';
 import { StatusService } from 'src/game/status/status.service';
+import { HistoryService } from 'src/game/history/history.service';
 
 describe('PlayerService', () => {
     const mockExpeditionService = {
@@ -41,10 +42,16 @@ describe('PlayerService', () => {
                     provide: StatusService,
                     useValue: {},
                 },
+                {
+                    provide: HistoryService,
+                    useValue: {
+                        register: jest.fn(),
+                    },
+                },
             ],
         }).compile();
 
-        playerService = module.get<PlayerService>(PlayerService);
+        playerService = module.get(PlayerService);
         mockContext = {
             client: mockEventEmitter2,
             expedition: {
@@ -133,7 +140,7 @@ describe('PlayerService', () => {
         it('should update the player defense', async () => {
             await playerService.setDefense(mockContext, 10);
             expect(mockExpeditionService.updateById).toHaveBeenCalledWith(
-                mockContext.expedition.id,
+                mockContext.expedition._id.toString(),
                 {
                     [PLAYER_DEFENSE_PATH]: 10,
                 },
@@ -147,7 +154,7 @@ describe('PlayerService', () => {
         it('should update the player energy', async () => {
             await playerService.setEnergy(mockContext, 10);
             expect(mockExpeditionService.updateById).toHaveBeenCalledWith(
-                mockContext.expedition.id,
+                mockContext.expedition._id.toString(),
                 {
                     [PLAYER_ENERGY_PATH]: 10,
                 },
@@ -161,7 +168,7 @@ describe('PlayerService', () => {
             await playerService.setHp(mockContext, 10);
 
             expect(mockExpeditionService.updateById).toHaveBeenCalledWith(
-                mockContext.expedition.id,
+                mockContext.expedition._id.toString(),
                 {
                     [PLAYER_CURRENT_HP_PATH]: 10,
                 },
@@ -176,7 +183,7 @@ describe('PlayerService', () => {
             await playerService.setGlobalHp(mockContext, 10);
 
             expect(mockExpeditionService.updateById).toHaveBeenCalledWith(
-                mockContext.expedition.id,
+                mockContext.expedition._id.toString(),
                 {
                     [PLAYER_STATE_HP_CURRENT_PATH]: 10,
                 },
@@ -190,7 +197,7 @@ describe('PlayerService', () => {
         it('should heal to max hp', async () => {
             await playerService.setHp(mockContext, 90);
             expect(mockExpeditionService.updateById).toHaveBeenCalledWith(
-                mockContext.expedition.id,
+                mockContext.expedition._id.toString(),
                 {
                     [PLAYER_CURRENT_HP_PATH]: 80,
                 },

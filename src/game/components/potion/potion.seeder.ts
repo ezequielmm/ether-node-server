@@ -39,9 +39,8 @@ export class PotionSeeder implements Seeder {
             arcaneBrewPotion,
             philterOfRedemptionPotion,
             dewDropElixirPotion,
-            // TODO: Fix cost effect for these potions
-            // pavaRootPotion,
-            // phantomPhialPotion,
+            pavaRootPotion,
+            phantomPhialPotion,
         ]);
     }
 

@@ -25,6 +25,7 @@ export const FeintCardUpgraded: Card = {
     },
     showPointer: false,
     isUpgraded: true,
+    isActive: true,
 };
 
 export const FeintCard: Card = {
@@ -51,4 +52,5 @@ export const FeintCard: Card = {
     showPointer: false,
     isUpgraded: false,
     upgradedCardId: FeintCardUpgraded.cardId,
+    isActive: true,
 };
