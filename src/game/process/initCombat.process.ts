@@ -53,6 +53,15 @@ export class InitCombatProcess {
             currentNode,
         });
 
+        this.client.emit(
+            'InitCombat',
+            StandardResponse.respond({
+                message_type: SWARMessageType.CombatUpdate,
+                action: SWARAction.BeginCombat,
+                data: null,
+            }),
+        );
+
         const ctx: GameContext = {
             client: this.client,
             expedition: expedition as ExpeditionDocument,
@@ -83,6 +92,15 @@ export class InitCombatProcess {
 
         const enemiesAreDead = currentNode.data.enemies.every(
             (enemy) => enemy.hpCurrent === 0,
+        );
+
+        this.client.emit(
+            'InitCombat',
+            StandardResponse.respond({
+                message_type: SWARMessageType.CombatUpdate,
+                action: SWARAction.BeginCombat,
+                data: null,
+            }),
         );
 
         if (enemiesAreDead) {

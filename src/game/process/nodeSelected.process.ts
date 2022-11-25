@@ -81,15 +81,6 @@ export class NodeSelectedProcess {
 
                     await this.initCombatProcess.process(client, node);
 
-                    client.emit(
-                        'InitCombat',
-                        StandardResponse.respond({
-                            message_type: SWARMessageType.CombatUpdate,
-                            action: SWARAction.BeginCombat,
-                            data: null,
-                        }),
-                    );
-
                     return StandardResponse.respond({
                         message_type: SWARMessageType.MapUpdate,
                         seed: mapSeedId,
