@@ -10,6 +10,11 @@ import { IExpeditionNode } from '../components/expedition/expedition.interface';
 import { ExpeditionDocument } from '../components/expedition/expedition.schema';
 import { ExpeditionService } from '../components/expedition/expedition.service';
 import { GameContext } from '../components/interfaces';
+import {
+    StandardResponse,
+    SWARMessageType,
+    SWARAction,
+} from '../standardResponse/standardResponse';
 import { CurrentNodeGeneratorProcess } from './currentNodeGenerator.process';
 
 @Injectable()
@@ -67,17 +72,44 @@ export class InitCombatProcess {
             clientId: this.client.id,
         });
 
+        const expeditionId = expedition._id.toString();
+
         const ctx: GameContext = {
             client: this.client,
             expedition: expedition as ExpeditionDocument,
         };
 
-        await this.setCombatTurnAction.handle({
-            clientId: this.client.id,
-            newRound: 1,
-            playing: CombatTurnEnum.Player,
-        });
+        const { currentNode } = expedition;
 
-        await this.enemyService.calculateNewIntentions(ctx);
+        const enemiesAreDead = currentNode.data.enemies.every(
+            (enemy) => enemy.hpCurrent === 0,
+        );
+
+        if (enemiesAreDead) {
+            await this.expeditionService.updateById(expeditionId, {
+                $set: {
+                    'currentNode.showRewards': true,
+                },
+            });
+
+            this.client.emit(
+                'PutData',
+                StandardResponse.respond({
+                    message_type: SWARMessageType.EndCombat,
+                    action: SWARAction.EnemiesDefeated,
+                    data: {
+                        rewards: currentNode.data.rewards,
+                    },
+                }),
+            );
+        } else {
+            await this.setCombatTurnAction.handle({
+                clientId: this.client.id,
+                newRound: 1,
+                playing: CombatTurnEnum.Player,
+            });
+
+            await this.enemyService.calculateNewIntentions(ctx);
+        }
     }
 }
