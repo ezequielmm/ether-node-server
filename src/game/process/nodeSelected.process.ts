@@ -126,15 +126,6 @@ export class NodeSelectedProcess {
                 );
 
                 await this.initCombatProcess.process(client, node);
-
-                client.emit(
-                    'InitCombat',
-                    StandardResponse.respond({
-                        message_type: SWARMessageType.CombatUpdate,
-                        action: SWARAction.BeginCombat,
-                        data: null,
-                    }),
-                );
             } else {
                 switch (node.type) {
                     case ExpeditionMapNodeTypeEnum.Camp:
