@@ -20,17 +20,23 @@ export const ancientOneData: Enemy = {
     healthRange: [80, 85],
     scripts: [
         {
+            id: 0,
+            intentions: [],
+            next: [{ probability: 1, scriptId: 1 }],
+        },
+        {
+            id: 1,
             intentions: [
                 {
                     type: EnemyIntentionType.Debuff,
                     target: CardTargetedEnum.Player,
-                    value: -1,
+                    value: 2,
                     effects: [
                         {
                             effect: damageEffect.name,
                             target: CardTargetedEnum.Player,
                             args: {
-                                value: -1,
+                                value: 2,
                             },
                         },
                     ],
@@ -39,15 +45,16 @@ export const ancientOneData: Enemy = {
             next: [
                 {
                     probability: 0.75,
-                    scriptIndex: 1,
+                    scriptId: 2,
                 },
                 {
                     probability: 0.25,
-                    scriptIndex: 3,
+                    scriptId: 4,
                 },
             ],
         },
         {
+            id: 2,
             intentions: [
                 {
                     type: EnemyIntentionType.Attack,
@@ -67,15 +74,16 @@ export const ancientOneData: Enemy = {
             next: [
                 {
                     probability: 0.75,
-                    scriptIndex: 3,
+                    scriptId: 4,
                 },
                 {
                     probability: 0.25,
-                    scriptIndex: 2,
+                    scriptId: 3,
                 },
             ],
         },
         {
+            id: 3,
             intentions: [
                 {
                     type: EnemyIntentionType.Attack,
@@ -95,11 +103,12 @@ export const ancientOneData: Enemy = {
             next: [
                 {
                     probability: 1,
-                    scriptIndex: 0,
+                    scriptId: 1,
                 },
             ],
         },
         {
+            id: 4,
             intentions: [
                 {
                     type: EnemyIntentionType.Defend,
@@ -119,11 +128,11 @@ export const ancientOneData: Enemy = {
             next: [
                 {
                     probability: 0.75,
-                    scriptIndex: 0,
+                    scriptId: 1,
                 },
                 {
                     probability: 0.25,
-                    scriptIndex: 2,
+                    scriptId: 3,
                 },
             ],
         },

@@ -53,6 +53,9 @@ export class InitExpeditionProcess {
                 cards,
                 createdAt: new Date(),
                 potions: [],
+                cardUpgradeCount: 0,
+                cardDestroyCount: 0,
+                trinkets: [],
             },
             status: ExpeditionStatusEnum.InProgress,
         });
@@ -113,6 +116,7 @@ export class InitExpeditionProcess {
                 isUpgraded: card.isUpgraded,
                 upgradedCardId: card?.upgradedCardId,
                 triggerAtEndOfTurn: card.triggerAtEndOfTurn,
+                isActive: true,
             }));
     }
 }

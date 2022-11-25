@@ -36,6 +36,7 @@ export const TasteOfBloodCardUpgraded: Card = {
     },
     showPointer: false,
     isUpgraded: true,
+    isActive: true,
 };
 
 export const TasteOfBloodCard: Card = {
@@ -70,4 +71,5 @@ export const TasteOfBloodCard: Card = {
     showPointer: false,
     isUpgraded: false,
     upgradedCardId: TasteOfBloodCardUpgraded.cardId,
+    isActive: true,
 };

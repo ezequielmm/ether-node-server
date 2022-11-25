@@ -1,53 +1,67 @@
 export enum ItemsTypeEnum {
-    CardsForPlayer = 'cards',
-    NeutralCards = 'neutral_cards',
-    RandomTrinkets = 'trinkets',
-    RandomPotions = 'potions',
+    Card = 'card',
+    Trinket = 'trinket',
+    Potion = 'potion',
+    Destroy = 'remove',
+    Upgrade = 'upgrade',
 }
 
 export enum CardCommon {
     name = 'common',
-    minCoin = 45,
-    maxCoin = 55,
+    minPrice = 45,
+    maxPrice = 55,
 }
+
 export enum CardUncommon {
     name = 'uncommon',
-    minCoin = 68,
-    maxCoin = 82,
+    minPrice = 68,
+    maxPrice = 82,
 }
+
 export enum CardRare {
     name = 'rare',
-    minCoin = 135,
-    maxCoin = 165,
+    minPrice = 135,
+    maxPrice = 165,
 }
+
 export enum PotionCommon {
     name = 'common',
-    minCoin = 48,
-    maxCoin = 52,
+    minPrice = 48,
+    maxPrice = 52,
 }
+
 export enum PotionUncommon {
     name = 'uncommon',
-    minCoin = 72,
-    maxCoin = 78,
+    minPrice = 72,
+    maxPrice = 78,
 }
+
 export enum PotionRare {
     name = 'rare',
-    minCoin = 95,
-    maxCoin = 105,
+    minPrice = 95,
+    maxPrice = 105,
 }
 
 export enum TrinketCommon {
     name = 'common',
-    minCoin = 143,
-    maxCoin = 157,
+    minPrice = 143,
+    maxPrice = 157,
 }
+
 export enum TrinketUncommon {
     name = 'uncommon',
-    minCoin = 238,
-    maxCoin = 262,
+    minPrice = 238,
+    maxPrice = 262,
 }
+
 export enum TrinketRare {
     name = 'rare',
-    minCoin = 285,
-    maxCoin = 315,
+    minPrice = 285,
+    maxPrice = 315,
+}
+
+export enum PurchaseFailureEnum {
+    NoEnoughGold = 'Not enough gold',
+    InvalidId = 'Invalid id',
+    MaxPotionReached = 'You cannot carry any more potions. Discard or use one to buy a potion.',
 }

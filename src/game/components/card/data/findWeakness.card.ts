@@ -27,6 +27,7 @@ export const FindWeaknessCardUpgraded: Card = {
     },
     showPointer: true,
     isUpgraded: true,
+    isActive: true,
 };
 
 export const FindWeaknessCard: Card = {
@@ -55,4 +56,5 @@ export const FindWeaknessCard: Card = {
     showPointer: true,
     isUpgraded: false,
     upgradedCardId: FindWeaknessCardUpgraded.cardId,
+    isActive: true,
 };

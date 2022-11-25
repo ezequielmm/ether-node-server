@@ -156,3 +156,10 @@ export enum serverEnvironments {
 export function getTimestampInSeconds(): number {
     return Math.floor(Date.now() / 1000);
 }
+
+/**
+ * Get a random number with a given
+ */
+export function getRandomNumber(limit: number): number {
+    return Math.floor(Math.random() * limit);
+}

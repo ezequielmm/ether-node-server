@@ -33,6 +33,7 @@ export const AnticipateCardUpgraded: Card = {
     },
     showPointer: false,
     isUpgraded: false,
+    isActive: true,
 };
 
 export const AnticipateCard: Card = {
@@ -66,4 +67,5 @@ export const AnticipateCard: Card = {
     showPointer: false,
     isUpgraded: false,
     upgradedCardId: AnticipateCardUpgraded.cardId,
+    isActive: true,
 };

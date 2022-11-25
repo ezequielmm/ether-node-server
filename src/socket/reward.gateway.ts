@@ -4,9 +4,14 @@ import { filter } from 'lodash';
 import { Socket } from 'socket.io';
 import { FullSyncAction } from 'src/game/action/fullSync.action';
 import { CardService } from 'src/game/components/card/card.service';
-import { IExpeditionNodeReward } from 'src/game/components/expedition/expedition.enum';
+import {
+    ExpeditionMapNodeTypeEnum,
+    IExpeditionNodeReward,
+} from 'src/game/components/expedition/expedition.enum';
+import { Reward } from 'src/game/components/expedition/expedition.interface';
 import { ExpeditionService } from 'src/game/components/expedition/expedition.service';
 import { PotionService } from 'src/game/components/potion/potion.service';
+import { TrinketService } from 'src/game/components/trinket/trinket.service';
 import {
     StandardResponse,
     SWARMessageType,
@@ -23,6 +28,7 @@ export class RewardGateway {
         private readonly potionService: PotionService,
         private readonly cardService: CardService,
         private readonly fullSyncAction: FullSyncAction,
+        private readonly trinketService: TrinketService,
     ) {}
 
     @SubscribeMessage('RewardSelected')
@@ -38,18 +44,22 @@ export class RewardGateway {
 
         this.logger.debug(`Client ${client.id} choose reward id: ${rewardId}`);
 
-        let {
-            _id: expeditionId,
-            currentNode: {
-                completed: nodeIsCompleted,
-                data: { rewards },
-            },
+        const {
+            currentNode: { completed: nodeIsCompleted, nodeType },
         } = expedition;
 
-        // Check if the node is completed
-        if (nodeIsCompleted) {
-            this.logger.debug('Node already completed, cannot select reward');
+        const expeditionId = expedition._id.toString();
 
+        let rewards: Reward[] = [];
+
+        rewards =
+            nodeType === ExpeditionMapNodeTypeEnum.Treasure
+                ? expedition.currentNode.treasureData.rewards
+                : expedition.currentNode.data.rewards;
+
+        if (nodeIsCompleted) {
+            // Check if the node is completed
+            this.logger.debug('Node already completed, cannot select reward');
             return '';
         }
 
@@ -58,7 +68,7 @@ export class RewardGateway {
             return id === rewardId;
         });
 
-        // If the reward is inavlid we throw and exception
+        // If the reward is invalid we throw and exception
         if (!reward) throw new Error(`Reward ${rewardId} not found`);
 
         // Now we set that we took the reward
@@ -79,27 +89,40 @@ export class RewardGateway {
                     reward.potion.potionId,
                 );
                 break;
-            case IExpeditionNodeReward.Card: {
+            case IExpeditionNodeReward.Card:
                 await this.cardService.addCardToDeck(ctx, reward.card.cardId);
                 // Disable all other card rewards
-                rewards = rewards.map((r) => {
-                    if (r.type === IExpeditionNodeReward.Card) {
-                        r.taken = true;
+                rewards = rewards.map((reward) => {
+                    if (reward.type === IExpeditionNodeReward.Card) {
+                        reward.taken = true;
                     }
-                    return r;
+                    return reward;
                 });
                 break;
-            }
+            case IExpeditionNodeReward.Trinket:
+                reward.taken = await this.trinketService.add(
+                    ctx,
+                    reward.trinket.trinketId,
+                );
+                break;
         }
 
         await this.fullSyncAction.handle(client, false);
 
         // Next we save the reward on the expedition
-        await this.expeditionService.updateById(expedition._id, {
-            $set: {
-                'currentNode.data.rewards': rewards,
-            },
-        });
+        if (nodeType === ExpeditionMapNodeTypeEnum.Treasure) {
+            await this.expeditionService.updateById(expedition._id.toString(), {
+                $set: {
+                    'currentNode.treasureData.rewards': rewards,
+                },
+            });
+        } else {
+            await this.expeditionService.updateById(expedition._id.toString(), {
+                $set: {
+                    'currentNode.data.rewards': rewards,
+                },
+            });
+        }
 
         // Now we get the rewards that are pending to be taken
         const pendingRewards = filter(rewards, {
@@ -107,7 +130,10 @@ export class RewardGateway {
         });
 
         return StandardResponse.respond({
-            message_type: SWARMessageType.EndCombat,
+            message_type:
+                nodeType === ExpeditionMapNodeTypeEnum.Treasure
+                    ? SWARMessageType.EndTreasure
+                    : SWARMessageType.EndCombat,
             action: SWARAction.SelectAnotherReward,
             data: {
                 rewards: pendingRewards,

@@ -1,5 +1,6 @@
+import { attachStatusEffect } from 'src/game/effects/attachStatus/constants';
 import { damageEffect } from 'src/game/effects/damage/constants';
-import { defenseEffect } from 'src/game/effects/defense/constants';
+import { feebleStatus } from 'src/game/status/feeble/constants';
 import { CardTargetedEnum } from '../../card/card.enum';
 import {
     EnemyTypeEnum,
@@ -19,18 +20,37 @@ export const redSporelingData: Enemy = {
     healthRange: [12, 14],
     scripts: [
         {
+            id: 0,
+            intentions: [
+                // TODO: Create Summoned status
+            ],
+            next: [
+                {
+                    probability: 0.6,
+                    scriptId: 1,
+                },
+                {
+                    probability: 0.4,
+                    scriptId: 2,
+                },
+            ],
+        },
+        {
+            id: 1,
             intentions: [
                 {
-                    type: EnemyIntentionType.Defend,
+                    type: EnemyIntentionType.Debuff,
                     target: CardTargetedEnum.Player,
                     value: 2,
-                    // TODO: Create Feeble Status and use it here
                     effects: [
                         {
-                            effect: defenseEffect.name,
+                            effect: attachStatusEffect.name,
                             target: CardTargetedEnum.Player,
                             args: {
-                                value: 2,
+                                statusName: feebleStatus.name,
+                                statusArgs: {
+                                    counter: 2,
+                                },
                             },
                         },
                     ],
@@ -39,15 +59,16 @@ export const redSporelingData: Enemy = {
             next: [
                 {
                     probability: 0.4,
-                    scriptIndex: 0,
+                    scriptId: 1,
                 },
                 {
                     probability: 0.6,
-                    scriptIndex: 1,
+                    scriptId: 2,
                 },
             ],
         },
         {
+            id: 2,
             intentions: [
                 {
                     type: EnemyIntentionType.Attack,
@@ -67,11 +88,11 @@ export const redSporelingData: Enemy = {
             next: [
                 {
                     probability: 0.6,
-                    scriptIndex: 0,
+                    scriptId: 1,
                 },
                 {
                     probability: 0.4,
-                    scriptIndex: 1,
+                    scriptId: 2,
                 },
             ],
         },

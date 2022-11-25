@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Potion, PotionDocument } from './potion.schema';
 import { Model } from 'mongoose';
@@ -13,30 +13,42 @@ import {
     SWARMessageType,
 } from 'src/game/standardResponse/standardResponse';
 import { TargetId } from 'src/game/effects/effects.types';
-import { CardRarityEnum } from '../card/card.enum';
 import { PotionRarityEnum } from './potion.enum';
 import { find } from 'lodash';
 import { PotionInstance } from '../expedition/expedition.interface';
 import { randomUUID } from 'crypto';
+import { getPotionIdField, PotionId } from './potion.type';
+import { getRandomNumber } from 'src/utils';
+import { CustomException, ErrorBehavior } from 'src/socket/custom.exception';
+import { CombatQueueService } from '../combatQueue/combatQueue.service';
 
 @Injectable()
 export class PotionService {
+    private readonly logger: Logger = new Logger(PotionService.name);
+
     constructor(
         @InjectModel(Potion.name)
         private readonly potion: Model<PotionDocument>,
         private readonly effectService: EffectService,
         private readonly playerService: PlayerService,
         private readonly expeditionService: ExpeditionService,
+        private readonly combatQueueService: CombatQueueService,
     ) {}
 
     async findAll(): Promise<PotionDocument[]> {
-        return this.potion.find().lean();
+        return this.potion.find({ isActive: true }).lean();
     }
 
     async findByPotionId(potionId: number): Promise<PotionDocument> {
         return this.potion.findOne({ potionId });
     }
-    async randomPotion(limit: number): Promise<PotionDocument[]> {
+
+    async findById(id: PotionId): Promise<PotionDocument> {
+        const field = getPotionIdField(id);
+        return this.potion.findOne({ [field]: id }).lean();
+    }
+
+    async randomPotion(limit: number): Promise<Potion[]> {
         const count = await this.potion.countDocuments({
             $and: [
                 {
@@ -46,23 +58,28 @@ export class PotionService {
                         { rarity: PotionRarityEnum.Rare },
                     ],
                 },
+                { isActive: true },
             ],
         });
-        const random = Math.floor(Math.random() * count);
+
+        const random = getRandomNumber(count);
+
         return await this.potion
             .find({
                 $and: [
                     {
                         $or: [
-                            { rarity: CardRarityEnum.Common },
-                            { rarity: CardRarityEnum.Uncommon },
-                            { rarity: CardRarityEnum.Rare },
+                            { rarity: PotionRarityEnum.Common },
+                            { rarity: PotionRarityEnum.Uncommon },
+                            { rarity: PotionRarityEnum.Rare },
                         ],
                     },
+                    { isActive: true },
                 ],
             })
             .limit(limit)
-            .skip(random);
+            .skip(random)
+            .lean();
     }
 
     async use(
@@ -82,7 +99,10 @@ export class PotionService {
                     data: { potionId: potionUniqueId },
                 }),
             );
-            return;
+            throw new CustomException(
+                'Potion not found',
+                ErrorBehavior.ReturnToMainMenu,
+            );
         }
 
         const inCombat =
@@ -99,10 +119,20 @@ export class PotionService {
                     data: { potionId: potionUniqueId },
                 }),
             );
-            return;
+            throw new CustomException(
+                `Potion can't be used outside combat`,
+                ErrorBehavior.ReturnToMainMenu,
+            );
         }
 
         const player = this.playerService.get(ctx);
+
+        if (inCombat) {
+            this.logger.debug(
+                `Started combat queue for client ${ctx.client.id}`,
+            );
+            await this.combatQueueService.start(ctx);
+        }
 
         // Apply potion effects
         await this.effectService.applyAll({
@@ -111,6 +141,11 @@ export class PotionService {
             effects: potion.effects,
             selectedEnemy: targetId,
         });
+
+        if (inCombat) {
+            this.logger.debug(`Ended combat queue for client ${ctx.client.id}`);
+            await this.combatQueueService.end(ctx);
+        }
 
         // Once potion is used, remove it from the player's inventory
         await this.remove(ctx, potionUniqueId);
@@ -136,9 +171,13 @@ export class PotionService {
         ctx.expedition.playerState.potions = potions;
 
         // Update in database
-        await this.expeditionService.updateById(ctx.expedition._id, {
+        await this.expeditionService.updateById(ctx.expedition._id.toString(), {
             'playerState.potions': potions,
         });
+
+        this.logger.debug(
+            `Removed Potion ${potionUniqueId} from client ${ctx.client.id}`,
+        );
     }
 
     public async add(ctx: GameContext, potionId: number): Promise<boolean> {
@@ -170,10 +209,9 @@ export class PotionService {
             return false;
         }
 
-        // remove _id and __v from potion
-        const { _id, __v, ...potionData } = potion.toObject();
+        const potionData = potion.toObject();
 
-        await this.expeditionService.updateById(ctx.expedition._id, {
+        await this.expeditionService.updateById(ctx.expedition._id.toString(), {
             $push: {
                 'playerState.potions': {
                     id: randomUUID(),

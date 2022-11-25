@@ -35,6 +35,7 @@ describe('Card Description Formatter', () => {
         showPointer: true,
         isUpgraded: false,
         isTemporary: false,
+        isActive: true,
     };
 
     const statusCard: IExpeditionPlayerStateDeckCard = {
@@ -62,6 +63,7 @@ describe('Card Description Formatter', () => {
         showPointer: false,
         isUpgraded: false,
         isTemporary: false,
+        isActive: true,
     };
 
     it('should update the description with effect value', () => {

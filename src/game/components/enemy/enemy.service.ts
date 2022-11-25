@@ -4,9 +4,9 @@ import { Enemy, EnemyDocument } from './enemy.schema';
 import { Model } from 'mongoose';
 import { EnemyId, enemyIdField, enemySelector } from './enemy.type';
 import { GameContext, ExpeditionEntity } from '../interfaces';
-import { ExpeditionEnemy } from './enemy.interface';
+import { EnemyScript, ExpeditionEnemy } from './enemy.interface';
 import { CardTargetedEnum } from '../card/card.enum';
-import { find, sample } from 'lodash';
+import { find, reject, sample, isEmpty } from 'lodash';
 import { ExpeditionService } from '../expedition/expedition.service';
 import {
     ENEMY_CURRENT_SCRIPT_PATH,
@@ -21,6 +21,9 @@ import {
     StatusCounterType,
 } from 'src/game/status/interfaces';
 import { StatusService } from 'src/game/status/status.service';
+import { EnemyIntentionType } from './enemy.enum';
+import { damageEffect } from 'src/game/effects/damage/constants';
+import { HARD_MODE_NODE_END, HARD_MODE_NODE_START } from 'src/game/constants';
 
 @Injectable()
 export class EnemyService {
@@ -120,7 +123,46 @@ export class EnemyService {
     public getRandom(ctx: GameContext): ExpeditionEnemy {
         const enemies = this.getAll(ctx);
 
-        return sample(enemies);
+        return sample(
+            // Reject enemies that are dead
+            reject(enemies, {
+                value: {
+                    hpCurrent: 0,
+                },
+            }),
+        );
+    }
+
+    /**
+     * Sets the current script of an enemy
+     *
+     * @param ctx Context
+     * @param id Enemy id
+     * @param script Enemy script value
+     * @returns Enemy script value
+     */
+    public async setCurrentScript(
+        ctx: GameContext,
+        id: EnemyId,
+        script: EnemyScript,
+    ): Promise<EnemyScript> {
+        const enemy = this.get(ctx, id);
+
+        await this.expeditionService.updateByFilter(
+            {
+                _id: ctx.expedition._id,
+                ...enemySelector(enemy.value.id),
+            },
+            {
+                [ENEMY_CURRENT_SCRIPT_PATH]: script,
+            },
+        );
+
+        enemy.value.currentScript = script;
+
+        this.logger.debug(`Set script of enemy ${id} to ${script}`);
+
+        return script;
     }
 
     /**
@@ -244,22 +286,42 @@ export class EnemyService {
     async calculateNewIntentions(ctx: GameContext): Promise<void> {
         const enemies = this.getAll(ctx);
 
-        for (const enemy of enemies) {
+        const enemiesAlive = enemies.filter(
+            (enemy) => enemy.value.hpCurrent > 0,
+        );
+
+        for (const enemy of enemiesAlive) {
             const { scripts } = await this.findById(enemy.value.enemyId);
             const currentScript = enemy.value.currentScript;
+            let nextScript: EnemyScript;
 
-            const nextScript = currentScript
-                ? scripts[
-                      getRandomItemByWeight(
-                          currentScript.next,
-                          currentScript.next.map((s) => s.probability),
-                      ).scriptIndex
-                  ]
-                : scripts[0];
+            if (currentScript) {
+                nextScript = this.getNextScript(scripts, currentScript);
+            } else {
+                nextScript = scripts[0];
+
+                // If the first script does not have intentions,
+                // then it is used only to calculate the next possible script
+                if (isEmpty(nextScript.intentions)) {
+                    nextScript = this.getNextScript(scripts, nextScript);
+                }
+            }
+
+            // Increase damage for node from 14 to 20
+            const node = ctx.expedition.map.find(
+                (node) => node.id == ctx.expedition.currentNode.nodeId,
+            );
+
+            if (
+                HARD_MODE_NODE_START <= node.step &&
+                node.step <= HARD_MODE_NODE_END
+            ) {
+                this.increaseScriptDamage(nextScript);
+            }
 
             await this.expeditionService.updateByFilter(
                 {
-                    _id: ctx.expedition._id,
+                    clientId: ctx.client.id,
                     ...enemySelector(enemy.value.id),
                 },
                 {
@@ -272,7 +334,41 @@ export class EnemyService {
             this.logger.debug(
                 `Calculated new script for enemy ${enemy.value.id}`,
             );
+            this.logger.debug(`New script: ${JSON.stringify(nextScript)}`);
         }
+    }
+
+    private getNextScript(
+        scripts: EnemyScript[],
+        currentScript: EnemyScript,
+    ): EnemyScript {
+        return find(scripts, {
+            id: getRandomItemByWeight(
+                currentScript.next,
+                currentScript.next.map((s) => s.probability),
+            ).scriptId,
+        });
+    }
+
+    /**
+     * Increase damage for script
+     *
+     * @param script Script
+     * @param scale Scale to increase
+     */
+    private increaseScriptDamage(script: EnemyScript, scale = 1.5) {
+        script.intentions.forEach((intention) => {
+            if (intention.type == EnemyIntentionType.Attack) {
+                intention.value = Math.floor(intention.value * scale);
+                intention.effects.forEach((effect) => {
+                    if (effect.effect == damageEffect.name) {
+                        effect.args.value = Math.floor(
+                            effect.args.value * scale,
+                        );
+                    }
+                });
+            }
+        });
     }
 
     /**

@@ -42,6 +42,7 @@ export class ExpeditionGateway {
             return await this.nodeSelectedProcess.handle(client, node_id);
         } catch (e) {
             this.logger.error(e.message);
+            this.logger.error(e.trace);
             client.emit('ErrorMessage', {
                 message: `An Error has ocurred selecting the node`,
             });
@@ -89,7 +90,7 @@ export class ExpeditionGateway {
                 `Player ${client.id} completed the node ${nodeId}`,
             );
 
-            await this.expeditionService.updateById(expedition._id, {
+            await this.expeditionService.updateById(expedition._id.toString(), {
                 $set: {
                     map: mapToSave,
                     'currentNode.completed': true,
@@ -114,10 +115,10 @@ export class ExpeditionGateway {
 
             const mapToSave = newMap.getMap;
 
-            await this.expeditionService.updateById(expedition._id, {
+            await this.expeditionService.updateById(expedition._id.toString(), {
                 $set: {
                     map: mapToSave,
-                    'currentNode.completed': true,
+                    'currentNode.completed': false,
                 },
             });
 

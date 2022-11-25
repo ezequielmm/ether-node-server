@@ -9,6 +9,7 @@ import {
     EnemyIntentionType,
 } from '../enemy.enum';
 import { Enemy } from '../enemy.schema';
+import { attachStatusEffect } from 'src/game/effects/attachStatus/constants';
 
 export const barkChargerData: Enemy = {
     enemyId: 6,
@@ -20,6 +21,15 @@ export const barkChargerData: Enemy = {
     healthRange: [10, 12],
     scripts: [
         {
+            id: 0,
+            intentions: [],
+            next: [
+                { probability: 0.5, scriptId: 1 },
+                { probability: 0.5, scriptId: 2 },
+            ],
+        },
+        {
+            id: 1,
             intentions: [
                 {
                     type: EnemyIntentionType.Attack,
@@ -37,7 +47,7 @@ export const barkChargerData: Enemy = {
                 },
                 {
                     type: EnemyIntentionType.Defend,
-                    target: CardTargetedEnum.Player,
+                    target: CardTargetedEnum.Self,
                     value: 5,
                     effects: [
                         {
@@ -53,15 +63,16 @@ export const barkChargerData: Enemy = {
             next: [
                 {
                     probability: 0.5,
-                    scriptIndex: 0,
+                    scriptId: 1,
                 },
                 {
                     probability: 0.5,
-                    scriptIndex: 1,
+                    scriptId: 2,
                 },
             ],
         },
         {
+            id: 2,
             intentions: [
                 {
                     type: EnemyIntentionType.Defend,
@@ -78,15 +89,18 @@ export const barkChargerData: Enemy = {
                     ],
                 },
                 {
-                    type: EnemyIntentionType.Defend,
+                    type: EnemyIntentionType.Buff,
                     target: CardTargetedEnum.Self,
-                    value: 5,
-                    status: [
+                    value: 2,
+                    effects: [
                         {
-                            name: resolveStatus.name,
-                            attachTo: CardTargetedEnum.Self,
+                            effect: attachStatusEffect.name,
+                            target: CardTargetedEnum.Self,
                             args: {
-                                counter: 2,
+                                statusName: resolveStatus.name,
+                                statusArgs: {
+                                    counter: 2,
+                                },
                             },
                         },
                     ],
@@ -95,15 +109,16 @@ export const barkChargerData: Enemy = {
             next: [
                 {
                     probability: 0.9,
-                    scriptIndex: 2,
+                    scriptId: 3,
                 },
                 {
                     probability: 0.1,
-                    scriptIndex: 0,
+                    scriptId: 1,
                 },
             ],
         },
         {
+            id: 3,
             intentions: [
                 {
                     type: EnemyIntentionType.Attack,
@@ -123,7 +138,7 @@ export const barkChargerData: Enemy = {
             next: [
                 {
                     probability: 1,
-                    scriptIndex: 0,
+                    scriptId: 1,
                 },
             ],
         },

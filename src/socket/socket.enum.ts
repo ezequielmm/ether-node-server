@@ -1,3 +1,5 @@
+import { GatewayMetadata } from '@nestjs/websockets';
+
 export enum DataWSRequestTypesEnum {
     Energy = 'Energy',
     Health = 'Health',
@@ -11,9 +13,11 @@ export enum DataWSRequestTypesEnum {
     PlayerDeck = 'PlayerDeck',
     CurrentNode = 'CurrentNode',
     UpgradableCards = 'UpgradableCards',
+    MerchantData = 'MerchantData',
+    TreasureData = 'TreasureData',
 }
 
-export const corsSocketSettings = {
+export const corsSocketSettings: GatewayMetadata = {
     cors: {
         origin: '*',
     },

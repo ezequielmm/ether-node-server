@@ -68,6 +68,7 @@ describe('Utility Functions', () => {
                 isTemporary: false,
                 showPointer: true,
                 isUpgraded: false,
+                isActive: true,
             },
             {
                 cardId: 2,
@@ -94,6 +95,7 @@ describe('Utility Functions', () => {
                 isTemporary: false,
                 showPointer: false,
                 isUpgraded: false,
+                isActive: true,
             },
             {
                 cardId: 3,
@@ -130,6 +132,7 @@ describe('Utility Functions', () => {
                 isTemporary: false,
                 showPointer: true,
                 isUpgraded: true,
+                isActive: true,
             },
             {
                 cardId: 4,
@@ -166,6 +169,7 @@ describe('Utility Functions', () => {
                 isTemporary: false,
                 showPointer: true,
                 isUpgraded: true,
+                isActive: true,
             },
             {
                 cardId: 5,
@@ -192,6 +196,7 @@ describe('Utility Functions', () => {
                 isTemporary: false,
                 showPointer: true,
                 isUpgraded: false,
+                isActive: true,
             },
         ];
 
@@ -221,6 +226,7 @@ describe('Utility Functions', () => {
                 isTemporary: false,
                 showPointer: true,
                 isUpgraded: false,
+                isActive: true,
             },
         ];
 

@@ -3,7 +3,8 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import {
     CreateCardSelectionScreenDTO,
-    IFindCardSelectionScreen,
+    IFindCardSelectionScreenDTO,
+    UpdateCardSelectionScreenDTO,
 } from './cardSelectionScreen.interface';
 import {
     CardSelectionScreen,
@@ -28,8 +29,16 @@ export class CardSelectionScreenService {
     }
 
     async findOne(
-        payload: IFindCardSelectionScreen,
+        payload: IFindCardSelectionScreenDTO,
     ): Promise<CardSelectionScreenDocument> {
         return await this.cardSelectionScreen.findOne(payload).lean();
+    }
+
+    async update(payload: UpdateCardSelectionScreenDTO): Promise<void> {
+        const { clientId } = payload;
+        await this.cardSelectionScreen.updateOne(
+            { clientId },
+            { $set: payload },
+        );
     }
 }

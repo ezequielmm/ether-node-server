@@ -5,9 +5,11 @@ import { GetCardPilesAction } from 'src/game/action/getCardPiles.action';
 import { GetCurrentStepAction } from 'src/game/action/getCurrentStep.action';
 import { GetEnemiesAction } from 'src/game/action/getEnemies.action';
 import { GetEnergyAction } from 'src/game/action/getEnergy.action';
+import { GetMerchantDataAction } from 'src/game/action/getMerchantData.action';
 import { GetPlayerDeckAction } from 'src/game/action/getPlayerDeck.action';
 import { GetPlayerInfoAction } from 'src/game/action/getPlayerInfo.action';
 import { GetStatusesAction } from 'src/game/action/getStatuses.action';
+import { GetTreasureDataAction } from 'src/game/action/getTreasureData.action';
 import { GetUpgradableCardsAction } from 'src/game/action/getUpgradableCards.action';
 import { SendEnemyIntentProcess } from 'src/game/process/sendEnemyIntents.process';
 import {
@@ -30,6 +32,8 @@ export class GetDataGateway {
         private readonly getPlayerInfoAction: GetPlayerInfoAction,
         private readonly getCurrentStepAction: GetCurrentStepAction,
         private readonly getUpgradableCards: GetUpgradableCardsAction,
+        private readonly getMerchantDataAction: GetMerchantDataAction,
+        private readonly getTreasureDataAction: GetTreasureDataAction,
     ) {}
 
     @SubscribeMessage('GetData')
@@ -77,6 +81,14 @@ export class GetDataGateway {
                 case DataWSRequestTypesEnum.UpgradableCards:
                     data = await this.getUpgradableCards.handle(client.id);
                     break;
+
+                case DataWSRequestTypesEnum.MerchantData:
+                    data = await this.getMerchantDataAction.handle(client.id);
+                    break;
+
+                case DataWSRequestTypesEnum.TreasureData:
+                    data = await this.getTreasureDataAction.handle(client);
+                    break;
             }
 
             return StandardResponse.respond({
@@ -86,6 +98,7 @@ export class GetDataGateway {
             });
         } catch (e) {
             this.logger.error(e.message);
+            this.logger.error(e.trace);
 
             client.emit('ErrorMessage', {
                 message: `An Error has ocurred getting ${types}`,

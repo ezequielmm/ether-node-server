@@ -34,6 +34,7 @@ export const TorchCardUpgraded: Card = {
     },
     showPointer: true,
     isUpgraded: false,
+    isActive: true,
 };
 
 export const TorchCard: Card = {
@@ -68,4 +69,5 @@ export const TorchCard: Card = {
     showPointer: true,
     isUpgraded: false,
     upgradedCardId: TorchCardUpgraded.cardId,
+    isActive: true,
 };

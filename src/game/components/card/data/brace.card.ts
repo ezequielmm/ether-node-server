@@ -26,6 +26,7 @@ export const BraceCardUpgraded: Card = {
     },
     showPointer: false,
     isUpgraded: true,
+    isActive: true,
 };
 
 export const BraceCard: Card = {
@@ -60,4 +61,5 @@ export const BraceCard: Card = {
     showPointer: false,
     isUpgraded: false,
     upgradedCardId: BraceCardUpgraded.cardId,
+    isActive: true,
 };

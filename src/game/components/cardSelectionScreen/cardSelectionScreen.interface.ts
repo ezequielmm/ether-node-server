@@ -2,7 +2,12 @@ import { CardSelectionScreen } from './cardSelectionScreen.schema';
 
 export type CreateCardSelectionScreenDTO = CardSelectionScreen;
 
-export interface IFindCardSelectionScreen {
-    readonly client_id?: string;
-    readonly id?: string;
+export interface IFindCardSelectionScreenDTO {
+    readonly clientId: string;
+}
+
+export interface UpdateCardSelectionScreenDTO {
+    readonly clientId: string;
+    readonly cardIds?: string[];
+    readonly amountToTake?: number;
 }

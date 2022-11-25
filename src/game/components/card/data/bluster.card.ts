@@ -34,6 +34,7 @@ export const BlusterCardUpgraded: Card = {
     },
     showPointer: false,
     isUpgraded: true,
+    isActive: true,
 };
 
 export const BlusterCard: Card = {
@@ -68,4 +69,5 @@ export const BlusterCard: Card = {
     showPointer: false,
     isUpgraded: false,
     upgradedCardId: BlusterCardUpgraded.cardId,
+    isActive: true,
 };

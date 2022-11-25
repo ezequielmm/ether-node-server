@@ -12,7 +12,6 @@ import { AuthGatewayService } from 'src/authGateway/authGateway.service';
 import { ExpeditionService } from 'src/game/components/expedition/expedition.service';
 import { FullSyncAction } from 'src/game/action/fullSync.action';
 import { ExpeditionMapNodeTypeEnum } from 'src/game/components/expedition/expedition.enum';
-import { InitCombatProcess } from 'src/game/process/initCombat.process';
 import { PlayerService } from 'src/game/components/player/player.service';
 import { CombatQueueService } from 'src/game/components/combatQueue/combatQueue.service';
 import { CardSelectionScreenService } from 'src/game/components/cardSelectionScreen/cardSelectionScreen.service';
@@ -30,7 +29,6 @@ export class SocketGateway
         private readonly authGatewayService: AuthGatewayService,
         private readonly expeditionService: ExpeditionService,
         private readonly fullSyncAction: FullSyncAction,
-        private readonly initCombatProcess: InitCombatProcess,
         private readonly playerService: PlayerService,
         private readonly combatQueueService: CombatQueueService,
         private readonly cardSelectionScreenService: CardSelectionScreenService,
@@ -65,24 +63,11 @@ export class SocketGateway
             if (expedition) {
                 this.logger.debug(`Client connected: ${client.id}`);
 
-                const { currentNode } = expedition;
-
                 // Here we check if the player is in a node already
-                if (currentNode !== undefined) {
-                    const { nodeType, nodeId } = currentNode;
+                if (expedition.currentNode !== undefined) {
+                    const { nodeType } = expedition.currentNode;
 
-                    const nodeTypes = Object.values(ExpeditionMapNodeTypeEnum);
-                    const combatNodes = nodeTypes.filter(
-                        (node) => node.search('combat') !== -1,
-                    );
-
-                    if (combatNodes.includes(nodeType)) {
-                        const node =
-                            await this.expeditionService.getExpeditionMapNode({
-                                clientId: client.id,
-                                nodeId,
-                            });
-
+                    if (nodeType === ExpeditionMapNodeTypeEnum.Combat) {
                         const { hpCurrent } =
                             await this.expeditionService.getPlayerState({
                                 clientId: client.id,
@@ -92,8 +77,6 @@ export class SocketGateway
                             { client, expedition },
                             hpCurrent,
                         );
-
-                        await this.initCombatProcess.process(client, node);
                     }
                 }
 

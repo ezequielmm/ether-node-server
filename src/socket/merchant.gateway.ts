@@ -3,7 +3,7 @@ import { Logger } from '@nestjs/common';
 import { Socket } from 'socket.io';
 import { corsSocketSettings } from './socket.enum';
 import { MerchantService } from 'src/game/merchant/merchant.service';
-import { selectedItem } from 'src/game/merchant/interfaces';
+import { SelectedItem } from 'src/game/merchant/merchant.interface';
 
 @WebSocketGateway(corsSocketSettings)
 export class MerchantGateway {
@@ -11,15 +11,14 @@ export class MerchantGateway {
 
     constructor(private readonly merchantService: MerchantService) {}
 
-    @SubscribeMessage('PurchaseItem')
-    async handleItemsSelected(
-        client: Socket,
-        selected: selectedItem,
-    ): Promise<void> {
+    @SubscribeMessage('MerchantBuy')
+    async handleItemsSelected(client: Socket, payload: string): Promise<void> {
+        const selected = JSON.parse(payload) as SelectedItem;
+
         this.logger.debug(
-            `Client ${client.id} trigger message "ItemsSelected"`,
+            `Client ${client.id} trigger message "MerchantBuy": ${payload}`,
         );
 
-        await this.merchantService.handle(client, selected);
+        await this.merchantService.buyItem(client, selected);
     }
 }

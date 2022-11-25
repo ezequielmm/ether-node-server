@@ -25,6 +25,7 @@ export const LevitateCardUpgraded: Card = {
     },
     showPointer: false,
     isUpgraded: true,
+    isActive: true,
 };
 
 export const LevitateCard: Card = {
@@ -51,4 +52,5 @@ export const LevitateCard: Card = {
     showPointer: false,
     isUpgraded: false,
     upgradedCardId: LevitateCardUpgraded.cardId,
+    isActive: true,
 };

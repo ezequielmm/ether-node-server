@@ -39,6 +39,7 @@ export const Refocus: Card = {
     },
     showPointer: false,
     isUpgraded: false,
+    isActive: true,
 };
 
 // TODO: Add refocus - id: 158

@@ -14,7 +14,7 @@ export class FullSyncAction {
 
     constructor(private readonly expeditionService: ExpeditionService) {}
 
-    async handle(client: Socket, sendShowMap: boolean = true): Promise<void> {
+    async handle(client: Socket, sendShowMap = true): Promise<void> {
         const expedition = await this.expeditionService.findOne({
             clientId: client.id,
         });
@@ -59,7 +59,7 @@ export class FullSyncAction {
                         gold: playerState.gold,
                         cards: playerState.cards,
                         potions: playerState.potions,
-                        trinkets: [],
+                        trinkets: playerState.trinkets,
                     },
                 },
             }),

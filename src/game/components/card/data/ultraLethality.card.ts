@@ -40,6 +40,7 @@ export const UltraLethalityCardUpgraded: Card = {
     },
     showPointer: true,
     isUpgraded: false,
+    isActive: true,
 };
 
 export const UltraLethalityCard: Card = {
@@ -80,4 +81,5 @@ export const UltraLethalityCard: Card = {
     showPointer: true,
     isUpgraded: false,
     upgradedCardId: UltraLethalityCardUpgraded.cardId,
+    isActive: true,
 };

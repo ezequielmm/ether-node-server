@@ -2,8 +2,12 @@ import Act from '../act/act';
 import Node from '../nodes/node';
 import nodeFactory from '../nodes/index';
 import { actCconfigAlternatives } from '../act/act.config';
-import { ExpeditionMapNodeTypeEnum } from 'src/game/components/expedition/expedition.enum';
+import {
+    ExpeditionMapNodeTypeEnum,
+    RoyalHouseTitles,
+} from 'src/game/components/expedition/expedition.enum';
 import { IExpeditionNode } from 'src/game/components/expedition/expedition.interface';
+import buildActOne from '../act/act-one';
 
 class ExpeditionMap {
     public readonly clientId?: string;
@@ -38,6 +42,7 @@ class ExpeditionMap {
                 node.type,
                 node.subType,
                 node.private_data,
+                node?.title,
             );
             nodeObj.exits = node.exits;
             nodeObj.enter = node.enter;
@@ -88,6 +93,7 @@ class ExpeditionMap {
             ExpeditionMapNodeTypeEnum.RoyalHouse,
             ExpeditionMapNodeTypeEnum.RoyalHouseA,
             {},
+            RoyalHouseTitles.Cynthienne,
         );
         const royalB = nodeFactory(
             2,
@@ -96,6 +102,7 @@ class ExpeditionMap {
             ExpeditionMapNodeTypeEnum.RoyalHouse,
             ExpeditionMapNodeTypeEnum.RoyalHouseB,
             {},
+            RoyalHouseTitles.Medici,
         );
         const royalC = nodeFactory(
             3,
@@ -104,6 +111,7 @@ class ExpeditionMap {
             ExpeditionMapNodeTypeEnum.RoyalHouse,
             ExpeditionMapNodeTypeEnum.RoyalHouseC,
             {},
+            RoyalHouseTitles.Brightflame,
         );
         const royalD = nodeFactory(
             4,
@@ -112,6 +120,7 @@ class ExpeditionMap {
             ExpeditionMapNodeTypeEnum.RoyalHouse,
             ExpeditionMapNodeTypeEnum.RoyalHouseD,
             {},
+            RoyalHouseTitles.Rhunn,
         );
         const portal = nodeFactory(
             5,
@@ -155,11 +164,21 @@ class ExpeditionMap {
         // Clear currentStepnumber, nextStepnumber and newActMap to initial values.
         this.newActMap.clear();
         this.currentStepnumber = 0;
+        // TODO: Review Act class
         this.currentAct = new Act(actnumber, actConfigAlternatives);
-        for (let step = 0; step <= this.currentAct.stepsTotal; step += 1) {
-            const nodesToGenerate = this.nodesToGenerate();
-            this.addNodes(step, nodesToGenerate);
+
+        // for (let step = 0; step <= this.currentAct.stepsTotal; step += 1) {
+        //const nodesToGenerate = this.nodesToGenerate();
+        //this.addNodes(step, nodesToGenerate);
+        // }
+
+        if (actnumber == 1) {
+            const nodes: Node[] = buildActOne(this.previousNodeId++);
+            this.newActMap = new Map<number, Node>(
+                nodes.map((node) => [node.id, node]),
+            );
         }
+
         this.createConnections();
         this.MergeCurrentAndNewMap();
     }

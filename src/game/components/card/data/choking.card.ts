@@ -1,5 +1,4 @@
 import { attachStatusEffect } from 'src/game/effects/attachStatus/constants';
-import { damageEffect } from 'src/game/effects/damage/constants';
 import { feebleStatus } from 'src/game/status/feeble/constants';
 import {
     CardKeywordEnum,
@@ -36,4 +35,5 @@ export const ChokingCard: Card = {
     showPointer: false,
     isUpgraded: false,
     triggerAtEndOfTurn: true,
+    isActive: true,
 };
