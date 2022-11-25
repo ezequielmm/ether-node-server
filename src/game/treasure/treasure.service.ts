@@ -32,7 +32,7 @@ export class TreasureService {
 
         // const randomCoinChance = getRandomBetween(1, 100);
         const randomPotionChance = getRandomBetween(1, 100);
-        const randomTrappedChance = getRandomBetween(1, 100);
+        //const randomTrappedChance = getRandomBetween(1, 100);
 
         /*if (randomCoinChance <= chest.coinChance) {
             const coin = getRandomBetween(chest.minCoins, chest.maxCoins);
@@ -65,7 +65,7 @@ export class TreasureService {
             });
         }
 
-        const isTrappedChest = this.isTrappedChest(
+        /*const isTrappedChest = this.isTrappedChest(
             randomTrappedChance,
             chest.trappedChance,
         );
@@ -73,6 +73,9 @@ export class TreasureService {
         const type = isTrappedChest
             ? chest.trappedType
             : TreasureTypeEnum.NoTrap;
+        */
+
+        const type = TreasureTypeEnum.NoTrap;
 
         return {
             name: chest.name,
@@ -80,7 +83,7 @@ export class TreasureService {
             isOpen: false,
             rewards,
             type,
-            ...(isTrappedChest && this.generateTrappedData(chest)),
+            //...(isTrappedChest && this.generateTrappedData(chest)),
         };
     }
 
