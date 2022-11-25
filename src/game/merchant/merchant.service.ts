@@ -47,6 +47,8 @@ export class MerchantService {
         client: Socket,
         selectedItem: SelectedItem,
     ): Promise<void> {
+        this.client = client;
+
         switch (selectedItem.type) {
             case ItemsTypeEnum.Card:
             case ItemsTypeEnum.Trinket:

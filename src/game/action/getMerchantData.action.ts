@@ -1,8 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { randomUUID } from 'crypto';
-import { CardDescriptionFormatter } from '../cardDescriptionFormatter/cardDescriptionFormatter';
 import { CardService } from '../components/card/card.service';
-import { IExpeditionPlayerStateDeckCard } from '../components/expedition/expedition.interface';
 import { ExpeditionService } from '../components/expedition/expedition.service';
 
 @Injectable()
@@ -35,48 +32,6 @@ export class GetMerchantDataAction {
             trinkets: merchantItems.trinkets,
             potions: merchantItems.potions,
         };
-
-        const cardsId = [];
-
-        for (let i = 0; i < cards.length; i++) {
-            if (!cards[i].isUpgraded) {
-                data.upgradeableCards.push(cards[i]);
-                cardsId.push(cards[i].upgradedCardId);
-            }
-        }
-
-        const upgradeableCards = await this.cardService.findCardsById(cardsId);
-
-        let index = -1;
-        let id = null;
-
-        for (let i = 0; i < cardsId.length; i++) {
-            if (cardsId[i] !== id) {
-                id = cardsId[i];
-                index = index + 1;
-            }
-
-            const upgradedCard: IExpeditionPlayerStateDeckCard = {
-                id: randomUUID(),
-                cardId: data.upgradeableCards[i].cardId,
-                name: upgradeableCards[index].name,
-                cardType: upgradeableCards[index].cardType,
-                energy: upgradeableCards[index].energy,
-                description: CardDescriptionFormatter.process(
-                    upgradeableCards[index],
-                ),
-                isTemporary: false,
-                rarity: upgradeableCards[index].rarity,
-                properties: upgradeableCards[index].properties,
-                keywords: upgradeableCards[index].keywords,
-                showPointer: upgradeableCards[index].showPointer,
-                pool: upgradeableCards[index].pool,
-                isUpgraded: upgradeableCards[index].isUpgraded,
-                isActive: true,
-            };
-
-            data.upgradedCards.push(upgradedCard);
-        }
 
         return data;
     }
