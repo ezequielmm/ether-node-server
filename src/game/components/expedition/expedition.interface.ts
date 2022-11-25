@@ -1,4 +1,4 @@
-import { Item } from 'src/game/merchant/interfaces';
+import { Item } from 'src/game/merchant/merchant.interface';
 import { AttachedStatus, StatusType } from 'src/game/status/interfaces';
 import { CardRarityEnum, CardTypeEnum } from '../card/card.enum';
 import { Card } from '../card/card.schema';

@@ -1,5 +1,6 @@
 import { forwardRef, Module } from '@nestjs/common';
 import { ActionModule } from '../action/action.module';
+import { CombatModule } from '../combat/combat.module';
 import { CardModule } from '../components/card/card.module';
 import { CharacterModule } from '../components/character/character.module';
 import { CombatQueueModule } from '../components/combatQueue/combatQueue.module';
@@ -45,6 +46,7 @@ import { SendEnemyIntentProcess } from './sendEnemyIntents.process';
         CombatQueueModule,
         forwardRef(() => PotionModule),
         TrinketModule,
+        CombatModule,
     ],
     providers: [
         SendEnemyIntentProcess,

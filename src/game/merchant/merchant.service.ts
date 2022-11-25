@@ -1,12 +1,13 @@
+import { Injectable, Logger } from '@nestjs/common';
 import { randomUUID } from 'crypto';
 import { Socket } from 'socket.io';
-import { CardDescriptionFormatter } from '../cardDescriptionFormatter/cardDescriptionFormatter';
-import { Injectable, Logger } from '@nestjs/common';
+import { CustomException, ErrorBehavior } from 'src/socket/custom.exception';
 import { getRandomBetween } from 'src/utils';
+import { CardDescriptionFormatter } from '../cardDescriptionFormatter/cardDescriptionFormatter';
 import { CardRarityEnum, CardTypeEnum } from '../components/card/card.enum';
 import { CardDocument } from '../components/card/card.schema';
 import { CardService } from '../components/card/card.service';
-import { CardId, getCardIdField } from '../components/card/card.type';
+import { getCardIdField } from '../components/card/card.type';
 import { ExpeditionMapNodeTypeEnum } from '../components/expedition/expedition.enum';
 import {
     IExpeditionPlayerState,
@@ -15,64 +16,72 @@ import {
 import { ExpeditionService } from '../components/expedition/expedition.service';
 import { PotionRarityEnum } from '../components/potion/potion.enum';
 import { PotionService } from '../components/potion/potion.service';
-import { TrinketRarityEnum } from '../components/trinket/trinket.enum';
-import { TrinketService } from '../components/trinket/trinket.service';
 import {
     StandardResponse,
-    SWARAction,
     SWARMessageType,
+    SWARAction,
 } from '../standardResponse/standardResponse';
-import { Item, MerchantItems, SelectedItem } from './interfaces';
 import {
-    CardCommon,
-    ItemsTypeEnum,
-    CardRare,
-    CardUncommon,
     PotionCommon,
     PotionUncommon,
     PotionRare,
-    TrinketCommon,
-    TrinketUncommon,
-    TrinketRare,
+    ItemsTypeEnum,
+    CardCommon,
+    CardRare,
+    CardUncommon,
     PurchaseFailureEnum,
 } from './merchant.enum';
-import { CustomException, ErrorBehavior } from 'src/socket/custom.exception';
+import { Item, MerchantItems, SelectedItem } from './merchant.interface';
 
 @Injectable()
 export class MerchantService {
     private readonly logger: Logger = new Logger(MerchantService.name);
+
     constructor(
         private readonly expeditionService: ExpeditionService,
         private readonly cardService: CardService,
         private readonly potionService: PotionService,
-        private readonly trinketService: TrinketService,
     ) {}
 
-    async merchantBuy(
-        client: Socket,
-        selectedItem: SelectedItem,
-    ): Promise<void> {
+    private client: Socket;
+    private selectedItem: SelectedItem;
+    private expeditionId: string;
+
+    async generateMerchant(): Promise<MerchantItems> {
+        const potions = await this.getPotions();
+        const cards = await this.getCards();
+
+        return {
+            cards,
+            potions,
+            trinkets: [],
+        };
+    }
+
+    async buyItem(client: Socket, selectedItem: SelectedItem): Promise<void> {
+        this.client = client;
+        this.selectedItem = selectedItem;
+
         switch (selectedItem.type) {
             case ItemsTypeEnum.Card:
             case ItemsTypeEnum.Trinket:
             case ItemsTypeEnum.Potion:
-                await this.handle(client, selectedItem);
+                await this.processItem();
                 break;
             case ItemsTypeEnum.Destroy:
-                await this.cardDestroy(client, selectedItem.targetId);
+                await this.cardDestroy();
                 break;
             case ItemsTypeEnum.Upgrade:
-                await this.cardUpgrade(client, selectedItem.targetId);
+                await this.cardUpgrade();
                 break;
         }
     }
 
-    async handle(client: Socket, selectedItem: SelectedItem): Promise<void> {
-        this.logger.log('handle', { selectedItem });
-        const { targetId, type } = selectedItem;
+    private async processItem(): Promise<void> {
+        const { targetId, type } = this.selectedItem;
 
         const expedition = await this.expeditionService.findOne({
-            clientId: client.id,
+            clientId: this.client.id,
         });
 
         const {
@@ -80,10 +89,10 @@ export class MerchantService {
             currentNode: { merchantItems, nodeType },
         } = expedition;
 
-        const id = expedition._id.toString();
+        this.expeditionId = expedition._id.toString();
 
         if (nodeType !== ExpeditionMapNodeTypeEnum.Merchant) {
-            client.emit('ErrorMessage', {
+            this.client.emit('ErrorMessage', {
                 message: `You are not in the merchant node`,
             });
             throw new CustomException(
@@ -123,7 +132,7 @@ export class MerchantService {
         }
 
         if (!item) {
-            this.failure(client, PurchaseFailureEnum.InvalidId);
+            this.failure(PurchaseFailureEnum.InvalidId);
             throw new CustomException(
                 PurchaseFailureEnum.InvalidId,
                 ErrorBehavior.ReturnToMainMenu,
@@ -131,7 +140,7 @@ export class MerchantService {
         }
 
         if (playerState.gold < item.cost) {
-            this.failure(client, PurchaseFailureEnum.NoEnoughGold);
+            this.failure(PurchaseFailureEnum.NoEnoughGold);
             throw new CustomException(
                 PurchaseFailureEnum.NoEnoughGold,
                 ErrorBehavior.ReturnToMainMenu,
@@ -145,12 +154,11 @@ export class MerchantService {
                     item,
                     itemIndex,
                     playerState,
-                    id,
                 );
                 break;
             case ItemsTypeEnum.Potion:
                 if (playerState.potions.length > 2) {
-                    this.failure(client, PurchaseFailureEnum.MaxPotionReached);
+                    this.failure(PurchaseFailureEnum.MaxPotionReached);
                     throw new CustomException(
                         PurchaseFailureEnum.MaxPotionReached,
                         ErrorBehavior.ReturnToMainMenu,
@@ -161,199 +169,22 @@ export class MerchantService {
                     item,
                     itemIndex,
                     playerState,
-                    id,
-                );
-                break;
-            case ItemsTypeEnum.Trinket:
-                await this.handleTrinkets(
-                    merchantItems,
-                    item,
-                    itemIndex,
-                    playerState,
-                    id,
                 );
                 break;
         }
 
-        await this.success(client);
+        await this.success();
     }
 
-    async handleCard(
-        merchantItems: MerchantItems,
-        item: Item,
-        itemIndex: number,
-        playerState: IExpeditionPlayerState,
-        _id: string,
-    ) {
-        const newPlayerState = {
-            ...playerState,
-            gold: playerState.gold - item.cost,
-            cards: [...playerState.cards, item.item],
-        };
-
-        const mewMerchantItems = {
-            ...merchantItems,
-        };
-        mewMerchantItems.cards[itemIndex].isSold = true;
-
-        await this.expeditionService.updateById(_id, {
-            $set: {
-                playerState: newPlayerState,
-                'currentNode.merchantItems': mewMerchantItems,
-            },
-        });
-    }
-
-    async handlePotions(
-        merchantItems: MerchantItems,
-        item: Item,
-        itemIndex: number,
-        playerState: IExpeditionPlayerState,
-        _id: string,
-    ) {
-        this.logger.log('handlePotions', { item });
-        const newPlayerState = {
-            ...playerState,
-            gold: playerState.gold - item.cost,
-            potions: [...playerState.potions, item.item],
-        };
-        const mewMerchantItems = {
-            ...merchantItems,
-        };
-        mewMerchantItems.potions[itemIndex].isSold = true;
-
-        await this.expeditionService.updateById(_id, {
-            $set: {
-                playerState: newPlayerState,
-                'currentNode.merchantItems': mewMerchantItems,
-            },
-        });
-    }
-
-    async handleTrinkets(
-        merchantItems: MerchantItems,
-        item: Item,
-        itemIndex: number,
-        playerState: IExpeditionPlayerState,
-        _id: string,
-    ) {
-        const newPlayerState = {
-            ...playerState,
-            gold: playerState.gold - item.cost,
-            trinkets: [...playerState.trinkets, item.item],
-        };
-
-        const mewMerchantItems = {
-            ...merchantItems,
-        };
-        mewMerchantItems.trinkets[itemIndex].isSold = true;
-
-        await this.expeditionService.updateById(_id, {
-            $set: {
-                playerState: newPlayerState,
-                'currentNode.merchantItems': mewMerchantItems,
-            },
-        });
-    }
-
-    async getCard() {
-        const attackCard = await this.cardService.randomCards(
-            2,
-            CardTypeEnum.Attack,
-        );
-        const defenseCard = await this.cardService.randomCards(
-            1,
-            CardTypeEnum.Defend,
-        );
-        const skillCard = await this.cardService.randomCards(
-            1,
-            CardTypeEnum.Skill,
-        );
-        const powerCard = await this.cardService.randomCards(
-            2,
-            CardTypeEnum.Power,
-        );
-        const cards: CardDocument[] = [
-            ...attackCard,
-            ...defenseCard,
-            ...skillCard,
-            ...powerCard,
-        ];
-        const itemsData: Item[] = [];
-
-        for (let i = 0; i < cards.length; i++) {
-            let cost: number = null;
-
-            switch (cards[i].rarity) {
-                case CardRarityEnum.Common:
-                    cost = getRandomBetween(
-                        CardCommon.minPrice,
-                        CardCommon.maxPrice,
-                    );
-                    break;
-                case CardRarityEnum.Uncommon:
-                    cost = getRandomBetween(
-                        CardUncommon.minPrice,
-                        CardUncommon.maxPrice,
-                    );
-                    break;
-                case CardRarityEnum.Rare:
-                    cost = getRandomBetween(
-                        CardRare.minPrice,
-                        CardRare.maxPrice,
-                    );
-                    break;
-            }
-
-            const data = {
-                isSale: false,
-                id: randomUUID(),
-                isSold: false,
-                itemId: cards[i].cardId,
-            };
-            itemsData.push({
-                ...data,
-                cost,
-                type: ItemsTypeEnum.Card,
-                item: {
-                    id: data.id,
-                    cardId: cards[i].cardId,
-                    name: cards[i].name,
-                    rarity: cards[i].rarity,
-                    cardType: cards[i].cardType,
-                    pool: cards[i].pool,
-                    energy: cards[i].energy,
-                    description: CardDescriptionFormatter.process(cards[i]),
-                    isTemporary: false,
-                    properties: cards[i].properties,
-                    keywords: cards[i].keywords,
-                    showPointer: cards[i].showPointer,
-                    isUpgraded: cards[i].isUpgraded,
-                    upgradedCardId: cards[i].upgradedCardId,
-                    isActive: true,
-                },
-            });
-        }
-
-        const randomIndex: number = getRandomBetween(0, itemsData.length);
-        itemsData[randomIndex] = {
-            ...itemsData[randomIndex],
-            isSale: true,
-            cost: Math.floor(itemsData[randomIndex].cost / 2),
-        };
-
-        return itemsData;
-    }
-
-    async getPotions() {
+    private async getPotions(): Promise<Item[]> {
         const potions = await this.potionService.randomPotion(5);
 
         const itemsData: Item[] = [];
 
-        for (let i = 0; i < potions.length; i++) {
+        for (const potion of potions) {
             let cost: number = null;
 
-            switch (potions[i].rarity) {
+            switch (potion.rarity) {
                 case PotionRarityEnum.Common:
                     cost = getRandomBetween(
                         PotionCommon.minPrice,
@@ -374,25 +205,23 @@ export class MerchantService {
                     break;
             }
 
-            const data = {
-                id: randomUUID(),
-                isSold: false,
-                itemId: potions[i].potionId,
-            };
+            const itemId = randomUUID();
 
             itemsData.push({
-                ...data,
+                id: itemId,
+                isSold: false,
+                itemId: potion.potionId,
                 cost,
                 type: ItemsTypeEnum.Potion,
                 item: {
-                    potionId: potions[i].potionId,
-                    name: potions[i].name,
-                    rarity: potions[i].rarity,
-                    description: potions[i].description,
-                    effects: potions[i].effects,
-                    usableOutsideCombat: potions[i].usableOutsideCombat,
-                    showPointer: potions[i].showPointer,
-                    id: data.id,
+                    potionId: potion.potionId,
+                    name: potion.name,
+                    rarity: potion.rarity,
+                    description: potion.description,
+                    effects: potion.effects,
+                    usableOutsideCombat: potion.usableOutsideCombat,
+                    showPointer: potion.showPointer,
+                    id: itemId,
                     isActive: true,
                 },
             });
@@ -401,68 +230,119 @@ export class MerchantService {
         return itemsData;
     }
 
-    async getTrinket() {
-        const trinkets = await this.trinketService.randomTrinket(5);
+    private async getCards(): Promise<Item[]> {
+        const attackCard = await this.cardService.randomCards(
+            2,
+            CardTypeEnum.Attack,
+        );
+
+        const defenseCard = await this.cardService.randomCards(
+            1,
+            CardTypeEnum.Defend,
+        );
+
+        const skillCard = await this.cardService.randomCards(
+            1,
+            CardTypeEnum.Skill,
+        );
+
+        const powerCard = await this.cardService.randomCards(
+            2,
+            CardTypeEnum.Power,
+        );
+
+        const cards: CardDocument[] = [
+            ...attackCard,
+            ...defenseCard,
+            ...skillCard,
+            ...powerCard,
+        ];
 
         const itemsData: Item[] = [];
 
-        for (let i = 0; i < trinkets.length; i++) {
+        for (const card of cards) {
             let cost: number = null;
 
-            switch (trinkets[i].rarity) {
-                case TrinketRarityEnum.Common:
+            switch (card.rarity) {
+                case CardRarityEnum.Common:
                     cost = getRandomBetween(
-                        TrinketCommon.minPrice,
-                        TrinketCommon.maxPrice,
+                        CardCommon.minPrice,
+                        CardCommon.maxPrice,
                     );
-
                     break;
-                case TrinketRarityEnum.Uncommon:
+                case CardRarityEnum.Uncommon:
                     cost = getRandomBetween(
-                        TrinketUncommon.minPrice,
-                        TrinketUncommon.maxPrice,
+                        CardUncommon.minPrice,
+                        CardUncommon.maxPrice,
                     );
-
                     break;
-                case TrinketRarityEnum.Rare:
+                case CardRarityEnum.Rare:
                     cost = getRandomBetween(
-                        TrinketRare.minPrice,
-                        TrinketRare.maxPrice,
+                        CardRare.minPrice,
+                        CardRare.maxPrice,
                     );
                     break;
             }
 
-            const data = {
-                id: randomUUID(),
-                isSold: false,
-                itemId: trinkets[i].trinketId,
-            };
+            const itemId = randomUUID();
 
             itemsData.push({
-                ...data,
+                isSale: false,
+                id: itemId,
+                isSold: false,
+                itemId: card.cardId,
                 cost,
-                type: ItemsTypeEnum.Trinket,
+                type: ItemsTypeEnum.Card,
                 item: {
-                    id: data.id,
-                    trinketId: trinkets[i].trinketId,
-                    name: trinkets[i].name,
-                    rarity: trinkets[i].rarity,
-                    description: trinkets[i].description,
-                    effects: trinkets[i].effects,
+                    id: itemId,
+                    cardId: card.cardId,
+                    name: card.name,
+                    rarity: card.rarity,
+                    cardType: card.cardType,
+                    pool: card.pool,
+                    energy: card.energy,
+                    description: CardDescriptionFormatter.process(card),
+                    isTemporary: false,
+                    properties: card.properties,
+                    keywords: card.keywords,
+                    showPointer: card.showPointer,
+                    isUpgraded: card.isUpgraded,
+                    upgradedCardId: card.upgradedCardId,
+                    isActive: true,
                 },
             });
         }
+
+        const randomIndex: number = getRandomBetween(0, itemsData.length);
+
+        itemsData[randomIndex] = {
+            ...itemsData[randomIndex],
+            isSale: true,
+            cost: Math.floor(itemsData[randomIndex].cost / 2),
+        };
+
         return itemsData;
     }
 
-    async success(client: Socket): Promise<void> {
+    private async failure(data: PurchaseFailureEnum): Promise<void> {
+        this.client.emit(
+            'PutData',
+            StandardResponse.respond({
+                message_type: SWARMessageType.MerchantUpdate,
+                action: SWARAction.PurchaseFailure,
+                data,
+            }),
+        );
+    }
+
+    private async success(): Promise<void> {
         const expedition = await this.expeditionService.findOne({
-            clientId: client.id,
+            clientId: this.client.id,
         });
 
         const { playerState, playerId } = expedition || {};
 
-        client.emit(
+        this.client.emit(
             'PutData',
             StandardResponse.respond({
                 message_type: SWARMessageType.MerchantUpdate,
@@ -471,7 +351,7 @@ export class MerchantService {
             }),
         );
 
-        client.emit(
+        this.client.emit(
             'PlayerState',
             StandardResponse.respond({
                 message_type: SWARMessageType.PlayerStateUpdate,
@@ -494,32 +374,42 @@ export class MerchantService {
         );
     }
 
-    async failure(client: Socket, data: PurchaseFailureEnum): Promise<void> {
-        client.emit(
-            'PutData',
-            StandardResponse.respond({
-                message_type: SWARMessageType.MerchantUpdate,
-                action: SWARAction.PurchaseFailure,
-                data,
-            }),
-        );
-    }
+    private async handleCard(
+        merchantItems: MerchantItems,
+        item: Item,
+        itemIndex: number,
+        playerState: IExpeditionPlayerState,
+    ) {
+        const newPlayerState = {
+            ...playerState,
+            gold: playerState.gold - item.cost,
+            cards: [...playerState.cards, item.item],
+        };
 
-    async playerCards(client: Socket) {
-        const { cards } = await this.expeditionService.getPlayerState({
-            clientId: client.id,
+        const mewMerchantItems = {
+            ...merchantItems,
+        };
+        mewMerchantItems.cards[itemIndex].isSold = true;
+
+        await this.expeditionService.updateById(this.expeditionId, {
+            $set: {
+                playerState: newPlayerState,
+                'currentNode.merchantItems': mewMerchantItems,
+            },
         });
-
-        return cards;
     }
 
-    async cardUpgrade(client: Socket, cardId: CardId) {
+    async cardUpgrade() {
         const playerState = await this.expeditionService.getPlayerState({
-            clientId: client.id,
+            clientId: this.client.id,
         });
+
+        const cardId = this.selectedItem.targetId;
+
         const upgradedPrice = 75 + 25 * playerState.cardUpgradeCount;
+
         if (playerState.gold < upgradedPrice) {
-            client.emit('ErrorMessage', {
+            this.client.emit('ErrorMessage', {
                 message: `Not enough gold`,
             });
             return;
@@ -532,24 +422,25 @@ export class MerchantService {
                 if (card.cardId == playerState.cards[i].cardId) {
                     break;
                 } else if (i === playerState.cards.length - 1) {
-                    client.emit('ErrorMessage', {
+                    this.client.emit('ErrorMessage', {
                         message: `Card not in merchant offer`,
                     });
                     return;
                 }
             }
         } else {
-            client.emit('ErrorMessage', {
+            this.client.emit('ErrorMessage', {
                 message: `Card not in merchant offer`,
             });
             return;
         }
         if (!card.isUpgraded && !card.upgradedCardId) {
-            client.emit('ErrorMessage', {
+            this.client.emit('ErrorMessage', {
                 message: `Card could be not upgraded`,
             });
             return;
         }
+
         const upgradedCardData = await this.cardService.findById(
             card.upgradedCardId,
         );
@@ -595,7 +486,7 @@ export class MerchantService {
         };
 
         await this.expeditionService.updateByFilter(
-            { clientId: client.id },
+            { clientId: this.client.id },
             {
                 $set: {
                     playerState: newPlayerState,
@@ -603,22 +494,49 @@ export class MerchantService {
             },
         );
 
-        this.success(client);
+        await this.success();
     }
 
-    async cardDestroy(client: Socket, cardId: CardId) {
+    async handlePotions(
+        merchantItems: MerchantItems,
+        item: Item,
+        itemIndex: number,
+        playerState: IExpeditionPlayerState,
+    ) {
+        const newPlayerState = {
+            ...playerState,
+            gold: playerState.gold - item.cost,
+            potions: [...playerState.potions, item.item],
+        };
+        const mewMerchantItems = {
+            ...merchantItems,
+        };
+        mewMerchantItems.potions[itemIndex].isSold = true;
+
+        await this.expeditionService.updateById(this.expeditionId, {
+            $set: {
+                playerState: newPlayerState,
+                'currentNode.merchantItems': mewMerchantItems,
+            },
+        });
+    }
+
+    async cardDestroy() {
         const playerState = await this.expeditionService.getPlayerState({
-            clientId: client.id,
+            clientId: this.client.id,
         });
         const destroyPrice = 75 + 25 * playerState.cardDestroyCount;
+
         if (playerState.gold < destroyPrice) {
-            client.emit('ErrorMessage', {
+            this.client.emit('ErrorMessage', {
                 message: `Not enough gold`,
             });
             return;
         }
 
-        const card = await this.cardService.findById(cardId);
+        const card = await this.cardService.findById(
+            this.selectedItem.targetId,
+        );
 
         let cardIndex: number = null;
 
@@ -630,18 +548,20 @@ export class MerchantService {
                 }
             }
         }
+
         if (cardIndex === null) {
-            client.emit('ErrorMessage', {
+            this.client.emit('ErrorMessage', {
                 message: `Card not in merchant offer`,
             });
             return;
         }
+
         playerState.cards.splice(cardIndex, 1);
         playerState.cardDestroyCount = playerState.cardDestroyCount + 1;
         playerState.gold = playerState.gold - destroyPrice;
 
         await this.expeditionService.updateByFilter(
-            { clientId: client.id },
+            { clientId: this.client.id },
             {
                 $set: {
                     playerState,
@@ -649,6 +569,6 @@ export class MerchantService {
             },
         );
 
-        this.success(client);
+        await this.success();
     }
 }

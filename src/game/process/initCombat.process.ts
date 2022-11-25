@@ -2,7 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { Socket } from 'socket.io';
 import { SetCombatTurnAction } from '../action/setCombatTurn.action';
 import { EnemyService } from '../components/enemy/enemy.service';
-import { CombatTurnEnum } from '../components/expedition/expedition.enum';
+import {
+    CombatTurnEnum,
+    ExpeditionMapNodeStatusEnum,
+} from '../components/expedition/expedition.enum';
 import { IExpeditionNode } from '../components/expedition/expedition.interface';
 import { ExpeditionDocument } from '../components/expedition/expedition.schema';
 import { ExpeditionService } from '../components/expedition/expedition.service';
@@ -18,24 +21,59 @@ export class InitCombatProcess {
         private readonly setCombatTurnAction: SetCombatTurnAction,
     ) {}
 
+    private node: IExpeditionNode;
+    private client: Socket;
+
     async process(client: Socket, node: IExpeditionNode): Promise<void> {
+        this.node = node;
+        this.client = client;
+
+        switch (this.node.status) {
+            case ExpeditionMapNodeStatusEnum.Available:
+                await this.createCombat();
+                break;
+            case ExpeditionMapNodeStatusEnum.Active:
+                await this.continueCombat();
+        }
+    }
+
+    async createCombat(): Promise<void> {
         const currentNode =
             await this.currentNodeGeneratorProcess.getCurrentNodeData(
-                node,
-                client.id,
+                this.node,
+                this.client.id,
             );
 
-        const expedition = await this.expeditionService.update(client.id, {
+        const expedition = await this.expeditionService.update(this.client.id, {
             currentNode,
         });
 
         const ctx: GameContext = {
-            client,
+            client: this.client,
             expedition: expedition as ExpeditionDocument,
         };
 
         await this.setCombatTurnAction.handle({
-            clientId: client.id,
+            clientId: this.client.id,
+            newRound: 1,
+            playing: CombatTurnEnum.Player,
+        });
+
+        await this.enemyService.calculateNewIntentions(ctx);
+    }
+
+    async continueCombat(): Promise<void> {
+        const expedition = await this.expeditionService.findOne({
+            clientId: this.client.id,
+        });
+
+        const ctx: GameContext = {
+            client: this.client,
+            expedition: expedition as ExpeditionDocument,
+        };
+
+        await this.setCombatTurnAction.handle({
+            clientId: this.client.id,
             newRound: 1,
             playing: CombatTurnEnum.Player,
         });

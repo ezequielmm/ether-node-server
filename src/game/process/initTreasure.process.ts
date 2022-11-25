@@ -57,16 +57,18 @@ export class InitTreasureProcess {
             clientId: this.clientId,
         });
 
-        return isOpen
-            ? StandardResponse.respond({
-                  message_type: SWARMessageType.TreasureUpdate,
-                  action: SWARAction.ContinueTreasure,
-                  data: null,
-              })
-            : StandardResponse.respond({
-                  message_type: SWARMessageType.TreasureUpdate,
-                  action: SWARAction.BeginTreasure,
-                  data: null,
-              });
+        if (isOpen) {
+            return StandardResponse.respond({
+                message_type: SWARMessageType.TreasureUpdate,
+                action: SWARAction.ContinueTreasure,
+                data: null,
+            });
+        } else {
+            return StandardResponse.respond({
+                message_type: SWARMessageType.TreasureUpdate,
+                action: SWARAction.BeginTreasure,
+                data: null,
+            });
+        }
     }
 }

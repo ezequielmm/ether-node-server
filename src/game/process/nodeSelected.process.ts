@@ -117,13 +117,7 @@ export class NodeSelectedProcess {
                 case ExpeditionMapNodeTypeEnum.Treasure:
                     return await this.initTreasureProcess.process(client, node);
                 case ExpeditionMapNodeTypeEnum.Merchant:
-                    await this.initMerchantProcess.process(client, node);
-
-                    return StandardResponse.respond({
-                        message_type: SWARMessageType.MerchantUpdate,
-                        action: SWARAction.BeginMerchant,
-                        data: null,
-                    });
+                    return this.initMerchantProcess.process(client, node);
             }
         } else if (node.isActive) {
             if (node.type === ExpeditionMapNodeTypeEnum.Combat) {

@@ -1,16 +1,21 @@
 import { Injectable } from '@nestjs/common';
+import { Socket } from 'socket.io';
 import { CustomException, ErrorBehavior } from 'src/socket/custom.exception';
 import { ExpeditionMapNodeTypeEnum } from '../components/expedition/expedition.enum';
 import { ExpeditionService } from '../components/expedition/expedition.service';
-import { TreasureInterface } from '../treasure/treasure.interfaces';
+import {
+    StandardResponse,
+    SWARMessageType,
+    SWARAction,
+} from '../standardResponse/standardResponse';
 @Injectable()
 export class GetTreasureDataAction {
     constructor(private readonly expeditionService: ExpeditionService) {}
 
-    async handle(clientId: string): Promise<TreasureInterface['size']> {
+    async handle(client: Socket): Promise<string> {
         const { nodeType, ...currentNode } =
             await this.expeditionService.getCurrentNode({
-                clientId,
+                clientId: client.id,
             });
 
         if (nodeType !== ExpeditionMapNodeTypeEnum.Treasure) {
@@ -21,8 +26,22 @@ export class GetTreasureDataAction {
         }
 
         const {
-            treasureData: { size },
+            treasureData: { size, isOpen, type, rewards },
         } = currentNode;
+
+        if (isOpen) {
+            client.emit(
+                'PutData',
+                StandardResponse.respond({
+                    message_type: SWARMessageType.GenericData,
+                    action: SWARAction.ChestResult,
+                    data: {
+                        type: type,
+                        rewards: rewards,
+                    },
+                }),
+            );
+        }
 
         return size;
     }

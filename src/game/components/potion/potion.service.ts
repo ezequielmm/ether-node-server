@@ -48,7 +48,7 @@ export class PotionService {
         return this.potion.findOne({ [field]: id }).lean();
     }
 
-    async randomPotion(limit: number): Promise<PotionDocument[]> {
+    async randomPotion(limit: number): Promise<Potion[]> {
         const count = await this.potion.countDocuments({
             $and: [
                 {
@@ -78,7 +78,8 @@ export class PotionService {
                 ],
             })
             .limit(limit)
-            .skip(random);
+            .skip(random)
+            .lean();
     }
 
     async use(

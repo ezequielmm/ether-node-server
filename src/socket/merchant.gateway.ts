@@ -3,7 +3,7 @@ import { Logger } from '@nestjs/common';
 import { Socket } from 'socket.io';
 import { corsSocketSettings } from './socket.enum';
 import { MerchantService } from 'src/game/merchant/merchant.service';
-import { SelectedItem } from 'src/game/merchant/interfaces';
+import { SelectedItem } from 'src/game/merchant/merchant.interface';
 
 @WebSocketGateway(corsSocketSettings)
 export class MerchantGateway {
@@ -18,6 +18,7 @@ export class MerchantGateway {
         this.logger.debug(
             `Client ${client.id} trigger message "MerchantBuy": ${payload}`,
         );
-        await this.merchantService.merchantBuy(client, selected);
+
+        await this.merchantService.buyItem(client, selected);
     }
 }

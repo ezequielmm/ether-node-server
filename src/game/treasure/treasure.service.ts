@@ -30,11 +30,11 @@ export class TreasureService {
 
         const rewards: Reward[] = [];
 
-        const randomCoinChance = getRandomBetween(1, 100);
+        // const randomCoinChance = getRandomBetween(1, 100);
         const randomPotionChance = getRandomBetween(1, 100);
-        const randomTrappedChance = getRandomBetween(1, 100);
+        //const randomTrappedChance = getRandomBetween(1, 100);
 
-        if (randomCoinChance <= chest.coinChance) {
+        /*if (randomCoinChance <= chest.coinChance) {
             const coin = getRandomBetween(chest.minCoins, chest.maxCoins);
 
             rewards.push({
@@ -43,7 +43,16 @@ export class TreasureService {
                 amount: coin,
                 taken: false,
             });
-        }
+        }*/
+
+        const coin = getRandomBetween(chest.minCoins, chest.maxCoins);
+
+        rewards.push({
+            id: randomUUID(),
+            type: IExpeditionNodeReward.Gold,
+            amount: coin,
+            taken: false,
+        });
 
         if (randomPotionChance <= chest.potionChance) {
             const potion = await this.potionService.getRandomPotion();
@@ -56,7 +65,7 @@ export class TreasureService {
             });
         }
 
-        const isTrappedChest = this.isTrappedChest(
+        /*const isTrappedChest = this.isTrappedChest(
             randomTrappedChance,
             chest.trappedChance,
         );
@@ -64,6 +73,9 @@ export class TreasureService {
         const type = isTrappedChest
             ? chest.trappedType
             : TreasureTypeEnum.NoTrap;
+        */
+
+        const type = TreasureTypeEnum.NoTrap;
 
         return {
             name: chest.name,
@@ -71,7 +83,7 @@ export class TreasureService {
             isOpen: false,
             rewards,
             type,
-            ...(isTrappedChest && this.generateTrappedData(chest)),
+            //...(isTrappedChest && this.generateTrappedData(chest)),
         };
     }
 
@@ -108,26 +120,18 @@ export class TreasureService {
                     },
                 },
             );
-
-            client.emit(
-                'PutData',
-                StandardResponse.respond({
-                    message_type: SWARMessageType.TreasureNodeUpdate,
-                    action: SWARAction.ChestResult,
-                    data: {
-                        type: treasureData.type,
-                    },
-                }),
-            );
-        } else {
-            client.emit(
-                'PutData',
-                StandardResponse.respond({
-                    message_type: SWARMessageType.TreasureNodeUpdate,
-                    action: SWARAction.ChestResult,
-                    data: { type: treasureData.type },
-                }),
-            );
         }
+
+        client.emit(
+            'PutData',
+            StandardResponse.respond({
+                message_type: SWARMessageType.GenericData,
+                action: SWARAction.ChestResult,
+                data: {
+                    type: treasureData.type,
+                    rewards: treasureData.rewards,
+                },
+            }),
+        );
     }
 }
