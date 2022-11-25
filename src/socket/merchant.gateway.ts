@@ -19,6 +19,6 @@ export class MerchantGateway {
             `Client ${client.id} trigger message "MerchantBuy": ${payload}`,
         );
 
-        await this.merchantService.processItem(client, selected);
+        await this.merchantService.buyItem(client, selected);
     }
 }
