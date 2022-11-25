@@ -1,5 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Socket } from 'socket.io';
+import { removeCardsFromPile } from 'src/utils';
+import { CardKeywordEnum } from '../components/card/card.enum';
 import { ExpeditionService } from '../components/expedition/expedition.service';
 import {
     StandardResponse,
@@ -24,25 +26,38 @@ export class DiscardAllCardsAction {
         const {
             data: {
                 player: {
-                    cards: { hand, discard },
+                    cards: { hand, discard, exhausted },
                 },
             },
         } = await this.expeditionService.getCurrentNode({
             clientId: client.id,
         });
 
-        const newDiscard = [...hand, ...discard];
+        const cardsToExhaust = hand.filter((card) =>
+            card.keywords.includes(CardKeywordEnum.Fade),
+        );
+
+        const newHand = removeCardsFromPile({
+            originalPile: hand,
+            cardsToRemove: cardsToExhaust,
+        });
+
+        const newDiscard = [...newHand, ...discard];
+        const newExhaust = [...exhausted, ...cardsToExhaust];
 
         await this.expeditionService.updateHandPiles({
             clientId: client.id,
             hand: [],
             discard: newDiscard,
+            exhausted: newExhaust,
         });
 
-        const cardMoves = hand.map(({ id }) => {
+        const cardMoves = hand.map(({ id, keywords }) => {
             return {
                 source: 'hand',
-                destination: 'discard',
+                destination: keywords.includes(CardKeywordEnum.Fade)
+                    ? 'exhaust'
+                    : 'discard',
                 id,
             };
         });
