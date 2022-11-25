@@ -7,8 +7,12 @@ import { CardDescriptionFormatter } from '../cardDescriptionFormatter/cardDescri
 import { CardRarityEnum, CardTypeEnum } from '../components/card/card.enum';
 import { CardDocument } from '../components/card/card.schema';
 import { CardService } from '../components/card/card.service';
+import { getCardIdField } from '../components/card/card.type';
 import { ExpeditionMapNodeTypeEnum } from '../components/expedition/expedition.enum';
-import { IExpeditionPlayerState } from '../components/expedition/expedition.interface';
+import {
+    IExpeditionPlayerState,
+    IExpeditionPlayerStateDeckCard,
+} from '../components/expedition/expedition.interface';
 import { ExpeditionService } from '../components/expedition/expedition.service';
 import { PotionRarityEnum } from '../components/potion/potion.enum';
 import { PotionService } from '../components/potion/potion.service';
@@ -63,6 +67,12 @@ export class MerchantService {
             case ItemsTypeEnum.Trinket:
             case ItemsTypeEnum.Potion:
                 await this.processItem();
+                break;
+            case ItemsTypeEnum.Destroy:
+                await this.cardDestroy();
+                break;
+            case ItemsTypeEnum.Upgrade:
+                await this.cardUpgrade();
                 break;
         }
     }
@@ -389,6 +399,104 @@ export class MerchantService {
         });
     }
 
+    async cardUpgrade() {
+        const playerState = await this.expeditionService.getPlayerState({
+            clientId: this.client.id,
+        });
+
+        const cardId = this.selectedItem.targetId;
+
+        const upgradedPrice = 75 + 25 * playerState.cardUpgradeCount;
+
+        if (playerState.gold < upgradedPrice) {
+            this.client.emit('ErrorMessage', {
+                message: `Not enough gold`,
+            });
+            return;
+        }
+
+        const card = await this.cardService.findById(cardId);
+
+        if (card) {
+            for (let i = 0; i < playerState.cards.length; i++) {
+                if (card.cardId == playerState.cards[i].cardId) {
+                    break;
+                } else if (i === playerState.cards.length - 1) {
+                    this.client.emit('ErrorMessage', {
+                        message: `Card not in merchant offer`,
+                    });
+                    return;
+                }
+            }
+        } else {
+            this.client.emit('ErrorMessage', {
+                message: `Card not in merchant offer`,
+            });
+            return;
+        }
+        if (!card.isUpgraded && !card.upgradedCardId) {
+            this.client.emit('ErrorMessage', {
+                message: `Card could be not upgraded`,
+            });
+            return;
+        }
+
+        const upgradedCardData = await this.cardService.findById(
+            card.upgradedCardId,
+        );
+
+        const upgradedCard: IExpeditionPlayerStateDeckCard = {
+            id: randomUUID(),
+            cardId: card.cardId,
+            name: upgradedCardData.name,
+            cardType: upgradedCardData.cardType,
+            energy: upgradedCardData.energy,
+            description: CardDescriptionFormatter.process(upgradedCardData),
+            isTemporary: false,
+            rarity: upgradedCardData.rarity,
+            properties: upgradedCardData.properties,
+            keywords: upgradedCardData.keywords,
+            showPointer: upgradedCardData.showPointer,
+            pool: upgradedCardData.pool,
+            isUpgraded: upgradedCardData.isUpgraded,
+            isActive: true,
+        };
+
+        const id = getCardIdField(cardId);
+
+        let isUpgraded = false;
+
+        const newCard = playerState.cards.map((item) => {
+            if (item[id] == card[id] && !isUpgraded) {
+                isUpgraded = true;
+                return upgradedCard;
+            } else {
+                return item;
+            }
+        });
+
+        const newGold = playerState.gold - upgradedPrice;
+        const newCardUpgradeCount = playerState.cardUpgradeCount + 1;
+
+        const newPlayerState = {
+            ...playerState,
+            cards: newCard,
+            gold: newGold,
+            cardUpgradeCount: newCardUpgradeCount,
+        };
+
+        await this.expeditionService.updateByFilter(
+            { clientId: this.client.id },
+            {
+                $set: {
+                    playerState: newPlayerState,
+                },
+            },
+        );
+
+        await this.success();
+    }
+
     async handlePotions(
         merchantItems: MerchantItems,
         item: Item,
@@ -411,5 +519,56 @@ export class MerchantService {
                 'currentNode.merchantItems': mewMerchantItems,
             },
         });
+    }
+
+    async cardDestroy() {
+        const playerState = await this.expeditionService.getPlayerState({
+            clientId: this.client.id,
+        });
+        const destroyPrice = 75 + 25 * playerState.cardDestroyCount;
+
+        if (playerState.gold < destroyPrice) {
+            this.client.emit('ErrorMessage', {
+                message: `Not enough gold`,
+            });
+            return;
+        }
+
+        const card = await this.cardService.findById(
+            this.selectedItem.targetId,
+        );
+
+        let cardIndex: number = null;
+
+        if (card) {
+            for (let i = 0; i < playerState.cards.length; i++) {
+                if (card.cardId == playerState.cards[i].cardId) {
+                    cardIndex = i;
+                    break;
+                }
+            }
+        }
+
+        if (cardIndex === null) {
+            this.client.emit('ErrorMessage', {
+                message: `Card not in merchant offer`,
+            });
+            return;
+        }
+
+        playerState.cards.splice(cardIndex, 1);
+        playerState.cardDestroyCount = playerState.cardDestroyCount + 1;
+        playerState.gold = playerState.gold - destroyPrice;
+
+        await this.expeditionService.updateByFilter(
+            { clientId: this.client.id },
+            {
+                $set: {
+                    playerState,
+                },
+            },
+        );
+
+        await this.success();
     }
 }
