@@ -15,6 +15,7 @@ export enum DataWSRequestTypesEnum {
     UpgradableCards = 'UpgradableCards',
     MerchantData = 'MerchantData',
     TreasureData = 'TreasureData',
+    Rewards = 'Rewards',
 }
 
 export const corsSocketSettings: GatewayMetadata = {
