@@ -11,6 +11,7 @@ import {
     GetExpeditionMapDTO,
     GetExpeditionMapNodeDTO,
     GetPlayerStateDTO,
+    OverrideAvailableNodeDTO,
     playerHasAnExpeditionDTO,
     SetCombatTurnDTO,
     UpdateClientIdDTO,
@@ -18,7 +19,10 @@ import {
     UpdateHandPilesDTO,
     UpdatePlayerDeckDTO,
 } from './expedition.dto';
-import { ExpeditionStatusEnum } from './expedition.enum';
+import {
+    ExpeditionMapNodeStatusEnum,
+    ExpeditionStatusEnum,
+} from './expedition.enum';
 import {
     IExpeditionCurrentNode,
     IExpeditionNode,
@@ -357,5 +361,23 @@ export class ExpeditionService {
                 { new: true },
             )
             .lean();
+    }
+
+    async overrideAvailableNode(
+        payload: OverrideAvailableNodeDTO,
+    ): Promise<void> {
+        const { clientId, nodeId } = payload;
+
+        await this.expedition.findOneAndUpdate(
+            {
+                clientId,
+                [`map.nodeId`]: nodeId,
+            },
+            {
+                $set: {
+                    'map.$.status': ExpeditionMapNodeStatusEnum.Available,
+                },
+            },
+        );
     }
 }
