@@ -363,7 +363,6 @@ export const actCconfigAlternatives = [
                         chance: 10,
                         config: {},
                     },
-
                     {
                         type: 'combat',
                         subType: 'combat_elite',
@@ -486,7 +485,13 @@ export const actCconfigAlternatives = [
                     {
                         type: 'camp',
                         subType: 'camp_regular',
-                        chance: 100,
+                        chance: 50,
+                        config: {},
+                    },
+                    {
+                        type: 'encounter',
+                        subType: 'encounter',
+                        chance: 50,
                         config: {},
                     },
                 ],

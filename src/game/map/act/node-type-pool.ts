@@ -46,7 +46,14 @@ export class NodeTypePool {
             },
         },
         {
-            frequency: 60,
+            frequency: 10,
+            node: {
+                type: ExpeditionMapNodeTypeEnum.Encounter,
+                subType: ExpeditionMapNodeTypeEnum.Encounter,
+            },
+        },
+        {
+            frequency: 50,
             node: {
                 type: ExpeditionMapNodeTypeEnum.Combat,
                 subType: ExpeditionMapNodeTypeEnum.CombatStandard,
