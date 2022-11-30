@@ -129,4 +129,16 @@ export class ExpeditionGateway {
             });
         }
     }
+
+    @SubscribeMessage('NodeSkipped')
+    async handleNodeSkipped(client: Socket, nodeId: number): Promise<void> {
+        this.logger.debug(
+            `Client ${client.id} trigger message "NodeSkipped": ${nodeId}`,
+        );
+
+        await this.expeditionService.overrideAvailableNode({
+            clientId: client.id,
+            nodeId,
+        });
+    }
 }

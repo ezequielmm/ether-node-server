@@ -7,18 +7,25 @@ import { ExpeditionService } from '../components/expedition/expedition.service';
 export class GetRewardsAction {
     constructor(private readonly expeditionService: ExpeditionService) {}
 
-    async handle(clientId: string): Promise<Reward[]> {
+    async handle(clientId: string): Promise<{ rewards: Reward[] }> {
         const currentNode = await this.expeditionService.getCurrentNode({
             clientId,
         });
 
+        let rewards = [];
+
         switch (currentNode.nodeType) {
             case ExpeditionMapNodeTypeEnum.Combat:
-                return currentNode.data.rewards;
+                rewards = currentNode.data.rewards;
+                break;
             case ExpeditionMapNodeTypeEnum.Treasure:
-                return currentNode.treasureData.rewards;
+                rewards = currentNode.treasureData.rewards;
+                break;
             default:
-                return [];
+                rewards = [];
+                break;
         }
+
+        return { rewards };
     }
 }
