@@ -131,14 +131,14 @@ export class ExpeditionGateway {
     }
 
     @SubscribeMessage('NodeSkipped')
-    async handleNodeSkipped(client: Socket, nodeId: number): Promise<void> {
+    async handleNodeSkipped(client: Socket, node_id: number): Promise<void> {
         this.logger.debug(
-            `Client ${client.id} trigger message "NodeSkipped": ${nodeId}`,
+            `Client ${client.id} trigger message "NodeSkipped": ${node_id}`,
         );
 
         await this.expeditionService.overrideAvailableNode({
             clientId: client.id,
-            nodeId,
+            nodeId: node_id,
         });
     }
 }
