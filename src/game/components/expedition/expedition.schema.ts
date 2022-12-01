@@ -77,6 +77,9 @@ export class Expedition {
         enum: ExpeditionStatusEnum,
     })
     status: ExpeditionStatusEnum;
+
+    @Prop({ default: false })
+    isCurrentlyPlaying: boolean;
 }
 
 export const ExpeditionSchema = SchemaFactory.createForClass(Expedition);

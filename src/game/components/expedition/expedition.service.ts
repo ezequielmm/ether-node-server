@@ -144,8 +144,16 @@ export class ExpeditionService {
         const { clientId, playerId } = payload;
         return await this.expedition.findOneAndUpdate(
             { playerId, status: ExpeditionStatusEnum.InProgress },
-            { clientId },
+            { clientId, isCurrentlyPlaying: true },
         );
+    }
+
+    async updatePlayerStatus(payload: {
+        clientId: string;
+        isCurrentlyPlaying: boolean;
+    }): Promise<void> {
+        const { clientId, isCurrentlyPlaying } = payload;
+        await this.expedition.updateOne({ clientId }, { isCurrentlyPlaying });
     }
 
     async getExpeditionMapNode(

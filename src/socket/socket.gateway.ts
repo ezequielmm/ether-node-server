@@ -112,6 +112,12 @@ export class SocketGateway
             `Deleted card selection screen items for client ${client.id}`,
         );
 
+        // Update player connection status
+        await this.expeditionService.updatePlayerStatus({
+            clientId: client.id,
+            isCurrentlyPlaying: false,
+        });
+
         // Log amount of clients connected
         this.logger.verbose(
             `Clients connected: ${this.server.engine.clientsCount}`,
