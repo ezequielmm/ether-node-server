@@ -154,4 +154,10 @@ $(document).ready(function () {
             showJSON(response);
         });
     });
+
+    $('#btnEncounterChoice').click(function () {
+        socket.emit('EncounterChoice', (response) => {
+            showJSON(response);
+        });
+    });
 });
