@@ -28,6 +28,7 @@ import { InitNodeProcess } from './initNode.process';
 import { InitTreasureProcess } from './initTreasure.process';
 import { NodeSelectedProcess } from './nodeSelected.process';
 import { SendEnemyIntentProcess } from './sendEnemyIntents.process';
+import {InitEncounterProcess} from "./initEncounter.process";
 
 @Module({
     imports: [
@@ -62,6 +63,7 @@ import { SendEnemyIntentProcess } from './sendEnemyIntents.process';
         InitNodeProcess,
         InitMerchantProcess,
         InitTreasureProcess,
+        InitEncounterProcess,
     ],
     exports: [
         SendEnemyIntentProcess,
@@ -77,6 +79,7 @@ import { SendEnemyIntentProcess } from './sendEnemyIntents.process';
         InitNodeProcess,
         InitMerchantProcess,
         InitTreasureProcess,
+        InitEncounterProcess,
     ],
 })
 export class ProcessModule {}

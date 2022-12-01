@@ -13,6 +13,7 @@ import { InitMerchantProcess } from './initMerchant.process';
 
 import { InitNodeProcess } from './initNode.process';
 import { InitTreasureProcess } from './initTreasure.process';
+import { InitEncounterProcess } from "./initEncounter.process";
 
 @Injectable()
 export class NodeSelectedProcess {
@@ -24,6 +25,7 @@ export class NodeSelectedProcess {
         private readonly initNodeProcess: InitNodeProcess,
         private readonly initMerchantProcess: InitMerchantProcess,
         private readonly initTreasureProcess: InitTreasureProcess,
+        private readonly initEncounterProcess: InitEncounterProcess,
     ) {}
 
     async handle(client: Socket, node_id: number): Promise<string> {
@@ -98,13 +100,10 @@ export class NodeSelectedProcess {
                         data: null,
                     });
                 case ExpeditionMapNodeTypeEnum.Encounter:
-                    await this.initNodeProcess.process(client, node);
-
-                    return StandardResponse.respond({
-                        message_type: SWARMessageType.EncounterUpdate,
-                        action: SWARAction.BeginEncounter,
-                        data: null,
-                    });
+                    return await this.initEncounterProcess.process(
+                        client,
+                        node,
+                    );
                 case ExpeditionMapNodeTypeEnum.Treasure:
                     return await this.initTreasureProcess.process(client, node);
                 case ExpeditionMapNodeTypeEnum.Merchant:
