@@ -5,6 +5,7 @@ import {
 } from 'src/game/components/card/card.enum';
 import { IExpeditionPlayerStateDeckCard } from 'src/game/components/expedition/expedition.interface';
 import {
+    getBearerToken,
     isEven,
     isNotUndefined,
     isValidAuthToken,
@@ -12,13 +13,21 @@ import {
 } from '.';
 
 describe('Utility Functions', () => {
+    it('should return a plain token', () => {
+        const token = 'Bearer a token';
+
+        const result = getBearerToken(token);
+
+        expect(result).toBe('a token');
+    });
+
     it('should verify if string is a valid token', () => {
         const token =
             'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c';
 
         const result = isValidAuthToken(token);
 
-        expect(result).toBe(true);
+        expect(result).toBeTruthy();
     });
 
     it('should return false if token is not valid', () => {
@@ -26,7 +35,7 @@ describe('Utility Functions', () => {
 
         const result = isValidAuthToken(token);
 
-        expect(result).toBe(false);
+        expect(result).toBeFalsy();
     });
 
     it('should test is if is even', () => {
