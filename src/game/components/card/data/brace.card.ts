@@ -51,7 +51,7 @@ export const BraceCard: Card = {
         statuses: [
             {
                 name: resolveStatus.name,
-                attachTo: CardTargetedEnum.Self,
+                attachTo: CardTargetedEnum.Player,
                 args: {
                     counter: 1,
                 },

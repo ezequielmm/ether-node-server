@@ -6,7 +6,7 @@ import {
 } from '../components/card/card.enum';
 import { IExpeditionPlayerStateDeckCard } from '../components/expedition/expedition.interface';
 import { damageEffect } from '../effects/damage/constants';
-import { regenerate } from '../status/regenerate/contants';
+import { regeneration } from '../status/regeneration/contants';
 import { CardDescriptionFormatter } from './cardDescriptionFormatter';
 
 describe('Card Description Formatter', () => {
@@ -46,13 +46,13 @@ describe('Card Description Formatter', () => {
         cardType: CardTypeEnum.Power,
         pool: 'knight',
         energy: 1,
-        description: `Gain {${regenerate.name}} [${regenerate.name}]`,
+        description: `Gain {${regeneration.name}} [${regeneration.name}]`,
         keywords: [],
         properties: {
             effects: [],
             statuses: [
                 {
-                    name: regenerate.name,
+                    name: regeneration.name,
                     attachTo: CardTargetedEnum.Player,
                     args: {
                         counter: 1,
@@ -75,6 +75,6 @@ describe('Card Description Formatter', () => {
     it('should update the description with status value', () => {
         const result = CardDescriptionFormatter.process(statusCard);
 
-        expect(result).toBe('Gain 1 <color=#0066cc>regenerate</color>');
+        expect(result).toBe('Gain 1 <color=#0066cc>regeneration</color>');
     });
 });

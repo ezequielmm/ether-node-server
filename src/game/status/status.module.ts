@@ -34,7 +34,7 @@ import { InterceptEvent } from './intercept/intercept.event';
 import { InterceptStatus } from './intercept/intercept.status';
 import { NextPlayerTurnStatus } from './nextPlayerTurn/nextPlayerTurn.status';
 import { PrayingStatus } from './praying/praying.status';
-import { RegenerateStatus } from './regenerate/regenerate.status';
+import { RegenerationStatus } from './regeneration/regeneration.status';
 import { ResistStatus } from './resist/resist.status';
 import { ResolveStatus } from './resolve/resolve.status';
 import { ResolveExpiresStatus } from './resolveExpires/resolveExpires.status';
@@ -73,7 +73,7 @@ import { TurtlingStatus } from './turtling/turtling.status';
         BurnStatus,
         DodgeStatus,
         SiphoningStatus,
-        RegenerateStatus,
+        RegenerationStatus,
         SpiritedStatus,
         SpikesStatus,
         ConfusionStatus,
