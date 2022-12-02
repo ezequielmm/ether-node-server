@@ -15,8 +15,9 @@ export class EncounterGateway {
     @SubscribeMessage('EncounterChoice')
     async handleEncounterChoice(
         client: Socket,
-        rewardId: string,
+        choiceIdx: string,
     ): Promise<string> {
+        //place holder values
         return StandardResponse.respond({
             message_type: SWARMessageType.GenericData,
             action: SWARAction.BeginEncounter,
