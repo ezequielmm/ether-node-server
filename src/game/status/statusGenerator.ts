@@ -51,7 +51,7 @@ export class StatusGenerator {
             case heraldingStatus.name:
                 return `All attacks this turn will do double damage`;
             default:
-                return `Unknown Intentions`;
+                return `Unknown Status`;
         }
     }
 }

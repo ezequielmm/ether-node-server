@@ -2,7 +2,11 @@ import { SubscribeMessage, WebSocketGateway } from '@nestjs/websockets';
 import { corsSocketSettings } from './socket.enum';
 import { Logger } from '@nestjs/common';
 import { Socket } from 'socket.io';
-import { StandardResponse, SWARAction, SWARMessageType } from '../game/standardResponse/standardResponse';
+import {
+    StandardResponse,
+    SWARAction,
+    SWARMessageType,
+} from '../game/standardResponse/standardResponse';
 
 @WebSocketGateway(corsSocketSettings)
 export class EncounterGateway {
