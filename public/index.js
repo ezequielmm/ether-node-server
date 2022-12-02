@@ -60,6 +60,14 @@ $(document).ready(function () {
         });
     });
 
+    $('#btnSkipNode').click(function () {
+        const nodeId = document.getElementById('nodeId').value;
+
+        socket.emit('NodeSkipped', parseInt(nodeId), (response) => {
+            showJSON(response);
+        });
+    });
+
     $('#btnPlayCard').click(function () {
         const cardId = document.getElementById('cardId').value;
         const targetId = document.getElementById('targetId').value;
