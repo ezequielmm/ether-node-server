@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { CurrentNodeGeneratorProcess } from './currentNodeGenerator.process';
 import { ExpeditionService } from '../components/expedition/expedition.service';
 import { Socket } from 'socket.io';
@@ -19,6 +19,7 @@ import { InitNodeProcess } from './initNode.process';
 
 @Injectable()
 export class InitEncounterProcess {
+    private readonly logger: Logger = new Logger(InitEncounterProcess.name);
     constructor(
         private readonly currentNodeGeneratorProcess: CurrentNodeGeneratorProcess,
         private readonly expeditionService: ExpeditionService,
@@ -37,21 +38,12 @@ export class InitEncounterProcess {
         switch (node.status) {
             case ExpeditionMapNodeStatusEnum.Available:
                 return await this.createEncounterData();
+            case ExpeditionMapNodeStatusEnum.Active:
+                return await this.continueEncounter();
         }
     }
 
-    private async createEncounterData(): Promise<string> {
-        const nodeType = getRandomItemByWeight(
-            [
-                ExpeditionMapNodeTypeEnum.Encounter,
-                ExpeditionMapNodeTypeEnum.Merchant,
-                ExpeditionMapNodeTypeEnum.Camp,
-                ExpeditionMapNodeTypeEnum.Treasure,
-            ],
-            //[85, 10, 5],
-            [25, 25, 25, 25],
-        );
-
+    private async executeNode(nodeType: ExpeditionMapNodeTypeEnum) {
         switch (nodeType) {
             case ExpeditionMapNodeTypeEnum.Encounter:
                 return StandardResponse.respond({
@@ -71,6 +63,33 @@ export class InitEncounterProcess {
                     action: SWARAction.BeginCamp,
                     data: null,
                 });
+            case ExpeditionMapNodeTypeEnum.Treasure:
+                this.node.type = ExpeditionMapNodeTypeEnum.Treasure;
+                return await this.initTreasureProcess.process(
+                    this.client,
+                    this.node,
+                );
         }
+    }
+
+    private async createEncounterData(): Promise<string> {
+        const nodeType = getRandomItemByWeight(
+            [
+                ExpeditionMapNodeTypeEnum.Encounter,
+                ExpeditionMapNodeTypeEnum.Merchant,
+                ExpeditionMapNodeTypeEnum.Camp,
+            ],
+            [85, 10, 5],
+        );
+
+        return await this.executeNode(nodeType);
+    }
+
+    private async continueEncounter(): Promise<string> {
+        return StandardResponse.respond({
+            message_type: SWARMessageType.EncounterUpdate,
+            action: SWARAction.ContinueEncounter,
+            data: null,
+        });
     }
 }
