@@ -14,6 +14,8 @@ import {
 } from '../standardResponse/standardResponse';
 import { getRandomItemByWeight } from '../../utils';
 import { InitTreasureProcess } from './initTreasure.process';
+import { InitMerchantProcess } from './initMerchant.process';
+import { InitNodeProcess } from './initNode.process';
 
 @Injectable()
 export class InitEncounterProcess {
@@ -21,9 +23,13 @@ export class InitEncounterProcess {
         private readonly currentNodeGeneratorProcess: CurrentNodeGeneratorProcess,
         private readonly expeditionService: ExpeditionService,
         private readonly initTreasureProcess: InitTreasureProcess,
+        private readonly initMerchantProcess: InitMerchantProcess,
+        private readonly initNodeProcess: InitNodeProcess,
     ) {}
+
     private client: Socket;
     private node: IExpeditionNode;
+
     async process(client: Socket, node: IExpeditionNode): Promise<string> {
         this.client = client;
         this.node = node;
@@ -31,8 +37,6 @@ export class InitEncounterProcess {
         switch (node.status) {
             case ExpeditionMapNodeStatusEnum.Available:
                 return await this.createEncounterData();
-            case ExpeditionMapNodeStatusEnum.Active:
-                return await this.continueEncounter();
         }
     }
 
@@ -41,25 +45,32 @@ export class InitEncounterProcess {
             [
                 ExpeditionMapNodeTypeEnum.Encounter,
                 ExpeditionMapNodeTypeEnum.Merchant,
-                ExpeditionMapNodeTypeEnum.CampRegular,
+                ExpeditionMapNodeTypeEnum.Camp,
+                ExpeditionMapNodeTypeEnum.Treasure,
             ],
-            [85, 10, 5],
+            //[85, 10, 5],
+            [25, 25, 25, 25],
         );
 
-        return await this.initTreasureProcess.process(this.client, this.node);
-        return StandardResponse.respond({
-            message_type: SWARMessageType.EncounterUpdate,
-            action: SWARAction.BeginEncounter,
-            data: null,
-        });
-    }
+        switch (nodeType) {
+            case ExpeditionMapNodeTypeEnum.Encounter:
+                return StandardResponse.respond({
+                    message_type: SWARMessageType.EncounterUpdate,
+                    action: SWARAction.BeginEncounter,
+                    data: null,
+                });
+            case ExpeditionMapNodeTypeEnum.Merchant:
+                this.node.type = ExpeditionMapNodeTypeEnum.Merchant;
+                return this.initMerchantProcess.process(this.client, this.node);
+            case ExpeditionMapNodeTypeEnum.Camp:
+                this.node.type = ExpeditionMapNodeTypeEnum.Camp;
+                await this.initNodeProcess.process(this.client, this.node);
 
-    private async continueEncounter(): Promise<string> {
-        return await this.initTreasureProcess.process(this.client, this.node);
-        return StandardResponse.respond({
-            message_type: SWARMessageType.EncounterUpdate,
-            action: SWARAction.ContinueEncounter,
-            data: null,
-        });
+                return StandardResponse.respond({
+                    message_type: SWARMessageType.CampUpdate,
+                    action: SWARAction.BeginCamp,
+                    data: null,
+                });
+        }
     }
 }
