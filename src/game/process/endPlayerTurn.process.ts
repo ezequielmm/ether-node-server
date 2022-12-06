@@ -16,7 +16,7 @@ import { SWARMessageType } from '../standardResponse/standardResponse';
 import { BeginEnemyTurnProcess } from './beginEnemyTurn.process';
 
 interface EndPlayerTurnDTO {
-    client: Socket;
+    ctx: GameContext;
 }
 
 @Injectable()
@@ -34,7 +34,8 @@ export class EndPlayerTurnProcess {
     ) {}
 
     async handle(payload: EndPlayerTurnDTO): Promise<void> {
-        const { client } = payload;
+        const { ctx } = payload;
+        const { client } = ctx;
 
         this.logger.debug(`Ending player ${client.id} turn`);
 
@@ -47,11 +48,6 @@ export class EndPlayerTurnProcess {
         const expedition = await this.expeditionService.findOne({
             clientId: client.id,
         });
-
-        const ctx: GameContext = {
-            client,
-            expedition,
-        };
 
         // Reset defense for the enemies that are alive
         const {
@@ -83,6 +79,6 @@ export class EndPlayerTurnProcess {
 
         await this.combatQueueService.end(ctx);
 
-        await this.beginEnemyTurnProcess.handle({ client });
+        await this.beginEnemyTurnProcess.handle({ ctx });
     }
 }

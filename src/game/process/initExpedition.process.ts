@@ -8,7 +8,10 @@ import { CharacterDocument } from '../components/character/character.schema';
 import { CharacterService } from '../components/character/character.service';
 import { CustomDeckService } from '../components/customDeck/customDeck.service';
 import { ExpeditionStatusEnum } from '../components/expedition/expedition.enum';
-import { IExpeditionPlayerStateDeckCard } from '../components/expedition/expedition.interface';
+import {
+    IExpeditionPlayerStateDeckCard,
+    Player,
+} from '../components/expedition/expedition.interface';
 import { ExpeditionService } from '../components/expedition/expedition.service';
 
 interface InitExpeditionDTO {

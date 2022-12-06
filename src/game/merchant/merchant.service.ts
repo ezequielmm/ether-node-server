@@ -10,7 +10,7 @@ import { CardService } from '../components/card/card.service';
 import { getCardIdField } from '../components/card/card.type';
 import { ExpeditionMapNodeTypeEnum } from '../components/expedition/expedition.enum';
 import {
-    IExpeditionPlayerState,
+    Player,
     IExpeditionPlayerStateDeckCard,
 } from '../components/expedition/expedition.interface';
 import { ExpeditionService } from '../components/expedition/expedition.service';
@@ -378,7 +378,7 @@ export class MerchantService {
         merchantItems: MerchantItems,
         item: Item,
         itemIndex: number,
-        playerState: IExpeditionPlayerState,
+        playerState: Player,
     ) {
         const newPlayerState = {
             ...playerState,
@@ -501,7 +501,7 @@ export class MerchantService {
         merchantItems: MerchantItems,
         item: Item,
         itemIndex: number,
-        playerState: IExpeditionPlayerState,
+        playerState: Player,
     ) {
         const newPlayerState = {
             ...playerState,

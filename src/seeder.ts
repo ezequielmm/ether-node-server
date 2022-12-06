@@ -7,7 +7,6 @@ import {
     Character,
     CharacterSchema,
 } from './game/components/character/character.schema';
-import { TrinketSeeder } from './game/components/trinket/trinket.seeder';
 import {
     Trinket,
     TrinketSchema,
@@ -54,7 +53,6 @@ seeder({
 }).run([
     CardSeeder,
     CharacterSeeder,
-    TrinketSeeder,
     PotionSeeder,
     EnemySeeder,
     SettingsSeeder,

@@ -26,7 +26,7 @@ import {
 import {
     IExpeditionCurrentNode,
     IExpeditionNode,
-    IExpeditionPlayerState,
+    Player,
     IExpeditionPlayerStateDeckCard,
 } from './expedition.interface';
 import { generateMap, restoreMap } from 'src/game/map/app';
@@ -37,23 +37,40 @@ import { PlayerService } from '../player/player.service';
 import { EnemyService } from '../enemy/enemy.service';
 import { EnemyId } from '../enemy/enemy.type';
 import { Socket } from 'socket.io';
+import { EventEmitter2 } from '@nestjs/event-emitter';
+import { PeacockFeatherTrinket } from '../trinket/collection/peacock-feather.trinket';
 
 @Injectable()
 export class ExpeditionService {
     constructor(
         @InjectModel(Expedition.name)
         private readonly expedition: Model<ExpeditionDocument>,
+        @InjectModel(PeacockFeatherTrinket.name)
+        private readonly peacockFeatherTrinketModel: Model<PeacockFeatherTrinket>,
         private readonly playerService: PlayerService,
         private readonly enemyService: EnemyService,
     ) {}
 
     async getGameContext(client: Socket): Promise<GameContext> {
         const expedition = await this.findOne({ clientId: client.id });
+        const events = new EventEmitter2();
 
-        return {
+        const ctx = {
             expedition,
             client,
+            events,
         };
+
+        // const peacockFeatherTrinket = new this.peacockFeatherTrinketModel();
+        // expedition.playerState.trinkets.push(peacockFeatherTrinket);
+
+        // await expedition.save();
+
+        // expedition.playerState.trinkets.forEach((trinket) => {
+        // trinket.onAttach(ctx);
+        // });
+
+        return ctx;
     }
 
     async findOne(payload: FindOneExpeditionDTO): Promise<ExpeditionDocument> {
@@ -62,7 +79,8 @@ export class ExpeditionService {
                 ...payload,
                 status: ExpeditionStatusEnum.InProgress,
             })
-            .lean();
+            .populate('playerState')
+            .populate('playerState.trinkets');
     }
 
     async create(payload: CreateExpeditionDTO): Promise<ExpeditionDocument> {
@@ -198,9 +216,7 @@ export class ExpeditionService {
         return cards;
     }
 
-    async getPlayerState(
-        payload: GetPlayerStateDTO,
-    ): Promise<IExpeditionPlayerState> {
+    async getPlayerState(payload: GetPlayerStateDTO): Promise<Player> {
         const { playerState } = await this.expedition
             .findOne(payload)
             .select('playerState')

@@ -39,9 +39,8 @@ export class CombatGateway {
     async handleEndTurn(client: Socket): Promise<void> {
         this.logger.debug(`Client ${client.id} trigger message "EndTurn"`);
 
-        const expedition = await this.expeditionService.findOne({
-            clientId: client.id,
-        });
+        const ctx = await this.expeditionService.getGameContext(client);
+        const expedition = ctx.expedition;
 
         if (expedition.currentNode !== null) {
             const {
@@ -52,14 +51,11 @@ export class CombatGateway {
 
             switch (playing) {
                 case CombatTurnEnum.Player:
-                    await this.endPlayerTurnProcess.handle({ client });
+                    await this.endPlayerTurnProcess.handle({ ctx });
                     break;
                 case CombatTurnEnum.Enemy:
                     await this.endEnemyTurnProcess.handle({
-                        ctx: {
-                            client,
-                            expedition,
-                        },
+                        ctx,
                     });
                     break;
             }
@@ -71,11 +67,11 @@ export class CombatGateway {
         this.logger.debug(
             `Client ${client.id} trigger message "CardPlayed": ${payload}`,
         );
-
+        const ctx = await this.expeditionService.getGameContext(client);
         const { cardId, targetId }: ICardPlayed = JSON.parse(payload);
 
         await this.cardPlayedAction.handle({
-            client,
+            ctx,
             cardId,
             selectedEnemyId: targetId,
         });

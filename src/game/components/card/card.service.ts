@@ -189,7 +189,7 @@ export class CardService {
                     `Auto playing card ${card.cardId}:${card.name}`,
                 );
                 await this.cardPlayedAction.handle({
-                    client: ctx.client,
+                    ctx,
                     cardId: card.id,
                     selectedEnemyId: undefined,
                 });
@@ -214,7 +214,7 @@ export class CardService {
                     `Auto playing card ${card.cardId}:${card.name}`,
                 );
                 await this.cardPlayedAction.handle({
-                    client: ctx.client,
+                    ctx,
                     cardId: card.id,
                     selectedEnemyId: undefined,
                 });

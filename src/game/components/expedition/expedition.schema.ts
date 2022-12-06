@@ -11,12 +11,14 @@ import {
 import {
     IExpeditionCurrentNodeDataEnemy,
     IExpeditionNode,
-    IExpeditionPlayerState,
+    Player,
     IExpeditionPlayerStateDeckCard,
     Reward,
+    PlayerSchema,
 } from './expedition.interface';
 
 export type ExpeditionDocument = HydratedDocument<Expedition>;
+
 @Schema({
     collection: 'expeditions',
     versionKey: false,
@@ -34,8 +36,8 @@ export class Expedition {
     @Prop()
     map: IExpeditionNode[];
 
-    @Prop({ type: Object })
-    playerState: IExpeditionPlayerState;
+    @Prop({ type: PlayerSchema })
+    playerState: Player;
 
     @Prop({ type: Object })
     currentNode?: {

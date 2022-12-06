@@ -11,27 +11,27 @@ import { getRandomNumber } from 'src/utils';
 import { ExpeditionService } from '../expedition/expedition.service';
 import { GameContext } from '../interfaces';
 import { TrinketRarityEnum } from './trinket.enum';
-import { Trinket, TrinketDocument } from './trinket.schema';
+import { Trinket } from './trinket.schema';
 import { getTrinketField, TrinketId } from './trinket.type';
 
 @Injectable()
 export class TrinketService {
     constructor(
         @InjectModel(Trinket.name)
-        private readonly trinket: Model<TrinketDocument>,
+        private readonly trinket: Model<Trinket>,
         private readonly expeditionService: ExpeditionService,
     ) {}
 
-    async findAll(): Promise<TrinketDocument[]> {
+    async findAll(): Promise<Trinket[]> {
         return this.trinket.find({ isActive: true }).lean();
     }
 
-    async findById(id: TrinketId): Promise<TrinketDocument> {
+    async findById(id: TrinketId): Promise<Trinket> {
         const field = getTrinketField(id);
         return this.trinket.findOne({ [field]: id }).lean();
     }
 
-    async randomTrinket(limit: number): Promise<TrinketDocument[]> {
+    async randomTrinket(limit: number): Promise<Trinket[]> {
         const count = await this.trinket.countDocuments({
             $and: [
                 {
@@ -64,7 +64,7 @@ export class TrinketService {
             .skip(random);
     }
 
-    async findOneRandomTrinket(rarity: string): Promise<TrinketDocument> {
+    async findOneRandomTrinket(rarity: string): Promise<Trinket> {
         const count = await this.trinket.countDocuments({ rarity });
         const random = getRandomNumber(count);
         const trinket = await this.trinket

@@ -1,18 +1,26 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 import { JsonEffect } from 'src/game/effects/effects.interface';
+import { GameContext } from '../interfaces';
 import { TrinketRarityEnum } from './trinket.enum';
 
-export type TrinketDocument = Trinket & Document;
+@Schema()
+export class Trinket extends Document {
+    constructor() {
+        super();
+        console.log('Trinket constructor');
+    }
 
-@Schema({
-    collection: 'trinkets',
-})
-export class Trinket {
+    @Prop()
+    instanceId: number;
+
     @Prop()
     trinketId: number;
 
-    @Prop()
+    @Prop({
+        type: String,
+        required: true,
+    })
     name: string;
 
     @Prop()
@@ -23,6 +31,11 @@ export class Trinket {
 
     @Prop()
     effects: JsonEffect[];
+
+    onAttach(_ctx: GameContext): void {
+        throw new Error('Method not implemented.');
+    }
 }
 
-export const TrinketSchema = SchemaFactory.createForClass(Trinket);
+export const TrinketSchema =
+    SchemaFactory.createForClass(Trinket).loadClass(Trinket);
