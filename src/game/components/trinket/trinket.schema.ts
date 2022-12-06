@@ -1,16 +1,16 @@
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
+import { ModelOptions, Prop } from '@typegoose/typegoose';
 import { JsonEffect } from 'src/game/effects/effects.interface';
 import { GameContext } from '../interfaces';
 import { TrinketRarityEnum } from './trinket.enum';
 
-@Schema()
-export class Trinket extends Document {
-    constructor() {
-        super();
-        console.log('Trinket constructor');
-    }
-
+@ModelOptions({
+    schemaOptions: {
+        collection: 'trinkets',
+        discriminatorKey: 'name',
+        _id: false,
+    },
+})
+export class Trinket {
     @Prop()
     instanceId: number;
 
@@ -36,6 +36,3 @@ export class Trinket extends Document {
         throw new Error('Method not implemented.');
     }
 }
-
-export const TrinketSchema =
-    SchemaFactory.createForClass(Trinket).loadClass(Trinket);

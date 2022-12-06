@@ -1,4 +1,4 @@
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Prop } from '@typegoose/typegoose';
 import { Item } from 'src/game/merchant/merchant.interface';
 import { AttachedStatus, StatusType } from 'src/game/status/interfaces';
 import { CardRarityEnum, CardTypeEnum } from '../card/card.enum';
@@ -10,7 +10,8 @@ import {
 } from '../enemy/enemy.enum';
 import { EnemyScript } from '../enemy/enemy.interface';
 import { Potion } from '../potion/potion.schema';
-import { Trinket, TrinketSchema } from '../trinket/trinket.schema';
+import { PeacockFeatherTrinket } from '../trinket/collection/peacock-feather.trinket';
+import { Trinket } from '../trinket/trinket.schema';
 import {
     ExpeditionMapNodeTypeEnum,
     ExpeditionMapNodeStatusEnum,
@@ -22,7 +23,6 @@ export interface PotionInstance extends Potion {
     id: string;
 }
 
-@Schema()
 export class Player {
     @Prop()
     playerId: string;
@@ -45,7 +45,15 @@ export class Player {
     @Prop()
     potions: PotionInstance[];
 
-    @Prop({ type: [TrinketSchema] })
+    @Prop({
+        type: Trinket,
+        discriminators: () => [
+            {
+                type: PeacockFeatherTrinket,
+                value: 'Peacock Feather',
+            },
+        ],
+    })
     trinkets: Trinket[];
 
     @Prop()
@@ -63,9 +71,6 @@ export class Player {
     @Prop()
     cardDestroyCount: number;
 }
-
-export const PlayerSchema =
-    SchemaFactory.createForClass(Player).loadClass(Player);
 
 export interface IExpeditionNode {
     readonly id: number;

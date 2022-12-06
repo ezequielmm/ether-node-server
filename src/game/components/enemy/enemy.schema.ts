@@ -1,13 +1,9 @@
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument } from 'mongoose';
+import { ModelOptions, Prop } from '@typegoose/typegoose';
 import { EnemyTypeEnum, EnemyCategoryEnum, EnemySizeEnum } from './enemy.enum';
 import { EnemyScript } from './enemy.interface';
 
-export type EnemyDocument = HydratedDocument<Enemy>;
-
-@Schema({
-    collection: 'enemies',
-    versionKey: false,
+@ModelOptions({
+    schemaOptions: { collection: 'enemies', versionKey: false },
 })
 export class Enemy {
     @Prop({ unique: true })
@@ -34,5 +30,3 @@ export class Enemy {
     @Prop({ type: Object })
     scripts: EnemyScript[];
 }
-
-export const EnemySchema = SchemaFactory.createForClass(Enemy);

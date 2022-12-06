@@ -1,7 +1,8 @@
 import { MongooseModuleOptions } from '@nestjs/mongoose';
+import { TypegooseModuleOptions } from 'nestjs-typegoose';
 
 export function composeMongooseModuleOptions(
     uri: string,
-): MongooseModuleOptions {
-    return { uri, useNewUrlParser: true, useUnifiedTopology: true };
+): TypegooseModuleOptions {
+    return;
 }

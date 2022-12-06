@@ -1,4 +1,4 @@
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { modelOptions, Prop } from '@typegoose/typegoose';
 import { HydratedDocument } from 'mongoose';
 import { MerchantItems } from 'src/game/merchant/merchant.interface';
 import { AttachedStatus, StatusType } from 'src/game/status/interfaces';
@@ -14,14 +14,12 @@ import {
     Player,
     IExpeditionPlayerStateDeckCard,
     Reward,
-    PlayerSchema,
 } from './expedition.interface';
 
 export type ExpeditionDocument = HydratedDocument<Expedition>;
 
-@Schema({
-    collection: 'expeditions',
-    versionKey: false,
+@modelOptions({
+    schemaOptions: { collection: 'expeditions', versionKey: false },
 })
 export class Expedition {
     @Prop()
@@ -36,7 +34,7 @@ export class Expedition {
     @Prop()
     map: IExpeditionNode[];
 
-    @Prop({ type: PlayerSchema })
+    @Prop()
     playerState: Player;
 
     @Prop({ type: Object })
@@ -83,5 +81,3 @@ export class Expedition {
     @Prop({ default: false })
     isCurrentlyPlaying: boolean;
 }
-
-export const ExpeditionSchema = SchemaFactory.createForClass(Expedition);

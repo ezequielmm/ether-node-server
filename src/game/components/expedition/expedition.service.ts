@@ -61,14 +61,17 @@ export class ExpeditionService {
             events,
         };
 
-        // const peacockFeatherTrinket = new this.peacockFeatherTrinketModel();
-        // expedition.playerState.trinkets.push(peacockFeatherTrinket);
+        const peacockFeatherTrinket = new this.peacockFeatherTrinketModel();
+        expedition.playerState.trinkets.push(peacockFeatherTrinket);
+        // peacockFeatherTrinket.hola();
 
-        // await expedition.save();
+        await expedition.save();
 
-        // expedition.playerState.trinkets.forEach((trinket) => {
-        // trinket.onAttach(ctx);
-        // });
+        expedition.playerState.trinkets.forEach((trinket) => {
+            // trinket.onAttach(ctx);
+            trinket['hola']?.();
+            console.log(trinket['hola']);
+        });
 
         return ctx;
     }

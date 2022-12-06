@@ -1,12 +1,11 @@
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { ModelOptions, Prop } from '@typegoose/typegoose';
 import { HydratedDocument } from 'mongoose';
 import { CharacterClassEnum } from './character.enum';
 
 export type CharacterDocument = HydratedDocument<Character>;
 
-@Schema({
-    collection: 'characters',
-    versionKey: false,
+@ModelOptions({
+    schemaOptions: { collection: 'characters', versionKey: false },
 })
 export class Character {
     @Prop()
@@ -33,5 +32,3 @@ export class Character {
     @Prop()
     isActive: boolean;
 }
-
-export const CharacterSchema = SchemaFactory.createForClass(Character);
