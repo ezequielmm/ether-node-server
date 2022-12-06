@@ -25,6 +25,8 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { composeMongooseModuleOptions } from './dbConfiguration';
 import { Chest, ChestSchema } from './game/components/chest/chest.schema';
 import { ChestSeeder } from './game/components/chest/chest.seeder';
+import { EncounterSeeder } from './game/components/encounter/encounter.seeder';
+import { Encounter, EncounterSchema } from "./game/components/encounter/encounter.schema";
 
 seeder({
     imports: [
@@ -49,6 +51,7 @@ seeder({
             { name: Enemy.name, schema: EnemySchema },
             { name: Settings.name, schema: SettingsSchema },
             { name: Chest.name, schema: ChestSchema },
+            { name: Encounter.name, schema: EncounterSchema}
         ]),
     ],
 }).run([
@@ -59,4 +62,5 @@ seeder({
     EnemySeeder,
     SettingsSeeder,
     ChestSeeder,
+    EncounterSeeder,
 ]);
