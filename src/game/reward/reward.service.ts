@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { randomUUID } from 'crypto';
 import { pick } from 'lodash';
-import { getRandomBetween, getRandomItemByWeight } from 'src/utils';
+import { getRandomItemByWeight } from 'src/utils';
 import { CardDescriptionFormatter } from '../cardDescriptionFormatter/cardDescriptionFormatter';
 import { CardRarityEnum, CardTypeEnum } from '../components/card/card.enum';
 import { CardService } from '../components/card/card.service';
@@ -21,7 +21,7 @@ import { PotionService } from '../components/potion/potion.service';
 
 interface GenerateRewardsDTO {
     node: IExpeditionNode;
-    willGenerateGold: boolean;
+    coinsToGenerate: number;
     cardsToGenerate: number;
     potionsToGenerate: number;
 }
@@ -36,53 +36,36 @@ export class RewardService {
     private node: IExpeditionNode;
 
     async generateRewards(payload: GenerateRewardsDTO): Promise<Reward[]> {
-        const { node, willGenerateGold, cardsToGenerate, potionsToGenerate } =
+        const { cardsToGenerate, potionsToGenerate, coinsToGenerate, node } =
             payload;
 
         this.node = node;
 
         const rewards: Reward[] = [];
 
-        if (willGenerateGold) {
-            const goldAmount = this.generateCoins();
-            // Only if we get coins we should add that reward
-            if (goldAmount > 0) {
-                rewards.push({
-                    id: randomUUID(),
-                    type: IExpeditionNodeReward.Gold,
-                    amount: goldAmount,
-                    taken: false,
-                });
-            }
+        if (coinsToGenerate > 0) {
+            rewards.push({
+                id: randomUUID(),
+                type: IExpeditionNodeReward.Gold,
+                amount: coinsToGenerate,
+                taken: false,
+            });
         }
 
         if (cardsToGenerate > 0) {
-            const cards = await this.generateCards();
+            const cards = await this.generateCards(cardsToGenerate);
             // Only if we get cards for the rewards
             if (cards.length > 0) rewards.push(...cards);
         }
 
         if (potionsToGenerate > 0) {
-            const potions = await this.generatePotions();
+            const potions = await this.generatePotions(potionsToGenerate);
 
             // Only if we get potions for the rewards
             if (potions.length > 0) rewards.push(...potions);
         }
 
         return rewards;
-    }
-
-    private generateCoins(): number {
-        switch (this.node.subType) {
-            case ExpeditionMapNodeTypeEnum.CombatStandard:
-                return getRandomBetween(10, 20);
-            case ExpeditionMapNodeTypeEnum.CombatElite:
-                return getRandomBetween(25, 35);
-            case ExpeditionMapNodeTypeEnum.CombatBoss:
-                return getRandomBetween(95, 105);
-            default:
-                return 0;
-        }
     }
 
     private async generateCards(amount = 3): Promise<CardReward[]> {
@@ -135,12 +118,11 @@ export class RewardService {
         const potionRewards: PotionReward[] = [];
 
         for (let i = 1; i <= amount; i++) {
-            const potionRarity: PotionRarityEnum =
-                this.getPotionRarityProbability();
-
             const potion = await this.potionService.getRandomPotion({
                 isActive: true,
-                rarity: potionRarity,
+                ...(this.node.type === ExpeditionMapNodeTypeEnum.Combat && {
+                    rarity: this.getPotionRarityProbability(),
+                }),
             });
 
             if (potion)
@@ -184,8 +166,8 @@ export class RewardService {
         }
     }
 
-    private getPotionRarityProbability = (): PotionRarityEnum =>
-        getRandomItemByWeight(
+    private getPotionRarityProbability(): PotionRarityEnum {
+        return getRandomItemByWeight(
             [
                 PotionRarityEnum.Common,
                 PotionRarityEnum.Uncommon,
@@ -193,4 +175,5 @@ export class RewardService {
             ],
             [0.65, 0.25, 0.1],
         );
+    }
 }

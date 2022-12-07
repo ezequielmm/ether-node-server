@@ -7,7 +7,10 @@ import {
 } from 'src/utils';
 import { EnemyService } from '../components/enemy/enemy.service';
 import { EnemyId } from '../components/enemy/enemy.type';
-import { CombatTurnEnum } from '../components/expedition/expedition.enum';
+import {
+    CombatTurnEnum,
+    ExpeditionMapNodeTypeEnum,
+} from '../components/expedition/expedition.enum';
 import {
     IExpeditionCurrentNode,
     IExpeditionCurrentNodeDataEnemy,
@@ -66,7 +69,7 @@ export class CombatService {
         const enemies = await this.getEnemies();
         const rewards = await this.rewardService.generateRewards({
             node: this.node,
-            willGenerateGold: true,
+            coinsToGenerate: this.generateCoins(),
             cardsToGenerate: 3,
             potionsToGenerate: shouldGeneratePotion ? 1 : 0,
         });
@@ -157,5 +160,18 @@ export class CombatService {
                 };
             }),
         );
+    }
+
+    private generateCoins(): number {
+        switch (this.node.subType) {
+            case ExpeditionMapNodeTypeEnum.CombatStandard:
+                return getRandomBetween(10, 20);
+            case ExpeditionMapNodeTypeEnum.CombatElite:
+                return getRandomBetween(25, 35);
+            case ExpeditionMapNodeTypeEnum.CombatBoss:
+                return getRandomBetween(95, 105);
+            default:
+                return 0;
+        }
     }
 }
