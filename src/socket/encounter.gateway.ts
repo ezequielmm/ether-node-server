@@ -7,21 +7,26 @@ import {
     SWARAction,
     SWARMessageType,
 } from '../game/standardResponse/standardResponse';
+import { EncounterService } from '../game/components/encounter/encounter.service';
 
 @WebSocketGateway(corsSocketSettings)
 export class EncounterGateway {
     private readonly logger: Logger = new Logger(EncounterGateway.name);
+
+    constructor(private readonly encounterService: EncounterService) {}
 
     @SubscribeMessage('EncounterChoice')
     async handleEncounterChoice(
         client: Socket,
         choiceIdx: string,
     ): Promise<string> {
-        //place holder values
-        return StandardResponse.respond({
-            message_type: SWARMessageType.GenericData,
-            action: SWARAction.BeginEncounter,
-            data: {},
-        });
+        this.logger.debug(
+            `Client ${client.id} trigger message "EncounterChoice"`,
+        );
+
+        return await this.encounterService.encounterChoice(
+            client.id,
+            parseInt(choiceIdx),
+        );
     }
 }

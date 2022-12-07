@@ -73,6 +73,10 @@ export class InitEncounterProcess {
     }
 
     private async createEncounterData(): Promise<string> {
+        const currentNode = await this.expeditionService.getCurrentNode({
+            clientId: this.client.id,
+        });
+
         const nodeType = getRandomItemByWeight(
             [
                 ExpeditionMapNodeTypeEnum.Encounter,

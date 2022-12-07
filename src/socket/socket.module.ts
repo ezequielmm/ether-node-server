@@ -22,6 +22,7 @@ import { TreasureGateway } from './treasure.gateway';
 import { EncounterGateway } from './encounter.gateway';
 import { TreasureModule } from 'src/game/treasure/treasure.module';
 import { TrinketModule } from 'src/game/components/trinket/trinket.module';
+import { EncounterModule } from '../game/components/encounter/encounter.module';
 
 @Module({
     imports: [
@@ -38,6 +39,7 @@ import { TrinketModule } from 'src/game/components/trinket/trinket.module';
         MerchantModule,
         TreasureModule,
         TrinketModule,
+        EncounterModule,
     ],
     providers: [
         SocketGateway,

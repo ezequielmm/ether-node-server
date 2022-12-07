@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { EncounterService } from '../components/encounter/encounter.service';
+import { ExpeditionService } from '../components/expedition/expedition.service';
 
 export interface EncounterDTO {
     displayText: string;
@@ -7,7 +8,10 @@ export interface EncounterDTO {
 }
 @Injectable()
 export class GetEncounterDataAction {
-    constructor(private readonly encounterService: EncounterService) {}
+    constructor(
+        private readonly expeditionService: ExpeditionService,
+        private readonly encounterService: EncounterService,
+    ) {}
 
     async handle(clientId: string): Promise<EncounterDTO> {
         const encounter = await this.encounterService.getByEncounterId(3);

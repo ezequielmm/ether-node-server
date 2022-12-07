@@ -55,6 +55,7 @@ export enum SWARAction {
     BeginCamp = 'begin_camp',
     BeginEncounter = 'begin_encounter',
     ContinueEncounter = 'continue_encounter',
+    FinishEncounter = 'finish_encounter',
     BeginTreasure = 'begin_treasure',
     ContinueTreasure = 'continue_treasure',
     TreasureData = 'treasure_data',
