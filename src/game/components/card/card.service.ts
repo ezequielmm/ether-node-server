@@ -60,7 +60,7 @@ export class CardService {
         return await this.card.find(filter).lean();
     }
 
-    async findOne(filter?: FilterQuery<Card>): Promise<CardDocument> {
+    async findOne(filter: FilterQuery<Card>): Promise<CardDocument> {
         return await this.card.findOne(filter).lean();
     }
 

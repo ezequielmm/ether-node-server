@@ -5,4 +5,5 @@ export const settingsData: Settings = {
     maxEnergy: 3,
     initialHandPileSize: 5,
     initialDeckSize: 10,
+    initialPotionChance: 40,
 };

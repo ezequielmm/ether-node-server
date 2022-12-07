@@ -57,13 +57,30 @@ export class CombatService {
             cardsToRemove: handCards,
         });
 
+        const {
+            actConfig: { potionChance },
+        } = await this.expeditionService.findOne({ clientId }, { map: 0 });
+
+        const shouldGeneratePotion = getRandomBetween(1, 100) < potionChance;
+
         const enemies = await this.getEnemies();
         const rewards = await this.rewardService.generateRewards({
             node: this.node,
             willGenerateGold: true,
             cardsToGenerate: 3,
-            potionsToGenerate: 1,
+            potionsToGenerate: shouldGeneratePotion ? 1 : 0,
         });
+
+        if (potionChance > 0 && potionChance < 100) {
+            await this.expeditionService.updateByFilter(
+                { clientId },
+                {
+                    'actConfig.potionChange': {
+                        $inc: shouldGeneratePotion ? 10 : -10,
+                    },
+                },
+            );
+        }
 
         return {
             nodeId: this.node.id,

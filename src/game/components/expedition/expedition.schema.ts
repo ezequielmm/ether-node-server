@@ -17,6 +17,7 @@ import {
 } from './expedition.interface';
 
 export type ExpeditionDocument = HydratedDocument<Expedition>;
+
 @Schema({
     collection: 'expeditions',
     versionKey: false,
@@ -27,6 +28,11 @@ export class Expedition {
 
     @Prop()
     playerId: number;
+
+    @Prop({ type: Object })
+    actConfig?: {
+        potionChance: number;
+    };
 
     @Prop()
     mapSeedId?: number;

@@ -104,6 +104,7 @@ export class RewardService {
                 rarity: cardRarity,
                 cardType: { $nin: [CardTypeEnum.Curse, CardTypeEnum.Status] },
                 cardId: { $nin: cardIds },
+                isUpgraded: this.node.act > 1,
             });
 
             const cardPreview = pick(card, [
