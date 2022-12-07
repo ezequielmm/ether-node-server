@@ -32,6 +32,8 @@ import { GetUpgradableCardsAction } from './getUpgradableCards.action';
 import { MoveCardAction } from './moveCard.action';
 import { SetCombatTurnAction } from './setCombatTurn.action';
 import { UpgradeCardAction } from './upgradeCard.action';
+import { GetEncounterDataAction } from './getEncounterDataAction';
+import { EncounterModule } from '../components/encounter/encounter.module';
 
 const actions = [
     FullSyncAction,
@@ -56,6 +58,7 @@ const actions = [
     GetMerchantDataAction,
     GetTreasureDataAction,
     GetRewardsAction,
+    GetEncounterDataAction,
 ];
 
 @Module({
@@ -71,6 +74,7 @@ const actions = [
         PlayerModule,
         HistoryModule,
         CombatQueueModule,
+        EncounterModule,
     ],
     providers: actions,
     exports: actions,

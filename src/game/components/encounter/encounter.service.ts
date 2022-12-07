@@ -9,4 +9,11 @@ export class EncounterService {
         @InjectModel(Encounter.name)
         private readonly encounterModel: Model<Encounter>,
     ) {}
+
+    async getByEncounterId(encounterId: number): Promise<string> {
+        const encounter = await this.encounterModel
+            .findOne({ encounterId })
+            .exec();
+        return 'hello';
+    }
 }
