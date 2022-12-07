@@ -158,7 +158,7 @@ export function getTimestampInSeconds(): number {
 }
 
 /**
- * Get a random number with a given
+ * Get a random number with a given limit
  */
 export function getRandomNumber(limit: number): number {
     return Math.floor(Math.random() * limit);
