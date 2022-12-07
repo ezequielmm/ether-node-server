@@ -18,7 +18,7 @@ import {
     SWARMessageType,
 } from 'src/game/standardResponse/standardResponse';
 import { corsSocketSettings, DataWSRequestTypesEnum } from './socket.enum';
-import { GetEncounterDataAction } from '../game/action/getEncounterDataAction';
+import { GetEncounterDataAction } from 'src/game/action/getEncounterDataAction';
 
 @WebSocketGateway(corsSocketSettings)
 export class GetDataGateway {

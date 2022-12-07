@@ -10,10 +10,10 @@ export class EncounterService {
         private readonly encounterModel: Model<Encounter>,
     ) {}
 
-    async getByEncounterId(encounterId: number): Promise<string> {
+    async getByEncounterId(encounterId: number): Promise<Encounter> {
         const encounter = await this.encounterModel
             .findOne({ encounterId })
             .exec();
-        return 'hello';
+        return encounter;
     }
 }
