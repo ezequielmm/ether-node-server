@@ -72,12 +72,14 @@ export class CombatService {
         });
 
         if (potionChance > 0 && potionChance < 100) {
+            const newPotionChance = shouldGeneratePotion
+                ? Math.min(100, potionChance - 10)
+                : Math.max(0, potionChance + 10);
+
             await this.expeditionService.updateByFilter(
                 { clientId },
                 {
-                    'actConfig.potionChange': {
-                        $inc: shouldGeneratePotion ? 10 : -10,
-                    },
+                    ['actConfig.potionChance']: newPotionChance,
                 },
             );
         }

@@ -15,6 +15,10 @@ import {
     IExpeditionPlayerStateDeckCard,
     Reward,
 } from './expedition.interface';
+import {
+    ExpeditionActConfig,
+    ExpeditionActConfigSchema,
+} from './expeditionActConfig.schema';
 
 export type ExpeditionDocument = HydratedDocument<Expedition>;
 
@@ -29,10 +33,8 @@ export class Expedition {
     @Prop()
     playerId: number;
 
-    @Prop({ type: Object })
-    actConfig?: {
-        potionChance: number;
-    };
+    @Prop({ type: ExpeditionActConfigSchema })
+    actConfig?: ExpeditionActConfig;
 
     @Prop()
     mapSeedId?: number;
