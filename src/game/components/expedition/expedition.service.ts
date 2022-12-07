@@ -19,10 +19,7 @@ import {
     UpdateHandPilesDTO,
     UpdatePlayerDeckDTO,
 } from './expedition.dto';
-import {
-    ExpeditionMapNodeStatusEnum,
-    ExpeditionStatusEnum,
-} from './expedition.enum';
+import { ExpeditionStatusEnum } from './expedition.enum';
 import {
     IExpeditionCurrentNode,
     IExpeditionNode,
@@ -144,8 +141,16 @@ export class ExpeditionService {
         const { clientId, playerId } = payload;
         return await this.expedition.findOneAndUpdate(
             { playerId, status: ExpeditionStatusEnum.InProgress },
-            { clientId },
+            { clientId, isCurrentlyPlaying: true },
         );
+    }
+
+    async updatePlayerStatus(payload: {
+        clientId: string;
+        isCurrentlyPlaying: boolean;
+    }): Promise<void> {
+        const { clientId, isCurrentlyPlaying } = payload;
+        await this.expedition.updateOne({ clientId }, { isCurrentlyPlaying });
     }
 
     async getExpeditionMapNode(
@@ -368,16 +373,16 @@ export class ExpeditionService {
     ): Promise<void> {
         const { clientId, nodeId } = payload;
 
-        await this.expedition.findOneAndUpdate(
-            {
-                clientId,
-                [`map.nodeId`]: nodeId,
-            },
-            {
-                $set: {
-                    'map.$.status': ExpeditionMapNodeStatusEnum.Available,
-                },
-            },
-        );
+        const map = await this.getExpeditionMap({
+            clientId,
+        });
+
+        const expeditionMap = restoreMap(map);
+        const selectedNode = expeditionMap.fullCurrentMap.get(nodeId);
+        selectedNode.setAvailable();
+
+        await this.update(clientId, {
+            map: expeditionMap.getMap,
+        });
     }
 }

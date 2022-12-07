@@ -58,6 +58,7 @@ export class InitExpeditionProcess {
                 trinkets: [],
             },
             status: ExpeditionStatusEnum.InProgress,
+            isCurrentlyPlaying: false,
         });
 
         this.logger.debug(`Created expedition for player id: ${playerId}`);
