@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Potion, PotionDocument } from './potion.schema';
-import { Model } from 'mongoose';
+import { FilterQuery, Model } from 'mongoose';
 import { GameContext } from '../interfaces';
 import { ExpeditionMapNodeTypeEnum } from '../expedition/expedition.enum';
 import { EffectService } from 'src/game/effects/effects.service';
@@ -223,9 +223,15 @@ export class PotionService {
         return true;
     }
 
-    public async getRandomPotion(): Promise<PotionDocument> {
+    public async getRandomPotion(
+        filter?: FilterQuery<Potion>,
+        amount = 1,
+    ): Promise<PotionDocument> {
         const [potion] = await this.potion
-            .aggregate<PotionDocument>([{ $sample: { size: 1 } }])
+            .aggregate<PotionDocument>([
+                { $match: filter },
+                { $sample: { size: amount } },
+            ])
             .exec();
 
         return potion;

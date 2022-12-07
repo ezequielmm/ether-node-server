@@ -64,6 +64,18 @@ export class CardService {
         return await this.card.findOne(filter).lean();
     }
 
+    async getRandomCard(
+        filter?: FilterQuery<Card>,
+        amount = 1,
+    ): Promise<CardDocument> {
+        const [card] = await this.card.aggregate<CardDocument>([
+            { $match: filter },
+            { $sample: { size: amount } },
+        ]);
+
+        return card;
+    }
+
     async findByType(card_type: CardTypeEnum): Promise<CardDocument[]> {
         return this.card
             .find({
