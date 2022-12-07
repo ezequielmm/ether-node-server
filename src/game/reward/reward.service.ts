@@ -19,6 +19,13 @@ import {
 import { PotionRarityEnum } from '../components/potion/potion.enum';
 import { PotionService } from '../components/potion/potion.service';
 
+interface GenerateRewardsDTO {
+    node: IExpeditionNode;
+    willGenerateGold: boolean;
+    cardsToGenerate: number;
+    potionsToGenerate: number;
+}
+
 @Injectable()
 export class RewardService {
     constructor(
@@ -28,18 +35,16 @@ export class RewardService {
 
     private node: IExpeditionNode;
 
-    async generateRewards(node: IExpeditionNode): Promise<Reward[]> {
+    async generateRewards(payload: GenerateRewardsDTO): Promise<Reward[]> {
+        const { node, willGenerateGold, cardsToGenerate, potionsToGenerate } =
+            payload;
+
         this.node = node;
 
         const rewards: Reward[] = [];
 
-        // First we check if is a combat node, them we apply the conditions
-        // to generate the coins
-        if (node.type === ExpeditionMapNodeTypeEnum.Combat) {
+        if (willGenerateGold) {
             const goldAmount = this.generateCoins();
-            const cards = await this.generateCards();
-            const potions = await this.generatePotions();
-
             // Only if we get coins we should add that reward
             if (goldAmount > 0) {
                 rewards.push({
@@ -49,9 +54,16 @@ export class RewardService {
                     taken: false,
                 });
             }
+        }
 
+        if (cardsToGenerate > 0) {
+            const cards = await this.generateCards();
             // Only if we get cards for the rewards
             if (cards.length > 0) rewards.push(...cards);
+        }
+
+        if (potionsToGenerate > 0) {
+            const potions = await this.generatePotions();
 
             // Only if we get potions for the rewards
             if (potions.length > 0) rewards.push(...potions);

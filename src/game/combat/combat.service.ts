@@ -58,7 +58,12 @@ export class CombatService {
         });
 
         const enemies = await this.getEnemies();
-        const rewards = await this.rewardService.generateRewards(this.node);
+        const rewards = await this.rewardService.generateRewards({
+            node: this.node,
+            willGenerateGold: true,
+            cardsToGenerate: 3,
+            potionsToGenerate: 1,
+        });
 
         return {
             nodeId: this.node.id,
