@@ -10,10 +10,11 @@ export class Encounter {
     @Prop()
     encounterId: number;
 
-    @Prop()
-    displayText: string;
-
-    @Prop([String])
-    buttonText: string[];
+    @Prop({ type: Object })
+    stages: {
+        buttonText: string[];
+        displayText: string;
+        effects: any[];
+    }[];
 }
 export const EncounterSchema = SchemaFactory.createForClass(Encounter);
