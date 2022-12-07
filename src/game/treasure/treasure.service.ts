@@ -25,6 +25,7 @@ export class TreasureService {
         const chest = await this.chestService.getRandomChest();
 
         const randomCoinChance = getRandomBetween(1, 100);
+        const randomPotionChance = getRandomBetween(1, 100);
 
         const rewards = await this.rewardService.generateRewards({
             node,
@@ -33,7 +34,7 @@ export class TreasureService {
                     ? getRandomBetween(chest.minCoins, chest.maxCoins)
                     : 0,
             cardsToGenerate: 0,
-            potionsToGenerate: 1,
+            potionsToGenerate: randomPotionChance <= chest.potionChance ? 1 : 0,
         });
 
         return {
