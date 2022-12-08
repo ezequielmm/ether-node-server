@@ -12,9 +12,13 @@ export class Encounter {
 
     @Prop({ type: Object })
     stages: {
-        buttonText: string[];
+        // eslint-disable-next-line @typescript-eslint/ban-types
+        buttons: {
+            text: string;
+            nextStage: number;
+            effects: any[];
+        }[];
         displayText: string;
-        effects: any[];
     }[];
 }
 export const EncounterSchema = SchemaFactory.createForClass(Encounter);

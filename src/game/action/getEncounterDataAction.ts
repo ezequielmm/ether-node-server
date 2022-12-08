@@ -19,10 +19,13 @@ export class GetEncounterDataAction {
             client,
         );
         const encounter = await this.encounterService.getByEncounterId(
-            encounterData.kind,
+            encounterData.encounterId,
         );
         const stage = encounter.stages[encounterData.stage];
-        const buttonText = stage.buttonText;
+        const buttonText: string[] = [];
+        for (let i = 0; i < stage.buttons.length; i++) {
+            buttonText.push(stage.buttons[i].text);
+        }
         const displayText = stage.displayText;
         const answer: EncounterDTO = { displayText, buttonText };
         return answer;

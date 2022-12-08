@@ -1,4 +1,4 @@
 export interface EncounterInterface {
-    kind: number;
+    encounterId: number;
     stage: number;
 }

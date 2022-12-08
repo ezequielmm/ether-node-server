@@ -2,7 +2,11 @@ import { Injectable } from '@nestjs/common';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { Encounter } from './encounter.schema';
-import { StandardResponse, SWARAction, SWARMessageType } from '../../standardResponse/standardResponse';
+import {
+    StandardResponse,
+    SWARAction,
+    SWARMessageType,
+} from '../../standardResponse/standardResponse';
 import { ExpeditionService } from '../expedition/expedition.service';
 import { SocketId } from 'socket.io-adapter';
 import { Socket } from 'socket.io';
@@ -23,11 +27,7 @@ export class EncounterService {
         return encounter;
     }
 
-    async encounterChoice(
-        client: Socket,
-        choiceIdx: number,
-    ): Promise<string> {
-
+    async encounterChoice(client: Socket, choiceIdx: number): Promise<string> {
         const encounterData = await this.getEncounterData(client);
         //place holder values
         return StandardResponse.respond({

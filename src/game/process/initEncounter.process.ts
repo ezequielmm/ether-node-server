@@ -87,10 +87,10 @@ export class InitEncounterProcess {
         );
 
         const encounterData = {
-            kind: 3,
+            encounterId: 3,
             stage: 0,
         };
-        
+
         const ctx = await this.expeditionService.getGameContext(this.client);
         const expedition = ctx.expedition;
         await this.expeditionService.updateById(expedition._id.toString(), {
