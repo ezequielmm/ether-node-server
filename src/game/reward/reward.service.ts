@@ -13,18 +13,11 @@ import {
     Reward,
     TrinketReward,
 } from '../components/expedition/expedition.interface';
+import { ExpeditionService } from '../components/expedition/expedition.service';
 import { PotionRarityEnum } from '../components/potion/potion.enum';
 import { PotionService } from '../components/potion/potion.service';
 import { TrinketRarityEnum } from '../components/trinket/trinket.enum';
 import { TrinketService } from '../components/trinket/trinket.service';
-
-interface GenerateRewardsDTO {
-    node: IExpeditionNode;
-    coinsToGenerate: number;
-    cardsToGenerate: CardRarityEnum[];
-    potionsToGenerate: PotionRarityEnum[];
-    trinketsToGenerate: TrinketRarityEnum[];
-}
 
 @Injectable()
 export class RewardService {
@@ -32,20 +25,29 @@ export class RewardService {
         private readonly cardService: CardService,
         private readonly potionService: PotionService,
         private readonly trinketService: TrinketService,
+        private readonly expeditionService: ExpeditionService,
     ) {}
 
     private node: IExpeditionNode;
+    private clientId: string;
 
-    async generateRewards(payload: GenerateRewardsDTO): Promise<Reward[]> {
-        const {
-            cardsToGenerate,
-            potionsToGenerate,
-            trinketsToGenerate,
-            coinsToGenerate,
-            node,
-        } = payload;
-
+    async generateRewards({
+        cardsToGenerate,
+        potionsToGenerate,
+        trinketsToGenerate,
+        coinsToGenerate,
+        node,
+        clientId,
+    }: {
+        clientId: string;
+        node: IExpeditionNode;
+        coinsToGenerate: number;
+        cardsToGenerate: CardRarityEnum[];
+        potionsToGenerate: PotionRarityEnum[];
+        trinketsToGenerate: TrinketRarityEnum[];
+    }): Promise<Reward[]> {
         this.node = node;
+        this.clientId = clientId;
 
         const rewards: Reward[] = [];
 
@@ -153,10 +155,21 @@ export class RewardService {
     ): Promise<TrinketReward[]> {
         const trinketRewards: TrinketReward[] = [];
 
+        const { trinkets } = await this.expeditionService.getPlayerState({
+            clientId: this.clientId,
+        });
+
+        const trinketIds = trinkets.map(({ trinketId }) => trinketId);
+
         for (let i = 0; i < trinketRewards.length; i++) {
             const trinket = await this.trinketService.getRandomTrinket({
                 isActive: true,
                 rarity: trinketsToGenerate[i],
+                ...(trinketIds.length > 0 && {
+                    trinketId: {
+                        $nin: trinketIds,
+                    },
+                }),
             });
 
             if (trinket)

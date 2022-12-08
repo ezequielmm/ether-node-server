@@ -22,13 +22,17 @@ export class TreasureService {
         private readonly rewardService: RewardService,
     ) {}
 
-    async generateTreasure(node: IExpeditionNode): Promise<TreasureInterface> {
+    async generateTreasure(
+        node: IExpeditionNode,
+        clientId: string,
+    ): Promise<TreasureInterface> {
         const chest = await this.chestService.getRandomChest();
 
         const randomCoinChance = getRandomBetween(1, 100);
         const randomPotionChance = getRandomBetween(1, 100);
 
         const rewards = await this.rewardService.generateRewards({
+            clientId,
             node,
             coinsToGenerate:
                 randomCoinChance <= chest.coinChance

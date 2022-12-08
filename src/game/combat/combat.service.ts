@@ -74,6 +74,7 @@ export class CombatService {
 
         const enemies = await this.getEnemies();
         const rewards = await this.rewardService.generateRewards({
+            clientId: this.clientId,
             node: this.node,
             coinsToGenerate: this.generateCoins(),
             cardsToGenerate: this.getCardRarityProbability(
