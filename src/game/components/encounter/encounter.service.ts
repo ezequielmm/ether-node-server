@@ -5,6 +5,8 @@ import { Encounter } from './encounter.schema';
 import { StandardResponse, SWARAction, SWARMessageType } from '../../standardResponse/standardResponse';
 import { ExpeditionService } from '../expedition/expedition.service';
 import { SocketId } from 'socket.io-adapter';
+import { Socket } from 'socket.io';
+import { EncounterInterface } from './encounter.interfaces';
 
 @Injectable()
 export class EncounterService {
@@ -22,18 +24,24 @@ export class EncounterService {
     }
 
     async encounterChoice(
-        clientId: SocketId,
+        client: Socket,
         choiceIdx: number,
     ): Promise<string> {
-        const currentNode = await this.expeditionService.getCurrentNode({
-            clientId: clientId,
-        });
 
+        const encounterData = await this.getEncounterData(client);
         //place holder values
         return StandardResponse.respond({
             message_type: SWARMessageType.EncounterUpdate,
             action: SWARAction.FinishEncounter,
             data: {},
         });
+    }
+
+    async getEncounterData(client: Socket): Promise<EncounterInterface> {
+        const ctx = await this.expeditionService.getGameContext(client);
+        const expedition = ctx.expedition;
+        const encounterData: EncounterInterface =
+            expedition.currentNode.encounterData;
+        return encounterData;
     }
 }

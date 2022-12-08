@@ -99,7 +99,7 @@ export class GetDataGateway {
                     break;
 
                 case DataWSRequestTypesEnum.EncounterData:
-                    data = await this.getEncounterAction.handle(client.id);
+                    data = await this.getEncounterAction.handle(client);
                     break;
             }
 

@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { EncounterService } from '../components/encounter/encounter.service';
 import { ExpeditionService } from '../components/expedition/expedition.service';
+import { Socket } from 'socket.io';
 
 export interface EncounterDTO {
     displayText: string;
@@ -13,11 +14,16 @@ export class GetEncounterDataAction {
         private readonly encounterService: EncounterService,
     ) {}
 
-    async handle(clientId: string): Promise<EncounterDTO> {
-        const encounter = await this.encounterService.getByEncounterId(3);
-        const stageZero = encounter.stages[0];
-        const buttonText = stageZero.buttonText;
-        const displayText = stageZero.displayText;
+    async handle(client: Socket): Promise<EncounterDTO> {
+        const encounterData = await this.encounterService.getEncounterData(
+            client,
+        );
+        const encounter = await this.encounterService.getByEncounterId(
+            encounterData.kind,
+        );
+        const stage = encounter.stages[encounterData.stage];
+        const buttonText = stage.buttonText;
+        const displayText = stage.displayText;
         const answer: EncounterDTO = { displayText, buttonText };
         return answer;
     }

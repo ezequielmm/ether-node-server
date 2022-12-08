@@ -2,11 +2,6 @@ import { SubscribeMessage, WebSocketGateway } from '@nestjs/websockets';
 import { corsSocketSettings } from './socket.enum';
 import { Logger } from '@nestjs/common';
 import { Socket } from 'socket.io';
-import {
-    StandardResponse,
-    SWARAction,
-    SWARMessageType,
-} from '../game/standardResponse/standardResponse';
 import { EncounterService } from '../game/components/encounter/encounter.service';
 
 @WebSocketGateway(corsSocketSettings)
@@ -25,7 +20,7 @@ export class EncounterGateway {
         );
 
         return await this.encounterService.encounterChoice(
-            client.id,
+            client,
             parseInt(choiceIdx),
         );
     }
