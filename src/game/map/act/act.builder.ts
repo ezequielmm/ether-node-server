@@ -1,8 +1,7 @@
+import { filter, random } from 'lodash';
 import { ExpeditionMapNodeTypeEnum } from 'src/game/components/expedition/expedition.enum';
 import nodeFactory from '../nodes';
 import Node from '../nodes/node';
-import * as _ from 'lodash';
-import { snakeCaseToTitleCase } from 'src/utils';
 
 /**
  * Object config for node
@@ -118,7 +117,7 @@ export class DefaultActBuilder implements ActBuilder {
     }
 
     addRangeOfNodes(min: number, max: number, nodeConfig?: NodeConfig): void {
-        const count = _.random(min, max);
+        const count = random(min, max);
 
         for (let i = 0; i < count; i++) {
             this.addNode(nodeConfig);
@@ -128,7 +127,7 @@ export class DefaultActBuilder implements ActBuilder {
     fillUndefinedNodes(
         callback: (node: Node, nodes: Node[]) => NodeConfig,
     ): void {
-        _.filter(this.nodes, {
+        filter(this.nodes, {
             type: undefined,
         }).forEach((node) => {
             const index = this.nodes.indexOf(node);
@@ -150,7 +149,7 @@ export class DefaultActBuilder implements ActBuilder {
             config?.data,
             config?.type === ExpeditionMapNodeTypeEnum.Camp
                 ? 'Spirit Well'
-                : snakeCaseToTitleCase(config?.subType),
+                : config?.subType,
         );
     }
 }

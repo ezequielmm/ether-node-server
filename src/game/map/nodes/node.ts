@@ -102,7 +102,7 @@ class Node implements IExpeditionNode {
 
     private setTitle(title: string): string {
         if (title !== null || title !== undefined) return title;
-        else '';
+        return snakeCaseToTitleCase(title);
     }
 }
 
