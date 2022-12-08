@@ -15,19 +15,6 @@ export class GetEncounterDataAction {
     ) {}
 
     async handle(client: Socket): Promise<EncounterDTO> {
-        const encounterData = await this.encounterService.getEncounterData(
-            client,
-        );
-        const encounter = await this.encounterService.getByEncounterId(
-            encounterData.encounterId,
-        );
-        const stage = encounter.stages[encounterData.stage];
-        const buttonText: string[] = [];
-        for (let i = 0; i < stage.buttons.length; i++) {
-            buttonText.push(stage.buttons[i].text);
-        }
-        const displayText = stage.displayText;
-        const answer: EncounterDTO = { displayText, buttonText };
-        return answer;
+        return await this.encounterService.getEncounterDTO(client);
     }
 }

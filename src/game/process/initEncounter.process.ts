@@ -89,20 +89,6 @@ export class InitEncounterProcess {
         );
 
         await this.encounterService.updateEncounterData(3, 0, this.client);
-        /*
-        const encounterData = {
-            encounterId: 3,
-            stage: 0,
-        };
-
-        const ctx = await this.expeditionService.getGameContext(this.client);
-        const expedition = ctx.expedition;
-        await this.expeditionService.updateById(expedition._id.toString(), {
-            $set: {
-                'currentNode.encounterData': encounterData,
-            },
-        });
-        */
         return await this.executeNode(nodeType);
     }
 

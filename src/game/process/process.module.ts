@@ -28,7 +28,7 @@ import { InitNodeProcess } from './initNode.process';
 import { InitTreasureProcess } from './initTreasure.process';
 import { NodeSelectedProcess } from './nodeSelected.process';
 import { SendEnemyIntentProcess } from './sendEnemyIntents.process';
-import {InitEncounterProcess} from "./initEncounter.process";
+import { InitEncounterProcess } from './initEncounter.process';
 import { EncounterModule } from '../components/encounter/encounter.module';
 import { EncounterService } from '../components/encounter/encounter.service';
 

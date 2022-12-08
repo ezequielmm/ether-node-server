@@ -12,6 +12,7 @@ import { SocketId } from 'socket.io-adapter';
 import { Socket } from 'socket.io';
 import { EncounterInterface } from './encounter.interfaces';
 import { EncounterDTO } from '../../action/getEncounterDataAction';
+import { DataWSRequestTypesEnum } from '../../../socket/socket.enum';
 
 @Injectable()
 export class EncounterService {
@@ -21,25 +22,41 @@ export class EncounterService {
         private readonly expeditionService: ExpeditionService,
     ) {}
 
-    async getByEncounterId(encounterId: number): Promise<Encounter> {
-        const encounter = await this.encounterModel
-            .findOne({ encounterId })
-            .exec();
-        return encounter;
-    }
-
     async encounterChoice(client: Socket, choiceIdx: number): Promise<string> {
         const encounterData = await this.getEncounterData(client);
         const encounter = await this.getByEncounterId(
             encounterData.encounterId,
         );
+        const stage = encounter.stages[encounterData.stage];
+        const buttonPressed = stage.buttons[choiceIdx];
+        await this.updateEncounterData(
+            encounterData.encounterId,
+            buttonPressed.nextStage,
+            client,
+        );
 
+        const data = await this.getEncounterDTO(client);
+
+        return StandardResponse.respond({
+            message_type: SWARMessageType.GenericData,
+            action: DataWSRequestTypesEnum.EncounterData,
+            data,
+        });
+        
+        
         //place holder values
         return StandardResponse.respond({
             message_type: SWARMessageType.EncounterUpdate,
             action: SWARAction.FinishEncounter,
             data: {},
         });
+    }
+
+    async getByEncounterId(encounterId: number): Promise<Encounter> {
+        const encounter = await this.encounterModel
+            .findOne({ encounterId })
+            .exec();
+        return encounter;
     }
 
     async getEncounterDTO(client: Socket): Promise<EncounterDTO> {
