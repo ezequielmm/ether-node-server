@@ -12,7 +12,10 @@ export const NagpraEncounter: Encounter = {
                 {
                     text: 'A: Trade for the birdcage [100 Coin]',
                     nextStage: 1,
-                    effects: [],
+                    effects: [
+                        { kind: 'coin', amount: '100' },
+                        { kind: 'birdcage' },
+                    ],
                 },
                 {
                     text: 'B: Refuse the Offer [Leave]',

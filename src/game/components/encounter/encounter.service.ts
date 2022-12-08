@@ -28,7 +28,19 @@ export class EncounterService {
             encounterData.encounterId,
         );
         const stage = encounter.stages[encounterData.stage];
+
+        if (choiceIdx >= stage.buttons.length || choiceIdx < 0) {
+            // impossible condition. used temporarily for QA
+            return StandardResponse.respond({
+                message_type: SWARMessageType.EncounterUpdate,
+                action: SWARAction.FinishEncounter,
+                data: {},
+            });
+        }
+
         const buttonPressed = stage.buttons[choiceIdx];
+        await this.applyEffects(buttonPressed.effects, client);
+
         await this.updateEncounterData(
             encounterData.encounterId,
             buttonPressed.nextStage,
@@ -42,14 +54,29 @@ export class EncounterService {
             action: DataWSRequestTypesEnum.EncounterData,
             data,
         });
-        
-        
-        //place holder values
-        return StandardResponse.respond({
-            message_type: SWARMessageType.EncounterUpdate,
-            action: SWARAction.FinishEncounter,
-            data: {},
-        });
+    }
+
+    async applyEffects(effects: any[], client: Socket): Promise<void> {
+        for (let i = 0; i < effects.length; i++) {
+            const effect = effects[i];
+            switch (effect.kind) {
+                case 'coin':
+                    const amount = parseInt(effect.amount);
+                    const ctx = await this.expeditionService.getGameContext(
+                        client,
+                    );
+                    const expedition = ctx.expedition;
+                    const expeditionId = expedition._id.toString();
+                    await this.expeditionService.updateById(expeditionId, {
+                        $inc: {
+                            'playerState.gold': amount,
+                        },
+                    });
+                    break;
+                case 'birdcage':
+                    break;
+            }
+        }
     }
 
     async getByEncounterId(encounterId: number): Promise<Encounter> {
