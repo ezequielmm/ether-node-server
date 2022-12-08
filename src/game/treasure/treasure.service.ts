@@ -1,10 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { Socket } from 'socket.io';
 import { getRandomBetween, getRandomItemByWeight } from 'src/utils';
+import { ChestSizeEnum } from '../components/chest/chest.enum';
+import { Chest } from '../components/chest/chest.schema';
 import { ChestService } from '../components/chest/chest.service';
 import { IExpeditionNode } from '../components/expedition/expedition.interface';
 import { ExpeditionService } from '../components/expedition/expedition.service';
 import { PotionRarityEnum } from '../components/potion/potion.enum';
+import { TrinketRarityEnum } from '../components/trinket/trinket.enum';
 import { RewardService } from '../reward/reward.service';
 import {
     StandardResponse,
@@ -22,11 +25,15 @@ export class TreasureService {
         private readonly rewardService: RewardService,
     ) {}
 
+    private chest: Chest;
+
     async generateTreasure(
         node: IExpeditionNode,
         clientId: string,
     ): Promise<TreasureInterface> {
         const chest = await this.chestService.getRandomChest();
+
+        this.chest = chest;
 
         const randomCoinChance = getRandomBetween(1, 100);
         const randomPotionChance = getRandomBetween(1, 100);
@@ -97,5 +104,29 @@ export class TreasureService {
             ],
             [0.65, 0.25, 0.1],
         );
+    }
+
+    private getTrinketRarityProbability(): TrinketRarityEnum {
+        switch (this.chest.size) {
+            case ChestSizeEnum.Small:
+                return getRandomItemByWeight(
+                    [TrinketRarityEnum.Common, TrinketRarityEnum.Uncommon],
+                    [0.75, 0.25],
+                );
+            case ChestSizeEnum.Medium:
+                return getRandomItemByWeight(
+                    [
+                        TrinketRarityEnum.Common,
+                        TrinketRarityEnum.Uncommon,
+                        TrinketRarityEnum.Rare,
+                    ],
+                    [0.35, 0.5, 0.15],
+                );
+            case ChestSizeEnum.Large:
+                return getRandomItemByWeight(
+                    [TrinketRarityEnum.Uncommon, TrinketRarityEnum.Rare],
+                    [0.75, 0.25],
+                );
+        }
     }
 }
