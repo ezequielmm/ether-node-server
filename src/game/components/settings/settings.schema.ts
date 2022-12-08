@@ -22,6 +22,9 @@ export class Settings {
 
     @Prop()
     initialPotionChance: number;
+
+    @Prop()
+    maxCardRewardsInCombat: number;
 }
 
 export const SettingsSchema = SchemaFactory.createForClass(Settings);

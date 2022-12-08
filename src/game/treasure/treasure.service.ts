@@ -33,7 +33,7 @@ export class TreasureService {
                 randomCoinChance <= chest.coinChance
                     ? getRandomBetween(chest.minCoins, chest.maxCoins)
                     : 0,
-            cardsToGenerate: 0,
+            cardsToGenerate: [],
             potionsToGenerate: randomPotionChance <= chest.potionChance ? 1 : 0,
         });
 

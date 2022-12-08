@@ -22,7 +22,7 @@ import { PotionService } from '../components/potion/potion.service';
 interface GenerateRewardsDTO {
     node: IExpeditionNode;
     coinsToGenerate: number;
-    cardsToGenerate: number;
+    cardsToGenerate: CardRarityEnum[];
     potionsToGenerate: number;
 }
 
@@ -52,7 +52,7 @@ export class RewardService {
             });
         }
 
-        if (cardsToGenerate > 0) {
+        if (cardsToGenerate.length > 0) {
             const cards = await this.generateCards(cardsToGenerate);
             // Only if we get cards for the rewards
             if (cards.length > 0) rewards.push(...cards);
@@ -68,14 +68,13 @@ export class RewardService {
         return rewards;
     }
 
-    private async generateCards(amount = 3): Promise<CardReward[]> {
+    private async generateCards(
+        cardsToGenerate: CardRarityEnum[],
+    ): Promise<CardReward[]> {
         const cardRewards: CardReward[] = [];
 
         // First we create a loop for 3 cards
-        for (let i = 1; i <= amount; i++) {
-            // Next, we go through the probabilities for each card rarity
-            const cardRarity: CardRarityEnum = this.getCardRarityProbability();
-
+        for (let i = 0; i < cardsToGenerate.length; i++) {
             // Here we get all the card ids that we have as reward to
             // Avoid repetition
             const cardIds = cardRewards.map((reward) => reward.card.cardId);
@@ -84,7 +83,7 @@ export class RewardService {
             // card rewards array already
             const card = await this.cardService.getRandomCard({
                 isActive: true,
-                rarity: cardRarity,
+                rarity: cardsToGenerate[i],
                 cardType: { $nin: [CardTypeEnum.Curse, CardTypeEnum.Status] },
                 cardId: { $nin: cardIds },
                 isUpgraded: this.node.act > 1,
@@ -135,35 +134,6 @@ export class RewardService {
         }
 
         return potionRewards;
-    }
-
-    private getCardRarityProbability(): CardRarityEnum {
-        switch (this.node.subType) {
-            case ExpeditionMapNodeTypeEnum.CombatStandard:
-                return getRandomItemByWeight(
-                    [
-                        CardRarityEnum.Common,
-                        CardRarityEnum.Uncommon,
-                        CardRarityEnum.Rare,
-                    ],
-                    [0.6, 0.37, 0.03],
-                );
-            case ExpeditionMapNodeTypeEnum.CombatElite:
-                return getRandomItemByWeight(
-                    [
-                        CardRarityEnum.Common,
-                        CardRarityEnum.Uncommon,
-                        CardRarityEnum.Rare,
-                        CardRarityEnum.Legendary,
-                    ],
-                    [0.5, 0.38, 0.09, 0.03],
-                );
-            case ExpeditionMapNodeTypeEnum.CombatStandard:
-                return getRandomItemByWeight(
-                    [CardRarityEnum.Rare, CardRarityEnum.Legendary],
-                    [0.8, 0.2],
-                );
-        }
     }
 
     private getPotionRarityProbability(): PotionRarityEnum {

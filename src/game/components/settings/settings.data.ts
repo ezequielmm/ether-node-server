@@ -6,4 +6,5 @@ export const settingsData: Settings = {
     initialHandPileSize: 5,
     initialDeckSize: 10,
     initialPotionChance: 40,
+    maxCardRewardsInCombat: 3,
 };

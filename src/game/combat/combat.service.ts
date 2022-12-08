@@ -5,6 +5,7 @@ import {
     getRandomItemByWeight,
     removeCardsFromPile,
 } from 'src/utils';
+import { CardRarityEnum } from '../components/card/card.enum';
 import { EnemyService } from '../components/enemy/enemy.service';
 import { EnemyId } from '../components/enemy/enemy.type';
 import {
@@ -42,8 +43,12 @@ export class CombatService {
         this.clientId = clientId;
 
         // Get initial player stats
-        const { initialEnergy, maxEnergy, initialHandPileSize } =
-            await this.settingsService.getSettings();
+        const {
+            initialEnergy,
+            maxEnergy,
+            initialHandPileSize,
+            maxCardRewardsInCombat,
+        } = await this.settingsService.getSettings();
 
         // Get current health
         const { hpCurrent, hpMax, cards } =
@@ -70,22 +75,13 @@ export class CombatService {
         const rewards = await this.rewardService.generateRewards({
             node: this.node,
             coinsToGenerate: this.generateCoins(),
-            cardsToGenerate: 3,
+            cardsToGenerate: this.getCardRarityProbability(
+                maxCardRewardsInCombat,
+            ),
             potionsToGenerate: shouldGeneratePotion ? 1 : 0,
         });
 
-        if (potionChance > 0 && potionChance < 100) {
-            const newPotionChance = shouldGeneratePotion
-                ? Math.min(100, potionChance - 10)
-                : Math.max(0, potionChance + 10);
-
-            await this.expeditionService.updateByFilter(
-                { clientId },
-                {
-                    ['actConfig.potionChance']: newPotionChance,
-                },
-            );
-        }
+        this.updatePotionChance(potionChance, shouldGeneratePotion);
 
         return {
             nodeId: this.node.id,
@@ -172,6 +168,70 @@ export class CombatService {
                 return getRandomBetween(95, 105);
             default:
                 return 0;
+        }
+    }
+
+    private getCardRarityProbability(
+        cardsToGenerate: number,
+    ): CardRarityEnum[] {
+        const rarities: CardRarityEnum[] = [];
+
+        for (let i = 1; i <= cardsToGenerate; i++) {
+            switch (this.node.subType) {
+                case ExpeditionMapNodeTypeEnum.CombatStandard:
+                    rarities.push(
+                        getRandomItemByWeight(
+                            [
+                                CardRarityEnum.Common,
+                                CardRarityEnum.Uncommon,
+                                CardRarityEnum.Rare,
+                            ],
+                            [0.6, 0.37, 0.03],
+                        ),
+                    );
+                    break;
+                case ExpeditionMapNodeTypeEnum.CombatElite:
+                    rarities.push(
+                        getRandomItemByWeight(
+                            [
+                                CardRarityEnum.Common,
+                                CardRarityEnum.Uncommon,
+                                CardRarityEnum.Rare,
+                                CardRarityEnum.Legendary,
+                            ],
+                            [0.5, 0.38, 0.09, 0.03],
+                        ),
+                    );
+                    break;
+                case ExpeditionMapNodeTypeEnum.CombatStandard:
+                    rarities.push(
+                        getRandomItemByWeight(
+                            [CardRarityEnum.Rare, CardRarityEnum.Legendary],
+                            [0.8, 0.2],
+                        ),
+                    );
+                    break;
+            }
+        }
+
+        return rarities;
+    }
+
+    private async updatePotionChance(
+        potionChance: number,
+        shouldGeneratePotion: boolean,
+    ): Promise<void> {
+        if (potionChance > 0 && potionChance < 100) {
+            const newPotionChance = shouldGeneratePotion
+                ? Math.min(100, potionChance - 10)
+                : Math.max(0, potionChance + 10);
+
+            await this.expeditionService.updateByFilter(
+                { clientId: this.clientId },
+                {
+                    ['actConfig.potionChance']: newPotionChance,
+                },
+            );
         }
     }
 }
