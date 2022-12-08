@@ -20,6 +20,7 @@ import {
 import { ExpeditionService } from '../components/expedition/expedition.service';
 import { PotionRarityEnum } from '../components/potion/potion.enum';
 import { SettingsService } from '../components/settings/settings.service';
+import { TrinketRarityEnum } from '../components/trinket/trinket.enum';
 import { HARD_MODE_NODE_START, HARD_MODE_NODE_END } from '../constants';
 import { RewardService } from '../reward/reward.service';
 import { StatusType } from '../status/interfaces';
@@ -71,6 +72,7 @@ export class CombatService {
         } = await this.expeditionService.findOne({ clientId }, { map: 0 });
 
         const shouldGeneratePotion = getRandomBetween(1, 100) < potionChance;
+        const trinketsToGenerate = [this.getTrinketRarityProbability()];
 
         const enemies = await this.getEnemies();
         const rewards = await this.rewardService.generateRewards({
@@ -83,7 +85,9 @@ export class CombatService {
             potionsToGenerate: shouldGeneratePotion
                 ? [this.getPotionRarityProbability()]
                 : [],
-            trinketsToGenerate: [],
+            trinketsToGenerate: trinketsToGenerate.filter(
+                (item) => item !== null,
+            ),
         });
 
         this.updatePotionChance(potionChance, shouldGeneratePotion);
@@ -231,6 +235,22 @@ export class CombatService {
             ],
             [0.65, 0.25, 0.1],
         );
+    }
+
+    private getTrinketRarityProbability(): TrinketRarityEnum {
+        switch (this.node.subType) {
+            case ExpeditionMapNodeTypeEnum.CombatElite:
+                return getRandomItemByWeight(
+                    [
+                        TrinketRarityEnum.Common,
+                        TrinketRarityEnum.Uncommon,
+                        TrinketRarityEnum.Rare,
+                    ],
+                    [0.5, 0.33, 0.17],
+                );
+            default:
+                return null;
+        }
     }
 
     private async updatePotionChance(
