@@ -16,6 +16,7 @@ import { getRandomItemByWeight } from '../../utils';
 import { InitTreasureProcess } from './initTreasure.process';
 import { InitMerchantProcess } from './initMerchant.process';
 import { InitNodeProcess } from './initNode.process';
+import { EncounterService } from '../components/encounter/encounter.service';
 
 @Injectable()
 export class InitEncounterProcess {
@@ -26,6 +27,7 @@ export class InitEncounterProcess {
         private readonly initTreasureProcess: InitTreasureProcess,
         private readonly initMerchantProcess: InitMerchantProcess,
         private readonly initNodeProcess: InitNodeProcess,
+        private readonly encounterService: EncounterService,
     ) {}
 
     private client: Socket;
@@ -86,6 +88,8 @@ export class InitEncounterProcess {
             [85, 10, 5],
         );
 
+        await this.encounterService.updateEncounterData(3, 0, this.client);
+        /*
         const encounterData = {
             encounterId: 3,
             stage: 0,
@@ -98,6 +102,7 @@ export class InitEncounterProcess {
                 'currentNode.encounterData': encounterData,
             },
         });
+        */
         return await this.executeNode(nodeType);
     }
 

@@ -8,7 +8,7 @@ import { EncounterService } from '../game/components/encounter/encounter.service
 export class EncounterGateway {
     private readonly logger: Logger = new Logger(EncounterGateway.name);
 
-    constructor(private readonly encounterService: EncounterService,) {}
+    constructor(private readonly encounterService: EncounterService) {}
 
     @SubscribeMessage('EncounterChoice')
     async handleEncounterChoice(
