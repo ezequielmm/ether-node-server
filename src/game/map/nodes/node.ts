@@ -3,6 +3,7 @@ import {
     ExpeditionMapNodeStatusEnum,
 } from 'src/game/components/expedition/expedition.enum';
 import { IExpeditionNode } from 'src/game/components/expedition/expedition.interface';
+import { snakeCaseToTitleCase } from 'src/utils';
 import ExpeditionMap from '../map/expeditionMap';
 
 class Node implements IExpeditionNode {
@@ -17,6 +18,7 @@ class Node implements IExpeditionNode {
     public state: any;
     public title?: string;
     public private_data: any;
+
     constructor(
         id: number,
         act: number,
@@ -36,7 +38,7 @@ class Node implements IExpeditionNode {
         this.status = ExpeditionMapNodeStatusEnum.Disabled;
         this.private_data = private_data;
         this.state = {};
-        if (title) this.title = title;
+        this.title = this.setTitle(title);
     }
 
     public get isActive(): boolean {
@@ -96,6 +98,11 @@ class Node implements IExpeditionNode {
         this.exits.forEach((exit) => {
             expeditionMap.fullCurrentMap.get(exit).setAvailable();
         });
+    }
+
+    private setTitle(title: string): string {
+        if (title !== null || title !== undefined) return title;
+        else '';
     }
 }
 

@@ -129,6 +129,7 @@ class ExpeditionMap {
             ExpeditionMapNodeTypeEnum.Portal,
             ExpeditionMapNodeTypeEnum.Portal,
             {},
+            'Portal',
         );
         royalA.exits.push(5);
         royalB.exits.push(5);

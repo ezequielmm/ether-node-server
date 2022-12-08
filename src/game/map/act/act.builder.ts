@@ -2,6 +2,7 @@ import { ExpeditionMapNodeTypeEnum } from 'src/game/components/expedition/expedi
 import nodeFactory from '../nodes';
 import Node from '../nodes/node';
 import * as _ from 'lodash';
+import { snakeCaseToTitleCase } from 'src/utils';
 
 /**
  * Object config for node
@@ -147,6 +148,9 @@ export class DefaultActBuilder implements ActBuilder {
             config?.type,
             config?.subType,
             config?.data,
+            config?.type === ExpeditionMapNodeTypeEnum.Camp
+                ? 'Spirit Well'
+                : snakeCaseToTitleCase(config?.subType),
         );
     }
 }

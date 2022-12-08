@@ -163,3 +163,13 @@ export function getTimestampInSeconds(): number {
 export function getRandomNumber(limit: number): number {
     return Math.floor(Math.random() * limit);
 }
+
+/**
+ * Convert snake case to title case
+ * return string
+ */
+export function snakeCaseToTitleCase(text: string): string {
+    return text
+        .replace(/^[-_]*(.)/, (_, c) => c.toUpperCase())
+        .replace(/[-_]+(.)/g, (_, c) => ' ' + c.toUpperCase());
+}
