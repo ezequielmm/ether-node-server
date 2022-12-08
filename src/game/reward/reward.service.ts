@@ -1,14 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { randomUUID } from 'crypto';
 import { pick } from 'lodash';
-import { getRandomItemByWeight } from 'src/utils';
 import { CardDescriptionFormatter } from '../cardDescriptionFormatter/cardDescriptionFormatter';
 import { CardRarityEnum, CardTypeEnum } from '../components/card/card.enum';
 import { CardService } from '../components/card/card.service';
-import {
-    ExpeditionMapNodeTypeEnum,
-    IExpeditionNodeReward,
-} from '../components/expedition/expedition.enum';
+import { IExpeditionNodeReward } from '../components/expedition/expedition.enum';
 import {
     CardPreview,
     CardReward,
@@ -23,7 +19,7 @@ interface GenerateRewardsDTO {
     node: IExpeditionNode;
     coinsToGenerate: number;
     cardsToGenerate: CardRarityEnum[];
-    potionsToGenerate: number;
+    potionsToGenerate: PotionRarityEnum[];
 }
 
 @Injectable()
@@ -58,7 +54,7 @@ export class RewardService {
             if (cards.length > 0) rewards.push(...cards);
         }
 
-        if (potionsToGenerate > 0) {
+        if (potionsToGenerate.length > 0) {
             const potions = await this.generatePotions(potionsToGenerate);
 
             // Only if we get potions for the rewards
@@ -113,15 +109,15 @@ export class RewardService {
         return cardRewards;
     }
 
-    private async generatePotions(amount = 1): Promise<PotionReward[]> {
+    private async generatePotions(
+        potionsToGenerate: PotionRarityEnum[],
+    ): Promise<PotionReward[]> {
         const potionRewards: PotionReward[] = [];
 
-        for (let i = 1; i <= amount; i++) {
+        for (let i = 0; i < potionsToGenerate.length; i++) {
             const potion = await this.potionService.getRandomPotion({
                 isActive: true,
-                ...(this.node.type === ExpeditionMapNodeTypeEnum.Combat && {
-                    rarity: this.getPotionRarityProbability(),
-                }),
+                rarity: potionsToGenerate[i],
             });
 
             if (potion)
@@ -134,16 +130,5 @@ export class RewardService {
         }
 
         return potionRewards;
-    }
-
-    private getPotionRarityProbability(): PotionRarityEnum {
-        return getRandomItemByWeight(
-            [
-                PotionRarityEnum.Common,
-                PotionRarityEnum.Uncommon,
-                PotionRarityEnum.Rare,
-            ],
-            [0.65, 0.25, 0.1],
-        );
     }
 }

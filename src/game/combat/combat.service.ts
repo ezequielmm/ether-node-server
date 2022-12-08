@@ -18,6 +18,7 @@ import {
     IExpeditionNode,
 } from '../components/expedition/expedition.interface';
 import { ExpeditionService } from '../components/expedition/expedition.service';
+import { PotionRarityEnum } from '../components/potion/potion.enum';
 import { SettingsService } from '../components/settings/settings.service';
 import { HARD_MODE_NODE_START, HARD_MODE_NODE_END } from '../constants';
 import { RewardService } from '../reward/reward.service';
@@ -78,7 +79,9 @@ export class CombatService {
             cardsToGenerate: this.getCardRarityProbability(
                 maxCardRewardsInCombat,
             ),
-            potionsToGenerate: shouldGeneratePotion ? 1 : 0,
+            potionsToGenerate: shouldGeneratePotion
+                ? [this.getPotionRarityProbability()]
+                : [],
         });
 
         this.updatePotionChance(potionChance, shouldGeneratePotion);
@@ -215,6 +218,17 @@ export class CombatService {
         }
 
         return rarities;
+    }
+
+    private getPotionRarityProbability(): PotionRarityEnum {
+        return getRandomItemByWeight(
+            [
+                PotionRarityEnum.Common,
+                PotionRarityEnum.Uncommon,
+                PotionRarityEnum.Rare,
+            ],
+            [0.65, 0.25, 0.1],
+        );
     }
 
     private async updatePotionChance(

@@ -1,9 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { Socket } from 'socket.io';
-import { getRandomBetween } from 'src/utils';
+import { getRandomBetween, getRandomItemByWeight } from 'src/utils';
 import { ChestService } from '../components/chest/chest.service';
 import { IExpeditionNode } from '../components/expedition/expedition.interface';
 import { ExpeditionService } from '../components/expedition/expedition.service';
+import { PotionRarityEnum } from '../components/potion/potion.enum';
 import { RewardService } from '../reward/reward.service';
 import {
     StandardResponse,
@@ -34,7 +35,10 @@ export class TreasureService {
                     ? getRandomBetween(chest.minCoins, chest.maxCoins)
                     : 0,
             cardsToGenerate: [],
-            potionsToGenerate: randomPotionChance <= chest.potionChance ? 1 : 0,
+            potionsToGenerate:
+                randomPotionChance <= chest.potionChance
+                    ? [this.getPotionRarityProbability()]
+                    : [],
         });
 
         return {
@@ -76,6 +80,17 @@ export class TreasureService {
                     rewards: treasureData.rewards,
                 },
             }),
+        );
+    }
+
+    private getPotionRarityProbability(): PotionRarityEnum {
+        return getRandomItemByWeight(
+            [
+                PotionRarityEnum.Common,
+                PotionRarityEnum.Uncommon,
+                PotionRarityEnum.Rare,
+            ],
+            [0.65, 0.25, 0.1],
         );
     }
 }
