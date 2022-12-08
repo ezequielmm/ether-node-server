@@ -64,13 +64,10 @@ export class CardService {
         return await this.card.findOne(filter).lean();
     }
 
-    async getRandomCard(
-        filter?: FilterQuery<Card>,
-        amount = 1,
-    ): Promise<CardDocument> {
+    async getRandomCard(filter?: FilterQuery<Card>): Promise<CardDocument> {
         const [card] = await this.card.aggregate<CardDocument>([
             { $match: filter },
-            { $sample: { size: amount } },
+            { $sample: { size: 1 } },
         ]);
 
         return card;

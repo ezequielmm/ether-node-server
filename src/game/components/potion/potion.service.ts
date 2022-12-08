@@ -225,12 +225,11 @@ export class PotionService {
 
     public async getRandomPotion(
         filter?: FilterQuery<Potion>,
-        amount = 1,
     ): Promise<PotionDocument> {
         const [potion] = await this.potion
             .aggregate<PotionDocument>([
                 { $match: filter },
-                { $sample: { size: amount } },
+                { $sample: { size: 1 } },
             ])
             .exec();
 

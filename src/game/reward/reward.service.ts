@@ -11,15 +11,19 @@ import {
     IExpeditionNode,
     PotionReward,
     Reward,
+    TrinketReward,
 } from '../components/expedition/expedition.interface';
 import { PotionRarityEnum } from '../components/potion/potion.enum';
 import { PotionService } from '../components/potion/potion.service';
+import { TrinketRarityEnum } from '../components/trinket/trinket.enum';
+import { TrinketService } from '../components/trinket/trinket.service';
 
 interface GenerateRewardsDTO {
     node: IExpeditionNode;
     coinsToGenerate: number;
     cardsToGenerate: CardRarityEnum[];
     potionsToGenerate: PotionRarityEnum[];
+    trinketsToGenerate: TrinketRarityEnum[];
 }
 
 @Injectable()
@@ -27,13 +31,19 @@ export class RewardService {
     constructor(
         private readonly cardService: CardService,
         private readonly potionService: PotionService,
+        private readonly trinketService: TrinketService,
     ) {}
 
     private node: IExpeditionNode;
 
     async generateRewards(payload: GenerateRewardsDTO): Promise<Reward[]> {
-        const { cardsToGenerate, potionsToGenerate, coinsToGenerate, node } =
-            payload;
+        const {
+            cardsToGenerate,
+            potionsToGenerate,
+            trinketsToGenerate,
+            coinsToGenerate,
+            node,
+        } = payload;
 
         this.node = node;
 
@@ -59,6 +69,12 @@ export class RewardService {
 
             // Only if we get potions for the rewards
             if (potions.length > 0) rewards.push(...potions);
+        }
+
+        if (trinketsToGenerate.length > 0) {
+            const trinkets = await this.generateTrinkets(trinketsToGenerate);
+
+            if (trinkets.length > 0) rewards.push(...trinkets);
         }
 
         return rewards;
@@ -130,5 +146,32 @@ export class RewardService {
         }
 
         return potionRewards;
+    }
+
+    private async generateTrinkets(
+        trinketsToGenerate: TrinketRarityEnum[],
+    ): Promise<TrinketReward[]> {
+        const trinketRewards: TrinketReward[] = [];
+
+        for (let i = 0; i < trinketRewards.length; i++) {
+            const trinket = await this.trinketService.getRandomTrinket({
+                isActive: true,
+                rarity: trinketsToGenerate[i],
+            });
+
+            if (trinket)
+                trinketRewards.push({
+                    id: randomUUID(),
+                    type: IExpeditionNodeReward.Trinket,
+                    taken: false,
+                    trinket: pick(trinket, [
+                        'trinketId',
+                        'name',
+                        'description',
+                    ]),
+                });
+        }
+
+        return trinketRewards;
     }
 }

@@ -1,16 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { randomUUID } from 'crypto';
-import { Model } from 'mongoose';
+import { FilterQuery, Model } from 'mongoose';
 import {
     StandardResponse,
     SWARMessageType,
     SWARAction,
 } from 'src/game/standardResponse/standardResponse';
-import { getRandomNumber } from 'src/utils';
 import { ExpeditionService } from '../expedition/expedition.service';
 import { GameContext } from '../interfaces';
-import { TrinketRarityEnum } from './trinket.enum';
 import { Trinket, TrinketDocument } from './trinket.schema';
 import { getTrinketField, TrinketId } from './trinket.type';
 
@@ -31,48 +29,17 @@ export class TrinketService {
         return this.trinket.findOne({ [field]: id }).lean();
     }
 
-    async randomTrinket(limit: number): Promise<TrinketDocument[]> {
-        const count = await this.trinket.countDocuments({
-            $and: [
-                {
-                    $or: [
-                        { rarity: TrinketRarityEnum.Common },
-                        { rarity: TrinketRarityEnum.Uncommon },
-                        { rarity: TrinketRarityEnum.Rare },
-                    ],
-                },
-                { isActive: true },
-            ],
-        });
+    public async getRandomTrinket(
+        filter?: FilterQuery<Trinket>,
+    ): Promise<TrinketDocument> {
+        const [trinket] = await this.trinket
+            .aggregate<TrinketDocument>([
+                { $match: filter },
+                { $sample: { size: 1 } },
+            ])
+            .exec();
 
-        const random = getRandomNumber(count);
-
-        return await this.trinket
-            .find({
-                $and: [
-                    {
-                        $or: [
-                            { rarity: TrinketRarityEnum.Common },
-                            { rarity: TrinketRarityEnum.Uncommon },
-                            { rarity: TrinketRarityEnum.Rare },
-                        ],
-                    },
-                    { isActive: true },
-                ],
-            })
-            .limit(limit)
-            .skip(random);
-    }
-
-    async findOneRandomTrinket(rarity: string): Promise<TrinketDocument> {
-        const count = await this.trinket.countDocuments({ rarity });
-        const random = getRandomNumber(count);
-        const trinket = await this.trinket
-            .find({ rarity, isActive: true })
-            .limit(1)
-            .skip(random);
-
-        return trinket[0] ? trinket[0] : null;
+        return trinket;
     }
 
     public async add(ctx: GameContext, trinketId: number): Promise<boolean> {

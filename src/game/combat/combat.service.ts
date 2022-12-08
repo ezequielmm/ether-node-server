@@ -82,6 +82,7 @@ export class CombatService {
             potionsToGenerate: shouldGeneratePotion
                 ? [this.getPotionRarityProbability()]
                 : [],
+            trinketsToGenerate: [],
         });
 
         this.updatePotionChance(potionChance, shouldGeneratePotion);
