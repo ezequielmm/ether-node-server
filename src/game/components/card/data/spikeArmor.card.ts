@@ -5,14 +5,15 @@ import { Card } from '../card.schema';
 
 const spikeArmorDamage = 3;
 const spikeArmorUpgradedDamage = 5;
+
 export const SpikeArmorCardUpgraded: Card = {
     cardId: 70,
-    name: 'Spike Armor+',
+    name: 'Spiked Armor+',
     rarity: CardRarityEnum.Common,
     cardType: CardTypeEnum.Skill,
     pool: 'knight',
     energy: 1,
-    description: `Whenever you are attacked, deal {${damageEffect.name}} damage back to attacker`,
+    description: `Give ${spikeArmorUpgradedDamage} spikes`,
     keywords: [],
     properties: {
         effects: [
@@ -43,12 +44,12 @@ export const SpikeArmorCardUpgraded: Card = {
 
 export const SpikeArmorCard: Card = {
     cardId: 69,
-    name: 'Spike Armor',
+    name: 'Spiked Armor',
     rarity: CardRarityEnum.Common,
     cardType: CardTypeEnum.Skill,
     pool: 'knight',
     energy: 1,
-    description: `Whenever you are attacked, deal {${damageEffect.name}} damage back to attacker`,
+    description: `Give ${spikeArmorDamage} spikes`,
     keywords: [],
     properties: {
         effects: [
