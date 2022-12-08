@@ -93,7 +93,7 @@ class ExpeditionMap {
             ExpeditionMapNodeTypeEnum.RoyalHouse,
             ExpeditionMapNodeTypeEnum.RoyalHouseA,
             {},
-            RoyalHouseTitles.Cynthienne,
+            RoyalHouseTitles.Rhunn,
         );
         const royalB = nodeFactory(
             2,
@@ -102,7 +102,7 @@ class ExpeditionMap {
             ExpeditionMapNodeTypeEnum.RoyalHouse,
             ExpeditionMapNodeTypeEnum.RoyalHouseB,
             {},
-            RoyalHouseTitles.Medici,
+            RoyalHouseTitles.Brightflame,
         );
         const royalC = nodeFactory(
             3,
@@ -111,7 +111,7 @@ class ExpeditionMap {
             ExpeditionMapNodeTypeEnum.RoyalHouse,
             ExpeditionMapNodeTypeEnum.RoyalHouseC,
             {},
-            RoyalHouseTitles.Brightflame,
+            RoyalHouseTitles.Medici,
         );
         const royalD = nodeFactory(
             4,
@@ -120,7 +120,7 @@ class ExpeditionMap {
             ExpeditionMapNodeTypeEnum.RoyalHouse,
             ExpeditionMapNodeTypeEnum.RoyalHouseD,
             {},
-            RoyalHouseTitles.Rhunn,
+            RoyalHouseTitles.Cynthienne,
         );
         const portal = nodeFactory(
             5,
