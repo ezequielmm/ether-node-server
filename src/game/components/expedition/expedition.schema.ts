@@ -15,6 +15,7 @@ import {
     IExpeditionPlayerStateDeckCard,
     Reward,
 } from './expedition.interface';
+import { EncounterInterface } from '../encounter/encounter.interfaces';
 
 export type ExpeditionDocument = HydratedDocument<Expedition>;
 @Schema({
@@ -69,6 +70,7 @@ export class Expedition {
         };
         merchantItems?: MerchantItems;
         treasureData?: TreasureInterface;
+        encounterData?: EncounterInterface;
     };
 
     @Prop({

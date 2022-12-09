@@ -48,7 +48,7 @@ export interface IExpeditionNode {
     readonly isDisable: boolean;
     readonly isAvailable: boolean;
     readonly isComplete: boolean;
-    readonly type: ExpeditionMapNodeTypeEnum;
+    type: ExpeditionMapNodeTypeEnum;
     readonly subType: ExpeditionMapNodeTypeEnum;
     readonly status: ExpeditionMapNodeStatusEnum;
     readonly exits: number[];
