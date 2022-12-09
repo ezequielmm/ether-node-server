@@ -18,6 +18,7 @@ import {
     SWARMessageType,
 } from 'src/game/standardResponse/standardResponse';
 import { corsSocketSettings, DataWSRequestTypesEnum } from './socket.enum';
+import { GetEncounterDataAction } from 'src/game/action/getEncounterDataAction';
 
 @WebSocketGateway(corsSocketSettings)
 export class GetDataGateway {
@@ -36,6 +37,7 @@ export class GetDataGateway {
         private readonly getMerchantDataAction: GetMerchantDataAction,
         private readonly getTreasureDataAction: GetTreasureDataAction,
         private readonly getRewardsAction: GetRewardsAction,
+        private readonly getEncounterAction: GetEncounterDataAction,
     ) {}
 
     @SubscribeMessage('GetData')
@@ -94,6 +96,10 @@ export class GetDataGateway {
 
                 case DataWSRequestTypesEnum.Rewards:
                     data = await this.getRewardsAction.handle(client.id);
+                    break;
+
+                case DataWSRequestTypesEnum.EncounterData:
+                    data = await this.getEncounterAction.handle(client);
                     break;
             }
 

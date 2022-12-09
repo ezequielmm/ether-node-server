@@ -19,6 +19,7 @@ import {
     ExpeditionActConfig,
     ExpeditionActConfigSchema,
 } from './expeditionActConfig.schema';
+import { EncounterInterface } from '../encounter/encounter.interfaces';
 
 export type ExpeditionDocument = HydratedDocument<Expedition>;
 
@@ -77,6 +78,7 @@ export class Expedition {
         };
         merchantItems?: MerchantItems;
         treasureData?: TreasureInterface;
+        encounterData?: EncounterInterface;
     };
 
     @Prop({

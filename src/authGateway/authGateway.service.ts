@@ -4,6 +4,7 @@ import { firstValueFrom } from 'rxjs';
 import { AxiosResponse } from 'axios';
 import { IAuthProfile } from './authGateway.interface';
 import { ConfigService } from '@nestjs/config';
+import { getBearerToken } from 'src/utils';
 
 @Injectable()
 export class AuthGatewayService {
@@ -13,12 +14,12 @@ export class AuthGatewayService {
     ) {}
 
     async getUser(token: string): Promise<AxiosResponse<IAuthProfile>> {
-        token = token.replace('Bearer', '');
+        token = getBearerToken(token);
 
         const userRoute = this.configService.get<string>('GET_PROFILE_URL');
 
         return await firstValueFrom(
-            this.http.get(userRoute, {
+            this.http.get<IAuthProfile>(userRoute, {
                 headers: { Authorization: `Bearer ${token}` },
             }),
         );
