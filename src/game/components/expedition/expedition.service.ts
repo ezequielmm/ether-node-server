@@ -383,6 +383,12 @@ export class ExpeditionService {
 
         await this.update(clientId, {
             map: expeditionMap.getMap,
+            currentNode: {
+                nodeId: selectedNode.id,
+                completed: true,
+                nodeType: selectedNode.type,
+                showRewards: false,
+            },
         });
     }
 }
