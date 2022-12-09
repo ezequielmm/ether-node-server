@@ -1,6 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { Socket } from 'socket.io';
-import { ExpeditionMapNodeTypeEnum } from '../components/expedition/expedition.enum';
+import {
+    ExpeditionMapNodeStatusEnum,
+    ExpeditionMapNodeTypeEnum,
+} from '../components/expedition/expedition.enum';
 import { IExpeditionNode } from '../components/expedition/expedition.interface';
 import { ExpeditionDocument } from '../components/expedition/expedition.schema';
 import { ExpeditionService } from '../components/expedition/expedition.service';
@@ -60,6 +63,7 @@ export class ContinueExpeditionProcess {
         const newMap = restoreMap(oldMap);
         newMap.activeNode = newMap.fullCurrentMap.get(this.node.id);
         newMap.activeNode.complete(newMap);
+        newMap.activeNode.status = ExpeditionMapNodeStatusEnum.Completed;
 
         return newMap.getMap;
     }
