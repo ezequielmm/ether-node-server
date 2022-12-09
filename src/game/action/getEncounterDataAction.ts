@@ -4,6 +4,7 @@ import { ExpeditionService } from '../components/expedition/expedition.service';
 import { Socket } from 'socket.io';
 
 export interface EncounterDTO {
+    imageId: string;
     displayText: string;
     buttonText: string[];
 }
