@@ -59,9 +59,7 @@ export class EncounterService {
     async applyEffects(effects: any[], client: Socket): Promise<void> {
         for (let i = 0; i < effects.length; i++) {
             const effect = effects[i];
-            const ctx = await this.expeditionService.getGameContext(
-                client,
-            );
+            const ctx = await this.expeditionService.getGameContext(client);
             const expedition = ctx.expedition;
             const expeditionId = expedition._id.toString();
             let amount = 0;
@@ -107,7 +105,8 @@ export class EncounterService {
             buttonText.push(stage.buttons[i].text);
         }
         const displayText = stage.displayText;
-        const answer: EncounterDTO = { displayText, buttonText };
+        const imageId = encounter.imageId;
+        const answer: EncounterDTO = { imageId, displayText, buttonText };
         return answer;
     }
 

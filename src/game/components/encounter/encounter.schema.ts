@@ -10,15 +10,18 @@ export class Encounter {
     @Prop()
     encounterId: number;
 
+    @Prop()
+    imageId: string;
+
     @Prop({ type: Object })
     stages: {
         // eslint-disable-next-line @typescript-eslint/ban-types
+        displayText: string;
         buttons: {
             text: string;
             nextStage: number;
             effects: any[];
         }[];
-        displayText: string;
     }[];
 }
 export const EncounterSchema = SchemaFactory.createForClass(Encounter);
