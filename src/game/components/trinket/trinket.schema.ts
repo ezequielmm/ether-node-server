@@ -1,4 +1,4 @@
-import { ModelOptions, Prop } from '@typegoose/typegoose';
+import { ModelOptions, Prop, SubDocumentType } from '@typegoose/typegoose';
 import { randomUUID } from 'crypto';
 import {
     StandardResponse,
@@ -14,9 +14,9 @@ import { TrinketRarityEnum } from './trinket.enum';
         _id: false,
     },
 })
-export class Trinket {
+export class Trinket<T = any> {
     @Prop({ default: () => randomUUID() })
-    id: number;
+    id: string;
 
     @Prop()
     trinketId: number;
@@ -37,13 +37,13 @@ export class Trinket {
         throw new Error('Method not implemented.');
     }
 
-    trigger(ctx: GameContext) {
+    trigger(this: SubDocumentType<T>, ctx: GameContext) {
         ctx.client.send(
             StandardResponse.respond({
                 message_type: SWARMessageType.TrinketTriggered,
                 action: SWARAction.FlashTrinketIcon,
                 data: {
-                    ...this,
+                    ...this.toObject(),
                 },
             }),
         );

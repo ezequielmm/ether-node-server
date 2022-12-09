@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ModuleRef } from '@nestjs/core';
 import { ReturnModelType } from '@typegoose/typegoose';
-import { getModelToken } from 'nestjs-typegoose';
+import { getModelToken, InjectModel } from 'nestjs-typegoose';
 import {
     StandardResponse,
     SWARAction,
@@ -15,22 +15,24 @@ import { Trinket } from './trinket.schema';
 export class TrinketService {
     constructor(private readonly moduleRef: ModuleRef) {}
 
-    findById(id: number): Trinket {
+    createById(id: number): Trinket {
         const TrinketClass = Object.values(Trinkets).find(
             (trinket) => trinket.TrinketId === id,
         );
 
         if (!TrinketClass) return null;
 
+        console.log('TrinketClass', TrinketClass.name);
+
         const TrinketModel = this.moduleRef.get<
             ReturnModelType<typeof Trinket>
-        >(getModelToken(TrinketClass.name));
+        >(getModelToken(TrinketClass.name), { strict: false });
 
         return new TrinketModel();
     }
 
     public async add(ctx: GameContext, trinketId: number): Promise<boolean> {
-        const trinket = this.findById(trinketId);
+        const trinket = this.createById(trinketId);
 
         if (!trinket) {
             ctx.client.emit(
@@ -45,6 +47,7 @@ export class TrinketService {
         }
 
         ctx.expedition.playerState.trinkets.push(trinket);
+        trinket.onAttach(ctx);
         await ctx.expedition.save();
 
         return true;

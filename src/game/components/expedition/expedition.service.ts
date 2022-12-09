@@ -59,6 +59,10 @@ export class ExpeditionService {
             events,
         };
 
+        expedition.playerState.trinkets.forEach((trinket) => {
+            trinket.onAttach(ctx);
+        });
+
         return ctx;
     }
 
