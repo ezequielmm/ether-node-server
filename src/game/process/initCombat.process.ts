@@ -43,8 +43,8 @@ export class InitCombatProcess {
     async createCombat(): Promise<void> {
         const currentNode =
             await this.currentNodeGeneratorProcess.getCurrentNodeData(
+                this.ctx,
                 this.node,
-                this.ctx.client.id,
             );
 
         const expedition = await this.expeditionService.update(

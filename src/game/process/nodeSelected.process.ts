@@ -93,7 +93,7 @@ export class NodeSelectedProcess {
                 case ExpeditionMapNodeTypeEnum.Camp:
                 case ExpeditionMapNodeTypeEnum.CampHouse:
                 case ExpeditionMapNodeTypeEnum.CampRegular:
-                    await this.initNodeProcess.process(ctx.client, node);
+                    await this.initNodeProcess.process(ctx, node);
 
                     return StandardResponse.respond({
                         message_type: SWARMessageType.CampUpdate,
@@ -101,7 +101,7 @@ export class NodeSelectedProcess {
                         data: null,
                     });
                 case ExpeditionMapNodeTypeEnum.Encounter:
-                    await this.initNodeProcess.process(ctx.client, node);
+                    await this.initNodeProcess.process(ctx, node);
 
                     return StandardResponse.respond({
                         message_type: SWARMessageType.EncounterUpdate,
@@ -109,12 +109,9 @@ export class NodeSelectedProcess {
                         data: null,
                     });
                 case ExpeditionMapNodeTypeEnum.Treasure:
-                    return await this.initTreasureProcess.process(
-                        ctx.client,
-                        node,
-                    );
+                    return await this.initTreasureProcess.process(ctx, node);
                 case ExpeditionMapNodeTypeEnum.Merchant:
-                    return this.initMerchantProcess.process(ctx.client, node);
+                    return this.initMerchantProcess.process(ctx, node);
             }
         } else if (node.isActive) {
             if (node.type === ExpeditionMapNodeTypeEnum.Combat) {
@@ -128,7 +125,7 @@ export class NodeSelectedProcess {
                     case ExpeditionMapNodeTypeEnum.Camp:
                     case ExpeditionMapNodeTypeEnum.CampHouse:
                     case ExpeditionMapNodeTypeEnum.CampRegular:
-                        await this.initNodeProcess.process(ctx.client, node);
+                        await this.initNodeProcess.process(ctx, node);
 
                         return StandardResponse.respond({
                             message_type: SWARMessageType.CampUpdate,
@@ -136,7 +133,7 @@ export class NodeSelectedProcess {
                             data: null,
                         });
                     case ExpeditionMapNodeTypeEnum.Encounter:
-                        await this.initNodeProcess.process(ctx.client, node);
+                        await this.initNodeProcess.process(ctx, node);
 
                         return StandardResponse.respond({
                             message_type: SWARMessageType.EncounterUpdate,
@@ -145,14 +142,11 @@ export class NodeSelectedProcess {
                         });
                     case ExpeditionMapNodeTypeEnum.Treasure:
                         return await this.initTreasureProcess.process(
-                            ctx.client,
+                            ctx,
                             node,
                         );
                     case ExpeditionMapNodeTypeEnum.Merchant:
-                        await this.initMerchantProcess.process(
-                            ctx.client,
-                            node,
-                        );
+                        await this.initMerchantProcess.process(ctx, node);
 
                         return StandardResponse.respond({
                             message_type: SWARMessageType.MerchantUpdate,

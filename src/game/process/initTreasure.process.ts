@@ -3,6 +3,7 @@ import { Socket } from 'socket.io';
 import { ExpeditionMapNodeStatusEnum } from '../components/expedition/expedition.enum';
 import { IExpeditionNode } from '../components/expedition/expedition.interface';
 import { ExpeditionService } from '../components/expedition/expedition.service';
+import { GameContext } from '../components/interfaces';
 import {
     StandardResponse,
     SWARMessageType,
@@ -20,23 +21,23 @@ export class InitTreasureProcess {
     private clientId: string;
     private node: IExpeditionNode;
 
-    async process(client: Socket, node: IExpeditionNode): Promise<string> {
-        this.clientId = client.id;
+    async process(ctx: GameContext, node: IExpeditionNode): Promise<string> {
+        this.clientId = ctx.client.id;
         this.node = node;
 
         switch (node.status) {
             case ExpeditionMapNodeStatusEnum.Available:
-                return await this.createTreasureData();
+                return await this.createTreasureData(ctx);
             case ExpeditionMapNodeStatusEnum.Active:
                 return await this.continueTreasure();
         }
     }
 
-    private async createTreasureData(): Promise<string> {
+    private async createTreasureData(ctx: GameContext): Promise<string> {
         const currentNode =
             await this.currentNodeGeneratorProcess.getCurrentNodeData(
+                ctx,
                 this.node,
-                this.clientId,
             );
 
         await this.expeditionService.update(this.clientId, {

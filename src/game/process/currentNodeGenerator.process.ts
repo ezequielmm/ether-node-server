@@ -5,6 +5,7 @@ import {
     IExpeditionCurrentNode,
     IExpeditionNode,
 } from '../components/expedition/expedition.interface';
+import { GameContext } from '../components/interfaces';
 import { MerchantService } from '../merchant/merchant.service';
 import { TreasureService } from '../treasure/treasure.service';
 
@@ -20,17 +21,17 @@ export class CurrentNodeGeneratorProcess {
     ) {}
 
     async getCurrentNodeData(
+        ctx: GameContext,
         node: IExpeditionNode,
-        clientId: string,
     ): Promise<IExpeditionCurrentNode> {
         this.node = node;
-        this.clientId = clientId;
+        this.clientId = ctx.client.id;
 
         switch (this.node.type) {
             case ExpeditionMapNodeTypeEnum.Combat:
-                return await this.getCombatCurrentNode();
+                return await this.getCombatCurrentNode(ctx);
             case ExpeditionMapNodeTypeEnum.Treasure:
-                return await this.getTreasureCurrentNode();
+                return await this.getTreasureCurrentNode(ctx);
             case ExpeditionMapNodeTypeEnum.Merchant:
                 return await this.getMerchantCurrentNode();
             default:
@@ -38,8 +39,10 @@ export class CurrentNodeGeneratorProcess {
         }
     }
 
-    private async getCombatCurrentNode(): Promise<IExpeditionCurrentNode> {
-        return await this.combatService.generate(this.node, this.clientId);
+    private async getCombatCurrentNode(
+        ctx: GameContext,
+    ): Promise<IExpeditionCurrentNode> {
+        return await this.combatService.generate(ctx, this.node);
     }
 
     private getCurrentNode(): IExpeditionCurrentNode {
@@ -51,8 +54,13 @@ export class CurrentNodeGeneratorProcess {
         };
     }
 
-    private async getTreasureCurrentNode(): Promise<IExpeditionCurrentNode> {
-        const treasureData = await this.treasureService.generateTreasure();
+    private async getTreasureCurrentNode(
+        ctx: GameContext,
+    ): Promise<IExpeditionCurrentNode> {
+        const treasureData = await this.treasureService.generateTreasure(
+            ctx,
+            this.node,
+        );
 
         return {
             nodeId: this.node.id,

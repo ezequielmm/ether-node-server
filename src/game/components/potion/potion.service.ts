@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectModel } from 'nestjs-typegoose';
 import { Potion } from './potion.schema';
 import { GameContext } from '../interfaces';
-import { Document } from 'mongoose';
+import { Document, FilterQuery } from 'mongoose';
 import { ExpeditionMapNodeTypeEnum } from '../expedition/expedition.enum';
 import { EffectService } from 'src/game/effects/effects.service';
 import { PlayerService } from '../player/player.service';
@@ -34,7 +34,7 @@ export class PotionService {
         private readonly playerService: PlayerService,
         private readonly expeditionService: ExpeditionService,
         private readonly combatQueueService: CombatQueueService,
-    ) {}
+    ) { }
 
     async findAll(): Promise<Potion[]> {
         return this.potion.find({ isActive: true }).lean();
@@ -224,9 +224,14 @@ export class PotionService {
         return true;
     }
 
-    public async getRandomPotion(): Promise<Potion> {
+    public async getRandomPotion(
+        filter?: FilterQuery<Potion>,
+    ): Promise<Potion> {
         const [potion] = await this.potion
-            .aggregate<Potion>([{ $sample: { size: 1 } }])
+            .aggregate<Potion>([
+                { $match: filter },
+                { $sample: { size: 1 } },
+            ])
             .exec();
 
         return potion;

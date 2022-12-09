@@ -7,10 +7,10 @@ import { TrinketRarityEnum } from '../trinket.enum';
 import { Trinket } from '../trinket.schema';
 
 /**
- * Corncob pipe Trinket
+ * Pine Resin Trinket
  */
-export class CorncobPipeTrinket extends Trinket {
-    @Prop({ default: 9 })
+export class PineResin extends Trinket {
+    @Prop({ default: 2 })
     trinketId: number;
 
     @Prop({ default: 'Corncob Pipe' })

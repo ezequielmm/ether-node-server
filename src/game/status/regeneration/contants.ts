@@ -9,8 +9,8 @@ import {
     StatusType,
 } from '../interfaces';
 
-export const regenerate: StatusEvent = {
-    name: 'regenerate',
+export const regeneration: StatusEvent = {
+    name: 'regeneration',
     type: StatusType.Buff,
     counterType: StatusCounterType.Intensity,
     trigger: StatusTrigger.Event,

@@ -15,6 +15,7 @@ import {
     Player,
     Reward,
 } from './expedition.interface';
+import { ExpeditionActConfig } from './expeditionActConfig.schema';
 
 export type ExpeditionDocument = HydratedDocument<Expedition>;
 
@@ -27,6 +28,9 @@ export class Expedition {
 
     @Prop()
     playerId: number;
+
+    @Prop({ type: ExpeditionActConfig })
+    actConfig?: ExpeditionActConfig;
 
     @Prop()
     mapSeedId?: number;

@@ -1,11 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from 'nestjs-typegoose';
-import { UpdateQuery, FilterQuery } from 'mongoose';
+import { Model, UpdateQuery, FilterQuery, ProjectionFields } from 'mongoose';
 import { Expedition, ExpeditionDocument } from './expedition.schema';
 import {
     CardExistsOnPlayerHandDTO,
     CreateExpeditionDTO,
-    FindOneExpeditionDTO,
     GetCurrentNodeDTO,
     GetDeckCardsDTO,
     GetExpeditionMapDTO,
@@ -19,10 +18,7 @@ import {
     UpdateHandPilesDTO,
     UpdatePlayerDeckDTO,
 } from './expedition.dto';
-import {
-    ExpeditionMapNodeStatusEnum,
-    ExpeditionStatusEnum,
-} from './expedition.enum';
+import { ExpeditionStatusEnum } from './expedition.enum';
 import {
     IExpeditionCurrentNode,
     IExpeditionNode,
@@ -47,7 +43,7 @@ export class ExpeditionService {
         private readonly expedition: ReturnModelType<typeof Expedition>,
         private readonly playerService: PlayerService,
         private readonly enemyService: EnemyService,
-    ) {}
+    ) { }
 
     async getGameContext(client: Socket): Promise<GameContext> {
         const expedition = await this.findOne({ clientId: client.id });
@@ -66,14 +62,19 @@ export class ExpeditionService {
         return ctx;
     }
 
-    async findOne(payload: FindOneExpeditionDTO): Promise<ExpeditionDocument> {
+    async findOne(
+        filter: FilterQuery<Expedition>,
+        projection?: ProjectionFields<Expedition>,
+    ): Promise<ExpeditionDocument> {
         return await this.expedition
-            .findOne({
-                ...payload,
-                status: ExpeditionStatusEnum.InProgress,
-            })
-            .populate('playerState')
-            .populate('playerState.trinkets');
+            .findOne(
+                {
+                    ...filter,
+                    status: ExpeditionStatusEnum.InProgress,
+                },
+                projection,
+            )
+            .lean();
     }
 
     async create(payload: CreateExpeditionDTO): Promise<ExpeditionDocument> {
@@ -385,16 +386,16 @@ export class ExpeditionService {
     ): Promise<void> {
         const { clientId, nodeId } = payload;
 
-        await this.expedition.findOneAndUpdate(
-            {
-                clientId,
-                [`map.nodeId`]: nodeId,
-            },
-            {
-                $set: {
-                    'map.$.status': ExpeditionMapNodeStatusEnum.Available,
-                },
-            },
-        );
+        const map = await this.getExpeditionMap({
+            clientId,
+        });
+
+        const expeditionMap = restoreMap(map);
+        const selectedNode = expeditionMap.fullCurrentMap.get(nodeId);
+        selectedNode.setAvailable();
+
+        await this.update(clientId, {
+            map: expeditionMap.getMap,
+        });
     }
 }

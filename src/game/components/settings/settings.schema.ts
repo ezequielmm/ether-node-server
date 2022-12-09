@@ -15,4 +15,10 @@ export class Settings {
 
     @Prop()
     initialDeckSize: number;
+
+    @Prop()
+    initialPotionChance: number;
+
+    @Prop()
+    maxCardRewardsInCombat: number;
 }

@@ -9,7 +9,7 @@ export const FadeCardUpgraded: Card = {
     cardType: CardTypeEnum.Skill,
     pool: 'knight',
     energy: 2,
-    description: `Dodge the next 2 attack`,
+    description: `Dodge the next 2 attacks`,
     keywords: [],
     properties: {
         effects: [],
