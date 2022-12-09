@@ -158,7 +158,15 @@ $(document).ready(function () {
     });
 
     $('#btnOpenChest').click(function () {
-        socket.emit('OpenChest', (response) => {
+        socket.emit('ChestOpened', (response) => {
+            showJSON(response);
+        });
+    });
+
+    $('#btnEncounterChoice').click(function () {
+        const choiceIdx = document.getElementById('choiceIdx').value;
+
+        socket.emit('EncounterChoice', parseInt(choiceIdx), (response) => {
             showJSON(response);
         });
     });
