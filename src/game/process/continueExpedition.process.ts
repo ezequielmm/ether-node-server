@@ -47,6 +47,7 @@ export class ContinueExpeditionProcess {
                 this.node.type === ExpeditionMapNodeTypeEnum.Combat
                     ? SWARMessageType.EndCombat
                     : SWARMessageType.EndNode,
+            seed: this.expedition.mapSeedId,
             action: SWARAction.ShowMap,
             data: newMap,
         });
