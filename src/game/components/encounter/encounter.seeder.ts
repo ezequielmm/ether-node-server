@@ -4,6 +4,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Encounter, EncounterDocument } from './encounter.schema';
 import { NagpraEncounter } from './data/nagpra.encounter';
+import { WillowispEncounter } from './data/willowisp.encounter';
 
 @Injectable()
 export class EncounterSeeder implements Seeder {
@@ -13,7 +14,7 @@ export class EncounterSeeder implements Seeder {
     ) {}
 
     seed(): Promise<any> {
-        return this.encounter.insertMany([NagpraEncounter]);
+        return this.encounter.insertMany([NagpraEncounter, WillowispEncounter]);
     }
     async drop(): Promise<any> {
         return this.encounter.deleteMany({});

@@ -1,6 +1,4 @@
 import { Encounter } from '../encounter.schema';
-import { AttackCard } from '../../card/data/attack.card';
-import { DefenseCard } from '../../card/data/defend.card';
 
 export const NagpraEncounter: Encounter = {
     encounterId: 3,

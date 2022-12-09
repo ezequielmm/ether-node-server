@@ -59,21 +59,31 @@ export class EncounterService {
     async applyEffects(effects: any[], client: Socket): Promise<void> {
         for (let i = 0; i < effects.length; i++) {
             const effect = effects[i];
+            const ctx = await this.expeditionService.getGameContext(
+                client,
+            );
+            const expedition = ctx.expedition;
+            const expeditionId = expedition._id.toString();
+            let amount = 0;
             switch (effect.kind) {
-                case 'coin':
-                    const amount = parseInt(effect.amount);
-                    const ctx = await this.expeditionService.getGameContext(
-                        client,
-                    );
-                    const expedition = ctx.expedition;
-                    const expeditionId = expedition._id.toString();
+                case 'coin': //eg nagpra
+                    amount = parseInt(effect.amount);
                     await this.expeditionService.updateById(expeditionId, {
                         $inc: {
                             'playerState.gold': amount,
                         },
                     });
                     break;
-                case 'birdcage':
+                case 'hp_max': //eg will o wisp
+                    amount = parseInt(effect.amount);
+                    await this.expeditionService.updateById(expeditionId, {
+                        $inc: {
+                            'playerState.hpMax': amount,
+                        },
+                    });
+                    break;
+                case 'birdcage': //nagpra
+                case 'upgrade_random_card': //eg will o wisp
                     break;
             }
         }
