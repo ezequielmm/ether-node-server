@@ -8,7 +8,7 @@ import {
 } from 'src/utils';
 import { CardDescriptionFormatter } from '../cardDescriptionFormatter/cardDescriptionFormatter';
 import { CardRarityEnum } from '../components/card/card.enum';
-import { CardDocument } from '../components/card/card.schema';
+import { Card } from '../components/card/card.schema';
 import { CardService } from '../components/card/card.service';
 import { EnemyService } from '../components/enemy/enemy.service';
 import { EnemyId } from '../components/enemy/enemy.type';
@@ -39,7 +39,7 @@ export class CombatService {
         private readonly enemyService: EnemyService,
         private readonly potionService: PotionService,
         private readonly cardService: CardService,
-    ) {}
+    ) { }
 
     private node: IExpeditionNode;
     private clientId: string;
@@ -236,7 +236,7 @@ export class CombatService {
         return false;
     }
 
-    private async getRandomCardByNode(): Promise<CardDocument> {
+    private async getRandomCardByNode(): Promise<Card> {
         const rarity = getRandomItemByWeight(
             [
                 CardRarityEnum.Common,

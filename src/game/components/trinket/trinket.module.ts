@@ -1,30 +1,25 @@
 import { forwardRef, Module } from '@nestjs/common';
-import { MongooseModule } from '@nestjs/mongoose';
+import { TypegooseModule } from 'nestjs-typegoose';
 import { ExpeditionModule } from '../expedition/expedition.module';
-import {
-    PeacockFeatherTrinket,
-    PeacockFeatherTrinketSchema,
-} from './collection/peacock-feather.trinket';
-import { Trinket, TrinketSchema } from './trinket.schema';
+import { CorncobPipeUpgradedTrinket } from './collection/corncob-pipe-upgraded.trinket';
+import { CorncobPipeTrinket } from './collection/corncob-pipe.trinket';
+import { Trinket } from './trinket.schema';
 import { TrinketService } from './trinket.service';
 
 @Module({
     imports: [
-        MongooseModule.forFeature([
+        TypegooseModule.forFeature([
             {
-                name: Trinket.name,
-                schema: TrinketSchema,
+                typegooseClass: Trinket,
                 discriminators: [
-                    {
-                        name: PeacockFeatherTrinket.name,
-                        schema: PeacockFeatherTrinketSchema,
-                    },
+                    CorncobPipeTrinket,
+                    CorncobPipeUpgradedTrinket,
                 ],
             },
         ]),
         forwardRef(() => ExpeditionModule),
     ],
     providers: [TrinketService],
-    exports: [TrinketService, MongooseModule],
+    exports: [TrinketService, TypegooseModule],
 })
 export class TrinketModule {}

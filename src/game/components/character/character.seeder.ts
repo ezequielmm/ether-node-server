@@ -1,15 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { Seeder } from 'nestjs-seeder';
-import { InjectModel } from '@nestjs/mongoose';
-import { Character, CharacterDocument } from './character.schema';
-import { Model } from 'mongoose';
+import { InjectModel } from 'nestjs-typegoose';
+import { Character } from './character.schema';
 import { CharacterData } from './character.data';
+import { ReturnModelType } from '@typegoose/typegoose';
 
 @Injectable()
 export class CharacterSeeder implements Seeder {
     constructor(
-        @InjectModel(Character.name)
-        private readonly character: Model<CharacterDocument>,
+        @InjectModel(Character)
+        private readonly character: ReturnModelType<typeof Character>,
     ) {}
 
     async seed(): Promise<any> {

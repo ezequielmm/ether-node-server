@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model, UpdateQuery, FilterQuery } from 'mongoose';
+import { InjectModel } from 'nestjs-typegoose';
+import { UpdateQuery, FilterQuery } from 'mongoose';
 import { Expedition, ExpeditionDocument } from './expedition.schema';
 import {
     CardExistsOnPlayerHandDTO,
@@ -38,15 +38,13 @@ import { EnemyService } from '../enemy/enemy.service';
 import { EnemyId } from '../enemy/enemy.type';
 import { Socket } from 'socket.io';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import { PeacockFeatherTrinket } from '../trinket/collection/peacock-feather.trinket';
+import { ReturnModelType } from '@typegoose/typegoose';
 
 @Injectable()
 export class ExpeditionService {
     constructor(
-        @InjectModel(Expedition.name)
-        private readonly expedition: Model<ExpeditionDocument>,
-        @InjectModel(PeacockFeatherTrinket.name)
-        private readonly peacockFeatherTrinketModel: Model<PeacockFeatherTrinket>,
+        @InjectModel(Expedition)
+        private readonly expedition: ReturnModelType<typeof Expedition>,
         private readonly playerService: PlayerService,
         private readonly enemyService: EnemyService,
     ) {}
@@ -60,18 +58,6 @@ export class ExpeditionService {
             client,
             events,
         };
-
-        const peacockFeatherTrinket = new this.peacockFeatherTrinketModel();
-        expedition.playerState.trinkets.push(peacockFeatherTrinket);
-        // peacockFeatherTrinket.hola();
-
-        await expedition.save();
-
-        expedition.playerState.trinkets.forEach((trinket) => {
-            // trinket.onAttach(ctx);
-            trinket['hola']?.();
-            console.log(trinket['hola']);
-        });
 
         return ctx;
     }

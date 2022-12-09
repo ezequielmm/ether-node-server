@@ -1,16 +1,17 @@
 import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
+import { InjectModel } from 'nestjs-typegoose';
 import { Model } from 'mongoose';
-import { CustomDeck, CustomDeckDocument } from './customDeck.schema';
+import { CustomDeck } from './customDeck.schema';
+import { ReturnModelType } from '@typegoose/typegoose';
 
 @Injectable()
 export class CustomDeckService {
     constructor(
-        @InjectModel(CustomDeck.name)
-        private readonly customDeck: Model<CustomDeckDocument>,
+        @InjectModel(CustomDeck)
+        private readonly customDeck: ReturnModelType<typeof CustomDeck>,
     ) {}
 
-    async findByEmail(email: string): Promise<CustomDeckDocument> {
+    async findByEmail(email: string): Promise<CustomDeck> {
         return await this.customDeck.findOne({ email, isDefault: true }).lean();
     }
 }

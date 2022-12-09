@@ -4,7 +4,6 @@ import { ApiModule } from './api/api.module';
 import { SocketModule } from './socket/socket.module';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-// import { DebugLogger } from './tests/integrationTestServer';
 import { TypegooseModule } from 'nestjs-typegoose';
 
 @Module({

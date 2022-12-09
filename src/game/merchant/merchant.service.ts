@@ -5,7 +5,7 @@ import { CustomException, ErrorBehavior } from 'src/socket/custom.exception';
 import { getRandomBetween } from 'src/utils';
 import { CardDescriptionFormatter } from '../cardDescriptionFormatter/cardDescriptionFormatter';
 import { CardRarityEnum, CardTypeEnum } from '../components/card/card.enum';
-import { CardDocument } from '../components/card/card.schema';
+import { Card } from '../components/card/card.schema';
 import { CardService } from '../components/card/card.service';
 import { getCardIdField } from '../components/card/card.type';
 import { ExpeditionMapNodeTypeEnum } from '../components/expedition/expedition.enum';
@@ -251,7 +251,7 @@ export class MerchantService {
             CardTypeEnum.Power,
         );
 
-        const cards: CardDocument[] = [
+        const cards: Card[] = [
             ...attackCard,
             ...defenseCard,
             ...skillCard,

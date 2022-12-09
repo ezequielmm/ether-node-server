@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
-import { Card, CardDocument } from 'src/game/components/card/card.schema';
+import { InjectModel } from 'nestjs-typegoose';
+import { Card } from 'src/game/components/card/card.schema';
 import { CardId, getCardIdField } from 'src/game/components/card/card.type';
+import { ReturnModelType } from '@typegoose/typegoose';
 
 /**
  * We use this simple card mock instead the CardService to avoid using
@@ -11,9 +11,9 @@ import { CardId, getCardIdField } from 'src/game/components/card/card.type';
 @Injectable()
 export class CardServiceMock {
     constructor(
-        @InjectModel(Card.name) private readonly card: Model<CardDocument>,
+        @InjectModel(Card) private readonly card: ReturnModelType<typeof Card>,
     ) {}
-    async findById(id: CardId): Promise<CardDocument> {
+    async findById(id: CardId): Promise<Card> {
         const field = getCardIdField(id);
         return this.card.findOne({ [field]: id }).lean();
     }

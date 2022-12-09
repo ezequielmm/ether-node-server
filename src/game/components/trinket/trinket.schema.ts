@@ -1,18 +1,22 @@
 import { ModelOptions, Prop } from '@typegoose/typegoose';
-import { JsonEffect } from 'src/game/effects/effects.interface';
+import { randomUUID } from 'crypto';
+import {
+    StandardResponse,
+    SWARAction,
+    SWARMessageType,
+} from 'src/game/standardResponse/standardResponse';
 import { GameContext } from '../interfaces';
 import { TrinketRarityEnum } from './trinket.enum';
 
 @ModelOptions({
     schemaOptions: {
         collection: 'trinkets',
-        discriminatorKey: 'name',
         _id: false,
     },
 })
 export class Trinket {
-    @Prop()
-    instanceId: number;
+    @Prop({ default: () => randomUUID() })
+    id: number;
 
     @Prop()
     trinketId: number;
@@ -29,10 +33,21 @@ export class Trinket {
     @Prop()
     description: string;
 
-    @Prop()
-    effects: JsonEffect[];
-
     onAttach(_ctx: GameContext): void {
         throw new Error('Method not implemented.');
     }
+
+    trigger(ctx: GameContext) {
+        ctx.client.send(
+            StandardResponse.respond({
+                message_type: SWARMessageType.TrinketTriggered,
+                action: SWARAction.FlashTrinketIcon,
+                data: {
+                    ...this,
+                },
+            }),
+        );
+    }
+
+    static TrinketId: number;
 }

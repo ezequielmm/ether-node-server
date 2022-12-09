@@ -1,13 +1,14 @@
 import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
+import { InjectModel } from 'nestjs-typegoose';
 import { FilterQuery, Model } from 'mongoose';
 import { getRandomItemByWeight } from 'src/utils';
-import { Chest, ChestDocument } from './chest.schema';
+import { Chest } from './chest.schema';
+import { ReturnModelType } from '@typegoose/typegoose';
 
 @Injectable()
 export class ChestService {
     constructor(
-        @InjectModel(Chest.name) private readonly chest: Model<ChestDocument>,
+        @InjectModel(Chest) private readonly chest: ReturnModelType<typeof Chest>,
     ) {}
 
     async getRandomChest(): Promise<Chest> {
@@ -19,7 +20,7 @@ export class ChestService {
         );
     }
 
-    async findOne(filter: FilterQuery<ChestDocument>): Promise<Chest> {
+    async findOne(filter: FilterQuery<Chest>): Promise<Chest> {
         return await this.chest.findOne(filter).lean();
     }
 }

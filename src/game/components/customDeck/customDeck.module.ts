@@ -1,15 +1,12 @@
 import { Module } from '@nestjs/common';
-import { MongooseModule } from '@nestjs/mongoose';
-import { CustomDeck, CustomDeckSchema } from './customDeck.schema';
+import { TypegooseModule } from 'nestjs-typegoose';
+import { CustomDeck } from './customDeck.schema';
 import { CustomDeckService } from './customDeck.service';
 
 @Module({
     imports: [
-        MongooseModule.forFeature([
-            {
-                name: CustomDeck.name,
-                schema: CustomDeckSchema,
-            },
+        TypegooseModule.forFeature([
+            CustomDeck,
         ]),
     ],
     providers: [CustomDeckService],

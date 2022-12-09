@@ -1,15 +1,12 @@
 import { Module } from '@nestjs/common';
-import { MongooseModule } from '@nestjs/mongoose';
-import { Settings, SettingsSchema } from './settings.schema';
+import { TypegooseModule } from 'nestjs-typegoose';
+import { Settings } from './settings.schema';
 import { SettingsService } from './settings.service';
 
 @Module({
     imports: [
-        MongooseModule.forFeature([
-            {
-                name: Settings.name,
-                schema: SettingsSchema,
-            },
+        TypegooseModule.forFeature([
+            Settings
         ]),
     ],
     providers: [SettingsService],

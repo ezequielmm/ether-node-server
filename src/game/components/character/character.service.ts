@@ -1,21 +1,21 @@
 import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
-import { Character, CharacterDocument } from './character.schema';
+import { ReturnModelType } from '@typegoose/typegoose';
+import { InjectModel } from 'nestjs-typegoose';
 import { GetCharacterDTO } from './character.dto';
+import { Character } from './character.schema';
 
 @Injectable()
 export class CharacterService {
     constructor(
-        @InjectModel(Character.name)
-        private readonly character: Model<CharacterDocument>,
+        @InjectModel(Character)
+        private readonly character: ReturnModelType<typeof Character>,
     ) {}
 
-    async findAll(): Promise<CharacterDocument[]> {
+    async findAll(): Promise<Character[]> {
         return this.character.find({ isActive: true }).lean();
     }
 
-    async findOne(payload: GetCharacterDTO): Promise<CharacterDocument> {
+    async findOne(payload: GetCharacterDTO): Promise<Character> {
         return this.character.findOne(payload).lean();
     }
 }

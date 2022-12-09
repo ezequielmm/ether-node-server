@@ -4,7 +4,7 @@ import { getTimestampInSeconds } from 'src/utils';
 import { CardDescriptionFormatter } from '../cardDescriptionFormatter/cardDescriptionFormatter';
 import { CardService } from '../components/card/card.service';
 import { CharacterClassEnum } from '../components/character/character.enum';
-import { CharacterDocument } from '../components/character/character.schema';
+import { Character } from '../components/character/character.schema';
 import { CharacterService } from '../components/character/character.service';
 import { CustomDeckService } from '../components/customDeck/customDeck.service';
 import { ExpeditionStatusEnum } from '../components/expedition/expedition.enum';
@@ -68,7 +68,7 @@ export class InitExpeditionProcess {
     }
 
     private async generatePlayerDeck(
-        character: CharacterDocument,
+        character: Character,
         email: string,
     ): Promise<IExpeditionPlayerStateDeckCard[]> {
         // We destructure the cards from the character

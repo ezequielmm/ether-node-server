@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
+import { InjectModel } from 'nestjs-typegoose';
 import { Model } from 'mongoose';
 import { CreateExpeditionDTO } from 'src/game/components/expedition/expedition.dto';
 import { ExpeditionStatusEnum } from 'src/game/components/expedition/expedition.enum';
@@ -15,8 +15,8 @@ import { DebugLogger, IntegrationTestServer } from './integrationTestServer';
 @Injectable()
 class ExpeditionServiceMock {
     constructor(
-        @InjectModel(Expedition.name)
-        private readonly expedition: Model<ExpeditionDocument>,
+        @InjectModel(Expedition)
+        private readonly ExpeditionDocument ReturnModelType<ExpeditionDocument>,
     ) {}
     async findOne(clientId: string): Promise<ExpeditionDocument> {
         return this.expedition.findOne({ clientId }).lean();

@@ -1,9 +1,6 @@
 import { ModelOptions, Prop } from '@typegoose/typegoose';
-import { HydratedDocument } from 'mongoose';
 import { TreasureTypeEnum } from 'src/game/treasure/treasure.enum';
 import { ChestSizeEnum } from './chest.enum';
-
-export type ChestDocument = HydratedDocument<Chest>;
 
 @ModelOptions({
     schemaOptions: { collection: 'chests', versionKey: false },

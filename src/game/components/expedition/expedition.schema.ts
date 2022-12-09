@@ -11,8 +11,8 @@ import {
 import {
     IExpeditionCurrentNodeDataEnemy,
     IExpeditionNode,
-    Player,
     IExpeditionPlayerStateDeckCard,
+    Player,
     Reward,
 } from './expedition.interface';
 

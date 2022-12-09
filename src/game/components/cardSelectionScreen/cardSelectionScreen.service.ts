@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
+import { InjectModel } from 'nestjs-typegoose';
 import { Model } from 'mongoose';
 import {
     CreateCardSelectionScreenDTO,
@@ -7,20 +7,20 @@ import {
     UpdateCardSelectionScreenDTO,
 } from './cardSelectionScreen.interface';
 import {
-    CardSelectionScreen,
-    CardSelectionScreenDocument,
+    CardSelectionScreen
 } from './cardSelectionScreen.schema';
+import { ReturnModelType } from '@typegoose/typegoose';
 
 @Injectable()
 export class CardSelectionScreenService {
     constructor(
-        @InjectModel(CardSelectionScreen.name)
-        private readonly cardSelectionScreen: Model<CardSelectionScreenDocument>,
+        @InjectModel(CardSelectionScreen)
+        private readonly cardSelectionScreen: ReturnModelType<typeof CardSelectionScreen>,
     ) {}
 
     async create(
         payload: CreateCardSelectionScreenDTO,
-    ): Promise<CardSelectionScreenDocument> {
+    ): Promise<CardSelectionScreen> {
         return await this.cardSelectionScreen.create(payload);
     }
 
@@ -30,7 +30,7 @@ export class CardSelectionScreenService {
 
     async findOne(
         payload: IFindCardSelectionScreenDTO,
-    ): Promise<CardSelectionScreenDocument> {
+    ): Promise<CardSelectionScreen> {
         return await this.cardSelectionScreen.findOne(payload).lean();
     }
 

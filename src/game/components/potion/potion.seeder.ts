@@ -1,8 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
+import { InjectModel } from 'nestjs-typegoose';
 import { Seeder } from 'nestjs-seeder';
-import { Potion, PotionDocument } from './potion.schema';
-import { Model } from 'mongoose';
+import { Potion } from './potion.schema';
 import { healingPotion } from './data/healing.potion';
 import { defensePotion } from './data/defense.potion';
 import { springWaterFlask } from './data/springWaterFlask.potion';
@@ -17,12 +16,13 @@ import { phantomPhialPotion } from './data/phantomPhial.potion';
 import { philterOfRedemptionPotion } from './data/philterOfRedemption.potion';
 import { pavaRootPotion } from './data/pavaRoot.potion';
 import { dewDropElixirPotion } from './data/dewDropElixir.potion';
+import { ReturnModelType } from '@typegoose/typegoose';
 
 @Injectable()
 export class PotionSeeder implements Seeder {
     constructor(
-        @InjectModel(Potion.name)
-        private readonly potion: Model<PotionDocument>,
+        @InjectModel(Potion)
+        private readonly potion: ReturnModelType<typeof Potion>,
     ) {}
 
     async seed(): Promise<any> {

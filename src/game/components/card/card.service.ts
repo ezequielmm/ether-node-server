@@ -1,9 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
-import { InjectModel } from '@nestjs/mongoose';
+import { InjectModel } from 'nestjs-typegoose';
 import { randomUUID } from 'crypto';
 import { filter } from 'lodash';
-import { Model } from 'mongoose';
 import { CardPlayedAction } from 'src/game/action/cardPlayed.action';
 import {
     EVENT_AFTER_DRAW_CARDS,
@@ -27,7 +26,7 @@ import { ExpeditionService } from '../expedition/expedition.service';
 import { GameContext } from '../interfaces';
 import { PlayerService } from '../player/player.service';
 import { CardKeywordEnum, CardRarityEnum, CardTypeEnum } from './card.enum';
-import { Card, CardDocument } from './card.schema';
+import { Card } from './card.schema';
 import { CardId, getCardIdField } from './card.type';
 import { EffectDTO } from '../../effects/effects.interface';
 import {
@@ -39,12 +38,13 @@ import { CardDescriptionFormatter } from 'src/game/cardDescriptionFormatter/card
 import { getRandomNumber } from 'src/utils';
 import { AfterDrawCardEvent } from 'src/game/action/drawCard.action';
 import { MoveCardAction } from 'src/game/action/moveCard.action';
+import { ReturnModelType } from '@typegoose/typegoose';
 
 @Injectable()
 export class CardService {
     private readonly logger = new Logger(CardService.name);
     constructor(
-        @InjectModel(Card.name) private readonly card: Model<CardDocument>,
+        @InjectModel(Card) private readonly card: ReturnModelType<typeof Card>,
         private readonly cardPlayedAction: CardPlayedAction,
         private readonly expeditionService: ExpeditionService,
         private readonly statusService: StatusService,
@@ -52,11 +52,11 @@ export class CardService {
         private readonly moveCardAction: MoveCardAction,
     ) {}
 
-    async findAll(): Promise<CardDocument[]> {
+    async findAll(): Promise<Card[]> {
         return this.card.find({ isActive: true }).lean();
     }
 
-    async findByType(card_type: CardTypeEnum): Promise<CardDocument[]> {
+    async findByType(card_type: CardTypeEnum): Promise<Card[]> {
         return this.card
             .find({
                 card_type,
@@ -66,7 +66,7 @@ export class CardService {
             .lean();
     }
 
-    async findByRarity(rarity: CardRarityEnum): Promise<CardDocument[]> {
+    async findByRarity(rarity: CardRarityEnum): Promise<Card[]> {
         return this.card
             .find({
                 rarity,
@@ -76,19 +76,19 @@ export class CardService {
             .lean();
     }
 
-    async findById(id: CardId): Promise<CardDocument> {
+    async findById(id: CardId): Promise<Card> {
         const field = getCardIdField(id);
         return this.card.findOne({ [field]: id }).lean();
     }
 
-    async findCardsById(cards: number[]): Promise<CardDocument[]> {
+    async findCardsById(cards: number[]): Promise<Card[]> {
         return this.card.find({ cardId: { $in: cards } }).lean();
     }
 
     async randomCards(
         limit: number,
         card_type: CardTypeEnum,
-    ): Promise<CardDocument[]> {
+    ): Promise<Card[]> {
         const count = await this.card.countDocuments({
             $and: [
                 {
@@ -127,7 +127,7 @@ export class CardService {
             .skip(random);
     }
 
-    async getRandomCard(rarity: CardRarityEnum): Promise<CardDocument> {
+    async getRandomCard(rarity: CardRarityEnum): Promise<Card> {
         const cards = await this.findByRarity(rarity);
         const randomCard = cards[Math.floor(Math.random() * cards.length)];
         return randomCard;
@@ -162,7 +162,7 @@ export class CardService {
         });
     }
 
-    async getRandomCardOfType(cardType: CardTypeEnum): Promise<CardDocument> {
+    async getRandomCardOfType(cardType: CardTypeEnum): Promise<Card> {
         const count = await this.card.countDocuments({ cardType });
 
         const random = getRandomNumber(count);

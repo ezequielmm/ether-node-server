@@ -1,12 +1,12 @@
 import { forwardRef, Module } from '@nestjs/common';
-import { MongooseModule } from '@nestjs/mongoose';
+import { TypegooseModule } from 'nestjs-typegoose';
 import { ActionModule } from 'src/game/action/action.module';
 import { EffectModule } from 'src/game/effects/effects.module';
 import { CombatQueueModule } from '../combatQueue/combatQueue.module';
 import { ExpeditionModule } from '../expedition/expedition.module';
 import { PlayerModule } from '../player/player.module';
 import { PotionGateway } from './potion.gateway';
-import { Potion, PotionSchema } from './potion.schema';
+import { Potion } from './potion.schema';
 import { PotionService } from './potion.service';
 
 @Module({
@@ -14,11 +14,8 @@ import { PotionService } from './potion.service';
         forwardRef(() => ExpeditionModule),
         EffectModule,
         PlayerModule,
-        MongooseModule.forFeature([
-            {
-                name: Potion.name,
-                schema: PotionSchema,
-            },
+        TypegooseModule.forFeature([
+          Potion
         ]),
         forwardRef(() => ActionModule),
         CombatQueueModule,

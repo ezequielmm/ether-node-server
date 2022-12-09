@@ -1,13 +1,13 @@
 import { DynamicModule } from '@nestjs/common';
-import { MongooseModule, MongooseModuleOptions } from '@nestjs/mongoose';
+import { TypegooseModule } from 'nestjs-typegoose';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 
 export class InMemoryMongoDB {
     public static forRootAsyncModule(
         mongod: MongoMemoryServer,
-        options: MongooseModuleOptions = {},
+        options: TypegooseModule = {},
     ): DynamicModule {
-        return MongooseModule.forRootAsync({
+        return TypegooseModule.forRootAsync({
             useFactory: async () => {
                 const mongoUri = await mongod.getUri();
                 return {

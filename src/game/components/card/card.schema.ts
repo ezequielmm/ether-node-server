@@ -1,10 +1,7 @@
 import { ModelOptions, Prop } from '@typegoose/typegoose';
-import { HydratedDocument } from 'mongoose';
 import { JsonEffect } from 'src/game/effects/effects.interface';
 import { JsonStatus } from 'src/game/status/interfaces';
 import { CardRarityEnum, CardTypeEnum, CardKeywordEnum } from './card.enum';
-
-export type CardDocument = HydratedDocument<Card>;
 
 @ModelOptions({
     schemaOptions: { collection: 'cards', versionKey: false },

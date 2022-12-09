@@ -1,18 +1,15 @@
 import { forwardRef, Module } from '@nestjs/common';
-import { MongooseModule } from '@nestjs/mongoose';
+import { TypegooseModule } from 'nestjs-typegoose';
 import { StatusModule } from 'src/game/status/status.module';
 import { CombatQueueModule } from '../combatQueue/combatQueue.module';
 import { ExpeditionModule } from '../expedition/expedition.module';
-import { Enemy, EnemySchema } from './enemy.schema';
+import { Enemy} from './enemy.schema';
 import { EnemyService } from './enemy.service';
 
 @Module({
     imports: [
-        MongooseModule.forFeature([
-            {
-                name: Enemy.name,
-                schema: EnemySchema,
-            },
+        TypegooseModule.forFeature([
+            Enemy,
         ]),
         forwardRef(() => ExpeditionModule),
         forwardRef(() => StatusModule),
