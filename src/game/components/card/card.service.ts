@@ -3,7 +3,7 @@ import { OnEvent } from '@nestjs/event-emitter';
 import { InjectModel } from '@nestjs/mongoose';
 import { randomUUID } from 'crypto';
 import { filter } from 'lodash';
-import { Model } from 'mongoose';
+import { FilterQuery, Model } from 'mongoose';
 import { CardPlayedAction } from 'src/game/action/cardPlayed.action';
 import {
     EVENT_AFTER_DRAW_CARDS,
@@ -54,6 +54,23 @@ export class CardService {
 
     async findAll(): Promise<CardDocument[]> {
         return this.card.find({ isActive: true }).lean();
+    }
+
+    async find(filter?: FilterQuery<Card>): Promise<CardDocument[]> {
+        return await this.card.find(filter).lean();
+    }
+
+    async findOne(filter: FilterQuery<Card>): Promise<CardDocument> {
+        return await this.card.findOne(filter).lean();
+    }
+
+    async getRandomCard(filter?: FilterQuery<Card>): Promise<CardDocument> {
+        const [card] = await this.card.aggregate<CardDocument>([
+            { $match: filter },
+            { $sample: { size: 1 } },
+        ]);
+
+        return card;
     }
 
     async findByType(card_type: CardTypeEnum): Promise<CardDocument[]> {
@@ -127,12 +144,6 @@ export class CardService {
             .skip(random);
     }
 
-    async getRandomCard(rarity: CardRarityEnum): Promise<CardDocument> {
-        const cards = await this.findByRarity(rarity);
-        const randomCard = cards[Math.floor(Math.random() * cards.length)];
-        return randomCard;
-    }
-
     async addCardToDeck(ctx: GameContext, cardId: number): Promise<void> {
         const newCard = await this.findById(cardId);
         const deck = ctx.expedition.playerState.cards;
@@ -160,19 +171,6 @@ export class CardService {
         this.expeditionService.updatePlayerDeck({
             deck: newDeck,
         });
-    }
-
-    async getRandomCardOfType(cardType: CardTypeEnum): Promise<CardDocument> {
-        const count = await this.card.countDocuments({ cardType });
-
-        const random = getRandomNumber(count);
-
-        const card = await this.card
-            .find({ cardType, isActive: true })
-            .limit(1)
-            .skip(random);
-
-        return card[0] ? card[0] : null;
     }
 
     @OnEvent(EVENT_AFTER_DRAW_CARDS)

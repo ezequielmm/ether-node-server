@@ -16,7 +16,9 @@ export class GetRewardsAction {
 
         switch (currentNode.nodeType) {
             case ExpeditionMapNodeTypeEnum.Combat:
-                rewards = currentNode.data.rewards;
+                rewards = currentNode.showRewards
+                    ? currentNode.data.rewards
+                    : [];
                 break;
             case ExpeditionMapNodeTypeEnum.Treasure:
                 rewards = currentNode.treasureData.rewards;

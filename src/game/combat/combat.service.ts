@@ -1,34 +1,28 @@
 import { Injectable } from '@nestjs/common';
 import { randomUUID } from 'crypto';
-import { pick, random } from 'lodash';
 import {
     getRandomBetween,
     getRandomItemByWeight,
     removeCardsFromPile,
 } from 'src/utils';
-import { CardDescriptionFormatter } from '../cardDescriptionFormatter/cardDescriptionFormatter';
 import { CardRarityEnum } from '../components/card/card.enum';
-import { CardDocument } from '../components/card/card.schema';
-import { CardService } from '../components/card/card.service';
 import { EnemyService } from '../components/enemy/enemy.service';
 import { EnemyId } from '../components/enemy/enemy.type';
 import {
     CombatTurnEnum,
     ExpeditionMapNodeTypeEnum,
-    IExpeditionNodeReward,
 } from '../components/expedition/expedition.enum';
 import {
-    CardPreview,
-    CardReward,
     IExpeditionCurrentNode,
     IExpeditionCurrentNodeDataEnemy,
     IExpeditionNode,
-    Reward,
 } from '../components/expedition/expedition.interface';
 import { ExpeditionService } from '../components/expedition/expedition.service';
-import { PotionService } from '../components/potion/potion.service';
+import { PotionRarityEnum } from '../components/potion/potion.enum';
 import { SettingsService } from '../components/settings/settings.service';
+import { TrinketRarityEnum } from '../components/trinket/trinket.enum';
 import { HARD_MODE_NODE_START, HARD_MODE_NODE_END } from '../constants';
+import { RewardService } from '../reward/reward.service';
 import { StatusType } from '../status/interfaces';
 
 @Injectable()
@@ -37,30 +31,11 @@ export class CombatService {
         private readonly settingsService: SettingsService,
         private readonly expeditionService: ExpeditionService,
         private readonly enemyService: EnemyService,
-        private readonly potionService: PotionService,
-        private readonly cardService: CardService,
+        private readonly rewardService: RewardService,
     ) {}
 
     private node: IExpeditionNode;
     private clientId: string;
-
-    private readonly cardRewardByNodeSubType: Map<
-        ExpeditionMapNodeTypeEnum,
-        number[]
-    > = new Map([
-        [ExpeditionMapNodeTypeEnum.CombatStandard, [0.6, 0.37, 0.03, 0.0]],
-        [ExpeditionMapNodeTypeEnum.CombatElite, [0.5, 0.38, 0.09, 0.03]],
-        [ExpeditionMapNodeTypeEnum.CombatBoss, [0.0, 0.0, 0.8, 0.2]],
-    ]);
-
-    private readonly goldRewardByNodeType: Map<
-        ExpeditionMapNodeTypeEnum,
-        () => number
-    > = new Map([
-        [ExpeditionMapNodeTypeEnum.Combat, () => random(10, 20)],
-        [ExpeditionMapNodeTypeEnum.CombatElite, () => random(25, 35)],
-        [ExpeditionMapNodeTypeEnum.CombatBoss, () => random(95, 105)],
-    ]);
 
     async generate(
         node: IExpeditionNode,
@@ -70,8 +45,12 @@ export class CombatService {
         this.clientId = clientId;
 
         // Get initial player stats
-        const { initialEnergy, maxEnergy, initialHandPileSize } =
-            await this.settingsService.getSettings();
+        const {
+            initialEnergy,
+            maxEnergy,
+            initialHandPileSize,
+            maxCardRewardsInCombat,
+        } = await this.settingsService.getSettings();
 
         // Get current health
         const { hpCurrent, hpMax, cards } =
@@ -88,8 +67,30 @@ export class CombatService {
             cardsToRemove: handCards,
         });
 
+        const {
+            actConfig: { potionChance },
+        } = await this.expeditionService.findOne({ clientId }, { map: 0 });
+
+        const shouldGeneratePotion = getRandomBetween(1, 100) < potionChance;
+        const trinketsToGenerate = [this.getTrinketRarityProbability()];
+
         const enemies = await this.getEnemies();
-        const rewards = await this.getRewards();
+        const rewards = await this.rewardService.generateRewards({
+            clientId: this.clientId,
+            node: this.node,
+            coinsToGenerate: this.generateCoins(),
+            cardsToGenerate: this.getCardRarityProbability(
+                maxCardRewardsInCombat,
+            ),
+            potionsToGenerate: shouldGeneratePotion
+                ? [this.getPotionRarityProbability()]
+                : [],
+            trinketsToGenerate: trinketsToGenerate.filter(
+                (item) => item !== null,
+            ),
+        });
+
+        this.updatePotionChance(potionChance, shouldGeneratePotion);
 
         return {
             nodeId: this.node.id,
@@ -166,86 +167,107 @@ export class CombatService {
         );
     }
 
-    private async getRewards(): Promise<Reward[]> {
-        // Start with the base rewards (Gold)
-        const rewards: Reward[] = [
-            {
-                id: randomUUID(),
-                type: IExpeditionNodeReward.Gold,
-                amount: this.goldRewardByNodeType.get(this.node.type)() ?? 0,
-                taken: false,
-            },
-        ];
-
-        // Add cards to the rewards
-        if (this.isCardRewardAvailable()) {
-            const cards = await this.getRandomCardRewards();
-            rewards.push(...cards);
+    private generateCoins(): number {
+        switch (this.node.subType) {
+            case ExpeditionMapNodeTypeEnum.CombatStandard:
+                return getRandomBetween(10, 20);
+            case ExpeditionMapNodeTypeEnum.CombatElite:
+                return getRandomBetween(25, 35);
+            case ExpeditionMapNodeTypeEnum.CombatBoss:
+                return getRandomBetween(95, 105);
+            default:
+                return 0;
         }
-
-        // TEMP: Potions added to all combat nodes for testing
-        const potion = await this.potionService.getRandomPotion();
-
-        rewards.push({
-            id: randomUUID(),
-            type: IExpeditionNodeReward.Potion,
-            taken: false,
-            potion: pick(potion, ['potionId', 'name', 'description']),
-        });
-
-        // Removed trinkets for now
-
-        return rewards;
     }
 
-    private async getRandomCardRewards(): Promise<CardReward[]> {
-        const cards: CardReward[] = [];
+    private getCardRarityProbability(
+        cardsToGenerate: number,
+    ): CardRarityEnum[] {
+        const rarities: CardRarityEnum[] = [];
 
-        for (let i = 0; i < 3; i++) {
-            const card = await this.getRandomCardByNode();
-
-            const cardPreview = pick(card, [
-                'cardId',
-                'name',
-                'description',
-                'energy',
-                'rarity',
-                'cardType',
-                'pool',
-                'isUpgraded',
-            ]) as unknown as CardPreview;
-
-            cardPreview.description = CardDescriptionFormatter.process(card);
-
-            cards.push({
-                id: randomUUID(),
-                type: IExpeditionNodeReward.Card,
-                card: cardPreview,
-                taken: false,
-            });
+        for (let i = 1; i <= cardsToGenerate; i++) {
+            switch (this.node.subType) {
+                case ExpeditionMapNodeTypeEnum.CombatStandard:
+                    rarities.push(
+                        getRandomItemByWeight(
+                            [
+                                CardRarityEnum.Common,
+                                CardRarityEnum.Uncommon,
+                                CardRarityEnum.Rare,
+                            ],
+                            [0.6, 0.37, 0.03],
+                        ),
+                    );
+                    break;
+                case ExpeditionMapNodeTypeEnum.CombatElite:
+                    rarities.push(
+                        getRandomItemByWeight(
+                            [
+                                CardRarityEnum.Common,
+                                CardRarityEnum.Uncommon,
+                                CardRarityEnum.Rare,
+                                CardRarityEnum.Legendary,
+                            ],
+                            [0.5, 0.38, 0.09, 0.03],
+                        ),
+                    );
+                    break;
+                case ExpeditionMapNodeTypeEnum.CombatStandard:
+                    rarities.push(
+                        getRandomItemByWeight(
+                            [CardRarityEnum.Rare, CardRarityEnum.Legendary],
+                            [0.8, 0.2],
+                        ),
+                    );
+                    break;
+            }
         }
 
-        return cards;
+        return rarities;
     }
 
-    private isCardRewardAvailable(): boolean {
-        for (const type of this.cardRewardByNodeSubType.keys()) {
-            if (type === this.node.subType) return true;
-        }
-
-        return false;
-    }
-
-    private async getRandomCardByNode(): Promise<CardDocument> {
-        const rarity = getRandomItemByWeight(
+    private getPotionRarityProbability(): PotionRarityEnum {
+        return getRandomItemByWeight(
             [
-                CardRarityEnum.Common,
-                CardRarityEnum.Uncommon,
-                CardRarityEnum.Rare,
-                CardRarityEnum.Legendary,
+                PotionRarityEnum.Common,
+                PotionRarityEnum.Uncommon,
+                PotionRarityEnum.Rare,
             ],
-            this.cardRewardByNodeSubType.get(this.node.subType),
+            [0.65, 0.25, 0.1],
         );
-        return this.cardService.getRandomCard(rarity);
+    }
+
+    private getTrinketRarityProbability(): TrinketRarityEnum {
+        switch (this.node.subType) {
+            case ExpeditionMapNodeTypeEnum.CombatElite:
+                return getRandomItemByWeight(
+                    [
+                        TrinketRarityEnum.Common,
+                        TrinketRarityEnum.Uncommon,
+                        TrinketRarityEnum.Rare,
+                    ],
+                    [0.5, 0.33, 0.17],
+                );
+            default:
+                return null;
+        }
+    }
+
+    private async updatePotionChance(
+        potionChance: number,
+        shouldGeneratePotion: boolean,
+    ): Promise<void> {
+        if (potionChance > 0 && potionChance < 100) {
+            const newPotionChance = shouldGeneratePotion
+                ? Math.min(100, potionChance - 10)
+                : Math.max(0, potionChance + 10);
+
+            await this.expeditionService.updateByFilter(
+                { clientId: this.clientId },
+                {
+                    ['actConfig.potionChance']: newPotionChance,
+                },
+            );
+        }
     }
 }

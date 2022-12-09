@@ -1,11 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, UpdateQuery, FilterQuery } from 'mongoose';
+import { Model, UpdateQuery, FilterQuery, ProjectionFields } from 'mongoose';
 import { Expedition, ExpeditionDocument } from './expedition.schema';
 import {
     CardExistsOnPlayerHandDTO,
     CreateExpeditionDTO,
-    FindOneExpeditionDTO,
     GetCurrentNodeDTO,
     GetDeckCardsDTO,
     GetExpeditionMapDTO,
@@ -53,12 +52,18 @@ export class ExpeditionService {
         };
     }
 
-    async findOne(payload: FindOneExpeditionDTO): Promise<ExpeditionDocument> {
+    async findOne(
+        filter: FilterQuery<Expedition>,
+        projection?: ProjectionFields<Expedition>,
+    ): Promise<ExpeditionDocument> {
         return await this.expedition
-            .findOne({
-                ...payload,
-                status: ExpeditionStatusEnum.InProgress,
-            })
+            .findOne(
+                {
+                    ...filter,
+                    status: ExpeditionStatusEnum.InProgress,
+                },
+                projection,
+            )
             .lean();
     }
 

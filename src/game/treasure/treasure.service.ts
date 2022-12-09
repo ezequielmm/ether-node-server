@@ -1,104 +1,64 @@
 import { Injectable } from '@nestjs/common';
-import { randomUUID } from 'crypto';
-import { pick } from 'lodash';
 import { Socket } from 'socket.io';
-import { getRandomBetween } from 'src/utils';
+import { getRandomBetween, getRandomItemByWeight } from 'src/utils';
+import { ChestSizeEnum } from '../components/chest/chest.enum';
 import { Chest } from '../components/chest/chest.schema';
 import { ChestService } from '../components/chest/chest.service';
-import { IExpeditionNodeReward } from '../components/expedition/expedition.enum';
-import { Reward } from '../components/expedition/expedition.interface';
+import { IExpeditionNode } from '../components/expedition/expedition.interface';
 import { ExpeditionService } from '../components/expedition/expedition.service';
-import { PotionService } from '../components/potion/potion.service';
+import { PotionRarityEnum } from '../components/potion/potion.enum';
+import { TrinketRarityEnum } from '../components/trinket/trinket.enum';
+import { RewardService } from '../reward/reward.service';
 import {
     StandardResponse,
     SWARAction,
     SWARMessageType,
 } from '../standardResponse/standardResponse';
 import { TreasureTypeEnum } from './treasure.enum';
-import { TreasureInterface, TreasureTrappedData } from './treasure.interfaces';
+import { TreasureInterface } from './treasure.interfaces';
 
 @Injectable()
 export class TreasureService {
     constructor(
         private readonly expeditionService: ExpeditionService,
         private readonly chestService: ChestService,
-        private readonly potionService: PotionService,
+        private readonly rewardService: RewardService,
     ) {}
 
-    async generateTreasure(): Promise<TreasureInterface> {
+    private chest: Chest;
+
+    async generateTreasure(
+        node: IExpeditionNode,
+        clientId: string,
+    ): Promise<TreasureInterface> {
         const chest = await this.chestService.getRandomChest();
 
-        const rewards: Reward[] = [];
+        this.chest = chest;
 
-        // const randomCoinChance = getRandomBetween(1, 100);
+        const randomCoinChance = getRandomBetween(1, 100);
         const randomPotionChance = getRandomBetween(1, 100);
-        //const randomTrappedChance = getRandomBetween(1, 100);
 
-        /*if (randomCoinChance <= chest.coinChance) {
-            const coin = getRandomBetween(chest.minCoins, chest.maxCoins);
-
-            rewards.push({
-                id: randomUUID(),
-                type: IExpeditionNodeReward.Gold,
-                amount: coin,
-                taken: false,
-            });
-        }*/
-
-        const coin = getRandomBetween(chest.minCoins, chest.maxCoins);
-
-        rewards.push({
-            id: randomUUID(),
-            type: IExpeditionNodeReward.Gold,
-            amount: coin,
-            taken: false,
+        const rewards = await this.rewardService.generateRewards({
+            clientId,
+            node,
+            coinsToGenerate:
+                randomCoinChance <= chest.coinChance
+                    ? getRandomBetween(chest.minCoins, chest.maxCoins)
+                    : 0,
+            cardsToGenerate: [],
+            potionsToGenerate:
+                randomPotionChance <= chest.potionChance
+                    ? [this.getPotionRarityProbability()]
+                    : [],
+            trinketsToGenerate: [this.getTrinketRarityProbability()],
         });
-
-        if (randomPotionChance <= chest.potionChance) {
-            const potion = await this.potionService.getRandomPotion();
-
-            rewards.push({
-                id: randomUUID(),
-                type: IExpeditionNodeReward.Potion,
-                taken: false,
-                potion: pick(potion, ['potionId', 'name', 'description']),
-            });
-        }
-
-        /*const isTrappedChest = this.isTrappedChest(
-            randomTrappedChance,
-            chest.trappedChance,
-        );
-
-        const type = isTrappedChest
-            ? chest.trappedType
-            : TreasureTypeEnum.NoTrap;
-        */
-
-        const type = TreasureTypeEnum.NoTrap;
 
         return {
             name: chest.name,
             size: chest.size,
             isOpen: false,
             rewards,
-            type,
-            //...(isTrappedChest && this.generateTrappedData(chest)),
-        };
-    }
-
-    private isTrappedChest = (
-        trappedChance: number,
-        chestTrappedChance: number,
-    ): boolean => trappedChance <= chestTrappedChance;
-
-    private generateTrappedData(chest: Chest): TreasureTrappedData {
-        return {
-            textToShow: chest.trappedText,
-            startsCombat: chest.trappedStartsCombat,
-            ...(chest.trappedType === TreasureTypeEnum.Damage && {
-                damage: chest.trappedTypeValue,
-            }),
+            type: TreasureTypeEnum.NoTrap,
         };
     }
 
@@ -133,5 +93,40 @@ export class TreasureService {
                 },
             }),
         );
+    }
+
+    private getPotionRarityProbability(): PotionRarityEnum {
+        return getRandomItemByWeight(
+            [
+                PotionRarityEnum.Common,
+                PotionRarityEnum.Uncommon,
+                PotionRarityEnum.Rare,
+            ],
+            [0.65, 0.25, 0.1],
+        );
+    }
+
+    private getTrinketRarityProbability(): TrinketRarityEnum {
+        switch (this.chest.size) {
+            case ChestSizeEnum.Small:
+                return getRandomItemByWeight(
+                    [TrinketRarityEnum.Common, TrinketRarityEnum.Uncommon],
+                    [0.75, 0.25],
+                );
+            case ChestSizeEnum.Medium:
+                return getRandomItemByWeight(
+                    [
+                        TrinketRarityEnum.Common,
+                        TrinketRarityEnum.Uncommon,
+                        TrinketRarityEnum.Rare,
+                    ],
+                    [0.35, 0.5, 0.15],
+                );
+            case ChestSizeEnum.Large:
+                return getRandomItemByWeight(
+                    [TrinketRarityEnum.Uncommon, TrinketRarityEnum.Rare],
+                    [0.75, 0.25],
+                );
+        }
     }
 }

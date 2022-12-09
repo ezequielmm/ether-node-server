@@ -52,7 +52,10 @@ export class CurrentNodeGeneratorProcess {
     }
 
     private async getTreasureCurrentNode(): Promise<IExpeditionCurrentNode> {
-        const treasureData = await this.treasureService.generateTreasure();
+        const treasureData = await this.treasureService.generateTreasure(
+            this.node,
+            this.clientId,
+        );
 
         return {
             nodeId: this.node.id,

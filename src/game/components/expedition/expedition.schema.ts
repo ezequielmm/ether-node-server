@@ -15,9 +15,14 @@ import {
     IExpeditionPlayerStateDeckCard,
     Reward,
 } from './expedition.interface';
+import {
+    ExpeditionActConfig,
+    ExpeditionActConfigSchema,
+} from './expeditionActConfig.schema';
 import { EncounterInterface } from '../encounter/encounter.interfaces';
 
 export type ExpeditionDocument = HydratedDocument<Expedition>;
+
 @Schema({
     collection: 'expeditions',
     versionKey: false,
@@ -28,6 +33,9 @@ export class Expedition {
 
     @Prop()
     playerId: number;
+
+    @Prop({ type: ExpeditionActConfigSchema })
+    actConfig?: ExpeditionActConfig;
 
     @Prop()
     mapSeedId?: number;
