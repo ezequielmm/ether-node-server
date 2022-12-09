@@ -1,10 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { randomUUID } from 'crypto';
-import { pick } from 'lodash';
+import { filter, pick } from 'lodash';
+import { CustomException, ErrorBehavior } from 'src/socket/custom.exception';
 import { CardDescriptionFormatter } from '../cardDescriptionFormatter/cardDescriptionFormatter';
 import { CardRarityEnum, CardTypeEnum } from '../components/card/card.enum';
 import { CardService } from '../components/card/card.service';
-import { IExpeditionNodeReward } from '../components/expedition/expedition.enum';
+import {
+    ExpeditionMapNodeTypeEnum,
+    IExpeditionNodeReward,
+} from '../components/expedition/expedition.enum';
 import {
     CardPreview,
     CardReward,
@@ -14,10 +18,16 @@ import {
     TrinketReward,
 } from '../components/expedition/expedition.interface';
 import { ExpeditionService } from '../components/expedition/expedition.service';
+import { GameContext } from '../components/interfaces';
 import { PotionRarityEnum } from '../components/potion/potion.enum';
 import { PotionService } from '../components/potion/potion.service';
 import { TrinketRarityEnum } from '../components/trinket/trinket.enum';
 import { TrinketService } from '../components/trinket/trinket.service';
+import {
+    StandardResponse,
+    SWARMessageType,
+    SWARAction,
+} from '../standardResponse/standardResponse';
 
 @Injectable()
 export class RewardService {
@@ -80,6 +90,107 @@ export class RewardService {
         }
 
         return rewards;
+    }
+
+    async takeReward(ctx: GameContext, rewardId: string): Promise<string> {
+        // Get the updated expedition
+        const expedition = ctx.expedition;
+
+        const {
+            currentNode: { completed: nodeIsCompleted, nodeType },
+        } = expedition;
+
+        const expeditionId = expedition._id.toString();
+
+        let rewards: Reward[] = [];
+
+        rewards =
+            nodeType === ExpeditionMapNodeTypeEnum.Treasure
+                ? expedition.currentNode.treasureData.rewards
+                : expedition.currentNode.data.rewards;
+
+        if (nodeIsCompleted) {
+            // Check if the node is completed
+            throw new CustomException(
+                'Node already completed, cannot select reward',
+                ErrorBehavior.ReturnToMainMenu,
+            );
+        }
+
+        // check if the reward that we are receiving is correct and exists
+        const reward = rewards.find(({ id }) => {
+            return id === rewardId;
+        });
+
+        // If the reward is invalid we throw and exception
+        if (!reward) throw new Error(`Reward ${rewardId} not found`);
+
+        // Now we set that we took the reward
+        reward.taken = true;
+
+        // Now we apply the redward to the user profile
+        switch (reward.type) {
+            case IExpeditionNodeReward.Gold:
+                await this.expeditionService.updateById(expeditionId, {
+                    $inc: {
+                        'playerState.gold': reward.amount,
+                    },
+                });
+                break;
+            case IExpeditionNodeReward.Potion:
+                reward.taken = await this.potionService.add(
+                    ctx,
+                    reward.potion.potionId,
+                );
+                break;
+            case IExpeditionNodeReward.Card:
+                await this.cardService.addCardToDeck(ctx, reward.card.cardId);
+                // Disable all other card rewards
+                rewards = rewards.map((reward) => {
+                    if (reward.type === IExpeditionNodeReward.Card) {
+                        reward.taken = true;
+                    }
+                    return reward;
+                });
+                break;
+            case IExpeditionNodeReward.Trinket:
+                reward.taken = await this.trinketService.add(
+                    ctx,
+                    reward.trinket.trinketId,
+                );
+                break;
+        }
+
+        // Next we save the reward on the expedition
+        if (nodeType === ExpeditionMapNodeTypeEnum.Treasure) {
+            await this.expeditionService.updateById(expedition._id.toString(), {
+                $set: {
+                    'currentNode.treasureData.rewards': rewards,
+                },
+            });
+        } else {
+            await this.expeditionService.updateById(expedition._id.toString(), {
+                $set: {
+                    'currentNode.data.rewards': rewards,
+                },
+            });
+        }
+
+        // Now we get the rewards that are pending to be taken
+        const pendingRewards = filter(rewards, {
+            taken: false,
+        });
+
+        return StandardResponse.respond({
+            message_type:
+                nodeType === ExpeditionMapNodeTypeEnum.Treasure
+                    ? SWARMessageType.EndTreasure
+                    : SWARMessageType.EndCombat,
+            action: SWARAction.SelectAnotherReward,
+            data: {
+                rewards: pendingRewards,
+            },
+        });
     }
 
     private async generateCards(
