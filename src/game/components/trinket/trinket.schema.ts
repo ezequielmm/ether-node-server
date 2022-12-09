@@ -38,7 +38,8 @@ export class Trinket<T = any> {
     }
 
     trigger(this: SubDocumentType<T>, ctx: GameContext) {
-        ctx.client.send(
+        ctx.client.emit(
+            'PutData',
             StandardResponse.respond({
                 message_type: SWARMessageType.TrinketTriggered,
                 action: SWARAction.FlashTrinketIcon,
