@@ -33,7 +33,7 @@ export class CombatService {
         private readonly expeditionService: ExpeditionService,
         private readonly enemyService: EnemyService,
         private readonly rewardService: RewardService,
-    ) {}
+    ) { }
 
     private node: IExpeditionNode;
     private clientId: string;
@@ -53,10 +53,7 @@ export class CombatService {
         } = await this.settingsService.getSettings();
 
         // Get current health
-        const { hpCurrent, hpMax, cards } =
-            await this.expeditionService.getPlayerState({
-                clientId: this.clientId,
-            });
+        const { hpCurrent, hpMax, cards } = ctx.expedition.playerState;
 
         const handCards = cards
             .sort(() => 0.5 - Math.random())

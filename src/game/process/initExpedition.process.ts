@@ -31,7 +31,7 @@ export class InitExpeditionProcess {
         private readonly characterService: CharacterService,
         private readonly customDeckService: CustomDeckService,
         private readonly settingsService: SettingsService,
-    ) {}
+    ) { }
 
     async handle(payload: InitExpeditionDTO): Promise<void> {
         const { playerId, playerName, email } = payload;

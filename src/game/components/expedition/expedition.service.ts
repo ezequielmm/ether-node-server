@@ -35,6 +35,7 @@ import { EnemyId } from '../enemy/enemy.type';
 import { Socket } from 'socket.io';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { ReturnModelType } from '@typegoose/typegoose';
+import { TrinketService } from '../trinket/trinket.service';
 
 @Injectable()
 export class ExpeditionService {
@@ -43,7 +44,8 @@ export class ExpeditionService {
         private readonly expedition: ReturnModelType<typeof Expedition>,
         private readonly playerService: PlayerService,
         private readonly enemyService: EnemyService,
-    ) { }
+        private readonly trinketService: TrinketService,
+    ) {}
 
     async getGameContext(client: Socket): Promise<GameContext> {
         const expedition = await this.findOne({ clientId: client.id });
@@ -66,15 +68,13 @@ export class ExpeditionService {
         filter: FilterQuery<Expedition>,
         projection?: ProjectionFields<Expedition>,
     ): Promise<ExpeditionDocument> {
-        return await this.expedition
-            .findOne(
-                {
-                    ...filter,
-                    status: ExpeditionStatusEnum.InProgress,
-                },
-                projection,
-            )
-            .lean();
+        return await this.expedition.findOne(
+            {
+                ...filter,
+                status: ExpeditionStatusEnum.InProgress,
+            },
+            projection,
+        );
     }
 
     async create(payload: CreateExpeditionDTO): Promise<ExpeditionDocument> {

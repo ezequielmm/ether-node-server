@@ -37,7 +37,7 @@ export class RewardService {
         private readonly potionService: PotionService,
         private readonly trinketService: TrinketService,
         private readonly expeditionService: ExpeditionService,
-    ) {}
+    ) { }
 
     private node: IExpeditionNode;
 

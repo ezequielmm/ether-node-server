@@ -29,7 +29,7 @@ export class Expedition {
     @Prop()
     playerId: number;
 
-    @Prop({ type: ExpeditionActConfig })
+    @Prop()
     actConfig?: ExpeditionActConfig;
 
     @Prop()
