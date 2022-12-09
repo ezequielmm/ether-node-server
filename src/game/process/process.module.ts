@@ -31,6 +31,7 @@ import { SendEnemyIntentProcess } from './sendEnemyIntents.process';
 import { InitEncounterProcess } from './initEncounter.process';
 import { EncounterModule } from '../components/encounter/encounter.module';
 import { EncounterService } from '../components/encounter/encounter.service';
+import { ContinueExpeditionProcess } from './continueExpedition.process';
 
 @Module({
     imports: [
@@ -67,6 +68,7 @@ import { EncounterService } from '../components/encounter/encounter.service';
         InitMerchantProcess,
         InitTreasureProcess,
         InitEncounterProcess,
+        ContinueExpeditionProcess,
     ],
     exports: [
         SendEnemyIntentProcess,
@@ -83,6 +85,7 @@ import { EncounterService } from '../components/encounter/encounter.service';
         InitMerchantProcess,
         InitTreasureProcess,
         InitEncounterProcess,
+        ContinueExpeditionProcess,
     ],
 })
 export class ProcessModule {}
