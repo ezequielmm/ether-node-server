@@ -8,7 +8,6 @@ import {
     SWARMessageType,
 } from '../../standardResponse/standardResponse';
 import { ExpeditionService } from '../expedition/expedition.service';
-import { SocketId } from 'socket.io-adapter';
 import { Socket } from 'socket.io';
 import { EncounterInterface } from './encounter.interfaces';
 import { EncounterDTO } from '../../action/getEncounterDataAction';
