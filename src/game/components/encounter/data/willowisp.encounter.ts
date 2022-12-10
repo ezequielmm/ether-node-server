@@ -2,7 +2,7 @@ import { Encounter } from '../encounter.schema';
 
 export const WillowispEncounter: Encounter = {
     encounterId: 6,
-    imageId: '6',
+    imageId: 'willowisp',
     stages: [
         {
             displayText:

@@ -2,7 +2,7 @@ import { Encounter } from '../encounter.schema';
 
 export const NagpraEncounter: Encounter = {
     encounterId: 3,
-    imageId: '3',
+    imageId: 'nagpra',
     stages: [
         {
             displayText:
