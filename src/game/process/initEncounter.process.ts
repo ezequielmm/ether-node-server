@@ -17,6 +17,8 @@ import { InitTreasureProcess } from './initTreasure.process';
 import { InitMerchantProcess } from './initMerchant.process';
 import { InitNodeProcess } from './initNode.process';
 import { EncounterService } from '../components/encounter/encounter.service';
+import { PotionRarityEnum } from '../components/potion/potion.enum';
+import { EncounterIdEnum } from '../components/encounter/encounter.enum';
 
 @Injectable()
 export class InitEncounterProcess {
@@ -36,6 +38,16 @@ export class InitEncounterProcess {
     async process(client: Socket, node: IExpeditionNode): Promise<string> {
         this.client = client;
         this.node = node;
+
+        const currentNode =
+            await this.currentNodeGeneratorProcess.getCurrentNodeData(
+                this.node,
+                this.client.id,
+            );
+
+        await this.expeditionService.update(this.client.id, {
+            currentNode,
+        });
 
         switch (node.status) {
             case ExpeditionMapNodeStatusEnum.Available:
@@ -88,7 +100,16 @@ export class InitEncounterProcess {
             [85, 10, 5],
         );
 
-        await this.encounterService.updateEncounterData(3, 0, this.client);
+        const encounterId = getRandomItemByWeight(
+            [EncounterIdEnum.Nagpra, EncounterIdEnum.WillOWisp],
+            [1, 1],
+        );
+
+        await this.encounterService.updateEncounterData(
+            encounterId,
+            0,
+            this.client,
+        );
         return await this.executeNode(nodeType);
     }
 
