@@ -1,6 +1,8 @@
+import { burn } from './burn/constants';
 import { confusion } from './confusion/constants';
 import { dodge } from './dodge/constants';
 import { doubleDown } from './doubleDown/contants';
+import { feebleStatus } from './feeble/constants';
 import { fortitude } from './fortitude/constants';
 import { heraldDelayedStatus } from './heraldDelayed/constants';
 import { heraldingStatus } from './heralding/constants';
@@ -77,6 +79,10 @@ export class StatusGenerator {
                 return `All attacks this turn will do double damage`;
             case trapped.name:
                 return `The enemy is hiding and waiting to strike`;
+            case burn.name:
+                return `Burn does ${counter} points of damage at the end of each turn`;
+            case feebleStatus.name:
+                return `All Defend actions gain 25% less Defense`;
             default:
                 return `Unknown status`;
         }
