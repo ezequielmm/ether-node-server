@@ -6,6 +6,7 @@ class Encounter extends Node {
     private minEncounterId: number;
     private maxEncounterId: number;
     private defaultSceneId: number;
+
     constructor(
         id: number,
         act: number,
@@ -13,8 +14,9 @@ class Encounter extends Node {
         type: ExpeditionMapNodeTypeEnum,
         subType: ExpeditionMapNodeTypeEnum,
         private_data: any,
+        title?: string,
     ) {
-        super(id, act, step, type, subType, private_data);
+        super(id, act, step, type, subType, private_data, title);
         this.minEncounterId = 0;
         this.maxEncounterId = 24;
         this.defaultSceneId = 0;

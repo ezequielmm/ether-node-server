@@ -3,6 +3,16 @@ import { random } from 'lodash';
 import { IExpeditionPlayerStateDeckCard } from 'src/game/components/expedition/expedition.interface';
 
 /**
+ * Gets a bearer token string and removes the word 'Bearer'
+ * and trims the final result
+ * @param token string - the token to format
+ * @return string
+ */
+export function getBearerToken(token: string): string {
+    return token.replace('Bearer', '').trim();
+}
+
+/**
  * Validates that the Bearer token is valid
  * @param token The bearer token to validate
  * @return boolean
@@ -19,9 +29,7 @@ export function isValidAuthToken(token: string): boolean {
 
     // If we have something, we remove the "Bearer" word
     // to have just the token itself
-    token = token.startsWith('Bearer')
-        ? token.replace('Bearer', '').trim()
-        : token;
+    token = getBearerToken(token);
 
     // Next we use jwt-decode to get the header of the
     // token and make sure that is a real token
@@ -40,6 +48,7 @@ export function isValidAuthToken(token: string): boolean {
     // At the end we return the boolean value
     return isValidToken;
 }
+
 /**
  * Get a random value from an Enum
  * @param anEnum the enum to get the value
@@ -158,8 +167,18 @@ export function getTimestampInSeconds(): number {
 }
 
 /**
- * Get a random number with a given limit
+ * Get a random number until a given limit
  */
 export function getRandomNumber(limit: number): number {
     return Math.floor(Math.random() * limit);
+}
+
+/**
+ * Convert snake case to title case
+ * return string
+ */
+export function snakeCaseToTitleCase(text: string): string {
+    return text
+        .replace(/^[-_]*(.)/, (_, c) => c.toUpperCase())
+        .replace(/[-_]+(.)/g, (_, c) => ' ' + c.toUpperCase());
 }
