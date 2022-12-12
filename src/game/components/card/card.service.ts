@@ -207,7 +207,7 @@ export class CardService {
             },
         );
 
-        if (cards.length) {
+        if (cards.length > 0) {
             for (const card of cards) {
                 this.logger.debug(
                     `Auto playing card ${card.cardId}:${card.name}`,
