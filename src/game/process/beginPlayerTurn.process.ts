@@ -47,9 +47,17 @@ export class BeginPlayerTurnProcess {
 
         this.logger.debug(`Beginning player ${client.id} turn`);
 
-        // Get ongoing expedition
-        const expedition = await this.expeditionService.findOne({
+        // Update round and entity playing
+        const expedition = await this.expeditionService.setCombatTurn({
             clientId: client.id,
+            playing: CombatTurnEnum.Player,
+        });
+
+        // Send change turn message
+        this.changeTurnAction.handle({
+            client,
+            type: SWARMessageType.BeginTurn,
+            entity: CombatTurnEnum.Player,
         });
 
         const {
@@ -60,6 +68,10 @@ export class BeginPlayerTurnProcess {
                 },
             },
         } = expedition;
+
+        await this.expeditionService.updateById(expedition._id.toString(), {
+            'currentNode.data.round': round + 1,
+        });
 
         // Create player context
         const ctx: GameContext = {
@@ -72,20 +84,6 @@ export class BeginPlayerTurnProcess {
 
         await this.eventEmitter.emitAsync(EVENT_BEFORE_PLAYER_TURN_START, {
             ctx,
-        });
-
-        // Update round and entity playing
-        await this.expeditionService.setCombatTurn({
-            clientId: client.id,
-            playing: CombatTurnEnum.Player,
-            newRound: round + 1,
-        });
-
-        // Send change turn message
-        this.changeTurnAction.handle({
-            client,
-            type: SWARMessageType.BeginTurn,
-            entity: CombatTurnEnum.Player,
         });
 
         // Reset energy
@@ -121,6 +119,14 @@ export class BeginPlayerTurnProcess {
 
         await this.enemyService.calculateNewIntentions(ctx);
 
+        // Send possible actions related to the statuses attached to the player at the beginning of the turn
+        await this.eventEmitter.emitAsync(EVENT_AFTER_PLAYER_TURN_START, {
+            ctx,
+        });
+
+        // Complete combat queue
+        await this.combatQueueService.end(ctx);
+
         // Send updated player information
         const playerInfo = await this.getPlayerInfoAction.handle(client.id);
 
@@ -132,13 +138,5 @@ export class BeginPlayerTurnProcess {
                 data: playerInfo,
             }),
         );
-
-        // Send possible actions related to the statuses attached to the player at the beginning of the turn
-        await this.eventEmitter.emitAsync(EVENT_AFTER_PLAYER_TURN_START, {
-            ctx,
-        });
-
-        // Complete combat queue
-        await this.combatQueueService.end(ctx);
     }
 }

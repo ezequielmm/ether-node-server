@@ -12,6 +12,7 @@ import { CardSelectionScreenService } from 'src/game/components/cardSelectionScr
 import { MoveCardAction } from 'src/game/action/moveCard.action';
 import { corsSocketSettings } from './socket.enum';
 import { CustomException, ErrorBehavior } from './custom.exception';
+import { GameContext } from 'src/game/components/interfaces';
 
 interface ICardPlayed {
     cardId: CardId;
@@ -50,17 +51,17 @@ export class CombatGateway {
                 },
             } = expedition;
 
+            const ctx: GameContext = {
+                client,
+                expedition,
+            };
+
             switch (playing) {
                 case CombatTurnEnum.Player:
-                    await this.endPlayerTurnProcess.handle({ client });
+                    await this.endPlayerTurnProcess.handle({ ctx });
                     break;
                 case CombatTurnEnum.Enemy:
-                    await this.endEnemyTurnProcess.handle({
-                        ctx: {
-                            client,
-                            expedition,
-                        },
-                    });
+                    await this.endEnemyTurnProcess.handle({ ctx });
                     break;
             }
         }
