@@ -14,7 +14,7 @@ export const FlurryCardUpgraded: Card = {
     cardType: CardTypeEnum.Attack,
     pool: 'knight',
     energy: CardEnergyEnum.All,
-    description: `Deal {${flurry.name}} damage to 3 random enemies X times`,
+    description: `Deal 7 damage to a random enemy X+1 times`,
     keywords: [],
     properties: {
         effects: [
@@ -22,21 +22,7 @@ export const FlurryCardUpgraded: Card = {
                 effect: flurry.name,
                 target: CardTargetedEnum.RandomEnemy,
                 args: {
-                    value: 4,
-                },
-            },
-            {
-                effect: flurry.name,
-                target: CardTargetedEnum.RandomEnemy,
-                args: {
-                    value: 4,
-                },
-            },
-            {
-                effect: flurry.name,
-                target: CardTargetedEnum.RandomEnemy,
-                args: {
-                    value: 4,
+                    value: 7,
                 },
             },
         ],
@@ -54,7 +40,7 @@ export const FlurryCard: Card = {
     cardType: CardTypeEnum.Attack,
     pool: 'knight',
     energy: CardEnergyEnum.All,
-    description: `Deal {${flurry.name}} damage to 3 random enemies X times`,
+    description: `Deal 6 damage to a random enemy X times`,
     keywords: [],
     properties: {
         effects: [
@@ -62,21 +48,7 @@ export const FlurryCard: Card = {
                 effect: flurry.name,
                 target: CardTargetedEnum.RandomEnemy,
                 args: {
-                    value: 3,
-                },
-            },
-            {
-                effect: flurry.name,
-                target: CardTargetedEnum.RandomEnemy,
-                args: {
-                    value: 3,
-                },
-            },
-            {
-                effect: flurry.name,
-                target: CardTargetedEnum.RandomEnemy,
-                args: {
-                    value: 3,
+                    value: 6,
                 },
             },
         ],
