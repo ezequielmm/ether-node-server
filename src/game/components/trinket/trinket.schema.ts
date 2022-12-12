@@ -12,6 +12,7 @@ import { TrinketRarityEnum } from './trinket.enum';
     schemaOptions: {
         collection: 'trinkets',
         _id: false,
+        versionKey: false,
     },
 })
 export class Trinket<T = any> {
