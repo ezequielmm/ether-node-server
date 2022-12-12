@@ -11,6 +11,7 @@ import { resolveStatus } from './resolve/constants';
 import { siphoning } from './siphoning/constants';
 import { spikesStatus } from './spikes/constants';
 import { spirited } from './spirited/contants';
+import { trapped } from './trapped/constants';
 import { turtling } from './turtling/constants';
 
 export interface IStatusesList {
@@ -61,6 +62,8 @@ export class StatusGenerator {
                 return `Double the effect of all Defense gained from cards`;
             case heraldingStatus.name:
                 return `All attacks this turn will do double damage`;
+            case trapped.name:
+                return `The enemy is hiding and waiting to strike`;
             default:
                 return `Unknown status`;
         }

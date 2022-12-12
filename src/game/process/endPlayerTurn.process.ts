@@ -5,6 +5,7 @@ import { DiscardAllCardsAction } from '../action/discardAllCards.action';
 import { CombatQueueService } from '../components/combatQueue/combatQueue.service';
 import { EnemyService } from '../components/enemy/enemy.service';
 import { CombatTurnEnum } from '../components/expedition/expedition.enum';
+import { ExpeditionService } from '../components/expedition/expedition.service';
 import { GameContext } from '../components/interfaces';
 import { EVENT_AFTER_PLAYER_TURN_END } from '../constants';
 import { SWARMessageType } from '../standardResponse/standardResponse';
@@ -25,6 +26,7 @@ export class EndPlayerTurnProcess {
         private readonly combatQueueService: CombatQueueService,
         private readonly changeTurnAction: ChangeTurnAction,
         private readonly enemyService: EnemyService,
+        private readonly expeditionService: ExpeditionService,
     ) {}
 
     async handle(payload: EndPlayerTurnDTO): Promise<void> {
