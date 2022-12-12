@@ -14,7 +14,7 @@ export const FlurryCardUpgraded: Card = {
     cardType: CardTypeEnum.Attack,
     pool: 'knight',
     energy: CardEnergyEnum.All,
-    description: `Deal 7 damage to a random enemy X+1 times`,
+    description: `Deal 7 damage to a random enemy Xtimes`,
     keywords: [],
     properties: {
         effects: [

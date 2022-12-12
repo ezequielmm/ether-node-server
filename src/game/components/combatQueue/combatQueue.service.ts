@@ -151,16 +151,8 @@ export class CombatQueueService {
         statuses: AttachedStatus[],
     ): Promise<void> {
         const statusesInfo: IStatusesList[] = [];
-        for (const status of statuses) {
-            statusesInfo.push({
-                name: status.name,
-                counter: status.args.counter,
-                description: StatusGenerator.generateDescription(
-                    status.name,
-                    status.args.counter,
-                ),
-            });
-        }
+
+        statusesInfo.push(...StatusGenerator.formatStatusesToArray(statuses));
 
         await this.push({
             ctx,
