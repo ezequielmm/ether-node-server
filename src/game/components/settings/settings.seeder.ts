@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { InjectModel } from 'nestjs-typegoose';
+import { InjectModel } from 'kindagoose';
 import { Seeder } from 'nestjs-seeder';
 import { Model } from 'mongoose';
 import { Settings } from './settings.schema';
@@ -11,7 +11,7 @@ export class SettingsSeeder implements Seeder {
     constructor(
         @InjectModel(Settings)
         private readonly settings: ReturnModelType<typeof Settings>,
-    ) {}
+    ) { }
 
     async seed(): Promise<any> {
         return this.settings.insertMany(settingsData);

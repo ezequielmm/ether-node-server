@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { InjectModel } from 'nestjs-typegoose';
+import { InjectModel } from 'kindagoose';
 import { Model, UpdateQuery, FilterQuery, ProjectionFields } from 'mongoose';
 import { Expedition, ExpeditionDocument } from './expedition.schema';
 import {
@@ -45,7 +45,7 @@ export class ExpeditionService {
         private readonly playerService: PlayerService,
         private readonly enemyService: EnemyService,
         private readonly trinketService: TrinketService,
-    ) {}
+    ) { }
 
     async getGameContext(client: Socket): Promise<GameContext> {
         const expedition = await this.findOne({ clientId: client.id });

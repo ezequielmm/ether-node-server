@@ -1,5 +1,5 @@
 import { forwardRef, Inject, Injectable, Logger } from '@nestjs/common';
-import { InjectModel } from 'nestjs-typegoose';
+import { InjectModel } from 'kindagoose';
 import { Enemy } from './enemy.schema';
 import { Model } from 'mongoose';
 import { EnemyId, enemyIdField, enemySelector } from './enemy.type';
@@ -36,7 +36,7 @@ export class EnemyService {
         private readonly expeditionService: ExpeditionService,
         @Inject(forwardRef(() => StatusService))
         private readonly statusService: StatusService,
-    ) {}
+    ) { }
 
     /**
      * Check if the entity is an enemy

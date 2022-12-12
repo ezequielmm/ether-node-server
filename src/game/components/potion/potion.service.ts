@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { InjectModel } from 'nestjs-typegoose';
+import { InjectModel } from 'kindagoose';
 import { Potion } from './potion.schema';
 import { GameContext } from '../interfaces';
 import { Document, FilterQuery } from 'mongoose';

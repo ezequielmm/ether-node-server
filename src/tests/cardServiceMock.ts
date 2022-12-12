@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { InjectModel } from 'nestjs-typegoose';
+import { InjectModel } from 'kindagoose';
 import { Card } from 'src/game/components/card/card.schema';
 import { CardId, getCardIdField } from 'src/game/components/card/card.type';
 import { ReturnModelType } from '@typegoose/typegoose';
@@ -12,7 +12,7 @@ import { ReturnModelType } from '@typegoose/typegoose';
 export class CardServiceMock {
     constructor(
         @InjectModel(Card) private readonly card: ReturnModelType<typeof Card>,
-    ) {}
+    ) { }
     async findById(id: CardId): Promise<Card> {
         const field = getCardIdField(id);
         return this.card.findOne({ [field]: id }).lean();

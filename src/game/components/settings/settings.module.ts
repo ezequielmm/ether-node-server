@@ -1,15 +1,15 @@
 import { Module } from '@nestjs/common';
-import { TypegooseModule } from 'nestjs-typegoose';
+import { KindagooseModule } from 'kindagoose';
 import { Settings } from './settings.schema';
 import { SettingsService } from './settings.service';
 
 @Module({
     imports: [
-        TypegooseModule.forFeature([
+        KindagooseModule.forFeature([
             Settings
         ]),
     ],
     providers: [SettingsService],
     exports: [SettingsService],
 })
-export class SettingsModule {}
+export class SettingsModule { }

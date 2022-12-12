@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
-import { InjectModel } from 'nestjs-typegoose';
+import { InjectModel } from 'kindagoose';
 import { randomUUID } from 'crypto';
 import { filter } from 'lodash';
 import { FilterQuery, Model } from 'mongoose';

@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { InjectModel } from 'nestjs-typegoose';
+import { InjectModel } from 'kindagoose';
 import { Model } from 'mongoose';
 import {
     CreateCardSelectionScreenDTO,
@@ -16,7 +16,7 @@ export class CardSelectionScreenService {
     constructor(
         @InjectModel(CardSelectionScreen)
         private readonly cardSelectionScreen: ReturnModelType<typeof CardSelectionScreen>,
-    ) {}
+    ) { }
 
     async create(
         payload: CreateCardSelectionScreenDTO,

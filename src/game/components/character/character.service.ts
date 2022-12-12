@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ReturnModelType } from '@typegoose/typegoose';
-import { InjectModel } from 'nestjs-typegoose';
+import { InjectModel } from 'kindagoose';
 import { GetCharacterDTO } from './character.dto';
 import { Character } from './character.schema';
 
@@ -9,7 +9,7 @@ export class CharacterService {
     constructor(
         @InjectModel(Character)
         private readonly character: ReturnModelType<typeof Character>,
-    ) {}
+    ) { }
 
     async findAll(): Promise<Character[]> {
         return this.character.find({ isActive: true }).lean();

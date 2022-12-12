@@ -5,17 +5,17 @@ import { CardModule } from '../card/card.module';
 import { EnemyModule } from '../enemy/enemy.module';
 import { PlayerModule } from '../player/player.module';
 import { TrinketModule } from '../trinket/trinket.module';
-import { TypegooseModule } from 'nestjs-typegoose';
+import { KindagooseModule } from 'kindagoose';
 
 @Module({
     imports: [
-        TypegooseModule.forFeature([Expedition]),
+        KindagooseModule.forFeature([Expedition]),
         CardModule,
         EnemyModule,
         PlayerModule,
         TrinketModule,
     ],
     providers: [ExpeditionService],
-    exports: [ExpeditionService, TypegooseModule],
+    exports: [ExpeditionService, KindagooseModule],
 })
-export class ExpeditionModule {}
+export class ExpeditionModule { }

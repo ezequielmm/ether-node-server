@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
 import { ReturnModelType } from '@typegoose/typegoose';
 import { isEmpty } from 'lodash';
-import { InjectModel } from 'nestjs-typegoose';
+import { InjectModel } from 'kindagoose';
 import {
     EVENT_AFTER_STATUSES_UPDATE,
     EVENT_AFTER_STATUS_ATTACH
@@ -30,7 +30,7 @@ export class CombatQueueService {
     constructor(
         @InjectModel(CombatQueue)
         private readonly combatQueue: ReturnModelType<typeof CombatQueue>,
-    ) {}
+    ) { }
 
     async findByClientId(clientId: string): Promise<CombatQueue> {
         return await this.combatQueue.findOne({ clientId });

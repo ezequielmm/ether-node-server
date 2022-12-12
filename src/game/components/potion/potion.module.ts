@@ -1,5 +1,5 @@
 import { forwardRef, Module } from '@nestjs/common';
-import { TypegooseModule } from 'nestjs-typegoose';
+import { KindagooseModule } from 'kindagoose';
 import { ActionModule } from 'src/game/action/action.module';
 import { EffectModule } from 'src/game/effects/effects.module';
 import { CombatQueueModule } from '../combatQueue/combatQueue.module';
@@ -10,17 +10,17 @@ import { Potion } from './potion.schema';
 import { PotionService } from './potion.service';
 
 @Module({
-    imports: [
-        forwardRef(() => ExpeditionModule),
-        EffectModule,
-        PlayerModule,
-        TypegooseModule.forFeature([
-          Potion
-        ]),
-        forwardRef(() => ActionModule),
-        CombatQueueModule,
-    ],
-    providers: [PotionService, PotionGateway],
-    exports: [PotionService],
+  imports: [
+    forwardRef(() => ExpeditionModule),
+    EffectModule,
+    PlayerModule,
+    KindagooseModule.forFeature([
+      Potion
+    ]),
+    forwardRef(() => ActionModule),
+    CombatQueueModule,
+  ],
+  providers: [PotionService, PotionGateway],
+  exports: [PotionService],
 })
-export class PotionModule {}
+export class PotionModule { }

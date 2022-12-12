@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { TypegooseModule } from 'nestjs-typegoose';
+import { KindagooseModule } from 'kindagoose';
 import {
     CardSelectionScreen,
 } from './cardSelectionScreen.schema';
@@ -7,7 +7,7 @@ import { CardSelectionScreenService } from './cardSelectionScreen.service';
 
 @Module({
     imports: [
-        TypegooseModule.forFeature([
+        KindagooseModule.forFeature([
             CardSelectionScreen,
         ]),
     ],

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ModuleRef } from '@nestjs/core';
 import { ReturnModelType } from '@typegoose/typegoose';
-import { getModelToken } from 'nestjs-typegoose';
+import { getModelToken } from 'kindagoose';
 import { FilterQuery, Model } from 'mongoose';
 import {
     StandardResponse,
@@ -15,7 +15,7 @@ import * as _ from 'lodash';
 
 @Injectable()
 export class TrinketService {
-    constructor(private readonly moduleRef: ModuleRef) {}
+    constructor(private readonly moduleRef: ModuleRef) { }
 
     private createFromClass(TrinketClass: typeof Trinket): Trinket {
         const TrinketModel = this.moduleRef.get<

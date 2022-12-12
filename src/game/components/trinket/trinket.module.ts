@@ -1,5 +1,5 @@
 import { forwardRef, Module } from '@nestjs/common';
-import { TypegooseModule } from 'nestjs-typegoose';
+import { KindagooseModule } from 'kindagoose';
 import { ExpeditionModule } from '../expedition/expedition.module';
 import { CorncobPipeUpgradedTrinket } from './collection/corncob-pipe-upgraded.trinket';
 import { CorncobPipeTrinket } from './collection/corncob-pipe.trinket';
@@ -8,9 +8,9 @@ import { TrinketService } from './trinket.service';
 
 @Module({
     imports: [
-        TypegooseModule.forFeature([
+        KindagooseModule.forFeature([
             {
-                typegooseClass: Trinket,
+                schema: Trinket,
                 discriminators: [
                     CorncobPipeTrinket,
                     CorncobPipeUpgradedTrinket,
@@ -20,6 +20,6 @@ import { TrinketService } from './trinket.service';
         forwardRef(() => ExpeditionModule),
     ],
     providers: [TrinketService],
-    exports: [TrinketService, TypegooseModule],
+    exports: [TrinketService, KindagooseModule],
 })
-export class TrinketModule {}
+export class TrinketModule { }

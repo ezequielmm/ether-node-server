@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
-import { TypegooseModule } from 'nestjs-typegoose';
+import { KindagooseModule } from 'kindagoose';
 import { CombatQueue } from './combatQueue.schema';
 import { CombatQueueService } from './combatQueue.service';
 
 @Module({
     imports: [
-        TypegooseModule.forFeature([
+        KindagooseModule.forFeature([
             CombatQueue,
         ]),
     ],

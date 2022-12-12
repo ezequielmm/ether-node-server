@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { InjectModel } from 'nestjs-typegoose';
+import { InjectModel } from 'kindagoose';
 import { Seeder } from 'nestjs-seeder';
 import { Chest } from './chest.schema';
 import { SmallChest } from './data/small.chest';
@@ -11,7 +11,7 @@ import { ReturnModelType } from '@typegoose/typegoose';
 export class ChestSeeder implements Seeder {
     constructor(
         @InjectModel(Chest) private readonly chest: ReturnModelType<typeof Chest>,
-    ) {}
+    ) { }
 
     async seed(): Promise<any> {
         return this.chest.insertMany([SmallChest, MediumChest, LargeChest]);

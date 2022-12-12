@@ -13,11 +13,11 @@ import { SettingsSeeder } from './game/components/settings/settings.seeder';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { Chest } from './game/components/chest/chest.schema';
 import { ChestSeeder } from './game/components/chest/chest.seeder';
-import { TypegooseModule } from 'nestjs-typegoose';
+import { KindagooseModule } from 'kindagoose';
 
 seeder({
     imports: [
-        TypegooseModule.forRootAsync({
+        KindagooseModule.forRootAsync({
             imports: [
                 ConfigModule.forRoot({
                     cache: true,
@@ -30,7 +30,7 @@ seeder({
                 return { uri, useNewUrlParser: true, useUnifiedTopology: true };
             },
         }),
-        TypegooseModule.forFeature([
+        KindagooseModule.forFeature([
             Card,
             Character,
             Trinket,

@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { InjectModel } from 'nestjs-typegoose';
+import { InjectModel } from 'kindagoose';
 import { Seeder } from 'nestjs-seeder';
 import { Potion } from './potion.schema';
 import { healingPotion } from './data/healing.potion';
@@ -23,7 +23,7 @@ export class PotionSeeder implements Seeder {
     constructor(
         @InjectModel(Potion)
         private readonly potion: ReturnModelType<typeof Potion>,
-    ) {}
+    ) { }
 
     async seed(): Promise<any> {
         return this.potion.insertMany([
