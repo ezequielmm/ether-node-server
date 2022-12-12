@@ -243,9 +243,7 @@ export class CardPlayedAction {
                     });
 
                     if (endTurn)
-                        await this.endPlayerTurnProcess.handle({
-                            client: this.client,
-                        });
+                        await this.endPlayerTurnProcess.handle({ ctx });
                 }
             }
         }
