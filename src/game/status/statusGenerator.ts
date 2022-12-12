@@ -11,6 +11,7 @@ import { resolveStatus } from './resolve/constants';
 import { siphoning } from './siphoning/constants';
 import { spikesStatus } from './spikes/constants';
 import { spirited } from './spirited/contants';
+import { tasteOfBloodBuff, tasteOfBloodDebuff } from './tasteOfBlood/constants';
 import { trapped } from './trapped/constants';
 import { turtling } from './turtling/constants';
 
@@ -56,7 +57,8 @@ export class StatusGenerator {
                 return `Each attack against this character deals ${counter} damage to the attacker`;
             case spirited.name:
                 return `Next turn, gain ${counter} Energy points`;
-            case 'tasteOfBlood':
+            case tasteOfBloodBuff.name:
+            case tasteOfBloodDebuff.name:
                 return `All attacks by and against you will do double damage`;
             case turtling.name:
                 return `Double the effect of all Defense gained from cards`;
@@ -64,7 +66,6 @@ export class StatusGenerator {
                 return `All attacks this turn will do double damage`;
             case trapped.name:
                 return `The enemy is hiding and waiting to strike`;
-            default:
                 return `Unknown status`;
         }
     }
