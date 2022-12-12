@@ -66,6 +66,7 @@ export class StatusGenerator {
                 return `All attacks this turn will do double damage`;
             case trapped.name:
                 return `The enemy is hiding and waiting to strike`;
+            default:
                 return `Unknown status`;
         }
     }
