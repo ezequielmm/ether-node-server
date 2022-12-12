@@ -1,20 +1,15 @@
 import { forwardRef, Module } from '@nestjs/common';
-import { MongooseModule } from '@nestjs/mongoose';
+import { KindagooseModule } from 'kindagoose';
 import { EncounterService } from './encounter.service';
 import { ExpeditionModule } from '../expedition/expedition.module';
-import { Encounter, EncounterSchema } from './encounter.schema';
+import { Encounter } from './encounter.schema';
 
 @Module({
     imports: [
-        MongooseModule.forFeature([
-            {
-                name: Encounter.name,
-                schema: EncounterSchema,
-            },
-        ]),
+        KindagooseModule.forFeature([Encounter]),
         forwardRef(() => ExpeditionModule),
     ],
     providers: [EncounterService],
     exports: [EncounterService],
 })
-export class EncounterModule {}
+export class EncounterModule { }

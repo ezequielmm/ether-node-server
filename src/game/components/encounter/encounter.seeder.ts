@@ -1,17 +1,18 @@
 import { Injectable } from '@nestjs/common';
 import { Seeder } from 'nestjs-seeder';
-import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { Encounter, EncounterDocument } from './encounter.schema';
+import { Encounter } from './encounter.schema';
 import { NagpraEncounter } from './data/nagpra.encounter';
 import { WillowispEncounter } from './data/willowisp.encounter';
+import { InjectModel } from 'kindagoose';
+import { ReturnModelType } from '@typegoose/typegoose';
 
 @Injectable()
 export class EncounterSeeder implements Seeder {
     constructor(
-        @InjectModel(Encounter.name)
-        private readonly encounter: Model<EncounterDocument>,
-    ) {}
+        @InjectModel(Encounter)
+        private readonly encounter: ReturnModelType<typeof Encounter>,
+    ) { }
 
     seed(): Promise<any> {
         return this.encounter.insertMany([NagpraEncounter, WillowispEncounter]);

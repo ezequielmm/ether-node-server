@@ -19,6 +19,7 @@ import { InitNodeProcess } from './initNode.process';
 import { EncounterService } from '../components/encounter/encounter.service';
 import { PotionRarityEnum } from '../components/potion/potion.enum';
 import { EncounterIdEnum } from '../components/encounter/encounter.enum';
+import { GameContext } from '../components/interfaces';
 
 @Injectable()
 export class InitEncounterProcess {
@@ -30,22 +31,22 @@ export class InitEncounterProcess {
         private readonly initMerchantProcess: InitMerchantProcess,
         private readonly initNodeProcess: InitNodeProcess,
         private readonly encounterService: EncounterService,
-    ) {}
+    ) { }
 
-    private client: Socket;
+    private ctx: GameContext;
     private node: IExpeditionNode;
 
-    async process(client: Socket, node: IExpeditionNode): Promise<string> {
-        this.client = client;
+    async process(ctx: GameContext, node: IExpeditionNode): Promise<string> {
+        this.ctx = ctx;
         this.node = node;
 
         const currentNode =
             await this.currentNodeGeneratorProcess.getCurrentNodeData(
+                ctx,
                 this.node,
-                this.client.id,
             );
 
-        await this.expeditionService.update(this.client.id, {
+        await this.expeditionService.update(this.ctx.client.id, {
             currentNode,
         });
 
@@ -67,10 +68,10 @@ export class InitEncounterProcess {
                 });
             case ExpeditionMapNodeTypeEnum.Merchant:
                 this.node.type = ExpeditionMapNodeTypeEnum.Merchant;
-                return this.initMerchantProcess.process(this.client, this.node);
+                return this.initMerchantProcess.process(this.ctx, this.node);
             case ExpeditionMapNodeTypeEnum.Camp:
                 this.node.type = ExpeditionMapNodeTypeEnum.Camp;
-                await this.initNodeProcess.process(this.client, this.node);
+                await this.initNodeProcess.process(this.ctx, this.node);
 
                 return StandardResponse.respond({
                     message_type: SWARMessageType.CampUpdate,
@@ -80,7 +81,7 @@ export class InitEncounterProcess {
             case ExpeditionMapNodeTypeEnum.Treasure:
                 this.node.type = ExpeditionMapNodeTypeEnum.Treasure;
                 return await this.initTreasureProcess.process(
-                    this.client,
+                    this.ctx,
                     this.node,
                 );
         }
@@ -88,7 +89,7 @@ export class InitEncounterProcess {
 
     private async createEncounterData(): Promise<string> {
         const currentNode = await this.expeditionService.getCurrentNode({
-            clientId: this.client.id,
+            clientId: this.ctx.client.id,
         });
 
         const nodeType = getRandomItemByWeight(
@@ -108,7 +109,7 @@ export class InitEncounterProcess {
         await this.encounterService.updateEncounterData(
             encounterId,
             0,
-            this.client,
+            this.ctx.client,
         );
         return await this.executeNode(nodeType);
     }
