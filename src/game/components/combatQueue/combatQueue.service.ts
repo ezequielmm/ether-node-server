@@ -154,18 +154,20 @@ export class CombatQueueService {
 
         statusesInfo.push(...StatusGenerator.formatStatusesToArray(statuses));
 
-        await this.push({
-            ctx,
-            source,
-            target,
-            args: {
-                effectType: CombatQueueTargetEffectTypeEnum.Status,
-                healthDelta: 0,
-                finalHealth: 0,
-                defenseDelta: 0,
-                finalDefense: 0,
-                statuses: statusesInfo,
-            },
-        });
+        if (statusesInfo.length > 0) {
+            await this.push({
+                ctx,
+                source,
+                target,
+                args: {
+                    effectType: CombatQueueTargetEffectTypeEnum.Status,
+                    healthDelta: 0,
+                    finalHealth: 0,
+                    defenseDelta: 0,
+                    finalDefense: 0,
+                    statuses: statusesInfo,
+                },
+            });
+        }
     }
 }
