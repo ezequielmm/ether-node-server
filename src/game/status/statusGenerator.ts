@@ -1,6 +1,8 @@
+import { burn } from './burn/constants';
 import { confusion } from './confusion/constants';
 import { dodge } from './dodge/constants';
 import { doubleDown } from './doubleDown/contants';
+import { feebleStatus } from './feeble/constants';
 import { fortitude } from './fortitude/constants';
 import { heraldDelayedStatus } from './heraldDelayed/constants';
 import { heraldingStatus } from './heralding/constants';
@@ -11,6 +13,8 @@ import { resolveStatus } from './resolve/constants';
 import { siphoning } from './siphoning/constants';
 import { spikesStatus } from './spikes/constants';
 import { spirited } from './spirited/contants';
+import { tasteOfBloodBuff, tasteOfBloodDebuff } from './tasteOfBlood/constants';
+import { trapped } from './trapped/constants';
 import { turtling } from './turtling/constants';
 
 export interface IStatusesList {
@@ -22,8 +26,19 @@ export interface IStatusesList {
 export class StatusGenerator {
     static formatStatusesToArray(items: AttachedStatus[]): IStatusesList[] {
         return items.map(({ name, args: { counter: counter } }) => {
+            let newName = name;
+
+            switch (name) {
+                case tasteOfBloodBuff.name:
+                case tasteOfBloodDebuff.name:
+                    newName = 'tasteOfBlood';
+                    break;
+                default:
+                    newName = name;
+            }
+
             return {
-                name,
+                name: newName,
                 counter,
                 description: this.generateDescription(name, counter),
             };
@@ -55,12 +70,19 @@ export class StatusGenerator {
                 return `Each attack against this character deals ${counter} damage to the attacker`;
             case spirited.name:
                 return `Next turn, gain ${counter} Energy points`;
-            case 'tasteOfBlood':
+            case tasteOfBloodBuff.name:
+            case tasteOfBloodDebuff.name:
                 return `All attacks by and against you will do double damage`;
             case turtling.name:
                 return `Double the effect of all Defense gained from cards`;
             case heraldingStatus.name:
                 return `All attacks this turn will do double damage`;
+            case trapped.name:
+                return `The enemy is hiding and waiting to strike`;
+            case burn.name:
+                return `Burn does ${counter} points of damage at the end of each turn`;
+            case feebleStatus.name:
+                return `All Defend actions gain 25% less Defense`;
             default:
                 return `Unknown status`;
         }

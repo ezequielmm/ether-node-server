@@ -6,7 +6,7 @@ export const damagePotion: Potion = {
     potionId: 3,
     name: 'Damage Potion',
     rarity: PotionRarityEnum.Common,
-    description: 'Apply 10 damage to an enemy',
+    description: 'Deal 10 damage to an enemy',
     effects: [
         {
             effect: damageEffect.name,
