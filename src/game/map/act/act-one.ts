@@ -19,19 +19,19 @@ const basicInitialCombatNode: NodeConfig = {
         enemies: [
             {
                 enemies: [stingFaeData.enemyId, stingFaeData.enemyId],
-                probability: 0,
+                probability: 0.25,
             },
             {
                 enemies: [barkChargerData.enemyId, barkChargerData.enemyId],
-                probability: 0,
+                probability: 0.25,
             },
             {
                 enemies: [sporeMongerData.enemyId],
-                probability: 1,
+                probability: 0.25,
             },
             {
                 enemies: [mimicFrog1Data.enemyId],
-                probability: 0,
+                probability: 0.25,
             },
         ],
     },
