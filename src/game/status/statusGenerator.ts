@@ -24,8 +24,19 @@ export interface IStatusesList {
 export class StatusGenerator {
     static formatStatusesToArray(items: AttachedStatus[]): IStatusesList[] {
         return items.map(({ name, args: { counter: counter } }) => {
+            let newName = name;
+
+            switch (name) {
+                case tasteOfBloodBuff.name:
+                case tasteOfBloodDebuff.name:
+                    newName = 'tasteOfBlood';
+                    break;
+                default:
+                    newName = name;
+            }
+
             return {
-                name,
+                name: newName,
                 counter,
                 description: this.generateDescription(name, counter),
             };
