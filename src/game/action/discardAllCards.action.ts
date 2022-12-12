@@ -42,14 +42,11 @@ export class DiscardAllCardsAction {
             cardsToRemove: cardsToExhaust,
         });
 
-        const newDiscard = [...newHand, ...discard];
-        const newExhaust = [...exhausted, ...cardsToExhaust];
-
         await this.expeditionService.updateHandPiles({
             clientId: client.id,
             hand: [],
-            discard: newDiscard,
-            exhausted: newExhaust,
+            discard: [...newHand, ...discard],
+            exhausted: [...exhausted, ...cardsToExhaust],
         });
 
         const cardMoves = hand.map(({ id, keywords }) => {
