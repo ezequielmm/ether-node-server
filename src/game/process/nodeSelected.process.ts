@@ -36,6 +36,7 @@ export class NodeSelectedProcess {
     ) { }
 
     async handle(ctx: GameContext, node_id: number): Promise<string> {
+        this.ctx = ctx;
         this.node = await this.expeditionService.getExpeditionMapNode({
             clientId: ctx.client.id,
             nodeId: node_id,
