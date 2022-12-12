@@ -1,12 +1,10 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import { Socket } from 'socket.io';
 import { ChangeTurnAction } from '../action/changeTurn.action';
 import { DiscardAllCardsAction } from '../action/discardAllCards.action';
 import { CombatQueueService } from '../components/combatQueue/combatQueue.service';
 import { EnemyService } from '../components/enemy/enemy.service';
 import { CombatTurnEnum } from '../components/expedition/expedition.enum';
-import { ExpeditionService } from '../components/expedition/expedition.service';
 import { GameContext } from '../components/interfaces';
 import {
     EVENT_AFTER_PLAYER_TURN_END,
@@ -26,16 +24,15 @@ export class EndPlayerTurnProcess {
     constructor(
         private readonly discardAllCardsAction: DiscardAllCardsAction,
         private readonly beginEnemyTurnProcess: BeginEnemyTurnProcess,
-        private readonly expeditionService: ExpeditionService,
         private readonly eventEmitter: EventEmitter2,
         private readonly combatQueueService: CombatQueueService,
         private readonly changeTurnAction: ChangeTurnAction,
         private readonly enemyService: EnemyService,
-    ) {}
+    ) { }
 
     async handle(payload: EndPlayerTurnDTO): Promise<void> {
         const { ctx } = payload;
-        const { client } = ctx;
+        const { client, expedition } = ctx;
 
         this.logger.debug(`Ending player ${client.id} turn`);
 
@@ -45,10 +42,6 @@ export class EndPlayerTurnProcess {
             entity: CombatTurnEnum.Player,
         });
 
-        const expedition = await this.expeditionService.findOne({
-            clientId: client.id,
-        });
-
         // Reset defense for the enemies that are alive
         const {
             currentNode: {
@@ -56,9 +49,7 @@ export class EndPlayerTurnProcess {
             },
         } = expedition;
 
-        const enemies = allEnemies.filter(({ hpCurrent }) => {
-            return hpCurrent > 0;
-        });
+        const enemies = allEnemies.filter(({ hpCurrent }) => hpCurrent > 0);
 
         for (const { id } of enemies) {
             await this.enemyService.setDefense(ctx, id, 0);

@@ -54,7 +54,7 @@ export class CardPlayedAction {
         private readonly combatQueueService: CombatQueueService,
         private readonly historyService: HistoryService,
         private readonly eventEmitter: EventEmitter2,
-    ) {}
+    ) { }
 
     async handle(payload: CardPlayedDTO): Promise<void> {
         const { cardId, selectedEnemyId, ctx } = payload;
@@ -232,9 +232,7 @@ export class CardPlayedAction {
                     });
 
                     if (endTurn)
-                        await this.endPlayerTurnProcess.handle({
-                            ctx,
-                        });
+                        await this.endPlayerTurnProcess.handle({ ctx });
                 }
             }
         }

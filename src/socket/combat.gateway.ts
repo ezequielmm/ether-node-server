@@ -33,7 +33,7 @@ export class CombatGateway {
         private readonly expeditionService: ExpeditionService,
         private readonly cardSelectionService: CardSelectionScreenService,
         private readonly moveCardAction: MoveCardAction,
-    ) {}
+    ) { }
 
     @SubscribeMessage('EndTurn')
     async handleEndTurn(client: Socket): Promise<void> {
@@ -54,9 +54,7 @@ export class CombatGateway {
                     await this.endPlayerTurnProcess.handle({ ctx });
                     break;
                 case CombatTurnEnum.Enemy:
-                    await this.endEnemyTurnProcess.handle({
-                        ctx,
-                    });
+                    await this.endEnemyTurnProcess.handle({ ctx });
                     break;
             }
         }
