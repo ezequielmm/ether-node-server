@@ -12,10 +12,9 @@ import { Socket } from 'socket.io';
 import { EncounterInterface } from './encounter.interfaces';
 import { EncounterDTO } from '../../action/getEncounterDataAction';
 import { DataWSRequestTypesEnum } from '../../../socket/socket.enum';
-import { IExpeditionNode } from "../expedition/expedition.interface";
-import { getRandomItemByWeight } from "../../../utils";
-import { ExpeditionMapNodeTypeEnum } from "../expedition/expedition.enum";
-import { EncounterIdEnum } from "./encounter.enum";
+import { IExpeditionNode } from '../expedition/expedition.interface';
+import { getRandomItemByWeight } from '../../../utils';
+import { EncounterIdEnum } from './encounter.enum';
 
 @Injectable()
 export class EncounterService {
@@ -84,16 +83,6 @@ export class EncounterService {
             switch (effect.kind) {
                 case 'coin': //eg nagpra
                     amount = parseInt(effect.amount);
-
-                    const playerState =
-                        await this.expeditionService.getPlayerState({
-                            clientId: client.id,
-                        });
-
-                    if (playerState.gold + amount < 0) {
-                        amount = -playerState.gold;
-                    }
-
                     await this.expeditionService.updateById(expeditionId, {
                         $inc: {
                             'playerState.gold': amount,
@@ -128,21 +117,13 @@ export class EncounterService {
             encounterData.encounterId,
         );
         const stage = encounter.stages[encounterData.stage];
-        const buttons: {
-            text: string;
-            enabled: boolean;
-        }[] = [];
+        const buttonText: string[] = [];
         for (let i = 0; i < stage.buttons.length; i++) {
-            const enabled = true;
-            const text = stage.buttons[i].text;
-            buttons.push({
-                text,
-                enabled,
-            });
+            buttonText.push(stage.buttons[i].text);
         }
         const displayText = stage.displayText;
         const imageId = encounter.imageId;
-        const answer: EncounterDTO = { imageId, displayText, buttons };
+        const answer: EncounterDTO = { imageId, displayText, buttonText };
         return answer;
     }
 
