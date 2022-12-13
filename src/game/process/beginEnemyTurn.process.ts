@@ -22,7 +22,7 @@ import {
 } from '../standardResponse/standardResponse';
 
 interface BeginEnemyTurnDTO {
-    client: Socket;
+    ctx: GameContext;
 }
 
 @Injectable()
@@ -40,7 +40,8 @@ export class BeginEnemyTurnProcess {
     ) {}
 
     async handle(payload: BeginEnemyTurnDTO): Promise<void> {
-        const { client } = payload;
+        const { ctx } = payload;
+        const { client } = ctx;
 
         this.logger.debug(`Beginning enemies turn`);
 
@@ -67,11 +68,6 @@ export class BeginEnemyTurnProcess {
         const enemies = allEnemies.filter(({ hpCurrent }) => {
             return hpCurrent > 0;
         });
-
-        const ctx: GameContext = {
-            client: this.client,
-            expedition,
-        };
 
         await this.combatQueueService.start(ctx);
 

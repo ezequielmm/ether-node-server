@@ -1,3 +1,4 @@
+import { bolstered } from './bolstered/constants';
 import { burn } from './burn/constants';
 import { confusion } from './confusion/constants';
 import { dewDropStatus } from './dewDrop/constants';
@@ -92,6 +93,8 @@ export class StatusGenerator {
                 return `The first card played each round will cost 1 less Energy`;
             case intercept.name:
                 return `All attacks against this character do half damage while active`;
+            case bolstered.name:
+                return `Until the end of the turn, gain ${counter} Defense for every card you play`;
             default:
                 return `Unknown status`;
         }

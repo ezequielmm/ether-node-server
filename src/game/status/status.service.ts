@@ -1,6 +1,6 @@
 import { forwardRef, Inject, Injectable, Logger } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import { InjectModel } from '@nestjs/mongoose';
+import { InjectModel } from 'kindagoose';
 import {
     compact,
     filter,
@@ -52,9 +52,11 @@ import {
     StatusTrigger,
     AttachedStatus,
     AttachDTO,
+    BeforeStatusAttachEvent,
 } from './interfaces';
 import * as cliColor from 'cli-color';
 import { TargetId } from '../effects/effects.types';
+import { ReturnModelType } from '@typegoose/typegoose';
 
 export interface AfterStatusAttachEvent {
     ctx: GameContext;
@@ -76,8 +78,8 @@ export class StatusService {
     private handlers: ProviderContainer<StatusMetadata, StatusHandler>[];
 
     constructor(
-        @InjectModel(Expedition.name)
-        private readonly expedition: Model<ExpeditionDocument>,
+        @InjectModel(Expedition)
+        private readonly expedition: ReturnModelType<typeof Expedition>,
         private readonly providerService: ProviderService,
         @Inject(forwardRef(() => ExpeditionService))
         private readonly expeditionService: ExpeditionService,
@@ -93,6 +95,11 @@ export class StatusService {
 
             // Check if the event is array of events
             const events = isArray(event) ? event : [event];
+
+            // If CTX, trigger event on events
+            if (ctx) {
+                ctx.events.emit(events, rest);
+            }
 
             // Loop through the events and trigger the handlers
             for (const event of events) {
@@ -141,7 +148,7 @@ export class StatusService {
     public async attach(dto: AttachDTO) {
         const { ctx, source, target, statusName, statusArgs } = dto;
 
-        await this.eventEmitter.emitAsync(EVENT_BEFORE_STATUS_ATTACH, {
+        const eventBeforeStatusAttach: BeforeStatusAttachEvent = {
             ctx,
             source,
             target,
@@ -150,7 +157,11 @@ export class StatusService {
                 args: statusArgs,
             },
             targetId: target.value.id,
-        });
+        };
+        await this.eventEmitter.emitAsync(
+            EVENT_BEFORE_STATUS_ATTACH,
+            eventBeforeStatusAttach,
+        );
 
         let finalStatus: AttachedStatus;
         switch (target.type) {

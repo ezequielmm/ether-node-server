@@ -1,4 +1,4 @@
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { modelOptions, Prop } from '@typegoose/typegoose';
 import { HydratedDocument } from 'mongoose';
 import { MerchantItems } from 'src/game/merchant/merchant.interface';
 import { AttachedStatus, StatusType } from 'src/game/status/interfaces';
@@ -11,21 +11,17 @@ import {
 import {
     IExpeditionCurrentNodeDataEnemy,
     IExpeditionNode,
-    IExpeditionPlayerState,
     IExpeditionPlayerStateDeckCard,
+    Player,
     Reward,
 } from './expedition.interface';
-import {
-    ExpeditionActConfig,
-    ExpeditionActConfigSchema,
-} from './expeditionActConfig.schema';
+import { ExpeditionActConfig } from './expeditionActConfig.schema';
 import { EncounterInterface } from '../encounter/encounter.interfaces';
 
 export type ExpeditionDocument = HydratedDocument<Expedition>;
 
-@Schema({
-    collection: 'expeditions',
-    versionKey: false,
+@modelOptions({
+    schemaOptions: { collection: 'expeditions', versionKey: false },
 })
 export class Expedition {
     @Prop()
@@ -34,7 +30,7 @@ export class Expedition {
     @Prop()
     playerId: number;
 
-    @Prop({ type: ExpeditionActConfigSchema })
+    @Prop()
     actConfig?: ExpeditionActConfig;
 
     @Prop()
@@ -43,8 +39,8 @@ export class Expedition {
     @Prop()
     map: IExpeditionNode[];
 
-    @Prop({ type: Object })
-    playerState: IExpeditionPlayerState;
+    @Prop()
+    playerState: Player;
 
     @Prop({ type: Object })
     currentNode?: {
@@ -91,5 +87,3 @@ export class Expedition {
     @Prop({ default: false })
     isCurrentlyPlaying: boolean;
 }
-
-export const ExpeditionSchema = SchemaFactory.createForClass(Expedition);

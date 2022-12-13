@@ -12,7 +12,6 @@ import { CardSelectionScreenService } from 'src/game/components/cardSelectionScr
 import { MoveCardAction } from 'src/game/action/moveCard.action';
 import { corsSocketSettings } from './socket.enum';
 import { CustomException, ErrorBehavior } from './custom.exception';
-import { GameContext } from 'src/game/components/interfaces';
 
 interface ICardPlayed {
     cardId: CardId;
@@ -34,15 +33,14 @@ export class CombatGateway {
         private readonly expeditionService: ExpeditionService,
         private readonly cardSelectionService: CardSelectionScreenService,
         private readonly moveCardAction: MoveCardAction,
-    ) {}
+    ) { }
 
     @SubscribeMessage('EndTurn')
     async handleEndTurn(client: Socket): Promise<void> {
         this.logger.debug(`Client ${client.id} trigger message "EndTurn"`);
 
-        const expedition = await this.expeditionService.findOne({
-            clientId: client.id,
-        });
+        const ctx = await this.expeditionService.getGameContext(client);
+        const expedition = ctx.expedition;
 
         if (expedition.currentNode !== null) {
             const {
@@ -50,11 +48,6 @@ export class CombatGateway {
                     data: { playing },
                 },
             } = expedition;
-
-            const ctx: GameContext = {
-                client,
-                expedition,
-            };
 
             switch (playing) {
                 case CombatTurnEnum.Player:
@@ -72,11 +65,11 @@ export class CombatGateway {
         this.logger.debug(
             `Client ${client.id} trigger message "CardPlayed": ${payload}`,
         );
-
+        const ctx = await this.expeditionService.getGameContext(client);
         const { cardId, targetId }: ICardPlayed = JSON.parse(payload);
 
         await this.cardPlayedAction.handle({
-            client,
+            ctx,
             cardId,
             selectedEnemyId: targetId,
         });

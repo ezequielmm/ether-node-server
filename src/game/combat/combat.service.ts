@@ -18,6 +18,7 @@ import {
     IExpeditionNode,
 } from '../components/expedition/expedition.interface';
 import { ExpeditionService } from '../components/expedition/expedition.service';
+import { GameContext } from '../components/interfaces';
 import { PotionRarityEnum } from '../components/potion/potion.enum';
 import { SettingsService } from '../components/settings/settings.service';
 import { TrinketRarityEnum } from '../components/trinket/trinket.enum';
@@ -38,11 +39,10 @@ export class CombatService {
     private clientId: string;
 
     async generate(
+        ctx: GameContext,
         node: IExpeditionNode,
-        clientId: string,
     ): Promise<IExpeditionCurrentNode> {
         this.node = node;
-        this.clientId = clientId;
 
         // Get initial player stats
         const {
@@ -53,10 +53,7 @@ export class CombatService {
         } = await this.settingsService.getSettings();
 
         // Get current health
-        const { hpCurrent, hpMax, cards } =
-            await this.expeditionService.getPlayerState({
-                clientId: this.clientId,
-            });
+        const { hpCurrent, hpMax, cards } = ctx.expedition.playerState;
 
         const handCards = cards
             .sort(() => 0.5 - Math.random())
@@ -69,14 +66,14 @@ export class CombatService {
 
         const {
             actConfig: { potionChance },
-        } = await this.expeditionService.findOne({ clientId }, { map: 0 });
+        } = ctx.expedition;
 
         const shouldGeneratePotion = getRandomBetween(1, 100) < potionChance;
         const trinketsToGenerate = [this.getTrinketRarityProbability()];
 
         const enemies = await this.getEnemies();
         const rewards = await this.rewardService.generateRewards({
-            clientId: this.clientId,
+            ctx,
             node: this.node,
             coinsToGenerate: this.generateCoins(),
             cardsToGenerate: this.getCardRarityProbability(

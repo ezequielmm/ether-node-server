@@ -1,38 +1,38 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { ReturnModelType } from '@typegoose/typegoose';
+import { isEmpty } from 'lodash';
+import { InjectModel } from 'kindagoose';
 import {
     EVENT_AFTER_STATUSES_UPDATE,
-    EVENT_AFTER_STATUS_ATTACH,
+    EVENT_AFTER_STATUS_ATTACH
 } from 'src/game/constants';
 import {
     StandardResponse,
     SWARAction,
-    SWARMessageType,
+    SWARMessageType
 } from 'src/game/standardResponse/standardResponse';
 import { AttachedStatus } from 'src/game/status/interfaces';
 import {
     IStatusesList,
-    StatusGenerator,
+    StatusGenerator
 } from 'src/game/status/statusGenerator';
-import { GameContext, ExpeditionEntity } from '../interfaces';
+import { ExpeditionEntity, GameContext } from '../interfaces';
+import { PlayerService } from '../player/player.service';
 import { CombatQueueTargetEffectTypeEnum } from './combatQueue.enum';
 import { CreateCombatQueueDTO, PushActionDTO } from './combatQueue.interface';
-import { CombatQueue, CombatQueueDocument } from './combatQueue.schema';
-import { isEmpty } from 'lodash';
-import { PlayerService } from '../player/player.service';
+import { CombatQueue } from './combatQueue.schema';
 
 @Injectable()
 export class CombatQueueService {
     private readonly logger = new Logger(CombatQueueService.name);
 
     constructor(
-        @InjectModel(CombatQueue.name)
-        private readonly combatQueue: Model<CombatQueueDocument>,
-    ) {}
+        @InjectModel(CombatQueue)
+        private readonly combatQueue: ReturnModelType<typeof CombatQueue>,
+    ) { }
 
-    async findByClientId(clientId: string): Promise<CombatQueueDocument> {
+    async findByClientId(clientId: string): Promise<CombatQueue> {
         return await this.combatQueue.findOne({ clientId });
     }
 
@@ -43,7 +43,7 @@ export class CombatQueueService {
         });
     }
 
-    async create(payload: CreateCombatQueueDTO): Promise<CombatQueueDocument> {
+    async create(payload: CreateCombatQueueDTO): Promise<CombatQueue> {
         return await this.combatQueue.create(payload);
     }
 

@@ -5,6 +5,7 @@ import {
     ExpeditionMapNodeTypeEnum,
 } from '../components/expedition/expedition.enum';
 import { ExpeditionService } from '../components/expedition/expedition.service';
+import { GameContext } from '../components/interfaces';
 import { restoreMap } from '../map/app';
 import {
     StandardResponse,
@@ -22,8 +23,8 @@ import { IExpeditionNode } from '../components/expedition/expedition.interface';
 @Injectable()
 export class NodeSelectedProcess {
     private readonly logger: Logger = new Logger(NodeSelectedProcess.name);
-    private client: Socket;
     private node: IExpeditionNode;
+    private ctx: GameContext;
 
     constructor(
         private readonly expeditionService: ExpeditionService,
@@ -32,12 +33,12 @@ export class NodeSelectedProcess {
         private readonly initMerchantProcess: InitMerchantProcess,
         private readonly initTreasureProcess: InitTreasureProcess,
         private readonly initEncounterProcess: InitEncounterProcess,
-    ) {}
+    ) { }
 
-    async handle(client: Socket, node_id: number): Promise<string> {
-        this.client = client;
+    async handle(ctx: GameContext, node_id: number): Promise<string> {
+        this.ctx = ctx;
         this.node = await this.expeditionService.getExpeditionMapNode({
-            clientId: client.id,
+            clientId: ctx.client.id,
             nodeId: node_id,
         });
 
@@ -48,7 +49,7 @@ export class NodeSelectedProcess {
                 return await this.nodeIsActive();
             default:
                 this.logger.error('Selected node is not available');
-                client.emit('ErrorMessage', {
+                ctx.client.emit('ErrorMessage', {
                     message: `An Error has ocurred selecting the node`,
                 });
                 break;
@@ -57,7 +58,7 @@ export class NodeSelectedProcess {
 
     private async nodeIsAvailable(): Promise<string> {
         const map = await this.expeditionService.getExpeditionMap({
-            clientId: this.client.id,
+            clientId: this.ctx.client.id,
         });
 
         const expeditionMap = restoreMap(map);
@@ -65,13 +66,13 @@ export class NodeSelectedProcess {
         selectedNode.select(expeditionMap);
 
         const { map: newMap, mapSeedId } =
-            (await this.expeditionService.update(this.client.id, {
+            (await this.expeditionService.update(this.ctx.client.id, {
                 map: expeditionMap.getMap,
             })) || {};
 
         switch (this.node.type) {
             case ExpeditionMapNodeTypeEnum.Portal:
-                this.logger.debug(`Map extended for client ${this.client.id}`);
+                this.logger.debug(`Map extended for client ${this.ctx.client.id}`);
 
                 return StandardResponse.respond({
                     message_type: SWARMessageType.MapUpdate,
@@ -85,7 +86,7 @@ export class NodeSelectedProcess {
             case ExpeditionMapNodeTypeEnum.RoyalHouseC:
             case ExpeditionMapNodeTypeEnum.RoyalHouseD:
                 this.logger.debug(
-                    `Activated portal for client ${this.client.id}`,
+                    `Activated portal for client ${this.ctx.client.id}`,
                 );
 
                 return StandardResponse.respond({
@@ -99,10 +100,10 @@ export class NodeSelectedProcess {
             case ExpeditionMapNodeTypeEnum.CombatElite:
             case ExpeditionMapNodeTypeEnum.CombatStandard:
                 this.logger.debug(
-                    `Sent message InitCombat to client ${this.client.id}`,
+                    `Sent message InitCombat to client ${this.ctx.client.id}`,
                 );
 
-                await this.initCombatProcess.process(this.client, this.node);
+                await this.initCombatProcess.process(this.ctx, this.node);
 
                 return StandardResponse.respond({
                     message_type: SWARMessageType.MapUpdate,
@@ -113,7 +114,7 @@ export class NodeSelectedProcess {
             case ExpeditionMapNodeTypeEnum.Camp:
             case ExpeditionMapNodeTypeEnum.CampHouse:
             case ExpeditionMapNodeTypeEnum.CampRegular:
-                await this.initNodeProcess.process(this.client, this.node);
+                await this.initNodeProcess.process(this.ctx, this.node);
 
                 return StandardResponse.respond({
                     message_type: SWARMessageType.CampUpdate,
@@ -122,16 +123,16 @@ export class NodeSelectedProcess {
                 });
             case ExpeditionMapNodeTypeEnum.Encounter:
                 return await this.initEncounterProcess.process(
-                    this.client,
+                    this.ctx,
                     this.node,
                 );
             case ExpeditionMapNodeTypeEnum.Treasure:
                 return await this.initTreasureProcess.process(
-                    this.client,
+                    this.ctx,
                     this.node,
                 );
             case ExpeditionMapNodeTypeEnum.Merchant:
-                return this.initMerchantProcess.process(this.client, this.node);
+                return this.initMerchantProcess.process(this.ctx, this.node);
         }
     }
 
@@ -139,15 +140,15 @@ export class NodeSelectedProcess {
         switch (this.node.type) {
             case ExpeditionMapNodeTypeEnum.Combat:
                 this.logger.debug(
-                    `Sent message InitCombat to client ${this.client.id}`,
+                    `Sent message InitCombat to client ${this.ctx.client.id}`,
                 );
 
-                await this.initCombatProcess.process(this.client, this.node);
+                await this.initCombatProcess.process(this.ctx, this.node);
                 break;
             case ExpeditionMapNodeTypeEnum.Camp:
             case ExpeditionMapNodeTypeEnum.CampHouse:
             case ExpeditionMapNodeTypeEnum.CampRegular:
-                await this.initNodeProcess.process(this.client, this.node);
+                await this.initNodeProcess.process(this.ctx, this.node);
 
                 return StandardResponse.respond({
                     message_type: SWARMessageType.CampUpdate,
@@ -155,7 +156,7 @@ export class NodeSelectedProcess {
                     data: null,
                 });
             case ExpeditionMapNodeTypeEnum.Encounter:
-                await this.initNodeProcess.process(this.client, this.node);
+                await this.initNodeProcess.process(this.ctx, this.node);
 
                 return StandardResponse.respond({
                     message_type: SWARMessageType.EncounterUpdate,
@@ -164,11 +165,11 @@ export class NodeSelectedProcess {
                 });
             case ExpeditionMapNodeTypeEnum.Treasure:
                 return await this.initTreasureProcess.process(
-                    this.client,
+                    this.ctx,
                     this.node,
                 );
             case ExpeditionMapNodeTypeEnum.Merchant:
-                await this.initMerchantProcess.process(this.client, this.node);
+                await this.initMerchantProcess.process(this.ctx, this.node);
 
                 return StandardResponse.respond({
                     message_type: SWARMessageType.MerchantUpdate,

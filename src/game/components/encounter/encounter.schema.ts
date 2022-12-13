@@ -1,10 +1,8 @@
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
+import { modelOptions, Prop } from '@typegoose/typegoose';
 
 export type EncounterDocument = Encounter & Document;
-@Schema({
-    collection: 'encounters',
-    versionKey: false,
+@modelOptions({
+    schemaOptions: { collection: 'encounter', versionKey: false },
 })
 export class Encounter {
     @Prop()
@@ -24,4 +22,3 @@ export class Encounter {
         }[];
     }[];
 }
-export const EncounterSchema = SchemaFactory.createForClass(Encounter);

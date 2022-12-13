@@ -343,3 +343,14 @@ export interface MutateEffectArgsDTO {
     effectDTO: EffectDTO;
     preview: boolean;
 }
+
+export interface BeforeStatusAttachEvent {
+    ctx: GameContext;
+    source: ExpeditionEntity;
+    target: ExpeditionEntity;
+    status: {
+        name: string;
+        args: any;
+    };
+    targetId: TargetId;
+}

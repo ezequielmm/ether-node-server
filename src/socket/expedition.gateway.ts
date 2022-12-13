@@ -33,8 +33,10 @@ export class ExpeditionGateway {
             `Client ${client.id} trigger message "NodeSelected": ${node_id}`,
         );
 
+        const ctx = await this.expeditionService.getGameContext(client);
+
         try {
-            return await this.nodeSelectedProcess.handle(client, node_id);
+            return await this.nodeSelectedProcess.handle(ctx, node_id);
         } catch (e) {
             this.logger.error(e.message);
             this.logger.error(e.trace);

@@ -1,4 +1,4 @@
-import * as _ from 'lodash';
+import { range } from 'lodash';
 import { ancientOneData } from 'src/game/components/enemy/data/ancientOne.enemy';
 import { barkChargerData } from 'src/game/components/enemy/data/barkCharger.enemy';
 import { fungalBruteData } from 'src/game/components/enemy/data/fungalBrute.enemy';
@@ -177,7 +177,7 @@ export const actCconfigAlternatives = [
                 ],
             },
             // Node 4 to 11
-            ..._.range(8).map(() => ({
+            ...range(8).map(() => ({
                 nodes: [2, 4],
                 node_options: [
                     {
@@ -342,7 +342,7 @@ export const actCconfigAlternatives = [
                 ],
             },
             // Node 14 to 20
-            ..._.range(7).map(() => ({
+            ...range(7).map(() => ({
                 nodes: [2, 4],
                 node_options: [
                     {

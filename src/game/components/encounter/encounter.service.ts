@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Model } from 'mongoose';
-import { InjectModel } from '@nestjs/mongoose';
+import { InjectModel } from 'kindagoose';
 import { Encounter } from './encounter.schema';
 import {
     StandardResponse,
@@ -12,15 +11,16 @@ import { Socket } from 'socket.io';
 import { EncounterInterface } from './encounter.interfaces';
 import { EncounterDTO } from '../../action/getEncounterDataAction';
 import { DataWSRequestTypesEnum } from '../../../socket/socket.enum';
+import { ReturnModelType } from '@typegoose/typegoose';
+import { getRandomItemByWeight } from 'src/utils';
 import { IExpeditionNode } from '../expedition/expedition.interface';
-import { getRandomItemByWeight } from '../../../utils';
 import { EncounterIdEnum } from './encounter.enum';
 
 @Injectable()
 export class EncounterService {
     constructor(
-        @InjectModel(Encounter.name)
-        private readonly encounterModel: Model<Encounter>,
+        @InjectModel(Encounter)
+        private readonly encounterModel: ReturnModelType<typeof Encounter>,
         private readonly expeditionService: ExpeditionService,
     ) {}
 

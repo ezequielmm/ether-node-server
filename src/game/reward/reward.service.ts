@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { randomUUID } from 'crypto';
-import { filter, pick } from 'lodash';
+import { chain, filter, includes, map, pick } from 'lodash';
 import { CustomException, ErrorBehavior } from 'src/socket/custom.exception';
 import { CardDescriptionFormatter } from '../cardDescriptionFormatter/cardDescriptionFormatter';
 import { CardRarityEnum, CardTypeEnum } from '../components/card/card.enum';
@@ -39,17 +39,16 @@ export class RewardService {
     ) {}
 
     private node: IExpeditionNode;
-    private clientId: string;
 
     async generateRewards({
+        ctx,
         cardsToGenerate,
         potionsToGenerate,
         trinketsToGenerate,
         coinsToGenerate,
         node,
-        clientId,
     }: {
-        clientId: string;
+        ctx: GameContext;
         node: IExpeditionNode;
         coinsToGenerate: number;
         cardsToGenerate: CardRarityEnum[];
@@ -57,7 +56,6 @@ export class RewardService {
         trinketsToGenerate: TrinketRarityEnum[];
     }): Promise<Reward[]> {
         this.node = node;
-        this.clientId = clientId;
 
         const rewards: Reward[] = [];
 
@@ -84,7 +82,10 @@ export class RewardService {
         }
 
         if (trinketsToGenerate.length > 0) {
-            const trinkets = await this.generateTrinkets(trinketsToGenerate);
+            const trinkets = await this.generateTrinkets(
+                ctx,
+                trinketsToGenerate,
+            );
 
             if (trinkets.length > 0) rewards.push(...trinkets);
         }
@@ -262,40 +263,24 @@ export class RewardService {
     }
 
     private async generateTrinkets(
-        trinketsToGenerate: TrinketRarityEnum[],
+        ctx: GameContext,
+        trinketRarities: TrinketRarityEnum[],
     ): Promise<TrinketReward[]> {
-        const trinketRewards: TrinketReward[] = [];
+        const trinketToReject = map(
+            ctx.expedition.playerState.trinkets,
+            'trinketId',
+        );
 
-        const { trinkets } = await this.expeditionService.getPlayerState({
-            clientId: this.clientId,
-        });
-
-        const trinketIds = trinkets.map(({ trinketId }) => trinketId);
-
-        for (let i = 0; i < trinketRewards.length; i++) {
-            const trinket = await this.trinketService.getRandomTrinket({
-                isActive: true,
-                rarity: trinketsToGenerate[i],
-                ...(trinketIds.length > 0 && {
-                    trinketId: {
-                        $nin: trinketIds,
-                    },
-                }),
-            });
-
-            if (trinket)
-                trinketRewards.push({
-                    id: randomUUID(),
-                    type: IExpeditionNodeReward.Trinket,
-                    taken: false,
-                    trinket: pick(trinket, [
-                        'trinketId',
-                        'name',
-                        'description',
-                    ]),
-                });
-        }
-
-        return trinketRewards;
+        return chain(this.trinketService.findAll())
+            .reject((trinket) => includes(trinketToReject, trinket.trinketId))
+            .reject((trinket) => includes(trinketRarities, trinket.rarity))
+            .uniqBy('rarity')
+            .map<TrinketReward>((trinket) => ({
+                id: randomUUID(),
+                type: IExpeditionNodeReward.Trinket,
+                taken: false,
+                trinket: pick(trinket, ['trinketId', 'name', 'description']),
+            }))
+            .value();
     }
 }

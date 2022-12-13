@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
+import { InjectModel } from 'kindagoose';
 import { Model, UpdateQuery, FilterQuery, ProjectionFields } from 'mongoose';
 import { Expedition, ExpeditionDocument } from './expedition.schema';
 import {
@@ -22,7 +22,7 @@ import { ExpeditionStatusEnum } from './expedition.enum';
 import {
     IExpeditionCurrentNode,
     IExpeditionNode,
-    IExpeditionPlayerState,
+    Player,
     IExpeditionPlayerStateDeckCard,
 } from './expedition.interface';
 import { generateMap, restoreMap } from 'src/game/map/app';
@@ -33,38 +33,48 @@ import { PlayerService } from '../player/player.service';
 import { EnemyService } from '../enemy/enemy.service';
 import { EnemyId } from '../enemy/enemy.type';
 import { Socket } from 'socket.io';
+import { EventEmitter2 } from '@nestjs/event-emitter';
+import { ReturnModelType } from '@typegoose/typegoose';
+import { TrinketService } from '../trinket/trinket.service';
 
 @Injectable()
 export class ExpeditionService {
     constructor(
-        @InjectModel(Expedition.name)
-        private readonly expedition: Model<ExpeditionDocument>,
+        @InjectModel(Expedition)
+        private readonly expedition: ReturnModelType<typeof Expedition>,
         private readonly playerService: PlayerService,
         private readonly enemyService: EnemyService,
-    ) {}
+        private readonly trinketService: TrinketService,
+    ) { }
 
     async getGameContext(client: Socket): Promise<GameContext> {
         const expedition = await this.findOne({ clientId: client.id });
+        const events = new EventEmitter2();
 
-        return {
+        const ctx = {
             expedition,
             client,
+            events,
         };
+
+        expedition.playerState.trinkets.forEach((trinket) => {
+            trinket.onAttach(ctx);
+        });
+
+        return ctx;
     }
 
     async findOne(
         filter: FilterQuery<Expedition>,
         projection?: ProjectionFields<Expedition>,
     ): Promise<ExpeditionDocument> {
-        return await this.expedition
-            .findOne(
-                {
-                    ...filter,
-                    status: ExpeditionStatusEnum.InProgress,
-                },
-                projection,
-            )
-            .lean();
+        return await this.expedition.findOne(
+            {
+                ...filter,
+                status: ExpeditionStatusEnum.InProgress,
+            },
+            projection,
+        );
     }
 
     async create(payload: CreateExpeditionDTO): Promise<ExpeditionDocument> {
@@ -200,9 +210,7 @@ export class ExpeditionService {
         return cards;
     }
 
-    async getPlayerState(
-        payload: GetPlayerStateDTO,
-    ): Promise<IExpeditionPlayerState> {
+    async getPlayerState(payload: GetPlayerStateDTO): Promise<Player> {
         const { playerState } = await this.expedition
             .findOne(payload)
             .select('playerState')

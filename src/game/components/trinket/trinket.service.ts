@@ -1,49 +1,49 @@
 import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { randomUUID } from 'crypto';
-import { FilterQuery, Model } from 'mongoose';
+import { ModuleRef } from '@nestjs/core';
+import { ReturnModelType } from '@typegoose/typegoose';
+import { getModelToken } from 'kindagoose';
+import { find, sample, filter as filterFunction } from 'lodash';
 import {
     StandardResponse,
-    SWARMessageType,
     SWARAction,
+    SWARMessageType,
 } from 'src/game/standardResponse/standardResponse';
-import { ExpeditionService } from '../expedition/expedition.service';
 import { GameContext } from '../interfaces';
-import { Trinket, TrinketDocument } from './trinket.schema';
-import { getTrinketField, TrinketId } from './trinket.type';
+import * as Trinkets from './collection';
+import { Trinket } from './trinket.schema';
 
 @Injectable()
 export class TrinketService {
-    constructor(
-        @InjectModel(Trinket.name)
-        private readonly trinket: Model<TrinketDocument>,
-        private readonly expeditionService: ExpeditionService,
-    ) {}
+    constructor(private readonly moduleRef: ModuleRef) {}
 
-    async findAll(): Promise<TrinketDocument[]> {
-        return this.trinket.find({ isActive: true }).lean();
+    private createFromClass(TrinketClass: typeof Trinket): Trinket {
+        const TrinketModel = this.moduleRef.get<
+            ReturnModelType<typeof Trinket>
+        >(getModelToken(TrinketClass.name), { strict: false });
+
+        return new TrinketModel();
     }
 
-    async findById(id: TrinketId): Promise<TrinketDocument> {
-        const field = getTrinketField(id);
-        return this.trinket.findOne({ [field]: id }).lean();
+    public findAll(): Trinket[] {
+        return Object.values(Trinkets).map((TrinketClass) =>
+            this.createFromClass(TrinketClass),
+        );
     }
 
-    public async getRandomTrinket(
-        filter?: FilterQuery<Trinket>,
-    ): Promise<TrinketDocument> {
-        const [trinket] = await this.trinket
-            .aggregate<TrinketDocument>([
-                { $match: filter },
-                { $sample: { size: 1 } },
-            ])
-            .exec();
+    public find(filter: Partial<Trinket>): Trinket[] {
+        return filterFunction(this.findAll(), filter);
+    }
 
-        return trinket;
+    public findOne(filter: Partial<Trinket>): Trinket {
+        return find(this.findAll(), filter);
+    }
+
+    public getRandomTrinket(filter?: Partial<Trinket>): Trinket {
+        return sample(this.find(filter));
     }
 
     public async add(ctx: GameContext, trinketId: number): Promise<boolean> {
-        const trinket = await this.findById(trinketId);
+        const trinket = this.findOne({ trinketId });
 
         if (!trinket) {
             ctx.client.emit(
@@ -57,14 +57,9 @@ export class TrinketService {
             return false;
         }
 
-        await this.expeditionService.updateById(ctx.expedition._id.toString(), {
-            $push: {
-                'playerState.trinkets': {
-                    id: randomUUID(),
-                    ...trinket,
-                },
-            },
-        });
+        ctx.expedition.playerState.trinkets.push(trinket);
+        trinket.onAttach(ctx);
+        await ctx.expedition.save();
 
         return true;
     }

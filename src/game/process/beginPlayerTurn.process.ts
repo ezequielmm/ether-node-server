@@ -23,7 +23,7 @@ import {
 } from '../standardResponse/standardResponse';
 
 interface BeginPlayerTurnDTO {
-    client: Socket;
+    ctx: GameContext;
 }
 
 @Injectable()
@@ -40,10 +40,11 @@ export class BeginPlayerTurnProcess {
         private readonly getPlayerInfoAction: GetPlayerInfoAction,
         private readonly combatQueueService: CombatQueueService,
         private readonly changeTurnAction: ChangeTurnAction,
-    ) {}
+    ) { }
 
     async handle(payload: BeginPlayerTurnDTO): Promise<void> {
-        const { client } = payload;
+        const { ctx } = payload;
+        const { client } = ctx;
 
         this.logger.debug(`Beginning player ${client.id} turn`);
 
@@ -72,12 +73,6 @@ export class BeginPlayerTurnProcess {
         await this.expeditionService.updateById(expedition._id.toString(), {
             'currentNode.data.round': round + 1,
         });
-
-        // Create player context
-        const ctx: GameContext = {
-            client,
-            expedition: expedition as ExpeditionDocument,
-        };
 
         // Start the combat queue
         await this.combatQueueService.start(ctx);

@@ -6,6 +6,7 @@ import { Chest } from '../components/chest/chest.schema';
 import { ChestService } from '../components/chest/chest.service';
 import { IExpeditionNode } from '../components/expedition/expedition.interface';
 import { ExpeditionService } from '../components/expedition/expedition.service';
+import { GameContext } from '../components/interfaces';
 import { PotionRarityEnum } from '../components/potion/potion.enum';
 import { TrinketRarityEnum } from '../components/trinket/trinket.enum';
 import { RewardService } from '../reward/reward.service';
@@ -28,8 +29,8 @@ export class TreasureService {
     private chest: Chest;
 
     async generateTreasure(
+        ctx: GameContext,
         node: IExpeditionNode,
-        clientId: string,
     ): Promise<TreasureInterface> {
         const chest = await this.chestService.getRandomChest();
 
@@ -39,7 +40,7 @@ export class TreasureService {
         const randomPotionChance = getRandomBetween(1, 100);
 
         const rewards = await this.rewardService.generateRewards({
-            clientId,
+            ctx,
             node,
             coinsToGenerate:
                 randomCoinChance <= chest.coinChance

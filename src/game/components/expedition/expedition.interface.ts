@@ -1,3 +1,4 @@
+import { Prop } from '@typegoose/typegoose';
 import { Item } from 'src/game/merchant/merchant.interface';
 import { AttachedStatus, StatusType } from 'src/game/status/interfaces';
 import { CardRarityEnum, CardTypeEnum } from '../card/card.enum';
@@ -9,6 +10,8 @@ import {
 } from '../enemy/enemy.enum';
 import { EnemyScript } from '../enemy/enemy.interface';
 import { Potion } from '../potion/potion.schema';
+import { CorncobPipeUpgradedTrinket } from '../trinket/collection/corncob-pipe-upgraded.trinket';
+import { CorncobPipeTrinket } from '../trinket/collection/corncob-pipe.trinket';
 import { Trinket } from '../trinket/trinket.schema';
 import {
     ExpeditionMapNodeTypeEnum,
@@ -21,22 +24,47 @@ export interface PotionInstance extends Potion {
     id: string;
 }
 
-export interface TrinketInstance extends Trinket {
-    id: string;
-}
-export interface IExpeditionPlayerState {
+export class Player {
+    @Prop()
     playerId: string;
+
+    @Prop()
     playerName: string;
+
+    @Prop()
     characterClass: string;
+
+    @Prop()
     hpMax: number;
+
+    @Prop()
     hpCurrent: number;
+
+    @Prop()
     gold: number;
+
+    @Prop()
     potions: PotionInstance[];
-    trinkets: TrinketInstance[];
+
+    @Prop({
+        type: Trinket,
+        discriminators: () => [CorncobPipeTrinket, CorncobPipeUpgradedTrinket],
+    })
+    trinkets: Trinket[];
+
+    @Prop()
     createdAt: Date;
+
+    @Prop()
     cards: IExpeditionPlayerStateDeckCard[];
+
+    @Prop()
     stoppedAt?: Date;
+
+    @Prop()
     cardUpgradeCount: number;
+
+    @Prop()
     cardDestroyCount: number;
 }
 

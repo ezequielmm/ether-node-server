@@ -79,6 +79,7 @@ export class EndCombatProcess {
             {
                 $set: {
                     status: ExpeditionStatusEnum.Defeated,
+                    isCurrentlyPlaying: false,
                 },
             },
         );
