@@ -99,17 +99,6 @@ export class InitEncounterProcess {
             ],
             [85, 10, 5],
         );
-
-        const encounterId = getRandomItemByWeight(
-            [EncounterIdEnum.Nagpra, EncounterIdEnum.WillOWisp],
-            [1, 1],
-        );
-
-        await this.encounterService.updateEncounterData(
-            encounterId,
-            0,
-            this.client,
-        );
         return await this.executeNode(nodeType);
     }
 
