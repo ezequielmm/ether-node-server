@@ -1,4 +1,4 @@
-import { Prop, SubDocumentType } from '@typegoose/typegoose';
+import { Prop } from '@typegoose/typegoose';
 import { Item } from 'src/game/merchant/merchant.interface';
 import { AttachedStatus, StatusType } from 'src/game/status/interfaces';
 import { CardRarityEnum, CardTypeEnum } from '../card/card.enum';
