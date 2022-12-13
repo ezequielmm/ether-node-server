@@ -33,7 +33,7 @@ export class CombatService {
         private readonly expeditionService: ExpeditionService,
         private readonly enemyService: EnemyService,
         private readonly rewardService: RewardService,
-    ) { }
+    ) {}
 
     private node: IExpeditionNode;
     private clientId: string;
@@ -237,6 +237,15 @@ export class CombatService {
     private getTrinketRarityProbability(): TrinketRarityEnum {
         switch (this.node.subType) {
             case ExpeditionMapNodeTypeEnum.CombatElite:
+                return getRandomItemByWeight(
+                    [
+                        TrinketRarityEnum.Common,
+                        TrinketRarityEnum.Uncommon,
+                        TrinketRarityEnum.Rare,
+                    ],
+                    [0.5, 0.33, 0.17],
+                );
+            case ExpeditionMapNodeTypeEnum.CombatStandard:
                 return getRandomItemByWeight(
                     [
                         TrinketRarityEnum.Common,
