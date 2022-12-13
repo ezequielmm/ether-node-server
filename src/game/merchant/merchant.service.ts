@@ -62,6 +62,8 @@ export class MerchantService {
         this.client = client;
         this.selectedItem = selectedItem;
 
+        this.logger.debug(selectedItem);
+
         switch (selectedItem.type) {
             case ItemsTypeEnum.Card:
             case ItemsTypeEnum.Trinket:
