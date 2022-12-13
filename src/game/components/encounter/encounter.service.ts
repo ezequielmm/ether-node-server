@@ -118,13 +118,21 @@ export class EncounterService {
             encounterData.encounterId,
         );
         const stage = encounter.stages[encounterData.stage];
-        const buttonText: string[] = [];
+        const buttons: {
+            text: string;
+            enabled: boolean;
+        }[] = [];
         for (let i = 0; i < stage.buttons.length; i++) {
-            buttonText.push(stage.buttons[i].text);
+            const enabled = true;
+            const text = stage.buttons[i].text;
+            buttons.push({
+                text,
+                enabled,
+            });
         }
         const displayText = stage.displayText;
         const imageId = encounter.imageId;
-        const answer: EncounterDTO = { imageId, displayText, buttonText };
+        const answer: EncounterDTO = { imageId, displayText, buttons };
         return answer;
     }
 
