@@ -3,7 +3,7 @@ import { Document } from 'mongoose';
 
 export type EncounterDocument = Encounter & Document;
 @Schema({
-    collection: 'encounter',
+    collection: 'encounters',
     versionKey: false,
 })
 export class Encounter {
