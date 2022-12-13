@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import * as _ from 'lodash';
+import { findLast } from 'lodash';
 import { DeepPartial } from 'src/utils';
 import { ClientId } from '../components/expedition/expedition.type';
 import {
@@ -40,9 +40,8 @@ export class HistoryService {
      * @param clientId Client id
      * @returns History of the client
      */
-    get(clientId: ClientId): Registry[] {
-        return this.historyDictionary.get(clientId) || [];
-    }
+    get = (clientId: ClientId): Registry[] =>
+        this.historyDictionary.get(clientId) || [];
 
     /**
      * Return the last registry that matches the partial registry
@@ -58,12 +57,11 @@ export class HistoryService {
         // Get the history of the client
         const history = this.get(clientId);
 
-        return _.findLast(history, registry) as T;
+        return findLast(history, registry) as T;
     }
 
-    isEffect(registry: Registry): registry is EffectRegistry {
-        return registry.type === 'effect';
-    }
+    isEffect = (registry: Registry): registry is EffectRegistry =>
+        registry.type === 'effect';
 
     /**
      * Clear the history of a client

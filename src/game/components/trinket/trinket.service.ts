@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { ModuleRef } from '@nestjs/core';
 import { ReturnModelType } from '@typegoose/typegoose';
 import { getModelToken } from 'kindagoose';
-import { FilterQuery, Model } from 'mongoose';
+import { find, sample, filter as filterFunction } from 'lodash';
 import {
     StandardResponse,
     SWARAction,
@@ -11,11 +11,10 @@ import {
 import { GameContext } from '../interfaces';
 import * as Trinkets from './collection';
 import { Trinket } from './trinket.schema';
-import * as _ from 'lodash';
 
 @Injectable()
 export class TrinketService {
-    constructor(private readonly moduleRef: ModuleRef) { }
+    constructor(private readonly moduleRef: ModuleRef) {}
 
     private createFromClass(TrinketClass: typeof Trinket): Trinket {
         const TrinketModel = this.moduleRef.get<
@@ -32,15 +31,15 @@ export class TrinketService {
     }
 
     public find(filter: Partial<Trinket>): Trinket[] {
-        return _.filter(this.findAll(), filter);
+        return filterFunction(this.findAll(), filter);
     }
 
     public findOne(filter: Partial<Trinket>): Trinket {
-        return _.find(this.findAll(), filter);
+        return find(this.findAll(), filter);
     }
 
     public getRandomTrinket(filter?: Partial<Trinket>): Trinket {
-        return _.sample(this.find(filter));
+        return sample(this.find(filter));
     }
 
     public async add(ctx: GameContext, trinketId: number): Promise<boolean> {

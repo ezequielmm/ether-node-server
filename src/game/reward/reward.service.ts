@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { randomUUID } from 'crypto';
-import { filter, pick } from 'lodash';
+import { chain, filter, includes, map, pick } from 'lodash';
 import { CustomException, ErrorBehavior } from 'src/socket/custom.exception';
 import { CardDescriptionFormatter } from '../cardDescriptionFormatter/cardDescriptionFormatter';
 import { CardRarityEnum, CardTypeEnum } from '../components/card/card.enum';
@@ -28,7 +28,6 @@ import {
     SWARMessageType,
     SWARAction,
 } from '../standardResponse/standardResponse';
-import * as _ from 'lodash';
 
 @Injectable()
 export class RewardService {
@@ -37,7 +36,7 @@ export class RewardService {
         private readonly potionService: PotionService,
         private readonly trinketService: TrinketService,
         private readonly expeditionService: ExpeditionService,
-    ) { }
+    ) {}
 
     private node: IExpeditionNode;
 
@@ -267,14 +266,14 @@ export class RewardService {
         ctx: GameContext,
         trinketRarities: TrinketRarityEnum[],
     ): Promise<TrinketReward[]> {
-        const trinketToReject = _.map(
+        const trinketToReject = map(
             ctx.expedition.playerState.trinkets,
             'trinketId',
         );
 
-        return _.chain(this.trinketService.findAll())
-            .reject((trinket) => _.includes(trinketToReject, trinket.trinketId))
-            .reject((trinket) => !_.includes(trinketRarities, trinket.rarity))
+        return chain(this.trinketService.findAll())
+            .reject((trinket) => includes(trinketToReject, trinket.trinketId))
+            .reject((trinket) => includes(trinketRarities, trinket.rarity))
             .uniqBy('rarity')
             .map<TrinketReward>((trinket) => ({
                 id: randomUUID(),
