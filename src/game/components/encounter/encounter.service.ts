@@ -84,6 +84,16 @@ export class EncounterService {
             switch (effect.kind) {
                 case 'coin': //eg nagpra
                     amount = parseInt(effect.amount);
+
+                    const playerState =
+                        await this.expeditionService.getPlayerState({
+                            clientId: client.id,
+                        });
+
+                    if (playerState.gold + amount < 0) {
+                        amount = -playerState.gold;
+                    }
+
                     await this.expeditionService.updateById(expeditionId, {
                         $inc: {
                             'playerState.gold': amount,
