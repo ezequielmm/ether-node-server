@@ -1,12 +1,15 @@
 import { burn } from './burn/constants';
 import { confusion } from './confusion/constants';
+import { dewDropStatus } from './dewDrop/constants';
 import { dodge } from './dodge/constants';
 import { doubleDown } from './doubleDown/contants';
+import { fatigue } from './fatigue/constants';
 import { feebleStatus } from './feeble/constants';
 import { fortitude } from './fortitude/constants';
 import { heraldDelayedStatus } from './heraldDelayed/constants';
 import { heraldingStatus } from './heralding/constants';
 import { imbued } from './imbued/constants';
+import { intercept } from './intercept/constants';
 import { AttachedStatus } from './interfaces';
 import { regeneration } from './regeneration/contants';
 import { resolveStatus } from './resolve/constants';
@@ -83,6 +86,12 @@ export class StatusGenerator {
                 return `Burn does ${counter} points of damage at the end of each turn`;
             case feebleStatus.name:
                 return `All Defend actions gain 25% less Defense`;
+            case fatigue.name:
+                return `All attacks by this character do 25% less damage`;
+            case dewDropStatus.name:
+                return `The first card played each round will cost 1 less Energy`;
+            case intercept.name:
+                return `All attacks against this character do half damage while active`;
             default:
                 return `Unknown status`;
         }
