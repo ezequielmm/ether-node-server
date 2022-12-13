@@ -497,7 +497,7 @@ export class MerchantService {
         await this.success();
     }
 
-    async handlePotions(
+    private async handlePotions(
         merchantItems: MerchantItems,
         item: Item,
         itemIndex: number,
