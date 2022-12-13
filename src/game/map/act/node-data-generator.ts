@@ -1,4 +1,4 @@
-import * as _ from 'lodash';
+import { cloneDeep } from 'lodash';
 import { ancientOneData } from 'src/game/components/enemy/data/ancientOne.enemy';
 import { barkChargerData } from 'src/game/components/enemy/data/barkCharger.enemy';
 import { groundMothData } from 'src/game/components/enemy/data/groundmoth.enemy';
@@ -189,14 +189,14 @@ export class DefaultNodeDataFiller implements NodeDataFiller {
         }
 
         if (config.subType == ExpeditionMapNodeTypeEnum.CombatElite) {
-            config.data = _.cloneDeep(eliteNodeData);
+            config.data = cloneDeep(eliteNodeData);
         }
 
         if (config.subType == ExpeditionMapNodeTypeEnum.CombatStandard) {
             if (step <= 12) {
-                config.data = _.cloneDeep(easyCombatStandarData);
+                config.data = cloneDeep(easyCombatStandarData);
             } else {
-                config.data = _.cloneDeep(hardCombatStandarData);
+                config.data = cloneDeep(hardCombatStandarData);
             }
         }
     }

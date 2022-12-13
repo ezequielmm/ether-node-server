@@ -60,6 +60,14 @@ $(document).ready(function () {
         });
     });
 
+    $('#btnSkipNode').click(function () {
+        const nodeId = document.getElementById('nodeId').value;
+
+        socket.emit('NodeSkipped', parseInt(nodeId), (response) => {
+            showJSON(response);
+        });
+    });
+
     $('#btnPlayCard').click(function () {
         const cardId = document.getElementById('cardId').value;
         const targetId = document.getElementById('targetId').value;
@@ -150,7 +158,15 @@ $(document).ready(function () {
     });
 
     $('#btnOpenChest').click(function () {
-        socket.emit('OpenChest', (response) => {
+        socket.emit('ChestOpened', (response) => {
+            showJSON(response);
+        });
+    });
+
+    $('#btnEncounterChoice').click(function () {
+        const choiceIdx = document.getElementById('choiceIdx').value;
+
+        socket.emit('EncounterChoice', parseInt(choiceIdx), (response) => {
             showJSON(response);
         });
     });

@@ -1,13 +1,9 @@
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument } from 'mongoose';
+import { ModelOptions, Prop } from '@typegoose/typegoose';
 import { ExpeditionEntity } from '../interfaces';
 import { ICombatQueueTarget } from './combatQueue.interface';
 
-export type CombatQueueDocument = HydratedDocument<CombatQueue>;
-
-@Schema({
-    collection: 'combatQueues',
-    versionKey: false,
+@ModelOptions({
+    schemaOptions: { collection: 'combatQueue', versionKey: false },
 })
 export class CombatQueue {
     @Prop()
@@ -20,5 +16,3 @@ export class CombatQueue {
         targets?: ICombatQueueTarget[];
     }[];
 }
-
-export const CombatQueueSchema = SchemaFactory.createForClass(CombatQueue);

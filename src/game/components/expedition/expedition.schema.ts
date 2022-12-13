@@ -1,4 +1,4 @@
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { modelOptions, Prop } from '@typegoose/typegoose';
 import { HydratedDocument } from 'mongoose';
 import { MerchantItems } from 'src/game/merchant/merchant.interface';
 import { AttachedStatus, StatusType } from 'src/game/status/interfaces';
@@ -11,15 +11,17 @@ import {
 import {
     IExpeditionCurrentNodeDataEnemy,
     IExpeditionNode,
-    IExpeditionPlayerState,
     IExpeditionPlayerStateDeckCard,
+    Player,
     Reward,
 } from './expedition.interface';
+import { ExpeditionActConfig } from './expeditionActConfig.schema';
+import { EncounterInterface } from '../encounter/encounter.interfaces';
 
 export type ExpeditionDocument = HydratedDocument<Expedition>;
-@Schema({
-    collection: 'expeditions',
-    versionKey: false,
+
+@modelOptions({
+    schemaOptions: { collection: 'expeditions', versionKey: false },
 })
 export class Expedition {
     @Prop()
@@ -29,13 +31,16 @@ export class Expedition {
     playerId: number;
 
     @Prop()
+    actConfig?: ExpeditionActConfig;
+
+    @Prop()
     mapSeedId?: number;
 
     @Prop()
     map: IExpeditionNode[];
 
-    @Prop({ type: Object })
-    playerState: IExpeditionPlayerState;
+    @Prop()
+    playerState: Player;
 
     @Prop({ type: Object })
     currentNode?: {
@@ -69,6 +74,7 @@ export class Expedition {
         };
         merchantItems?: MerchantItems;
         treasureData?: TreasureInterface;
+        encounterData?: EncounterInterface;
     };
 
     @Prop({
@@ -77,6 +83,7 @@ export class Expedition {
         enum: ExpeditionStatusEnum,
     })
     status: ExpeditionStatusEnum;
-}
 
-export const ExpeditionSchema = SchemaFactory.createForClass(Expedition);
+    @Prop({ default: false })
+    isCurrentlyPlaying: boolean;
+}

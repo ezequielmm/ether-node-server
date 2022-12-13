@@ -43,13 +43,37 @@ function nodeFactory(
     | Empty {
     switch (subType) {
         case ExpeditionMapNodeTypeEnum.Combat:
-            return new Combat(id, act, step, type, subType, private_data);
+            return new Combat(
+                id,
+                act,
+                step,
+                type,
+                subType,
+                private_data,
+                title,
+            );
 
         case ExpeditionMapNodeTypeEnum.CombatBoss:
-            return new CombatBoss(id, act, step, type, subType, private_data);
+            return new CombatBoss(
+                id,
+                act,
+                step,
+                type,
+                subType,
+                private_data,
+                title,
+            );
 
         case ExpeditionMapNodeTypeEnum.CombatElite:
-            return new CombatElite(id, act, step, type, subType, private_data);
+            return new CombatElite(
+                id,
+                act,
+                step,
+                type,
+                subType,
+                private_data,
+                title,
+            );
 
         case ExpeditionMapNodeTypeEnum.CombatStandard:
             return new CombatStandard(
@@ -59,25 +83,66 @@ function nodeFactory(
                 type,
                 subType,
                 private_data,
+                title,
             );
 
         case ExpeditionMapNodeTypeEnum.Camp:
-            return new Camp(id, act, step, type, subType, private_data);
+            return new Camp(id, act, step, type, subType, private_data, title);
 
         case ExpeditionMapNodeTypeEnum.CampHouse:
-            return new CampHouse(id, act, step, type, subType, private_data);
+            return new CampHouse(
+                id,
+                act,
+                step,
+                type,
+                subType,
+                private_data,
+                title,
+            );
 
         case ExpeditionMapNodeTypeEnum.CampRegular:
-            return new CampRegular(id, act, step, type, subType, private_data);
+            return new CampRegular(
+                id,
+                act,
+                step,
+                type,
+                subType,
+                private_data,
+                title,
+            );
 
         case ExpeditionMapNodeTypeEnum.Encounter:
-            return new Encounter(id, act, step, type, subType, private_data);
+            return new Encounter(
+                id,
+                act,
+                step,
+                type,
+                subType,
+                private_data,
+                title,
+            );
 
         case ExpeditionMapNodeTypeEnum.Merchant:
-            return new Merchant(id, act, step, type, subType, private_data);
+            return new Merchant(
+                id,
+                act,
+                step,
+                type,
+                subType,
+                private_data,
+                title,
+            );
 
         case ExpeditionMapNodeTypeEnum.Portal:
-            return new Portal(id, act, step, type, subType, private_data);
+            return new Portal(
+                id,
+                act,
+                step,
+                type,
+                subType,
+                private_data,
+                title,
+            );
 
         case ExpeditionMapNodeTypeEnum.RoyalHouse:
             return new RoyalHouse(
@@ -138,7 +203,15 @@ function nodeFactory(
             return new Event(id, act, step, type, subType, private_data);
 
         case ExpeditionMapNodeTypeEnum.Treasure:
-            return new Treasure(id, act, step, type, subType, private_data);
+            return new Treasure(
+                id,
+                act,
+                step,
+                type,
+                subType,
+                private_data,
+                title,
+            );
 
         default:
             return new Empty(id, act, step, type, subType, private_data);

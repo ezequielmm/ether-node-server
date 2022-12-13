@@ -1,18 +1,15 @@
 import { Module } from '@nestjs/common';
-import { MongooseModule } from '@nestjs/mongoose';
-import { CustomDeck, CustomDeckSchema } from './customDeck.schema';
+import { KindagooseModule } from 'kindagoose';
+import { CustomDeck } from './customDeck.schema';
 import { CustomDeckService } from './customDeck.service';
 
 @Module({
     imports: [
-        MongooseModule.forFeature([
-            {
-                name: CustomDeck.name,
-                schema: CustomDeckSchema,
-            },
+        KindagooseModule.forFeature([
+            CustomDeck,
         ]),
     ],
     providers: [CustomDeckService],
     exports: [CustomDeckService],
 })
-export class CustomDeckModule {}
+export class CustomDeckModule { }

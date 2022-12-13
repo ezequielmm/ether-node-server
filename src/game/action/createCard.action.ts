@@ -1,7 +1,9 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { DocumentType } from '@typegoose/typegoose';
 import { randomUUID } from 'crypto';
 import { Socket } from 'socket.io';
 import { CardDescriptionFormatter } from '../cardDescriptionFormatter/cardDescriptionFormatter';
+import { Card } from '../components/card/card.schema';
 import { CardService } from '../components/card/card.service';
 import { ExpeditionService } from '../components/expedition/expedition.service';
 import {
@@ -24,7 +26,7 @@ export class CreateCardAction {
     constructor(
         private readonly expeditionService: ExpeditionService,
         private readonly cardService: CardService,
-    ) {}
+    ) { }
 
     async handle(dto: CreateCardDTO): Promise<void> {
         const { client, cardsToAdd, destination, sendSWARResponse } = dto;
@@ -41,7 +43,7 @@ export class CreateCardAction {
         const destinationDeck = cards[destination];
 
         // Query the cards we need from the card service
-        let newCards = await this.cardService.findCardsById(cardsToAdd);
+        let newCards = (await this.cardService.findCardsById(cardsToAdd)) as DocumentType<Card>[];
 
         // Generate UUIDs for the new cards
         newCards = newCards.map((card) => {

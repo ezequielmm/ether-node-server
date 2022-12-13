@@ -9,8 +9,9 @@ class Treasure extends Node {
         type: ExpeditionMapNodeTypeEnum,
         subType: ExpeditionMapNodeTypeEnum,
         private_data: any,
+        title?: string,
     ) {
-        super(id, act, step, type, subType, private_data);
+        super(id, act, step, type, subType, private_data, title);
     }
 }
 

@@ -1,4 +1,4 @@
-import { regenerate } from 'src/game/status/regenerate/contants';
+import { regeneration } from 'src/game/status/regeneration/contants';
 import { CardRarityEnum, CardTypeEnum, CardTargetedEnum } from '../card.enum';
 import { Card } from '../card.schema';
 
@@ -9,13 +9,13 @@ export const InvokeBlessingCardUpgraded: Card = {
     cardType: CardTypeEnum.Power,
     pool: 'knight',
     energy: 0,
-    description: `Gain {${regenerate.name}} Regenerate`,
+    description: `Gain {${regeneration.name}} Regeneration`,
     keywords: [],
     properties: {
         effects: [],
         statuses: [
             {
-                name: regenerate.name,
+                name: regeneration.name,
                 attachTo: CardTargetedEnum.Player,
                 args: {
                     counter: 1,
@@ -35,13 +35,13 @@ export const InvokeBlessingCard: Card = {
     cardType: CardTypeEnum.Power,
     pool: 'knight',
     energy: 1,
-    description: `Gain {${regenerate.name}} Regenerate`,
+    description: `Gain {${regeneration.name}} Regeneration`,
     keywords: [],
     properties: {
         effects: [],
         statuses: [
             {
-                name: regenerate.name,
+                name: regeneration.name,
                 attachTo: CardTargetedEnum.Player,
                 args: {
                     counter: 1,

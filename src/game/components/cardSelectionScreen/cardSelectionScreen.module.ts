@@ -1,21 +1,17 @@
 import { Module } from '@nestjs/common';
-import { MongooseModule } from '@nestjs/mongoose';
+import { KindagooseModule } from 'kindagoose';
 import {
     CardSelectionScreen,
-    CardSelectionScreenSchema,
 } from './cardSelectionScreen.schema';
 import { CardSelectionScreenService } from './cardSelectionScreen.service';
 
 @Module({
     imports: [
-        MongooseModule.forFeature([
-            {
-                name: CardSelectionScreen.name,
-                schema: CardSelectionScreenSchema,
-            },
+        KindagooseModule.forFeature([
+            CardSelectionScreen,
         ]),
     ],
     providers: [CardSelectionScreenService],
     exports: [CardSelectionScreenService],
 })
-export class CardSelectionScreenModule {}
+export class CardSelectionScreenModule { }

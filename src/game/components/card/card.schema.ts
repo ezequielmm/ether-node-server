@@ -1,14 +1,10 @@
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument } from 'mongoose';
+import { ModelOptions, Prop } from '@typegoose/typegoose';
 import { JsonEffect } from 'src/game/effects/effects.interface';
 import { JsonStatus } from 'src/game/status/interfaces';
 import { CardRarityEnum, CardTypeEnum, CardKeywordEnum } from './card.enum';
 
-export type CardDocument = HydratedDocument<Card>;
-
-@Schema({
-    collection: 'cards',
-    versionKey: false,
+@ModelOptions({
+    schemaOptions: { collection: 'cards', versionKey: false },
 })
 export class Card {
     @Prop({ unique: true })
@@ -64,5 +60,3 @@ export class Card {
     @Prop()
     isActive: boolean;
 }
-
-export const CardSchema = SchemaFactory.createForClass(Card);

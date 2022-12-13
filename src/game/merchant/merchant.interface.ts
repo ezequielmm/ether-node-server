@@ -1,8 +1,8 @@
 import {
     IExpeditionPlayerStateDeckCard,
     PotionInstance,
-    TrinketInstance,
 } from '../components/expedition/expedition.interface';
+import { Trinket } from '../components/trinket/trinket.schema';
 import { ItemsTypeEnum } from './merchant.enum';
 
 export interface Item {
@@ -12,7 +12,7 @@ export interface Item {
     itemId: number;
     cost: number;
     type: ItemsTypeEnum;
-    item: IExpeditionPlayerStateDeckCard | PotionInstance | TrinketInstance;
+    item: IExpeditionPlayerStateDeckCard | PotionInstance | Trinket;
 }
 
 export interface FindOneMerchantDTO {

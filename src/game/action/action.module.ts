@@ -25,12 +25,15 @@ import { GetEnergyAction } from './getEnergy.action';
 import { GetMerchantDataAction } from './getMerchantData.action';
 import { GetPlayerDeckAction } from './getPlayerDeck.action';
 import { GetPlayerInfoAction } from './getPlayerInfo.action';
+import { GetRewardsAction } from './getRewards.action';
 import { GetStatusesAction } from './getStatuses.action';
 import { GetTreasureDataAction } from './getTreasureData.action';
 import { GetUpgradableCardsAction } from './getUpgradableCards.action';
 import { MoveCardAction } from './moveCard.action';
 import { SetCombatTurnAction } from './setCombatTurn.action';
 import { UpgradeCardAction } from './upgradeCard.action';
+import { GetEncounterDataAction } from './getEncounterDataAction';
+import { EncounterModule } from '../components/encounter/encounter.module';
 
 const actions = [
     FullSyncAction,
@@ -54,6 +57,8 @@ const actions = [
     GetUpgradableCardsAction,
     GetMerchantDataAction,
     GetTreasureDataAction,
+    GetRewardsAction,
+    GetEncounterDataAction,
 ];
 
 @Module({
@@ -69,6 +74,7 @@ const actions = [
         PlayerModule,
         HistoryModule,
         CombatQueueModule,
+        EncounterModule,
     ],
     providers: actions,
     exports: actions,

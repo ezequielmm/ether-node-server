@@ -34,27 +34,20 @@ export class EndCombatProcess {
         if (this.enemyService.isAllDead(ctx)) {
             this.logger.debug('All enemies are dead. Ending combat');
             await this.endCombat(ctx);
-            this.emitEnemiesDefeated(ctx);
         }
     }
 
     private async endCombat(ctx: GameContext): Promise<void> {
         await this.combatQueueService.end(ctx);
 
-        const {
-            expedition: { id: expeditionId },
-        } = ctx;
-
-        await this.expeditionService.updateById(expeditionId, {
+        await this.expeditionService.updateById(ctx.expedition._id.toString(), {
             $set: {
                 'currentNode.showRewards': true,
             },
         });
 
         this.logger.debug(`Combat ended for client ${ctx.client.id}`);
-    }
 
-    private emitEnemiesDefeated(ctx: GameContext) {
         ctx.client.emit(
             'PutData',
             StandardResponse.respond({
@@ -86,6 +79,7 @@ export class EndCombatProcess {
             {
                 $set: {
                     status: ExpeditionStatusEnum.Defeated,
+                    isCurrentlyPlaying: false,
                 },
             },
         );

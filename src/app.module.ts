@@ -1,24 +1,22 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { ApiModule } from './api/api.module';
-import { MongooseModule } from '@nestjs/mongoose';
 import { SocketModule } from './socket/socket.module';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { composeMongooseModuleOptions } from './dbConfiguration';
-// import { DebugLogger } from './tests/integrationTestServer';
+import { KindagooseModule } from 'kindagoose';
 
 @Module({
     imports: [
         ApiModule,
         ConfigModule.forRoot({ isGlobal: true, cache: true }),
         SocketModule,
-        MongooseModule.forRootAsync({
+        KindagooseModule.forRootAsync({
             inject: [ConfigService],
             useFactory: (configService: ConfigService) => {
                 const uri = configService.get<string>('MONGODB_URL');
 
-                return composeMongooseModuleOptions(uri);
+                return { uri, useNewUrlParser: true, useUnifiedTopology: true };
             },
         }),
         EventEmitterModule.forRoot({

@@ -1,11 +1,7 @@
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument } from 'mongoose';
+import { ModelOptions, Prop } from '@typegoose/typegoose';
 
-export type SettingsDocument = HydratedDocument<Settings>;
-
-@Schema({
-    collection: 'settings',
-    versionKey: false,
+@ModelOptions({
+    schemaOptions: { collection: 'settings', versionKey: false },
 })
 export class Settings {
     @Prop()
@@ -19,6 +15,10 @@ export class Settings {
 
     @Prop()
     initialDeckSize: number;
-}
 
-export const SettingsSchema = SchemaFactory.createForClass(Settings);
+    @Prop()
+    initialPotionChance: number;
+
+    @Prop()
+    maxCardRewardsInCombat: number;
+}

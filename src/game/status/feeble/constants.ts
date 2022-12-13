@@ -8,7 +8,7 @@ import {
 } from '../interfaces';
 
 export const feebleStatus: StatusEffect = {
-    name: 'Feeble',
+    name: 'feeble',
     type: StatusType.Debuff,
     counterType: StatusCounterType.Duration,
     trigger: StatusTrigger.Effect,

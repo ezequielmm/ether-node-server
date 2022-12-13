@@ -28,6 +28,7 @@ export enum SWARMessageType {
     AddPotion = 'add_potion',
     AddTrinket = 'add_trinket',
     CardDestroy = 'card_destroy',
+    TrinketTriggered = 'trinket_triggered',
 }
 
 export enum SWARAction {
@@ -54,6 +55,8 @@ export enum SWARAction {
     CombatQueue = 'combat_queue',
     BeginCamp = 'begin_camp',
     BeginEncounter = 'begin_encounter',
+    ContinueEncounter = 'continue_encounter',
+    FinishEncounter = 'finish_encounter',
     BeginTreasure = 'begin_treasure',
     ContinueTreasure = 'continue_treasure',
     TreasureData = 'treasure_data',
@@ -76,6 +79,7 @@ export enum SWARAction {
     HealAmount = 'heal_amount',
     CardUpgrade = 'card_upgrade',
     CardDestroy = 'card_destroy',
+    FlashTrinketIcon = 'flash_trinket_icon',
 }
 
 interface SWARPayload {

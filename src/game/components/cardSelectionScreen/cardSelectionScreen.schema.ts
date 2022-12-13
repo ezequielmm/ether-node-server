@@ -1,12 +1,8 @@
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument } from 'mongoose';
+import { ModelOptions, Prop } from '@typegoose/typegoose';
 import { CardSelectionScreenOriginPileEnum } from './cardSelectionScreen.enum';
 
-export type CardSelectionScreenDocument = HydratedDocument<CardSelectionScreen>;
-
-@Schema({
-    collection: 'cardSelectionScreens',
-    versionKey: false,
+@ModelOptions({
+    schemaOptions: { collection: 'cardSelectionScreens', versionKey: false },
 })
 export class CardSelectionScreen {
     @Prop()
@@ -21,6 +17,3 @@ export class CardSelectionScreen {
     @Prop()
     amountToTake: number;
 }
-
-export const CardSelectionScreenSchema =
-    SchemaFactory.createForClass(CardSelectionScreen);

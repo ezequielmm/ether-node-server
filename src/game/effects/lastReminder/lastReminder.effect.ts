@@ -1,7 +1,7 @@
 import { EnemyService } from 'src/game/components/enemy/enemy.service';
 import { PlayerService } from 'src/game/components/player/player.service';
 import { burn } from 'src/game/status/burn/constants';
-import { regenerate } from 'src/game/status/regenerate/contants';
+import { regeneration } from 'src/game/status/regeneration/contants';
 import { StatusService } from 'src/game/status/status.service';
 import { EffectDecorator } from '../effects.decorator';
 import { EffectDTO, EffectHandler } from '../effects.interface';
@@ -22,7 +22,7 @@ export class LastReminderEffect implements EffectHandler {
         } = dto;
 
         // Here we check if the target has any burn status
-        // if it does, the source get the regenerate status
+        // if it does, the source get the regeneration status
         let hasBurnStatus = false;
 
         if (EnemyService.isEnemy(target)) {
@@ -42,7 +42,7 @@ export class LastReminderEffect implements EffectHandler {
                 ctx,
                 source,
                 target,
-                statusName: regenerate.name,
+                statusName: regeneration.name,
                 statusArgs: { counter: currentValue },
             });
         }
