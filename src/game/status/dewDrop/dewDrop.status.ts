@@ -19,6 +19,7 @@ export class DewDropStatus implements StatusEventHandler {
             round: ctx.expedition.currentNode.data.round,
         });
 
-        if (!cardPlayed) eventArgs.card.energy -= 1;
+        if (!cardPlayed)
+            eventArgs.card.energy = Math.max(0, eventArgs.card.energy - 1);
     }
 }
