@@ -1,42 +1,42 @@
 import { Prop } from '@typegoose/typegoose';
-import { EVENT_BEFORE_STATUS_ATTACH } from 'src/game/constants';
-import { burn } from 'src/game/status/burn/constants';
-import { BeforeStatusAttachEvent } from 'src/game/status/interfaces';
-import { GameContext } from '../../interfaces';
+import { EffectDTO } from 'src/game/effects/effects.interface';
+import { StatusDirection, StatusType } from 'src/game/status/interfaces';
+import { PlayerService } from '../../player/player.service';
+import { TrinketModifier } from '../trinket-modifier';
 import { TrinketRarityEnum } from '../trinket.enum';
-import { Trinket } from '../trinket.schema';
 
 /**
  * Pine Resin Trinket
  */
-export class PineResin extends Trinket {
+export class PineResin extends TrinketModifier {
     @Prop({ default: 2 })
     trinketId: number;
 
-    @Prop({ default: 'Corncob Pipe' })
+    @Prop({ default: 'Pine Resin' })
     name: string;
 
-    @Prop({ default: 'All Burn effects apply +1 Burn' })
+    @Prop({
+        default: 'When taking unblocked attack damage, reduce damage by 1',
+    })
     description: string;
 
     @Prop({ default: TrinketRarityEnum.Common })
     rarity: TrinketRarityEnum;
 
-    @Prop({ default: 1 })
-    burnIncrement: number;
+    @Prop({ default: StatusType.Buff })
+    type: StatusType;
 
-    onAttach(ctx: GameContext): void {
-        ctx.events.addListener(
-            EVENT_BEFORE_STATUS_ATTACH,
-            (args: BeforeStatusAttachEvent) => {
-                if (
-                    args.status.name == burn.name &&
-                    args.target.type == 'enemy'
-                ) {
-                    args.status.args.counter += 1;
-                    this.trigger(ctx);
-                }
-            },
-        );
+    @Prop({ default: StatusDirection.Incoming })
+    direction: StatusDirection;
+
+    mutate(dto: EffectDTO): EffectDTO {
+        if (PlayerService.isPlayer(dto.target)) {
+            if (dto.target.value.combatState.defense == 0) {
+                dto.args.currentValue = 0;
+                this.trigger(dto.ctx);
+            }
+        }
+
+        return dto;
     }
 }
