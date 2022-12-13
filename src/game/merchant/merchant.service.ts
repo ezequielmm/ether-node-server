@@ -62,6 +62,8 @@ export class MerchantService {
         this.client = client;
         this.selectedItem = selectedItem;
 
+        this.logger.debug(selectedItem);
+
         switch (selectedItem.type) {
             case ItemsTypeEnum.Card:
             case ItemsTypeEnum.Trinket:
@@ -497,7 +499,7 @@ export class MerchantService {
         await this.success();
     }
 
-    async handlePotions(
+    private async handlePotions(
         merchantItems: MerchantItems,
         item: Item,
         itemIndex: number,

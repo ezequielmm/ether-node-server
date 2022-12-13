@@ -7,12 +7,12 @@ export class GetUpgradableCardsAction {
     constructor(private readonly expeditionService: ExpeditionService) {}
 
     async handle(clientId: string): Promise<IExpeditionPlayerStateDeckCard[]> {
+        // First we get the current card deck from the player
         const {
             playerState: { cards },
-        } = await this.expeditionService.findOne({ clientId });
+        } = await this.expeditionService.findOne({ clientId }, { map: 0 });
 
-        return cards.filter(({ isUpgraded }) => {
-            return !isUpgraded;
-        });
+        // Then, we return only the cards that can be upgraded
+        return cards.filter(({ isUpgraded }) => !isUpgraded);
     }
 }

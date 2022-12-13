@@ -1,7 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { CurrentNodeGeneratorProcess } from './currentNodeGenerator.process';
 import { ExpeditionService } from '../components/expedition/expedition.service';
-import { Socket } from 'socket.io';
 import { IExpeditionNode } from '../components/expedition/expedition.interface';
 import {
     ExpeditionMapNodeStatusEnum,
@@ -17,8 +16,6 @@ import { InitTreasureProcess } from './initTreasure.process';
 import { InitMerchantProcess } from './initMerchant.process';
 import { InitNodeProcess } from './initNode.process';
 import { EncounterService } from '../components/encounter/encounter.service';
-import { PotionRarityEnum } from '../components/potion/potion.enum';
-import { EncounterIdEnum } from '../components/encounter/encounter.enum';
 import { GameContext } from '../components/interfaces';
 
 @Injectable()
@@ -31,7 +28,7 @@ export class InitEncounterProcess {
         private readonly initMerchantProcess: InitMerchantProcess,
         private readonly initNodeProcess: InitNodeProcess,
         private readonly encounterService: EncounterService,
-    ) { }
+    ) {}
 
     private ctx: GameContext;
     private node: IExpeditionNode;
@@ -99,17 +96,6 @@ export class InitEncounterProcess {
                 ExpeditionMapNodeTypeEnum.Camp,
             ],
             [85, 10, 5],
-        );
-
-        const encounterId = getRandomItemByWeight(
-            [EncounterIdEnum.Nagpra, EncounterIdEnum.WillOWisp],
-            [1, 1],
-        );
-
-        await this.encounterService.updateEncounterData(
-            encounterId,
-            0,
-            this.ctx.client,
         );
         return await this.executeNode(nodeType);
     }

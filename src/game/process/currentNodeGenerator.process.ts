@@ -8,6 +8,7 @@ import {
 import { GameContext } from '../components/interfaces';
 import { MerchantService } from '../merchant/merchant.service';
 import { TreasureService } from '../treasure/treasure.service';
+import { EncounterService } from '../components/encounter/encounter.service';
 
 @Injectable()
 export class CurrentNodeGeneratorProcess {
@@ -18,6 +19,7 @@ export class CurrentNodeGeneratorProcess {
         private readonly treasureService: TreasureService,
         private readonly combatService: CombatService,
         private readonly merchantService: MerchantService,
+        private readonly encounterService: EncounterService,
     ) {}
 
     async getCurrentNodeData(
@@ -34,6 +36,8 @@ export class CurrentNodeGeneratorProcess {
                 return await this.getTreasureCurrentNode(ctx);
             case ExpeditionMapNodeTypeEnum.Merchant:
                 return await this.getMerchantCurrentNode();
+            case ExpeditionMapNodeTypeEnum.Encounter:
+                return await this.getEncounterCurrentNode();
             default:
                 return this.getCurrentNode();
         }
@@ -43,6 +47,20 @@ export class CurrentNodeGeneratorProcess {
         ctx: GameContext,
     ): Promise<IExpeditionCurrentNode> {
         return await this.combatService.generate(ctx, this.node);
+    }
+
+    private async getEncounterCurrentNode(): Promise<IExpeditionCurrentNode> {
+        const encounterData = await this.encounterService.generateEncounter(
+            this.node,
+            this.clientId,
+        );
+        return {
+            nodeId: this.node.id,
+            completed: false,
+            nodeType: this.node.type,
+            showRewards: false,
+            encounterData,
+        };
     }
 
     private getCurrentNode(): IExpeditionCurrentNode {
