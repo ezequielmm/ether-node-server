@@ -245,15 +245,6 @@ export class CombatService {
                     ],
                     [0.5, 0.33, 0.17],
                 );
-            case ExpeditionMapNodeTypeEnum.CombatStandard:
-                return getRandomItemByWeight(
-                    [
-                        TrinketRarityEnum.Common,
-                        TrinketRarityEnum.Uncommon,
-                        TrinketRarityEnum.Rare,
-                    ],
-                    [0.5, 0.33, 0.17],
-                );
             default:
                 return null;
         }
