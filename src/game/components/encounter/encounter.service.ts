@@ -12,6 +12,10 @@ import { Socket } from 'socket.io';
 import { EncounterInterface } from './encounter.interfaces';
 import { EncounterDTO } from '../../action/getEncounterDataAction';
 import { DataWSRequestTypesEnum } from '../../../socket/socket.enum';
+import { IExpeditionNode } from "../expedition/expedition.interface";
+import { getRandomItemByWeight } from "../../../utils";
+import { ExpeditionMapNodeTypeEnum } from "../expedition/expedition.enum";
+import { EncounterIdEnum } from "./encounter.enum";
 
 @Injectable()
 export class EncounterService {
@@ -20,6 +24,21 @@ export class EncounterService {
         private readonly encounterModel: Model<Encounter>,
         private readonly expeditionService: ExpeditionService,
     ) {}
+
+    async generateEncounter(
+        node: IExpeditionNode,
+        clientId: string,
+    ): Promise<EncounterInterface> {
+        const encounterId = getRandomItemByWeight(
+            [EncounterIdEnum.Nagpra, EncounterIdEnum.WillOWisp],
+            [1, 1],
+        );
+
+        return {
+            encounterId,
+            stage: 0,
+        };
+    }
 
     async encounterChoice(client: Socket, choiceIdx: number): Promise<string> {
         const encounterData = await this.getEncounterData(client);
