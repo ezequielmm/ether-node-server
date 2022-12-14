@@ -48,7 +48,7 @@ export const mimicFrog1Data: Enemy = {
                     ],
                 },
                 {
-                    type: EnemyIntentionType.Stun,
+                    type: EnemyIntentionType.Debuff,
                     target: CardTargetedEnum.Player,
                     value: 2,
                     effects: [
