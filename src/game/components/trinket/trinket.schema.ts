@@ -34,8 +34,8 @@ export class Trinket<T = any> {
     @Prop()
     description: string;
 
-    onAttach(ctx: GameContext): void {
-        throw new Error(`Method not implemented for client ${ctx.client.id}`);
+    onAttach(_ctx: GameContext) {
+        //throw new Error('Method not implemented.');
     }
 
     trigger(this: SubDocumentType<T>, ctx: GameContext) {

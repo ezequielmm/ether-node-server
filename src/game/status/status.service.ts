@@ -10,16 +10,12 @@ import {
     reject,
     isEqual,
 } from 'lodash';
-import { Model } from 'mongoose';
 import { CardTargetedEnum } from '../components/card/card.enum';
 import { ExpeditionEnemy } from '../components/enemy/enemy.interface';
 import { EnemyService } from '../components/enemy/enemy.service';
 import { enemyIdField } from '../components/enemy/enemy.type';
 import { ExpeditionStatusEnum } from '../components/expedition/expedition.enum';
-import {
-    Expedition,
-    ExpeditionDocument,
-} from '../components/expedition/expedition.schema';
+import { Expedition } from '../components/expedition/expedition.schema';
 import { ExpeditionService } from '../components/expedition/expedition.service';
 import { GameContext, ExpeditionEntity } from '../components/interfaces';
 import { PlayerService } from '../components/player/player.service';

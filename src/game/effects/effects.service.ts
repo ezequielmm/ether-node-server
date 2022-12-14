@@ -1,6 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { find } from 'lodash';
 import { ExpeditionService } from '../components/expedition/expedition.service';
+import { PlayerService } from '../components/player/player.service';
+import { TrinketService } from '../components/trinket/trinket.service';
 import { HistoryService } from '../history/history.service';
 import { ProviderContainer } from '../provider/interfaces';
 import { ProviderService } from '../provider/provider.service';
@@ -26,6 +28,7 @@ export class EffectService {
         private readonly statusService: StatusService,
         private readonly expeditionService: ExpeditionService,
         private readonly historyService: HistoryService,
+        private readonly trinketService: TrinketService,
     ) {}
 
     async applyAll(dto: ApplyAllDTO): Promise<void> {
@@ -134,6 +137,9 @@ export class EffectService {
             target,
             StatusDirection.Incoming,
         );
+
+        // Trinkets are applied before statuses
+        effectDTO = await this.trinketService.pipeline(dto);
 
         // Apply statuses to the outgoing effects 🔫  →
         effectDTO = await this.statusService.mutate({

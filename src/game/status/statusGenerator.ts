@@ -7,6 +7,7 @@ import { doubleDown } from './doubleDown/contants';
 import { fatigue } from './fatigue/constants';
 import { feebleStatus } from './feeble/constants';
 import { fortitude } from './fortitude/constants';
+import { gifted } from './gifted/constants';
 import { heraldDelayedStatus } from './heraldDelayed/constants';
 import { heraldingStatus } from './heralding/constants';
 import { imbued } from './imbued/constants';
@@ -95,6 +96,8 @@ export class StatusGenerator {
                 return `All attacks against this character do half damage while active`;
             case bolstered.name:
                 return `Until the end of the turn, gain ${counter} Defense for every card you play`;
+            case gifted.name:
+                return `Gain ${counter} Defense at the start of each round`;
             default:
                 return `Unknown status`;
         }

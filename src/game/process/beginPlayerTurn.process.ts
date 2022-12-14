@@ -1,13 +1,11 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import { Socket } from 'socket.io';
 import { ChangeTurnAction } from '../action/changeTurn.action';
 import { DrawCardAction } from '../action/drawCard.action';
 import { GetPlayerInfoAction } from '../action/getPlayerInfo.action';
 import { CombatQueueService } from '../components/combatQueue/combatQueue.service';
 import { EnemyService } from '../components/enemy/enemy.service';
 import { CombatTurnEnum } from '../components/expedition/expedition.enum';
-import { ExpeditionDocument } from '../components/expedition/expedition.schema';
 import { ExpeditionService } from '../components/expedition/expedition.service';
 import { GameContext } from '../components/interfaces';
 import { PlayerService } from '../components/player/player.service';
@@ -40,7 +38,7 @@ export class BeginPlayerTurnProcess {
         private readonly getPlayerInfoAction: GetPlayerInfoAction,
         private readonly combatQueueService: CombatQueueService,
         private readonly changeTurnAction: ChangeTurnAction,
-    ) { }
+    ) {}
 
     async handle(payload: BeginPlayerTurnDTO): Promise<void> {
         const { ctx } = payload;
@@ -53,6 +51,8 @@ export class BeginPlayerTurnProcess {
             clientId: client.id,
             playing: CombatTurnEnum.Player,
         });
+
+        await this.enemyService.calculateNewIntentions(ctx);
 
         // Send change turn message
         this.changeTurnAction.handle({
@@ -111,8 +111,6 @@ export class BeginPlayerTurnProcess {
             cardType: undefined,
             SWARMessageTypeToSend: SWARMessageType.BeginTurn,
         });
-
-        await this.enemyService.calculateNewIntentions(ctx);
 
         // Send possible actions related to the statuses attached to the player at the beginning of the turn
         await this.eventEmitter.emitAsync(EVENT_AFTER_PLAYER_TURN_START, {

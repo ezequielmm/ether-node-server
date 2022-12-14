@@ -34,7 +34,7 @@ export class PotionService {
         private readonly playerService: PlayerService,
         private readonly expeditionService: ExpeditionService,
         private readonly combatQueueService: CombatQueueService,
-    ) { }
+    ) {}
 
     async findAll(): Promise<Potion[]> {
         return this.potion.find({ isActive: true }).lean();
@@ -228,10 +228,7 @@ export class PotionService {
         filter?: FilterQuery<Potion>,
     ): Promise<Potion> {
         const [potion] = await this.potion
-            .aggregate<Potion>([
-                { $match: filter },
-                { $sample: { size: 1 } },
-            ])
+            .aggregate<Potion>([{ $match: filter }, { $sample: { size: 1 } }])
             .exec();
 
         return potion;

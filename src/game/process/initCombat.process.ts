@@ -50,6 +50,14 @@ export class InitCombatProcess {
         this.ctx.expedition.currentNode = currentNode;
         await this.ctx.expedition.save();
 
+        await this.setCombatTurnAction.handle({
+            clientId: this.ctx.client.id,
+            newRound: 1,
+            playing: CombatTurnEnum.Player,
+        });
+
+        await this.enemyService.calculateNewIntentions(this.ctx);
+
         this.ctx.client.emit(
             'InitCombat',
             StandardResponse.respond({
@@ -58,14 +66,6 @@ export class InitCombatProcess {
                 data: null,
             }),
         );
-
-        await this.setCombatTurnAction.handle({
-            clientId: this.ctx.client.id,
-            newRound: 1,
-            playing: CombatTurnEnum.Player,
-        });
-
-        await this.enemyService.calculateNewIntentions(this.ctx);
     }
 
     async continueCombat(): Promise<void> {
@@ -78,15 +78,6 @@ export class InitCombatProcess {
 
         const enemiesAreDead = currentNode.data.enemies.every(
             (enemy) => enemy.hpCurrent === 0,
-        );
-
-        this.ctx.client.emit(
-            'InitCombat',
-            StandardResponse.respond({
-                message_type: SWARMessageType.CombatUpdate,
-                action: SWARAction.BeginCombat,
-                data: null,
-            }),
         );
 
         if (enemiesAreDead) {
@@ -115,5 +106,14 @@ export class InitCombatProcess {
 
             await this.enemyService.calculateNewIntentions(this.ctx);
         }
+
+        this.ctx.client.emit(
+            'InitCombat',
+            StandardResponse.respond({
+                message_type: SWARMessageType.CombatUpdate,
+                action: SWARAction.BeginCombat,
+                data: null,
+            }),
+        );
     }
 }

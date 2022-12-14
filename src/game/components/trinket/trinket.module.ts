@@ -1,20 +1,16 @@
 import { forwardRef, Module } from '@nestjs/common';
 import { KindagooseModule } from 'kindagoose';
 import { ExpeditionModule } from '../expedition/expedition.module';
-import { CorncobPipeUpgradedTrinket } from './collection/corncob-pipe-upgraded.trinket';
-import { CorncobPipeTrinket } from './collection/corncob-pipe.trinket';
 import { Trinket } from './trinket.schema';
 import { TrinketService } from './trinket.service';
+import * as Trinkets from '../trinket/collection';
 
 @Module({
     imports: [
         KindagooseModule.forFeature([
             {
                 schema: Trinket,
-                discriminators: [
-                    CorncobPipeTrinket,
-                    CorncobPipeUpgradedTrinket,
-                ],
+                discriminators: Object.values(Trinkets),
             },
         ]),
         forwardRef(() => ExpeditionModule),
@@ -22,4 +18,4 @@ import { TrinketService } from './trinket.service';
     providers: [TrinketService],
     exports: [TrinketService, KindagooseModule],
 })
-export class TrinketModule { }
+export class TrinketModule {}

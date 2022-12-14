@@ -6,6 +6,7 @@ import { CombatQueueModule } from '../components/combatQueue/combatQueue.module'
 import { EnemyModule } from '../components/enemy/enemy.module';
 import { ExpeditionModule } from '../components/expedition/expedition.module';
 import { PlayerModule } from '../components/player/player.module';
+import { TrinketModule } from '../components/trinket/trinket.module';
 import { HistoryModule } from '../history/history.module';
 import { ProviderModule } from '../provider/provider.module';
 import { StatusModule } from '../status/status.module';
@@ -43,6 +44,7 @@ import { TwistTheBladeEffect } from './twistTheBlade/twistTheBlade.effect';
         forwardRef(() => ActionModule),
         forwardRef(() => CardModule),
         ProviderModule,
+        TrinketModule,
         PlayerModule,
         CombatQueueModule,
         HistoryModule,
