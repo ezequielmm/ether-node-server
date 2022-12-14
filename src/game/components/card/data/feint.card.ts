@@ -49,7 +49,7 @@ export const FeintCard: Card = {
         ],
         statuses: [],
     },
-    showPointer: false,
+    showPointer: true,
     isUpgraded: false,
     upgradedCardId: FeintCardUpgraded.cardId,
     isActive: true,
