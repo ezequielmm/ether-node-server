@@ -22,4 +22,4 @@ import { TrinketService } from './trinket.service';
     providers: [TrinketService],
     exports: [TrinketService, KindagooseModule],
 })
-export class TrinketModule { }
+export class TrinketModule {}
