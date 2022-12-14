@@ -6,7 +6,10 @@ import { Socket } from 'socket.io';
 export interface EncounterDTO {
     imageId: string;
     displayText: string;
-    buttonText: string[];
+    buttons: {
+        text: string;
+        enabled: boolean;
+    }[];
 }
 @Injectable()
 export class GetEncounterDataAction {
