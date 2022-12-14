@@ -13,7 +13,6 @@ import { EncounterService } from '../components/encounter/encounter.service';
 @Injectable()
 export class CurrentNodeGeneratorProcess {
     private node: IExpeditionNode;
-    private clientId: string;
 
     constructor(
         private readonly treasureService: TreasureService,
@@ -27,7 +26,6 @@ export class CurrentNodeGeneratorProcess {
         node: IExpeditionNode,
     ): Promise<IExpeditionCurrentNode> {
         this.node = node;
-        this.clientId = ctx.client.id;
 
         switch (this.node.type) {
             case ExpeditionMapNodeTypeEnum.Combat:
@@ -50,10 +48,8 @@ export class CurrentNodeGeneratorProcess {
     }
 
     private async getEncounterCurrentNode(): Promise<IExpeditionCurrentNode> {
-        const encounterData = await this.encounterService.generateEncounter(
-            this.node,
-            this.clientId,
-        );
+        const encounterData = await this.encounterService.generateEncounter();
+
         return {
             nodeId: this.node.id,
             completed: false,

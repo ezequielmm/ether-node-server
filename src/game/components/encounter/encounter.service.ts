@@ -13,7 +13,6 @@ import { EncounterDTO } from '../../action/getEncounterDataAction';
 import { DataWSRequestTypesEnum } from '../../../socket/socket.enum';
 import { ReturnModelType } from '@typegoose/typegoose';
 import { getRandomItemByWeight } from 'src/utils';
-import { IExpeditionNode } from '../expedition/expedition.interface';
 import { EncounterIdEnum } from './encounter.enum';
 
 @Injectable()
@@ -24,10 +23,7 @@ export class EncounterService {
         private readonly expeditionService: ExpeditionService,
     ) {}
 
-    async generateEncounter(
-        node: IExpeditionNode,
-        clientId: string,
-    ): Promise<EncounterInterface> {
+    async generateEncounter(): Promise<EncounterInterface> {
         const encounterId = getRandomItemByWeight(
             [EncounterIdEnum.Nagpra, EncounterIdEnum.WillOWisp],
             [1, 1],
@@ -80,6 +76,7 @@ export class EncounterService {
             const expedition = ctx.expedition;
             const expeditionId = expedition._id.toString();
             let amount = 0;
+
             switch (effect.kind) {
                 case 'coin': //eg nagpra
                     amount = parseInt(effect.amount);
