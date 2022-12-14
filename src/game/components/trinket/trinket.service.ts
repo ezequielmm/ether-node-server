@@ -104,7 +104,7 @@ export class TrinketService {
             );
         }
 
-        return _.chain(trinkets)
+        return chain(trinkets)
             .reduce((dto, trinket) => trinket.mutate(dto), mutateDTO.dto)
             .value();
     }
