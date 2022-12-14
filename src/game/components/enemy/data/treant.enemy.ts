@@ -168,7 +168,7 @@ export const treantData: Enemy = {
             id: 5,
             intentions: [
                 {
-                    type: EnemyIntentionType.Stun,
+                    type: EnemyIntentionType.Debuff,
                     target: CardTargetedEnum.Player,
                     value: 3,
                     effects: [

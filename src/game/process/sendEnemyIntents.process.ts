@@ -51,8 +51,6 @@ export class SendEnemyIntentProcess {
                 return `This Enemy is plotting to gain a Buff effect`;
             case EnemyIntentionType.Debuff:
                 return `This Enemy is scheming to apply a Debuff effect`;
-            case EnemyIntentionType.Stun:
-                return `This enemy is doing nothing`;
             default:
                 return `Unknown intentions`;
         }

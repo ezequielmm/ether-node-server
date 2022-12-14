@@ -47,7 +47,7 @@ export const fungalBruteData: Enemy = {
                     ],
                 },
                 {
-                    type: EnemyIntentionType.Stun,
+                    type: EnemyIntentionType.Debuff,
                     target: CardTargetedEnum.Player,
                     value: 2,
                     effects: [
