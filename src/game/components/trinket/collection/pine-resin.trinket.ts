@@ -1,14 +1,14 @@
 import { Prop } from '@typegoose/typegoose';
+import { damageEffect } from 'src/game/effects/damage/constants';
 import { EffectDTO } from 'src/game/effects/effects.interface';
 import { StatusDirection, StatusType } from 'src/game/status/interfaces';
-import { PlayerService } from '../../player/player.service';
 import { TrinketModifier } from '../trinket-modifier';
 import { TrinketRarityEnum } from '../trinket.enum';
 
 /**
  * Pine Resin Trinket
  */
-export class PineResin extends TrinketModifier {
+export class PineResinTrinket extends TrinketModifier {
     @Prop({ default: 2 })
     trinketId: number;
 
@@ -29,10 +29,13 @@ export class PineResin extends TrinketModifier {
     @Prop({ default: StatusDirection.Incoming })
     direction: StatusDirection;
 
+    @Prop({ default: damageEffect.name })
+    effect: string;
+
     mutate(dto: EffectDTO): EffectDTO {
-        if (PlayerService.isPlayer(dto.target)) {
+        if (dto.target.type == 'player') {
             if (dto.target.value.combatState.defense == 0) {
-                dto.args.currentValue = 0;
+                dto.args.currentValue -= 1;
                 this.trigger(dto.ctx);
             }
         }

@@ -10,6 +10,9 @@ export class TrinketModifier extends Trinket {
     @Prop()
     type: StatusType;
 
+    @Prop()
+    effect: string;
+
     mutate(_value: EffectDTO): Promise<EffectDTO> | EffectDTO {
         throw new Error('Method not implemented.');
     }

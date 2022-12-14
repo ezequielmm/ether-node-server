@@ -34,7 +34,7 @@ export class Trinket<T = any> {
     description: string;
 
     onAttach(_ctx: GameContext) {
-        throw new Error('Method not implemented.');
+        //throw new Error('Method not implemented.');
     }
 
     trigger(this: SubDocumentType<T>, ctx: GameContext) {

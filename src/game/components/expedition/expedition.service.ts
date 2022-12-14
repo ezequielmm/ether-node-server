@@ -45,7 +45,7 @@ export class ExpeditionService {
         private readonly playerService: PlayerService,
         private readonly enemyService: EnemyService,
         private readonly trinketService: TrinketService,
-    ) { }
+    ) {}
 
     async getGameContext(client: Socket): Promise<GameContext> {
         const expedition = await this.findOne({ clientId: client.id });

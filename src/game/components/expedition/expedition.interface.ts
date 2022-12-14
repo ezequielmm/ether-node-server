@@ -1,4 +1,4 @@
-import { Prop, SubDocumentType } from '@typegoose/typegoose';
+import { Prop } from '@typegoose/typegoose';
 import { Item } from 'src/game/merchant/merchant.interface';
 import { AttachedStatus, StatusType } from 'src/game/status/interfaces';
 import { CardRarityEnum, CardTypeEnum } from '../card/card.enum';
@@ -10,8 +10,6 @@ import {
 } from '../enemy/enemy.enum';
 import { EnemyScript } from '../enemy/enemy.interface';
 import { Potion } from '../potion/potion.schema';
-import { CorncobPipeUpgradedTrinket } from '../trinket/collection/corncob-pipe-upgraded.trinket';
-import { CorncobPipeTrinket } from '../trinket/collection/corncob-pipe.trinket';
 import { Trinket } from '../trinket/trinket.schema';
 import {
     ExpeditionMapNodeTypeEnum,
@@ -19,6 +17,7 @@ import {
     IExpeditionNodeReward,
 } from './expedition.enum';
 import { Expedition } from './expedition.schema';
+import * as Trinkets from '../trinket/collection';
 
 export interface PotionInstance extends Potion {
     id: string;
@@ -48,7 +47,7 @@ export class Player {
 
     @Prop({
         type: Trinket,
-        discriminators: () => [CorncobPipeTrinket, CorncobPipeUpgradedTrinket],
+        discriminators: () => Object.values(Trinkets),
     })
     trinkets: Trinket[];
 

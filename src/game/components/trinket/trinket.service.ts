@@ -87,6 +87,7 @@ export class TrinketService {
                     .filter(TrinketModifier.isModifier)
                     .filter({
                         direction: StatusDirection.Outgoing,
+                        effect: mutateDTO.effect,
                     })
                     .value(),
             );
@@ -98,6 +99,7 @@ export class TrinketService {
                     .filter(TrinketModifier.isModifier)
                     .filter({
                         direction: StatusDirection.Incoming,
+                        effect: mutateDTO.effect,
                     })
                     .value(),
             );
