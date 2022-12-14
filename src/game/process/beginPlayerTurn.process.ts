@@ -40,7 +40,7 @@ export class BeginPlayerTurnProcess {
         private readonly getPlayerInfoAction: GetPlayerInfoAction,
         private readonly combatQueueService: CombatQueueService,
         private readonly changeTurnAction: ChangeTurnAction,
-    ) { }
+    ) {}
 
     async handle(payload: BeginPlayerTurnDTO): Promise<void> {
         const { ctx } = payload;
@@ -53,6 +53,8 @@ export class BeginPlayerTurnProcess {
             clientId: client.id,
             playing: CombatTurnEnum.Player,
         });
+
+        await this.enemyService.calculateNewIntentions(ctx);
 
         // Send change turn message
         this.changeTurnAction.handle({
@@ -111,8 +113,6 @@ export class BeginPlayerTurnProcess {
             cardType: undefined,
             SWARMessageTypeToSend: SWARMessageType.BeginTurn,
         });
-
-        await this.enemyService.calculateNewIntentions(ctx);
 
         // Send possible actions related to the statuses attached to the player at the beginning of the turn
         await this.eventEmitter.emitAsync(EVENT_AFTER_PLAYER_TURN_START, {
