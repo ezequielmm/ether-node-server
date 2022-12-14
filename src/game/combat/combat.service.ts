@@ -33,7 +33,7 @@ export class CombatService {
         private readonly expeditionService: ExpeditionService,
         private readonly enemyService: EnemyService,
         private readonly rewardService: RewardService,
-    ) { }
+    ) {}
 
     private node: IExpeditionNode;
     private clientId: string;

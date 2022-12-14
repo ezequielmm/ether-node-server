@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { Model } from 'mongoose';
 import { InjectModel } from 'kindagoose';
 import { Encounter } from './encounter.schema';
 import {
@@ -13,6 +12,8 @@ import { EncounterInterface } from './encounter.interfaces';
 import { EncounterDTO } from '../../action/getEncounterDataAction';
 import { DataWSRequestTypesEnum } from '../../../socket/socket.enum';
 import { ReturnModelType } from '@typegoose/typegoose';
+import { getRandomItemByWeight } from 'src/utils';
+import { EncounterIdEnum } from './encounter.enum';
 
 @Injectable()
 export class EncounterService {
@@ -20,7 +21,19 @@ export class EncounterService {
         @InjectModel(Encounter)
         private readonly encounterModel: ReturnModelType<typeof Encounter>,
         private readonly expeditionService: ExpeditionService,
-    ) { }
+    ) {}
+
+    async generateEncounter(): Promise<EncounterInterface> {
+        const encounterId = getRandomItemByWeight(
+            [EncounterIdEnum.Nagpra, EncounterIdEnum.WillOWisp],
+            [1, 1],
+        );
+
+        return {
+            encounterId,
+            stage: 0,
+        };
+    }
 
     async encounterChoice(client: Socket, choiceIdx: number): Promise<string> {
         const encounterData = await this.getEncounterData(client);
@@ -63,6 +76,7 @@ export class EncounterService {
             const expedition = ctx.expedition;
             const expeditionId = expedition._id.toString();
             let amount = 0;
+
             switch (effect.kind) {
                 case 'coin': //eg nagpra
                     amount = parseInt(effect.amount);

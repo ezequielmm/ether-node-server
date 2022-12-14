@@ -9,7 +9,7 @@ import { ReturnModelType } from '@typegoose/typegoose';
 export class CardSeeder implements Seeder {
     constructor(
         @InjectModel(Card) private readonly card: ReturnModelType<typeof Card>,
-    ) { }
+    ) {}
 
     async seed(): Promise<any> {
         return this.card.insertMany(data);

@@ -10,7 +10,7 @@ export const BraceCardUpgraded: Card = {
     cardType: CardTypeEnum.Defend,
     pool: 'knight',
     energy: 2,
-    description: `Gain 11 Defense`,
+    description: `Gain 11 Defense and 2 resolve`,
     keywords: [],
     properties: {
         effects: [
@@ -22,7 +22,15 @@ export const BraceCardUpgraded: Card = {
                 },
             },
         ],
-        statuses: [],
+        statuses: [
+            {
+                name: resolveStatus.name,
+                attachTo: CardTargetedEnum.Player,
+                args: {
+                    counter: 2,
+                },
+            },
+        ],
     },
     showPointer: false,
     isUpgraded: true,

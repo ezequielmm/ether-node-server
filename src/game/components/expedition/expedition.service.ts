@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from 'kindagoose';
-import { Model, UpdateQuery, FilterQuery, ProjectionFields } from 'mongoose';
+import { UpdateQuery, FilterQuery, ProjectionFields } from 'mongoose';
 import { Expedition, ExpeditionDocument } from './expedition.schema';
 import {
     CardExistsOnPlayerHandDTO,
@@ -35,7 +35,6 @@ import { EnemyId } from '../enemy/enemy.type';
 import { Socket } from 'socket.io';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { ReturnModelType } from '@typegoose/typegoose';
-import { TrinketService } from '../trinket/trinket.service';
 
 @Injectable()
 export class ExpeditionService {
@@ -44,8 +43,7 @@ export class ExpeditionService {
         private readonly expedition: ReturnModelType<typeof Expedition>,
         private readonly playerService: PlayerService,
         private readonly enemyService: EnemyService,
-        private readonly trinketService: TrinketService,
-    ) {}
+    ) { }
 
     async getGameContext(client: Socket): Promise<GameContext> {
         const expedition = await this.findOne({ clientId: client.id });

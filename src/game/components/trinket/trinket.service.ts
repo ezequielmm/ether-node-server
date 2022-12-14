@@ -2,24 +2,23 @@ import { Injectable } from '@nestjs/common';
 import { ModuleRef } from '@nestjs/core';
 import { ReturnModelType } from '@typegoose/typegoose';
 import { getModelToken } from 'kindagoose';
+import { chain, filter as filterFunction, find, sample } from 'lodash';
+import { MutateDTO } from 'src/game/effects/effects.interface';
 import {
     StandardResponse,
     SWARAction,
-    SWARMessageType,
+    SWARMessageType
 } from 'src/game/standardResponse/standardResponse';
+import { StatusDirection } from 'src/game/status/interfaces';
 import { GameContext } from '../interfaces';
-import * as Trinkets from './collection';
-import { Trinket } from './trinket.schema';
-import * as _ from 'lodash';
-import { MutateDTO } from 'src/game/effects/effects.interface';
 import { PlayerService } from '../player/player.service';
+import * as Trinkets from './collection';
 import { TrinketModifier } from './trinket-modifier';
-import { StatusDirection, StatusType } from 'src/game/status/interfaces';
-import { TrinketModule } from './trinket.module';
+import { Trinket } from './trinket.schema';
 
 @Injectable()
 export class TrinketService {
-    constructor(private readonly moduleRef: ModuleRef) {}
+    constructor(private readonly moduleRef: ModuleRef) { }
 
     private createFromClass(TrinketClass: typeof Trinket): Trinket {
         const TrinketModel = this.moduleRef.get<
@@ -36,15 +35,15 @@ export class TrinketService {
     }
 
     public find(filter: Partial<Trinket>): Trinket[] {
-        return _.filter(this.findAll(), filter);
+        return filterFunction(this.findAll(), filter);
     }
 
     public findOne(filter: Partial<Trinket>): Trinket {
-        return _.find(this.findAll(), filter);
+        return find(this.findAll(), filter);
     }
 
     public getRandomTrinket(filter?: Partial<Trinket>): Trinket {
-        return _.sample(this.find(filter));
+        return sample(this.find(filter));
     }
 
     public async add(ctx: GameContext, trinketId: number): Promise<boolean> {
@@ -83,7 +82,7 @@ export class TrinketService {
 
         if (PlayerService.isPlayer(mutateDTO.dto.source)) {
             trinkets.push(
-                ..._.chain(mutateDTO.ctx.expedition.playerState.trinkets)
+                ...chain(mutateDTO.ctx.expedition.playerState.trinkets)
                     .filter(TrinketModifier.isModifier)
                     .filter({
                         direction: StatusDirection.Outgoing,
@@ -95,7 +94,7 @@ export class TrinketService {
 
         if (PlayerService.isPlayer(mutateDTO.dto.target)) {
             trinkets.push(
-                ..._.chain(mutateDTO.ctx.expedition.playerState.trinkets)
+                ...chain(mutateDTO.ctx.expedition.playerState.trinkets)
                     .filter(TrinketModifier.isModifier)
                     .filter({
                         direction: StatusDirection.Incoming,

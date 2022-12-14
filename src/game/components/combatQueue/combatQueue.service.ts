@@ -151,29 +151,23 @@ export class CombatQueueService {
         statuses: AttachedStatus[],
     ): Promise<void> {
         const statusesInfo: IStatusesList[] = [];
-        for (const status of statuses) {
-            statusesInfo.push({
-                name: status.name,
-                counter: status.args.counter,
-                description: StatusGenerator.generateDescription(
-                    status.name,
-                    status.args.counter,
-                ),
+
+        statusesInfo.push(...StatusGenerator.formatStatusesToArray(statuses));
+
+        if (statusesInfo.length > 0) {
+            await this.push({
+                ctx,
+                source,
+                target,
+                args: {
+                    effectType: CombatQueueTargetEffectTypeEnum.Status,
+                    healthDelta: 0,
+                    finalHealth: 0,
+                    defenseDelta: 0,
+                    finalDefense: 0,
+                    statuses: statusesInfo,
+                },
             });
         }
-
-        await this.push({
-            ctx,
-            source,
-            target,
-            args: {
-                effectType: CombatQueueTargetEffectTypeEnum.Status,
-                healthDelta: 0,
-                finalHealth: 0,
-                defenseDelta: 0,
-                finalDefense: 0,
-                statuses: statusesInfo,
-            },
-        });
     }
 }

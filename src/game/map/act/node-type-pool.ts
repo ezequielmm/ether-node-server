@@ -1,5 +1,5 @@
+import { shuffle, times } from 'lodash';
 import { ExpeditionMapNodeTypeEnum } from 'src/game/components/expedition/expedition.enum';
-import * as _ from 'lodash';
 import { NodeConfig } from './act.builder';
 
 export interface NodeTypeFrequency {
@@ -65,29 +65,28 @@ export class NodeTypePool {
 
     constructor(private readonly length: number) {
         this.pool = this.groupByPercentage(
-            _.times(this.length),
+            times(this.length),
             this.types.map(({ frequency }) => frequency),
         ).flatMap((group, index) =>
-            _.times(group.length, () => this.types[index].node),
+            times(group.length, () => this.types[index].node),
         );
 
-        this.pool = _.shuffle(this.pool);
+        this.pool = shuffle(this.pool);
     }
 
-    popRandom(): NodeConfig {
-        return this.pool.pop();
-    }
+    popRandom = (): NodeConfig => this.pool.pop();
 
     private groupByPercentage<T>(array: T[], percentages: number[]): T[][] {
         // Get percentage for 1 node type:
-        let unit = 100 / array.length;
+        const unit = 100 / array.length;
         // Sort percentages by decreasing remainder (modulo unit)
         //   and get number of units covered by each percentage
-        let sorted = percentages
+        const sorted = percentages
             .map((p, i) => [i, Math.floor(p / unit), p % unit])
             .sort((a, b) => b[2] - a[2]);
         // Get how many units are not yet distributed:
-        let remain = array.length - sorted.reduce((sum, a) => (sum += a[1]), 0);
+        const remain =
+            array.length - sorted.reduce((sum, a) => (sum += a[1]), 0);
         // Distribute those, giving priority to groups where the remainders are greatest
         for (let i = 0; i < remain; i++) sorted[i][1]++;
         // Build and return the chunks by filling the groups in their

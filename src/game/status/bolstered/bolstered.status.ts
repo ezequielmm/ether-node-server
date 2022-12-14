@@ -35,17 +35,17 @@ export class BolsteredStatus implements StatusEventHandler {
             },
         } = args;
 
-        let finalDefesense: number;
+        let finalDefense: number;
 
         if (PlayerService.isPlayer(target)) {
-            finalDefesense = target.value.combatState.defense + value;
-            await this.playerService.setDefense(ctx, finalDefesense);
+            finalDefense = target.value.combatState.defense + value;
+            await this.playerService.setDefense(ctx, finalDefense);
         } else if (EnemyService.isEnemy(target)) {
-            finalDefesense = target.value.defense + value;
+            finalDefense = target.value.defense + value;
             await this.enemyService.setDefense(
                 ctx,
                 target.value.id,
-                target.value.defense + value,
+                finalDefense,
             );
         }
 
@@ -56,7 +56,7 @@ export class BolsteredStatus implements StatusEventHandler {
             args: {
                 effectType: CombatQueueTargetEffectTypeEnum.Defense,
                 defenseDelta: value,
-                finalDefense: finalDefesense,
+                finalDefense: finalDefense,
                 healthDelta: undefined,
                 finalHealth: undefined,
                 statuses: [],

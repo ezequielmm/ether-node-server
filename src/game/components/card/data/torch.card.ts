@@ -33,7 +33,7 @@ export const TorchCardUpgraded: Card = {
         ],
     },
     showPointer: true,
-    isUpgraded: false,
+    isUpgraded: true,
     isActive: true,
 };
 

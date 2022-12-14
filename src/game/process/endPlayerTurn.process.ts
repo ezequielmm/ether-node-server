@@ -25,7 +25,7 @@ export class EndPlayerTurnProcess {
         private readonly combatQueueService: CombatQueueService,
         private readonly changeTurnAction: ChangeTurnAction,
         private readonly enemyService: EnemyService,
-    ) { }
+    ) {}
 
     async handle(payload: EndPlayerTurnDTO): Promise<void> {
         const { ctx } = payload;

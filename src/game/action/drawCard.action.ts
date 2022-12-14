@@ -64,9 +64,7 @@ export class DrawCardAction {
                 },
                 enemies,
             },
-        } = await this.expeditionService.getCurrentNode({
-            clientId: client.id,
-        });
+        } = ctx.expedition.currentNode;
 
         // First we check is we have to take at least 1 card
         if (amountToTake > 0) {

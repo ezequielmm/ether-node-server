@@ -1,10 +1,8 @@
-import { ModelOptions, Prop } from '@typegoose/typegoose';
+import { modelOptions, Prop } from '@typegoose/typegoose';
 
-@ModelOptions({
-    schemaOptions: {
-        collection: 'encounter',
-        versionKey: false,
-    }
+export type EncounterDocument = Encounter & Document;
+@modelOptions({
+    schemaOptions: { collection: 'encounter', versionKey: false },
 })
 export class Encounter {
     @Prop()
