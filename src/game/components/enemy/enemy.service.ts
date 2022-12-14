@@ -1,7 +1,6 @@
 import { forwardRef, Inject, Injectable, Logger } from '@nestjs/common';
 import { InjectModel } from 'kindagoose';
 import { Enemy } from './enemy.schema';
-import { Model } from 'mongoose';
 import { EnemyId, enemyIdField, enemySelector } from './enemy.type';
 import { GameContext, ExpeditionEntity } from '../interfaces';
 import { EnemyScript, ExpeditionEnemy } from './enemy.interface';
@@ -31,12 +30,13 @@ export class EnemyService {
     private readonly logger: Logger = new Logger(EnemyService.name);
 
     constructor(
-        @InjectModel(Enemy) private readonly enemy: ReturnModelType<typeof Enemy>,
+        @InjectModel(Enemy)
+        private readonly enemy: ReturnModelType<typeof Enemy>,
         @Inject(forwardRef(() => ExpeditionService))
         private readonly expeditionService: ExpeditionService,
         @Inject(forwardRef(() => StatusService))
         private readonly statusService: StatusService,
-    ) { }
+    ) {}
 
     /**
      * Check if the entity is an enemy
