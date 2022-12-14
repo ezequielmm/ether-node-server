@@ -2,19 +2,23 @@ import { Injectable } from '@nestjs/common';
 import { ModuleRef } from '@nestjs/core';
 import { ReturnModelType } from '@typegoose/typegoose';
 import { getModelToken } from 'kindagoose';
-import { find, sample, filter as filterFunction } from 'lodash';
+import { chain, filter as filterFunction, find, sample } from 'lodash';
+import { MutateDTO } from 'src/game/effects/effects.interface';
 import {
     StandardResponse,
     SWARAction,
-    SWARMessageType,
+    SWARMessageType
 } from 'src/game/standardResponse/standardResponse';
+import { StatusDirection } from 'src/game/status/interfaces';
 import { GameContext } from '../interfaces';
+import { PlayerService } from '../player/player.service';
 import * as Trinkets from './collection';
+import { TrinketModifier } from './trinket-modifier';
 import { Trinket } from './trinket.schema';
 
 @Injectable()
 export class TrinketService {
-    constructor(private readonly moduleRef: ModuleRef) {}
+    constructor(private readonly moduleRef: ModuleRef) { }
 
     private createFromClass(TrinketClass: typeof Trinket): Trinket {
         const TrinketModel = this.moduleRef.get<
@@ -61,6 +65,47 @@ export class TrinketService {
         trinket.onAttach(ctx);
         await ctx.expedition.save();
 
+        ctx.client.emit(
+            'PutData',
+            StandardResponse.respond({
+                message_type: SWARMessageType.AddTrinket,
+                action: SWARAction.TrinketAdded,
+                data: { trinketId },
+            }),
+        );
+
         return true;
+    }
+
+    public async pipeline(mutateDTO: MutateDTO) {
+        const trinkets: TrinketModifier[] = [];
+
+        if (PlayerService.isPlayer(mutateDTO.dto.source)) {
+            trinkets.push(
+                ...chain(mutateDTO.ctx.expedition.playerState.trinkets)
+                    .filter(TrinketModifier.isModifier)
+                    .filter({
+                        direction: StatusDirection.Outgoing,
+                        effect: mutateDTO.effect,
+                    })
+                    .value(),
+            );
+        }
+
+        if (PlayerService.isPlayer(mutateDTO.dto.target)) {
+            trinkets.push(
+                ...chain(mutateDTO.ctx.expedition.playerState.trinkets)
+                    .filter(TrinketModifier.isModifier)
+                    .filter({
+                        direction: StatusDirection.Incoming,
+                        effect: mutateDTO.effect,
+                    })
+                    .value(),
+            );
+        }
+
+        return chain(trinkets)
+            .reduce((dto, trinket) => trinket.mutate(dto), mutateDTO.dto)
+            .value();
     }
 }

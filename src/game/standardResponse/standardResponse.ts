@@ -75,6 +75,7 @@ export enum SWARAction {
     PotionNotFoundInDatabase = 'potion_not_found_in_database',
     PotionMaxCountReached = 'potion_max_count_reached',
     TrinketNotFoundInDatabase = 'trinket_not_found_in_database',
+    TrinketAdded = 'trinket_added',
     ChestResult = 'chest_result',
     HealAmount = 'heal_amount',
     CardUpgrade = 'card_upgrade',
