@@ -25,7 +25,7 @@ export const PlantFeetCardUpgraded: Card = {
         statuses: [],
     },
     showPointer: false,
-    isUpgraded: false,
+    isUpgraded: true,
     isActive: true,
 };
 
