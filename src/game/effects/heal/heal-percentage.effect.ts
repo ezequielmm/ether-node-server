@@ -16,7 +16,7 @@ export interface HealPercentageArgs {
 })
 @Injectable()
 export class HealPercentageEffect implements EffectHandler {
-    constructor(private readonly effectSerfice: EffectService) {}
+    constructor(private readonly effectService: EffectService) {}
 
     async handle(payload: EffectDTO<HealPercentageArgs>): Promise<void> {
         const ctx = payload.ctx;
@@ -26,7 +26,7 @@ export class HealPercentageEffect implements EffectHandler {
 
         const hp = this.calculatePercentage(target, percentage);
 
-        await this.effectSerfice.apply({
+        await this.effectService.apply({
             ctx,
             source,
             target,
