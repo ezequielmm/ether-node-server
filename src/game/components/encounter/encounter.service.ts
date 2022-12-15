@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from "@nestjs/common";
 import { InjectModel } from 'kindagoose';
 import { Encounter } from './encounter.schema';
 import {
@@ -14,6 +14,7 @@ import { DataWSRequestTypesEnum } from '../../../socket/socket.enum';
 import { ReturnModelType } from '@typegoose/typegoose';
 import { getRandomItemByWeight } from 'src/utils';
 import { EncounterIdEnum } from './encounter.enum';
+import { CardService } from '../card/card.service';
 
 @Injectable()
 export class EncounterService {
@@ -21,12 +22,14 @@ export class EncounterService {
         @InjectModel(Encounter)
         private readonly encounterModel: ReturnModelType<typeof Encounter>,
         private readonly expeditionService: ExpeditionService,
+
+        private readonly cardService: CardService,
     ) {}
 
     async generateEncounter(): Promise<EncounterInterface> {
         const encounterId = getRandomItemByWeight(
             [EncounterIdEnum.Nagpra, EncounterIdEnum.WillOWisp],
-            [1, 1],
+            [0, 1],
         );
 
         return {
@@ -69,7 +72,7 @@ export class EncounterService {
         });
     }
 
-    async applyEffects(effects: any[], client: Socket): Promise<void> {
+    private async applyEffects(effects: any[], client: Socket): Promise<void> {
         for (let i = 0; i < effects.length; i++) {
             const effect = effects[i];
             const ctx = await this.expeditionService.getGameContext(client);
@@ -104,12 +107,48 @@ export class EncounterService {
                         },
                     });
                     break;
-                case 'birdcage': //nagpra
                 case 'upgrade_random_card': //eg will o wisp
+                    await this.upgradeRandomCard(client);
+                    break;
+                case 'birdcage': //nagpra
                 case 'card_add_to_library': //eg naiad
                     break;
+
             }
         }
+    }
+
+    private async upgradeRandomCard(client: Socket): Promise<void> {
+        const {
+            playerState,
+            playerState: { cards },
+            currentNode: { merchantItems },
+        } = await this.expeditionService.findOne({
+            clientId: client.id,
+        });
+
+        const data = {
+            upgradeableCards: [],
+        };
+
+        const cardIds: number[] = [];
+        const probabiltyWeights: number[] = [];
+
+        for (const card of cards) {
+            if (!card.isUpgraded) {
+                data.upgradeableCards.push(card);
+                cardIds.push(card.upgradedCardId);
+                probabiltyWeights.push(1);
+            }
+        }
+
+        const upgradedCards = await this.cardService.findCardsById(cardIds);
+        const upgradedCardData = getRandomItemByWeight(
+            upgradedCards,
+            probabiltyWeights,
+        );
+
+        //see MerchantService
     }
 
     async getByEncounterId(encounterId: number): Promise<Encounter> {
@@ -118,6 +157,7 @@ export class EncounterService {
             .exec();
         return encounter;
     }
+
     async getEncounterDTO(client: Socket): Promise<EncounterDTO> {
         const encounterData = await this.getEncounterData(client);
         const encounter = await this.getByEncounterId(
