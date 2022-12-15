@@ -79,7 +79,17 @@ export class EncounterService {
 
             switch (effect.kind) {
                 case 'coin': //eg nagpra
+                    const playerState =
+                        await this.expeditionService.getPlayerState({
+                            clientId: client.id,
+                        });
                     amount = parseInt(effect.amount);
+
+                    if (playerState.gold + amount < 0) {
+                        // no negative gold
+                        amount = -playerState.gold;
+                    }
+
                     await this.expeditionService.updateById(expeditionId, {
                         $inc: {
                             'playerState.gold': amount,
@@ -96,6 +106,7 @@ export class EncounterService {
                     break;
                 case 'birdcage': //nagpra
                 case 'upgrade_random_card': //eg will o wisp
+                case 'card_add_to_library': //eg naiad
                     break;
             }
         }
