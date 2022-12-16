@@ -32,7 +32,7 @@ import {
     PurchaseFailureEnum,
 } from './merchant.enum';
 import { Item, MerchantItems, SelectedItem } from './merchant.interface';
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 
 @Injectable()
 export class MerchantService {
@@ -483,7 +483,7 @@ export class MerchantService {
         const newCardUpgradeCount = playerState.cardUpgradeCount + 1;
 
         const newPlayerState = {
-            ...playerState,//don't toObject() here
+            ...playerState, //don't toObject() here
             cards: newCard,
             gold: newGold,
             cardUpgradeCount: newCardUpgradeCount,
