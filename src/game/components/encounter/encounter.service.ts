@@ -8,7 +8,7 @@ import {
 } from '../../standardResponse/standardResponse';
 import { ExpeditionService } from '../expedition/expedition.service';
 import { Socket } from 'socket.io';
-import { EncounterButton, EncounterInterface } from "./encounter.interfaces";
+import { EncounterButton, EncounterInterface } from './encounter.interfaces';
 import { EncounterDTO } from '../../action/getEncounterDataAction';
 import { DataWSRequestTypesEnum } from '../../../socket/socket.enum';
 import { ReturnModelType } from '@typegoose/typegoose';
@@ -17,7 +17,12 @@ import { EncounterIdEnum } from './encounter.enum';
 import { CardService } from '../card/card.service';
 import { GameContext } from '../interfaces';
 import { TrinketService } from '../trinket/trinket.service';
-import { Player } from "../expedition/expedition.interface";
+import {
+    IExpeditionPlayerStateDeckCard,
+    Player,
+} from '../expedition/expedition.interface';
+import { randomUUID } from 'crypto';
+import { CardDescriptionFormatter } from '../../cardDescriptionFormatter/cardDescriptionFormatter';
 
 @Injectable()
 export class EncounterService {
@@ -33,7 +38,7 @@ export class EncounterService {
     async generateEncounter(): Promise<EncounterInterface> {
         const encounterId = getRandomItemByWeight(
             [EncounterIdEnum.Nagpra, EncounterIdEnum.WillOWisp],
-            [1, 0],
+            [1, 1],
         );
 
         return {
@@ -85,14 +90,13 @@ export class EncounterService {
             const ctx = await this.expeditionService.getGameContext(client);
             const expedition = ctx.expedition;
             const expeditionId = expedition._id.toString();
+            const playerState = await this.expeditionService.getPlayerState({
+                clientId: client.id,
+            });
             let amount = 0;
 
             switch (effect.kind) {
                 case 'coin': //eg nagpra
-                    const playerState =
-                        await this.expeditionService.getPlayerState({
-                            clientId: client.id,
-                        });
                     amount = parseInt(effect.amount);
 
                     if (playerState.gold + amount < 0) {
@@ -115,7 +119,7 @@ export class EncounterService {
                     });
                     break;
                 case 'upgrade_random_card': //eg will o wisp
-                    await this.upgradeRandomCard(client);
+                    await this.upgradeRandomCard(client, playerState);
                     break;
                 case 'birdcage': //nagpra
                     await this.birdcage(ctx);
@@ -130,36 +134,28 @@ export class EncounterService {
         await this.trinketService.add(ctx, 2);
     }
 
-    private async upgradeRandomCard(client: Socket): Promise<void> {
-        const {
-            playerState,
-            playerState: { cards },
-            currentNode: { merchantItems },
-        } = await this.expeditionService.findOne({
-            clientId: client.id,
-        });
-
-        const data = {
-            upgradeableCards: [],
-        };
-
+    private async upgradeRandomCard(
+        client: Socket,
+        playerState: Player,
+    ): Promise<void> {
         const cardIds: number[] = [];
         const probabilityWeights: number[] = [];
 
-        for (const card of cards) {
-            if (!card.isUpgraded) {
-                data.upgradeableCards.push(card);
-                cardIds.push(card.upgradedCardId);
+        for (const card of playerState.cards) {
+            if (!card.isUpgraded && card.upgradedCardId) {
+                cardIds.push(card.cardId);
                 probabilityWeights.push(1);
             }
         }
 
-        const upgradedCards = await this.cardService.findCardsById(cardIds);
-        const upgradedCardData = getRandomItemByWeight(
-            upgradedCards,
+        if (cardIds.length == 0) return; // no cards qualify for upgrade
+
+        const upgradeMeCardId = getRandomItemByWeight(
+            cardIds,
             probabilityWeights,
         );
 
+        await this.upgradeCard(upgradeMeCardId, playerState, client);
         //see MerchantService
     }
 
@@ -239,5 +235,61 @@ export class EncounterService {
         const encounterData: EncounterInterface =
             expedition.currentNode.encounterData;
         return encounterData;
+    }
+
+    async upgradeCard(
+        cardId: string | number,
+        playerState: Player,
+        client: Socket,
+    ): Promise<void> {
+        const card = await this.cardService.findById(cardId);
+
+        const upgradedCardData = await this.cardService.findById(
+            card.upgradedCardId,
+        );
+
+        const upgradedCard: IExpeditionPlayerStateDeckCard = {
+            id: randomUUID(),
+            cardId: card.cardId,
+            name: upgradedCardData.name,
+            cardType: upgradedCardData.cardType,
+            energy: upgradedCardData.energy,
+            description: CardDescriptionFormatter.process(upgradedCardData),
+            isTemporary: false,
+            rarity: upgradedCardData.rarity,
+            properties: upgradedCardData.properties,
+            keywords: upgradedCardData.keywords,
+            showPointer: upgradedCardData.showPointer,
+            pool: upgradedCardData.pool,
+            isUpgraded: upgradedCardData.isUpgraded,
+            isActive: true,
+        };
+        let isUpgraded = false;
+
+        const newCard = playerState.cards.map((item) => {
+            if (item.cardId == card.cardId && !isUpgraded) {
+                isUpgraded = true;
+                return upgradedCard;
+            } else {
+                return item;
+            }
+        });
+
+        const newCardUpgradeCount = playerState.cardUpgradeCount + 1;
+
+        const newPlayerState = {
+            ...playerState, //don't toObject() here
+            cards: newCard,
+            cardUpgradeCount: newCardUpgradeCount,
+        };
+
+        await this.expeditionService.updateByFilter(
+            { clientId: client.id },
+            {
+                $set: {
+                    playerState: newPlayerState,
+                },
+            },
+        );
     }
 }
