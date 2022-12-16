@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { HistoryService } from 'src/game/history/history.service';
 import { EffectDecorator } from '../effects.decorator';
 import { EffectDTO, EffectHandler } from '../effects.interface';
-import _ from 'lodash';
+import * as _ from 'lodash';
 import { EffectService } from '../effects.service';
 import { healEffect } from '../heal/constants';
 import { philterOfRedemptionEffect } from './constants';
