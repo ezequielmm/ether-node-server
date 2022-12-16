@@ -1,8 +1,8 @@
-import { Encounter } from "../encounter.schema";
-
+import { Encounter } from '../encounter.schema';
+import { EncounterIdEnum } from '../encounter.enum';
 
 export const NaiadEncounter: Encounter = {
-    encounterId: 5,
+    encounterId: EncounterIdEnum.Naiad,
     imageId: 'naiad',
     stages: [
         {

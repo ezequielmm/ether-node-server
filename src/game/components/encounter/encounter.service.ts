@@ -8,7 +8,7 @@ import {
 } from '../../standardResponse/standardResponse';
 import { ExpeditionService } from '../expedition/expedition.service';
 import { Socket } from 'socket.io';
-import { EncounterInterface } from './encounter.interfaces';
+import { EncounterButton, EncounterInterface } from "./encounter.interfaces";
 import { EncounterDTO } from '../../action/getEncounterDataAction';
 import { DataWSRequestTypesEnum } from '../../../socket/socket.enum';
 import { ReturnModelType } from '@typegoose/typegoose';
@@ -17,6 +17,7 @@ import { EncounterIdEnum } from './encounter.enum';
 import { CardService } from '../card/card.service';
 import { GameContext } from '../interfaces';
 import { TrinketService } from '../trinket/trinket.service';
+import { Player } from "../expedition/expedition.interface";
 
 @Injectable()
 export class EncounterService {
@@ -32,7 +33,7 @@ export class EncounterService {
     async generateEncounter(): Promise<EncounterInterface> {
         const encounterId = getRandomItemByWeight(
             [EncounterIdEnum.Nagpra, EncounterIdEnum.WillOWisp],
-            [1, 1],
+            [1, 0],
         );
 
         return {
@@ -42,6 +43,9 @@ export class EncounterService {
     }
 
     async encounterChoice(client: Socket, choiceIdx: number): Promise<string> {
+        const playerState = await this.expeditionService.getPlayerState({
+            clientId: client.id,
+        });
         const encounterData = await this.getEncounterData(client);
         const encounter = await this.getByEncounterId(
             encounterData.encounterId,
@@ -66,7 +70,7 @@ export class EncounterService {
             client,
         );
 
-        const data = await this.getEncounterDTO(client);
+        const data = await this.getEncounterDTO(client, playerState);
 
         return StandardResponse.respond({
             message_type: SWARMessageType.GenericData,
@@ -166,7 +170,10 @@ export class EncounterService {
         return encounter;
     }
 
-    async getEncounterDTO(client: Socket): Promise<EncounterDTO> {
+    async getEncounterDTO(
+        client: Socket,
+        playerState: Player,
+    ): Promise<EncounterDTO> {
         const encounterData = await this.getEncounterData(client);
         const encounter = await this.getByEncounterId(
             encounterData.encounterId,
@@ -177,8 +184,9 @@ export class EncounterService {
             enabled: boolean;
         }[] = [];
         for (let i = 0; i < stage.buttons.length; i++) {
-            const enabled = true;
-            const text = stage.buttons[i].text;
+            const button = stage.buttons[i];
+            const enabled = this.calculateEnabledState(button, playerState);
+            const text = button.text;
             buttons.push({
                 text,
                 enabled,
@@ -188,6 +196,22 @@ export class EncounterService {
         const imageId = encounter.imageId;
         const answer: EncounterDTO = { imageId, displayText, buttons };
         return answer;
+    }
+
+    private calculateEnabledState(
+        button: EncounterButton,
+        playerState: Player,
+    ): boolean {
+        for (let i = 0; i < button.effects.length; i++) {
+            const effect = button.effects[i];
+            if (effect.kind === 'coin') {
+                const amount = parseInt(effect.amount);
+                if (playerState.gold + amount < 0) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     async updateEncounterData(
