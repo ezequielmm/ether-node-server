@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { HistoryService } from 'src/game/history/history.service';
 import { EffectDecorator } from '../effects.decorator';
 import { EffectDTO, EffectHandler } from '../effects.interface';
-import * as _ from 'lodash';
+import { filter, sumBy } from 'lodash';
 import { EffectService } from '../effects.service';
 import { healEffect } from '../heal/constants';
 import { philterOfRedemptionEffect } from './constants';
@@ -19,7 +19,7 @@ export class PhilterOfRedemptionEffect implements EffectHandler {
 
     async handle(dto: EffectDTO): Promise<void> {
         const { ctx, source, target } = dto;
-        const damages = _.filter(this.historyService.get(ctx.client.id), {
+        const damages = filter(this.historyService.get(ctx.client.id), {
             type: 'damage',
             turn: dto.ctx.expedition.currentNode.data.round - 1,
         });
@@ -31,7 +31,7 @@ export class PhilterOfRedemptionEffect implements EffectHandler {
             effect: {
                 effect: healEffect.name,
                 args: {
-                    value: _.sumBy(damages, 'damage'),
+                    value: sumBy(damages, 'damage'),
                 },
             },
         });
