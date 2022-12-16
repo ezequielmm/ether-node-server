@@ -4,7 +4,7 @@ import {
     Injectable,
     Provider,
 } from '@nestjs/common';
-import { MongooseModule, getConnectionToken } from '@nestjs/mongoose';
+import { KindagooseModule, getConnectionToken } from 'kindagoose';
 import { IoAdapter } from '@nestjs/platform-socket.io';
 import { Test, TestingModule } from '@nestjs/testing';
 import { MongoMemoryServer } from 'mongodb-memory-server';
@@ -53,7 +53,7 @@ export class IntegrationTestServer {
         this.module = await Test.createTestingModule({
             imports: [
                 InMemoryMongoDB.forRootAsyncModule(this.mongod),
-                MongooseModule.forFeature(params.models),
+                KindagooseModule.forFeature(params.models),
             ],
             providers: params.logger
                 ? [params.logger, ...params.providers]

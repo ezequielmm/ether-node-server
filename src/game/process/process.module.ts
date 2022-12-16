@@ -28,6 +28,9 @@ import { InitNodeProcess } from './initNode.process';
 import { InitTreasureProcess } from './initTreasure.process';
 import { NodeSelectedProcess } from './nodeSelected.process';
 import { SendEnemyIntentProcess } from './sendEnemyIntents.process';
+import { InitEncounterProcess } from './initEncounter.process';
+import { EncounterModule } from '../components/encounter/encounter.module';
+import { ContinueExpeditionProcess } from './continueExpedition.process';
 
 @Module({
     imports: [
@@ -47,6 +50,7 @@ import { SendEnemyIntentProcess } from './sendEnemyIntents.process';
         forwardRef(() => PotionModule),
         TrinketModule,
         CombatModule,
+        EncounterModule,
     ],
     providers: [
         SendEnemyIntentProcess,
@@ -62,6 +66,8 @@ import { SendEnemyIntentProcess } from './sendEnemyIntents.process';
         InitNodeProcess,
         InitMerchantProcess,
         InitTreasureProcess,
+        InitEncounterProcess,
+        ContinueExpeditionProcess,
     ],
     exports: [
         SendEnemyIntentProcess,
@@ -77,6 +83,8 @@ import { SendEnemyIntentProcess } from './sendEnemyIntents.process';
         InitNodeProcess,
         InitMerchantProcess,
         InitTreasureProcess,
+        InitEncounterProcess,
+        ContinueExpeditionProcess,
     ],
 })
 export class ProcessModule {}

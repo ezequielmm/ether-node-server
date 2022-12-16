@@ -1,14 +1,14 @@
 import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
+import { InjectModel } from 'kindagoose';
 import { Seeder } from 'nestjs-seeder';
-import { Card, CardDocument } from './card.schema';
-import { Model } from 'mongoose';
+import { Card } from './card.schema';
 import { data } from './card.data';
+import { ReturnModelType } from '@typegoose/typegoose';
 
 @Injectable()
 export class CardSeeder implements Seeder {
     constructor(
-        @InjectModel(Card.name) private readonly card: Model<CardDocument>,
+        @InjectModel(Card) private readonly card: ReturnModelType<typeof Card>,
     ) {}
 
     async seed(): Promise<any> {

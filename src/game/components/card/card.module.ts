@@ -1,20 +1,15 @@
 import { forwardRef, Module } from '@nestjs/common';
-import { MongooseModule } from '@nestjs/mongoose';
+import { KindagooseModule } from 'kindagoose';
 import { ActionModule } from 'src/game/action/action.module';
 import { StatusModule } from 'src/game/status/status.module';
 import { ExpeditionModule } from '../expedition/expedition.module';
 import { PlayerModule } from '../player/player.module';
-import { Card, CardSchema } from './card.schema';
+import { Card } from './card.schema';
 import { CardService } from './card.service';
 
 @Module({
     imports: [
-        MongooseModule.forFeature([
-            {
-                name: Card.name,
-                schema: CardSchema,
-            },
-        ]),
+        KindagooseModule.forFeature([Card]),
         forwardRef(() => ActionModule),
         forwardRef(() => ExpeditionModule),
         forwardRef(() => StatusModule),
@@ -23,4 +18,4 @@ import { CardService } from './card.service';
     providers: [CardService],
     exports: [CardService],
 })
-export class CardModule {}
+export class CardModule { }

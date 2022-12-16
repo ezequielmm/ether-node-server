@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { ExpeditionService } from 'src/game/components/expedition/expedition.service';
 import { CustomException, ErrorBehavior } from 'src/socket/custom.exception';
 import {
-    IExpeditionPlayerState,
+    Player,
     IExpeditionPlayerStateDeckCard,
 } from '../components/expedition/expedition.interface';
 
@@ -18,8 +18,8 @@ export interface PlayerInfoResponse {
     energyMax: number;
     defense: number;
     cards: IExpeditionPlayerStateDeckCard[];
-    potions: IExpeditionPlayerState['potions'];
-    trinkets: IExpeditionPlayerState['trinkets'];
+    potions: Player['potions'];
+    trinkets: Player['trinkets'];
 }
 
 @Injectable()

@@ -16,7 +16,7 @@ export const ChokingCard: Card = {
     pool: 'knight',
     energy: 1,
     description: 'If in hand at end of turn, gain 2 Feeble\nExhaust',
-    keywords: [CardKeywordEnum.Exhaust],
+    keywords: [CardKeywordEnum.Exhaust, CardKeywordEnum.Unplayable],
     properties: {
         effects: [
             {

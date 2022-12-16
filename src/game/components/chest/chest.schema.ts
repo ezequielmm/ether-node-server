@@ -1,13 +1,9 @@
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument } from 'mongoose';
+import { ModelOptions, Prop } from '@typegoose/typegoose';
 import { TreasureTypeEnum } from 'src/game/treasure/treasure.enum';
 import { ChestSizeEnum } from './chest.enum';
 
-export type ChestDocument = HydratedDocument<Chest>;
-
-@Schema({
-    collection: 'chests',
-    versionKey: false,
+@ModelOptions({
+    schemaOptions: { collection: 'chests', versionKey: false },
 })
 export class Chest {
     @Prop()
@@ -46,5 +42,3 @@ export class Chest {
     @Prop()
     trappedStartsCombat: boolean;
 }
-
-export const ChestSchema = SchemaFactory.createForClass(Chest);

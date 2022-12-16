@@ -50,6 +50,6 @@ export class EndEnemyTurnProcess {
 
         await this.combatQueueService.end(ctx);
 
-        await this.beingPlayerTurnProcess.handle({ client });
+        await this.beingPlayerTurnProcess.handle({ ctx });
     }
 }

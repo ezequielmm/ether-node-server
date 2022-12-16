@@ -1,9 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
-import _ from 'lodash';
 import { EnemyService } from 'src/game/components/enemy/enemy.service';
 import { GameContext } from 'src/game/components/interfaces';
-import { PlayerService } from 'src/game/components/player/player.service';
 import { EVENT_BEFORE_ENEMIES_TURN_START } from 'src/game/constants';
 import { damageEffect } from 'src/game/effects/damage/constants';
 import { DamageArgs } from 'src/game/effects/damage/damage.effect';

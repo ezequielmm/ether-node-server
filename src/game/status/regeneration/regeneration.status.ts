@@ -9,13 +9,13 @@ import { EffectService } from 'src/game/effects/effects.service';
 import { healEffect } from 'src/game/effects/heal/constants';
 import { StatusEventDTO, StatusEventHandler } from '../interfaces';
 import { StatusDecorator } from '../status.decorator';
-import { regenerate } from './contants';
+import { regeneration } from './contants';
 
 @StatusDecorator({
-    status: regenerate,
+    status: regeneration,
 })
 @Injectable()
-export class RegenerateStatus implements StatusEventHandler {
+export class RegenerationStatus implements StatusEventHandler {
     constructor(private readonly effectService: EffectService) {}
 
     async handle(dto: StatusEventDTO): Promise<void> {

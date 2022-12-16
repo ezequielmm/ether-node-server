@@ -22,6 +22,7 @@ export class RemoveDefenseEffect implements EffectHandler {
         const { ctx, source, target } = payload;
 
         let oldDefense: number;
+
         if (EnemyService.isEnemy(target)) {
             oldDefense = target.value.defense;
             await this.enemyService.setDefense(ctx, target.value.id, 0);

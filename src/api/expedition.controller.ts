@@ -141,6 +141,7 @@ export class ExpeditionController {
             if (hasExpedition) {
                 await this.expeditionService.update(playerId, {
                     status: ExpeditionStatusEnum.Canceled,
+                    isCurrentlyPlaying: false,
                 });
 
                 return { canceledExpedition: true };

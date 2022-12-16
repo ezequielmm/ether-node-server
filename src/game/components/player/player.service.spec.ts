@@ -55,6 +55,7 @@ describe('PlayerService', () => {
         mockContext = {
             client: mockEventEmitter2,
             expedition: {
+                _id: 123,
                 playerState: {
                     hpMax: 80,
                     hpCurrent: 80,

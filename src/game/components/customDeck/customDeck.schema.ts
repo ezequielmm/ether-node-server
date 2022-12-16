@@ -1,11 +1,7 @@
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument } from 'mongoose';
+import { ModelOptions, Prop } from '@typegoose/typegoose';
 
-export type CustomDeckDocument = HydratedDocument<CustomDeck>;
-
-@Schema({
-    collection: 'customDecks',
-    versionKey: false,
+@ModelOptions({
+    schemaOptions: { collection: 'customDecks', versionKey: false },
 })
 export class CustomDeck {
     @Prop()
@@ -23,5 +19,3 @@ export class CustomDeck {
     @Prop()
     isDefault: boolean;
 }
-
-export const CustomDeckSchema = SchemaFactory.createForClass(CustomDeck);

@@ -48,7 +48,9 @@
                             </div>
                         </div>
                     </div>
+
                     <hr />
+
                     <div class='form-group'>
                         <button
                             type='button'
@@ -60,7 +62,7 @@
                     </div>
                     <hr />
                     <div class='form-group'>
-                        <label for='nodeId'>Select a node</label>
+                        <label for='nodeId'>Node Id</label>
                         <div class='input-group'>
                             <input
                                 type='number'
@@ -77,6 +79,15 @@
                                     id='btnSelectNode'
                                 >
                                     Select Node
+                                </button>
+                            </div>
+                            <div class='input-group-append'>
+                                <button
+                                    type='button'
+                                    class='btn btn-primary'
+                                    id='btnSkipNode'
+                                >
+                                    Skip Node
                                 </button>
                             </div>
                         </div>
@@ -136,6 +147,7 @@
                                 <option value='Potions'>Potions</option>
                                 <option value='Trinkets'>Trinkets</option>
                                 <option value='Statuses'>Statuses</option>
+                                <option value='Rewards'>Rewards</option>
                                 <option
                                     value='EnemyIntents'
                                 >EnemyIntents</option>
@@ -261,6 +273,7 @@
                             />
                             <select class='form-control' id='itemType'>
                                 <option value='potion'>Potion</option>
+                                <option value='card'>Card</option>
                             </select>
                             <div class='input-group-append'>
                                 <button
@@ -282,6 +295,29 @@
                         >
                             Open Chest
                         </button>
+                    </div>
+                    <hr />
+                    <div class='form-group'>
+                        <label for='choiceIdx'>Select a choice</label>
+                        <div class='input-group'>
+                            <input
+                                type='number'
+                                id='choiceIdx'
+                                min='1'
+                                class='form-control'
+                                value=''
+                                placeholder='Choice...'
+                            />
+                            <div class='input-group-append'>
+                                <button
+                                    type='button'
+                                    class='btn btn-primary'
+                                    id='btnEncounterChoice'
+                                >
+                                    Encounter Choice
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class='col-md-6'>

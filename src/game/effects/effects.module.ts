@@ -6,6 +6,7 @@ import { CombatQueueModule } from '../components/combatQueue/combatQueue.module'
 import { EnemyModule } from '../components/enemy/enemy.module';
 import { ExpeditionModule } from '../components/expedition/expedition.module';
 import { PlayerModule } from '../components/player/player.module';
+import { TrinketModule } from '../components/trinket/trinket.module';
 import { HistoryModule } from '../history/history.module';
 import { ProviderModule } from '../provider/provider.module';
 import { StatusModule } from '../status/status.module';
@@ -24,6 +25,7 @@ import { EnergyEffect } from './energy/energy.effect';
 import { ExecutionersBlowEffect } from './executionersBlow/executionersBlow.effect';
 import { FlurryEffect } from './flurry/flurry.effect';
 import { HeadButtEffect } from './headButt/headButt.effect';
+import { HealPercentageEffect } from './heal/heal-percentage.effect';
 import { HealEffect } from './heal/heal.effect';
 import { KnockDownEffect } from './knockDown/knockDown.effect';
 import { LastReminderEffect } from './lastReminder/lastReminder.effect';
@@ -43,6 +45,7 @@ import { TwistTheBladeEffect } from './twistTheBlade/twistTheBlade.effect';
         forwardRef(() => ActionModule),
         forwardRef(() => CardModule),
         ProviderModule,
+        TrinketModule,
         PlayerModule,
         CombatQueueModule,
         HistoryModule,
@@ -54,6 +57,7 @@ import { TwistTheBladeEffect } from './twistTheBlade/twistTheBlade.effect';
         DefenseEffect,
         DrawCardEffect,
         HealEffect,
+        HealPercentageEffect,
         EnergyEffect,
         RemoveDefenseEffect,
         DoubleBurnEffect,

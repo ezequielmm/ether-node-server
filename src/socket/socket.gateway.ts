@@ -60,6 +60,8 @@ export class SocketGateway
                 playerId,
             });
 
+            const ctx = await this.expeditionService.getGameContext(client);
+
             if (expedition) {
                 this.logger.debug(`Client connected: ${client.id}`);
 
@@ -73,10 +75,7 @@ export class SocketGateway
                                 clientId: client.id,
                             });
 
-                        await this.playerService.setHp(
-                            { client, expedition },
-                            hpCurrent,
-                        );
+                        await this.playerService.setHp(ctx, hpCurrent);
                     }
                 }
 
@@ -111,6 +110,12 @@ export class SocketGateway
         this.logger.debug(
             `Deleted card selection screen items for client ${client.id}`,
         );
+
+        // Update player connection status
+        await this.expeditionService.updatePlayerStatus({
+            clientId: client.id,
+            isCurrentlyPlaying: false,
+        });
 
         // Log amount of clients connected
         this.logger.verbose(

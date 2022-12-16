@@ -1,7 +1,6 @@
 import { forwardRef, Inject, Injectable, Logger } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Enemy, EnemyDocument } from './enemy.schema';
-import { Model } from 'mongoose';
+import { InjectModel } from 'kindagoose';
+import { Enemy } from './enemy.schema';
 import { EnemyId, enemyIdField, enemySelector } from './enemy.type';
 import { GameContext, ExpeditionEntity } from '../interfaces';
 import { EnemyScript, ExpeditionEnemy } from './enemy.interface';
@@ -24,13 +23,15 @@ import { StatusService } from 'src/game/status/status.service';
 import { EnemyIntentionType } from './enemy.enum';
 import { damageEffect } from 'src/game/effects/damage/constants';
 import { HARD_MODE_NODE_END, HARD_MODE_NODE_START } from 'src/game/constants';
+import { ReturnModelType } from '@typegoose/typegoose';
 
 @Injectable()
 export class EnemyService {
     private readonly logger: Logger = new Logger(EnemyService.name);
 
     constructor(
-        @InjectModel(Enemy.name) private readonly enemy: Model<EnemyDocument>,
+        @InjectModel(Enemy)
+        private readonly enemy: ReturnModelType<typeof Enemy>,
         @Inject(forwardRef(() => ExpeditionService))
         private readonly expeditionService: ExpeditionService,
         @Inject(forwardRef(() => StatusService))
@@ -71,9 +72,9 @@ export class EnemyService {
      * Returns enemy by id or enemyId
      *
      * @param enemyId EnemyId
-     * @returns EnemyDocument
+     * @returns Enemy
      */
-    public async findById(enemyId: EnemyId): Promise<EnemyDocument> {
+    public async findById(enemyId: EnemyId): Promise<Enemy> {
         return typeof enemyId === 'string'
             ? this.enemy.findById(enemyId).lean()
             : this.enemy.findOne({ enemyId }).lean();
@@ -376,7 +377,7 @@ export class EnemyService {
      *
      * @param enemies number[]
      */
-    async findEnemiesById(enemies: number[]): Promise<EnemyDocument[]> {
+    async findEnemiesById(enemies: number[]): Promise<Enemy[]> {
         return await this.enemy.find({ enemyId: { $in: enemies } }).lean();
     }
 

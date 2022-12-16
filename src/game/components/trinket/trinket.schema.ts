@@ -1,18 +1,31 @@
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
-import { JsonEffect } from 'src/game/effects/effects.interface';
+import { ModelOptions, Prop, SubDocumentType } from '@typegoose/typegoose';
+import { randomUUID } from 'crypto';
+import {
+    StandardResponse,
+    SWARAction,
+    SWARMessageType,
+} from 'src/game/standardResponse/standardResponse';
+import { GameContext } from '../interfaces';
 import { TrinketRarityEnum } from './trinket.enum';
 
-export type TrinketDocument = Trinket & Document;
-
-@Schema({
-    collection: 'trinkets',
+@ModelOptions({
+    schemaOptions: {
+        collection: 'trinkets',
+        _id: false,
+        versionKey: false,
+    },
 })
-export class Trinket {
+export class Trinket<T = any> {
+    @Prop({ default: () => randomUUID() })
+    id: string;
+
     @Prop()
     trinketId: number;
 
-    @Prop()
+    @Prop({
+        type: String,
+        required: true,
+    })
     name: string;
 
     @Prop()
@@ -21,8 +34,22 @@ export class Trinket {
     @Prop()
     description: string;
 
-    @Prop()
-    effects: JsonEffect[];
-}
+    onAttach(_ctx: GameContext) {
+        //throw new Error('Method not implemented.');
+    }
 
-export const TrinketSchema = SchemaFactory.createForClass(Trinket);
+    trigger(this: SubDocumentType<T>, ctx: GameContext) {
+        ctx.client.emit(
+            'PutData',
+            StandardResponse.respond({
+                message_type: SWARMessageType.TrinketTriggered,
+                action: SWARAction.FlashTrinketIcon,
+                data: {
+                    ...this.toObject(),
+                },
+            }),
+        );
+    }
+
+    static TrinketId: number;
+}

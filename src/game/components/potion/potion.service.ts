@@ -1,8 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Potion, PotionDocument } from './potion.schema';
-import { Model } from 'mongoose';
+import { InjectModel } from 'kindagoose';
+import { Potion } from './potion.schema';
 import { GameContext } from '../interfaces';
+import { Document, FilterQuery } from 'mongoose';
 import { ExpeditionMapNodeTypeEnum } from '../expedition/expedition.enum';
 import { EffectService } from 'src/game/effects/effects.service';
 import { PlayerService } from '../player/player.service';
@@ -21,29 +21,30 @@ import { getPotionIdField, PotionId } from './potion.type';
 import { getRandomNumber } from 'src/utils';
 import { CustomException, ErrorBehavior } from 'src/socket/custom.exception';
 import { CombatQueueService } from '../combatQueue/combatQueue.service';
+import { ReturnModelType } from '@typegoose/typegoose';
 
 @Injectable()
 export class PotionService {
     private readonly logger: Logger = new Logger(PotionService.name);
 
     constructor(
-        @InjectModel(Potion.name)
-        private readonly potion: Model<PotionDocument>,
+        @InjectModel(Potion)
+        private readonly potion: ReturnModelType<typeof Potion>,
         private readonly effectService: EffectService,
         private readonly playerService: PlayerService,
         private readonly expeditionService: ExpeditionService,
         private readonly combatQueueService: CombatQueueService,
     ) {}
 
-    async findAll(): Promise<PotionDocument[]> {
+    async findAll(): Promise<Potion[]> {
         return this.potion.find({ isActive: true }).lean();
     }
 
-    async findByPotionId(potionId: number): Promise<PotionDocument> {
+    async findByPotionId(potionId: number): Promise<Potion> {
         return this.potion.findOne({ potionId });
     }
 
-    async findById(id: PotionId): Promise<PotionDocument> {
+    async findById(id: PotionId): Promise<Potion> {
         const field = getPotionIdField(id);
         return this.potion.findOne({ [field]: id }).lean();
     }
@@ -209,7 +210,7 @@ export class PotionService {
             return false;
         }
 
-        const potionData = potion.toObject();
+        const potionData = (potion as Potion & Document).toObject();
 
         await this.expeditionService.updateById(ctx.expedition._id.toString(), {
             $push: {
@@ -223,9 +224,11 @@ export class PotionService {
         return true;
     }
 
-    public async getRandomPotion(): Promise<PotionDocument> {
+    public async getRandomPotion(
+        filter?: FilterQuery<Potion>,
+    ): Promise<Potion> {
         const [potion] = await this.potion
-            .aggregate<PotionDocument>([{ $sample: { size: 1 } }])
+            .aggregate<Potion>([{ $match: filter }, { $sample: { size: 1 } }])
             .exec();
 
         return potion;

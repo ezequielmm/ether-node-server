@@ -57,3 +57,7 @@ export interface UpdateHandPilesDTO extends BaseDTO {
 export interface UpdatePlayerDeckDTO extends BaseDTO {
     deck: IExpeditionPlayerStateDeckCard[];
 }
+
+export interface OverrideAvailableNodeDTO extends BaseDTO {
+    nodeId: number;
+}

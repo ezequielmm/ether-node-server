@@ -8,6 +8,7 @@ import { GetEnergyAction } from 'src/game/action/getEnergy.action';
 import { GetMerchantDataAction } from 'src/game/action/getMerchantData.action';
 import { GetPlayerDeckAction } from 'src/game/action/getPlayerDeck.action';
 import { GetPlayerInfoAction } from 'src/game/action/getPlayerInfo.action';
+import { GetRewardsAction } from 'src/game/action/getRewards.action';
 import { GetStatusesAction } from 'src/game/action/getStatuses.action';
 import { GetTreasureDataAction } from 'src/game/action/getTreasureData.action';
 import { GetUpgradableCardsAction } from 'src/game/action/getUpgradableCards.action';
@@ -17,6 +18,7 @@ import {
     SWARMessageType,
 } from 'src/game/standardResponse/standardResponse';
 import { corsSocketSettings, DataWSRequestTypesEnum } from './socket.enum';
+import { GetEncounterDataAction } from 'src/game/action/getEncounterDataAction';
 
 @WebSocketGateway(corsSocketSettings)
 export class GetDataGateway {
@@ -34,6 +36,8 @@ export class GetDataGateway {
         private readonly getUpgradableCards: GetUpgradableCardsAction,
         private readonly getMerchantDataAction: GetMerchantDataAction,
         private readonly getTreasureDataAction: GetTreasureDataAction,
+        private readonly getRewardsAction: GetRewardsAction,
+        private readonly getEncounterAction: GetEncounterDataAction,
     ) {}
 
     @SubscribeMessage('GetData')
@@ -88,6 +92,14 @@ export class GetDataGateway {
 
                 case DataWSRequestTypesEnum.TreasureData:
                     data = await this.getTreasureDataAction.handle(client);
+                    break;
+
+                case DataWSRequestTypesEnum.Rewards:
+                    data = await this.getRewardsAction.handle(client.id);
+                    break;
+
+                case DataWSRequestTypesEnum.EncounterData:
+                    data = await this.getEncounterAction.handle(client);
                     break;
             }
 

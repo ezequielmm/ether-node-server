@@ -1,3 +1,4 @@
+import { Prop } from '@typegoose/typegoose';
 import { Item } from 'src/game/merchant/merchant.interface';
 import { AttachedStatus, StatusType } from 'src/game/status/interfaces';
 import { CardRarityEnum, CardTypeEnum } from '../card/card.enum';
@@ -16,27 +17,53 @@ import {
     IExpeditionNodeReward,
 } from './expedition.enum';
 import { Expedition } from './expedition.schema';
+import * as Trinkets from '../trinket/collection';
 
 export interface PotionInstance extends Potion {
     id: string;
 }
 
-export interface TrinketInstance extends Trinket {
-    id: string;
-}
-export interface IExpeditionPlayerState {
+export class Player {
+    @Prop()
     playerId: string;
+
+    @Prop()
     playerName: string;
+
+    @Prop()
     characterClass: string;
+
+    @Prop()
     hpMax: number;
+
+    @Prop()
     hpCurrent: number;
+
+    @Prop()
     gold: number;
+
+    @Prop()
     potions: PotionInstance[];
-    trinkets: TrinketInstance[];
+
+    @Prop({
+        type: Trinket,
+        discriminators: () => Object.values(Trinkets),
+    })
+    trinkets: Trinket[];
+
+    @Prop()
     createdAt: Date;
+
+    @Prop()
     cards: IExpeditionPlayerStateDeckCard[];
+
+    @Prop()
     stoppedAt?: Date;
+
+    @Prop()
     cardUpgradeCount: number;
+
+    @Prop()
     cardDestroyCount: number;
 }
 
@@ -48,7 +75,7 @@ export interface IExpeditionNode {
     readonly isDisable: boolean;
     readonly isAvailable: boolean;
     readonly isComplete: boolean;
-    readonly type: ExpeditionMapNodeTypeEnum;
+    type: ExpeditionMapNodeTypeEnum;
     readonly subType: ExpeditionMapNodeTypeEnum;
     readonly status: ExpeditionMapNodeStatusEnum;
     readonly exits: number[];

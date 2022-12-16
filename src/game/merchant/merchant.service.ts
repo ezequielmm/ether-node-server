@@ -5,12 +5,12 @@ import { CustomException, ErrorBehavior } from 'src/socket/custom.exception';
 import { getRandomBetween } from 'src/utils';
 import { CardDescriptionFormatter } from '../cardDescriptionFormatter/cardDescriptionFormatter';
 import { CardRarityEnum, CardTypeEnum } from '../components/card/card.enum';
-import { CardDocument } from '../components/card/card.schema';
+import { Card } from '../components/card/card.schema';
 import { CardService } from '../components/card/card.service';
 import { getCardIdField } from '../components/card/card.type';
 import { ExpeditionMapNodeTypeEnum } from '../components/expedition/expedition.enum';
 import {
-    IExpeditionPlayerState,
+    Player,
     IExpeditionPlayerStateDeckCard,
 } from '../components/expedition/expedition.interface';
 import { ExpeditionService } from '../components/expedition/expedition.service';
@@ -32,6 +32,7 @@ import {
     PurchaseFailureEnum,
 } from './merchant.enum';
 import { Item, MerchantItems, SelectedItem } from './merchant.interface';
+import mongoose from 'mongoose';
 
 @Injectable()
 export class MerchantService {
@@ -61,6 +62,8 @@ export class MerchantService {
     async buyItem(client: Socket, selectedItem: SelectedItem): Promise<void> {
         this.client = client;
         this.selectedItem = selectedItem;
+
+        this.logger.debug(selectedItem);
 
         switch (selectedItem.type) {
             case ItemsTypeEnum.Card:
@@ -251,7 +254,7 @@ export class MerchantService {
             CardTypeEnum.Power,
         );
 
-        const cards: CardDocument[] = [
+        const cards: Card[] = [
             ...attackCard,
             ...defenseCard,
             ...skillCard,
@@ -378,10 +381,11 @@ export class MerchantService {
         merchantItems: MerchantItems,
         item: Item,
         itemIndex: number,
-        playerState: IExpeditionPlayerState,
+        playerState: Player,
     ) {
+        const playerDoc = playerState as unknown as mongoose.Document;
         const newPlayerState = {
-            ...playerState,
+            ...playerDoc.toObject(),
             gold: playerState.gold - item.cost,
             cards: [...playerState.cards, item.item],
         };
@@ -479,7 +483,7 @@ export class MerchantService {
         const newCardUpgradeCount = playerState.cardUpgradeCount + 1;
 
         const newPlayerState = {
-            ...playerState,
+            ...playerState, //don't toObject() here
             cards: newCard,
             gold: newGold,
             cardUpgradeCount: newCardUpgradeCount,
@@ -497,14 +501,15 @@ export class MerchantService {
         await this.success();
     }
 
-    async handlePotions(
+    private async handlePotions(
         merchantItems: MerchantItems,
         item: Item,
         itemIndex: number,
-        playerState: IExpeditionPlayerState,
+        playerState: Player,
     ) {
+        const playerDoc = playerState as unknown as mongoose.Document;
         const newPlayerState = {
-            ...playerState,
+            ...playerDoc.toObject(),
             gold: playerState.gold - item.cost,
             potions: [...playerState.potions, item.item],
         };

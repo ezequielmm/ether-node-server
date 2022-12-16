@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import * as _ from 'lodash';
+import { compact, filter, map, take } from 'lodash';
 import { MoveCardAction } from 'src/game/action/moveCard.action';
 import { CardSelectionScreenOriginPileEnum } from 'src/game/components/cardSelectionScreen/cardSelectionScreen.enum';
 import { HistoryService } from 'src/game/history/history.service';
@@ -21,11 +21,11 @@ export class PhantomPhialEffect implements EffectHandler {
     async handle(dto: EffectDTO): Promise<void> {
         const { ctx } = dto;
 
-        const cardsPlayed = _.filter(this.historyService.get(ctx.client.id), {
+        const cardsPlayed = filter(this.historyService.get(ctx.client.id), {
             type: 'card',
         }) as CardRegistry[];
 
-        const cardIds = _.map(_.compact(_.take(cardsPlayed, 2)), 'id');
+        const cardIds = map(compact(take(cardsPlayed, 2)), 'id');
 
         await this.moveCardToHandAction.handle({
             client: ctx.client,

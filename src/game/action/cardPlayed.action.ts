@@ -27,7 +27,7 @@ import { DiscardCardAction } from './discardCard.action';
 import { ExhaustCardAction } from './exhaustCard.action';
 
 interface CardPlayedDTO {
-    readonly client: Socket;
+    readonly ctx: GameContext;
     readonly cardId: CardId;
     readonly selectedEnemyId: TargetId;
 }
@@ -54,12 +54,12 @@ export class CardPlayedAction {
         private readonly combatQueueService: CombatQueueService,
         private readonly historyService: HistoryService,
         private readonly eventEmitter: EventEmitter2,
-    ) {}
+    ) { }
 
     async handle(payload: CardPlayedDTO): Promise<void> {
-        const { client, cardId, selectedEnemyId } = payload;
+        const { cardId, selectedEnemyId, ctx } = payload;
 
-        this.client = client;
+        this.client = ctx.client;
 
         // First make sure card exists on player's hand pile
         const cardExists = await this.expeditionService.cardExistsOnPlayerHand({
@@ -86,11 +86,6 @@ export class CardPlayedAction {
                     },
                 },
             } = expedition;
-
-            const ctx: GameContext = {
-                client,
-                expedition,
-            };
 
             // If everything goes right, we get the card information from
             // the player hand pile
@@ -128,7 +123,7 @@ export class CardPlayedAction {
                 );
             } else {
                 this.logger.debug(
-                    `Started combat queue for client ${client.id}`,
+                    `Started combat queue for client ${ctx.client.id}`,
                 );
                 await this.combatQueueService.start(ctx);
 
@@ -144,7 +139,7 @@ export class CardPlayedAction {
                     this.sendNotEnoughEnergyMessage(message);
                 } else {
                     this.logger.verbose(
-                        `Player ${client.id} played card: ${card.name}`,
+                        `Player ${ctx.client.id} played card: ${card.name}`,
                     );
 
                     const source = this.playerService.get(ctx);
@@ -211,7 +206,7 @@ export class CardPlayedAction {
                             player: { energy, energyMax },
                         },
                     } = await this.expeditionService.getCurrentNode({
-                        clientId: client.id,
+                        clientId: ctx.client.id,
                     });
 
                     const newEnergy =
@@ -219,18 +214,12 @@ export class CardPlayedAction {
                             ? 0
                             : energy - cardEnergyCost;
 
-                    await this.playerService.setEnergy(
-                        {
-                            client,
-                            expedition: expedition as ExpeditionDocument,
-                        },
-                        newEnergy,
-                    );
+                    await this.playerService.setEnergy(ctx, newEnergy);
 
                     this.sendUpdateEnergyMessage(newEnergy, energyMax);
 
                     this.logger.debug(
-                        `Ended combat queue for client ${client.id}`,
+                        `Ended combat queue for client ${ctx.client.id}`,
                     );
                     await this.combatQueueService.end(ctx);
 
@@ -243,9 +232,7 @@ export class CardPlayedAction {
                     });
 
                     if (endTurn)
-                        await this.endPlayerTurnProcess.handle({
-                            client: this.client,
-                        });
+                        await this.endPlayerTurnProcess.handle({ ctx });
                 }
             }
         }
