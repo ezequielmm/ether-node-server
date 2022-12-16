@@ -9,10 +9,11 @@ import { CombatQueueService } from 'src/game/components/combatQueue/combatQueue.
 import { ExpeditionEntity, GameContext } from 'src/game/components/interfaces';
 import { ExpeditionEnemy } from 'src/game/components/enemy/enemy.interface';
 import { ExpeditionPlayer } from 'src/game/components/player/interfaces';
+
 export interface HealArgs {
     value: number;
-    percentage: number;
 }
+
 @EffectDecorator({
     effect: healEffect,
 })
@@ -24,87 +25,90 @@ export class HealEffect implements EffectHandler {
         private readonly combatQueueService: CombatQueueService,
     ) {}
 
-    private ctx: GameContext;
-    private source: ExpeditionEntity;
-    private target: ExpeditionEntity;
-    private hpToAdd: number;
-    private percentage: number;
-
     async handle(payload: EffectDTO<HealArgs>): Promise<void> {
         const {
             ctx,
             source,
             target,
-            args: { currentValue: hpToAdd, percentage },
+            args: { currentValue: hpToAdd },
         } = payload;
 
-        this.ctx = ctx;
-        this.source = source;
-        this.target = target;
-        this.hpToAdd = hpToAdd;
-        this.percentage = percentage;
-
-        // hpToAdd is the amount of hp to add to the hpCurrent value
-
         // Here we check is the target to heal is the player
-        if (PlayerService.isPlayer(target)) await this.applyHPToPlayer();
+        if (PlayerService.isPlayer(target))
+            await this.applyHPToPlayer(ctx, source, target, hpToAdd);
 
         // And here we check is the target to heal is the enemy
-        if (EnemyService.isEnemy(target)) await this.applyHPToEnemy();
+        if (EnemyService.isEnemy(target))
+            await this.applyHPToEnemy(ctx, source, target, hpToAdd);
     }
 
-    private async applyHPToPlayer(): Promise<void> {
-        const {
-            value: {
-                combatState: { hpCurrent, hpMax },
-            },
-        } = this.target as ExpeditionPlayer;
+    private async applyHPToPlayer(
+        ctx: GameContext,
+        source: ExpeditionEntity,
+        player: ExpeditionPlayer,
+        hp: number,
+    ): Promise<void> {
+        const hpCurrent = player.value.combatState.hpCurrent;
 
-        const newHp = this.calculateHp(hpMax, hpCurrent);
+        await this.playerService.setGlobalHp(
+            ctx,
+            player.value.combatState.hpCurrent + hp,
+        );
 
-        await this.playerService.setHp(this.ctx, newHp);
+        const newHp = await this.playerService.setHp(
+            ctx,
+            player.value.combatState.hpCurrent + hp,
+        );
 
-        await this.sendToCombatQueue(newHp);
+        await this.sendToCombatQueue(
+            ctx,
+            source,
+            player,
+            newHp - hpCurrent,
+            newHp,
+        );
     }
 
-    private async applyHPToEnemy(): Promise<void> {
-        const {
-            value: { hpCurrent, hpMax },
-        } = this.target as ExpeditionEnemy;
-
-        const newHp = this.calculateHp(hpMax, hpCurrent);
-        console.log({ newHp });
-
-        await this.enemyService.setHp(this.ctx, this.target.value.id, newHp);
-
-        await this.sendToCombatQueue(newHp);
+    private async applyHPToEnemy(
+        ctx: GameContext,
+        source: ExpeditionEntity,
+        enemy: ExpeditionEnemy,
+        hp: number,
+    ): Promise<void> {
+        const hpCurrent = enemy.value.hpCurrent;
+        const newHp = await this.enemyService.setHp(
+            ctx,
+            enemy.value.id,
+            enemy.value.hpCurrent + hp,
+        );
+        await this.sendToCombatQueue(
+            ctx,
+            source,
+            enemy,
+            newHp - hpCurrent,
+            newHp,
+        );
     }
 
-    private async sendToCombatQueue(newHp: number): Promise<void> {
+    private async sendToCombatQueue(
+        ctx: GameContext,
+        source: ExpeditionEntity,
+        target: ExpeditionEntity,
+        healthDelta: number,
+        finalHealth: number,
+    ): Promise<void> {
         await this.combatQueueService.push({
-            ctx: this.ctx,
-            source: this.source,
-            target: this.target,
+            ctx: ctx,
+            source: source,
+            target: target,
             args: {
                 effectType: CombatQueueTargetEffectTypeEnum.Heal,
                 defenseDelta: 0,
                 finalDefense: 0,
-                healthDelta: this.hpToAdd,
-                finalHealth: newHp,
+                healthDelta,
+                finalHealth,
                 statuses: [],
             },
         });
-    }
-
-    private calculateHp(hpMax: number, hpCurrent: number): number {
-        let newHealth = hpCurrent + this.hpToAdd;
-
-        /// Here we check if we have a percentega to check
-        if (this.percentage > 0) {
-            // if we have a percentage we recover the percentege of max hp
-            newHealth = hpCurrent + hpCurrent * this.percentage;
-        }
-
-        return Math.floor(Math.min(hpMax, newHealth));
     }
 }

@@ -23,34 +23,10 @@ export const trapelicanData: Enemy = {
     scripts: [
         {
             id: 0,
-            intentions: [
-                {
-                    type: EnemyIntentionType.Debuff,
-                    target: CardTargetedEnum.Player,
-                    value: 1,
-                    effects: [
-                        {
-                            effect: attachStatusEffect.name,
-                            target: CardTargetedEnum.Self,
-                            args: {
-                                statusName: trapped.name,
-                                statusArgs: {
-                                    counter: 1,
-                                },
-                            },
-                        },
-                    ],
-                },
-            ],
+            intentions: [],
             next: [
-                {
-                    probability: 0.7,
-                    scriptId: 1,
-                },
-                {
-                    probability: 0.3,
-                    scriptId: 2,
-                },
+                { probability: 0.5, scriptId: 3 },
+                { probability: 0.5, scriptId: 1 },
             ],
         },
         {
@@ -73,12 +49,15 @@ export const trapelicanData: Enemy = {
             ],
             next: [
                 {
-                    probability: 1,
+                    probability: 0.6,
+                    scriptId: 2,
+                },
+                {
+                    probability: 0.4,
                     scriptId: 3,
                 },
             ],
         },
-
         {
             id: 2,
             intentions: [
@@ -122,11 +101,12 @@ export const trapelicanData: Enemy = {
                 },
             ],
         },
+
         {
             id: 3,
             intentions: [
                 {
-                    type: EnemyIntentionType.Buff,
+                    type: EnemyIntentionType.Debuff,
                     target: CardTargetedEnum.Player,
                     value: 1,
                     effects: [
@@ -143,7 +123,7 @@ export const trapelicanData: Enemy = {
                     ],
                 },
                 {
-                    type: EnemyIntentionType.Debuff,
+                    type: EnemyIntentionType.Buff,
                     target: CardTargetedEnum.Player,
                     value: 1,
                     effects: [
@@ -167,20 +147,6 @@ export const trapelicanData: Enemy = {
                 },
                 {
                     probability: 0.3,
-                    scriptId: 2,
-                },
-            ],
-        },
-        {
-            id: 4,
-            intentions: [],
-            next: [
-                {
-                    probability: 0.3,
-                    scriptId: 1,
-                },
-                {
-                    probability: 0.7,
                     scriptId: 2,
                 },
             ],

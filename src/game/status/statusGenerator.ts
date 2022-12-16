@@ -2,6 +2,7 @@ import { bolstered } from './bolstered/constants';
 import { burn } from './burn/constants';
 import { confusion } from './confusion/constants';
 import { dewDropStatus } from './dewDrop/constants';
+import { distraught } from './distraught/constants';
 import { dodge } from './dodge/constants';
 import { doubleDown } from './doubleDown/contants';
 import { fatigue } from './fatigue/constants';
@@ -98,6 +99,8 @@ export class StatusGenerator {
                 return `Until the end of the turn, gain ${counter} Defense for every card you play`;
             case gifted.name:
                 return `Gain ${counter} Defense at the start of each round`;
+            case distraught.name:
+                return `All attacks against this character do an extra 50% damage`;
             default:
                 return `Unknown status`;
         }

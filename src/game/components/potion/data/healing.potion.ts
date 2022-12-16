@@ -1,4 +1,4 @@
-import { healEffect } from 'src/game/effects/heal/constants';
+import { healPercentageEffect } from 'src/game/effects/heal/constants';
 import { PotionRarityEnum, PotionTargetEnum } from '../potion.enum';
 import { Potion } from '../potion.schema';
 
@@ -9,11 +9,10 @@ export const healingPotion: Potion = {
     description: 'Heal for 20% of Max hitpoints',
     effects: [
         {
-            effect: healEffect.name,
+            effect: healPercentageEffect.name,
             target: PotionTargetEnum.Player,
             args: {
-                value: 0,
-                percentage: 0.2,
+                value: 20,
             },
         },
     ],
