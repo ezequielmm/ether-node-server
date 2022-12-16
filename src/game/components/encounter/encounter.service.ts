@@ -1,4 +1,4 @@
-import { forwardRef, Inject, Injectable } from "@nestjs/common";
+import { Injectable } from '@nestjs/common';
 import { InjectModel } from 'kindagoose';
 import { Encounter } from './encounter.schema';
 import {
@@ -15,6 +15,8 @@ import { ReturnModelType } from '@typegoose/typegoose';
 import { getRandomItemByWeight } from 'src/utils';
 import { EncounterIdEnum } from './encounter.enum';
 import { CardService } from '../card/card.service';
+import { GameContext } from '../interfaces';
+import { TrinketService } from '../trinket/trinket.service';
 
 @Injectable()
 export class EncounterService {
@@ -24,12 +26,13 @@ export class EncounterService {
         private readonly expeditionService: ExpeditionService,
 
         private readonly cardService: CardService,
+        private readonly trinketService: TrinketService,
     ) {}
 
     async generateEncounter(): Promise<EncounterInterface> {
         const encounterId = getRandomItemByWeight(
             [EncounterIdEnum.Nagpra, EncounterIdEnum.WillOWisp],
-            [0, 1],
+            [1, 1],
         );
 
         return {
@@ -111,11 +114,16 @@ export class EncounterService {
                     await this.upgradeRandomCard(client);
                     break;
                 case 'birdcage': //nagpra
+                    await this.birdcage(ctx);
+                    break;
                 case 'card_add_to_library': //eg naiad
                     break;
-
             }
         }
+    }
+
+    private async birdcage(ctx: GameContext): Promise<void> {
+        await this.trinketService.add(ctx, 2);
     }
 
     private async upgradeRandomCard(client: Socket): Promise<void> {
@@ -132,20 +140,20 @@ export class EncounterService {
         };
 
         const cardIds: number[] = [];
-        const probabiltyWeights: number[] = [];
+        const probabilityWeights: number[] = [];
 
         for (const card of cards) {
             if (!card.isUpgraded) {
                 data.upgradeableCards.push(card);
                 cardIds.push(card.upgradedCardId);
-                probabiltyWeights.push(1);
+                probabilityWeights.push(1);
             }
         }
 
         const upgradedCards = await this.cardService.findCardsById(cardIds);
         const upgradedCardData = getRandomItemByWeight(
             upgradedCards,
-            probabiltyWeights,
+            probabilityWeights,
         );
 
         //see MerchantService

@@ -4,12 +4,14 @@ import { EncounterService } from './encounter.service';
 import { ExpeditionModule } from '../expedition/expedition.module';
 import { Encounter } from './encounter.schema';
 import { CardModule } from '../card/card.module';
+import { TrinketModule } from '../trinket/trinket.module';
 
 @Module({
     imports: [
         KindagooseModule.forFeature([Encounter]),
         forwardRef(() => ExpeditionModule),
         forwardRef(() => CardModule),
+        forwardRef(() => TrinketModule),
     ],
     providers: [EncounterService],
     exports: [EncounterService],
