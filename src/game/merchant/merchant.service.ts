@@ -32,6 +32,7 @@ import {
     PurchaseFailureEnum,
 } from './merchant.enum';
 import { Item, MerchantItems, SelectedItem } from './merchant.interface';
+import mongoose from "mongoose";
 
 @Injectable()
 export class MerchantService {
@@ -382,8 +383,9 @@ export class MerchantService {
         itemIndex: number,
         playerState: Player,
     ) {
+        const playerDoc = playerState as unknown as mongoose.Document;
         const newPlayerState = {
-            ...playerState,
+            ...playerDoc.toObject(),
             gold: playerState.gold - item.cost,
             cards: [...playerState.cards, item.item],
         };
@@ -480,8 +482,9 @@ export class MerchantService {
         const newGold = playerState.gold - upgradedPrice;
         const newCardUpgradeCount = playerState.cardUpgradeCount + 1;
 
+        const playerDoc = playerState as unknown as mongoose.Document;
         const newPlayerState = {
-            ...playerState,
+            ...playerDoc.toObject(),
             cards: newCard,
             gold: newGold,
             cardUpgradeCount: newCardUpgradeCount,
@@ -505,8 +508,9 @@ export class MerchantService {
         itemIndex: number,
         playerState: Player,
     ) {
+        const playerDoc = playerState as unknown as mongoose.Document;
         const newPlayerState = {
-            ...playerState,
+            ...playerDoc.toObject(),
             gold: playerState.gold - item.cost,
             potions: [...playerState.potions, item.item],
         };
