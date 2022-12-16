@@ -482,9 +482,8 @@ export class MerchantService {
         const newGold = playerState.gold - upgradedPrice;
         const newCardUpgradeCount = playerState.cardUpgradeCount + 1;
 
-        const playerDoc = playerState as unknown as mongoose.Document;
         const newPlayerState = {
-            ...playerDoc.toObject(),
+            ...playerState,//don't toObject() here
             cards: newCard,
             gold: newGold,
             cardUpgradeCount: newCardUpgradeCount,
