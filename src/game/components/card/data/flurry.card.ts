@@ -1,4 +1,4 @@
-import { flurry } from 'src/game/effects/flurry/constants';
+import { flurry, flurryPlus } from 'src/game/effects/flurry/constants';
 import {
     CardRarityEnum,
     CardTypeEnum,
@@ -19,7 +19,7 @@ export const FlurryCardUpgraded: Card = {
     properties: {
         effects: [
             {
-                effect: flurry.name,
+                effect: flurryPlus.name,
                 target: CardTargetedEnum.RandomEnemy,
                 args: {
                     value: 7,

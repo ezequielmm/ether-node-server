@@ -23,6 +23,7 @@ import { DrawCardEffect } from './drawCard/drawCard.effect';
 import { EffectService } from './effects.service';
 import { EnergyEffect } from './energy/energy.effect';
 import { ExecutionersBlowEffect } from './executionersBlow/executionersBlow.effect';
+import { FlurryPlusEffect } from './flurry/flurry-plus.effect';
 import { FlurryEffect } from './flurry/flurry.effect';
 import { HeadButtEffect } from './headButt/headButt.effect';
 import { HealPercentageEffect } from './heal/heal-percentage.effect';
@@ -64,6 +65,7 @@ import { TwistTheBladeEffect } from './twistTheBlade/twistTheBlade.effect';
         HeadButtEffect,
         RepositionEffect,
         FlurryEffect,
+        FlurryPlusEffect,
         RemoveDebuffEffect,
         DoubleResolveEffect,
         AnticipatingEffect,
