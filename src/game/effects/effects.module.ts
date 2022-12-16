@@ -25,6 +25,7 @@ import { EnergyEffect } from './energy/energy.effect';
 import { ExecutionersBlowEffect } from './executionersBlow/executionersBlow.effect';
 import { FlurryEffect } from './flurry/flurry.effect';
 import { HeadButtEffect } from './headButt/headButt.effect';
+import { HealPercentageEffect } from './heal/heal-percentage.effect';
 import { HealEffect } from './heal/heal.effect';
 import { KnockDownEffect } from './knockDown/knockDown.effect';
 import { LastReminderEffect } from './lastReminder/lastReminder.effect';
@@ -56,6 +57,7 @@ import { TwistTheBladeEffect } from './twistTheBlade/twistTheBlade.effect';
         DefenseEffect,
         DrawCardEffect,
         HealEffect,
+        HealPercentageEffect,
         EnergyEffect,
         RemoveDefenseEffect,
         DoubleBurnEffect,

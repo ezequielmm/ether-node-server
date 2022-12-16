@@ -41,7 +41,7 @@ export const FeintCard: Card = {
         effects: [
             {
                 effect: removeDefenseEffect.name,
-                target: CardTargetedEnum.AllEnemies,
+                target: CardTargetedEnum.Enemy,
                 args: {
                     value: 0,
                 },
