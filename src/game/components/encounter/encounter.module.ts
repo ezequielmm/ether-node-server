@@ -5,6 +5,7 @@ import { ExpeditionModule } from '../expedition/expedition.module';
 import { Encounter } from './encounter.schema';
 import { CardModule } from '../card/card.module';
 import { TrinketModule } from '../trinket/trinket.module';
+import { PotionModule } from '../potion/potion.module';
 
 @Module({
     imports: [
@@ -12,6 +13,7 @@ import { TrinketModule } from '../trinket/trinket.module';
         forwardRef(() => ExpeditionModule),
         forwardRef(() => CardModule),
         forwardRef(() => TrinketModule),
+        forwardRef(() => PotionModule),
     ],
     providers: [EncounterService],
     exports: [EncounterService],

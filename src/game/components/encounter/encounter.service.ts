@@ -23,6 +23,7 @@ import {
 } from '../expedition/expedition.interface';
 import { randomUUID } from 'crypto';
 import { CardDescriptionFormatter } from '../../cardDescriptionFormatter/cardDescriptionFormatter';
+import { PotionService } from "../potion/potion.service";
 
 @Injectable()
 export class EncounterService {
@@ -33,6 +34,7 @@ export class EncounterService {
 
         private readonly cardService: CardService,
         private readonly trinketService: TrinketService,
+        private readonly potionService: PotionService,
     ) {}
 
     async generateEncounter(): Promise<EncounterInterface> {
