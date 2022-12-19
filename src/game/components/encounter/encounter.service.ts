@@ -46,7 +46,7 @@ export class EncounterService {
                 EncounterIdEnum.YoungWizard,
                 EncounterIdEnum.DancingSatyr,
             ],
-            [1, 0, 1, 0],
+            [1, 0, 1, 0, 0],
         );
 
         return {
