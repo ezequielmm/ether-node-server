@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { every } from 'lodash';
 import { SetCombatTurnAction } from '../action/setCombatTurn.action';
 import { EnemyService } from '../components/enemy/enemy.service';
 import {
@@ -76,9 +77,9 @@ export class InitCombatProcess {
         const expeditionId = expedition._id.toString();
         const { currentNode } = expedition;
 
-        const enemiesAreDead = currentNode.data.enemies.every(
-            (enemy) => enemy.hpCurrent === 0,
-        );
+        const enemiesAreDead = every(currentNode.data.enemies, {
+            hpCurrent: 0,
+        });
 
         if (enemiesAreDead) {
             await this.expeditionService.updateById(expeditionId, {
@@ -92,9 +93,16 @@ export class InitCombatProcess {
                 StandardResponse.respond({
                     message_type: SWARMessageType.EndCombat,
                     action: SWARAction.EnemiesDefeated,
-                    data: {
-                        rewards: currentNode.data.rewards,
-                    },
+                    data: null,
+                }),
+            );
+
+            this.ctx.client.emit(
+                'PutData',
+                StandardResponse.respond({
+                    message_type: SWARMessageType.EndCombat,
+                    action: SWARAction.ShowRewards,
+                    data: { rewards: currentNode.data.rewards },
                 }),
             );
         } else {
@@ -105,15 +113,15 @@ export class InitCombatProcess {
             });
 
             await this.enemyService.calculateNewIntentions(this.ctx);
-        }
 
-        this.ctx.client.emit(
-            'InitCombat',
-            StandardResponse.respond({
-                message_type: SWARMessageType.CombatUpdate,
-                action: SWARAction.BeginCombat,
-                data: null,
-            }),
-        );
+            this.ctx.client.emit(
+                'InitCombat',
+                StandardResponse.respond({
+                    message_type: SWARMessageType.CombatUpdate,
+                    action: SWARAction.BeginCombat,
+                    data: null,
+                }),
+            );
+        }
     }
 }

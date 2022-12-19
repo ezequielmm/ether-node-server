@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { randomUUID } from 'crypto';
-import { chain, filter, includes, map, pick } from 'lodash';
+import { chain, filter, find, includes, map, pick } from 'lodash';
 import { CustomException, ErrorBehavior } from 'src/socket/custom.exception';
 import { CardDescriptionFormatter } from '../cardDescriptionFormatter/cardDescriptionFormatter';
 import { CardRarityEnum, CardTypeEnum } from '../components/card/card.enum';
@@ -119,9 +119,7 @@ export class RewardService {
         }
 
         // check if the reward that we are receiving is correct and exists
-        const reward = rewards.find(({ id }) => {
-            return id === rewardId;
-        });
+        const reward = find(rewards, { id: rewardId });
 
         // If the reward is invalid we throw and exception
         if (!reward) throw new Error(`Reward ${rewardId} not found`);
@@ -148,9 +146,7 @@ export class RewardService {
                 await this.cardService.addCardToDeck(ctx, reward.card.cardId);
                 // Disable all other card rewards
                 rewards = rewards.map((reward) => {
-                    if (reward.type === IExpeditionNodeReward.Card) {
-                        reward.taken = true;
-                    }
+                    reward.taken = reward.type === IExpeditionNodeReward.Card;
                     return reward;
                 });
                 break;
