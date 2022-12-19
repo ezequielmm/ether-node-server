@@ -1,7 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { find } from 'lodash';
 import { ExpeditionService } from '../components/expedition/expedition.service';
-import { PlayerService } from '../components/player/player.service';
 import { TrinketService } from '../components/trinket/trinket.service';
 import { HistoryService } from '../history/history.service';
 import { ProviderContainer } from '../provider/interfaces';

@@ -1,5 +1,4 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { Socket } from 'socket.io';
 import {
     ExpeditionMapNodeStatusEnum,
     ExpeditionMapNodeTypeEnum,
@@ -33,7 +32,7 @@ export class NodeSelectedProcess {
         private readonly initMerchantProcess: InitMerchantProcess,
         private readonly initTreasureProcess: InitTreasureProcess,
         private readonly initEncounterProcess: InitEncounterProcess,
-    ) { }
+    ) {}
 
     async handle(ctx: GameContext, node_id: number): Promise<string> {
         this.ctx = ctx;
@@ -72,7 +71,9 @@ export class NodeSelectedProcess {
 
         switch (this.node.type) {
             case ExpeditionMapNodeTypeEnum.Portal:
-                this.logger.debug(`Map extended for client ${this.ctx.client.id}`);
+                this.logger.debug(
+                    `Map extended for client ${this.ctx.client.id}`,
+                );
 
                 return StandardResponse.respond({
                     message_type: SWARMessageType.MapUpdate,

@@ -8,9 +8,7 @@ import { EnemyService } from './enemy.service';
 
 @Module({
     imports: [
-        KindagooseModule.forFeature([
-            Enemy,
-        ]),
+        KindagooseModule.forFeature([Enemy]),
         forwardRef(() => ExpeditionModule),
         forwardRef(() => StatusModule),
         CombatQueueModule,
@@ -18,4 +16,4 @@ import { EnemyService } from './enemy.service';
     providers: [EnemyService],
     exports: [EnemyService],
 })
-export class EnemyModule { }
+export class EnemyModule {}
