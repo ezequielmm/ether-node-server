@@ -43,7 +43,7 @@ export class ExpeditionService {
         private readonly expedition: ReturnModelType<typeof Expedition>,
         private readonly playerService: PlayerService,
         private readonly enemyService: EnemyService,
-    ) { }
+    ) {}
 
     async getGameContext(client: Socket): Promise<GameContext> {
         const expedition = await this.findOne({ clientId: client.id });

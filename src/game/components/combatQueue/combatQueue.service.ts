@@ -5,17 +5,17 @@ import { isEmpty } from 'lodash';
 import { InjectModel } from 'kindagoose';
 import {
     EVENT_AFTER_STATUSES_UPDATE,
-    EVENT_AFTER_STATUS_ATTACH
+    EVENT_AFTER_STATUS_ATTACH,
 } from 'src/game/constants';
 import {
     StandardResponse,
     SWARAction,
-    SWARMessageType
+    SWARMessageType,
 } from 'src/game/standardResponse/standardResponse';
 import { AttachedStatus } from 'src/game/status/interfaces';
 import {
     IStatusesList,
-    StatusGenerator
+    StatusGenerator,
 } from 'src/game/status/statusGenerator';
 import { ExpeditionEntity, GameContext } from '../interfaces';
 import { PlayerService } from '../player/player.service';
@@ -30,7 +30,7 @@ export class CombatQueueService {
     constructor(
         @InjectModel(CombatQueue)
         private readonly combatQueue: ReturnModelType<typeof CombatQueue>,
-    ) { }
+    ) {}
 
     async findByClientId(clientId: string): Promise<CombatQueue> {
         return await this.combatQueue.findOne({ clientId });

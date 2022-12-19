@@ -4,12 +4,8 @@ import { Settings } from './settings.schema';
 import { SettingsService } from './settings.service';
 
 @Module({
-    imports: [
-        KindagooseModule.forFeature([
-            Settings
-        ]),
-    ],
+    imports: [KindagooseModule.forFeature([Settings])],
     providers: [SettingsService],
     exports: [SettingsService],
 })
-export class SettingsModule { }
+export class SettingsModule {}

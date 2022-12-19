@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { Socket } from 'socket.io';
 import { ExpeditionMapNodeStatusEnum } from '../components/expedition/expedition.enum';
 import { IExpeditionNode } from '../components/expedition/expedition.interface';
 import { ExpeditionService } from '../components/expedition/expedition.service';

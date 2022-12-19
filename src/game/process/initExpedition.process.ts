@@ -8,10 +8,7 @@ import { Character } from '../components/character/character.schema';
 import { CharacterService } from '../components/character/character.service';
 import { CustomDeckService } from '../components/customDeck/customDeck.service';
 import { ExpeditionStatusEnum } from '../components/expedition/expedition.enum';
-import {
-    IExpeditionPlayerStateDeckCard,
-    Player,
-} from '../components/expedition/expedition.interface';
+import { IExpeditionPlayerStateDeckCard } from '../components/expedition/expedition.interface';
 import { ExpeditionService } from '../components/expedition/expedition.service';
 import { SettingsService } from '../components/settings/settings.service';
 
@@ -31,7 +28,7 @@ export class InitExpeditionProcess {
         private readonly characterService: CharacterService,
         private readonly customDeckService: CustomDeckService,
         private readonly settingsService: SettingsService,
-    ) { }
+    ) {}
 
     async handle(payload: InitExpeditionDTO): Promise<void> {
         const { playerId, playerName, email } = payload;
