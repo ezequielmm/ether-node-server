@@ -92,17 +92,8 @@ export class InitCombatProcess {
                 'PutData',
                 StandardResponse.respond({
                     message_type: SWARMessageType.EndCombat,
-                    action: SWARAction.EnemiesDefeated,
-                    data: null,
-                }),
-            );
-
-            this.ctx.client.emit(
-                'PutData',
-                StandardResponse.respond({
-                    message_type: SWARMessageType.EndCombat,
                     action: SWARAction.ShowRewards,
-                    data: { rewards: currentNode.data.rewards },
+                    data: null,
                 }),
             );
         } else {

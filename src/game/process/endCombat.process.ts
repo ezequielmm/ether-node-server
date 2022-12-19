@@ -53,9 +53,7 @@ export class EndCombatProcess {
             StandardResponse.respond({
                 message_type: SWARMessageType.EndCombat,
                 action: SWARAction.EnemiesDefeated,
-                data: {
-                    rewards: ctx.expedition.currentNode.data.rewards,
-                },
+                data: null,
             }),
         );
     }
