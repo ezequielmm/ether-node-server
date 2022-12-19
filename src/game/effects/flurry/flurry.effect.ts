@@ -18,13 +18,11 @@ export class FlurryEffect implements EffectHandler {
         private readonly enemyService: EnemyService,
     ) {}
 
-    async handle(dto: EffectDTO): Promise<void> {
+    protected async flurry(dto: EffectDTO, times: number) {
         const { ctx, source } = dto;
         let { target } = dto;
 
-        const energy = get(ctx.expedition, PLAYER_ENERGY_PATH);
-
-        for (let i = 0; i < energy; i++) {
+        for (let i = 0; i < times; i++) {
             if (
                 EnemyService.isEnemy(target) &&
                 this.enemyService.isDead(target)
@@ -39,7 +37,7 @@ export class FlurryEffect implements EffectHandler {
             }
 
             await this.effectService.apply({
-                ctx: dto.ctx,
+                ctx,
                 source,
                 target,
                 effect: {
@@ -50,5 +48,11 @@ export class FlurryEffect implements EffectHandler {
                 },
             });
         }
+    }
+
+    async handle(dto: EffectDTO): Promise<void> {
+        const { ctx } = dto;
+        const energy = get(ctx.expedition, PLAYER_ENERGY_PATH);
+        await this.flurry(dto, energy);
     }
 }
