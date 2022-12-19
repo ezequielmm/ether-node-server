@@ -137,6 +137,9 @@ export class EncounterService {
                     await this.looseRandomCard(client, playerState);
                     break;
                 case 'card_add_to_library': //eg naiad
+                case 'pan_flute':
+                case 'silver_pan_flute':
+                case 'golden_pan_flute':
                     break;
             }
         }
