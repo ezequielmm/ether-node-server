@@ -39,8 +39,13 @@ export class EncounterService {
 
     async generateEncounter(): Promise<EncounterInterface> {
         const encounterId = getRandomItemByWeight(
-            [EncounterIdEnum.Nagpra, EncounterIdEnum.WillOWisp],
-            [1, 1],
+            [
+                EncounterIdEnum.Nagpra,
+                EncounterIdEnum.Naiad,
+                EncounterIdEnum.WillOWisp,
+                EncounterIdEnum.YoungWizard,
+            ],
+            [0, 0, 0, 1],
         );
 
         return {
@@ -126,6 +131,11 @@ export class EncounterService {
                 case 'birdcage': //nagpra
                     await this.birdcage(ctx);
                     break;
+                case 'runic_tomb': //young wizard
+                    break;
+                case 'loose_random_card':
+                    await this.looseRandomCard(client, playerState);
+                    break;
                 case 'card_add_to_library': //eg naiad
                     break;
             }
@@ -134,6 +144,58 @@ export class EncounterService {
 
     private async birdcage(ctx: GameContext): Promise<void> {
         await this.trinketService.add(ctx, 2);
+    }
+
+    private async looseRandomCard(
+        client: Socket,
+        playerState: Player,
+    ): Promise<void> {
+        const cardIds: number[] = [];
+        const probabilityWeights: number[] = [];
+
+        for (const card of playerState.cards) {
+            cardIds.push(card.cardId);
+            probabilityWeights.push(1);
+        }
+
+        if (cardIds.length == 0) return; // no cards in hand
+
+        const looseMeCardId = getRandomItemByWeight(
+            cardIds,
+            probabilityWeights,
+        );
+
+        await this.looseCard(looseMeCardId, playerState, client);
+    }
+
+    async looseCard(
+        cardId: string | number,
+        playerState: Player,
+        client: Socket,
+    ): Promise<void> {
+        let hasLostOne = false;
+        const newCards = playerState.cards.filter((item) => {
+            if (item.cardId == cardId && !hasLostOne) {
+                hasLostOne = true;
+                return false;
+            } else {
+                return true;
+            }
+        });
+
+        const newPlayerState = {
+            ...playerState, //don't toObject() here
+            cards: newCards,
+        };
+
+        await this.expeditionService.updateByFilter(
+            { clientId: client.id },
+            {
+                $set: {
+                    playerState: newPlayerState,
+                },
+            },
+        );
     }
 
     private async upgradeRandomCard(
@@ -266,9 +328,9 @@ export class EncounterService {
             isUpgraded: upgradedCardData.isUpgraded,
             isActive: true,
         };
-        let isUpgraded = false;
 
-        const newCard = playerState.cards.map((item) => {
+        let isUpgraded = false;
+        const newCards = playerState.cards.map((item) => {
             if (item.cardId == card.cardId && !isUpgraded) {
                 isUpgraded = true;
                 return upgradedCard;
@@ -281,7 +343,7 @@ export class EncounterService {
 
         const newPlayerState = {
             ...playerState, //don't toObject() here
-            cards: newCard,
+            cards: newCards,
             cardUpgradeCount: newCardUpgradeCount,
         };
 

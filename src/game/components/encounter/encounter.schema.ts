@@ -3,7 +3,7 @@ import { EncounterButton } from './encounter.interfaces';
 
 export type EncounterDocument = Encounter & Document;
 @modelOptions({
-    schemaOptions: { collection: 'encounter', versionKey: false },
+    schemaOptions: { collection: 'encounters', versionKey: false },
 })
 export class Encounter {
     @Prop()
