@@ -12,4 +12,4 @@ import { Encounter } from './encounter.schema';
     providers: [EncounterService],
     exports: [EncounterService],
 })
-export class EncounterModule { }
+export class EncounterModule {}

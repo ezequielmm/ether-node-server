@@ -4,12 +4,8 @@ import { Character } from './character.schema';
 import { CharacterService } from './character.service';
 
 @Module({
-    imports: [
-        KindagooseModule.forFeature([
-            Character,
-        ]),
-    ],
+    imports: [KindagooseModule.forFeature([Character])],
     providers: [CharacterService],
     exports: [CharacterService],
 })
-export class CharacterModule { }
+export class CharacterModule {}

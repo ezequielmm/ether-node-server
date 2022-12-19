@@ -9,7 +9,7 @@ export class CharacterService {
     constructor(
         @InjectModel(Character)
         private readonly character: ReturnModelType<typeof Character>,
-    ) { }
+    ) {}
 
     async findAll(): Promise<Character[]> {
         return this.character.find({ isActive: true }).lean();

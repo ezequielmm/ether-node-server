@@ -36,7 +36,6 @@ import { Socket } from 'socket.io';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { ReturnModelType } from '@typegoose/typegoose';
 import { ModuleRef } from '@nestjs/core';
-import { TrinketService } from '../trinket/trinket.service';
 
 @Injectable()
 export class ExpeditionService {
@@ -46,7 +45,6 @@ export class ExpeditionService {
         private readonly playerService: PlayerService,
         private readonly enemyService: EnemyService,
         private readonly moduleRef: ModuleRef,
-        private readonly trinketService: TrinketService,
     ) { }
 
     async getGameContext(client: Socket): Promise<GameContext> {
@@ -63,9 +61,6 @@ export class ExpeditionService {
         expedition.playerState.trinkets.forEach((trinket) => {
             trinket.onAttach(ctx);
         });
-
-
-        // this.trinketService.add(ctx, 16);
 
         return ctx;
     }
