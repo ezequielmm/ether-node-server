@@ -10,8 +10,8 @@ import { CustomDeckService } from '../components/customDeck/customDeck.service';
 import { ExpeditionStatusEnum } from '../components/expedition/expedition.enum';
 import {
     IExpeditionPlayerStateDeckCard,
-    Player,
 } from '../components/expedition/expedition.interface';
+import { Player } from "../components/expedition/player";
 import { ExpeditionService } from '../components/expedition/expedition.service';
 import { SettingsService } from '../components/settings/settings.service';
 

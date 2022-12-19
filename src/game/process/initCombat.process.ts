@@ -8,10 +8,11 @@ import {
 import { IExpeditionNode } from '../components/expedition/expedition.interface';
 import { ExpeditionService } from '../components/expedition/expedition.service';
 import { GameContext } from '../components/interfaces';
+import { EVENT_AFTER_INIT_COMBAT } from '../constants';
 import {
     StandardResponse,
-    SWARMessageType,
     SWARAction,
+    SWARMessageType,
 } from '../standardResponse/standardResponse';
 import { CurrentNodeGeneratorProcess } from './currentNodeGenerator.process';
 
@@ -38,6 +39,8 @@ export class InitCombatProcess {
             case ExpeditionMapNodeStatusEnum.Active:
                 await this.continueCombat();
         }
+
+        await this.ctx.events.emitAsync(EVENT_AFTER_INIT_COMBAT, { ctx });
     }
 
     async createCombat(): Promise<void> {

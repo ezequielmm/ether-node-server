@@ -10,9 +10,9 @@ import { CardService } from '../components/card/card.service';
 import { getCardIdField } from '../components/card/card.type';
 import { ExpeditionMapNodeTypeEnum } from '../components/expedition/expedition.enum';
 import {
-    Player,
     IExpeditionPlayerStateDeckCard,
 } from '../components/expedition/expedition.interface';
+import { Player } from "../components/expedition/player";
 import { ExpeditionService } from '../components/expedition/expedition.service';
 import { PotionRarityEnum } from '../components/potion/potion.enum';
 import { PotionService } from '../components/potion/potion.service';
@@ -42,7 +42,7 @@ export class MerchantService {
         private readonly expeditionService: ExpeditionService,
         private readonly cardService: CardService,
         private readonly potionService: PotionService,
-    ) {}
+    ) { }
 
     private client: Socket;
     private selectedItem: SelectedItem;

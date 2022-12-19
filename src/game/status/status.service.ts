@@ -1,6 +1,6 @@
 import { forwardRef, Inject, Injectable, Logger } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import { InjectModel } from 'kindagoose';
+import { getModelToken, InjectModel } from 'kindagoose';
 import {
     compact,
     filter,
@@ -74,7 +74,7 @@ export class StatusService {
     private handlers: ProviderContainer<StatusMetadata, StatusHandler>[];
 
     constructor(
-        @InjectModel(Expedition)
+        @Inject(getModelToken('Expedition'))
         private readonly expedition: ReturnModelType<typeof Expedition>,
         private readonly providerService: ProviderService,
         @Inject(forwardRef(() => ExpeditionService))

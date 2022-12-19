@@ -1,7 +1,6 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { forwardRef, Inject, Injectable, Logger } from '@nestjs/common';
 import { find } from 'lodash';
 import { ExpeditionService } from '../components/expedition/expedition.service';
-import { PlayerService } from '../components/player/player.service';
 import { TrinketService } from '../components/trinket/trinket.service';
 import { HistoryService } from '../history/history.service';
 import { ProviderContainer } from '../provider/interfaces';
@@ -26,8 +25,10 @@ export class EffectService {
     constructor(
         private readonly providerService: ProviderService,
         private readonly statusService: StatusService,
+        @Inject(forwardRef(() => ExpeditionService))
         private readonly expeditionService: ExpeditionService,
         private readonly historyService: HistoryService,
+        @Inject(forwardRef(() => TrinketService))
         private readonly trinketService: TrinketService,
     ) {}
 

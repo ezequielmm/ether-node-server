@@ -1,4 +1,3 @@
-import { Prop } from '@typegoose/typegoose';
 import { Item } from 'src/game/merchant/merchant.interface';
 import { AttachedStatus, StatusType } from 'src/game/status/interfaces';
 import { CardRarityEnum, CardTypeEnum } from '../card/card.enum';
@@ -10,61 +9,15 @@ import {
 } from '../enemy/enemy.enum';
 import { EnemyScript } from '../enemy/enemy.interface';
 import { Potion } from '../potion/potion.schema';
-import { Trinket } from '../trinket/trinket.schema';
 import {
     ExpeditionMapNodeTypeEnum,
     ExpeditionMapNodeStatusEnum,
     IExpeditionNodeReward,
 } from './expedition.enum';
 import { Expedition } from './expedition.schema';
-import * as Trinkets from '../trinket/collection';
 
 export interface PotionInstance extends Potion {
     id: string;
-}
-
-export class Player {
-    @Prop()
-    playerId: string;
-
-    @Prop()
-    playerName: string;
-
-    @Prop()
-    characterClass: string;
-
-    @Prop()
-    hpMax: number;
-
-    @Prop()
-    hpCurrent: number;
-
-    @Prop()
-    gold: number;
-
-    @Prop()
-    potions: PotionInstance[];
-
-    @Prop({
-        type: Trinket,
-        discriminators: () => Object.values(Trinkets),
-    })
-    trinkets: Trinket[];
-
-    @Prop()
-    createdAt: Date;
-
-    @Prop()
-    cards: IExpeditionPlayerStateDeckCard[];
-
-    @Prop()
-    stoppedAt?: Date;
-
-    @Prop()
-    cardUpgradeCount: number;
-
-    @Prop()
-    cardDestroyCount: number;
 }
 
 export interface IExpeditionNode {
