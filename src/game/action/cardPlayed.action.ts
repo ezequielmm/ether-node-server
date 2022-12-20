@@ -8,7 +8,6 @@ import {
 } from '../components/card/card.enum';
 import { CardId, getCardIdField } from '../components/card/card.type';
 import { CombatQueueService } from '../components/combatQueue/combatQueue.service';
-import { ExpeditionDocument } from '../components/expedition/expedition.schema';
 import { ExpeditionService } from '../components/expedition/expedition.service';
 import { GameContext } from '../components/interfaces';
 import { PlayerService } from '../components/player/player.service';
@@ -54,7 +53,7 @@ export class CardPlayedAction {
         private readonly combatQueueService: CombatQueueService,
         private readonly historyService: HistoryService,
         private readonly eventEmitter: EventEmitter2,
-    ) { }
+    ) {}
 
     async handle(payload: CardPlayedDTO): Promise<void> {
         const { cardId, selectedEnemyId, ctx } = payload;
