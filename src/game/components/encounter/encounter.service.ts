@@ -130,9 +130,7 @@ export class EncounterService {
                 case 'upgrade_random_card': //eg will o wisp
                     await this.upgradeRandomCard(client, playerState);
                     break;
-                case 'birdcage': //nagpra
-                    await this.birdcage(ctx);
-                    break;
+
                 case 'loose_random_card':
                     await this.looseRandomCard(client, playerState);
                     break;
@@ -140,10 +138,26 @@ export class EncounterService {
                     const cardId = parseInt(effect.cardId);
                     await this.cardService.addCardToDeck(ctx, cardId);
                     break;
-                case 'runic_tomb': //young wizard
-                case 'pan_flute':
-                case 'silver_pan_flute':
-                case 'golden_pan_flute':
+                case 'trinket':
+                    switch (effect.item) {
+                        case 'birdcage': //nagpra
+                            await this.trinketService.add(ctx, 2); //TODO need correct trinket id
+                            break;
+                        case 'runic_tomb': //young wizard
+                            await this.trinketService.add(ctx, 2); //TODO need correct trinket id
+                            break;
+                        case 'pan_flute': //satyr
+                            await this.trinketService.add(ctx, 2); //TODO need correct trinket id
+                            break;
+                        case 'silver_pan_flute': //satyr
+                            await this.trinketService.add(ctx, 2); //TODO need correct trinket id
+                            break;
+                        case 'golden_pan_flute': //satyr
+                            await this.trinketService.add(ctx, 2); //TODO need correct trinket id
+                            break;
+                    }
+                    break;
+
                 case 'brimbles_quest':// mossy troll
                     break;
             }

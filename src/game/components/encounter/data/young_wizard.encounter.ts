@@ -3,7 +3,7 @@ import { EncounterIdEnum } from '../encounter.enum';
 
 export const YoungWizardEncounter: Encounter = {
     encounterId: EncounterIdEnum.YoungWizard,
-    imageId: 'young_wizard',
+    imageId: 'youngseatedwizard',
     stages: [
         {
             //0
@@ -11,7 +11,7 @@ export const YoungWizardEncounter: Encounter = {
                 'You part some brambles with your sword to find a young man, apparently a wizard, seated against a stone, reading through a strange book. “Ahh, right on time,” he pronounces, without looking up from his tome. “Starting to sense that not all is as it should be on this plane, I assume?” He raises a single brow and looks at you out of the corner of his eye.',
             buttons: [
                 {
-                    text: 'A: You’ve got that right []',
+                    text: 'A: You’ve got that right',
                     nextStage: 1,
                     effects: [],
                 },
@@ -27,7 +27,7 @@ export const YoungWizardEncounter: Encounter = {
                     nextStage: 2,
                     effects: [
                         { kind: 'loose_random_card', amount: '1' },
-                        { kind: 'runic_tomb' },
+                        { kind: 'trinket', item: 'runic_tomb' },
                     ],
                 },
                 {

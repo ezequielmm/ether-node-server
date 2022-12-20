@@ -3,7 +3,7 @@ import { EncounterIdEnum } from '../encounter.enum';
 
 export const MossyTrollEncounter: Encounter = {
     encounterId: EncounterIdEnum.MossyTroll,
-    imageId: 'mossy_troll',
+    imageId: 'troll',
     stages: [
         {
             // 0
@@ -30,7 +30,9 @@ export const MossyTrollEncounter: Encounter = {
                 {
                     text: 'A: Accept [Take Curse card]', // aka option 3
                     nextStage: 3,
-                    effects: [{ kind: 'brimbles_quest' }],
+                    effects: [
+                        { kind: 'card_add_to_library', cardId: '1' }, //TODO correct card id
+                    ],
                 },
                 {
                     text: 'B: Refuse', // aka option 4

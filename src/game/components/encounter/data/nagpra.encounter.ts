@@ -14,7 +14,7 @@ export const NagpraEncounter: Encounter = {
                     nextStage: 1,
                     effects: [
                         { kind: 'coin', amount: '-100' },
-                        { kind: 'birdcage' },
+                        { kind: 'trinket', item: 'birdcage' },
                     ],
                 },
                 {
