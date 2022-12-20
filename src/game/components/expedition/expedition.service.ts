@@ -22,9 +22,9 @@ import { ExpeditionStatusEnum } from './expedition.enum';
 import {
     IExpeditionCurrentNode,
     IExpeditionNode,
-    Player,
     IExpeditionPlayerStateDeckCard,
 } from './expedition.interface';
+import { Player } from "./player";
 import { generateMap, restoreMap } from 'src/game/map/app';
 import { ClientId, getClientIdField } from './expedition.type';
 import { CardTargetedEnum } from '../card/card.enum';
@@ -35,6 +35,7 @@ import { EnemyId } from '../enemy/enemy.type';
 import { Socket } from 'socket.io';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { ReturnModelType } from '@typegoose/typegoose';
+import { ModuleRef } from '@nestjs/core';
 
 @Injectable()
 export class ExpeditionService {
@@ -43,7 +44,8 @@ export class ExpeditionService {
         private readonly expedition: ReturnModelType<typeof Expedition>,
         private readonly playerService: PlayerService,
         private readonly enemyService: EnemyService,
-    ) {}
+        private readonly moduleRef: ModuleRef,
+    ) { }
 
     async getGameContext(client: Socket): Promise<GameContext> {
         const expedition = await this.findOne({ clientId: client.id });
@@ -53,6 +55,7 @@ export class ExpeditionService {
             expedition,
             client,
             events,
+            moduleRef: this.moduleRef,
         };
 
         expedition.playerState.trinkets.forEach((trinket) => {

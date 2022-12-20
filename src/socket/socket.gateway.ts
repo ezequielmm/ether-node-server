@@ -49,11 +49,9 @@ export class SocketGateway
         }
 
         try {
-            const {
-                data: {
-                    data: { id: playerId },
-                },
-            } = await this.authGatewayService.getUser(authorization);
+            const { id: playerId } = await this.authGatewayService.getUser(
+                authorization,
+            );
 
             const expedition = await this.expeditionService.updateClientId({
                 clientId: client.id,
