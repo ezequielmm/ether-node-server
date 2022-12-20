@@ -19,6 +19,9 @@ export class GetEncounterDataAction {
     ) {}
 
     async handle(client: Socket): Promise<EncounterDTO> {
-        return await this.encounterService.getEncounterDTO(client);
+        const playerState = await this.expeditionService.getPlayerState({
+            clientId: client.id,
+        });
+        return await this.encounterService.getEncounterDTO(client, playerState);
     }
 }

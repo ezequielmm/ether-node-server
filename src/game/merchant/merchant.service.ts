@@ -464,12 +464,11 @@ export class MerchantService {
             isActive: true,
         };
 
-        const id = getCardIdField(cardId);
 
         let isUpgraded = false;
 
         const newCard = playerState.cards.map((item) => {
-            if (item[id] == card[id] && !isUpgraded) {
+            if (item.cardId == card.cardId && !isUpgraded) {
                 isUpgraded = true;
                 return upgradedCard;
             } else {
