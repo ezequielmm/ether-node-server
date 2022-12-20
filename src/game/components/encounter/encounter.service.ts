@@ -24,6 +24,7 @@ import {
 import { randomUUID } from 'crypto';
 import { CardDescriptionFormatter } from '../../cardDescriptionFormatter/cardDescriptionFormatter';
 import { PotionService } from '../potion/potion.service';
+import { EnchantedForest } from "./data/enchanted_forest.encounter";
 
 @Injectable()
 export class EncounterService {
@@ -44,10 +45,11 @@ export class EncounterService {
                 EncounterIdEnum.Naiad,
                 EncounterIdEnum.WillOWisp,
                 EncounterIdEnum.DancingSatyr,
+                EncounterIdEnum.EnchantedForest,
                 EncounterIdEnum.MossyTroll,
                 EncounterIdEnum.YoungWizard,
             ],
-            [1, 0, 1, 0, 0, 0],
+            [1, 0, 1, 0, 0, 0, 0],
         );
 
         return {
@@ -137,6 +139,10 @@ export class EncounterService {
                 case 'card_add_to_library': //eg naiad
                     const cardId = parseInt(effect.cardId);
                     await this.cardService.addCardToDeck(ctx, cardId);
+                    break;
+                case 'choose_card_remove':
+                    break;
+                case 'choose_card_upgrade':
                     break;
                 case 'trinket':
                     switch (effect.item) {
