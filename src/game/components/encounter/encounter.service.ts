@@ -43,10 +43,11 @@ export class EncounterService {
                 EncounterIdEnum.Nagpra,
                 EncounterIdEnum.Naiad,
                 EncounterIdEnum.WillOWisp,
-                EncounterIdEnum.YoungWizard,
                 EncounterIdEnum.DancingSatyr,
+                EncounterIdEnum.MossyTroll,
+                EncounterIdEnum.YoungWizard,
             ],
-            [1, 0, 1, 0, 0],
+            [1, 0, 1, 0, 0, 0],
         );
 
         return {
@@ -132,15 +133,18 @@ export class EncounterService {
                 case 'birdcage': //nagpra
                     await this.birdcage(ctx);
                     break;
-                case 'runic_tomb': //young wizard
-                    break;
                 case 'loose_random_card':
                     await this.looseRandomCard(client, playerState);
                     break;
                 case 'card_add_to_library': //eg naiad
+                    const cardId = parseInt(effect.cardId);
+                    await this.cardService.addCardToDeck(ctx, cardId);
+                    break;
+                case 'runic_tomb': //young wizard
                 case 'pan_flute':
                 case 'silver_pan_flute':
                 case 'golden_pan_flute':
+                case 'brimbles_quest':// mossy troll
                     break;
             }
         }

@@ -13,8 +13,8 @@ export const NaiadEncounter: Encounter = {
                     text: 'A: Go to the Naiad [Receive one Blessing. Receive one curse.]',
                     nextStage: 1,
                     effects: [
-                        { kind: 'card_add_to_library', cardId: '0' },
-                        { kind: 'card_add_to_library', cardId: '0' },
+                        { kind: 'card_add_to_library', cardId: '1' }, //TODO correct card id
+                        { kind: 'card_add_to_library', cardId: '3' }, //TODO correct card id
                     ],
                 },
                 {

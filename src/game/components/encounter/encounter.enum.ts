@@ -4,5 +4,6 @@ export enum EncounterIdEnum {
     Naiad = 5,
     WillOWisp = 6,
     DancingSatyr = 7,
+    MossyTroll = 10,
     YoungWizard = 11,
 }
