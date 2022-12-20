@@ -9,10 +9,8 @@ import { Card } from '../components/card/card.schema';
 import { CardService } from '../components/card/card.service';
 import { getCardIdField } from '../components/card/card.type';
 import { ExpeditionMapNodeTypeEnum } from '../components/expedition/expedition.enum';
-import {
-    Player,
-    IExpeditionPlayerStateDeckCard,
-} from '../components/expedition/expedition.interface';
+import { IExpeditionPlayerStateDeckCard } from '../components/expedition/expedition.interface';
+import { Player } from '../components/expedition/player';
 import { ExpeditionService } from '../components/expedition/expedition.service';
 import { PotionRarityEnum } from '../components/potion/potion.enum';
 import { PotionService } from '../components/potion/potion.service';

@@ -25,5 +25,7 @@ export const EVENT_AFTER_DAMAGE_EFFECT = 'damageEffect';
 
 export const EVENT_AFTER_DRAW_CARDS = 'afterDrawCards';
 
+export const EVENT_AFTER_INIT_COMBAT = 'afterInitCombat';
+
 export const HARD_MODE_NODE_START = 13;
 export const HARD_MODE_NODE_END = 19;
