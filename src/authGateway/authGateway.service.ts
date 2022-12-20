@@ -17,8 +17,10 @@ export class AuthGatewayService {
 
         const userRoute = this.configService.get<string>('GET_PROFILE_URL');
 
-        const { data } = await firstValueFrom(
-            this.http.get<IProfile>(userRoute, {
+        const {
+            data: { data },
+        } = await firstValueFrom(
+            this.http.get<{ data: IProfile }>(userRoute, {
                 headers: { Authorization: `Bearer ${token}` },
             }),
         );
