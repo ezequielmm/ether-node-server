@@ -1,6 +1,6 @@
 import { forwardRef, Inject, Injectable, Logger } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import { getModelToken, InjectModel } from 'kindagoose';
+import { getModelToken } from 'kindagoose';
 import {
     compact,
     filter,

@@ -14,7 +14,7 @@ import {
     IExpeditionPlayerStateDeckCard,
     Reward,
 } from './expedition.interface';
-import { Player } from "./player";
+import { Player } from './player';
 import { ExpeditionActConfig } from './expeditionActConfig.schema';
 import { EncounterInterface } from '../encounter/encounter.interfaces';
 
