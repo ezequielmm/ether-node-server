@@ -7,7 +7,6 @@ import { CardDescriptionFormatter } from '../cardDescriptionFormatter/cardDescri
 import { CardRarityEnum, CardTypeEnum } from '../components/card/card.enum';
 import { Card } from '../components/card/card.schema';
 import { CardService } from '../components/card/card.service';
-import { getCardIdField } from '../components/card/card.type';
 import { ExpeditionMapNodeTypeEnum } from '../components/expedition/expedition.enum';
 import { IExpeditionPlayerStateDeckCard } from '../components/expedition/expedition.interface';
 import { Player } from '../components/expedition/player';
@@ -463,7 +462,6 @@ export class MerchantService {
             isUpgraded: upgradedCardData.isUpgraded,
             isActive: true,
         };
-
 
         let isUpgraded = false;
 
