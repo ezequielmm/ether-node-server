@@ -17,13 +17,11 @@ import { EncounterIdEnum } from './encounter.enum';
 import { CardService } from '../card/card.service';
 import { GameContext } from '../interfaces';
 import { TrinketService } from '../trinket/trinket.service';
-import {
-    IExpeditionPlayerStateDeckCard,
-    Player,
-} from '../expedition/expedition.interface';
+import { IExpeditionPlayerStateDeckCard } from '../expedition/expedition.interface';
 import { randomUUID } from 'crypto';
 import { CardDescriptionFormatter } from '../../cardDescriptionFormatter/cardDescriptionFormatter';
-import { PotionService } from "../potion/potion.service";
+import { PotionService } from '../potion/potion.service';
+import { Player } from '../expedition/player';
 
 @Injectable()
 export class EncounterService {
@@ -144,7 +142,7 @@ export class EncounterService {
                 case 'pan_flute':
                 case 'silver_pan_flute':
                 case 'golden_pan_flute':
-                case 'brimbles_quest':// mossy troll
+                case 'brimbles_quest': // mossy troll
                     break;
             }
         }
