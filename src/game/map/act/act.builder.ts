@@ -47,7 +47,7 @@ export interface ActBuilder {
      * @param {number} length Number of steps to add
      * @param {StepCallback} callback Callback to add nodes to the step added
      */
-    addRandgeOfSteps(length: number, callback: StepCallback): void;
+    addRangeOfSteps(length: number, callback: StepCallback): void;
 
     /**
      * Add a node to the current step
@@ -99,7 +99,7 @@ export class DefaultActBuilder implements ActBuilder {
         callback?.(this);
     }
 
-    addRandgeOfSteps(
+    addRangeOfSteps(
         length: number,
         callback: (builder: ActBuilder) => void,
     ): void {

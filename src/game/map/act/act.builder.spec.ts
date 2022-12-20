@@ -20,13 +20,13 @@ describe('ActBuilder', () => {
     describe('addRandgeOfSteps', () => {
         it('should add range of steps', () => {
             expect(actBuilder['currentStep']).toBe(-1);
-            actBuilder.addRandgeOfSteps(3, () => {});
+            actBuilder.addRangeOfSteps(3, () => {});
             expect(actBuilder['currentStep']).toBe(2);
         });
 
         it('should add range of steps with callback', () => {
             expect(actBuilder['currentStep']).toBe(-1);
-            actBuilder.addRandgeOfSteps(3, (step) => {
+            actBuilder.addRangeOfSteps(3, (step) => {
                 step.addNode();
                 step.addNode();
                 step.addNode();
@@ -120,7 +120,7 @@ describe('ActBuilder', () => {
             expect(actBuilder['nodes']).toHaveLength(0);
             expect(actBuilder['currentStep']).toBe(-1);
 
-            actBuilder.addRandgeOfSteps(3, (step) => {
+            actBuilder.addRangeOfSteps(3, (step) => {
                 step.addNode();
                 step.addNode();
                 step.addNode();
