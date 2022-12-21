@@ -38,6 +38,7 @@ export class EncounterService {
     async generateEncounter(): Promise<EncounterInterface> {
         const encounterId = getRandomItemByWeight(
             [
+                EncounterIdEnum.AbandonedAltar,
                 EncounterIdEnum.Nagpra,
                 EncounterIdEnum.Naiad,
                 EncounterIdEnum.WillOWisp,
@@ -46,7 +47,7 @@ export class EncounterService {
                 EncounterIdEnum.MossyTroll,
                 EncounterIdEnum.YoungWizard,
             ],
-            [1, 0, 1, 0, 0, 0, 0],
+            [0, 1, 0, 1, 0, 0, 0, 0],
         );
 
         return {
@@ -137,8 +138,9 @@ export class EncounterService {
                     const cardId = parseInt(effect.cardId);
                     await this.cardService.addCardToDeck(ctx, cardId);
                     break;
-                case 'choose_card_remove':
-                case 'choose_card_upgrade':
+                case 'choose_card_to_sacrifice': // abandon altar
+                case 'choose_card_remove': // Enchanted Forest
+                case 'choose_card_upgrade': // Enchanted Forest
                     await this.chooseCardRemove(client, playerState);
                     break;
                 case 'trinket':

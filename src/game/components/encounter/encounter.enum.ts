@@ -1,6 +1,6 @@
-import { EnchantedForest } from "./data/enchanted_forest.encounter";
 
 export enum EncounterIdEnum {
+    AbandonedAltar = 1,
     Nagpra = 3,
     Naiad = 5,
     WillOWisp = 6,
