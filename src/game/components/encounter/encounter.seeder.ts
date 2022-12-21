@@ -5,6 +5,8 @@ import { NagpraEncounter } from './data/nagpra.encounter';
 import { WillowispEncounter } from './data/willowisp.encounter';
 import { InjectModel } from 'kindagoose';
 import { ReturnModelType } from '@typegoose/typegoose';
+import { NaiadEncounter } from './data/naiad.encounter';
+import { YoungWizardEncounter } from './data/young_wizard.encounter';
 
 @Injectable()
 export class EncounterSeeder implements Seeder {
@@ -14,7 +16,12 @@ export class EncounterSeeder implements Seeder {
     ) {}
 
     seed(): Promise<any> {
-        return this.encounter.insertMany([NagpraEncounter, WillowispEncounter]);
+        return this.encounter.insertMany([
+            NagpraEncounter,
+            WillowispEncounter,
+            NaiadEncounter,
+            YoungWizardEncounter,
+        ]);
     }
     async drop(): Promise<any> {
         return this.encounter.deleteMany({});

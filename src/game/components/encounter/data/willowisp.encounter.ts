@@ -1,7 +1,8 @@
 import { Encounter } from '../encounter.schema';
+import { EncounterIdEnum } from '../encounter.enum';
 
 export const WillowispEncounter: Encounter = {
-    encounterId: 6,
+    encounterId: EncounterIdEnum.WillOWisp,
     imageId: 'willowisp',
     stages: [
         {

@@ -7,12 +7,9 @@ import { CardDescriptionFormatter } from '../cardDescriptionFormatter/cardDescri
 import { CardRarityEnum, CardTypeEnum } from '../components/card/card.enum';
 import { Card } from '../components/card/card.schema';
 import { CardService } from '../components/card/card.service';
-import { getCardIdField } from '../components/card/card.type';
 import { ExpeditionMapNodeTypeEnum } from '../components/expedition/expedition.enum';
-import {
-    Player,
-    IExpeditionPlayerStateDeckCard,
-} from '../components/expedition/expedition.interface';
+import { IExpeditionPlayerStateDeckCard } from '../components/expedition/expedition.interface';
+import { Player } from '../components/expedition/player';
 import { ExpeditionService } from '../components/expedition/expedition.service';
 import { PotionRarityEnum } from '../components/potion/potion.enum';
 import { PotionService } from '../components/potion/potion.service';
@@ -466,12 +463,10 @@ export class MerchantService {
             isActive: true,
         };
 
-        const id = getCardIdField(cardId);
-
         let isUpgraded = false;
 
         const newCard = playerState.cards.map((item) => {
-            if (item[id] == card[id] && !isUpgraded) {
+            if (item.cardId == card.cardId && !isUpgraded) {
                 isUpgraded = true;
                 return upgradedCard;
             } else {

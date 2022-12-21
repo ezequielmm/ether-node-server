@@ -146,7 +146,7 @@ export class RewardService {
                 await this.cardService.addCardToDeck(ctx, reward.card.cardId);
                 // Disable all other card rewards
                 rewards = rewards.map((reward) => {
-                    reward.taken = reward.type === IExpeditionNodeReward.Card;
+                    reward.taken = true;
                     return reward;
                 });
                 break;

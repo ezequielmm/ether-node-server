@@ -5,6 +5,7 @@ import { CardModule } from '../card/card.module';
 import { EnemyModule } from '../enemy/enemy.module';
 import { PlayerModule } from '../player/player.module';
 import { KindagooseModule } from 'kindagoose';
+import { TrinketModule } from '../trinket/trinket.module';
 
 @Module({
     imports: [
@@ -12,6 +13,7 @@ import { KindagooseModule } from 'kindagoose';
         CardModule,
         EnemyModule,
         PlayerModule,
+        TrinketModule,
     ],
     providers: [ExpeditionService],
     exports: [ExpeditionService, KindagooseModule],

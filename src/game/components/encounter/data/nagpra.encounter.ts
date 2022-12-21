@@ -1,7 +1,8 @@
 import { Encounter } from '../encounter.schema';
+import { EncounterIdEnum } from '../encounter.enum';
 
 export const NagpraEncounter: Encounter = {
-    encounterId: 3,
+    encounterId: EncounterIdEnum.Nagpra,
     imageId: 'nagpra',
     stages: [
         {
@@ -12,7 +13,7 @@ export const NagpraEncounter: Encounter = {
                     text: 'A: Trade for the birdcage [100 Coin]',
                     nextStage: 1,
                     effects: [
-                        { kind: 'coin', amount: '100' },
+                        { kind: 'coin', amount: '-100' },
                         { kind: 'birdcage' },
                     ],
                 },
