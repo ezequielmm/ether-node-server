@@ -3,6 +3,7 @@ import { EncounterIdEnum } from '../encounter.enum';
 
 export const EnchantedForest: Encounter = {
     encounterId: EncounterIdEnum.EnchantedForest,
+    encounterName: 'Enchanted Forest',
     imageId: 'ents',
     stages: [
         {

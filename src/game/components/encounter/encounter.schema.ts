@@ -10,6 +10,9 @@ export class Encounter {
     encounterId: number;
 
     @Prop()
+    encounterName: string;
+
+    @Prop()
     imageId: string;
 
     @Prop({ type: Object })

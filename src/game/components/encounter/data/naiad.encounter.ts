@@ -3,6 +3,7 @@ import { EncounterIdEnum } from '../encounter.enum';
 
 export const NaiadEncounter: Encounter = {
     encounterId: EncounterIdEnum.Naiad,
+    encounterName: 'Naiad',
     imageId: 'naiad',
     stages: [
         {

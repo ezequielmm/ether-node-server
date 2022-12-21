@@ -3,6 +3,7 @@ import { EncounterIdEnum } from '../encounter.enum';
 
 export const WillowispEncounter: Encounter = {
     encounterId: EncounterIdEnum.WillOWisp,
+    encounterName: "Will 'o Wisp",
     imageId: 'willowisp',
     stages: [
         {

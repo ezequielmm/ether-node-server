@@ -3,6 +3,7 @@ import { EncounterIdEnum } from '../encounter.enum';
 
 export const DancingSatyrEncounter: Encounter = {
     encounterId: EncounterIdEnum.DancingSatyr,
+    encounterName: 'Dancing Satyr',
     imageId: 'satyr',
     stages: [
         {

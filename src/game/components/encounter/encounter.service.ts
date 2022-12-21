@@ -23,7 +23,6 @@ import { CardDescriptionFormatter } from '../../cardDescriptionFormatter/cardDes
 import { PotionService } from '../potion/potion.service';
 import { Player } from '../expedition/player';
 
-
 @Injectable()
 export class EncounterService {
     constructor(
@@ -174,7 +173,7 @@ export class EncounterService {
         client.emit(
             'PutData',
             StandardResponse.respond({
-                message_type: SWARMessageType.CombatUpdate,
+                message_type: SWARMessageType.CombatUpdate, //SWARMessageType.EncounterUpdate doesnt work
                 action: SWARAction.ShowCardDialog,
                 data: {
                     cards: playerState.cards,
