@@ -24,7 +24,6 @@ import {
 import { randomUUID } from 'crypto';
 import { CardDescriptionFormatter } from '../../cardDescriptionFormatter/cardDescriptionFormatter';
 import { PotionService } from '../potion/potion.service';
-import { EnchantedForest } from "./data/enchanted_forest.encounter";
 
 @Injectable()
 export class EncounterService {
@@ -141,15 +140,15 @@ export class EncounterService {
                     await this.cardService.addCardToDeck(ctx, cardId);
                     break;
                 case 'choose_card_remove':
-                    break;
                 case 'choose_card_upgrade':
+                    await this.chooseCardRemove(client, playerState);
                     break;
                 case 'trinket':
                     switch (effect.item) {
                         case 'birdcage': //nagpra
                             await this.trinketService.add(ctx, 2); //TODO need correct trinket id
                             break;
-                        case 'runic_tomb': //young wizard
+                        case 'runic_tome': //young wizard
                             await this.trinketService.add(ctx, 2); //TODO need correct trinket id
                             break;
                         case 'pan_flute': //satyr
@@ -164,14 +163,27 @@ export class EncounterService {
                     }
                     break;
 
-                case 'brimbles_quest':// mossy troll
+                case 'brimbles_quest': // mossy troll
                     break;
             }
         }
     }
 
-    private async birdcage(ctx: GameContext): Promise<void> {
-        await this.trinketService.add(ctx, 2);
+    private async chooseCardRemove(
+        client: Socket,
+        playerState: Player,
+    ): Promise<void> {
+        client.emit(
+            'PutData',
+            StandardResponse.respond({
+                message_type: SWARMessageType.CombatUpdate,
+                action: SWARAction.ShowCardDialog,
+                data: {
+                    cards: playerState.cards,
+                    cardsToTake: 1,
+                },
+            }),
+        );
     }
 
     private async looseRandomCard(

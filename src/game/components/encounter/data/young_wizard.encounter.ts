@@ -29,7 +29,7 @@ export const YoungWizardEncounter: Encounter = {
                     nextStage: 2,
                     effects: [
                         { kind: 'loose_random_card', amount: '1' },
-                        { kind: 'trinket', item: 'runic_tomb' },
+                        { kind: 'trinket', item: 'runic_tome' },
                     ],
                 },
                 {
