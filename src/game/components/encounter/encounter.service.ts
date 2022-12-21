@@ -161,12 +161,6 @@ export class EncounterService {
                             break;
                     }
                     break;
-
-                case 'runic_tomb': //young wizard
-                case 'pan_flute':
-                case 'silver_pan_flute':
-                case 'golden_pan_flute':
-
                 case 'brimbles_quest': // mossy troll
                     break;
             }
