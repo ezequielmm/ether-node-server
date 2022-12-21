@@ -39,6 +39,7 @@ export class EncounterService {
         const encounterId = getRandomItemByWeight(
             [
                 EncounterIdEnum.AbandonedAltar,
+                EncounterIdEnum.Rugburn,
                 EncounterIdEnum.Nagpra,
                 EncounterIdEnum.Naiad,
                 EncounterIdEnum.WillOWisp,
@@ -47,7 +48,7 @@ export class EncounterService {
                 EncounterIdEnum.MossyTroll,
                 EncounterIdEnum.YoungWizard,
             ],
-            [0, 1, 0, 1, 0, 0, 0, 0],
+            [0, 0, 1, 0, 1, 0, 0, 0, 0],
         );
 
         return {
@@ -121,9 +122,23 @@ export class EncounterService {
                     break;
                 case 'hp_max': //eg will o wisp
                     amount = parseInt(effect.amount);
+                    if (playerState.hpMax + amount < 0) {
+                        amount = -playerState.hpMax;
+                    }
                     await this.expeditionService.updateById(expeditionId, {
                         $inc: {
                             'playerState.hpMax': amount,
+                        },
+                    });
+                    break;
+                case 'hit_points': //eg rug burn
+                    amount = parseInt(effect.amount);
+                    if (playerState.hpCurrent + amount < 0) {
+                        amount = -playerState.hpCurrent;
+                    }
+                    await this.expeditionService.updateById(expeditionId, {
+                        $inc: {
+                            'playerState.hpCurrent': amount,
                         },
                     });
                     break;
@@ -294,7 +309,12 @@ export class EncounterService {
         const encounterName = encounter.encounterName;
         const displayText = stage.displayText;
         const imageId = encounter.imageId;
-        const answer: EncounterDTO = { encounterName, imageId, displayText, buttons };
+        const answer: EncounterDTO = {
+            encounterName,
+            imageId,
+            displayText,
+            buttons,
+        };
         return answer;
     }
 

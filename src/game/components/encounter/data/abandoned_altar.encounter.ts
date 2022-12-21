@@ -1,8 +1,8 @@
 import { Encounter } from '../encounter.schema';
 import { EncounterIdEnum } from '../encounter.enum';
 
-export const AbandonedAltar: Encounter = {
-    encounterId: EncounterIdEnum.Nagpra,
+export const AbandonedAltarEncounter: Encounter = {
+    encounterId: EncounterIdEnum.AbandonedAltar,
     encounterName: 'Abandoned Altar',
     imageId: 'runicbeehive',
     stages: [
