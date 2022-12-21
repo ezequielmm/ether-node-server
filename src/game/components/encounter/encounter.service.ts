@@ -289,9 +289,10 @@ export class EncounterService {
                 enabled,
             });
         }
+        const encounterName = encounter.encounterName;
         const displayText = stage.displayText;
         const imageId = encounter.imageId;
-        const answer: EncounterDTO = { imageId, displayText, buttons };
+        const answer: EncounterDTO = { encounterName, imageId, displayText, buttons };
         return answer;
     }
 
