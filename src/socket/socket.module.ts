@@ -24,6 +24,7 @@ import { TreasureModule } from 'src/game/treasure/treasure.module';
 import { TrinketModule } from 'src/game/components/trinket/trinket.module';
 import { RewardModule } from 'src/game/reward/reward.module';
 import { EncounterModule } from '../game/components/encounter/encounter.module';
+import { UpgradeCardModule } from 'src/game/upgradeCard/upgradeCard.module';
 
 @Module({
     imports: [
@@ -42,6 +43,7 @@ import { EncounterModule } from '../game/components/encounter/encounter.module';
         TrinketModule,
         RewardModule,
         EncounterModule,
+        UpgradeCardModule,
     ],
     providers: [
         SocketGateway,
