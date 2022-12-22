@@ -12,6 +12,7 @@ import { MossyTrollEncounter } from './data/mossy_troll.encounter';
 import { EnchantedForest } from './data/enchanted_forest.encounter';
 import { AbandonedAltarEncounter } from './data/abandoned_altar.encounter';
 import { RugburnEncounter } from './data/rugburn.encounter';
+import { TreeCarvingEncounter } from './data/tree_carving.encounter';
 
 @Injectable()
 export class EncounterSeeder implements Seeder {
@@ -24,12 +25,13 @@ export class EncounterSeeder implements Seeder {
         return this.encounter.insertMany([
             AbandonedAltarEncounter,
             RugburnEncounter,
+            NagpraEncounter,
+            TreeCarvingEncounter,
+            NaiadEncounter,
+            WillowispEncounter,
             DancingSatyrEncounter,
             EnchantedForest,
             MossyTrollEncounter,
-            NagpraEncounter,
-            NaiadEncounter,
-            WillowispEncounter,
             YoungWizardEncounter,
         ]);
     }

@@ -41,6 +41,7 @@ export class EncounterService {
                 EncounterIdEnum.AbandonedAltar,
                 EncounterIdEnum.Rugburn,
                 EncounterIdEnum.Nagpra,
+                EncounterIdEnum.TreeCarving,
                 EncounterIdEnum.Naiad,
                 EncounterIdEnum.WillOWisp,
                 EncounterIdEnum.DancingSatyr,
@@ -48,7 +49,7 @@ export class EncounterService {
                 EncounterIdEnum.MossyTroll,
                 EncounterIdEnum.YoungWizard,
             ],
-            [0, 0, 1, 0, 1, 0, 0, 0, 0],
+            [0, 0, 1, 0, 0, 1, 0, 0, 0, 0],
         );
 
         return {
@@ -157,6 +158,10 @@ export class EncounterService {
                 case 'choose_card_remove': // Enchanted Forest
                 case 'choose_card_upgrade': // Enchanted Forest
                     await this.chooseCardRemove(client, playerState);
+                    break;
+                case 'fatigue': // tree carving
+                case 'imbued': // tree carving
+                case 'feeble': // tree carving
                     break;
                 case 'trinket':
                     switch (effect.item) {
