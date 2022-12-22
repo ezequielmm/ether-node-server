@@ -3,7 +3,8 @@ import { EncounterIdEnum } from '../encounter.enum';
 
 export const DancingSatyrEncounter: Encounter = {
     encounterId: EncounterIdEnum.DancingSatyr,
-    imageId: 'dancing_satyr',
+    encounterName: 'Dancing Satyr',
+    imageId: 'satyr',
     stages: [
         {
             //0
@@ -39,7 +40,7 @@ export const DancingSatyrEncounter: Encounter = {
                     //aka option 4
                     text: 'B: Stop Dancing',
                     nextStage: 4,
-                    effects: [{ kind: 'pan_flute' }],
+                    effects: [{ kind: 'trinket', item: 'pan_flute' }],
                 },
             ],
         },
@@ -58,14 +59,14 @@ export const DancingSatyrEncounter: Encounter = {
                     //aka option 5
                     text: 'A: Stop Dancing',
                     nextStage: 5,
-                    effects: [{ kind: 'silver_pan_flute' }],
+                    effects: [{ kind: 'trinket', item: 'silver_pan_flute' }],
                 },
                 {
                     //aka option 6
                     text: 'B: Continue Dancing [Lose 12 more Max HP. Maximize Trinket to 3 Resolve.]',
                     nextStage: 6,
                     effects: [
-                        { kind: 'golden_pan_flute' },
+                        { kind: 'trinket', item: 'golden_pan_flute' },
                         { kind: 'hp_max', amount: '-12' },
                     ],
                 },
