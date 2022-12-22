@@ -8,9 +8,10 @@ import { stingFaeData } from 'src/game/components/enemy/data/stingFae.enemy';
 import { thornWolfData } from 'src/game/components/enemy/data/thornWolf.enemy';
 import { treantData } from 'src/game/components/enemy/data/treant.enemy';
 import { ExpeditionMapNodeTypeEnum } from 'src/game/components/expedition/expedition.enum';
-import { DefaultActBuilder, NodeConfig } from './act.builder';
-import { DefaultNodeDataFiller } from './node-data-generator';
-import { NodeTypePool } from './node-type-pool';
+import { DefaultActBuilder, NodeConfig } from '../act.builder';
+import { ActTwoNodeDataFiller } from './node-data-generator';
+import { NodeTypePool } from '../node-type-pool';
+import { NodeConnectionManager } from '../node-connection-manager';
 
 const basicInitialCombatNode: NodeConfig = {
     type: ExpeditionMapNodeTypeEnum.Combat,
@@ -18,15 +19,15 @@ const basicInitialCombatNode: NodeConfig = {
     data: {
         enemies: [
             {
-                enemies: [stingFaeData.enemyId, stingFaeData.enemyId],
-                probability: 0.25,
-            },
-            {
-                enemies: [barkChargerData.enemyId, barkChargerData.enemyId],
-                probability: 0.25,
-            },
-            {
                 enemies: [sporeMongerData.enemyId],
+                probability: 0.25,
+            },
+            {
+                enemies: [barkChargerData.enemyId],
+                probability: 0.25,
+            },
+            {
+                enemies: [stingFaeData.enemyId],
                 probability: 0.25,
             },
             {
@@ -75,19 +76,25 @@ const bossNode: NodeConfig = {
     },
 };
 
+const portalNode: NodeConfig = {
+    type: ExpeditionMapNodeTypeEnum.Portal,
+    subType: ExpeditionMapNodeTypeEnum.Portal,
+    data: {},
+};
+
 const campNode: NodeConfig = {
     type: ExpeditionMapNodeTypeEnum.Camp,
     subType: ExpeditionMapNodeTypeEnum.CampRegular,
 };
 
 export default function (initialNodeId = 0) {
-    const actBuilder = new DefaultActBuilder(1, initialNodeId);
+    const actBuilder = new DefaultActBuilder(2, initialNodeId);
 
-    actBuilder.addRandgeOfSteps(3, (step) => {
+    actBuilder.addRangeOfSteps(3, (step) => {
         step.addRangeOfNodes(3, 5, basicInitialCombatNode);
     });
 
-    actBuilder.addRandgeOfSteps(8, (step) => {
+    actBuilder.addRangeOfSteps(8, (step) => {
         step.addRangeOfNodes(2, 4);
     });
 
@@ -99,7 +106,7 @@ export default function (initialNodeId = 0) {
         step.addNode(campNode);
     });
 
-    actBuilder.addRandgeOfSteps(7, (step) => {
+    actBuilder.addRangeOfSteps(7, (step) => {
         step.addRangeOfNodes(2, 4);
     });
 
@@ -111,8 +118,13 @@ export default function (initialNodeId = 0) {
         step.addNode(bossNode);
     });
 
+    actBuilder.addStep((step) => {
+        step.addNode(portalNode);
+    });
+
     let pool: NodeTypePool;
-    const data: DefaultNodeDataFiller = new DefaultNodeDataFiller();
+    const data: ActTwoNodeDataFiller = new ActTwoNodeDataFiller();
+    const nodeConnectionManager = new NodeConnectionManager(1, 3);
 
     actBuilder.fillUndefinedNodes((node, nodes) => {
         pool = pool || new NodeTypePool(nodes.length);
@@ -123,5 +135,8 @@ export default function (initialNodeId = 0) {
         return config;
     });
 
-    return actBuilder.getNodes();
+    const nodes = actBuilder.getNodes();
+    nodeConnectionManager.configureConnections(nodes);
+
+    return nodes;
 }
