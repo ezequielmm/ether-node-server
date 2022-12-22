@@ -11,11 +11,8 @@ import { swampGoblin2Data } from 'src/game/components/enemy/data/swampGoblin2.en
 import { thornWolfData } from 'src/game/components/enemy/data/thornWolf.enemy';
 import { trapelicanData } from 'src/game/components/enemy/data/trapelican.enemy';
 import { ExpeditionMapNodeTypeEnum } from 'src/game/components/expedition/expedition.enum';
-import { NodeConfig } from './act.builder';
-
-export interface NodeDataFiller {
-    fill(config: NodeConfig, step: number): void;
-}
+import { NodeConfig } from '../act.builder';
+import { NodeDataFiller } from '../node-data-filler';
 
 const eliteNodeData = {
     enemies: [
@@ -182,10 +179,10 @@ const hardCombatStandarData = {
     ],
 };
 
-export class DefaultNodeDataFiller implements NodeDataFiller {
+export class ActTwoNodeDataFiller implements NodeDataFiller {
     fill(config: NodeConfig, step: number): void {
         if (config.type != ExpeditionMapNodeTypeEnum.Combat) {
-            return null;
+            return;
         }
 
         if (config.subType == ExpeditionMapNodeTypeEnum.CombatElite) {
