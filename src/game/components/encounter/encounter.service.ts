@@ -38,14 +38,18 @@ export class EncounterService {
     async generateEncounter(): Promise<EncounterInterface> {
         const encounterId = getRandomItemByWeight(
             [
+                EncounterIdEnum.AbandonedAltar,
+                EncounterIdEnum.Rugburn,
                 EncounterIdEnum.Nagpra,
+                EncounterIdEnum.TreeCarving,
                 EncounterIdEnum.Naiad,
                 EncounterIdEnum.WillOWisp,
                 EncounterIdEnum.DancingSatyr,
+                EncounterIdEnum.EnchantedForest,
                 EncounterIdEnum.MossyTroll,
                 EncounterIdEnum.YoungWizard,
             ],
-            [1, 0, 1, 0, 0, 0],
+            [0, 0, 1, 0, 0, 1, 0, 0, 0, 0],
         );
 
         return {
@@ -119,18 +123,30 @@ export class EncounterService {
                     break;
                 case 'hp_max': //eg will o wisp
                     amount = parseInt(effect.amount);
+                    if (playerState.hpMax + amount < 0) {
+                        amount = -playerState.hpMax;
+                    }
                     await this.expeditionService.updateById(expeditionId, {
                         $inc: {
                             'playerState.hpMax': amount,
                         },
                     });
                     break;
+                case 'hit_points': //eg rug burn
+                    amount = parseInt(effect.amount);
+                    if (playerState.hpCurrent + amount < 0) {
+                        amount = -playerState.hpCurrent;
+                    }
+                    await this.expeditionService.updateById(expeditionId, {
+                        $inc: {
+                            'playerState.hpCurrent': amount,
+                        },
+                    });
+                    break;
                 case 'upgrade_random_card': //eg will o wisp
                     await this.upgradeRandomCard(client, playerState);
                     break;
-                case 'birdcage': //nagpra
-                    await this.birdcage(ctx);
-                    break;
+
                 case 'loose_random_card':
                     await this.looseRandomCard(client, playerState);
                     break;
@@ -138,18 +154,55 @@ export class EncounterService {
                     const cardId = parseInt(effect.cardId);
                     await this.cardService.addCardToDeck(ctx, cardId);
                     break;
-                case 'runic_tomb': //young wizard
-                case 'pan_flute':
-                case 'silver_pan_flute':
-                case 'golden_pan_flute':
+                case 'choose_card_to_sacrifice': // abandon altar
+                case 'choose_card_remove': // Enchanted Forest
+                case 'choose_card_upgrade': // Enchanted Forest
+                    await this.chooseCardRemove(client, playerState);
+                    break;
+                case 'fatigue': // tree carving
+                case 'imbued': // tree carving
+                case 'feeble': // tree carving
+                    break;
+                case 'trinket':
+                    switch (effect.item) {
+                        case 'birdcage': //nagpra
+                            await this.trinketService.add(ctx, 2); //TODO need correct trinket id
+                            break;
+                        case 'runic_tome': //young wizard
+                            await this.trinketService.add(ctx, 2); //TODO need correct trinket id
+                            break;
+                        case 'pan_flute': //satyr
+                            await this.trinketService.add(ctx, 2); //TODO need correct trinket id
+                            break;
+                        case 'silver_pan_flute': //satyr
+                            await this.trinketService.add(ctx, 2); //TODO need correct trinket id
+                            break;
+                        case 'golden_pan_flute': //satyr
+                            await this.trinketService.add(ctx, 2); //TODO need correct trinket id
+                            break;
+                    }
+                    break;
                 case 'brimbles_quest': // mossy troll
                     break;
             }
         }
     }
 
-    private async birdcage(ctx: GameContext): Promise<void> {
-        await this.trinketService.add(ctx, 2);
+    private async chooseCardRemove(
+        client: Socket,
+        playerState: Player,
+    ): Promise<void> {
+        client.emit(
+            'PutData',
+            StandardResponse.respond({
+                message_type: SWARMessageType.CombatUpdate, //SWARMessageType.EncounterUpdate doesnt work
+                action: SWARAction.ShowCardDialog,
+                data: {
+                    cards: playerState.cards,
+                    cardsToTake: 1,
+                },
+            }),
+        );
     }
 
     private async looseRandomCard(
@@ -258,9 +311,15 @@ export class EncounterService {
                 enabled,
             });
         }
+        const encounterName = encounter.encounterName;
         const displayText = stage.displayText;
         const imageId = encounter.imageId;
-        const answer: EncounterDTO = { imageId, displayText, buttons };
+        const answer: EncounterDTO = {
+            encounterName,
+            imageId,
+            displayText,
+            buttons,
+        };
         return answer;
     }
 
