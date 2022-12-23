@@ -7,15 +7,17 @@ import { sporeMongerData } from 'src/game/components/enemy/data/sporeMonger.enem
 import { stingFaeData } from 'src/game/components/enemy/data/stingFae.enemy';
 import { thornWolfData } from 'src/game/components/enemy/data/thornWolf.enemy';
 import { treantData } from 'src/game/components/enemy/data/treant.enemy';
-import { ExpeditionMapNodeTypeEnum } from 'src/game/components/expedition/expedition.enum';
+import { NodeType } from 'src/game/components/expedition/node-type';
+import { NodeStatus } from 'src/game/components/expedition/node-status';
 import { DefaultActBuilder, NodeConfig } from '../act.builder';
 import { ActOneNodeDataFiller } from './node-data-generator';
 import { NodeTypePool } from '../node-type-pool';
 import { NodeConnectionManager } from '../node-connection-manager';
 
 const basicInitialCombatNode: NodeConfig = {
-    type: ExpeditionMapNodeTypeEnum.Combat,
-    subType: ExpeditionMapNodeTypeEnum.CombatStandard,
+    title: 'Combat',
+    type: NodeType.Combat,
+    subType: NodeType.CombatStandard,
     data: {
         enemies: [
             {
@@ -39,8 +41,9 @@ const basicInitialCombatNode: NodeConfig = {
 };
 
 const elitCombatNode: NodeConfig = {
-    type: ExpeditionMapNodeTypeEnum.Combat,
-    subType: ExpeditionMapNodeTypeEnum.CombatElite,
+    title: 'Elite Combat',
+    type: NodeType.Combat,
+    subType: NodeType.CombatElite,
     data: {
         enemies: [
             {
@@ -60,8 +63,9 @@ const elitCombatNode: NodeConfig = {
 };
 
 const bossNode: NodeConfig = {
-    type: ExpeditionMapNodeTypeEnum.Combat,
-    subType: ExpeditionMapNodeTypeEnum.CombatBoss,
+    title: 'Boss',
+    type: NodeType.Combat,
+    subType: NodeType.CombatBoss,
     data: {
         enemies: [
             {
@@ -77,14 +81,16 @@ const bossNode: NodeConfig = {
 };
 
 const portalNode: NodeConfig = {
-    type: ExpeditionMapNodeTypeEnum.Portal,
-    subType: ExpeditionMapNodeTypeEnum.Portal,
+    type: NodeType.Portal,
+    subType: NodeType.Portal,
     data: {},
+    title: 'Portal',
 };
 
 const campNode: NodeConfig = {
-    type: ExpeditionMapNodeTypeEnum.Camp,
-    subType: ExpeditionMapNodeTypeEnum.CampRegular,
+    title: 'Spirit Well',
+    type: NodeType.Camp,
+    subType: NodeType.CampRegular,
 };
 
 export default function (initialNodeId = 0) {
@@ -137,6 +143,13 @@ export default function (initialNodeId = 0) {
 
     const nodes = actBuilder.getNodes();
     nodeConnectionManager.configureConnections(nodes);
+
+    // Enable entrance nodes
+    nodes
+        .filter((node) => node.step == 0)
+        .forEach((node) => {
+            node.status = NodeStatus.Available;
+        });
 
     return nodes;
 }

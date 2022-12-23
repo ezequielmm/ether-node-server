@@ -6,6 +6,7 @@ import { EnemyModule } from '../enemy/enemy.module';
 import { PlayerModule } from '../player/player.module';
 import { KindagooseModule } from 'kindagoose';
 import { TrinketModule } from '../trinket/trinket.module';
+import { MapModule } from 'src/game/map/map/map.module';
 
 @Module({
     imports: [
@@ -14,6 +15,7 @@ import { TrinketModule } from '../trinket/trinket.module';
         EnemyModule,
         PlayerModule,
         TrinketModule,
+        MapModule,
     ],
     providers: [ExpeditionService],
     exports: [ExpeditionService, KindagooseModule],

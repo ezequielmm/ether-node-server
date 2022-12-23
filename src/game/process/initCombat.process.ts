@@ -2,11 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { every } from 'lodash';
 import { SetCombatTurnAction } from '../action/setCombatTurn.action';
 import { EnemyService } from '../components/enemy/enemy.service';
-import {
-    CombatTurnEnum,
-    ExpeditionMapNodeStatusEnum,
-} from '../components/expedition/expedition.enum';
-import { IExpeditionNode } from '../components/expedition/expedition.interface';
+import { CombatTurnEnum } from '../components/expedition/expedition.enum';
+import { Node } from '../components/expedition/node';
 import { ExpeditionService } from '../components/expedition/expedition.service';
 import { GameContext } from '../components/interfaces';
 import { EVENT_AFTER_INIT_COMBAT } from '../constants';
@@ -26,21 +23,24 @@ export class InitCombatProcess {
         private readonly setCombatTurnAction: SetCombatTurnAction,
     ) {}
 
-    private node: IExpeditionNode;
+    private node: Node;
     private ctx: GameContext;
 
-    async process(ctx: GameContext, node: IExpeditionNode): Promise<void> {
+    async process(
+        ctx: GameContext,
+        node: Node,
+        continueCombat: boolean,
+    ): Promise<void> {
         this.node = node;
         this.ctx = ctx;
 
-        switch (this.node.status) {
-            case ExpeditionMapNodeStatusEnum.Available:
-                await this.createCombat();
-                break;
-            case ExpeditionMapNodeStatusEnum.Active:
-                await this.continueCombat();
+        if (continueCombat) {
+            await this.continueCombat();
+        } else {
+            await this.createCombat();
         }
 
+        await this.ctx.expedition.save();
         await this.ctx.events.emitAsync(EVENT_AFTER_INIT_COMBAT, { ctx });
     }
 
@@ -52,7 +52,6 @@ export class InitCombatProcess {
             );
 
         this.ctx.expedition.currentNode = currentNode;
-        await this.ctx.expedition.save();
 
         await this.setCombatTurnAction.handle({
             clientId: this.ctx.client.id,

@@ -1,176 +1,162 @@
 import { Injectable, Logger } from '@nestjs/common';
-import {
-    ExpeditionMapNodeStatusEnum,
-    ExpeditionMapNodeTypeEnum,
-} from '../components/expedition/expedition.enum';
-import { ExpeditionService } from '../components/expedition/expedition.service';
+import { NodeStatus } from '../components/expedition/node-status';
+import { NodeType } from '../components/expedition/node-type';
 import { GameContext } from '../components/interfaces';
-import { restoreMap } from '../map/app';
 import {
     StandardResponse,
-    SWARMessageType,
     SWARAction,
+    SWARMessageType,
 } from '../standardResponse/standardResponse';
 import { InitCombatProcess } from './initCombat.process';
 import { InitMerchantProcess } from './initMerchant.process';
 
+import { Node } from '../components/expedition/node';
+import { MapService } from '../map/map.service';
+import { InitEncounterProcess } from './initEncounter.process';
 import { InitNodeProcess } from './initNode.process';
 import { InitTreasureProcess } from './initTreasure.process';
-import { InitEncounterProcess } from './initEncounter.process';
-import { IExpeditionNode } from '../components/expedition/expedition.interface';
 
 @Injectable()
 export class NodeSelectedProcess {
     private readonly logger: Logger = new Logger(NodeSelectedProcess.name);
-    private node: IExpeditionNode;
-    private ctx: GameContext;
 
     constructor(
-        private readonly expeditionService: ExpeditionService,
         private readonly initCombatProcess: InitCombatProcess,
         private readonly initNodeProcess: InitNodeProcess,
         private readonly initMerchantProcess: InitMerchantProcess,
         private readonly initTreasureProcess: InitTreasureProcess,
         private readonly initEncounterProcess: InitEncounterProcess,
+        private readonly mapService: MapService,
     ) {}
 
     async handle(ctx: GameContext, node_id: number): Promise<string> {
-        this.ctx = ctx;
-        this.node = await this.expeditionService.getExpeditionMapNode({
-            clientId: ctx.client.id,
-            nodeId: node_id,
-        });
+        const node = this.mapService.findNodeById(ctx, node_id);
 
-        switch (this.node.status) {
-            case ExpeditionMapNodeStatusEnum.Available:
-                return await this.nodeIsAvailable();
-            case ExpeditionMapNodeStatusEnum.Active:
-                return await this.nodeIsActive();
-            default:
-                this.logger.error('Selected node is not available');
-                ctx.client.emit('ErrorMessage', {
-                    message: `An Error has ocurred selecting the node`,
-                });
-                break;
+        if (this.mapService.nodeIsSelectable(ctx, node.id)) {
+            this.logger.error('Selected node is not available');
+            ctx.client.emit('ErrorMessage', {
+                message: `An Error has ocurred selecting the node`,
+            });
+        }
+
+        switch (node.status) {
+            case NodeStatus.Available:
+                return await this.nodeIsAvailable(ctx, node);
+            case NodeStatus.Active:
+                return await this.nodeIsActive(ctx, node);
         }
     }
 
-    private async nodeIsAvailable(): Promise<string> {
-        const map = await this.expeditionService.getExpeditionMap({
-            clientId: this.ctx.client.id,
-        });
+    private async nodeIsAvailable(
+        ctx: GameContext,
+        node: Node,
+    ): Promise<string> {
+        const { mapSeedId, map } = ctx.expedition;
 
-        const expeditionMap = restoreMap(map);
-        const selectedNode = expeditionMap.fullCurrentMap.get(this.node.id);
-        selectedNode.select(expeditionMap);
+        this.mapService.selectNode(ctx, node.id);
+        await ctx.expedition.save();
 
-        const { map: newMap, mapSeedId } =
-            (await this.expeditionService.update(this.ctx.client.id, {
-                map: expeditionMap.getMap,
-            })) || {};
+        let response: string;
+        switch (node.type) {
+            case NodeType.Portal:
+                this.logger.debug(`Map extended for client ${ctx.client.id}`);
 
-        switch (this.node.type) {
-            case ExpeditionMapNodeTypeEnum.Portal:
-                this.logger.debug(
-                    `Map extended for client ${this.ctx.client.id}`,
-                );
-
-                return StandardResponse.respond({
+                response = StandardResponse.respond({
                     message_type: SWARMessageType.MapUpdate,
                     seed: mapSeedId,
                     action: SWARAction.ExtendMap,
-                    data: newMap,
+                    data: map,
                 });
-            case ExpeditionMapNodeTypeEnum.RoyalHouse:
-            case ExpeditionMapNodeTypeEnum.RoyalHouseA:
-            case ExpeditionMapNodeTypeEnum.RoyalHouseB:
-            case ExpeditionMapNodeTypeEnum.RoyalHouseC:
-            case ExpeditionMapNodeTypeEnum.RoyalHouseD:
+                break;
+            case NodeType.RoyalHouse:
+            case NodeType.RoyalHouseA:
+            case NodeType.RoyalHouseB:
+            case NodeType.RoyalHouseC:
+            case NodeType.RoyalHouseD:
                 this.logger.debug(
-                    `Activated portal for client ${this.ctx.client.id}`,
+                    `Activated portal for client ${ctx.client.id}`,
                 );
 
-                return StandardResponse.respond({
+                response = StandardResponse.respond({
                     message_type: SWARMessageType.MapUpdate,
                     seed: mapSeedId,
                     action: SWARAction.ActivatePortal,
-                    data: newMap,
+                    data: map,
                 });
-            case ExpeditionMapNodeTypeEnum.Combat:
-            case ExpeditionMapNodeTypeEnum.CombatBoss:
-            case ExpeditionMapNodeTypeEnum.CombatElite:
-            case ExpeditionMapNodeTypeEnum.CombatStandard:
+                break;
+            case NodeType.Combat:
+            case NodeType.CombatBoss:
+            case NodeType.CombatElite:
+            case NodeType.CombatStandard:
                 this.logger.debug(
-                    `Sent message InitCombat to client ${this.ctx.client.id}`,
+                    `Sent message InitCombat to client ${ctx.client.id}`,
                 );
 
-                await this.initCombatProcess.process(this.ctx, this.node);
+                await this.initCombatProcess.process(ctx, node, false);
 
-                return StandardResponse.respond({
+                response = StandardResponse.respond({
                     message_type: SWARMessageType.MapUpdate,
                     seed: mapSeedId,
                     action: SWARAction.MapUpdate,
-                    data: newMap,
+                    data: map,
                 });
-            case ExpeditionMapNodeTypeEnum.Camp:
-            case ExpeditionMapNodeTypeEnum.CampHouse:
-            case ExpeditionMapNodeTypeEnum.CampRegular:
-                await this.initNodeProcess.process(this.ctx, this.node);
+                break;
+            case NodeType.Camp:
+            case NodeType.CampHouse:
+            case NodeType.CampRegular:
+                await this.initNodeProcess.process(ctx, node);
 
-                return StandardResponse.respond({
+                response = StandardResponse.respond({
                     message_type: SWARMessageType.CampUpdate,
                     action: SWARAction.BeginCamp,
                     data: null,
                 });
-            case ExpeditionMapNodeTypeEnum.Encounter:
-                return await this.initEncounterProcess.process(
-                    this.ctx,
-                    this.node,
-                );
-            case ExpeditionMapNodeTypeEnum.Treasure:
-                return await this.initTreasureProcess.process(
-                    this.ctx,
-                    this.node,
-                );
-            case ExpeditionMapNodeTypeEnum.Merchant:
-                return this.initMerchantProcess.process(this.ctx, this.node);
+                break;
+            case NodeType.Encounter:
+                response = await this.initEncounterProcess.process(ctx, node);
+                break;
+            case NodeType.Treasure:
+                response = await this.initTreasureProcess.process(ctx, node);
+                break;
+            case NodeType.Merchant:
+                response = await this.initMerchantProcess.process(ctx, node);
+                break;
         }
+
+        return response;
     }
 
-    private async nodeIsActive(): Promise<string> {
-        switch (this.node.type) {
-            case ExpeditionMapNodeTypeEnum.Combat:
+    private async nodeIsActive(ctx: GameContext, node: Node): Promise<string> {
+        switch (node.type) {
+            case NodeType.Combat:
                 this.logger.debug(
-                    `Sent message InitCombat to client ${this.ctx.client.id}`,
+                    `Sent message InitCombat to client ${ctx.client.id}`,
                 );
 
-                await this.initCombatProcess.process(this.ctx, this.node);
+                await this.initCombatProcess.process(ctx, node, true);
                 break;
-            case ExpeditionMapNodeTypeEnum.Camp:
-            case ExpeditionMapNodeTypeEnum.CampHouse:
-            case ExpeditionMapNodeTypeEnum.CampRegular:
-                await this.initNodeProcess.process(this.ctx, this.node);
+            case NodeType.Camp:
+            case NodeType.CampHouse:
+            case NodeType.CampRegular:
+                await this.initNodeProcess.process(ctx, node);
 
                 return StandardResponse.respond({
                     message_type: SWARMessageType.CampUpdate,
                     action: SWARAction.BeginCamp,
                     data: null,
                 });
-            case ExpeditionMapNodeTypeEnum.Encounter:
-                await this.initNodeProcess.process(this.ctx, this.node);
+            case NodeType.Encounter:
+                await this.initNodeProcess.process(ctx, node);
 
                 return StandardResponse.respond({
                     message_type: SWARMessageType.EncounterUpdate,
                     action: SWARAction.BeginEncounter,
                     data: null,
                 });
-            case ExpeditionMapNodeTypeEnum.Treasure:
-                return await this.initTreasureProcess.process(
-                    this.ctx,
-                    this.node,
-                );
-            case ExpeditionMapNodeTypeEnum.Merchant:
-                await this.initMerchantProcess.process(this.ctx, this.node);
+            case NodeType.Treasure:
+                return await this.initTreasureProcess.process(ctx, node);
+            case NodeType.Merchant:
+                await this.initMerchantProcess.process(ctx, node);
 
                 return StandardResponse.respond({
                     message_type: SWARMessageType.MerchantUpdate,

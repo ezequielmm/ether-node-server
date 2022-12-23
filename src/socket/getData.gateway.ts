@@ -19,6 +19,7 @@ import {
 } from 'src/game/standardResponse/standardResponse';
 import { corsSocketSettings, DataWSRequestTypesEnum } from './socket.enum';
 import { GetEncounterDataAction } from 'src/game/action/getEncounterDataAction';
+import { ExpeditionService } from 'src/game/components/expedition/expedition.service';
 
 @WebSocketGateway(corsSocketSettings)
 export class GetDataGateway {
@@ -38,6 +39,7 @@ export class GetDataGateway {
         private readonly getTreasureDataAction: GetTreasureDataAction,
         private readonly getRewardsAction: GetRewardsAction,
         private readonly getEncounterAction: GetEncounterDataAction,
+        private readonly expeditionService: ExpeditionService,
     ) {}
 
     @SubscribeMessage('GetData')
@@ -45,6 +47,8 @@ export class GetDataGateway {
         this.logger.debug(
             `Client ${client.id} trigger message "GetData": ${types}`,
         );
+
+        const ctx = await this.expeditionService.getGameContext(client);
 
         try {
             let data = null;
@@ -79,7 +83,7 @@ export class GetDataGateway {
                     break;
 
                 case DataWSRequestTypesEnum.CurrentNode:
-                    data = await this.getCurrentStepAction.handle(client.id);
+                    data = await this.getCurrentStepAction.handle(ctx);
                     break;
 
                 case DataWSRequestTypesEnum.UpgradableCards:

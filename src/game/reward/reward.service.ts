@@ -5,18 +5,16 @@ import { CustomException, ErrorBehavior } from 'src/socket/custom.exception';
 import { CardDescriptionFormatter } from '../cardDescriptionFormatter/cardDescriptionFormatter';
 import { CardRarityEnum, CardTypeEnum } from '../components/card/card.enum';
 import { CardService } from '../components/card/card.service';
-import {
-    ExpeditionMapNodeTypeEnum,
-    IExpeditionNodeReward,
-} from '../components/expedition/expedition.enum';
+import { IExpeditionNodeReward } from '../components/expedition/expedition.enum';
+import { NodeType } from '../components/expedition/node-type';
 import {
     CardPreview,
     CardReward,
-    IExpeditionNode,
     PotionReward,
     Reward,
     TrinketReward,
 } from '../components/expedition/expedition.interface';
+import { Node } from '../components/expedition/node';
 import { ExpeditionService } from '../components/expedition/expedition.service';
 import { GameContext } from '../components/interfaces';
 import { PotionRarityEnum } from '../components/potion/potion.enum';
@@ -38,7 +36,7 @@ export class RewardService {
         private readonly expeditionService: ExpeditionService,
     ) {}
 
-    private node: IExpeditionNode;
+    private node: Node;
 
     async generateRewards({
         ctx,
@@ -49,7 +47,7 @@ export class RewardService {
         node,
     }: {
         ctx: GameContext;
-        node: IExpeditionNode;
+        node: Node;
         coinsToGenerate: number;
         cardsToGenerate: CardRarityEnum[];
         potionsToGenerate: PotionRarityEnum[];
@@ -106,7 +104,7 @@ export class RewardService {
         let rewards: Reward[] = [];
 
         rewards =
-            nodeType === ExpeditionMapNodeTypeEnum.Treasure
+            nodeType === NodeType.Treasure
                 ? expedition.currentNode.treasureData.rewards
                 : expedition.currentNode.data.rewards;
 
@@ -159,7 +157,7 @@ export class RewardService {
         }
 
         // Next we save the reward on the expedition
-        if (nodeType === ExpeditionMapNodeTypeEnum.Treasure) {
+        if (nodeType === NodeType.Treasure) {
             await this.expeditionService.updateById(expedition._id.toString(), {
                 $set: {
                     'currentNode.treasureData.rewards': rewards,
@@ -180,7 +178,7 @@ export class RewardService {
 
         return StandardResponse.respond({
             message_type:
-                nodeType === ExpeditionMapNodeTypeEnum.Treasure
+                nodeType === NodeType.Treasure
                     ? SWARMessageType.EndTreasure
                     : SWARMessageType.EndCombat,
             action: SWARAction.SelectAnotherReward,

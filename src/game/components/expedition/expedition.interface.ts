@@ -1,4 +1,3 @@
-import { Item } from 'src/game/merchant/merchant.interface';
 import { AttachedStatus, StatusType } from 'src/game/status/interfaces';
 import { CardRarityEnum, CardTypeEnum } from '../card/card.enum';
 import { Card } from '../card/card.schema';
@@ -9,48 +8,11 @@ import {
 } from '../enemy/enemy.enum';
 import { EnemyScript } from '../enemy/enemy.interface';
 import { Potion } from '../potion/potion.schema';
-import {
-    ExpeditionMapNodeTypeEnum,
-    ExpeditionMapNodeStatusEnum,
-    IExpeditionNodeReward,
-} from './expedition.enum';
+import { IExpeditionNodeReward } from './expedition.enum';
 import { Expedition } from './expedition.schema';
 
 export interface PotionInstance extends Potion {
     id: string;
-}
-
-export interface IExpeditionNode {
-    readonly id: number;
-    readonly act: number;
-    readonly step: number;
-    readonly isActive: boolean;
-    readonly isDisable: boolean;
-    readonly isAvailable: boolean;
-    readonly isComplete: boolean;
-    type: ExpeditionMapNodeTypeEnum;
-    readonly subType: ExpeditionMapNodeTypeEnum;
-    readonly status: ExpeditionMapNodeStatusEnum;
-    readonly exits: number[];
-    readonly enter: number[];
-    readonly title?: string;
-    readonly private_data: {
-        cards?: Item[];
-        neutralCards?: Item[];
-        trinkets?: Item[];
-        potions?: Item[];
-        enemies?: {
-            enemies: number[];
-            probability: number;
-        }[];
-    };
-    readonly state?: {
-        treasure?: any;
-        enemies?: {
-            enemies: number[];
-            probability: number;
-        }[];
-    };
 }
 
 export class IExpeditionPlayerStateDeckCard extends Card {

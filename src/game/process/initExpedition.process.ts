@@ -11,6 +11,7 @@ import { ExpeditionStatusEnum } from '../components/expedition/expedition.enum';
 import { IExpeditionPlayerStateDeckCard } from '../components/expedition/expedition.interface';
 import { ExpeditionService } from '../components/expedition/expedition.service';
 import { SettingsService } from '../components/settings/settings.service';
+import { MapService } from '../map/map.service';
 
 interface InitExpeditionDTO {
     playerId: number;
@@ -28,6 +29,7 @@ export class InitExpeditionProcess {
         private readonly characterService: CharacterService,
         private readonly customDeckService: CustomDeckService,
         private readonly settingsService: SettingsService,
+        private readonly mapService: MapService,
     ) {}
 
     async handle(payload: InitExpeditionDTO): Promise<void> {
@@ -41,7 +43,8 @@ export class InitExpeditionProcess {
         const { initialPotionChance } =
             await this.settingsService.getSettings();
 
-        const map = this.expeditionService.getMap();
+        // const map = this.expeditionService.getMap();
+        const map = this.mapService.getActZero();
 
         const cards = await this.generatePlayerDeck(character, email);
 

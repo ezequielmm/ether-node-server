@@ -11,7 +11,7 @@ import { isValidAuthToken } from 'src/utils';
 import { AuthGatewayService } from 'src/authGateway/authGateway.service';
 import { ExpeditionService } from 'src/game/components/expedition/expedition.service';
 import { FullSyncAction } from 'src/game/action/fullSync.action';
-import { ExpeditionMapNodeTypeEnum } from 'src/game/components/expedition/expedition.enum';
+import { NodeType } from 'src/game/components/expedition/node-type';
 import { PlayerService } from 'src/game/components/player/player.service';
 import { CombatQueueService } from 'src/game/components/combatQueue/combatQueue.service';
 import { CardSelectionScreenService } from 'src/game/components/cardSelectionScreen/cardSelectionScreen.service';
@@ -67,7 +67,7 @@ export class SocketGateway
                 if (expedition.currentNode !== undefined) {
                     const { nodeType } = expedition.currentNode;
 
-                    if (nodeType === ExpeditionMapNodeTypeEnum.Combat) {
+                    if (nodeType === NodeType.Combat) {
                         const { hpCurrent } =
                             await this.expeditionService.getPlayerState({
                                 clientId: client.id,
