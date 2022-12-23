@@ -13,7 +13,7 @@ export const WillowispEncounter: Encounter = {
                 {
                     text: 'A: Kneel before the orb [Increase max hp by 10.]',
                     nextStage: 1,
-                    effects: [{ kind: 'hp_max', amount: '10' }],
+                    effects: [{ kind: 'hp_max_random', max: '8', min: '5' }],
                 },
                 {
                     text: 'B: Reach out and absorb power from the orb. [Upgrade 1 random card]',
