@@ -59,13 +59,13 @@ export const ancientOneData: Enemy = {
                 {
                     type: EnemyIntentionType.Attack,
                     target: CardTargetedEnum.Player,
-                    value: 10,
+                    value: 22,
                     effects: [
                         {
                             effect: damageEffect.name,
                             target: CardTargetedEnum.Player,
                             args: {
-                                value: 10,
+                                value: 22,
                             },
                         },
                     ],
