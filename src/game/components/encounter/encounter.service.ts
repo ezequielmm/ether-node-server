@@ -212,7 +212,7 @@ export class EncounterService {
         client.emit(
             'PutData',
             StandardResponse.respond({
-                message_type: SWARMessageType.EncounterUpdate, //SWARMessageType.EncounterUpdate doesnt work
+                message_type: SWARMessageType.EncounterUpdate,
                 action: SWARAction.ShowRemoveCardDialog,
                 data: {
                     cards: playerState.cards,
@@ -229,7 +229,7 @@ export class EncounterService {
         client.emit(
             'PutData',
             StandardResponse.respond({
-                message_type: SWARMessageType.EncounterUpdate, //SWARMessageType.EncounterUpdate doesnt work
+                message_type: SWARMessageType.EncounterUpdate,
                 action: SWARAction.ShowUpgradeCardDialog,
                 data: {
                     cards: playerState.cards,
