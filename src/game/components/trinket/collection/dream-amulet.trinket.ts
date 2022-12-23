@@ -1,5 +1,5 @@
 import { Prop } from '@typegoose/typegoose';
-import { EVENT_AFTER_INIT_COMBAT } from 'src/game/constants';
+import { EVENT_AFTER_PLAYER_TURN_START } from 'src/game/constants';
 import { drawCardEffect } from 'src/game/effects/drawCard/constants';
 import { EffectService } from 'src/game/effects/effects.service';
 import { GameContext } from '../../interfaces';
@@ -21,7 +21,7 @@ export class DreamAmuletTrinket extends Trinket {
     rarity: TrinketRarityEnum;
 
     onAttach(ctx: GameContext): void {
-        ctx.events.addListener(EVENT_AFTER_INIT_COMBAT, async () => {
+        ctx.events.addListener(EVENT_AFTER_PLAYER_TURN_START, async () => {
             const effectService = ctx.moduleRef.get(EffectService, {
                 strict: false,
             });
