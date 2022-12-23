@@ -1,9 +1,9 @@
 import {
     CombatTurnEnum,
-    ExpeditionMapNodeStatusEnum,
-    ExpeditionMapNodeTypeEnum,
     ExpeditionStatusEnum,
 } from '../components/expedition/expedition.enum';
+import { NodeType } from '../components/expedition/node-type';
+import { NodeStatus } from '../components/expedition/node-status';
 import {
     Expedition,
     ExpeditionSchema,
@@ -59,9 +59,9 @@ describe('GetTreasureDataAction', () => {
                     isDisable: false,
                     isAvailable: true,
                     isComplete: false,
-                    type: ExpeditionMapNodeTypeEnum.Combat,
-                    subType: ExpeditionMapNodeTypeEnum.Camp,
-                    status: ExpeditionMapNodeStatusEnum.Active,
+                    type: NodeType.Combat,
+                    subType: NodeType.Camp,
+                    status: NodeStatus.Active,
                     exits: [],
                     enter: [],
                     private_data: {
@@ -77,7 +77,7 @@ describe('GetTreasureDataAction', () => {
             status: ExpeditionStatusEnum.InProgress,
             currentNode: {
                 nodeId: 0,
-                nodeType: ExpeditionMapNodeTypeEnum.Combat,
+                nodeType: NodeType.Combat,
                 completed: false,
                 showRewards: true,
                 data: {
@@ -105,6 +105,7 @@ describe('GetTreasureDataAction', () => {
                     },
                 },
             },
+            isCurrentlyPlaying: false,
         });
 
         const expedition = await expeditionService.findOne({ clientId });

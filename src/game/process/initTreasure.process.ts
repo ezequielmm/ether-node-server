@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { ExpeditionMapNodeStatusEnum } from '../components/expedition/expedition.enum';
-import { IExpeditionNode } from '../components/expedition/expedition.interface';
+import { Node } from '../components/expedition/node';
 import { ExpeditionService } from '../components/expedition/expedition.service';
 import { GameContext } from '../components/interfaces';
 import {
@@ -18,17 +17,20 @@ export class InitTreasureProcess {
     ) {}
 
     private clientId: string;
-    private node: IExpeditionNode;
+    private node: Node;
 
-    async process(ctx: GameContext, node: IExpeditionNode): Promise<string> {
+    async process(
+        ctx: GameContext,
+        node: Node,
+        continueTreasure = false,
+    ): Promise<string> {
         this.clientId = ctx.client.id;
         this.node = node;
 
-        switch (node.status) {
-            case ExpeditionMapNodeStatusEnum.Available:
-                return await this.createTreasureData(ctx);
-            case ExpeditionMapNodeStatusEnum.Active:
-                return await this.continueTreasure();
+        if (continueTreasure) {
+            return await this.continueTreasure();
+        } else {
+            return await this.createTreasureData(ctx);
         }
     }
 

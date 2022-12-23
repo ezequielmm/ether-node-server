@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { IExpeditionNode } from '../components/expedition/expedition.interface';
+import { Node } from '../components/expedition/node';
 import { ExpeditionService } from '../components/expedition/expedition.service';
 import { GameContext } from '../components/interfaces';
 import { CurrentNodeGeneratorProcess } from './currentNodeGenerator.process';
@@ -11,7 +11,7 @@ export class InitNodeProcess {
         private readonly expeditionService: ExpeditionService,
     ) {}
 
-    async process(ctx: GameContext, node: IExpeditionNode): Promise<void> {
+    async process(ctx: GameContext, node: Node): Promise<void> {
         const currentNode =
             await this.currentNodeGeneratorProcess.getCurrentNodeData(
                 ctx,

@@ -49,19 +49,22 @@ export class ExpeditionGateway {
     @SubscribeMessage('ContinueExpedition')
     async handleContinueExpedition(client: Socket): Promise<string> {
         this.logger.debug(`Client ${client.id} will advance to the next node`);
+        const ctx = await this.expeditionService.getGameContext(client);
 
-        return await this.continueExpeditionProcess.handle({ client });
+        return this.continueExpeditionProcess.handle(ctx);
     }
 
     @SubscribeMessage('NodeSkipped')
-    async handleNodeSkipped(client: Socket, node_id: number): Promise<void> {
+    async handleNodeSkipped(client: Socket, nodeId: number): Promise<void> {
+        const ctx = await this.expeditionService.getGameContext(client);
+
         this.logger.debug(
-            `Client ${client.id} trigger message "NodeSkipped": ${node_id}`,
+            `Client ${client.id} trigger message "NodeSkipped": ${nodeId}`,
         );
 
         await this.expeditionService.overrideAvailableNode({
-            clientId: client.id,
-            nodeId: node_id,
+            ctx,
+            nodeId: ~~nodeId,
         });
     }
 }
