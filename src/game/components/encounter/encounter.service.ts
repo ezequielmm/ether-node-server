@@ -49,7 +49,7 @@ export class EncounterService {
                 EncounterIdEnum.MossyTroll,
                 EncounterIdEnum.YoungWizard,
             ],
-            [0, 0, 1, 0, 0, 1, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 1, 0, 0],
         );
 
         return {
@@ -155,9 +155,12 @@ export class EncounterService {
                     await this.cardService.addCardToDeck(ctx, cardId);
                     break;
                 case 'choose_card_to_sacrifice': // abandon altar
+                    break;
                 case 'choose_card_remove': // Enchanted Forest
-                case 'choose_card_upgrade': // Enchanted Forest
                     await this.chooseCardRemove(client, playerState);
+                    break;
+                case 'choose_card_upgrade': // Enchanted Forest
+                    await this.chooseCardUpgrade(client, playerState);
                     break;
                 case 'fatigue': // tree carving
                 case 'imbued': // tree carving
@@ -195,8 +198,25 @@ export class EncounterService {
         client.emit(
             'PutData',
             StandardResponse.respond({
-                message_type: SWARMessageType.CombatUpdate, //SWARMessageType.EncounterUpdate doesnt work
-                action: SWARAction.ShowCardDialog,
+                message_type: SWARMessageType.EncounterUpdate, //SWARMessageType.EncounterUpdate doesnt work
+                action: SWARAction.ShowRemoveCardDialog,
+                data: {
+                    cards: playerState.cards,
+                    cardsToTake: 1,
+                },
+            }),
+        );
+    }
+
+    private async chooseCardUpgrade(
+        client: Socket,
+        playerState: Player,
+    ): Promise<void> {
+        client.emit(
+            'PutData',
+            StandardResponse.respond({
+                message_type: SWARMessageType.EncounterUpdate, //SWARMessageType.EncounterUpdate doesnt work
+                action: SWARAction.ShowUpgradeCardDialog,
                 data: {
                     cards: playerState.cards,
                     cardsToTake: 1,

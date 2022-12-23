@@ -62,6 +62,8 @@ export enum SWARAction {
     TreasureData = 'treasure_data',
     BeginMerchant = 'begin_merchant',
     ShowCardDialog = 'show_card_dialog',
+    ShowUpgradeCardDialog = 'show_upgrade_card_dialog',
+    ShowRemoveCardDialog = 'show_remove_card_dialog',
     ShowInvalidPotion = 'show_invalid_potion',
     FinishCamp = 'finish_camp',
     MerchantUpdate = 'merchant_update',
