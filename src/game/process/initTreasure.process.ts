@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { NodeStatus } from '../components/expedition/node-status';
 import { Node } from '../components/expedition/node';
 import { ExpeditionService } from '../components/expedition/expedition.service';
 import { GameContext } from '../components/interfaces';

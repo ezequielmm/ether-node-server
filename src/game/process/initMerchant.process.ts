@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { Node } from '../components/expedition/node';
-import { ExpeditionService } from '../components/expedition/expedition.service';
 import { GameContext } from '../components/interfaces';
 import {
     StandardResponse,
@@ -13,7 +12,6 @@ import { CurrentNodeGeneratorProcess } from './currentNodeGenerator.process';
 export class InitMerchantProcess {
     constructor(
         private readonly currentNodeGeneratorProcess: CurrentNodeGeneratorProcess,
-        private readonly expeditionService: ExpeditionService,
     ) {}
 
     async process(ctx: GameContext, node: Node): Promise<string> {
@@ -23,9 +21,8 @@ export class InitMerchantProcess {
                 node,
             );
 
-        await this.expeditionService.update(ctx.client.id, {
-            currentNode,
-        });
+        ctx.expedition.currentNode = currentNode;
+        await ctx.expedition.save();
 
         return StandardResponse.respond({
             message_type: SWARMessageType.MerchantUpdate,

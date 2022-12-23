@@ -10,7 +10,7 @@ export const MAX_HOUSE_ID = 3;
 @Injectable()
 export class CampNodeStrategy implements NodeStrategy {
     onSelect(ctx: GameContext, node: Node) {
-        node.state.house_id = this.calculateHouseId();
+        node.state = { house_id: this.calculateHouseId() };
     }
 
     private calculateHouseId(): number {
