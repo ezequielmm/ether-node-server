@@ -18,7 +18,7 @@ export class MapService {
         const node = this.findNodeById(ctx, nodeId);
 
         // Check if node is available
-        if (node.status !== NodeStatus.Available) {
+        if (!node.isAvailable()) {
             throw new Error('Node is not available');
         }
 
@@ -44,6 +44,9 @@ export class MapService {
 
     public disableAll(ctx: GameContext) {
         for (const node of ctx.expedition.map) {
+            // Skip if node is already disabled
+            if (!node.isAvailable()) continue;
+
             this.disableNode(ctx, node.id);
         }
     }
@@ -62,7 +65,7 @@ export class MapService {
         const node = this.findNodeById(ctx, nodeId);
 
         // Check if node is active
-        if (node.status !== NodeStatus.Active) {
+        if (!node.isActive()) {
             throw new Error('Node is not active');
         }
 
@@ -105,15 +108,6 @@ export class MapService {
 
     public nodeIsSelectable(ctx: GameContext, nodeId: number): boolean {
         const node = this.findNodeById(ctx, nodeId);
-
-        // Check if node is available
-        if (
-            node.status != NodeStatus.Available &&
-            node.status != NodeStatus.Active
-        ) {
-            return false;
-        }
-
-        true;
+        return node.isSelectable();
     }
 }

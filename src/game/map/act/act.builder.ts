@@ -142,7 +142,7 @@ export class DefaultActBuilder implements ActBuilder {
     }
 
     private createNode(config: NodeConfig): Node {
-        return {
+        return new Node({
             id: this.initialNodeId++,
             act: this.actId,
             step: this.currentStep,
@@ -153,6 +153,6 @@ export class DefaultActBuilder implements ActBuilder {
             status: NodeStatus.Disabled,
             enter: [],
             exits: [],
-        };
+        });
     }
 }

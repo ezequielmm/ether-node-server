@@ -4,6 +4,10 @@ import { NodeStatus } from './node-status';
 import { Prop } from '@typegoose/typegoose';
 
 export class Node {
+    constructor(partial: Partial<Node>) {
+        Object.assign(this, partial);
+    }
+
     @Prop()
     id: number;
 
@@ -51,4 +55,24 @@ export class Node {
             probability: number;
         }[];
     } & any;
+
+    isAvailable(): boolean {
+        return this.status === NodeStatus.Available;
+    }
+
+    isActive(): boolean {
+        return this.status === NodeStatus.Active;
+    }
+
+    isCompleted(): boolean {
+        return this.status === NodeStatus.Completed;
+    }
+
+    isDisabled(): boolean {
+        return this.status === NodeStatus.Disabled;
+    }
+
+    isSelectable(): boolean {
+        return this.isAvailable() || this.isActive();
+    }
 }
