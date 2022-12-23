@@ -3,7 +3,6 @@ import { CurrentNodeGeneratorProcess } from './currentNodeGenerator.process';
 import { ExpeditionService } from '../components/expedition/expedition.service';
 import { Node } from '../components/expedition/node';
 import { NodeType } from '../components/expedition/node-type';
-import { NodeStatus } from '../components/expedition/node-status';
 import {
     StandardResponse,
     SWARAction,
@@ -13,7 +12,6 @@ import { getRandomItemByWeight } from '../../utils';
 import { InitTreasureProcess } from './initTreasure.process';
 import { InitMerchantProcess } from './initMerchant.process';
 import { InitNodeProcess } from './initNode.process';
-import { EncounterService } from '../components/encounter/encounter.service';
 import { GameContext } from '../components/interfaces';
 
 @Injectable()
@@ -25,13 +23,16 @@ export class InitEncounterProcess {
         private readonly initTreasureProcess: InitTreasureProcess,
         private readonly initMerchantProcess: InitMerchantProcess,
         private readonly initNodeProcess: InitNodeProcess,
-        private readonly encounterService: EncounterService,
     ) {}
 
     private ctx: GameContext;
     private node: Node;
 
-    async process(ctx: GameContext, node: Node): Promise<string> {
+    async process(
+        ctx: GameContext,
+        node: Node,
+        continueEncounter = false,
+    ): Promise<string> {
         this.ctx = ctx;
         this.node = node;
 
@@ -41,15 +42,13 @@ export class InitEncounterProcess {
                 this.node,
             );
 
-        await this.expeditionService.update(this.ctx.client.id, {
-            currentNode,
-        });
+        ctx.expedition.currentNode = currentNode;
+        await ctx.expedition.save();
 
-        switch (node.status) {
-            case NodeStatus.Available:
-                return await this.createEncounterData();
-            case NodeStatus.Active:
-                return await this.continueEncounter();
+        if (continueEncounter) {
+            return await this.continueEncounter();
+        } else {
+            return await this.createEncounterData();
         }
     }
 
@@ -83,9 +82,9 @@ export class InitEncounterProcess {
     }
 
     private async createEncounterData(): Promise<string> {
-        const currentNode = await this.expeditionService.getCurrentNode({
-            clientId: this.ctx.client.id,
-        });
+        // const currentNode = await this.expeditionService.getCurrentNode({
+        //     clientId: this.ctx.client.id,
+        // });
 
         const nodeType = getRandomItemByWeight(
             [NodeType.Encounter, NodeType.Merchant, NodeType.Camp],

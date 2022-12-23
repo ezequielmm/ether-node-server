@@ -11,11 +11,13 @@ export const DEFAULT_SCENE_ID = 0;
 @Injectable()
 export class EncounterNodeStrategy implements NodeStrategy {
     onSelect(ctx: GameContext, node: Node) {
-        node.state.encounte_id = this.calcEncounterId();
-        node.state.scene_id =
-            node.private_data && node.private_data.scene_id
-                ? node.private_data.scene_id
-                : DEFAULT_SCENE_ID;
+        node.state = {
+            encounte_id: this.calcEncounterId(),
+            scene_id:
+                node.private_data && node.private_data.scene_id
+                    ? node.private_data.scene_id
+                    : DEFAULT_SCENE_ID,
+        };
     }
 
     private calcEncounterId(): number {
