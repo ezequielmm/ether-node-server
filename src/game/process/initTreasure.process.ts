@@ -20,15 +20,18 @@ export class InitTreasureProcess {
     private clientId: string;
     private node: Node;
 
-    async process(ctx: GameContext, node: Node): Promise<string> {
+    async process(
+        ctx: GameContext,
+        node: Node,
+        continueTreasure = false,
+    ): Promise<string> {
         this.clientId = ctx.client.id;
         this.node = node;
 
-        switch (node.status) {
-            case NodeStatus.Available:
-                return await this.createTreasureData(ctx);
-            case NodeStatus.Active:
-                return await this.continueTreasure();
+        if (continueTreasure) {
+            return await this.continueTreasure();
+        } else {
+            return await this.createTreasureData(ctx);
         }
     }
 

@@ -116,7 +116,11 @@ export class NodeSelectedProcess {
                 response = await this.initEncounterProcess.process(ctx, node);
                 break;
             case NodeType.Treasure:
-                response = await this.initTreasureProcess.process(ctx, node);
+                response = await this.initTreasureProcess.process(
+                    ctx,
+                    node,
+                    false,
+                );
                 break;
             case NodeType.Merchant:
                 response = await this.initMerchantProcess.process(ctx, node);
@@ -154,7 +158,7 @@ export class NodeSelectedProcess {
                     data: null,
                 });
             case NodeType.Treasure:
-                return await this.initTreasureProcess.process(ctx, node);
+                return await this.initTreasureProcess.process(ctx, node, true);
             case NodeType.Merchant:
                 await this.initMerchantProcess.process(ctx, node);
 
