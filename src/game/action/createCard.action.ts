@@ -26,7 +26,7 @@ export class CreateCardAction {
     constructor(
         private readonly expeditionService: ExpeditionService,
         private readonly cardService: CardService,
-    ) { }
+    ) {}
 
     async handle(dto: CreateCardDTO): Promise<void> {
         const { client, cardsToAdd, destination, sendSWARResponse } = dto;
@@ -43,7 +43,9 @@ export class CreateCardAction {
         const destinationDeck = cards[destination];
 
         // Query the cards we need from the card service
-        let newCards = (await this.cardService.findCardsById(cardsToAdd)) as DocumentType<Card>[];
+        let newCards = (await this.cardService.findCardsById(
+            cardsToAdd,
+        )) as DocumentType<Card>[];
 
         // Generate UUIDs for the new cards
         newCards = newCards.map((card) => {
