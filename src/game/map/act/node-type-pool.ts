@@ -4,10 +4,7 @@ import { NodeConfig } from './act.builder';
 
 export interface NodeTypeFrequency {
     frequency: number;
-    node: {
-        type: NodeType;
-        subType: NodeType;
-    };
+    node: NodeConfig;
 }
 
 export class NodeTypePool {
@@ -20,6 +17,7 @@ export class NodeTypePool {
         {
             frequency: 5,
             node: {
+                title: 'Merchant',
                 type: NodeType.Merchant,
                 subType: NodeType.Merchant,
             },
@@ -27,6 +25,7 @@ export class NodeTypePool {
         {
             frequency: 12,
             node: {
+                title: 'Spirit Well',
                 type: NodeType.Camp,
                 subType: NodeType.CampRegular,
             },
@@ -34,6 +33,7 @@ export class NodeTypePool {
         {
             frequency: 15,
             node: {
+                title: 'Treasure',
                 type: NodeType.Treasure,
                 subType: NodeType.Treasure,
             },
@@ -41,6 +41,7 @@ export class NodeTypePool {
         {
             frequency: 8,
             node: {
+                title: 'Elite Combat',
                 type: NodeType.Combat,
                 subType: NodeType.CombatElite,
             },
@@ -48,6 +49,7 @@ export class NodeTypePool {
         {
             frequency: 10,
             node: {
+                title: 'Encounter',
                 type: NodeType.Encounter,
                 subType: NodeType.Encounter,
             },
@@ -55,6 +57,7 @@ export class NodeTypePool {
         {
             frequency: 50,
             node: {
+                title: 'Combat',
                 type: NodeType.Combat,
                 subType: NodeType.CombatStandard,
             },

@@ -187,9 +187,11 @@ export class ActTwoNodeDataFiller implements NodeDataFiller {
 
         if (config.subType == NodeType.CombatElite) {
             config.data = cloneDeep(eliteNodeData);
+            config.title = 'Elite Combat';
         }
 
         if (config.subType == NodeType.CombatStandard) {
+            config.title = 'Combat';
             if (step <= 12) {
                 config.data = cloneDeep(easyCombatStandarData);
             } else {

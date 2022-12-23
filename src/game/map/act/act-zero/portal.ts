@@ -5,4 +5,5 @@ export const portalNode: NodeConfig = {
     type: NodeType.Portal,
     subType: NodeType.Portal,
     data: {},
+    title: 'Portal',
 };

@@ -15,6 +15,7 @@ import { NodeTypePool } from '../node-type-pool';
 import { NodeConnectionManager } from '../node-connection-manager';
 
 const basicInitialCombatNode: NodeConfig = {
+    title: 'Combat',
     type: NodeType.Combat,
     subType: NodeType.CombatStandard,
     data: {
@@ -40,6 +41,7 @@ const basicInitialCombatNode: NodeConfig = {
 };
 
 const elitCombatNode: NodeConfig = {
+    title: 'Elite Combat',
     type: NodeType.Combat,
     subType: NodeType.CombatElite,
     data: {
@@ -61,6 +63,7 @@ const elitCombatNode: NodeConfig = {
 };
 
 const bossNode: NodeConfig = {
+    title: 'Boss',
     type: NodeType.Combat,
     subType: NodeType.CombatBoss,
     data: {
@@ -81,9 +84,11 @@ const portalNode: NodeConfig = {
     type: NodeType.Portal,
     subType: NodeType.Portal,
     data: {},
+    title: 'Portal',
 };
 
 const campNode: NodeConfig = {
+    title: 'Spirit Well',
     type: NodeType.Camp,
     subType: NodeType.CampRegular,
 };
