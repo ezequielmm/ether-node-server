@@ -34,6 +34,7 @@ import { SetCombatTurnAction } from './setCombatTurn.action';
 import { UpgradeCardAction } from './upgradeCard.action';
 import { GetEncounterDataAction } from './getEncounterDataAction';
 import { EncounterModule } from '../components/encounter/encounter.module';
+import { MapModule } from '../map/map/map.module';
 
 const actions = [
     FullSyncAction,
@@ -75,6 +76,7 @@ const actions = [
         HistoryModule,
         CombatQueueModule,
         EncounterModule,
+        MapModule,
     ],
     providers: actions,
     exports: actions,

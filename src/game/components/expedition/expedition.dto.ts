@@ -1,5 +1,6 @@
 import { DeepPartial } from 'src/utils';
 import { CardId } from '../card/card.type';
+import { GameContext } from '../interfaces';
 import { CombatTurnEnum } from './expedition.enum';
 import {
     IExpeditionCurrentNodeDataEnemy,
@@ -26,7 +27,8 @@ export type GetPlayerState = BaseDTO;
 export type GetCurrentNodeDTO = BaseDTO;
 export type GetPlayerStateDTO = BaseDTO;
 
-export interface GetExpeditionMapNodeDTO extends BaseDTO {
+export interface GetExpeditionMapNodeDTO {
+    ctx: GameContext;
     nodeId: number;
 }
 
@@ -58,6 +60,7 @@ export interface UpdatePlayerDeckDTO extends BaseDTO {
     deck: IExpeditionPlayerStateDeckCard[];
 }
 
-export interface OverrideAvailableNodeDTO extends BaseDTO {
+export interface OverrideAvailableNodeDTO {
+    ctx: GameContext;
     nodeId: number;
 }

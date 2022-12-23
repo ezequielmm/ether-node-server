@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { ExpeditionMapNodeTypeEnum } from '../components/expedition/expedition.enum';
+import { NodeType } from '../components/expedition/node-type';
 import { Reward } from '../components/expedition/expedition.interface';
 import { ExpeditionService } from '../components/expedition/expedition.service';
 
@@ -15,12 +15,12 @@ export class GetRewardsAction {
         let rewards = [];
 
         switch (currentNode.nodeType) {
-            case ExpeditionMapNodeTypeEnum.Combat:
+            case NodeType.Combat:
                 rewards = currentNode.showRewards
                     ? currentNode.data.rewards
                     : [];
                 break;
-            case ExpeditionMapNodeTypeEnum.Treasure:
+            case NodeType.Treasure:
                 rewards = currentNode.treasureData.rewards;
                 break;
             default:

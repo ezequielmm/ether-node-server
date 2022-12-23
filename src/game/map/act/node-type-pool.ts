@@ -1,12 +1,12 @@
 import { shuffle, times } from 'lodash';
-import { ExpeditionMapNodeTypeEnum } from 'src/game/components/expedition/expedition.enum';
+import { NodeType } from 'src/game/components/expedition/node-type';
 import { NodeConfig } from './act.builder';
 
 export interface NodeTypeFrequency {
     frequency: number;
     node: {
-        type: ExpeditionMapNodeTypeEnum;
-        subType: ExpeditionMapNodeTypeEnum;
+        type: NodeType;
+        subType: NodeType;
     };
 }
 
@@ -20,43 +20,43 @@ export class NodeTypePool {
         {
             frequency: 5,
             node: {
-                type: ExpeditionMapNodeTypeEnum.Merchant,
-                subType: ExpeditionMapNodeTypeEnum.Merchant,
+                type: NodeType.Merchant,
+                subType: NodeType.Merchant,
             },
         },
         {
             frequency: 12,
             node: {
-                type: ExpeditionMapNodeTypeEnum.Camp,
-                subType: ExpeditionMapNodeTypeEnum.CampRegular,
+                type: NodeType.Camp,
+                subType: NodeType.CampRegular,
             },
         },
         {
             frequency: 15,
             node: {
-                type: ExpeditionMapNodeTypeEnum.Treasure,
-                subType: ExpeditionMapNodeTypeEnum.Treasure,
+                type: NodeType.Treasure,
+                subType: NodeType.Treasure,
             },
         },
         {
             frequency: 8,
             node: {
-                type: ExpeditionMapNodeTypeEnum.Combat,
-                subType: ExpeditionMapNodeTypeEnum.CombatElite,
+                type: NodeType.Combat,
+                subType: NodeType.CombatElite,
             },
         },
         {
             frequency: 10,
             node: {
-                type: ExpeditionMapNodeTypeEnum.Encounter,
-                subType: ExpeditionMapNodeTypeEnum.Encounter,
+                type: NodeType.Encounter,
+                subType: NodeType.Encounter,
             },
         },
         {
             frequency: 50,
             node: {
-                type: ExpeditionMapNodeTypeEnum.Combat,
-                subType: ExpeditionMapNodeTypeEnum.CombatStandard,
+                type: NodeType.Combat,
+                subType: NodeType.CombatStandard,
             },
         },
     ];

@@ -4,7 +4,7 @@ import { getRandomBetween, getRandomItemByWeight } from 'src/utils';
 import { ChestSizeEnum } from '../components/chest/chest.enum';
 import { Chest } from '../components/chest/chest.schema';
 import { ChestService } from '../components/chest/chest.service';
-import { IExpeditionNode } from '../components/expedition/expedition.interface';
+import { Node } from '../components/expedition/node';
 import { ExpeditionService } from '../components/expedition/expedition.service';
 import { GameContext } from '../components/interfaces';
 import { PotionRarityEnum } from '../components/potion/potion.enum';
@@ -30,7 +30,7 @@ export class TreasureService {
 
     async generateTreasure(
         ctx: GameContext,
-        node: IExpeditionNode,
+        node: Node,
     ): Promise<TreasureInterface> {
         const chest = await this.chestService.getRandomChest();
 

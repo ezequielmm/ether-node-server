@@ -1,16 +1,18 @@
 import { filter, random } from 'lodash';
-import { ExpeditionMapNodeTypeEnum } from 'src/game/components/expedition/expedition.enum';
-import nodeFactory from '../nodes';
-import Node from '../nodes/node';
+import { NodeType } from 'src/game/components/expedition/node-type';
+import { NodeStatus } from 'src/game/components/expedition/node-status';
+import { Node } from 'src/game/components/expedition/node';
 
 /**
  * Object config for node
  */
 export interface NodeConfig {
+    /** Title of the node */
+    title?: string;
     /** Primary type of the node */
-    type: ExpeditionMapNodeTypeEnum;
+    type: NodeType;
     /** Secondary type of the node */
-    subType: ExpeditionMapNodeTypeEnum;
+    subType: NodeType;
     /** Optional data of the node*/
     data?: any;
 }
@@ -140,16 +142,17 @@ export class DefaultActBuilder implements ActBuilder {
     }
 
     private createNode(config: NodeConfig): Node {
-        return nodeFactory(
-            this.initialNodeId++,
-            this.actId,
-            this.currentStep,
-            config?.type,
-            config?.subType,
-            config?.data,
-            config?.type === ExpeditionMapNodeTypeEnum.Camp
-                ? 'Spirit Well'
-                : config?.subType,
-        );
+        return {
+            id: this.initialNodeId++,
+            act: this.actId,
+            step: this.currentStep,
+            type: config?.type,
+            subType: config?.subType,
+            private_data: config?.data,
+            title: config?.title,
+            status: NodeStatus.Disabled,
+            enter: [],
+            exits: [],
+        };
     }
 }

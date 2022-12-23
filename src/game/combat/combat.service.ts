@@ -8,15 +8,13 @@ import {
 import { CardRarityEnum } from '../components/card/card.enum';
 import { EnemyService } from '../components/enemy/enemy.service';
 import { EnemyId } from '../components/enemy/enemy.type';
-import {
-    CombatTurnEnum,
-    ExpeditionMapNodeTypeEnum,
-} from '../components/expedition/expedition.enum';
+import { CombatTurnEnum } from '../components/expedition/expedition.enum';
+import { NodeType } from '../components/expedition/node-type';
 import {
     IExpeditionCurrentNode,
     IExpeditionCurrentNodeDataEnemy,
-    IExpeditionNode,
 } from '../components/expedition/expedition.interface';
+import { Node } from '../components/expedition/node';
 import { ExpeditionService } from '../components/expedition/expedition.service';
 import { GameContext } from '../components/interfaces';
 import { PotionRarityEnum } from '../components/potion/potion.enum';
@@ -35,12 +33,12 @@ export class CombatService {
         private readonly rewardService: RewardService,
     ) {}
 
-    private node: IExpeditionNode;
+    private node: Node;
     private clientId: string;
 
     async generate(
         ctx: GameContext,
-        node: IExpeditionNode,
+        node: Node,
     ): Promise<IExpeditionCurrentNode> {
         this.node = node;
 
@@ -91,7 +89,7 @@ export class CombatService {
 
         return {
             nodeId: this.node.id,
-            completed: this.node.isComplete,
+            completed: false,
             nodeType: this.node.type,
             showRewards: false,
             data: {
@@ -166,11 +164,11 @@ export class CombatService {
 
     private generateCoins(): number {
         switch (this.node.subType) {
-            case ExpeditionMapNodeTypeEnum.CombatStandard:
+            case NodeType.CombatStandard:
                 return getRandomBetween(10, 20);
-            case ExpeditionMapNodeTypeEnum.CombatElite:
+            case NodeType.CombatElite:
                 return getRandomBetween(25, 35);
-            case ExpeditionMapNodeTypeEnum.CombatBoss:
+            case NodeType.CombatBoss:
                 return getRandomBetween(95, 105);
             default:
                 return 0;
@@ -184,7 +182,7 @@ export class CombatService {
 
         for (let i = 1; i <= cardsToGenerate; i++) {
             switch (this.node.subType) {
-                case ExpeditionMapNodeTypeEnum.CombatStandard:
+                case NodeType.CombatStandard:
                     rarities.push(
                         getRandomItemByWeight(
                             [
@@ -196,7 +194,7 @@ export class CombatService {
                         ),
                     );
                     break;
-                case ExpeditionMapNodeTypeEnum.CombatElite:
+                case NodeType.CombatElite:
                     rarities.push(
                         getRandomItemByWeight(
                             [
@@ -209,7 +207,7 @@ export class CombatService {
                         ),
                     );
                     break;
-                case ExpeditionMapNodeTypeEnum.CombatStandard:
+                case NodeType.CombatStandard:
                     rarities.push(
                         getRandomItemByWeight(
                             [CardRarityEnum.Rare, CardRarityEnum.Legendary],
@@ -236,7 +234,7 @@ export class CombatService {
 
     private getTrinketRarityProbability(): TrinketRarityEnum {
         switch (this.node.subType) {
-            case ExpeditionMapNodeTypeEnum.CombatElite:
+            case NodeType.CombatElite:
                 return getRandomItemByWeight(
                     [
                         TrinketRarityEnum.Common,
