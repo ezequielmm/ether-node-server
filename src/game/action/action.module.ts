@@ -31,7 +31,6 @@ import { GetTreasureDataAction } from './getTreasureData.action';
 import { GetUpgradableCardsAction } from './getUpgradableCards.action';
 import { MoveCardAction } from './moveCard.action';
 import { SetCombatTurnAction } from './setCombatTurn.action';
-import { UpgradeCardAction } from './upgradeCard.action';
 import { GetEncounterDataAction } from './getEncounterDataAction';
 import { EncounterModule } from '../components/encounter/encounter.module';
 import { MapModule } from '../map/map/map.module';
@@ -54,7 +53,6 @@ const actions = [
     MoveCardAction,
     ChangeTurnAction,
     CreateCardAction,
-    UpgradeCardAction,
     GetUpgradableCardsAction,
     GetMerchantDataAction,
     GetTreasureDataAction,
