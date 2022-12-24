@@ -12,7 +12,7 @@ import { EncounterButton, EncounterInterface } from './encounter.interfaces';
 import { EncounterDTO } from '../../action/getEncounterDataAction';
 import { DataWSRequestTypesEnum } from '../../../socket/socket.enum';
 import { ReturnModelType } from '@typegoose/typegoose';
-import { getRandomItemByWeight } from 'src/utils';
+import { getRandomBetween, getRandomItemByWeight } from 'src/utils';
 import { EncounterIdEnum } from './encounter.enum';
 import { CardService } from '../card/card.service';
 import { GameContext } from '../interfaces';
@@ -49,7 +49,7 @@ export class EncounterService {
                 EncounterIdEnum.MossyTroll,
                 EncounterIdEnum.YoungWizard,
             ],
-            [0, 0, 0, 0, 0, 0, 0, 1, 0, 0],
+            [0, 0, 1, 0, 0, 1, 0, 0, 0, 0],
         );
 
         return {
@@ -95,6 +95,21 @@ export class EncounterService {
         });
     }
 
+    private async incrMaxHp(
+        amount: number,
+        playerState: Player,
+        expeditionId: string,
+    ) {
+        if (playerState.hpMax + amount < 0) {
+            amount = -playerState.hpMax;
+        }
+        await this.expeditionService.updateById(expeditionId, {
+            $inc: {
+                'playerState.hpMax': amount,
+            },
+        });
+    }
+
     private async applyEffects(effects: any[], client: Socket): Promise<void> {
         for (let i = 0; i < effects.length; i++) {
             const effect = effects[i];
@@ -121,16 +136,15 @@ export class EncounterService {
                         },
                     });
                     break;
-                case 'hp_max': //eg will o wisp
+                case 'hp_max_random': //eg will o wisp
+                    const max = parseInt(effect.max);
+                    const min = parseInt(effect.min);
+                    amount = getRandomBetween(min, max);
+                    await this.incrMaxHp(amount, playerState, expeditionId);
+                    break;
+                case 'hp_max':
                     amount = parseInt(effect.amount);
-                    if (playerState.hpMax + amount < 0) {
-                        amount = -playerState.hpMax;
-                    }
-                    await this.expeditionService.updateById(expeditionId, {
-                        $inc: {
-                            'playerState.hpMax': amount,
-                        },
-                    });
+                    await this.incrMaxHp(amount, playerState, expeditionId);
                     break;
                 case 'hit_points': //eg rug burn
                     amount = parseInt(effect.amount);
@@ -198,7 +212,7 @@ export class EncounterService {
         client.emit(
             'PutData',
             StandardResponse.respond({
-                message_type: SWARMessageType.EncounterUpdate, //SWARMessageType.EncounterUpdate doesnt work
+                message_type: SWARMessageType.EncounterUpdate,
                 action: SWARAction.ShowRemoveCardDialog,
                 data: {
                     cards: playerState.cards,
@@ -215,7 +229,7 @@ export class EncounterService {
         client.emit(
             'PutData',
             StandardResponse.respond({
-                message_type: SWARMessageType.EncounterUpdate, //SWARMessageType.EncounterUpdate doesnt work
+                message_type: SWARMessageType.EncounterUpdate,
                 action: SWARAction.ShowUpgradeCardDialog,
                 data: {
                     cards: playerState.cards,
