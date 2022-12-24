@@ -1,4 +1,4 @@
-import { ExpeditionMapNodeTypeEnum } from 'src/game/components/expedition/expedition.enum';
+import { NodeType } from 'src/game/components/expedition/node-type';
 import { DefaultActBuilder } from './act.builder';
 import { ActBuilder } from './act.builder';
 
@@ -128,14 +128,14 @@ describe('ActBuilder', () => {
 
             actBuilder.fillUndefinedNodes((node, nodes) => {
                 return {
-                    type: ExpeditionMapNodeTypeEnum.Combat,
-                    subType: ExpeditionMapNodeTypeEnum.CombatElite,
+                    type: NodeType.Combat,
+                    subType: NodeType.CombatElite,
                 };
             });
 
             expect(actBuilder['nodes'][0]).toMatchObject({
-                type: ExpeditionMapNodeTypeEnum.Combat,
-                subType: ExpeditionMapNodeTypeEnum.CombatElite,
+                type: NodeType.Combat,
+                subType: NodeType.CombatElite,
             });
         });
     });

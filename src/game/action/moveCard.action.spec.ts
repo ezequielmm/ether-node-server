@@ -1,8 +1,8 @@
 import {
     CombatTurnEnum,
-    ExpeditionMapNodeTypeEnum,
     ExpeditionStatusEnum,
 } from '../components/expedition/expedition.enum';
+import { NodeType } from '../components/expedition/node-type';
 import {
     Expedition,
     ExpeditionSchema,
@@ -87,7 +87,7 @@ describe('MoveCardAction', () => {
             status: ExpeditionStatusEnum.InProgress,
             currentNode: {
                 nodeId: 0,
-                nodeType: ExpeditionMapNodeTypeEnum.Combat,
+                nodeType: NodeType.Combat,
                 completed: false,
                 showRewards: true,
                 data: {

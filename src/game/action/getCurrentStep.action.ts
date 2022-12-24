@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { ExpeditionService } from '../components/expedition/expedition.service';
+import { GameContext } from '../components/interfaces';
+import { MapService } from '../map/map.service';
 
 interface CurrentStepResponse {
     act: number;
@@ -8,20 +9,12 @@ interface CurrentStepResponse {
 
 @Injectable()
 export class GetCurrentStepAction {
-    constructor(private readonly expeditionService: ExpeditionService) {}
+    constructor(private readonly mapService: MapService) {}
 
-    async handle(clientId: string): Promise<CurrentStepResponse> {
-        // First we query the current node to get its id
-        const { nodeId } = await this.expeditionService.getCurrentNode({
-            clientId,
-        });
-
-        // Now we query the node infformation
-        const { act, step } = await this.expeditionService.getExpeditionMapNode(
-            {
-                clientId,
-                nodeId,
-            },
+    async handle(ctx: GameContext): Promise<CurrentStepResponse> {
+        const { act, step } = this.mapService.findNodeById(
+            ctx,
+            ctx.expedition.currentNode.nodeId,
         );
 
         return { act, step };
