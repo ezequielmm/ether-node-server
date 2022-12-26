@@ -7,7 +7,7 @@ import { CardDescriptionFormatter } from '../cardDescriptionFormatter/cardDescri
 import { CardRarityEnum, CardTypeEnum } from '../components/card/card.enum';
 import { Card } from '../components/card/card.schema';
 import { CardService } from '../components/card/card.service';
-import { ExpeditionMapNodeTypeEnum } from '../components/expedition/expedition.enum';
+import { NodeType } from '../components/expedition/node-type';
 import { IExpeditionPlayerStateDeckCard } from '../components/expedition/expedition.interface';
 import { Player } from '../components/expedition/player';
 import { ExpeditionService } from '../components/expedition/expedition.service';
@@ -91,7 +91,7 @@ export class MerchantService {
 
         this.expeditionId = expedition._id.toString();
 
-        if (nodeType !== ExpeditionMapNodeTypeEnum.Merchant) {
+        if (nodeType !== NodeType.Merchant) {
             this.client.emit('ErrorMessage', {
                 message: `You are not in the merchant node`,
             });

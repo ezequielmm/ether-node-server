@@ -1,10 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { CombatService } from '../combat/combat.service';
-import { ExpeditionMapNodeTypeEnum } from '../components/expedition/expedition.enum';
-import {
-    IExpeditionCurrentNode,
-    IExpeditionNode,
-} from '../components/expedition/expedition.interface';
+import { NodeType } from '../components/expedition/node-type';
+import { IExpeditionCurrentNode } from '../components/expedition/expedition.interface';
+import { Node } from '../components/expedition/node';
 import { GameContext } from '../components/interfaces';
 import { MerchantService } from '../merchant/merchant.service';
 import { TreasureService } from '../treasure/treasure.service';
@@ -12,7 +10,7 @@ import { EncounterService } from '../components/encounter/encounter.service';
 
 @Injectable()
 export class CurrentNodeGeneratorProcess {
-    private node: IExpeditionNode;
+    private node: Node;
 
     constructor(
         private readonly treasureService: TreasureService,
@@ -23,18 +21,18 @@ export class CurrentNodeGeneratorProcess {
 
     async getCurrentNodeData(
         ctx: GameContext,
-        node: IExpeditionNode,
+        node: Node,
     ): Promise<IExpeditionCurrentNode> {
         this.node = node;
 
         switch (this.node.type) {
-            case ExpeditionMapNodeTypeEnum.Combat:
+            case NodeType.Combat:
                 return await this.getCombatCurrentNode(ctx);
-            case ExpeditionMapNodeTypeEnum.Treasure:
+            case NodeType.Treasure:
                 return await this.getTreasureCurrentNode(ctx);
-            case ExpeditionMapNodeTypeEnum.Merchant:
+            case NodeType.Merchant:
                 return await this.getMerchantCurrentNode();
-            case ExpeditionMapNodeTypeEnum.Encounter:
+            case NodeType.Encounter:
                 return await this.getEncounterCurrentNode();
             default:
                 return this.getCurrentNode();

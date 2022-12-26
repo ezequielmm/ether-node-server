@@ -1,11 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { CurrentNodeGeneratorProcess } from './currentNodeGenerator.process';
 import { ExpeditionService } from '../components/expedition/expedition.service';
-import { IExpeditionNode } from '../components/expedition/expedition.interface';
-import {
-    ExpeditionMapNodeStatusEnum,
-    ExpeditionMapNodeTypeEnum,
-} from '../components/expedition/expedition.enum';
+import { Node } from '../components/expedition/node';
+import { NodeType } from '../components/expedition/node-type';
 import {
     StandardResponse,
     SWARAction,
@@ -15,7 +12,6 @@ import { getRandomItemByWeight } from '../../utils';
 import { InitTreasureProcess } from './initTreasure.process';
 import { InitMerchantProcess } from './initMerchant.process';
 import { InitNodeProcess } from './initNode.process';
-import { EncounterService } from '../components/encounter/encounter.service';
 import { GameContext } from '../components/interfaces';
 
 @Injectable()
@@ -27,13 +23,16 @@ export class InitEncounterProcess {
         private readonly initTreasureProcess: InitTreasureProcess,
         private readonly initMerchantProcess: InitMerchantProcess,
         private readonly initNodeProcess: InitNodeProcess,
-        private readonly encounterService: EncounterService,
     ) {}
 
     private ctx: GameContext;
-    private node: IExpeditionNode;
+    private node: Node;
 
-    async process(ctx: GameContext, node: IExpeditionNode): Promise<string> {
+    async process(
+        ctx: GameContext,
+        node: Node,
+        continueEncounter = false,
+    ): Promise<string> {
         this.ctx = ctx;
         this.node = node;
 
@@ -43,31 +42,29 @@ export class InitEncounterProcess {
                 this.node,
             );
 
-        await this.expeditionService.update(this.ctx.client.id, {
-            currentNode,
-        });
+        ctx.expedition.currentNode = currentNode;
+        await ctx.expedition.save();
 
-        switch (node.status) {
-            case ExpeditionMapNodeStatusEnum.Available:
-                return await this.createEncounterData();
-            case ExpeditionMapNodeStatusEnum.Active:
-                return await this.continueEncounter();
+        if (continueEncounter) {
+            return await this.continueEncounter();
+        } else {
+            return await this.createEncounterData();
         }
     }
 
-    private async executeNode(nodeType: ExpeditionMapNodeTypeEnum) {
+    private async executeNode(nodeType: NodeType) {
         switch (nodeType) {
-            case ExpeditionMapNodeTypeEnum.Encounter:
+            case NodeType.Encounter:
                 return StandardResponse.respond({
                     message_type: SWARMessageType.EncounterUpdate,
                     action: SWARAction.BeginEncounter,
                     data: null,
                 });
-            case ExpeditionMapNodeTypeEnum.Merchant:
-                this.node.type = ExpeditionMapNodeTypeEnum.Merchant;
+            case NodeType.Merchant:
+                this.node.type = NodeType.Merchant;
                 return this.initMerchantProcess.process(this.ctx, this.node);
-            case ExpeditionMapNodeTypeEnum.Camp:
-                this.node.type = ExpeditionMapNodeTypeEnum.Camp;
+            case NodeType.Camp:
+                this.node.type = NodeType.Camp;
                 await this.initNodeProcess.process(this.ctx, this.node);
 
                 return StandardResponse.respond({
@@ -75,8 +72,8 @@ export class InitEncounterProcess {
                     action: SWARAction.BeginCamp,
                     data: null,
                 });
-            case ExpeditionMapNodeTypeEnum.Treasure:
-                this.node.type = ExpeditionMapNodeTypeEnum.Treasure;
+            case NodeType.Treasure:
+                this.node.type = NodeType.Treasure;
                 return await this.initTreasureProcess.process(
                     this.ctx,
                     this.node,
@@ -85,16 +82,12 @@ export class InitEncounterProcess {
     }
 
     private async createEncounterData(): Promise<string> {
-        const currentNode = await this.expeditionService.getCurrentNode({
-            clientId: this.ctx.client.id,
-        });
+        // const currentNode = await this.expeditionService.getCurrentNode({
+        //     clientId: this.ctx.client.id,
+        // });
 
         const nodeType = getRandomItemByWeight(
-            [
-                ExpeditionMapNodeTypeEnum.Encounter,
-                ExpeditionMapNodeTypeEnum.Merchant,
-                ExpeditionMapNodeTypeEnum.Camp,
-            ],
+            [NodeType.Encounter, NodeType.Merchant, NodeType.Camp],
             [85, 10, 5],
         );
         return await this.executeNode(nodeType);

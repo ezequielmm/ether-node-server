@@ -10,7 +10,7 @@ import { swampGoblin1Data } from 'src/game/components/enemy/data/swampGoblin1.en
 import { swampGoblin2Data } from 'src/game/components/enemy/data/swampGoblin2.enemy';
 import { thornWolfData } from 'src/game/components/enemy/data/thornWolf.enemy';
 import { trapelicanData } from 'src/game/components/enemy/data/trapelican.enemy';
-import { ExpeditionMapNodeTypeEnum } from 'src/game/components/expedition/expedition.enum';
+import { NodeType } from 'src/game/components/expedition/node-type';
 import { NodeConfig } from '../act.builder';
 import { NodeDataFiller } from '../node-data-filler';
 
@@ -181,15 +181,17 @@ const hardCombatStandarData = {
 
 export class ActOneNodeDataFiller implements NodeDataFiller {
     fill(config: NodeConfig, step: number): void {
-        if (config.type != ExpeditionMapNodeTypeEnum.Combat) {
+        if (config.type != NodeType.Combat) {
             return;
         }
 
-        if (config.subType == ExpeditionMapNodeTypeEnum.CombatElite) {
+        if (config.subType == NodeType.CombatElite) {
             config.data = cloneDeep(eliteNodeData);
+            config.title = 'Elite Combat';
         }
 
-        if (config.subType == ExpeditionMapNodeTypeEnum.CombatStandard) {
+        if (config.subType == NodeType.CombatStandard) {
+            config.title = 'Combat';
             if (step <= 12) {
                 config.data = cloneDeep(easyCombatStandarData);
             } else {

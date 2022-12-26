@@ -1,5 +1,5 @@
 import { filter, random } from 'lodash';
-import Node from '../nodes/node';
+import { Node } from 'src/game/components/expedition/node';
 
 export class NodeConnectionManager {
     constructor(

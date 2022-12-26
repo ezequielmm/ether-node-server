@@ -1,9 +1,9 @@
 import { Enemy, EnemySchema } from '../components/enemy/enemy.schema';
 import {
     CombatTurnEnum,
-    ExpeditionMapNodeTypeEnum,
     ExpeditionStatusEnum,
 } from '../components/expedition/expedition.enum';
+import { NodeType } from '../components/expedition/node-type';
 import {
     Expedition,
     ExpeditionSchema,
@@ -118,7 +118,7 @@ describe('DrawCardAction', () => {
             status: ExpeditionStatusEnum.InProgress,
             currentNode: {
                 nodeId: 0,
-                nodeType: ExpeditionMapNodeTypeEnum.Combat,
+                nodeType: NodeType.Combat,
                 completed: false,
                 showRewards: true,
                 data: {
