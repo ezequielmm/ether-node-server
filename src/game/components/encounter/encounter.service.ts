@@ -49,7 +49,7 @@ export class EncounterService {
                 EncounterIdEnum.MossyTroll,
                 EncounterIdEnum.YoungWizard,
             ],
-            [0, 0, 1, 0, 0, 1, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 1, 0, 0],
         );
 
         return {
@@ -213,10 +213,11 @@ export class EncounterService {
             'PutData',
             StandardResponse.respond({
                 message_type: SWARMessageType.EncounterUpdate,
-                action: SWARAction.ShowRemoveCardDialog,
+                action: SWARAction.ShowCards,
                 data: {
                     cards: playerState.cards,
                     cardsToTake: 1,
+                    kind: 'remove',
                 },
             }),
         );
@@ -230,10 +231,11 @@ export class EncounterService {
             'PutData',
             StandardResponse.respond({
                 message_type: SWARMessageType.EncounterUpdate,
-                action: SWARAction.ShowUpgradeCardDialog,
+                action: SWARAction.ShowCards,
                 data: {
                     cards: playerState.cards,
                     cardsToTake: 1,
+                    kind: 'upgrade',
                 },
             }),
         );
