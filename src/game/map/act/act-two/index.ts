@@ -68,10 +68,10 @@ const bossNode: NodeConfig = {
     subType: NodeType.CombatBoss,
     data: {
         enemies: [
-            {
-                enemies: [treantData.enemyId],
-                probability: 0.5,
-            },
+            // {
+            //     enemies: [treantData.enemyId],
+            //     probability: 0.5,
+            // },
             {
                 enemies: [fungalBruteData.enemyId],
                 probability: 0.5,
