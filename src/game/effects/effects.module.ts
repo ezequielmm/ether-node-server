@@ -36,6 +36,7 @@ import { RemoveConfusionEffect } from './removeConfusion/removeConfusion.effect'
 import { RemoveDebuffEffect } from './removeDebuff/removeDebuff.effect';
 import { RemoveDefenseEffect } from './removeDefense/removeDefense.effect';
 import { RepositionEffect } from './reposition/reposition.effect';
+import { SpawnEnemyEffect } from './spawnEnemy/spawnEnemy.effect';
 import { TwistTheBladeEffect } from './twistTheBlade/twistTheBlade.effect';
 
 @Module({
@@ -80,6 +81,7 @@ import { TwistTheBladeEffect } from './twistTheBlade/twistTheBlade.effect';
         PavaRootEffect,
         RemoveConfusionEffect,
         ExecutionersBlowEffect,
+        SpawnEnemyEffect,
     ],
     exports: [EffectService],
 })
