@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { randomUUID } from 'crypto';
 import { map } from 'lodash';
 import { EnemyService } from 'src/game/components/enemy/enemy.service';
+import { ExpeditionStatusEnum } from 'src/game/components/expedition/expedition.enum';
 import { IExpeditionCurrentNodeDataEnemy } from 'src/game/components/expedition/expedition.interface';
 import { ExpeditionService } from 'src/game/components/expedition/expedition.service';
 import {
@@ -88,6 +89,14 @@ export class SpawnEnemyEffect implements EffectHandler {
                     action: SWARAction.SpawnEnemies,
                     data: { enemies: enemiesToAdd },
                 }),
+            );
+
+            await this.expeditionService.updateByFilter(
+                {
+                    clientId: ctx.client.id,
+                    status: ExpeditionStatusEnum.InProgress,
+                },
+                { $set: { 'currentNode.data.enemies': enemies } },
             );
         }
     }
