@@ -1,65 +1,22 @@
-import { ancientOneData } from 'src/game/components/enemy/data/ancientOne.enemy';
-import { barkChargerData } from 'src/game/components/enemy/data/barkCharger.enemy';
 import { fungalBruteData } from 'src/game/components/enemy/data/fungalBrute.enemy';
-import { mimicFrog1Data } from 'src/game/components/enemy/data/mimicFrog1.enemy';
-import { queenOrchidData } from 'src/game/components/enemy/data/queenOrchid.enemy';
-import { sporeMongerData } from 'src/game/components/enemy/data/sporeMonger.enemy';
-import { stingFaeData } from 'src/game/components/enemy/data/stingFae.enemy';
-import { thornWolfData } from 'src/game/components/enemy/data/thornWolf.enemy';
 import { treantData } from 'src/game/components/enemy/data/treant.enemy';
 import { NodeType } from 'src/game/components/expedition/node-type';
 import { NodeStatus } from 'src/game/components/expedition/node-status';
 import { DefaultActBuilder, NodeConfig } from '../act.builder';
-import { ActOneNodeDataFiller } from './node-data-generator';
 import { NodeTypePool } from '../node-type-pool';
 import { NodeConnectionManager } from '../node-connection-manager';
+import { ActOneNodeDataFiller } from './node-data-generator/index';
 
-const basicInitialCombatNode: NodeConfig = {
+const basicCombatNode: NodeConfig = {
     title: 'Combat',
     type: NodeType.Combat,
     subType: NodeType.CombatStandard,
-    data: {
-        enemies: [
-            {
-                enemies: [stingFaeData.enemyId, stingFaeData.enemyId],
-                probability: 0.25,
-            },
-            {
-                enemies: [barkChargerData.enemyId, barkChargerData.enemyId],
-                probability: 0.25,
-            },
-            {
-                enemies: [sporeMongerData.enemyId],
-                probability: 0.25,
-            },
-            {
-                enemies: [mimicFrog1Data.enemyId],
-                probability: 0.25,
-            },
-        ],
-    },
 };
 
 const elitCombatNode: NodeConfig = {
     title: 'Elite Combat',
     type: NodeType.Combat,
     subType: NodeType.CombatElite,
-    data: {
-        enemies: [
-            {
-                enemies: [thornWolfData.enemyId],
-                probability: 33.3,
-            },
-            {
-                enemies: [queenOrchidData.enemyId],
-                probability: 33.3,
-            },
-            {
-                enemies: [ancientOneData.enemyId],
-                probability: 33.3,
-            },
-        ],
-    },
 };
 
 const bossNode: NodeConfig = {
@@ -97,7 +54,7 @@ export default function (initialNodeId = 0) {
     const actBuilder = new DefaultActBuilder(1, initialNodeId);
 
     actBuilder.addRangeOfSteps(3, (step) => {
-        step.addRangeOfNodes(3, 5, basicInitialCombatNode);
+        step.addRangeOfNodes(3, 5, basicCombatNode);
     });
 
     actBuilder.addRangeOfSteps(8, (step) => {
@@ -128,21 +85,35 @@ export default function (initialNodeId = 0) {
         step.addNode(portalNode);
     });
 
+    // Set node types from pool
     let pool: NodeTypePool;
-    const data: ActOneNodeDataFiller = new ActOneNodeDataFiller();
-    const nodeConnectionManager = new NodeConnectionManager(1, 3);
 
-    actBuilder.fillUndefinedNodes((node, nodes) => {
+    // Get all nodes
+    const nodes = actBuilder.getNodes();
+
+    // Set node types from pool
+    actBuilder.fillByFilter({ type: undefined }, (node, nodes) => {
         pool = pool || new NodeTypePool(nodes.length);
+        return pool.popRandom();
+    });
 
-        const config = pool.popRandom();
-        data.fill(config, node.step);
+    // Act one filler
+    const filler = new ActOneNodeDataFiller(nodes);
+
+    // Fill data to nodes
+    actBuilder.fillByFilter({ private_data: undefined }, (node) => {
+        const config: NodeConfig = {
+            type: node.type,
+            subType: node.subType,
+            title: node.title,
+        };
+
+        filler.fill(config, node.step);
 
         return config;
     });
 
-    const nodes = actBuilder.getNodes();
-    nodeConnectionManager.configureConnections(nodes);
+    new NodeConnectionManager(1, 3).configureConnections(nodes);
 
     // Enable entrance nodes
     nodes
