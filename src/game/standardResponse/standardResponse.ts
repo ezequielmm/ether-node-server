@@ -84,6 +84,7 @@ export enum SWARAction {
     CardDestroy = 'card_destroy',
     FlashTrinketIcon = 'flash_trinket_icon',
     ShowRewards = 'show_rewards',
+    SpawnEnemies = 'spawn_enemies',
 }
 
 interface SWARPayload {
