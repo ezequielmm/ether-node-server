@@ -62,6 +62,7 @@ export enum SWARAction {
     TreasureData = 'treasure_data',
     BeginMerchant = 'begin_merchant',
     ShowCardDialog = 'show_card_dialog',
+    ShowCards = 'show_cards',
     ShowUpgradeCardDialog = 'show_upgrade_card_dialog',
     ShowRemoveCardDialog = 'show_remove_card_dialog',
     ShowInvalidPotion = 'show_invalid_potion',
@@ -84,6 +85,7 @@ export enum SWARAction {
     CardDestroy = 'card_destroy',
     FlashTrinketIcon = 'flash_trinket_icon',
     ShowRewards = 'show_rewards',
+    SpawnEnemies = 'spawn_enemies',
 }
 
 interface SWARPayload {
