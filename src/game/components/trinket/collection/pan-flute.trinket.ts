@@ -71,6 +71,8 @@ export class PanFluteTrinket extends Trinket {
             await combatQueueService.end(ctx);
 
             await combatQueueService.deleteCombatQueueByClientId(ctx.client.id);
+
+            this.trigger(ctx);
         });
     }
 }
