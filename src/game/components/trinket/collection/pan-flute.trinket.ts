@@ -2,6 +2,8 @@ import { Prop } from '@typegoose/typegoose';
 import { EVENT_AFTER_INIT_COMBAT } from 'src/game/constants';
 import { resolveStatus } from 'src/game/status/resolve/constants';
 import { StatusService } from 'src/game/status/status.service';
+import { CardTargetedEnum } from '../../card/card.enum';
+import { CombatQueueService } from '../../combatQueue/combatQueue.service';
 import { GameContext } from '../../interfaces';
 import { PlayerService } from '../../player/player.service';
 import { TrinketRarityEnum } from '../trinket.enum';
@@ -33,7 +35,13 @@ export class PanFluteTrinket extends Trinket {
                 strict: false,
             });
 
+            const combatQueueService = ctx.moduleRef.get(CombatQueueService, {
+                strict: false,
+            });
+
             const player = playerService.get(ctx);
+
+            await combatQueueService.start(ctx);
 
             await statusService.attach({
                 ctx,
@@ -45,6 +53,24 @@ export class PanFluteTrinket extends Trinket {
                     counter: this.resolveToGain,
                 },
             });
+
+            await combatQueueService.pushStatuses(ctx, player, player, [
+                {
+                    name: resolveStatus.name,
+                    addedInRound: 1,
+                    sourceReference: {
+                        type: CardTargetedEnum.Player,
+                    },
+                    args: {
+                        value: this.resolveToGain,
+                        counter: this.resolveToGain,
+                    },
+                },
+            ]);
+
+            await combatQueueService.end(ctx);
+
+            await combatQueueService.deleteCombatQueueByClientId(ctx.client.id);
         });
     }
 }
