@@ -1,4 +1,4 @@
-import { filter, random } from 'lodash';
+import { filter, ListIterateeCustom, random } from 'lodash';
 import { NodeType } from 'src/game/components/expedition/node-type';
 import { NodeStatus } from 'src/game/components/expedition/node-status';
 import { Node } from 'src/game/components/expedition/node';
@@ -129,9 +129,14 @@ export class DefaultActBuilder implements ActBuilder {
     fillUndefinedNodes(
         callback: (node: Node, nodes: Node[]) => NodeConfig,
     ): void {
-        filter(this.nodes, {
-            type: undefined,
-        }).forEach((node) => {
+        this.fillByFilter({ type: undefined }, callback);
+    }
+
+    fillByFilter(
+        _filter: ListIterateeCustom<Node, boolean>,
+        callback: (node: Node, nodes: Node[]) => NodeConfig,
+    ): void {
+        filter(this.nodes, _filter).forEach((node) => {
             const index = this.nodes.indexOf(node);
             const nodeConfig = callback(node, this.nodes);
             const newNode = this.createNode(nodeConfig);

@@ -30,4 +30,5 @@ export enum EnemyIntentionType {
     Stun = 'stun',
     Buff = 'buff',
     Debuff = 'debuff',
+    Special = 'special',
 }
