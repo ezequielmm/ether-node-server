@@ -23,6 +23,7 @@ import { CardDescriptionFormatter } from '../../cardDescriptionFormatter/cardDes
 import { PotionService } from '../potion/potion.service';
 import { Player } from '../expedition/player';
 import { IMoveCard } from '../../../socket/moveCard.gateway';
+import { logger } from '@typegoose/typegoose/lib/logSettings';
 
 @Injectable()
 export class EncounterService {
@@ -60,6 +61,8 @@ export class EncounterService {
     }
 
     async encounterChoice(client: Socket, choiceIdx: number): Promise<string> {
+        const ctx = await this.expeditionService.getGameContext(client);
+        const expedition = ctx.expedition;
         const playerState = await this.expeditionService.getPlayerState({
             clientId: client.id,
         });
@@ -81,12 +84,20 @@ export class EncounterService {
         const buttonPressed = stage.buttons[choiceIdx];
         await this.applyEffects(buttonPressed.effects, client);
 
-        await this.updateEncounterData(
-            encounterData.encounterId,
-            buttonPressed.nextStage,
-            client,
-        );
-
+        if (buttonPressed.awaitModal) {
+            await this.expeditionService.updateById(expedition._id.toString(), {
+                $set: {
+                    'currentNode.encounterData.afterModal':
+                        buttonPressed.nextStage,
+                },
+            });
+        } else {
+            await this.updateEncounterData(
+                encounterData.encounterId,
+                buttonPressed.nextStage,
+                client,
+            );
+        }
         const data = await this.getEncounterDTO(client, playerState);
 
         return StandardResponse.respond({
@@ -459,6 +470,34 @@ export class EncounterService {
         );
     }
 
+    async handleUpgradeCard(client: Socket, cardId: string): Promise<void> {
+        await this.postModalStage(client);
+    }
+
+    private async postModalStage(client: Socket): Promise<void> {
+        const playerState = await this.expeditionService.getPlayerState({
+            clientId: client.id,
+        });
+        const encounterData = await this.getEncounterData(client);
+
+        await this.updateEncounterData(
+            encounterData.encounterId,
+            encounterData.afterModal,
+            client,
+        );
+
+        const data = await this.getEncounterDTO(client, playerState);
+
+        client.emit(
+            'PutData',
+            StandardResponse.respond({
+                message_type: SWARMessageType.GenericData,
+                action: DataWSRequestTypesEnum.EncounterData,
+                data,
+            }),
+        );
+    }
+
     async handleMoveCard(client: Socket, payload: string): Promise<void> {
         const payloadJson = JSON.parse(payload);
         const cardToTake = payloadJson.cardsToTake[0];
@@ -494,5 +533,7 @@ export class EncounterService {
                 },
             },
         );
+
+        await this.postModalStage(client);
     }
 }
