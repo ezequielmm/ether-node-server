@@ -4,6 +4,7 @@ import { ExpeditionModule } from '../game/components/expedition/expedition.modul
 import { SocketGateway } from './socket.gateway';
 import { CardModule } from '../game/components/card/card.module';
 import { CombatGateway } from './combat.gateway';
+import { MoveCardGateway } from './moveCard.gateway';
 import { ExpeditionGateway } from './expedition.gateway';
 import { ActionModule } from 'src/game/action/action.module';
 import { ProcessModule } from 'src/game/process/process.module';
@@ -25,6 +26,7 @@ import { TrinketModule } from 'src/game/components/trinket/trinket.module';
 import { RewardModule } from 'src/game/reward/reward.module';
 import { EncounterModule } from '../game/components/encounter/encounter.module';
 import { UpgradeCardModule } from 'src/game/upgradeCard/upgradeCard.module';
+import { CombatModule } from '../game/combat/combat.module';
 
 @Module({
     imports: [
@@ -43,11 +45,13 @@ import { UpgradeCardModule } from 'src/game/upgradeCard/upgradeCard.module';
         TrinketModule,
         RewardModule,
         EncounterModule,
+        CombatModule,
         UpgradeCardModule,
     ],
     providers: [
         SocketGateway,
         CombatGateway,
+        MoveCardGateway,
         ExpeditionGateway,
         GetDataGateway,
         RewardGateway,

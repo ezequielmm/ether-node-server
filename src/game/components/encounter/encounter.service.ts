@@ -22,6 +22,7 @@ import { randomUUID } from 'crypto';
 import { CardDescriptionFormatter } from '../../cardDescriptionFormatter/cardDescriptionFormatter';
 import { PotionService } from '../potion/potion.service';
 import { Player } from '../expedition/player';
+import { IMoveCard } from '../../../socket/moveCard.gateway';
 
 @Injectable()
 export class EncounterService {
@@ -446,6 +447,43 @@ export class EncounterService {
             ...playerState, //don't toObject() here
             cards: newCards,
             cardUpgradeCount: newCardUpgradeCount,
+        };
+
+        await this.expeditionService.updateByFilter(
+            { clientId: client.id },
+            {
+                $set: {
+                    playerState: newPlayerState,
+                },
+            },
+        );
+    }
+
+    async handleMoveCard(client: Socket, payload: string): Promise<void> {
+        const payloadJson = JSON.parse(payload);
+        const cardToTake = payloadJson.cardsToTake[0];
+        const playerState = await this.expeditionService.getPlayerState({
+            clientId: client.id,
+        });
+        let removeMe = null; //indicates hacked client
+        for (let i = 0; i < playerState.cards.length; i++) {
+            const card = playerState.cards[i];
+            if (card.id === cardToTake) {
+                removeMe = card;
+            }
+        }
+
+        const newCards = playerState.cards.filter((card) => {
+            if (card.id == cardToTake) {
+                return false;
+            } else {
+                return true;
+            }
+        });
+
+        const newPlayerState = {
+            ...playerState,
+            cards: newCards,
         };
 
         await this.expeditionService.updateByFilter(
