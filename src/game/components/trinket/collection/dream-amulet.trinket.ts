@@ -28,6 +28,7 @@ export class DreamAmuletTrinket extends Trinket {
             const effectService = ctx.moduleRef.get(EffectService, {
                 strict: false,
             });
+
             const playerService = ctx.moduleRef.get(PlayerService, {
                 strict: false,
             });
