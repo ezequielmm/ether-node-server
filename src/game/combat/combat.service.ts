@@ -24,6 +24,11 @@ import { HARD_MODE_NODE_START, HARD_MODE_NODE_END } from '../constants';
 import { RewardService } from '../reward/reward.service';
 import { StatusType } from '../status/interfaces';
 import { filter } from 'lodash';
+import { Socket } from 'socket.io';
+import { CardSelectionScreenService } from '../components/cardSelectionScreen/cardSelectionScreen.service';
+import { MoveCardAction } from '../action/moveCard.action';
+import { IMoveCard } from '../../socket/moveCard.gateway';
+import { CustomException, ErrorBehavior } from '../../socket/custom.exception';
 
 @Injectable()
 export class CombatService {
@@ -32,6 +37,8 @@ export class CombatService {
         private readonly expeditionService: ExpeditionService,
         private readonly enemyService: EnemyService,
         private readonly rewardService: RewardService,
+        private readonly cardSelectionService: CardSelectionScreenService,
+        private readonly moveCardAction: MoveCardAction,
     ) {}
 
     private node: Node;
@@ -119,6 +126,56 @@ export class CombatService {
                 rewards,
             },
         };
+    }
+
+    async handleMoveCard(client: Socket, payload: string): Promise<void> {
+        const clientId = client.id;
+
+        // query the information received by the frontend
+        const { cardToTake } = JSON.parse(payload) as IMoveCard;
+
+        // Get card selection item
+        const cardSelection = await this.cardSelectionService.findOne({
+            clientId,
+        });
+
+        if (!cardSelection)
+            throw new CustomException(
+                'Card selected is not available',
+                ErrorBehavior.ReturnToMainMenu,
+            );
+
+        // Check if the id provided exists in the list
+        if (cardSelection.cardIds.includes(cardToTake)) {
+            // With the right card to take, we call the move card action
+            // with the right ids and the pile to take the cards
+            await this.moveCardAction.handle({
+                client,
+                cardIds: [cardToTake],
+                originPile: cardSelection.originPile,
+                targetPile: 'hand',
+                callback: (card) => {
+                    card.energy = 0;
+                    return card;
+                },
+            });
+
+            const amountToTake = cardSelection.amountToTake--;
+
+            if (amountToTake > 0) {
+                // Now we remove the id taken from the list and update
+                // the custom deck
+                await this.cardSelectionService.update({
+                    clientId,
+                    cardIds: cardSelection.cardIds.filter((card) => {
+                        return card !== cardToTake;
+                    }),
+                    amountToTake,
+                });
+            } else {
+                await this.cardSelectionService.deleteByClientId(clientId);
+            }
+        }
     }
 
     private async getEnemies(): Promise<IExpeditionCurrentNodeDataEnemy[]> {

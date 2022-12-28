@@ -12,15 +12,14 @@ import { CardSelectionScreenService } from 'src/game/components/cardSelectionScr
 import { MoveCardAction } from 'src/game/action/moveCard.action';
 import { corsSocketSettings } from './socket.enum';
 import { CustomException, ErrorBehavior } from './custom.exception';
+import { EncounterService } from 'src/game/components/encounter/encounter.service';
+import { IMoveCard } from './moveCard.gateway';
 
 interface ICardPlayed {
     cardId: CardId;
     targetId?: TargetId;
 }
 
-interface IMoveCard {
-    cardToTake: string;
-}
 
 @WebSocketGateway(corsSocketSettings)
 export class CombatGateway {
@@ -32,8 +31,9 @@ export class CombatGateway {
         private readonly endEnemyTurnProcess: EndEnemyTurnProcess,
         private readonly expeditionService: ExpeditionService,
         private readonly cardSelectionService: CardSelectionScreenService,
+        private readonly encounterService: EncounterService,
         private readonly moveCardAction: MoveCardAction,
-    ) { }
+    ) {}
 
     @SubscribeMessage('EndTurn')
     async handleEndTurn(client: Socket): Promise<void> {
@@ -75,11 +75,19 @@ export class CombatGateway {
         });
     }
 
-    @SubscribeMessage('MoveCard')
+    
     async handleMoveCard(client: Socket, payload: string): Promise<void> {
         this.logger.debug(
             `Client ${client.id} trigger message "MoveCard": ${payload}`,
         );
+
+        const encounterData = await this.encounterService.getEncounterData(
+            client,
+        );
+        if (encounterData) {
+            await this.encounterService.handleMoveCard(client, payload);
+            return;
+        }
 
         const clientId = client.id;
 
