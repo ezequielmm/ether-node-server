@@ -20,11 +20,15 @@ export class DreamAmuletTrinket extends Trinket {
     @Prop({ default: TrinketRarityEnum.Rare })
     rarity: TrinketRarityEnum;
 
+    @Prop({ default: 1 })
+    cardsToDraw: number;
+
     onAttach(ctx: GameContext): void {
         ctx.events.addListener(EVENT_AFTER_PLAYER_TURN_START, async () => {
             const effectService = ctx.moduleRef.get(EffectService, {
                 strict: false,
             });
+
             const playerService = ctx.moduleRef.get(PlayerService, {
                 strict: false,
             });
@@ -38,7 +42,7 @@ export class DreamAmuletTrinket extends Trinket {
                 effect: {
                     effect: drawCardEffect.name,
                     args: {
-                        value: 1,
+                        value: this.cardsToDraw,
                     },
                 },
             });

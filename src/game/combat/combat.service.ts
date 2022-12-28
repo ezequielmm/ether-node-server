@@ -23,6 +23,7 @@ import { TrinketRarityEnum } from '../components/trinket/trinket.enum';
 import { HARD_MODE_NODE_START, HARD_MODE_NODE_END } from '../constants';
 import { RewardService } from '../reward/reward.service';
 import { StatusType } from '../status/interfaces';
+import { filter } from 'lodash';
 import { Socket } from 'socket.io';
 import { CardSelectionScreenService } from '../components/cardSelectionScreen/cardSelectionScreen.service';
 import { MoveCardAction } from '../action/moveCard.action';
@@ -87,8 +88,9 @@ export class CombatService {
             potionsToGenerate: shouldGeneratePotion
                 ? [this.getPotionRarityProbability()]
                 : [],
-            trinketsToGenerate: trinketsToGenerate.filter(
-                (item) => item !== null,
+            trinketsToGenerate: filter(
+                trinketsToGenerate,
+                (trinket) => trinket !== null,
             ),
         });
 
