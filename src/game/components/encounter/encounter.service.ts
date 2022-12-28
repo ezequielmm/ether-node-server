@@ -37,8 +37,9 @@ export class EncounterService {
         private readonly potionService: PotionService,
     ) {}
 
-    async generateEncounter(): Promise<EncounterInterface> {
-        const encounterId = getRandomItemByWeight(
+    async generateEncounter(ctx: GameContext): Promise<EncounterInterface> {
+        //generate encounter
+        let encounterId = getRandomItemByWeight(
             [
                 EncounterIdEnum.AbandonedAltar,
                 EncounterIdEnum.Rugburn,
@@ -51,8 +52,14 @@ export class EncounterService {
                 EncounterIdEnum.MossyTroll,
                 EncounterIdEnum.YoungWizard,
             ],
-            [0, 0, 0, 0, 0, 0, 0, 1, 0, 0],
+            [0, 0, 1, 0, 0, 1, 0, 1, 0, 0],
         );
+
+        //fetch existing encounter if there is one
+        const encounterData = await this.getEncounterData(ctx.client);
+        if (encounterData) {
+            encounterId = encounterData.encounterId;
+        }
 
         return {
             encounterId,
