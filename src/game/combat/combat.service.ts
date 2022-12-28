@@ -23,6 +23,7 @@ import { TrinketRarityEnum } from '../components/trinket/trinket.enum';
 import { HARD_MODE_NODE_START, HARD_MODE_NODE_END } from '../constants';
 import { RewardService } from '../reward/reward.service';
 import { StatusType } from '../status/interfaces';
+import { filter } from 'lodash';
 
 @Injectable()
 export class CombatService {
@@ -80,8 +81,9 @@ export class CombatService {
             potionsToGenerate: shouldGeneratePotion
                 ? [this.getPotionRarityProbability()]
                 : [],
-            trinketsToGenerate: trinketsToGenerate.filter(
-                (item) => item !== null,
+            trinketsToGenerate: filter(
+                trinketsToGenerate,
+                (trinket) => trinket !== null,
             ),
         });
 
