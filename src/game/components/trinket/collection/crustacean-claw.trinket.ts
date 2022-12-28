@@ -1,14 +1,9 @@
 import { Prop } from '@typegoose/typegoose';
-import { map, sampleSize } from 'lodash';
 import { EVENT_AFTER_INIT_COMBAT } from 'src/game/constants';
-import {
-    StandardResponse,
-    SWARAction,
-    SWARMessageType,
-} from 'src/game/standardResponse/standardResponse';
-import { removeCardsFromPile } from 'src/utils';
-import { ExpeditionService } from '../../expedition/expedition.service';
+import { drawCardEffect } from 'src/game/effects/drawCard/constants';
+import { EffectService } from 'src/game/effects/effects.service';
 import { GameContext } from '../../interfaces';
+import { PlayerService } from '../../player/player.service';
 import { TrinketRarityEnum } from '../trinket.enum';
 import { Trinket } from '../trinket.schema';
 
@@ -33,44 +28,31 @@ export class CrustaceanClawTrinket extends Trinket {
 
     onAttach(ctx: GameContext): void {
         ctx.events.addListener(EVENT_AFTER_INIT_COMBAT, async () => {
-            const decks = ctx.expedition.currentNode.data.player.cards;
-            const drawPile = decks.draw;
-            const handPile = decks.hand;
-
-            const expeditionService = ctx.moduleRef.get(ExpeditionService, {
+            const effectService = ctx.moduleRef.get(EffectService, {
                 strict: false,
             });
 
-            // Take the random cards from the draw pile
-            const cardsToMove = sampleSize(drawPile, this.cardsToDraw);
-
-            // now we update the new decks
-            const newHand = [...handPile, ...cardsToMove];
-            const newDraw = removeCardsFromPile({
-                originalPile: drawPile,
-                cardsToRemove: cardsToMove,
+            const playerService = ctx.moduleRef.get(PlayerService, {
+                strict: false,
             });
 
-            // Now we save those on the hand pile
-            await expeditionService.updateHandPiles({
-                clientId: ctx.client.id,
-                hand: newHand,
-                draw: newDraw,
+            const player = playerService.get(ctx);
+
+            await effectService.apply({
+                ctx,
+                source: player,
+                target: player,
+                effect: {
+                    effect: drawCardEffect.name,
+                    args: {
+                        value: this.cardsToDraw,
+                    },
+                },
             });
 
-            // Now we send the message to let the frontend know the new cards
-            ctx.client.emit(
-                'PutData',
-                StandardResponse.respond({
-                    message_type: SWARMessageType.CombatUpdate,
-                    action: SWARAction.MoveCard,
-                    data: map(cardsToMove, (card) => ({
-                        source: 'draw',
-                        destination: 'hand',
-                        id: card.id,
-                    })),
-                }),
-            );
+            // TODO: set cards cost to 0 only for one turn
+
+            this.trigger(ctx);
         });
     }
 }
