@@ -13,7 +13,7 @@ import { MoveCardAction } from 'src/game/action/moveCard.action';
 import { corsSocketSettings } from './socket.enum';
 import { CustomException, ErrorBehavior } from './custom.exception';
 import { EncounterService } from 'src/game/components/encounter/encounter.service';
-import { IMoveCard } from "./moveCard.gateway";
+import { IMoveCard } from './moveCard.gateway';
 
 interface ICardPlayed {
     cardId: CardId;
@@ -75,7 +75,7 @@ export class CombatGateway {
         });
     }
 
-    @SubscribeMessage('MoveCard')
+    
     async handleMoveCard(client: Socket, payload: string): Promise<void> {
         this.logger.debug(
             `Client ${client.id} trigger message "MoveCard": ${payload}`,
