@@ -9,5 +9,5 @@ export class DreamAmuletUpgradedTrinket extends DreamAmuletTrinket {
     description: string;
 
     @Prop({ default: 2 })
-    burnIncrement: number;
+    cardsToDraw: number;
 }
