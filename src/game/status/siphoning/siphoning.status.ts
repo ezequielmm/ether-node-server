@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
-import { CardTargetedEnum } from 'src/game/components/card/card.enum';
 import { EnemyService } from 'src/game/components/enemy/enemy.service';
 import { GameContext } from 'src/game/components/interfaces';
 import { PlayerService } from 'src/game/components/player/player.service';
@@ -29,19 +28,18 @@ export class SiphoningStatus implements StatusEventHandler {
     ) {}
 
     async handle(dto: StatusEventDTO): Promise<void> {
-        if (dto.source.type === CardTargetedEnum.Player) {
-            await this.effectService.apply({
-                ctx: dto.ctx,
-                source: dto.source,
-                target: dto.target,
-                effect: {
-                    effect: defenseEffect.name,
-                    args: {
-                        value: dto.eventArgs.damageDealt,
-                    },
+        console.log({ dto });
+        await this.effectService.apply({
+            ctx: dto.ctx,
+            source: dto.source,
+            target: dto.target,
+            effect: {
+                effect: defenseEffect.name,
+                args: {
+                    value: dto.eventArgs.damageDealt,
                 },
-            });
-        }
+            },
+        });
     }
 
     @OnEvent(EVENT_BEFORE_ENEMIES_TURN_START)
