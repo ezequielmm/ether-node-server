@@ -103,7 +103,7 @@ export class DrawCardEffect implements EffectHandler {
                 cardType: CardTypeEnum.Defend,
             }),
             SWARMessageTypeToSend: SWARMessageType.PlayerAffected,
-            useEnemiesConfusedsValue,
+            useEnemiesConfusedAsValue,
         });
     }
 }
