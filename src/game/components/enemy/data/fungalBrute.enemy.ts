@@ -28,9 +28,8 @@ export const fungalBruteData: Enemy = {
             id: 0,
             intentions: [],
             next: [
-                // { probability: 0.5, scriptId: 1 },
-                // { probability: 0.5, scriptId: 2 },
-                { probability: 1, scriptId: 4 },
+                { probability: 0.5, scriptId: 1 },
+                { probability: 0.5, scriptId: 2 },
             ],
         },
         {
@@ -68,15 +67,14 @@ export const fungalBruteData: Enemy = {
                 },
             ],
             next: [
-                // {
-                //     probability: 0.5,
-                //     scriptId: 2,
-                // },
-                // {
-                //     probability: 0.5,
-                //     scriptId: 4, // Need to integrate [If Sporelings=0] Script 4: Spawn; [If Sporelings > 0] Script 5: Cultivate
-                // },
-                { probability: 1, scriptId: 4 },
+                {
+                    probability: 0.5,
+                    scriptId: 2,
+                },
+                {
+                    probability: 0.5,
+                    scriptId: 4, // Need to integrate [If Sporelings=0] Script 4: Spawn; [If Sporelings > 0] Script 5: Cultivate
+                },
             ],
         },
         {
@@ -98,11 +96,10 @@ export const fungalBruteData: Enemy = {
                 },
             ],
             next: [
-                // {
-                //     probability: 1,
-                //     scriptId: 3,
-                // },
-                { probability: 1, scriptId: 4 },
+                {
+                    probability: 1,
+                    scriptId: 3,
+                },
             ],
         },
         {
@@ -124,15 +121,14 @@ export const fungalBruteData: Enemy = {
                 },
             ],
             next: [
-                // {
-                //     probability: 0.5,
-                //     scriptId: 2,
-                // },
-                // {
-                //     probability: 0.5,
-                //     scriptId: 4, // TEMPORAL REDIRECTION
-                // },
-                { probability: 1, scriptId: 4 },
+                {
+                    probability: 0.5,
+                    scriptId: 2,
+                },
+                {
+                    probability: 0.5,
+                    scriptId: 1, // TEMPORAL REDIRECTION
+                },
             ],
         },
         {
@@ -147,7 +143,6 @@ export const fungalBruteData: Enemy = {
                             effect: spawnEnemyEffect.name,
                             target: CardTargetedEnum.None,
                             args: {
-                                value: 1,
                                 enemiesToSpawn: [
                                     redSporelingData.enemyId,
                                     yellowSporelingData.enemyId,
@@ -158,11 +153,10 @@ export const fungalBruteData: Enemy = {
                 },
             ],
             next: [
-                // {
-                //     probability: 1,
-                //     scriptId: 2,
-                // },
-                { probability: 1, scriptId: 4 },
+                {
+                    probability: 1,
+                    scriptId: 2,
+                },
             ],
         },
     ],
