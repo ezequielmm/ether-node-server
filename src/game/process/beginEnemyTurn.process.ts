@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import { isEmpty } from 'lodash';
+import { filter, isEmpty } from 'lodash';
 import { Socket } from 'socket.io';
 import { ChangeTurnAction } from '../action/changeTurn.action';
 import { CardTargetedEnum } from '../components/card/card.enum';
@@ -65,9 +65,7 @@ export class BeginEnemyTurnProcess {
             },
         } = expedition;
 
-        const enemies = allEnemies.filter(({ hpCurrent }) => {
-            return hpCurrent > 0;
-        });
+        const enemies = filter(allEnemies, ({ hpCurrent }) => hpCurrent > 0);
 
         await this.combatQueueService.start(ctx);
 
@@ -140,9 +138,7 @@ export class BeginEnemyTurnProcess {
                 message_type: SWARMessageType.EnemyAffected,
                 action: SWARAction.UpdateEnemy,
                 data: enemiesUpdated
-                    .filter(({ hpCurrent }) => {
-                        return hpCurrent > 0;
-                    })
+                    .filter(({ hpCurrent }) => hpCurrent > 0)
                     .map((enemy) => ({
                         id: enemy.id,
                         enemyId: enemy.enemyId,
