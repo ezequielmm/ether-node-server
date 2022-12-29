@@ -127,7 +127,7 @@ export const fungalBruteData: Enemy = {
                 },
                 {
                     probability: 0.5,
-                    scriptId: 1, // TEMPORAL REDIRECTION
+                    scriptId: 4, // TEMPORAL REDIRECTION
                 },
             ],
         },
