@@ -15,7 +15,7 @@ import { Chest } from './game/components/chest/chest.schema';
 import { ChestSeeder } from './game/components/chest/chest.seeder';
 import { KindagooseModule } from 'kindagoose';
 import { EncounterSeeder } from './game/components/encounter/encounter.seeder';
-import { Encounter } from "./game/components/encounter/encounter.schema";
+import { Encounter } from './game/components/encounter/encounter.schema';
 
 seeder({
     imports: [
@@ -40,7 +40,7 @@ seeder({
             Enemy,
             Settings,
             Chest,
-            Encounter
+            Encounter,
         ]),
     ],
 }).run([
