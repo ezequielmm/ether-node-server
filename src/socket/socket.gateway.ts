@@ -16,6 +16,7 @@ import { PlayerService } from 'src/game/components/player/player.service';
 import { CombatQueueService } from 'src/game/components/combatQueue/combatQueue.service';
 import { CardSelectionScreenService } from 'src/game/components/cardSelectionScreen/cardSelectionScreen.service';
 import { corsSocketSettings } from './socket.enum';
+import { isEmpty } from 'lodash';
 
 @WebSocketGateway(corsSocketSettings)
 export class SocketGateway
@@ -67,11 +68,15 @@ export class SocketGateway
                 if (expedition.currentNode !== undefined) {
                     const { nodeType } = expedition.currentNode;
 
-                    if (nodeType === NodeType.Combat)
+                    if (
+                        nodeType === NodeType.Combat &&
+                        !isEmpty(expedition.currentNode.data)
+                    ) {
                         await this.playerService.setGlobalHp(
                             ctx,
                             expedition.currentNode.data.player.hpCurrent,
                         );
+                    }
                 }
 
                 await this.fullSyncAction.handle(client);
