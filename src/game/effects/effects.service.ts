@@ -92,7 +92,7 @@ export class EffectService {
             effect: name,
         });
 
-        for (let i = 0; i < times; i++) {
+        for (let i = 1; i <= times; i++) {
             const { metadata, instance } = this.findContainerByName(name);
 
             // Check if the combat has ended
