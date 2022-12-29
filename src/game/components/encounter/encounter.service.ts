@@ -24,6 +24,7 @@ import { PotionService } from '../potion/potion.service';
 import { Player } from '../expedition/player';
 import { IMoveCard } from '../../../socket/moveCard.gateway';
 import { logger } from '@typegoose/typegoose/lib/logSettings';
+import { CardRarityEnum } from '../card/card.enum';
 
 @Injectable()
 export class EncounterService {
@@ -52,7 +53,7 @@ export class EncounterService {
                 EncounterIdEnum.MossyTroll,
                 EncounterIdEnum.YoungWizard,
             ],
-            [0, 0, 1, 0, 0, 1, 0, 1, 0, 0],
+            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         );
 
         //fetch existing encounter if there is one
@@ -129,6 +130,24 @@ export class EncounterService {
         });
     }
 
+    private async incrHp(
+        amount: number,
+        playerState: Player,
+        expeditionId: string,
+    ) {
+        if (playerState.hpCurrent + amount < 0) {
+            amount = -playerState.hpCurrent;
+        }
+        if (playerState.hpCurrent + amount < playerState.hpMax) {
+            amount = playerState.hpMax - playerState.hpCurrent;
+        }
+        await this.expeditionService.updateById(expeditionId, {
+            $inc: {
+                'playerState.hpCurrent': amount,
+            },
+        });
+    }
+
     private async applyEffects(effects: any[], client: Socket): Promise<void> {
         for (let i = 0; i < effects.length; i++) {
             const effect = effects[i];
@@ -167,14 +186,8 @@ export class EncounterService {
                     break;
                 case 'hit_points': //eg rug burn
                     amount = parseInt(effect.amount);
-                    if (playerState.hpCurrent + amount < 0) {
-                        amount = -playerState.hpCurrent;
-                    }
-                    await this.expeditionService.updateById(expeditionId, {
-                        $inc: {
-                            'playerState.hpCurrent': amount,
-                        },
-                    });
+                    await this.incrHp(amount, playerState, expeditionId);
+
                     break;
                 case 'upgrade_random_card': //eg will o wisp
                     await this.upgradeRandomCard(client, playerState);
@@ -188,6 +201,7 @@ export class EncounterService {
                     await this.cardService.addCardToDeck(ctx, cardId);
                     break;
                 case 'choose_card_to_sacrifice': // abandon altar
+                    await this.chooseCardRemove(client, playerState);
                     break;
                 case 'choose_card_remove': // Enchanted Forest
                     await this.chooseCardRemove(client, playerState);
@@ -347,6 +361,7 @@ export class EncounterService {
     async getEncounterDTO(
         client: Socket,
         playerState: Player,
+        overrideTextKey: string = null,
     ): Promise<EncounterDTO> {
         const encounterData = await this.getEncounterData(client);
         const encounter = await this.getByEncounterId(
@@ -367,7 +382,10 @@ export class EncounterService {
             });
         }
         const encounterName = encounter.encounterName;
-        const displayText = stage.displayText;
+        let displayText = stage.displayText;
+        if (overrideTextKey && encounter.overrideDisplayText) {
+            displayText = encounter.overrideDisplayText[overrideTextKey];
+        }
         const imageId = encounter.imageId;
         const answer: EncounterDTO = {
             encounterName,
@@ -481,7 +499,10 @@ export class EncounterService {
         await this.postModalStage(client);
     }
 
-    private async postModalStage(client: Socket): Promise<void> {
+    private async postModalStage(
+        client: Socket,
+        overrideTextKey: string = null,
+    ): Promise<void> {
         const playerState = await this.expeditionService.getPlayerState({
             clientId: client.id,
         });
@@ -493,7 +514,11 @@ export class EncounterService {
             client,
         );
 
-        const data = await this.getEncounterDTO(client, playerState);
+        const data = await this.getEncounterDTO(
+            client,
+            playerState,
+            overrideTextKey,
+        );
 
         client.emit(
             'PutData',
@@ -541,6 +566,74 @@ export class EncounterService {
             },
         );
 
-        await this.postModalStage(client);
+        const encounterData = await this.getEncounterData(client);
+        const encounterKind = await this.getByEncounterId(
+            encounterData.encounterId,
+        );
+        await this.applyPostCardChoiceEffects(
+            client,
+            playerState,
+            encounterKind.postCardChoiceEffect,
+            removeMe,
+        );
+
+        await this.postModalStage(
+            client,
+            this.rarityToOverrideKey(removeMe.rarity),
+        );
+    }
+
+    private async applyPostCardChoiceEffects(
+        client: Socket,
+        playerState: Player,
+        effect: string,
+        removeMe: IExpeditionPlayerStateDeckCard,
+    ): Promise<void> {
+        const ctx = await this.expeditionService.getGameContext(client);
+        const expedition = ctx.expedition;
+        const expeditionId = expedition._id.toString();
+        switch (effect) {
+            case 'abandon_altar':
+                switch (removeMe.rarity) {
+                    case CardRarityEnum.Starter:
+                        break;
+                    case CardRarityEnum.Common:
+                        await this.incrHp(5, playerState, expeditionId);
+                        break;
+                    case CardRarityEnum.Uncommon:
+                        await this.incrHp(
+                            playerState.hpMax - playerState.hpCurrent,
+                            playerState,
+                            expeditionId,
+                        );
+                        break;
+                    case CardRarityEnum.Rare:
+                        await this.incrMaxHp(10, playerState, expeditionId);
+                        break;
+                    case CardRarityEnum.Legendary:
+                        break;
+                    case CardRarityEnum.Special:
+                        break;
+                }
+                break;
+        }
+    }
+
+    private rarityToOverrideKey(rarity: CardRarityEnum): string {
+        switch (rarity) {
+            case CardRarityEnum.Starter:
+                return 'starter';
+            case CardRarityEnum.Common:
+                return 'common';
+            case CardRarityEnum.Uncommon:
+                return 'uncommon';
+            case CardRarityEnum.Rare:
+                return 'rare';
+            case CardRarityEnum.Legendary:
+                return 'legendary';
+            case CardRarityEnum.Special:
+                return 'epic';
+        }
+        return null;
     }
 }
