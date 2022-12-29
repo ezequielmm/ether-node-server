@@ -29,18 +29,17 @@ export class SiphoningStatus implements StatusEventHandler {
     ) {}
 
     async handle(dto: StatusEventDTO): Promise<void> {
-        if (dto.target.type === CardTargetedEnum.Enemy)
-            await this.effectService.apply({
-                ctx: dto.ctx,
-                source: dto.source,
-                target: dto.target,
-                effect: {
-                    effect: defenseEffect.name,
-                    args: {
-                        value: dto.eventArgs.damageDealt,
-                    },
+        await this.effectService.apply({
+            ctx: dto.ctx,
+            source: dto.source,
+            target: dto.target,
+            effect: {
+                effect: defenseEffect.name,
+                args: {
+                    value: dto.eventArgs.damageDealt,
                 },
-            });
+            },
+        });
     }
 
     @OnEvent(EVENT_BEFORE_ENEMIES_TURN_START)
