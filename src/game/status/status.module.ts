@@ -14,6 +14,7 @@ import { BolsteredStatus } from './bolstered/bolstered.status';
 import { BurnStatus } from './burn/burn.status';
 import { ClearHeadedStatus } from './clearHeaded/clearHeaded.status';
 import { ConfusionStatus } from './confusion/confusion.status';
+import { BirdcageStatus } from './birdcage/birdcage.status';
 import { DewDropStatus } from './dewDrop/dewDrop.status';
 import { DistraughtEvent } from './distraught/distraught.event';
 import { DistraughtStatus } from './distraught/distraught.status';
@@ -104,6 +105,7 @@ import { TurtlingStatus } from './turtling/turtling.status';
         DewDropStatus,
         FeebleStatus,
         TrappedStatus,
+        BirdcageStatus,
     ],
     exports: [StatusService],
 })

@@ -5,3 +5,5 @@ export { BrokenStalactiteTrinket } from './broken-stalactite.trinket';
 export { DreamAmuletTrinket } from './dream-amulet.trinket';
 export { DreamAmuletUpgradedTrinket } from './dream-amulet-upgraded.trinket';
 export { PanFluteTrinket } from './pan-flute.trinket';
+export { BirdcageUpgradedTrinket } from './birdcage-upgraded.trinket';
+export { BirdcageTrinket } from './birdcage.trinket';
