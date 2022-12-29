@@ -22,8 +22,6 @@ import { randomUUID } from 'crypto';
 import { CardDescriptionFormatter } from '../../cardDescriptionFormatter/cardDescriptionFormatter';
 import { PotionService } from '../potion/potion.service';
 import { Player } from '../expedition/player';
-import { IMoveCard } from '../../../socket/moveCard.gateway';
-import { logger } from '@typegoose/typegoose/lib/logSettings';
 import { CardRarityEnum } from '../card/card.enum';
 
 @Injectable()
@@ -53,7 +51,7 @@ export class EncounterService {
                 EncounterIdEnum.MossyTroll,
                 EncounterIdEnum.YoungWizard,
             ],
-            [0, 0, 0, 0, 0, 0, 1, 0, 0, 0],
+            [1, 0, 1, 0, 0, 1, 1, 1, 0, 0],
         );
 
         //fetch existing encounter if there is one
