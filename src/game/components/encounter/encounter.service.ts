@@ -595,6 +595,7 @@ export class EncounterService {
         switch (effect) {
             case 'abandon_altar':
                 switch (removeMe.rarity) {
+                    case CardRarityEnum.Special:
                     case CardRarityEnum.Starter:
                         break;
                     case CardRarityEnum.Common:
@@ -611,8 +612,7 @@ export class EncounterService {
                         await this.incrMaxHp(10, playerState, expeditionId);
                         break;
                     case CardRarityEnum.Legendary:
-                        break;
-                    case CardRarityEnum.Special:
+                        await this.incrMaxHp(20, playerState, expeditionId);
                         break;
                 }
                 break;
