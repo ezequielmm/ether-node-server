@@ -137,7 +137,7 @@ export const fungalBruteData: Enemy = {
                 {
                     type: EnemyIntentionType.Special,
                     target: CardTargetedEnum.None,
-                    value: 0,
+                    value: 1,
                     effects: [
                         {
                             effect: spawnEnemyEffect.name,

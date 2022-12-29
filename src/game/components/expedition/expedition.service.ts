@@ -57,7 +57,7 @@ export class ExpeditionService {
             moduleRef: this.moduleRef,
         };
 
-        expedition.playerState.trinkets.forEach((trinket) => {
+        expedition.playerState?.trinkets.forEach((trinket) => {
             trinket.onAttach(ctx);
         });
 
