@@ -28,7 +28,6 @@ export class SiphoningStatus implements StatusEventHandler {
     ) {}
 
     async handle(dto: StatusEventDTO): Promise<void> {
-        console.log({ dto });
         await this.effectService.apply({
             ctx: dto.ctx,
             source: dto.source,
