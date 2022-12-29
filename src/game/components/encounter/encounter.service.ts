@@ -53,7 +53,7 @@ export class EncounterService {
                 EncounterIdEnum.MossyTroll,
                 EncounterIdEnum.YoungWizard,
             ],
-            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 1, 0, 0, 0],
         );
 
         //fetch existing encounter if there is one
@@ -187,12 +187,10 @@ export class EncounterService {
                 case 'hit_points': //eg rug burn
                     amount = parseInt(effect.amount);
                     await this.incrHp(amount, playerState, expeditionId);
-
                     break;
                 case 'upgrade_random_card': //eg will o wisp
                     await this.upgradeRandomCard(client, playerState);
                     break;
-
                 case 'loose_random_card':
                     await this.looseRandomCard(client, playerState);
                     break;
@@ -222,13 +220,13 @@ export class EncounterService {
                             await this.trinketService.add(ctx, 2); //TODO need correct trinket id
                             break;
                         case 'pan_flute': //satyr
-                            await this.trinketService.add(ctx, 2); //TODO need correct trinket id
+                            await this.trinketService.add(ctx, 45);
                             break;
                         case 'silver_pan_flute': //satyr
-                            await this.trinketService.add(ctx, 2); //TODO need correct trinket id
+                            await this.trinketService.add(ctx, 46);
                             break;
                         case 'golden_pan_flute': //satyr
-                            await this.trinketService.add(ctx, 2); //TODO need correct trinket id
+                            await this.trinketService.add(ctx, 47);
                             break;
                     }
                     break;
