@@ -68,12 +68,10 @@ export class SocketGateway
                     const { nodeType } = expedition.currentNode;
 
                     if (nodeType === NodeType.Combat) {
-                        const { hpCurrent } =
-                            await this.expeditionService.getPlayerState({
-                                clientId: client.id,
-                            });
-
-                        await this.playerService.setHp(ctx, hpCurrent);
+                        await this.playerService.setHp(
+                            ctx,
+                            expedition.currentNode.data.player.hpCurrent,
+                        );
                     }
                 }
 

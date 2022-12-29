@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { randomUUID } from 'crypto';
-import { map, some } from 'lodash';
+import { includes, map, some } from 'lodash';
 import { Socket } from 'socket.io';
 import { blueSporelingData } from 'src/game/components/enemy/data/blueSporeling.enemy';
 import { fungalBruteData } from 'src/game/components/enemy/data/fungalBrute.enemy';
@@ -62,7 +62,7 @@ export class SpawnEnemyEffect implements EffectHandler {
                       const sporelingsIds = this.getSporelingsIds();
                       return (
                           enemy.hpCurrent > 0 &&
-                          sporelingsIds.includes(enemy.enemyId)
+                          includes(sporelingsIds, enemy.enemyId)
                       );
                   })
                 : false;
@@ -71,6 +71,8 @@ export class SpawnEnemyEffect implements EffectHandler {
 
             if (combatHasSporelings)
                 await this.spawnEnemies(enemiesToSpawn, enemies, ctx.client);
+
+            console.log({ combatHasFungalBrute, combatHasSporelings });
         } else {
             await this.spawnEnemies(enemiesToSpawn, enemies, ctx.client);
         }
