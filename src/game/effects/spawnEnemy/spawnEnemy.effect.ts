@@ -71,6 +71,8 @@ export class SpawnEnemyEffect implements EffectHandler {
 
             if (combatHasSporelings)
                 await this.spawnEnemies(enemiesToSpawn, enemies, ctx.client);
+
+            console.log({ combatHasFungalBrute, combatHasSporelings });
         } else {
             await this.spawnEnemies(enemiesToSpawn, enemies, ctx.client);
         }
