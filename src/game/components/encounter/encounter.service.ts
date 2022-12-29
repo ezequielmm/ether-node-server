@@ -22,7 +22,7 @@ import { randomUUID } from 'crypto';
 import { CardDescriptionFormatter } from '../../cardDescriptionFormatter/cardDescriptionFormatter';
 import { PotionService } from '../potion/potion.service';
 import { Player } from '../expedition/player';
-import { IMoveCard } from '../../../socket/moveCard.gateway';
+import { CardRarityEnum } from '../card/card.enum';
 
 @Injectable()
 export class EncounterService {
@@ -36,8 +36,9 @@ export class EncounterService {
         private readonly potionService: PotionService,
     ) {}
 
-    async generateEncounter(): Promise<EncounterInterface> {
-        const encounterId = getRandomItemByWeight(
+    async generateEncounter(ctx: GameContext): Promise<EncounterInterface> {
+        //generate encounter
+        let encounterId = getRandomItemByWeight(
             [
                 EncounterIdEnum.AbandonedAltar,
                 EncounterIdEnum.Rugburn,
@@ -50,8 +51,14 @@ export class EncounterService {
                 EncounterIdEnum.MossyTroll,
                 EncounterIdEnum.YoungWizard,
             ],
-            [0, 0, 0, 0, 0, 0, 0, 1, 0, 0],
+            [1, 0, 1, 0, 0, 1, 1, 1, 0, 0],
         );
+
+        //fetch existing encounter if there is one
+        const encounterData = await this.getEncounterData(ctx.client);
+        if (encounterData) {
+            encounterId = encounterData.encounterId;
+        }
 
         return {
             encounterId,
@@ -60,6 +67,8 @@ export class EncounterService {
     }
 
     async encounterChoice(client: Socket, choiceIdx: number): Promise<string> {
+        const ctx = await this.expeditionService.getGameContext(client);
+        const expedition = ctx.expedition;
         const playerState = await this.expeditionService.getPlayerState({
             clientId: client.id,
         });
@@ -81,12 +90,20 @@ export class EncounterService {
         const buttonPressed = stage.buttons[choiceIdx];
         await this.applyEffects(buttonPressed.effects, client);
 
-        await this.updateEncounterData(
-            encounterData.encounterId,
-            buttonPressed.nextStage,
-            client,
-        );
-
+        if (buttonPressed.awaitModal) {
+            await this.expeditionService.updateById(expedition._id.toString(), {
+                $set: {
+                    'currentNode.encounterData.afterModal':
+                        buttonPressed.nextStage,
+                },
+            });
+        } else {
+            await this.updateEncounterData(
+                encounterData.encounterId,
+                buttonPressed.nextStage,
+                client,
+            );
+        }
         const data = await this.getEncounterDTO(client, playerState);
 
         return StandardResponse.respond({
@@ -107,6 +124,24 @@ export class EncounterService {
         await this.expeditionService.updateById(expeditionId, {
             $inc: {
                 'playerState.hpMax': amount,
+            },
+        });
+    }
+
+    private async incrHp(
+        amount: number,
+        playerState: Player,
+        expeditionId: string,
+    ) {
+        if (playerState.hpCurrent + amount < 0) {
+            amount = -playerState.hpCurrent;
+        }
+        if (playerState.hpCurrent + amount < playerState.hpMax) {
+            amount = playerState.hpMax - playerState.hpCurrent;
+        }
+        await this.expeditionService.updateById(expeditionId, {
+            $inc: {
+                'playerState.hpCurrent': amount,
             },
         });
     }
@@ -149,19 +184,11 @@ export class EncounterService {
                     break;
                 case 'hit_points': //eg rug burn
                     amount = parseInt(effect.amount);
-                    if (playerState.hpCurrent + amount < 0) {
-                        amount = -playerState.hpCurrent;
-                    }
-                    await this.expeditionService.updateById(expeditionId, {
-                        $inc: {
-                            'playerState.hpCurrent': amount,
-                        },
-                    });
+                    await this.incrHp(amount, playerState, expeditionId);
                     break;
                 case 'upgrade_random_card': //eg will o wisp
                     await this.upgradeRandomCard(client, playerState);
                     break;
-
                 case 'loose_random_card':
                     await this.looseRandomCard(client, playerState);
                     break;
@@ -170,6 +197,7 @@ export class EncounterService {
                     await this.cardService.addCardToDeck(ctx, cardId);
                     break;
                 case 'choose_card_to_sacrifice': // abandon altar
+                    await this.chooseCardRemove(client, playerState);
                     break;
                 case 'choose_card_remove': // Enchanted Forest
                     await this.chooseCardRemove(client, playerState);
@@ -190,13 +218,13 @@ export class EncounterService {
                             await this.trinketService.add(ctx, 2); //TODO need correct trinket id
                             break;
                         case 'pan_flute': //satyr
-                            await this.trinketService.add(ctx, 2); //TODO need correct trinket id
+                            await this.trinketService.add(ctx, 45);
                             break;
                         case 'silver_pan_flute': //satyr
-                            await this.trinketService.add(ctx, 2); //TODO need correct trinket id
+                            await this.trinketService.add(ctx, 46);
                             break;
                         case 'golden_pan_flute': //satyr
-                            await this.trinketService.add(ctx, 2); //TODO need correct trinket id
+                            await this.trinketService.add(ctx, 47);
                             break;
                     }
                     break;
@@ -329,6 +357,7 @@ export class EncounterService {
     async getEncounterDTO(
         client: Socket,
         playerState: Player,
+        overrideTextKey: string = null,
     ): Promise<EncounterDTO> {
         const encounterData = await this.getEncounterData(client);
         const encounter = await this.getByEncounterId(
@@ -349,7 +378,10 @@ export class EncounterService {
             });
         }
         const encounterName = encounter.encounterName;
-        const displayText = stage.displayText;
+        let displayText = stage.displayText;
+        if (overrideTextKey && encounter.overrideDisplayText) {
+            displayText = encounter.overrideDisplayText[overrideTextKey];
+        }
         const imageId = encounter.imageId;
         const answer: EncounterDTO = {
             encounterName,
@@ -459,6 +491,41 @@ export class EncounterService {
         );
     }
 
+    async handleUpgradeCard(client: Socket, cardId: string): Promise<void> {
+        await this.postModalStage(client);
+    }
+
+    private async postModalStage(
+        client: Socket,
+        overrideTextKey: string = null,
+    ): Promise<void> {
+        const playerState = await this.expeditionService.getPlayerState({
+            clientId: client.id,
+        });
+        const encounterData = await this.getEncounterData(client);
+
+        await this.updateEncounterData(
+            encounterData.encounterId,
+            encounterData.afterModal,
+            client,
+        );
+
+        const data = await this.getEncounterDTO(
+            client,
+            playerState,
+            overrideTextKey,
+        );
+
+        client.emit(
+            'PutData',
+            StandardResponse.respond({
+                message_type: SWARMessageType.GenericData,
+                action: DataWSRequestTypesEnum.EncounterData,
+                data,
+            }),
+        );
+    }
+
     async handleMoveCard(client: Socket, payload: string): Promise<void> {
         const payloadJson = JSON.parse(payload);
         const cardToTake = payloadJson.cardsToTake[0];
@@ -494,5 +561,75 @@ export class EncounterService {
                 },
             },
         );
+
+        const encounterData = await this.getEncounterData(client);
+        const encounterKind = await this.getByEncounterId(
+            encounterData.encounterId,
+        );
+        await this.applyPostCardChoiceEffects(
+            client,
+            playerState,
+            encounterKind.postCardChoiceEffect,
+            removeMe,
+        );
+
+        await this.postModalStage(
+            client,
+            this.rarityToOverrideKey(removeMe.rarity),
+        );
+    }
+
+    private async applyPostCardChoiceEffects(
+        client: Socket,
+        playerState: Player,
+        effect: string,
+        removeMe: IExpeditionPlayerStateDeckCard,
+    ): Promise<void> {
+        const ctx = await this.expeditionService.getGameContext(client);
+        const expedition = ctx.expedition;
+        const expeditionId = expedition._id.toString();
+        switch (effect) {
+            case 'abandon_altar':
+                switch (removeMe.rarity) {
+                    case CardRarityEnum.Special:
+                    case CardRarityEnum.Starter:
+                        break;
+                    case CardRarityEnum.Common:
+                        await this.incrHp(5, playerState, expeditionId);
+                        break;
+                    case CardRarityEnum.Uncommon:
+                        await this.incrHp(
+                            playerState.hpMax - playerState.hpCurrent,
+                            playerState,
+                            expeditionId,
+                        );
+                        break;
+                    case CardRarityEnum.Rare:
+                        await this.incrMaxHp(10, playerState, expeditionId);
+                        break;
+                    case CardRarityEnum.Legendary:
+                        await this.incrMaxHp(20, playerState, expeditionId);
+                        break;
+                }
+                break;
+        }
+    }
+
+    private rarityToOverrideKey(rarity: CardRarityEnum): string {
+        switch (rarity) {
+            case CardRarityEnum.Starter:
+                return 'starter';
+            case CardRarityEnum.Common:
+                return 'common';
+            case CardRarityEnum.Uncommon:
+                return 'uncommon';
+            case CardRarityEnum.Rare:
+                return 'rare';
+            case CardRarityEnum.Legendary:
+                return 'legendary';
+            case CardRarityEnum.Special:
+                return 'epic';
+        }
+        return null;
     }
 }

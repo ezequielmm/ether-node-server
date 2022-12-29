@@ -33,7 +33,7 @@ export class CurrentNodeGeneratorProcess {
             case NodeType.Merchant:
                 return await this.getMerchantCurrentNode();
             case NodeType.Encounter:
-                return await this.getEncounterCurrentNode();
+                return await this.getEncounterCurrentNode(ctx);
             default:
                 return this.getCurrentNode();
         }
@@ -45,8 +45,12 @@ export class CurrentNodeGeneratorProcess {
         return await this.combatService.generate(ctx, this.node);
     }
 
-    private async getEncounterCurrentNode(): Promise<IExpeditionCurrentNode> {
-        const encounterData = await this.encounterService.generateEncounter();
+    private async getEncounterCurrentNode(
+        ctx: GameContext,
+    ): Promise<IExpeditionCurrentNode> {
+        const encounterData = await this.encounterService.generateEncounter(
+            ctx,
+        );
 
         return {
             nodeId: this.node.id,

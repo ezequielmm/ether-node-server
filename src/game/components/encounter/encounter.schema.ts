@@ -16,6 +16,12 @@ export class Encounter {
     imageId: string;
 
     @Prop({ type: Object })
+    overrideDisplayText?: object;
+
+    @Prop()
+    postCardChoiceEffect?: string;
+
+    @Prop({ type: Object })
     stages: {
         displayText: string;
         buttons: EncounterButton[];
