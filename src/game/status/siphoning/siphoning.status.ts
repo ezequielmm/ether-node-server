@@ -42,8 +42,7 @@ export class SiphoningStatus implements StatusEventHandler {
     }
 
     @OnEvent(EVENT_BEFORE_ENEMIES_TURN_START)
-    async onEnemiesTurnStart(args: { ctx: GameContext }): Promise<void> {
-        const { ctx } = args;
+    async onEnemiesTurnStart({ ctx }: { ctx: GameContext }): Promise<void> {
         const enemies = this.enemyService.getAll(ctx);
 
         for (const enemy of enemies) {
@@ -57,8 +56,7 @@ export class SiphoningStatus implements StatusEventHandler {
     }
 
     @OnEvent(EVENT_BEFORE_PLAYER_TURN_START)
-    async onPlayerTurnStart(args: { ctx: GameContext }): Promise<void> {
-        const { ctx } = args;
+    async onPlayerTurnStart({ ctx }: { ctx: GameContext }): Promise<void> {
         const player = this.playerService.get(ctx);
         const statuses = player.value.combatState.statuses;
 
