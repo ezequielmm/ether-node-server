@@ -67,12 +67,11 @@ export class SocketGateway
                 if (expedition.currentNode !== undefined) {
                     const { nodeType } = expedition.currentNode;
 
-                    if (nodeType === NodeType.Combat) {
-                        await this.playerService.setHp(
+                    if (nodeType === NodeType.Combat)
+                        await this.playerService.setGlobalHp(
                             ctx,
                             expedition.currentNode.data.player.hpCurrent,
                         );
-                    }
                 }
 
                 await this.fullSyncAction.handle(client);
