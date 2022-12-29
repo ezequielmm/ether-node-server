@@ -1,6 +1,6 @@
 import { Prop } from '@typegoose/typegoose';
 import { TrinketRarityEnum } from '../trinket.enum';
-import { CrustaceansClawTrinket } from './Crustaceans-claw.trinket';
+import { CrustaceansClawTrinket } from './crustaceans-claw.trinket';
 
 /**
  * Crustacean's Claw Upgraded Trinket

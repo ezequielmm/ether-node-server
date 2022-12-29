@@ -69,7 +69,7 @@ export class SpawnEnemyEffect implements EffectHandler {
 
             // We only need to add new sporelings if there are no more alive
 
-            if (combatHasSporelings)
+            if (!combatHasSporelings)
                 await this.spawnEnemies(enemiesToSpawn, enemies, ctx.client);
 
             console.log({ combatHasFungalBrute, combatHasSporelings });

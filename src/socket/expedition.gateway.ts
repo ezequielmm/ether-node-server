@@ -56,11 +56,11 @@ export class ExpeditionGateway {
 
     @SubscribeMessage('NodeSkipped')
     async handleNodeSkipped(client: Socket, nodeId: number): Promise<void> {
-        const ctx = await this.expeditionService.getGameContext(client);
-
         this.logger.debug(
             `Client ${client.id} trigger message "NodeSkipped": ${nodeId}`,
         );
+
+        const ctx = await this.expeditionService.getGameContext(client);
 
         await this.expeditionService.overrideAvailableNode({
             ctx,
