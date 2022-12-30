@@ -136,12 +136,12 @@ export const fungalBruteData: Enemy = {
             intentions: [
                 {
                     type: EnemyIntentionType.Special,
-                    target: CardTargetedEnum.None,
-                    value: 0,
+                    target: CardTargetedEnum.Self,
+                    value: 1,
                     effects: [
                         {
                             effect: spawnEnemyEffect.name,
-                            target: CardTargetedEnum.None,
+                            target: CardTargetedEnum.Self,
                             args: {
                                 enemiesToSpawn: [
                                     redSporelingData.enemyId,

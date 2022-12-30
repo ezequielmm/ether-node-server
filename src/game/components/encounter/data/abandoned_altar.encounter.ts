@@ -5,6 +5,17 @@ export const AbandonedAltarEncounter: Encounter = {
     encounterId: EncounterIdEnum.AbandonedAltar,
     encounterName: 'Abandoned Altar',
     imageId: 'runicbeehive',
+    overrideDisplayText: {
+        starter:
+            'The Card burns to ash, but you feel nothing. After a time, you continue on your way.',
+        common: 'You feel soothing warmth from the fire.',
+        uncommon: 'A glow emanates from the shrine, filling you with vigor',
+        rare: 'A glow emanates from the shrine, filling you with vigor',
+        epic: 'You feel the presence of a mighty spirit, and its strength flows through you.',
+        legendary:
+            'You feel the presence of a mighty spirit, and its strength flows through you.',
+    },
+    postCardChoiceEffect: 'abandon_altar',
     stages: [
         {
             //0
@@ -14,11 +25,12 @@ export const AbandonedAltarEncounter: Encounter = {
                 {
                     text: 'A: Offer a Card', //aka option 1
                     nextStage: 1,
+                    awaitModal: true,
                     effects: [{ kind: 'choose_card_to_sacrifice' }],
                 },
                 {
                     text: 'B: Leave', //aka option 2
-                    nextStage: 2,
+                    nextStage: 1,
                     effects: [],
                 },
             ],

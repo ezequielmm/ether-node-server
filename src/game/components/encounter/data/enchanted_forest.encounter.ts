@@ -14,11 +14,13 @@ export const EnchantedForest: Encounter = {
                 {
                     text: 'A: Become lighter to escape [Choose a card to remove]', // aka option 1
                     nextStage: 1,
+                    awaitModal: true,
                     effects: [{ kind: 'choose_card_remove' }],
                 },
                 {
                     text: 'B: Grow like the seedling [Choose a card to upgrade]', // aka option 2
                     nextStage: 2,
+                    awaitModal: true,
                     effects: [{ kind: 'choose_card_upgrade' }],
                 },
             ],

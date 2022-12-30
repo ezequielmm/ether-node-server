@@ -94,6 +94,7 @@ export class InitEncounterProcess {
     }
 
     private async continueEncounter(): Promise<string> {
+        
         return StandardResponse.respond({
             message_type: SWARMessageType.EncounterUpdate,
             action: SWARAction.ContinueEncounter,

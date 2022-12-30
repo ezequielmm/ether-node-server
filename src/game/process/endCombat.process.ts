@@ -6,7 +6,7 @@ import { ExpeditionStatusEnum } from '../components/expedition/expedition.enum';
 import { ExpeditionService } from '../components/expedition/expedition.service';
 import { GameContext } from '../components/interfaces';
 import { PlayerService } from '../components/player/player.service';
-import { EVENT_AFTER_DAMAGE_EFFECT } from '../constants';
+import { EVENT_AFTER_DAMAGE_EFFECT, EVENT_AFTER_END_COMBAT } from '../constants';
 import {
     StandardResponse,
     SWARAction,
@@ -56,6 +56,8 @@ export class EndCombatProcess {
                 data: null,
             }),
         );
+
+        ctx.events.emit(EVENT_AFTER_END_COMBAT, { ctx });
     }
 
     private async emitPlayerDefeated(ctx: GameContext): Promise<void> {

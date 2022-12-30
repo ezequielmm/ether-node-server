@@ -6,6 +6,9 @@ import { PlayerService } from '../../player/player.service';
 import { TrinketRarityEnum } from '../trinket.enum';
 import { Trinket } from '../trinket.schema';
 
+/**
+ * Birdcage Trinket
+ */
 export class BirdcageTrinket extends Trinket {
     @Prop({ default: 3 })
     trinketId: number;

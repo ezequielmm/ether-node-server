@@ -46,7 +46,8 @@ export class BirdcageStatus implements StatusEventHandler {
                     },
                 });
 
-                dto.remove();
+                args.counter = 4;
+                dto.update(args);
             } else {
                 dto.update(args);
             }

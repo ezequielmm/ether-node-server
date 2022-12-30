@@ -8,12 +8,16 @@ import {
 } from 'src/game/standardResponse/standardResponse';
 import { UpgradeCardService } from 'src/game/upgradeCard/upgradeCard.service';
 import { corsSocketSettings } from './socket.enum';
+import { EncounterService } from '../game/components/encounter/encounter.service';
 
 @WebSocketGateway(corsSocketSettings)
 export class UpgradeCardGateway {
     private readonly logger: Logger = new Logger(UpgradeCardGateway.name);
 
-    constructor(private readonly upgradeCardService: UpgradeCardService) {}
+    constructor(
+        private readonly upgradeCardService: UpgradeCardService,
+        private readonly encounterService: EncounterService,
+    ) {}
 
     @SubscribeMessage('CardUpgradeSelected')
     async handleCardUpgradeSelected(
@@ -37,6 +41,14 @@ export class UpgradeCardGateway {
             client,
             cardId,
         );
+
+        const encounterData = await this.encounterService.getEncounterData(
+            client,
+        );
+        if (encounterData) {
+            await this.encounterService.handleUpgradeCard(client, cardId);
+            return response;
+        }
 
         client.emit(
             'PutData',
