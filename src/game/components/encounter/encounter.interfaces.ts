@@ -9,4 +9,5 @@ export class EncounterButton {
     nextStage: number;
     awaitModal?: boolean;
     effects: any[];
+    randomStaging?: any[];
 }

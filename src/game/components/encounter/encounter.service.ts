@@ -23,6 +23,7 @@ import { CardDescriptionFormatter } from '../../cardDescriptionFormatter/cardDes
 import { PotionService } from '../potion/potion.service';
 import { Player } from '../expedition/player';
 import { CardRarityEnum } from '../card/card.enum';
+import { logger } from '@typegoose/typegoose/lib/logSettings';
 
 @Injectable()
 export class EncounterService {
@@ -50,8 +51,9 @@ export class EncounterService {
                 EncounterIdEnum.EnchantedForest,
                 EncounterIdEnum.MossyTroll,
                 EncounterIdEnum.YoungWizard,
+                EncounterIdEnum.RunicBehive,
             ],
-            [1, 0, 1, 0, 0, 1, 1, 1, 0, 0],
+            [1, 0, 1, 0, 0, 1, 1, 1, 0, 0, 0],
         );
 
         //fetch existing encounter if there is one
@@ -88,6 +90,15 @@ export class EncounterService {
         }
 
         const buttonPressed = stage.buttons[choiceIdx];
+        if (buttonPressed.randomStaging) {
+            const r = getRandomBetween(
+                0,
+                buttonPressed.randomStaging.length - 1,
+            );
+            const randomStage = buttonPressed.randomStaging[r];
+            buttonPressed.effects = randomStage.effects;
+            buttonPressed.nextStage = randomStage.nextStage;
+        }
         await this.applyEffects(buttonPressed.effects, client);
 
         if (buttonPressed.awaitModal) {

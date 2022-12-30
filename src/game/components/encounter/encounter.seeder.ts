@@ -13,6 +13,7 @@ import { EnchantedForest } from './data/enchanted_forest.encounter';
 import { AbandonedAltarEncounter } from './data/abandoned_altar.encounter';
 import { RugburnEncounter } from './data/rugburn.encounter';
 import { TreeCarvingEncounter } from './data/tree_carving.encounter';
+import { RunicBeehiveEncounter } from './data/runic_beehive';
 
 @Injectable()
 export class EncounterSeeder implements Seeder {
@@ -33,6 +34,7 @@ export class EncounterSeeder implements Seeder {
             EnchantedForest,
             MossyTrollEncounter,
             YoungWizardEncounter,
+            RunicBeehiveEncounter,
         ]);
     }
     async drop(): Promise<any> {
