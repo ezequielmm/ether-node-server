@@ -199,6 +199,7 @@ export class EncounterService {
                     amount = parseInt(effect.amount);
                     await this.incrHp(amount, playerState, expeditionId);
                     break;
+
                 case 'upgrade_random_card': //eg will o wisp
                     await this.upgradeRandomCard(client, playerState);
                     break;
@@ -208,6 +209,10 @@ export class EncounterService {
                 case 'card_add_to_library': //eg naiad
                     const cardId = parseInt(effect.cardId);
                     await this.cardService.addCardToDeck(ctx, cardId);
+                    break;
+                case 'choose_trinket':
+                    amount = parseInt(effect.amount);
+                    this.chooseTrinket(client, playerState, amount);
                     break;
                 case 'choose_card_to_sacrifice': // abandon altar
                     await this.chooseCardRemove(client, playerState);
@@ -245,6 +250,14 @@ export class EncounterService {
                     break;
             }
         }
+    }
+
+    private chooseTrinket(
+        client: Socket,
+        playerState: Player,
+        amount: number,
+    ): void {
+        
     }
 
     private async chooseCardRemove(
