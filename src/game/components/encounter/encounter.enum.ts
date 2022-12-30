@@ -10,5 +10,7 @@ export enum EncounterIdEnum {
     EnchantedForest = 8,
     MossyTroll = 10,
     YoungWizard = 11,
-    RunicBehive = 12,
+
+    Oddbarks = 13,
+    RunicBehive = 14,
 }
