@@ -41,18 +41,19 @@ export class EncounterService {
         //generate encounter
         let encounterId = getRandomItemByWeight(
             [
-                EncounterIdEnum.AbandonedAltar,
+                EncounterIdEnum.AbandonedAltar, //1
                 EncounterIdEnum.Rugburn,
-                EncounterIdEnum.Nagpra,
+                EncounterIdEnum.Nagpra, //3
                 EncounterIdEnum.TreeCarving,
                 EncounterIdEnum.Naiad,
-                EncounterIdEnum.WillOWisp,
-                EncounterIdEnum.DancingSatyr,
-                EncounterIdEnum.EnchantedForest,
+                EncounterIdEnum.WillOWisp, //6
+                EncounterIdEnum.DancingSatyr, //7
+                EncounterIdEnum.EnchantedForest, //8
                 EncounterIdEnum.MossyTroll,
                 EncounterIdEnum.YoungWizard,
                 EncounterIdEnum.RunicBehive,
             ],
+            //      1  2  3  4  5  6  7  8  9  10 11
             [1, 0, 1, 0, 0, 1, 1, 1, 0, 0, 0],
         );
 
@@ -602,7 +603,7 @@ export class EncounterService {
         switch (effect) {
             case 'abandon_altar':
                 switch (removeMe.rarity) {
-                    case CardRarityEnum.Special:
+                    case CardRarityEnum.Special: //abandon altar treat special as cursed
                     case CardRarityEnum.Starter:
                         break;
                     case CardRarityEnum.Common:
