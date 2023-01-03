@@ -6,7 +6,6 @@ import { CardDescriptionFormatter } from '../cardDescriptionFormatter/cardDescri
 import { CardRarityEnum, CardTypeEnum } from '../components/card/card.enum';
 import { CardService } from '../components/card/card.service';
 import { IExpeditionNodeReward } from '../components/expedition/expedition.enum';
-import { NodeType } from '../components/expedition/node-type';
 import {
     CardPreview,
     CardReward,
@@ -14,17 +13,19 @@ import {
     Reward,
     TrinketReward,
 } from '../components/expedition/expedition.interface';
-import { Node } from '../components/expedition/node';
 import { ExpeditionService } from '../components/expedition/expedition.service';
+import { Node } from '../components/expedition/node';
+import { NodeType } from '../components/expedition/node-type';
 import { GameContext } from '../components/interfaces';
 import { PotionRarityEnum } from '../components/potion/potion.enum';
 import { PotionService } from '../components/potion/potion.service';
 import { TrinketRarityEnum } from '../components/trinket/trinket.enum';
+import { Trinket } from '../components/trinket/trinket.schema';
 import { TrinketService } from '../components/trinket/trinket.service';
 import {
     StandardResponse,
-    SWARMessageType,
     SWARAction,
+    SWARMessageType,
 } from '../standardResponse/standardResponse';
 
 @Injectable()
@@ -258,17 +259,20 @@ export class RewardService {
 
     private async generateTrinkets(
         ctx: GameContext,
-        trinketRarities: TrinketRarityEnum[],
+        trinketsToGenerate: TrinketRarityEnum[],
     ): Promise<TrinketReward[]> {
-        const trinketToReject = map(
+        if (trinketsToGenerate.length === 0) return [];
+
+        const trinketsInInventory = map<Trinket>(
             ctx.expedition.playerState.trinkets,
             'trinketId',
         );
 
         return chain(this.trinketService.findAll())
-            .reject((trinket) => includes(trinketToReject, trinket.trinketId))
-            .reject((trinket) => includes(trinketRarities, trinket.rarity))
+            .shuffle()
             .uniqBy('rarity')
+            .reject(({ trinketId }) => includes(trinketsInInventory, trinketId))
+            .filter(({ rarity }) => includes(trinketsToGenerate, rarity))
             .map<TrinketReward>((trinket) => ({
                 id: randomUUID(),
                 type: IExpeditionNodeReward.Trinket,
