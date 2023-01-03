@@ -261,9 +261,7 @@ export class RewardService {
         ctx: GameContext,
         trinketsToGenerate: TrinketRarityEnum[],
     ): Promise<TrinketReward[]> {
-        if (!trinketsToGenerate.length) {
-            return [];
-        }
+        if (trinketsToGenerate.length === 0) return [];
 
         const trinketsInInventory = map<Trinket>(
             ctx.expedition.playerState.trinkets,
@@ -273,10 +271,8 @@ export class RewardService {
         return chain(this.trinketService.findAll())
             .shuffle()
             .uniqBy('rarity')
-            .reject((trinket) =>
-                includes(trinketsInInventory, trinket.trinketId),
-            )
-            .filter((trinket) => includes(trinketsToGenerate, trinket.rarity))
+            .reject(({ trinketId }) => includes(trinketsInInventory, trinketId))
+            .filter(({ rarity }) => includes(trinketsToGenerate, rarity))
             .map<TrinketReward>((trinket) => ({
                 id: randomUUID(),
                 type: IExpeditionNodeReward.Trinket,
