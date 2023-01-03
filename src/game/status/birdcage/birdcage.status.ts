@@ -18,7 +18,8 @@ export class BirdcageStatus implements StatusEventHandler {
         private readonly playerService: PlayerService,
         private readonly effectService: EffectService,
     ) {}
-    async handle(dto: StatusEventDTO): Promise<any> {
+
+    async handle(dto: StatusEventDTO): Promise<void> {
         const {
             ctx,
             status: { args },
@@ -26,6 +27,7 @@ export class BirdcageStatus implements StatusEventHandler {
                 card: { cardType },
             },
         } = dto;
+
         if (cardType === CardTypeEnum.Attack) {
             args.counter--;
 

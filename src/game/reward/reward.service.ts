@@ -273,6 +273,7 @@ export class RewardService {
             .uniqBy('rarity')
             .reject(({ trinketId }) => includes(trinketsInInventory, trinketId))
             .filter(({ rarity }) => includes(trinketsToGenerate, rarity))
+            .filter(({ rarity }) => rarity !== TrinketRarityEnum.Special)
             .map<TrinketReward>((trinket) => ({
                 id: randomUUID(),
                 type: IExpeditionNodeReward.Trinket,
