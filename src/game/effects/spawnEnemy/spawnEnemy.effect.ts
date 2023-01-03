@@ -125,7 +125,7 @@ export class SpawnEnemyEffect implements EffectHandler {
                 StandardResponse.respond({
                     message_type: SWARMessageType.CombatUpdate,
                     action: SWARAction.SpawnEnemies,
-                    data: { enemies: enemiesToAdd },
+                    data: enemiesToAdd,
                 }),
             );
 
