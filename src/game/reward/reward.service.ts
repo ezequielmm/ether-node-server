@@ -26,6 +26,7 @@ import {
     SWARMessageType,
     SWARAction,
 } from '../standardResponse/standardResponse';
+import { Trinket } from '../components/trinket/trinket.schema';
 
 @Injectable()
 export class RewardService {
@@ -258,17 +259,24 @@ export class RewardService {
 
     private async generateTrinkets(
         ctx: GameContext,
-        trinketRarities: TrinketRarityEnum[],
+        trinketsToGenerate: TrinketRarityEnum[],
     ): Promise<TrinketReward[]> {
-        const trinketToReject = map(
+        if (!trinketsToGenerate.length) {
+            return [];
+        }
+
+        const trinketsInInventory = map<Trinket>(
             ctx.expedition.playerState.trinkets,
             'trinketId',
         );
 
         return chain(this.trinketService.findAll())
-            .reject((trinket) => includes(trinketToReject, trinket.trinketId))
-            .reject((trinket) => includes(trinketRarities, trinket.rarity))
+            .shuffle()
             .uniqBy('rarity')
+            .reject((trinket) =>
+                includes(trinketsInInventory, trinket.trinketId),
+            )
+            .filter((trinket) => includes(trinketsToGenerate, trinket.rarity))
             .map<TrinketReward>((trinket) => ({
                 id: randomUUID(),
                 type: IExpeditionNodeReward.Trinket,
