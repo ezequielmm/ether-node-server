@@ -6,7 +6,6 @@ import { CardDescriptionFormatter } from '../cardDescriptionFormatter/cardDescri
 import { CardRarityEnum, CardTypeEnum } from '../components/card/card.enum';
 import { CardService } from '../components/card/card.service';
 import { IExpeditionNodeReward } from '../components/expedition/expedition.enum';
-import { NodeType } from '../components/expedition/node-type';
 import {
     CardPreview,
     CardReward,
@@ -14,19 +13,20 @@ import {
     Reward,
     TrinketReward,
 } from '../components/expedition/expedition.interface';
-import { Node } from '../components/expedition/node';
 import { ExpeditionService } from '../components/expedition/expedition.service';
+import { Node } from '../components/expedition/node';
+import { NodeType } from '../components/expedition/node-type';
 import { GameContext } from '../components/interfaces';
 import { PotionRarityEnum } from '../components/potion/potion.enum';
 import { PotionService } from '../components/potion/potion.service';
 import { TrinketRarityEnum } from '../components/trinket/trinket.enum';
+import { Trinket } from '../components/trinket/trinket.schema';
 import { TrinketService } from '../components/trinket/trinket.service';
 import {
     StandardResponse,
-    SWARMessageType,
     SWARAction,
+    SWARMessageType,
 } from '../standardResponse/standardResponse';
-import { Trinket } from '../components/trinket/trinket.schema';
 
 @Injectable()
 export class RewardService {
