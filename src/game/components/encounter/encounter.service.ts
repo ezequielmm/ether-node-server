@@ -43,7 +43,7 @@ export class EncounterService {
             [
                 EncounterIdEnum.AbandonedAltar, //1
                 EncounterIdEnum.Rugburn,
-                EncounterIdEnum.Nagpra, //3
+                EncounterIdEnum.Nagpra, //3 TODO disabled due to server crashing bug
                 EncounterIdEnum.TreeCarving,
                 EncounterIdEnum.Naiad,
                 EncounterIdEnum.WillOWisp, //6
@@ -55,7 +55,7 @@ export class EncounterService {
                 EncounterIdEnum.RunicBehive,
             ],
             //      1  2  3  4  5  6  7  8  9  10 11 12
-            [1, 0, 1, 0, 0, 1, 1, 1, 0, 0, 0, 0],
+            [1, 0, 0, 0, 0, 1, 1, 1, 0, 0],
         );
 
         //fetch existing encounter if there is one
@@ -233,7 +233,7 @@ export class EncounterService {
                             await this.trinketService.add(ctx, 2); //TODO need correct trinket id
                             break;
                         case 'runic_tome': //young wizard
-                            await this.trinketService.add(ctx, 2); //TODO need correct trinket id
+                            await this.trinketService.add(ctx, 3);
                             break;
                         case 'pan_flute': //satyr
                             await this.trinketService.add(ctx, 45);
