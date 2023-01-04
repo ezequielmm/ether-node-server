@@ -16,10 +16,10 @@ import { NodeDataFiller } from '../node-data-filler';
 
 const eliteNodeData = {
     enemies: [
-        {
-            enemies: [thornWolfData.enemyId],
-            probability: 33.3,
-        },
+        // {
+        //     enemies: [thornWolfData.enemyId],
+        //     probability: 33.3,
+        // },
         {
             enemies: [queenOrchidData.enemyId],
             probability: 33.3,

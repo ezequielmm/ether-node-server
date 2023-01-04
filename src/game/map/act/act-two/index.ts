@@ -45,10 +45,10 @@ const elitCombatNode: NodeConfig = {
     subType: NodeType.CombatElite,
     data: {
         enemies: [
-            {
-                enemies: [thornWolfData.enemyId],
-                probability: 33.3,
-            },
+            // {
+            //     enemies: [thornWolfData.enemyId],
+            //     probability: 33.3,
+            // },
             {
                 enemies: [queenOrchidData.enemyId],
                 probability: 33.3,

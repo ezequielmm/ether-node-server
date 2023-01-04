@@ -1,9 +1,10 @@
-import { ModelOptions, Prop } from '@typegoose/typegoose';
+import { ModelOptions, Prop, Severity } from '@typegoose/typegoose';
 import { EnemyTypeEnum, EnemyCategoryEnum, EnemySizeEnum } from './enemy.enum';
 import { EnemyScript } from './enemy.interface';
 
 @ModelOptions({
     schemaOptions: { collection: 'enemies', versionKey: false },
+    options: { allowMixed: Severity.ALLOW },
 })
 export class Enemy {
     @Prop({ unique: true })

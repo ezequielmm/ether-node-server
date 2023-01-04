@@ -29,9 +29,9 @@ export class SummonedStatus implements StatusEventHandler {
             eventArgs: { enemy },
         } = dto;
 
-        // First we check if the enemy is a boss, otherwise we exit
+        // First we check if the enemy that died is an elite, otherwise we exit
         // the status
-        if (enemy.category !== EnemyCategoryEnum.Boss) return;
+        if (enemy.category !== EnemyCategoryEnum.Elite) return;
 
         // Now we get the enemies that we have on the current node data
         const {
