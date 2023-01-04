@@ -96,7 +96,10 @@ export class EffectService {
             const { metadata, instance } = this.findContainerByName(name);
 
             // Check if the combat has ended
-            if (this.expeditionService.isCurrentCombatEnded(ctx)) {
+            if (
+                this.expeditionService.isCurrentCombatEnded(ctx) &&
+                !metadata.effect.ghost
+            ) {
                 this.logger.debug(
                     `Combat ended, skipping effect ${effect.effect}`,
                 );

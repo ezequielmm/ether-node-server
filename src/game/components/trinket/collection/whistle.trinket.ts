@@ -38,8 +38,8 @@ export class WhistleTrinket extends Trinket {
     onAttach(ctx: GameContext): void {
         ctx.events.addListener(
             EVENT_AFTER_PLAYER_TURN_START,
-            async function (event: GameEvent) {
-                if (event.ctx.expedition.currentNode.data.round !== 3) {
+            async (event: GameEvent) => {
+                if (event.ctx.expedition.currentNode.data.round !== 2) {
                     return;
                 }
 
