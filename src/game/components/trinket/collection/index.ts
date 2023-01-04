@@ -17,3 +17,7 @@ export { PeacockFeatherUpgradedTrinket } from './peacock-feather-upgraded.trinke
 export { PeacockFeatherTrinket } from './peacock-feather.trinket';
 export { GobletUpgradedTrinket } from './goblet-upgraded.trinket';
 export { GobletTrinket } from './goblet.trinket';
+export { CrustaceansClawTrinket } from './crustaceans-claw.trinket';
+export { CrustaceansClawUpgradedTrinket } from './crustaceans-claw-upgraded.trinket';
+export { PhoenixEggTrinket } from './phoenix-egg.trinket';
+export { PhoenixEggUpgradedTrinket } from './phoenix-egg-upgraded.trinket';
