@@ -15,3 +15,5 @@ export { SilverPanFluteTrinket } from './silver-pan-flute.trinket';
 export { GoldPanFluteTrinket } from './gold-pan-flute.trinket';
 export { PeacockFeatherUpgradedTrinket } from './peacock-feather-upgraded.trinket';
 export { PeacockFeatherTrinket } from './peacock-feather.trinket';
+export { GobletUpgradedTrinket } from './goblet-upgraded.trinket';
+export { GobletTrinket } from './goblet.trinket';
