@@ -6,7 +6,6 @@ import { queenOrchidData } from 'src/game/components/enemy/data/queenOrchid.enem
 import { sporeMongerData } from 'src/game/components/enemy/data/sporeMonger.enemy';
 import { stingFaeData } from 'src/game/components/enemy/data/stingFae.enemy';
 import { thornWolfData } from 'src/game/components/enemy/data/thornWolf.enemy';
-import { treantData } from 'src/game/components/enemy/data/treant.enemy';
 import { NodeType } from 'src/game/components/expedition/node-type';
 import { NodeStatus } from 'src/game/components/expedition/node-status';
 import { DefaultActBuilder, NodeConfig } from '../act.builder';

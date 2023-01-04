@@ -1,4 +1,12 @@
-import { EnemyCategoryEnum, EnemySizeEnum, EnemyTypeEnum } from '../enemy.enum';
+import { attachStatusEffect } from 'src/game/effects/attachStatus/constants';
+import { SummonedStatus } from 'src/game/status/summoned/summoned.status';
+import { CardTargetedEnum } from '../../card/card.enum';
+import {
+    EnemyCategoryEnum,
+    EnemyIntentionType,
+    EnemySizeEnum,
+    EnemyTypeEnum,
+} from '../enemy.enum';
 import { Enemy } from '../enemy.schema';
 
 export const thornWolfPupData: Enemy = {
@@ -13,8 +21,29 @@ export const thornWolfPupData: Enemy = {
         {
             // we need a summoned status
             id: 0,
-            intentions: [],
-            next: [],
+            intentions: [
+                {
+                    type: EnemyIntentionType.Buff,
+                    target: CardTargetedEnum.Self,
+                    value: 2,
+                    effects: [
+                        {
+                            effect: attachStatusEffect.name,
+                            target: CardTargetedEnum.Self,
+                            args: {
+                                statusName: SummonedStatus.name,
+                                statusArgs: {},
+                            },
+                        },
+                    ],
+                },
+            ],
+            next: [
+                {
+                    probability: 1,
+                    scriptId: 0,
+                },
+            ],
         },
     ],
 };

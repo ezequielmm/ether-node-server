@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { filter } from 'lodash';
 import { thornWolfData } from 'src/game/components/enemy/data/thornWolf.enemy';
 import { thornWolfPupData } from 'src/game/components/enemy/data/thornWolfPup.enemy';
@@ -18,7 +18,10 @@ interface SummonedData {
 })
 @Injectable()
 export class SummonedStatus implements StatusEventHandler {
-    constructor(private readonly expeditionService: ExpeditionService) {}
+    constructor(
+        @Inject(forwardRef(() => ExpeditionService))
+        private readonly expeditionService: ExpeditionService,
+    ) {}
 
     async handle(dto: StatusEventDTO<SummonedData>): Promise<void> {
         const {
