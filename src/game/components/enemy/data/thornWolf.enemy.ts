@@ -1,6 +1,7 @@
 import { attachStatusEffect } from 'src/game/effects/attachStatus/constants';
 import { damageEffect } from 'src/game/effects/damage/constants';
 import { defenseEffect } from 'src/game/effects/defense/constants';
+import { spawnEnemyEffect } from 'src/game/effects/spawnEnemy/contants';
 import { spikesStatus } from 'src/game/status/spikes/constants';
 import { CardTargetedEnum } from '../../card/card.enum';
 import {
@@ -10,6 +11,7 @@ import {
     EnemyIntentionType,
 } from '../enemy.enum';
 import { Enemy } from '../enemy.schema';
+import { thornWolfPupData } from './thornWolfPup.enemy';
 
 export const thornWolfData: Enemy = {
     enemyId: 11,
@@ -154,17 +156,15 @@ export const thornWolfData: Enemy = {
             id: 4,
             intentions: [
                 {
-                    type: EnemyIntentionType.Defend,
+                    type: EnemyIntentionType.Special,
                     target: CardTargetedEnum.Self,
-                    value: 5,
-                    //  This effect 'Summon ' was not developed so I have added 'defenseEffect' one
-                    //  TODO: Replace defense effect with Summon effect once it is created
+                    value: 1,
                     effects: [
                         {
-                            effect: defenseEffect.name,
+                            effect: spawnEnemyEffect.name,
                             target: CardTargetedEnum.Self,
                             args: {
-                                value: 5,
+                                enemiesToSpawn: [thornWolfPupData.enemyId],
                             },
                         },
                     ],

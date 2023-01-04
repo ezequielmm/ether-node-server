@@ -29,6 +29,7 @@ import {
 } from 'src/game/constants';
 import { ReturnModelType } from '@typegoose/typegoose';
 import { EventEmitter2 } from '@nestjs/event-emitter';
+import { ProjectionFields } from 'mongoose';
 
 @Injectable()
 export class EnemyService {
@@ -80,10 +81,13 @@ export class EnemyService {
      * @param enemyId EnemyId
      * @returns Enemy
      */
-    public async findById(enemyId: EnemyId): Promise<Enemy> {
+    public async findById(
+        enemyId: EnemyId,
+        projection?: ProjectionFields<Enemy>,
+    ): Promise<Enemy> {
         return typeof enemyId === 'string'
-            ? this.enemy.findById(enemyId).lean()
-            : this.enemy.findOne({ enemyId }).lean();
+            ? this.enemy.findById(enemyId, projection).lean()
+            : this.enemy.findOne({ enemyId }, projection).lean();
     }
 
     /**

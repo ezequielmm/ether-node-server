@@ -5,6 +5,8 @@ import { Socket } from 'socket.io';
 import { blueSporelingData } from 'src/game/components/enemy/data/blueSporeling.enemy';
 import { fungalBruteData } from 'src/game/components/enemy/data/fungalBrute.enemy';
 import { redSporelingData } from 'src/game/components/enemy/data/redSporeling.enemy';
+import { thornWolfData } from 'src/game/components/enemy/data/thornWolf.enemy';
+import { thornWolfPupData } from 'src/game/components/enemy/data/thornWolfPup.enemy';
 import { yellowSporelingData } from 'src/game/components/enemy/data/yellowSporeling.enemy';
 import { EnemyService } from 'src/game/components/enemy/enemy.service';
 import { ExpeditionStatusEnum } from 'src/game/components/expedition/expedition.enum';
@@ -55,6 +57,10 @@ export class SpawnEnemyEffect implements EffectHandler {
             enemyId: fungalBruteData.enemyId,
         });
 
+        const combatHasThornWolf = some(enemies, {
+            enemyId: thornWolfData.enemyId,
+        });
+
         if (combatHasFungalBrute) {
             // Now if we have a fungal brute, we check if we have any sporelings alive
             const combatHasSporelings = combatHasFungalBrute
@@ -71,8 +77,20 @@ export class SpawnEnemyEffect implements EffectHandler {
 
             if (!combatHasSporelings)
                 await this.spawnEnemies(enemiesToSpawn, enemies, ctx.client);
+        } else if (combatHasThornWolf) {
+            // Now if we have a thornwolf, we check if we have any thornwolf pups alive
+            const combatHasThornWolfPups = combatHasThornWolf
+                ? some(enemies, (enemy) => {
+                      const thornWolfPupsIds = this.getThrornWolfPupsIds();
+                      return (
+                          enemy.hpCurrent > 0 &&
+                          includes(thornWolfPupsIds, enemy.enemyId)
+                      );
+                  })
+                : false;
 
-            console.log({ combatHasFungalBrute, combatHasSporelings });
+            if (!combatHasThornWolfPups)
+                await this.spawnEnemies(enemiesToSpawn, enemies, ctx.client);
         } else {
             await this.spawnEnemies(enemiesToSpawn, enemies, ctx.client);
         }
@@ -144,4 +162,6 @@ export class SpawnEnemyEffect implements EffectHandler {
         redSporelingData.enemyId,
         yellowSporelingData.enemyId,
     ];
+
+    private getThrornWolfPupsIds = (): number[] => [thornWolfPupData.enemyId];
 }

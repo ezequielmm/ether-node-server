@@ -1,11 +1,4 @@
-import { attachStatusEffect } from 'src/game/effects/attachStatus/constants';
-import { CardTargetedEnum } from '../../card/card.enum';
-import {
-    EnemyCategoryEnum,
-    EnemyIntentionType,
-    EnemySizeEnum,
-    EnemyTypeEnum,
-} from '../enemy.enum';
+import { EnemyCategoryEnum, EnemySizeEnum, EnemyTypeEnum } from '../enemy.enum';
 import { Enemy } from '../enemy.schema';
 
 export const thornWolfPupData: Enemy = {

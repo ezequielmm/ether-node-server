@@ -12,7 +12,7 @@ export class CardSeeder implements Seeder {
     ) {}
 
     async seed(): Promise<any> {
-        return this.card.insertMany(data);
+        return this.card.insertMany<Card>(data);
     }
 
     async drop(): Promise<any> {

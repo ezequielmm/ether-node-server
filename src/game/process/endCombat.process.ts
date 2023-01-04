@@ -6,7 +6,10 @@ import { ExpeditionStatusEnum } from '../components/expedition/expedition.enum';
 import { ExpeditionService } from '../components/expedition/expedition.service';
 import { GameContext } from '../components/interfaces';
 import { PlayerService } from '../components/player/player.service';
-import { EVENT_AFTER_DAMAGE_EFFECT, EVENT_AFTER_END_COMBAT } from '../constants';
+import {
+    EVENT_AFTER_DAMAGE_EFFECT,
+    EVENT_AFTER_END_COMBAT,
+} from '../constants';
 import {
     StandardResponse,
     SWARAction,
