@@ -8,6 +8,7 @@ export enum EncounterIdEnum {
     WillOWisp = 6,
     DancingSatyr = 7,
     EnchantedForest = 8,
+
     MossyTroll = 10,
     YoungWizard = 11,
 

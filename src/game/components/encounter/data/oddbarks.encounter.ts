@@ -14,7 +14,7 @@ export const OddbarksEncounter: Encounter = {
                 {
                     text: 'A: Offer a Trinket [Transform Trinket]', // aka option 1
                     nextStage: 1,
-                    awaitModal: true,
+                    //awaitModal: true,
                     effects: [{ kind: 'choose_trinket', amount: 1 }],
                 },
                 {

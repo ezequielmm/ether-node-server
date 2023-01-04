@@ -41,8 +41,8 @@ export class EncounterService {
         //generate encounter
         let encounterId = getRandomItemByWeight(
             [
-                EncounterIdEnum.AbandonedAltar, //1
-                EncounterIdEnum.Rugburn,
+                EncounterIdEnum.AbandonedAltar, // [3 jan 2023] customer is not going to provide art
+                EncounterIdEnum.Rugburn, // [3 jan 2023] wont do
                 EncounterIdEnum.Nagpra, //3 TODO disabled due to server crashing bug
                 EncounterIdEnum.TreeCarving,
                 EncounterIdEnum.Naiad,
@@ -51,11 +51,11 @@ export class EncounterService {
                 EncounterIdEnum.EnchantedForest, //8
                 EncounterIdEnum.MossyTroll,
                 EncounterIdEnum.YoungWizard,
-                EncounterIdEnum.Oddbarks,
+                EncounterIdEnum.Oddbarks, // 11
                 EncounterIdEnum.RunicBehive,
             ],
             //      1  2  3  4  5  6  7  8  9  10 11 12
-            [1, 0, 0, 0, 0, 1, 1, 1, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0],
         );
 
         //fetch existing encounter if there is one
@@ -212,7 +212,7 @@ export class EncounterService {
                     break;
                 case 'choose_trinket':
                     amount = parseInt(effect.amount);
-                    this.chooseTrinket(client, playerState, amount);
+                    await this.chooseTrinket(client, playerState, amount);
                     break;
                 case 'choose_card_to_sacrifice': // abandon altar
                     await this.chooseCardRemove(client, playerState);
@@ -230,10 +230,10 @@ export class EncounterService {
                 case 'trinket':
                     switch (effect.item) {
                         case 'birdcage': //nagpra
-                            await this.trinketService.add(ctx, 2); //TODO need correct trinket id
+                            await this.trinketService.add(ctx, 3);
                             break;
                         case 'runic_tome': //young wizard
-                            await this.trinketService.add(ctx, 3);
+                            await this.trinketService.add(ctx, 2); //TODO need correct trinket id
                             break;
                         case 'pan_flute': //satyr
                             await this.trinketService.add(ctx, 45);
@@ -252,12 +252,23 @@ export class EncounterService {
         }
     }
 
-    private chooseTrinket(
+    private async chooseTrinket(
         client: Socket,
         playerState: Player,
         amount: number,
-    ): void {
-        
+    ): Promise<void> {
+        client.emit(
+            'PutData',
+            StandardResponse.respond({
+                message_type: SWARMessageType.EncounterUpdate,
+                action: SWARAction.SelectTrinkets,
+                data: {
+                    trinkets: playerState.trinkets,
+                    trinketsToTake: amount,
+                    kind: 'remove',
+                },
+            }),
+        );
     }
 
     private async chooseCardRemove(
