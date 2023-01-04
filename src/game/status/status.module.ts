@@ -49,6 +49,7 @@ import { TasteOfBloodBuffStatus } from './tasteOfBlood/tasteOfBlood.buff.status'
 import { TasteOfBloodDebuffStatus } from './tasteOfBlood/tasteOfBlood.debuff.status';
 import { TrappedStatus } from './trapped/trapped.status';
 import { TurtlingStatus } from './turtling/turtling.status';
+import { SummonedStatus } from './summoned/summoned.status';
 
 @Module({
     imports: [
@@ -106,6 +107,7 @@ import { TurtlingStatus } from './turtling/turtling.status';
         FeebleStatus,
         TrappedStatus,
         BirdcageStatus,
+        SummonedStatus,
     ],
     exports: [StatusService],
 })
