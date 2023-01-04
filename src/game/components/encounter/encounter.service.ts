@@ -441,6 +441,12 @@ export class EncounterService {
                     return false;
                 }
             }
+            if (effect.kind === 'choose_trinket') {
+                const amount = parseInt(effect.amount);
+                if (playerState.trinkets.length < amount) {
+                    return false;
+                }
+            }
         }
         return true;
     }
