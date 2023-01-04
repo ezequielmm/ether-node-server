@@ -8,7 +8,7 @@ import { Trinket } from '../trinket.schema';
  * Goblet Trinket
  */
 export class GobletTrinket extends Trinket {
-    @Prop({ default: 3 })
+    @Prop({ default: 24 })
     trinketId: number;
 
     @Prop({ default: 'Goblet' })
