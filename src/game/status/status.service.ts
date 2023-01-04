@@ -94,7 +94,7 @@ export class StatusService {
 
             // If CTX, trigger event on events
             if (ctx) {
-                ctx.events.emit(events, rest);
+                await ctx.events.emitAsync(events, args);
             }
 
             // Loop through the events and trigger the handlers
