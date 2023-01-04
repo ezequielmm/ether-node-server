@@ -20,7 +20,6 @@ interface ICardPlayed {
     targetId?: TargetId;
 }
 
-
 @WebSocketGateway(corsSocketSettings)
 export class CombatGateway {
     private readonly logger: Logger = new Logger(CombatGateway.name);
@@ -75,7 +74,6 @@ export class CombatGateway {
         });
     }
 
-    
     async handleMoveCard(client: Socket, payload: string): Promise<void> {
         this.logger.debug(
             `Client ${client.id} trigger message "MoveCard": ${payload}`,

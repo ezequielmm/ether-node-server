@@ -13,3 +13,5 @@ export { WhistleTrinket } from './whistle.trinket';
 export { WhistleUpgradedTrinket } from './whistle-upgraded.trinket';
 export { SilverPanFluteTrinket } from './silver-pan-flute.trinket';
 export { GoldPanFluteTrinket } from './gold-pan-flute.trinket';
+export { PeacockFeatherUpgradedTrinket } from './peacock-feather-upgraded.trinket';
+export { PeacockFeatherTrinket } from './peacock-feather.trinket';
