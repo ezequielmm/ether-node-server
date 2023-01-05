@@ -28,7 +28,7 @@ export class EndCombatProcess {
     ) {}
 
     @OnEvent(EVENT_AFTER_DAMAGE_EFFECT)
-    async handle({ ctx }): Promise<void> {
+    async handle({ ctx }: { ctx: GameContext }): Promise<void> {
         if (this.playerService.isDead(ctx)) {
             this.logger.debug('Player is dead. Ending combat');
             await this.emitPlayerDefeated(ctx);

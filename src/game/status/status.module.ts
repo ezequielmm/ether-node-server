@@ -50,6 +50,7 @@ import { TasteOfBloodDebuffStatus } from './tasteOfBlood/tasteOfBlood.debuff.sta
 import { TrappedStatus } from './trapped/trapped.status';
 import { TurtlingStatus } from './turtling/turtling.status';
 import { SummonedStatus } from './summoned/summoned.status';
+import { ProcessModule } from '../process/process.module';
 
 @Module({
     imports: [
@@ -59,6 +60,7 @@ import { SummonedStatus } from './summoned/summoned.status';
         forwardRef(() => PlayerModule),
         forwardRef(() => CardModule),
         forwardRef(() => ActionModule),
+        forwardRef(() => ProcessModule),
         CombatQueueModule,
         ProviderModule,
         HistoryModule,

@@ -3,8 +3,15 @@ import { filter } from 'lodash';
 import { thornWolfData } from 'src/game/components/enemy/data/thornWolf.enemy';
 import { thornWolfPupData } from 'src/game/components/enemy/data/thornWolfPup.enemy';
 import { EnemyCategoryEnum } from 'src/game/components/enemy/enemy.enum';
+import { EnemyService } from 'src/game/components/enemy/enemy.service';
 import { IExpeditionCurrentNodeDataEnemy } from 'src/game/components/expedition/expedition.interface';
 import { ExpeditionService } from 'src/game/components/expedition/expedition.service';
+import { EndCombatProcess } from 'src/game/process/endCombat.process';
+import {
+    StandardResponse,
+    SWARMessageType,
+    SWARAction,
+} from 'src/game/standardResponse/standardResponse';
 import { StatusEventDTO, StatusEventHandler } from '../interfaces';
 import { StatusDecorator } from '../status.decorator';
 import { summoned } from './constants';
@@ -21,15 +28,16 @@ export class SummonedStatus implements StatusEventHandler {
     constructor(
         @Inject(forwardRef(() => ExpeditionService))
         private readonly expeditionService: ExpeditionService,
+        private readonly endCombatProcess: EndCombatProcess,
+        private readonly enemyService: EnemyService,
     ) {}
 
     async handle(dto: StatusEventDTO<SummonedData>): Promise<void> {
         const {
             ctx,
+            ctx: { client },
             eventArgs: { enemy },
         } = dto;
-
-        console.log(dto);
 
         // First we check if the enemy that died is an elite, otherwise we exit
         // the status
@@ -55,7 +63,7 @@ export class SummonedStatus implements StatusEventHandler {
                 enemy.hpCurrent > 0 &&
                 enemyMinions.includes(enemy.enemyId) &&
                 enemy.statuses.debuff.some(
-                    (status) => status.name === SummonedStatus.name,
+                    (status) => status.name === summoned.name,
                 )
             );
         });
@@ -64,16 +72,38 @@ export class SummonedStatus implements StatusEventHandler {
         // from the enemies array and send a new message to the frontend, but only
         // if we have at least one minion
         if (minionsToRemove.length > 0) {
+            const minionsToRemoveIds = minionsToRemove.map(({ id }) => id);
+
             await this.expeditionService.updateByFilter(
                 {
-                    clientId: ctx.client.id,
+                    clientId: client.id,
                 },
                 {
                     $set: {
-                        'currentNode.data.enemies': [],
+                        'currentNode.data.enemies': filter(
+                            enemies,
+                            (enemy) => !minionsToRemoveIds.includes(enemy.id),
+                        ),
                     },
                 },
             );
+
+            // Next we send a new message to the frontend to remove the minions
+            client.emit(
+                'PutData',
+                StandardResponse.respond({
+                    message_type: SWARMessageType.CombatUpdate,
+                    action: SWARAction.RemoveEnemies,
+                    data: minionsToRemove,
+                }),
+            );
+
+            const newCtx = await this.expeditionService.getGameContext(client);
+
+            const areAllEnemiesDead = this.enemyService.isAllDead(newCtx);
+
+            if (areAllEnemiesDead)
+                await this.endCombatProcess.handle({ ctx: newCtx });
         }
     }
 
