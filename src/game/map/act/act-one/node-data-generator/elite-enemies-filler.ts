@@ -8,17 +8,16 @@ export class EliteEnemiesFiller extends EnemyNodeDataFiller {
         return [
             {
                 enemies: [thornWolfData.enemyId],
-                // frequency: 33.3,
-                frequency: 100,
+                frequency: 33.3,
             },
-            // {
-            //     enemies: [queenOrchidData.enemyId],
-            //     frequency: 33.3,
-            // },
-            // {
-            //     enemies: [ancientOneData.enemyId],
-            //     frequency: 33.3,
-            // },
+            {
+                enemies: [queenOrchidData.enemyId],
+                frequency: 33.3,
+            },
+            {
+                enemies: [ancientOneData.enemyId],
+                frequency: 33.3,
+            },
         ];
     }
 }
