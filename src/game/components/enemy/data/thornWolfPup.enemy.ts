@@ -1,5 +1,5 @@
 import { attachStatusEffect } from 'src/game/effects/attachStatus/constants';
-import { SummonedStatus } from 'src/game/status/summoned/summoned.status';
+import { summoned } from 'src/game/status/summoned/constants';
 import { CardTargetedEnum } from '../../card/card.enum';
 import {
     EnemyCategoryEnum,
@@ -23,15 +23,15 @@ export const thornWolfPupData: Enemy = {
             id: 0,
             intentions: [
                 {
-                    type: EnemyIntentionType.Buff,
+                    type: EnemyIntentionType.Debuff,
                     target: CardTargetedEnum.Self,
-                    value: 2,
+                    value: 1,
                     effects: [
                         {
                             effect: attachStatusEffect.name,
                             target: CardTargetedEnum.Self,
                             args: {
-                                statusName: SummonedStatus.name,
+                                statusName: summoned.name,
                                 statusArgs: {},
                             },
                         },

@@ -29,6 +29,8 @@ export class SummonedStatus implements StatusEventHandler {
             eventArgs: { enemy },
         } = dto;
 
+        console.log(dto);
+
         // First we check if the enemy that died is an elite, otherwise we exit
         // the status
         if (enemy.category !== EnemyCategoryEnum.Elite) return;

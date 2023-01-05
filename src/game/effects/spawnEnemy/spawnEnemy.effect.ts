@@ -89,8 +89,6 @@ export class SpawnEnemyEffect implements EffectHandler {
                   })
                 : false;
 
-            console.log({ combatHasThornWolfPups });
-
             if (!combatHasThornWolfPups)
                 await this.spawnEnemies(enemiesToSpawn, enemies, ctx.client);
         } else {
@@ -108,8 +106,6 @@ export class SpawnEnemyEffect implements EffectHandler {
         const enemiesFromDB = await this.enemyService.findEnemiesById(
             enemiesToSpawn,
         );
-
-        console.log({ enemiesToSpawn });
 
         // Now if we find enemies, we add them to the combat state and send a new message
         // To the frontend so they can show the proper animations
