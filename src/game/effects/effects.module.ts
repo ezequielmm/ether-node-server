@@ -8,6 +8,7 @@ import { ExpeditionModule } from '../components/expedition/expedition.module';
 import { PlayerModule } from '../components/player/player.module';
 import { TrinketModule } from '../components/trinket/trinket.module';
 import { HistoryModule } from '../history/history.module';
+import { ProcessModule } from '../process/process.module';
 import { ProviderModule } from '../provider/provider.module';
 import { StatusModule } from '../status/status.module';
 import { AddCardEffect } from './addCard/addCard.effect';
@@ -53,6 +54,7 @@ import { TwistTheBladeEffect } from './twistTheBlade/twistTheBlade.effect';
         CombatQueueModule,
         HistoryModule,
         CardSelectionScreenModule,
+        ProcessModule,
     ],
     providers: [
         EffectService,

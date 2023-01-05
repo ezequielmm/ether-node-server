@@ -11,11 +11,11 @@ import { PotionService } from './potion.service';
 
 @Module({
     imports: [
-        forwardRef(() => ExpeditionModule),
-        EffectModule,
-        PlayerModule,
         KindagooseModule.forFeature([Potion]),
+        forwardRef(() => ExpeditionModule),
+        forwardRef(() => EffectModule),
         forwardRef(() => ActionModule),
+        PlayerModule,
         CombatQueueModule,
     ],
     providers: [PotionService, PotionGateway],
