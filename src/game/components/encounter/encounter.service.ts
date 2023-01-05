@@ -23,6 +23,7 @@ import { CardDescriptionFormatter } from '../../cardDescriptionFormatter/cardDes
 import { PotionService } from '../potion/potion.service';
 import { Player } from '../expedition/player';
 import { CardRarityEnum } from '../card/card.enum';
+import { logger } from '@typegoose/typegoose/lib/logSettings';
 
 @Injectable()
 export class EncounterService {
@@ -40,18 +41,21 @@ export class EncounterService {
         //generate encounter
         let encounterId = getRandomItemByWeight(
             [
-                EncounterIdEnum.AbandonedAltar,
-                EncounterIdEnum.Rugburn,
-                EncounterIdEnum.Nagpra,
+                EncounterIdEnum.AbandonedAltar, // [3 jan 2023] customer is not going to provide art
+                EncounterIdEnum.Rugburn, // [3 jan 2023] wont do
+                EncounterIdEnum.Nagpra, //3 TODO disabled due to server crashing bug
                 EncounterIdEnum.TreeCarving,
                 EncounterIdEnum.Naiad,
-                EncounterIdEnum.WillOWisp,
-                EncounterIdEnum.DancingSatyr,
-                EncounterIdEnum.EnchantedForest,
+                EncounterIdEnum.WillOWisp, //6
+                EncounterIdEnum.DancingSatyr, //7
+                EncounterIdEnum.EnchantedForest, //8
                 EncounterIdEnum.MossyTroll,
                 EncounterIdEnum.YoungWizard,
+                EncounterIdEnum.Oddbarks, // 11
+                EncounterIdEnum.RunicBehive,
             ],
-            [1, 0, 1, 0, 0, 1, 1, 1, 0, 0],
+            //      1  2  3  4  5  6  7  8  9  10 11 12
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0],
         );
 
         //fetch existing encounter if there is one
@@ -88,6 +92,15 @@ export class EncounterService {
         }
 
         const buttonPressed = stage.buttons[choiceIdx];
+        if (buttonPressed.randomStaging) {
+            const r = getRandomBetween(
+                0,
+                buttonPressed.randomStaging.length - 1,
+            );
+            const randomStage = buttonPressed.randomStaging[r];
+            buttonPressed.effects = randomStage.effects;
+            buttonPressed.nextStage = randomStage.nextStage;
+        }
         await this.applyEffects(buttonPressed.effects, client);
 
         if (buttonPressed.awaitModal) {
@@ -186,6 +199,7 @@ export class EncounterService {
                     amount = parseInt(effect.amount);
                     await this.incrHp(amount, playerState, expeditionId);
                     break;
+
                 case 'upgrade_random_card': //eg will o wisp
                     await this.upgradeRandomCard(client, playerState);
                     break;
@@ -195,6 +209,10 @@ export class EncounterService {
                 case 'card_add_to_library': //eg naiad
                     const cardId = parseInt(effect.cardId);
                     await this.cardService.addCardToDeck(ctx, cardId);
+                    break;
+                case 'choose_trinket':
+                    amount = parseInt(effect.amount);
+                    await this.chooseTrinket(client, playerState, amount);
                     break;
                 case 'choose_card_to_sacrifice': // abandon altar
                     await this.chooseCardRemove(client, playerState);
@@ -212,7 +230,7 @@ export class EncounterService {
                 case 'trinket':
                     switch (effect.item) {
                         case 'birdcage': //nagpra
-                            await this.trinketService.add(ctx, 2); //TODO need correct trinket id
+                            await this.trinketService.add(ctx, 3);
                             break;
                         case 'runic_tome': //young wizard
                             await this.trinketService.add(ctx, 2); //TODO need correct trinket id
@@ -232,6 +250,25 @@ export class EncounterService {
                     break;
             }
         }
+    }
+
+    private async chooseTrinket(
+        client: Socket,
+        playerState: Player,
+        amount: number,
+    ): Promise<void> {
+        client.emit(
+            'PutData',
+            StandardResponse.respond({
+                message_type: SWARMessageType.EncounterUpdate,
+                action: SWARAction.SelectTrinkets,
+                data: {
+                    trinkets: playerState.trinkets,
+                    trinketsToTake: amount,
+                    kind: 'remove',
+                },
+            }),
+        );
     }
 
     private async chooseCardRemove(
@@ -401,6 +438,12 @@ export class EncounterService {
             if (effect.kind === 'coin') {
                 const amount = parseInt(effect.amount);
                 if (playerState.gold + amount < 0) {
+                    return false;
+                }
+            }
+            if (effect.kind === 'choose_trinket') {
+                const amount = parseInt(effect.amount);
+                if (playerState.trinkets.length < amount) {
                     return false;
                 }
             }
@@ -591,7 +634,7 @@ export class EncounterService {
         switch (effect) {
             case 'abandon_altar':
                 switch (removeMe.rarity) {
-                    case CardRarityEnum.Special:
+                    case CardRarityEnum.Special: //abandon altar treat special as cursed
                     case CardRarityEnum.Starter:
                         break;
                     case CardRarityEnum.Common:

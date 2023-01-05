@@ -60,7 +60,7 @@ export class EndCombatProcess {
             }),
         );
 
-        ctx.events.emit(EVENT_AFTER_END_COMBAT, { ctx });
+        await ctx.events.emitAsync(EVENT_AFTER_END_COMBAT, { ctx });
     }
 
     private async emitPlayerDefeated(ctx: GameContext): Promise<void> {
