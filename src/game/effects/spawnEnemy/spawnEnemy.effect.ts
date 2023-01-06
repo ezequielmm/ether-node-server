@@ -154,6 +154,18 @@ export class SpawnEnemyEffect implements EffectHandler {
                 },
                 { $set: { 'currentNode.data.enemies': enemies } },
             );
+
+            // Now we generate a new ctx to generate the new enemy intentions
+            const newCtx = await this.expeditionService.getGameContext(client);
+
+            // Now we generate the new intentions, always going to the initial 0 state
+            enemiesFromDB.forEach(async (enemy) => {
+                await this.enemyService.setCurrentScript(
+                    newCtx,
+                    enemy.enemyId,
+                    enemy.scripts[0],
+                );
+            });
         }
     }
 
