@@ -22,110 +22,110 @@ export const thornWolfPupData: Enemy = {
     description: 'Minion creature to ThornWolf',
     healthRange: [30, 35],
     scripts: [
-        // {
-        //     // we need a summoned status
-        //     id: 0,
-        //     intentions: [
-        //         {
-        //             type: EnemyIntentionType.Debuff,
-        //             target: CardTargetedEnum.Self,
-        //             value: 1,
-        //             effects: [
-        //                 {
-        //                     effect: attachStatusEffect.name,
-        //                     target: CardTargetedEnum.Self,
-        //                     args: {
-        //                         statusName: summoned.name,
-        //                         statusArgs: {},
-        //                     },
-        //                 },
-        //             ],
-        //         },
-        //     ],
-        //     next: [
-        //         {
-        //             probability: 0.6,
-        //             scriptId: 1,
-        //         },
-        //         {
-        //             probability: 0.4,
-        //             scriptId: 2,
-        //         },
-        //     ],
-        // },
-        // {
-        //     id: 1,
-        //     intentions: [
-        //         {
-        //             type: EnemyIntentionType.Attack,
-        //             target: CardTargetedEnum.Player,
-        //             value: 7,
-        //             effects: [
-        //                 {
-        //                     effect: damageEffect.name,
-        //                     target: CardTargetedEnum.Player,
-        //                     args: { value: 15 },
-        //                 },
-        //             ],
-        //         },
-        //     ],
-        //     next: [
-        //         {
-        //             probability: 0.6,
-        //             scriptId: 3,
-        //         },
-        //         {
-        //             probability: 0.4,
-        //             scriptId: 1,
-        //         },
-        //     ],
-        // },
-        // {
-        //     id: 2,
-        //     intentions: [
-        //         {
-        //             type: EnemyIntentionType.Defend,
-        //             target: CardTargetedEnum.Self,
-        //             value: 4,
-        //             effects: [
-        //                 {
-        //                     effect: defenseEffect.name,
-        //                     target: CardTargetedEnum.Self,
-        //                     args: {
-        //                         value: 4,
-        //                     },
-        //                 },
-        //             ],
-        //         },
-        //         {
-        //             type: EnemyIntentionType.Buff,
-        //             target: CardTargetedEnum.Self,
-        //             value: 1,
-        //             effects: [
-        //                 {
-        //                     effect: attachStatusEffect.name,
-        //                     target: CardTargetedEnum.Self,
-        //                     args: {
-        //                         statusName: spikesStatus.name,
-        //                         statusArgs: {
-        //                             counter: 1,
-        //                         },
-        //                     },
-        //                 },
-        //             ],
-        //         },
-        //     ],
-        //     next: [
-        //         {
-        //             probability: 0.5,
-        //             scriptId: 1,
-        //         },
-        //         {
-        //             probability: 0.5,
-        //             scriptId: 3,
-        //         },
-        //     ],
-        // },
+        {
+            // we need a summoned status
+            id: 0,
+            intentions: [
+                {
+                    type: EnemyIntentionType.Debuff,
+                    target: CardTargetedEnum.Self,
+                    value: 1,
+                    effects: [
+                        {
+                            effect: attachStatusEffect.name,
+                            target: CardTargetedEnum.Self,
+                            args: {
+                                statusName: summoned.name,
+                                statusArgs: {},
+                            },
+                        },
+                    ],
+                },
+            ],
+            next: [
+                {
+                    probability: 0.6,
+                    scriptId: 1,
+                },
+                {
+                    probability: 0.4,
+                    scriptId: 2,
+                },
+            ],
+        },
+        {
+            id: 1,
+            intentions: [
+                {
+                    type: EnemyIntentionType.Attack,
+                    target: CardTargetedEnum.Player,
+                    value: 7,
+                    effects: [
+                        {
+                            effect: damageEffect.name,
+                            target: CardTargetedEnum.Player,
+                            args: { value: 15 },
+                        },
+                    ],
+                },
+            ],
+            next: [
+                {
+                    probability: 0.6,
+                    scriptId: 3,
+                },
+                {
+                    probability: 0.4,
+                    scriptId: 1,
+                },
+            ],
+        },
+        {
+            id: 2,
+            intentions: [
+                {
+                    type: EnemyIntentionType.Defend,
+                    target: CardTargetedEnum.Self,
+                    value: 4,
+                    effects: [
+                        {
+                            effect: defenseEffect.name,
+                            target: CardTargetedEnum.Self,
+                            args: {
+                                value: 4,
+                            },
+                        },
+                    ],
+                },
+                {
+                    type: EnemyIntentionType.Buff,
+                    target: CardTargetedEnum.Self,
+                    value: 1,
+                    effects: [
+                        {
+                            effect: attachStatusEffect.name,
+                            target: CardTargetedEnum.Self,
+                            args: {
+                                statusName: spikesStatus.name,
+                                statusArgs: {
+                                    counter: 1,
+                                },
+                            },
+                        },
+                    ],
+                },
+            ],
+            next: [
+                {
+                    probability: 0.5,
+                    scriptId: 1,
+                },
+                {
+                    probability: 0.5,
+                    scriptId: 3,
+                },
+            ],
+        },
         {
             id: 3,
             intentions: [
