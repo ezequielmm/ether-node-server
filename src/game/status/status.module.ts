@@ -51,6 +51,7 @@ import { TrappedStatus } from './trapped/trapped.status';
 import { TurtlingStatus } from './turtling/turtling.status';
 import { SummonedStatus } from './summoned/summoned.status';
 import { ProcessModule } from '../process/process.module';
+import { PeacockFeatherStatus } from './peacockFeather/peacockFeather.status';
 
 @Module({
     imports: [
@@ -110,6 +111,7 @@ import { ProcessModule } from '../process/process.module';
         TrappedStatus,
         BirdcageStatus,
         SummonedStatus,
+        PeacockFeatherStatus,
     ],
     exports: [StatusService],
 })

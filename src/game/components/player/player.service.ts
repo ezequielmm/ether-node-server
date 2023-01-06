@@ -14,6 +14,7 @@ import {
     PLAYER_CURRENT_HP_PATH,
     PLAYER_DEFENSE_PATH,
     PLAYER_ENERGY_PATH,
+    PLAYER_MAX_HP_PATH,
     PLAYER_STATE_HP_CURRENT_PATH,
     PLAYER_STATUSES_PATH,
 } from './contants';
@@ -148,6 +149,26 @@ export class PlayerService {
         this.logger.debug(`Player hp set to ${newHp}`);
 
         return newHp;
+    }
+
+    /**
+     * Raise the player's global Max HP
+     */
+    public async raiseMaxHp(
+        ctx: GameContext,
+        raiseHp: number,
+    ): Promise<number> {
+        const player = this.get(ctx);
+        const newHpMax = player.value.globalState.hpMax + raiseHp;
+
+        await this.expeditionService.updateById(ctx.expedition._id.toString(), {
+            [PLAYER_MAX_HP_PATH]: newHpMax,
+        });
+
+        set(ctx.expedition, PLAYER_MAX_HP_PATH, newHpMax);
+        this.logger.debug(`Player raise Max HP by  ${raiseHp}`);
+
+        return newHpMax;
     }
 
     /**
