@@ -152,13 +152,11 @@ export class DrawCardAction {
                     StandardResponse.respond({
                         message_type: SWARMessageTypeToSend,
                         action: SWARAction.MoveCard,
-                        data: discardPile.map(({ id }) => {
-                            return {
-                                source: 'discard',
-                                destination: 'draw',
-                                id,
-                            };
-                        }),
+                        data: discardPile.map(({ id }) => ({
+                            source: 'discard',
+                            destination: 'draw',
+                            id,
+                        })),
                     }),
                 );
 
