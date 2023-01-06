@@ -13,6 +13,7 @@ import { CardService } from '../components/card/card.service';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { EVENT_AFTER_DRAW_CARDS } from '../constants';
 import { GameContext } from '../components/interfaces';
+import { shuffle, takeRight } from 'lodash';
 
 interface DrawCardDTO {
     readonly ctx: GameContext;
@@ -100,7 +101,7 @@ export class DrawCardAction {
             let cardsToMoveToHand: IExpeditionPlayerStateDeckCard[] = [];
 
             // Now we take the cards we need from the draw pile
-            cardsToMoveToHand = drawPile.slice(0, amountToTakeFromDraw);
+            cardsToMoveToHand = takeRight(drawPile, amountToTakeFromDraw);
 
             // Remove the cards taken from the draw pile
             let newDraw = removeCardsFromPile({
@@ -137,9 +138,7 @@ export class DrawCardAction {
             if (amountToTakeFromDiscard > 0) {
                 // First we move all the cards from the discard pile to the
                 // draw pile and shuffle it
-                newDraw = [...newDraw, ...discard].sort(
-                    () => 0.5 - Math.random(),
-                );
+                newDraw = shuffle([...newDraw, ...discard]);
 
                 // Send create message for the cards
                 // source: discard
@@ -166,8 +165,8 @@ export class DrawCardAction {
                 newDiscard = [];
 
                 // Here we get the rest of cards to take from the discard pile
-                const restOfCardsToTake = newDraw.slice(
-                    0,
+                const restOfCardsToTake = takeRight(
+                    newDraw,
                     amountToTakeFromDiscard,
                 );
 
@@ -194,13 +193,11 @@ export class DrawCardAction {
                     StandardResponse.respond({
                         message_type: SWARMessageTypeToSend,
                         action: SWARAction.MoveCard,
-                        data: restOfCardsToTake.map(({ id }) => {
-                            return {
-                                source: 'draw',
-                                destination: 'hand',
-                                id,
-                            };
-                        }),
+                        data: restOfCardsToTake.map(({ id }) => ({
+                            source: 'draw',
+                            destination: 'hand',
+                            id,
+                        })),
                     }),
                 );
             }
