@@ -6,7 +6,10 @@ import { CombatQueueService } from '../components/combatQueue/combatQueue.servic
 import { EnemyService } from '../components/enemy/enemy.service';
 import { CombatTurnEnum } from '../components/expedition/expedition.enum';
 import { GameContext } from '../components/interfaces';
-import { EVENT_AFTER_PLAYER_TURN_END } from '../constants';
+import {
+    EVENT_AFTER_PLAYER_TURN_END,
+    EVENT_BEFORE_PLAYER_TURN_END,
+} from '../constants';
 import { SWARMessageType } from '../standardResponse/standardResponse';
 import { BeginEnemyTurnProcess } from './beginEnemyTurn.process';
 
@@ -31,6 +34,9 @@ export class EndPlayerTurnProcess {
         const { ctx } = payload;
         const { client, expedition } = ctx;
 
+        await this.eventEmitter.emitAsync(EVENT_BEFORE_PLAYER_TURN_END, {
+            ctx,
+        });
         this.logger.debug(`Ending player ${client.id} turn`);
 
         this.changeTurnAction.handle({

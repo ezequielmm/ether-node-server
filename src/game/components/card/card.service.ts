@@ -100,7 +100,9 @@ export class CardService {
     }
 
     async findCardsById(cards: number[]): Promise<Card[]> {
-        return this.card.find({ cardId: { $in: cards } }).lean();
+        return this.card
+            .find({ cardId: { $in: cards }, isActive: true })
+            .lean();
     }
 
     async randomCards(limit: number, card_type: CardTypeEnum): Promise<Card[]> {
