@@ -15,6 +15,7 @@ import { treantData } from './data/treant.enemy';
 import { blueSporelingData } from './data/blueSporeling.enemy';
 import { redSporelingData } from './data/redSporeling.enemy';
 import { yellowSporelingData } from './data/yellowSporeling.enemy';
+import { centipionData } from './data/centipion.enemy';
 
 export const data: Enemy[] = [
     sporeMongerData,
@@ -33,4 +34,5 @@ export const data: Enemy[] = [
     blueSporelingData,
     redSporelingData,
     yellowSporelingData,
+    centipionData,
 ];
