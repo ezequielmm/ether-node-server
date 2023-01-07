@@ -81,7 +81,7 @@ export const centipionData: Enemy = {
                 {
                     type: EnemyIntentionType.Debuff,
                     target: CardTargetedEnum.Player,
-                    value: 1,
+                    value: 2,
                     effects: [
                         {
                             effect: addCardEffect.name,
