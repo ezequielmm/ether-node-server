@@ -87,7 +87,7 @@ export const centipionData: Enemy = {
                             effect: addCardEffect.name,
                             target: CardTargetedEnum.Player,
                             args: {
-                                value: 1,
+                                value: 2,
                                 cardId: WoundedCard.cardId,
                                 destination: 'discard',
                             },
