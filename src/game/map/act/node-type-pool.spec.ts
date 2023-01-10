@@ -12,7 +12,6 @@ describe('Node type pool', () => {
             nodeTypePool = new NodeTypePool(23);
             expect(nodeTypePool['pool'].length).toBe(23);
             expect(nodeTypePool['pool'].length).toBe(nodeTypePool['length']);
-            console.log(nodeTypePool['pool']);
         });
     });
 });
