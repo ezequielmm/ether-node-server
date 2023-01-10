@@ -23,6 +23,8 @@ export class WalletService {
                 },
             ),
         );
-        return data;
+        const sub_data = data.data as any;
+        const content = sub_data.data;
+        return content;
     }
 }

@@ -18,6 +18,6 @@ export class WalletController {
     constructor(private walletService :WalletService){}
     @Get(':id')
     getMe(@Param('id') walletId: string) {
-        this.walletService.getTokenIdList(walletId);
+        return this.walletService.getTokenIdList(walletId);
     }
 }
