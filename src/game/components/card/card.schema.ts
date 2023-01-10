@@ -1,10 +1,11 @@
-import { ModelOptions, Prop } from '@typegoose/typegoose';
+import { ModelOptions, Prop, Severity } from '@typegoose/typegoose';
 import { JsonEffect } from 'src/game/effects/effects.interface';
 import { JsonStatus } from 'src/game/status/interfaces';
 import { CardRarityEnum, CardTypeEnum, CardKeywordEnum } from './card.enum';
 
 @ModelOptions({
     schemaOptions: { collection: 'cards', versionKey: false },
+    options: { allowMixed: Severity.ALLOW },
 })
 export class Card {
     @Prop({ unique: true })
