@@ -13,7 +13,7 @@ export class WalletService {
 
         const data = await firstValueFrom(
             this.httpService.get<any[]>(
-                `${protocol}${domain}'/v1/accounts/'${walletId}'/contracts/0x32A322C7C77840c383961B8aB503c9f45440c81f/chains/1/tokens`,
+                `${protocol}${domain}/v1/accounts/${walletId}/contracts/0x32A322C7C77840c383961B8aB503c9f45440c81f/chains/1/tokens`,
                 {
                     headers: {
                         Authorization:
