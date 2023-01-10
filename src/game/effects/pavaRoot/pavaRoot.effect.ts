@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { filter, sample } from 'lodash';
 import { MoveCardAction } from 'src/game/action/moveCard.action';
 import { CardTypeEnum } from 'src/game/components/card/card.enum';
-import { CardSelectionScreenOriginPileEnum } from 'src/game/components/cardSelectionScreen/cardSelectionScreen.enum';
 import { EffectDecorator } from '../effects.decorator';
 import { EffectDTO, EffectHandler } from '../effects.interface';
 import { pavaRootEffect } from './constants';
@@ -12,7 +11,7 @@ import { pavaRootEffect } from './constants';
 })
 @Injectable()
 export class PavaRootEffect implements EffectHandler {
-    constructor(private readonly moveCardToHandAction: MoveCardAction) {}
+    constructor(private readonly moveCardAction: MoveCardAction) {}
 
     async handle(dto: EffectDTO): Promise<void> {
         const { ctx } = dto;
@@ -26,10 +25,11 @@ export class PavaRootEffect implements EffectHandler {
         );
 
         if (attackCard) {
-            await this.moveCardToHandAction.handle({
+            await this.moveCardAction.handle({
                 client: ctx.client,
                 cardIds: [attackCard.id],
-                originPile: CardSelectionScreenOriginPileEnum.Draw,
+                originPile: 'draw',
+                targetPile: 'hand',
                 callback: (card) => {
                     card.energy = 0;
                     return card;
