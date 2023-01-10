@@ -1,9 +1,8 @@
 import { attachStatusEffect } from 'src/game/effects/attachStatus/constants';
 import { damageEffect } from 'src/game/effects/damage/constants';
-import { defenseEffect } from 'src/game/effects/defense/constants';
-import { spawnEnemyEffect } from 'src/game/effects/spawnEnemy/contants';
-import { spikesStatus } from 'src/game/status/spikes/constants';
+import { feebleStatus } from 'src/game/status/feeble/constants';
 import { CardTargetedEnum } from '../../card/card.enum';
+import { distraught } from 'src/game/status/distraught/constants';
 import {
     EnemyTypeEnum,
     EnemyCategoryEnum,
@@ -11,41 +10,56 @@ import {
     EnemyIntentionType,
 } from '../enemy.enum';
 import { Enemy } from '../enemy.schema';
-import { thornWolfPupData } from './thornWolfPup.enemy';
+import { resolveStatus } from 'src/game/status/resolve/constants';
 
-export const thornWolfData: Enemy = {
-    enemyId: 11,
-    name: 'ThornWolf',
-    type: EnemyTypeEnum.Plant,
-    category: EnemyCategoryEnum.Elite,
-    size: EnemySizeEnum.Large,
+export const deepDwellerData: Enemy = {
+    enemyId: 17,
+    name: 'Deep Dweller',
+    type: EnemyTypeEnum.Beast,
+    category: EnemyCategoryEnum.Boss,
+    size: EnemySizeEnum.Giant,
     description:
-        'Imposing wolf-cat creature with multiple eyes and sharp thorns. Mutated by the bacteria in the swamp, he is half animal, half plant and an itchy fungal slime grows on him, making him extremely irritable. He claws at knights with his massive toxic THORN CLAWS',
-    healthRange: [85, 90],
+        'The head and arms of a vast monster that extends off-screen. Resembles an angler fish, with a huge toothy mouth and a bloody severed stalk on it’s head, from where the Ethereal Figure lure had been cut off',
+    healthRange: [400, 400],
     scripts: [
         {
             id: 0,
             intentions: [],
-            next: [
-                { probability: 0.5, scriptId: 1 },
-                { probability: 0.5, scriptId: 2 },
-            ],
+            next: [{ probability: 1, scriptId: 1 }],
         },
         {
             id: 1,
             intentions: [
                 {
-                    type: EnemyIntentionType.Attack,
+                    type: EnemyIntentionType.Debuff,
                     target: CardTargetedEnum.Player,
-                    value: 15,
-                    //  This effect 'Summon ' was not developed so I have added 'damageEffect' one
-                    //  TODO: Add Summon effect
+                    value: 2,
                     effects: [
                         {
-                            effect: damageEffect.name,
+                            effect: attachStatusEffect.name,
                             target: CardTargetedEnum.Player,
                             args: {
-                                value: 15,
+                                statusName: feebleStatus.name,
+                                statusArgs: {
+                                    counter: 2,
+                                },
+                            },
+                        },
+                    ],
+                },
+                {
+                    type: EnemyIntentionType.Debuff,
+                    target: CardTargetedEnum.Player,
+                    value: 2,
+                    effects: [
+                        {
+                            effect: attachStatusEffect.name,
+                            target: CardTargetedEnum.Player,
+                            args: {
+                                statusName: distraught.name,
+                                statusArgs: {
+                                    counter: 2,
+                                },
                             },
                         },
                     ],
@@ -54,11 +68,11 @@ export const thornWolfData: Enemy = {
             next: [
                 {
                     probability: 0.5,
-                    scriptId: 3,
+                    scriptId: 2,
                 },
                 {
                     probability: 0.5,
-                    scriptId: 4,
+                    scriptId: 3,
                 },
             ],
         },
@@ -68,73 +82,13 @@ export const thornWolfData: Enemy = {
                 {
                     type: EnemyIntentionType.Attack,
                     target: CardTargetedEnum.Player,
-                    value: 6,
+                    value: 16,
                     effects: [
                         {
                             effect: damageEffect.name,
                             target: CardTargetedEnum.Player,
                             args: {
-                                value: 6,
-                            },
-                        },
-                    ],
-                },
-                {
-                    type: EnemyIntentionType.Attack,
-                    target: CardTargetedEnum.Player,
-                    value: 6,
-                    effects: [
-                        {
-                            effect: damageEffect.name,
-                            target: CardTargetedEnum.Player,
-                            args: {
-                                value: 6,
-                            },
-                        },
-                    ],
-                },
-            ],
-            next: [
-                {
-                    probability: 0.5,
-                    scriptId: 3,
-                },
-                {
-                    probability: 0.5,
-                    scriptId: 4,
-                },
-            ],
-        },
-        {
-            id: 3,
-            intentions: [
-                {
-                    type: EnemyIntentionType.Defend,
-                    target: CardTargetedEnum.Self,
-                    value: 5,
-                    effects: [
-                        {
-                            effect: defenseEffect.name,
-                            target: CardTargetedEnum.Self,
-                            args: {
-                                value: 5,
-                            },
-                        },
-                    ],
-                },
-                {
-                    type: EnemyIntentionType.Buff,
-                    target: CardTargetedEnum.Self,
-                    value: 2,
-                    effects: [
-                        {
-                            effect: attachStatusEffect.name,
-                            target: CardTargetedEnum.Self,
-                            args: {
-                                statusName: spikesStatus.name,
-                                statusArgs: {
-                                    counter: 2,
-                                },
+                                value: 16,
                             },
                         },
                     ],
@@ -152,18 +106,76 @@ export const thornWolfData: Enemy = {
             ],
         },
         {
+            id: 3,
+            intentions: [
+                {
+                    type: EnemyIntentionType.Attack,
+                    target: CardTargetedEnum.Player,
+                    value: 10,
+                    effects: [
+                        {
+                            effect: damageEffect.name,
+                            target: CardTargetedEnum.Player,
+                            args: {
+                                value: 10,
+                                multiplier: 2,
+                            },
+                        },
+                    ],
+                },
+            ],
+            next: [
+                {
+                    probability: 0.5,
+                    scriptId: 1,
+                },
+                {
+                    probability: 0.4,
+                    scriptId: 4,
+                },
+            ],
+        },
+        {
             id: 4,
             intentions: [
                 {
-                    type: EnemyIntentionType.Special,
+                    type: EnemyIntentionType.Buff,
                     target: CardTargetedEnum.Self,
-                    value: 1,
+                    value: 2,
                     effects: [
                         {
-                            effect: spawnEnemyEffect.name,
+                            effect: attachStatusEffect.name,
                             target: CardTargetedEnum.Self,
                             args: {
-                                enemiesToSpawn: [thornWolfPupData.enemyId],
+                                statusName: resolveStatus.name,
+                                statusArgs: {
+                                    counter: 2,
+                                },
+                            },
+                        },
+                    ],
+                },
+            ],
+            next: [
+                {
+                    probability: 1,
+                    scriptId: 5,
+                },
+            ],
+        },
+        {
+            id: 5,
+            intentions: [
+                {
+                    type: EnemyIntentionType.Attack,
+                    target: CardTargetedEnum.Player,
+                    value: 31,
+                    effects: [
+                        {
+                            effect: damageEffect.name,
+                            target: CardTargetedEnum.Player,
+                            args: {
+                                value: 31,
                             },
                         },
                     ],

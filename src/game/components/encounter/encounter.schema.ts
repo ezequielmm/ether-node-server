@@ -1,9 +1,10 @@
-import { modelOptions, Prop } from '@typegoose/typegoose';
+import { modelOptions, Prop, Severity } from '@typegoose/typegoose';
 import { EncounterButton } from './encounter.interfaces';
 
 export type EncounterDocument = Encounter & Document;
 @modelOptions({
     schemaOptions: { collection: 'encounters', versionKey: false },
+    options: { allowMixed: Severity.ALLOW },
 })
 export class Encounter {
     @Prop()
