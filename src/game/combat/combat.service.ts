@@ -23,7 +23,7 @@ import { TrinketRarityEnum } from '../components/trinket/trinket.enum';
 import { HARD_MODE_NODE_START, HARD_MODE_NODE_END } from '../constants';
 import { RewardService } from '../reward/reward.service';
 import { StatusType } from '../status/interfaces';
-import { filter } from 'lodash';
+import { filter, shuffle, takeRight } from 'lodash';
 import { Socket } from 'socket.io';
 import { CardSelectionScreenService } from '../components/cardSelectionScreen/cardSelectionScreen.service';
 import { MoveCardAction } from '../action/moveCard.action';
@@ -61,9 +61,7 @@ export class CombatService {
         // Get current health
         const { hpCurrent, hpMax, cards } = ctx.expedition.playerState;
 
-        const handCards = cards
-            .sort(() => 0.5 - Math.random())
-            .slice(0, initialHandPileSize);
+        const handCards = takeRight(shuffle(cards), initialHandPileSize);
 
         const drawCards = removeCardsFromPile({
             originalPile: cards,

@@ -256,7 +256,7 @@ export interface StatusEffectHandler {
  */
 export interface StatusEventHandler {
     // TODO: Define the args
-    handle(args: StatusEventDTO): Promise<any>;
+    handle(args: StatusEventDTO): Promise<void>;
 }
 
 export type StatusHandler = StatusEffectHandler | StatusEventHandler;

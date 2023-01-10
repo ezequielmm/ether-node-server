@@ -8,6 +8,7 @@ import { ExpeditionModule } from '../components/expedition/expedition.module';
 import { PlayerModule } from '../components/player/player.module';
 import { TrinketModule } from '../components/trinket/trinket.module';
 import { HistoryModule } from '../history/history.module';
+import { ProcessModule } from '../process/process.module';
 import { ProviderModule } from '../provider/provider.module';
 import { StatusModule } from '../status/status.module';
 import { AddCardEffect } from './addCard/addCard.effect';
@@ -23,6 +24,7 @@ import { DrawCardEffect } from './drawCard/drawCard.effect';
 import { EffectService } from './effects.service';
 import { EnergyEffect } from './energy/energy.effect';
 import { ExecutionersBlowEffect } from './executionersBlow/executionersBlow.effect';
+import { FleeEffect } from './flee/flee.effect';
 import { FlurryPlusEffect } from './flurry/flurry-plus.effect';
 import { FlurryEffect } from './flurry/flurry.effect';
 import { HeadButtEffect } from './headButt/headButt.effect';
@@ -52,6 +54,7 @@ import { TwistTheBladeEffect } from './twistTheBlade/twistTheBlade.effect';
         CombatQueueModule,
         HistoryModule,
         CardSelectionScreenModule,
+        ProcessModule,
     ],
     providers: [
         EffectService,
@@ -82,6 +85,7 @@ import { TwistTheBladeEffect } from './twistTheBlade/twistTheBlade.effect';
         RemoveConfusionEffect,
         ExecutionersBlowEffect,
         SpawnEnemyEffect,
+        FleeEffect,
     ],
     exports: [EffectService],
 })

@@ -533,10 +533,10 @@ export class StatusService {
                 value: {
                     id: expedition.playerId,
                     globalState: expedition.playerState,
-                    combatState: expedition.currentNode.data.player,
+                    combatState: expedition.currentNode?.data.player,
                 },
             },
-            statuses: expedition.currentNode.data.player.statuses,
+            statuses: expedition.currentNode?.data.player.statuses,
         });
 
         collection.push(...this.getAllFromEnemies(ctx));
