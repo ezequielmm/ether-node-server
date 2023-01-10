@@ -1,17 +1,23 @@
 import { Injectable } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { firstValueFrom } from 'rxjs';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class WalletService {
-    constructor(private readonly httpService: HttpService) {}
+    constructor(
+        private readonly httpService: HttpService,
+        private readonly configService: ConfigService,
+    ) {}
 
     async getTokenIdList(walletId: string): Promise<string[]> {
-        const protocol = 'http://';
+        const domain = this.configService.get<string>('NFT_SERVICE_URL');
+        const contract_id = this.configService.get<string>(
+            'NFT_SERVICE_CONTRACT_ID',
+        );
 
-        const domain = 'nft-service.dev.robotseamonster.com';
-
-        const url = `${protocol}${domain}/v1/accounts/${walletId}/contracts/0x32A322C7C77840c383961B8aB503c9f45440c81f/chains/1/tokens`;
+        const url = `${domain}/v1/accounts/${walletId}/contracts/${contract_id}/chains/1/tokens`;
+        //for example https://api.dev.kote.robotseamonster.com/v1/wallets/0xbd22537d05207e470A458773683041012ddcAB65
         const data = await firstValueFrom(
             this.httpService.get<any[]>(url, {
                 headers: {

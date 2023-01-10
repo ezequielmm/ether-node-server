@@ -26,6 +26,8 @@ NODE_ENV="development"
 | SSL_KEY_PATH    | The path for the `server.key` file for SSL                              |
 | GET_PROFILE_URL | API route to get the user profile on the auth service                   |
 | NODE_ENV        | Environment where the service is running: `development` or `production` |
+| NFT_SERVICE_URL | API route to get wallet tokens from the nft service                     |
+|NFT_SERVICE_CONTRACT_ID| Contract id for nft srevice queries                               |
 
 Once the `.env` file is set, we can run `npm run seed` to seed the database with the initial data.
 
