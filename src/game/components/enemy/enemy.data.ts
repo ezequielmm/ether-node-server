@@ -15,6 +15,7 @@ import { treantData } from './data/treant.enemy';
 import { blueSporelingData } from './data/blueSporeling.enemy';
 import { redSporelingData } from './data/redSporeling.enemy';
 import { yellowSporelingData } from './data/yellowSporeling.enemy';
+import { deepDwellerData } from './data/deepDweller.enemy';
 import { thornWolfPupData } from './data/thornWolfPup.enemy';
 
 export const data: Enemy[] = [
@@ -34,5 +35,6 @@ export const data: Enemy[] = [
     blueSporelingData,
     redSporelingData,
     yellowSporelingData,
+    deepDwellerData,
     thornWolfPupData,
 ];
