@@ -20,6 +20,7 @@ import { resolveStatus } from './resolve/constants';
 import { siphoning } from './siphoning/constants';
 import { spikesStatus } from './spikes/constants';
 import { spirited } from './spirited/contants';
+import { summoned } from './summoned/constants';
 import { tasteOfBloodBuff, tasteOfBloodDebuff } from './tasteOfBlood/constants';
 import { trapped } from './trapped/constants';
 import { turtling } from './turtling/constants';
@@ -114,6 +115,8 @@ export class StatusGenerator {
                 return `All attacks against this character do an extra 50% damage`;
             case birdcageStatus.name:
                 return `Every 4th attack deals ${value}  more damage`;
+            case summoned.name:
+                return `Summoned enemies are banished if all masters are defeated`;
             default:
                 return `Unknown status`;
         }

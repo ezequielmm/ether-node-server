@@ -55,9 +55,7 @@ export class MoveCardAction {
         // Now we take the cards by its id and check if we have to
         // change their cost down to 0
         const cardsToMove = deckPile
-            .filter(({ id }) => {
-                return cardIds.includes(id);
-            })
+            .filter(({ id }) => cardIds.includes(id))
             .map(callback || ((card) => card));
 
         // Now we remove the cards from the desired pile

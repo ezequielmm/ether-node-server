@@ -1,8 +1,9 @@
-import { ModelOptions, Prop } from '@typegoose/typegoose';
+import { ModelOptions, Prop, Severity } from '@typegoose/typegoose';
 import { CharacterClassEnum } from './character.enum';
 
 @ModelOptions({
     schemaOptions: { collection: 'characters', versionKey: false },
+    options: { allowMixed: Severity.ALLOW },
 })
 export class Character {
     @Prop()
