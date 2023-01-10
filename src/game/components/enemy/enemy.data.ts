@@ -16,6 +16,7 @@ import { blueSporelingData } from './data/blueSporeling.enemy';
 import { redSporelingData } from './data/redSporeling.enemy';
 import { yellowSporelingData } from './data/yellowSporeling.enemy';
 import { deepDwellerData } from './data/deepDweller.enemy';
+import { thornWolfPupData } from './data/thornWolfPup.enemy';
 
 export const data: Enemy[] = [
     sporeMongerData,
@@ -35,4 +36,5 @@ export const data: Enemy[] = [
     redSporelingData,
     yellowSporelingData,
     deepDwellerData,
+    thornWolfPupData,
 ];

@@ -94,20 +94,7 @@ export class CardPlayedAction {
                 return card[field] === cardId;
             });
 
-            const source = this.playerService.get(ctx);
-            const sourceReference =
-                this.statusService.getReferenceFromEntity(source);
-
-            await this.eventEmitter.emitAsync(EVENT_BEFORE_CARD_PLAY, {
-                ctx,
-                card,
-                cardSource: source,
-                cardSourceReference: sourceReference,
-                cardTargetId: selectedEnemyId,
-            });
-
             const {
-                energy: cardEnergyCost,
                 properties: { effects, statuses },
                 keywords,
             } = card;
@@ -129,7 +116,7 @@ export class CardPlayedAction {
                 // Next we make sure that the card can be played and the user has
                 // enough energy
                 const { canPlayCard, message } = this.canPlayerPlayCard(
-                    cardEnergyCost,
+                    card.energy,
                     availableEnergy,
                 );
 
@@ -209,9 +196,9 @@ export class CardPlayedAction {
                     });
 
                     const newEnergy =
-                        cardEnergyCost === CardEnergyEnum.All
+                        card.energy === CardEnergyEnum.All
                             ? 0
-                            : energy - cardEnergyCost;
+                            : energy - card.energy;
 
                     await this.playerService.setEnergy(ctx, newEnergy);
 

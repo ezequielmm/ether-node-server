@@ -31,3 +31,5 @@ export const EVENT_AFTER_END_COMBAT = 'afterEndCombat';
 
 export const HARD_MODE_NODE_START = 13;
 export const HARD_MODE_NODE_END = 19;
+
+export const EVENT_ENEMY_DEAD = 'enemyDead';
