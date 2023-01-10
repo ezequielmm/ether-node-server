@@ -25,6 +25,12 @@ export class WalletService {
         );
         const sub_data = data.data as any;
         const content = sub_data.data;
-        return content;
+        const tokens = content.tokens;
+        const tokenArray: string[] = [];
+        for( let i = 0; i < tokens.length; i++){
+            const token = tokens[i];
+            tokenArray.push(token.tokenID);
+        }
+        return tokenArray;
     }
 }
