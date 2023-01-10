@@ -11,16 +11,14 @@ export class WalletService {
 
         const domain = 'nft-service.dev.robotseamonster.com';
 
+        const url = `${protocol}${domain}/v1/accounts/${walletId}/contracts/0x32A322C7C77840c383961B8aB503c9f45440c81f/chains/1/tokens`;
         const data = await firstValueFrom(
-            this.httpService.get<any[]>(
-                `${protocol}${domain}/v1/accounts/${walletId}/contracts/0x32A322C7C77840c383961B8aB503c9f45440c81f/chains/1/tokens`,
-                {
-                    headers: {
-                        Authorization:
-                            'vJGApId83NIZnmfkWUrFGOjdxTr4IQBM2WRq2PBj2pjEdZrirC6fAiL1orifv2VO',
-                    },
+            this.httpService.get<any[]>(url, {
+                headers: {
+                    Authorization:
+                        'vJGApId83NIZnmfkWUrFGOjdxTr4IQBM2WRq2PBj2pjEdZrirC6fAiL1orifv2VO',
                 },
-            ),
+            }),
         );
 
         const sub_data = data.data as any;
