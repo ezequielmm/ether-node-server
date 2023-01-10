@@ -1,3 +1,4 @@
+import { birdcageStatus } from './birdcage/constants';
 import { bolstered } from './bolstered/constants';
 import { burn } from './burn/constants';
 import { confusion } from './confusion/constants';
@@ -32,7 +33,7 @@ export interface IStatusesList {
 
 export class StatusGenerator {
     static formatStatusesToArray(items: AttachedStatus[]): IStatusesList[] {
-        return items.map(({ name, args: { counter: counter } }) => {
+        return items.map(({ name, args: { counter, value } }) => {
             let newName = name;
 
             switch (name) {
@@ -47,12 +48,20 @@ export class StatusGenerator {
             return {
                 name: newName,
                 counter,
-                description: this.generateDescription(name, counter),
+                description: this.generateDescription(
+                    name,
+                    counter,
+                    value ? value : null,
+                ),
             };
         });
     }
 
-    public static generateDescription(name: string, counter: number): string {
+    public static generateDescription(
+        name: string,
+        counter: number,
+        value?: number | null,
+    ): string {
         // TODO Add description property to status type and remove this switch
         switch (name) {
             case resolveStatus.name:
@@ -102,6 +111,8 @@ export class StatusGenerator {
                 return `Gain ${counter} Defense at the start of each round`;
             case distraught.name:
                 return `All attacks against this character do an extra 50% damage`;
+            case birdcageStatus.name:
+                return `Every 4th attack deals ${value} more damage`;
             case summoned.name:
                 return `Summoned enemies are banished if all masters are defeated`;
             default:
