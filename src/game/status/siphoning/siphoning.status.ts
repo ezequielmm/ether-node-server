@@ -1,16 +1,17 @@
 import { Injectable } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
 import { EnemyService } from 'src/game/components/enemy/enemy.service';
-import { GameContext } from 'src/game/components/interfaces';
 import { PlayerService } from 'src/game/components/player/player.service';
 import {
     EVENT_BEFORE_ENEMIES_TURN_START,
     EVENT_BEFORE_PLAYER_TURN_START,
 } from 'src/game/constants';
+import { DamageArgs } from 'src/game/effects/damage/damage.effect';
 import { defenseEffect } from 'src/game/effects/defense/constants';
+import { EffectDTO } from 'src/game/effects/effects.interface';
 import { EffectService } from 'src/game/effects/effects.service';
-import { confusion } from '../confusion/constants';
-import { StatusEventDTO, StatusEventHandler } from '../interfaces';
+import { GameEvent } from 'src/game/interfaces';
+import { StatusEffectDTO, StatusEffectHandler } from '../interfaces';
 import { StatusDecorator } from '../status.decorator';
 import { StatusService } from '../status.service';
 import { siphoning } from './constants';
@@ -19,52 +20,68 @@ import { siphoning } from './constants';
     status: siphoning,
 })
 @Injectable()
-export class SiphoningStatus implements StatusEventHandler {
+export class SiphoningStatus implements StatusEffectHandler {
     constructor(
         private readonly effectService: EffectService,
-        private readonly playerService: PlayerService,
         private readonly enemyService: EnemyService,
+        private readonly playerService: PlayerService,
         private readonly statusService: StatusService,
     ) {}
 
-    async handle(dto: StatusEventDTO): Promise<void> {
+    async preview(
+        args: StatusEffectDTO<DamageArgs>,
+    ): Promise<EffectDTO<DamageArgs>> {
+        return args.effectDTO;
+    }
+
+    async handle(
+        dto: StatusEffectDTO<DamageArgs>,
+    ): Promise<EffectDTO<DamageArgs>> {
+        const {
+            ctx,
+            effectDTO: { args, source },
+        } = dto;
+
+        // set the amount of defense we are going to get
+        const newDefense = args.currentValue;
+
+        // Trigger the effectService and send a defense effect
         await this.effectService.apply({
-            ctx: dto.ctx,
-            source: dto.source,
-            target: dto.target,
+            ctx,
+            source,
+            target: source,
             effect: {
                 effect: defenseEffect.name,
                 args: {
-                    value: dto.eventArgs.damageDealt,
+                    value: newDefense,
                 },
             },
         });
+
+        return dto.effectDTO;
     }
 
     @OnEvent(EVENT_BEFORE_ENEMIES_TURN_START)
-    async onEnemiesTurnStart({ ctx }: { ctx: GameContext }): Promise<void> {
+    async onEnemiesTurnStart({ ctx }: GameEvent): Promise<void> {
         const enemies = this.enemyService.getAll(ctx);
 
         for (const enemy of enemies) {
-            await this.statusService.decreaseCounterAndRemove(
+            await this.statusService.removeStatus({
                 ctx,
-                enemy.value.statuses,
-                enemy,
-                confusion,
-            );
+                entity: enemy,
+                status: siphoning,
+            });
         }
     }
 
     @OnEvent(EVENT_BEFORE_PLAYER_TURN_START)
-    async onPlayerTurnStart({ ctx }: { ctx: GameContext }): Promise<void> {
+    async onPlayerTurnStart({ ctx }: GameEvent): Promise<void> {
         const player = this.playerService.get(ctx);
-        const statuses = player.value.combatState.statuses;
 
-        await this.statusService.decreaseCounterAndRemove(
+        await this.statusService.removeStatus({
             ctx,
-            statuses,
-            player,
-            siphoning,
-        );
+            entity: player,
+            status: siphoning,
+        });
     }
 }

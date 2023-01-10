@@ -11,6 +11,9 @@ export const pavaRootPotion: Potion = {
         {
             effect: pavaRootEffect.name,
             target: PotionTargetEnum.Player,
+            args: {
+                value: 1,
+            },
         },
     ],
     usableOutsideCombat: false,
