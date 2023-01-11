@@ -18,7 +18,7 @@ export class GiftedStatus implements StatusEventHandler {
         private readonly combatQueueService: CombatQueueService,
     ) {}
 
-    async handle(dto: StatusEventDTO<Record<string, any>>): Promise<any> {
+    async handle(dto: StatusEventDTO): Promise<void> {
         const { ctx, source, target, status } = dto;
 
         let finalDefense: number;
