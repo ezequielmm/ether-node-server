@@ -17,6 +17,14 @@ SSL_CERT_PATH=""
 SSL_KEY_PATH=""
 GET_PROFILE_URL="http://localhost:8000/v1/user"
 NODE_ENV="development"
+NFT_SERVICE_URL="http://nft-service.dev.robotseamonster.com"
+NFT_SERVICE_CONTRACT_ID="0x80e2109a826148b9b1a41b0958ca53a4cdc64b70"
+NFT_SERVICE_CHAIN_ID="5"
+NFT_SERVICE_AUTHORIZATION="vJGApId83NIZnmfkWUrFGOjdxTr4IQBM2WRq2PBj2pjEdZrirC6fAiL1orifv2VO"
+
+#for production
+NFT_SERVICE_CONTRACT_ID="0x32A322C7C77840c383961B8aB503c9f45440c81f"
+NFT_SERVICE_CHAIN_ID="1"
 ```
 
 | Key             | Value                                                                   |
@@ -28,6 +36,8 @@ NODE_ENV="development"
 | NODE_ENV        | Environment where the service is running: `development` or `production` |
 | NFT_SERVICE_URL | API route to get wallet tokens from the nft service                     |
 |NFT_SERVICE_CONTRACT_ID| Contract id for nft srevice queries                               |
+|NFT_SERVICE_CHAIN_ID| The chain id for nft srevice queries                                 |
+|NFT_SERVICE_AUTHORIZATION| The value of the Authorization header for the nft srevice       |
 
 Once the `.env` file is set, we can run `npm run seed` to seed the database with the initial data.
 
