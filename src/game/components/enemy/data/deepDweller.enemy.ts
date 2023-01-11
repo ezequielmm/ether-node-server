@@ -13,7 +13,7 @@ import { Enemy } from '../enemy.schema';
 import { resolveStatus } from 'src/game/status/resolve/constants';
 
 export const deepDwellerData: Enemy = {
-    enemyId: 17,
+    enemyId: 97, // TODO: TEMP ID
     name: 'Deep Dweller',
     type: EnemyTypeEnum.Beast,
     category: EnemyCategoryEnum.Boss,
