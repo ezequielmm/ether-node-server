@@ -38,6 +38,10 @@ import { RemoveConfusionEffect } from './removeConfusion/removeConfusion.effect'
 import { RemoveDebuffEffect } from './removeDebuff/removeDebuff.effect';
 import { RemoveDefenseEffect } from './removeDefense/removeDefense.effect';
 import { RepositionEffect } from './reposition/reposition.effect';
+import {
+    ShieldBashEffect,
+    ShieldBashEffectUpgraded,
+} from './shieldBash/shieldBash.effect';
 import { SpawnEnemyEffect } from './spawnEnemy/spawnEnemy.effect';
 import { TwistTheBladeEffect } from './twistTheBlade/twistTheBlade.effect';
 
@@ -86,6 +90,8 @@ import { TwistTheBladeEffect } from './twistTheBlade/twistTheBlade.effect';
         ExecutionersBlowEffect,
         SpawnEnemyEffect,
         FleeEffect,
+        ShieldBashEffect,
+        ShieldBashEffectUpgraded,
     ],
     exports: [EffectService],
 })
