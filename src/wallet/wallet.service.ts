@@ -1,34 +1,48 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { firstValueFrom } from 'rxjs';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class WalletService {
-    constructor(private readonly httpService: HttpService) {}
+    private readonly logger: Logger = new Logger(WalletService.name);
+    constructor(
+        private readonly httpService: HttpService,
+        private readonly configService: ConfigService,
+    ) {}
 
     async getTokenIdList(walletId: string): Promise<string[]> {
-        const protocol = 'http://';
-
-        const domain = 'nft-service.dev.robotseamonster.com';
-
-        const url = `${protocol}${domain}/v1/accounts/${walletId}/contracts/0x32A322C7C77840c383961B8aB503c9f45440c81f/chains/1/tokens`;
-        const data = await firstValueFrom(
-            this.httpService.get<any[]>(url, {
-                headers: {
-                    Authorization:
-                        'vJGApId83NIZnmfkWUrFGOjdxTr4IQBM2WRq2PBj2pjEdZrirC6fAiL1orifv2VO',
-                },
-            }),
+        const domain = this.configService.get<string>('NFT_SERVICE_URL');
+        const contract_id = this.configService.get<string>(
+            'NFT_SERVICE_CONTRACT_ID',
         );
-
-        const sub_data = data.data as any;
-        const content = sub_data.data;
-        const tokens = content.tokens;
+        const chain_id = this.configService.get<string>('NFT_SERVICE_CHAIN_ID');
+        const authorization = this.configService.get<string>(
+            'NFT_SERVICE_AUTHORIZATION',
+        );
+        const url = `${domain}/v1/accounts/${walletId}/contracts/${contract_id}/chains/${chain_id}/tokens`;
+        // a main chain wallet https://api.dev.kote.robotseamonster.com/v1/wallets/0xbd22537d05207e470A458773683041012ddcAB65
+        // a goerli wallet http://localhost:3000/v1/wallets/0xA10f15B66a2e05c4e376F8bfC35aE662438153Be
         const tokenArray: string[] = [];
+        try {
+            const data = await firstValueFrom(
+                this.httpService.get<any[]>(url, {
+                    headers: {
+                        Authorization: authorization,
+                    },
+                }),
+            );
 
-        for (let i = 0; i < tokens.length; i++) {
-            const token = tokens[i];
-            tokenArray.push(token.tokenID);
+            const sub_data = data.data as any;
+            const content = sub_data.data;
+            const tokens = content.tokens;
+            for (let i = 0; i < tokens.length; i++) {
+                const token = tokens[i];
+                tokenArray.push(token.tokenID);
+            }
+        } catch (e) {
+            this.logger.debug(e);
+            throw e;
         }
 
         return tokenArray;
