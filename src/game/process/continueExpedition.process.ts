@@ -27,9 +27,7 @@ export class ContinueExpeditionProcess {
         ctx.expedition.currentNode.completed = true;
 
         // Now we update the expedition based on the node type
-        if (node.type === NodeType.Combat) {
-            this.setupDataFromCombat(ctx);
-        }
+        if (node.type === NodeType.Combat) this.setupDataFromCombat(ctx);
 
         await ctx.expedition.save();
 

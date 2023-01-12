@@ -76,13 +76,13 @@ export class DrawCardAction {
             let discardPile = discard;
 
             if (cardTypeFilter !== 'All') {
-                drawPile = draw.filter(({ cardType }) => {
-                    return cardType === cardTypeFilter;
-                });
+                drawPile = draw.filter(
+                    ({ cardType }) => cardType === cardTypeFilter,
+                );
 
-                discardPile = discard.filter(({ cardType }) => {
-                    return cardType === cardTypeFilter;
-                });
+                discardPile = discard.filter(
+                    ({ cardType }) => cardType === cardTypeFilter,
+                );
             }
 
             // Verify how many card we need from the draw pile
@@ -124,13 +124,11 @@ export class DrawCardAction {
                 StandardResponse.respond({
                     message_type: SWARMessageTypeToSend,
                     action: SWARAction.MoveCard,
-                    data: cardsToMoveToHand.map(({ id }) => {
-                        return {
-                            source: 'draw',
-                            destination: 'hand',
-                            id,
-                        };
-                    }),
+                    data: cardsToMoveToHand.map(({ id }) => ({
+                        source: 'draw',
+                        destination: 'hand',
+                        id,
+                    })),
                 }),
             );
 

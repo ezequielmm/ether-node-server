@@ -27,11 +27,9 @@ export class InitTreasureProcess {
         this.clientId = ctx.client.id;
         this.node = node;
 
-        if (continueTreasure) {
-            return await this.continueTreasure();
-        } else {
-            return await this.createTreasureData(ctx);
-        }
+        return continueTreasure
+            ? await this.continueTreasure(ctx)
+            : await this.createTreasureData(ctx);
     }
 
     private async createTreasureData(ctx: GameContext): Promise<string> {
@@ -52,12 +50,14 @@ export class InitTreasureProcess {
         });
     }
 
-    private async continueTreasure(): Promise<string> {
+    private async continueTreasure(ctx: GameContext): Promise<string> {
         const {
-            treasureData: { isOpen },
-        } = await this.expeditionService.getCurrentNode({
-            clientId: this.clientId,
-        });
+            expedition: {
+                currentNode: {
+                    treasureData: { isOpen },
+                },
+            },
+        } = ctx;
 
         if (isOpen) {
             return StandardResponse.respond({
