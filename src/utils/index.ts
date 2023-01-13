@@ -99,17 +99,19 @@ export function isEven(input: number): boolean {
  * @param cardsToRemove The card array to remove from originalPile
  * @return IExpeditionPlayerStateDeckCard[]
  */
-export function removeCardsFromPile(payload: {
+export function removeCardsFromPile({
+    originalPile,
+    cardsToRemove,
+}: {
     originalPile: IExpeditionPlayerStateDeckCard[];
     cardsToRemove: IExpeditionPlayerStateDeckCard[];
 }): IExpeditionPlayerStateDeckCard[] {
-    const { originalPile, cardsToRemove } = payload;
-
-    return originalPile.filter((drawCard) => {
-        return !cardsToRemove.some((handCard) => {
-            return drawCard.id === handCard.id;
-        });
-    });
+    return originalPile.filter(
+        (originalCard) =>
+            !cardsToRemove.some(
+                (cardToRemove) => originalCard.id === cardToRemove.id,
+            ),
+    );
 }
 
 /**
