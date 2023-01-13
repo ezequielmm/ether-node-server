@@ -20,6 +20,7 @@ import { stickMantisData } from './data/stickMantis.enemy';
 import { deepDwellerData } from './data/deepDweller.enemy';
 import { rockElementalData } from './data/rockElemental.enemy';
 import { thornWolfPupData } from './data/thornWolfPup.enemy';
+import { deepSorcererData } from './data/deepSorcerer.enemy';
 
 export const data: Enemy[] = [
     sporeMongerData,
@@ -43,4 +44,5 @@ export const data: Enemy[] = [
     deepDwellerData,
     rockElementalData,
     thornWolfPupData,
+    deepSorcererData,
 ];
