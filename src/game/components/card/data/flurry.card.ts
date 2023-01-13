@@ -1,4 +1,4 @@
-import { flurry } from 'src/game/effects/flurry/constants';
+import { flurry, flurryPlus } from 'src/game/effects/flurry/constants';
 import {
     CardRarityEnum,
     CardTypeEnum,
@@ -14,12 +14,12 @@ export const FlurryCardUpgraded: Card = {
     cardType: CardTypeEnum.Attack,
     pool: 'knight',
     energy: CardEnergyEnum.All,
-    description: `Deal 7 damage to a random enemy Xtimes`,
+    description: `Deal 7 damage X + 1 times to random enemies`,
     keywords: [],
     properties: {
         effects: [
             {
-                effect: flurry.name,
+                effect: flurryPlus.name,
                 target: CardTargetedEnum.RandomEnemy,
                 args: {
                     value: 7,
@@ -40,7 +40,7 @@ export const FlurryCard: Card = {
     cardType: CardTypeEnum.Attack,
     pool: 'knight',
     energy: CardEnergyEnum.All,
-    description: `Deal 6 damage to a random enemy X times`,
+    description: `Deal 6 damage X times to random enemies`,
     keywords: [],
     properties: {
         effects: [

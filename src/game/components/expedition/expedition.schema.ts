@@ -1,20 +1,17 @@
-import { modelOptions, Prop } from '@typegoose/typegoose';
+import { modelOptions, Prop, PropType } from '@typegoose/typegoose';
 import { HydratedDocument } from 'mongoose';
 import { MerchantItems } from 'src/game/merchant/merchant.interface';
 import { AttachedStatus, StatusType } from 'src/game/status/interfaces';
 import { TreasureInterface } from 'src/game/treasure/treasure.interfaces';
-import {
-    CombatTurnEnum,
-    ExpeditionMapNodeTypeEnum,
-    ExpeditionStatusEnum,
-} from './expedition.enum';
+import { CombatTurnEnum, ExpeditionStatusEnum } from './expedition.enum';
+import { NodeType } from './node-type';
 import {
     IExpeditionCurrentNodeDataEnemy,
-    IExpeditionNode,
     IExpeditionPlayerStateDeckCard,
-    Player,
     Reward,
 } from './expedition.interface';
+import { Node } from './node';
+import { Player } from './player';
 import { ExpeditionActConfig } from './expeditionActConfig.schema';
 import { EncounterInterface } from '../encounter/encounter.interfaces';
 
@@ -36,8 +33,8 @@ export class Expedition {
     @Prop()
     mapSeedId?: number;
 
-    @Prop()
-    map: IExpeditionNode[];
+    @Prop({ type: () => [Node] }, PropType.ARRAY)
+    map: Node[];
 
     @Prop()
     playerState: Player;
@@ -45,7 +42,7 @@ export class Expedition {
     @Prop({ type: Object })
     currentNode?: {
         nodeId: number;
-        nodeType: ExpeditionMapNodeTypeEnum;
+        nodeType: NodeType;
         completed: boolean;
         showRewards: boolean;
         data?: {

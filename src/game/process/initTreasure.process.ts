@@ -1,7 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Socket } from 'socket.io';
-import { ExpeditionMapNodeStatusEnum } from '../components/expedition/expedition.enum';
-import { IExpeditionNode } from '../components/expedition/expedition.interface';
+import { Node } from '../components/expedition/node';
 import { ExpeditionService } from '../components/expedition/expedition.service';
 import { GameContext } from '../components/interfaces';
 import {
@@ -19,18 +17,19 @@ export class InitTreasureProcess {
     ) {}
 
     private clientId: string;
-    private node: IExpeditionNode;
+    private node: Node;
 
-    async process(ctx: GameContext, node: IExpeditionNode): Promise<string> {
+    async process(
+        ctx: GameContext,
+        node: Node,
+        continueTreasure = false,
+    ): Promise<string> {
         this.clientId = ctx.client.id;
         this.node = node;
 
-        switch (node.status) {
-            case ExpeditionMapNodeStatusEnum.Available:
-                return await this.createTreasureData(ctx);
-            case ExpeditionMapNodeStatusEnum.Active:
-                return await this.continueTreasure();
-        }
+        return continueTreasure
+            ? await this.continueTreasure(ctx)
+            : await this.createTreasureData(ctx);
     }
 
     private async createTreasureData(ctx: GameContext): Promise<string> {
@@ -51,12 +50,14 @@ export class InitTreasureProcess {
         });
     }
 
-    private async continueTreasure(): Promise<string> {
+    private async continueTreasure(ctx: GameContext): Promise<string> {
         const {
-            treasureData: { isOpen },
-        } = await this.expeditionService.getCurrentNode({
-            clientId: this.clientId,
-        });
+            expedition: {
+                currentNode: {
+                    treasureData: { isOpen },
+                },
+            },
+        } = ctx;
 
         if (isOpen) {
             return StandardResponse.respond({

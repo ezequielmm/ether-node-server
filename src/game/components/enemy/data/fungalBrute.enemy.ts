@@ -1,6 +1,7 @@
 import { addCardEffect } from 'src/game/effects/addCard/contants';
 import { damageEffect } from 'src/game/effects/damage/constants';
 import { defenseEffect } from 'src/game/effects/defense/constants';
+import { spawnEnemyEffect } from 'src/game/effects/spawnEnemy/contants';
 import { CardTargetedEnum } from '../../card/card.enum';
 import { StunnedCard } from '../../card/data/stunned.card';
 import {
@@ -10,6 +11,8 @@ import {
     EnemyIntentionType,
 } from '../enemy.enum';
 import { Enemy } from '../enemy.schema';
+import { redSporelingData } from './redSporeling.enemy';
+import { yellowSporelingData } from './yellowSporeling.enemy';
 
 export const fungalBruteData: Enemy = {
     enemyId: 7,
@@ -125,6 +128,34 @@ export const fungalBruteData: Enemy = {
                 {
                     probability: 0.5,
                     scriptId: 1, // TEMPORAL REDIRECTION
+                },
+            ],
+        },
+        {
+            id: 4,
+            intentions: [
+                {
+                    type: EnemyIntentionType.Special,
+                    target: CardTargetedEnum.Self,
+                    value: 1,
+                    effects: [
+                        {
+                            effect: spawnEnemyEffect.name,
+                            target: CardTargetedEnum.Self,
+                            args: {
+                                enemiesToSpawn: [
+                                    redSporelingData.enemyId,
+                                    yellowSporelingData.enemyId,
+                                ],
+                            },
+                        },
+                    ],
+                },
+            ],
+            next: [
+                {
+                    probability: 1,
+                    scriptId: 2,
                 },
             ],
         },

@@ -5,6 +5,16 @@ import { NagpraEncounter } from './data/nagpra.encounter';
 import { WillowispEncounter } from './data/willowisp.encounter';
 import { InjectModel } from 'kindagoose';
 import { ReturnModelType } from '@typegoose/typegoose';
+import { NaiadEncounter } from './data/naiad.encounter';
+import { YoungWizardEncounter } from './data/young_wizard.encounter';
+import { DancingSatyrEncounter } from './data/dancing_satyr.encounter';
+import { MossyTrollEncounter } from './data/mossy_troll.encounter';
+import { EnchantedForest } from './data/enchanted_forest.encounter';
+import { AbandonedAltarEncounter } from './data/abandoned_altar.encounter';
+import { RugburnEncounter } from './data/rugburn.encounter';
+import { TreeCarvingEncounter } from './data/tree_carving.encounter';
+import { RunicBeehiveEncounter } from './data/runic_beehive';
+import { OddbarksEncounter } from './data/oddbarks.encounter';
 
 @Injectable()
 export class EncounterSeeder implements Seeder {
@@ -14,7 +24,20 @@ export class EncounterSeeder implements Seeder {
     ) {}
 
     seed(): Promise<any> {
-        return this.encounter.insertMany([NagpraEncounter, WillowispEncounter]);
+        return this.encounter.insertMany([
+            AbandonedAltarEncounter,
+            RugburnEncounter,
+            NagpraEncounter,
+            TreeCarvingEncounter,
+            NaiadEncounter,
+            WillowispEncounter,
+            DancingSatyrEncounter,
+            EnchantedForest,
+            MossyTrollEncounter,
+            YoungWizardEncounter,
+            OddbarksEncounter,
+            RunicBeehiveEncounter,
+        ]);
     }
     async drop(): Promise<any> {
         return this.encounter.deleteMany({});

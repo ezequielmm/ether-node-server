@@ -1,10 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { ExpeditionService } from 'src/game/components/expedition/expedition.service';
 import { CustomException, ErrorBehavior } from 'src/socket/custom.exception';
-import {
-    Player,
-    IExpeditionPlayerStateDeckCard,
-} from '../components/expedition/expedition.interface';
+import { IExpeditionPlayerStateDeckCard } from '../components/expedition/expedition.interface';
+import { Player } from '../components/expedition/player';
 
 export interface PlayerInfoResponse {
     id: string;

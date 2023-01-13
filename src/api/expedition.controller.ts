@@ -45,11 +45,9 @@ export class ExpeditionController {
         const { authorization } = headers;
 
         try {
-            const {
-                data: {
-                    data: { id: playerId },
-                },
-            } = await this.authGatewayService.getUser(authorization);
+            const { id: playerId } = await this.authGatewayService.getUser(
+                authorization,
+            );
 
             const hasExpedition =
                 await this.expeditionService.playerHasExpeditionInProgress({
@@ -82,9 +80,9 @@ export class ExpeditionController {
 
         try {
             const {
-                data: {
-                    data: { id: playerId, name: playerName, email },
-                },
+                id: playerId,
+                name: playerName,
+                email,
             } = await this.authGatewayService.getUser(authorization);
 
             const hasExpedition =
@@ -127,11 +125,9 @@ export class ExpeditionController {
         const { authorization } = headers;
 
         try {
-            const {
-                data: {
-                    data: { id: playerId },
-                },
-            } = await this.authGatewayService.getUser(authorization);
+            const { id: playerId } = await this.authGatewayService.getUser(
+                authorization,
+            );
 
             const hasExpedition =
                 await this.expeditionService.playerHasExpeditionInProgress({

@@ -7,8 +7,6 @@ import {
     CreateExpeditionDTO,
     GetCurrentNodeDTO,
     GetDeckCardsDTO,
-    GetExpeditionMapDTO,
-    GetExpeditionMapNodeDTO,
     GetPlayerStateDTO,
     OverrideAvailableNodeDTO,
     playerHasAnExpeditionDTO,
@@ -21,11 +19,10 @@ import {
 import { ExpeditionStatusEnum } from './expedition.enum';
 import {
     IExpeditionCurrentNode,
-    IExpeditionNode,
-    Player,
     IExpeditionPlayerStateDeckCard,
 } from './expedition.interface';
-import { generateMap, restoreMap } from 'src/game/map/app';
+import { Node } from './node';
+import { Player } from './player';
 import { ClientId, getClientIdField } from './expedition.type';
 import { CardTargetedEnum } from '../card/card.enum';
 import { GameContext, ExpeditionEntity } from '../interfaces';
@@ -35,6 +32,8 @@ import { EnemyId } from '../enemy/enemy.type';
 import { Socket } from 'socket.io';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { ReturnModelType } from '@typegoose/typegoose';
+import { ModuleRef } from '@nestjs/core';
+import { MapService } from 'src/game/map/map.service';
 
 @Injectable()
 export class ExpeditionService {
@@ -43,7 +42,9 @@ export class ExpeditionService {
         private readonly expedition: ReturnModelType<typeof Expedition>,
         private readonly playerService: PlayerService,
         private readonly enemyService: EnemyService,
-    ) { }
+        private readonly moduleRef: ModuleRef,
+        private readonly mapService: MapService,
+    ) {}
 
     async getGameContext(client: Socket): Promise<GameContext> {
         const expedition = await this.findOne({ clientId: client.id });
@@ -53,9 +54,10 @@ export class ExpeditionService {
             expedition,
             client,
             events,
+            moduleRef: this.moduleRef,
         };
 
-        expedition.playerState.trinkets.forEach((trinket) => {
+        expedition.playerState?.trinkets.forEach((trinket) => {
             trinket.onAttach(ctx);
         });
 
@@ -143,11 +145,6 @@ export class ExpeditionService {
         return item !== null;
     }
 
-    getMap(): IExpeditionNode[] {
-        const { getMap } = generateMap();
-        return getMap;
-    }
-
     async updateClientId(
         payload: UpdateClientIdDTO,
     ): Promise<ExpeditionDocument> {
@@ -166,33 +163,8 @@ export class ExpeditionService {
         await this.expedition.updateOne({ clientId }, { isCurrentlyPlaying });
     }
 
-    async getExpeditionMapNode(
-        payload: GetExpeditionMapNodeDTO,
-    ): Promise<IExpeditionNode> {
-        const { clientId, nodeId } = payload;
-
-        const { map } = await this.expedition
-            .findOne({ clientId })
-            .select('map')
-            .lean();
-
-        if (!map) return null;
-        if (typeof clientId === 'string')
-            return restoreMap(map, clientId).fullCurrentMap.get(nodeId);
-    }
-
-    async getExpeditionMap(
-        payload: GetExpeditionMapDTO,
-    ): Promise<IExpeditionNode[]> {
-        const { map } = await this.expedition
-            .findOne(payload)
-            .select('map')
-            .lean();
-
-        // TODO: throw error if there is no expedition
-        if (!map) return null;
-        if (typeof payload.clientId === 'string')
-            return restoreMap(map, payload.clientId).getMap;
+    async getExpeditionMap(ctx: GameContext): Promise<Node[]> {
+        return ctx.expedition.map;
     }
 
     async getDeckCards(
@@ -382,24 +354,18 @@ export class ExpeditionService {
     async overrideAvailableNode(
         payload: OverrideAvailableNodeDTO,
     ): Promise<void> {
-        const { clientId, nodeId } = payload;
+        const { ctx, nodeId } = payload;
 
-        const map = await this.getExpeditionMap({
-            clientId,
-        });
+        const node = this.mapService.findNodeById(ctx, nodeId);
+        this.mapService.enableNode(ctx, nodeId);
 
-        const expeditionMap = restoreMap(map);
-        const selectedNode = expeditionMap.fullCurrentMap.get(nodeId);
-        selectedNode.setAvailable();
+        ctx.expedition.currentNode = {
+            nodeId: node.id,
+            completed: true,
+            nodeType: node.type,
+            showRewards: false,
+        };
 
-        await this.update(clientId, {
-            map: expeditionMap.getMap,
-            currentNode: {
-                nodeId: selectedNode.id,
-                completed: true,
-                nodeType: selectedNode.type,
-                showRewards: false,
-            },
-        });
+        await ctx.expedition.save();
     }
 }

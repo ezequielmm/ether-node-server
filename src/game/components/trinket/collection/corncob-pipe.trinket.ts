@@ -30,10 +30,10 @@ export class CorncobPipeTrinket extends Trinket {
             EVENT_BEFORE_STATUS_ATTACH,
             (args: BeforeStatusAttachEvent) => {
                 if (
-                    args.status.name == burn.name &&
-                    args.target.type == 'enemy'
+                    args.status.name === burn.name &&
+                    args.target.type === 'enemy'
                 ) {
-                    args.status.args.counter += 1;
+                    args.status.args.counter += this.burnIncrement;
                     this.trigger(ctx);
                 }
             },

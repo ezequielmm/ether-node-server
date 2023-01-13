@@ -10,8 +10,9 @@ import { ReturnModelType } from '@typegoose/typegoose';
 @Injectable()
 export class ChestSeeder implements Seeder {
     constructor(
-        @InjectModel(Chest) private readonly chest: ReturnModelType<typeof Chest>,
-    ) { }
+        @InjectModel(Chest)
+        private readonly chest: ReturnModelType<typeof Chest>,
+    ) {}
 
     async seed(): Promise<any> {
         return this.chest.insertMany([SmallChest, MediumChest, LargeChest]);

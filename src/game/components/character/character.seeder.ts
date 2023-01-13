@@ -10,7 +10,7 @@ export class CharacterSeeder implements Seeder {
     constructor(
         @InjectModel(Character)
         private readonly character: ReturnModelType<typeof Character>,
-    ) { }
+    ) {}
 
     async seed(): Promise<any> {
         return this.character.create(CharacterData);

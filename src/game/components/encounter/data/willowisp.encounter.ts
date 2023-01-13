@@ -1,7 +1,9 @@
 import { Encounter } from '../encounter.schema';
+import { EncounterIdEnum } from '../encounter.enum';
 
 export const WillowispEncounter: Encounter = {
-    encounterId: 6,
+    encounterId: EncounterIdEnum.WillOWisp,
+    encounterName: "Will 'o Wisp",
     imageId: 'willowisp',
     stages: [
         {
@@ -9,9 +11,9 @@ export const WillowispEncounter: Encounter = {
                 'You stumble across a glowing orb levitating in mid-air. Your fingers begin to tingle and a feeling of calm washes over you.',
             buttons: [
                 {
-                    text: 'A: Kneel before the orb [Increase max hp by 10.]',
+                    text: 'A: Kneel before the orb [Increase max hp by 5 to 8.]',
                     nextStage: 1,
-                    effects: [{ kind: 'hp_max', amount: '10' }],
+                    effects: [{ kind: 'hp_max_random', max: '8', min: '5' }],
                 },
                 {
                     text: 'B: Reach out and absorb power from the orb. [Upgrade 1 random card]',

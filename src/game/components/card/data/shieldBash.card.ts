@@ -1,4 +1,7 @@
-import { damageEffect } from 'src/game/effects/damage/constants';
+import {
+    shieldBashEffect,
+    shieldBashUpgradedEffect,
+} from 'src/game/effects/shieldBash/constants';
 import { CardRarityEnum, CardTypeEnum, CardTargetedEnum } from '../card.enum';
 import { Card } from '../card.schema';
 
@@ -14,12 +17,10 @@ export const ShieldBashCardUpgraded: Card = {
     properties: {
         effects: [
             {
-                effect: damageEffect.name,
+                effect: shieldBashUpgradedEffect.name,
                 target: CardTargetedEnum.Enemy,
                 args: {
-                    value: 1, // Value is calculated in the effect
-                    useDefense: true,
-                    multiplier: 2,
+                    value: Number.NaN,
                 },
             },
         ],
@@ -42,12 +43,10 @@ export const ShieldBashCard: Card = {
     properties: {
         effects: [
             {
-                effect: damageEffect.name,
+                effect: shieldBashEffect.name,
                 target: CardTargetedEnum.Enemy,
                 args: {
-                    value: 1, // Value is calculated in the effect
-                    useDefense: true,
-                    multiplier: 1,
+                    value: Number.NaN,
                 },
             },
         ],

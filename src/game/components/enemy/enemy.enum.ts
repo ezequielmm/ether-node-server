@@ -6,6 +6,7 @@ export enum EnemyTypeEnum {
     Undead = 'undead',
     Clockwork = 'clockwork',
     Eldritch = 'eldritch',
+    Human = 'human',
 }
 
 export enum EnemyCategoryEnum {
@@ -30,4 +31,5 @@ export enum EnemyIntentionType {
     Stun = 'stun',
     Buff = 'buff',
     Debuff = 'debuff',
+    Special = 'special',
 }

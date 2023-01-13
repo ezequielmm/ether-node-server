@@ -11,11 +11,12 @@ import { isValidAuthToken } from 'src/utils';
 import { AuthGatewayService } from 'src/authGateway/authGateway.service';
 import { ExpeditionService } from 'src/game/components/expedition/expedition.service';
 import { FullSyncAction } from 'src/game/action/fullSync.action';
-import { ExpeditionMapNodeTypeEnum } from 'src/game/components/expedition/expedition.enum';
+import { NodeType } from 'src/game/components/expedition/node-type';
 import { PlayerService } from 'src/game/components/player/player.service';
 import { CombatQueueService } from 'src/game/components/combatQueue/combatQueue.service';
 import { CardSelectionScreenService } from 'src/game/components/cardSelectionScreen/cardSelectionScreen.service';
 import { corsSocketSettings } from './socket.enum';
+import { isEmpty } from 'lodash';
 
 @WebSocketGateway(corsSocketSettings)
 export class SocketGateway
@@ -49,11 +50,9 @@ export class SocketGateway
         }
 
         try {
-            const {
-                data: {
-                    data: { id: playerId },
-                },
-            } = await this.authGatewayService.getUser(authorization);
+            const { id: playerId } = await this.authGatewayService.getUser(
+                authorization,
+            );
 
             const expedition = await this.expeditionService.updateClientId({
                 clientId: client.id,
@@ -69,13 +68,14 @@ export class SocketGateway
                 if (expedition.currentNode !== undefined) {
                     const { nodeType } = expedition.currentNode;
 
-                    if (nodeType === ExpeditionMapNodeTypeEnum.Combat) {
-                        const { hpCurrent } =
-                            await this.expeditionService.getPlayerState({
-                                clientId: client.id,
-                            });
-
-                        await this.playerService.setHp(ctx, hpCurrent);
+                    if (
+                        nodeType === NodeType.Combat &&
+                        !isEmpty(expedition.currentNode.data)
+                    ) {
+                        await this.playerService.setGlobalHp(
+                            ctx,
+                            expedition.currentNode.data.player.hpCurrent,
+                        );
                     }
                 }
 

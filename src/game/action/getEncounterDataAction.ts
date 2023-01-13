@@ -4,6 +4,7 @@ import { ExpeditionService } from '../components/expedition/expedition.service';
 import { Socket } from 'socket.io';
 
 export interface EncounterDTO {
+    encounterName: string;
     imageId: string;
     displayText: string;
     buttons: {
@@ -19,6 +20,9 @@ export class GetEncounterDataAction {
     ) {}
 
     async handle(client: Socket): Promise<EncounterDTO> {
-        return await this.encounterService.getEncounterDTO(client);
+        const playerState = await this.expeditionService.getPlayerState({
+            clientId: client.id,
+        });
+        return await this.encounterService.getEncounterDTO(client, playerState);
     }
 }

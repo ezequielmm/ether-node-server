@@ -1,10 +1,10 @@
-import { ModelOptions, Prop } from '@typegoose/typegoose';
+import { ModelOptions, Prop, Severity } from '@typegoose/typegoose';
 import { JsonEffect } from 'src/game/effects/effects.interface';
 import { PotionRarityEnum } from './potion.enum';
-import { Document } from 'mongoose';
 
 @ModelOptions({
     schemaOptions: { collection: 'potions', versionKey: false },
+    options: { allowMixed: Severity.ALLOW },
 })
 export class Potion {
     @Prop()

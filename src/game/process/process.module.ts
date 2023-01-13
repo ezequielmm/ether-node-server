@@ -31,26 +31,28 @@ import { SendEnemyIntentProcess } from './sendEnemyIntents.process';
 import { InitEncounterProcess } from './initEncounter.process';
 import { EncounterModule } from '../components/encounter/encounter.module';
 import { ContinueExpeditionProcess } from './continueExpedition.process';
+import { MapModule } from '../map/map/map.module';
 
 @Module({
     imports: [
         forwardRef(() => ExpeditionModule),
-        SettingsModule,
         forwardRef(() => EnemyModule),
         forwardRef(() => MerchantModule),
         forwardRef(() => TreasureModule),
         forwardRef(() => ActionModule),
         forwardRef(() => CardModule),
-        CharacterModule,
         forwardRef(() => StatusModule),
-        PlayerModule,
         forwardRef(() => EffectModule),
+        PotionModule,
+        SettingsModule,
+        CharacterModule,
+        PlayerModule,
         CustomDeckModule,
         CombatQueueModule,
-        forwardRef(() => PotionModule),
         TrinketModule,
         CombatModule,
         EncounterModule,
+        MapModule,
     ],
     providers: [
         SendEnemyIntentProcess,

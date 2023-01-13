@@ -3,7 +3,7 @@ import { InjectModel } from 'kindagoose';
 import { Potion } from './potion.schema';
 import { GameContext } from '../interfaces';
 import { Document, FilterQuery } from 'mongoose';
-import { ExpeditionMapNodeTypeEnum } from '../expedition/expedition.enum';
+import { NodeType } from '../expedition/node-type';
 import { EffectService } from 'src/game/effects/effects.service';
 import { PlayerService } from '../player/player.service';
 import { ExpeditionService } from '../expedition/expedition.service';
@@ -107,8 +107,7 @@ export class PotionService {
         }
 
         const inCombat =
-            ctx.expedition.currentNode.nodeType ===
-            ExpeditionMapNodeTypeEnum.Combat;
+            ctx.expedition.currentNode.nodeType === NodeType.Combat;
 
         // Check if potion is usable in the current context
         if (!inCombat && !potion.usableOutsideCombat) {

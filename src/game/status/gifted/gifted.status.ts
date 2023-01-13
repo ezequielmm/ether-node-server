@@ -1,8 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { CombatQueueTargetEffectTypeEnum } from 'src/game/components/combatQueue/combatQueue.enum';
-import { CombatQueueService } from 'src/game/components/combatQueue/combatQueue.service';
-import { EnemyService } from 'src/game/components/enemy/enemy.service';
-import { PlayerService } from 'src/game/components/player/player.service';
+import { defenseEffect } from 'src/game/effects/defense/constants';
+import { EffectService } from 'src/game/effects/effects.service';
 import { StatusEventDTO, StatusEventHandler } from '../interfaces';
 import { StatusDecorator } from '../status.decorator';
 import { gifted } from './constants';
@@ -12,40 +10,20 @@ import { gifted } from './constants';
 })
 @Injectable()
 export class GiftedStatus implements StatusEventHandler {
-    constructor(
-        private readonly playerService: PlayerService,
-        private readonly enemyService: EnemyService,
-        private readonly combatQueueService: CombatQueueService,
-    ) {}
+    constructor(private readonly effectService: EffectService) {}
 
-    async handle(dto: StatusEventDTO<Record<string, any>>): Promise<any> {
+    async handle(dto: StatusEventDTO): Promise<void> {
         const { ctx, source, target, status } = dto;
 
-        let finalDefense: number;
-        if (PlayerService.isPlayer(target)) {
-            finalDefense =
-                target.value.combatState.defense + status.args.counter;
-            await this.playerService.setDefense(ctx, finalDefense);
-        } else if (EnemyService.isEnemy(target)) {
-            finalDefense = target.value.defense + status.args.counter;
-            await this.enemyService.setDefense(
-                ctx,
-                target.value.id,
-                finalDefense,
-            );
-        }
-
-        await this.combatQueueService.push({
+        await this.effectService.apply({
             ctx,
             source,
             target,
-            args: {
-                effectType: CombatQueueTargetEffectTypeEnum.Defense,
-                defenseDelta: status.args.counter,
-                finalDefense,
-                healthDelta: undefined,
-                finalHealth: undefined,
-                statuses: [],
+            effect: {
+                effect: defenseEffect.name,
+                args: {
+                    value: status.args.counter,
+                },
             },
         });
     }

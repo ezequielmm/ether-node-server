@@ -3,7 +3,7 @@ import { OnEvent } from '@nestjs/event-emitter';
 import { InjectModel } from 'kindagoose';
 import { randomUUID } from 'crypto';
 import { filter } from 'lodash';
-import { FilterQuery, Model } from 'mongoose';
+import { FilterQuery } from 'mongoose';
 import { CardPlayedAction } from 'src/game/action/cardPlayed.action';
 import {
     EVENT_AFTER_DRAW_CARDS,
@@ -51,10 +51,10 @@ export class CardService {
         private readonly statusService: StatusService,
         private readonly playerService: PlayerService,
         private readonly moveCardAction: MoveCardAction,
-    ) { }
+    ) {}
 
     async findAll(): Promise<Card[]> {
-        return this.card.find({ isActive: true }).lean();
+        return await this.card.find({ isActive: true }).lean();
     }
 
     async find(filter?: FilterQuery<Card>): Promise<Card[]> {
@@ -100,13 +100,12 @@ export class CardService {
     }
 
     async findCardsById(cards: number[]): Promise<Card[]> {
-        return this.card.find({ cardId: { $in: cards } }).lean();
+        return this.card
+            .find({ cardId: { $in: cards }, isActive: true })
+            .lean();
     }
 
-    async randomCards(
-        limit: number,
-        card_type: CardTypeEnum,
-    ): Promise<Card[]> {
+    async randomCards(limit: number, card_type: CardTypeEnum): Promise<Card[]> {
         const count = await this.card.countDocuments({
             $and: [
                 {

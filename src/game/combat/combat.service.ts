@@ -8,15 +8,13 @@ import {
 import { CardRarityEnum } from '../components/card/card.enum';
 import { EnemyService } from '../components/enemy/enemy.service';
 import { EnemyId } from '../components/enemy/enemy.type';
-import {
-    CombatTurnEnum,
-    ExpeditionMapNodeTypeEnum,
-} from '../components/expedition/expedition.enum';
+import { CombatTurnEnum } from '../components/expedition/expedition.enum';
+import { NodeType } from '../components/expedition/node-type';
 import {
     IExpeditionCurrentNode,
     IExpeditionCurrentNodeDataEnemy,
-    IExpeditionNode,
 } from '../components/expedition/expedition.interface';
+import { Node } from '../components/expedition/node';
 import { ExpeditionService } from '../components/expedition/expedition.service';
 import { GameContext } from '../components/interfaces';
 import { PotionRarityEnum } from '../components/potion/potion.enum';
@@ -25,6 +23,12 @@ import { TrinketRarityEnum } from '../components/trinket/trinket.enum';
 import { HARD_MODE_NODE_START, HARD_MODE_NODE_END } from '../constants';
 import { RewardService } from '../reward/reward.service';
 import { StatusType } from '../status/interfaces';
+import { filter, shuffle, takeRight } from 'lodash';
+import { Socket } from 'socket.io';
+import { CardSelectionScreenService } from '../components/cardSelectionScreen/cardSelectionScreen.service';
+import { MoveCardAction } from '../action/moveCard.action';
+import { IMoveCard } from '../../socket/moveCard.gateway';
+import { CustomException, ErrorBehavior } from '../../socket/custom.exception';
 
 @Injectable()
 export class CombatService {
@@ -33,14 +37,16 @@ export class CombatService {
         private readonly expeditionService: ExpeditionService,
         private readonly enemyService: EnemyService,
         private readonly rewardService: RewardService,
+        private readonly cardSelectionService: CardSelectionScreenService,
+        private readonly moveCardAction: MoveCardAction,
     ) {}
 
-    private node: IExpeditionNode;
+    private node: Node;
     private clientId: string;
 
     async generate(
         ctx: GameContext,
-        node: IExpeditionNode,
+        node: Node,
     ): Promise<IExpeditionCurrentNode> {
         this.node = node;
 
@@ -55,9 +61,7 @@ export class CombatService {
         // Get current health
         const { hpCurrent, hpMax, cards } = ctx.expedition.playerState;
 
-        const handCards = cards
-            .sort(() => 0.5 - Math.random())
-            .slice(0, initialHandPileSize);
+        const handCards = takeRight(shuffle(cards), initialHandPileSize);
 
         const drawCards = removeCardsFromPile({
             originalPile: cards,
@@ -82,8 +86,9 @@ export class CombatService {
             potionsToGenerate: shouldGeneratePotion
                 ? [this.getPotionRarityProbability()]
                 : [],
-            trinketsToGenerate: trinketsToGenerate.filter(
-                (item) => item !== null,
+            trinketsToGenerate: filter(
+                trinketsToGenerate,
+                (trinket) => trinket !== null,
             ),
         });
 
@@ -91,7 +96,7 @@ export class CombatService {
 
         return {
             nodeId: this.node.id,
-            completed: this.node.isComplete,
+            completed: false,
             nodeType: this.node.type,
             showRewards: false,
             data: {
@@ -119,6 +124,56 @@ export class CombatService {
                 rewards,
             },
         };
+    }
+
+    async handleMoveCard(client: Socket, payload: string): Promise<void> {
+        const clientId = client.id;
+
+        // query the information received by the frontend
+        const { cardToTake } = JSON.parse(payload) as IMoveCard;
+
+        // Get card selection item
+        const cardSelection = await this.cardSelectionService.findOne({
+            clientId,
+        });
+
+        if (!cardSelection)
+            throw new CustomException(
+                'Card selected is not available',
+                ErrorBehavior.ReturnToMainMenu,
+            );
+
+        // Check if the id provided exists in the list
+        if (cardSelection.cardIds.includes(cardToTake)) {
+            // With the right card to take, we call the move card action
+            // with the right ids and the pile to take the cards
+            await this.moveCardAction.handle({
+                client,
+                cardIds: [cardToTake],
+                originPile: cardSelection.originPile,
+                targetPile: 'hand',
+                callback: (card) => {
+                    card.energy = 0;
+                    return card;
+                },
+            });
+
+            const amountToTake = cardSelection.amountToTake--;
+
+            if (amountToTake > 0) {
+                // Now we remove the id taken from the list and update
+                // the custom deck
+                await this.cardSelectionService.update({
+                    clientId,
+                    cardIds: cardSelection.cardIds.filter((card) => {
+                        return card !== cardToTake;
+                    }),
+                    amountToTake,
+                });
+            } else {
+                await this.cardSelectionService.deleteByClientId(clientId);
+            }
+        }
     }
 
     private async getEnemies(): Promise<IExpeditionCurrentNodeDataEnemy[]> {
@@ -166,11 +221,11 @@ export class CombatService {
 
     private generateCoins(): number {
         switch (this.node.subType) {
-            case ExpeditionMapNodeTypeEnum.CombatStandard:
+            case NodeType.CombatStandard:
                 return getRandomBetween(10, 20);
-            case ExpeditionMapNodeTypeEnum.CombatElite:
+            case NodeType.CombatElite:
                 return getRandomBetween(25, 35);
-            case ExpeditionMapNodeTypeEnum.CombatBoss:
+            case NodeType.CombatBoss:
                 return getRandomBetween(95, 105);
             default:
                 return 0;
@@ -184,7 +239,7 @@ export class CombatService {
 
         for (let i = 1; i <= cardsToGenerate; i++) {
             switch (this.node.subType) {
-                case ExpeditionMapNodeTypeEnum.CombatStandard:
+                case NodeType.CombatStandard:
                     rarities.push(
                         getRandomItemByWeight(
                             [
@@ -196,7 +251,7 @@ export class CombatService {
                         ),
                     );
                     break;
-                case ExpeditionMapNodeTypeEnum.CombatElite:
+                case NodeType.CombatElite:
                     rarities.push(
                         getRandomItemByWeight(
                             [
@@ -209,7 +264,7 @@ export class CombatService {
                         ),
                     );
                     break;
-                case ExpeditionMapNodeTypeEnum.CombatStandard:
+                case NodeType.CombatStandard:
                     rarities.push(
                         getRandomItemByWeight(
                             [CardRarityEnum.Rare, CardRarityEnum.Legendary],
@@ -236,7 +291,7 @@ export class CombatService {
 
     private getTrinketRarityProbability(): TrinketRarityEnum {
         switch (this.node.subType) {
-            case ExpeditionMapNodeTypeEnum.CombatElite:
+            case NodeType.CombatElite:
                 return getRandomItemByWeight(
                     [
                         TrinketRarityEnum.Common,
