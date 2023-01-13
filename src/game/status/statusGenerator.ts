@@ -32,7 +32,9 @@ export interface IStatusesList {
 }
 
 export class StatusGenerator {
-    static formatStatusesToArray(items: AttachedStatus[]): IStatusesList[] {
+    public static formatStatusesToArray(
+        items: AttachedStatus[],
+    ): IStatusesList[] {
         return items.map(({ name, args: { counter, value } }) => {
             let newName = name;
 
