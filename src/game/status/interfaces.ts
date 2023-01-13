@@ -126,6 +126,7 @@ export type StatusName = string;
 
 export interface StatusArgs extends Record<string, any> {
     counter: number;
+    description?: string;
 }
 
 /** It is used to declare the status information in the card. */
