@@ -25,7 +25,7 @@ export const BolsterCardUpgraded: Card = {
     },
     showPointer: false,
     isUpgraded: true,
-    isActive: true,
+    isActive: false,
 };
 
 export const BolsterCard: Card = {
@@ -52,5 +52,5 @@ export const BolsterCard: Card = {
     showPointer: false,
     isUpgraded: false,
     upgradedCardId: BolsterCardUpgraded.cardId,
-    isActive: true,
+    isActive: false,
 };

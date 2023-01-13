@@ -49,6 +49,10 @@ import { TasteOfBloodBuffStatus } from './tasteOfBlood/tasteOfBlood.buff.status'
 import { TasteOfBloodDebuffStatus } from './tasteOfBlood/tasteOfBlood.debuff.status';
 import { TrappedStatus } from './trapped/trapped.status';
 import { TurtlingStatus } from './turtling/turtling.status';
+import { SummonedStatus } from './summoned/summoned.status';
+import { ProcessModule } from '../process/process.module';
+import { PeacockFeatherStatus } from './peacockFeather/peacockFeather.status';
+import { BlightedStatus } from './blighted/blighted.status';
 
 @Module({
     imports: [
@@ -58,6 +62,7 @@ import { TurtlingStatus } from './turtling/turtling.status';
         forwardRef(() => PlayerModule),
         forwardRef(() => CardModule),
         forwardRef(() => ActionModule),
+        forwardRef(() => ProcessModule),
         CombatQueueModule,
         ProviderModule,
         HistoryModule,
@@ -106,6 +111,9 @@ import { TurtlingStatus } from './turtling/turtling.status';
         FeebleStatus,
         TrappedStatus,
         BirdcageStatus,
+        SummonedStatus,
+        PeacockFeatherStatus,
+        BlightedStatus,
     ],
     exports: [StatusService],
 })

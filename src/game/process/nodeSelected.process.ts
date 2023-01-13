@@ -56,18 +56,16 @@ export class NodeSelectedProcess {
         this.mapService.selectNode(ctx, node.id);
         await ctx.expedition.save();
 
-        let response: string;
         switch (node.type) {
             case NodeType.Portal:
                 this.logger.debug(`Map extended for client ${ctx.client.id}`);
 
-                response = StandardResponse.respond({
+                return StandardResponse.respond({
                     message_type: SWARMessageType.MapUpdate,
                     seed: mapSeedId,
                     action: SWARAction.ExtendMap,
                     data: map,
                 });
-                break;
             case NodeType.RoyalHouse:
             case NodeType.RoyalHouseA:
             case NodeType.RoyalHouseB:
@@ -77,13 +75,12 @@ export class NodeSelectedProcess {
                     `Activated portal for client ${ctx.client.id}`,
                 );
 
-                response = StandardResponse.respond({
+                return StandardResponse.respond({
                     message_type: SWARMessageType.MapUpdate,
                     seed: mapSeedId,
                     action: SWARAction.ActivatePortal,
                     data: map,
                 });
-                break;
             case NodeType.Combat:
             case NodeType.CombatBoss:
             case NodeType.CombatElite:
@@ -94,45 +91,52 @@ export class NodeSelectedProcess {
 
                 await this.initCombatProcess.process(ctx, node, false);
 
-                response = StandardResponse.respond({
+                return StandardResponse.respond({
                     message_type: SWARMessageType.MapUpdate,
                     seed: mapSeedId,
                     action: SWARAction.MapUpdate,
                     data: map,
                 });
-                break;
             case NodeType.Camp:
             case NodeType.CampHouse:
             case NodeType.CampRegular:
+                this.logger.debug(`Started Camp for client ${ctx.client.id}`);
+
                 await this.initNodeProcess.process(ctx, node);
 
-                response = StandardResponse.respond({
+                return StandardResponse.respond({
                     message_type: SWARMessageType.CampUpdate,
                     action: SWARAction.BeginCamp,
                     data: null,
                 });
-                break;
             case NodeType.Encounter:
-                response = await this.initEncounterProcess.process(ctx, node);
-                break;
-            case NodeType.Treasure:
-                response = await this.initTreasureProcess.process(
-                    ctx,
-                    node,
-                    false,
+                this.logger.debug(
+                    `Started Encounter for client ${ctx.client.id}`,
                 );
-                break;
-            case NodeType.Merchant:
-                response = await this.initMerchantProcess.process(ctx, node);
-                break;
-        }
 
-        return response;
+                return await this.initEncounterProcess.process(ctx, node);
+            case NodeType.Treasure:
+                this.logger.debug(
+                    `Started Treasure for client ${ctx.client.id}`,
+                );
+
+                return await this.initTreasureProcess.process(ctx, node, false);
+            case NodeType.Merchant:
+                this.logger.debug(
+                    `Started Merchant for client ${ctx.client.id}`,
+                );
+
+                return await this.initMerchantProcess.process(ctx, node);
+        }
     }
 
     private async nodeIsActive(ctx: GameContext, node: Node): Promise<string> {
         switch (node.type) {
             case NodeType.Combat:
+            case NodeType.Combat:
+            case NodeType.CombatBoss:
+            case NodeType.CombatElite:
+            case NodeType.CombatStandard:
                 this.logger.debug(
                     `Sent message InitCombat to client ${ctx.client.id}`,
                 );

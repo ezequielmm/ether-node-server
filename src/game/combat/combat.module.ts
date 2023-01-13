@@ -10,11 +10,11 @@ import { ActionModule } from '../action/action.module';
 @Module({
     imports: [
         forwardRef(() => ExpeditionModule),
+        forwardRef(() => EnemyModule),
+        forwardRef(() => ActionModule),
         SettingsModule,
-        EnemyModule,
         RewardModule,
         CardSelectionScreenModule,
-        forwardRef(() => ActionModule),
     ],
     providers: [CombatService],
     exports: [CombatService],
