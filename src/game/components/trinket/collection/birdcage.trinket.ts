@@ -1,4 +1,5 @@
 import { Prop } from '@typegoose/typegoose';
+import { EVENT_AFTER_INIT_COMBAT } from 'src/game/constants';
 import { birdcageStatus } from 'src/game/status/birdcage/constants';
 import { StatusService } from 'src/game/status/status.service';
 import { GameContext } from '../../interfaces';
@@ -26,27 +27,28 @@ export class BirdcageTrinket extends Trinket {
     damage: number;
 
     async onAttach(ctx: GameContext): Promise<void> {
-        const statusService = ctx.moduleRef.get(StatusService, {
-            strict: false,
+        ctx.events.addListener(EVENT_AFTER_INIT_COMBAT, async () => {
+            const statusService = ctx.moduleRef.get(StatusService, {
+                strict: false,
+            });
+
+            const playerService = ctx.moduleRef.get(PlayerService, {
+                strict: false,
+            });
+
+            const player = playerService.get(ctx);
+
+            await statusService.attach({
+                ctx,
+                source: player,
+                target: player,
+                statusName: birdcageStatus.name,
+                statusArgs: {
+                    counter: 4,
+                    value: this.damage,
+                },
+            });
+            this.trigger(ctx);
         });
-
-        const playerService = ctx.moduleRef.get(PlayerService, {
-            strict: false,
-        });
-
-        const player = playerService.get(ctx);
-
-        await statusService.attach({
-            ctx,
-            source: player,
-            target: player,
-            statusName: birdcageStatus.name,
-            statusArgs: {
-                counter: 4,
-                value: this.damage,
-            },
-        });
-
-        this.trigger(ctx);
     }
 }
