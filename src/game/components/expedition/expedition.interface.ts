@@ -1,4 +1,3 @@
-import { ApiProperty } from '@nestjs/swagger';
 import { AttachedStatus, StatusType } from 'src/game/status/interfaces';
 import { CardRarityEnum, CardTypeEnum } from '../card/card.enum';
 import { Card } from '../card/card.schema';
@@ -84,27 +83,7 @@ export interface CardReward extends BaseReward {
 
 export type Reward = GoldReward | PotionReward | CardReward | TrinketReward;
 
-export interface IExpeditionStatusResponse {
-    readonly hasExpedition: boolean;
-}
-
-export interface IExpeditionCreatedResponse {
-    readonly expeditionCreated: boolean;
-}
-
-export interface IExpeditionCancelledResponse {
-    readonly canceledExpedition: boolean;
-}
-
 export type IExpeditionCurrentNode = Expedition['currentNode'];
 export type IExpeditionPlayerGlobalState = Expedition['playerState'];
 export type IExpeditionPlayerCombatState =
     IExpeditionCurrentNode['data']['player'];
-
-export class CreateExpeditionApiDTO {
-    @ApiProperty({ default: 'knight' })
-    class: string;
-
-    @ApiProperty()
-    nftId: number;
-}

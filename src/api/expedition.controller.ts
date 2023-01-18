@@ -9,18 +9,25 @@ import {
     Post,
     Body,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
+import {
+    ApiBearerAuth,
+    ApiOperation,
+    ApiProperty,
+    ApiTags,
+} from '@nestjs/swagger';
 import { AuthGuard } from '../guards/auth.guard';
 import { ExpeditionService } from '../game/components/expedition/expedition.service';
 import { AuthGatewayService } from 'src/authGateway/authGateway.service';
-import {
-    CreateExpeditionApiDTO,
-    IExpeditionCancelledResponse,
-    IExpeditionCreatedResponse,
-    IExpeditionStatusResponse,
-} from 'src/game/components/expedition/expedition.interface';
 import { ExpeditionStatusEnum } from 'src/game/components/expedition/expedition.enum';
 import { InitExpeditionProcess } from 'src/game/process/initExpedition.process';
+
+class CreateExpeditionApiDTO {
+    @ApiProperty({ default: 'knight' })
+    readonly class: string;
+
+    @ApiProperty()
+    readonly nftId: number;
+}
 
 @ApiBearerAuth()
 @ApiTags('Expedition')
@@ -41,7 +48,7 @@ export class ExpeditionController {
     @Get('/status')
     async handleGetExpeditionStatus(
         @Headers() headers,
-    ): Promise<IExpeditionStatusResponse> {
+    ): Promise<{ hasExpedition: boolean; nftId: number }> {
         this.logger.debug(`Client called GET route "/expeditions/status"`);
 
         const { authorization } = headers;
@@ -51,12 +58,17 @@ export class ExpeditionController {
                 authorization,
             );
 
-            const hasExpedition =
-                await this.expeditionService.playerHasExpeditionInProgress({
-                    clientId: playerId,
-                });
+            const expedition = await this.expeditionService.findOne(
+                {
+                    playerId: playerId,
+                },
+                { playerState: 1 },
+            );
 
-            return { hasExpedition };
+            const hasExpedition = expedition !== null;
+            const nftId = expedition?.playerState?.nftId ?? 0;
+
+            return { hasExpedition, nftId };
         } catch (e) {
             this.logger.error(e.stack);
             throw new HttpException(
@@ -76,7 +88,9 @@ export class ExpeditionController {
     async handleCreateExpedition(
         @Headers() headers,
         @Body() payload: CreateExpeditionApiDTO,
-    ): Promise<IExpeditionCreatedResponse> {
+    ): Promise<{
+        expeditionCreated: boolean;
+    }> {
         this.logger.debug(`Client called POST route "/expeditions"`);
 
         const { authorization } = headers;
@@ -123,9 +137,9 @@ export class ExpeditionController {
         summary: `Cancel the expedition`,
     })
     @Post('/cancel')
-    async handleCancelExpedition(
-        @Headers() headers,
-    ): Promise<IExpeditionCancelledResponse> {
+    async handleCancelExpedition(@Headers() headers): Promise<{
+        canceledExpedition: boolean;
+    }> {
         this.logger.debug(`Client called POST route "/expedition/cancel"`);
 
         const { authorization } = headers;
