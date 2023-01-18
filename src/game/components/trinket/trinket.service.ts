@@ -62,7 +62,7 @@ export class TrinketService {
         }
 
         ctx.expedition.playerState.trinkets.push(trinket);
-        trinket.onAttach(ctx);
+        await trinket.onAttach(ctx);
         await ctx.expedition.save();
 
         ctx.client.emit(
