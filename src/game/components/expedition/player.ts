@@ -11,6 +11,9 @@ export class Player {
     playerId: string;
 
     @Prop()
+    nftId?: number;
+
+    @Prop()
     playerName: string;
 
     @Prop()

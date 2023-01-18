@@ -1,4 +1,4 @@
-import { modelOptions, Prop, PropType } from '@typegoose/typegoose';
+import { modelOptions, Prop, PropType, Severity } from '@typegoose/typegoose';
 import { HydratedDocument } from 'mongoose';
 import { MerchantItems } from 'src/game/merchant/merchant.interface';
 import { AttachedStatus, StatusType } from 'src/game/status/interfaces';
@@ -19,6 +19,7 @@ export type ExpeditionDocument = HydratedDocument<Expedition>;
 
 @modelOptions({
     schemaOptions: { collection: 'expeditions', versionKey: false },
+    options: { allowMixed: Severity.ALLOW },
 })
 export class Expedition {
     @Prop()
