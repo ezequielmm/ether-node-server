@@ -66,7 +66,7 @@ export class ExpeditionController {
             );
 
             const hasExpedition = expedition !== null;
-            const nftId = expedition?.playerState?.nftId ?? 0;
+            const nftId = expedition?.playerState?.nftId ?? -1;
 
             return { hasExpedition, nftId };
         } catch (e) {
