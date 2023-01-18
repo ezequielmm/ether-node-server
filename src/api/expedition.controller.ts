@@ -7,12 +7,14 @@ import {
     HttpException,
     HttpStatus,
     Post,
+    Body,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '../guards/auth.guard';
 import { ExpeditionService } from '../game/components/expedition/expedition.service';
 import { AuthGatewayService } from 'src/authGateway/authGateway.service';
 import {
+    CreateExpeditionApiDTO,
     IExpeditionCancelledResponse,
     IExpeditionCreatedResponse,
     IExpeditionStatusResponse,
@@ -73,6 +75,7 @@ export class ExpeditionController {
     @Post()
     async handleCreateExpedition(
         @Headers() headers,
+        @Body() payload: CreateExpeditionApiDTO,
     ): Promise<IExpeditionCreatedResponse> {
         this.logger.debug(`Client called POST route "/expeditions"`);
 
@@ -85,6 +88,8 @@ export class ExpeditionController {
                 email,
             } = await this.authGatewayService.getUser(authorization);
 
+            const { nftId } = payload;
+
             const hasExpedition =
                 await this.expeditionService.playerHasExpeditionInProgress({
                     clientId: playerId,
@@ -95,6 +100,7 @@ export class ExpeditionController {
                     playerId,
                     playerName,
                     email,
+                    nftId,
                 });
 
                 return { expeditionCreated: true };

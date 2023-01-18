@@ -1,3 +1,4 @@
+import { ApiProperty } from '@nestjs/swagger';
 import { AttachedStatus, StatusType } from 'src/game/status/interfaces';
 import { CardRarityEnum, CardTypeEnum } from '../card/card.enum';
 import { Card } from '../card/card.schema';
@@ -99,3 +100,11 @@ export type IExpeditionCurrentNode = Expedition['currentNode'];
 export type IExpeditionPlayerGlobalState = Expedition['playerState'];
 export type IExpeditionPlayerCombatState =
     IExpeditionCurrentNode['data']['player'];
+
+export class CreateExpeditionApiDTO {
+    @ApiProperty({ default: 'knight' })
+    class: string;
+
+    @ApiProperty()
+    nftId: number;
+}
