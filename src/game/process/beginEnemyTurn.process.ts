@@ -21,15 +21,9 @@ import {
     SWARMessageType,
 } from '../standardResponse/standardResponse';
 
-interface BeginEnemyTurnDTO {
-    ctx: GameContext;
-}
-
 @Injectable()
 export class BeginEnemyTurnProcess {
     private readonly logger: Logger = new Logger(BeginEnemyTurnProcess.name);
-
-    private client: Socket;
 
     constructor(
         @Inject(forwardRef(() => ExpeditionService))
@@ -40,24 +34,23 @@ export class BeginEnemyTurnProcess {
         private readonly changeTurnAction: ChangeTurnAction,
     ) {}
 
-    async handle(payload: BeginEnemyTurnDTO): Promise<void> {
-        const { ctx } = payload;
-        const { client } = ctx;
-
+    async handle({ ctx }: { ctx: GameContext }): Promise<void> {
         this.logger.debug(`Beginning enemies turn`);
 
-        this.client = client;
+        const { client, expedition } = ctx;
+
+        await this.expeditionService.updateByFilter(
+            { clientId: client.id },
+            {
+                'currentNode.data.playing': CombatTurnEnum.Enemy,
+            },
+        );
 
         // Set combat turn change
         this.changeTurnAction.handle({
-            client: this.client,
+            client,
             type: SWARMessageType.BeginTurn,
             entity: CombatTurnEnum.Enemy,
-        });
-
-        const expedition = await this.expeditionService.setCombatTurn({
-            clientId: this.client.id,
-            playing: CombatTurnEnum.Enemy,
         });
 
         const {
@@ -111,7 +104,8 @@ export class BeginEnemyTurnProcess {
             }
         }
 
-        await this.sendUpdatedEnemiesData();
+        await this.sendUpdatedEnemiesData(client);
+
         await this.eventEmitter.emitAsync(EVENT_AFTER_ENEMIES_TURN_START, {
             ctx,
         });
@@ -119,21 +113,21 @@ export class BeginEnemyTurnProcess {
         await this.combatQueueService.end(ctx);
     }
 
-    private async sendUpdatedEnemiesData(): Promise<void> {
+    private async sendUpdatedEnemiesData(client: Socket): Promise<void> {
         // Next we query back the enemies from the database and
         // send them to the client
         const {
             data: { enemies: enemiesUpdated },
         } = await this.expeditionService.getCurrentNode({
-            clientId: this.client.id,
+            clientId: client.id,
         });
 
         // Send enemies updated
         this.logger.debug(
-            `Sent message PutData to client ${this.client.id}: ${SWARAction.UpdateEnemy}`,
+            `Sent message PutData to client ${client.id}: ${SWARAction.UpdateEnemy}`,
         );
 
-        this.client.emit(
+        client.emit(
             'PutData',
             StandardResponse.respond({
                 message_type: SWARMessageType.EnemyAffected,
