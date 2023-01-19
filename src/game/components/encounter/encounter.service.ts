@@ -474,7 +474,7 @@ export class EncounterService {
         const ctx = await this.expeditionService.getGameContext(client);
         const expedition = ctx.expedition;
         const encounterData: EncounterInterface =
-            expedition.currentNode.encounterData;
+            expedition.currentNode?.encounterData;
         return encounterData;
     }
 

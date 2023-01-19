@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { randomUUID } from 'crypto';
 import {
     getRandomBetween,
@@ -24,7 +24,6 @@ import { HARD_MODE_NODE_START, HARD_MODE_NODE_END } from '../constants';
 import { RewardService } from '../reward/reward.service';
 import { StatusType } from '../status/interfaces';
 import { filter, shuffle, takeRight } from 'lodash';
-import { Socket } from 'socket.io';
 import { CardSelectionScreenService } from '../components/cardSelectionScreen/cardSelectionScreen.service';
 import { MoveCardAction } from '../action/moveCard.action';
 import { IMoveCard } from '../../socket/moveCard.gateway';
@@ -41,6 +40,7 @@ export class CombatService {
         private readonly rewardService: RewardService,
         private readonly cardSelectionService: CardSelectionScreenService,
         private readonly moveCardAction: MoveCardAction,
+        @Inject(forwardRef(() => CardService))
         private readonly cardService: CardService,
     ) {}
 

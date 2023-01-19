@@ -1,14 +1,14 @@
 import { Prop } from '@typegoose/typegoose';
-import { EVENT_AFTER_INIT_COMBAT } from 'src/game/constants';
-import { chooseCardEffect } from 'src/game/effects/chooseCard/constants';
-import { EffectService } from 'src/game/effects/effects.service';
-import { birdcageStatus } from 'src/game/status/birdcage/constants';
-import { StatusService } from 'src/game/status/status.service';
+import {
+    StandardResponse,
+    SWARAction,
+    SWARMessageType,
+} from 'src/game/standardResponse/standardResponse';
+import { Card } from '../../card/card.schema';
 import { CardService } from '../../card/card.service';
 import { CardSelectionScreenOriginPileEnum } from '../../cardSelectionScreen/cardSelectionScreen.enum';
 import { CardSelectionScreenService } from '../../cardSelectionScreen/cardSelectionScreen.service';
 import { GameContext } from '../../interfaces';
-import { PlayerService } from '../../player/player.service';
 import { TrinketRarityEnum } from '../trinket.enum';
 import { Trinket } from '../trinket.schema';
 
@@ -40,30 +40,37 @@ export class RunicTomeTrinket extends Trinket {
 
         const opts = { strict: false };
 
-        const effectService = moduleRef.get(EffectService, opts);
-        const playerService = moduleRef.get(PlayerService, opts);
-        const cardService = moduleRef.get(CardService);
+        const cardSelectionScreenService = moduleRef.get(
+            CardSelectionScreenService,
+            opts,
+        );
+        const cardService = moduleRef.get(CardService, opts);
 
-        const cards = [];
+        const cards: Card[] = [];
 
         for (let i = 0; i < MAX_CARDS_TO_SHOW; i++) {
             const card = await cardService.getRandomCard();
             cards.push(card);
         }
 
-        const player = playerService.get(ctx);
-
-        await effectService.apply({
-            ctx,
-            source: player,
-            target: player,
-            effect: {
-                effect: chooseCardEffect.name,
-                args: {
-                    value: this.cardsToTake,
-                    originPile: CardSelectionScreenOriginPileEnum.None,
+        ctx.client.emit(
+            'PutData',
+            StandardResponse.respond({
+                message_type: SWARMessageType.CombatUpdate,
+                action: SWARAction.ShowCardDialog,
+                data: {
+                    cards: cards,
+                    cardsToTake: this.cardsToTake,
                 },
-            },
+            }),
+        );
+
+        await cardSelectionScreenService.deleteByClientId(ctx.client.id);
+        await cardSelectionScreenService.create({
+            clientId: ctx.client.id,
+            cardIds: cards.map(({ cardId }) => cardId),
+            originPile: CardSelectionScreenOriginPileEnum.None,
+            amountToTake: this.cardsToTake,
         });
     }
 }
