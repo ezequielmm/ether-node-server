@@ -35,7 +35,15 @@ export class RunicTomeTrinket extends Trinket {
     @Prop({ default: 2 })
     cardsToTake: number;
 
+    @Prop({ default: false })
+    used: boolean;
+
     async onAttach(ctx: GameContext): Promise<void> {
+        // If the trinket has already been used, we don't need to do anything
+        if (this.used) {
+            return;
+        }
+
         const moduleRef = ctx.moduleRef;
 
         const opts = { strict: false };
@@ -53,6 +61,14 @@ export class RunicTomeTrinket extends Trinket {
             cards.push(card);
         }
 
+        await cardSelectionScreenService.deleteByClientId(ctx.client.id);
+        await cardSelectionScreenService.create({
+            clientId: ctx.client.id,
+            cardIds: cards.map(({ cardId }) => cardId),
+            originPile: CardSelectionScreenOriginPileEnum.None,
+            amountToTake: this.cardsToTake,
+        });
+
         ctx.client.emit(
             'PutData',
             StandardResponse.respond({
@@ -65,12 +81,11 @@ export class RunicTomeTrinket extends Trinket {
             }),
         );
 
-        await cardSelectionScreenService.deleteByClientId(ctx.client.id);
-        await cardSelectionScreenService.create({
-            clientId: ctx.client.id,
-            cardIds: cards.map(({ cardId }) => cardId),
-            originPile: CardSelectionScreenOriginPileEnum.None,
-            amountToTake: this.cardsToTake,
-        });
+        // Mark the trinket as used
+        this.used = true;
+        ctx.expedition.markModified('playerState.trinkets');
+
+        // Save the expedition
+        await ctx.expedition.save();
     }
 }
