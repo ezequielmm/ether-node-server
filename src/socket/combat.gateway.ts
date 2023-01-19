@@ -34,8 +34,6 @@ export class CombatGateway {
         const ctx = await this.expeditionService.getGameContext(client);
         const { expedition } = ctx;
 
-        console.log(expedition.currentNode);
-
         if (
             expedition.currentNode === null ||
             expedition.currentNode.nodeType !== NodeType.Combat
