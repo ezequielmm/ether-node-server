@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { forwardRef, Inject, Injectable, Logger } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { filter, isEmpty } from 'lodash';
 import { Socket } from 'socket.io';
@@ -32,6 +32,7 @@ export class BeginEnemyTurnProcess {
     private client: Socket;
 
     constructor(
+        @Inject(forwardRef(() => ExpeditionService))
         private readonly expeditionService: ExpeditionService,
         private readonly effectService: EffectService,
         private readonly eventEmitter: EventEmitter2,

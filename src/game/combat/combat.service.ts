@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { randomUUID } from 'crypto';
 import {
     getRandomBetween,
@@ -24,11 +24,12 @@ import { HARD_MODE_NODE_START, HARD_MODE_NODE_END } from '../constants';
 import { RewardService } from '../reward/reward.service';
 import { StatusType } from '../status/interfaces';
 import { filter, shuffle, takeRight } from 'lodash';
-import { Socket } from 'socket.io';
 import { CardSelectionScreenService } from '../components/cardSelectionScreen/cardSelectionScreen.service';
 import { MoveCardAction } from '../action/moveCard.action';
 import { IMoveCard } from '../../socket/moveCard.gateway';
 import { CustomException, ErrorBehavior } from '../../socket/custom.exception';
+import { CardSelectionScreenOriginPileEnum } from '../components/cardSelectionScreen/cardSelectionScreen.enum';
+import { CardService } from '../components/card/card.service';
 
 @Injectable()
 export class CombatService {
@@ -39,6 +40,8 @@ export class CombatService {
         private readonly rewardService: RewardService,
         private readonly cardSelectionService: CardSelectionScreenService,
         private readonly moveCardAction: MoveCardAction,
+        @Inject(forwardRef(() => CardService))
+        private readonly cardService: CardService,
     ) {}
 
     private node: Node;
@@ -126,8 +129,9 @@ export class CombatService {
         };
     }
 
-    async handleMoveCard(client: Socket, payload: string): Promise<void> {
-        const clientId = client.id;
+    async handleMoveCard(ctx: GameContext, payload: string): Promise<void> {
+        const client = ctx.client;
+        const clientId = ctx.client.id;
 
         // query the information received by the frontend
         const { cardToTake } = JSON.parse(payload) as IMoveCard;
@@ -145,18 +149,26 @@ export class CombatService {
 
         // Check if the id provided exists in the list
         if (cardSelection.cardIds.includes(cardToTake)) {
-            // With the right card to take, we call the move card action
-            // with the right ids and the pile to take the cards
-            await this.moveCardAction.handle({
-                client,
-                cardIds: [cardToTake],
-                originPile: cardSelection.originPile,
-                targetPile: 'hand',
-                callback: (card) => {
-                    card.energy = 0;
-                    return card;
-                },
-            });
+            if (
+                cardSelection.originPile !=
+                CardSelectionScreenOriginPileEnum.None
+            ) {
+                // With the right card to take, we call the move card action
+                // with the right ids and the pile to take the cards
+                await this.moveCardAction.handle({
+                    client,
+                    cardIds: [cardToTake],
+                    originPile: cardSelection.originPile,
+                    targetPile: 'hand',
+                    callback: (card) => {
+                        card.energy = 0;
+                        return card;
+                    },
+                });
+            } else {
+                // If the origin pile is none, we add the new card to the deck instead of moving it
+                await this.cardService.addCardToDeck(ctx, parseInt(cardToTake));
+            }
 
             const amountToTake = cardSelection.amountToTake--;
 

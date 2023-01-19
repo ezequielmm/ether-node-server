@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { forwardRef, Inject, Injectable, Logger } from '@nestjs/common';
 import { Socket } from 'socket.io';
 import { CardId } from '../components/card/card.type';
 import { IExpeditionPlayerStateDeckCard } from '../components/expedition/expedition.interface';
@@ -18,7 +18,10 @@ interface ExhaustCardDTO {
 export class ExhaustCardAction {
     private readonly logger: Logger = new Logger(ExhaustCardAction.name);
 
-    constructor(private readonly expeditionService: ExpeditionService) {}
+    constructor(
+        @Inject(forwardRef(() => ExpeditionService))
+        private readonly expeditionService: ExpeditionService,
+    ) {}
 
     async handle(payload: ExhaustCardDTO): Promise<void> {
         const { client, cardId } = payload;

@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { forwardRef, Inject, Injectable, Logger } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
 import { InjectModel } from 'kindagoose';
 import { randomUUID } from 'crypto';
@@ -47,6 +47,7 @@ export class CardService {
     constructor(
         @InjectModel(Card) private readonly card: ReturnModelType<typeof Card>,
         private readonly cardPlayedAction: CardPlayedAction,
+        @Inject(forwardRef(() => ExpeditionService))
         private readonly expeditionService: ExpeditionService,
         private readonly statusService: StatusService,
         private readonly playerService: PlayerService,
@@ -65,7 +66,7 @@ export class CardService {
         return await this.card.findOne(filter).lean();
     }
 
-    async getRandomCard(filter?: FilterQuery<Card>): Promise<Card> {
+    async getRandomCard(filter: FilterQuery<Card> = {}): Promise<Card> {
         const [card] = await this.card.aggregate<Card>([
             { $match: filter },
             { $sample: { size: 1 } },
@@ -161,6 +162,23 @@ export class CardService {
             clientId: ctx.client.id,
             deck,
         });
+
+        // TODO: Create a new message type for this
+        // TEMPORARY
+        ctx.client.emit(
+            'PutData',
+            StandardResponse.respond({
+                message_type: SWARMessageType.PlayerAffected,
+                action: SWARAction.AddCard,
+                data: [
+                    {
+                        destination: 'hand',
+                        id: undefined,
+                        card: newCard,
+                    },
+                ],
+            }),
+        );
     }
 
     async removeCardFromDeck(ctx: GameContext, cardId: string): Promise<void> {

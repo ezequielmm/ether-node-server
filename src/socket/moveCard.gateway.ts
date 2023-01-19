@@ -4,6 +4,7 @@ import { Logger } from '@nestjs/common';
 import { Socket } from 'socket.io';
 import { EncounterService } from '../game/components/encounter/encounter.service';
 import { CombatService } from '../game/combat/combat.service';
+import { ExpeditionService } from 'src/game/components/expedition/expedition.service';
 
 export interface IMoveCard {
     cardToTake: string;
@@ -13,6 +14,7 @@ export interface IMoveCard {
 export class MoveCardGateway {
     private readonly logger: Logger = new Logger(MoveCardGateway.name);
     constructor(
+        private readonly expeditionService: ExpeditionService,
         private readonly encounterService: EncounterService,
         private readonly combatService: CombatService,
     ) {}
@@ -23,6 +25,8 @@ export class MoveCardGateway {
             `Client ${client.id} trigger message "MoveCard": ${payload}`,
         );
 
+        const ctx = await this.expeditionService.getGameContext(client);
+
         const encounterData = await this.encounterService.getEncounterData(
             client,
         );
@@ -31,6 +35,6 @@ export class MoveCardGateway {
             return;
         }
 
-        await this.combatService.handleMoveCard(client, payload);
+        await this.combatService.handleMoveCard(ctx, payload);
     }
 }
