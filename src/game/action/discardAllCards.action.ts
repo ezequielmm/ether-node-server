@@ -24,9 +24,7 @@ export class DiscardAllCardsAction {
         private readonly expeditionService: ExpeditionService,
     ) {}
 
-    async handle(payload: DiscardAllCardsDTO) {
-        const { client, SWARMessageTypeToSend } = payload;
-
+    async handle({ client, SWARMessageTypeToSend }: DiscardAllCardsDTO) {
         const {
             data: {
                 player: {
@@ -55,7 +53,7 @@ export class DiscardAllCardsAction {
 
         const cardMoves = hand.map(({ id, keywords }) => ({
             source: 'hand',
-            destination: keywords.includes(CardKeywordEnum.Fade)
+            destination: includes(keywords, CardKeywordEnum.Fade)
                 ? 'exhaust'
                 : 'discard',
             id,

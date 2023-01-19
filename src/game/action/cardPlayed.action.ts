@@ -56,9 +56,11 @@ export class CardPlayedAction {
         private readonly eventEmitter: EventEmitter2,
     ) {}
 
-    async handle(payload: CardPlayedDTO): Promise<void> {
-        const { cardId, selectedEnemyId, ctx } = payload;
-
+    async handle({
+        cardId,
+        selectedEnemyId,
+        ctx,
+    }: CardPlayedDTO): Promise<void> {
         this.client = ctx.client;
 
         // First make sure card exists on player's hand pile
