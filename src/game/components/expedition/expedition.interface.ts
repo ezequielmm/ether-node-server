@@ -83,18 +83,6 @@ export interface CardReward extends BaseReward {
 
 export type Reward = GoldReward | PotionReward | CardReward | TrinketReward;
 
-export interface IExpeditionStatusResponse {
-    readonly hasExpedition: boolean;
-}
-
-export interface IExpeditionCreatedResponse {
-    readonly expeditionCreated: boolean;
-}
-
-export interface IExpeditionCancelledResponse {
-    readonly canceledExpedition: boolean;
-}
-
 export type IExpeditionCurrentNode = Expedition['currentNode'];
 export type IExpeditionPlayerGlobalState = Expedition['playerState'];
 export type IExpeditionPlayerCombatState =

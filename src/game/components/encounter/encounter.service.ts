@@ -46,16 +46,16 @@ export class EncounterService {
                 EncounterIdEnum.Nagpra, //3 TODO disabled due to server crashing bug
                 EncounterIdEnum.TreeCarving,
                 EncounterIdEnum.Naiad,
-                EncounterIdEnum.WillOWisp, //6
-                EncounterIdEnum.DancingSatyr, //7
-                EncounterIdEnum.EnchantedForest, //8
+                EncounterIdEnum.WillOWisp, //6 working [13 jan 2023]
+                EncounterIdEnum.DancingSatyr, //7 working [13 jan 2023]
+                EncounterIdEnum.EnchantedForest, //8 working [13 jan 2023]
                 EncounterIdEnum.MossyTroll,
                 EncounterIdEnum.YoungWizard,
                 EncounterIdEnum.Oddbarks, // 11
                 EncounterIdEnum.RunicBehive,
             ],
             //      1  2  3  4  5  6  7  8  9  10 11 12
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0],
+            [0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0],
         );
 
         //fetch existing encounter if there is one

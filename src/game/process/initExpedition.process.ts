@@ -17,6 +17,7 @@ interface InitExpeditionDTO {
     playerId: number;
     playerName: string;
     email: string;
+    nftId: number;
 }
 
 @Injectable()
@@ -32,9 +33,12 @@ export class InitExpeditionProcess {
         private readonly mapService: MapService,
     ) {}
 
-    async handle(payload: InitExpeditionDTO): Promise<void> {
-        const { playerId, playerName, email } = payload;
-
+    async handle({
+        playerId,
+        playerName,
+        email,
+        nftId,
+    }: InitExpeditionDTO): Promise<void> {
         const character = await this.characterService.findOne({
             characterClass: CharacterClassEnum.Knight,
         });
@@ -58,6 +62,7 @@ export class InitExpeditionProcess {
             playerState: {
                 playerId: randomUUID(),
                 playerName,
+                nftId,
                 characterClass: character.characterClass,
                 hpMax: character.initialHealth,
                 hpCurrent: character.initialHealth,
