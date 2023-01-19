@@ -37,8 +37,6 @@ import { MapService } from 'src/game/map/map.service';
 
 @Injectable()
 export class ExpeditionService {
-    private readonly ctxCache: Map<ClientId, GameContext> = new Map();
-
     constructor(
         @InjectModel(Expedition)
         private readonly expedition: ReturnModelType<typeof Expedition>,
@@ -46,16 +44,9 @@ export class ExpeditionService {
         private readonly enemyService: EnemyService,
         private readonly moduleRef: ModuleRef,
         private readonly mapService: MapService,
-    ) {
-        // Clear the cache every 5 minutes
-        setInterval(() => this.ctxCache.clear(), 5 * 60 * 1000);
-    }
+    ) {}
 
     async getGameContext(client: Socket): Promise<GameContext> {
-        if (this.ctxCache.has(client.id)) {
-            return this.ctxCache.get(client.id);
-        }
-
         const expedition = await this.findOne({ clientId: client.id });
         const events = new EventEmitter2();
 
@@ -69,8 +60,6 @@ export class ExpeditionService {
         for (const trinket of expedition.playerState?.trinkets) {
             await trinket.onAttach(ctx);
         }
-
-        this.ctxCache.set(client.id, ctx);
 
         return ctx;
     }
