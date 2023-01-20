@@ -298,6 +298,9 @@ export class EnemyService {
                         ...(enemy.category === EnemyCategoryEnum.Basic && {
                             'scores.basicEnemiesDefeated': 1,
                         }),
+                        ...(enemy.category === EnemyCategoryEnum.Minion && {
+                            'scores.basicEnemiesDefeated': 1,
+                        }),
                         ...(enemy.category === EnemyCategoryEnum.Elite && {
                             'scores.eliteEnemiesDefeated': 1,
                         }),

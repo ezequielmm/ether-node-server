@@ -6,9 +6,6 @@ import { ModelOptions, Prop, Severity } from '@typegoose/typegoose';
 })
 export class Score {
     @Prop({ default: 0 })
-    nodesCompleted: number;
-
-    @Prop({ default: 0 })
     basicEnemiesDefeated: number;
 
     @Prop({ default: 0 })
