@@ -12,18 +12,18 @@ export const OddbarksEncounter: Encounter = {
                 'Three small forms jump out from behind a tree! They grumble excitedly in an unknown tongue that sounds like the creaking of branches in the wind. They jump back and forth, not especially scared of you. One waddles forward, sticks out both of its upturned limbs and stares at you expectantly.',
             buttons: [
                 {
-                    text: 'A: Offer a Trinket [Transform Trinket]', // aka option 1
+                    text: 'Click HERE to offer a Trinket [Transform Trinket]', // aka option 1
                     nextStage: 1,
                     //awaitModal: true,
                     effects: [{ kind: 'choose_trinket', amount: 1 }],
                 },
                 {
-                    text: 'B: Offer 2 Trinkets [Transform 2 Trinkets]', // aka option 2
+                    text: 'Click HERE to offer 2 Trinkets [Transform 2 Trinkets]', // aka option 2
                     nextStage: 2,
                     effects: [{ kind: 'choose_trinket', amount: 2 }],
                 },
                 {
-                    text: 'C: Walk on [Leave]',
+                    text: 'Click HERE to walk on [Leave]',
                     nextStage: 2,
                     effects: [],
                 },
