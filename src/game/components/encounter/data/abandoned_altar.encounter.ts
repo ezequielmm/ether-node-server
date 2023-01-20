@@ -23,13 +23,13 @@ export const AbandonedAltarEncounter: Encounter = {
                 'You come across an ancient altar to an unknown spirit, covered with moss and vines. You sense that offering a sacrifice may compel them to bless your journey',
             buttons: [
                 {
-                    text: 'A: Offer a Card', //aka option 1
+                    text: 'Click HERE to offer a Card', //aka option 1
                     nextStage: 1,
                     awaitModal: true,
                     effects: [{ kind: 'choose_card_to_sacrifice' }],
                 },
                 {
-                    text: 'B: Leave', //aka option 2
+                    text: 'Click HERE to leave', //aka option 2
                     nextStage: 1,
                     effects: [],
                 },
