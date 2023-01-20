@@ -55,6 +55,12 @@ export class InitExpeditionProcess {
         await this.expeditionService.create({
             playerId,
             map,
+            scores: {
+                nodesCompleted: 0,
+                basicEnemiesDefeated: 0,
+                eliteEnemiesDefeated: 0,
+                bossEnemiesDefeated: 0,
+            },
             mapSeedId: getTimestampInSeconds(),
             actConfig: {
                 potionChance: initialPotionChance,

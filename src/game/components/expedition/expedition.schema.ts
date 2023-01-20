@@ -33,7 +33,7 @@ export class Expedition {
     actConfig?: ExpeditionActConfig;
 
     @Prop()
-    scores: Score;
+    scores?: Score;
 
     @Prop()
     mapSeedId?: number;

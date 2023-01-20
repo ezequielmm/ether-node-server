@@ -20,11 +20,7 @@ import {
     StatusCounterType,
 } from 'src/game/status/interfaces';
 import { StatusService } from 'src/game/status/status.service';
-import {
-    EnemyCategoryEnum,
-    EnemyIntentionType,
-    EnemyTypeEnum,
-} from './enemy.enum';
+import { EnemyCategoryEnum, EnemyIntentionType } from './enemy.enum';
 import { damageEffect } from 'src/game/effects/damage/constants';
 import {
     EVENT_ENEMY_DEAD,
