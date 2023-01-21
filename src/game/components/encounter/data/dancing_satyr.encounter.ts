@@ -13,13 +13,13 @@ export const DancingSatyrEncounter: Encounter = {
             buttons: [
                 {
                     //aka option 1
-                    text: 'Click HERE to dance with the Satyr [Lose 10 Max HP, Start each combat with 1 Resolve]',
+                    text: 'Click here to dance with the Satyr [Lose 10 Max HP, Start each combat with 1 Resolve]',
                     nextStage: 1,
                     effects: [{ kind: 'hp_max', amount: '-10' }],
                 },
                 {
                     //aka option 2
-                    text: 'Click HERE to decline the Offer [Leave]',
+                    text: 'Click here to decline the Offer [Leave]',
                     nextStage: 2,
                     effects: [],
                 },
@@ -32,13 +32,13 @@ export const DancingSatyrEncounter: Encounter = {
             buttons: [
                 {
                     //aka option 3
-                    text: 'Click HERE to continue Dancing [Lose 10 more Max HP, upgrade Trinket to 2 Resolve]',
+                    text: 'Click here to continue Dancing [Lose 10 more Max HP, upgrade Trinket to 2 Resolve]',
                     nextStage: 3,
                     effects: [{ kind: 'hp_max', amount: '-10' }],
                 },
                 {
                     //aka option 4
-                    text: 'Click HERE to stop Dancing',
+                    text: 'Click here to stop Dancing',
                     nextStage: 4,
                     effects: [{ kind: 'trinket', item: 'pan_flute' }],
                 },
@@ -57,13 +57,13 @@ export const DancingSatyrEncounter: Encounter = {
             buttons: [
                 {
                     //aka option 5
-                    text: 'Click HERE to stop Dancing',
+                    text: 'Click here to stop Dancing',
                     nextStage: 5,
                     effects: [{ kind: 'trinket', item: 'silver_pan_flute' }],
                 },
                 {
                     //aka option 6
-                    text: 'Click HERE to continue Dancing [Lose 12 more Max HP. Maximize Trinket to 3 Resolve.]',
+                    text: 'Click here to continue Dancing [Lose 12 more Max HP. Maximize Trinket to 3 Resolve.]',
                     nextStage: 6,
                     effects: [
                         { kind: 'trinket', item: 'golden_pan_flute' },

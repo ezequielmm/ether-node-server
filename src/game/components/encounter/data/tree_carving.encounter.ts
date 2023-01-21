@@ -12,12 +12,12 @@ export const TreeCarvingEncounter: Encounter = {
                 'A glowing string of runes etched into the trunk of a tree catches your attention. You don’t recognize the markings but you think you might be able to decode them if you take the time. Haven’t you seen that first rune somewhere before…?',
             buttons: [
                 {
-                    text: 'Click HERE to try to decode the runes', // aka option 1
+                    text: 'Click here to try to decode the runes', // aka option 1
                     nextStage: 1,
                     effects: [],
                 },
                 {
-                    text: 'Click HERE to leave', // aka option 2
+                    text: 'Click here to leave', // aka option 2
                     nextStage: 2,
                     effects: [],
                 },
@@ -29,12 +29,12 @@ export const TreeCarvingEncounter: Encounter = {
                 'You inch closer to the runes, straining to recall where you’ve seen them before. Just as you’re about to give up, they begin to morph in front of you. You can suddenly read them. They say, “Stop him. Stop him before it spreads.”',
             buttons: [
                 {
-                    text: 'Click HERE to touch the Runes [Become Imbued. Start next combat with 2 Fatigue.]', // aka option 3
+                    text: 'Click here to touch the Runes [Become Imbued. Start next combat with 2 Fatigue.]', // aka option 3
                     nextStage: 3,
                     effects: [{ kind: 'fatigue' }, { kind: 'imbued' }],
                 },
                 {
-                    text: 'Click HERE to step Away [Start next combat with Feeble]', // aka option 4
+                    text: 'Click here to step Away [Start next combat with Feeble]', // aka option 4
                     nextStage: 4,
                     effects: [{ kind: 'feeble' }],
                 },

@@ -12,12 +12,12 @@ export const MossyTrollEncounter: Encounter = {
                 'As you come around a bend, you spot a hunched over Troll, covered in moss, slowly swaying back and forth. He looks up and acknowledges your arrival with a wave. “Hi, friend,” he grumbles in his low, rocky voice. “Don’t mind me, just looking for my brother.”',
             buttons: [
                 {
-                    text: 'Click HERE to offer to help', // aka option 1
+                    text: 'Click here to offer to help', // aka option 1
                     nextStage: 1,
                     effects: [],
                 },
                 {
-                    text: 'Click HERE to offer condolences',
+                    text: 'Click here to offer condolences',
                     nextStage: 2,
                     effects: [],
                 },
@@ -29,14 +29,14 @@ export const MossyTrollEncounter: Encounter = {
                 'The Troll smiles a lazy smile. “That’s awfully kind of you but I don’t know how you could. Maybe if you see him, just tell him Brimble is waiting for him in the glade, he’ll know the one. Give him this so he knows it’s me, would you? He hasn’t been acting himself lately.” The Troll produces a (curse card) from his pocket and hands it to you.',
             buttons: [
                 {
-                    text: 'Click HERE to accept [Take Curse card]', // aka option 3
+                    text: 'Click here to accept [Take Curse card]', // aka option 3
                     nextStage: 3,
                     effects: [
                         { kind: 'card_add_to_library', cardId: '1' }, //TODO correct card id
                     ],
                 },
                 {
-                    text: 'Click HERE to refuse', // aka option 4
+                    text: 'Click here to refuse', // aka option 4
                     nextStage: 2,
                     effects: [],
                 },

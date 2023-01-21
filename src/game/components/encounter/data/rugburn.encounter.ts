@@ -13,7 +13,7 @@ export const RugburnEncounter: Encounter = {
                 '“Fancy a ride?” whispers the voice.',
             buttons: [
                 {
-                    text: 'Click HERE to step on the rug [Lose 10 HP, go for a ride]',
+                    text: 'Click here to step on the rug [Lose 10 HP, go for a ride]',
                     nextStage: 1, //aka option 1
                     effects: [
                         { kind: 'hit_points', amount: '-10' },
@@ -21,7 +21,7 @@ export const RugburnEncounter: Encounter = {
                     ],
                 },
                 {
-                    text: 'Click HERE to GTFO [Nothing happens]', //aka option 2
+                    text: 'Click here to GTFO [Nothing happens]', //aka option 2
                     nextStage: 2,
                     effects: [],
                 },

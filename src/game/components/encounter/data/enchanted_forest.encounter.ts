@@ -12,13 +12,13 @@ export const EnchantedForest: Encounter = {
                 'You come to an obstructed section of trees. Their branches begin to move, blocking the way out. Suddenly three of the face-like trunks awaken. “Whooo Enters Ouuuuur Foressssst?”',
             buttons: [
                 {
-                    text: 'Click HERE to become lighter to escape [Choose a card to remove]', // aka option 1
+                    text: 'Click here to become lighter to escape [Choose a card to remove]', // aka option 1
                     nextStage: 1,
                     awaitModal: true,
                     effects: [{ kind: 'choose_card_remove' }],
                 },
                 {
-                    text: 'Click HERE to grow like the seedling [Choose a card to upgrade]', // aka option 2
+                    text: 'Click here to grow like the seedling [Choose a card to upgrade]', // aka option 2
                     nextStage: 2,
                     awaitModal: true,
                     effects: [{ kind: 'choose_card_upgrade' }],

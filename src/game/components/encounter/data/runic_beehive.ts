@@ -13,13 +13,13 @@ export const RunicBeehiveEncounter: Encounter = {
             buttons: [
                 {
                     // aka option 1
-                    text: 'Click HERE to sneak Past [Nothing Happens]',
+                    text: 'Click here to sneak Past [Nothing Happens]',
                     nextStage: 1,
                     effects: [], //TODO confirm no cards added when sneaking by
                 },
                 {
                     // aka option 2
-                    text: 'Click HERE to steal Honey [50% chance of gaining Stolen Honey Trinket, 50% chance of gaining Bee Venom Curse Card]',
+                    text: 'Click here to steal Honey [50% chance of gaining Stolen Honey Trinket, 50% chance of gaining Bee Venom Curse Card]',
                     nextStage: 2, // actually random between stage 2 and 3 see randomStaging
                     effects: [],
                     randomStaging: [

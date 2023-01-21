@@ -12,7 +12,7 @@ export const NagpraEncounter: Encounter = {
                 'At the intersection of a path through the forest you stumble upon some sort of bird creature. They bow before you and hold out a cage housing a dark-feathered bird. They click their beak. You reach out to take the cage but they pull away and click their beak again…',
             buttons: [
                 {
-                    text: 'Click HERE to trade for the birdcage [100 Coin]',
+                    text: 'Click here to trade for the birdcage [100 Coin]',
                     nextStage: 1,
                     effects: [
                         { kind: 'coin', amount: '-100' },
@@ -20,7 +20,7 @@ export const NagpraEncounter: Encounter = {
                     ],
                 },
                 {
-                    text: 'Click HERE to refuse the Offer [Leave]',
+                    text: 'Click here to refuse the Offer [Leave]',
                     nextStage: 2,
                     effects: [],
                 },
