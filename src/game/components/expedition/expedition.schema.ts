@@ -14,6 +14,7 @@ import { Node } from './node';
 import { Player } from './player';
 import { ExpeditionActConfig } from './expeditionActConfig.schema';
 import { EncounterInterface } from '../encounter/encounter.interfaces';
+import { Score } from './scores';
 
 export type ExpeditionDocument = HydratedDocument<Expedition>;
 
@@ -30,6 +31,9 @@ export class Expedition {
 
     @Prop()
     actConfig?: ExpeditionActConfig;
+
+    @Prop()
+    scores?: Score;
 
     @Prop()
     mapSeedId?: number;

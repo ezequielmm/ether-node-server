@@ -20,7 +20,7 @@ import {
     StatusCounterType,
 } from 'src/game/status/interfaces';
 import { StatusService } from 'src/game/status/status.service';
-import { EnemyIntentionType } from './enemy.enum';
+import { EnemyCategoryEnum, EnemyIntentionType } from './enemy.enum';
 import { damageEffect } from 'src/game/effects/damage/constants';
 import {
     EVENT_ENEMY_DEAD,
@@ -286,8 +286,31 @@ export class EnemyService {
         await this.setHp(ctx, id, enemy.hpCurrent);
         await this.setDefense(ctx, id, enemy.defense);
 
-        if (enemy.hpCurrent === 0)
+        if (enemy.hpCurrent === 0) {
             await this.eventEmitter.emitAsync(EVENT_ENEMY_DEAD, { ctx, enemy });
+
+            await this.expeditionService.updateByFilter(
+                {
+                    clientId: client.id,
+                },
+                {
+                    $inc: {
+                        ...(enemy.category === EnemyCategoryEnum.Basic && {
+                            'scores.basicEnemiesDefeated': 1,
+                        }),
+                        ...(enemy.category === EnemyCategoryEnum.Minion && {
+                            'scores.basicEnemiesDefeated': 1,
+                        }),
+                        ...(enemy.category === EnemyCategoryEnum.Elite && {
+                            'scores.eliteEnemiesDefeated': 1,
+                        }),
+                        ...(enemy.category === EnemyCategoryEnum.Boss && {
+                            'scores.bossEnemiesDefeated': 1,
+                        }),
+                    },
+                },
+            );
+        }
 
         return enemy.hpCurrent;
     }

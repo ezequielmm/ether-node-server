@@ -20,6 +20,10 @@ import { ExpeditionService } from '../game/components/expedition/expedition.serv
 import { AuthGatewayService } from 'src/authGateway/authGateway.service';
 import { ExpeditionStatusEnum } from 'src/game/components/expedition/expedition.enum';
 import { InitExpeditionProcess } from 'src/game/process/initExpedition.process';
+import {
+    ScoreCalculatorService,
+    ScoreResponse,
+} from 'src/game/scoreCalculator/scoreCalculator.service';
 
 class CreateExpeditionApiDTO {
     @ApiProperty({ default: 'knight' })
@@ -38,6 +42,7 @@ export class ExpeditionController {
         private readonly authGatewayService: AuthGatewayService,
         private readonly expeditionService: ExpeditionService,
         private readonly initExpeditionProcess: InitExpeditionProcess,
+        private readonly scoreCalculatorService: ScoreCalculatorService,
     ) {}
 
     private readonly logger: Logger = new Logger(ExpeditionController.name);
@@ -164,6 +169,42 @@ export class ExpeditionController {
             } else {
                 return { canceledExpedition: false };
             }
+        } catch (e) {
+            this.logger.error(e.stack);
+            throw new HttpException(
+                {
+                    status: HttpStatus.UNAUTHORIZED,
+                    error: e.message,
+                },
+                HttpStatus.UNAUTHORIZED,
+            );
+        }
+    }
+
+    @ApiOperation({
+        summary: 'Query the expedition score',
+    })
+    @Get('/score')
+    async handleGetScore(@Headers() headers): Promise<ScoreResponse> {
+        this.logger.debug(`Client called GET route "/expedition/score"`);
+
+        const { authorization } = headers;
+
+        try {
+            const { id: playerId } = await this.authGatewayService.getUser(
+                authorization,
+            );
+
+            const expedition = await this.expeditionService.findOne({
+                playerId,
+            });
+
+            if (!expedition) return null;
+
+            return this.scoreCalculatorService.calculate({
+                expedition,
+                outcome: expedition.status,
+            });
         } catch (e) {
             this.logger.error(e.stack);
             throw new HttpException(
