@@ -201,13 +201,10 @@ export class ExpeditionController {
 
             if (!expedition) return null;
 
-            return expedition.status === ExpeditionStatusEnum.Defeated ||
-                expedition.status === ExpeditionStatusEnum.Victory
-                ? this.scoreCalculatorService.calculate({
-                      expedition,
-                      outcome: expedition.status,
-                  })
-                : null;
+            return this.scoreCalculatorService.calculate({
+                expedition,
+                outcome: expedition.status,
+            });
         } catch (e) {
             this.logger.error(e.stack);
             throw new HttpException(
