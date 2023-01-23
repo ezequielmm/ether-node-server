@@ -233,7 +233,7 @@ export class EncounterService {
                             await this.trinketService.add(ctx, 3);
                             break;
                         case 'runic_tome': //young wizard
-                            await this.trinketService.add(ctx, 2); //TODO need correct trinket id
+                            await this.trinketService.add(ctx, 23);
                             break;
                         case 'pan_flute': //satyr
                             await this.trinketService.add(ctx, 45);
