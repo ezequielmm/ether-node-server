@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { filter } from 'lodash';
+import { Expedition } from '../components/expedition/expedition.schema';
 import { Node } from '../components/expedition/node';
 import { NodeStatus } from '../components/expedition/node-status';
-import { GameContext } from '../components/interfaces';
 
-interface ScoreResponse {
+export interface ScoreResponse {
     outcome: string;
     totalScore: number;
     achievements: {
@@ -16,10 +16,10 @@ interface ScoreResponse {
 @Injectable()
 export class ScoreCalculatorService {
     calculate({
-        ctx,
+        expedition,
         outcome,
     }: {
-        ctx: GameContext;
+        expedition: Expedition;
         outcome: string;
     }): ScoreResponse {
         // All the points will be calculatred based on
@@ -27,16 +27,14 @@ export class ScoreCalculatorService {
         // https://robotseamonster.atlassian.net/wiki/spaces/KOTE/pages/272334852/Requirements+for+GameEnd+Score+from+Adam
         // First we calculate the enemies defeated
         const {
-            expedition: {
-                scores: {
-                    basicEnemiesDefeated,
-                    eliteEnemiesDefeated,
-                    bossEnemiesDefeated,
-                },
-                map,
-                playerState: { hpCurrent, hpMax },
+            scores: {
+                basicEnemiesDefeated,
+                eliteEnemiesDefeated,
+                bossEnemiesDefeated,
             },
-        } = ctx;
+            map,
+            playerState: { hpCurrent, hpMax },
+        } = expedition;
 
         const totalBasicEnemies =
             this.calculateBasicEnemiesPoints(basicEnemiesDefeated);
