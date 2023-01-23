@@ -10,7 +10,6 @@ import {
     EVENT_AFTER_DAMAGE_EFFECT,
     EVENT_AFTER_END_COMBAT,
 } from '../constants';
-import { ScoreCalculatorService } from '../scoreCalculator/scoreCalculator.service';
 import {
     StandardResponse,
     SWARAction,
@@ -26,7 +25,6 @@ export class EndCombatProcess {
         private readonly enemyService: EnemyService,
         private readonly expeditionService: ExpeditionService,
         private readonly combatQueueService: CombatQueueService,
-        private readonly scoreCalculator: ScoreCalculatorService,
     ) {}
 
     @OnEvent(EVENT_AFTER_DAMAGE_EFFECT)
@@ -90,7 +88,5 @@ export class EndCombatProcess {
         );
 
         this.logger.debug(`Combat ended for client ${ctx.client.id}`);
-
-        await this.scoreCalculator.calculate(ctx);
     }
 }

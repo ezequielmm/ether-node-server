@@ -1,9 +1,7 @@
-import { forwardRef, Module } from '@nestjs/common';
-import { ExpeditionModule } from '../components/expedition/expedition.module';
+import { Module } from '@nestjs/common';
 import { ScoreCalculatorService } from './scoreCalculator.service';
 
 @Module({
-    imports: [forwardRef(() => ExpeditionModule)],
     providers: [ScoreCalculatorService],
     exports: [ScoreCalculatorService],
 })

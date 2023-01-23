@@ -1,15 +1,27 @@
 import { Injectable } from '@nestjs/common';
 import { filter } from 'lodash';
-import { ExpeditionService } from '../components/expedition/expedition.service';
 import { Node } from '../components/expedition/node';
 import { NodeStatus } from '../components/expedition/node-status';
 import { GameContext } from '../components/interfaces';
 
+interface ScoreResponse {
+    outcome: string;
+    totalScore: number;
+    achievements: {
+        name: string;
+        score: number;
+    }[];
+}
+
 @Injectable()
 export class ScoreCalculatorService {
-    constructor(private readonly expeditionService: ExpeditionService) {}
-
-    async calculate(ctx: GameContext): Promise<void> {
+    calculate({
+        ctx,
+        outcome,
+    }: {
+        ctx: GameContext;
+        outcome: string;
+    }): ScoreResponse {
         // All the points will be calculatred based on
         // this documentation:
         // https://robotseamonster.atlassian.net/wiki/spaces/KOTE/pages/272334852/Requirements+for+GameEnd+Score+from+Adam
@@ -40,12 +52,50 @@ export class ScoreCalculatorService {
         const healthReamining = this.calculateHP(hpCurrent, hpMax);
 
         // How we sum all the points to get the total
-        const total =
+        const totalScore =
             totalBasicEnemies +
             totalEliteEnemies +
-            totalEliteEnemies +
+            totalBossEnemies +
             nodesCompleted +
             healthReamining;
+
+        const data: ScoreResponse = {
+            outcome,
+            totalScore,
+            achievements: [],
+        };
+
+        if (totalBasicEnemies > 0)
+            data.achievements.push({
+                name: 'Monsters slain',
+                score: totalBasicEnemies,
+            });
+
+        if (totalEliteEnemies > 0)
+            data.achievements.push({
+                name: 'Act I Elites defeated',
+                score: totalEliteEnemies,
+            });
+
+        if (totalBossEnemies > 0)
+            data.achievements.push({
+                name: 'Bosses defeated',
+                score: totalBossEnemies,
+            });
+
+        if (nodesCompleted > 0)
+            data.achievements.push({
+                name: 'Regions explored',
+                score: nodesCompleted,
+            });
+
+        if (healthReamining > 0)
+            data.achievements.push({
+                name: 'Healthy',
+                score: healthReamining,
+            });
+
+        return data;
     }
 
     private calculateBasicEnemiesPoints(enemiesToCalculate: number): number {
@@ -88,9 +138,11 @@ export class ScoreCalculatorService {
         // 26 HP = 2 Points
         // 27 HP = 3 Points
         // if the player has full HP it will sum 15 points
-        if (hpCurrent === hpMax) return 15;
-        if (hpCurrent === 25) return 1;
-        if (hpCurrent === 26) return 2;
-        if (hpCurrent === 27) return 3;
+        let score = 0;
+        if (hpCurrent === hpMax) score = 15;
+        if (hpCurrent === 25) score = 1;
+        if (hpCurrent === 26) score = 2;
+        if (hpCurrent === 27) score = 3;
+        return score;
     }
 }
