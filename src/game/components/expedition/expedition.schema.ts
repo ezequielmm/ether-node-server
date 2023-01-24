@@ -88,4 +88,10 @@ export class Expedition {
 
     @Prop({ default: false })
     isCurrentlyPlaying: boolean;
+
+    @Prop()
+    createdAt: Date;
+
+    @Prop()
+    defeatedAt?: Date;
 }

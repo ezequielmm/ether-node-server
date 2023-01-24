@@ -73,7 +73,6 @@ export class InitExpeditionProcess {
                 hpCurrent: character.initialHealth,
                 gold: character.initialGold,
                 cards,
-                createdAt: new Date(),
                 potions: [],
                 cardUpgradeCount: 0,
                 cardDestroyCount: 0,
@@ -81,6 +80,7 @@ export class InitExpeditionProcess {
             },
             status: ExpeditionStatusEnum.InProgress,
             isCurrentlyPlaying: false,
+            createdAt: new Date(),
         });
 
         this.logger.debug(`Created expedition for player id: ${playerId}`);

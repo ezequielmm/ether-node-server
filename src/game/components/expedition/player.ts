@@ -38,13 +38,7 @@ export class Player {
     trinkets: Trinket[];
 
     @Prop()
-    createdAt: Date;
-
-    @Prop()
     cards: IExpeditionPlayerStateDeckCard[];
-
-    @Prop()
-    defeatedAt?: Date;
 
     @Prop()
     cardUpgradeCount: number;
