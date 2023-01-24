@@ -66,6 +66,7 @@ export class ExpeditionController {
             const expedition = await this.expeditionService.findOne(
                 {
                     playerId: playerId,
+                    status: ExpeditionStatusEnum.InProgress,
                 },
                 { playerState: 1 },
             );
