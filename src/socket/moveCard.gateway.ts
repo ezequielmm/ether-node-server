@@ -7,7 +7,7 @@ import { CombatService } from '../game/combat/combat.service';
 import { ExpeditionService } from 'src/game/components/expedition/expedition.service';
 
 export interface IMoveCard {
-    cardToTake: string;
+    cardsToTake: string[];
 }
 
 @WebSocketGateway(corsSocketSettings)
