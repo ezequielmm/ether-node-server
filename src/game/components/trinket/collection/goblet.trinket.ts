@@ -2,12 +2,12 @@ import { Prop } from '@typegoose/typegoose';
 import { GameContext } from '../../interfaces';
 import { PlayerService } from '../../player/player.service';
 import { TrinketRarityEnum } from '../trinket.enum';
-import { Trinket } from '../trinket.schema';
+import { OneUseTrinket } from './one-use.trinket';
 
 /**
  * Goblet Trinket
  */
-export class GobletTrinket extends Trinket {
+export class GobletTrinket extends OneUseTrinket {
     @Prop({ default: 24 })
     trinketId: number;
 
@@ -24,11 +24,17 @@ export class GobletTrinket extends Trinket {
     raiseHp: number;
 
     async onAttach(ctx: GameContext): Promise<void> {
+        // If the trinket has already been used, we don't need to do anything
+        if (this.isUsed()) {
+            return;
+        }
+
         const playerService = ctx.moduleRef.get(PlayerService, {
             strict: false,
         });
 
-        playerService.raiseMaxHp(ctx, this.raiseHp);
+        await playerService.raiseMaxHp(ctx, this.raiseHp);
+        await this.markAsUsed(ctx);
 
         this.trigger(ctx);
     }
