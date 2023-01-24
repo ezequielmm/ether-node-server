@@ -1,9 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { filter } from 'lodash';
-import { IExpeditionPlayerStateDeckCard } from '../components/expedition/expedition.interface';
+import {
+    IExpeditionPlayerStateDeckCard,
+    PotionInstance,
+} from '../components/expedition/expedition.interface';
 import { Expedition } from '../components/expedition/expedition.schema';
 import { Node } from '../components/expedition/node';
 import { NodeStatus } from '../components/expedition/node-status';
+import { Trinket } from '../components/trinket/trinket.schema';
 
 export interface ScoreResponse {
     outcome: string;
@@ -34,7 +38,13 @@ export class ScoreCalculatorService {
                 bossEnemiesDefeated,
             },
             map,
-            playerState: { hpCurrent, hpMax, cards: playerDeck },
+            playerState: {
+                hpCurrent,
+                hpMax,
+                cards: playerDeck,
+                potions,
+                trinkets,
+            },
         } = expedition;
 
         const totalBasicEnemies =
@@ -53,6 +63,12 @@ export class ScoreCalculatorService {
         // Now we query how may cards we had in our deck at the end
         const deckSize = this.calculatePlayerDeck(playerDeck);
 
+        // Now we query how many potions we have remaining
+        const potionsRemaining = this.calculateRemainingPotions(potions);
+
+        // Now we query how many trinkets we havce remaining
+        const trinketsRemaining = this.calculateTrinkets(trinkets);
+
         // How we sum all the points to get the total
         const totalScore =
             totalBasicEnemies +
@@ -60,7 +76,9 @@ export class ScoreCalculatorService {
             totalBossEnemies +
             nodesCompleted +
             healthReamining +
-            deckSize;
+            deckSize +
+            potionsRemaining +
+            trinketsRemaining;
 
         const data: ScoreResponse = {
             outcome,
@@ -109,6 +127,18 @@ export class ScoreCalculatorService {
                         ? 'Encyclopedia'
                         : 'Lean and Mean',
                 score: deckSize,
+            });
+
+        if (potionsRemaining > 0)
+            data.achievements.push({
+                name: 'Save for Later',
+                score: potionsRemaining,
+            });
+
+        if (trinketsRemaining > 0)
+            data.achievements.push({
+                name: 'Trinket Hoarder',
+                score: trinketsRemaining,
             });
 
         return data;
@@ -171,5 +201,18 @@ export class ScoreCalculatorService {
         if (deckSize > 35) total = 20; // Librarian
         if (deckSize > 45) total = 50; // Encyclopedia
         return total;
+    }
+
+    private calculateRemainingPotions(potions: PotionInstance[]): number {
+        const potionsRemaining = potions.length;
+        let total = 0;
+        if (potionsRemaining === 1) total = 5;
+        if (potionsRemaining === 2) total = 10;
+        if (potionsRemaining === 3) total = 20;
+        return total;
+    }
+
+    private calculateTrinkets(trinkets: Trinket[]): number {
+        return trinkets.length >= 5 ? 5 : 0;
     }
 }
