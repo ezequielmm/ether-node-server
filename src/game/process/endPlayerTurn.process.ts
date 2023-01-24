@@ -32,13 +32,9 @@ export class EndPlayerTurnProcess {
 
         const { client, expedition } = ctx;
 
-        await this.combatQueueService.start(ctx);
-
         await this.eventEmitter.emitAsync(EVENT_BEFORE_PLAYER_TURN_END, {
             ctx,
         });
-
-        await this.combatQueueService.end(ctx);
 
         this.changeTurnAction.handle({
             client,
