@@ -38,13 +38,7 @@ export class Player {
     trinkets: Trinket[];
 
     @Prop()
-    createdAt: Date;
-
-    @Prop()
     cards: IExpeditionPlayerStateDeckCard[];
-
-    @Prop()
-    stoppedAt?: Date;
 
     @Prop()
     cardUpgradeCount: number;

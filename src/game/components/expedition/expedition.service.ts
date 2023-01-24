@@ -68,13 +68,7 @@ export class ExpeditionService {
         filter: FilterQuery<Expedition>,
         projection?: ProjectionFields<Expedition>,
     ): Promise<ExpeditionDocument> {
-        return await this.expedition.findOne(
-            {
-                ...filter,
-                status: ExpeditionStatusEnum.InProgress,
-            },
-            projection,
-        );
+        return await this.expedition.findOne(filter, projection);
     }
 
     async create(payload: CreateExpeditionDTO): Promise<ExpeditionDocument> {

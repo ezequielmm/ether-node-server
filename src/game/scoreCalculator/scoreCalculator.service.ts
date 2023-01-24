@@ -1,8 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { filter } from 'lodash';
+import {
+    IExpeditionPlayerStateDeckCard,
+    PotionInstance,
+} from '../components/expedition/expedition.interface';
 import { Expedition } from '../components/expedition/expedition.schema';
 import { Node } from '../components/expedition/node';
 import { NodeStatus } from '../components/expedition/node-status';
+import { Trinket } from '../components/trinket/trinket.schema';
 
 export interface ScoreResponse {
     outcome: string;
@@ -33,7 +38,14 @@ export class ScoreCalculatorService {
                 bossEnemiesDefeated,
             },
             map,
-            playerState: { hpCurrent, hpMax },
+            playerState: {
+                hpCurrent,
+                hpMax,
+                cards: playerDeck,
+                potions,
+                trinkets,
+                gold,
+            },
         } = expedition;
 
         const totalBasicEnemies =
@@ -49,13 +61,29 @@ export class ScoreCalculatorService {
         // How we query how much HP the player got
         const healthReamining = this.calculateHP(hpCurrent, hpMax);
 
+        // Now we query how may cards we had in our deck at the end
+        const deckSize = this.calculatePlayerDeck(playerDeck);
+
+        // Now we query how many potions we have remaining
+        const potionsRemaining = this.calculateRemainingPotions(potions);
+
+        // Now we query how many trinkets we have so far
+        const trinketsRemaining = this.calculateTrinkets(trinkets);
+
+        // Now we query how many coins we have remaining
+        const totalCoins = this.calculateCoinsRemaining(gold);
+
         // How we sum all the points to get the total
         const totalScore =
             totalBasicEnemies +
             totalEliteEnemies +
             totalBossEnemies +
             nodesCompleted +
-            healthReamining;
+            healthReamining +
+            deckSize +
+            potionsRemaining +
+            trinketsRemaining +
+            totalCoins;
 
         const data: ScoreResponse = {
             outcome,
@@ -91,6 +119,37 @@ export class ScoreCalculatorService {
             data.achievements.push({
                 name: 'Healthy',
                 score: healthReamining,
+            });
+
+        if (deckSize > 0)
+            data.achievements.push({
+                name:
+                    deckSize < 20
+                        ? 'Lean and Mean'
+                        : deckSize > 35
+                        ? 'Librarian'
+                        : deckSize > 45
+                        ? 'Encyclopedia'
+                        : 'Lean and Mean',
+                score: deckSize,
+            });
+
+        if (potionsRemaining > 0)
+            data.achievements.push({
+                name: 'Save for Later',
+                score: potionsRemaining,
+            });
+
+        if (trinketsRemaining > 0)
+            data.achievements.push({
+                name: 'Trinket Hoarder',
+                score: trinketsRemaining,
+            });
+
+        if (totalCoins > 0)
+            data.achievements.push({
+                name: 'Scrooge',
+                score: totalCoins,
             });
 
         return data;
@@ -142,5 +201,47 @@ export class ScoreCalculatorService {
         if (hpCurrent === 26) score = 2;
         if (hpCurrent === 27) score = 3;
         return score;
+    }
+
+    private calculatePlayerDeck(
+        cards: IExpeditionPlayerStateDeckCard[],
+    ): number {
+        // Here we calculate how many cards we have in the player's deck at the end
+        // of the expedition
+        // 20 cards or less = 40 points
+        // 35 cards or more = 20 points
+        // 45 cards or more = 50 points (overrides Librarian)
+        const deckSize = cards.length;
+        let total = 0;
+        if (deckSize < 20) total = 40; // Lean and Mean
+        if (deckSize > 35) total = 20; // Librarian
+        if (deckSize > 45) total = 50; // Encyclopedia
+        return total;
+    }
+
+    private calculateRemainingPotions(potions: PotionInstance[]): number {
+        // here we calculate hown many potions the player didn't use
+        // 1 potion left = 5 points
+        // 2 potions left = 10 points
+        // 3 potions left = 20 points
+        const potionsRemaining = potions.length;
+        let total = 0;
+        if (potionsRemaining === 1) total = 5;
+        if (potionsRemaining === 2) total = 10;
+        if (potionsRemaining === 3) total = 20;
+        return total;
+    }
+
+    private calculateTrinkets(trinkets: Trinket[]): number {
+        // here we calculate hown many trinkets the player have
+        // if the player have 5 or more trinkets, it gets 5 points
+        return trinkets.length >= 5 ? 5 : 0;
+    }
+
+    private calculateCoinsRemaining(coins: number): number {
+        // Here we calculate if the player has more than 250 coins
+        // at the end of the expedition
+        // 250 coins or more = 15 points
+        return coins > 250 ? 15 : 0;
     }
 }
