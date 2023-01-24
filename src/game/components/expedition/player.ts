@@ -44,7 +44,7 @@ export class Player {
     cards: IExpeditionPlayerStateDeckCard[];
 
     @Prop()
-    stoppedAt?: Date;
+    defeatedAt?: Date;
 
     @Prop()
     cardUpgradeCount: number;
