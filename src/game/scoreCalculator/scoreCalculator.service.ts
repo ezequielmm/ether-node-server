@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { filter } from 'lodash';
+import { IExpeditionPlayerStateDeckCard } from '../components/expedition/expedition.interface';
 import { Expedition } from '../components/expedition/expedition.schema';
 import { Node } from '../components/expedition/node';
 import { NodeStatus } from '../components/expedition/node-status';
@@ -33,7 +34,7 @@ export class ScoreCalculatorService {
                 bossEnemiesDefeated,
             },
             map,
-            playerState: { hpCurrent, hpMax },
+            playerState: { hpCurrent, hpMax, cards: playerDeck },
         } = expedition;
 
         const totalBasicEnemies =
@@ -49,13 +50,17 @@ export class ScoreCalculatorService {
         // How we query how much HP the player got
         const healthReamining = this.calculateHP(hpCurrent, hpMax);
 
+        // Now we query how may cards we had in our deck at the end
+        const deckSize = this.calculatePlayerDeck(playerDeck);
+
         // How we sum all the points to get the total
         const totalScore =
             totalBasicEnemies +
             totalEliteEnemies +
             totalBossEnemies +
             nodesCompleted +
-            healthReamining;
+            healthReamining +
+            deckSize;
 
         const data: ScoreResponse = {
             outcome,
@@ -91,6 +96,19 @@ export class ScoreCalculatorService {
             data.achievements.push({
                 name: 'Healthy',
                 score: healthReamining,
+            });
+
+        if (deckSize > 0)
+            data.achievements.push({
+                name:
+                    deckSize < 20
+                        ? 'Lean and Mean'
+                        : deckSize > 35
+                        ? 'Librarian'
+                        : deckSize > 45
+                        ? 'Encyclopedia'
+                        : 'Lean and Mean',
+                score: deckSize,
             });
 
         return data;
@@ -142,5 +160,16 @@ export class ScoreCalculatorService {
         if (hpCurrent === 26) score = 2;
         if (hpCurrent === 27) score = 3;
         return score;
+    }
+
+    private calculatePlayerDeck(
+        cards: IExpeditionPlayerStateDeckCard[],
+    ): number {
+        const deckSize = cards.length;
+        let total = 0;
+        if (deckSize < 20) total = 40; // Lean and Mean
+        if (deckSize > 35) total = 20; // Librarian
+        if (deckSize > 45) total = 50; // Encyclopedia
+        return total;
     }
 }
