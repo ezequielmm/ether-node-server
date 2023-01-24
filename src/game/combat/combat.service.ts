@@ -134,7 +134,7 @@ export class CombatService {
         const clientId = ctx.client.id;
 
         // query the information received by the frontend
-        const { cardToTake } = JSON.parse(payload) as IMoveCard;
+        const { cardsToTake } = JSON.parse(payload) as IMoveCard;
 
         // Get card selection item
         const cardSelection = await this.cardSelectionService.findOne({
@@ -147,43 +147,49 @@ export class CombatService {
                 ErrorBehavior.ReturnToMainMenu,
             );
 
-        // Check if the id provided exists in the list
-        if (cardSelection.cardIds.includes(cardToTake)) {
-            if (
-                cardSelection.originPile !=
-                CardSelectionScreenOriginPileEnum.None
-            ) {
-                // With the right card to take, we call the move card action
-                // with the right ids and the pile to take the cards
-                await this.moveCardAction.handle({
-                    client,
-                    cardIds: [cardToTake],
-                    originPile: cardSelection.originPile,
-                    targetPile: 'hand',
-                    callback: (card) => {
-                        card.energy = 0;
-                        return card;
-                    },
-                });
-            } else {
-                // If the origin pile is none, we add the new card to the deck instead of moving it
-                await this.cardService.addCardToDeck(ctx, parseInt(cardToTake));
-            }
+        for (const cardToTake of cardsToTake) {
+            // Check if the id provided exists in the list
+            if (cardSelection.cardIds.includes(cardToTake)) {
+                if (
+                    cardSelection.originPile !=
+                    CardSelectionScreenOriginPileEnum.None
+                ) {
+                    // With the right card to take, we call the move card action
+                    // with the right ids and the pile to take the cards
+                    await this.moveCardAction.handle({
+                        client,
+                        cardIds: [cardToTake],
+                        originPile: cardSelection.originPile,
+                        targetPile: 'hand',
+                        callback: (card) => {
+                            card.energy = 0;
+                            return card;
+                        },
+                    });
+                } else {
+                    // If the origin pile is none, we add the new card to the deck instead of moving it
+                    await this.cardService.addCardToDeck(
+                        ctx,
+                        parseInt(cardToTake),
+                    );
+                }
 
-            const amountToTake = cardSelection.amountToTake--;
+                const amountToTake = cardSelection.amountToTake--;
 
-            if (amountToTake > 0) {
-                // Now we remove the id taken from the list and update
-                // the custom deck
-                await this.cardSelectionService.update({
-                    clientId,
-                    cardIds: cardSelection.cardIds.filter((card) => {
-                        return card !== cardToTake;
-                    }),
-                    amountToTake,
-                });
-            } else {
-                await this.cardSelectionService.deleteByClientId(clientId);
+                if (amountToTake > 0) {
+                    // Now we remove the id taken from the list and update
+                    // the custom deck
+                    await this.cardSelectionService.update({
+                        clientId,
+                        cardIds: cardSelection.cardIds.filter((card) => {
+                            return card !== cardToTake;
+                        }),
+                        amountToTake,
+                    });
+                } else {
+                    await this.cardSelectionService.deleteByClientId(clientId);
+                    return;
+                }
             }
         }
     }
