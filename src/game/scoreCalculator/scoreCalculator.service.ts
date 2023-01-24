@@ -195,6 +195,11 @@ export class ScoreCalculatorService {
     private calculatePlayerDeck(
         cards: IExpeditionPlayerStateDeckCard[],
     ): number {
+        // Here we calculate how many cards we have in the player's deck at the end
+        // of the expedition
+        // 20 cards or less = 40 points
+        // 35 cards or more = 20 points
+        // 45 cards or more = 50 points (overrides Librarian)
         const deckSize = cards.length;
         let total = 0;
         if (deckSize < 20) total = 40; // Lean and Mean
@@ -204,6 +209,10 @@ export class ScoreCalculatorService {
     }
 
     private calculateRemainingPotions(potions: PotionInstance[]): number {
+        // here we calculate hown many potions the player didn't use
+        // 1 potion left = 5 points
+        // 2 potions left = 10 points
+        // 3 potions left = 20 points
         const potionsRemaining = potions.length;
         let total = 0;
         if (potionsRemaining === 1) total = 5;
@@ -213,6 +222,8 @@ export class ScoreCalculatorService {
     }
 
     private calculateTrinkets(trinkets: Trinket[]): number {
+        // here we calculate hown many trinkets the player have
+        // if the player have 5 or more trinkets, it gets 5 points
         return trinkets.length >= 5 ? 5 : 0;
     }
 }
