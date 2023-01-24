@@ -226,4 +226,11 @@ export class ScoreCalculatorService {
         // if the player have 5 or more trinkets, it gets 5 points
         return trinkets.length >= 5 ? 5 : 0;
     }
+
+    private calculateCoinsRemaining(coins: number): number {
+        // Here we calculate if the player has more than 250 coins
+        // at the end of the expedition
+        // 250 coins or more = 15 points
+        return coins > 250 ? 15 : 0;
+    }
 }
