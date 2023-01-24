@@ -10,14 +10,14 @@ import { CardSelectionScreenOriginPileEnum } from '../../cardSelectionScreen/car
 import { CardSelectionScreenService } from '../../cardSelectionScreen/cardSelectionScreen.service';
 import { GameContext } from '../../interfaces';
 import { TrinketRarityEnum } from '../trinket.enum';
-import { Trinket } from '../trinket.schema';
+import { OneUseTrinket } from './one-use.trinket';
 
 const MAX_CARDS_TO_SHOW = 5;
 
 /**
  * Runict Tome Trinket
  */
-export class RunicTomeTrinket extends Trinket {
+export class RunicTomeTrinket extends OneUseTrinket {
     @Prop({ default: 23 })
     trinketId: number;
 
@@ -35,12 +35,9 @@ export class RunicTomeTrinket extends Trinket {
     @Prop({ default: 2 })
     cardsToTake: number;
 
-    @Prop({ default: false })
-    used: boolean;
-
     async onAttach(ctx: GameContext): Promise<void> {
         // If the trinket has already been used, we don't need to do anything
-        if (this.used) {
+        if (this.isUsed()) {
             return;
         }
 
@@ -69,6 +66,8 @@ export class RunicTomeTrinket extends Trinket {
             amountToTake: this.cardsToTake,
         });
 
+        this.trigger(ctx);
+
         ctx.client.emit(
             'PutData',
             StandardResponse.respond({
@@ -81,11 +80,6 @@ export class RunicTomeTrinket extends Trinket {
             }),
         );
 
-        // Mark the trinket as used
-        this.used = true;
-        ctx.expedition.markModified('playerState.trinkets');
-
-        // Save the expedition
-        await ctx.expedition.save();
+        await this.markAsUsed(ctx);
     }
 }
