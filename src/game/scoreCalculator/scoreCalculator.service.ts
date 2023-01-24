@@ -44,6 +44,7 @@ export class ScoreCalculatorService {
                 cards: playerDeck,
                 potions,
                 trinkets,
+                gold,
             },
         } = expedition;
 
@@ -66,8 +67,11 @@ export class ScoreCalculatorService {
         // Now we query how many potions we have remaining
         const potionsRemaining = this.calculateRemainingPotions(potions);
 
-        // Now we query how many trinkets we havce remaining
+        // Now we query how many trinkets we have so far
         const trinketsRemaining = this.calculateTrinkets(trinkets);
+
+        // Now we query how many coins we have remaining
+        const totalCoins = this.calculateCoinsRemaining(gold);
 
         // How we sum all the points to get the total
         const totalScore =
@@ -78,7 +82,8 @@ export class ScoreCalculatorService {
             healthReamining +
             deckSize +
             potionsRemaining +
-            trinketsRemaining;
+            trinketsRemaining +
+            totalCoins;
 
         const data: ScoreResponse = {
             outcome,
@@ -139,6 +144,12 @@ export class ScoreCalculatorService {
             data.achievements.push({
                 name: 'Trinket Hoarder',
                 score: trinketsRemaining,
+            });
+
+        if (totalCoins > 0)
+            data.achievements.push({
+                name: 'Scrooge',
+                score: totalCoins,
             });
 
         return data;
