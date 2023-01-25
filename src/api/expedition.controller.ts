@@ -198,6 +198,7 @@ export class ExpeditionController {
 
             const expedition = await this.expeditionService.findOne({
                 playerId,
+                status: ExpeditionStatusEnum.InProgress,
             });
 
             if (!expedition) return null;
