@@ -20,13 +20,7 @@ export interface ScoreResponse {
 
 @Injectable()
 export class ScoreCalculatorService {
-    calculate({
-        expedition,
-        outcome,
-    }: {
-        expedition: Expedition;
-        outcome: string;
-    }): ScoreResponse {
+    calculate({ expedition }: { expedition: Expedition }): ScoreResponse {
         // All the points will be calculatred based on
         // this documentation:
         // https://robotseamonster.atlassian.net/wiki/spaces/KOTE/pages/272334852/Requirements+for+GameEnd+Score+from+Adam
@@ -46,6 +40,7 @@ export class ScoreCalculatorService {
                 trinkets,
                 gold,
             },
+            status,
         } = expedition;
 
         const totalBasicEnemies =
@@ -86,7 +81,7 @@ export class ScoreCalculatorService {
             totalCoins;
 
         const data: ScoreResponse = {
-            outcome,
+            outcome: status,
             totalScore,
             achievements: [],
         };
