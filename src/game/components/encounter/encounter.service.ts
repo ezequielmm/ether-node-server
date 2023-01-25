@@ -43,7 +43,7 @@ export class EncounterService {
             [
                 EncounterIdEnum.AbandonedAltar, // [3 jan 2023] customer is not going to provide art
                 EncounterIdEnum.Rugburn, // [3 jan 2023] wont do
-                EncounterIdEnum.Nagpra, //3 TODO disabled due to server crashing bug
+                EncounterIdEnum.Nagpra, //3
                 EncounterIdEnum.TreeCarving,
                 EncounterIdEnum.Naiad,
                 EncounterIdEnum.WillOWisp, //6 working [13 jan 2023]
@@ -54,8 +54,9 @@ export class EncounterService {
                 EncounterIdEnum.Oddbarks, // 11
                 EncounterIdEnum.RunicBehive,
             ],
-            //      1  2  3  4  5  6  7  8  9  10 11 12
-            [0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0],
+            //       1  2  3  4  5  6  7  8  9 10 11 12
+            //      [0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0],
+            [0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0],
         );
 
         //fetch existing encounter if there is one
