@@ -48,6 +48,7 @@ export class Expedition {
     currentNode?: {
         nodeId: number;
         nodeType: NodeType;
+        nodeSubType?: NodeType;
         completed: boolean;
         showRewards: boolean;
         data?: {
