@@ -101,6 +101,7 @@ export class CombatService {
             nodeId: this.node.id,
             completed: false,
             nodeType: this.node.type,
+            nodeSubType: this.node.subType,
             showRewards: false,
             data: {
                 round: 0,
