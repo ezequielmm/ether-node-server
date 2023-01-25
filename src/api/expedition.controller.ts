@@ -198,6 +198,10 @@ export class ExpeditionController {
 
             const expedition = await this.expeditionService.findOne({
                 playerId,
+                $or: [
+                    { status: ExpeditionStatusEnum.Victory },
+                    { status: ExpeditionStatusEnum.Defeated },
+                ],
             });
 
             if (!expedition) return null;
