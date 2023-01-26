@@ -18,7 +18,7 @@ export const swampGoblin2Data: Enemy = {
     size: EnemySizeEnum.Medium,
     description:
         'Elderly and hunch-backed, she tries to appear harmless but she is aggressive and has Magic powers. Her MAGIC SPORE STAFF is like a huge wand - it can be used to cover enemies in magic toxic spores and choke them',
-    healthRange: [38, 44],
+    healthRange: [24, 30],
     scripts: [
         {
             id: 0,
@@ -62,13 +62,13 @@ export const swampGoblin2Data: Enemy = {
                 {
                     type: EnemyIntentionType.Attack,
                     target: CardTargetedEnum.Player,
-                    value: 8,
+                    value: 6,
                     effects: [
                         {
                             effect: damageEffect.name,
                             target: CardTargetedEnum.Player,
                             args: {
-                                value: 8,
+                                value: 6,
                             },
                         },
                     ],
