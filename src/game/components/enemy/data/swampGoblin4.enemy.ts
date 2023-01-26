@@ -12,7 +12,7 @@ import { Enemy } from '../enemy.schema';
 
 // Nerf version of swampGoblin2Data
 export const swampGoblin4Data: Enemy = {
-    enemyId: 4,
+    enemyId: 44,
     name: 'SwampGoblin4',
     type: EnemyTypeEnum.Fae,
     category: EnemyCategoryEnum.Basic,
