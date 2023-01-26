@@ -68,7 +68,9 @@ export class ExpeditionService {
         filter: FilterQuery<Expedition>,
         projection?: ProjectionFields<Expedition>,
     ): Promise<ExpeditionDocument> {
-        return await this.expedition.findOne(filter, projection);
+        return await this.expedition
+            .findOne(filter, projection)
+            .sort({ createdAt: 1 });
     }
 
     async create(payload: CreateExpeditionDTO): Promise<ExpeditionDocument> {

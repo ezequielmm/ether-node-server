@@ -198,19 +198,16 @@ export class ExpeditionController {
 
             const expedition = await this.expeditionService.findOne({
                 playerId,
-                status: {
-                    $in: [
-                        ExpeditionStatusEnum.Victory,
-                        ExpeditionStatusEnum.Defeated,
-                    ],
-                },
+                $or: [
+                    { status: ExpeditionStatusEnum.Victory },
+                    { status: ExpeditionStatusEnum.Defeated },
+                ],
             });
 
             if (!expedition) return null;
 
             return this.scoreCalculatorService.calculate({
                 expedition,
-                outcome: expedition.status,
             });
         } catch (e) {
             this.logger.error(e.stack);
