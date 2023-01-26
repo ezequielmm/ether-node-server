@@ -5,6 +5,8 @@ import { sporeMongerData } from 'src/game/components/enemy/data/sporeMonger.enem
 import { stingFaeData } from 'src/game/components/enemy/data/stingFae.enemy';
 import { swampGoblin1Data } from 'src/game/components/enemy/data/swampGoblin1.enemy';
 import { swampGoblin2Data } from 'src/game/components/enemy/data/swampGoblin2.enemy';
+import { swampGoblin3Data } from 'src/game/components/enemy/data/swampGoblin3.enemy';
+import { swampGoblin4Data } from 'src/game/components/enemy/data/swampGoblin4.enemy';
 import { trapelicanData } from 'src/game/components/enemy/data/trapelican.enemy';
 import { EnemyNodeDataFiller } from '../../enemy-node-data-filler';
 
@@ -43,10 +45,10 @@ export class HardEnemiesFiller extends EnemyNodeDataFiller {
             },
             {
                 enemies: [
-                    swampGoblin2Data.enemyId,
-                    swampGoblin2Data.enemyId,
-                    swampGoblin1Data.enemyId,
-                    swampGoblin1Data.enemyId,
+                    swampGoblin3Data.enemyId,
+                    swampGoblin4Data.enemyId,
+                    swampGoblin3Data.enemyId,
+                    swampGoblin4Data.enemyId,
                 ],
                 frequency: 10,
             },
