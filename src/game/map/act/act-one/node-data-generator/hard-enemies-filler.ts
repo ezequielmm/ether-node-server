@@ -45,10 +45,10 @@ export class HardEnemiesFiller extends EnemyNodeDataFiller {
             },
             {
                 enemies: [
-                    swampGoblin3Data.enemyId,
-                    swampGoblin4Data.enemyId,
-                    swampGoblin3Data.enemyId,
-                    swampGoblin4Data.enemyId,
+                    swampGoblin1Data.enemyId,
+                    swampGoblin2Data.enemyId,
+                    swampGoblin1Data.enemyId,
+                    swampGoblin2Data.enemyId,
                 ],
                 frequency: 10,
             },
