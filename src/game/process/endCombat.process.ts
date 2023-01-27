@@ -4,6 +4,7 @@ import { CombatQueueService } from '../components/combatQueue/combatQueue.servic
 import { EnemyService } from '../components/enemy/enemy.service';
 import { ExpeditionStatusEnum } from '../components/expedition/expedition.enum';
 import { ExpeditionService } from '../components/expedition/expedition.service';
+import { NodeType } from '../components/expedition/node-type';
 import { GameContext } from '../components/interfaces';
 import { PlayerService } from '../components/player/player.service';
 import {
@@ -43,11 +44,15 @@ export class EndCombatProcess {
     private async endCombat(ctx: GameContext): Promise<void> {
         await this.combatQueueService.end(ctx);
 
-        await this.expeditionService.updateById(ctx.expedition._id.toString(), {
-            $set: {
-                'currentNode.showRewards': true,
-            },
-        });
+        if (ctx.expedition.currentNode.nodeSubType == NodeType.CombatBoss) {
+            ctx.expedition.status = ExpeditionStatusEnum.Victory;
+        }
+
+        ctx.expedition.currentNode.showRewards = true;
+
+        ctx.expedition.markModified('currentNode.showRewards');
+
+        await ctx.expedition.save();
 
         this.logger.debug(`Combat ended for client ${ctx.client.id}`);
 
@@ -83,6 +88,7 @@ export class EndCombatProcess {
                 $set: {
                     status: ExpeditionStatusEnum.Defeated,
                     isCurrentlyPlaying: false,
+                    defeatedAt: new Date(),
                 },
             },
         );

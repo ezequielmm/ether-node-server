@@ -1,7 +1,7 @@
-import { CombatQueueTargetEffectTypeEnum } from 'src/game/components/combatQueue/combatQueue.enum';
-import { CombatQueueService } from 'src/game/components/combatQueue/combatQueue.service';
 import { EnemyService } from 'src/game/components/enemy/enemy.service';
 import { PlayerService } from 'src/game/components/player/player.service';
+import { defenseEffect } from 'src/game/effects/defense/constants';
+import { EffectService } from 'src/game/effects/effects.service';
 import { StatusEventHandler, StatusEventDTO } from '../interfaces';
 import { StatusDecorator } from '../status.decorator';
 import { turtling } from './constants';
@@ -10,27 +10,29 @@ import { turtling } from './constants';
     status: turtling,
 })
 export class TurtlingStatus implements StatusEventHandler {
-    constructor(
-        private readonly enemyService: EnemyService,
-        private readonly playerService: PlayerService,
-        private readonly combatQueueService: CombatQueueService,
-    ) {}
+    constructor(private readonly effectService: EffectService) {}
 
     async handle(dto: StatusEventDTO<Record<string, any>>): Promise<any> {
         const { ctx, target, status, update, remove } = dto;
 
-        let finalDefense: number;
+        let defense: number;
         if (PlayerService.isPlayer(target)) {
-            finalDefense = target.value.combatState.defense * 2;
-            await this.playerService.setDefense(ctx, finalDefense);
+            defense = target.value.combatState.defense;
         } else if (EnemyService.isEnemy(target)) {
-            finalDefense = target.value.defense * 2;
-            await this.enemyService.setDefense(
-                ctx,
-                target.value.id,
-                finalDefense,
-            );
+            defense = target.value.defense;
         }
+
+        await this.effectService.apply({
+            ctx: ctx,
+            source: target,
+            target: target,
+            effect: {
+                effect: defenseEffect.name,
+                args: {
+                    value: defense,
+                },
+            },
+        });
 
         status.args.counter--;
 
@@ -41,19 +43,5 @@ export class TurtlingStatus implements StatusEventHandler {
                 counter: status.args.counter,
             });
         }
-
-        await this.combatQueueService.push({
-            ctx,
-            source: target,
-            target,
-            args: {
-                effectType: CombatQueueTargetEffectTypeEnum.Defense,
-                defenseDelta: finalDefense,
-                finalDefense: finalDefense,
-                healthDelta: undefined,
-                finalHealth: undefined,
-                statuses: [],
-            },
-        });
     }
 }

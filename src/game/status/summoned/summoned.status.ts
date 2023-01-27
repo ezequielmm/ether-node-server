@@ -1,16 +1,13 @@
-import { forwardRef, Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { filter } from 'lodash';
 import { thornWolfData } from 'src/game/components/enemy/data/thornWolf.enemy';
 import { thornWolfPupData } from 'src/game/components/enemy/data/thornWolfPup.enemy';
 import { EnemyCategoryEnum } from 'src/game/components/enemy/enemy.enum';
-import { EnemyService } from 'src/game/components/enemy/enemy.service';
 import { IExpeditionCurrentNodeDataEnemy } from 'src/game/components/expedition/expedition.interface';
-import { ExpeditionService } from 'src/game/components/expedition/expedition.service';
-import { EndCombatProcess } from 'src/game/process/endCombat.process';
 import {
     StandardResponse,
-    SWARMessageType,
     SWARAction,
+    SWARMessageType,
 } from 'src/game/standardResponse/standardResponse';
 import { StatusEventDTO, StatusEventHandler } from '../interfaces';
 import { StatusDecorator } from '../status.decorator';
@@ -25,13 +22,6 @@ interface SummonedData {
 })
 @Injectable()
 export class SummonedStatus implements StatusEventHandler {
-    constructor(
-        @Inject(forwardRef(() => ExpeditionService))
-        private readonly expeditionService: ExpeditionService,
-        private readonly endCombatProcess: EndCombatProcess,
-        private readonly enemyService: EnemyService,
-    ) {}
-
     async handle(dto: StatusEventDTO<SummonedData>): Promise<void> {
         const {
             ctx,
@@ -74,19 +64,12 @@ export class SummonedStatus implements StatusEventHandler {
         if (minionsToRemove.length > 0) {
             const minionsToRemoveIds = minionsToRemove.map(({ id }) => id);
 
-            await this.expeditionService.updateByFilter(
-                {
-                    clientId: client.id,
-                },
-                {
-                    $set: {
-                        'currentNode.data.enemies': filter(
-                            enemies,
-                            (enemy) => !minionsToRemoveIds.includes(enemy.id),
-                        ),
-                    },
-                },
+            ctx.expedition.currentNode.data.enemies = filter(
+                enemies,
+                (enemy) => !minionsToRemoveIds.includes(enemy.id),
             );
+            ctx.expedition.markModified('currentNode.data.enemies');
+            await ctx.expedition.save();
 
             // Next we send a new message to the frontend to remove the minions
             client.emit(
@@ -97,13 +80,6 @@ export class SummonedStatus implements StatusEventHandler {
                     data: minionsToRemove,
                 }),
             );
-
-            const newCtx = await this.expeditionService.getGameContext(client);
-
-            const areAllEnemiesDead = this.enemyService.isAllDead(newCtx);
-
-            if (areAllEnemiesDead)
-                await this.endCombatProcess.handle({ ctx: newCtx });
         }
     }
 

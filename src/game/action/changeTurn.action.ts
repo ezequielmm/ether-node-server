@@ -7,19 +7,19 @@ import {
     SWARMessageType,
 } from '../standardResponse/standardResponse';
 
-interface ChangeTurnDTO {
-    client: Socket;
-    type: SWARMessageType.BeginTurn | SWARMessageType.EndTurn;
-    entity: CombatTurnEnum;
-}
-
 @Injectable()
 export class ChangeTurnAction {
     private readonly logger: Logger = new Logger(ChangeTurnAction.name);
 
-    handle(payload: ChangeTurnDTO): void {
-        const { client, type, entity } = payload;
-
+    handle({
+        client,
+        type,
+        entity,
+    }: {
+        client: Socket;
+        type: SWARMessageType.BeginTurn | SWARMessageType.EndTurn;
+        entity: CombatTurnEnum;
+    }): void {
         this.logger.debug(
             `Sent message PutData to client ${client.id} - type: ${type}, action: ${SWARAction.ChangeTurn}, data: ${entity}`,
         );

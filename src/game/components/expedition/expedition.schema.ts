@@ -14,6 +14,7 @@ import { Node } from './node';
 import { Player } from './player';
 import { ExpeditionActConfig } from './expeditionActConfig.schema';
 import { EncounterInterface } from '../encounter/encounter.interfaces';
+import { Score } from './scores';
 
 export type ExpeditionDocument = HydratedDocument<Expedition>;
 
@@ -32,6 +33,9 @@ export class Expedition {
     actConfig?: ExpeditionActConfig;
 
     @Prop()
+    scores?: Score;
+
+    @Prop()
     mapSeedId?: number;
 
     @Prop({ type: () => [Node] }, PropType.ARRAY)
@@ -44,6 +48,7 @@ export class Expedition {
     currentNode?: {
         nodeId: number;
         nodeType: NodeType;
+        nodeSubType?: NodeType;
         completed: boolean;
         showRewards: boolean;
         data?: {
@@ -84,4 +89,10 @@ export class Expedition {
 
     @Prop({ default: false })
     isCurrentlyPlaying: boolean;
+
+    @Prop()
+    createdAt: Date;
+
+    @Prop()
+    defeatedAt?: Date;
 }

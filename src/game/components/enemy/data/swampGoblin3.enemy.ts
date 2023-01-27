@@ -11,15 +11,16 @@ import {
 } from '../enemy.enum';
 import { Enemy } from '../enemy.schema';
 
-export const swampGoblin1Data: Enemy = {
-    enemyId: 3,
-    name: 'SwampGoblin1',
+// Nerf version of swampGoblin1Data
+export const swampGoblin3Data: Enemy = {
+    enemyId: 33,
+    name: 'SwampGoblin3',
     type: EnemyTypeEnum.Fae,
     category: EnemyCategoryEnum.Basic,
     size: EnemySizeEnum.Medium,
     description:
         'Elderly and hunch-backed, she tries to appear harmless but she is aggressive and has Magic powers. Her MAGIC SPORE STAFF is like a huge wand - it can be used to cover enemies in magic toxic spores and choke them',
-    healthRange: [20, 26],
+    healthRange: [24, 30],
     scripts: [
         {
             id: 0,
@@ -35,13 +36,13 @@ export const swampGoblin1Data: Enemy = {
                 {
                     type: EnemyIntentionType.Attack,
                     target: CardTargetedEnum.Player,
-                    value: 4,
+                    value: 6,
                     effects: [
                         {
                             effect: damageEffect.name,
                             target: CardTargetedEnum.Player,
                             args: {
-                                value: 4,
+                                value: 6,
                             },
                         },
                     ],

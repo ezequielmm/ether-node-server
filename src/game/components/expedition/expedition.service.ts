@@ -57,9 +57,9 @@ export class ExpeditionService {
             moduleRef: this.moduleRef,
         };
 
-        expedition.playerState?.trinkets.forEach((trinket) => {
-            trinket.onAttach(ctx);
-        });
+        for (const trinket of expedition.playerState?.trinkets) {
+            await trinket.onAttach(ctx);
+        }
 
         return ctx;
     }
@@ -68,13 +68,9 @@ export class ExpeditionService {
         filter: FilterQuery<Expedition>,
         projection?: ProjectionFields<Expedition>,
     ): Promise<ExpeditionDocument> {
-        return await this.expedition.findOne(
-            {
-                ...filter,
-                status: ExpeditionStatusEnum.InProgress,
-            },
-            projection,
-        );
+        return await this.expedition
+            .findOne(filter, projection)
+            .sort({ createdAt: 1 });
     }
 
     async create(payload: CreateExpeditionDTO): Promise<ExpeditionDocument> {

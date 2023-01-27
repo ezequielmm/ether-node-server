@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { forwardRef, Inject, Injectable, Logger } from '@nestjs/common';
 import { filter, includes } from 'lodash';
 import { Socket } from 'socket.io';
 import { removeCardsFromPile } from 'src/utils';
@@ -19,11 +19,12 @@ interface DiscardAllCardsDTO {
 export class DiscardAllCardsAction {
     private readonly logger: Logger = new Logger(DiscardAllCardsAction.name);
 
-    constructor(private readonly expeditionService: ExpeditionService) {}
+    constructor(
+        @Inject(forwardRef(() => ExpeditionService))
+        private readonly expeditionService: ExpeditionService,
+    ) {}
 
-    async handle(payload: DiscardAllCardsDTO) {
-        const { client, SWARMessageTypeToSend } = payload;
-
+    async handle({ client, SWARMessageTypeToSend }: DiscardAllCardsDTO) {
         const {
             data: {
                 player: {
@@ -52,7 +53,7 @@ export class DiscardAllCardsAction {
 
         const cardMoves = hand.map(({ id, keywords }) => ({
             source: 'hand',
-            destination: keywords.includes(CardKeywordEnum.Fade)
+            destination: includes(keywords, CardKeywordEnum.Fade)
                 ? 'exhaust'
                 : 'discard',
             id,

@@ -8,8 +8,8 @@ export class CardSelectionScreen {
     @Prop()
     clientId: string;
 
-    @Prop([String])
-    cardIds: string[];
+    @Prop()
+    cardIds: any[];
 
     @Prop({ type: String, enum: CardSelectionScreenOriginPileEnum })
     originPile: CardSelectionScreenOriginPileEnum;

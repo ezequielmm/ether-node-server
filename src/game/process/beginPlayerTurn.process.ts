@@ -6,6 +6,7 @@ import { GetPlayerInfoAction } from '../action/getPlayerInfo.action';
 import { CombatQueueService } from '../components/combatQueue/combatQueue.service';
 import { EnemyService } from '../components/enemy/enemy.service';
 import { CombatTurnEnum } from '../components/expedition/expedition.enum';
+import { ExpeditionService } from '../components/expedition/expedition.service';
 import { GameContext } from '../components/interfaces';
 import { PlayerService } from '../components/player/player.service';
 import { SettingsService } from '../components/settings/settings.service';
@@ -18,10 +19,6 @@ import {
     SWARAction,
     SWARMessageType,
 } from '../standardResponse/standardResponse';
-
-interface BeginPlayerTurnDTO {
-    ctx: GameContext;
-}
 
 @Injectable()
 export class BeginPlayerTurnProcess {
@@ -36,15 +33,25 @@ export class BeginPlayerTurnProcess {
         private readonly getPlayerInfoAction: GetPlayerInfoAction,
         private readonly combatQueueService: CombatQueueService,
         private readonly changeTurnAction: ChangeTurnAction,
+        private readonly expeditionService: ExpeditionService,
     ) {}
 
-    async handle(payload: BeginPlayerTurnDTO): Promise<void> {
-        const { ctx } = payload;
+    async handle({ ctx }: { ctx: GameContext }): Promise<void> {
+        this.logger.debug(`Beginning player turn`);
+
         const { client } = ctx;
 
-        this.logger.debug(`Beginning player ${client.id} turn`);
-
         await this.enemyService.calculateNewIntentions(ctx);
+
+        await this.expeditionService.updateByFilter(
+            { clientId: client.id },
+            {
+                'currentNode.data.playing': CombatTurnEnum.Player,
+                $inc: {
+                    'currentNode.data.round': 1,
+                },
+            },
+        );
 
         // Send change turn message
         this.changeTurnAction.handle({
@@ -52,13 +59,6 @@ export class BeginPlayerTurnProcess {
             type: SWARMessageType.BeginTurn,
             entity: CombatTurnEnum.Player,
         });
-
-        ctx.expedition.currentNode.data.playing = CombatTurnEnum.Player;
-        ctx.expedition.currentNode.data.round += 1;
-
-        ctx.expedition.markModified('currentNode');
-
-        await ctx.expedition.save();
 
         const { handSize, defense } = ctx.expedition.currentNode.data.player;
 

@@ -12,7 +12,7 @@ export const NaiadEncounter: Encounter = {
                 'A Naiad emerges from a pond, her body wrapped in foam and pond weed. She speaks an odd language that sounds like a bubbling brook. You feel drawn to her.',
             buttons: [
                 {
-                    text: 'A: Go to the Naiad [Receive one Blessing. Receive one curse.]', // aka option 1
+                    text: 'Click here to go to the Naiad [Receive one Blessing. Receive one curse.]', // aka option 1
                     nextStage: 1,
                     effects: [
                         { kind: 'card_add_to_library', cardId: '1' }, //TODO correct card id
@@ -20,7 +20,7 @@ export const NaiadEncounter: Encounter = {
                     ],
                 },
                 {
-                    text: 'B: Resist her call [Leave]', // aka option 2
+                    text: 'Click here to resist her call [Leave]', // aka option 2
                     nextStage: 2,
                     effects: [],
                 },

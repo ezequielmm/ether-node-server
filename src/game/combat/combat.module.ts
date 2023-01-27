@@ -6,12 +6,14 @@ import { RewardModule } from '../reward/reward.module';
 import { CombatService } from './combat.service';
 import { CardSelectionScreenModule } from '../components/cardSelectionScreen/cardSelectionScreen.module';
 import { ActionModule } from '../action/action.module';
+import { CardModule } from '../components/card/card.module';
 
 @Module({
     imports: [
         forwardRef(() => ExpeditionModule),
         forwardRef(() => EnemyModule),
         forwardRef(() => ActionModule),
+        forwardRef(() => CardModule),
         SettingsModule,
         RewardModule,
         CardSelectionScreenModule,

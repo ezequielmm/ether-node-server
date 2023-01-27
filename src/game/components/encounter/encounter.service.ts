@@ -43,7 +43,7 @@ export class EncounterService {
             [
                 EncounterIdEnum.AbandonedAltar, // [3 jan 2023] customer is not going to provide art
                 EncounterIdEnum.Rugburn, // [3 jan 2023] wont do
-                EncounterIdEnum.Nagpra, //3 TODO disabled due to server crashing bug
+                EncounterIdEnum.Nagpra, //3
                 EncounterIdEnum.TreeCarving,
                 EncounterIdEnum.Naiad,
                 EncounterIdEnum.WillOWisp, //6 working [13 jan 2023]
@@ -54,8 +54,9 @@ export class EncounterService {
                 EncounterIdEnum.Oddbarks, // 11
                 EncounterIdEnum.RunicBehive,
             ],
-            //      1  2  3  4  5  6  7  8  9  10 11 12
-            [0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0],
+            //       1  2  3  4  5  6  7  8  9 10 11 12
+            //      [0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0],
+            [0, 0, 1, 0, 0, 1, 1, 1, 0, 1, 0, 0],
         );
 
         //fetch existing encounter if there is one
@@ -233,7 +234,7 @@ export class EncounterService {
                             await this.trinketService.add(ctx, 3);
                             break;
                         case 'runic_tome': //young wizard
-                            await this.trinketService.add(ctx, 2); //TODO need correct trinket id
+                            await this.trinketService.add(ctx, 23);
                             break;
                         case 'pan_flute': //satyr
                             await this.trinketService.add(ctx, 45);
@@ -474,7 +475,7 @@ export class EncounterService {
         const ctx = await this.expeditionService.getGameContext(client);
         const expedition = ctx.expedition;
         const encounterData: EncounterInterface =
-            expedition.currentNode.encounterData;
+            expedition.currentNode?.encounterData;
         return encounterData;
     }
 

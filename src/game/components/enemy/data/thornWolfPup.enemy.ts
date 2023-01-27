@@ -23,6 +23,16 @@ export const thornWolfPupData: Enemy = {
     healthRange: [30, 35],
     scripts: [
         {
+            id: -1,
+            intentions: [],
+            next: [
+                {
+                    probability: 1,
+                    scriptId: 0,
+                },
+            ],
+        },
+        {
             // we need a summoned status
             id: 0,
             intentions: [

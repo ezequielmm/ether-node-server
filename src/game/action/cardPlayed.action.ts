@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { forwardRef, Inject, Injectable, Logger } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { Socket } from 'socket.io';
 import { CardKeywordPipeline } from '../cardKeywordPipeline/cardKeywordPipeline';
@@ -43,6 +43,7 @@ export class CardPlayedAction {
     private client: Socket;
 
     constructor(
+        @Inject(forwardRef(() => ExpeditionService))
         private readonly expeditionService: ExpeditionService,
         private readonly effectService: EffectService,
         private readonly statusService: StatusService,
@@ -55,9 +56,11 @@ export class CardPlayedAction {
         private readonly eventEmitter: EventEmitter2,
     ) {}
 
-    async handle(payload: CardPlayedDTO): Promise<void> {
-        const { cardId, selectedEnemyId, ctx } = payload;
-
+    async handle({
+        cardId,
+        selectedEnemyId,
+        ctx,
+    }: CardPlayedDTO): Promise<void> {
         this.client = ctx.client;
 
         // First make sure card exists on player's hand pile

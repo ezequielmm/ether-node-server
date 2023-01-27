@@ -26,7 +26,7 @@ export const YoungWizardEncounter: Encounter = {
             buttons: [
                 {
                     //aka option 2
-                    text: 'A: Accept the Book [Lose 1 random card. Gain Runic Tome]',
+                    text: 'Click here to accept the Book [Lose 1 random card. Gain Runic Tome]',
                     nextStage: 2,
                     effects: [
                         { kind: 'loose_random_card', amount: '1' },
@@ -35,7 +35,7 @@ export const YoungWizardEncounter: Encounter = {
                 },
                 {
                     //aka option 3
-                    text: 'B: Refuse [Gain 100 Coin]',
+                    text: 'Click here to refuse [Gain 100 Coin]',
                     nextStage: 3,
                     effects: [{ kind: 'coin', amount: '100' }],
                 },

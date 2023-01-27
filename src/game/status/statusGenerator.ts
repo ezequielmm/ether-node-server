@@ -88,8 +88,7 @@ export class StatusGenerator {
                 return `Each attack against this character deals ${counter} damage to the attacker`;
             case spirited.name:
                 return `Next turn, gain ${counter} Energy points`;
-            case tasteOfBloodBuff.name:
-            case tasteOfBloodDebuff.name:
+            case 'tasteOfBlood':
                 return `All attacks by and against you will do double damage`;
             case turtling.name:
                 return `Double the effect of all Defense gained from cards`;

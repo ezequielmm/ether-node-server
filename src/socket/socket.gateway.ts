@@ -79,7 +79,7 @@ export class SocketGateway
                     }
                 }
 
-                await this.fullSyncAction.handle(client);
+                await this.fullSyncAction.handle(client, false);
 
                 this.logger.verbose(
                     `Clients connected: ${this.server.engine.clientsCount}`,

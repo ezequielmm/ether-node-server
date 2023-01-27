@@ -11,12 +11,12 @@ export const WillowispEncounter: Encounter = {
                 'You stumble across a glowing orb levitating in mid-air. Your fingers begin to tingle and a feeling of calm washes over you.',
             buttons: [
                 {
-                    text: 'A: Kneel before the orb [Increase max hp by 5 to 8.]',
+                    text: 'Click here to kneel before the orb [Increase max hp by 5 to 8]',
                     nextStage: 1,
                     effects: [{ kind: 'hp_max_random', max: '8', min: '5' }],
                 },
                 {
-                    text: 'B: Reach out and absorb power from the orb. [Upgrade 1 random card]',
+                    text: 'Click here to reach out & absorb power from the orb [Upgrade 1 random card]',
                     nextStage: 2,
                     effects: [{ kind: 'upgrade_random_card', amount: '1' }],
                 },
