@@ -50,6 +50,4 @@ export class Trinket<T = any> {
             }),
         );
     }
-
-    static TrinketId: number;
 }

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Socket } from 'socket.io';
 import { CustomException, ErrorBehavior } from 'src/socket/custom.exception';
-import { ExpeditionMapNodeTypeEnum } from '../components/expedition/expedition.enum';
+import { NodeType } from '../components/expedition/node-type';
 import { ExpeditionService } from '../components/expedition/expedition.service';
 import {
     StandardResponse,
@@ -18,7 +18,7 @@ export class GetTreasureDataAction {
                 clientId: client.id,
             });
 
-        if (nodeType !== ExpeditionMapNodeTypeEnum.Treasure) {
+        if (nodeType !== NodeType.Treasure) {
             throw new CustomException(
                 'This node is not a treasure node',
                 ErrorBehavior.ReturnToMainMenu,

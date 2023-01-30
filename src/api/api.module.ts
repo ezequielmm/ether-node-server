@@ -5,6 +5,7 @@ import { AuthGatewayModule } from 'src/authGateway/authGateway.module';
 import { ExpeditionModule } from 'src/game/components/expedition/expedition.module';
 import { ProcessModule } from 'src/game/process/process.module';
 import { MerchantModule } from 'src/game/merchant/merchant.module';
+import { ScoreCalculatorModule } from 'src/game/scoreCalculator/scoreCalculator.module';
 
 @Module({
     imports: [
@@ -12,6 +13,7 @@ import { MerchantModule } from 'src/game/merchant/merchant.module';
         ExpeditionModule,
         ProcessModule,
         MerchantModule,
+        ScoreCalculatorModule,
     ],
     controllers: [ProfileController, ExpeditionController],
 })

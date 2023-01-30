@@ -1,4 +1,4 @@
-import { ExpeditionMapNodeTypeEnum } from 'src/game/components/expedition/expedition.enum';
+import { NodeType } from 'src/game/components/expedition/node-type';
 import { DefaultActBuilder } from './act.builder';
 import { ActBuilder } from './act.builder';
 
@@ -20,13 +20,13 @@ describe('ActBuilder', () => {
     describe('addRandgeOfSteps', () => {
         it('should add range of steps', () => {
             expect(actBuilder['currentStep']).toBe(-1);
-            actBuilder.addRandgeOfSteps(3, () => {});
+            actBuilder.addRangeOfSteps(3, () => {});
             expect(actBuilder['currentStep']).toBe(2);
         });
 
         it('should add range of steps with callback', () => {
             expect(actBuilder['currentStep']).toBe(-1);
-            actBuilder.addRandgeOfSteps(3, (step) => {
+            actBuilder.addRangeOfSteps(3, (step) => {
                 step.addNode();
                 step.addNode();
                 step.addNode();
@@ -120,7 +120,7 @@ describe('ActBuilder', () => {
             expect(actBuilder['nodes']).toHaveLength(0);
             expect(actBuilder['currentStep']).toBe(-1);
 
-            actBuilder.addRandgeOfSteps(3, (step) => {
+            actBuilder.addRangeOfSteps(3, (step) => {
                 step.addNode();
                 step.addNode();
                 step.addNode();
@@ -128,14 +128,14 @@ describe('ActBuilder', () => {
 
             actBuilder.fillUndefinedNodes((node, nodes) => {
                 return {
-                    type: ExpeditionMapNodeTypeEnum.Combat,
-                    subType: ExpeditionMapNodeTypeEnum.CombatElite,
+                    type: NodeType.Combat,
+                    subType: NodeType.CombatElite,
                 };
             });
 
             expect(actBuilder['nodes'][0]).toMatchObject({
-                type: ExpeditionMapNodeTypeEnum.Combat,
-                subType: ExpeditionMapNodeTypeEnum.CombatElite,
+                type: NodeType.Combat,
+                subType: NodeType.CombatElite,
             });
         });
     });

@@ -4,12 +4,8 @@ import { CombatQueue } from './combatQueue.schema';
 import { CombatQueueService } from './combatQueue.service';
 
 @Module({
-    imports: [
-        KindagooseModule.forFeature([
-            CombatQueue,
-        ]),
-    ],
+    imports: [KindagooseModule.forFeature([CombatQueue])],
     providers: [CombatQueueService],
     exports: [CombatQueueService],
 })
-export class CombatQueueModule { }
+export class CombatQueueModule {}

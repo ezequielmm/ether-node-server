@@ -4,12 +4,8 @@ import { Chest } from './chest.schema';
 import { ChestService } from './chest.service';
 
 @Module({
-    imports: [
-        KindagooseModule.forFeature([
-            Chest,
-        ]),
-    ],
+    imports: [KindagooseModule.forFeature([Chest])],
     providers: [ChestService],
     exports: [ChestService],
 })
-export class ChestModule { }
+export class ChestModule {}

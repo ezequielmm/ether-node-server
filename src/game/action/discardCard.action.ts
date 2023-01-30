@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { forwardRef, Inject, Injectable, Logger } from '@nestjs/common';
 import { Socket } from 'socket.io';
 import { ExpeditionService } from 'src/game/components/expedition/expedition.service';
 import { isNotUndefined } from 'src/utils';
@@ -19,7 +19,10 @@ interface DiscardCardDTO {
 export class DiscardCardAction {
     private readonly logger: Logger = new Logger(DiscardCardAction.name);
 
-    constructor(private readonly expeditionService: ExpeditionService) {}
+    constructor(
+        @Inject(forwardRef(() => ExpeditionService))
+        private readonly expeditionService: ExpeditionService,
+    ) {}
 
     async handle(payload: DiscardCardDTO): Promise<void> {
         const { client, cardId } = payload;

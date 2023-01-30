@@ -30,6 +30,7 @@ export interface JsonEffect {
     times?: number;
     args?: {
         value?: number;
+        description?: string;
     } & Record<string, any>;
 }
 

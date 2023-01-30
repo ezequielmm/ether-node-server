@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { forwardRef, Inject, Injectable, Logger } from '@nestjs/common';
 import { Socket } from 'socket.io';
 import { removeCardsFromPile } from 'src/utils';
 import { IExpeditionPlayerStateDeckCard } from '../components/expedition/expedition.interface';
@@ -24,7 +24,10 @@ interface IMoveCardDTO {
 export class MoveCardAction {
     private readonly logger: Logger = new Logger(MoveCardAction.name);
 
-    constructor(private readonly expeditionService: ExpeditionService) {}
+    constructor(
+        @Inject(forwardRef(() => ExpeditionService))
+        private readonly expeditionService: ExpeditionService,
+    ) {}
 
     async handle(payload: IMoveCardDTO): Promise<void> {
         // First we deestructure the payload and get the data
@@ -52,9 +55,7 @@ export class MoveCardAction {
         // Now we take the cards by its id and check if we have to
         // change their cost down to 0
         const cardsToMove = deckPile
-            .filter(({ id }) => {
-                return cardIds.includes(id);
-            })
+            .filter(({ id }) => cardIds.includes(id))
             .map(callback || ((card) => card));
 
         // Now we remove the cards from the desired pile

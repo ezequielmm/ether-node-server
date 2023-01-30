@@ -18,4 +18,4 @@ import { CardService } from './card.service';
     providers: [CardService],
     exports: [CardService],
 })
-export class CardModule { }
+export class CardModule {}

@@ -11,10 +11,6 @@ import {
 import { SWARMessageType } from '../standardResponse/standardResponse';
 import { BeginPlayerTurnProcess } from './beginPlayerTurn.process';
 
-interface EndEnemyTurnDTO {
-    ctx: GameContext;
-}
-
 @Injectable()
 export class EndEnemyTurnProcess {
     private readonly logger: Logger = new Logger(EndEnemyTurnProcess.name);
@@ -26,10 +22,9 @@ export class EndEnemyTurnProcess {
         private readonly changeTurnAction: ChangeTurnAction,
     ) {}
 
-    async handle(payload: EndEnemyTurnDTO): Promise<void> {
+    async handle({ ctx }: { ctx: GameContext }): Promise<void> {
         this.logger.debug(`Ending enemies turn`);
 
-        const { ctx } = payload;
         const { client } = ctx;
 
         await this.combatQueueService.start(ctx);

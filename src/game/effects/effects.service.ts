@@ -1,7 +1,6 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { forwardRef, Inject, Injectable, Logger } from '@nestjs/common';
 import { find } from 'lodash';
 import { ExpeditionService } from '../components/expedition/expedition.service';
-import { PlayerService } from '../components/player/player.service';
 import { TrinketService } from '../components/trinket/trinket.service';
 import { HistoryService } from '../history/history.service';
 import { ProviderContainer } from '../provider/interfaces';
@@ -26,8 +25,10 @@ export class EffectService {
     constructor(
         private readonly providerService: ProviderService,
         private readonly statusService: StatusService,
+        @Inject(forwardRef(() => ExpeditionService))
         private readonly expeditionService: ExpeditionService,
         private readonly historyService: HistoryService,
+        @Inject(forwardRef(() => TrinketService))
         private readonly trinketService: TrinketService,
     ) {}
 
@@ -91,11 +92,14 @@ export class EffectService {
             effect: name,
         });
 
-        for (let i = 0; i < times; i++) {
+        for (let i = 1; i <= times; i++) {
             const { metadata, instance } = this.findContainerByName(name);
 
             // Check if the combat has ended
-            if (this.expeditionService.isCurrentCombatEnded(ctx)) {
+            if (
+                this.expeditionService.isCurrentCombatEnded(ctx) &&
+                !metadata.effect.ghost
+            ) {
                 this.logger.debug(
                     `Combat ended, skipping effect ${effect.effect}`,
                 );

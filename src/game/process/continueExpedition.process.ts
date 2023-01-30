@@ -1,105 +1,54 @@
 import { Injectable } from '@nestjs/common';
-import { Socket } from 'socket.io';
-import {
-    ExpeditionMapNodeStatusEnum,
-    ExpeditionMapNodeTypeEnum,
-} from '../components/expedition/expedition.enum';
-import { IExpeditionNode } from '../components/expedition/expedition.interface';
-import { ExpeditionDocument } from '../components/expedition/expedition.schema';
-import { ExpeditionService } from '../components/expedition/expedition.service';
-import { restoreMap } from '../map/app';
-import Node from '../map/nodes/node';
+import { NodeType } from '../components/expedition/node-type';
+import { GameContext } from '../components/interfaces';
+import { MapService } from '../map/map.service';
 import {
     StandardResponse,
-    SWARMessageType,
     SWARAction,
+    SWARMessageType,
 } from '../standardResponse/standardResponse';
 
 @Injectable()
 export class ContinueExpeditionProcess {
-    constructor(private readonly expeditionService: ExpeditionService) {}
+    constructor(private readonly mapService: MapService) {}
 
-    private expedition: ExpeditionDocument;
-    private node: IExpeditionNode;
-
-    async handle({ client }: { client: Socket }): Promise<string> {
-        // Here we get the updated expedition
-        this.expedition = await this.expeditionService.findOne({
-            clientId: client.id,
-        });
+    async handle(ctx: GameContext): Promise<string> {
+        const map = ctx.expedition.map;
 
         // Now we get the node information that is active at the moment
-        this.node = this.expedition.map.find(
-            (node) => node.id === this.expedition.currentNode.nodeId,
+        const node = this.mapService.findNodeById(
+            ctx,
+            ctx.expedition.currentNode.nodeId,
         );
 
         // Here we complete the node and set the next as available
         // and return the new map
-        const newMap = this.completeNode();
+        this.mapService.completeNode(ctx, node.id);
+        ctx.expedition.currentNode.completed = true;
 
         // Now we update the expedition based on the node type
-        if (this.node.type === ExpeditionMapNodeTypeEnum.Combat) {
-            await this.updateExpeditionForCombat(newMap);
-        } else {
-            await this.updateExpedition(newMap);
-        }
+        if (node.type === NodeType.Combat) this.setupDataFromCombat(ctx);
+
+        await ctx.expedition.save();
 
         // Send the final message with the map updated
         return StandardResponse.respond({
             message_type:
-                this.node.type === ExpeditionMapNodeTypeEnum.Combat
+                node.type === NodeType.Combat
                     ? SWARMessageType.EndCombat
                     : SWARMessageType.EndNode,
-            seed: this.expedition.mapSeedId,
+            seed: ctx.expedition.mapSeedId,
             action: SWARAction.ShowMap,
-            data: newMap,
+            data: map,
         });
     }
 
-    private completeNode(): Node[] {
-        // This will be for now combat nodes (merchant, camp, etc)
-        const { map: oldMap } = this.expedition;
+    private setupDataFromCombat(ctx: GameContext): void {
+        const { hpCurrent, hpMax } = ctx.expedition.currentNode.data.player;
 
-        const newMap = restoreMap(oldMap);
-        newMap.activeNode = newMap.fullCurrentMap.get(this.node.id);
-        newMap.activeNode.complete(newMap);
-        newMap.activeNode.status = ExpeditionMapNodeStatusEnum.Completed;
-
-        return newMap.getMap;
-    }
-
-    private async updateExpedition(newMap: Node[]): Promise<void> {
-        await this.expeditionService.updateById(
-            this.expedition._id.toString(),
-            {
-                $set: {
-                    map: newMap,
-                    'currentNode.completed': true,
-                },
-            },
-        );
-    }
-
-    private async updateExpeditionForCombat(newMap: Node[]): Promise<void> {
-        const {
-            currentNode: {
-                data: {
-                    player: { hpCurrent, hpMax },
-                },
-            },
-        } = this.expedition;
-
-        await this.expeditionService.updateById(
-            this.expedition._id.toString(),
-            {
-                $set: {
-                    map: newMap,
-                    'currentNode.completed': true,
-                    'currentNode.showRewards': false,
-                    'playerState.hpCurrent': hpCurrent,
-                    'playerState.hpMax': hpMax,
-                },
-            },
-        );
+        ctx.expedition.currentNode.completed = true;
+        ctx.expedition.currentNode.showRewards = false;
+        ctx.expedition.playerState.hpCurrent = hpCurrent;
+        ctx.expedition.playerState.hpMax = hpMax;
     }
 }

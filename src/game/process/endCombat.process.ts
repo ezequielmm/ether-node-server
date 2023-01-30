@@ -4,9 +4,13 @@ import { CombatQueueService } from '../components/combatQueue/combatQueue.servic
 import { EnemyService } from '../components/enemy/enemy.service';
 import { ExpeditionStatusEnum } from '../components/expedition/expedition.enum';
 import { ExpeditionService } from '../components/expedition/expedition.service';
+import { NodeType } from '../components/expedition/node-type';
 import { GameContext } from '../components/interfaces';
 import { PlayerService } from '../components/player/player.service';
-import { EVENT_AFTER_DAMAGE_EFFECT } from '../constants';
+import {
+    EVENT_AFTER_DAMAGE_EFFECT,
+    EVENT_AFTER_END_COMBAT,
+} from '../constants';
 import {
     StandardResponse,
     SWARAction,
@@ -25,7 +29,7 @@ export class EndCombatProcess {
     ) {}
 
     @OnEvent(EVENT_AFTER_DAMAGE_EFFECT)
-    async handle({ ctx }): Promise<void> {
+    async handle({ ctx }: { ctx: GameContext }): Promise<void> {
         if (this.playerService.isDead(ctx)) {
             this.logger.debug('Player is dead. Ending combat');
             await this.emitPlayerDefeated(ctx);
@@ -40,11 +44,15 @@ export class EndCombatProcess {
     private async endCombat(ctx: GameContext): Promise<void> {
         await this.combatQueueService.end(ctx);
 
-        await this.expeditionService.updateById(ctx.expedition._id.toString(), {
-            $set: {
-                'currentNode.showRewards': true,
-            },
-        });
+        if (ctx.expedition.currentNode.nodeSubType == NodeType.CombatBoss) {
+            ctx.expedition.status = ExpeditionStatusEnum.Victory;
+        }
+
+        ctx.expedition.currentNode.showRewards = true;
+
+        ctx.expedition.markModified('currentNode.showRewards');
+
+        await ctx.expedition.save();
 
         this.logger.debug(`Combat ended for client ${ctx.client.id}`);
 
@@ -53,11 +61,11 @@ export class EndCombatProcess {
             StandardResponse.respond({
                 message_type: SWARMessageType.EndCombat,
                 action: SWARAction.EnemiesDefeated,
-                data: {
-                    rewards: ctx.expedition.currentNode.data.rewards,
-                },
+                data: null,
             }),
         );
+
+        await ctx.events.emitAsync(EVENT_AFTER_END_COMBAT, { ctx });
     }
 
     private async emitPlayerDefeated(ctx: GameContext): Promise<void> {
@@ -80,6 +88,7 @@ export class EndCombatProcess {
                 $set: {
                     status: ExpeditionStatusEnum.Defeated,
                     isCurrentlyPlaying: false,
+                    defeatedAt: new Date(),
                 },
             },
         );

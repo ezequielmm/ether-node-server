@@ -7,7 +7,7 @@ import { MutateDTO } from 'src/game/effects/effects.interface';
 import {
     StandardResponse,
     SWARAction,
-    SWARMessageType
+    SWARMessageType,
 } from 'src/game/standardResponse/standardResponse';
 import { StatusDirection } from 'src/game/status/interfaces';
 import { GameContext } from '../interfaces';
@@ -18,7 +18,7 @@ import { Trinket } from './trinket.schema';
 
 @Injectable()
 export class TrinketService {
-    constructor(private readonly moduleRef: ModuleRef) { }
+    constructor(private readonly moduleRef: ModuleRef) {}
 
     private createFromClass(TrinketClass: typeof Trinket): Trinket {
         const TrinketModel = this.moduleRef.get<
@@ -62,7 +62,7 @@ export class TrinketService {
         }
 
         ctx.expedition.playerState.trinkets.push(trinket);
-        trinket.onAttach(ctx);
+        await trinket.onAttach(ctx);
         await ctx.expedition.save();
 
         ctx.client.emit(

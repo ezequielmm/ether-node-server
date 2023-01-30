@@ -1,16 +1,18 @@
-import { filter, random } from 'lodash';
-import { ExpeditionMapNodeTypeEnum } from 'src/game/components/expedition/expedition.enum';
-import nodeFactory from '../nodes';
-import Node from '../nodes/node';
+import { filter, ListIterateeCustom, random } from 'lodash';
+import { NodeType } from 'src/game/components/expedition/node-type';
+import { NodeStatus } from 'src/game/components/expedition/node-status';
+import { Node } from 'src/game/components/expedition/node';
 
 /**
  * Object config for node
  */
 export interface NodeConfig {
+    /** Title of the node */
+    title?: string;
     /** Primary type of the node */
-    type: ExpeditionMapNodeTypeEnum;
+    type: NodeType;
     /** Secondary type of the node */
-    subType: ExpeditionMapNodeTypeEnum;
+    subType: NodeType;
     /** Optional data of the node*/
     data?: any;
 }
@@ -47,7 +49,7 @@ export interface ActBuilder {
      * @param {number} length Number of steps to add
      * @param {StepCallback} callback Callback to add nodes to the step added
      */
-    addRandgeOfSteps(length: number, callback: StepCallback): void;
+    addRangeOfSteps(length: number, callback: StepCallback): void;
 
     /**
      * Add a node to the current step
@@ -99,7 +101,7 @@ export class DefaultActBuilder implements ActBuilder {
         callback?.(this);
     }
 
-    addRandgeOfSteps(
+    addRangeOfSteps(
         length: number,
         callback: (builder: ActBuilder) => void,
     ): void {
@@ -127,9 +129,14 @@ export class DefaultActBuilder implements ActBuilder {
     fillUndefinedNodes(
         callback: (node: Node, nodes: Node[]) => NodeConfig,
     ): void {
-        filter(this.nodes, {
-            type: undefined,
-        }).forEach((node) => {
+        this.fillByFilter({ type: undefined }, callback);
+    }
+
+    fillByFilter(
+        _filter: ListIterateeCustom<Node, boolean>,
+        callback: (node: Node, nodes: Node[]) => NodeConfig,
+    ): void {
+        filter(this.nodes, _filter).forEach((node) => {
             const index = this.nodes.indexOf(node);
             const nodeConfig = callback(node, this.nodes);
             const newNode = this.createNode(nodeConfig);
@@ -140,16 +147,17 @@ export class DefaultActBuilder implements ActBuilder {
     }
 
     private createNode(config: NodeConfig): Node {
-        return nodeFactory(
-            this.initialNodeId++,
-            this.actId,
-            this.currentStep,
-            config?.type,
-            config?.subType,
-            config?.data,
-            config?.type === ExpeditionMapNodeTypeEnum.Camp
-                ? 'Spirit Well'
-                : config?.subType,
-        );
+        return new Node({
+            id: this.initialNodeId++,
+            act: this.actId,
+            step: this.currentStep,
+            type: config?.type,
+            subType: config?.subType,
+            private_data: config?.data,
+            title: config?.title,
+            status: NodeStatus.Disabled,
+            enter: [],
+            exits: [],
+        });
     }
 }

@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { forwardRef, Inject, Injectable, Logger } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { Socket } from 'socket.io';
 import { CardKeywordPipeline } from '../cardKeywordPipeline/cardKeywordPipeline';
@@ -8,7 +8,6 @@ import {
 } from '../components/card/card.enum';
 import { CardId, getCardIdField } from '../components/card/card.type';
 import { CombatQueueService } from '../components/combatQueue/combatQueue.service';
-import { ExpeditionDocument } from '../components/expedition/expedition.schema';
 import { ExpeditionService } from '../components/expedition/expedition.service';
 import { GameContext } from '../components/interfaces';
 import { PlayerService } from '../components/player/player.service';
@@ -44,6 +43,7 @@ export class CardPlayedAction {
     private client: Socket;
 
     constructor(
+        @Inject(forwardRef(() => ExpeditionService))
         private readonly expeditionService: ExpeditionService,
         private readonly effectService: EffectService,
         private readonly statusService: StatusService,
@@ -54,11 +54,13 @@ export class CardPlayedAction {
         private readonly combatQueueService: CombatQueueService,
         private readonly historyService: HistoryService,
         private readonly eventEmitter: EventEmitter2,
-    ) { }
+    ) {}
 
-    async handle(payload: CardPlayedDTO): Promise<void> {
-        const { cardId, selectedEnemyId, ctx } = payload;
-
+    async handle({
+        cardId,
+        selectedEnemyId,
+        ctx,
+    }: CardPlayedDTO): Promise<void> {
         this.client = ctx.client;
 
         // First make sure card exists on player's hand pile
@@ -95,20 +97,7 @@ export class CardPlayedAction {
                 return card[field] === cardId;
             });
 
-            const source = this.playerService.get(ctx);
-            const sourceReference =
-                this.statusService.getReferenceFromEntity(source);
-
-            await this.eventEmitter.emitAsync(EVENT_BEFORE_CARD_PLAY, {
-                ctx,
-                card,
-                cardSource: source,
-                cardSourceReference: sourceReference,
-                cardTargetId: selectedEnemyId,
-            });
-
             const {
-                energy: cardEnergyCost,
                 properties: { effects, statuses },
                 keywords,
             } = card;
@@ -130,7 +119,7 @@ export class CardPlayedAction {
                 // Next we make sure that the card can be played and the user has
                 // enough energy
                 const { canPlayCard, message } = this.canPlayerPlayCard(
-                    cardEnergyCost,
+                    card.energy,
                     availableEnergy,
                 );
 
@@ -210,9 +199,9 @@ export class CardPlayedAction {
                     });
 
                     const newEnergy =
-                        cardEnergyCost === CardEnergyEnum.All
+                        card.energy === CardEnergyEnum.All
                             ? 0
-                            : energy - cardEnergyCost;
+                            : energy - card.energy;
 
                     await this.playerService.setEnergy(ctx, newEnergy);
 

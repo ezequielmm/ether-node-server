@@ -14,6 +14,7 @@ import { BolsteredStatus } from './bolstered/bolstered.status';
 import { BurnStatus } from './burn/burn.status';
 import { ClearHeadedStatus } from './clearHeaded/clearHeaded.status';
 import { ConfusionStatus } from './confusion/confusion.status';
+import { BirdcageStatus } from './birdcage/birdcage.status';
 import { DewDropStatus } from './dewDrop/dewDrop.status';
 import { DistraughtEvent } from './distraught/distraught.event';
 import { DistraughtStatus } from './distraught/distraught.status';
@@ -48,6 +49,10 @@ import { TasteOfBloodBuffStatus } from './tasteOfBlood/tasteOfBlood.buff.status'
 import { TasteOfBloodDebuffStatus } from './tasteOfBlood/tasteOfBlood.debuff.status';
 import { TrappedStatus } from './trapped/trapped.status';
 import { TurtlingStatus } from './turtling/turtling.status';
+import { SummonedStatus } from './summoned/summoned.status';
+import { ProcessModule } from '../process/process.module';
+import { PeacockFeatherStatus } from './peacockFeather/peacockFeather.status';
+import { BlightedStatus } from './blighted/blighted.status';
 
 @Module({
     imports: [
@@ -57,6 +62,7 @@ import { TurtlingStatus } from './turtling/turtling.status';
         forwardRef(() => PlayerModule),
         forwardRef(() => CardModule),
         forwardRef(() => ActionModule),
+        forwardRef(() => ProcessModule),
         CombatQueueModule,
         ProviderModule,
         HistoryModule,
@@ -104,6 +110,10 @@ import { TurtlingStatus } from './turtling/turtling.status';
         DewDropStatus,
         FeebleStatus,
         TrappedStatus,
+        BirdcageStatus,
+        SummonedStatus,
+        PeacockFeatherStatus,
+        BlightedStatus,
     ],
     exports: [StatusService],
 })

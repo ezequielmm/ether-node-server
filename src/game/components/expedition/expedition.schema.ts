@@ -1,27 +1,26 @@
-import { modelOptions, Prop } from '@typegoose/typegoose';
+import { modelOptions, Prop, PropType, Severity } from '@typegoose/typegoose';
 import { HydratedDocument } from 'mongoose';
 import { MerchantItems } from 'src/game/merchant/merchant.interface';
 import { AttachedStatus, StatusType } from 'src/game/status/interfaces';
 import { TreasureInterface } from 'src/game/treasure/treasure.interfaces';
-import {
-    CombatTurnEnum,
-    ExpeditionMapNodeTypeEnum,
-    ExpeditionStatusEnum,
-} from './expedition.enum';
+import { CombatTurnEnum, ExpeditionStatusEnum } from './expedition.enum';
+import { NodeType } from './node-type';
 import {
     IExpeditionCurrentNodeDataEnemy,
-    IExpeditionNode,
     IExpeditionPlayerStateDeckCard,
-    Player,
     Reward,
 } from './expedition.interface';
+import { Node } from './node';
+import { Player } from './player';
 import { ExpeditionActConfig } from './expeditionActConfig.schema';
 import { EncounterInterface } from '../encounter/encounter.interfaces';
+import { Score } from './scores';
 
 export type ExpeditionDocument = HydratedDocument<Expedition>;
 
 @modelOptions({
     schemaOptions: { collection: 'expeditions', versionKey: false },
+    options: { allowMixed: Severity.ALLOW },
 })
 export class Expedition {
     @Prop()
@@ -34,10 +33,13 @@ export class Expedition {
     actConfig?: ExpeditionActConfig;
 
     @Prop()
-    mapSeedId?: number;
+    scores?: Score;
 
     @Prop()
-    map: IExpeditionNode[];
+    mapSeedId?: number;
+
+    @Prop({ type: () => [Node] }, PropType.ARRAY)
+    map: Node[];
 
     @Prop()
     playerState: Player;
@@ -45,7 +47,8 @@ export class Expedition {
     @Prop({ type: Object })
     currentNode?: {
         nodeId: number;
-        nodeType: ExpeditionMapNodeTypeEnum;
+        nodeType: NodeType;
+        nodeSubType?: NodeType;
         completed: boolean;
         showRewards: boolean;
         data?: {
@@ -86,4 +89,10 @@ export class Expedition {
 
     @Prop({ default: false })
     isCurrentlyPlaying: boolean;
+
+    @Prop()
+    createdAt: Date;
+
+    @Prop()
+    defeatedAt?: Date;
 }

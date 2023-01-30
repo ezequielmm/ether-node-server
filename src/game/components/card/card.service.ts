@@ -1,9 +1,9 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { forwardRef, Inject, Injectable, Logger } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
 import { InjectModel } from 'kindagoose';
 import { randomUUID } from 'crypto';
 import { filter } from 'lodash';
-import { FilterQuery, Model } from 'mongoose';
+import { FilterQuery } from 'mongoose';
 import { CardPlayedAction } from 'src/game/action/cardPlayed.action';
 import {
     EVENT_AFTER_DRAW_CARDS,
@@ -47,14 +47,15 @@ export class CardService {
     constructor(
         @InjectModel(Card) private readonly card: ReturnModelType<typeof Card>,
         private readonly cardPlayedAction: CardPlayedAction,
+        @Inject(forwardRef(() => ExpeditionService))
         private readonly expeditionService: ExpeditionService,
         private readonly statusService: StatusService,
         private readonly playerService: PlayerService,
         private readonly moveCardAction: MoveCardAction,
-    ) { }
+    ) {}
 
     async findAll(): Promise<Card[]> {
-        return this.card.find({ isActive: true }).lean();
+        return await this.card.find({ isActive: true }).lean();
     }
 
     async find(filter?: FilterQuery<Card>): Promise<Card[]> {
@@ -65,7 +66,7 @@ export class CardService {
         return await this.card.findOne(filter).lean();
     }
 
-    async getRandomCard(filter?: FilterQuery<Card>): Promise<Card> {
+    async getRandomCard(filter: FilterQuery<Card> = {}): Promise<Card> {
         const [card] = await this.card.aggregate<Card>([
             { $match: filter },
             { $sample: { size: 1 } },
@@ -100,13 +101,12 @@ export class CardService {
     }
 
     async findCardsById(cards: number[]): Promise<Card[]> {
-        return this.card.find({ cardId: { $in: cards } }).lean();
+        return this.card
+            .find({ cardId: { $in: cards }, isActive: true })
+            .lean();
     }
 
-    async randomCards(
-        limit: number,
-        card_type: CardTypeEnum,
-    ): Promise<Card[]> {
+    async randomCards(limit: number, card_type: CardTypeEnum): Promise<Card[]> {
         const count = await this.card.countDocuments({
             $and: [
                 {
@@ -162,6 +162,23 @@ export class CardService {
             clientId: ctx.client.id,
             deck,
         });
+
+        // TODO: Create a new message type for this
+        // TEMPORARY
+        ctx.client.emit(
+            'PutData',
+            StandardResponse.respond({
+                message_type: SWARMessageType.PlayerAffected,
+                action: SWARAction.AddCard,
+                data: [
+                    {
+                        destination: 'hand',
+                        id: undefined,
+                        card: newCard,
+                    },
+                ],
+            }),
+        );
     }
 
     async removeCardFromDeck(ctx: GameContext, cardId: string): Promise<void> {

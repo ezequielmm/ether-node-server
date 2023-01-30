@@ -1,6 +1,6 @@
 import { forwardRef, Inject, Injectable, Logger } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import { InjectModel } from 'kindagoose';
+import { getModelToken } from 'kindagoose';
 import {
     compact,
     filter,
@@ -74,7 +74,7 @@ export class StatusService {
     private handlers: ProviderContainer<StatusMetadata, StatusHandler>[];
 
     constructor(
-        @InjectModel(Expedition)
+        @Inject(getModelToken('Expedition'))
         private readonly expedition: ReturnModelType<typeof Expedition>,
         private readonly providerService: ProviderService,
         @Inject(forwardRef(() => ExpeditionService))
@@ -94,7 +94,7 @@ export class StatusService {
 
             // If CTX, trigger event on events
             if (ctx) {
-                ctx.events.emit(events, rest);
+                await ctx.events.emitAsync(events, args);
             }
 
             // Loop through the events and trigger the handlers
@@ -533,10 +533,10 @@ export class StatusService {
                 value: {
                     id: expedition.playerId,
                     globalState: expedition.playerState,
-                    combatState: expedition.currentNode.data.player,
+                    combatState: expedition.currentNode?.data.player,
                 },
             },
-            statuses: expedition.currentNode.data.player.statuses,
+            statuses: expedition.currentNode?.data.player.statuses,
         });
 
         collection.push(...this.getAllFromEnemies(ctx));

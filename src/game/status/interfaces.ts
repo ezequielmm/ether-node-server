@@ -126,6 +126,7 @@ export type StatusName = string;
 
 export interface StatusArgs extends Record<string, any> {
     counter: number;
+    description?: string;
 }
 
 /** It is used to declare the status information in the card. */
@@ -256,7 +257,7 @@ export interface StatusEffectHandler {
  */
 export interface StatusEventHandler {
     // TODO: Define the args
-    handle(args: StatusEventDTO): Promise<any>;
+    handle(args: StatusEventDTO): Promise<void>;
 }
 
 export type StatusHandler = StatusEffectHandler | StatusEventHandler;

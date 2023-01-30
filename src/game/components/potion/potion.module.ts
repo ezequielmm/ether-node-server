@@ -10,17 +10,15 @@ import { Potion } from './potion.schema';
 import { PotionService } from './potion.service';
 
 @Module({
-  imports: [
-    forwardRef(() => ExpeditionModule),
-    EffectModule,
-    PlayerModule,
-    KindagooseModule.forFeature([
-      Potion
-    ]),
-    forwardRef(() => ActionModule),
-    CombatQueueModule,
-  ],
-  providers: [PotionService, PotionGateway],
-  exports: [PotionService],
+    imports: [
+        KindagooseModule.forFeature([Potion]),
+        forwardRef(() => ExpeditionModule),
+        forwardRef(() => EffectModule),
+        forwardRef(() => ActionModule),
+        PlayerModule,
+        CombatQueueModule,
+    ],
+    providers: [PotionService, PotionGateway],
+    exports: [PotionService],
 })
-export class PotionModule { }
+export class PotionModule {}

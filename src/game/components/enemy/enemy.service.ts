@@ -20,10 +20,16 @@ import {
     StatusCounterType,
 } from 'src/game/status/interfaces';
 import { StatusService } from 'src/game/status/status.service';
-import { EnemyIntentionType } from './enemy.enum';
+import { EnemyCategoryEnum, EnemyIntentionType } from './enemy.enum';
 import { damageEffect } from 'src/game/effects/damage/constants';
-import { HARD_MODE_NODE_END, HARD_MODE_NODE_START } from 'src/game/constants';
+import {
+    EVENT_ENEMY_DEAD,
+    HARD_MODE_NODE_END,
+    HARD_MODE_NODE_START,
+} from 'src/game/constants';
 import { ReturnModelType } from '@typegoose/typegoose';
+import { EventEmitter2 } from '@nestjs/event-emitter';
+import { ProjectionFields } from 'mongoose';
 
 @Injectable()
 export class EnemyService {
@@ -36,6 +42,7 @@ export class EnemyService {
         private readonly expeditionService: ExpeditionService,
         @Inject(forwardRef(() => StatusService))
         private readonly statusService: StatusService,
+        private readonly eventEmitter: EventEmitter2,
     ) {}
 
     /**
@@ -74,10 +81,13 @@ export class EnemyService {
      * @param enemyId EnemyId
      * @returns Enemy
      */
-    public async findById(enemyId: EnemyId): Promise<Enemy> {
+    public async findById(
+        enemyId: EnemyId,
+        projection?: ProjectionFields<Enemy>,
+    ): Promise<Enemy> {
         return typeof enemyId === 'string'
-            ? this.enemy.findById(enemyId).lean()
-            : this.enemy.findOne({ enemyId }).lean();
+            ? this.enemy.findById(enemyId, projection).lean()
+            : this.enemy.findOne({ enemyId }, projection).lean();
     }
 
     /**
@@ -275,6 +285,32 @@ export class EnemyService {
 
         await this.setHp(ctx, id, enemy.hpCurrent);
         await this.setDefense(ctx, id, enemy.defense);
+
+        if (enemy.hpCurrent === 0) {
+            await this.eventEmitter.emitAsync(EVENT_ENEMY_DEAD, { ctx, enemy });
+
+            await this.expeditionService.updateByFilter(
+                {
+                    clientId: client.id,
+                },
+                {
+                    $inc: {
+                        ...(enemy.category === EnemyCategoryEnum.Basic && {
+                            'scores.basicEnemiesDefeated': 1,
+                        }),
+                        ...(enemy.category === EnemyCategoryEnum.Minion && {
+                            'scores.basicEnemiesDefeated': 1,
+                        }),
+                        ...(enemy.category === EnemyCategoryEnum.Elite && {
+                            'scores.eliteEnemiesDefeated': 1,
+                        }),
+                        ...(enemy.category === EnemyCategoryEnum.Boss && {
+                            'scores.bossEnemiesDefeated': 1,
+                        }),
+                    },
+                },
+            );
+        }
 
         return enemy.hpCurrent;
     }

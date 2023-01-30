@@ -15,21 +15,16 @@ import {
     EVENT_BEFORE_PLAYER_TURN_START,
 } from '../constants';
 import {
-    SWARAction,
     StandardResponse,
+    SWARAction,
     SWARMessageType,
 } from '../standardResponse/standardResponse';
-
-interface BeginPlayerTurnDTO {
-    ctx: GameContext;
-}
 
 @Injectable()
 export class BeginPlayerTurnProcess {
     private readonly logger: Logger = new Logger(BeginPlayerTurnProcess.name);
 
     constructor(
-        private readonly expeditionService: ExpeditionService,
         private readonly playerService: PlayerService,
         private readonly enemyService: EnemyService,
         private readonly settingsService: SettingsService,
@@ -38,21 +33,25 @@ export class BeginPlayerTurnProcess {
         private readonly getPlayerInfoAction: GetPlayerInfoAction,
         private readonly combatQueueService: CombatQueueService,
         private readonly changeTurnAction: ChangeTurnAction,
+        private readonly expeditionService: ExpeditionService,
     ) {}
 
-    async handle(payload: BeginPlayerTurnDTO): Promise<void> {
-        const { ctx } = payload;
+    async handle({ ctx }: { ctx: GameContext }): Promise<void> {
+        this.logger.debug(`Beginning player turn`);
+
         const { client } = ctx;
 
-        this.logger.debug(`Beginning player ${client.id} turn`);
-
-        // Update round and entity playing
-        const expedition = await this.expeditionService.setCombatTurn({
-            clientId: client.id,
-            playing: CombatTurnEnum.Player,
-        });
-
         await this.enemyService.calculateNewIntentions(ctx);
+
+        await this.expeditionService.updateByFilter(
+            { clientId: client.id },
+            {
+                'currentNode.data.playing': CombatTurnEnum.Player,
+                $inc: {
+                    'currentNode.data.round': 1,
+                },
+            },
+        );
 
         // Send change turn message
         this.changeTurnAction.handle({
@@ -61,18 +60,7 @@ export class BeginPlayerTurnProcess {
             entity: CombatTurnEnum.Player,
         });
 
-        const {
-            currentNode: {
-                data: {
-                    round,
-                    player: { handSize, defense: currentDefense },
-                },
-            },
-        } = expedition;
-
-        await this.expeditionService.updateById(expedition._id.toString(), {
-            'currentNode.data.round': round + 1,
-        });
+        const { handSize, defense } = ctx.expedition.currentNode.data.player;
 
         // Start the combat queue
         await this.combatQueueService.start(ctx);
@@ -86,7 +74,7 @@ export class BeginPlayerTurnProcess {
             await this.settingsService.getSettings();
 
         // Reset defense for the player
-        if (currentDefense > 0) await this.playerService.setDefense(ctx, 0);
+        if (defense > 0) await this.playerService.setDefense(ctx, 0);
 
         // Set player energy to default values
         await this.playerService.setEnergy(ctx, initialEnergy);

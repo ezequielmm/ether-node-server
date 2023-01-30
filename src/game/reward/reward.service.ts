@@ -1,32 +1,31 @@
 import { Injectable } from '@nestjs/common';
 import { randomUUID } from 'crypto';
-import { chain, filter, includes, map, pick } from 'lodash';
+import { chain, filter, find, includes, map, pick } from 'lodash';
 import { CustomException, ErrorBehavior } from 'src/socket/custom.exception';
 import { CardDescriptionFormatter } from '../cardDescriptionFormatter/cardDescriptionFormatter';
 import { CardRarityEnum, CardTypeEnum } from '../components/card/card.enum';
 import { CardService } from '../components/card/card.service';
-import {
-    ExpeditionMapNodeTypeEnum,
-    IExpeditionNodeReward,
-} from '../components/expedition/expedition.enum';
+import { IExpeditionNodeReward } from '../components/expedition/expedition.enum';
 import {
     CardPreview,
     CardReward,
-    IExpeditionNode,
     PotionReward,
     Reward,
     TrinketReward,
 } from '../components/expedition/expedition.interface';
 import { ExpeditionService } from '../components/expedition/expedition.service';
+import { Node } from '../components/expedition/node';
+import { NodeType } from '../components/expedition/node-type';
 import { GameContext } from '../components/interfaces';
 import { PotionRarityEnum } from '../components/potion/potion.enum';
 import { PotionService } from '../components/potion/potion.service';
 import { TrinketRarityEnum } from '../components/trinket/trinket.enum';
+import { Trinket } from '../components/trinket/trinket.schema';
 import { TrinketService } from '../components/trinket/trinket.service';
 import {
     StandardResponse,
-    SWARMessageType,
     SWARAction,
+    SWARMessageType,
 } from '../standardResponse/standardResponse';
 
 @Injectable()
@@ -38,7 +37,7 @@ export class RewardService {
         private readonly expeditionService: ExpeditionService,
     ) {}
 
-    private node: IExpeditionNode;
+    private node: Node;
 
     async generateRewards({
         ctx,
@@ -49,7 +48,7 @@ export class RewardService {
         node,
     }: {
         ctx: GameContext;
-        node: IExpeditionNode;
+        node: Node;
         coinsToGenerate: number;
         cardsToGenerate: CardRarityEnum[];
         potionsToGenerate: PotionRarityEnum[];
@@ -106,7 +105,7 @@ export class RewardService {
         let rewards: Reward[] = [];
 
         rewards =
-            nodeType === ExpeditionMapNodeTypeEnum.Treasure
+            nodeType === NodeType.Treasure
                 ? expedition.currentNode.treasureData.rewards
                 : expedition.currentNode.data.rewards;
 
@@ -119,9 +118,7 @@ export class RewardService {
         }
 
         // check if the reward that we are receiving is correct and exists
-        const reward = rewards.find(({ id }) => {
-            return id === rewardId;
-        });
+        const reward = find(rewards, { id: rewardId });
 
         // If the reward is invalid we throw and exception
         if (!reward) throw new Error(`Reward ${rewardId} not found`);
@@ -148,9 +145,7 @@ export class RewardService {
                 await this.cardService.addCardToDeck(ctx, reward.card.cardId);
                 // Disable all other card rewards
                 rewards = rewards.map((reward) => {
-                    if (reward.type === IExpeditionNodeReward.Card) {
-                        reward.taken = true;
-                    }
+                    reward.taken = true;
                     return reward;
                 });
                 break;
@@ -163,7 +158,7 @@ export class RewardService {
         }
 
         // Next we save the reward on the expedition
-        if (nodeType === ExpeditionMapNodeTypeEnum.Treasure) {
+        if (nodeType === NodeType.Treasure) {
             await this.expeditionService.updateById(expedition._id.toString(), {
                 $set: {
                     'currentNode.treasureData.rewards': rewards,
@@ -184,7 +179,7 @@ export class RewardService {
 
         return StandardResponse.respond({
             message_type:
-                nodeType === ExpeditionMapNodeTypeEnum.Treasure
+                nodeType === NodeType.Treasure
                     ? SWARMessageType.EndTreasure
                     : SWARMessageType.EndCombat,
             action: SWARAction.SelectAnotherReward,
@@ -264,17 +259,21 @@ export class RewardService {
 
     private async generateTrinkets(
         ctx: GameContext,
-        trinketRarities: TrinketRarityEnum[],
+        trinketsToGenerate: TrinketRarityEnum[],
     ): Promise<TrinketReward[]> {
-        const trinketToReject = map(
+        if (trinketsToGenerate.length === 0) return [];
+
+        const trinketsInInventory = map<Trinket>(
             ctx.expedition.playerState.trinkets,
             'trinketId',
         );
 
         return chain(this.trinketService.findAll())
-            .reject((trinket) => includes(trinketToReject, trinket.trinketId))
-            .reject((trinket) => includes(trinketRarities, trinket.rarity))
+            .shuffle()
             .uniqBy('rarity')
+            .reject(({ trinketId }) => includes(trinketsInInventory, trinketId))
+            .filter(({ rarity }) => includes(trinketsToGenerate, rarity))
+            .filter(({ rarity }) => rarity !== TrinketRarityEnum.Special)
             .map<TrinketReward>((trinket) => ({
                 id: randomUUID(),
                 type: IExpeditionNodeReward.Trinket,

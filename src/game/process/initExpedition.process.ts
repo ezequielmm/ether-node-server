@@ -8,17 +8,16 @@ import { Character } from '../components/character/character.schema';
 import { CharacterService } from '../components/character/character.service';
 import { CustomDeckService } from '../components/customDeck/customDeck.service';
 import { ExpeditionStatusEnum } from '../components/expedition/expedition.enum';
-import {
-    IExpeditionPlayerStateDeckCard,
-    Player,
-} from '../components/expedition/expedition.interface';
+import { IExpeditionPlayerStateDeckCard } from '../components/expedition/expedition.interface';
 import { ExpeditionService } from '../components/expedition/expedition.service';
 import { SettingsService } from '../components/settings/settings.service';
+import { MapService } from '../map/map.service';
 
 interface InitExpeditionDTO {
     playerId: number;
     playerName: string;
     email: string;
+    nftId: number;
 }
 
 @Injectable()
@@ -31,11 +30,15 @@ export class InitExpeditionProcess {
         private readonly characterService: CharacterService,
         private readonly customDeckService: CustomDeckService,
         private readonly settingsService: SettingsService,
-    ) { }
+        private readonly mapService: MapService,
+    ) {}
 
-    async handle(payload: InitExpeditionDTO): Promise<void> {
-        const { playerId, playerName, email } = payload;
-
+    async handle({
+        playerId,
+        playerName,
+        email,
+        nftId,
+    }: InitExpeditionDTO): Promise<void> {
         const character = await this.characterService.findOne({
             characterClass: CharacterClassEnum.Knight,
         });
@@ -44,13 +47,19 @@ export class InitExpeditionProcess {
         const { initialPotionChance } =
             await this.settingsService.getSettings();
 
-        const map = this.expeditionService.getMap();
+        // const map = this.expeditionService.getMap();
+        const map = this.mapService.getActZero();
 
         const cards = await this.generatePlayerDeck(character, email);
 
         await this.expeditionService.create({
             playerId,
             map,
+            scores: {
+                basicEnemiesDefeated: 0,
+                eliteEnemiesDefeated: 0,
+                bossEnemiesDefeated: 0,
+            },
             mapSeedId: getTimestampInSeconds(),
             actConfig: {
                 potionChance: initialPotionChance,
@@ -58,12 +67,12 @@ export class InitExpeditionProcess {
             playerState: {
                 playerId: randomUUID(),
                 playerName,
+                nftId,
                 characterClass: character.characterClass,
                 hpMax: character.initialHealth,
                 hpCurrent: character.initialHealth,
                 gold: character.initialGold,
                 cards,
-                createdAt: new Date(),
                 potions: [],
                 cardUpgradeCount: 0,
                 cardDestroyCount: 0,
@@ -71,6 +80,7 @@ export class InitExpeditionProcess {
             },
             status: ExpeditionStatusEnum.InProgress,
             isCurrentlyPlaying: false,
+            createdAt: new Date(),
         });
 
         this.logger.debug(`Created expedition for player id: ${playerId}`);

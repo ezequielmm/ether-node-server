@@ -31,9 +31,7 @@ export class ProfileController {
         const { authorization: token } = headers;
 
         try {
-            const {
-                data: { data },
-            } = await this.authGatewayService.getUser(token);
+            const data = await this.authGatewayService.getUser(token);
 
             return data;
         } catch (e) {

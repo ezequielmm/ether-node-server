@@ -4,12 +4,8 @@ import { CustomDeck } from './customDeck.schema';
 import { CustomDeckService } from './customDeck.service';
 
 @Module({
-    imports: [
-        KindagooseModule.forFeature([
-            CustomDeck,
-        ]),
-    ],
+    imports: [KindagooseModule.forFeature([CustomDeck])],
     providers: [CustomDeckService],
     exports: [CustomDeckService],
 })
-export class CustomDeckModule { }
+export class CustomDeckModule {}

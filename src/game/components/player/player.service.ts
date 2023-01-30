@@ -151,6 +151,27 @@ export class PlayerService {
     }
 
     /**
+     * Raise the player's global Max HP
+     */
+    public async raiseMaxHp(
+        ctx: GameContext,
+        raiseHp: number,
+    ): Promise<number> {
+        ctx.expedition.playerState.hpMax += raiseHp;
+        if (ctx.expedition.currentNode?.data?.player)
+            ctx.expedition.currentNode.data.player.hpMax += raiseHp;
+
+        const newHpMax = ctx.expedition.playerState.hpMax;
+
+        ctx.expedition.markModified('currentNode.data.player.hpMax');
+        await ctx.expedition.save();
+
+        this.logger.debug(`Player raise Max HP by  ${raiseHp}`);
+
+        return newHpMax;
+    }
+
+    /**
      * Apply damage to the player
      *
      * @param ctx Context
