@@ -1,7 +1,7 @@
 import { Prop } from '@typegoose/typegoose';
 import {
     EVENT_AFTER_INIT_COMBAT,
-    EVENT_AFTER_PLAYER_TURN_START,
+    EVENT_BEFORE_PLAYER_TURN_START,
 } from 'src/game/constants';
 import { drawCardEffect } from 'src/game/effects/drawCard/constants';
 import { EffectService } from 'src/game/effects/effects.service';
@@ -53,7 +53,7 @@ export class DreamAmuletTrinket extends Trinket {
             this.trigger(ctx);
         };
 
-        ctx.events.addListener(EVENT_AFTER_PLAYER_TURN_START, drawCards);
+        ctx.events.addListener(EVENT_BEFORE_PLAYER_TURN_START, drawCards);
         ctx.events.addListener(EVENT_AFTER_INIT_COMBAT, drawCards);
     }
 }
