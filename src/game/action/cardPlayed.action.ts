@@ -1,6 +1,7 @@
 import { forwardRef, Inject, Injectable, Logger } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { Socket } from 'socket.io';
+import { canPlayerPlayCard } from 'src/utils/canCardBePlayed';
 import { CardKeywordPipeline } from '../cardKeywordPipeline/cardKeywordPipeline';
 import {
     CardEnergyEnum,
@@ -25,22 +26,9 @@ import { StatusService } from '../status/status.service';
 import { DiscardCardAction } from './discardCard.action';
 import { ExhaustCardAction } from './exhaustCard.action';
 
-interface CardPlayedDTO {
-    readonly ctx: GameContext;
-    readonly cardId: CardId;
-    readonly selectedEnemyId: TargetId;
-}
-
-interface ICanPlayCard {
-    readonly canPlayCard: boolean;
-    readonly message?: string;
-}
-
 @Injectable()
 export class CardPlayedAction {
     private readonly logger: Logger = new Logger(CardPlayedAction.name);
-
-    private client: Socket;
 
     constructor(
         @Inject(forwardRef(() => ExpeditionService))
@@ -60,22 +48,24 @@ export class CardPlayedAction {
         cardId,
         selectedEnemyId,
         ctx,
-    }: CardPlayedDTO): Promise<void> {
-        this.client = ctx.client;
-
+    }: {
+        readonly ctx: GameContext;
+        readonly cardId: CardId;
+        readonly selectedEnemyId: TargetId;
+    }): Promise<void> {
         // First make sure card exists on player's hand pile
         const cardExists = await this.expeditionService.cardExistsOnPlayerHand({
-            clientId: this.client.id,
+            clientId: ctx.client.id,
             cardId,
         });
 
         if (!cardExists) {
-            this.sendInvalidCardMessage();
+            this.sendInvalidCardMessage(ctx.client);
         } else {
             // If the card is valid we get the current node information
             // to validate the enemy
             const expedition = await this.expeditionService.findOne({
-                clientId: this.client.id,
+                clientId: ctx.client.id,
             });
 
             const {
@@ -108,24 +98,26 @@ export class CardPlayedAction {
             // Here we check if the card has a keyword for unplayable
             if (unplayable) {
                 this.sendNotEnoughEnergyMessage(
+                    ctx.client,
                     CardPlayErrorMessages.UnplayableCard,
                 );
             } else {
                 this.logger.debug(
                     `Started combat queue for client ${ctx.client.id}`,
                 );
+
                 await this.combatQueueService.start(ctx);
 
                 // Next we make sure that the card can be played and the user has
                 // enough energy
-                const { canPlayCard, message } = this.canPlayerPlayCard(
+                const { canPlayCard, message } = canPlayerPlayCard(
                     card.energy,
                     availableEnergy,
                 );
 
                 // next we inform the player that is not possible to play the card
                 if (!canPlayCard) {
-                    this.sendNotEnoughEnergyMessage(message);
+                    this.sendNotEnoughEnergyMessage(ctx.client, message);
                 } else {
                     this.logger.verbose(
                         `Player ${ctx.client.id} played card: ${card.name}`,
@@ -136,7 +128,7 @@ export class CardPlayedAction {
                         this.statusService.getReferenceFromEntity(source);
 
                     this.historyService.register({
-                        clientId: this.client.id,
+                        clientId: ctx.client.id,
                         registry: {
                             type: 'card',
                             source,
@@ -157,18 +149,22 @@ export class CardPlayedAction {
                     // and move the card to the desired pile
                     if (exhaust) {
                         await this.exhaustCardAction.handle({
-                            client: this.client,
+                            client: ctx.client,
                             cardId,
                         });
                     } else {
                         await this.discardCardAction.handle({
-                            client: this.client,
+                            client: ctx.client,
                             cardId,
                         });
                     }
 
+                    const newCtx = await this.expeditionService.getGameContext(
+                        ctx.client,
+                    );
+
                     await this.effectService.applyAll({
-                        ctx,
+                        ctx: newCtx,
                         source,
                         effects,
                         selectedEnemy: selectedEnemyId,
@@ -184,7 +180,7 @@ export class CardPlayedAction {
                     }
 
                     await this.statusService.attachAll({
-                        ctx,
+                        ctx: newCtx,
                         statuses,
                         targetId: selectedEnemyId,
                         source,
@@ -205,15 +201,19 @@ export class CardPlayedAction {
 
                     await this.playerService.setEnergy(ctx, newEnergy);
 
-                    this.sendUpdateEnergyMessage(newEnergy, energyMax);
+                    this.sendUpdateEnergyMessage(
+                        ctx.client,
+                        newEnergy,
+                        energyMax,
+                    );
 
                     this.logger.debug(
                         `Ended combat queue for client ${ctx.client.id}`,
                     );
-                    await this.combatQueueService.end(ctx);
+                    await this.combatQueueService.end(newCtx);
 
                     await this.eventEmitter.emitAsync(EVENT_AFTER_CARD_PLAY, {
-                        ctx,
+                        ctx: newCtx,
                         card,
                         cardSource: source,
                         cardSourceReference: sourceReference,
@@ -221,52 +221,18 @@ export class CardPlayedAction {
                     });
 
                     if (endTurn)
-                        await this.endPlayerTurnProcess.handle({ ctx });
+                        await this.endPlayerTurnProcess.handle({ ctx: newCtx });
                 }
             }
         }
     }
 
-    private canPlayerPlayCard(
-        cardEnergyCost: number,
-        availableEnergy: number,
-    ): ICanPlayCard {
-        // First we verify if the card has a 0 cost
-        // if this is true, we allow the use of this card no matter the energy
-        // the player has available
-        if (cardEnergyCost === CardEnergyEnum.None)
-            return {
-                canPlayCard: true,
-            };
-
-        // If the card has a cost of -1, this means that the card will use all the available
-        // energy that the player has, also the player energy needs to be more than 0
-        if (cardEnergyCost === CardEnergyEnum.All)
-            return {
-                canPlayCard: true,
-            };
-
-        // If the card energy cost is higher than the player's available energy or the
-        // player energy is 0 the player can't play the card
-        if (cardEnergyCost > availableEnergy || availableEnergy === 0)
-            return {
-                canPlayCard: false,
-                message: CardPlayErrorMessages.NoEnergyLeft,
-            };
-
-        // If the card energy cost is lower or equal than the player's available energy
-        if (cardEnergyCost <= availableEnergy)
-            return {
-                canPlayCard: true,
-            };
-    }
-
-    private sendInvalidCardMessage(): void {
+    private sendInvalidCardMessage(client: Socket): void {
         this.logger.error(
-            `Sent message ErrorMessage to client ${this.client.id}: ${SWARAction.InvalidCard}`,
+            `Sent message ErrorMessage to client ${client.id}: ${SWARAction.InvalidCard}`,
         );
 
-        this.client.emit(
+        client.emit(
             'ErrorMessage',
             StandardResponse.respond({
                 message_type: SWARMessageType.Error,
@@ -276,12 +242,12 @@ export class CardPlayedAction {
         );
     }
 
-    private sendNotEnoughEnergyMessage(message: string): void {
+    private sendNotEnoughEnergyMessage(client: Socket, message: string): void {
         this.logger.debug(
-            `Sent message ErrorMessage to client ${this.client.id}: ${SWARAction.InsufficientEnergy}`,
+            `Sent message ErrorMessage to client ${client.id}: ${SWARAction.InsufficientEnergy}`,
         );
 
-        this.client.emit(
+        client.emit(
             'ErrorMessage',
             StandardResponse.respond({
                 message_type: SWARMessageType.Error,
@@ -291,12 +257,16 @@ export class CardPlayedAction {
         );
     }
 
-    private sendUpdateEnergyMessage(energy: number, energyMax: number): void {
+    private sendUpdateEnergyMessage(
+        client: Socket,
+        energy: number,
+        energyMax: number,
+    ): void {
         this.logger.debug(
-            `Sent message PutData to client ${this.client.id}: ${SWARAction.UpdateEnergy}`,
+            `Sent message PutData to client ${client.id}: ${SWARAction.UpdateEnergy}`,
         );
 
-        this.client.emit(
+        client.emit(
             'PutData',
             StandardResponse.respond({
                 message_type: SWARMessageType.PlayerAffected,

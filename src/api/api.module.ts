@@ -6,6 +6,7 @@ import { ExpeditionModule } from 'src/game/components/expedition/expedition.modu
 import { ProcessModule } from 'src/game/process/process.module';
 import { MerchantModule } from 'src/game/merchant/merchant.module';
 import { ScoreCalculatorModule } from 'src/game/scoreCalculator/scoreCalculator.module';
+import { TokenController } from './token.controller';
 
 @Module({
     imports: [
@@ -15,6 +16,6 @@ import { ScoreCalculatorModule } from 'src/game/scoreCalculator/scoreCalculator.
         MerchantModule,
         ScoreCalculatorModule,
     ],
-    controllers: [ProfileController, ExpeditionController],
+    controllers: [ProfileController, ExpeditionController, TokenController],
 })
 export class ApiModule {}

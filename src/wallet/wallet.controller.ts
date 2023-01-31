@@ -10,7 +10,7 @@ export class WalletController {
         summary: 'Get NFT',
     })
     @Get(':id')
-    getTokenList(@Param('id') walletId: string) {
-        return this.walletService.getTokenIdList(walletId);
+    async getTokenList(@Param('id') walletId: string): Promise<string[]> {
+        return await this.walletService.getTokenIdList(walletId);
     }
 }

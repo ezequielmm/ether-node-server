@@ -4,7 +4,7 @@ import { Card } from '../card.schema';
 
 export const BulkUpCardUpgraded: Card = {
     cardId: 58,
-    name: 'Brace+',
+    name: 'Bulk up+',
     rarity: CardRarityEnum.Starter,
     cardType: CardTypeEnum.Defend,
     pool: 'Bulk Up',

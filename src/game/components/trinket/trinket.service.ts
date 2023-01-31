@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { ModuleRef } from '@nestjs/core';
-import { ReturnModelType } from '@typegoose/typegoose';
+import { isDocumentArray, ReturnModelType } from '@typegoose/typegoose';
 import { getModelToken } from 'kindagoose';
-import { chain, filter as filterFunction, find, sample } from 'lodash';
+import { chain, filter as filterFunction, find, last, sample } from 'lodash';
 import { MutateDTO } from 'src/game/effects/effects.interface';
 import {
     StandardResponse,
@@ -62,7 +62,7 @@ export class TrinketService {
         }
 
         ctx.expedition.playerState.trinkets.push(trinket);
-        await trinket.onAttach(ctx);
+        await last(ctx.expedition.playerState.trinkets).onAttach(ctx);
         await ctx.expedition.save();
 
         ctx.client.emit(
