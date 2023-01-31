@@ -74,7 +74,7 @@ export const thornWolfPupData: Enemy = {
                         {
                             effect: damageEffect.name,
                             target: CardTargetedEnum.Player,
-                            args: { value: 15 },
+                            args: { value: 7 },
                         },
                     ],
                 },

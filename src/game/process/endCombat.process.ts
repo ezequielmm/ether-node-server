@@ -44,7 +44,12 @@ export class EndCombatProcess {
     private async endCombat(ctx: GameContext): Promise<void> {
         await this.combatQueueService.end(ctx);
 
-        if (ctx.expedition.currentNode.nodeSubType == NodeType.CombatBoss) {
+        const isCombatBoss =
+            ctx.expedition.currentNode.nodeSubType == NodeType.CombatBoss;
+
+        // If combat boss, update expedition status to victory
+        // and emit show score
+        if (isCombatBoss) {
             ctx.expedition.status = ExpeditionStatusEnum.Victory;
             ctx.client.emit(
                 'PutData',
@@ -57,21 +62,23 @@ export class EndCombatProcess {
         }
 
         ctx.expedition.currentNode.showRewards = true;
-
         ctx.expedition.markModified('currentNode.showRewards');
 
         await ctx.expedition.save();
 
-        this.logger.debug(`Combat ended for client ${ctx.client.id}`);
+        // If not combat boss, emit enemies defeated
+        if (!isCombatBoss) {
+            ctx.client.emit(
+                'PutData',
+                StandardResponse.respond({
+                    message_type: SWARMessageType.EndCombat,
+                    action: SWARAction.EnemiesDefeated,
+                    data: null,
+                }),
+            );
+        }
 
-        ctx.client.emit(
-            'PutData',
-            StandardResponse.respond({
-                message_type: SWARMessageType.EndCombat,
-                action: SWARAction.EnemiesDefeated,
-                data: null,
-            }),
-        );
+        this.logger.debug(`Combat ended for client ${ctx.client.id}`);
 
         await ctx.events.emitAsync(EVENT_AFTER_END_COMBAT, { ctx });
     }
