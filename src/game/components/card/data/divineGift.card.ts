@@ -25,7 +25,7 @@ export const DivineGiftCardUpgraded: Card = {
     },
     showPointer: false,
     isUpgraded: true,
-    isActive: true,
+    isActive: false,
 };
 
 export const DivineGiftCard: Card = {

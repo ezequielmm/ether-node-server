@@ -88,6 +88,7 @@ export enum SWARAction {
     ShowRewards = 'show_rewards',
     SpawnEnemies = 'spawn_enemies',
     RemoveEnemies = 'remove_enemies',
+    ShowScore = 'show_score',
 }
 
 interface SWARPayload {
