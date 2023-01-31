@@ -162,23 +162,6 @@ export class CardService {
             clientId: ctx.client.id,
             deck,
         });
-
-        // TODO: Create a new message type for this
-        // TEMPORARY
-        ctx.client.emit(
-            'PutData',
-            StandardResponse.respond({
-                message_type: SWARMessageType.PlayerAffected,
-                action: SWARAction.AddCard,
-                data: [
-                    {
-                        destination: 'hand',
-                        id: undefined,
-                        card: newCard,
-                    },
-                ],
-            }),
-        );
     }
 
     async removeCardFromDeck(ctx: GameContext, cardId: string): Promise<void> {
