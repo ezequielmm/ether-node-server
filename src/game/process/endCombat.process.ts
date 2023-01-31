@@ -46,6 +46,14 @@ export class EndCombatProcess {
 
         if (ctx.expedition.currentNode.nodeSubType == NodeType.CombatBoss) {
             ctx.expedition.status = ExpeditionStatusEnum.Victory;
+            ctx.client.emit(
+                'PutData',
+                StandardResponse.respond({
+                    message_type: SWARMessageType.EndCombat,
+                    action: SWARAction.ShowScore,
+                    data: null,
+                }),
+            );
         }
 
         ctx.expedition.currentNode.showRewards = true;
