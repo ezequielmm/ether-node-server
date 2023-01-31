@@ -55,7 +55,7 @@ export const GNCardUpgraded: Card = {
     },
     showPointer: false,
     isUpgraded: true,
-    isActive: true,
+    isActive: false,
 };
 
 export const GNCard: Card = {
@@ -104,5 +104,5 @@ export const GNCard: Card = {
     showPointer: false,
     isUpgraded: false,
     upgradedCardId: GNCardUpgraded.cardId,
-    isActive: true,
+    isActive: false,
 };
