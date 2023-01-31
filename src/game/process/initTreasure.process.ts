@@ -16,30 +16,27 @@ export class InitTreasureProcess {
         private readonly expeditionService: ExpeditionService,
     ) {}
 
-    private clientId: string;
-    private node: Node;
-
     async process(
         ctx: GameContext,
         node: Node,
         continueTreasure = false,
     ): Promise<string> {
-        this.clientId = ctx.client.id;
-        this.node = node;
-
         return continueTreasure
             ? await this.continueTreasure(ctx)
-            : await this.createTreasureData(ctx);
+            : await this.createTreasureData(ctx, node);
     }
 
-    private async createTreasureData(ctx: GameContext): Promise<string> {
+    private async createTreasureData(
+        ctx: GameContext,
+        node: Node,
+    ): Promise<string> {
         const currentNode =
             await this.currentNodeGeneratorProcess.getCurrentNodeData(
                 ctx,
-                this.node,
+                node,
             );
 
-        await this.expeditionService.update(this.clientId, {
+        await this.expeditionService.update(ctx.client.id, {
             currentNode,
         });
 
@@ -59,18 +56,16 @@ export class InitTreasureProcess {
             },
         } = ctx;
 
-        if (isOpen) {
-            return StandardResponse.respond({
-                message_type: SWARMessageType.TreasureUpdate,
-                action: SWARAction.ContinueTreasure,
-                data: null,
-            });
-        } else {
-            return StandardResponse.respond({
-                message_type: SWARMessageType.TreasureUpdate,
-                action: SWARAction.BeginTreasure,
-                data: null,
-            });
-        }
+        return isOpen
+            ? StandardResponse.respond({
+                  message_type: SWARMessageType.TreasureUpdate,
+                  action: SWARAction.ContinueTreasure,
+                  data: null,
+              })
+            : StandardResponse.respond({
+                  message_type: SWARMessageType.TreasureUpdate,
+                  action: SWARAction.BeginTreasure,
+                  data: null,
+              });
     }
 }

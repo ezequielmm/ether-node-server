@@ -1,6 +1,7 @@
 import { forwardRef, Inject, Injectable, Logger } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { Socket } from 'socket.io';
+import { canPlayerPlayCard } from 'src/utils/canCardBePlayed';
 import { CardKeywordPipeline } from '../cardKeywordPipeline/cardKeywordPipeline';
 import {
     CardEnergyEnum,
@@ -25,17 +26,6 @@ import { StatusService } from '../status/status.service';
 import { DiscardCardAction } from './discardCard.action';
 import { ExhaustCardAction } from './exhaustCard.action';
 
-interface CardPlayedDTO {
-    readonly ctx: GameContext;
-    readonly cardId: CardId;
-    readonly selectedEnemyId: TargetId;
-}
-
-interface ICanPlayCard {
-    readonly canPlayCard: boolean;
-    readonly message?: string;
-}
-
 @Injectable()
 export class CardPlayedAction {
     private readonly logger: Logger = new Logger(CardPlayedAction.name);
@@ -58,7 +48,11 @@ export class CardPlayedAction {
         cardId,
         selectedEnemyId,
         ctx,
-    }: CardPlayedDTO): Promise<void> {
+    }: {
+        readonly ctx: GameContext;
+        readonly cardId: CardId;
+        readonly selectedEnemyId: TargetId;
+    }): Promise<void> {
         // First make sure card exists on player's hand pile
         const cardExists = await this.expeditionService.cardExistsOnPlayerHand({
             clientId: ctx.client.id,
@@ -111,11 +105,12 @@ export class CardPlayedAction {
                 this.logger.debug(
                     `Started combat queue for client ${ctx.client.id}`,
                 );
+
                 await this.combatQueueService.start(ctx);
 
                 // Next we make sure that the card can be played and the user has
                 // enough energy
-                const { canPlayCard, message } = this.canPlayerPlayCard(
+                const { canPlayCard, message } = canPlayerPlayCard(
                     card.energy,
                     availableEnergy,
                 );
@@ -164,8 +159,12 @@ export class CardPlayedAction {
                         });
                     }
 
+                    const newCtx = await this.expeditionService.getGameContext(
+                        ctx.client,
+                    );
+
                     await this.effectService.applyAll({
-                        ctx,
+                        ctx: newCtx,
                         source,
                         effects,
                         selectedEnemy: selectedEnemyId,
@@ -181,7 +180,7 @@ export class CardPlayedAction {
                     }
 
                     await this.statusService.attachAll({
-                        ctx,
+                        ctx: newCtx,
                         statuses,
                         targetId: selectedEnemyId,
                         source,
@@ -211,10 +210,10 @@ export class CardPlayedAction {
                     this.logger.debug(
                         `Ended combat queue for client ${ctx.client.id}`,
                     );
-                    await this.combatQueueService.end(ctx);
+                    await this.combatQueueService.end(newCtx);
 
                     await this.eventEmitter.emitAsync(EVENT_AFTER_CARD_PLAY, {
-                        ctx,
+                        ctx: newCtx,
                         card,
                         cardSource: source,
                         cardSourceReference: sourceReference,
@@ -222,44 +221,10 @@ export class CardPlayedAction {
                     });
 
                     if (endTurn)
-                        await this.endPlayerTurnProcess.handle({ ctx });
+                        await this.endPlayerTurnProcess.handle({ ctx: newCtx });
                 }
             }
         }
-    }
-
-    private canPlayerPlayCard(
-        cardEnergyCost: number,
-        availableEnergy: number,
-    ): ICanPlayCard {
-        // First we verify if the card has a 0 cost
-        // if this is true, we allow the use of this card no matter the energy
-        // the player has available
-        if (cardEnergyCost === CardEnergyEnum.None)
-            return {
-                canPlayCard: true,
-            };
-
-        // If the card has a cost of -1, this means that the card will use all the available
-        // energy that the player has, also the player energy needs to be more than 0
-        if (cardEnergyCost === CardEnergyEnum.All)
-            return {
-                canPlayCard: true,
-            };
-
-        // If the card energy cost is higher than the player's available energy or the
-        // player energy is 0 the player can't play the card
-        if (cardEnergyCost > availableEnergy || availableEnergy === 0)
-            return {
-                canPlayCard: false,
-                message: CardPlayErrorMessages.NoEnergyLeft,
-            };
-
-        // If the card energy cost is lower or equal than the player's available energy
-        if (cardEnergyCost <= availableEnergy)
-            return {
-                canPlayCard: true,
-            };
     }
 
     private sendInvalidCardMessage(client: Socket): void {
