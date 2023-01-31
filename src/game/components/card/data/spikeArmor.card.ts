@@ -39,7 +39,7 @@ export const SpikeArmorCardUpgraded: Card = {
     },
     showPointer: false,
     isUpgraded: true,
-    isActive: true,
+    isActive: false,
 };
 
 export const SpikeArmorCard: Card = {
@@ -76,5 +76,5 @@ export const SpikeArmorCard: Card = {
     showPointer: false,
     isUpgraded: false,
     upgradedCardId: SpikeArmorCardUpgraded.cardId,
-    isActive: true,
+    isActive: false,
 };
