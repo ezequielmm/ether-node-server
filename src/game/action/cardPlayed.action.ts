@@ -25,17 +25,6 @@ import { StatusService } from '../status/status.service';
 import { DiscardCardAction } from './discardCard.action';
 import { ExhaustCardAction } from './exhaustCard.action';
 
-interface CardPlayedDTO {
-    readonly ctx: GameContext;
-    readonly cardId: CardId;
-    readonly selectedEnemyId: TargetId;
-}
-
-interface ICanPlayCard {
-    readonly canPlayCard: boolean;
-    readonly message?: string;
-}
-
 @Injectable()
 export class CardPlayedAction {
     private readonly logger: Logger = new Logger(CardPlayedAction.name);
@@ -58,7 +47,11 @@ export class CardPlayedAction {
         cardId,
         selectedEnemyId,
         ctx,
-    }: CardPlayedDTO): Promise<void> {
+    }: {
+        readonly ctx: GameContext;
+        readonly cardId: CardId;
+        readonly selectedEnemyId: TargetId;
+    }): Promise<void> {
         // First make sure card exists on player's hand pile
         const cardExists = await this.expeditionService.cardExistsOnPlayerHand({
             clientId: ctx.client.id,
@@ -231,7 +224,10 @@ export class CardPlayedAction {
     private canPlayerPlayCard(
         cardEnergyCost: number,
         availableEnergy: number,
-    ): ICanPlayCard {
+    ): {
+        readonly canPlayCard: boolean;
+        readonly message?: string;
+    } {
         // First we verify if the card has a 0 cost
         // if this is true, we allow the use of this card no matter the energy
         // the player has available
