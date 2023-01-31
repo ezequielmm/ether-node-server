@@ -13,24 +13,26 @@ export class TokenController {
         {
             sig,
             wallet,
-            entropy,
-            expires,
+            created,
+            message,
         }: {
             sig: string;
             wallet: string;
-            entropy: number;
-            expires: number;
+            created: number;
+            message: string;
         },
     ): { isValid: boolean } {
         const timeNow = Math.floor(Date.now() / 1000);
 
-        if (timeNow >= expires) return { isValid: false };
+        //if (timeNow >= expires) return { isValid: false };
 
-        const hash = `KOTE\nAction: Login\nEntropy: ${entropy}\nExpires: ${expires}`;
+        //const hash = `KOTE\nAction: Login\nEntropy: ${created}\nExpires: ${message}`;
 
-        const msgHash = ethers.utils.hashMessage(hash);
+        //const msgHash = ethers.utils.hashMessage(hash);
+        const msgHash = ethers.utils.hashMessage(message);
 
-        const msgHashBytes = ethers.utils.arrayify(msgHash);
+        //const msgHashBytes = ethers.utils.arrayify(msgHash);
+        const msgHashBytes = msgHash;
 
         const recoveredAddress = ethers.utils.recoverAddress(msgHashBytes, sig);
 
