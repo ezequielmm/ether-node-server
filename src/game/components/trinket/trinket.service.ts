@@ -1,8 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { ModuleRef } from '@nestjs/core';
-import { isDocumentArray, ReturnModelType } from '@typegoose/typegoose';
+import { ReturnModelType } from '@typegoose/typegoose';
 import { getModelToken } from 'kindagoose';
-import { chain, filter as filterFunction, find, last, sample } from 'lodash';
+import {
+    chain,
+    filter as filterFunction,
+    find,
+    last,
+    sample,
+    sampleSize,
+} from 'lodash';
 import { MutateDTO } from 'src/game/effects/effects.interface';
 import {
     StandardResponse,
@@ -44,6 +51,13 @@ export class TrinketService {
 
     public getRandomTrinket(filter?: Partial<Trinket>): Trinket {
         return sample(this.find(filter));
+    }
+
+    public getRandomTrinkets(
+        amount: number,
+        filter?: Partial<Trinket>,
+    ): Trinket[] {
+        return sampleSize(this.find(filter), amount);
     }
 
     public async add(ctx: GameContext, trinketId: number): Promise<boolean> {

@@ -27,9 +27,12 @@ import {
     CardRare,
     CardUncommon,
     PurchaseFailureEnum,
+    TrinketCommon,
 } from './merchant.enum';
 import { Item, MerchantItems, SelectedItem } from './merchant.interface';
 import mongoose from 'mongoose';
+import { TrinketService } from '../components/trinket/trinket.service';
+import { TrinketRarityEnum } from '../components/trinket/trinket.enum';
 
 @Injectable()
 export class MerchantService {
@@ -39,29 +42,22 @@ export class MerchantService {
         private readonly expeditionService: ExpeditionService,
         private readonly cardService: CardService,
         private readonly potionService: PotionService,
+        private readonly trinketService: TrinketService,
     ) {}
-
-    private client: Socket;
-    private selectedItem: SelectedItem;
-    private expeditionId: string;
 
     async generateMerchant(): Promise<MerchantItems> {
         const potions = await this.getPotions();
         const cards = await this.getCards();
+        const trinkets = await this.getTrinkets();
 
         return {
             cards,
             potions,
-            trinkets: [],
+            trinkets,
         };
     }
 
     async buyItem(client: Socket, selectedItem: SelectedItem): Promise<void> {
-        this.client = client;
-        this.selectedItem = selectedItem;
-
-        this.logger.debug(selectedItem);
-
         switch (selectedItem.type) {
             case ItemsTypeEnum.Card:
             case ItemsTypeEnum.Trinket:
@@ -224,6 +220,40 @@ export class MerchantService {
                     id: itemId,
                     isActive: true,
                 },
+            });
+        }
+
+        return itemsData;
+    }
+
+    private async getTrinkets(): Promise<Item[]> {
+        const trinkets = this.trinketService.getRandomTrinkets(5);
+
+        const itemsData: Item[] = [];
+
+        for (const trinket of trinkets) {
+            let cost: number = null;
+
+            switch (trinket.rarity) {
+                case TrinketRarityEnum.Common:
+                    cost = getRandomBetween(
+                        TrinketCommon.minPrice,
+                        TrinketCommon.maxPrice,
+                    );
+                    break;
+            }
+
+            const itemId = randomUUID();
+
+            trinket.id = itemId;
+
+            itemsData.push({
+                id: itemId,
+                isSold: false,
+                itemId: trinket.trinketId,
+                cost,
+                type: ItemsTypeEnum.Trinket,
+                item: trinket,
             });
         }
 
@@ -503,14 +533,17 @@ export class MerchantService {
         playerState: Player,
     ) {
         const playerDoc = playerState as unknown as mongoose.Document;
+
         const newPlayerState = {
             ...playerDoc.toObject(),
             gold: playerState.gold - item.cost,
             potions: [...playerState.potions, item.item],
         };
+
         const mewMerchantItems = {
             ...merchantItems,
         };
+
         mewMerchantItems.potions[itemIndex].isSold = true;
 
         await this.expeditionService.updateById(this.expeditionId, {
