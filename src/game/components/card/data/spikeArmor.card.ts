@@ -1,3 +1,5 @@
+/*
+
 import { damageEffect } from 'src/game/effects/damage/constants';
 import { spikesStatus } from 'src/game/status/spikes/constants';
 import { CardRarityEnum, CardTypeEnum, CardTargetedEnum } from '../card.enum';
@@ -78,3 +80,4 @@ export const SpikeArmorCard: Card = {
     upgradedCardId: SpikeArmorCardUpgraded.cardId,
     isActive: false,
 };
+*/
