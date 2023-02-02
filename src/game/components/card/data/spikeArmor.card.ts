@@ -1,4 +1,4 @@
-/*
+
 
 import { damageEffect } from 'src/game/effects/damage/constants';
 import { spikesStatus } from 'src/game/status/spikes/constants';
@@ -80,4 +80,4 @@ export const SpikeArmorCard: Card = {
     upgradedCardId: SpikeArmorCardUpgraded.cardId,
     isActive: false,
 };
-*/
+

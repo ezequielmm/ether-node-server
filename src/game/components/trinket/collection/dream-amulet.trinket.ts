@@ -1,4 +1,4 @@
-/*
+
 
 import { Prop } from '@typegoose/typegoose';
 import {
@@ -59,4 +59,4 @@ export class DreamAmuletTrinket extends Trinket {
         ctx.events.addListener(EVENT_AFTER_INIT_COMBAT, drawCards);
     }
 }
-*/
+
