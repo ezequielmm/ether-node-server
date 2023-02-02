@@ -173,6 +173,15 @@ export class MerchantService {
                     playerState,
                 );
                 break;
+            case ItemsTypeEnum.Trinket:
+                await this.handleTrinkets(
+                    client,
+                    merchantItems,
+                    item,
+                    itemIndex,
+                    playerState,
+                );
+                break;
         }
 
         await this.success(client);
@@ -545,7 +554,7 @@ export class MerchantService {
         item: Item,
         itemIndex: number,
         playerState: Player,
-    ) {
+    ): Promise<void> {
         const playerDoc = playerState as unknown as mongoose.Document;
 
         const newPlayerState = {
@@ -559,6 +568,36 @@ export class MerchantService {
         };
 
         mewMerchantItems.potions[itemIndex].isSold = true;
+
+        await this.expeditionService.updateByFilter(
+            { clientId: client.id },
+            {
+                $set: {
+                    playerState: newPlayerState,
+                    'currentNode.merchantItems': mewMerchantItems,
+                },
+            },
+        );
+    }
+
+    private async handleTrinkets(
+        client: Socket,
+        merchantItems: MerchantItems,
+        item: Item,
+        itemIndex: number,
+        playerState: Player,
+    ): Promise<void> {
+        const playerDoc = playerState as unknown as mongoose.Document;
+        const newPlayerState = {
+            ...playerDoc.toObject(),
+            gold: playerState.gold - item.cost,
+            trinkets: [...playerState.trinkets, item.item],
+        };
+
+        const mewMerchantItems = {
+            ...merchantItems,
+        };
+        mewMerchantItems.cards[itemIndex].isSold = true;
 
         await this.expeditionService.updateByFilter(
             { clientId: client.id },
