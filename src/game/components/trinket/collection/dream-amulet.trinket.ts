@@ -1,3 +1,5 @@
+
+
 import { Prop } from '@typegoose/typegoose';
 import {
     EVENT_AFTER_INIT_COMBAT,
@@ -57,3 +59,4 @@ export class DreamAmuletTrinket extends Trinket {
         ctx.events.addListener(EVENT_AFTER_INIT_COMBAT, drawCards);
     }
 }
+
