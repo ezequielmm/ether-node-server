@@ -1,3 +1,5 @@
+
+
 import { Prop } from '@typegoose/typegoose';
 import { pull, sample } from 'lodash';
 import {
@@ -55,3 +57,4 @@ export class DreamAmuletTrinket extends Trinket {
         });
     }
 }
+
