@@ -1,5 +1,9 @@
+
+
 import { Prop } from '@typegoose/typegoose';
+import { pull, sample } from 'lodash';
 import {
+    EVENT_AFTER_CREATE_COMBAT,
     EVENT_AFTER_INIT_COMBAT,
     EVENT_BEFORE_PLAYER_TURN_START,
 } from 'src/game/constants';
@@ -27,33 +31,30 @@ export class DreamAmuletTrinket extends Trinket {
     cardsToDraw: number;
 
     onAttach(ctx: GameContext): void {
-        const drawCards = async () => {
-            const effectService = ctx.moduleRef.get(EffectService, {
-                strict: false,
-            });
+        // Once the combat is created, it is generated with the player's hand cards created
+        // We can then add the extra card to the player's hand
+        // The add card process is only necessary once, after modify the hand size will be
+        // handled by the draw card process in the next player turn
+        ctx.events.addListener(EVENT_AFTER_CREATE_COMBAT, async () => {
+            const player = ctx.expedition.currentNode.data.player;
 
-            const playerService = ctx.moduleRef.get(PlayerService, {
-                strict: false,
-            });
+            for (let i = 0; i < this.cardsToDraw; i++) {
+                // Get random card from draw pile
+                const cardToDraw = sample(player.cards.draw);
 
-            const player = playerService.get(ctx);
+                // Remove card from draw pile and add to hand
+                player.cards.draw = pull(player.cards.draw, cardToDraw);
+                player.cards.hand = [...player.cards.hand, cardToDraw];
+            }
 
-            await effectService.apply({
-                ctx,
-                source: player,
-                target: player,
-                effect: {
-                    effect: drawCardEffect.name,
-                    args: {
-                        value: this.cardsToDraw,
-                    },
-                },
-            });
+            // Update player hand size for the next turns
+            player.handSize += this.cardsToDraw;
+
+            ctx.expedition.markModified('currentNode.data.player');
+            await ctx.expedition.save();
 
             this.trigger(ctx);
-        };
-
-        ctx.events.addListener(EVENT_BEFORE_PLAYER_TURN_START, drawCards);
-        ctx.events.addListener(EVENT_AFTER_INIT_COMBAT, drawCards);
+        });
     }
 }
+
