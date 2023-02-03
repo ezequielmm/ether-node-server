@@ -9,7 +9,7 @@ export const SparkCardUpgraded: Card = {
     rarity: CardRarityEnum.Common,
     cardType: CardTypeEnum.Skill,
     pool: 'knight',
-    energy: 1,
+    energy: 0,
     description: `Inflict  {${doubleBurn.name}} Burn`,
     keywords: [],
     properties: {
