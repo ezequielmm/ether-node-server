@@ -27,9 +27,14 @@ import {
     CardRare,
     CardUncommon,
     PurchaseFailureEnum,
+    TrinketCommon,
+    TrinketUncommon,
+    TrinketRare,
 } from './merchant.enum';
 import { Item, MerchantItems, SelectedItem } from './merchant.interface';
 import mongoose from 'mongoose';
+import { TrinketService } from '../components/trinket/trinket.service';
+import { TrinketRarityEnum } from '../components/trinket/trinket.enum';
 
 @Injectable()
 export class MerchantService {
@@ -39,16 +44,18 @@ export class MerchantService {
         private readonly expeditionService: ExpeditionService,
         private readonly cardService: CardService,
         private readonly potionService: PotionService,
+        private readonly trinketService: TrinketService,
     ) {}
 
     async generateMerchant(): Promise<MerchantItems> {
         const potions = await this.getPotions();
         const cards = await this.getCards();
+        const trinkets = await this.getTrinkets();
 
         return {
             cards,
             potions,
-            trinkets: [],
+            trinkets,
         };
     }
 
@@ -97,33 +104,36 @@ export class MerchantService {
 
         let item: Item;
         let itemIndex: number;
-        let data: Item[];
+        let items: Item[] = [];
 
         switch (type) {
             case ItemsTypeEnum.Card:
-                data = merchantItems.cards;
+                items = merchantItems.cards;
                 break;
             case ItemsTypeEnum.Trinket:
-                data = merchantItems.trinkets;
+                items = merchantItems.trinkets;
                 break;
             case ItemsTypeEnum.Potion:
-                data = merchantItems.potions;
+                items = merchantItems.potions;
                 break;
         }
 
-        for (let i = 0; i < data.length; i++) {
-            if (typeof targetId == 'string') {
-                if (targetId == data[i].id) {
-                    item = data[i];
-                    itemIndex = i;
-                }
-            } else if (typeof targetId == 'number') {
-                if (targetId == data[i].itemId) {
-                    item = data[i];
-                    itemIndex = i;
-                }
+        items.forEach((element, i) => {
+            switch (typeof targetId) {
+                case 'string':
+                    if (targetId === element.id) {
+                        item = element;
+                        itemIndex = i;
+                    }
+                    break;
+                case 'number':
+                    if (targetId === element.itemId) {
+                        item = element;
+                        itemIndex = i;
+                    }
+                    break;
             }
-        }
+        });
 
         if (!item) {
             this.failure(client, PurchaseFailureEnum.InvalidId);
@@ -144,7 +154,7 @@ export class MerchantService {
         switch (type) {
             case ItemsTypeEnum.Card:
                 await this.handleCard(
-                    expedition.id,
+                    client,
                     merchantItems,
                     item,
                     itemIndex,
@@ -160,7 +170,16 @@ export class MerchantService {
                     );
                 }
                 await this.handlePotions(
-                    expedition.id,
+                    client,
+                    merchantItems,
+                    item,
+                    itemIndex,
+                    playerState,
+                );
+                break;
+            case ItemsTypeEnum.Trinket:
+                await this.handleTrinkets(
+                    client,
                     merchantItems,
                     item,
                     itemIndex,
@@ -220,6 +239,55 @@ export class MerchantService {
                     id: itemId,
                     isActive: true,
                 },
+            });
+        }
+
+        return itemsData;
+    }
+
+    private async getTrinkets(): Promise<Item[]> {
+        const trinkets = this.trinketService.getRandomTrinkets(5, (trinket) => {
+            // Avoid special trinkets
+            return trinket.rarity !== TrinketRarityEnum.Special;
+        });
+
+        const itemsData: Item[] = [];
+
+        for (const trinket of trinkets) {
+            let cost: number = null;
+
+            switch (trinket.rarity) {
+                case TrinketRarityEnum.Common:
+                    cost = getRandomBetween(
+                        TrinketCommon.minPrice,
+                        TrinketCommon.maxPrice,
+                    );
+                    break;
+                case TrinketRarityEnum.Uncommon:
+                    cost = getRandomBetween(
+                        TrinketUncommon.minPrice,
+                        TrinketUncommon.maxPrice,
+                    );
+                    break;
+                case TrinketRarityEnum.Rare:
+                    cost = getRandomBetween(
+                        TrinketRare.minPrice,
+                        TrinketRare.maxPrice,
+                    );
+                    break;
+            }
+
+            const itemId = randomUUID();
+
+            trinket.id = itemId;
+
+            itemsData.push({
+                id: itemId,
+                isSold: false,
+                itemId: trinket.trinketId,
+                cost,
+                type: ItemsTypeEnum.Trinket,
+                item: trinket,
             });
         }
 
@@ -374,7 +442,7 @@ export class MerchantService {
     }
 
     private async handleCard(
-        expeditionId: string,
+        client: Socket,
         merchantItems: MerchantItems,
         item: Item,
         itemIndex: number,
@@ -392,12 +460,15 @@ export class MerchantService {
         };
         mewMerchantItems.cards[itemIndex].isSold = true;
 
-        await this.expeditionService.updateById(expeditionId, {
-            $set: {
-                playerState: newPlayerState,
-                'currentNode.merchantItems': mewMerchantItems,
+        await this.expeditionService.updateByFilter(
+            { clientId: client.id },
+            {
+                $set: {
+                    playerState: newPlayerState,
+                    'currentNode.merchantItems': mewMerchantItems,
+                },
             },
-        });
+        );
     }
 
     async cardUpgrade(client: Socket, selectedItem: SelectedItem) {
@@ -497,35 +568,72 @@ export class MerchantService {
     }
 
     private async handlePotions(
-        expeditionId: string,
+        client: Socket,
         merchantItems: MerchantItems,
         item: Item,
         itemIndex: number,
         playerState: Player,
-    ) {
+    ): Promise<void> {
         const playerDoc = playerState as unknown as mongoose.Document;
+
         const newPlayerState = {
             ...playerDoc.toObject(),
             gold: playerState.gold - item.cost,
             potions: [...playerState.potions, item.item],
         };
+
         const mewMerchantItems = {
             ...merchantItems,
         };
+
         mewMerchantItems.potions[itemIndex].isSold = true;
 
-        await this.expeditionService.updateById(expeditionId, {
-            $set: {
-                playerState: newPlayerState,
-                'currentNode.merchantItems': mewMerchantItems,
+        await this.expeditionService.updateByFilter(
+            { clientId: client.id },
+            {
+                $set: {
+                    playerState: newPlayerState,
+                    'currentNode.merchantItems': mewMerchantItems,
+                },
             },
-        });
+        );
+    }
+
+    private async handleTrinkets(
+        client: Socket,
+        merchantItems: MerchantItems,
+        item: Item,
+        itemIndex: number,
+        playerState: Player,
+    ): Promise<void> {
+        const playerDoc = playerState as unknown as mongoose.Document;
+        const newPlayerState = {
+            ...playerDoc.toObject(),
+            gold: playerState.gold - item.cost,
+            trinkets: [...playerState.trinkets, item.item],
+        };
+
+        const mewMerchantItems = {
+            ...merchantItems,
+        };
+        mewMerchantItems.cards[itemIndex].isSold = true;
+
+        await this.expeditionService.updateByFilter(
+            { clientId: client.id },
+            {
+                $set: {
+                    playerState: newPlayerState,
+                    'currentNode.merchantItems': mewMerchantItems,
+                },
+            },
+        );
     }
 
     async cardDestroy(client: Socket, selectedItem: SelectedItem) {
         const playerState = await this.expeditionService.getPlayerState({
             clientId: client.id,
         });
+
         const destroyPrice = 75 + 25 * playerState.cardDestroyCount;
 
         if (playerState.gold < destroyPrice) {
