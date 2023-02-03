@@ -6,7 +6,10 @@ import { CombatTurnEnum } from '../components/expedition/expedition.enum';
 import { Node } from '../components/expedition/node';
 import { ExpeditionService } from '../components/expedition/expedition.service';
 import { GameContext } from '../components/interfaces';
-import { EVENT_AFTER_INIT_COMBAT } from '../constants';
+import {
+    EVENT_AFTER_CREATE_COMBAT,
+    EVENT_AFTER_INIT_COMBAT,
+} from '../constants';
 import {
     StandardResponse,
     SWARAction,
@@ -52,6 +55,11 @@ export class InitCombatProcess {
             );
 
         this.ctx.expedition.currentNode = currentNode;
+
+        // Combat is created, emit event
+        await this.ctx.events.emitAsync(EVENT_AFTER_CREATE_COMBAT, {
+            ctx: this.ctx,
+        });
 
         await this.setCombatTurnAction.handle({
             clientId: this.ctx.client.id,
