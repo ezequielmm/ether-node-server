@@ -246,7 +246,10 @@ export class MerchantService {
     }
 
     private async getTrinkets(): Promise<Item[]> {
-        const trinkets = this.trinketService.getRandomTrinkets(5);
+        const trinkets = this.trinketService.getRandomTrinkets(5, (trinket) => {
+            // Avoid special trinkets
+            return trinket.rarity !== TrinketRarityEnum.Special;
+        });
 
         const itemsData: Item[] = [];
 

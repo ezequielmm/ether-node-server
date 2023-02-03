@@ -23,6 +23,8 @@ import * as Trinkets from './collection';
 import { TrinketModifier } from './trinket-modifier';
 import { Trinket } from './trinket.schema';
 
+type TrinketFilter = Partial<Trinket> | ((trinket: Trinket) => boolean);
+
 @Injectable()
 export class TrinketService {
     constructor(private readonly moduleRef: ModuleRef) {}
@@ -41,21 +43,21 @@ export class TrinketService {
         );
     }
 
-    public find(filter: Partial<Trinket>): Trinket[] {
+    public find(filter: TrinketFilter): Trinket[] {
         return filterFunction(this.findAll(), filter);
     }
 
-    public findOne(filter: Partial<Trinket>): Trinket {
+    public findOne(filter: TrinketFilter): Trinket {
         return find(this.findAll(), filter);
     }
 
-    public getRandomTrinket(filter?: Partial<Trinket>): Trinket {
+    public getRandomTrinket(filter?: TrinketFilter): Trinket {
         return sample(this.find(filter));
     }
 
     public getRandomTrinkets(
         amount: number,
-        filter?: Partial<Trinket>,
+        filter?: TrinketFilter,
     ): Trinket[] {
         return sampleSize(this.find(filter), amount);
     }
