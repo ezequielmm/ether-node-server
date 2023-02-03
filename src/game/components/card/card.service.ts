@@ -66,7 +66,9 @@ export class CardService {
         return await this.card.findOne(filter).lean();
     }
 
-    async getRandomCard(filter: FilterQuery<Card> = {}): Promise<Card> {
+    async getRandomCard(
+        filter: FilterQuery<Card> = { isActive: true },
+    ): Promise<Card> {
         const [card] = await this.card.aggregate<Card>([
             { $match: filter },
             { $sample: { size: 1 } },
