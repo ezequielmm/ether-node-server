@@ -1,75 +1,55 @@
-import { forwardRef, Inject, Injectable, Logger } from '@nestjs/common';
-import { filter, includes } from 'lodash';
-import { Socket } from 'socket.io';
-import { removeCardsFromPile } from 'src/utils';
+import { Injectable, Logger } from '@nestjs/common';
+import { filter, includes, reject } from 'lodash';
 import { CardKeywordEnum } from '../components/card/card.enum';
-import { ExpeditionService } from '../components/expedition/expedition.service';
+import { GameContext } from '../components/interfaces';
 import {
     StandardResponse,
     SWARAction,
     SWARMessageType,
 } from '../standardResponse/standardResponse';
 
-interface DiscardAllCardsDTO {
-    readonly client: Socket;
-    readonly SWARMessageTypeToSend: SWARMessageType;
-}
-
 @Injectable()
 export class DiscardAllCardsAction {
     private readonly logger: Logger = new Logger(DiscardAllCardsAction.name);
 
-    constructor(
-        @Inject(forwardRef(() => ExpeditionService))
-        private readonly expeditionService: ExpeditionService,
-    ) {}
+    async handle(ctx: GameContext, messageType: SWARMessageType) {
+        // Get cards from playerk
+        const cards = ctx.expedition.currentNode.data.player.cards;
 
-    async handle({ client, SWARMessageTypeToSend }: DiscardAllCardsDTO) {
-        const {
-            data: {
-                player: {
-                    cards: { hand, discard, exhausted },
-                },
-            },
-        } = await this.expeditionService.getCurrentNode({
-            clientId: client.id,
-        });
+        // Determine which cards to discard and which to exhaust
+        const isFade = (card) => includes(card.keywords, CardKeywordEnum.Fade);
 
-        const cardsToExhaust = filter(hand, ({ keywords }) =>
-            includes(keywords, CardKeywordEnum.Fade),
-        );
+        const cardsToExhaust = filter(cards.hand, isFade);
+        const cardsToDiscard = reject(cards.hand, isFade);
 
-        const newHand = removeCardsFromPile({
-            originalPile: hand,
-            cardsToRemove: cardsToExhaust,
-        });
+        cards.hand = [];
+        cards.discard.push(...cardsToDiscard);
+        cards.exhausted.push(...cardsToExhaust);
 
-        await this.expeditionService.updateHandPiles({
-            clientId: client.id,
-            hand: [],
-            discard: [...newHand, ...discard],
-            exhausted: [...exhausted, ...cardsToExhaust],
-        });
+        // Save expedition
+        ctx.expedition.markModified('currentNode.data.player.cards');
+        await ctx.expedition.save();
 
-        const cardMoves = hand.map(({ id, keywords }) => ({
-            source: 'hand',
-            destination: includes(keywords, CardKeywordEnum.Fade)
-                ? 'exhaust'
-                : 'discard',
-            id,
-        }));
+        // Create data to send to client for each card moved
+        const data = [];
 
-        this.logger.debug(
-            `Sent message PutData to client ${client.id}: ${SWARAction.MoveCard}`,
-        );
+        for (const card of [...cardsToExhaust, ...cardsToDiscard]) {
+            data.push({
+                source: 'hand',
+                destination: isFade(card) ? 'exhaust' : 'discard',
+                id: card.id,
+            });
+        }
 
-        client.emit(
+        ctx.client.emit(
             'PutData',
             StandardResponse.respond({
-                message_type: SWARMessageTypeToSend,
+                message_type: messageType,
                 action: SWARAction.MoveCard,
-                data: cardMoves,
+                data: data,
             }),
         );
+
+        this.logger.debug(`Discarded and exhausted all cards`);
     }
 }
