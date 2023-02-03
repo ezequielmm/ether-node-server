@@ -28,6 +28,8 @@ import {
     CardUncommon,
     PurchaseFailureEnum,
     TrinketCommon,
+    TrinketUncommon,
+    TrinketRare,
 } from './merchant.enum';
 import { Item, MerchantItems, SelectedItem } from './merchant.interface';
 import mongoose from 'mongoose';
@@ -256,6 +258,18 @@ export class MerchantService {
                     cost = getRandomBetween(
                         TrinketCommon.minPrice,
                         TrinketCommon.maxPrice,
+                    );
+                    break;
+                case TrinketRarityEnum.Uncommon:
+                    cost = getRandomBetween(
+                        TrinketUncommon.minPrice,
+                        TrinketUncommon.maxPrice,
+                    );
+                    break;
+                case TrinketRarityEnum.Rare:
+                    cost = getRandomBetween(
+                        TrinketRare.minPrice,
+                        TrinketRare.maxPrice,
                     );
                     break;
             }
