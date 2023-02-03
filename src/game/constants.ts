@@ -25,6 +25,7 @@ export const EVENT_AFTER_DAMAGE_EFFECT = 'damageEffect';
 
 export const EVENT_AFTER_DRAW_CARDS = 'afterDrawCards';
 
+export const EVENT_AFTER_CREATE_COMBAT = 'afterCreateCombat';
 export const EVENT_AFTER_INIT_COMBAT = 'afterInitCombat';
 
 export const EVENT_AFTER_END_COMBAT = 'afterEndCombat';
