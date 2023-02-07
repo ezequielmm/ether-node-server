@@ -10,6 +10,7 @@ import { ConfigService } from '@nestjs/config';
 import { serverEnvironments } from './utils';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { join } from 'path';
+import { Logger } from 'nestjs-pino';
 
 async function bootstrap() {
     let app: NestExpressApplication;
@@ -29,6 +30,8 @@ async function bootstrap() {
     } else {
         app = await NestFactory.create<NestExpressApplication>(AppModule);
     }
+    // Pino Logger
+    app.useLogger(app.get(Logger));
 
     app.useWebSocketAdapter(new IoAdapter(app));
 
