@@ -6,9 +6,29 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { KindagooseModule } from 'kindagoose';
 import { WalletModule } from './wallet/wallet.module';
+import { LoggerModule } from 'nestjs-pino';
+import { createWriteStream } from 'pino-papertrail';
 
 @Module({
     imports: [
+        LoggerModule.forRootAsync({
+            inject: [ConfigService],
+            useFactory: (configService: ConfigService) => ({
+                pinoHttp:
+                    configService.get('NODE_ENV') !== 'development'
+                        ? createWriteStream({
+                              appname: configService.get('PAPERTRAIL_APP_NAME'),
+                              host: configService.get('PAPERTRAIL_HOST'),
+                              port: configService.get('PAPERTRAIL_PORT'),
+                          })
+                        : {
+                              transport: {
+                                  target: 'pino-pretty',
+                                  options: { colorize: true },
+                              },
+                          },
+            }),
+        }),
         WalletModule,
         ApiModule,
         ConfigModule.forRoot({ isGlobal: true, cache: true }),
