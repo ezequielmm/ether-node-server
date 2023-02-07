@@ -18,7 +18,7 @@ import { createWriteStream } from 'pino-papertrail';
                     configService.get('NODE_ENV') !== 'development'
                         ? createWriteStream({
                               appname: configService.get('PAPERTRAIL_APP_NAME'),
-                              host: configService.get('PAPERTRAIL_HOST'),
+                              host: configService.get('PAPERTRAIL_HOSTNAME'),
                               port: configService.get('PAPERTRAIL_PORT'),
                           })
                         : {
