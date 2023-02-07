@@ -10,7 +10,7 @@ export const SparkCardUpgraded: Card = {
     cardType: CardTypeEnum.Skill,
     pool: 'knight',
     energy: 0,
-    description: `Inflict  {${doubleBurn.name}} Burn`,
+    description: `Inflict {${doubleBurn.name}} Burn`,
     keywords: [],
     properties: {
         effects: [],
@@ -36,7 +36,7 @@ export const SparkCard: Card = {
     cardType: CardTypeEnum.Skill,
     pool: 'knight',
     energy: 1,
-    description: `Inflict  {${doubleBurn.name}} Burn`,
+    description: `Inflict {${doubleBurn.name}} Burn`,
     keywords: [],
     properties: {
         effects: [],
