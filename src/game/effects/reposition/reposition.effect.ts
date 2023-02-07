@@ -21,7 +21,6 @@ export class RepositionEffect implements EffectHandler {
         // current node object
         const {
             ctx: {
-                client,
                 expedition: {
                     currentNode: {
                         data: {
@@ -43,10 +42,7 @@ export class RepositionEffect implements EffectHandler {
         const cardsToDrawBack = hand.length;
 
         // Now we move all those cards to the discard pile
-        await this.discardAllCardsAction.handle({
-            client,
-            SWARMessageTypeToSend,
-        });
+        await this.discardAllCardsAction.handle(ctx, SWARMessageTypeToSend);
 
         // Now, we take the amount of cards we had on the hand pile
         // from the draw pile
