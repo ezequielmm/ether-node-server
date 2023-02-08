@@ -25,7 +25,13 @@ export class FullSyncAction {
                 ErrorBehavior.ReturnToMainMenu,
             );
 
-        const { map, playerState, mapSeedId, playerId } = expedition || {};
+        const {
+            map,
+            playerState,
+            mapSeedId,
+            playerId,
+            id: expeditionId,
+        } = expedition || {};
 
         this.logger.debug(`Sent message ExpeditionMap to client ${client.id}`);
 
@@ -49,6 +55,7 @@ export class FullSyncAction {
                 message_type: SWARMessageType.PlayerStateUpdate,
                 action: SWARAction.UpdatePlayerState,
                 data: {
+                    expeditionId: expeditionId,
                     playerState: {
                         id: playerState.playerId,
                         playerId,
