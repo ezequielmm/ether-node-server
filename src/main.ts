@@ -25,10 +25,13 @@ async function bootstrap() {
                     cert: readFileSync(certFilePath),
                     key: readFileSync(keyFilePath),
                 },
+                bufferLogs: true,
             });
         }
     } else {
-        app = await NestFactory.create<NestExpressApplication>(AppModule);
+        app = await NestFactory.create<NestExpressApplication>(AppModule, {
+            bufferLogs: true,
+        });
     }
     // Pino Logger
     app.useLogger(app.get(Logger));
