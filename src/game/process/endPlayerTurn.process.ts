@@ -61,10 +61,7 @@ export class EndPlayerTurnProcess {
 
         await this.combatQueueService.start(ctx);
 
-        await this.discardAllCardsAction.handle({
-            client,
-            SWARMessageTypeToSend: SWARMessageType.EndTurn,
-        });
+        await this.discardAllCardsAction.handle(ctx, SWARMessageType.EndTurn);
 
         await this.eventEmitter.emitAsync(EVENT_AFTER_PLAYER_TURN_END, { ctx });
 
