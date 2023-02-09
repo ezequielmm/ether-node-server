@@ -32,6 +32,13 @@ export class CombatGateway {
         this.logger.debug(`Client ${client.id} trigger message "EndTurn"`);
 
         const ctx = await this.expeditionService.getGameContext(client);
+
+        // If the combat is ended, we skip the turn
+        if (this.expeditionService.isCurrentCombatEnded(ctx)) {
+            this.logger.log('Combat ended, skipping turn');
+            return;
+        }
+
         const { expedition } = ctx;
 
         if (
