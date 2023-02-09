@@ -1,5 +1,6 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { filter, includes, reject } from 'lodash';
+import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 import { CardKeywordEnum } from '../components/card/card.enum';
 import { GameContext } from '../components/interfaces';
 import {
@@ -10,10 +11,17 @@ import {
 
 @Injectable()
 export class DiscardAllCardsAction {
-    private readonly logger: Logger = new Logger(DiscardAllCardsAction.name);
+    constructor(
+        @InjectPinoLogger()
+        private readonly logger: PinoLogger,
+    ) {}
 
     async handle(ctx: GameContext, messageType: SWARMessageType) {
-        // Get cards from playerk
+        const { client } = ctx;
+
+        const logger = this.logger.logger.child(ctx.info);
+
+        // Get cards from player deck in expedition
         const cards = ctx.expedition.currentNode.data.player.cards;
 
         // Determine which cards to discard and which to exhaust
@@ -41,7 +49,7 @@ export class DiscardAllCardsAction {
             });
         }
 
-        ctx.client.emit(
+        client.emit(
             'PutData',
             StandardResponse.respond({
                 message_type: messageType,
@@ -50,6 +58,6 @@ export class DiscardAllCardsAction {
             }),
         );
 
-        this.logger.log(`Discarded and exhausted all cards`);
+        logger.info(`Discarded and exhausted all cards`);
     }
 }
