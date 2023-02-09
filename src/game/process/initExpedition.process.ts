@@ -13,13 +13,6 @@ import { ExpeditionService } from '../components/expedition/expedition.service';
 import { SettingsService } from '../components/settings/settings.service';
 import { MapService } from '../map/map.service';
 
-interface InitExpeditionDTO {
-    playerId: number;
-    playerName: string;
-    email: string;
-    nftId: number;
-}
-
 @Injectable()
 export class InitExpeditionProcess {
     private readonly logger: Logger = new Logger(InitExpeditionProcess.name);
@@ -38,7 +31,12 @@ export class InitExpeditionProcess {
         playerName,
         email,
         nftId,
-    }: InitExpeditionDTO): Promise<void> {
+    }: {
+        playerId: number;
+        playerName: string;
+        email: string;
+        nftId: number;
+    }): Promise<void> {
         const character = await this.characterService.findOne({
             characterClass: CharacterClassEnum.Knight,
         });
