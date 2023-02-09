@@ -16,7 +16,7 @@ export class EncounterGateway {
         choiceIdx: string,
     ): Promise<string> {
         this.logger.log(
-            `Client ${client.id} trigger message "EncounterChoice"`,
+            `Client ${client.id} trigger message "EncounterChoice" with choiceId: ${choiceIdx}`,
         );
 
         return await this.encounterService.encounterChoice(

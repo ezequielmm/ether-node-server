@@ -13,11 +13,11 @@ export class MerchantGateway {
 
     @SubscribeMessage('MerchantBuy')
     async handleItemsSelected(client: Socket, payload: string): Promise<void> {
-        const selected = JSON.parse(payload) as SelectedItem;
-
         this.logger.log(
             `Client ${client.id} trigger message "MerchantBuy": ${payload}`,
         );
+
+        const selected = JSON.parse(payload) as SelectedItem;
 
         await this.merchantService.buyItem(client, selected);
     }

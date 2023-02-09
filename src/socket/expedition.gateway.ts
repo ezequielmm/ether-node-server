@@ -48,6 +48,7 @@ export class ExpeditionGateway {
     @SubscribeMessage('ContinueExpedition')
     async handleContinueExpedition(client: Socket): Promise<string> {
         this.logger.log(`Client ${client.id} will advance to the next node`);
+
         const ctx = await this.expeditionService.getGameContext(client);
 
         return this.continueExpeditionProcess.handle(ctx);

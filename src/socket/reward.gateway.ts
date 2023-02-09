@@ -21,10 +21,10 @@ export class RewardGateway {
         client: Socket,
         rewardId: string,
     ): Promise<string> {
+        this.logger.log(`Client ${client.id} choose reward id: ${rewardId}`);
+
         // Get the game context
         const ctx = await this.expeditionService.getGameContext(client);
-
-        this.logger.log(`Client ${client.id} choose reward id: ${rewardId}`);
 
         const response = await this.rewardService.takeReward(ctx, rewardId);
 
