@@ -50,6 +50,7 @@ export class ChooseCardEffect implements EffectHandler {
 
         // Now we send a message to the frontend to choose a card from that list
         this.logger.log(
+            payload.ctx.info,
             `Client ${client.id} will take ${cardsToTake} cards from the ${originPile} pile`,
         );
 

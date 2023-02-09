@@ -159,6 +159,14 @@ export class StatusService {
             eventBeforeStatusAttach,
         );
 
+        this.logger.log(
+            {
+                ...ctx.info,
+                status: eventBeforeStatusAttach.status,
+            },
+            'Status to be attached',
+        );
+
         let finalStatus: AttachedStatus;
         switch (target.type) {
             case CardTargetedEnum.Player:
@@ -179,6 +187,14 @@ export class StatusService {
                 );
                 break;
         }
+
+        this.logger.log(
+            {
+                ...ctx.info,
+                status: finalStatus,
+            },
+            'Status attached',
+        );
 
         const afterStatusAttachEvent: AfterStatusAttachEvent = {
             ctx,
@@ -231,6 +247,7 @@ export class StatusService {
                 });
 
                 this.logger.log(
+                    ctx.info,
                     `Mutating effect ${effect} with status ${status.name} | ${effectDTO.args.initialValue} ➭ ${effectDTO.args.currentValue}`,
                 );
             }
@@ -308,6 +325,15 @@ export class StatusService {
             target,
             collection,
         };
+
+        this.logger.log(
+            {
+                ...ctx.info,
+                entity: target,
+                statuses: collection,
+            },
+            'Statuses updated',
+        );
 
         await this.eventEmitter.emitAsync(
             EVENT_AFTER_STATUSES_UPDATE,
@@ -591,9 +617,13 @@ export class StatusService {
             if (status.args.counter === 0) {
                 // If the value is 0, remove the status
                 statusesToRemove.push(status);
-                this.logger.log(cliColor.red(`Removing status ${status.name}`));
+                this.logger.log(
+                    ctx.info,
+                    cliColor.red(`Removing status ${status.name}`),
+                );
             } else {
                 this.logger.log(
+                    ctx.info,
                     cliColor.red(
                         `Decreasing ${status.name} status value to ${status.args.counter}`,
                     ),
@@ -633,7 +663,10 @@ export class StatusService {
         statuses[status.type] = finalStatuses;
 
         // Update status collection
-        this.logger.log(`Removing status ${status.name} from ${entity.type}`);
+        this.logger.log(
+            ctx.info,
+            `Removing status ${status.name} from ${entity.type}`,
+        );
 
         await this.updateStatuses(ctx, entity, statuses);
     }

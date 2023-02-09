@@ -23,7 +23,7 @@ export class EndEnemyTurnProcess {
     ) {}
 
     async handle({ ctx }: { ctx: GameContext }): Promise<void> {
-        this.logger.log(`Ending enemies turn`);
+        this.logger.log(ctx.info, `Ending enemies turn`);
 
         const { client } = ctx;
 

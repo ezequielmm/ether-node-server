@@ -28,7 +28,7 @@ export class EndPlayerTurnProcess {
     ) {}
 
     async handle({ ctx }: { ctx: GameContext }): Promise<void> {
-        this.logger.log(`Ending player turn`);
+        this.logger.log(ctx.info, `Ending player turn`);
 
         const { client, expedition } = ctx;
 

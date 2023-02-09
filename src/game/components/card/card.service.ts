@@ -158,7 +158,7 @@ export class CardService {
             ...newCard,
         });
 
-        this.logger.log(`Adding card ${cardId} to deck`);
+        this.logger.log(ctx.info, `Adding card ${cardId} to deck`);
 
         await this.expeditionService.updatePlayerDeck({
             clientId: ctx.client.id,
@@ -187,6 +187,7 @@ export class CardService {
         if (cards.length) {
             for (const card of cards) {
                 this.logger.log(
+                    ctx.info,
                     `Auto playing card ${card.cardId}:${card.name}`,
                 );
                 await this.cardPlayedAction.handle({
@@ -212,6 +213,7 @@ export class CardService {
         if (cards.length > 0) {
             for (const card of cards) {
                 this.logger.log(
+                    ctx.info,
                     `Auto playing card ${card.cardId}:${card.name}`,
                 );
                 await this.cardPlayedAction.handle({

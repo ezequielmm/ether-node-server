@@ -1,5 +1,4 @@
 import { SubscribeMessage, WebSocketGateway } from '@nestjs/websockets';
-import { Logger } from '@nestjs/common';
 import { Socket } from 'socket.io';
 import { CardId } from 'src/game/components/card/card.type';
 import { TargetId } from 'src/game/effects/effects.types';
@@ -18,8 +17,6 @@ interface ICardPlayed {
 
 @WebSocketGateway(corsSocketSettings)
 export class CombatGateway {
-    private readonly logger: Logger = new Logger(CombatGateway.name);
-
     constructor(
         private readonly cardPlayedAction: CardPlayedAction,
         private readonly endPlayerTurnProcess: EndPlayerTurnProcess,
@@ -29,8 +26,6 @@ export class CombatGateway {
 
     @SubscribeMessage('EndTurn')
     async handleEndTurn(client: Socket): Promise<void> {
-        this.logger.log(`Client ${client.id} trigger message "EndTurn"`);
-
         const ctx = await this.expeditionService.getGameContext(client);
         const { expedition } = ctx;
 
@@ -58,9 +53,6 @@ export class CombatGateway {
 
     @SubscribeMessage('CardPlayed')
     async handleCardPlayed(client: Socket, payload: string): Promise<void> {
-        this.logger.log(
-            `Client ${client.id} trigger message "CardPlayed": ${payload}`,
-        );
         const ctx = await this.expeditionService.getGameContext(client);
         const { cardId, targetId }: ICardPlayed = JSON.parse(payload);
 

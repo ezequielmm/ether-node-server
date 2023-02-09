@@ -21,6 +21,7 @@ export class AnticipatingStatus implements StatusEventHandler {
         const { ctx, status, target } = dto;
 
         this.logger.log(
+            ctx.info,
             `Restoring ${status.args.counter} defense to ${target.type}`,
         );
 

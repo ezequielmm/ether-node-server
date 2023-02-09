@@ -1,4 +1,3 @@
-import { Logger } from '@nestjs/common';
 import { SubscribeMessage, WebSocketGateway } from '@nestjs/websockets';
 import { Socket } from 'socket.io';
 import { ExpeditionService } from 'src/game/components/expedition/expedition.service';
@@ -12,8 +11,6 @@ import { corsSocketSettings } from './socket.enum';
 
 @WebSocketGateway(corsSocketSettings)
 export class CampGateway {
-    private readonly logger: Logger = new Logger(CampGateway.name);
-
     constructor(
         private readonly expeditionService: ExpeditionService,
         private readonly playerService: PlayerService,
@@ -21,10 +18,6 @@ export class CampGateway {
 
     @SubscribeMessage('CampRecoverHealth')
     async handleRecoverHealth(client: Socket): Promise<string> {
-        this.logger.log(
-            `Client ${client.id} trigger message "CampRecoverHealth"`,
-        );
-
         // First we get the actual player state to get the
         // actual health and max health for the player
         const ctx = await this.expeditionService.getGameContext(client);
@@ -40,8 +33,6 @@ export class CampGateway {
 
         // Now we update the current hp for the player
         await this.playerService.setGlobalHp(ctx, newHp);
-
-        this.logger.log(`Sent message PlayerState to client ${client.id}`);
 
         client.emit(
             'PlayerState',

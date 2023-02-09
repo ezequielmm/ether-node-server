@@ -35,6 +35,7 @@ import { Item, MerchantItems, SelectedItem } from './merchant.interface';
 import mongoose from 'mongoose';
 import { TrinketService } from '../components/trinket/trinket.service';
 import { TrinketRarityEnum } from '../components/trinket/trinket.enum';
+import { GameContext } from '../components/interfaces';
 
 @Injectable()
 export class MerchantService {
@@ -59,20 +60,20 @@ export class MerchantService {
         };
     }
 
-    async buyItem(client: Socket, selectedItem: SelectedItem): Promise<void> {
-        this.logger.log(selectedItem);
+    async buyItem(ctx: GameContext, selectedItem: SelectedItem): Promise<void> {
+        this.logger.log(ctx.info, selectedItem);
 
         switch (selectedItem.type) {
             case ItemsTypeEnum.Card:
             case ItemsTypeEnum.Trinket:
             case ItemsTypeEnum.Potion:
-                await this.processItem(client, selectedItem);
+                await this.processItem(ctx.client, selectedItem);
                 break;
             case ItemsTypeEnum.Destroy:
-                await this.cardDestroy(client, selectedItem);
+                await this.cardDestroy(ctx.client, selectedItem);
                 break;
             case ItemsTypeEnum.Upgrade:
-                await this.cardUpgrade(client, selectedItem);
+                await this.cardUpgrade(ctx.client, selectedItem);
                 break;
         }
     }

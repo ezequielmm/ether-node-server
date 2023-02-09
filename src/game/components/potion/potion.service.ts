@@ -128,7 +128,10 @@ export class PotionService {
         const player = this.playerService.get(ctx);
 
         if (inCombat) {
-            this.logger.log(`Started combat queue for client ${ctx.client.id}`);
+            this.logger.log(
+                ctx.info,
+                `Started combat queue for client ${ctx.client.id}`,
+            );
             await this.combatQueueService.start(ctx);
         }
 
@@ -141,7 +144,10 @@ export class PotionService {
         });
 
         if (inCombat) {
-            this.logger.log(`Ended combat queue for client ${ctx.client.id}`);
+            this.logger.log(
+                ctx.info,
+                `Ended combat queue for client ${ctx.client.id}`,
+            );
             await this.combatQueueService.end(ctx);
         }
 
@@ -174,6 +180,7 @@ export class PotionService {
         });
 
         this.logger.log(
+            ctx.info,
             `Removed Potion ${potionUniqueId} from client ${ctx.client.id}`,
         );
     }

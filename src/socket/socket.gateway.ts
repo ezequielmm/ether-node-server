@@ -42,38 +42,6 @@ export class SocketGateway
             `Client attempting a connection: ${client.id}`,
         );
 
-        client.prependAny((event, ...args) => {
-            this.logger.log(
-                {
-                    event,
-                    args: args.map((arg) => {
-                        try {
-                            return JSON.parse(arg);
-                        } catch (error) {
-                            return arg;
-                        }
-                    }),
-                },
-                'Client sent a message',
-            );
-        });
-
-        client.prependAnyOutgoing((event, ...args) => {
-            this.logger.log(
-                {
-                    event,
-                    args: args.map((arg) => {
-                        try {
-                            return JSON.parse(arg);
-                        } catch (error) {
-                            return arg;
-                        }
-                    }),
-                },
-                'Server sent a message',
-            );
-        });
-
         const { authorization } = client.handshake.headers;
 
         if (!isValidAuthToken(authorization)) {
@@ -92,21 +60,45 @@ export class SocketGateway
                 authorization,
             );
 
-            const expedition = await this.expeditionService.updateClientId({
-                clientId: client.id,
-                playerId,
-            });
-
             const ctx = await this.expeditionService.getGameContext(client);
+            const expedition = ctx.expedition;
 
-            if (expedition) {
+            client.prependAny((event, ...args) => {
                 this.logger.log(
                     {
-                        clientId: client.id,
-                        expeditionId: expedition.id,
+                        ...ctx.info,
+                        event,
+                        args: args.map((arg) => {
+                            try {
+                                return JSON.parse(arg);
+                            } catch (error) {
+                                return arg;
+                            }
+                        }),
                     },
-                    `Client connected to expedition`,
+                    'Client sent a message',
                 );
+            });
+
+            client.prependAnyOutgoing((event, ...args) => {
+                this.logger.log(
+                    {
+                        ...ctx.info,
+                        event,
+                        args: args.map((arg) => {
+                            try {
+                                return JSON.parse(arg);
+                            } catch (error) {
+                                return arg;
+                            }
+                        }),
+                    },
+                    'Server sent a message',
+                );
+            });
+
+            if (expedition) {
+                this.logger.log(ctx.info, `Client connected to expedition`);
 
                 // Here we check if the player is in a node already
                 if (expedition.currentNode !== undefined) {
@@ -142,15 +134,21 @@ export class SocketGateway
     }
 
     async handleDisconnect(client: Socket): Promise<void> {
-        this.logger.log(`Client disconnected: ${client.id}`);
+        const ctx = await this.expeditionService.getGameContext(client);
+
+        this.logger.log(ctx.info, `Client disconnected: ${client.id}`);
 
         // Clear Combat queue
         await this.combatQueueService.deleteCombatQueueByClientId(client.id);
-        this.logger.log(`Deleted combat queue for client ${client.id}`);
+        this.logger.log(
+            ctx.info,
+            `Deleted combat queue for client ${client.id}`,
+        );
 
         // Clear Card Selection Queue
         await this.cardSelectionScreenService.deleteByClientId(client.id);
         this.logger.log(
+            ctx.info,
             `Deleted card selection screen items for client ${client.id}`,
         );
 

@@ -52,7 +52,7 @@ export class InitExpeditionProcess {
 
         const cards = await this.generatePlayerDeck(character, email);
 
-        await this.expeditionService.create({
+        const expedition = await this.expeditionService.create({
             playerId,
             map,
             scores: {
@@ -83,7 +83,12 @@ export class InitExpeditionProcess {
             createdAt: new Date(),
         });
 
-        this.logger.log(`Created expedition for player id: ${playerId}`);
+        this.logger.log(
+            {
+                expId: expedition.id,
+            },
+            `Created expedition for player id: ${playerId}`,
+        );
     }
 
     private async generatePlayerDeck(

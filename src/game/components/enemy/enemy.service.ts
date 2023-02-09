@@ -171,7 +171,7 @@ export class EnemyService {
 
         enemy.value.currentScript = script;
 
-        this.logger.log(`Set script of enemy ${id} to ${script}`);
+        this.logger.log(ctx.info, `Set script of enemy ${id} to ${script}`);
 
         return script;
     }
@@ -203,7 +203,7 @@ export class EnemyService {
 
         enemy.value.defense = defense;
 
-        this.logger.log(`Set defense of enemy ${id} to ${defense}`);
+        this.logger.log(ctx.info, `Set defense of enemy ${id} to ${defense}`);
 
         return defense;
     }
@@ -237,7 +237,7 @@ export class EnemyService {
 
         enemy.value.hpCurrent = newHp;
 
-        this.logger.log(`Set hpCurrent of enemy ${id} to ${hp}`);
+        this.logger.log(ctx.info, `Set hpCurrent of enemy ${id} to ${hp}`);
 
         return newHp;
     }
@@ -280,6 +280,7 @@ export class EnemyService {
         }
 
         this.logger.log(
+            ctx.info,
             `Player ${client.id} applied damage of ${damage} to enemy ${id}`,
         );
 
@@ -369,9 +370,13 @@ export class EnemyService {
             enemy.value.currentScript = nextScript;
 
             this.logger.log(
+                ctx.info,
                 `Calculated new script for enemy ${enemy.value.id}`,
             );
-            this.logger.log(`New script: ${JSON.stringify(nextScript)}`);
+            this.logger.log(
+                ctx.info,
+                `New script: ${JSON.stringify(nextScript)}`,
+            );
         }
     }
 
@@ -452,10 +457,11 @@ export class EnemyService {
                 // If the status has a counter, we increment it
                 oldStatus.args.counter++;
                 this.logger.log(
+                    ctx.info,
                     `Status ${name} counter incremented to ${oldStatus.args.counter}`,
                 );
             } else {
-                this.logger.log(`Status ${name} has no counter`);
+                this.logger.log(ctx.info, `Status ${name} has no counter`);
             }
 
             finalStatusAttached = oldStatus;
@@ -488,7 +494,7 @@ export class EnemyService {
             },
         );
 
-        this.logger.log(`Status ${name} attached to enemy ${id}`);
+        this.logger.log(ctx.info, `Status ${name} attached to enemy ${id}`);
 
         return finalStatusAttached;
     }

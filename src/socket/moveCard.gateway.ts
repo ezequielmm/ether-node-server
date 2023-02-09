@@ -21,11 +21,12 @@ export class MoveCardGateway {
 
     @SubscribeMessage('MoveCard')
     async handleMoveCard(client: Socket, payload: string): Promise<void> {
+        const ctx = await this.expeditionService.getGameContext(client);
+
         this.logger.log(
+            ctx.info,
             `Client ${client.id} trigger message "MoveCard": ${payload}`,
         );
-
-        const ctx = await this.expeditionService.getGameContext(client);
 
         const encounterData = await this.encounterService.getEncounterData(
             client,

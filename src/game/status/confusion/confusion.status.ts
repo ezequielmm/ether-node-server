@@ -54,6 +54,7 @@ export class ConfusionStatus implements StatusEffectHandler {
         set(dto.effectDTO, 'target', newTarget);
 
         this.logger.log(
+            ctx.info,
             `Confused effect changed target from ${target.type} to ${newTarget.type}`,
         );
 

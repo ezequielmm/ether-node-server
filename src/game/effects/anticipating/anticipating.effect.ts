@@ -28,6 +28,7 @@ export class AnticipatingEffect implements EffectHandler {
         }
 
         this.logger.log(
+            ctx.info,
             `Adding anticipating status to ${target.type} with ${defense} defense`,
         );
 

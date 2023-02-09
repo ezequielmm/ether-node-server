@@ -1,4 +1,3 @@
-import { Logger } from '@nestjs/common';
 import { SubscribeMessage, WebSocketGateway } from '@nestjs/websockets';
 import { Socket } from 'socket.io';
 import { FullSyncAction } from 'src/game/action/fullSync.action';
@@ -8,8 +7,6 @@ import { corsSocketSettings } from './socket.enum';
 
 @WebSocketGateway(corsSocketSettings)
 export class RewardGateway {
-    private readonly logger: Logger = new Logger(RewardGateway.name);
-
     constructor(
         private readonly expeditionService: ExpeditionService,
         private readonly fullSyncAction: FullSyncAction,
@@ -21,8 +18,6 @@ export class RewardGateway {
         client: Socket,
         rewardId: string,
     ): Promise<string> {
-        this.logger.log(`Client ${client.id} choose reward id: ${rewardId}`);
-
         // Get the game context
         const ctx = await this.expeditionService.getGameContext(client);
 

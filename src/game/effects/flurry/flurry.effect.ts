@@ -27,12 +27,15 @@ export class FlurryEffect implements EffectHandler {
                 EnemyService.isEnemy(target) &&
                 this.enemyService.isDead(target)
             ) {
-                this.logger.log('Enemy is dead, looking for other enemies');
+                this.logger.log(
+                    ctx.info,
+                    'Enemy is dead, looking for other enemies',
+                );
                 target = this.enemyService.getRandom(ctx);
             }
 
             if (!target) {
-                this.logger.error('No target found for Flurry');
+                this.logger.error(ctx.info, 'No target found for Flurry');
                 return;
             }
 
