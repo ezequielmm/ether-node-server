@@ -58,10 +58,10 @@ export class ExpeditionService {
             events,
             moduleRef: this.moduleRef,
             info: {
-                Env: this.configService.get<string>('PAPERTRAIL_ENV'),
-                Acct: expedition.playerState.email,
-                ExId: expedition !== null ? expedition.id : null,
-                Serv: this.configService.get<string>('PAPERTRAIL_SERVICE'),
+                env: this.configService.get<string>('PAPERTRAIL_ENV'),
+                account: expedition.playerState.email,
+                expeditionID: expedition !== null ? expedition.id : null,
+                service: this.configService.get<string>('PAPERTRAIL_SERVICE'),
             },
         };
 

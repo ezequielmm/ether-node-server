@@ -16,12 +16,7 @@ import { createWriteStream } from 'pino-papertrail';
             useFactory: (configService: ConfigService) => ({
                 pinoHttp: [
                     {
-                        formatters: {
-                            level(label, number) {
-                                return { Lev: number };
-                            },
-                        },
-                        messageKey: 'Msg',
+                        messageKey: 'message',
                         transport:
                             process.env.NODE_ENV !== 'production'
                                 ? { target: 'pino-pretty' }
