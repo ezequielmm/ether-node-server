@@ -60,6 +60,11 @@ export class SocketGateway
                 authorization,
             );
 
+            await this.expeditionService.updateClientId({
+                playerId,
+                clientId: client.id,
+            });
+
             const ctx = await this.expeditionService.getGameContext(client);
             const expedition = ctx.expedition;
 

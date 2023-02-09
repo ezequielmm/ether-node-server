@@ -62,7 +62,7 @@ export class ExpeditionService {
         };
 
         for (const trinket of expedition.playerState?.trinkets) {
-            await trinket.onAttach(ctx);
+            trinket.onAttach(ctx);
         }
 
         return ctx;
