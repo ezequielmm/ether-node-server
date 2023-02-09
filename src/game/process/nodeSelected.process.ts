@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { NodeStatus } from '../components/expedition/node-status';
 import { NodeType } from '../components/expedition/node-type';
 import { GameContext } from '../components/interfaces';
@@ -15,12 +15,13 @@ import { MapService } from '../map/map.service';
 import { InitEncounterProcess } from './initEncounter.process';
 import { InitNodeProcess } from './initNode.process';
 import { InitTreasureProcess } from './initTreasure.process';
+import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 
 @Injectable()
 export class NodeSelectedProcess {
-    private readonly logger: Logger = new Logger(NodeSelectedProcess.name);
-
     constructor(
+        @InjectPinoLogger()
+        private readonly logger: PinoLogger,
         private readonly initCombatProcess: InitCombatProcess,
         private readonly initNodeProcess: InitNodeProcess,
         private readonly initMerchantProcess: InitMerchantProcess,
@@ -32,8 +33,10 @@ export class NodeSelectedProcess {
     async handle(ctx: GameContext, node_id: number): Promise<string> {
         const node = this.mapService.findNodeById(ctx, node_id);
 
+        const logger = this.logger.logger.child(ctx.info);
+
         if (!this.mapService.nodeIsSelectable(ctx, node.id)) {
-            this.logger.error('Selected node is not available');
+            logger.error('Selected node is not available');
             ctx.client.emit('ErrorMessage', {
                 message: `An Error has ocurred selecting the node`,
             });
@@ -51,6 +54,8 @@ export class NodeSelectedProcess {
         ctx: GameContext,
         node: Node,
     ): Promise<string> {
+        const logger = this.logger.logger.child(ctx.info);
+
         const { mapSeedId, map } = ctx.expedition;
 
         this.mapService.selectNode(ctx, node.id);
@@ -58,7 +63,7 @@ export class NodeSelectedProcess {
 
         switch (node.type) {
             case NodeType.Portal:
-                this.logger.log(`Map extended for client ${ctx.client.id}`);
+                logger.info(`Map extended for client ${ctx.client.id}`);
 
                 return StandardResponse.respond({
                     message_type: SWARMessageType.MapUpdate,
@@ -71,7 +76,7 @@ export class NodeSelectedProcess {
             case NodeType.RoyalHouseB:
             case NodeType.RoyalHouseC:
             case NodeType.RoyalHouseD:
-                this.logger.log(`Activated portal for client ${ctx.client.id}`);
+                logger.info(`Activated portal for client ${ctx.client.id}`);
 
                 return StandardResponse.respond({
                     message_type: SWARMessageType.MapUpdate,
@@ -83,7 +88,7 @@ export class NodeSelectedProcess {
             case NodeType.CombatBoss:
             case NodeType.CombatElite:
             case NodeType.CombatStandard:
-                this.logger.log(
+                logger.info(
                     `Sent message InitCombat to client ${ctx.client.id}`,
                 );
 
@@ -98,7 +103,7 @@ export class NodeSelectedProcess {
             case NodeType.Camp:
             case NodeType.CampHouse:
             case NodeType.CampRegular:
-                this.logger.log(`Started Camp for client ${ctx.client.id}`);
+                logger.info(`Started Camp for client ${ctx.client.id}`);
 
                 await this.initNodeProcess.process(ctx, node);
 
@@ -108,30 +113,30 @@ export class NodeSelectedProcess {
                     data: null,
                 });
             case NodeType.Encounter:
-                this.logger.log(
-                    `Started Encounter for client ${ctx.client.id}`,
-                );
+                logger.info(`Started Encounter for client ${ctx.client.id}`);
 
                 return await this.initEncounterProcess.process(ctx, node);
             case NodeType.Treasure:
-                this.logger.log(`Started Treasure for client ${ctx.client.id}`);
+                logger.info(`Started Treasure for client ${ctx.client.id}`);
 
                 return await this.initTreasureProcess.process(ctx, node, false);
             case NodeType.Merchant:
-                this.logger.log(`Started Merchant for client ${ctx.client.id}`);
+                logger.info(`Started Merchant for client ${ctx.client.id}`);
 
                 return await this.initMerchantProcess.process(ctx, node);
         }
     }
 
     private async nodeIsActive(ctx: GameContext, node: Node): Promise<string> {
+        const logger = this.logger.logger.child(ctx.info);
+
         switch (node.type) {
             case NodeType.Combat:
             case NodeType.Combat:
             case NodeType.CombatBoss:
             case NodeType.CombatElite:
             case NodeType.CombatStandard:
-                this.logger.log(
+                logger.info(
                     `Sent message InitCombat to client ${ctx.client.id}`,
                 );
 
@@ -140,6 +145,10 @@ export class NodeSelectedProcess {
             case NodeType.Camp:
             case NodeType.CampHouse:
             case NodeType.CampRegular:
+                logger.info(
+                    `Sent message BeginCamp to client ${ctx.client.id}`,
+                );
+
                 await this.initNodeProcess.process(ctx, node);
 
                 return StandardResponse.respond({
@@ -148,6 +157,10 @@ export class NodeSelectedProcess {
                     data: null,
                 });
             case NodeType.Encounter:
+                logger.info(
+                    `Sent message BeginEncounter to client ${ctx.client.id}`,
+                );
+
                 await this.initNodeProcess.process(ctx, node);
 
                 return StandardResponse.respond({
@@ -156,8 +169,16 @@ export class NodeSelectedProcess {
                     data: null,
                 });
             case NodeType.Treasure:
+                logger.info(
+                    `Sent message BeginEncounter to client ${ctx.client.id}`,
+                );
+
                 return await this.initTreasureProcess.process(ctx, node, true);
             case NodeType.Merchant:
+                logger.info(
+                    `Sent message BeginMerchant to client ${ctx.client.id}`,
+                );
+
                 await this.initMerchantProcess.process(ctx, node);
 
                 return StandardResponse.respond({
