@@ -1,4 +1,5 @@
-import { forwardRef, Inject, Injectable, Logger } from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
+import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 import { Socket } from 'socket.io';
 import { CardId } from '../components/card/card.type';
 import { IExpeditionPlayerStateDeckCard } from '../components/expedition/expedition.interface';
@@ -9,33 +10,40 @@ import {
     SWARMessageType,
 } from '../standardResponse/standardResponse';
 
-interface ExhaustCardDTO {
-    readonly client: Socket;
-    readonly cardId: CardId;
-}
-
 @Injectable()
 export class ExhaustCardAction {
-    private readonly logger: Logger = new Logger(ExhaustCardAction.name);
-
     constructor(
+        @InjectPinoLogger(ExhaustCardAction.name)
+        private readonly logger: PinoLogger,
         @Inject(forwardRef(() => ExpeditionService))
         private readonly expeditionService: ExpeditionService,
     ) {}
 
-    async handle(payload: ExhaustCardDTO): Promise<void> {
-        const { client, cardId } = payload;
+    async handle({
+        client,
+        cardId,
+    }: {
+        readonly client: Socket;
+        readonly cardId: CardId;
+    }): Promise<void> {
+        // First we get the game context
+        const ctx = await this.expeditionService.getGameContext(client);
 
-        // First we get the hand and discard piles from the current node object
+        // Now we set the logger context
+        const logger = this.logger.logger.child(ctx.info);
+
+        // Now we get the hand and discard piles from the current node object
         const {
-            data: {
-                player: {
-                    cards: { hand, exhausted },
+            expedition: {
+                currentNode: {
+                    data: {
+                        player: {
+                            cards: { hand, exhausted },
+                        },
+                    },
                 },
             },
-        } = await this.expeditionService.getCurrentNode({
-            clientId: client.id,
-        });
+        } = ctx;
 
         // Then we take the desired card from the hand pile
         // Also remove it from the hand pile
@@ -58,7 +66,7 @@ export class ExhaustCardAction {
             exhausted,
         });
 
-        this.logger.log(
+        logger.info(
             `Sent message PutData to client ${client.id}: ${SWARAction.MoveCard}`,
         );
 
