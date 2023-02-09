@@ -1,6 +1,7 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { filter } from 'lodash';
+import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 import { ChangeTurnAction } from '../action/changeTurn.action';
 import { DiscardAllCardsAction } from '../action/discardAllCards.action';
 import { CombatQueueService } from '../components/combatQueue/combatQueue.service';
@@ -16,9 +17,9 @@ import { BeginEnemyTurnProcess } from './beginEnemyTurn.process';
 
 @Injectable()
 export class EndPlayerTurnProcess {
-    private readonly logger: Logger = new Logger(EndPlayerTurnProcess.name);
-
     constructor(
+        @InjectPinoLogger(EndPlayerTurnProcess.name)
+        private readonly logger: PinoLogger,
         private readonly discardAllCardsAction: DiscardAllCardsAction,
         private readonly beginEnemyTurnProcess: BeginEnemyTurnProcess,
         private readonly eventEmitter: EventEmitter2,
@@ -28,7 +29,10 @@ export class EndPlayerTurnProcess {
     ) {}
 
     async handle({ ctx }: { ctx: GameContext }): Promise<void> {
-        this.logger.log(`Ending player turn`);
+        // Set the logger context
+        const logger = this.logger.logger.child(ctx.info);
+
+        logger.info(`Ending player turn`);
 
         const { client, expedition } = ctx;
 
