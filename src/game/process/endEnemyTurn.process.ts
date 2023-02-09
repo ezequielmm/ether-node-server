@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { ChangeTurnAction } from '../action/changeTurn.action';
 import { CombatQueueService } from '../components/combatQueue/combatQueue.service';
@@ -13,8 +13,6 @@ import { BeginPlayerTurnProcess } from './beginPlayerTurn.process';
 
 @Injectable()
 export class EndEnemyTurnProcess {
-    private readonly logger: Logger = new Logger(EndEnemyTurnProcess.name);
-
     constructor(
         private readonly beingPlayerTurnProcess: BeginPlayerTurnProcess,
         private readonly eventEmitter: EventEmitter2,
@@ -23,8 +21,6 @@ export class EndEnemyTurnProcess {
     ) {}
 
     async handle({ ctx }: { ctx: GameContext }): Promise<void> {
-        this.logger.log(`Ending enemies turn`);
-
         const { client } = ctx;
 
         await this.combatQueueService.start(ctx);
