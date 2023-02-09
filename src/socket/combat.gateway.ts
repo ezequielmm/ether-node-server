@@ -29,10 +29,7 @@ export class CombatGateway {
         const ctx = await this.expeditionService.getGameContext(client);
 
         // If the combat is ended, we skip the turn
-        if (this.expeditionService.isCurrentCombatEnded(ctx)) {
-            this.logger.log('Combat ended, skipping turn');
-            return;
-        }
+        if (this.expeditionService.isCurrentCombatEnded(ctx)) return;
 
         const { expedition } = ctx;
 
