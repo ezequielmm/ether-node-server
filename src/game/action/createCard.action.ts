@@ -1,6 +1,7 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { DocumentType } from '@typegoose/typegoose';
 import { randomUUID } from 'crypto';
+import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 import { Socket } from 'socket.io';
 import { CardDescriptionFormatter } from '../cardDescriptionFormatter/cardDescriptionFormatter';
 import { Card } from '../components/card/card.schema';
@@ -12,33 +13,41 @@ import {
     SWARMessageType,
 } from '../standardResponse/standardResponse';
 
-interface CreateCardDTO {
-    cardsToAdd: number[];
-    client: Socket;
-    destination: 'hand' | 'discard';
-    sendSWARResponse: boolean;
-}
-
 @Injectable()
 export class CreateCardAction {
-    private readonly logger: Logger = new Logger(CreateCardAction.name);
-
     constructor(
+        @InjectPinoLogger(CreateCardAction.name)
+        private readonly logger: PinoLogger,
         private readonly expeditionService: ExpeditionService,
         private readonly cardService: CardService,
     ) {}
 
-    async handle(dto: CreateCardDTO): Promise<void> {
-        const { client, cardsToAdd, destination, sendSWARResponse } = dto;
+    async handle({
+        client,
+        cardsToAdd,
+        destination,
+        sendSWARResponse,
+    }: {
+        cardsToAdd: number[];
+        client: Socket;
+        destination: 'hand' | 'discard';
+        sendSWARResponse: boolean;
+    }): Promise<void> {
+        // First get game context
+        const ctx = await this.expeditionService.getGameContext(client);
+
+        const logger = this.logger.logger.child(ctx.info);
 
         // Get the current decks for the player
         const {
-            data: {
-                player: { cards },
+            expedition: {
+                currentNode: {
+                    data: {
+                        player: { cards },
+                    },
+                },
             },
-        } = await this.expeditionService.getCurrentNode({
-            clientId: client.id,
-        });
+        } = ctx;
 
         const destinationDeck = cards[destination];
 
@@ -64,7 +73,7 @@ export class CreateCardAction {
         // to the frontend at the moment
         if (sendSWARResponse) {
             // Send message to the frontend to comunicate the new cards
-            this.logger.log(
+            logger.info(
                 `Added ${newCards.length} new cards to player ${client.id} deck`,
             );
 
