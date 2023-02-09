@@ -17,6 +17,9 @@ export class Player {
     playerName: string;
 
     @Prop()
+    email?: string;
+
+    @Prop()
     characterClass: string;
 
     @Prop()

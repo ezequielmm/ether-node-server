@@ -63,6 +63,7 @@ export class InitExpeditionProcess {
                 potionChance: initialPotionChance,
             },
             playerState: {
+                email,
                 playerId: randomUUID(),
                 playerName,
                 nftId,
