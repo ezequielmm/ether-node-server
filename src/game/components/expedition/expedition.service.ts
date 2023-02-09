@@ -57,7 +57,7 @@ export class ExpeditionService {
             moduleRef: this.moduleRef,
             info: {
                 clientId: client.id,
-                expId: expedition.id,
+                expId: expedition !== null ? expedition.id : null,
             },
         };
 
