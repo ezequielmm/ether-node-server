@@ -1,5 +1,10 @@
 # KOTE Gameplay Service
 
+| Server      | Status                                                                                                                                                                                                                                                                        |
+| ----------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Development | [![Laravel Forge Site Deployment Status](https://img.shields.io/endpoint?url=https%3A%2F%2Fforge.laravel.com%2Fsite-badges%2F24e71277-d374-4aac-90b7-4394ab80880e%3Fdate%3D1%26commit%3D1&style=plastic)](https://forge.laravel.com/servers/533302/sites/1834943/deployments) |
+| Staging     | [![Laravel Forge Site Deployment Status](https://img.shields.io/endpoint?url=https%3A%2F%2Fforge.laravel.com%2Fsite-badges%2Ff8a1b62f-eae9-4d8b-a6bb-847d524ceeaf%3Fdate%3D1%26commit%3D1&style=plastic)](https://forge.laravel.com/servers/565781/sites/1666418/deployments) |
+
 This documentation will serve as a starting point to install and run the service with necessary commands and resources.
 
 For local development is recommended to have installed:
@@ -27,17 +32,17 @@ NFT_SERVICE_CONTRACT_ID="0x32A322C7C77840c383961B8aB503c9f45440c81f"
 NFT_SERVICE_CHAIN_ID="1"
 ```
 
-| Key             | Value                                                                   |
-| --------------- | ----------------------------------------------------------------------- |
-| MONGODB_URL     | The mongo db url for local/remote database connection                   |
-| SSL_CERT_PATH   | The path for the `server.crt` file for SSL                              |
-| SSL_KEY_PATH    | The path for the `server.key` file for SSL                              |
-| GET_PROFILE_URL | API route to get the user profile on the auth service                   |
-| NODE_ENV        | Environment where the service is running: `development` or `production` |
-| NFT_SERVICE_URL | API route to get wallet tokens from the nft service                     |
-|NFT_SERVICE_CONTRACT_ID| Contract id for nft srevice queries                               |
-|NFT_SERVICE_CHAIN_ID| The chain id for nft srevice queries                                 |
-|NFT_SERVICE_AUTHORIZATION| The value of the Authorization header for the nft srevice       |
+| Key                       | Value                                                                   |
+| ------------------------- | ----------------------------------------------------------------------- |
+| MONGODB_URL               | The mongo db url for local/remote database connection                   |
+| SSL_CERT_PATH             | The path for the `server.crt` file for SSL                              |
+| SSL_KEY_PATH              | The path for the `server.key` file for SSL                              |
+| GET_PROFILE_URL           | API route to get the user profile on the auth service                   |
+| NODE_ENV                  | Environment where the service is running: `development` or `production` |
+| NFT_SERVICE_URL           | API route to get wallet tokens from the nft service                     |
+| NFT_SERVICE_CONTRACT_ID   | Contract id for nft srevice queries                                     |
+| NFT_SERVICE_CHAIN_ID      | The chain id for nft srevice queries                                    |
+| NFT_SERVICE_AUTHORIZATION | The value of the Authorization header for the nft srevice               |
 
 Once the `.env` file is set, we can run `npm run seed` to seed the database with the initial data.
 
