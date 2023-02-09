@@ -1,4 +1,5 @@
-import { forwardRef, Inject, Injectable, Logger } from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
+import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 import { Socket } from 'socket.io';
 import { ExpeditionService } from 'src/game/components/expedition/expedition.service';
 import { isNotUndefined } from 'src/utils';
@@ -10,33 +11,40 @@ import {
     SWARMessageType,
 } from '../standardResponse/standardResponse';
 
-interface DiscardCardDTO {
-    readonly client: Socket;
-    readonly cardId: CardId;
-}
-
 @Injectable()
 export class DiscardCardAction {
-    private readonly logger: Logger = new Logger(DiscardCardAction.name);
-
     constructor(
+        @InjectPinoLogger(DiscardCardAction.name)
+        private readonly logger: PinoLogger,
         @Inject(forwardRef(() => ExpeditionService))
         private readonly expeditionService: ExpeditionService,
     ) {}
 
-    async handle(payload: DiscardCardDTO): Promise<void> {
-        const { client, cardId } = payload;
+    async handle({
+        client,
+        cardId,
+    }: {
+        readonly client: Socket;
+        readonly cardId: CardId;
+    }): Promise<void> {
+        // First we get the game context
+        const ctx = await this.expeditionService.getGameContext(client);
 
-        // First we get the hand and discard piles from the current node object
+        // Now we set the logger context
+        const logger = this.logger.logger.child(ctx.info);
+
+        // now we get the hand and discard piles from the current game context
         const {
-            data: {
-                player: {
-                    cards: { hand, discard },
+            expedition: {
+                currentNode: {
+                    data: {
+                        player: {
+                            cards: { hand, discard },
+                        },
+                    },
                 },
             },
-        } = await this.expeditionService.getCurrentNode({
-            clientId: client.id,
-        });
+        } = ctx;
 
         // Then we take the desired card from the hand pile
         // Also remove it from the hand pile
@@ -83,7 +91,7 @@ export class DiscardCardAction {
             discard,
         });
 
-        this.logger.log(
+        logger.info(
             `Sent message PutData to client ${client.id}: ${SWARAction.MoveCard}`,
         );
 
