@@ -20,12 +20,14 @@ import {
 import { corsSocketSettings, DataWSRequestTypesEnum } from './socket.enum';
 import { GetEncounterDataAction } from 'src/game/action/getEncounterDataAction';
 import { ExpeditionService } from 'src/game/components/expedition/expedition.service';
+import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
+import pino from 'pino';
 
 @WebSocketGateway(corsSocketSettings)
 export class GetDataGateway {
-    private readonly logger: Logger = new Logger(GetDataGateway.name);
-
     constructor(
+        @InjectPinoLogger(GetDataGateway.name)
+        private readonly logger: PinoLogger,
         private readonly sendEnemyIntentsProcess: SendEnemyIntentProcess,
         private readonly getPlayerDeckAction: GetPlayerDeckAction,
         private readonly getStatusesAction: GetStatusesAction,
@@ -44,11 +46,11 @@ export class GetDataGateway {
 
     @SubscribeMessage('GetData')
     async handleGetData(client: Socket, types: string): Promise<string> {
-        this.logger.log(
-            `Client ${client.id} trigger message "GetData": ${types}`,
-        );
-
         const ctx = await this.expeditionService.getGameContext(client);
+
+        const logger = this.logger.logger.child(ctx.info);
+
+        logger.info(`Client ${client.id} trigger message "GetData": ${types}`);
 
         try {
             let data = null;
@@ -113,8 +115,8 @@ export class GetDataGateway {
                 data,
             });
         } catch (e) {
-            this.logger.error(e.message);
-            this.logger.error(e.trace);
+            logger.error(ctx.info, e.message);
+            logger.error(ctx.info, e.trace);
 
             client.emit('ErrorMessage', {
                 message: `An Error has ocurred getting ${types}`,

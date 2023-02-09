@@ -55,6 +55,10 @@ export class ExpeditionService {
             client,
             events,
             moduleRef: this.moduleRef,
+            info: {
+                clientId: client.id,
+                expId: expedition.id,
+            },
         };
 
         for (const trinket of expedition.playerState?.trinkets) {
