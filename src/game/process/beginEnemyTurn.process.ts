@@ -1,7 +1,8 @@
-import { forwardRef, Inject, Injectable, Logger } from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { filter, isEmpty } from 'lodash';
-import { Socket } from 'socket.io';
+import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
+import pino from 'pino';
 import { ChangeTurnAction } from '../action/changeTurn.action';
 import { CardTargetedEnum } from '../components/card/card.enum';
 import { CombatQueueService } from '../components/combatQueue/combatQueue.service';
@@ -23,9 +24,9 @@ import {
 
 @Injectable()
 export class BeginEnemyTurnProcess {
-    private readonly logger: Logger = new Logger(BeginEnemyTurnProcess.name);
-
     constructor(
+        @InjectPinoLogger()
+        private readonly logger: PinoLogger,
         @Inject(forwardRef(() => ExpeditionService))
         private readonly expeditionService: ExpeditionService,
         private readonly effectService: EffectService,
@@ -35,7 +36,10 @@ export class BeginEnemyTurnProcess {
     ) {}
 
     async handle({ ctx }: { ctx: GameContext }): Promise<void> {
-        this.logger.log(`Beginning enemies turn`);
+        // First we set the loggers context
+        const logger = this.logger.logger.child(ctx.info);
+
+        logger.info(`Beginning enemies turn`);
 
         const { client, expedition } = ctx;
 
@@ -95,7 +99,7 @@ export class BeginEnemyTurnProcess {
                     });
 
                     if (this.expeditionService.isCurrentCombatEnded(ctx)) {
-                        this.logger.log(
+                        logger.info(
                             'Combat ended, skipping rest of enemies, intentions and effects',
                         );
                         return;
@@ -104,7 +108,7 @@ export class BeginEnemyTurnProcess {
             }
         }
 
-        await this.sendUpdatedEnemiesData(client);
+        await this.sendUpdatedEnemiesData(ctx, logger);
 
         await this.eventEmitter.emitAsync(EVENT_AFTER_ENEMIES_TURN_START, {
             ctx,
@@ -113,17 +117,21 @@ export class BeginEnemyTurnProcess {
         await this.combatQueueService.end(ctx);
     }
 
-    private async sendUpdatedEnemiesData(client: Socket): Promise<void> {
-        // Next we query back the enemies from the database and
-        // send them to the client
+    private async sendUpdatedEnemiesData(
+        ctx: GameContext,
+        logger: pino.Logger<pino.LoggerOptions & pino.ChildLoggerOptions>,
+    ): Promise<void> {
         const {
-            data: { enemies: enemiesUpdated },
-        } = await this.expeditionService.getCurrentNode({
-            clientId: client.id,
-        });
+            client,
+            expedition: {
+                currentNode: {
+                    data: { enemies },
+                },
+            },
+        } = ctx;
 
         // Send enemies updated
-        this.logger.log(
+        logger.info(
             `Sent message PutData to client ${client.id}: ${SWARAction.UpdateEnemy}`,
         );
 
@@ -132,7 +140,7 @@ export class BeginEnemyTurnProcess {
             StandardResponse.respond({
                 message_type: SWARMessageType.EnemyAffected,
                 action: SWARAction.UpdateEnemy,
-                data: enemiesUpdated
+                data: enemies
                     .filter(({ hpCurrent }) => hpCurrent > 0)
                     .map((enemy) => ({
                         id: enemy.id,
