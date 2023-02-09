@@ -1,4 +1,3 @@
-import { Logger } from '@nestjs/common';
 import { SubscribeMessage, WebSocketGateway } from '@nestjs/websockets';
 import { Socket } from 'socket.io';
 import { GetCardPilesAction } from 'src/game/action/getCardPiles.action';
@@ -21,7 +20,6 @@ import { corsSocketSettings, DataWSRequestTypesEnum } from './socket.enum';
 import { GetEncounterDataAction } from 'src/game/action/getEncounterDataAction';
 import { ExpeditionService } from 'src/game/components/expedition/expedition.service';
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
-import pino from 'pino';
 
 @WebSocketGateway(corsSocketSettings)
 export class GetDataGateway {
