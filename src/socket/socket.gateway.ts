@@ -46,7 +46,13 @@ export class SocketGateway
             this.logger.log(
                 {
                     event,
-                    args,
+                    args: args.map((arg) => {
+                        try {
+                            return JSON.parse(arg);
+                        } catch (error) {
+                            return arg;
+                        }
+                    }),
                 },
                 'Client sent a message',
             );
@@ -56,7 +62,13 @@ export class SocketGateway
             this.logger.log(
                 {
                     event,
-                    args,
+                    args: args.map((arg) => {
+                        try {
+                            return JSON.parse(arg);
+                        } catch (error) {
+                            return arg;
+                        }
+                    }),
                 },
                 'Server sent a message',
             );
