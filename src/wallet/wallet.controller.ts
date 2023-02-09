@@ -1,7 +1,8 @@
 import { Controller, Get, Param } from '@nestjs/common';
-import { ApiOperation } from '@nestjs/swagger';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { WalletService } from './wallet.service';
 
+@ApiTags('Wallet')
 @Controller('wallets')
 export class WalletController {
     constructor(private walletService: WalletService) {}

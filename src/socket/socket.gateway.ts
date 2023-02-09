@@ -116,6 +116,7 @@ export class SocketGateway
                 this.logger.log(
                     {
                         clientId: client.id,
+                        playerId,
                     },
                     'There is no expedition in progress for this player',
                 );
