@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { isNotUndefined, removeCardsFromPile } from 'src/utils';
 import { CardTypeEnum } from '../components/card/card.enum';
 import { IExpeditionPlayerStateDeckCard } from '../components/expedition/expedition.interface';
@@ -14,14 +14,7 @@ import { EventEmitter2 } from '@nestjs/event-emitter';
 import { EVENT_AFTER_DRAW_CARDS } from '../constants';
 import { GameContext } from '../components/interfaces';
 import { shuffle, takeRight } from 'lodash';
-
-interface DrawCardDTO {
-    readonly ctx: GameContext;
-    readonly amountToTake: number;
-    readonly SWARMessageTypeToSend: SWARMessageType;
-    readonly cardType?: CardTypeEnum;
-    readonly useEnemiesConfusedAsValue?: boolean;
-}
+import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 
 export interface AfterDrawCardEvent {
     ctx: GameContext;
@@ -32,24 +25,30 @@ export interface AfterDrawCardEvent {
 
 @Injectable()
 export class DrawCardAction {
-    private readonly logger: Logger = new Logger(DrawCardAction.name);
-
     constructor(
+        @InjectPinoLogger(DrawCardAction.name)
+        private readonly logger: PinoLogger,
         private readonly expeditionService: ExpeditionService,
         private readonly cardService: CardService,
         private readonly eventEmitter2: EventEmitter2,
     ) {}
 
-    async handle(payload: DrawCardDTO): Promise<void> {
-        const {
-            ctx,
-            amountToTake,
-            cardType,
-            SWARMessageTypeToSend,
-            useEnemiesConfusedAsValue,
-        } = payload;
-
+    async handle({
+        ctx,
+        amountToTake,
+        cardType,
+        SWARMessageTypeToSend,
+        useEnemiesConfusedAsValue,
+    }: {
+        readonly ctx: GameContext;
+        readonly amountToTake: number;
+        readonly SWARMessageTypeToSend: SWARMessageType;
+        readonly cardType?: CardTypeEnum;
+        readonly useEnemiesConfusedAsValue?: boolean;
+    }): Promise<void> {
         const { client } = ctx;
+
+        const logger = this.logger.logger.child(ctx.info);
 
         const cardTypeFilter = cardType === undefined ? 'All' : cardType;
 
@@ -115,7 +114,7 @@ export class DrawCardAction {
             // Send create message for the new cards
             // source: draw
             // destination: hand
-            this.logger.log(
+            logger.info(
                 `Sent message PutData to client ${client.id}: ${SWARAction.MoveCard}`,
             );
 
@@ -141,7 +140,7 @@ export class DrawCardAction {
                 // Send create message for the cards
                 // source: discard
                 // destination: draw
-                this.logger.log(
+                logger.info(
                     `Sent message PutData to client ${client.id}: ${SWARAction.MoveCard}`,
                 );
 
@@ -180,7 +179,7 @@ export class DrawCardAction {
                 // Send create message for the new cards
                 // source: draw
                 // destination: hand
-                this.logger.log(
+                logger.info(
                     `Sent message PutData to client ${client.id}: ${SWARAction.MoveCard}`,
                 );
 
