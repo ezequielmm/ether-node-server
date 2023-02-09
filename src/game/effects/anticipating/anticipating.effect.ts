@@ -27,7 +27,7 @@ export class AnticipatingEffect implements EffectHandler {
             defense = target.value.defense;
         }
 
-        this.logger.debug(
+        this.logger.log(
             `Adding anticipating status to ${target.type} with ${defense} defense`,
         );
 

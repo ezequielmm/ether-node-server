@@ -33,7 +33,7 @@ export class TwistTheBladeEffect implements EffectHandler {
         ) as EffectRegistry;
 
         if (!lastDamageEffect) {
-            this.logger.debug(`No damage effect found, skipping`);
+            this.logger.log(`No damage effect found, skipping`);
             return;
         }
 

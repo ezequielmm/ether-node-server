@@ -17,7 +17,7 @@ export class StunnedStatus implements StatusEventHandler {
         const enemy = args.enemy as IExpeditionCurrentNodeDataEnemy;
 
         if (EnemyService.isEnemy(target) && target.value.id == enemy.id) {
-            this.logger.debug(`Stunned ${enemy.name}:${enemy.id}`);
+            this.logger.log(`Stunned ${enemy.name}:${enemy.id}`);
 
             // Remove effects of the enemy's intentions in memory
             for (const intention of enemy.currentScript.intentions) {

@@ -12,7 +12,7 @@ export class TreasureGateway {
 
     @SubscribeMessage('ChestOpened')
     async handleOpenChest(client: Socket): Promise<void> {
-        this.logger.debug(`Client ${client.id} trigger message "ChestOpened"`);
+        this.logger.log(`Client ${client.id} trigger message "ChestOpened"`);
 
         await this.treasureService.openChest(client);
     }

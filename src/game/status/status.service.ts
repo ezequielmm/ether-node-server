@@ -230,7 +230,7 @@ export class StatusService {
                     },
                 });
 
-                this.logger.debug(
+                this.logger.log(
                     `Mutating effect ${effect} with status ${status.name} | ${effectDTO.args.initialValue} ➭ ${effectDTO.args.currentValue}`,
                 );
             }
@@ -591,11 +591,9 @@ export class StatusService {
             if (status.args.counter === 0) {
                 // If the value is 0, remove the status
                 statusesToRemove.push(status);
-                this.logger.debug(
-                    cliColor.red(`Removing status ${status.name}`),
-                );
+                this.logger.log(cliColor.red(`Removing status ${status.name}`));
             } else {
-                this.logger.debug(
+                this.logger.log(
                     cliColor.red(
                         `Decreasing ${status.name} status value to ${status.args.counter}`,
                     ),
@@ -635,7 +633,7 @@ export class StatusService {
         statuses[status.type] = finalStatuses;
 
         // Update status collection
-        this.logger.debug(`Removing status ${status.name} from ${entity.type}`);
+        this.logger.log(`Removing status ${status.name} from ${entity.type}`);
 
         await this.updateStatuses(ctx, entity, statuses);
     }

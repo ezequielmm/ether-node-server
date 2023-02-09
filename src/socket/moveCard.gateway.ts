@@ -21,7 +21,7 @@ export class MoveCardGateway {
 
     @SubscribeMessage('MoveCard')
     async handleMoveCard(client: Socket, payload: string): Promise<void> {
-        this.logger.debug(
+        this.logger.log(
             `Client ${client.id} trigger message "MoveCard": ${payload}`,
         );
 

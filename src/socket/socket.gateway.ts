@@ -33,16 +33,45 @@ export class SocketGateway
     ) {}
 
     afterInit(): void {
-        this.logger.debug(`Socket Initiated`);
+        this.logger.log(`Socket Initiated`);
     }
 
     async handleConnection(client: Socket): Promise<void> {
-        this.logger.debug(`Client attempting a connection: ${client.id}`);
+        this.logger.log(
+            client.handshake,
+            `Client attempting a connection: ${client.id}`,
+        );
+
+        client.prependAny((event, ...args) => {
+            this.logger.log(
+                {
+                    event,
+                    args,
+                },
+                'Client sent a message',
+            );
+        });
+
+        client.prependAnyOutgoing((event, ...args) => {
+            this.logger.log(
+                {
+                    event,
+                    args,
+                },
+                'Server sent a message',
+            );
+        });
 
         const { authorization } = client.handshake.headers;
 
         if (!isValidAuthToken(authorization)) {
-            this.logger.debug(`Client has an invalid auth token: ${client.id}`);
+            this.logger.log(
+                {
+                    authorization,
+                    clientId: client.id,
+                },
+                'Client has an invalid auth token',
+            );
             client.disconnect(true);
         }
 
@@ -59,7 +88,13 @@ export class SocketGateway
             const ctx = await this.expeditionService.getGameContext(client);
 
             if (expedition) {
-                this.logger.debug(`Client connected: ${client.id}`);
+                this.logger.log(
+                    {
+                        clientId: client.id,
+                        expeditionId: expedition.id,
+                    },
+                    `Client connected to expedition`,
+                );
 
                 // Here we check if the player is in a node already
                 if (expedition.currentNode !== undefined) {
@@ -78,29 +113,31 @@ export class SocketGateway
 
                 await this.fullSyncAction.handle(client, false);
             } else {
-                this.logger.debug(
-                    `There is no expedition in progress for this player: ${client.id}`,
+                this.logger.log(
+                    {
+                        clientId: client.id,
+                    },
+                    'There is no expedition in progress for this player',
                 );
 
                 client.disconnect(true);
             }
         } catch (e) {
-            this.logger.debug(e.message);
-            this.logger.debug(e.stack);
+            this.logger.error(e);
             client.disconnect(true);
         }
     }
 
     async handleDisconnect(client: Socket): Promise<void> {
-        this.logger.debug(`Client disconnected: ${client.id}`);
+        this.logger.log(`Client disconnected: ${client.id}`);
 
         // Clear Combat queue
         await this.combatQueueService.deleteCombatQueueByClientId(client.id);
-        this.logger.debug(`Deleted combat queue for client ${client.id}`);
+        this.logger.log(`Deleted combat queue for client ${client.id}`);
 
         // Clear Card Selection Queue
         await this.cardSelectionScreenService.deleteByClientId(client.id);
-        this.logger.debug(
+        this.logger.log(
             `Deleted card selection screen items for client ${client.id}`,
         );
 

@@ -115,7 +115,7 @@ export class DrawCardAction {
             // Send create message for the new cards
             // source: draw
             // destination: hand
-            this.logger.debug(
+            this.logger.log(
                 `Sent message PutData to client ${client.id}: ${SWARAction.MoveCard}`,
             );
 
@@ -141,7 +141,7 @@ export class DrawCardAction {
                 // Send create message for the cards
                 // source: discard
                 // destination: draw
-                this.logger.debug(
+                this.logger.log(
                     `Sent message PutData to client ${client.id}: ${SWARAction.MoveCard}`,
                 );
 
@@ -180,7 +180,7 @@ export class DrawCardAction {
                 // Send create message for the new cards
                 // source: draw
                 // destination: hand
-                this.logger.debug(
+                this.logger.log(
                     `Sent message PutData to client ${client.id}: ${SWARAction.MoveCard}`,
                 );
 

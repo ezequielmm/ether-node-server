@@ -49,7 +49,7 @@ export class ChooseCardEffect implements EffectHandler {
                 : cards.draw;
 
         // Now we send a message to the frontend to choose a card from that list
-        this.logger.debug(
+        this.logger.log(
             `Client ${client.id} will take ${cardsToTake} cards from the ${originPile} pile`,
         );
 

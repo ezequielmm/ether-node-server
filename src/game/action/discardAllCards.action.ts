@@ -50,6 +50,6 @@ export class DiscardAllCardsAction {
             }),
         );
 
-        this.logger.debug(`Discarded and exhausted all cards`);
+        this.logger.log(`Discarded and exhausted all cards`);
     }
 }

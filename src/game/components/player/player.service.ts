@@ -89,7 +89,7 @@ export class PlayerService {
         });
 
         set(ctx.expedition, PLAYER_DEFENSE_PATH, defense);
-        this.logger.debug(`Player defense set to ${defense}`);
+        this.logger.log(`Player defense set to ${defense}`);
 
         return defense;
     }
@@ -107,7 +107,7 @@ export class PlayerService {
         });
 
         set(ctx.expedition, PLAYER_ENERGY_PATH, energy);
-        this.logger.debug(`Player energy set to ${energy}`);
+        this.logger.log(`Player energy set to ${energy}`);
 
         return energy;
     }
@@ -128,7 +128,7 @@ export class PlayerService {
         });
 
         set(ctx.expedition, PLAYER_CURRENT_HP_PATH, newHp);
-        this.logger.debug(`Player hp set to ${newHp}`);
+        this.logger.log(`Player hp set to ${newHp}`);
 
         return newHp;
     }
@@ -145,7 +145,7 @@ export class PlayerService {
         });
 
         set(ctx.expedition, PLAYER_STATE_HP_CURRENT_PATH, newHp);
-        this.logger.debug(`Player hp set to ${newHp}`);
+        this.logger.log(`Player hp set to ${newHp}`);
 
         return newHp;
     }
@@ -166,7 +166,7 @@ export class PlayerService {
         ctx.expedition.markModified('currentNode.data.player.hpMax');
         await ctx.expedition.save();
 
-        this.logger.debug(`Player raise Max HP by  ${raiseHp}`);
+        this.logger.log(`Player raise Max HP by  ${raiseHp}`);
 
         return newHpMax;
     }
@@ -205,7 +205,7 @@ export class PlayerService {
             newHp = Math.max(0, currentHp - damage);
         }
 
-        this.logger.debug(`Player received damage for ${damage} points`);
+        this.logger.log(`Player received damage for ${damage} points`);
 
         // Update the player's defense and new health
         await this.setDefense(ctx, newDefense);
@@ -300,7 +300,7 @@ export class PlayerService {
             },
         );
 
-        this.logger.debug(`Status ${name} attached to player`);
+        this.logger.log(`Status ${name} attached to player`);
 
         return finalStatusAttached;
     }

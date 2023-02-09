@@ -44,7 +44,7 @@ export class GetDataGateway {
 
     @SubscribeMessage('GetData')
     async handleGetData(client: Socket, types: string): Promise<string> {
-        this.logger.debug(
+        this.logger.log(
             `Client ${client.id} trigger message "GetData": ${types}`,
         );
 

@@ -171,7 +171,7 @@ export class EnemyService {
 
         enemy.value.currentScript = script;
 
-        this.logger.debug(`Set script of enemy ${id} to ${script}`);
+        this.logger.log(`Set script of enemy ${id} to ${script}`);
 
         return script;
     }
@@ -203,7 +203,7 @@ export class EnemyService {
 
         enemy.value.defense = defense;
 
-        this.logger.debug(`Set defense of enemy ${id} to ${defense}`);
+        this.logger.log(`Set defense of enemy ${id} to ${defense}`);
 
         return defense;
     }
@@ -237,7 +237,7 @@ export class EnemyService {
 
         enemy.value.hpCurrent = newHp;
 
-        this.logger.debug(`Set hpCurrent of enemy ${id} to ${hp}`);
+        this.logger.log(`Set hpCurrent of enemy ${id} to ${hp}`);
 
         return newHp;
     }
@@ -279,7 +279,7 @@ export class EnemyService {
             enemy.hpCurrent = Math.max(0, enemy.hpCurrent - damage);
         }
 
-        this.logger.debug(
+        this.logger.log(
             `Player ${client.id} applied damage of ${damage} to enemy ${id}`,
         );
 
@@ -368,10 +368,10 @@ export class EnemyService {
 
             enemy.value.currentScript = nextScript;
 
-            this.logger.debug(
+            this.logger.log(
                 `Calculated new script for enemy ${enemy.value.id}`,
             );
-            this.logger.debug(`New script: ${JSON.stringify(nextScript)}`);
+            this.logger.log(`New script: ${JSON.stringify(nextScript)}`);
         }
     }
 
@@ -488,7 +488,7 @@ export class EnemyService {
             },
         );
 
-        this.logger.debug(`Status ${name} attached to enemy ${id}`);
+        this.logger.log(`Status ${name} attached to enemy ${id}`);
 
         return finalStatusAttached;
     }

@@ -83,7 +83,7 @@ export class DiscardCardAction {
             discard,
         });
 
-        this.logger.debug(
+        this.logger.log(
             `Sent message PutData to client ${client.id}: ${SWARAction.MoveCard}`,
         );
 

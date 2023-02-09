@@ -58,7 +58,7 @@ export class NodeSelectedProcess {
 
         switch (node.type) {
             case NodeType.Portal:
-                this.logger.debug(`Map extended for client ${ctx.client.id}`);
+                this.logger.log(`Map extended for client ${ctx.client.id}`);
 
                 return StandardResponse.respond({
                     message_type: SWARMessageType.MapUpdate,
@@ -71,9 +71,7 @@ export class NodeSelectedProcess {
             case NodeType.RoyalHouseB:
             case NodeType.RoyalHouseC:
             case NodeType.RoyalHouseD:
-                this.logger.debug(
-                    `Activated portal for client ${ctx.client.id}`,
-                );
+                this.logger.log(`Activated portal for client ${ctx.client.id}`);
 
                 return StandardResponse.respond({
                     message_type: SWARMessageType.MapUpdate,
@@ -85,7 +83,7 @@ export class NodeSelectedProcess {
             case NodeType.CombatBoss:
             case NodeType.CombatElite:
             case NodeType.CombatStandard:
-                this.logger.debug(
+                this.logger.log(
                     `Sent message InitCombat to client ${ctx.client.id}`,
                 );
 
@@ -100,7 +98,7 @@ export class NodeSelectedProcess {
             case NodeType.Camp:
             case NodeType.CampHouse:
             case NodeType.CampRegular:
-                this.logger.debug(`Started Camp for client ${ctx.client.id}`);
+                this.logger.log(`Started Camp for client ${ctx.client.id}`);
 
                 await this.initNodeProcess.process(ctx, node);
 
@@ -110,21 +108,17 @@ export class NodeSelectedProcess {
                     data: null,
                 });
             case NodeType.Encounter:
-                this.logger.debug(
+                this.logger.log(
                     `Started Encounter for client ${ctx.client.id}`,
                 );
 
                 return await this.initEncounterProcess.process(ctx, node);
             case NodeType.Treasure:
-                this.logger.debug(
-                    `Started Treasure for client ${ctx.client.id}`,
-                );
+                this.logger.log(`Started Treasure for client ${ctx.client.id}`);
 
                 return await this.initTreasureProcess.process(ctx, node, false);
             case NodeType.Merchant:
-                this.logger.debug(
-                    `Started Merchant for client ${ctx.client.id}`,
-                );
+                this.logger.log(`Started Merchant for client ${ctx.client.id}`);
 
                 return await this.initMerchantProcess.process(ctx, node);
         }
@@ -137,7 +131,7 @@ export class NodeSelectedProcess {
             case NodeType.CombatBoss:
             case NodeType.CombatElite:
             case NodeType.CombatStandard:
-                this.logger.debug(
+                this.logger.log(
                     `Sent message InitCombat to client ${ctx.client.id}`,
                 );
 

@@ -53,7 +53,7 @@ export class ConfusionStatus implements StatusEffectHandler {
         // This change is unique to this status
         set(dto.effectDTO, 'target', newTarget);
 
-        this.logger.debug(
+        this.logger.log(
             `Confused effect changed target from ${target.type} to ${newTarget.type}`,
         );
 

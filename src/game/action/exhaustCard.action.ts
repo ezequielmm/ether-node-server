@@ -58,7 +58,7 @@ export class ExhaustCardAction {
             exhausted,
         });
 
-        this.logger.debug(
+        this.logger.log(
             `Sent message PutData to client ${client.id}: ${SWARAction.MoveCard}`,
         );
 

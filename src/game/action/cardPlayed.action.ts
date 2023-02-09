@@ -102,7 +102,7 @@ export class CardPlayedAction {
                     CardPlayErrorMessages.UnplayableCard,
                 );
             } else {
-                this.logger.debug(
+                this.logger.log(
                     `Started combat queue for client ${ctx.client.id}`,
                 );
 
@@ -173,7 +173,7 @@ export class CardPlayedAction {
                     // After applying the effects, check if the current
                     // combat has ended and if so, skip all next steps
                     if (this.expeditionService.isCurrentCombatEnded(ctx)) {
-                        this.logger.debug(
+                        this.logger.log(
                             'Current node is completed. Skipping next actions',
                         );
                         return;
@@ -207,7 +207,7 @@ export class CardPlayedAction {
                         energyMax,
                     );
 
-                    this.logger.debug(
+                    this.logger.log(
                         `Ended combat queue for client ${ctx.client.id}`,
                     );
                     await this.combatQueueService.end(newCtx);
@@ -243,7 +243,7 @@ export class CardPlayedAction {
     }
 
     private sendNotEnoughEnergyMessage(client: Socket, message: string): void {
-        this.logger.debug(
+        this.logger.log(
             `Sent message ErrorMessage to client ${client.id}: ${SWARAction.InsufficientEnergy}`,
         );
 
@@ -262,7 +262,7 @@ export class CardPlayedAction {
         energy: number,
         energyMax: number,
     ): void {
-        this.logger.debug(
+        this.logger.log(
             `Sent message PutData to client ${client.id}: ${SWARAction.UpdateEnergy}`,
         );
 

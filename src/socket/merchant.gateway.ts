@@ -15,7 +15,7 @@ export class MerchantGateway {
     async handleItemsSelected(client: Socket, payload: string): Promise<void> {
         const selected = JSON.parse(payload) as SelectedItem;
 
-        this.logger.debug(
+        this.logger.log(
             `Client ${client.id} trigger message "MerchantBuy": ${payload}`,
         );
 

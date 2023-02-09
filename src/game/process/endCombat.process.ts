@@ -31,12 +31,12 @@ export class EndCombatProcess {
     @OnEvent(EVENT_AFTER_DAMAGE_EFFECT)
     async handle({ ctx }: { ctx: GameContext }): Promise<void> {
         if (this.playerService.isDead(ctx)) {
-            this.logger.debug('Player is dead. Ending combat');
+            this.logger.log('Player is dead. Ending combat');
             await this.emitPlayerDefeated(ctx);
         }
 
         if (this.enemyService.isAllDead(ctx)) {
-            this.logger.debug('All enemies are dead. Ending combat');
+            this.logger.log('All enemies are dead. Ending combat');
             await this.endCombat(ctx);
         }
     }
@@ -78,7 +78,7 @@ export class EndCombatProcess {
             );
         }
 
-        this.logger.debug(`Combat ended for client ${ctx.client.id}`);
+        this.logger.log(`Combat ended for client ${ctx.client.id}`);
 
         await ctx.events.emitAsync(EVENT_AFTER_END_COMBAT, { ctx });
     }
@@ -108,6 +108,6 @@ export class EndCombatProcess {
             },
         );
 
-        this.logger.debug(`Combat ended for client ${ctx.client.id}`);
+        this.logger.log(`Combat ended for client ${ctx.client.id}`);
     }
 }

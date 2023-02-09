@@ -15,7 +15,7 @@ export class EncounterGateway {
         client: Socket,
         choiceIdx: string,
     ): Promise<string> {
-        this.logger.debug(
+        this.logger.log(
             `Client ${client.id} trigger message "EncounterChoice"`,
         );
 

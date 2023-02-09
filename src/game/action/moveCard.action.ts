@@ -68,7 +68,7 @@ export class MoveCardAction {
         // Send create message for the new cards
         // source: the desired pile
         // destination: hand
-        this.logger.debug(
+        this.logger.log(
             `Sent message PutData to client ${client.id}: ${SWARAction.MoveCard}`,
         );
 

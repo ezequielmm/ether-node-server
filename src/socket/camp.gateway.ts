@@ -21,7 +21,7 @@ export class CampGateway {
 
     @SubscribeMessage('CampRecoverHealth')
     async handleRecoverHealth(client: Socket): Promise<string> {
-        this.logger.debug(
+        this.logger.log(
             `Client ${client.id} trigger message "CampRecoverHealth"`,
         );
 
@@ -41,7 +41,7 @@ export class CampGateway {
         // Now we update the current hp for the player
         await this.playerService.setGlobalHp(ctx, newHp);
 
-        this.logger.debug(`Sent message PlayerState to client ${client.id}`);
+        this.logger.log(`Sent message PlayerState to client ${client.id}`);
 
         client.emit(
             'PlayerState',

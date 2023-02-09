@@ -24,7 +24,7 @@ export class UpgradeCardGateway {
         client: Socket,
         cardId: string,
     ): Promise<string> {
-        this.logger.debug(
+        this.logger.log(
             `Client ${client.id} trigger message "CardUpgradeSelected": cardId: ${cardId}`,
         );
 
@@ -33,7 +33,7 @@ export class UpgradeCardGateway {
 
     @SubscribeMessage('UpgradeCard')
     async handleUpgradeCard(client: Socket, cardId: string): Promise<string> {
-        this.logger.debug(
+        this.logger.log(
             `Client ${client.id} trigger message "UpgradeCard": cardId: ${cardId}`,
         );
 

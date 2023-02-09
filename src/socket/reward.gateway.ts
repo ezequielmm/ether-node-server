@@ -24,7 +24,7 @@ export class RewardGateway {
         // Get the game context
         const ctx = await this.expeditionService.getGameContext(client);
 
-        this.logger.debug(`Client ${client.id} choose reward id: ${rewardId}`);
+        this.logger.log(`Client ${client.id} choose reward id: ${rewardId}`);
 
         const response = await this.rewardService.takeReward(ctx, rewardId);
 

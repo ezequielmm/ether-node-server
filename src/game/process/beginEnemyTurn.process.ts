@@ -35,7 +35,7 @@ export class BeginEnemyTurnProcess {
     ) {}
 
     async handle({ ctx }: { ctx: GameContext }): Promise<void> {
-        this.logger.debug(`Beginning enemies turn`);
+        this.logger.log(`Beginning enemies turn`);
 
         const { client, expedition } = ctx;
 
@@ -95,7 +95,7 @@ export class BeginEnemyTurnProcess {
                     });
 
                     if (this.expeditionService.isCurrentCombatEnded(ctx)) {
-                        this.logger.debug(
+                        this.logger.log(
                             'Combat ended, skipping rest of enemies, intentions and effects',
                         );
                         return;
@@ -123,7 +123,7 @@ export class BeginEnemyTurnProcess {
         });
 
         // Send enemies updated
-        this.logger.debug(
+        this.logger.log(
             `Sent message PutData to client ${client.id}: ${SWARAction.UpdateEnemy}`,
         );
 

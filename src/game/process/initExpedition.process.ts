@@ -83,7 +83,7 @@ export class InitExpeditionProcess {
             createdAt: new Date(),
         });
 
-        this.logger.debug(`Created expedition for player id: ${playerId}`);
+        this.logger.log(`Created expedition for player id: ${playerId}`);
     }
 
     private async generatePlayerDeck(
@@ -112,7 +112,7 @@ export class InitExpeditionProcess {
             .reduce((newDeckCards, card) => {
                 deck.forEach(({ cardId, amount }) => {
                     if (card.cardId === cardId) {
-                        this.logger.debug(
+                        this.logger.log(
                             `Added ${amount} ${card.name} cards to ${email} deck`,
                         );
                         for (let i = 1; i <= amount; i++) {

@@ -20,16 +20,14 @@ export class ExpeditionGateway {
 
     @SubscribeMessage('SyncExpedition')
     async handleSyncExpedition(client: Socket): Promise<void> {
-        this.logger.debug(
-            `Client ${client.id} trigger message "SyncExpedition"`,
-        );
+        this.logger.log(`Client ${client.id} trigger message "SyncExpedition"`);
 
         await this.fullSyncAction.handle(client);
     }
 
     @SubscribeMessage('NodeSelected')
     async handleNodeSelected(client: Socket, node_id: number): Promise<string> {
-        this.logger.debug(
+        this.logger.log(
             `Client ${client.id} trigger message "NodeSelected": ${node_id}`,
         );
 
@@ -49,7 +47,7 @@ export class ExpeditionGateway {
 
     @SubscribeMessage('ContinueExpedition')
     async handleContinueExpedition(client: Socket): Promise<string> {
-        this.logger.debug(`Client ${client.id} will advance to the next node`);
+        this.logger.log(`Client ${client.id} will advance to the next node`);
         const ctx = await this.expeditionService.getGameContext(client);
 
         return this.continueExpeditionProcess.handle(ctx);
@@ -57,7 +55,7 @@ export class ExpeditionGateway {
 
     @SubscribeMessage('NodeSkipped')
     async handleNodeSkipped(client: Socket, nodeId: number): Promise<void> {
-        this.logger.debug(
+        this.logger.log(
             `Client ${client.id} trigger message "NodeSkipped": ${nodeId}`,
         );
 

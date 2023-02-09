@@ -60,7 +60,7 @@ export class MerchantService {
     }
 
     async buyItem(client: Socket, selectedItem: SelectedItem): Promise<void> {
-        this.logger.debug(selectedItem);
+        this.logger.log(selectedItem);
 
         switch (selectedItem.type) {
             case ItemsTypeEnum.Card:

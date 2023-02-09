@@ -37,7 +37,7 @@ export class BeginPlayerTurnProcess {
     ) {}
 
     async handle({ ctx }: { ctx: GameContext }): Promise<void> {
-        this.logger.debug(`Beginning player turn`);
+        this.logger.log(`Beginning player turn`);
 
         const { client } = ctx;
 
@@ -80,7 +80,7 @@ export class BeginPlayerTurnProcess {
         await this.playerService.setEnergy(ctx, initialEnergy);
 
         // Send new energy amount
-        this.logger.debug(
+        this.logger.log(
             `Sent message PutData to client ${client.id}: ${SWARAction.UpdateEnergy}`,
         );
 

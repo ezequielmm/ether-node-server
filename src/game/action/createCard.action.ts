@@ -64,7 +64,7 @@ export class CreateCardAction {
         // to the frontend at the moment
         if (sendSWARResponse) {
             // Send message to the frontend to comunicate the new cards
-            this.logger.debug(
+            this.logger.log(
                 `Added ${newCards.length} new cards to player ${client.id} deck`,
             );
 

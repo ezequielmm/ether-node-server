@@ -67,7 +67,7 @@ export class SharpenBladeStatus implements StatusEventHandler {
         // Update in memory cards
         ctx.expedition.currentNode.data.player.cards.hand.push(...cards);
 
-        this.logger.debug(
+        this.logger.log(
             `Added ${cards.length} ${card.name} cards to player hand`,
         );
     }

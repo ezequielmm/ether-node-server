@@ -21,7 +21,7 @@ export class PortalNodeStrategy
     protected readonly mapService: MapService;
 
     onCompleted(ctx: GameContext): void {
-        this.logger.debug(`Map extended for client ${ctx.client.id}`);
+        this.logger.log(`Map extended for client ${ctx.client.id}`);
 
         // Get current act
         const act = maxBy(ctx.expedition.map, 'act');
