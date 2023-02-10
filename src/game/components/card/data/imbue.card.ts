@@ -25,7 +25,7 @@ export const ImbueCardUpgraded: Card = {
     },
     showPointer: false,
     isUpgraded: true,
-    isActive: true,
+    isActive: false,
 };
 
 export const ImbueCard: Card = {
@@ -52,5 +52,5 @@ export const ImbueCard: Card = {
     showPointer: false,
     isUpgraded: false,
     upgradedCardId: ImbueCardUpgraded.cardId,
-    isActive: true,
+    isActive: false,
 };

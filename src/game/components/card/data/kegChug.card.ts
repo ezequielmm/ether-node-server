@@ -25,7 +25,7 @@ export const KegChugCardUpgraded: Card = {
     },
     showPointer: false,
     isUpgraded: true,
-    isActive: true,
+    isActive: false,
 };
 
 export const KegChugCard: Card = {
@@ -52,5 +52,5 @@ export const KegChugCard: Card = {
     showPointer: false,
     isUpgraded: false,
     upgradedCardId: KegChugCardUpgraded.cardId,
-    isActive: true,
+    isActive: false,
 };
