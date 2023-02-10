@@ -34,6 +34,7 @@ import { EventEmitter2 } from '@nestjs/event-emitter';
 import { ReturnModelType } from '@typegoose/typegoose';
 import { ModuleRef } from '@nestjs/core';
 import { MapService } from 'src/game/map/map.service';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class ExpeditionService {
@@ -44,21 +45,28 @@ export class ExpeditionService {
         private readonly enemyService: EnemyService,
         private readonly moduleRef: ModuleRef,
         private readonly mapService: MapService,
+        private readonly configService: ConfigService,
     ) {}
 
     async getGameContext(client: Socket): Promise<GameContext> {
         const expedition = await this.findOne({ clientId: client.id });
         const events = new EventEmitter2();
 
-        const ctx = {
+        const ctx: GameContext = {
             expedition,
             client,
             events,
             moduleRef: this.moduleRef,
+            info: {
+                env: this.configService.get<string>('PAPERTRAIL_ENV'),
+                account: expedition.playerState.email,
+                expeditionID: expedition !== null ? expedition.id : null,
+                service: this.configService.get<string>('PAPERTRAIL_SERVICE'),
+            },
         };
 
         for (const trinket of expedition.playerState?.trinkets) {
-            await trinket.onAttach(ctx);
+            trinket.onAttach(ctx);
         }
 
         return ctx;

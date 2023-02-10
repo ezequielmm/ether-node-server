@@ -61,6 +61,7 @@ export class ExecutionersBlowEffect implements EffectHandler {
 
         // Log enemy death
         this.logger.log(
+            ctx.info,
             `Enemy ${target.value.id} is dead, adding ${cardRegistry.card.name} Card with 0 energy cost`,
         );
 

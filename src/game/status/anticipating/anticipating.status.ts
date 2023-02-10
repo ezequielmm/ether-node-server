@@ -20,7 +20,8 @@ export class AnticipatingStatus implements StatusEventHandler {
     async handle(dto: StatusEventDTO): Promise<any> {
         const { ctx, status, target } = dto;
 
-        this.logger.debug(
+        this.logger.log(
+            ctx.info,
             `Restoring ${status.args.counter} defense to ${target.type}`,
         );
 

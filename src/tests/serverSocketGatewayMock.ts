@@ -19,16 +19,16 @@ export class ServerSocketGatewayMock
     clientSocket: Socket;
 
     afterInit(): void {
-        this.logger.debug('socket initialized');
+        this.logger.log('socket initialized');
     }
 
     async handleConnection(client: Socket): Promise<void> {
-        this.logger.debug(`handling connection with client id ${client.id}`);
+        this.logger.log(`handling connection with client id ${client.id}`);
         this.clientSocket = client;
     }
 
     async handleDisconnect(client: Socket): Promise<void> {
-        this.logger.debug(`handling disconnect with client id ${client.id}`);
+        this.logger.log(`handling disconnect with client id ${client.id}`);
         client.disconnect();
     }
 }

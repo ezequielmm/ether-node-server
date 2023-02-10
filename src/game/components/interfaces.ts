@@ -10,6 +10,12 @@ export interface GameContext {
     readonly expedition: ExpeditionDocument;
     readonly events: EventEmitter2;
     readonly moduleRef: ModuleRef;
+    readonly info: {
+        account: string;
+        expeditionID: string;
+        env: string;
+        service: string;
+    };
 }
 
 export type ExpeditionEntity = ExpeditionPlayer | ExpeditionEnemy;

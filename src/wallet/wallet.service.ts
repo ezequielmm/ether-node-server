@@ -41,7 +41,7 @@ export class WalletService {
                 tokenArray.push(token.tokenID);
             }
         } catch (e) {
-            this.logger.debug(e);
+            this.logger.log(e);
             throw e;
         }
 

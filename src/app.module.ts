@@ -14,19 +14,20 @@ import { createWriteStream } from 'pino-papertrail';
         LoggerModule.forRootAsync({
             inject: [ConfigService],
             useFactory: (configService: ConfigService) => ({
-                pinoHttp:
-                    configService.get('NODE_ENV') !== 'development'
-                        ? createWriteStream({
-                              appname: configService.get('PAPERTRAIL_APP_NAME'),
-                              host: configService.get('PAPERTRAIL_HOSTNAME'),
-                              port: configService.get('PAPERTRAIL_PORT'),
-                          })
-                        : {
-                              transport: {
-                                  target: 'pino-pretty',
-                                  options: { colorize: true },
-                              },
-                          },
+                pinoHttp: [
+                    {
+                        messageKey: 'message',
+                        transport:
+                            process.env.NODE_ENV !== 'production'
+                                ? { target: 'pino-pretty' }
+                                : undefined,
+                    },
+                    createWriteStream({
+                        appname: configService.get('PAPERTRAIL_APP_NAME'),
+                        host: configService.get('PAPERTRAIL_HOSTNAME'),
+                        port: configService.get('PAPERTRAIL_PORT'),
+                    }),
+                ],
             }),
         }),
         WalletModule,

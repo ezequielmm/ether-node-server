@@ -81,7 +81,8 @@ export class BolsteredStatus implements StatusEventHandler {
             status.statuses.buff = buffStatuses;
 
             // Update status collection
-            this.logger.debug(
+            this.logger.log(
+                ctx.info,
                 `Removing status 'bolstered' from ${status.target.type}`,
             );
 

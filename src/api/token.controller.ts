@@ -1,7 +1,8 @@
 import { Body, Controller, Post } from '@nestjs/common';
-import { ApiOperation } from '@nestjs/swagger';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ethers } from 'ethers';
 
+@ApiTags('Tokens')
 @Controller('tokens')
 export class TokenController {
     @ApiOperation({

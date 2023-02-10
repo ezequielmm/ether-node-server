@@ -17,7 +17,8 @@ export class NextPlayerTurnStatus implements StatusEventHandler {
     async handle(dto: StatusEventDTO<Record<string, any>>): Promise<any> {
         const { ctx, source, target, status, remove } = dto;
 
-        this.logger.debug(
+        this.logger.log(
+            ctx.info,
             `NextPlayerTurnStatus.handle() source: ${source.value.id} target: ${target.value.id}`,
         );
 
