@@ -196,7 +196,7 @@ export class ExpeditionController {
                 authorization,
             );
 
-            const expedition = await this.expeditionService.findOne({
+            const expedition = await this.expeditionService.findOneTimeDesc({
                 playerId,
                 $or: [
                     { status: ExpeditionStatusEnum.Victory },
