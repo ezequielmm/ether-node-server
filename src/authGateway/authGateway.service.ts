@@ -16,12 +16,18 @@ export class AuthGatewayService {
         token = getBearerToken(token);
 
         const userRoute = this.configService.get<string>('GET_PROFILE_URL');
+        const authServiceApiKey = this.configService.get<string>(
+            'GET_PROFILE_API_KEY',
+        ); // 'api-key' header
 
         const {
             data: { data },
         } = await firstValueFrom(
             this.http.get<{ data: IProfile }>(userRoute, {
-                headers: { Authorization: `Bearer ${token}` },
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    'api-key': authServiceApiKey,
+                },
             }),
         );
 
