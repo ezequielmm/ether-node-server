@@ -1,6 +1,8 @@
 version: '3'
+name: kote-gameplay-stack
 services:
     mongodb:
+        container_name: kote-mongodb
         image: mongo:6.0
         restart: always
         ports:
@@ -8,8 +10,9 @@ services:
         volumes:
             - mongodb-data:/data/db
         networks:
-            - kote-net
-    nestjs-api:
+            - kote-network
+    core:
+        container_name: kote-core
         build: .
         restart: always
         env_file:
@@ -19,11 +22,11 @@ services:
         depends_on:
             - mongodb
         networks:
-            - kote-net
+            - kote-network
 
 networks:
-    kote-net:
-        driver: bridge
+    kote-network:
+        external: true
 
 volumes:
     mongodb-data:
