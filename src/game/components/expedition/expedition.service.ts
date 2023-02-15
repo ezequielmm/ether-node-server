@@ -60,7 +60,7 @@ export class ExpeditionService {
             info: {
                 env: this.configService.get<string>('PAPERTRAIL_ENV'),
                 account: expedition.playerState.email,
-                expeditionID: expedition !== null ? expedition.id : null,
+                expeditionId: expedition !== null ? expedition.id : null,
                 service: this.configService.get<string>('PAPERTRAIL_SERVICE'),
             },
         };
@@ -89,7 +89,7 @@ export class ExpeditionService {
             .findOne(filter, projection)
             .sort({ createdAt: -1 });
     }
-    
+
     async create(payload: CreateExpeditionDTO): Promise<ExpeditionDocument> {
         return await this.expedition.create(payload);
     }

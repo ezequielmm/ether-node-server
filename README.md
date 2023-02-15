@@ -4,6 +4,7 @@
 | ----------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Development | [![Laravel Forge Site Deployment Status](https://img.shields.io/endpoint?url=https%3A%2F%2Fforge.laravel.com%2Fsite-badges%2F24e71277-d374-4aac-90b7-4394ab80880e%3Fdate%3D1%26commit%3D1&style=plastic)](https://forge.laravel.com/servers/533302/sites/1834943/deployments) |
 | Staging     | [![Laravel Forge Site Deployment Status](https://img.shields.io/endpoint?url=https%3A%2F%2Fforge.laravel.com%2Fsite-badges%2Ff8a1b62f-eae9-4d8b-a6bb-847d524ceeaf%3Fdate%3D1%26commit%3D1&style=plastic)](https://forge.laravel.com/servers/565781/sites/1666418/deployments) |
+| Alpha       | [![Laravel Forge Site Deployment Status](https://img.shields.io/endpoint?url=https%3A%2F%2Fforge.laravel.com%2Fsite-badges%2F15b2c683-0869-4d03-9d59-566e9c4851bf%3Fdate%3D1%26commit%3D1&style=plastic)](https://forge.laravel.com/servers/653718/sites/1890188/deployments) |
 
 This documentation will serve as a starting point to install and run the service with necessary commands and resources.
 
