@@ -12,7 +12,7 @@ export interface GameContext {
     readonly moduleRef: ModuleRef;
     readonly info: {
         account: string;
-        expeditionID: string;
+        expeditionId: string;
         env: string;
         service: string;
     };
