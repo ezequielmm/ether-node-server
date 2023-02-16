@@ -21,7 +21,7 @@ import { createWriteStream } from 'pino-papertrail';
                             bindings: (bindings) => ({
                                 pid: bindings.pid,
                                 hostname: bindings.hostname,
-                                backendVersion: configService.get(
+                                serverVersion: configService.get(
                                     'npm_package_version',
                                 ),
                             }),
