@@ -6,6 +6,7 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { KindagooseModule } from 'kindagoose';
 import { WalletModule } from './wallet/wallet.module';
+import { ShowVersionModule } from './showVersion/showVersion.module';
 import { LoggerModule } from 'nestjs-pino';
 import { createWriteStream } from 'pino-papertrail';
 
@@ -31,6 +32,7 @@ import { createWriteStream } from 'pino-papertrail';
             }),
         }),
         WalletModule,
+        ShowVersionModule,
         ApiModule,
         ConfigModule.forRoot({ isGlobal: true, cache: true }),
         SocketModule,
