@@ -1,10 +1,11 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import { Controller, Get } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
-import { ShowVersionService } from './showVersion.service';
 const pkg = require('../../package.json');
 
 @Controller('showVersion')
 export class ShowVersionController {
+    @ApiOperation({ summary: 'Show version' })
+    @ApiTags('showVersion')
     @Get('/')
     getVersion(): string {
         return pkg.version;
