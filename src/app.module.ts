@@ -17,6 +17,15 @@ import { createWriteStream } from 'pino-papertrail';
                 pinoHttp: [
                     {
                         messageKey: 'message',
+                        formatters: {
+                            bindings: (bindings) => ({
+                                pid: bindings.pid,
+                                hostname: bindings.hostname,
+                                backendVersion: configService.get(
+                                    'npm_package_version',
+                                ),
+                            }),
+                        },
                         transport:
                             process.env.NODE_ENV !== 'production'
                                 ? { target: 'pino-pretty' }
