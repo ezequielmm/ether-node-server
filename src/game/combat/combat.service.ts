@@ -91,7 +91,7 @@ export class CombatService {
             ),
         });
 
-        this.updatePotionChance(
+        await this.updatePotionChance(
             ctx.client.id,
             potionChance,
             shouldGeneratePotion,
