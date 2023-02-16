@@ -1,33 +1,34 @@
-import { Schema } from 'mongoose';
+import { ModelOptions, Prop } from '@typegoose/typegoose';
 
-export interface IBugReport {
+@ModelOptions({
+    schemaOptions: { collection: 'bugreports', versionKey: false },
+})
+export class BugReportSC {
+    @Prop()
     reportId: string;
+    @Prop()
     environment: string;
+    @Prop()
     service: string;
+    @Prop()
     clientId: string;
+    @Prop()
     account: string;
+    @Prop()
     knightId: string;
+    @Prop()
     expeditionId: string;
+    @Prop()
     userDescription: string;
+    @Prop()
     userTitle: string;
+    @Prop()
     screenshot: string;
+    @Prop()
     frontendVersion: string;
+    @Prop()
     backendVersion: string;
+    @Prop()
     messageLog: [];
 }
-
-export const bugReportSchema = new Schema<IBugReport>({
-    reportId: { type: String },
-    environment: { type: String },
-    service: { type: String },
-    clientId: { type: String },
-    account: { type: String },
-    knightId: { type: String },
-    expeditionId: { type: String },
-    userDescription: { type: String },
-    userTitle: { type: String },
-    screenshot: { type: String },
-    frontendVersion: { type: String },
-    backendVersion: { type: String },
-    messageLog: [],
-});
+export type BugReportDTO = BugReportSC;

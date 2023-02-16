@@ -1,31 +1,27 @@
-import { Injectable, Logger } from '@nestjs/common';
-import { HttpService } from '@nestjs/axios';
+import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import mongoose, { model } from 'mongoose';
-import { bugReportSchema, IBugReport } from './bugReport.schema';
+import mongoose from 'mongoose';
+import { BugReportDTO, BugReportSC } from './bugReport.schema';
+import { InjectModel } from 'kindagoose';
+import { ReturnModelType } from '@typegoose/typegoose';
 
 @Injectable()
 export class BugReportService {
-    private readonly logger: Logger = new Logger(BugReportService.name);
     constructor(
-        private readonly httpService: HttpService,
+        @InjectModel(BugReportSC)
+        private readonly cardSelectionScreen: ReturnModelType<
+            typeof BugReportSC
+        >,
         private readonly configService: ConfigService,
     ) {}
 
-    async writeBugReport(message: any): Promise<string> {
+    async create(payload: BugReportDTO): Promise<BugReportSC> {
         const saveState = mongoose.connection.readyState;
         if (saveState === 0) {
             await mongoose.connect(
                 this.configService.get<string>('MONGODB_URL'),
             );
         }
-
-        const BugReport = model<IBugReport>('BugReport', bugReportSchema);
-        const bugReport = new BugReport(message);
-        await bugReport.save();
-        if (saveState === 0) {
-            await mongoose.disconnect();
-        }
-        return 'ok';
+        return await this.cardSelectionScreen.create(payload);
     }
 }
