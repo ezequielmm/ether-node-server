@@ -29,7 +29,12 @@ import { createWriteStream } from 'pino-papertrail';
                         },
                         transport:
                             process.env.NODE_ENV !== 'production'
-                                ? { target: 'pino-pretty' }
+                                ? {
+                                      target: 'pino-pretty',
+                                      options: {
+                                          colorize: true,
+                                      },
+                                  }
                                 : undefined,
                     },
                     createWriteStream({
@@ -50,7 +55,11 @@ import { createWriteStream } from 'pino-papertrail';
             useFactory: (configService: ConfigService) => {
                 const uri = configService.get<string>('MONGODB_URL');
 
-                return { uri, useNewUrlParser: true, useUnifiedTopology: true };
+                return {
+                    uri,
+                    useNewUrlParser: true,
+                    useUnifiedTopology: true,
+                };
             },
         }),
         EventEmitterModule.forRoot({

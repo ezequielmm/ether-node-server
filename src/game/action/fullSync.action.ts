@@ -56,6 +56,7 @@ export class FullSyncAction {
                 action: SWARAction.UpdatePlayerState,
                 data: {
                     expeditionId: expeditionId,
+                    expeditionCreatedAt: expedition.createdAt,
                     playerState: {
                         id: playerState.playerId,
                         playerId,
