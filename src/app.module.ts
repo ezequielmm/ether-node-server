@@ -5,6 +5,7 @@ import { SocketModule } from './socket/socket.module';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { KindagooseModule } from 'kindagoose';
+import { BugReportModule } from './bugReport/bugReport.module';
 import { WalletModule } from './wallet/wallet.module';
 import { LoggerModule } from 'nestjs-pino';
 import { createWriteStream } from 'pino-papertrail';
@@ -17,6 +18,15 @@ import { createWriteStream } from 'pino-papertrail';
                 pinoHttp: [
                     {
                         messageKey: 'message',
+                        formatters: {
+                            bindings: (bindings) => ({
+                                pid: bindings.pid,
+                                hostname: bindings.hostname,
+                                serverVersion: configService.get(
+                                    'npm_package_version',
+                                ),
+                            }),
+                        },
                         transport:
                             process.env.NODE_ENV !== 'production'
                                 ? { target: 'pino-pretty' }
@@ -30,6 +40,7 @@ import { createWriteStream } from 'pino-papertrail';
                 ],
             }),
         }),
+        BugReportModule,
         WalletModule,
         ApiModule,
         ConfigModule.forRoot({ isGlobal: true, cache: true }),
