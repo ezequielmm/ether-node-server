@@ -27,9 +27,15 @@ import {
     CardRare,
     CardUncommon,
     PurchaseFailureEnum,
+    TrinketCommon,
+    TrinketUncommon,
+    TrinketRare,
 } from './merchant.enum';
 import { Item, MerchantItems, SelectedItem } from './merchant.interface';
 import mongoose from 'mongoose';
+import { TrinketService } from '../components/trinket/trinket.service';
+import { TrinketRarityEnum } from '../components/trinket/trinket.enum';
+import { GameContext } from '../components/interfaces';
 
 @Injectable()
 export class MerchantService {
@@ -39,49 +45,47 @@ export class MerchantService {
         private readonly expeditionService: ExpeditionService,
         private readonly cardService: CardService,
         private readonly potionService: PotionService,
+        private readonly trinketService: TrinketService,
     ) {}
-
-    private client: Socket;
-    private selectedItem: SelectedItem;
-    private expeditionId: string;
 
     async generateMerchant(): Promise<MerchantItems> {
         const potions = await this.getPotions();
         const cards = await this.getCards();
+        const trinkets = await this.getTrinkets();
 
         return {
             cards,
             potions,
-            trinkets: [],
+            trinkets,
         };
     }
 
-    async buyItem(client: Socket, selectedItem: SelectedItem): Promise<void> {
-        this.client = client;
-        this.selectedItem = selectedItem;
-
-        this.logger.debug(selectedItem);
+    async buyItem(ctx: GameContext, selectedItem: SelectedItem): Promise<void> {
+        this.logger.log(ctx.info, selectedItem);
 
         switch (selectedItem.type) {
             case ItemsTypeEnum.Card:
             case ItemsTypeEnum.Trinket:
             case ItemsTypeEnum.Potion:
-                await this.processItem();
+                await this.processItem(ctx.client, selectedItem);
                 break;
             case ItemsTypeEnum.Destroy:
-                await this.cardDestroy();
+                await this.cardDestroy(ctx.client, selectedItem);
                 break;
             case ItemsTypeEnum.Upgrade:
-                await this.cardUpgrade();
+                await this.cardUpgrade(ctx.client, selectedItem);
                 break;
         }
     }
 
-    private async processItem(): Promise<void> {
-        const { targetId, type } = this.selectedItem;
+    private async processItem(
+        client: Socket,
+        selectedItem: SelectedItem,
+    ): Promise<void> {
+        const { targetId, type } = selectedItem;
 
         const expedition = await this.expeditionService.findOne({
-            clientId: this.client.id,
+            clientId: client.id,
         });
 
         const {
@@ -89,10 +93,8 @@ export class MerchantService {
             currentNode: { merchantItems, nodeType },
         } = expedition;
 
-        this.expeditionId = expedition._id.toString();
-
         if (nodeType !== NodeType.Merchant) {
-            this.client.emit('ErrorMessage', {
+            client.emit('ErrorMessage', {
                 message: `You are not in the merchant node`,
             });
             throw new CustomException(
@@ -103,36 +105,39 @@ export class MerchantService {
 
         let item: Item;
         let itemIndex: number;
-        let data: Item[];
+        let items: Item[] = [];
 
         switch (type) {
             case ItemsTypeEnum.Card:
-                data = merchantItems.cards;
+                items = merchantItems.cards;
                 break;
             case ItemsTypeEnum.Trinket:
-                data = merchantItems.trinkets;
+                items = merchantItems.trinkets;
                 break;
             case ItemsTypeEnum.Potion:
-                data = merchantItems.potions;
+                items = merchantItems.potions;
                 break;
         }
 
-        for (let i = 0; i < data.length; i++) {
-            if (typeof targetId == 'string') {
-                if (targetId == data[i].id) {
-                    item = data[i];
-                    itemIndex = i;
-                }
-            } else if (typeof targetId == 'number') {
-                if (targetId == data[i].itemId) {
-                    item = data[i];
-                    itemIndex = i;
-                }
+        items.forEach((element, i) => {
+            switch (typeof targetId) {
+                case 'string':
+                    if (targetId === element.id) {
+                        item = element;
+                        itemIndex = i;
+                    }
+                    break;
+                case 'number':
+                    if (targetId === element.itemId) {
+                        item = element;
+                        itemIndex = i;
+                    }
+                    break;
             }
-        }
+        });
 
         if (!item) {
-            this.failure(PurchaseFailureEnum.InvalidId);
+            this.failure(client, PurchaseFailureEnum.InvalidId);
             throw new CustomException(
                 PurchaseFailureEnum.InvalidId,
                 ErrorBehavior.ReturnToMainMenu,
@@ -140,7 +145,7 @@ export class MerchantService {
         }
 
         if (playerState.gold < item.cost) {
-            this.failure(PurchaseFailureEnum.NoEnoughGold);
+            this.failure(client, PurchaseFailureEnum.NoEnoughGold);
             throw new CustomException(
                 PurchaseFailureEnum.NoEnoughGold,
                 ErrorBehavior.ReturnToMainMenu,
@@ -150,6 +155,7 @@ export class MerchantService {
         switch (type) {
             case ItemsTypeEnum.Card:
                 await this.handleCard(
+                    client,
                     merchantItems,
                     item,
                     itemIndex,
@@ -158,13 +164,23 @@ export class MerchantService {
                 break;
             case ItemsTypeEnum.Potion:
                 if (playerState.potions.length > 2) {
-                    this.failure(PurchaseFailureEnum.MaxPotionReached);
+                    this.failure(client, PurchaseFailureEnum.MaxPotionReached);
                     throw new CustomException(
                         PurchaseFailureEnum.MaxPotionReached,
                         ErrorBehavior.ReturnToMainMenu,
                     );
                 }
                 await this.handlePotions(
+                    client,
+                    merchantItems,
+                    item,
+                    itemIndex,
+                    playerState,
+                );
+                break;
+            case ItemsTypeEnum.Trinket:
+                await this.handleTrinkets(
+                    client,
                     merchantItems,
                     item,
                     itemIndex,
@@ -173,7 +189,7 @@ export class MerchantService {
                 break;
         }
 
-        await this.success();
+        await this.success(client);
     }
 
     private async getPotions(): Promise<Item[]> {
@@ -224,6 +240,55 @@ export class MerchantService {
                     id: itemId,
                     isActive: true,
                 },
+            });
+        }
+
+        return itemsData;
+    }
+
+    private async getTrinkets(): Promise<Item[]> {
+        const trinkets = this.trinketService.getRandomTrinkets(5, (trinket) => {
+            // Avoid special trinkets
+            return trinket.rarity !== TrinketRarityEnum.Special;
+        });
+
+        const itemsData: Item[] = [];
+
+        for (const trinket of trinkets) {
+            let cost: number = null;
+
+            switch (trinket.rarity) {
+                case TrinketRarityEnum.Common:
+                    cost = getRandomBetween(
+                        TrinketCommon.minPrice,
+                        TrinketCommon.maxPrice,
+                    );
+                    break;
+                case TrinketRarityEnum.Uncommon:
+                    cost = getRandomBetween(
+                        TrinketUncommon.minPrice,
+                        TrinketUncommon.maxPrice,
+                    );
+                    break;
+                case TrinketRarityEnum.Rare:
+                    cost = getRandomBetween(
+                        TrinketRare.minPrice,
+                        TrinketRare.maxPrice,
+                    );
+                    break;
+            }
+
+            const itemId = randomUUID();
+
+            trinket.id = itemId;
+
+            itemsData.push({
+                id: itemId,
+                isSold: false,
+                itemId: trinket.trinketId,
+                cost,
+                type: ItemsTypeEnum.Trinket,
+                item: trinket,
             });
         }
 
@@ -324,8 +389,11 @@ export class MerchantService {
         return itemsData;
     }
 
-    private async failure(data: PurchaseFailureEnum): Promise<void> {
-        this.client.emit(
+    private async failure(
+        client: Socket,
+        data: PurchaseFailureEnum,
+    ): Promise<void> {
+        client.emit(
             'PutData',
             StandardResponse.respond({
                 message_type: SWARMessageType.MerchantUpdate,
@@ -335,14 +403,14 @@ export class MerchantService {
         );
     }
 
-    private async success(): Promise<void> {
+    private async success(client: Socket): Promise<void> {
         const expedition = await this.expeditionService.findOne({
-            clientId: this.client.id,
+            clientId: client.id,
         });
 
         const { playerState, playerId } = expedition || {};
 
-        this.client.emit(
+        client.emit(
             'PutData',
             StandardResponse.respond({
                 message_type: SWARMessageType.MerchantUpdate,
@@ -351,7 +419,7 @@ export class MerchantService {
             }),
         );
 
-        this.client.emit(
+        client.emit(
             'PlayerState',
             StandardResponse.respond({
                 message_type: SWARMessageType.PlayerStateUpdate,
@@ -375,6 +443,7 @@ export class MerchantService {
     }
 
     private async handleCard(
+        client: Socket,
         merchantItems: MerchantItems,
         item: Item,
         itemIndex: number,
@@ -392,25 +461,28 @@ export class MerchantService {
         };
         mewMerchantItems.cards[itemIndex].isSold = true;
 
-        await this.expeditionService.updateById(this.expeditionId, {
-            $set: {
-                playerState: newPlayerState,
-                'currentNode.merchantItems': mewMerchantItems,
+        await this.expeditionService.updateByFilter(
+            { clientId: client.id },
+            {
+                $set: {
+                    playerState: newPlayerState,
+                    'currentNode.merchantItems': mewMerchantItems,
+                },
             },
-        });
+        );
     }
 
-    async cardUpgrade() {
+    async cardUpgrade(client: Socket, selectedItem: SelectedItem) {
         const playerState = await this.expeditionService.getPlayerState({
-            clientId: this.client.id,
+            clientId: client.id,
         });
 
-        const cardId = this.selectedItem.targetId;
+        const cardId = selectedItem.targetId;
 
         const upgradedPrice = 75 + 25 * playerState.cardUpgradeCount;
 
         if (playerState.gold < upgradedPrice) {
-            this.client.emit('ErrorMessage', {
+            client.emit('ErrorMessage', {
                 message: `Not enough gold`,
             });
             return;
@@ -423,20 +495,20 @@ export class MerchantService {
                 if (card.cardId == playerState.cards[i].cardId) {
                     break;
                 } else if (i === playerState.cards.length - 1) {
-                    this.client.emit('ErrorMessage', {
+                    client.emit('ErrorMessage', {
                         message: `Card not in merchant offer`,
                     });
                     return;
                 }
             }
         } else {
-            this.client.emit('ErrorMessage', {
+            client.emit('ErrorMessage', {
                 message: `Card not in merchant offer`,
             });
             return;
         }
         if (!card.isUpgraded && !card.upgradedCardId) {
-            this.client.emit('ErrorMessage', {
+            client.emit('ErrorMessage', {
                 message: `Card could be not upgraded`,
             });
             return;
@@ -485,7 +557,7 @@ export class MerchantService {
         };
 
         await this.expeditionService.updateByFilter(
-            { clientId: this.client.id },
+            { clientId: client.id },
             {
                 $set: {
                     playerState: newPlayerState,
@@ -493,50 +565,86 @@ export class MerchantService {
             },
         );
 
-        await this.success();
+        await this.success(client);
     }
 
     private async handlePotions(
+        client: Socket,
         merchantItems: MerchantItems,
         item: Item,
         itemIndex: number,
         playerState: Player,
-    ) {
+    ): Promise<void> {
         const playerDoc = playerState as unknown as mongoose.Document;
+
         const newPlayerState = {
             ...playerDoc.toObject(),
             gold: playerState.gold - item.cost,
             potions: [...playerState.potions, item.item],
         };
+
         const mewMerchantItems = {
             ...merchantItems,
         };
+
         mewMerchantItems.potions[itemIndex].isSold = true;
 
-        await this.expeditionService.updateById(this.expeditionId, {
-            $set: {
-                playerState: newPlayerState,
-                'currentNode.merchantItems': mewMerchantItems,
+        await this.expeditionService.updateByFilter(
+            { clientId: client.id },
+            {
+                $set: {
+                    playerState: newPlayerState,
+                    'currentNode.merchantItems': mewMerchantItems,
+                },
             },
-        });
+        );
     }
 
-    async cardDestroy() {
+    private async handleTrinkets(
+        client: Socket,
+        merchantItems: MerchantItems,
+        item: Item,
+        itemIndex: number,
+        playerState: Player,
+    ): Promise<void> {
+        const playerDoc = playerState as unknown as mongoose.Document;
+        const newPlayerState = {
+            ...playerDoc.toObject(),
+            gold: playerState.gold - item.cost,
+            trinkets: [...playerState.trinkets, item.item],
+        };
+
+        const mewMerchantItems = {
+            ...merchantItems,
+        };
+        mewMerchantItems.cards[itemIndex].isSold = true;
+
+        await this.expeditionService.updateByFilter(
+            { clientId: client.id },
+            {
+                $set: {
+                    playerState: newPlayerState,
+                    'currentNode.merchantItems': mewMerchantItems,
+                },
+            },
+        );
+    }
+
+    async cardDestroy(client: Socket, selectedItem: SelectedItem) {
         const playerState = await this.expeditionService.getPlayerState({
-            clientId: this.client.id,
+            clientId: client.id,
         });
+
         const destroyPrice = 75 + 25 * playerState.cardDestroyCount;
 
         if (playerState.gold < destroyPrice) {
-            this.client.emit('ErrorMessage', {
+            client.emit('ErrorMessage', {
                 message: `Not enough gold`,
             });
             return;
         }
 
-        const card = await this.cardService.findById(
-            this.selectedItem.targetId,
-        );
+        const card = await this.cardService.findById(selectedItem.targetId);
 
         let cardIndex: number = null;
 
@@ -550,7 +658,7 @@ export class MerchantService {
         }
 
         if (cardIndex === null) {
-            this.client.emit('ErrorMessage', {
+            client.emit('ErrorMessage', {
                 message: `Card not in merchant offer`,
             });
             return;
@@ -561,7 +669,7 @@ export class MerchantService {
         playerState.gold = playerState.gold - destroyPrice;
 
         await this.expeditionService.updateByFilter(
-            { clientId: this.client.id },
+            { clientId: client.id },
             {
                 $set: {
                     playerState,
@@ -569,6 +677,6 @@ export class MerchantService {
             },
         );
 
-        await this.success();
+        await this.success(client);
     }
 }

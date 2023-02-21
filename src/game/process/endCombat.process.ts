@@ -1,5 +1,7 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
+import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
+import pino from 'pino';
 import { CombatQueueService } from '../components/combatQueue/combatQueue.service';
 import { EnemyService } from '../components/enemy/enemy.service';
 import { ExpeditionStatusEnum } from '../components/expedition/expedition.enum';
@@ -19,9 +21,9 @@ import {
 
 @Injectable()
 export class EndCombatProcess {
-    private readonly logger: Logger = new Logger(EndCombatProcess.name);
-
     constructor(
+        @InjectPinoLogger(EndCombatProcess.name)
+        private readonly logger: PinoLogger,
         private readonly playerService: PlayerService,
         private readonly enemyService: EnemyService,
         private readonly expeditionService: ExpeditionService,
@@ -30,18 +32,27 @@ export class EndCombatProcess {
 
     @OnEvent(EVENT_AFTER_DAMAGE_EFFECT)
     async handle({ ctx }: { ctx: GameContext }): Promise<void> {
+        const logger = this.logger.logger.child(ctx.info);
+
+        logger.info(
+            `Checking if combat should end for client ${ctx.client.id}`,
+        );
+
         if (this.playerService.isDead(ctx)) {
-            this.logger.debug('Player is dead. Ending combat');
-            await this.emitPlayerDefeated(ctx);
+            logger.info('Player is dead. Ending combat');
+            await this.emitPlayerDefeated(ctx, logger);
         }
 
         if (this.enemyService.isAllDead(ctx)) {
-            this.logger.debug('All enemies are dead. Ending combat');
-            await this.endCombat(ctx);
+            logger.info('All enemies are dead. Ending combat');
+            await this.endCombat(ctx, logger);
         }
     }
 
-    private async endCombat(ctx: GameContext): Promise<void> {
+    private async endCombat(
+        ctx: GameContext,
+        logger: pino.Logger<pino.LoggerOptions & pino.ChildLoggerOptions>,
+    ): Promise<void> {
         await this.combatQueueService.end(ctx);
 
         const isCombatBoss =
@@ -78,12 +89,15 @@ export class EndCombatProcess {
             );
         }
 
-        this.logger.debug(`Combat ended for client ${ctx.client.id}`);
+        logger.info(`Combat ended for client ${ctx.client.id}`);
 
         await ctx.events.emitAsync(EVENT_AFTER_END_COMBAT, { ctx });
     }
 
-    private async emitPlayerDefeated(ctx: GameContext): Promise<void> {
+    private async emitPlayerDefeated(
+        ctx: GameContext,
+        logger: pino.Logger<pino.LoggerOptions & pino.ChildLoggerOptions>,
+    ): Promise<void> {
         await this.combatQueueService.end(ctx);
 
         ctx.client.emit(
@@ -108,6 +122,6 @@ export class EndCombatProcess {
             },
         );
 
-        this.logger.debug(`Combat ended for client ${ctx.client.id}`);
+        logger.info(`Combat ended for client ${ctx.client.id}`);
     }
 }

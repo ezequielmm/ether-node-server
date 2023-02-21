@@ -25,9 +25,15 @@ export class FullSyncAction {
                 ErrorBehavior.ReturnToMainMenu,
             );
 
-        const { map, playerState, mapSeedId, playerId } = expedition || {};
+        const {
+            map,
+            playerState,
+            mapSeedId,
+            playerId,
+            id: expeditionId,
+        } = expedition || {};
 
-        this.logger.debug(`Sent message ExpeditionMap to client ${client.id}`);
+        this.logger.log(`Sent message ExpeditionMap to client ${client.id}`);
 
         if (sendShowMap) {
             client.emit(
@@ -41,7 +47,7 @@ export class FullSyncAction {
             );
         }
 
-        this.logger.debug(`Sent message PlayerState to client ${client.id}`);
+        this.logger.log(`Sent message PlayerState to client ${client.id}`);
 
         client.emit(
             'PlayerState',
@@ -49,6 +55,8 @@ export class FullSyncAction {
                 message_type: SWARMessageType.PlayerStateUpdate,
                 action: SWARAction.UpdatePlayerState,
                 data: {
+                    expeditionId: expeditionId,
+                    expeditionCreatedAt: expedition.createdAt,
                     playerState: {
                         id: playerState.playerId,
                         playerId,

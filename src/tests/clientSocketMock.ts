@@ -10,7 +10,7 @@ export class ClientSocketMock {
     public connect(port: number): Promise<void> {
         return new Promise((resolve) => {
             this.socket = connect(`ws://[::1]:${port}`).on('connect', () => {
-                Logger.debug('client connected');
+                this.logger.log('client connected');
                 resolve();
             });
         });

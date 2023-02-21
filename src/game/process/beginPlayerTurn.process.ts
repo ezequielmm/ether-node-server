@@ -1,5 +1,6 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
+import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 import { ChangeTurnAction } from '../action/changeTurn.action';
 import { DrawCardAction } from '../action/drawCard.action';
 import { GetPlayerInfoAction } from '../action/getPlayerInfo.action';
@@ -22,9 +23,9 @@ import {
 
 @Injectable()
 export class BeginPlayerTurnProcess {
-    private readonly logger: Logger = new Logger(BeginPlayerTurnProcess.name);
-
     constructor(
+        @InjectPinoLogger()
+        private readonly logger: PinoLogger,
         private readonly playerService: PlayerService,
         private readonly enemyService: EnemyService,
         private readonly settingsService: SettingsService,
@@ -37,9 +38,12 @@ export class BeginPlayerTurnProcess {
     ) {}
 
     async handle({ ctx }: { ctx: GameContext }): Promise<void> {
-        this.logger.debug(`Beginning player turn`);
-
         const { client } = ctx;
+
+        // First set up the logger
+        const logger = this.logger.logger.child(ctx.info);
+
+        logger.info(`Beginning player turn`);
 
         await this.enemyService.calculateNewIntentions(ctx);
 
@@ -80,7 +84,7 @@ export class BeginPlayerTurnProcess {
         await this.playerService.setEnergy(ctx, initialEnergy);
 
         // Send new energy amount
-        this.logger.debug(
+        logger.info(
             `Sent message PutData to client ${client.id}: ${SWARAction.UpdateEnergy}`,
         );
 

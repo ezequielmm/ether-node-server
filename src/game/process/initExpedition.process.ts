@@ -13,13 +13,6 @@ import { ExpeditionService } from '../components/expedition/expedition.service';
 import { SettingsService } from '../components/settings/settings.service';
 import { MapService } from '../map/map.service';
 
-interface InitExpeditionDTO {
-    playerId: number;
-    playerName: string;
-    email: string;
-    nftId: number;
-}
-
 @Injectable()
 export class InitExpeditionProcess {
     private readonly logger: Logger = new Logger(InitExpeditionProcess.name);
@@ -38,7 +31,12 @@ export class InitExpeditionProcess {
         playerName,
         email,
         nftId,
-    }: InitExpeditionDTO): Promise<void> {
+    }: {
+        playerId: number;
+        playerName: string;
+        email: string;
+        nftId: number;
+    }): Promise<void> {
         const character = await this.characterService.findOne({
             characterClass: CharacterClassEnum.Knight,
         });
@@ -52,7 +50,7 @@ export class InitExpeditionProcess {
 
         const cards = await this.generatePlayerDeck(character, email);
 
-        await this.expeditionService.create({
+        const expedition = await this.expeditionService.create({
             playerId,
             map,
             scores: {
@@ -65,6 +63,7 @@ export class InitExpeditionProcess {
                 potionChance: initialPotionChance,
             },
             playerState: {
+                email,
                 playerId: randomUUID(),
                 playerName,
                 nftId,
@@ -83,7 +82,12 @@ export class InitExpeditionProcess {
             createdAt: new Date(),
         });
 
-        this.logger.debug(`Created expedition for player id: ${playerId}`);
+        this.logger.log(
+            {
+                expId: expedition.id,
+            },
+            `Created expedition for player id: ${playerId}`,
+        );
     }
 
     private async generatePlayerDeck(
@@ -112,7 +116,7 @@ export class InitExpeditionProcess {
             .reduce((newDeckCards, card) => {
                 deck.forEach(({ cardId, amount }) => {
                     if (card.cardId === cardId) {
-                        this.logger.debug(
+                        this.logger.log(
                             `Added ${amount} ${card.name} cards to ${email} deck`,
                         );
                         for (let i = 1; i <= amount; i++) {

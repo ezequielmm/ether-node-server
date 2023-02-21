@@ -6,6 +6,7 @@ import { dewDropStatus } from './dewDrop/constants';
 import { distraught } from './distraught/constants';
 import { dodge } from './dodge/constants';
 import { doubleDown } from './doubleDown/contants';
+import { drained } from './drained/constants';
 import { fatigue } from './fatigue/constants';
 import { feebleStatus } from './feeble/constants';
 import { fortitude } from './fortitude/constants';
@@ -116,6 +117,8 @@ export class StatusGenerator {
                 return `Every 4th attack deals ${value} more damage`;
             case summoned.name:
                 return `Summoned enemies are banished if all masters are defeated`;
+            case drained.name:
+                return `Next turn, lose ${value} Energy`;
             default:
                 return `Unknown status`;
         }

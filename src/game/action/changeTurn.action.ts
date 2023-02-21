@@ -20,7 +20,7 @@ export class ChangeTurnAction {
         type: SWARMessageType.BeginTurn | SWARMessageType.EndTurn;
         entity: CombatTurnEnum;
     }): void {
-        this.logger.debug(
+        this.logger.log(
             `Sent message PutData to client ${client.id} - type: ${type}, action: ${SWARAction.ChangeTurn}, data: ${entity}`,
         );
 

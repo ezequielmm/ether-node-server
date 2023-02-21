@@ -34,7 +34,8 @@ export class FatigueStatus implements StatusEffectHandler {
         args: StatusEffectDTO<DamageArgs>,
     ): Promise<EffectDTO<DamageArgs>> {
         const damage = Math.floor(args.effectDTO.args.currentValue * 0.75);
-        this.logger.debug(
+        this.logger.log(
+            args.ctx.info,
             `Reducing damage by 25% due to ${fatigue.name} from ${args.effectDTO.args.currentValue} to ${damage}`,
         );
 

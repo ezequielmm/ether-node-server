@@ -1,4 +1,5 @@
-import { forwardRef, Inject, Injectable, Logger } from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
+import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 import { Socket } from 'socket.io';
 import { removeCardsFromPile } from 'src/utils';
 import { IExpeditionPlayerStateDeckCard } from '../components/expedition/expedition.interface';
@@ -10,43 +11,46 @@ import {
     SWARMessageType,
 } from '../standardResponse/standardResponse';
 
-interface IMoveCardDTO {
-    readonly client: Socket;
-    readonly cardIds: string[];
-    readonly originPile: keyof Expedition['currentNode']['data']['player']['cards'];
-    readonly targetPile?: keyof Expedition['currentNode']['data']['player']['cards'];
-    readonly callback?: (
-        card: IExpeditionPlayerStateDeckCard,
-    ) => IExpeditionPlayerStateDeckCard;
-}
-
 @Injectable()
 export class MoveCardAction {
-    private readonly logger: Logger = new Logger(MoveCardAction.name);
-
     constructor(
+        @InjectPinoLogger(MoveCardAction.name)
+        private readonly logger: PinoLogger,
         @Inject(forwardRef(() => ExpeditionService))
         private readonly expeditionService: ExpeditionService,
     ) {}
 
-    async handle(payload: IMoveCardDTO): Promise<void> {
-        // First we deestructure the payload and get the data
-        const {
-            cardIds,
-            originPile,
-            targetPile = 'hand',
-            client,
-            callback,
-        } = payload;
+    async handle({
+        cardIds,
+        originPile,
+        targetPile = 'hand',
+        client,
+        callback,
+    }: {
+        readonly client: Socket;
+        readonly cardIds: string[];
+        readonly originPile: keyof Expedition['currentNode']['data']['player']['cards'];
+        readonly targetPile?: keyof Expedition['currentNode']['data']['player']['cards'];
+        readonly callback?: (
+            card: IExpeditionPlayerStateDeckCard,
+        ) => IExpeditionPlayerStateDeckCard;
+    }): Promise<void> {
+        // First we get the game context
+        const ctx = await this.expeditionService.getGameContext(client);
+
+        // Now we set the logger context
+        const logger = this.logger.logger.child(ctx.info);
 
         // Now we get the current node information
         const {
-            data: {
-                player: { cards },
+            expedition: {
+                currentNode: {
+                    data: {
+                        player: { cards },
+                    },
+                },
             },
-        } = await this.expeditionService.getCurrentNode({
-            clientId: client.id,
-        });
+        } = ctx;
 
         // Now we set a variable for the cardfrom where we
         // are going to take the cards
@@ -68,7 +72,7 @@ export class MoveCardAction {
         // Send create message for the new cards
         // source: the desired pile
         // destination: hand
-        this.logger.debug(
+        logger.info(
             `Sent message PutData to client ${client.id}: ${SWARAction.MoveCard}`,
         );
 

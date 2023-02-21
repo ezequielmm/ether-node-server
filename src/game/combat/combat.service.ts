@@ -44,15 +44,10 @@ export class CombatService {
         private readonly cardService: CardService,
     ) {}
 
-    private node: Node;
-    private clientId: string;
-
     async generate(
         ctx: GameContext,
         node: Node,
     ): Promise<IExpeditionCurrentNode> {
-        this.node = node;
-
         // Get initial player stats
         const {
             initialEnergy,
@@ -76,14 +71,15 @@ export class CombatService {
         } = ctx.expedition;
 
         const shouldGeneratePotion = getRandomBetween(1, 100) < potionChance;
-        const trinketsToGenerate = [this.getTrinketRarityProbability()];
+        const trinketsToGenerate = [this.getTrinketRarityProbability(node)];
 
-        const enemies = await this.getEnemies();
+        const enemies = await this.getEnemies(node);
         const rewards = await this.rewardService.generateRewards({
             ctx,
-            node: this.node,
-            coinsToGenerate: this.generateCoins(),
+            node: node,
+            coinsToGenerate: this.generateCoins(node),
             cardsToGenerate: this.getCardRarityProbability(
+                node,
                 maxCardRewardsInCombat,
             ),
             potionsToGenerate: shouldGeneratePotion
@@ -95,13 +91,17 @@ export class CombatService {
             ),
         });
 
-        this.updatePotionChance(potionChance, shouldGeneratePotion);
+        await this.updatePotionChance(
+            ctx.client.id,
+            potionChance,
+            shouldGeneratePotion,
+        );
 
         return {
-            nodeId: this.node.id,
+            nodeId: node.id,
             completed: false,
-            nodeType: this.node.type,
-            nodeSubType: this.node.subType,
+            nodeType: node.type,
+            nodeSubType: node.subType,
             showRewards: false,
             data: {
                 round: 0,
@@ -195,12 +195,12 @@ export class CombatService {
         }
     }
 
-    private async getEnemies(): Promise<IExpeditionCurrentNodeDataEnemy[]> {
+    private async getEnemies(
+        node: Node,
+    ): Promise<IExpeditionCurrentNodeDataEnemy[]> {
         const enemyGroup = getRandomItemByWeight<EnemyId[]>(
-            this.node.private_data.enemies.map(({ enemies }) => enemies),
-            this.node.private_data.enemies.map(
-                ({ probability }) => probability,
-            ),
+            node.private_data.enemies.map(({ enemies }) => enemies),
+            node.private_data.enemies.map(({ probability }) => probability),
         );
 
         return await Promise.all(
@@ -213,8 +213,8 @@ export class CombatService {
                 );
 
                 if (
-                    HARD_MODE_NODE_START <= this.node.step &&
-                    this.node.step <= HARD_MODE_NODE_END
+                    HARD_MODE_NODE_START <= node.step &&
+                    node.step <= HARD_MODE_NODE_END
                 ) {
                     newHealth = Math.floor(newHealth * 1.5);
                 }
@@ -238,8 +238,8 @@ export class CombatService {
         );
     }
 
-    private generateCoins(): number {
-        switch (this.node.subType) {
+    private generateCoins(node: Node): number {
+        switch (node.subType) {
             case NodeType.CombatStandard:
                 return getRandomBetween(10, 20);
             case NodeType.CombatElite:
@@ -252,12 +252,13 @@ export class CombatService {
     }
 
     private getCardRarityProbability(
+        node: Node,
         cardsToGenerate: number,
     ): CardRarityEnum[] {
         const rarities: CardRarityEnum[] = [];
 
         for (let i = 1; i <= cardsToGenerate; i++) {
-            switch (this.node.subType) {
+            switch (node.subType) {
                 case NodeType.CombatStandard:
                     rarities.push(
                         getRandomItemByWeight(
@@ -308,8 +309,8 @@ export class CombatService {
         );
     }
 
-    private getTrinketRarityProbability(): TrinketRarityEnum {
-        switch (this.node.subType) {
+    private getTrinketRarityProbability(node: Node): TrinketRarityEnum {
+        switch (node.subType) {
             case NodeType.CombatElite:
                 return getRandomItemByWeight(
                     [
@@ -325,6 +326,7 @@ export class CombatService {
     }
 
     private async updatePotionChance(
+        clientId: string,
         potionChance: number,
         shouldGeneratePotion: boolean,
     ): Promise<void> {
@@ -334,7 +336,7 @@ export class CombatService {
                 : Math.max(0, potionChance + 10);
 
             await this.expeditionService.updateByFilter(
-                { clientId: this.clientId },
+                { clientId: clientId },
                 {
                     ['actConfig.potionChance']: newPotionChance,
                 },
