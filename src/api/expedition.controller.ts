@@ -54,7 +54,7 @@ export class ExpeditionController {
     async handleGetExpeditionStatus(
         @Headers() headers,
     ): Promise<{ hasExpedition: boolean; nftId: number }> {
-        this.logger.debug(`Client called GET route "/expeditions/status"`);
+        this.logger.log(`Client called GET route "/expeditions/status"`);
 
         const { authorization } = headers;
 
@@ -68,10 +68,11 @@ export class ExpeditionController {
                     playerId: playerId,
                     status: ExpeditionStatusEnum.InProgress,
                 },
-                { playerState: 1 },
+                { playerState: 1, isCurrentlyPlaying: 1 },
             );
 
-            const hasExpedition = expedition !== null;
+            const hasExpedition =
+                expedition !== null && !expedition.isCurrentlyPlaying;
             const nftId = expedition?.playerState?.nftId ?? -1;
 
             return { hasExpedition, nftId };
@@ -97,7 +98,7 @@ export class ExpeditionController {
     ): Promise<{
         expeditionCreated: boolean;
     }> {
-        this.logger.debug(`Client called POST route "/expeditions"`);
+        this.logger.log(`Client called POST route "/expeditions"`);
 
         const { authorization } = headers;
 
@@ -146,7 +147,7 @@ export class ExpeditionController {
     async handleCancelExpedition(@Headers() headers): Promise<{
         canceledExpedition: boolean;
     }> {
-        this.logger.debug(`Client called POST route "/expedition/cancel"`);
+        this.logger.log(`Client called POST route "/expedition/cancel"`);
 
         const { authorization } = headers;
 
@@ -187,7 +188,7 @@ export class ExpeditionController {
     })
     @Get('/score')
     async handleGetScore(@Headers() headers): Promise<ScoreResponse> {
-        this.logger.debug(`Client called GET route "/expedition/score"`);
+        this.logger.log(`Client called GET route "/expedition/score"`);
 
         const { authorization } = headers;
 
@@ -196,7 +197,7 @@ export class ExpeditionController {
                 authorization,
             );
 
-            const expedition = await this.expeditionService.findOne({
+            const expedition = await this.expeditionService.findOneTimeDesc({
                 playerId,
                 $or: [
                     { status: ExpeditionStatusEnum.Victory },

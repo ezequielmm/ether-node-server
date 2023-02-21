@@ -10,6 +10,7 @@ import { ConfigService } from '@nestjs/config';
 import { serverEnvironments } from './utils';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { join } from 'path';
+import { Logger } from 'nestjs-pino';
 
 async function bootstrap() {
     let app: NestExpressApplication;
@@ -24,11 +25,16 @@ async function bootstrap() {
                     cert: readFileSync(certFilePath),
                     key: readFileSync(keyFilePath),
                 },
+                bufferLogs: true,
             });
         }
     } else {
-        app = await NestFactory.create<NestExpressApplication>(AppModule);
+        app = await NestFactory.create<NestExpressApplication>(AppModule, {
+            bufferLogs: true,
+        });
     }
+    // Pino Logger
+    app.useLogger(app.get(Logger));
 
     app.useWebSocketAdapter(new IoAdapter(app));
 

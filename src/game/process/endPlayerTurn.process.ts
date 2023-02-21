@@ -28,7 +28,8 @@ export class EndPlayerTurnProcess {
     ) {}
 
     async handle({ ctx }: { ctx: GameContext }): Promise<void> {
-        this.logger.debug(`Ending player turn`);
+        // Set the logger context
+        this.logger.log(ctx.info, `Ending player turn`);
 
         const { client, expedition } = ctx;
 
@@ -61,10 +62,7 @@ export class EndPlayerTurnProcess {
 
         await this.combatQueueService.start(ctx);
 
-        await this.discardAllCardsAction.handle({
-            client,
-            SWARMessageTypeToSend: SWARMessageType.EndTurn,
-        });
+        await this.discardAllCardsAction.handle(ctx, SWARMessageType.EndTurn);
 
         await this.eventEmitter.emitAsync(EVENT_AFTER_PLAYER_TURN_END, { ctx });
 

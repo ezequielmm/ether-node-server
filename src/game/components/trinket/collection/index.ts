@@ -21,5 +21,5 @@ export { GobletTrinket } from './goblet.trinket';
 // export { CrustaceansClawUpgradedTrinket } from './crustaceans-claw-upgraded.trinket';
 export { PhoenixEggTrinket } from './phoenix-egg.trinket';
 export { PhoenixEggUpgradedTrinket } from './phoenix-egg-upgraded.trinket';
-export { RunicTomeTrinket } from './runic-tome.trinket';
-export { RunicTomeUpgradedTrinket } from './runic-tome-upgraded.trinket';
+//export { RunicTomeTrinket } from './runic-tome.trinket';
+//export { RunicTomeUpgradedTrinket } from './runic-tome-upgraded.trinket';

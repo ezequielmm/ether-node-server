@@ -7,6 +7,7 @@ import { ProcessModule } from 'src/game/process/process.module';
 import { MerchantModule } from 'src/game/merchant/merchant.module';
 import { ScoreCalculatorModule } from 'src/game/scoreCalculator/scoreCalculator.module';
 import { TokenController } from './token.controller';
+import { ShowVersionController } from './showVersion.controller';
 
 @Module({
     imports: [
@@ -16,6 +17,11 @@ import { TokenController } from './token.controller';
         MerchantModule,
         ScoreCalculatorModule,
     ],
-    controllers: [ProfileController, ExpeditionController, TokenController],
+    controllers: [
+        ProfileController,
+        ExpeditionController,
+        TokenController,
+        ShowVersionController,
+    ],
 })
 export class ApiModule {}

@@ -3,10 +3,9 @@ import {
     OnGatewayDisconnect,
     OnGatewayInit,
     WebSocketGateway,
-    WebSocketServer,
 } from '@nestjs/websockets';
 import { Logger } from '@nestjs/common';
-import { Server, Socket } from 'socket.io';
+import { Socket } from 'socket.io';
 import { isValidAuthToken } from 'src/utils';
 import { AuthGatewayService } from 'src/authGateway/authGateway.service';
 import { ExpeditionService } from 'src/game/components/expedition/expedition.service';
@@ -24,8 +23,6 @@ export class SocketGateway
 {
     private readonly logger: Logger = new Logger(SocketGateway.name);
 
-    @WebSocketServer() server: Server;
-
     constructor(
         private readonly authGatewayService: AuthGatewayService,
         private readonly expeditionService: ExpeditionService,
@@ -36,16 +33,25 @@ export class SocketGateway
     ) {}
 
     afterInit(): void {
-        this.logger.debug(`Socket Initiated`);
+        this.logger.log(`Socket Initiated`);
     }
 
     async handleConnection(client: Socket): Promise<void> {
-        this.logger.debug(`Client attempting a connection: ${client.id}`);
+        this.logger.log(
+            client.handshake,
+            `Client attempting a connection: ${client.id}`,
+        );
 
         const { authorization } = client.handshake.headers;
 
         if (!isValidAuthToken(authorization)) {
-            this.logger.debug(`Client has an invalid auth token: ${client.id}`);
+            this.logger.log(
+                {
+                    authorization,
+                    clientId: client.id,
+                },
+                'Client has an invalid auth token',
+            );
             client.disconnect(true);
         }
 
@@ -54,15 +60,50 @@ export class SocketGateway
                 authorization,
             );
 
-            const expedition = await this.expeditionService.updateClientId({
-                clientId: client.id,
+            await this.expeditionService.updateClientId({
                 playerId,
+                clientId: client.id,
             });
 
             const ctx = await this.expeditionService.getGameContext(client);
+            const expedition = ctx.expedition;
+
+            client.prependAny((event, ...args) => {
+                this.logger.log(
+                    {
+                        ...ctx.info,
+                        event,
+                        args: args.map((arg) => {
+                            try {
+                                return JSON.parse(arg);
+                            } catch (error) {
+                                return arg;
+                            }
+                        }),
+                    },
+                    'Client sent a message',
+                );
+            });
+
+            client.prependAnyOutgoing((event, ...args) => {
+                this.logger.log(
+                    {
+                        ...ctx.info,
+                        event,
+                        args: args.map((arg) => {
+                            try {
+                                return JSON.parse(arg);
+                            } catch (error) {
+                                return arg;
+                            }
+                        }),
+                    },
+                    'Server sent a message',
+                );
+            });
 
             if (expedition) {
-                this.logger.debug(`Client connected: ${client.id}`);
+                this.logger.log(ctx.info, `Client connected to expedition`);
 
                 // Here we check if the player is in a node already
                 if (expedition.currentNode !== undefined) {
@@ -80,34 +121,37 @@ export class SocketGateway
                 }
 
                 await this.fullSyncAction.handle(client, false);
-
-                this.logger.verbose(
-                    `Clients connected: ${this.server.engine.clientsCount}`,
-                );
             } else {
-                this.logger.debug(
-                    `There is no expedition in progress for this player: ${client.id}`,
+                this.logger.log(
+                    {
+                        clientId: client.id,
+                        playerId,
+                    },
+                    'There is no expedition in progress for this player',
                 );
 
                 client.disconnect(true);
             }
         } catch (e) {
-            this.logger.debug(e.message);
-            this.logger.debug(e.stack);
+            this.logger.error(e);
             client.disconnect(true);
         }
     }
 
     async handleDisconnect(client: Socket): Promise<void> {
-        this.logger.debug(`Client disconnected: ${client.id}`);
+        const ctx = await this.expeditionService.getGameContext(client);
 
         // Clear Combat queue
         await this.combatQueueService.deleteCombatQueueByClientId(client.id);
-        this.logger.debug(`Deleted combat queue for client ${client.id}`);
+        this.logger.log(
+            ctx.info,
+            `Deleted combat queue for client ${client.id}`,
+        );
 
         // Clear Card Selection Queue
         await this.cardSelectionScreenService.deleteByClientId(client.id);
-        this.logger.debug(
+        this.logger.log(
+            ctx.info,
             `Deleted card selection screen items for client ${client.id}`,
         );
 
@@ -117,9 +161,7 @@ export class SocketGateway
             isCurrentlyPlaying: false,
         });
 
-        // Log amount of clients connected
-        this.logger.verbose(
-            `Clients connected: ${this.server.engine.clientsCount}`,
-        );
+        // Log disconnection event
+        this.logger.log(ctx.info, `Client disconnected: ${client.id}`);
     }
 }

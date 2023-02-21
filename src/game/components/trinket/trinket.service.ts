@@ -1,8 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { ModuleRef } from '@nestjs/core';
-import { isDocumentArray, ReturnModelType } from '@typegoose/typegoose';
+import { ReturnModelType } from '@typegoose/typegoose';
 import { getModelToken } from 'kindagoose';
-import { chain, filter as filterFunction, find, last, sample } from 'lodash';
+import {
+    chain,
+    filter as filterFunction,
+    find,
+    last,
+    sample,
+    sampleSize,
+} from 'lodash';
 import { MutateDTO } from 'src/game/effects/effects.interface';
 import {
     StandardResponse,
@@ -15,6 +22,8 @@ import { PlayerService } from '../player/player.service';
 import * as Trinkets from './collection';
 import { TrinketModifier } from './trinket-modifier';
 import { Trinket } from './trinket.schema';
+
+type TrinketFilter = Partial<Trinket> | ((trinket: Trinket) => boolean);
 
 @Injectable()
 export class TrinketService {
@@ -34,16 +43,23 @@ export class TrinketService {
         );
     }
 
-    public find(filter: Partial<Trinket>): Trinket[] {
+    public find(filter: TrinketFilter): Trinket[] {
         return filterFunction(this.findAll(), filter);
     }
 
-    public findOne(filter: Partial<Trinket>): Trinket {
+    public findOne(filter: TrinketFilter): Trinket {
         return find(this.findAll(), filter);
     }
 
-    public getRandomTrinket(filter?: Partial<Trinket>): Trinket {
+    public getRandomTrinket(filter?: TrinketFilter): Trinket {
         return sample(this.find(filter));
+    }
+
+    public getRandomTrinkets(
+        amount: number,
+        filter?: TrinketFilter,
+    ): Trinket[] {
+        return sampleSize(this.find(filter), amount);
     }
 
     public async add(ctx: GameContext, trinketId: number): Promise<boolean> {
