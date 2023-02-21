@@ -68,10 +68,11 @@ export class ExpeditionController {
                     playerId: playerId,
                     status: ExpeditionStatusEnum.InProgress,
                 },
-                { playerState: 1 },
+                { playerState: 1, isCurrentlyPlaying: 1 },
             );
 
-            const hasExpedition = expedition !== null;
+            const hasExpedition =
+                expedition !== null && !expedition.isCurrentlyPlaying;
             const nftId = expedition?.playerState?.nftId ?? -1;
 
             return { hasExpedition, nftId };

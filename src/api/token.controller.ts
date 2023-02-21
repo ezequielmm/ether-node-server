@@ -22,11 +22,11 @@ export class TokenController {
             message: string;
         },
     ): { isValid: boolean } {
-        const msgHash = ethers.utils.hashMessage(message);
+        const msgHash = ethers.hashMessage(message);
 
         const msgHashBytes = msgHash;
 
-        const recoveredAddress = ethers.utils.recoverAddress(msgHashBytes, sig);
+        const recoveredAddress = ethers.recoverAddress(msgHashBytes, sig);
 
         return {
             isValid: recoveredAddress.toLowerCase() === wallet.toLowerCase(),

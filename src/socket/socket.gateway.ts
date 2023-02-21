@@ -141,8 +141,6 @@ export class SocketGateway
     async handleDisconnect(client: Socket): Promise<void> {
         const ctx = await this.expeditionService.getGameContext(client);
 
-        this.logger.log(ctx.info, `Client disconnected: ${client.id}`);
-
         // Clear Combat queue
         await this.combatQueueService.deleteCombatQueueByClientId(client.id);
         this.logger.log(
@@ -162,5 +160,8 @@ export class SocketGateway
             clientId: client.id,
             isCurrentlyPlaying: false,
         });
+
+        // Log disconnection event
+        this.logger.log(ctx.info, `Client disconnected: ${client.id}`);
     }
 }
