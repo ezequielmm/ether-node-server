@@ -8,8 +8,8 @@ export const DoubleDownCardUpgraded: Card = {
     rarity: CardRarityEnum.Rare,
     cardType: CardTypeEnum.Skill,
     pool: 'knight',
-    energy: 1,
-    description: `Your next attack this turn does 2.5x damage`,
+    energy: 0,
+    description: `Your next attack this turn does 2x damage`,
     keywords: [],
     properties: {
         effects: [],
@@ -17,7 +17,7 @@ export const DoubleDownCardUpgraded: Card = {
             {
                 name: doubleDown.name,
                 attachTo: CardTargetedEnum.Player,
-                args: { counter: 2.5 },
+                args: { counter: 2 },
             },
         ],
     },
