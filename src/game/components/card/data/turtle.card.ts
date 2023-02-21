@@ -9,7 +9,7 @@ export const TurtleCardUpgraded: Card = {
     cardType: CardTypeEnum.Defend,
     pool: 'knight',
     energy: 0,
-    description: `At the end of next turn, double your defense`,
+    description: `At the end of this and next turn, double your defense`,
     keywords: [],
     properties: {
         effects: [],
