@@ -33,6 +33,7 @@ NFT_SERVICE_CONTRACT_ID="0x32A322C7C77840c383961B8aB503c9f45440c81f"
 NFT_SERVICE_CHAIN_ID="1"
 ```
 
+<<<<<<< HEAD
 | Key                       | Value                                                                   |
 | ------------------------- | ----------------------------------------------------------------------- |
 | MONGODB_URL               | The mongo db url for local/remote database connection                   |
@@ -44,6 +45,19 @@ NFT_SERVICE_CHAIN_ID="1"
 | NFT_SERVICE_CONTRACT_ID   | Contract id for nft srevice queries                                     |
 | NFT_SERVICE_CHAIN_ID      | The chain id for nft srevice queries                                    |
 | NFT_SERVICE_AUTHORIZATION | The value of the Authorization header for the nft srevice               |
+=======
+| Key             | Value                                                                   |
+| --------------- | ----------------------------------------------------------------------- |
+| MONGODB_URL     | The mongo db url for local/remote database connection                   |
+| SSL_CERT_PATH   | The path for the `server.crt` file for SSL                              |
+| SSL_KEY_PATH    | The path for the `server.key` file for SSL                              |
+| GET_PROFILE_URL | API route to get the user profile on the auth service                   |
+| NODE_ENV        | Environment where the service is running: `development` or `production` |
+| NFT_SERVICE_URL | API route to get wallet tokens from the nft service                     |
+|NFT_SERVICE_CONTRACT_ID| Contract id for nft srevice queries                               |
+|NFT_SERVICE_CHAIN_ID| The chain id for nft srevice queries                                 |
+|NFT_SERVICE_AUTHORIZATION| The value of the Authorization header for the nft srevice       |
+>>>>>>> 36736433f324a2de6c8fada07446d63fef763eca
 
 Once the `.env` file is set, we can run `npm run seed` to seed the database with the initial data.
 
@@ -56,4 +70,8 @@ To start the project in dev mode we run `npm run start:dev` and leave the consol
 
 If you prefer tu run with the debugger for Visual Studio Code, run `npm run start:debug`
 
+<<<<<<< HEAD
 For socket connection, the socket server runs on the same port (`3000` on local, `443` for SSL) that the service is running.
+=======
+For socket connection, the socket server runs on the same port (`3000` on local, `443` for SSL) that the service is running.
+>>>>>>> 36736433f324a2de6c8fada07446d63fef763eca
