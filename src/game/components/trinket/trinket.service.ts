@@ -1,0 +1,127 @@
+import { Injectable } from '@nestjs/common';
+import { ModuleRef } from '@nestjs/core';
+import { ReturnModelType } from '@typegoose/typegoose';
+import { getModelToken } from 'kindagoose';
+import {
+    chain,
+    filter as filterFunction,
+    find,
+    last,
+    sample,
+    sampleSize,
+} from 'lodash';
+import { MutateDTO } from 'src/game/effects/effects.interface';
+import {
+    StandardResponse,
+    SWARAction,
+    SWARMessageType,
+} from 'src/game/standardResponse/standardResponse';
+import { StatusDirection } from 'src/game/status/interfaces';
+import { GameContext } from '../interfaces';
+import { PlayerService } from '../player/player.service';
+import * as Trinkets from './collection';
+import { TrinketModifier } from './trinket-modifier';
+import { Trinket } from './trinket.schema';
+
+type TrinketFilter = Partial<Trinket> | ((trinket: Trinket) => boolean);
+
+@Injectable()
+export class TrinketService {
+    constructor(private readonly moduleRef: ModuleRef) {}
+
+    private createFromClass(TrinketClass: typeof Trinket): Trinket {
+        const TrinketModel = this.moduleRef.get<
+            ReturnModelType<typeof Trinket>
+        >(getModelToken(TrinketClass.name), { strict: false });
+
+        return new TrinketModel();
+    }
+
+    public findAll(): Trinket[] {
+        return Object.values(Trinkets).map((TrinketClass) =>
+            this.createFromClass(TrinketClass),
+        );
+    }
+
+    public find(filter: TrinketFilter): Trinket[] {
+        return filterFunction(this.findAll(), filter);
+    }
+
+    public findOne(filter: TrinketFilter): Trinket {
+        return find(this.findAll(), filter);
+    }
+
+    public getRandomTrinket(filter?: TrinketFilter): Trinket {
+        return sample(this.find(filter));
+    }
+
+    public getRandomTrinkets(
+        amount: number,
+        filter?: TrinketFilter,
+    ): Trinket[] {
+        return sampleSize(this.find(filter), amount);
+    }
+
+    public async add(ctx: GameContext, trinketId: number): Promise<boolean> {
+        const trinket = this.findOne({ trinketId });
+
+        if (!trinket) {
+            ctx.client.emit(
+                'PutData',
+                StandardResponse.respond({
+                    message_type: SWARMessageType.AddTrinket,
+                    action: SWARAction.TrinketNotFoundInDatabase,
+                    data: { trinketId },
+                }),
+            );
+            return false;
+        }
+
+        ctx.expedition.playerState.trinkets.push(trinket);
+        await last(ctx.expedition.playerState.trinkets).onAttach(ctx);
+        await ctx.expedition.save();
+
+        ctx.client.emit(
+            'PutData',
+            StandardResponse.respond({
+                message_type: SWARMessageType.AddTrinket,
+                action: SWARAction.TrinketAdded,
+                data: { trinketId },
+            }),
+        );
+
+        return true;
+    }
+
+    public async pipeline(mutateDTO: MutateDTO) {
+        const trinkets: TrinketModifier[] = [];
+
+        if (PlayerService.isPlayer(mutateDTO.dto.source)) {
+            trinkets.push(
+                ...chain(mutateDTO.ctx.expedition.playerState.trinkets)
+                    .filter(TrinketModifier.isModifier)
+                    .filter({
+                        direction: StatusDirection.Outgoing,
+                        effect: mutateDTO.effect,
+                    })
+                    .value(),
+            );
+        }
+
+        if (PlayerService.isPlayer(mutateDTO.dto.target)) {
+            trinkets.push(
+                ...chain(mutateDTO.ctx.expedition.playerState.trinkets)
+                    .filter(TrinketModifier.isModifier)
+                    .filter({
+                        direction: StatusDirection.Incoming,
+                        effect: mutateDTO.effect,
+                    })
+                    .value(),
+            );
+        }
+
+        return chain(trinkets)
+            .reduce((dto, trinket) => trinket.mutate(dto), mutateDTO.dto)
+            .value();
+    }
+}
