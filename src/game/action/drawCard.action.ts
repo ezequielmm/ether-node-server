@@ -237,17 +237,12 @@ export class DrawCardAction {
                 discard: newDiscard,
             });
 
-            const afterDrawCardsEvent: AfterDrawCardEvent = {
+            await this.eventEmitter2.emitAsync(EVENT_AFTER_DRAW_CARDS, {
                 ctx,
                 newHand,
                 newDraw,
                 newDiscard,
-            };
-
-            await this.eventEmitter2.emitAsync(
-                EVENT_AFTER_DRAW_CARDS,
-                afterDrawCardsEvent,
-            );
+            });
         }
     }
 }
