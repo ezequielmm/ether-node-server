@@ -37,7 +37,6 @@ mongodb-queries
 !.vscode/extensions.json
 
 #Env files
-.env
 *.env
 
 #VS Code
