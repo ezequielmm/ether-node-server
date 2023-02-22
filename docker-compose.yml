@@ -13,6 +13,7 @@ services:
             - kote-network
     core:
         container_name: kote-core
+        image: kote-gameplay-stack-core
         build: .
         restart: always
         env_file:
