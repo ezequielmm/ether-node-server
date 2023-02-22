@@ -2,9 +2,9 @@
 
 | Server      | Status                                                                                                                                                                                                                                                                        |
 | ----------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Development | [![Laravel Forge Site Deployment Status](https://img.shields.io/endpoint?url=https%3A%2F%2Fforge.laravel.com%2Fsite-badges%2F24e71277-d374-4aac-90b7-4394ab80880e%3Fdate%3D1%26commit%3D1&style=plastic)](https://forge.laravel.com/servers/533302/sites/1834943/deployments) |
-| Staging     | [![Laravel Forge Site Deployment Status](https://img.shields.io/endpoint?url=https%3A%2F%2Fforge.laravel.com%2Fsite-badges%2Ff8a1b62f-eae9-4d8b-a6bb-847d524ceeaf%3Fdate%3D1%26commit%3D1&style=plastic)](https://forge.laravel.com/servers/565781/sites/1666418/deployments) |
-| Alpha       | [![Laravel Forge Site Deployment Status](https://img.shields.io/endpoint?url=https%3A%2F%2Fforge.laravel.com%2Fsite-badges%2F15b2c683-0869-4d03-9d59-566e9c4851bf%3Fdate%3D1%26commit%3D1&style=plastic)](https://forge.laravel.com/servers/653718/sites/1890188/deployments) |
+| Development | [![Laravel Forge Site Deployment Status](https://img.shields.io/endpoint?url=https%3A%2F%2Fforge.laravel.com%2Fsite-badges%2F2eb3b12e-c3be-49bf-a341-d9f5bb5849fa%3Fdate%3D1%26commit%3D1&style=plastic)](https://forge.laravel.com)                                          |
+| Staging     | [![Laravel Forge Site Deployment Status](https://img.shields.io/endpoint?url=https%3A%2F%2Fforge.laravel.com%2Fsite-badges%2F873a6505-341a-442a-9088-bee080900361%3Fdate%3D1%26commit%3D1&style=plastic)](https://forge.laravel.com)                                          |
+| Alpha       | [![Laravel Forge Site Deployment Status](https://img.shields.io/endpoint?url=https%3A%2F%2Fforge.laravel.com%2Fsite-badges%2F803fdfe9-51d2-4922-a42a-ed20a943e94c%3Fdate%3D1%26commit%3D1&style=plastic)](https://forge.laravel.com) |
 
 This documentation will serve as a starting point to install and run the service with necessary commands and resources.
 
@@ -34,30 +34,31 @@ NFT_SERVICE_CHAIN_ID="1"
 ```
 
 <<<<<<< HEAD
-| Key                       | Value                                                                   |
+| Key | Value |
 | ------------------------- | ----------------------------------------------------------------------- |
-| MONGODB_URL               | The mongo db url for local/remote database connection                   |
-| SSL_CERT_PATH             | The path for the `server.crt` file for SSL                              |
-| SSL_KEY_PATH              | The path for the `server.key` file for SSL                              |
-| GET_PROFILE_URL           | API route to get the user profile on the auth service                   |
-| NODE_ENV                  | Environment where the service is running: `development` or `production` |
-| NFT_SERVICE_URL           | API route to get wallet tokens from the nft service                     |
-| NFT_SERVICE_CONTRACT_ID   | Contract id for nft srevice queries                                     |
-| NFT_SERVICE_CHAIN_ID      | The chain id for nft srevice queries                                    |
-| NFT_SERVICE_AUTHORIZATION | The value of the Authorization header for the nft srevice               |
+| MONGODB_URL | The mongo db url for local/remote database connection |
+| SSL_CERT_PATH | The path for the `server.crt` file for SSL |
+| SSL_KEY_PATH | The path for the `server.key` file for SSL |
+| GET_PROFILE_URL | API route to get the user profile on the auth service |
+| NODE_ENV | Environment where the service is running: `development` or `production` |
+| NFT_SERVICE_URL | API route to get wallet tokens from the nft service |
+| NFT_SERVICE_CONTRACT_ID | Contract id for nft srevice queries |
+| NFT_SERVICE_CHAIN_ID | The chain id for nft srevice queries |
+| NFT_SERVICE_AUTHORIZATION | The value of the Authorization header for the nft srevice |
 =======
-| Key             | Value                                                                   |
+| Key | Value |
 | --------------- | ----------------------------------------------------------------------- |
-| MONGODB_URL     | The mongo db url for local/remote database connection                   |
-| SSL_CERT_PATH   | The path for the `server.crt` file for SSL                              |
-| SSL_KEY_PATH    | The path for the `server.key` file for SSL                              |
-| GET_PROFILE_URL | API route to get the user profile on the auth service                   |
-| NODE_ENV        | Environment where the service is running: `development` or `production` |
-| NFT_SERVICE_URL | API route to get wallet tokens from the nft service                     |
-|NFT_SERVICE_CONTRACT_ID| Contract id for nft srevice queries                               |
-|NFT_SERVICE_CHAIN_ID| The chain id for nft srevice queries                                 |
-|NFT_SERVICE_AUTHORIZATION| The value of the Authorization header for the nft srevice       |
->>>>>>> 36736433f324a2de6c8fada07446d63fef763eca
+| MONGODB_URL | The mongo db url for local/remote database connection |
+| SSL_CERT_PATH | The path for the `server.crt` file for SSL |
+| SSL_KEY_PATH | The path for the `server.key` file for SSL |
+| GET_PROFILE_URL | API route to get the user profile on the auth service |
+| NODE_ENV | Environment where the service is running: `development` or `production` |
+| NFT_SERVICE_URL | API route to get wallet tokens from the nft service |
+|NFT_SERVICE_CONTRACT_ID| Contract id for nft srevice queries |
+|NFT_SERVICE_CHAIN_ID| The chain id for nft srevice queries |
+|NFT_SERVICE_AUTHORIZATION| The value of the Authorization header for the nft srevice |
+
+> > > > > > > 36736433f324a2de6c8fada07446d63fef763eca
 
 Once the `.env` file is set, we can run `npm run seed` to seed the database with the initial data.
 
@@ -74,4 +75,5 @@ If you prefer tu run with the debugger for Visual Studio Code, run `npm run star
 For socket connection, the socket server runs on the same port (`3000` on local, `443` for SSL) that the service is running.
 =======
 For socket connection, the socket server runs on the same port (`3000` on local, `443` for SSL) that the service is running.
->>>>>>> 36736433f324a2de6c8fada07446d63fef763eca
+
+> > > > > > > 36736433f324a2de6c8fada07446d63fef763eca
