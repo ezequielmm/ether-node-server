@@ -89,6 +89,15 @@ export class RewardService {
             if (trinkets.length > 0) rewards.push(...trinkets);
         }
 
+        if (rewards.length === 0) {
+            rewards.push({
+                id: randomUUID(),
+                type: IExpeditionNodeReward.Gold,
+                amount: 10, // see https://robotseamonster.monday.com/boards/2075844718/views/90131469/pulses/3979452615
+                taken: false,
+            });
+        }
+
         return rewards;
     }
 
