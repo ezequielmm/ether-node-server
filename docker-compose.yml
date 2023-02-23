@@ -20,8 +20,6 @@ services:
             - .env
         ports:
             - '${APP_PORT:-3000}:3000'
-        depends_on:
-            - mongodb
         networks:
             - kote-network
 networks:
