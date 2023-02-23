@@ -64,4 +64,6 @@ export enum PurchaseFailureEnum {
     NoEnoughGold = 'Not enough gold',
     InvalidId = 'Invalid id',
     MaxPotionReached = 'You cannot carry any more potions. Discard or use one to buy a potion.',
+    CardAlreadyUpgraded = 'This card is already upgraded',
+    CardCantBeUpgraded = 'This card cannot be upgraded',
 }
