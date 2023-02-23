@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { BugReportDTO, BugReportSC } from './bugReport.schema';
+import { BugReportSC } from './bugReport.schema';
 import { InjectModel } from 'kindagoose';
 import { ReturnModelType } from '@typegoose/typegoose';
 import { S3 } from 'aws-sdk';
