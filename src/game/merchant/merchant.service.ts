@@ -36,6 +36,7 @@ import mongoose from 'mongoose';
 import { TrinketService } from '../components/trinket/trinket.service';
 import { TrinketRarityEnum } from '../components/trinket/trinket.enum';
 import { GameContext } from '../components/interfaces';
+import { remove } from 'lodash';
 
 @Injectable()
 export class MerchantService {
@@ -529,7 +530,33 @@ export class MerchantService {
         };
 
         // Now we need to remove the old card from the player state
-        // and add the new one and save it on the database
+        const newCardDeck = remove(
+            playerState.cards,
+            (card) => card.id === cardId,
+        );
+
+        // Now we add the new card to the player state
+        newCardDeck.push(upgradedCard);
+
+        // Now we reduce the coin cost of the upgrade
+        const newGold = playerState.gold - upgradedPrice;
+
+        // Now we increase the card upgrade count
+        const newCardUpgradeCount = playerState.cardUpgradeCount + 1;
+
+        // Now we update the player state
+        await this.expeditionService.updateByFilter(
+            { clientId: client.id },
+            {
+                $set: {
+                    'playerState.cards': newCardDeck,
+                    'playerState.gold': newGold,
+                    'playerState.cardUpgradeCount': newCardUpgradeCount,
+                },
+            },
+        );
+
+        await this.success(client);
     }
 
     private async handlePotions(
