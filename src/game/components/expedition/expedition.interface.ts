@@ -18,6 +18,7 @@ export interface PotionInstance extends Potion {
 export class IExpeditionPlayerStateDeckCard extends Card {
     id: string;
     isTemporary: boolean;
+    oldEnergy?: number;
 }
 
 export interface IExpeditionCurrentNodeDataEnemy {
