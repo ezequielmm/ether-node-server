@@ -4,36 +4,45 @@ import { InjectModel } from 'kindagoose';
 import { ReturnModelType } from '@typegoose/typegoose';
 import { S3 } from 'aws-sdk';
 import { randomUUID } from 'crypto';
+import { ConfigService } from '@nestjs/config';
+
 @Injectable()
 export class BugReportService {
     constructor(
         @InjectModel(BugReportSC)
         private readonly bugreportSC: ReturnModelType<typeof BugReportSC>,
+        private readonly configService: ConfigService,
     ) {}
 
     async create(payload: any): Promise<BugReportSC> {
-        const bucket = process.env.AWS_S3_BUCKET_NAME;
-        const region = 'us-west-2';
-        const name = 'uploads/' + randomUUID() + '.png';
-        const image_base64 = payload.screenshot;
-        const file = Buffer.from(image_base64, 'base64');
-        const params = {
-            Bucket: bucket,
-            Key: String(name),
-            Body: file,
-        };
+        const bucket = this.configService.get<string>('AWS_BUCKET_NAME');
+        const accessKeyId = this.configService.get<string>('AWS_ACCESS_KEY_ID');
+        const secretAccessKey =
+            this.configService.get<string>('AWS_SECRET_KEY');
+        const region = this.configService.get<string>('AWS_REGION');
+
+        const name = `uploads/${randomUUID}.png`;
+        const imageBase64 = payload.screenshot;
+        const file = Buffer.from(imageBase64, 'base64');
+
         const s3 = new S3({
-            accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-            secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+            region,
+            accessKeyId,
+            secretAccessKey,
         });
 
         const promise = new Promise((resolve, reject) => {
-            s3.upload(params, (err, data) => {
-                if (err) {
-                    reject(err.message);
-                }
-                resolve(data);
-            });
+            s3.upload(
+                {
+                    Bucket: bucket,
+                    Key: String(name),
+                    Body: file,
+                },
+                (err, data) => {
+                    if (err) reject(err.message);
+                    resolve(data);
+                },
+            );
         });
 
         await promise;
