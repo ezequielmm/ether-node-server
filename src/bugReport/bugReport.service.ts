@@ -21,7 +21,7 @@ export class BugReportService {
             this.configService.get<string>('AWS_SECRET_KEY');
         const region = this.configService.get<string>('AWS_REGION');
 
-        const name = `uploads/${randomUUID}.png`;
+        const name = `uploads/${randomUUID()}.png`;
         const imageBase64 = payload.screenshot;
         const file = Buffer.from(imageBase64, 'base64');
 
