@@ -7,7 +7,7 @@ import {
     AutonomousWeaponCard,
     AutonomousWeaponCardUpgraded,
 } from './data/autonomousWeapon.card';
-import { BackflipCard, BackflipCardUpgraded } from './data/backflip.card';
+// import { BackflipCard, BackflipCardUpgraded } from './data/backflip.card';
 import { BackHandCard, BackHandCardUpgraded } from './data/backhand.card';
 import { BlusterCard, BlusterCardUpgraded } from './data/bluster.card';
 import { BolsterCard, BolsterCardUpgraded } from './data/bolster.card';
@@ -42,7 +42,7 @@ import {
     GiveNoGroundCard,
     GiveNoGroundCardUpgraded,
 } from './data/giveNoGround.card';
-import { GNCard, GNCardUpgraded } from './data/gn.card';
+// import { GNCard, GNCardUpgraded } from './data/gn.card';
 import { HeadButtCard, HeadButtCardUpgraded } from './data/headButt.card';
 import {
     HeavenGraceCard,
@@ -181,8 +181,8 @@ export const data: Card[] = [
     SiphonCardUpgraded,
     InvokeBlessingCard,
     InvokeBlessingCardUpgraded,
-    GNCard,
-    GNCardUpgraded,
+    // GNCard,
+    // GNCardUpgraded,
     HeadButtCard,
     HeadButtCardUpgraded,
     PlantFeetCard,
@@ -244,8 +244,8 @@ export const data: Card[] = [
     TwistTheBladeCardUpgraded,
     KnockDownCard,
     KnockDownCardUpgraded,
-    BackflipCard,
-    BackflipCardUpgraded,
+    // BackflipCard,
+    // BackflipCardUpgraded,
     FrontflipCard,
     FrontflipCardUpgraded,
     BurnedCard,
