@@ -59,6 +59,11 @@ export class CombatService {
         // Get current health
         const { hpCurrent, hpMax, cards } = ctx.expedition.playerState;
 
+        // Set card old energy value to 0
+        cards.forEach((card) => {
+            card.oldEnergy = 0;
+        });
+
         const handCards = takeRight(shuffle(cards), initialHandPileSize);
 
         const drawCards = removeCardsFromPile({
