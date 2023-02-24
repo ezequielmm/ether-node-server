@@ -52,6 +52,7 @@ export class TreasureService {
                     ? [this.getPotionRarityProbability()]
                     : [],
             trinketsToGenerate: [this.getTrinketRarityProbability()],
+            chest,
         });
 
         return {

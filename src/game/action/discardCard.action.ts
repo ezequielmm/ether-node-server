@@ -82,6 +82,14 @@ export class DiscardCardAction {
             return effect;
         });
 
+        // Next we check if the card has the key oldEnergy greater
+        // than 0, if it is true them we set the card energy to the
+        // oldEnergy value
+        cardToDiscard.energy =
+            cardToDiscard.oldEnergy > 0
+                ? cardToDiscard.oldEnergy
+                : cardToDiscard.energy;
+
         // Them add the card to the discard pile
         discard.push(cardToDiscard);
 
