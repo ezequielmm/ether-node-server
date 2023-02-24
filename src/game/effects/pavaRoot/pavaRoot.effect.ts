@@ -31,6 +31,7 @@ export class PavaRootEffect implements EffectHandler {
                 originPile: 'draw',
                 targetPile: 'hand',
                 callback: (card) => {
+                    card.oldEnergy = card.energy;
                     card.energy = 0;
                     return card;
                 },
