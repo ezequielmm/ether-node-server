@@ -29,4 +29,7 @@ export class Character {
 
     @Prop()
     isActive: boolean;
+
+    @Prop()
+    contractId?: string;
 }
