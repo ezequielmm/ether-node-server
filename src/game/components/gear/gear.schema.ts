@@ -1,5 +1,5 @@
 import { ModelOptions, Prop, Severity } from '@typegoose/typegoose';
-import { GearRarityEnum } from './gear.enum';
+import { GearCategoryEnum, GearRarityEnum, GearTraitEnum } from "./gear.enum";
 
 @ModelOptions({
     schemaOptions: { collection: 'gears', versionKey: false },
@@ -11,6 +11,12 @@ export class Gear {
 
     @Prop()
     name: string;
+
+    @Prop({ type: String, enum: GearTraitEnum })
+    trait: GearTraitEnum;
+
+    @Prop({ type: String, enum: GearCategoryEnum })
+    category: GearCategoryEnum;
 
     @Prop({ type: String, enum: GearRarityEnum })
     rarity: GearRarityEnum;
