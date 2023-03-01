@@ -70,6 +70,7 @@ export class EndCombatProcess {
             ctx.expedition.status = ExpeditionStatusEnum.Victory;
             ctx.expedition.finalScore = score;
             ctx.expedition.completedAt = new Date();
+            ctx.expedition.endedAt = new Date();
 
             ctx.client.emit(
                 'PutData',
@@ -126,6 +127,7 @@ export class EndCombatProcess {
         ctx.expedition.finalScore = score;
         ctx.expedition.isCurrentlyPlaying = false;
         ctx.expedition.defeatedAt = new Date();
+        ctx.expedition.endedAt = new Date();
 
         await ctx.expedition.save();
 

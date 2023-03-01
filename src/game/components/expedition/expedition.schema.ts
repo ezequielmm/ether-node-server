@@ -98,8 +98,17 @@ export class Expedition {
     createdAt: Date;
 
     @Prop()
+    /**
+     * @Deprecated use endedAt instead
+     */
     defeatedAt?: Date;
 
     @Prop()
+    /**
+     * @Deprecated use endedAt instead
+     */
     completedAt?: Date;
+
+    @Prop()
+    endedAt?: Date;
 }
