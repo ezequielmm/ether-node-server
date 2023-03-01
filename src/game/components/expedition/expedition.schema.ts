@@ -15,6 +15,7 @@ import { Player } from './player';
 import { ExpeditionActConfig } from './expeditionActConfig.schema';
 import { EncounterInterface } from '../encounter/encounter.interfaces';
 import { Score } from './scores';
+import { ScoreResponse } from 'src/game/scoreCalculator/scoreCalculator.service';
 
 export type ExpeditionDocument = HydratedDocument<Expedition>;
 
@@ -43,6 +44,9 @@ export class Expedition {
 
     @Prop()
     playerState: Player;
+
+    @Prop()
+    finalScore?: ScoreResponse;
 
     @Prop({ type: Object })
     currentNode?: {
@@ -95,4 +99,7 @@ export class Expedition {
 
     @Prop()
     defeatedAt?: Date;
+
+    @Prop()
+    completedAt?: Date;
 }

@@ -13,6 +13,7 @@ import {
     EVENT_AFTER_DAMAGE_EFFECT,
     EVENT_AFTER_END_COMBAT,
 } from '../constants';
+import { ScoreCalculatorService } from '../scoreCalculator/scoreCalculator.service';
 import {
     StandardResponse,
     SWARAction,
@@ -28,6 +29,7 @@ export class EndCombatProcess {
         private readonly enemyService: EnemyService,
         private readonly expeditionService: ExpeditionService,
         private readonly combatQueueService: CombatQueueService,
+        private readonly scoreCalculatorService: ScoreCalculatorService,
     ) {}
 
     @OnEvent(EVENT_AFTER_DAMAGE_EFFECT)
@@ -61,7 +63,14 @@ export class EndCombatProcess {
         // If combat boss, update expedition status to victory
         // and emit show score
         if (isCombatBoss) {
+            const score = this.scoreCalculatorService.calculate({
+                expedition: ctx.expedition,
+            });
+
             ctx.expedition.status = ExpeditionStatusEnum.Victory;
+            ctx.expedition.finalScore = score;
+            ctx.expedition.completedAt = new Date();
+
             ctx.client.emit(
                 'PutData',
                 StandardResponse.respond({
@@ -109,18 +118,16 @@ export class EndCombatProcess {
             }),
         );
 
-        await this.expeditionService.updateByFilter(
-            {
-                clientId: ctx.client.id,
-            },
-            {
-                $set: {
-                    status: ExpeditionStatusEnum.Defeated,
-                    isCurrentlyPlaying: false,
-                    defeatedAt: new Date(),
-                },
-            },
-        );
+        const score = this.scoreCalculatorService.calculate({
+            expedition: ctx.expedition,
+        });
+
+        ctx.expedition.status = ExpeditionStatusEnum.Defeated;
+        ctx.expedition.finalScore = score;
+        ctx.expedition.isCurrentlyPlaying = false;
+        ctx.expedition.defeatedAt = new Date();
+
+        await ctx.expedition.save();
 
         logger.info(`Combat ended for client ${ctx.client.id}`);
     }
