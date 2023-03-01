@@ -1,10 +1,10 @@
 import { Gear } from '../gear.schema';
 import { GearCategoryEnum, GearRarityEnum, GearTraitEnum } from '../gear.enum';
 
-export const Padding_Lower_Padding_Black: Gear = {
-    gearId: 203,
-    name: 'Black',
+export const Padding_Padding_White: Gear = {
+    gearId: 191,
+    name: 'White',
     trait: GearTraitEnum.Padding,
-    category: GearCategoryEnum.Lower_Padding,
+    category: GearCategoryEnum.Padding,
     rarity: GearRarityEnum.Legendary,
 };

@@ -180,28 +180,17 @@ import { Vambrace_Vambraces_Blue_Forearm } from './data/Vambrace_Vambraces_Blue_
 import { Vambrace_Vambraces_Red_Forearm } from './data/Vambrace_Vambraces_Red_Forearm.data';
 import { Vambrace_Vambraces_Gold_Strapped_Elbow } from './data/Vambrace_Vambraces_Gold_Strapped_Elbow.data';
 import { Vambrace_Vambraces_Purple_Forearm } from './data/Vambrace_Vambraces_Purple_Forearm.data';
-import { Padding_Upper_Padding_Silver } from './data/Padding_Upper_Padding_Silver.data';
-import { Padding_Upper_Padding_Blue } from './data/Padding_Upper_Padding_Blue.data';
-import { Padding_Upper_Padding_Green } from './data/Padding_Upper_Padding_Green.data';
-import { Padding_Upper_Padding_Gray } from './data/Padding_Upper_Padding_Gray.data';
-import { Padding_Upper_Padding_Dark_Green } from './data/Padding_Upper_Padding_Dark_Green.data';
-import { Padding_Upper_Padding_Brown } from './data/Padding_Upper_Padding_Brown.data';
-import { Padding_Upper_Padding_Red } from './data/Padding_Upper_Padding_Red.data';
-import { Padding_Upper_Padding_Yellow } from './data/Padding_Upper_Padding_Yellow.data';
-import { Padding_Upper_Padding_Purple } from './data/Padding_Upper_Padding_Purple.data';
-import { Padding_Upper_Padding_White } from './data/Padding_Upper_Padding_White.data';
-import { Padding_Upper_Padding_Black } from './data/Padding_Upper_Padding_Black.data';
-import { Padding_Lower_Padding_Silver } from './data/Padding_Lower_Padding_Silver.data';
-import { Padding_Lower_Padding_Blue } from './data/Padding_Lower_Padding_Blue.data';
-import { Padding_Lower_Padding_Green } from './data/Padding_Lower_Padding_Green.data';
-import { Padding_Lower_Padding_Gray } from './data/Padding_Lower_Padding_Gray.data';
-import { Padding_Lower_Padding_Dark_Green } from './data/Padding_Lower_Padding_Dark_Green.data';
-import { Padding_Lower_Padding_Brown } from './data/Padding_Lower_Padding_Brown.data';
-import { Padding_Lower_Padding_Red } from './data/Padding_Lower_Padding_Red.data';
-import { Padding_Lower_Padding_Yellow } from './data/Padding_Lower_Padding_Yellow.data';
-import { Padding_Lower_Padding_Purple } from './data/Padding_Lower_Padding_Purple.data';
-import { Padding_Lower_Padding_White } from './data/Padding_Lower_Padding_White.data';
-import { Padding_Lower_Padding_Black } from './data/Padding_Lower_Padding_Black.data';
+import { Padding_Padding_Silver } from './data/Padding_Padding_Silver.data';
+import { Padding_Padding_Blue } from './data/Padding_Padding_Blue.data';
+import { Padding_Padding_Green } from './data/Padding_Padding_Green.data';
+import { Padding_Padding_Gray } from './data/Padding_Padding_Gray.data';
+import { Padding_Padding_Dark_Green } from './data/Padding_Padding_Dark_Green.data';
+import { Padding_Padding_Brown } from './data/Padding_Padding_Brown.data';
+import { Padding_Padding_Red } from './data/Padding_Padding_Red.data';
+import { Padding_Padding_Yellow } from './data/Padding_Padding_Yellow.data';
+import { Padding_Padding_Purple } from './data/Padding_Padding_Purple.data';
+import { Padding_Padding_White } from './data/Padding_Padding_White.data';
+import { Padding_Padding_Black } from './data/Padding_Padding_Black.data';
 
 export const data: Gear[] = [
     Helmet_Helmet_Hounskull,
@@ -385,26 +374,15 @@ export const data: Gear[] = [
     Vambrace_Vambraces_Red_Forearm,
     Vambrace_Vambraces_Gold_Strapped_Elbow,
     Vambrace_Vambraces_Purple_Forearm,
-    Padding_Upper_Padding_Silver,
-    Padding_Upper_Padding_Blue,
-    Padding_Upper_Padding_Green,
-    Padding_Upper_Padding_Gray,
-    Padding_Upper_Padding_Dark_Green,
-    Padding_Upper_Padding_Brown,
-    Padding_Upper_Padding_Red,
-    Padding_Upper_Padding_Yellow,
-    Padding_Upper_Padding_Purple,
-    Padding_Upper_Padding_White,
-    Padding_Upper_Padding_Black,
-    Padding_Lower_Padding_Silver,
-    Padding_Lower_Padding_Blue,
-    Padding_Lower_Padding_Green,
-    Padding_Lower_Padding_Gray,
-    Padding_Lower_Padding_Dark_Green,
-    Padding_Lower_Padding_Brown,
-    Padding_Lower_Padding_Red,
-    Padding_Lower_Padding_Yellow,
-    Padding_Lower_Padding_Purple,
-    Padding_Lower_Padding_White,
-    Padding_Lower_Padding_Black,
+    Padding_Padding_Silver,
+    Padding_Padding_Blue,
+    Padding_Padding_Green,
+    Padding_Padding_Gray,
+    Padding_Padding_Dark_Green,
+    Padding_Padding_Brown,
+    Padding_Padding_Red,
+    Padding_Padding_Yellow,
+    Padding_Padding_Purple,
+    Padding_Padding_White,
+    Padding_Padding_Black,
 ];

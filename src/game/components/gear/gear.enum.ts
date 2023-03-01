@@ -27,6 +27,5 @@ export enum GearCategoryEnum {
     Boots = 'Boots',
     Pauldrons = 'Pauldrons',
     Vambraces = 'Vambraces',
-    Upper_Padding = 'Upper_Padding',
-    Lower_Padding = 'Lower_Padding',
+    Padding = 'Padding',
 }
