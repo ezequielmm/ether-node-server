@@ -3,6 +3,7 @@ import { AuthGatewayModule } from '../authGateway/authGateway.module';
 import { ExpeditionModule } from '../game/components/expedition/expedition.module';
 import { SocketGateway } from './socket.gateway';
 import { CardModule } from '../game/components/card/card.module';
+import { GearModule } from '../game/components/gear/gear.module';
 import { CombatGateway } from './combat.gateway';
 import { MoveCardGateway } from './moveCard.gateway';
 import { ExpeditionGateway } from './expedition.gateway';
@@ -28,6 +29,7 @@ import { EncounterModule } from '../game/components/encounter/encounter.module';
 import { UpgradeCardModule } from 'src/game/upgradeCard/upgradeCard.module';
 import { CombatModule } from '../game/combat/combat.module';
 
+
 @Module({
     imports: [
         AuthGatewayModule,
@@ -45,6 +47,7 @@ import { CombatModule } from '../game/combat/combat.module';
         TrinketModule,
         RewardModule,
         EncounterModule,
+        GearModule,
         CombatModule,
         UpgradeCardModule,
     ],

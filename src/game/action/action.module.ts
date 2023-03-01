@@ -33,6 +33,7 @@ import { MoveCardAction } from './moveCard.action';
 import { SetCombatTurnAction } from './setCombatTurn.action';
 import { GetEncounterDataAction } from './getEncounterDataAction';
 import { EncounterModule } from '../components/encounter/encounter.module';
+import { GearModule } from '../components/gear/gear.module';
 import { MapModule } from '../map/map/map.module';
 
 const actions = [
@@ -73,6 +74,7 @@ const actions = [
         PlayerModule,
         HistoryModule,
         CombatQueueModule,
+        GearModule,
         EncounterModule,
         MapModule,
     ],
