@@ -5,6 +5,7 @@ import { ReturnModelType } from '@typegoose/typegoose';
 import { S3 } from 'aws-sdk';
 import { randomUUID } from 'crypto';
 import { ConfigService } from '@nestjs/config';
+import { HttpService } from '@nestjs/axios';
 
 @Injectable()
 export class BugReportService {
@@ -12,9 +13,23 @@ export class BugReportService {
         @InjectModel(BugReportSC)
         private readonly bugreportSC: ReturnModelType<typeof BugReportSC>,
         private readonly configService: ConfigService,
+        private readonly httpService: HttpService,
     ) {}
 
     async create(payload: any): Promise<BugReportSC> {
+        const slack_message = {
+            text: 'title: 8\ndescription: 8',
+            attachments: [
+                {
+                    title: 'screen shot',
+                    image_url:
+                        'https://kote-bug-reports.s3.amazonaws.com/development/ef19c77c-11db-4c9e-aebd-8e3c63b50106.png',
+                },
+            ],
+        };
+        const slack_message_str = JSON.stringify(slack_message);
+        console.log(slack_message_str);
+
         const bucket = this.configService.get<string>('AWS_BUCKET_NAME');
         const accessKeyId = this.configService.get<string>('AWS_ACCESS_KEY_ID');
         const secretAccessKey =
@@ -45,8 +60,10 @@ export class BugReportService {
                 },
             );
         });
-
         await promise;
+
+        const domain = this.configService.get<string>('S3_IMAGE_URL_DOMAIN');
+        const url = `${domain}/${name}`;
 
         payload.screenshot = name;
         return await this.bugreportSC.create(payload);
