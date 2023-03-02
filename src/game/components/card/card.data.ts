@@ -1,5 +1,5 @@
 import { Card } from './card.schema';
-import { AdeptCard, AdeptCardUpgraded } from './data/adept.card';
+//import { AdeptCard, AdeptCardUpgraded } from './data/adept.card';
 import { AnticipateCard, AnticipateCardUpgraded } from './data/anticipate.card';
 import { ArmorUpCard, ArmorUpCardUpgraded } from './data/armorUp.card';
 import { AttackCard, AttackCardUpgraded } from './data/attack.card';
@@ -7,7 +7,7 @@ import {
     AutonomousWeaponCard,
     AutonomousWeaponCardUpgraded,
 } from './data/autonomousWeapon.card';
-import { BackflipCard, BackflipCardUpgraded } from './data/backflip.card';
+// import { BackflipCard, BackflipCardUpgraded } from './data/backflip.card';
 import { BackHandCard, BackHandCardUpgraded } from './data/backhand.card';
 import { BlusterCard, BlusterCardUpgraded } from './data/bluster.card';
 import { BolsterCard, BolsterCardUpgraded } from './data/bolster.card';
@@ -42,8 +42,8 @@ import {
     GiveNoGroundCard,
     GiveNoGroundCardUpgraded,
 } from './data/giveNoGround.card';
-import { GNCard, GNCardUpgraded } from './data/gn.card';
-import { HeadButtCard, HeadButtCardUpgraded } from './data/headButt.card';
+// import { GNCard, GNCardUpgraded } from './data/gn.card';
+//import { HeadButtCard, HeadButtCardUpgraded } from './data/headButt.card';
 import {
     HeavenGraceCard,
     HeavenGraceCardUpgraded,
@@ -55,7 +55,7 @@ import {
 import { HiltPunchCard, HiltPunchCardUpgraded } from './data/hiltPunch.card';
 import { ImbueCard, ImbueCardUpgraded } from './data/imbue.card';
 import { InterceptCard, InterceptCardUpgraded } from './data/intercept.card';
-import { IntimidateCard, IntimidateCardUpgraded } from './data/intimidate.card';
+//import { IntimidateCard, IntimidateCardUpgraded } from './data/intimidate.card';
 import {
     InvokeBlessingCard,
     InvokeBlessingCardUpgraded,
@@ -181,16 +181,16 @@ export const data: Card[] = [
     SiphonCardUpgraded,
     InvokeBlessingCard,
     InvokeBlessingCardUpgraded,
-    GNCard,
-    GNCardUpgraded,
-    HeadButtCard,
-    HeadButtCardUpgraded,
+    // GNCard,
+    // GNCardUpgraded,
+    // HeadButtCard,
+    // HeadButtCardUpgraded,
     PlantFeetCard,
     PlantFeetCardUpgraded,
     DoubleDownCard,
     DoubleDownCardUpgraded,
-    IntimidateCard,
-    IntimidateCardUpgraded,
+    // IntimidateCard,
+    // IntimidateCardUpgraded,
     //SpikeArmorCard,
     //SpikeArmorCardUpgraded,
     RepositionCard,
@@ -218,8 +218,8 @@ export const data: Card[] = [
     ForceFieldCardUpgraded,
     BolsterCard,
     BolsterCardUpgraded,
-    AdeptCard,
-    AdeptCardUpgraded,
+    // AdeptCard,
+    // AdeptCardUpgraded,
     DivineGiftCard,
     DivineGiftCardUpgraded,
     ExecutionersBlowCard,
@@ -244,8 +244,8 @@ export const data: Card[] = [
     TwistTheBladeCardUpgraded,
     KnockDownCard,
     KnockDownCardUpgraded,
-    BackflipCard,
-    BackflipCardUpgraded,
+    // BackflipCard,
+    // BackflipCardUpgraded,
     FrontflipCard,
     FrontflipCardUpgraded,
     BurnedCard,

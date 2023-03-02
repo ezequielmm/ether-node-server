@@ -11,6 +11,7 @@ import { serverEnvironments } from './utils';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { join } from 'path';
 import { Logger } from 'nestjs-pino';
+import { json, urlencoded } from 'express';
 
 async function bootstrap() {
     let app: NestExpressApplication;
@@ -49,6 +50,9 @@ async function bootstrap() {
         defaultVersion: '1',
         type: VersioningType.URI,
     });
+
+    app.use(json({ limit: '40mb' }));
+    app.use(urlencoded({ extended: true, limit: '40mb' })); // prevent 423 errors from bug reports
 
     // Get configService
     const configService = app.get(ConfigService);
