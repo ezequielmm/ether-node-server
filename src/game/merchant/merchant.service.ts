@@ -520,7 +520,7 @@ export class MerchantService {
         // Here we create the card object to be added to the player state
         const upgradedCard: IExpeditionPlayerStateDeckCard = {
             id: randomUUID(),
-            cardId: card.cardId,
+            cardId: upgradedCardData.cardId,
             name: upgradedCardData.name,
             cardType: upgradedCardData.cardType,
             energy: upgradedCardData.energy,
