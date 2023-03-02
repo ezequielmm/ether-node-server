@@ -36,7 +36,7 @@ import mongoose from 'mongoose';
 import { TrinketService } from '../components/trinket/trinket.service';
 import { TrinketRarityEnum } from '../components/trinket/trinket.enum';
 import { GameContext } from '../components/interfaces';
-import { remove } from 'lodash';
+import { filter } from 'lodash';
 
 @Injectable()
 export class MerchantService {
@@ -530,9 +530,9 @@ export class MerchantService {
         };
 
         // Now we need to remove the old card from the player state
-        const newCardDeck = remove(
+        const newCardDeck = filter(
             playerState.cards,
-            (card) => card.id === cardId,
+            ({ id }) => id !== cardId,
         );
 
         // Now we add the new card to the player state
