@@ -27,6 +27,13 @@ export class BugReportService {
                 },
             ],
         };
+        await this.httpService
+            .post(
+                'https://hooks.slack.com/services/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',
+                { slack_message },
+                { headers: { 'Content-type': 'application/json' } },
+            )
+            .toPromise();
         const slack_message_str = JSON.stringify(slack_message);
         console.log(slack_message_str);
 
