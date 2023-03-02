@@ -1,5 +1,5 @@
 import { Card } from './card.schema';
-import { AdeptCard, AdeptCardUpgraded } from './data/adept.card';
+//import { AdeptCard, AdeptCardUpgraded } from './data/adept.card';
 import { AnticipateCard, AnticipateCardUpgraded } from './data/anticipate.card';
 import { ArmorUpCard, ArmorUpCardUpgraded } from './data/armorUp.card';
 import { AttackCard, AttackCardUpgraded } from './data/attack.card';
@@ -43,7 +43,7 @@ import {
     GiveNoGroundCardUpgraded,
 } from './data/giveNoGround.card';
 // import { GNCard, GNCardUpgraded } from './data/gn.card';
-import { HeadButtCard, HeadButtCardUpgraded } from './data/headButt.card';
+//import { HeadButtCard, HeadButtCardUpgraded } from './data/headButt.card';
 import {
     HeavenGraceCard,
     HeavenGraceCardUpgraded,
@@ -183,8 +183,8 @@ export const data: Card[] = [
     InvokeBlessingCardUpgraded,
     // GNCard,
     // GNCardUpgraded,
-    HeadButtCard,
-    HeadButtCardUpgraded,
+    // HeadButtCard,
+    // HeadButtCardUpgraded,
     PlantFeetCard,
     PlantFeetCardUpgraded,
     DoubleDownCard,
@@ -218,8 +218,8 @@ export const data: Card[] = [
     ForceFieldCardUpgraded,
     BolsterCard,
     BolsterCardUpgraded,
-    AdeptCard,
-    AdeptCardUpgraded,
+    // AdeptCard,
+    // AdeptCardUpgraded,
     DivineGiftCard,
     DivineGiftCardUpgraded,
     ExecutionersBlowCard,
