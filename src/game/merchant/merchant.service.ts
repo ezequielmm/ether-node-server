@@ -493,7 +493,10 @@ export class MerchantService {
             return this.failure(client, PurchaseFailureEnum.NoEnoughGold);
 
         // Now we query the card information to check if we can upgrade it
-        const card = await this.cardService.findById(cardId);
+        const card = await this.cardService.findOne({ _id: cardId });
+
+        // If we can't find the card we return an error
+        if (!card) return this.failure(client, PurchaseFailureEnum.InvalidId);
 
         // Now we check if the card is already upgraded
         if (card.isUpgraded && !card.upgradedCardId)
@@ -507,9 +510,12 @@ export class MerchantService {
             return this.failure(client, PurchaseFailureEnum.CardCantBeUpgraded);
 
         // Now we query the upgraded information of the card
-        const upgradedCardData = await this.cardService.findById(
-            card.upgradedCardId,
-        );
+        const upgradedCardData = await this.cardService.findOne({
+            cardId: card.upgradedCardId,
+        });
+
+        if (!upgradedCardData)
+            return this.failure(client, PurchaseFailureEnum.InvalidId);
 
         // Here we create the card object to be added to the player state
         const upgradedCard: IExpeditionPlayerStateDeckCard = {
