@@ -36,7 +36,7 @@ import mongoose from 'mongoose';
 import { TrinketService } from '../components/trinket/trinket.service';
 import { TrinketRarityEnum } from '../components/trinket/trinket.enum';
 import { GameContext } from '../components/interfaces';
-import { filter } from 'lodash';
+import { filter, find } from 'lodash';
 
 @Injectable()
 export class MerchantService {
@@ -492,8 +492,20 @@ export class MerchantService {
         if (playerState.gold < upgradedPrice)
             return this.failure(client, PurchaseFailureEnum.NoEnoughGold);
 
+        // Now we find the card in the player state to get its card id
+        const cardFromPlayerState = find(
+            playerState.cards,
+            ({ id }) => id === cardId,
+        );
+
+        // If we can't find the card we return an error
+        if (!cardFromPlayerState)
+            return this.failure(client, PurchaseFailureEnum.InvalidId);
+
         // Now we query the card information to check if we can upgrade it
-        const card = await this.cardService.findById(cardId);
+        const card = await this.cardService.findOne({
+            cardId: cardFromPlayerState.cardId,
+        });
 
         // If we can't find the card we return an error
         if (!card) return this.failure(client, PurchaseFailureEnum.InvalidId);
