@@ -483,7 +483,7 @@ export class MerchantService {
         });
 
         // Now we get the card id from the selected item
-        const cardId = selectedItem.targetId;
+        const cardId = selectedItem.targetId as string;
 
         // Now we need the price to upgrade the card
         const upgradedPrice = 75 + 25 * playerState.cardUpgradeCount;
@@ -493,7 +493,7 @@ export class MerchantService {
             return this.failure(client, PurchaseFailureEnum.NoEnoughGold);
 
         // Now we query the card information to check if we can upgrade it
-        const card = await this.cardService.findOne({ _id: cardId });
+        const card = await this.cardService.findById(cardId);
 
         // If we can't find the card we return an error
         if (!card) return this.failure(client, PurchaseFailureEnum.InvalidId);
