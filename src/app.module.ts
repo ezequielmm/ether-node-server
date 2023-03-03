@@ -9,6 +9,7 @@ import { BugReportModule } from './bugReport/bugReport.module';
 import { WalletModule } from './wallet/wallet.module';
 import { LoggerModule } from 'nestjs-pino';
 import { createWriteStream } from 'pino-papertrail';
+import { PlayerGearModule } from './playerGear/playerGear.module';
 
 @Module({
     imports: [
@@ -46,6 +47,7 @@ import { createWriteStream } from 'pino-papertrail';
             }),
         }),
         BugReportModule,
+        PlayerGearModule,
         WalletModule,
         ApiModule,
         ConfigModule.forRoot({ isGlobal: true, cache: true }),
