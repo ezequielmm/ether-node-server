@@ -30,7 +30,6 @@ import { NodeSelectedProcess } from './nodeSelected.process';
 import { SendEnemyIntentProcess } from './sendEnemyIntents.process';
 import { InitEncounterProcess } from './initEncounter.process';
 import { EncounterModule } from '../components/encounter/encounter.module';
-import { GearModule } from '../components/gear/gear.module';
 import { ContinueExpeditionProcess } from './continueExpedition.process';
 import { MapModule } from '../map/map/map.module';
 
@@ -52,7 +51,6 @@ import { MapModule } from '../map/map/map.module';
         CombatQueueModule,
         TrinketModule,
         CombatModule,
-        GearModule,
         EncounterModule,
         MapModule,
     ],
