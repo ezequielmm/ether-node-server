@@ -48,7 +48,8 @@ export class BugReportService {
         });
         await promise;
 
-        //send to slack
+        // send to slack
+        const slackUrl = this.configService.get<string>('SLACK_WEBHOOK_URL');
         const userTitle = payload.userTitle;
         const userDescription = payload.userDescription;
         const domain = this.configService.get<string>('S3_IMAGE_URL_DOMAIN');
@@ -64,14 +65,12 @@ export class BugReportService {
         };
         const slack_message_str = JSON.stringify(slack_message);
         await lastValueFrom(
-            this.httpService.post(
-                'https://hooks.slack.com/services/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',
-                slack_message_str,
-                { headers: { 'Content-type': 'application/json' } },
-            ),
+            this.httpService.post(slackUrl, slack_message_str, {
+                headers: { 'Content-type': 'application/json' },
+            }),
         );
 
-        //write to DB
+        // write to DB
         payload.screenshot = name;
         return await this.bugreportSC.create(payload);
     }
