@@ -1,6 +1,9 @@
-import { Prop } from "@typegoose/typegoose";
+import { Prop } from '@typegoose/typegoose';
 
 export class GearItem {
+    @Prop()
+    gearId: string;
+
     @Prop()
     name: string;
 

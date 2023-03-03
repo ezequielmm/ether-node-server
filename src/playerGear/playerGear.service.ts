@@ -39,16 +39,18 @@ export class PlayerGearService {
         if (gearList) return;
 
         const g1: GearItem = {
-            name: 'a name',
-            trait: 'a trait',
-            category: 'a category',
-            rarity: 'a rarity',
+            gearId: '1',
+            name: 'Hounskull',
+            trait: 'Helmet',
+            category: 'Helmet',
+            rarity: 'Common',
         };
         const g2: GearItem = {
-            name: '2 name',
-            trait: '2 trait',
-            category: '2 category',
-            rarity: '2 rarity',
+            gearId: '24',
+            name: 'Wooden Circle',
+            trait: 'Shield',
+            category: 'Shield',
+            rarity: 'Common',
         };
         const p: PlayerGear = {
             playerId: playerId,
