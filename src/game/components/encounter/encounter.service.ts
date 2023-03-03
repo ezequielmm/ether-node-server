@@ -20,10 +20,8 @@ import { TrinketService } from '../trinket/trinket.service';
 import { IExpeditionPlayerStateDeckCard } from '../expedition/expedition.interface';
 import { randomUUID } from 'crypto';
 import { CardDescriptionFormatter } from '../../cardDescriptionFormatter/cardDescriptionFormatter';
-import { PotionService } from '../potion/potion.service';
 import { Player } from '../expedition/player';
 import { CardRarityEnum } from '../card/card.enum';
-import { logger } from '@typegoose/typegoose/lib/logSettings';
 
 @Injectable()
 export class EncounterService {
@@ -34,7 +32,6 @@ export class EncounterService {
 
         private readonly cardService: CardService,
         private readonly trinketService: TrinketService,
-        private readonly potionService: PotionService,
     ) {}
 
     async generateEncounter(ctx: GameContext): Promise<EncounterInterface> {
@@ -55,7 +52,7 @@ export class EncounterService {
                 EncounterIdEnum.RunicBehive,
             ],
             //       1  2  3  4  5  6  7  8  9 10 11 12
-            [0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0],
+            [0, 0, 1, 0, 0, 1, 1, 1, 0, 0, 0, 0],
         );
 
         //fetch existing encounter if there is one
