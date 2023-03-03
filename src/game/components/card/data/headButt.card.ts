@@ -33,7 +33,7 @@ export const HeadButtCardUpgraded: Card = {
     },
     showPointer: true,
     isUpgraded: true,
-    isActive: true,
+    isActive: false,
 };
 
 export const HeadButtCard: Card = {
@@ -67,5 +67,5 @@ export const HeadButtCard: Card = {
     showPointer: true,
     isUpgraded: false,
     upgradedCardId: HeadButtCardUpgraded.cardId,
-    isActive: true,
+    isActive: false,
 };
