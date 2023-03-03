@@ -1,5 +1,5 @@
 import { ModelOptions, Prop, Severity } from '@typegoose/typegoose';
-import { GearCategoryEnum, GearRarityEnum, GearTraitEnum } from "./gear.enum";
+import { GearCategoryEnum, GearRarityEnum, GearTraitEnum } from './gear.enum';
 
 @ModelOptions({
     schemaOptions: { collection: 'gears', versionKey: false },

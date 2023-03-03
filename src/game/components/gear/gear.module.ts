@@ -1,4 +1,4 @@
-import { forwardRef, Module } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { Gear } from './gear.schema';
 import { KindagooseModule } from 'kindagoose';
 import { GearService } from './gear.service';
