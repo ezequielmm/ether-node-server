@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { filter, includes, reject } from 'lodash';
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 import { CardKeywordEnum } from '../components/card/card.enum';
+import { IExpeditionPlayerStateDeckCard } from '../components/expedition/expedition.interface';
 import { GameContext } from '../components/interfaces';
 import {
     StandardResponse,
@@ -25,7 +26,8 @@ export class DiscardAllCardsAction {
         const cards = ctx.expedition.currentNode.data.player.cards;
 
         // Determine which cards to discard and which to exhaust
-        const isFade = (card) => includes(card.keywords, CardKeywordEnum.Fade);
+        const isFade = (card: IExpeditionPlayerStateDeckCard) =>
+            includes(card.keywords, CardKeywordEnum.Fade);
 
         // Next we check if the card has the key oldEnergy greater
         // than 0, if it is true them we set the card energy to the
