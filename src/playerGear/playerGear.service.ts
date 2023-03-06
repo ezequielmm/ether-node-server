@@ -5,7 +5,8 @@ import { ReturnModelType } from '@typegoose/typegoose';
 import { HttpService } from '@nestjs/axios';
 import { ConfigService } from '@nestjs/config';
 import { firstValueFrom } from 'rxjs';
-import { GearItem } from './gearItem';
+import { data } from '../game/components/gear/gear.data';
+import { Gear } from '../game/components/gear/gear.schema';
 @Injectable()
 export class PlayerGearService {
     constructor(
@@ -15,7 +16,7 @@ export class PlayerGearService {
         private readonly configService: ConfigService,
     ) {}
 
-    async getGear(authToken: string): Promise<GearItem[]> {
+    async getGear(authToken: string): Promise<Gear[]> {
         const url = this.configService.get<string>('GET_PROFILE_URL');
         const data = await firstValueFrom(
             this.httpService.get<any>(url, {
@@ -38,23 +39,22 @@ export class PlayerGearService {
         });
         if (gearList) return;
 
-        const g1: GearItem = {
-            gearId: '1',
-            name: 'Hounskull',
-            trait: 'Helmet',
-            category: 'Helmet',
-            rarity: 'Common',
-        };
-        const g2: GearItem = {
-            gearId: '24',
-            name: 'Wooden Circle',
-            trait: 'Shield',
-            category: 'Shield',
-            rarity: 'Common',
-        };
         const p: PlayerGear = {
             playerId: playerId,
-            gear: [g1, g2],
+            gear: [
+                data[0],
+                data[1],
+                data[2],
+                data[24],
+                data[41],
+                data[71],
+                data[91],
+                data[112],
+                data[131],
+                data[151],
+                data[169],
+                data[182],
+            ],
         };
         await this.playerGear.create(p);
     }
