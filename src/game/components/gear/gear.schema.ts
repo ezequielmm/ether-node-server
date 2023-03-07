@@ -6,7 +6,7 @@ import { GearCategoryEnum, GearRarityEnum, GearTraitEnum } from './gear.enum';
     options: { allowMixed: Severity.ALLOW },
 })
 export class Gear {
-    @Prop()
+    @Prop({ unique: true })
     gearId: number;
 
     @Prop()
