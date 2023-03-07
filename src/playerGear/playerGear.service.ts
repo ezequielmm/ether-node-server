@@ -1,12 +1,18 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from 'kindagoose';
 import { PlayerGear } from './playerGear.schema';
-import { ReturnModelType } from '@typegoose/typegoose';
+import { Prop, ReturnModelType } from '@typegoose/typegoose';
 import { HttpService } from '@nestjs/axios';
 import { ConfigService } from '@nestjs/config';
 import { firstValueFrom } from 'rxjs';
 import { data } from '../game/components/gear/gear.data';
 import { Gear } from '../game/components/gear/gear.schema';
+import { GearItem } from './gearItem';
+import {
+    GearCategoryEnum,
+    GearRarityEnum,
+    GearTraitEnum,
+} from '../game/components/gear/gear.enum';
 @Injectable()
 export class PlayerGearService {
     constructor(
@@ -46,20 +52,30 @@ export class PlayerGearService {
         const p: PlayerGear = {
             playerId: playerId,
             gear: [
-                data[0],
-                data[1],
-                data[2],
-                data[24],
-                data[41],
-                data[71],
-                data[91],
-                data[112],
-                data[131],
-                data[151],
-                data[169],
-                data[182],
+                this.toGearItem(data[0]),
+                this.toGearItem(data[1]),
+                this.toGearItem(data[2]),
+                this.toGearItem(data[24]),
+                this.toGearItem(data[41]),
+                this.toGearItem(data[71]),
+                this.toGearItem(data[91]),
+                this.toGearItem(data[112]),
+                this.toGearItem(data[131]),
+                this.toGearItem(data[151]),
+                this.toGearItem(data[169]),
+                this.toGearItem(data[182]),
             ],
         };
         await this.playerGear.create(p);
+    }
+
+    toGearItem(gear: Gear): GearItem {
+        return {
+            gearId: gear.gearId,
+            name: gear.name,
+            trait: gear.trait,
+            category: gear.category,
+            rarity: gear.rarity,
+        };
     }
 }
