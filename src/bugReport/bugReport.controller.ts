@@ -3,13 +3,13 @@ import { BugReportService } from './bugReport.service';
 import { BugReportDTO } from './bugReport.schema';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 
-@ApiTags('bugReports')
-@Controller('bugReports')
+@ApiTags('Bug Reports')
+@Controller('bug')
 export class BugReportController {
     constructor(private bugReportService: BugReportService) {}
 
     @ApiOperation({ summary: 'Create a bug report' })
-    @Post()
+    @Post('/report')
     async create(@Body() message: BugReportDTO): Promise<string> {
         await this.bugReportService.create(message);
         return 'ok';

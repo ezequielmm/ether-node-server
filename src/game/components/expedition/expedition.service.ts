@@ -52,6 +52,10 @@ export class ExpeditionService {
         const expedition = await this.findOne({ clientId: client.id });
         const events = new EventEmitter2();
 
+        if (!expedition?.playerState) {
+            throw new Error('Player state not found');
+        }
+
         const ctx: GameContext = {
             expedition,
             client,
@@ -59,7 +63,7 @@ export class ExpeditionService {
             moduleRef: this.moduleRef,
             info: {
                 env: this.configService.get<string>('PAPERTRAIL_ENV'),
-                account: expedition.playerState.email,
+                account: expedition?.playerState.email,
                 expeditionId: expedition !== null ? expedition.id : null,
                 service: this.configService.get<string>('PAPERTRAIL_SERVICE'),
             },

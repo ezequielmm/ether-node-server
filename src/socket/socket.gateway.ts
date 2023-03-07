@@ -120,7 +120,7 @@ export class SocketGateway
                     }
                 }
 
-                await this.fullSyncAction.handle(client, false);
+                await this.fullSyncAction.handle(client, true);
             } else {
                 this.logger.log(
                     {
