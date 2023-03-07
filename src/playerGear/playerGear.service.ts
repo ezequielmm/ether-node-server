@@ -18,10 +18,14 @@ export class PlayerGearService {
 
     async getGear(authToken: string): Promise<Gear[]> {
         const url = this.configService.get<string>('GET_PROFILE_URL');
+        const authServiceApiKey = this.configService.get<string>(
+            'GET_PROFILE_API_KEY',
+        ); // 'api-key' header
         const data = await firstValueFrom(
             this.httpService.get<any>(url, {
                 headers: {
                     Authorization: authToken,
+                    'api-key': authServiceApiKey,
                 },
             }),
         );
