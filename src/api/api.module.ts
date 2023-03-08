@@ -8,6 +8,7 @@ import { MerchantModule } from 'src/game/merchant/merchant.module';
 import { ScoreCalculatorModule } from 'src/game/scoreCalculator/scoreCalculator.module';
 import { TokenController } from './token.controller';
 import { ShowVersionController } from './showVersion.controller';
+import { ShowNftNetworkController } from './showNftNetwork.controller';
 
 @Module({
     imports: [
@@ -22,6 +23,7 @@ import { ShowVersionController } from './showVersion.controller';
         ExpeditionController,
         TokenController,
         ShowVersionController,
+        ShowNftNetworkController,
     ],
 })
 export class ApiModule {}
