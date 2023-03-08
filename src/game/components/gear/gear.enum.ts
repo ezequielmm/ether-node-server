@@ -11,10 +11,14 @@ export enum GearTraitEnum {
     Shield = 'Shield',
     Weapon = 'Weapon',
     Breastplate = 'Breastplate',
+    Legguard = 'Legguard',
     Gauntlet = 'Gauntlet',
+    Boots = 'Boots',
     Pauldrons = 'Pauldrons',
     Vambrace = 'Vambrace',
     Padding = 'Padding',
+    Crest = 'Crest',
+    Sigil = 'Sigil',
 }
 
 export enum GearCategoryEnum {
