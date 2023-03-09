@@ -28,10 +28,7 @@ export class PlayerGearService {
     ) {}
 
     async getGear(authToken: string): Promise<any> {
-        return {
-            ownedGear: [],
-            equippedGear: [],
-        };
+
         this.logger.log('PlayerGearService one');
         if (!this.configService) return 'no configService';
         const url = this.configService.get<string>('GET_PROFILE_URL');
@@ -51,6 +48,10 @@ export class PlayerGearService {
             }),
         );
         this.logger.log('PlayerGearService four');
+        return {
+            ownedGear: [],
+            equippedGear: [],
+        };
         if (!data) return 'no data';
         if (!data.data) return 'no data.data';
         if (!data.data.data) return 'no data.data.data';
