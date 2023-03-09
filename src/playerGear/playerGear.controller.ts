@@ -10,7 +10,8 @@ export class PlayerGearController {
     constructor(private playerGearService: PlayerGearService) {}
     @ApiOperation({ summary: 'Get player gear' })
     @Get()
-    async get(@Headers('Authorization') authHeader: any): Promise<Gear[]> {
+    async get(@Headers('Authorization') authHeader: any): Promise<any> {
+        return 'ok';
         return await this.playerGearService.getGear(authHeader);
     }
 }
