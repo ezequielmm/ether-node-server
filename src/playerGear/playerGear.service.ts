@@ -76,19 +76,19 @@ export class PlayerGearService {
             return 'expeditionService.findOneTimeDesc failed';
         }
         this.logger.log('PlayerGearService seven');
-        let equippedGear = [];
+        let equippedGear = undefined;
         if (expedition) {
             const playerState = expedition.playerState;
             if (playerState) {
                 equippedGear = playerState.gear;
-                console.log(equippedGear);
             }
         }
+        if (!equippedGear) equippedGear = [];
         this.logger.log('PlayerGearService eight');
         const ownedGearGear = ownedGear ? ownedGear.gear : [];
         return {
-            ownedGear: ownedGearGear,
-            equippedGear: equippedGear,
+            ownedGear: [],
+            equippedGear: [],
         };
     }
 
