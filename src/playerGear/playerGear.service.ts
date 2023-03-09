@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from "@nestjs/common";
 import { InjectModel } from 'kindagoose';
 import { PlayerGear } from './playerGear.schema';
 import { Prop, ReturnModelType } from '@typegoose/typegoose';
@@ -17,6 +17,8 @@ import { ExpeditionService } from '../game/components/expedition/expedition.serv
 import { ExpeditionStatusEnum } from '../game/components/expedition/expedition.enum';
 @Injectable()
 export class PlayerGearService {
+    private readonly logger: Logger = new Logger(PlayerGearService.name);
+
     constructor(
         @InjectModel(PlayerGear)
         private readonly playerGear: ReturnModelType<typeof PlayerGear>,
@@ -26,12 +28,15 @@ export class PlayerGearService {
     ) {}
 
     async getGear(authToken: string): Promise<any> {
+        this.logger.log('PlayerGearService one');
         if (!this.configService) return 'no configService';
         const url = this.configService.get<string>('GET_PROFILE_URL');
+        this.logger.log('PlayerGearService two');
         if (!url) return 'no url';
         const authServiceApiKey = this.configService.get<string>(
             'GET_PROFILE_API_KEY',
         ); // 'api-key' header
+        this.logger.log('PlayerGearService three');
         if (!authServiceApiKey) return 'no authServiceApiKey';
         const data = await firstValueFrom(
             this.httpService.get<any>(url, {
@@ -41,6 +46,7 @@ export class PlayerGearService {
                 },
             }),
         );
+        this.logger.log('PlayerGearService four');
         if (!data) return 'no data';
         if (!data.data) return 'no data.data';
         if (!data.data.data) return 'no data.data.data';
@@ -49,6 +55,7 @@ export class PlayerGearService {
         const errorMessage = await this.dev_addLootForDevelopmentTesting(
             playerId,
         );
+        this.logger.log('PlayerGearService five');
         if (errorMessage) return errorMessage;
         let ownedGear = null;
         try {
@@ -58,6 +65,7 @@ export class PlayerGearService {
         } catch (e) {
             return 'playerGear.findOne failed';
         }
+        this.logger.log('PlayerGearService six');
         let expedition = null;
         try {
             expedition = await this.expeditionService.findOneTimeDesc({
@@ -66,7 +74,7 @@ export class PlayerGearService {
         } catch (e) {
             return 'expeditionService.findOneTimeDesc failed';
         }
-
+        this.logger.log('PlayerGearService seven');
         let equippedGear = [];
         if (expedition) {
             const playerState = expedition.playerState;
@@ -75,7 +83,7 @@ export class PlayerGearService {
                 console.log(equippedGear);
             }
         }
-
+        this.logger.log('PlayerGearService eight');
         return {
             ownedGear: ownedGear.gear,
             equippedGear: equippedGear,
