@@ -30,7 +30,7 @@ export class PlayerGearService {
     async getGear(authToken: string): Promise<any> {
         this.logger.log('PlayerGearService one');
         if (!this.configService) return 'no configService';
-        const url = this.configService.get<string>('GET_PROFILE_URL');
+        const url = 'http://gateway.villagers.dev.kote.robotseamonster.com/auth/v1/user';//this.configService.get<string>('GET_PROFILE_URL');
         this.logger.log('PlayerGearService two');
         //ok
 
@@ -49,10 +49,7 @@ export class PlayerGearService {
                 },
             }),
         );
-        return {
-            ownedGear: [],
-            equippedGear: [],
-        };
+        //bad
         this.logger.log('PlayerGearService four');
         //bad
         if (!data) return 'no data';
