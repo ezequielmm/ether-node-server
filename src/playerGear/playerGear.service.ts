@@ -28,6 +28,10 @@ export class PlayerGearService {
     ) {}
 
     async getGear(authToken: string): Promise<any> {
+        return {
+            ownedGear: [],
+            equippedGear: [],
+        };
         this.logger.log('PlayerGearService one');
         if (!this.configService) return 'no configService';
         const url = this.configService.get<string>('GET_PROFILE_URL');
@@ -87,8 +91,8 @@ export class PlayerGearService {
         this.logger.log('PlayerGearService eight');
         const ownedGearGear = ownedGear ? ownedGear.gear : [];
         return {
-            ownedGear: [],
-            equippedGear: [],
+            ownedGear: ownedGearGear,
+            equippedGear: equippedGear,
         };
     }
 
