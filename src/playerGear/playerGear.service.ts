@@ -26,6 +26,7 @@ export class PlayerGearService {
     ) {}
 
     async getGear(authToken: string): Promise<any> {
+        if (!this.configService) return 'no configService';
         const url = this.configService.get<string>('GET_PROFILE_URL');
         if (!url) return 'no url';
         const authServiceApiKey = this.configService.get<string>(
@@ -45,14 +46,26 @@ export class PlayerGearService {
         if (!data.data.data) return 'no data.data.data';
         const playerId = data.data.data.id;
         if (!playerId) return 'no data';
-        await this.dev_addLootForDevelopmentTesting(playerId);
-        const ownedGear = await this.playerGear.findOne({
-            playerId: playerId,
-        });
-
-        const expedition = await this.expeditionService.findOneTimeDesc({
+        const errorMessage = await this.dev_addLootForDevelopmentTesting(
             playerId,
-        });
+        );
+        if (errorMessage) return errorMessage;
+        let ownedGear = null;
+        try {
+            ownedGear = await this.playerGear.findOne({
+                playerId: playerId,
+            });
+        } catch (e) {
+            return 'playerGear.findOne failed';
+        }
+        let expedition = null;
+        try {
+            expedition = await this.expeditionService.findOneTimeDesc({
+                playerId,
+            });
+        } catch (e) {
+            return 'expeditionService.findOneTimeDesc failed';
+        }
 
         let equippedGear = [];
         if (expedition) {
@@ -70,11 +83,14 @@ export class PlayerGearService {
     }
 
     async dev_addLootForDevelopmentTesting(playerId: string) {
-        const gearList = await this.playerGear.findOne({
-            playerId: playerId,
-        });
-        if (gearList) return;
-
+        try {
+            const gearList = await this.playerGear.findOne({
+                playerId: playerId,
+            });
+            if (gearList) return;
+        } catch (e) {
+            return 'playerGear.findOne failed';
+        }
         const p: PlayerGear = {
             playerId: playerId,
             gear: [
@@ -92,7 +108,12 @@ export class PlayerGearService {
                 this.toGearItem(data[182]),
             ],
         };
-        await this.playerGear.create(p);
+        try {
+            await this.playerGear.create(p);
+        } catch (e) {
+            return 'create failed';
+        }
+        return null;
     }
 
     toGearItem(gear: Gear): GearItem {
