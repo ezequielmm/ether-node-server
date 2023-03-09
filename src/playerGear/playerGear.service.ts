@@ -13,16 +13,19 @@ import {
     GearRarityEnum,
     GearTraitEnum,
 } from '../game/components/gear/gear.enum';
+import { ExpeditionService } from '../game/components/expedition/expedition.service';
+import { ExpeditionStatusEnum } from '../game/components/expedition/expedition.enum';
 @Injectable()
 export class PlayerGearService {
     constructor(
         @InjectModel(PlayerGear)
         private readonly playerGear: ReturnModelType<typeof PlayerGear>,
+        private readonly expeditionService: ExpeditionService,
         private readonly httpService: HttpService,
         private readonly configService: ConfigService,
     ) {}
 
-    async getGear(authToken: string): Promise<Gear[]> {
+    async getGear(authToken: string): Promise<any> {
         const url = this.configService.get<string>('GET_PROFILE_URL');
         const authServiceApiKey = this.configService.get<string>(
             'GET_PROFILE_API_KEY',
@@ -37,10 +40,27 @@ export class PlayerGearService {
         );
         const playerId = data.data.data.id;
         await this.dev_addLootForDevelopmentTesting(playerId);
-        const gearList = await this.playerGear.findOne({
+        const ownedGear = await this.playerGear.findOne({
             playerId: playerId,
         });
-        return gearList.gear;
+
+        const expedition = await this.expeditionService.findOneTimeDesc({
+            playerId,
+        });
+
+        let equippedGear = [];
+        if (expedition) {
+            const playerState = expedition.playerState;
+            if (playerState) {
+                equippedGear = playerState.gear;
+                console.log(equippedGear);
+            }
+        }
+
+        return {
+            ownedGear: ownedGear.gear,
+            equippedGear: equippedGear,
+        };
     }
 
     async dev_addLootForDevelopmentTesting(playerId: string) {
