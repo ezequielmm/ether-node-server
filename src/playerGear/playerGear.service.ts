@@ -39,10 +39,7 @@ export class PlayerGearService {
             'GET_PROFILE_API_KEY',
         ); // 'api-key' header
         this.logger.log('PlayerGearService three');
-        return {
-            ownedGear: [],
-            equippedGear: [],
-        };
+        //ok
         if (!authServiceApiKey) return 'no authServiceApiKey';
         const data = await firstValueFrom(
             this.httpService.get<any>(url, {
@@ -52,6 +49,10 @@ export class PlayerGearService {
                 },
             }),
         );
+        return {
+            ownedGear: [],
+            equippedGear: [],
+        };
         this.logger.log('PlayerGearService four');
         //bad
         if (!data) return 'no data';
