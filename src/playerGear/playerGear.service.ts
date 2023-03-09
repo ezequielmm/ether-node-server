@@ -27,9 +27,11 @@ export class PlayerGearService {
 
     async getGear(authToken: string): Promise<any> {
         const url = this.configService.get<string>('GET_PROFILE_URL');
+        if (!url) return 'no url';
         const authServiceApiKey = this.configService.get<string>(
             'GET_PROFILE_API_KEY',
         ); // 'api-key' header
+        if (!authServiceApiKey) return 'no authServiceApiKey';
         const data = await firstValueFrom(
             this.httpService.get<any>(url, {
                 headers: {
@@ -38,7 +40,11 @@ export class PlayerGearService {
                 },
             }),
         );
+        if (!data) return 'no data';
+        if (!data.data) return 'no data.data';
+        if (!data.data.data) return 'no data.data.data';
         const playerId = data.data.data.id;
+        if (!playerId) return 'no data';
         await this.dev_addLootForDevelopmentTesting(playerId);
         const ownedGear = await this.playerGear.findOne({
             playerId: playerId,
