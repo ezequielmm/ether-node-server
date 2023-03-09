@@ -11,7 +11,6 @@ export class PlayerGearController {
     @ApiOperation({ summary: 'Get player gear' })
     @Get()
     async get(@Headers('Authorization') authHeader: any): Promise<Gear[]> {
-        console.log(authHeader);
         return await this.playerGearService.getGear(authHeader);
     }
 }
