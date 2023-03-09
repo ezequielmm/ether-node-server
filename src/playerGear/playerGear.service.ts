@@ -51,7 +51,7 @@ export class PlayerGearService {
         if (!data.data) return 'no data.data';
         if (!data.data.data) return 'no data.data.data';
         const playerId = data.data.data.id;
-        if (!playerId) return 'no data';
+        if (!playerId) return 'no playerId';
         const errorMessage = await this.dev_addLootForDevelopmentTesting(
             playerId,
         );
@@ -65,6 +65,7 @@ export class PlayerGearService {
         } catch (e) {
             return 'playerGear.findOne failed';
         }
+        if (!ownedGear) return 'no ownedGear';
         this.logger.log('PlayerGearService six');
         let expedition = null;
         try {
@@ -84,8 +85,9 @@ export class PlayerGearService {
             }
         }
         this.logger.log('PlayerGearService eight');
+        const ownedGearGear = ownedGear ? ownedGear.gear : [];
         return {
-            ownedGear: ownedGear.gear,
+            ownedGear: ownedGearGear,
             equippedGear: equippedGear,
         };
     }
