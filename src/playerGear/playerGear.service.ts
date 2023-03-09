@@ -1,4 +1,4 @@
-import { Injectable, Logger } from "@nestjs/common";
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectModel } from 'kindagoose';
 import { PlayerGear } from './playerGear.schema';
 import { Prop, ReturnModelType } from '@typegoose/typegoose';
@@ -28,11 +28,14 @@ export class PlayerGearService {
     ) {}
 
     async getGear(authToken: string): Promise<any> {
-
         this.logger.log('PlayerGearService one');
         if (!this.configService) return 'no configService';
         const url = this.configService.get<string>('GET_PROFILE_URL');
         this.logger.log('PlayerGearService two');
+        return {
+            ownedGear: [],
+            equippedGear: [],
+        };
         if (!url) return 'no url';
         const authServiceApiKey = this.configService.get<string>(
             'GET_PROFILE_API_KEY',
@@ -48,10 +51,7 @@ export class PlayerGearService {
             }),
         );
         this.logger.log('PlayerGearService four');
-        return {
-            ownedGear: [],
-            equippedGear: [],
-        };
+
         if (!data) return 'no data';
         if (!data.data) return 'no data.data';
         if (!data.data.data) return 'no data.data.data';
