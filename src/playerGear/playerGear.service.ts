@@ -32,15 +32,17 @@ export class PlayerGearService {
         if (!this.configService) return 'no configService';
         const url = this.configService.get<string>('GET_PROFILE_URL');
         this.logger.log('PlayerGearService two');
-        return {
-            ownedGear: [],
-            equippedGear: [],
-        };
+        //ok
+
         if (!url) return 'no url';
         const authServiceApiKey = this.configService.get<string>(
             'GET_PROFILE_API_KEY',
         ); // 'api-key' header
         this.logger.log('PlayerGearService three');
+        return {
+            ownedGear: [],
+            equippedGear: [],
+        };
         if (!authServiceApiKey) return 'no authServiceApiKey';
         const data = await firstValueFrom(
             this.httpService.get<any>(url, {
@@ -51,7 +53,7 @@ export class PlayerGearService {
             }),
         );
         this.logger.log('PlayerGearService four');
-
+        //bad
         if (!data) return 'no data';
         if (!data.data) return 'no data.data';
         if (!data.data.data) return 'no data.data.data';
