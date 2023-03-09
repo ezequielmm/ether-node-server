@@ -1,22 +1,31 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from 'kindagoose';
 import { PlayerGear } from './playerGear.schema';
-import { ReturnModelType } from '@typegoose/typegoose';
+import { Prop, ReturnModelType } from '@typegoose/typegoose';
 import { HttpService } from '@nestjs/axios';
 import { ConfigService } from '@nestjs/config';
 import { firstValueFrom } from 'rxjs';
 import { data } from '../game/components/gear/gear.data';
 import { Gear } from '../game/components/gear/gear.schema';
+import { GearItem } from './gearItem';
+import {
+    GearCategoryEnum,
+    GearRarityEnum,
+    GearTraitEnum,
+} from '../game/components/gear/gear.enum';
+import { ExpeditionService } from '../game/components/expedition/expedition.service';
+import { ExpeditionStatusEnum } from '../game/components/expedition/expedition.enum';
 @Injectable()
 export class PlayerGearService {
     constructor(
         @InjectModel(PlayerGear)
         private readonly playerGear: ReturnModelType<typeof PlayerGear>,
+        private readonly expeditionService: ExpeditionService,
         private readonly httpService: HttpService,
         private readonly configService: ConfigService,
     ) {}
 
-    async getGear(authToken: string): Promise<Gear[]> {
+    async getGear(authToken: string): Promise<any> {
         const url = this.configService.get<string>('GET_PROFILE_URL');
         const authServiceApiKey = this.configService.get<string>(
             'GET_PROFILE_API_KEY',
@@ -31,10 +40,27 @@ export class PlayerGearService {
         );
         const playerId = data.data.data.id;
         await this.dev_addLootForDevelopmentTesting(playerId);
-        const gearList = await this.playerGear.findOne({
+        const ownedGear = await this.playerGear.findOne({
             playerId: playerId,
         });
-        return gearList.gear;
+
+        const expedition = await this.expeditionService.findOneTimeDesc({
+            playerId,
+        });
+
+        let equippedGear = [];
+        if (expedition) {
+            const playerState = expedition.playerState;
+            if (playerState) {
+                equippedGear = playerState.gear;
+                console.log(equippedGear);
+            }
+        }
+
+        return {
+            ownedGear: ownedGear.gear,
+            equippedGear: equippedGear,
+        };
     }
 
     async dev_addLootForDevelopmentTesting(playerId: string) {
@@ -46,20 +72,30 @@ export class PlayerGearService {
         const p: PlayerGear = {
             playerId: playerId,
             gear: [
-                data[0],
-                data[1],
-                data[2],
-                data[24],
-                data[41],
-                data[71],
-                data[91],
-                data[112],
-                data[131],
-                data[151],
-                data[169],
-                data[182],
+                this.toGearItem(data[0]),
+                this.toGearItem(data[1]),
+                this.toGearItem(data[2]),
+                this.toGearItem(data[24]),
+                this.toGearItem(data[41]),
+                this.toGearItem(data[71]),
+                this.toGearItem(data[91]),
+                this.toGearItem(data[112]),
+                this.toGearItem(data[131]),
+                this.toGearItem(data[151]),
+                this.toGearItem(data[169]),
+                this.toGearItem(data[182]),
             ],
         };
         await this.playerGear.create(p);
+    }
+
+    toGearItem(gear: Gear): GearItem {
+        return {
+            gearId: gear.gearId,
+            name: gear.name,
+            trait: gear.trait,
+            category: gear.category,
+            rarity: gear.rarity,
+        };
     }
 }

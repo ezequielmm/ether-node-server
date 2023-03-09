@@ -31,6 +31,9 @@ class CreateExpeditionApiDTO {
 
     @ApiProperty()
     readonly nftId: number;
+
+    @ApiProperty()
+    readonly gear: any[];
 }
 
 @ApiBearerAuth()
@@ -110,6 +113,7 @@ export class ExpeditionController {
             } = await this.authGatewayService.getUser(authorization);
 
             const { nftId } = payload;
+            const { gear } = payload;
 
             const hasExpedition =
                 await this.expeditionService.playerHasExpeditionInProgress({
@@ -122,6 +126,7 @@ export class ExpeditionController {
                     playerName,
                     email,
                     nftId,
+                    gear,
                 });
 
                 return { expeditionCreated: true };

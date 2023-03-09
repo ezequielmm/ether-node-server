@@ -31,11 +31,13 @@ export class InitExpeditionProcess {
         playerName,
         email,
         nftId,
+        gear,
     }: {
         playerId: number;
         playerName: string;
         email: string;
         nftId: number;
+        gear: any[];
     }): Promise<void> {
         const character = await this.characterService.findOne({
             characterClass: CharacterClassEnum.Knight,
@@ -76,6 +78,7 @@ export class InitExpeditionProcess {
                 cardUpgradeCount: 0,
                 cardDestroyCount: 0,
                 trinkets: [],
+                gear: gear,
             },
             status: ExpeditionStatusEnum.InProgress,
             isCurrentlyPlaying: false,
