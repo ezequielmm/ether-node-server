@@ -92,7 +92,7 @@ import {
 import { Refocus } from './data/refocus.card';
 import { RepositionCard, RepositionCardUpgraded } from './data/reposition.card';
 import { RoundHouseCard, RoundHouseCardUpgraded } from './data/roundHouse.card';
-import { ShakeItOffCard, ShakeItOffCardUpgraded } from './data/shakeItOff.card';
+// import { ShakeItOffCard, ShakeItOffCardUpgraded } from './data/shakeItOff.card';
 // import {
 //     SharpenBladeCard,
 //     SharpenBladeCardUpgraded,
@@ -102,8 +102,8 @@ import {
     ShieldPlantCard,
     ShieldPlantCardUpgraded,
 } from './data/shieldPlant.card';
-import { ShoutCard, ShoutCardUpgraded } from './data/shout.card';
-import { SiphonCard, SiphonCardUpgraded } from './data/siphon.card';
+// import { ShoutCard, ShoutCardUpgraded } from './data/shout.card';
+// import { SiphonCard, SiphonCardUpgraded } from './data/siphon.card';
 import { SparkCard, SparkCardUpgraded } from './data/Spark.card';
 //import { SpikeArmorCard, SpikeArmorCardUpgraded } from './data/spikeArmor.card';
 import { StunnedCard } from './data/stunned.card';
