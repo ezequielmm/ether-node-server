@@ -28,18 +28,12 @@ export class PlayerGearService {
     ) {}
 
     async getGear(authToken: string): Promise<any> {
-        this.logger.log('PlayerGearService one');
         if (!this.configService) return 'no configService';
-        const url = 'http://gateway.villagers.dev.kote.robotseamonster.com/auth/v1/user';//this.configService.get<string>('GET_PROFILE_URL');
-        this.logger.log('PlayerGearService two');
-        //ok
-
+        const url = this.configService.get<string>('GET_PROFILE_URL');
         if (!url) return 'no url';
         const authServiceApiKey = this.configService.get<string>(
             'GET_PROFILE_API_KEY',
         ); // 'api-key' header
-        this.logger.log('PlayerGearService three');
-        //ok
         if (!authServiceApiKey) return 'no authServiceApiKey';
         const data = await firstValueFrom(
             this.httpService.get<any>(url, {
@@ -49,9 +43,6 @@ export class PlayerGearService {
                 },
             }),
         );
-        //bad
-        this.logger.log('PlayerGearService four');
-        //bad
         if (!data) return 'no data';
         if (!data.data) return 'no data.data';
         if (!data.data.data) return 'no data.data.data';
@@ -60,7 +51,6 @@ export class PlayerGearService {
         const errorMessage = await this.dev_addLootForDevelopmentTesting(
             playerId,
         );
-        this.logger.log('PlayerGearService five');
         if (errorMessage) return errorMessage;
         let ownedGear = null;
         try {
@@ -71,7 +61,6 @@ export class PlayerGearService {
             return 'playerGear.findOne failed';
         }
         if (!ownedGear) return 'no ownedGear';
-        this.logger.log('PlayerGearService six');
         let expedition = null;
         try {
             expedition = await this.expeditionService.findOneTimeDesc({
@@ -80,7 +69,6 @@ export class PlayerGearService {
         } catch (e) {
             return 'expeditionService.findOneTimeDesc failed';
         }
-        this.logger.log('PlayerGearService seven');
         let equippedGear = undefined;
         if (expedition) {
             const playerState = expedition.playerState;
@@ -89,7 +77,6 @@ export class PlayerGearService {
             }
         }
         if (!equippedGear) equippedGear = [];
-        this.logger.log('PlayerGearService eight');
         const ownedGearGear = ownedGear ? ownedGear.gear : [];
         return {
             ownedGear: ownedGearGear,
