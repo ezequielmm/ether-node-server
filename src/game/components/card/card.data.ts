@@ -37,7 +37,7 @@ import { FineEdgeCard, FineEdgeCardUpgraded } from './data/fineEdge.card';
 import { FirstMoveCard, FirstMoveCardUpgraded } from './data/firstMove.card';
 import { FlurryCard, FlurryCardUpgraded } from './data/flurry.card';
 import { ForceFieldCard, ForceFieldCardUpgraded } from './data/forceField.card';
-import { FrontflipCard, FrontflipCardUpgraded } from './data/frontflip.card';
+// import { FrontflipCard, FrontflipCardUpgraded } from './data/frontflip.card';
 import {
     GiveNoGroundCard,
     GiveNoGroundCardUpgraded,
@@ -246,8 +246,8 @@ export const data: Card[] = [
     KnockDownCardUpgraded,
     // BackflipCard,
     // BackflipCardUpgraded,
-    FrontflipCard,
-    FrontflipCardUpgraded,
+    // FrontflipCard,
+    // FrontflipCardUpgraded,
     BurnedCard,
     RoundHouseCard,
     RoundHouseCardUpgraded,
