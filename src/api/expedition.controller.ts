@@ -33,7 +33,7 @@ class CreateExpeditionApiDTO {
     readonly nftId: number;
 
     @ApiProperty()
-    readonly gear: any[];
+    readonly gear: string;
 }
 
 @ApiBearerAuth()
@@ -105,6 +105,7 @@ export class ExpeditionController {
 
         const { authorization } = headers;
 
+        const gear = JSON.parse(payload.gear);
         try {
             const {
                 id: playerId,

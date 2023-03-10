@@ -37,7 +37,7 @@ export class InitExpeditionProcess {
         playerName: string;
         email: string;
         nftId: number;
-        gear: any[];
+        gear: any;
     }): Promise<void> {
         const character = await this.characterService.findOne({
             characterClass: CharacterClassEnum.Knight,
