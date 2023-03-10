@@ -43,4 +43,4 @@ mongodb-queries
 .vscode
 
 # Data folder for mongoDB database
-data
+/data

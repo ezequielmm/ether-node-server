@@ -639,49 +639,45 @@ export class MerchantService {
         );
     }
 
-    async cardDestroy(client: Socket, selectedItem: SelectedItem) {
+    async cardDestroy(
+        client: Socket,
+        selectedItem: SelectedItem,
+    ): Promise<void> {
+        // First we need to get the player state with the card data
         const playerState = await this.expeditionService.getPlayerState({
             clientId: client.id,
         });
 
+        // Now we get the card id from the selected item
+        const cardId = selectedItem.targetId as string;
+
+        // Now we need the price to destroy the card
         const destroyPrice = 75 + 25 * playerState.cardDestroyCount;
 
-        if (playerState.gold < destroyPrice) {
-            client.emit('ErrorMessage', {
-                message: `Not enough gold`,
-            });
-            return;
-        }
+        // Now we need to check if the player has enough gold
+        if (playerState.gold < destroyPrice)
+            return this.failure(client, PurchaseFailureEnum.NoEnoughGold);
 
-        const card = await this.cardService.findById(selectedItem.targetId);
+        // Now we find the card in the player state and remove it
+        const newCardDeck = filter(
+            playerState.cards,
+            ({ id }) => id !== cardId,
+        );
 
-        let cardIndex: number = null;
+        // Now we reduce the coin cost of the upgrade
+        const newGold = playerState.gold - destroyPrice;
 
-        if (card) {
-            for (let i = 0; i < playerState.cards.length; i++) {
-                if (card.cardId == playerState.cards[i].cardId) {
-                    cardIndex = i;
-                    break;
-                }
-            }
-        }
+        // Now we increase the card destroy count
+        const newCardDestroyCount = playerState.cardDestroyCount + 1;
 
-        if (cardIndex === null) {
-            client.emit('ErrorMessage', {
-                message: `Card not in merchant offer`,
-            });
-            return;
-        }
-
-        playerState.cards.splice(cardIndex, 1);
-        playerState.cardDestroyCount = playerState.cardDestroyCount + 1;
-        playerState.gold = playerState.gold - destroyPrice;
-
+        // Now we update the player state
         await this.expeditionService.updateByFilter(
             { clientId: client.id },
             {
                 $set: {
-                    playerState,
+                    'playerState.cards': newCardDeck,
+                    'playerState.gold': newGold,
+                    'playerState.cardDestroyCount': newCardDestroyCount,
                 },
             },
         );

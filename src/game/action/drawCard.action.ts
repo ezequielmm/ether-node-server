@@ -40,7 +40,7 @@ export class DrawCardAction {
         SWARMessageTypeToSend,
         useEnemiesConfusedAsValue,
     }: {
-        readonly ctx: GameContext;
+        ctx: GameContext;
         readonly amountToTake: number;
         readonly SWARMessageTypeToSend: SWARMessageType;
         readonly cardType?: CardTypeEnum;
@@ -207,8 +207,10 @@ export class DrawCardAction {
                 // Next go to all the enemies and check if we have
                 // at least one enemy confused
                 const hasConfusedEnemies = enemies.some(
-                    ({ statuses: { debuff } }) =>
-                        debuff.some((item) => item.name === confusion.name),
+                    ({ statuses: { debuff: debuffs } }) =>
+                        debuffs.some(
+                            (debuff) => debuff.name === confusion.name,
+                        ),
                 );
 
                 // If it does, we modify the cost for the cards to 0
@@ -235,17 +237,12 @@ export class DrawCardAction {
                 discard: newDiscard,
             });
 
-            const afterDrawCardsEvent: AfterDrawCardEvent = {
+            await this.eventEmitter2.emitAsync(EVENT_AFTER_DRAW_CARDS, {
                 ctx,
                 newHand,
                 newDraw,
                 newDiscard,
-            };
-
-            await this.eventEmitter2.emitAsync(
-                EVENT_AFTER_DRAW_CARDS,
-                afterDrawCardsEvent,
-            );
+            });
         }
     }
 }
