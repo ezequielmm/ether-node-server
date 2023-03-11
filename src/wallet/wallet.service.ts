@@ -1,6 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
-import { firstValueFrom } from 'rxjs';
 import { ConfigService } from '@nestjs/config';
 import NFTService from '../nft-library/services/nft_service';
 
@@ -12,57 +11,35 @@ export class WalletService {
         private readonly configService: ConfigService,
     ) {}
 
-    async getTokenIdList(walletId: string, contractId): Promise<string[]> {
+    async getTokenIdList(walletId: string): Promise<string[]> {
         // the chain where are deployed the smart contracts
-        const chain = 5;
-        // The wallet address from he user
-        const wallet = '0xa10f15b66a2e05c4e376f8bfc35ae662438153be';
+        const chain = Number(process.env.NFT_SERVICE_CHAIN_ID);
+        //some goerli wallets
+        //const wallet = '0xa10f15b66a2e05c4e376f8bfc35ae662438153be';
+        //const wallet = '0x66956Fe08D7Bc88fe70216502fD8a6e4b7f269c5';
+        //const wallet = '0x2F2CF39D0325A9792f0C9E0de73cdc0820C5c65e';
         // The contracts to filter from all the user collections
-        const contracts = [
-            '0xF0aA34f832c34b32478B8D9696DC8Ad1c8065D2d',
-            '0x80e2109a826148b9b1a41b0958ca53a4cdc64b70',
-        ];
-        const nfts = await NFTService.listByContracts(chain, wallet, contracts);
+        let contracts = [];
+        if (chain === 1) {
+            contracts = [
+                '0x32A322C7C77840c383961B8aB503c9f45440c81f',
+                '0xbB4342E7aB28fd581d751b064dd924BCcd860faC',
+                '0x2d51402A6DAb0EA48E30Bb169db74FfE3c1c6675',
+            ];
+        }
+        if (chain === 5) {
+            contracts = [
+                '0x80e2109a826148b9b1a41b0958ca53a4cdc64b70',
+                '0xF0aA34f832c34b32478B8D9696DC8Ad1c8065D2d',
+                //internal server error '0x55abb816b145CA8F34ffA22D63fBC5bc57186690',
+            ];
+        }
+        const nfts = await NFTService.listByContracts(
+            chain,
+            walletId,
+            contracts,
+        );
 
         return nfts;
-        
-        
-        /*
-        
-        const domain = this.configService.get<string>('NFT_SERVICE_URL');
-        const contract_id = this.configService.get<string>(
-            'NFT_SERVICE_CONTRACT_ID',
-        );
-        const chain_id = this.configService.get<string>('NFT_SERVICE_CHAIN_ID');
-        const authorization = this.configService.get<string>(
-            'NFT_SERVICE_AUTHORIZATION',
-        );
-        const url = `${domain}/v1/accounts/${walletId}/contracts/${contractId}/chains/${chain_id}/tokens`;
-        // a main chain wallet https://api.dev.kote.robotseamonster.com/v1/wallets/0xbd22537d05207e470A458773683041012ddcAB65
-        // a goerli wallet http://localhost:3000/v1/wallets/0xA10f15B66a2e05c4e376F8bfC35aE662438153Be
-        const tokenArray: string[] = [];
-        try {
-            const data = await firstValueFrom(
-                this.httpService.get<any[]>(url, {
-                    headers: {
-                        Authorization: authorization,
-                    },
-                }),
-            );
-
-            const sub_data = data.data as any;
-            const content = sub_data.data;
-            const tokens = content.tokens;
-            for (let i = 0; i < tokens.length; i++) {
-                const token = tokens[i];
-                tokenArray.push(token.tokenID);
-            }
-        } catch (e) {
-            this.logger.log(e);
-            throw e;
-        }
-
-        return tokenArray;
-        */
     }
 }
