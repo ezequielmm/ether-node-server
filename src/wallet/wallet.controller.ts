@@ -11,10 +11,7 @@ export class WalletController {
         summary: 'Get NFT',
     })
     @Get(':id')
-    async getTokenList(
-        @Param('id') walletId: string,
-        @Query() query,
-    ): Promise<string[]> {
-        return await this.walletService.getTokenIdList(walletId,query.contractId,);
+    async getTokenList(@Param('id') walletId: string): Promise<string[]> {
+        return await this.walletService.getTokenIdList(walletId);
     }
 }
