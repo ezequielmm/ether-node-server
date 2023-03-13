@@ -92,7 +92,11 @@ export const trapelicanData: Enemy = {
             ],
             next: [
                 {
-                    probability: 1,
+                    probability: 0.6,
+                    scriptId: 3,
+                },
+                {
+                    probability: 0.4,
                     scriptId: 1,
                 },
             ],
