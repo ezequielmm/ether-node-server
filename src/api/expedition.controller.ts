@@ -110,16 +110,6 @@ export class ExpeditionController {
 
         const { authorization } = headers;
 
-        /*
-        let gear = [];
-        if (payload.gear) {
-            try {
-                gear = JSON.parse(payload.gear);
-            } catch (e) {
-                //invlaid gear
-            }
-        }
-        */
         try {
             const {
                 id: playerId,
