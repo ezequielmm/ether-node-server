@@ -78,6 +78,23 @@ export const treantData: Enemy = {
                         },
                     ],
                 },
+                {
+                    type: EnemyIntentionType.Buff,
+                    target: CardTargetedEnum.Self,
+                    value: 5,
+                    effects: [
+                        {
+                            effect: attachStatusEffect.name,
+                            target: CardTargetedEnum.Self,
+                            args: {
+                                statusName: resolveStatus.name,
+                                statusArgs: {
+                                    counter: 5,
+                                },
+                            },
+                        },
+                    ],
+                },
             ],
             next: [
                 {
