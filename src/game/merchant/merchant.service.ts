@@ -328,27 +328,29 @@ export class MerchantService {
 
         for (const card of cards) {
             let cost: number = null;
+            let rarityData: any = null; // should have a type, but may need to refactor rarity enums to have a shared type?
 
             switch (card.rarity) {
                 case CardRarityEnum.Common:
-                    cost = getRandomBetween(
-                        CardCommon.minPrice,
-                        CardCommon.maxPrice,
-                    );
+                    rarityData = CardCommon;
                     break;
                 case CardRarityEnum.Uncommon:
-                    cost = getRandomBetween(
-                        CardUncommon.minPrice,
-                        CardUncommon.maxPrice,
-                    );
+                    rarityData = CardUncommon;
                     break;
                 case CardRarityEnum.Rare:
-                    cost = getRandomBetween(
-                        CardRare.minPrice,
-                        CardRare.maxPrice,
-                    );
+                    rarityData = CardRare;
                     break;
             }
+
+            // add the difference between max and min on upgraded cards, to ensure they are priced higher than regular cards
+            cost = getRandomBetween(
+                    rarityData.minPrice, 
+                    rarityData.maxPrice,
+                   ) + (
+                    card.isUpgraded ?
+                    rarityData.maxPrice - rarityData.minPrice :
+                    0
+                   );
 
             const itemId = randomUUID();
 
