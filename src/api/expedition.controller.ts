@@ -64,6 +64,9 @@ export class ExpeditionController {
 
         const { authorization } = headers;
 
+        //todo add class knight, villager, blessedvillager
+        
+        
         try {
             const { id: playerId } = await this.authGatewayService.getUser(
                 authorization,

@@ -24,7 +24,7 @@ export class WalletService {
             contracts = [
                 '0x32A322C7C77840c383961B8aB503c9f45440c81f',
                 '0xbB4342E7aB28fd581d751b064dd924BCcd860faC',
-                '0x2d51402A6DAb0EA48E30Bb169db74FfE3c1c6675',
+                '0x2d51402A6DAb0EA48E30Bb169db74FfE3c1c6675',//subject to change
             ];
         }
         if (chain === 5) {
