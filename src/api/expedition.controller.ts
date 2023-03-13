@@ -24,6 +24,7 @@ import {
     ScoreCalculatorService,
     ScoreResponse,
 } from 'src/game/scoreCalculator/scoreCalculator.service';
+import { Gear } from '../game/components/gear/gear.schema';
 
 class CreateExpeditionApiDTO {
     @ApiProperty({ default: 'knight' })
@@ -54,9 +55,11 @@ export class ExpeditionController {
         summary: 'Check if the given user has an expedition in progress or not',
     })
     @Get('/status')
-    async handleGetExpeditionStatus(
-        @Headers() headers,
-    ): Promise<{ hasExpedition: boolean; nftId: number }> {
+    async handleGetExpeditionStatus(@Headers() headers): Promise<{
+        hasExpedition: boolean;
+        nftId: number;
+        equippedGear: Gear[];
+    }> {
         this.logger.log(`Client called GET route "/expeditions/status"`);
 
         const { authorization } = headers;
@@ -77,8 +80,10 @@ export class ExpeditionController {
             const hasExpedition =
                 expedition !== null && !expedition.isCurrentlyPlaying;
             const nftId = expedition?.playerState?.nftId ?? -1;
+            const equippedGear = expedition?.playerState?.equippedGear ?? [];
+            //todo parse for front end
 
-            return { hasExpedition, nftId };
+            return { hasExpedition, nftId, equippedGear };
         } catch (e) {
             this.logger.error(e.stack);
             throw new HttpException(
@@ -105,7 +110,14 @@ export class ExpeditionController {
 
         const { authorization } = headers;
 
-        const gear = JSON.parse(payload.gear);
+        let gear = [];
+        if (payload.gear) {
+            try {
+                gear = JSON.parse(payload.gear);
+            } catch (e) {
+                //invlaid gear
+            }
+        }
         try {
             const {
                 id: playerId,
@@ -114,12 +126,14 @@ export class ExpeditionController {
             } = await this.authGatewayService.getUser(authorization);
 
             const { nftId } = payload;
-            const { gear } = payload;
 
             const hasExpedition =
                 await this.expeditionService.playerHasExpeditionInProgress({
                     clientId: playerId,
                 });
+
+            let equippedGear: Gear[];
+            //todo populate based on payload
 
             if (!hasExpedition) {
                 await this.initExpeditionProcess.handle({
@@ -127,7 +141,7 @@ export class ExpeditionController {
                     playerName,
                     email,
                     nftId,
-                    gear,
+                    gear: equippedGear,
                 });
 
                 return { expeditionCreated: true };

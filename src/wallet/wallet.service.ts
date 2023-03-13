@@ -15,9 +15,9 @@ export class WalletService {
         // the chain where are deployed the smart contracts
         const chain = Number(process.env.NFT_SERVICE_CHAIN_ID);
         //some goerli wallets
-        //const wallet = '0xa10f15b66a2e05c4e376f8bfc35ae662438153be';
-        //const wallet = '0x66956Fe08D7Bc88fe70216502fD8a6e4b7f269c5';
-        //const wallet = '0x2F2CF39D0325A9792f0C9E0de73cdc0820C5c65e';
+        //walletId = '0xa10f15b66a2e05c4e376f8bfc35ae662438153be'; //many knights
+        //walletId = '0x66956Fe08D7Bc88fe70216502fD8a6e4b7f269c5';//2 knights
+        //walletId = '0x2F2CF39D0325A9792f0C9E0de73cdc0820C5c65e'; //many knights
         // The contracts to filter from all the user collections
         let contracts = [];
         if (chain === 1) {
