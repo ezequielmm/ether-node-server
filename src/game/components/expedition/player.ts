@@ -5,6 +5,7 @@ import {
     IExpeditionPlayerStateDeckCard,
     PotionInstance,
 } from './expedition.interface';
+import { GearItem } from '../../../playerGear/gearItem';
 
 export class Player {
     @Prop()
@@ -12,6 +13,9 @@ export class Player {
 
     @Prop()
     nftId?: number;
+
+    @Prop()
+    equippedGear?: GearItem[];
 
     @Prop()
     playerName: string;

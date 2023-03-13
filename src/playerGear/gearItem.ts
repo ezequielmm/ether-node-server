@@ -5,6 +5,9 @@ import {
     GearTraitEnum,
 } from '../game/components/gear/gear.enum';
 
+/**
+ * this class is needed to avoid unique key constraints that would happen if you used the Gear class
+ */
 export class GearItem {
     @Prop()
     gearId: number;

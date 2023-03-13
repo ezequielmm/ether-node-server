@@ -12,6 +12,7 @@ import { IExpeditionPlayerStateDeckCard } from '../components/expedition/expedit
 import { ExpeditionService } from '../components/expedition/expedition.service';
 import { SettingsService } from '../components/settings/settings.service';
 import { MapService } from '../map/map.service';
+import { GearItem } from '../../playerGear/gearItem';
 
 @Injectable()
 export class InitExpeditionProcess {
@@ -37,7 +38,7 @@ export class InitExpeditionProcess {
         playerName: string;
         email: string;
         nftId: number;
-        gear: any;
+        gear: GearItem[];
     }): Promise<void> {
         const character = await this.characterService.findOne({
             characterClass: CharacterClassEnum.Knight,
@@ -69,6 +70,7 @@ export class InitExpeditionProcess {
                 playerId: randomUUID(),
                 playerName,
                 nftId,
+                gear,
                 characterClass: character.characterClass,
                 hpMax: character.initialHealth,
                 hpCurrent: character.initialHealth,
@@ -78,7 +80,6 @@ export class InitExpeditionProcess {
                 cardUpgradeCount: 0,
                 cardDestroyCount: 0,
                 trinkets: [],
-                gear: gear,
             },
             status: ExpeditionStatusEnum.InProgress,
             isCurrentlyPlaying: false,

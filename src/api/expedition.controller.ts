@@ -24,6 +24,7 @@ import {
     ScoreCalculatorService,
     ScoreResponse,
 } from 'src/game/scoreCalculator/scoreCalculator.service';
+import { GearItem } from '../playerGear/gearItem';
 
 class CreateExpeditionApiDTO {
     @ApiProperty({ default: 'knight' })
@@ -33,7 +34,7 @@ class CreateExpeditionApiDTO {
     readonly nftId: number;
 
     @ApiProperty()
-    readonly gear: string;
+    readonly gear: GearItem[];
 }
 
 @ApiBearerAuth()
@@ -54,13 +55,18 @@ export class ExpeditionController {
         summary: 'Check if the given user has an expedition in progress or not',
     })
     @Get('/status')
-    async handleGetExpeditionStatus(
-        @Headers() headers,
-    ): Promise<{ hasExpedition: boolean; nftId: number }> {
+    async handleGetExpeditionStatus(@Headers() headers): Promise<{
+        hasExpedition: boolean;
+        nftId: number;
+        equippedGear: GearItem[];
+    }> {
         this.logger.log(`Client called GET route "/expeditions/status"`);
 
         const { authorization } = headers;
 
+        //todo add class knight, villager, blessedvillager
+        
+        
         try {
             const { id: playerId } = await this.authGatewayService.getUser(
                 authorization,
@@ -77,8 +83,10 @@ export class ExpeditionController {
             const hasExpedition =
                 expedition !== null && !expedition.isCurrentlyPlaying;
             const nftId = expedition?.playerState?.nftId ?? -1;
+            const equippedGear = expedition?.playerState?.gear ?? [];
+            //todo parse for front end
 
-            return { hasExpedition, nftId };
+            return { hasExpedition, nftId, equippedGear };
         } catch (e) {
             this.logger.error(e.stack);
             throw new HttpException(
@@ -105,7 +113,6 @@ export class ExpeditionController {
 
         const { authorization } = headers;
 
-        const gear = JSON.parse(payload.gear);
         try {
             const {
                 id: playerId,
