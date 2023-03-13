@@ -59,7 +59,7 @@ export class BugReportService {
         const image_url = `${domain}/${name}`;
         const slack_message = {
             text:
-                'expeditionId' +
+                'expeditionId: ' +
                 expeditionId +
                 '\ntitle: ' +
                 userTitle +
