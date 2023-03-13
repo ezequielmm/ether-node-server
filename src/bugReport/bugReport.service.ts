@@ -49,13 +49,22 @@ export class BugReportService {
         await promise;
 
         // send to slack
-        const slackUrl = this.configService.get<string>('SLACK_WEBHOOK_URL');
         const userTitle = payload.userTitle;
         const userDescription = payload.userDescription;
+        const expeditionId = payload.expeditionId;
+
+        const slackUrl = this.configService.get<string>('SLACK_WEBHOOK_URL');
+
         const domain = this.configService.get<string>('S3_IMAGE_URL_DOMAIN');
         const image_url = `${domain}/${name}`;
         const slack_message = {
-            text: 'title: ' + userTitle + '\ndescription: ' + userDescription,
+            text:
+                'expeditionId' +
+                expeditionId +
+                '\ntitle: ' +
+                userTitle +
+                '\ndescription: ' +
+                userDescription,
             attachments: [
                 {
                     title: 'screen shot',
