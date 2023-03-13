@@ -1,5 +1,6 @@
 import { damageEffect } from 'src/game/effects/damage/constants';
 import { defenseEffect } from 'src/game/effects/defense/constants';
+import { fatigueStatus } from 'src/game/status/fatigue/constants';
 import { CardTargetedEnum } from '../../card/card.enum';
 import {
     EnemyTypeEnum,
@@ -33,10 +34,13 @@ export const ancientOneData: Enemy = {
                     value: 2,
                     effects: [
                         {
-                            effect: damageEffect.name,
+                            effect: attachStatusEffect.name,
                             target: CardTargetedEnum.Player,
                             args: {
-                                value: 2,
+                                statusName: fatigueStatus.name,
+                                statusArgs: {
+                                    counter: 2,
+                                },
                             },
                         },
                     ],
