@@ -2,13 +2,12 @@ import { Injectable, Logger } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { ConfigService } from '@nestjs/config';
 import NFTService from '../nft-library/services/nft_service';
+import { PlayerWinService } from '../playerWin/playerWin.service';
 
 @Injectable()
 export class WalletService {
-    private readonly logger: Logger = new Logger(WalletService.name);
     constructor(
-        private readonly httpService: HttpService,
-        private readonly configService: ConfigService,
+        private playerWinService: PlayerWinService,
     ) {}
 
     async getTokenIdList(walletId: string): Promise<string[]> {
@@ -24,7 +23,7 @@ export class WalletService {
             contracts = [
                 '0x32A322C7C77840c383961B8aB503c9f45440c81f',
                 '0xbB4342E7aB28fd581d751b064dd924BCcd860faC',
-                '0x2d51402A6DAb0EA48E30Bb169db74FfE3c1c6675',//subject to change
+                '0x2d51402A6DAb0EA48E30Bb169db74FfE3c1c6675', //subject to change
             ];
         }
         if (chain === 5) {
@@ -39,28 +38,21 @@ export class WalletService {
             walletId,
             contracts,
         );
-        const contest_id = '0';
+        const event_id = '0';
         for (let i = 0; i < nfts.tokens.length; i++) {
             const over_token = nfts.tokens[i];
             const contract_address = over_token.contract_address;
             for (let j = 0; j < over_token.tokens.length; j++) {
                 const token_id = nfts.tokens[i].tokens[j].token_id;
-                nfts.tokens[i].tokens[j].can_play = this.canPlay(
-                    contest_id,
+                const can_play = await this.playerWinService.canPlay(
+                    event_id,
                     contract_address,
                     token_id,
                 );
+                nfts.tokens[i].tokens[j].can_play = can_play;
             }
         }
 
         return nfts;
-    }
-
-    canPlay(
-        contest_id: string,
-        contract_address: string,
-        token_id: string,
-    ): boolean {
-        return true;
     }
 }
