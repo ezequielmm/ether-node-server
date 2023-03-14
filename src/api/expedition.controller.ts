@@ -27,8 +27,8 @@ import {
 import { GearItem } from '../playerGear/gearItem';
 
 class CreateExpeditionApiDTO {
-    @ApiProperty({ default: 'knight' })
-    readonly class: string;
+    @ApiProperty({ default: 'Knight' })
+    readonly tokenType: string;
 
     @ApiProperty()
     readonly nftId: number;
@@ -124,7 +124,7 @@ export class ExpeditionController {
 
             const { nftId } = payload;
             const { equippedGear } = payload;
-            const character_class = payload.class;
+            const character_class = payload.tokenType;
 
             /* todo validate equippedGear vs ownedGeared
             ownedGear = await this.playerGear.findOne({
@@ -145,7 +145,7 @@ export class ExpeditionController {
                     email,
                     nftId,
                     equippedGear,
-                    character_class
+                    character_class,
                 });
 
                 return { expeditionCreated: true };

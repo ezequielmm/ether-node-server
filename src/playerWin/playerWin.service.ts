@@ -24,6 +24,8 @@ export class PlayerWinService {
     ): Promise<boolean> {
         const item = await this.playerWin.findOne({
             event_id: event_id,
+            contract_address: contract_address,
+            token_id: token_id,
         });
         return item === null;
     }
