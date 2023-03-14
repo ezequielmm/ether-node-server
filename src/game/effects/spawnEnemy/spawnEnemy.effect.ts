@@ -136,7 +136,7 @@ export class SpawnEnemyEffect implements EffectHandler {
                 },
             );
 
-            enemies.push(...enemiesToAdd);
+            enemies.unshift(...enemiesToAdd); // push new enemies to front of array instead of end, for frontend purposes.
 
             client.emit(
                 'PutData',
