@@ -327,25 +327,28 @@ export class MerchantService {
         const itemsData: Item[] = [];
 
         for (const card of cards) {
-            let cost: number = null;
+            let cost = 0;
 
             switch (card.rarity) {
                 case CardRarityEnum.Common:
-                    cost = getRandomBetween(
+                    cost = this.getCarPrice(
                         CardCommon.minPrice,
                         CardCommon.maxPrice,
+                        card.isUpgraded,
                     );
                     break;
                 case CardRarityEnum.Uncommon:
-                    cost = getRandomBetween(
+                    cost = this.getCarPrice(
                         CardUncommon.minPrice,
                         CardUncommon.maxPrice,
+                        card.isUpgraded,
                     );
                     break;
                 case CardRarityEnum.Rare:
-                    cost = getRandomBetween(
+                    cost = this.getCarPrice(
                         CardRare.minPrice,
                         CardRare.maxPrice,
+                        card.isUpgraded,
                     );
                     break;
             }
@@ -388,6 +391,15 @@ export class MerchantService {
         };
 
         return itemsData;
+    }
+
+    private getCarPrice(
+        minPrice: number,
+        maxPrice: number,
+        isCardUpgraded: boolean,
+    ): number {
+        const priceIncrease = isCardUpgraded ? maxPrice - minPrice : 0;
+        return getRandomBetween(minPrice, maxPrice) + priceIncrease;
     }
 
     private async failure(
