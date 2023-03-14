@@ -73,11 +73,11 @@ export class PlayerGearService {
         if (expedition) {
             const playerState = expedition.playerState;
             if (playerState) {
-                equippedGear = playerState.gear;
+                equippedGear = playerState.equippedGear;
             }
         }
         if (!equippedGear) equippedGear = [];
-        const ownedGearGear = ownedGear ? ownedGear.gear : [];
+        const ownedGearGear = ownedGear ? ownedGear.equippedGear : [];
         return {
             ownedGear: ownedGearGear,
             equippedGear: equippedGear,

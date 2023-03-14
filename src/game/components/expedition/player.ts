@@ -53,6 +53,4 @@ export class Player {
     @Prop()
     cardDestroyCount: number;
 
-    @Prop()
-    gear: any[];
 }

@@ -32,13 +32,13 @@ export class InitExpeditionProcess {
         playerName,
         email,
         nftId,
-        gear,
+        equippedGear,
     }: {
         playerId: number;
         playerName: string;
         email: string;
         nftId: number;
-        gear: GearItem[];
+        equippedGear: GearItem[];
     }): Promise<void> {
         const character = await this.characterService.findOne({
             characterClass: CharacterClassEnum.Knight,
@@ -70,7 +70,7 @@ export class InitExpeditionProcess {
                 playerId: randomUUID(),
                 playerName,
                 nftId,
-                gear,
+                equippedGear,
                 characterClass: character.characterClass,
                 hpMax: character.initialHealth,
                 hpCurrent: character.initialHealth,
