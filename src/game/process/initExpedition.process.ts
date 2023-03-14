@@ -33,15 +33,22 @@ export class InitExpeditionProcess {
         email,
         nftId,
         equippedGear,
+        character_class,
     }: {
         playerId: number;
         playerName: string;
         email: string;
         nftId: number;
         equippedGear: GearItem[];
+        character_class: string;
     }): Promise<void> {
+        let character_class_enum = CharacterClassEnum.Knight;
+        if (character_class === 'villager')
+            character_class_enum = CharacterClassEnum.Villager;
+        if (character_class === 'blessed-villager')
+            character_class_enum = CharacterClassEnum.BlessedVillager;
         const character = await this.characterService.findOne({
-            characterClass: CharacterClassEnum.Knight,
+            characterClass: character_class_enum,
         });
 
         // Get initial player stats

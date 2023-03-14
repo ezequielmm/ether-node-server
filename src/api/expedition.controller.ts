@@ -124,6 +124,7 @@ export class ExpeditionController {
 
             const { nftId } = payload;
             const { equippedGear } = payload;
+            const character_class = payload.class;
 
             /* todo validate equippedGear vs ownedGeared
             ownedGear = await this.playerGear.findOne({
@@ -144,6 +145,7 @@ export class ExpeditionController {
                     email,
                     nftId,
                     equippedGear,
+                    character_class
                 });
 
                 return { expeditionCreated: true };

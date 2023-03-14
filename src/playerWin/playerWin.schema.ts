@@ -1,7 +1,7 @@
 import { ModelOptions, Prop } from '@typegoose/typegoose';
 
 @ModelOptions({
-    schemaOptions: { collection: 'PlayerWins', versionKey: false },
+    schemaOptions: { collection: 'playerWins', versionKey: false },
 })
 export class PlayerWin {
     @Prop()
