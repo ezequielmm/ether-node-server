@@ -43,9 +43,9 @@ export class InitExpeditionProcess {
         character_class: string;
     }): Promise<void> {
         let character_class_enum = CharacterClassEnum.Knight;
-        if (character_class === 'villager')
+        if (character_class === 'Villager')
             character_class_enum = CharacterClassEnum.Villager;
-        if (character_class === 'blessed-villager')
+        if (character_class === 'BlessedVillager')
             character_class_enum = CharacterClassEnum.BlessedVillager;
         const character = await this.characterService.findOne({
             characterClass: character_class_enum,
