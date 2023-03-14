@@ -22,7 +22,7 @@ export const treantData: Enemy = {
     size: EnemySizeEnum.Giant,
     description:
         'An elemental giant with a terrifying giant hand that reaches for knights and CRUSHES them, or claws the ground to send a shockwave of dirt and rocks their way',
-    healthRange: [160, 160],
+    healthRange: [200, 200],
     scripts: [
         {
             id: 0,
@@ -74,6 +74,23 @@ export const treantData: Enemy = {
                             target: CardTargetedEnum.Player,
                             args: {
                                 value: 5,
+                            },
+                        },
+                    ],
+                },
+                {
+                    type: EnemyIntentionType.Buff,
+                    target: CardTargetedEnum.Self,
+                    value: 5,
+                    effects: [
+                        {
+                            effect: attachStatusEffect.name,
+                            target: CardTargetedEnum.Self,
+                            args: {
+                                statusName: resolveStatus.name,
+                                statusArgs: {
+                                    counter: 5,
+                                },
                             },
                         },
                     ],
