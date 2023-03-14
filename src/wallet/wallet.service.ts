@@ -3,6 +3,7 @@ import { HttpService } from '@nestjs/axios';
 import { ConfigService } from '@nestjs/config';
 import NFTService from '../nft-library/services/nft_service';
 import { PlayerWinService } from '../playerWin/playerWin.service';
+import { PlayerWin } from '../playerWin/playerWin.schema';
 
 @Injectable()
 export class WalletService {
@@ -36,22 +37,23 @@ export class WalletService {
             walletId,
             contracts,
         );
-        const event_id = '0';
-
-        const allWins = await this.playerWinService.findAllWins(walletId);
-        allWins[0].event_id;
-        //allWins.filter();
+        const all_wins = await this.playerWinService.findAllWins(walletId);
 
         for (let i = 0; i < nfts.tokens.length; i++) {
-            const over_token = nfts.tokens[i];
-            const contract_address = over_token.contract_address;
-            for (let j = 0; j < over_token.tokens.length; j++) {
-                const token_id = nfts.tokens[i].tokens[j].token_id;
-                const can_play = await this.playerWinService.canPlay(
-                    event_id,
-                    contract_address,
-                    token_id,
-                );
+            const token_list = nfts.tokens[i];
+            const contract_address = token_list.contract_address;
+            for (let j = 0; j < token_list.tokens.length; j++) {
+                const token_id = token_list.tokens[j].token_id;
+
+                let can_play = true;
+                //does all_wins include a token with the same contract_address and token_id
+                for (let k = 0; k < all_wins.length && can_play; k++) {
+                    const winner = all_wins[k];
+                    const found =
+                        winner.contract_address === contract_address &&
+                        winner.token_id === token_id;
+                    can_play = !found;
+                }
                 nfts.tokens[i].tokens[j].can_play = can_play;
             }
         }
