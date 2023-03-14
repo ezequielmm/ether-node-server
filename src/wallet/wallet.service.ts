@@ -39,7 +39,28 @@ export class WalletService {
             walletId,
             contracts,
         );
+        const contest_id = '0';
+        for (let i = 0; i < nfts.tokens.length; i++) {
+            const over_token = nfts.tokens[i];
+            const contract_address = over_token.contract_address;
+            for (let j = 0; j < over_token.tokens.length; j++) {
+                const token_id = nfts.tokens[i].tokens[j].token_id;
+                nfts.tokens[i].tokens[j].can_play = this.canPlay(
+                    contest_id,
+                    contract_address,
+                    token_id,
+                );
+            }
+        }
 
         return nfts;
+    }
+
+    canPlay(
+        contest_id: string,
+        contract_address: string,
+        token_id: string,
+    ): boolean {
+        return true;
     }
 }
