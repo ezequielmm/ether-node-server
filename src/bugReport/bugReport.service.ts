@@ -67,7 +67,7 @@ export class BugReportService {
                 userDescription,
             attachments: [
                 {
-                    title: 'screen shot',
+                    title: 'Screenshot',
                     image_url: image_url,
                 },
             ],
