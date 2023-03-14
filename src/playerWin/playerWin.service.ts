@@ -18,6 +18,6 @@ export class PlayerWinService {
         const item = await this.playerWin.findOne({
             event_id: event_id,
         });
-        return true;
+        return item != null;
     }
 }
