@@ -61,27 +61,9 @@ export class PlayerGearService {
             return 'playerGear.findOne failed';
         }
         if (!ownedGear) return 'no ownedGear';
-        let expedition = null;
-        try {
-            expedition = await this.expeditionService.findOneTimeDesc({
-                playerId,
-            });
-        } catch (e) {
-            return 'expeditionService.findOneTimeDesc failed';
-        }
-        let equippedGear = undefined;
-        if (expedition) {
-            const playerState = expedition.playerState;
-            if (playerState) {
-                equippedGear = playerState.equippedGear;
-            }
-        }
-        if (!equippedGear) equippedGear = [];
-        const ownedGearGear = ownedGear ? ownedGear.equippedGear : [];
-        return {
-            ownedGear: ownedGearGear,
-            equippedGear: equippedGear,
-        };
+
+        const ownedGearGear = ownedGear ? ownedGear.gear : [];
+        return { ownedGear: ownedGearGear };
     }
 
     async dev_addLootForDevelopmentTesting(playerId: string) {
