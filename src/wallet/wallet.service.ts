@@ -6,9 +6,7 @@ import { PlayerWinService } from '../playerWin/playerWin.service';
 
 @Injectable()
 export class WalletService {
-    constructor(
-        private playerWinService: PlayerWinService,
-    ) {}
+    constructor(private playerWinService: PlayerWinService) {}
 
     async getTokenIdList(walletId: string): Promise<string[]> {
         // the chain where are deployed the smart contracts
@@ -30,7 +28,7 @@ export class WalletService {
             contracts = [
                 '0x80e2109a826148b9b1a41b0958ca53a4cdc64b70',
                 '0xF0aA34f832c34b32478B8D9696DC8Ad1c8065D2d',
-                //internal server error '0x55abb816b145CA8F34ffA22D63fBC5bc57186690',
+                '0x55abb816b145CA8F34ffA22D63fBC5bc57186690',
             ];
         }
         const nfts = await NFTService.listByContracts(
@@ -39,6 +37,11 @@ export class WalletService {
             contracts,
         );
         const event_id = '0';
+
+        const allWins = await this.playerWinService.findAllWins(walletId);
+        allWins[0].event_id;
+        //allWins.filter();
+
         for (let i = 0; i < nfts.tokens.length; i++) {
             const over_token = nfts.tokens[i];
             const contract_address = over_token.contract_address;

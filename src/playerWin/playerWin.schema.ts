@@ -5,7 +5,7 @@ import { ModelOptions, Prop } from '@typegoose/typegoose';
 })
 export class PlayerWin {
     @Prop()
-    playerId: string;
+    wallet_id: string;
 
     @Prop()
     event_id: string;

@@ -10,6 +10,13 @@ export class PlayerWinService {
         private readonly playerWin: ReturnModelType<typeof PlayerWin>,
     ) {}
 
+    async findAllWins(wallet_id: string) {
+        const items = await this.playerWin.find({
+            wallet_id,
+        });
+        return items;
+    }
+
     async canPlay(
         event_id: string,
         contract_address: string,
