@@ -54,20 +54,19 @@ export class AddCardEffect {
         const cardsToAdd: IExpeditionPlayerStateDeckCard[] = Array(currentValue)
             .fill(card)
             .map((card) => ({
-                ...card,
                 id: randomUUID(),
-                // cardId: card.cardId,
-                // name: card.name,
-                // cardType: card.cardType,
-                // energy: card.energy,
-                // description: card.description,
-                // isTemporary: false,
-                // rarity: card.rarity,
-                // properties: card.properties,
-                // keywords: card.keywords,
-                // showPointer: card.showPointer,
-                // pool: card.pool,
-                // isUpgraded: card.isUpgraded,
+                cardId: card.cardId,
+                name: card.name,
+                cardType: card.cardType,
+                energy: card.energy,
+                description: card.description,
+                isTemporary: false,
+                rarity: card.rarity,
+                properties: card.properties,
+                keywords: card.keywords,
+                showPointer: card.showPointer,
+                pool: card.pool,
+                isUpgraded: card.isUpgraded,
                 isActive: true,
             }));
 
