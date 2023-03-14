@@ -331,21 +331,21 @@ export class MerchantService {
 
             switch (card.rarity) {
                 case CardRarityEnum.Common:
-                    cost = this.getCarPrice(
+                    cost = this.getCardPrice(
                         CardCommon.minPrice,
                         CardCommon.maxPrice,
                         card.isUpgraded,
                     );
                     break;
                 case CardRarityEnum.Uncommon:
-                    cost = this.getCarPrice(
+                    cost = this.getCardPrice(
                         CardUncommon.minPrice,
                         CardUncommon.maxPrice,
                         card.isUpgraded,
                     );
                     break;
                 case CardRarityEnum.Rare:
-                    cost = this.getCarPrice(
+                    cost = this.getCardPrice(
                         CardRare.minPrice,
                         CardRare.maxPrice,
                         card.isUpgraded,
@@ -393,7 +393,7 @@ export class MerchantService {
         return itemsData;
     }
 
-    private getCarPrice(
+    private getCardPrice(
         minPrice: number,
         maxPrice: number,
         isCardUpgraded: boolean,
