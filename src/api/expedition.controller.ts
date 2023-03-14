@@ -58,6 +58,7 @@ export class ExpeditionController {
     async handleGetExpeditionStatus(@Headers() headers): Promise<{
         hasExpedition: boolean;
         nftId: number;
+        tokenType: string;
         equippedGear: GearItem[];
     }> {
         this.logger.log(`Client called GET route "/expeditions/status"`);
@@ -65,8 +66,7 @@ export class ExpeditionController {
         const { authorization } = headers;
 
         //todo add class knight, villager, blessedvillager
-        
-        
+
         try {
             const { id: playerId } = await this.authGatewayService.getUser(
                 authorization,
@@ -84,9 +84,11 @@ export class ExpeditionController {
                 expedition !== null && !expedition.isCurrentlyPlaying;
             const nftId = expedition?.playerState?.nftId ?? -1;
             const equippedGear = expedition?.playerState?.equippedGear ?? [];
+            const tokenType =
+                expedition?.playerState?.characterClass ?? 'missing';
             //todo parse for front end
 
-            return { hasExpedition, nftId, equippedGear };
+            return { hasExpedition, nftId, tokenType, equippedGear };
         } catch (e) {
             this.logger.error(e.stack);
             throw new HttpException(
@@ -122,6 +124,13 @@ export class ExpeditionController {
 
             const { nftId } = payload;
             const { equippedGear } = payload;
+
+            /* todo validate equippedGear vs ownedGeared
+            ownedGear = await this.playerGear.findOne({
+                playerId: playerId,
+            });
+            see PlayerGear
+             */
 
             const hasExpedition =
                 await this.expeditionService.playerHasExpeditionInProgress({
