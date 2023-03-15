@@ -33,7 +33,7 @@ export class TrappedStatus implements StatusEffectHandler {
     async handle(
         dto: StatusEffectDTO<DamageArgs>,
     ): Promise<EffectDTO<DamageArgs>> {
-        const { ctx, effectDTO } = dto;
+        const { ctx, effectDTO, remove } = dto;
         const { source, target } = effectDTO;
 
         // Deal 12 damage to the player
@@ -49,13 +49,8 @@ export class TrappedStatus implements StatusEffectHandler {
             },
         });
 
-        if (EnemyService.isEnemy(target)) {
-            // Update the enemy's script to move to script 4
-            await this.enemyService.setCurrentScript(ctx, target.value.id, {
-                ...target.value.currentScript,
-                next: [{ probability: 1, scriptId: 4 }],
-            });
-        }
+        // Remove the status
+        remove();
 
         return effectDTO;
     }
