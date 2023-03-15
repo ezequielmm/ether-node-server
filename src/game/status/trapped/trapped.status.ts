@@ -61,11 +61,13 @@ export class TrappedStatus implements StatusEffectHandler {
         const enemies = this.enemyService.getAll(ctx);
 
         for (const enemy of enemies) {
-            await this.statusService.removeStatus({
-                ctx,
-                entity: enemy,
-                status: trapped,
-            });
+            if (enemy.value.hpCurrent > 0) {
+                await this.statusService.removeStatus({
+                    ctx,
+                    entity: enemy,
+                    status: trapped,
+                });
+            }
         }
     }
 }

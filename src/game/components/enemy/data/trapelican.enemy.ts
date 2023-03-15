@@ -101,7 +101,6 @@ export const trapelicanData: Enemy = {
                 },
             ],
         },
-
         {
             id: 3,
             intentions: [

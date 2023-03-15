@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
 import { WalletController } from './wallet.controller';
 import { WalletService } from './wallet.service';
-import { HttpModule } from '@nestjs/axios';
+import { PlayerWinModule } from '../playerWin/playerWin.module';
 @Module({
     controllers: [WalletController],
-    imports: [HttpModule],
+    imports: [PlayerWinModule],
     providers: [WalletService],
 })
 export class WalletModule {}

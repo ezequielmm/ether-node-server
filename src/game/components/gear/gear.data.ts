@@ -89,26 +89,26 @@ import { Breastplate_Breastplate_Gold_White_Hand } from './data/Breastplate_Brea
 import { Breastplate_Breastplate_Gold_Gothic } from './data/Breastplate_Breastplate_Gold_Gothic.data';
 import { Breastplate_Breastplate_Gold_Engraved } from './data/Breastplate_Breastplate_Gold_Engraved.data';
 import { Breastplate_Breastplate_Gold_Royal_Guard } from './data/Breastplate_Breastplate_Gold_Royal_Guard.data';
-import { Breastplate_Legguard_Gothic } from './data/Breastplate_Legguard_Gothic.data';
-import { Breastplate_Legguard_Engraved } from './data/Breastplate_Legguard_Engraved.data';
-import { Breastplate_Legguard_Royal_Guard } from './data/Breastplate_Legguard_Royal_Guard.data';
-import { Breastplate_Legguard_Blue_Leather } from './data/Breastplate_Legguard_Blue_Leather.data';
-import { Breastplate_Legguard_Red_Leather } from './data/Breastplate_Legguard_Red_Leather.data';
-import { Breastplate_Legguard_Dark } from './data/Breastplate_Legguard_Dark.data';
-import { Breastplate_Legguard_Purple_Leather } from './data/Breastplate_Legguard_Purple_Leather.data';
-import { Breastplate_Legguard_Bloodied_Gothic } from './data/Breastplate_Legguard_Bloodied_Gothic.data';
-import { Breastplate_Legguard_Purple_Dragon_Rent } from './data/Breastplate_Legguard_Purple_Dragon_Rent.data';
-import { Breastplate_Legguard_White_Hand } from './data/Breastplate_Legguard_White_Hand.data';
-import { Breastplate_Legguard_Red_Dragon_Rent } from './data/Breastplate_Legguard_Red_Dragon_Rent.data';
-import { Breastplate_Legguard_Blue_Dragon_Rent } from './data/Breastplate_Legguard_Blue_Dragon_Rent.data';
-import { Breastplate_Legguard_Blue_and_Gold } from './data/Breastplate_Legguard_Blue_and_Gold.data';
-import { Breastplate_Legguard_Medici } from './data/Breastplate_Legguard_Medici.data';
-import { Breastplate_Legguard_Gold_Templar } from './data/Breastplate_Legguard_Gold_Templar.data';
-import { Breastplate_Legguard_Ancient } from './data/Breastplate_Legguard_Ancient.data';
-import { Breastplate_Legguard_Gold_White_Hand } from './data/Breastplate_Legguard_Gold_White_Hand.data';
-import { Breastplate_Legguard_Gold_Gothic } from './data/Breastplate_Legguard_Gold_Gothic.data';
-import { Breastplate_Legguard_Gold_Engraved } from './data/Breastplate_Legguard_Gold_Engraved.data';
-import { Breastplate_Legguard_Gold_Royal_Guard } from './data/Breastplate_Legguard_Gold_Royal_Guard.data';
+import { Legguard_Legguard_Gothic } from './data/Legguard_Legguard_Gothic.data';
+import { Legguard_Legguard_Engraved } from './data/Legguard_Legguard_Engraved.data';
+import { Legguard_Legguard_Royal_Guard } from './data/Legguard_Legguard_Royal_Guard.data';
+import { Legguard_Legguard_Blue_Leather } from './data/Legguard_Legguard_Blue_Leather.data';
+import { Legguard_Legguard_Red_Leather } from './data/Legguard_Legguard_Red_Leather.data';
+import { Legguard_Legguard_Dark } from './data/Legguard_Legguard_Dark.data';
+import { Legguard_Legguard_Purple_Leather } from './data/Legguard_Legguard_Purple_Leather.data';
+import { Legguard_Legguard_Bloodied_Gothic } from './data/Legguard_Legguard_Bloodied_Gothic.data';
+import { Legguard_Legguard_Purple_Dragon_Rent } from './data/Legguard_Legguard_Purple_Dragon_Rent.data';
+import { Legguard_Legguard_White_Hand } from './data/Legguard_Legguard_White_Hand.data';
+import { Legguard_Legguard_Red_Dragon_Rent } from './data/Legguard_Legguard_Red_Dragon_Rent.data';
+import { Legguard_Legguard_Blue_Dragon_Rent } from './data/Legguard_Legguard_Blue_Dragon_Rent.data';
+import { Legguard_Legguard_Blue_and_Gold } from './data/Legguard_Legguard_Blue_and_Gold.data';
+import { Legguard_Legguard_Medici } from './data/Legguard_Legguard_Medici.data';
+import { Legguard_Legguard_Gold_Templar } from './data/Legguard_Legguard_Gold_Templar.data';
+import { Legguard_Legguard_Ancient } from './data/Legguard_Legguard_Ancient.data';
+import { Legguard_Legguard_Gold_White_Hand } from './data/Legguard_Legguard_Gold_White_Hand.data';
+import { Legguard_Legguard_Gold_Gothic } from './data/Legguard_Legguard_Gold_Gothic.data';
+import { Legguard_Legguard_Gold_Engraved } from './data/Legguard_Legguard_Gold_Engraved.data';
+import { Legguard_Legguard_Gold_Royal_Guard } from './data/Legguard_Legguard_Gold_Royal_Guard.data';
 import { Gauntlet_Gauntlets_Churburg_Hourglass } from './data/Gauntlet_Gauntlets_Churburg_Hourglass.data';
 import { Gauntlet_Gauntlets_Articulated } from './data/Gauntlet_Gauntlets_Articulated.data';
 import { Gauntlet_Gauntlets_Balthasar } from './data/Gauntlet_Gauntlets_Balthasar.data';
@@ -129,26 +129,26 @@ import { Gauntlet_Gauntlets_Gold_Mitten } from './data/Gauntlet_Gauntlets_Gold_M
 import { Gauntlet_Gauntlets_Gold_Dread } from './data/Gauntlet_Gauntlets_Gold_Dread.data';
 import { Gauntlet_Gauntlets_Flaming } from './data/Gauntlet_Gauntlets_Flaming.data';
 import { Gauntlet_Gauntlets_Blue_Flaming } from './data/Gauntlet_Gauntlets_Blue_Flaming.data';
-import { Gauntlet_Boots_Churburg_Hourglass } from './data/Gauntlet_Boots_Churburg_Hourglass.data';
-import { Gauntlet_Boots_Articulated } from './data/Gauntlet_Boots_Articulated.data';
-import { Gauntlet_Boots_Balthasar } from './data/Gauntlet_Boots_Balthasar.data';
-import { Gauntlet_Boots_Medici } from './data/Gauntlet_Boots_Medici.data';
-import { Gauntlet_Boots_Leather } from './data/Gauntlet_Boots_Leather.data';
-import { Gauntlet_Boots_Mitten } from './data/Gauntlet_Boots_Mitten.data';
-import { Gauntlet_Boots_Hourglass } from './data/Gauntlet_Boots_Hourglass.data';
-import { Gauntlet_Boots_Bloodied } from './data/Gauntlet_Boots_Bloodied.data';
-import { Gauntlet_Boots_Elven } from './data/Gauntlet_Boots_Elven.data';
-import { Gauntlet_Boots_Spiked } from './data/Gauntlet_Boots_Spiked.data';
-import { Gauntlet_Boots_Volcanic } from './data/Gauntlet_Boots_Volcanic.data';
-import { Gauntlet_Boots_Gold_Knuckle } from './data/Gauntlet_Boots_Gold_Knuckle.data';
-import { Gauntlet_Boots_Dread } from './data/Gauntlet_Boots_Dread.data';
-import { Gauntlet_Boots_Gold_Hourglass } from './data/Gauntlet_Boots_Gold_Hourglass.data';
-import { Gauntlet_Boots_Gold_Articulated } from './data/Gauntlet_Boots_Gold_Articulated.data';
-import { Gauntlet_Boots_Gold_Churburg_Hourglass } from './data/Gauntlet_Boots_Gold_Churburg_Hourglass.data';
-import { Gauntlet_Boots_Gold_Mitten } from './data/Gauntlet_Boots_Gold_Mitten.data';
-import { Gauntlet_Boots_Gold_Dread } from './data/Gauntlet_Boots_Gold_Dread.data';
-import { Gauntlet_Boots_Flaming } from './data/Gauntlet_Boots_Flaming.data';
-import { Gauntlet_Boots_Blue_Flaming } from './data/Gauntlet_Boots_Blue_Flaming.data';
+import { Boots_Boots_Churburg_Hourglass } from './data/Boots_Boots_Churburg_Hourglass.data';
+import { Boots_Boots_Articulated } from './data/Boots_Boots_Articulated.data';
+import { Boots_Boots_Balthasar } from './data/Boots_Boots_Balthasar.data';
+import { Boots_Boots_Medici } from './data/Boots_Boots_Medici.data';
+import { Boots_Boots_Leather } from './data/Boots_Boots_Leather.data';
+import { Boots_Boots_Mitten } from './data/Boots_Boots_Mitten.data';
+import { Boots_Boots_Hourglass } from './data/Boots_Boots_Hourglass.data';
+import { Boots_Boots_Bloodied } from './data/Boots_Boots_Bloodied.data';
+import { Boots_Boots_Elven } from './data/Boots_Boots_Elven.data';
+import { Boots_Boots_Spiked } from './data/Boots_Boots_Spiked.data';
+import { Boots_Boots_Volcanic } from './data/Boots_Boots_Volcanic.data';
+import { Boots_Boots_Gold_Knuckle } from './data/Boots_Boots_Gold_Knuckle.data';
+import { Boots_Boots_Dread } from './data/Boots_Boots_Dread.data';
+import { Boots_Boots_Gold_Hourglass } from './data/Boots_Boots_Gold_Hourglass.data';
+import { Boots_Boots_Gold_Articulated } from './data/Boots_Boots_Gold_Articulated.data';
+import { Boots_Boots_Gold_Churburg_Hourglass } from './data/Boots_Boots_Gold_Churburg_Hourglass.data';
+import { Boots_Boots_Gold_Mitten } from './data/Boots_Boots_Gold_Mitten.data';
+import { Boots_Boots_Gold_Dread } from './data/Boots_Boots_Gold_Dread.data';
+import { Boots_Boots_Flaming } from './data/Boots_Boots_Flaming.data';
+import { Boots_Boots_Blue_Flaming } from './data/Boots_Boots_Blue_Flaming.data';
 import { Pauldrons_Pauldrons_Leather_Edged } from './data/Pauldrons_Pauldrons_Leather_Edged.data';
 import { Pauldrons_Pauldrons_Fine_Leather } from './data/Pauldrons_Pauldrons_Fine_Leather.data';
 import { Pauldrons_Pauldrons_Silver_Flared } from './data/Pauldrons_Pauldrons_Silver_Flared.data';
@@ -283,26 +283,26 @@ export const data: Gear[] = [
     Breastplate_Breastplate_Gold_Gothic,
     Breastplate_Breastplate_Gold_Engraved,
     Breastplate_Breastplate_Gold_Royal_Guard,
-    Breastplate_Legguard_Gothic,
-    Breastplate_Legguard_Engraved,
-    Breastplate_Legguard_Royal_Guard,
-    Breastplate_Legguard_Blue_Leather,
-    Breastplate_Legguard_Red_Leather,
-    Breastplate_Legguard_Dark,
-    Breastplate_Legguard_Purple_Leather,
-    Breastplate_Legguard_Bloodied_Gothic,
-    Breastplate_Legguard_Purple_Dragon_Rent,
-    Breastplate_Legguard_White_Hand,
-    Breastplate_Legguard_Red_Dragon_Rent,
-    Breastplate_Legguard_Blue_Dragon_Rent,
-    Breastplate_Legguard_Blue_and_Gold,
-    Breastplate_Legguard_Medici,
-    Breastplate_Legguard_Gold_Templar,
-    Breastplate_Legguard_Ancient,
-    Breastplate_Legguard_Gold_White_Hand,
-    Breastplate_Legguard_Gold_Gothic,
-    Breastplate_Legguard_Gold_Engraved,
-    Breastplate_Legguard_Gold_Royal_Guard,
+    Legguard_Legguard_Gothic,
+    Legguard_Legguard_Engraved,
+    Legguard_Legguard_Royal_Guard,
+    Legguard_Legguard_Blue_Leather,
+    Legguard_Legguard_Red_Leather,
+    Legguard_Legguard_Dark,
+    Legguard_Legguard_Purple_Leather,
+    Legguard_Legguard_Bloodied_Gothic,
+    Legguard_Legguard_Purple_Dragon_Rent,
+    Legguard_Legguard_White_Hand,
+    Legguard_Legguard_Red_Dragon_Rent,
+    Legguard_Legguard_Blue_Dragon_Rent,
+    Legguard_Legguard_Blue_and_Gold,
+    Legguard_Legguard_Medici,
+    Legguard_Legguard_Gold_Templar,
+    Legguard_Legguard_Ancient,
+    Legguard_Legguard_Gold_White_Hand,
+    Legguard_Legguard_Gold_Gothic,
+    Legguard_Legguard_Gold_Engraved,
+    Legguard_Legguard_Gold_Royal_Guard,
     Gauntlet_Gauntlets_Churburg_Hourglass,
     Gauntlet_Gauntlets_Articulated,
     Gauntlet_Gauntlets_Balthasar,
@@ -323,26 +323,26 @@ export const data: Gear[] = [
     Gauntlet_Gauntlets_Gold_Dread,
     Gauntlet_Gauntlets_Flaming,
     Gauntlet_Gauntlets_Blue_Flaming,
-    Gauntlet_Boots_Churburg_Hourglass,
-    Gauntlet_Boots_Articulated,
-    Gauntlet_Boots_Balthasar,
-    Gauntlet_Boots_Medici,
-    Gauntlet_Boots_Leather,
-    Gauntlet_Boots_Mitten,
-    Gauntlet_Boots_Hourglass,
-    Gauntlet_Boots_Bloodied,
-    Gauntlet_Boots_Elven,
-    Gauntlet_Boots_Spiked,
-    Gauntlet_Boots_Volcanic,
-    Gauntlet_Boots_Gold_Knuckle,
-    Gauntlet_Boots_Dread,
-    Gauntlet_Boots_Gold_Hourglass,
-    Gauntlet_Boots_Gold_Articulated,
-    Gauntlet_Boots_Gold_Churburg_Hourglass,
-    Gauntlet_Boots_Gold_Mitten,
-    Gauntlet_Boots_Gold_Dread,
-    Gauntlet_Boots_Flaming,
-    Gauntlet_Boots_Blue_Flaming,
+    Boots_Boots_Churburg_Hourglass,
+    Boots_Boots_Articulated,
+    Boots_Boots_Balthasar,
+    Boots_Boots_Medici,
+    Boots_Boots_Leather,
+    Boots_Boots_Mitten,
+    Boots_Boots_Hourglass,
+    Boots_Boots_Bloodied,
+    Boots_Boots_Elven,
+    Boots_Boots_Spiked,
+    Boots_Boots_Volcanic,
+    Boots_Boots_Gold_Knuckle,
+    Boots_Boots_Dread,
+    Boots_Boots_Gold_Hourglass,
+    Boots_Boots_Gold_Articulated,
+    Boots_Boots_Gold_Churburg_Hourglass,
+    Boots_Boots_Gold_Mitten,
+    Boots_Boots_Gold_Dread,
+    Boots_Boots_Flaming,
+    Boots_Boots_Blue_Flaming,
     Pauldrons_Pauldrons_Leather_Edged,
     Pauldrons_Pauldrons_Fine_Leather,
     Pauldrons_Pauldrons_Silver_Flared,
