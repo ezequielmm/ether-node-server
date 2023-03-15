@@ -54,14 +54,14 @@ export class HardEnemiesFiller extends EnemyNodeDataFiller {
                 enemies: [
                     sporeMongerData.enemyId,
                     sporeMongerData.enemyId,
-                    trapelicanData.enemyId,
+                    stingFaeData.enemyId,
                 ],
                 frequency: 10,
             },
             {
                 enemies: [
-                    trapelicanData.enemyId,
-                    trapelicanData.enemyId,
+                    swampGoblin1Data.enemyId,
+                    swampGoblin2Data.enemyId,
                     mimicFrog1Data.enemyId,
                 ],
                 frequency: 10,
