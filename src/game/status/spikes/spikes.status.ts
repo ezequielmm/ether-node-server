@@ -39,7 +39,7 @@ export class SpikesStatus implements StatusEffectHandler {
         if (dto.effectDTO.args.type === undefined) {
             await this.effectService.apply(applyDTO);
         }
-        
+
         // Don't modify the args, the target will be damaged as well.
         return dto.effectDTO;
     }
