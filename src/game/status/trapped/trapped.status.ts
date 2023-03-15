@@ -49,14 +49,6 @@ export class TrappedStatus implements StatusEffectHandler {
             },
         });
 
-        if (EnemyService.isEnemy(target)) {
-            // Update the enemy's script to move to script 4
-            await this.enemyService.setCurrentScript(ctx, target.value.id, {
-                ...target.value.currentScript,
-                next: [{ probability: 1, scriptId: 4 }],
-            });
-        }
-
         return effectDTO;
     }
 
@@ -66,11 +58,13 @@ export class TrappedStatus implements StatusEffectHandler {
         const enemies = this.enemyService.getAll(ctx);
 
         for (const enemy of enemies) {
-            await this.statusService.removeStatus({
-                ctx,
-                entity: enemy,
-                status: trapped,
-            });
+            if (enemy.value.hpCurrent > 0) {
+                await this.statusService.removeStatus({
+                    ctx,
+                    entity: enemy,
+                    status: trapped,
+                });
+            }
         }
     }
 }
