@@ -24,13 +24,17 @@ import {
     ScoreCalculatorService,
     ScoreResponse,
 } from 'src/game/scoreCalculator/scoreCalculator.service';
+import { GearItem } from '../playerGear/gearItem';
 
 class CreateExpeditionApiDTO {
-    @ApiProperty({ default: 'knight' })
-    readonly class: string;
+    @ApiProperty({ default: 'Knight' })
+    readonly tokenType: string;
 
     @ApiProperty()
     readonly nftId: number;
+
+    @ApiProperty()
+    readonly equippedGear: GearItem[];
 }
 
 @ApiBearerAuth()
@@ -51,12 +55,17 @@ export class ExpeditionController {
         summary: 'Check if the given user has an expedition in progress or not',
     })
     @Get('/status')
-    async handleGetExpeditionStatus(
-        @Headers() headers,
-    ): Promise<{ hasExpedition: boolean; nftId: number }> {
+    async handleGetExpeditionStatus(@Headers() headers): Promise<{
+        hasExpedition: boolean;
+        nftId: number;
+        tokenType: string;
+        equippedGear: GearItem[];
+    }> {
         this.logger.log(`Client called GET route "/expeditions/status"`);
 
         const { authorization } = headers;
+
+        //todo add class knight, villager, blessedvillager
 
         try {
             const { id: playerId } = await this.authGatewayService.getUser(
@@ -74,8 +83,12 @@ export class ExpeditionController {
             const hasExpedition =
                 expedition !== null && !expedition.isCurrentlyPlaying;
             const nftId = expedition?.playerState?.nftId ?? -1;
+            const equippedGear = expedition?.playerState?.equippedGear ?? [];
+            const tokenType =
+                expedition?.playerState?.characterClass ?? 'missing';
+            //todo parse for front end
 
-            return { hasExpedition, nftId };
+            return { hasExpedition, nftId, tokenType, equippedGear };
         } catch (e) {
             this.logger.error(e.stack);
             throw new HttpException(
@@ -110,6 +123,15 @@ export class ExpeditionController {
             } = await this.authGatewayService.getUser(authorization);
 
             const { nftId } = payload;
+            const { equippedGear } = payload;
+            const character_class = payload.tokenType;
+
+            /* todo validate equippedGear vs ownedGeared
+            ownedGear = await this.playerGear.findOne({
+                playerId: playerId,
+            });
+            see PlayerGear
+             */
 
             const hasExpedition =
                 await this.expeditionService.playerHasExpeditionInProgress({
@@ -122,6 +144,8 @@ export class ExpeditionController {
                     playerName,
                     email,
                     nftId,
+                    equippedGear,
+                    character_class,
                 });
 
                 return { expeditionCreated: true };

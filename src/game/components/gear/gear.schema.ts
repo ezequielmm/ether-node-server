@@ -20,4 +20,7 @@ export class Gear {
 
     @Prop({ type: String, enum: GearRarityEnum })
     rarity: GearRarityEnum;
+
+    @Prop({ default: true })
+    isActive?: boolean;
 }
