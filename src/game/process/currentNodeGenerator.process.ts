@@ -91,6 +91,25 @@ export class CurrentNodeGeneratorProcess {
         ctx: GameContext,
         node: Node,
     ): Promise<IExpeditionCurrentNode> {
+        // First we check if we have a current node, if we do, we check if we have merchant items
+        // If we don't have merchant items, we generate them
+        // If we do have merchant items, we return them
+        const {
+            expedition: { currentNode },
+        } = ctx || {};
+
+        if (isEmpty(currentNode)) {
+            const merchantItems = await this.merchantService.generateMerchant();
+
+            return {
+                nodeId: node.id,
+                completed: false,
+                nodeType: node.type,
+                showRewards: false,
+                merchantItems,
+            };
+        }
+
         let {
             expedition: {
                 currentNode: { merchantItems },

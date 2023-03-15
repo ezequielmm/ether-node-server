@@ -37,7 +37,7 @@ import { FineEdgeCard, FineEdgeCardUpgraded } from './data/fineEdge.card';
 import { FirstMoveCard, FirstMoveCardUpgraded } from './data/firstMove.card';
 import { FlurryCard, FlurryCardUpgraded } from './data/flurry.card';
 import { ForceFieldCard, ForceFieldCardUpgraded } from './data/forceField.card';
-import { FrontflipCard, FrontflipCardUpgraded } from './data/frontflip.card';
+// import { FrontflipCard, FrontflipCardUpgraded } from './data/frontflip.card';
 import {
     GiveNoGroundCard,
     GiveNoGroundCardUpgraded,
@@ -92,7 +92,7 @@ import {
 import { Refocus } from './data/refocus.card';
 import { RepositionCard, RepositionCardUpgraded } from './data/reposition.card';
 import { RoundHouseCard, RoundHouseCardUpgraded } from './data/roundHouse.card';
-import { ShakeItOffCard, ShakeItOffCardUpgraded } from './data/shakeItOff.card';
+// import { ShakeItOffCard, ShakeItOffCardUpgraded } from './data/shakeItOff.card';
 // import {
 //     SharpenBladeCard,
 //     SharpenBladeCardUpgraded,
@@ -102,8 +102,8 @@ import {
     ShieldPlantCard,
     ShieldPlantCardUpgraded,
 } from './data/shieldPlant.card';
-import { ShoutCard, ShoutCardUpgraded } from './data/shout.card';
-import { SiphonCard, SiphonCardUpgraded } from './data/siphon.card';
+// import { ShoutCard, ShoutCardUpgraded } from './data/shout.card';
+// import { SiphonCard, SiphonCardUpgraded } from './data/siphon.card';
 import { SparkCard, SparkCardUpgraded } from './data/Spark.card';
 //import { SpikeArmorCard, SpikeArmorCardUpgraded } from './data/spikeArmor.card';
 import { StunnedCard } from './data/stunned.card';
@@ -169,16 +169,16 @@ export const data: Card[] = [
     QuickToAdaptCardUpgraded,
     KindleCard,
     KindleCardUpgraded,
-    ShakeItOffCard,
-    ShakeItOffCardUpgraded,
+    // ShakeItOffCard,
+    // ShakeItOffCardUpgraded,
     FadeCard,
     FadeCardUpgraded,
     GiveNoGroundCard,
     GiveNoGroundCardUpgraded,
     PerfectTimingCard,
     PerfectTimingCardUpgraded,
-    SiphonCard,
-    SiphonCardUpgraded,
+    // SiphonCard,
+    // SiphonCardUpgraded,
     InvokeBlessingCard,
     InvokeBlessingCardUpgraded,
     // GNCard,
@@ -236,8 +236,8 @@ export const data: Card[] = [
     // SharpenBladeCardUpgraded,
     OnARollCard,
     OnARollCardUpgraded,
-    ShoutCard,
-    ShoutCardUpgraded,
+    // ShoutCard,
+    // ShoutCardUpgraded,
     AnticipateCard,
     AnticipateCardUpgraded,
     TwistTheBladeCard,
@@ -246,8 +246,8 @@ export const data: Card[] = [
     KnockDownCardUpgraded,
     // BackflipCard,
     // BackflipCardUpgraded,
-    FrontflipCard,
-    FrontflipCardUpgraded,
+    // FrontflipCard,
+    // FrontflipCardUpgraded,
     BurnedCard,
     RoundHouseCard,
     RoundHouseCardUpgraded,
