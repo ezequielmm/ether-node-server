@@ -33,7 +33,7 @@ export class TrappedStatus implements StatusEffectHandler {
     async handle(
         dto: StatusEffectDTO<DamageArgs>,
     ): Promise<EffectDTO<DamageArgs>> {
-        const { ctx, effectDTO } = dto;
+        const { ctx, effectDTO, remove } = dto;
         const { source, target } = effectDTO;
 
         // Deal 12 damage to the player
@@ -48,6 +48,9 @@ export class TrappedStatus implements StatusEffectHandler {
                 },
             },
         });
+
+        // Remove the status
+        remove();
 
         return effectDTO;
     }
