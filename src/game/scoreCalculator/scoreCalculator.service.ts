@@ -16,6 +16,8 @@ export interface ScoreResponse {
         name: string;
         score: number;
     }[];
+    notifyNoLoot: boolean;
+    lootbox: any[];
 }
 
 @Injectable()
@@ -41,6 +43,7 @@ export class ScoreCalculatorService {
                 gold,
             },
             status,
+            lootbox,
         } = expedition;
 
         const totalBasicEnemies =
@@ -84,6 +87,8 @@ export class ScoreCalculatorService {
             outcome: status,
             totalScore,
             achievements: [],
+            notifyNoLoot: false,
+            lootbox,
         };
 
         if (totalBasicEnemies > 0)
