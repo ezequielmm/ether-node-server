@@ -67,6 +67,7 @@ export class InitExpeditionProcess {
                 basicEnemiesDefeated: 0,
                 eliteEnemiesDefeated: 0,
                 bossEnemiesDefeated: 0,
+                minionEnemiesDefeated: 0,
             },
             mapSeedId: getTimestampInSeconds(),
             actConfig: {
