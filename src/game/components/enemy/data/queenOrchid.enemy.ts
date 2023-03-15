@@ -44,7 +44,7 @@ export const queenOrchidData: Enemy = {
                             args: {
                                 value: 1,
                                 cardId: ChokingCard.cardId, //
-                                destination: 'draw',
+                                destination: 'discard',
                             },
                         },
                     ],

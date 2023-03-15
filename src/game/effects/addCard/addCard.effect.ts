@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { randomUUID } from 'crypto';
-import { shuffle } from 'lodash';
 import { Card } from 'src/game/components/card/card.schema';
 import { CardService } from 'src/game/components/card/card.service';
 import { IExpeditionPlayerStateDeckCard } from 'src/game/components/expedition/expedition.interface';
@@ -17,6 +16,7 @@ import { addCardEffect } from './contants';
 
 export interface AddCardArgs {
     destination: keyof Expedition['currentNode']['data']['player']['cards'];
+    position: 'top' | 'bottom' | 'random';
     cardId: Card['cardId'];
 }
 
@@ -33,7 +33,7 @@ export class AddCardEffect {
     async handle(payload: EffectDTO<AddCardArgs>): Promise<void> {
         const {
             ctx,
-            args: { currentValue, destination, cardId },
+            args: { currentValue, destination, cardId, position = 'top' },
         } = payload;
 
         const { client } = ctx;
@@ -70,12 +70,21 @@ export class AddCardEffect {
                 isActive: true,
             }));
 
-        cards[destination].push(...cardsToAdd);
-
-        // If destination is draw, we need to shuffle the cards
-        if (destination === 'draw') {
-            // Now we shuffle the cards
-            cards[destination] = shuffle(cards[destination]);
+        // Check position
+        if (position === 'random') {
+            // If it is random we need to add the cards in a random position
+            for (const card of cardsToAdd) {
+                const randomIndex = Math.floor(
+                    Math.random() * cards[destination].length,
+                );
+                cards[destination].splice(randomIndex, 0, card);
+            }
+        } else if (position === 'top') {
+            // If it is top we need to add the cards to the top of the destination
+            cards[destination].unshift(...cardsToAdd);
+        } else if (position === 'bottom') {
+            // If it is bottom we need to add the cards to the bottom of the destination
+            cards[destination].push(...cardsToAdd);
         }
 
         // Now we need to update the expedition state

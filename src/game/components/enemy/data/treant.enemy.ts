@@ -196,6 +196,7 @@ export const treantData: Enemy = {
                                 value: 3,
                                 cardId: StunnedCard.cardId,
                                 destination: 'draw',
+                                position: 'random',
                             },
                         },
                     ],
