@@ -39,7 +39,7 @@ export class PotionSeeder implements Seeder {
             arcaneBrewPotion,
             philterOfRedemptionPotion,
             dewDropElixirPotion,
-            pavaRootPotion,
+            // pavaRootPotion,
             //phantomPhialPotion,
         ]);
     }
