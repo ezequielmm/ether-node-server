@@ -30,13 +30,16 @@ export class SpikesStatus implements StatusEffectHandler {
                 effect: damageEffect.name,
                 args: {
                     value: dto.status.args.counter,
+                    type: 'spikes',
                 },
             },
         };
 
         // Apply damage to the source
-        await this.effectService.apply(applyDTO);
-
+        if (dto.effectDTO.args.type === undefined) {
+            await this.effectService.apply(applyDTO);
+        }
+        
         // Don't modify the args, the target will be damaged as well.
         return dto.effectDTO;
     }
