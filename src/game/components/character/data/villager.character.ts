@@ -35,4 +35,11 @@ export const VillagerCharacter: Character = {
             amount: 1,
         },
     ],
+    lootboxRarity: {
+        common: 20,
+        uncommon: 20,
+        rare: 20,
+        epic: 20,
+        legendary: 20,
+    },
 };

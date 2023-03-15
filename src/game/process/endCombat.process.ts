@@ -19,6 +19,9 @@ import {
     SWARAction,
     SWARMessageType,
 } from '../standardResponse/standardResponse';
+import { GearService } from '../components/gear/gear.service';
+import { GearRarityEnum } from '../components/gear/gear.enum';
+import { getRandomBetween } from "../../utils";
 
 @Injectable()
 export class EndCombatProcess {
@@ -30,6 +33,7 @@ export class EndCombatProcess {
         private readonly expeditionService: ExpeditionService,
         private readonly combatQueueService: CombatQueueService,
         private readonly scoreCalculatorService: ScoreCalculatorService,
+        private readonly gearService: GearService,
     ) {}
 
     @OnEvent(EVENT_AFTER_DAMAGE_EFFECT)
@@ -71,7 +75,39 @@ export class EndCombatProcess {
             ctx.expedition.finalScore = score;
             ctx.expedition.completedAt = new Date();
             ctx.expedition.endedAt = new Date();
+            
+            //add loot
+            const gear_list = [];
+            const oneGear = this.gearService.getOneGear(GearRarityEnum.Common);
+            ctx.expedition.lootbox = [oneGear];
+            const { common, uncommon, rare, epic, legendary } = ctx.expedition.playerState.lootboxRarity;
+            for (let i = 0; i < 3; i++) {// you get 3 gear
+                const d100 = getRandomBetween(0, 100);
+                let rarity = GearRarityEnum.Common;
+                let prob_sum = common;
 
+                if (d100 > prob_sum) rarity = GearRarityEnum.Uncommon;
+                prob_sum += uncommon;
+
+                if (d100 > prob_sum) rarity = GearRarityEnum.Rare;
+                prob_sum += rare;
+
+                if (d100 > prob_sum) rarity = GearRarityEnum.Epic;
+                prob_sum += epic;
+
+                if (d100 > prob_sum) rarity = GearRarityEnum.Legendary;
+                prob_sum += legendary;
+                //assert(prob_sum==100)
+
+                const one_gear = await this.gearService.getOneGear(rarity);
+                gear_list.push(one_gear);
+            }
+            ctx.expedition.lootbox = gear_list;
+
+
+
+
+                //message client
             ctx.client.emit(
                 'PutData',
                 StandardResponse.respond({
