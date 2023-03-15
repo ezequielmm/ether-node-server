@@ -21,6 +21,7 @@ export interface DamageArgs {
     onARoll?: {
         energyToRestore: number;
     };
+    type?: string;
 }
 
 @EffectDecorator({
