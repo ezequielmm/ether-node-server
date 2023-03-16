@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectModel } from 'kindagoose';
 import { PlayerGear } from './playerGear.schema';
 import { Prop, ReturnModelType } from '@typegoose/typegoose';
+import { AuthGatewayService } from 'src/authGateway/authGateway.service';
 import { HttpService } from '@nestjs/axios';
 import { ConfigService } from '@nestjs/config';
 import { firstValueFrom } from 'rxjs';
@@ -15,6 +16,8 @@ import {
 } from '../game/components/gear/gear.enum';
 import { ExpeditionService } from '../game/components/expedition/expedition.service';
 import { ExpeditionStatusEnum } from '../game/components/expedition/expedition.enum';
+import { filter } from 'lodash';
+
 @Injectable()
 export class PlayerGearService {
     private readonly logger: Logger = new Logger(PlayerGearService.name);
@@ -22,77 +25,46 @@ export class PlayerGearService {
     constructor(
         @InjectModel(PlayerGear)
         private readonly playerGear: ReturnModelType<typeof PlayerGear>,
+        private readonly authGatewayService: AuthGatewayService,
         private readonly expeditionService: ExpeditionService,
         private readonly httpService: HttpService,
         private readonly configService: ConfigService,
     ) {}
 
-    async allAreOwned(
-        authorization: string,
-        equipped_gear_list: GearItem[],
-    ): Promise<boolean> {
-        // validate equippedGear vs ownedGeared
-        const owned_gear_list = await this.getGear(authorization);
-        let present = true;
-        for (let i = 0; i < equipped_gear_list.length && present; i++) {
-            const equipped_gear_item = equipped_gear_list[i];
-            present = false;
-            for (let j = 0; j < owned_gear_list.ownedGear.length; j++) {
-                const owned_gear_item = owned_gear_list.ownedGear[j];
-                if (owned_gear_item.gearId === equipped_gear_item.gearId)
-                    present = true;
-            }
-        }
-        return present;
+    async findUnownedEquippedGear(playerId: number, equipped: GearItem[]): Promise<GearItem[]> {
+        const owned = await this.getGear(playerId);
+        
+        return equipped.filter(gear => !owned.includes(gear));
     }
 
-    async getGear(authToken: string): Promise<any> {
-        if (!this.configService) return 'no configService';
-        const url = this.configService.get<string>('GET_PROFILE_URL');
-        if (!url) return 'no url';
-        const authServiceApiKey = this.configService.get<string>(
-            'GET_PROFILE_API_KEY',
-        ); // 'api-key' header
-        if (!authServiceApiKey) return 'no authServiceApiKey';
-        const data = await firstValueFrom(
-            this.httpService.get<any>(url, {
-                headers: {
-                    Authorization: authToken,
-                    'api-key': authServiceApiKey,
-                },
-            }),
-        );
-        if (!data) return 'no data';
-        if (!data.data) return 'no data.data';
-        if (!data.data.data) return 'no data.data.data';
-        const playerId = data.data.data.id;
-        if (!playerId) return 'no playerId';
+    async allAreOwned(
+        playerId: number,
+        equipped_gear_list: GearItem[],
+    ): Promise<boolean> {
+        const unownedGear = await this.findUnownedEquippedGear(playerId, equipped_gear_list);
+        return unownedGear.length === 0;
+    }
+
+    async getGear(playerId: number): Promise<GearItem[]> {
         const errorMessage = await this.dev_addLootForDevelopmentTesting(
             playerId,
         );
-        if (errorMessage) return errorMessage;
-        let ownedGear = null;
-        try {
-            ownedGear = await this.playerGear.findOne({
+        
+        let {gear: ownedGear} = await this.playerGear.findOne({
                 playerId: playerId,
             });
-        } catch (e) {
-            return 'playerGear.findOne failed';
-        }
-        if (!ownedGear) return 'no ownedGear';
-
-        const ownedGearGear = ownedGear ? ownedGear.gear : [];
-        return { ownedGear: ownedGearGear };
+       
+        return ownedGear;
     }
 
-    async dev_addLootForDevelopmentTesting(playerId: string) {
+    async dev_addLootForDevelopmentTesting(playerId: number) {
         try {
             const gearList = await this.playerGear.findOne({
                 playerId: playerId,
             });
             if (gearList) return;
         } catch (e) {
-            return 'playerGear.findOne failed';
+            return;
         }
         const p: PlayerGear = {
             playerId: playerId,

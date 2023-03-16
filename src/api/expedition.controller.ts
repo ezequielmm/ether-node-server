@@ -131,7 +131,7 @@ export class ExpeditionController {
 
             // validate equippedGear vs ownedGeared
             const all_are_owned = await this.playerGearService.allAreOwned(
-                authorization,
+                playerId,
                 equippedGear,
             );
             if (!all_are_owned) {
