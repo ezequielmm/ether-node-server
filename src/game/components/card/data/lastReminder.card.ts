@@ -11,7 +11,7 @@ export const LastReminderCardUpgraded: Card = {
     cardType: CardTypeEnum.Attack,
     pool: 'knight',
     energy: 1,
-    description: `Deal 7 damage, Gain 7 defense, If the enemy has Burn, gain 1 Regeneration`,
+    description: `Deal 11 damage, Gain 11 defense, If the enemy has Burn, gain 2 Regeneration`,
     keywords: [],
     properties: {
         effects: [
@@ -19,14 +19,14 @@ export const LastReminderCardUpgraded: Card = {
                 effect: damageEffect.name,
                 target: CardTargetedEnum.Enemy,
                 args: {
-                    value: 7,
+                    value: 11,
                 },
             },
             {
                 effect: defenseEffect.name,
                 target: CardTargetedEnum.Player,
                 args: {
-                    value: 7,
+                    value: 11,
                 },
             },
             {
@@ -49,7 +49,7 @@ export const LastReminderCard: Card = {
     cardType: CardTypeEnum.Attack,
     pool: 'knight',
     energy: 1,
-    description: `Deal 11 damage, Gain 11 defense, If the enemy has Burn, gain 2 Regeneration`,
+    description: `Deal 7 damage, Gain 7 defense, If the enemy has Burn, gain 1 Regeneration`,
     keywords: [],
     properties: {
         effects: [
@@ -57,14 +57,14 @@ export const LastReminderCard: Card = {
                 effect: damageEffect.name,
                 target: CardTargetedEnum.Enemy,
                 args: {
-                    value: 11,
+                    value: 7,
                 },
             },
             {
                 effect: defenseEffect.name,
                 target: CardTargetedEnum.Player,
                 args: {
-                    value: 11,
+                    value: 7,
                 },
             },
             {
