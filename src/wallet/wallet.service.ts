@@ -14,11 +14,7 @@ export class WalletService {
     ) {}
 
     async getTokenIdList(walletId: string): Promise<any[]> {
-        
-        const all = await this.contestMapService.findAllWins();
-        const anId = all[0]._id;
-        return [anId];
-        
+     
         // the chain where are deployed the smart contracts
         const chain = Number(process.env.NFT_SERVICE_CHAIN_ID);
         //some goerli wallets

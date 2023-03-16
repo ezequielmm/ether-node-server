@@ -6,7 +6,7 @@ import { Schema } from 'mongoose';
 })
 export class ContestMap {
     //_id: Schema.Types.ObjectId;
-    
+
     @Prop()
     name: string;
 }
