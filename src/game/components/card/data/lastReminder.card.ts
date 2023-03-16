@@ -11,7 +11,7 @@ export const LastReminderCardUpgraded: Card = {
     cardType: CardTypeEnum.Attack,
     pool: 'knight',
     energy: 1,
-    description: `Deal 7 damage, Gain 7 defense, If the enemy has Burn, gain 1 Regeneration`,
+    description: `Deal 11 damage, Gain 11 defense, If the enemy has Burn, gain 2 Regeneration`,
     keywords: [],
     properties: {
         effects: [
@@ -49,7 +49,7 @@ export const LastReminderCard: Card = {
     cardType: CardTypeEnum.Attack,
     pool: 'knight',
     energy: 1,
-    description: `Deal 11 damage, Gain 11 defense, If the enemy has Burn, gain 2 Regeneration`,
+    description: `Deal 7 damage, Gain 7 defense, If the enemy has Burn, gain 1 Regeneration`,
     keywords: [],
     properties: {
         effects: [
