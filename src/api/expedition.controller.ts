@@ -25,6 +25,7 @@ import {
     ScoreResponse,
 } from 'src/game/scoreCalculator/scoreCalculator.service';
 import { GearItem } from '../playerGear/gearItem';
+import { PlayerGearService } from '../playerGear/playerGear.service';
 
 class CreateExpeditionApiDTO {
     @ApiProperty({ default: 'Knight' })
@@ -47,6 +48,7 @@ export class ExpeditionController {
         private readonly expeditionService: ExpeditionService,
         private readonly initExpeditionProcess: InitExpeditionProcess,
         private readonly scoreCalculatorService: ScoreCalculatorService,
+        private readonly playerGearService: PlayerGearService,
     ) {}
 
     private readonly logger: Logger = new Logger(ExpeditionController.name);
@@ -110,6 +112,7 @@ export class ExpeditionController {
         @Body() payload: CreateExpeditionApiDTO,
     ): Promise<{
         expeditionCreated: boolean;
+        reason?: string;
     }> {
         this.logger.log(`Client called POST route "/expeditions"`);
 
@@ -126,12 +129,14 @@ export class ExpeditionController {
             const { equippedGear } = payload;
             const character_class = payload.tokenType;
 
-            /* todo validate equippedGear vs ownedGeared
-            ownedGear = await this.playerGear.findOne({
-                playerId: playerId,
-            });
-            see PlayerGear
-             */
+            // validate equippedGear vs ownedGeared
+            const all_are_owned = await this.playerGearService.allAreOwned(
+                authorization,
+                equippedGear,
+            );
+            if (!all_are_owned) {
+                return { expeditionCreated: false, reason: 'wrong gear' };
+            }
 
             const hasExpedition =
                 await this.expeditionService.playerHasExpeditionInProgress({

@@ -27,6 +27,25 @@ export class PlayerGearService {
         private readonly configService: ConfigService,
     ) {}
 
+    async allAreOwned(
+        authorization: string,
+        equipped_gear_list: GearItem[],
+    ): Promise<boolean> {
+        // validate equippedGear vs ownedGeared
+        const owned_gear_list = await this.getGear(authorization);
+        let present = true;
+        for (let i = 0; i < equipped_gear_list.length && present; i++) {
+            const equipped_gear_item = equipped_gear_list[i];
+            present = false;
+            for (let j = 0; j < owned_gear_list.ownedGear.length; j++) {
+                const owned_gear_item = owned_gear_list.ownedGear[j];
+                if (owned_gear_item.gearId === equipped_gear_item.gearId)
+                    present = true;
+            }
+        }
+        return present;
+    }
+
     async getGear(authToken: string): Promise<any> {
         if (!this.configService) return 'no configService';
         const url = this.configService.get<string>('GET_PROFILE_URL');

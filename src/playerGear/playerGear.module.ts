@@ -14,5 +14,6 @@ import { ExpeditionModule } from '../game/components/expedition/expedition.modul
         ExpeditionModule,
     ],
     providers: [PlayerGearService],
+    exports:[PlayerGearService],
 })
 export class PlayerGearModule {}
