@@ -34,12 +34,16 @@ export class HealEffect implements EffectHandler {
         } = payload;
 
         // Here we check is the target to heal is the player
-        if (PlayerService.isPlayer(target))
-            await this.applyHPToPlayer(ctx, source, target, hpToAdd);
+        if (PlayerService.isPlayer(target)) {
+            if (target.value.combatState.hpCurrent > 0)
+                await this.applyHPToPlayer(ctx, source, target, hpToAdd);
+        }
 
         // And here we check is the target to heal is the enemy
-        if (EnemyService.isEnemy(target))
-            await this.applyHPToEnemy(ctx, source, target, hpToAdd);
+        if (EnemyService.isEnemy(target)) {
+            if (target.value.hpCurrent > 0)
+                await this.applyHPToEnemy(ctx, source, target, hpToAdd);
+        }
     }
 
     private async applyHPToPlayer(
