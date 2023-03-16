@@ -38,6 +38,7 @@ export class HealEffect implements EffectHandler {
             if (this.playerService.isDead(ctx)) return;
 
             await this.applyHPToPlayer(ctx, source, target, hpToAdd);
+            return;
         }
 
         // And here we check is the target to heal is the enemy
@@ -45,6 +46,7 @@ export class HealEffect implements EffectHandler {
             if (this.enemyService.isDead(target)) return;
 
             await this.applyHPToEnemy(ctx, source, target, hpToAdd);
+            return;
         }
     }
 
