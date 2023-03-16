@@ -33,6 +33,7 @@ import { EncounterModule } from '../components/encounter/encounter.module';
 import { ContinueExpeditionProcess } from './continueExpedition.process';
 import { MapModule } from '../map/map/map.module';
 import { ScoreCalculatorModule } from '../scoreCalculator/scoreCalculator.module';
+import { GearModule } from "../components/gear/gear.module";
 
 @Module({
     imports: [
@@ -55,6 +56,7 @@ import { ScoreCalculatorModule } from '../scoreCalculator/scoreCalculator.module
         EncounterModule,
         MapModule,
         ScoreCalculatorModule,
+        GearModule,
     ],
     providers: [
         SendEnemyIntentProcess,

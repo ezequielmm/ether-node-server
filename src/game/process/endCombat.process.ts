@@ -19,6 +19,7 @@ import {
     SWARAction,
     SWARMessageType,
 } from '../standardResponse/standardResponse';
+import { GearService } from '../components/gear/gear.service';
 
 @Injectable()
 export class EndCombatProcess {
@@ -30,6 +31,7 @@ export class EndCombatProcess {
         private readonly expeditionService: ExpeditionService,
         private readonly combatQueueService: CombatQueueService,
         private readonly scoreCalculatorService: ScoreCalculatorService,
+        private readonly gearService: GearService,
     ) {}
 
     @OnEvent(EVENT_AFTER_DAMAGE_EFFECT)
@@ -71,7 +73,9 @@ export class EndCombatProcess {
             ctx.expedition.finalScore = score;
             ctx.expedition.completedAt = new Date();
             ctx.expedition.endedAt = new Date();
+            ctx.expedition.lootbox = await this.gearService.getLootbox(3,ctx.expedition.playerState.lootboxRarity);
 
+            //message client
             ctx.client.emit(
                 'PutData',
                 StandardResponse.respond({

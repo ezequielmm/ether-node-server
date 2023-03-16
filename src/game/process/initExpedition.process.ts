@@ -88,6 +88,7 @@ export class InitExpeditionProcess {
                 cardUpgradeCount: 0,
                 cardDestroyCount: 0,
                 trinkets: [],
+                lootboxRarity: character.lootboxRarity,
             },
             status: ExpeditionStatusEnum.InProgress,
             isCurrentlyPlaying: false,
