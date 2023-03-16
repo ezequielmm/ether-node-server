@@ -33,28 +33,26 @@ export class TrappedStatus implements StatusEffectHandler {
     async handle(
         dto: StatusEffectDTO<DamageArgs>,
     ): Promise<EffectDTO<DamageArgs>> {
-        const { ctx, effectDTO } = dto;
+        const { ctx, effectDTO, remove } = dto;
         const { source, target } = effectDTO;
 
-        // Deal 12 damage to the player
-        await this.effectService.apply({
-            ctx,
-            source: target,
-            target: source,
-            effect: {
-                effect: damageEffect.name,
-                args: {
-                    value: 12,
+        if (effectDTO.args.type === undefined) {
+            // Deal 12 damage to the player
+            await this.effectService.apply({
+                ctx,
+                source: target,
+                target: source,
+                effect: {
+                    effect: damageEffect.name,
+                    args: {
+                        value: 12,
+                        type: 'trapped',
+                    },
                 },
-            },
-        });
-
-        if (EnemyService.isEnemy(target)) {
-            // Update the enemy's script to move to script 4
-            await this.enemyService.setCurrentScript(ctx, target.value.id, {
-                ...target.value.currentScript,
-                next: [{ probability: 1, scriptId: 4 }],
             });
+
+            // Remove the status
+            remove();
         }
 
         return effectDTO;
@@ -66,11 +64,13 @@ export class TrappedStatus implements StatusEffectHandler {
         const enemies = this.enemyService.getAll(ctx);
 
         for (const enemy of enemies) {
-            await this.statusService.removeStatus({
-                ctx,
-                entity: enemy,
-                status: trapped,
-            });
+            if (enemy.value.hpCurrent > 0) {
+                await this.statusService.removeStatus({
+                    ctx,
+                    entity: enemy,
+                    status: trapped,
+                });
+            }
         }
     }
 }

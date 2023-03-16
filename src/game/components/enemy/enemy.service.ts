@@ -300,7 +300,7 @@ export class EnemyService {
                             'scores.basicEnemiesDefeated': 1,
                         }),
                         ...(enemy.category === EnemyCategoryEnum.Minion && {
-                            'scores.basicEnemiesDefeated': 1,
+                            'scores.minionEnemiesDefeated': 1,
                         }),
                         ...(enemy.category === EnemyCategoryEnum.Elite && {
                             'scores.eliteEnemiesDefeated': 1,
