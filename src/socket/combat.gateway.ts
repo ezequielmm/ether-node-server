@@ -10,6 +10,7 @@ import { EndEnemyTurnProcess } from 'src/game/process/endEnemyTurn.process';
 import { corsSocketSettings } from './socket.enum';
 import { NodeType } from 'src/game/components/expedition/node-type';
 import { Logger } from '@nestjs/common';
+import { SocketQueueService } from 'src/socketQueue/socketQueue.service';
 
 interface ICardPlayed {
     cardId: CardId;
@@ -23,6 +24,7 @@ export class CombatGateway {
         private readonly endPlayerTurnProcess: EndPlayerTurnProcess,
         private readonly endEnemyTurnProcess: EndEnemyTurnProcess,
         private readonly expeditionService: ExpeditionService,
+        private readonly socketQueueService: SocketQueueService,
     ) {}
 
     private readonly logger: Logger = new Logger(CombatGateway.name);
@@ -69,10 +71,20 @@ export class CombatGateway {
         const ctx = await this.expeditionService.getGameContext(client);
         const { cardId, targetId }: ICardPlayed = JSON.parse(payload);
 
-        await this.cardPlayedAction.handle({
-            ctx,
-            cardId,
-            selectedEnemyId: targetId,
+        await this.socketQueueService.push(async () => {
+            try {
+                await this.cardPlayedAction.handle({
+                    ctx,
+                    cardId,
+                    selectedEnemyId: targetId,
+                });
+            } catch (error) {
+                this.logger.error({
+                    error,
+                });
+            }
         });
+
+        await this.socketQueueService.run();
     }
 }
