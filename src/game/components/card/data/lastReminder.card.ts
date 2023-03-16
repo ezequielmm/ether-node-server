@@ -19,14 +19,14 @@ export const LastReminderCardUpgraded: Card = {
                 effect: damageEffect.name,
                 target: CardTargetedEnum.Enemy,
                 args: {
-                    value: 7,
+                    value: 11,
                 },
             },
             {
                 effect: defenseEffect.name,
                 target: CardTargetedEnum.Player,
                 args: {
-                    value: 7,
+                    value: 11,
                 },
             },
             {
@@ -57,14 +57,14 @@ export const LastReminderCard: Card = {
                 effect: damageEffect.name,
                 target: CardTargetedEnum.Enemy,
                 args: {
-                    value: 11,
+                    value: 7,
                 },
             },
             {
                 effect: defenseEffect.name,
                 target: CardTargetedEnum.Player,
                 args: {
-                    value: 11,
+                    value: 7,
                 },
             },
             {
