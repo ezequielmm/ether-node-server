@@ -1,6 +1,7 @@
 import { addCardEffect } from 'src/game/effects/addCard/contants';
 import { damageEffect } from 'src/game/effects/damage/constants';
 import { defenseEffect } from 'src/game/effects/defense/constants';
+import { AddCardPosition } from 'src/game/effects/effects.enum';
 import { spawnEnemyEffect } from 'src/game/effects/spawnEnemy/contants';
 import { CardTargetedEnum } from '../../card/card.enum';
 import { StunnedCard } from '../../card/data/stunned.card';
@@ -61,6 +62,7 @@ export const fungalBruteData: Enemy = {
                                 value: 2,
                                 cardId: StunnedCard.cardId,
                                 destination: 'draw',
+                                position: AddCardPosition.Random,
                             },
                         },
                     ],
