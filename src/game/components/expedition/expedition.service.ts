@@ -16,7 +16,7 @@ import {
     UpdateHandPilesDTO,
     UpdatePlayerDeckDTO,
 } from './expedition.dto';
-import { ExpeditionStatusEnum, CombatTurnEnum } from './expedition.enum';
+import { ExpeditionStatusEnum } from './expedition.enum';
 import {
     IExpeditionCurrentNode,
     IExpeditionPlayerStateDeckCard,
@@ -48,8 +48,8 @@ export class ExpeditionService {
         private readonly configService: ConfigService,
     ) {}
 
-    async getExpeditionIdFromClient(client: Socket): Promise<any> {
-        const expedition = await this.findOne({ clientId: client.id });
+    async getExpeditionIdFromClient(clientId: string): Promise<string> {
+        const expedition = await this.findOne({ clientId }, { id: 1 });
         return expedition.id;
     }
 
