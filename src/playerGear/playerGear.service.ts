@@ -33,8 +33,13 @@ export class PlayerGearService {
 
     async findUnownedEquippedGear(playerId: number, equipped: GearItem[]): Promise<GearItem[]> {
         const owned = await this.getGear(playerId);
-        
-        return equipped.filter(gear => !owned.includes(gear));
+
+        return equipped.filter((gear) => {
+            //is doing !owned.includes(gear);
+            !owned.find((owned_gear) => {
+                return owned_gear.gearId === gear.gearId;
+            });
+        });
     }
 
     async allAreOwned(

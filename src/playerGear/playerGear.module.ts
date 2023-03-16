@@ -5,6 +5,7 @@ import { PlayerGear } from './playerGear.schema';
 import { PlayerGearService } from './playerGear.service';
 import { HttpModule } from '@nestjs/axios';
 import { ExpeditionModule } from '../game/components/expedition/expedition.module';
+import { AuthGatewayModule } from '../authGateway/authGateway.module';
 
 @Module({
     controllers: [PlayerGearController],
@@ -12,6 +13,7 @@ import { ExpeditionModule } from '../game/components/expedition/expedition.modul
         KindagooseModule.forFeature([PlayerGear]),
         HttpModule,
         ExpeditionModule,
+        AuthGatewayModule,
     ],
     providers: [PlayerGearService],
     exports:[PlayerGearService],
