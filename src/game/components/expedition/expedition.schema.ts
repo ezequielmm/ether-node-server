@@ -16,6 +16,7 @@ import { ExpeditionActConfig } from './expeditionActConfig.schema';
 import { EncounterInterface } from '../encounter/encounter.interfaces';
 import { Score } from './scores';
 import { ScoreResponse } from 'src/game/scoreCalculator/scoreCalculator.service';
+import { Gear } from '../gear/gear.schema';
 
 export type ExpeditionDocument = HydratedDocument<Expedition>;
 
@@ -113,5 +114,5 @@ export class Expedition {
     endedAt?: Date;
 
     @Prop()
-    lootbox?: any;
+    lootbox?: Gear[];
 }

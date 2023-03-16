@@ -8,6 +8,7 @@ import { Expedition } from '../components/expedition/expedition.schema';
 import { Node } from '../components/expedition/node';
 import { NodeStatus } from '../components/expedition/node-status';
 import { Trinket } from '../components/trinket/trinket.schema';
+import { Gear } from '../components/gear/gear.schema';
 
 export interface ScoreResponse {
     outcome: string;
@@ -17,7 +18,7 @@ export interface ScoreResponse {
         score: number;
     }[];
     notifyNoLoot: boolean;
-    lootbox: any[];
+    lootbox: Gear[];
 }
 
 @Injectable()
