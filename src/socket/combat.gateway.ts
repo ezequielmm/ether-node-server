@@ -10,7 +10,7 @@ import { EndEnemyTurnProcess } from 'src/game/process/endEnemyTurn.process';
 import { corsSocketSettings } from './socket.enum';
 import { NodeType } from 'src/game/components/expedition/node-type';
 import { Logger } from '@nestjs/common';
-import { SocketQueueService } from 'src/socketQueue/socketQueue.service';
+import { ActionQueueService } from 'src/actionQueue/actionQueue.service';
 
 interface ICardPlayed {
     cardId: CardId;
@@ -24,55 +24,62 @@ export class CombatGateway {
         private readonly endPlayerTurnProcess: EndPlayerTurnProcess,
         private readonly endEnemyTurnProcess: EndEnemyTurnProcess,
         private readonly expeditionService: ExpeditionService,
-        private readonly socketQueueService: SocketQueueService,
+        private readonly actionQueueService: ActionQueueService,
     ) {}
 
     private readonly logger: Logger = new Logger(CombatGateway.name);
 
     @SubscribeMessage('EndTurn')
     async handleEndTurn(client: Socket): Promise<void> {
-        try {
-            const ctx = await this.expeditionService.getGameContext(client);
+        await this.actionQueueService.push(await this.expeditionService.getExpeditionIdFromClient(client),
+        async () => {
+            try {
+                const ctx = await this.expeditionService.getGameContext(client);
+                const { expedition } = ctx;
 
-            // If the combat is ended, we skip the turn
-            if (this.expeditionService.isCurrentCombatEnded(ctx)) return;
+                // If the combat is ended, we skip the turn
+                if (this.expeditionService.isCurrentCombatEnded(ctx)) return;
+                
+                if (
+                    expedition.currentNode === null ||
+                    expedition.currentNode.nodeType !== NodeType.Combat
+                )
+                    return;
 
-            const { expedition } = ctx;
+                const {
+                    currentNode: {
+                        data: { playing },
+                    },
+                } = expedition;
 
-            if (
-                expedition.currentNode === null ||
-                expedition.currentNode.nodeType !== NodeType.Combat
-            )
-                return;
-
-            const {
-                currentNode: {
-                    data: { playing },
-                },
-            } = expedition;
-
-            switch (playing) {
-                case CombatTurnEnum.Player:
-                    await this.endPlayerTurnProcess.handle({ ctx });
-                    break;
-                case CombatTurnEnum.Enemy:
-                    await this.endEnemyTurnProcess.handle({ ctx });
-                    break;
+                switch (playing) {
+                    case CombatTurnEnum.Player:
+                        await this.endPlayerTurnProcess.handle({ ctx });
+                        break;
+                    case CombatTurnEnum.Enemy:
+                        await this.endEnemyTurnProcess.handle({ ctx });
+                        break;
+                }
+            } catch (error) {
+                this.logger.error({
+                    error,
+                });
             }
-        } catch (error) {
-            this.logger.error({
-                error,
-            });
-        }
+        });
     }
 
     @SubscribeMessage('CardPlayed')
     async handleCardPlayed(client: Socket, payload: string): Promise<void> {
-        const ctx = await this.expeditionService.getGameContext(client);
-        const { cardId, targetId }: ICardPlayed = JSON.parse(payload);
 
-        await this.socketQueueService.push(async () => {
+        await this.actionQueueService.push(await this.expeditionService.getExpeditionIdFromClient(client),
+        async () => {
             try {
+                const ctx = await this.expeditionService.getGameContext(client);
+                const { cardId, targetId }: ICardPlayed = JSON.parse(payload);
+
+                // Check if combat is on player turn. If not, bail without trying to play a card, because they, uh, can't.
+                if (ctx.expedition.currentNode.data.playing !== CombatTurnEnum.Player) return;
+
                 await this.cardPlayedAction.handle({
                     ctx,
                     cardId,
@@ -84,7 +91,5 @@ export class CombatGateway {
                 });
             }
         });
-
-        await this.socketQueueService.run();
     }
 }
