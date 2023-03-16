@@ -4,12 +4,21 @@ import { ConfigService } from '@nestjs/config';
 import NFTService from '../nft-library/services/nft_service';
 import { PlayerWinService } from '../playerWin/playerWin.service';
 import { PlayerWin } from '../playerWin/playerWin.schema';
+import { ContestMapService } from '../game/contestMap/contestMap.service';
 
 @Injectable()
 export class WalletService {
-    constructor(private playerWinService: PlayerWinService) {}
+    constructor(
+        private playerWinService: PlayerWinService,
+        private contestMapService: ContestMapService,
+    ) {}
 
-    async getTokenIdList(walletId: string): Promise<string[]> {
+    async getTokenIdList(walletId: string): Promise<any[]> {
+        
+        const all = await this.contestMapService.findAllWins();
+        const anId = all[0]._id;
+        return [anId];
+        
         // the chain where are deployed the smart contracts
         const chain = Number(process.env.NFT_SERVICE_CHAIN_ID);
         //some goerli wallets
