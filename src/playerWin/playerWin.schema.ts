@@ -14,5 +14,5 @@ export class PlayerWin {
     contract_address: string;
 
     @Prop()
-    token_id: string;
+    token_id: number;
 }
