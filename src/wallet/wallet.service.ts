@@ -46,7 +46,7 @@ export class WalletService {
             const contract_address = nfts.tokens[i].contract_address;
             for (let j = 0; j < nfts.tokens[i].tokens.length; j++) {
                 const token_id = nfts.tokens[i].tokens[j].token_id;
-                nfts.tokens[i].tokens[j].can_play = this.playerWinService.canPlay(event_id, contract_address, token_id, (win_counts[contract_address+token_id] || 0));
+                nfts.tokens[i].tokens[j].can_play = await this.playerWinService.canPlay(event_id, contract_address, token_id, (win_counts[contract_address+token_id] || 0));
             }
         }
 
