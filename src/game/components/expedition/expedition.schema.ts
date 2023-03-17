@@ -85,6 +85,9 @@ export class Expedition {
         encounterData?: EncounterInterface;
     };
 
+    @Prop()
+    event_id: string;
+
     @Prop({
         default: ExpeditionStatusEnum.InProgress,
         type: String,

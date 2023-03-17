@@ -9,4 +9,7 @@ export class Contest {
 
     @Prop()
     map_id: string;
+
+    @Prop()
+    event_id: string;
 }

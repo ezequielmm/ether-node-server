@@ -26,6 +26,7 @@ import {
 } from 'src/game/scoreCalculator/scoreCalculator.service';
 import { GearItem } from '../playerGear/gearItem';
 import { PlayerGearService } from '../playerGear/playerGear.service';
+import { ContestService } from '../game/contest/contest.service';
 
 class CreateExpeditionApiDTO {
     @ApiProperty({ default: 'Knight' })
@@ -49,6 +50,7 @@ export class ExpeditionController {
         private readonly initExpeditionProcess: InitExpeditionProcess,
         private readonly scoreCalculatorService: ScoreCalculatorService,
         private readonly playerGearService: PlayerGearService,
+        private contestService: ContestService,
     ) {}
 
     private readonly logger: Logger = new Logger(ExpeditionController.name);
@@ -144,6 +146,9 @@ export class ExpeditionController {
                 });
 
             if (!hasExpedition) {
+                const contest = await this.contestService.findActive();
+                const event_id = contest?.event_id ?? '';
+
                 await this.initExpeditionProcess.handle({
                     playerId,
                     playerName,
@@ -151,6 +156,7 @@ export class ExpeditionController {
                     nftId,
                     equippedGear,
                     character_class,
+                    event_id,
                 });
 
                 return { expeditionCreated: true };

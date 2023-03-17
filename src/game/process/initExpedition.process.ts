@@ -34,6 +34,7 @@ export class InitExpeditionProcess {
         nftId,
         equippedGear,
         character_class,
+        event_id,
     }: {
         playerId: number;
         playerName: string;
@@ -41,6 +42,7 @@ export class InitExpeditionProcess {
         nftId: number;
         equippedGear: GearItem[];
         character_class: string;
+        event_id: string;
     }): Promise<void> {
         let character_class_enum = CharacterClassEnum.Knight;
         if (character_class === 'Villager')
@@ -90,6 +92,7 @@ export class InitExpeditionProcess {
                 trinkets: [],
                 lootboxRarity: character.lootboxRarity,
             },
+            event_id: event_id,
             status: ExpeditionStatusEnum.InProgress,
             isCurrentlyPlaying: false,
             createdAt: new Date(),

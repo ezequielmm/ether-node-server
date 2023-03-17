@@ -9,7 +9,8 @@ import { ScoreCalculatorModule } from 'src/game/scoreCalculator/scoreCalculator.
 import { TokenController } from './token.controller';
 import { ShowVersionController } from './showVersion.controller';
 import { ShowNftNetworkController } from './showNftNetwork.controller';
-import { PlayerGearModule } from "../playerGear/playerGear.module";
+import { PlayerGearModule } from '../playerGear/playerGear.module';
+import { ContestModule } from '../game/contest/contest.module';
 
 @Module({
     imports: [
@@ -19,6 +20,7 @@ import { PlayerGearModule } from "../playerGear/playerGear.module";
         MerchantModule,
         ScoreCalculatorModule,
         PlayerGearModule,
+        ContestModule,
     ],
     controllers: [
         ProfileController,

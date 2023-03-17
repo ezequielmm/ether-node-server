@@ -45,19 +45,27 @@ export class WalletService {
             contracts,
         );
         const all_wins = await this.playerWinService.findAllWins(walletId);
-        const win_counts = countBy(all_wins, (win) => win.contract_address + win.token_id);
-        const event_id = ''; // TODO: get current event id
+        const win_counts = countBy(
+            all_wins,
+            (win) => win.contract_address + win.token_id,
+        );
+        const contest = await this.contestService.findActive();
+        const event_id = contest?.event_id ?? '';
 
         for (let i = 0; i < nfts.tokens.length; i++) {
             const contract_address = nfts.tokens[i].contract_address;
             for (let j = 0; j < nfts.tokens[i].tokens.length; j++) {
                 const token_id = nfts.tokens[i].tokens[j].token_id;
-                nfts.tokens[i].tokens[j].can_play = await this.playerWinService.canPlay(event_id, contract_address, token_id, (win_counts[contract_address+token_id] || 0));
+                nfts.tokens[i].tokens[j].can_play =
+                    await this.playerWinService.canPlay(
+                        event_id,
+                        contract_address,
+                        token_id,
+                        win_counts[contract_address + token_id] || 0,
+                    );
             }
         }
 
         return nfts;
     }
-
-    
 }
