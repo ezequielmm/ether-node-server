@@ -10,6 +10,7 @@ import { Node } from '../components/expedition/node';
 import { NodeStatus } from '../components/expedition/node-status';
 import { Trinket } from '../components/trinket/trinket.schema';
 import { ExpeditionStatusEnum } from '../components/expedition/expedition.enum';
+import { Gear } from '../components/gear/gear.schema';
 
 export interface ScoreResponse {
     outcome: string;
@@ -18,6 +19,8 @@ export interface ScoreResponse {
         name: string;
         score: number;
     }[];
+    notifyNoLoot: boolean;
+    lootbox: Gear[];
 }
 
 @Injectable()
@@ -45,6 +48,7 @@ export class ScoreCalculatorService {
             status,
             createdAt,
             endedAt,
+            lootbox,
         } = expedition;
 
         const totalBasicEnemies =
@@ -98,6 +102,8 @@ export class ScoreCalculatorService {
             outcome: status,
             totalScore,
             achievements: [],
+            notifyNoLoot: false,
+            lootbox,
         };
 
         if (totalBasicEnemies > 0)
