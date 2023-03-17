@@ -56,3 +56,8 @@ export enum CardDestinationEnum {
     DrawRandom = 'drawRandom',
     DrawTop = 'drawTop',
 }
+
+export enum CardDrawDepletedStrategyEnum {
+    ShuffleDiscard = 'shuffleDiscard', // reshuffle discard to form a new draw pile and continue
+    SampleDiscard = 'sampleDiscard', // choose randomly from discard without reshuffling
+}
