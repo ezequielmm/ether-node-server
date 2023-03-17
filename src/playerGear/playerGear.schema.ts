@@ -6,7 +6,7 @@ import { GearItem } from './gearItem';
 })
 export class PlayerGear {
     @Prop()
-    playerId: string;
+    playerId: number;
 
     @Prop({ type: () => [GearItem] }, PropType.ARRAY)
     gear: GearItem[];
