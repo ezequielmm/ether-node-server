@@ -5,6 +5,7 @@ import { corsSocketSettings } from './socket.enum';
 import { MerchantService } from 'src/game/merchant/merchant.service';
 import { SelectedItem } from 'src/game/merchant/merchant.interface';
 import { ExpeditionService } from 'src/game/components/expedition/expedition.service';
+import { ActionQueueService } from 'src/actionQueue/actionQueue.service';
 
 @WebSocketGateway(corsSocketSettings)
 export class MerchantGateway {
@@ -13,18 +14,28 @@ export class MerchantGateway {
     constructor(
         private readonly merchantService: MerchantService,
         private readonly expeditionService: ExpeditionService,
+        private readonly actionQueueService: ActionQueueService,
     ) {}
 
     @SubscribeMessage('MerchantBuy')
     async handleItemsSelected(client: Socket, payload: string): Promise<void> {
-        const ctx = await this.expeditionService.getGameContext(client);
+        await this.actionQueueService.push(
+            await this.expeditionService.getExpeditionIdFromClient(client.id),
+            async () => {
+                this.logger.debug('<MERCHANT ACTION>');
 
-        this.logger.log(
-            ctx.info,
-            `Client ${client.id} trigger message "MerchantBuy": ${payload}`,
+                const ctx = await this.expeditionService.getGameContext(client);
+
+                this.logger.log(
+                    ctx.info,
+                    `Client ${client.id} trigger message "MerchantBuy": ${payload}`,
+                );
+
+                const selected = JSON.parse(payload) as SelectedItem;
+                await this.merchantService.buyItem(ctx, selected);
+
+                this.logger.debug('</MERCHANT ACTION>');
+            },
         );
-
-        const selected = JSON.parse(payload) as SelectedItem;
-        await this.merchantService.buyItem(ctx, selected);
     }
 }
