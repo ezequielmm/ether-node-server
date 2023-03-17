@@ -4,6 +4,7 @@ import { ConfigService } from '@nestjs/config';
 import NFTService from '../nft-library/services/nft_service';
 import { PlayerWinService } from '../playerWin/playerWin.service';
 import { PlayerWin } from '../playerWin/playerWin.schema';
+import { countBy } from 'lodash';
 
 @Injectable()
 export class WalletService {
@@ -20,14 +21,14 @@ export class WalletService {
         let contracts = [];
         if (chain === 1) {
             contracts = [
-                '0x32A322C7C77840c383961B8aB503c9f45440c81f',
+                '0x32A322C7C77840c383961B8aB503c9f45440c81f', //knight
                 '0xbB4342E7aB28fd581d751b064dd924BCcd860faC',
                 '0x2d51402A6DAb0EA48E30Bb169db74FfE3c1c6675', //subject to change
             ];
         }
         if (chain === 5) {
             contracts = [
-                '0x80e2109a826148b9b1a41b0958ca53a4cdc64b70',
+                '0x80e2109a826148b9b1a41b0958ca53a4cdc64b70', //knight
                 '0xF0aA34f832c34b32478B8D9696DC8Ad1c8065D2d',
                 '0x55abb816b145CA8F34ffA22D63fBC5bc57186690',
             ];
@@ -38,26 +39,19 @@ export class WalletService {
             contracts,
         );
         const all_wins = await this.playerWinService.findAllWins(walletId);
+        const win_counts = countBy(all_wins, (win) => win.contract_address + win.token_id);
+        const event_id = ''; // TODO: get current event id
 
         for (let i = 0; i < nfts.tokens.length; i++) {
-            const token_list = nfts.tokens[i];
-            const contract_address = token_list.contract_address;
-            for (let j = 0; j < token_list.tokens.length; j++) {
-                const token_id = token_list.tokens[j].token_id;
-
-                let can_play = true;
-                //does all_wins include a token with the same contract_address and token_id
-                for (let k = 0; k < all_wins.length && can_play; k++) {
-                    const winner = all_wins[k];
-                    const found =
-                        winner.contract_address === contract_address &&
-                        winner.token_id === token_id;
-                    can_play = !found;
-                }
-                nfts.tokens[i].tokens[j].can_play = can_play;
+            const contract_address = nfts.tokens[i].contract_address;
+            for (let j = 0; j < nfts.tokens[i].tokens.length; j++) {
+                const token_id = nfts.tokens[i].tokens[j].token_id;
+                nfts.tokens[i].tokens[j].can_play = this.playerWinService.canPlay(event_id, contract_address, token_id, (win_counts[contract_address+token_id] || 0));
             }
         }
 
         return nfts;
     }
+
+    
 }
