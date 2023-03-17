@@ -17,6 +17,7 @@ import { EncounterInterface } from '../encounter/encounter.interfaces';
 import { Score } from './scores';
 import { ScoreResponse } from 'src/game/scoreCalculator/scoreCalculator.service';
 import { Gear } from '../gear/gear.schema';
+import { PlayerWinInfo } from "../../../playerWin/playerWin.schema";
 
 export type ExpeditionDocument = HydratedDocument<Expedition>;
 
@@ -85,8 +86,7 @@ export class Expedition {
         encounterData?: EncounterInterface;
     };
 
-    @Prop()
-    event_id: string;
+    @Prop({ type: Object }) contest: PlayerWinInfo;
 
     @Prop({
         default: ExpeditionStatusEnum.InProgress,

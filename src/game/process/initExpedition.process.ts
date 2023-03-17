@@ -44,6 +44,10 @@ export class InitExpeditionProcess {
         character_class: string;
         event_id: string;
     }): Promise<void> {
+        const wallet_id = ''; //todo make into param
+        const contract_address = ''; //todo make into param
+        const token_id = 0; //todo make into param
+
         let character_class_enum = CharacterClassEnum.Knight;
         if (character_class === 'Villager')
             character_class_enum = CharacterClassEnum.Villager;
@@ -92,7 +96,12 @@ export class InitExpeditionProcess {
                 trinkets: [],
                 lootboxRarity: character.lootboxRarity,
             },
-            event_id: event_id,
+            contest: {
+                wallet_id: wallet_id,
+                event_id: event_id,
+                contract_address: contract_address,
+                token_id: token_id,
+            },
             status: ExpeditionStatusEnum.InProgress,
             isCurrentlyPlaying: false,
             createdAt: new Date(),

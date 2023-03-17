@@ -16,3 +16,9 @@ export class PlayerWin {
     @Prop()
     token_id: number;
 }
+export class PlayerWinInfo {
+    wallet_id: string;
+    event_id: string;
+    contract_address: string;
+    token_id: number;
+}

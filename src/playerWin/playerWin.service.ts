@@ -1,15 +1,16 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from 'kindagoose';
-import { PlayerWin } from './playerWin.schema';
+import { PlayerWin, PlayerWinInfo } from './playerWin.schema';
 import { ReturnModelType } from '@typegoose/typegoose';
-
 @Injectable()
 export class PlayerWinService {
     constructor(
         @InjectModel(PlayerWin)
         private readonly playerWin: ReturnModelType<typeof PlayerWin>,
     ) {}
-
+    async create(contest_info: PlayerWinInfo) {
+        return await this.playerWin.create(contest_info);
+    }
     async findAllWins(wallet_id: string) {
         const items = await this.playerWin.find({
             wallet_id,

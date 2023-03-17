@@ -34,6 +34,7 @@ import { ContinueExpeditionProcess } from './continueExpedition.process';
 import { MapModule } from '../map/map/map.module';
 import { ScoreCalculatorModule } from '../scoreCalculator/scoreCalculator.module';
 import { GearModule } from "../components/gear/gear.module";
+import { PlayerWinModule } from "../../playerWin/playerWin.module";
 
 @Module({
     imports: [
@@ -57,6 +58,7 @@ import { GearModule } from "../components/gear/gear.module";
         MapModule,
         ScoreCalculatorModule,
         GearModule,
+        PlayerWinModule,
     ],
     providers: [
         SendEnemyIntentProcess,

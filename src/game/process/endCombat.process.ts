@@ -20,6 +20,7 @@ import {
     SWARMessageType,
 } from '../standardResponse/standardResponse';
 import { GearService } from '../components/gear/gear.service';
+import { PlayerWinService } from "../../playerWin/playerWin.service";
 
 @Injectable()
 export class EndCombatProcess {
@@ -32,6 +33,7 @@ export class EndCombatProcess {
         private readonly combatQueueService: CombatQueueService,
         private readonly scoreCalculatorService: ScoreCalculatorService,
         private readonly gearService: GearService,
+        private readonly playerWinService: PlayerWinService,
     ) {}
 
     @OnEvent(EVENT_AFTER_DAMAGE_EFFECT)
@@ -75,6 +77,7 @@ export class EndCombatProcess {
             ctx.expedition.endedAt = new Date();
             ctx.expedition.lootbox = await this.gearService.getLootbox(3,ctx.expedition.playerState.lootboxRarity);
             // TODO: Create a playerWin record for the current contest (how do we get event_id?)
+            await this.playerWinService.create(ctx.expedition.contest);
 
             //message client
             ctx.client.emit(
