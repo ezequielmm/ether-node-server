@@ -3,7 +3,7 @@ import { randomUUID } from 'crypto';
 import { Card } from 'src/game/components/card/card.schema';
 import { CardService } from 'src/game/components/card/card.service';
 import { IExpeditionPlayerStateDeckCard } from 'src/game/components/expedition/expedition.interface';
-import { ExpeditionService } from 'src/game/components/expedition/expedition.service';
+import { Expedition } from 'src/game/components/expedition/expedition.schema';
 import { PlayerService } from 'src/game/components/player/player.service';
 import {
     StandardResponse,
@@ -11,11 +11,13 @@ import {
     SWARMessageType,
 } from 'src/game/standardResponse/standardResponse';
 import { EffectDecorator } from '../effects.decorator';
+import { AddCardPosition } from '../effects.enum';
 import { EffectDTO } from '../effects.interface';
 import { addCardEffect } from './contants';
 
 export interface AddCardArgs {
-    destination: 'hand' | 'discard';
+    destination: keyof Expedition['currentNode']['data']['player']['cards'];
+    position: AddCardPosition;
     cardId: Card['cardId'];
 }
 
@@ -27,13 +29,17 @@ export class AddCardEffect {
     constructor(
         private readonly playerService: PlayerService,
         private readonly cardService: CardService,
-        private readonly expeditionService: ExpeditionService,
     ) {}
 
     async handle(payload: EffectDTO<AddCardArgs>): Promise<void> {
         const {
             ctx,
-            args: { currentValue, destination, cardId },
+            args: {
+                currentValue,
+                destination,
+                cardId,
+                position = AddCardPosition.Top,
+            },
         } = payload;
 
         const { client } = ctx;
@@ -70,11 +76,30 @@ export class AddCardEffect {
                 isActive: true,
             }));
 
-        // Now we save the cards on the destination deck
-        await this.expeditionService.updateHandPiles({
-            clientId: client.id,
-            [destination]: [...cards[destination], ...cardsToAdd],
-        });
+        // Check position
+        switch (position) {
+            case AddCardPosition.Random:
+                // If it is random we need to add the cards in a random position
+                for (const card of cardsToAdd) {
+                    const randomIndex = Math.floor(
+                        Math.random() * cards[destination].length,
+                    );
+                    cards[destination].splice(randomIndex, 0, card);
+                }
+                break;
+            case AddCardPosition.Top:
+                // If it is top we need to add the cards to the top of the destination
+                cards[destination].unshift(...cardsToAdd);
+                break;
+            case AddCardPosition.Bottom:
+                // If it is bottom we need to add the cards to the bottom of the destination
+                cards[destination].push(...cardsToAdd);
+                break;
+        }
+
+        // Now we need to update the expedition state
+        ctx.expedition.markModified('currentNode.data.player.cards');
+        await ctx.expedition.save();
 
         client.emit(
             'PutData',

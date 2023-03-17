@@ -40,8 +40,8 @@ export class LastReminderEffect implements EffectHandler {
         if (hasBurnStatus) {
             await this.statusService.attach({
                 ctx,
-                source,
-                target,
+                target: source,
+                source: target,
                 statusName: regeneration.name,
                 statusArgs: { counter: currentValue },
             });
