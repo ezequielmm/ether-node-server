@@ -240,7 +240,7 @@ export class ScoreCalculatorService {
         let upgradedCards = filter(cards, (card) => card.isUpgraded).length * 5;
         let epicPlusCount = filter(cards, (card) => card.rarity == CardRarityEnum.Legendary).length;
         let epicPlusCards = 0;
-        if (epicPlusCards== 0) epicPlusCards = 25;
+        if (epicPlusCount == 0) epicPlusCards = 25;
         if (epicPlusCount > 10) epicPlusCards = 10;
 
         return { total, upgradedCards, epicPlusCards };
