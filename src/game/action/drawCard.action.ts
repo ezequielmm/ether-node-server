@@ -1,6 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { isNotUndefined, removeCardsFromPile } from 'src/utils';
-import { CardTypeEnum, CardDrawDepletedStrategyEnum } from '../components/card/card.enum';
+import {
+    CardTypeEnum,
+    CardDrawDepletedStrategyEnum,
+} from '../components/card/card.enum';
 import { IExpeditionPlayerStateDeckCard } from '../components/expedition/expedition.interface';
 import { ExpeditionService } from '../components/expedition/expedition.service';
 import {
@@ -50,9 +53,13 @@ export class DrawCardAction {
 
         const { client } = ctx;
         const logger = this.logger.logger.child(ctx.info);
-       
-        const filterPile = function (pile: IExpeditionPlayerStateDeckCard[]): IExpeditionPlayerStateDeckCard[] {
-            return (filterType === undefined) ? pile : pile.filter( ({cardType}) => cardType === filterType );
+
+        const filterPile = function (
+            pile: IExpeditionPlayerStateDeckCard[],
+        ): IExpeditionPlayerStateDeckCard[] {
+            return filterType === undefined
+                ? pile
+                : pile.filter(({ cardType }) => cardType === filterType);
         };
 
         const {
@@ -64,11 +71,14 @@ export class DrawCardAction {
             },
         } = ctx.expedition.currentNode;
 
-        let drawFiltered = filterPile(draw);
-        let discardFiltered = filterPile(discard);
+        const drawFiltered = filterPile(draw);
+        const discardFiltered = filterPile(discard);
 
         // First, draw from draw pile
-        let cardsTaken: IExpeditionPlayerStateDeckCard[] = takeRight(drawFiltered, Math.min(amountToTake, drawFiltered.length));
+        let cardsTaken: IExpeditionPlayerStateDeckCard[] = takeRight(
+            drawFiltered,
+            Math.min(amountToTake, drawFiltered.length),
+        );
 
         // Remove Drawn Cards from full current draw pile
         let newDraw = removeCardsFromPile({
@@ -97,13 +107,21 @@ export class DrawCardAction {
         // Do we still need more cards?
         let newDiscard = [...discard];
         if (cardsTaken.length < amountToTake && discardFiltered.length > 0) {
-
-            const drawDepletedStrategy = (filterType === undefined) ? CardDrawDepletedStrategyEnum.ShuffleDiscard : CardDrawDepletedStrategyEnum.SampleDiscard;
+            const drawDepletedStrategy =
+                filterType === undefined
+                    ? CardDrawDepletedStrategyEnum.ShuffleDiscard
+                    : CardDrawDepletedStrategyEnum.SampleDiscard;
             let remainingCardsTaken: IExpeditionPlayerStateDeckCard[] = [];
 
-            if (drawDepletedStrategy === CardDrawDepletedStrategyEnum.SampleDiscard) {
+            if (
+                drawDepletedStrategy ===
+                CardDrawDepletedStrategyEnum.SampleDiscard
+            ) {
                 // sampleSize grabs unique random elements up to value as collection
-                remainingCardsTaken = sampleSize(discardFiltered, amountToTake - cardsTaken.length);
+                remainingCardsTaken = sampleSize(
+                    discardFiltered,
+                    amountToTake - cardsTaken.length,
+                );
 
                 // Tell client to move cards from discard to hand.
                 logger.info(
@@ -129,7 +147,10 @@ export class DrawCardAction {
                 });
             }
 
-            if (drawDepletedStrategy === CardDrawDepletedStrategyEnum.ShuffleDiscard) {
+            if (
+                drawDepletedStrategy ===
+                CardDrawDepletedStrategyEnum.ShuffleDiscard
+            ) {
                 // First, shuffle the discard pile and place it on the bottom of the draw pile.
                 // Typically, newDraw will be empty here, but if filtering, perhaps not
                 newDraw = [...newDraw, ...shuffle(discard)];
@@ -166,7 +187,7 @@ export class DrawCardAction {
                 logger.info(
                     `Sent message PutData to client ${client.id}: ${SWARAction.MoveCard}`,
                 );
-    
+
                 client.emit(
                     'PutData',
                     StandardResponse.respond({
@@ -187,13 +208,10 @@ export class DrawCardAction {
 
         // This modificationNow modify cards taken if necessary
         if (isNotUndefined(useEnemiesConfusedAsValue)) {
-
             // is there a confused enemy?
             const hasConfusedEnemies = enemies.some(
                 ({ statuses: { debuff: debuffs } }) =>
-                    debuffs.some(
-                        (debuff) => debuff.name === confusion.name,
-                    ),
+                    debuffs.some((debuff) => debuff.name === confusion.name),
             );
 
             // If so, cards cost 0
@@ -229,6 +247,5 @@ export class DrawCardAction {
             newDraw,
             newDiscard,
         });
-    
     }
 }
