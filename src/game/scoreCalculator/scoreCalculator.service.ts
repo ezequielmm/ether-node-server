@@ -218,7 +218,7 @@ export class ScoreCalculatorService {
         // 26 HP = 2 Points
         // 27 HP = 3 Points
         // if the player has full HP it will sum 15 points
-        let score = Math.max(0,hpCurrent - 25);
+        let score = Math.max(0,hpCurrent - 24);
         if (hpCurrent === hpMax) score += 15;
         return score;
     }
