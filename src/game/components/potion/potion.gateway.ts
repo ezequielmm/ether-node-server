@@ -25,33 +25,41 @@ export class PotionGateway {
 
     @SubscribeMessage('UsePotion')
     async use(client: Socket, payload: string): Promise<void> {
-        await this.actionQueueService.push(await this.expeditionService.getExpeditionIdFromClient(client),
-        async () => {
-            this.logger.debug('<USE POTION>');
+        await this.actionQueueService.push(
+            await this.expeditionService.getExpeditionIdFromClient(
+                client.id,
+            ),
+            async () => {
+                this.logger.debug('<USE POTION>');
 
-            const { potionId, targetId } = JSON.parse(payload) as UsePotionDTO;
+                const { potionId, targetId } = JSON.parse(payload) as UsePotionDTO;
 
-            const ctx = await this.expeditionService.getGameContext(client);
+                const ctx = await this.expeditionService.getGameContext(client);
 
-            await this.potionService.use(ctx, potionId, targetId);
+                await this.potionService.use(ctx, potionId, targetId);
 
-            await this.fullSyncAction.handle(client, false);
+                await this.fullSyncAction.handle(client, false);
 
-            this.logger.debug('</USE POTION>');
-        });
+                this.logger.debug('</USE POTION>');
+            }
+        );
     }
 
     @SubscribeMessage('RemovePotion')
     async remove(client: Socket, potionId: string): Promise<void> {
-        await this.actionQueueService.push(await this.expeditionService.getExpeditionIdFromClient(client),
-        async () => {        
-            this.logger.debug('<REMOVE POTION>');
+        await this.actionQueueService.push(
+            await this.expeditionService.getExpeditionIdFromClient(
+                client.id,
+            ),
+            async () => {        
+                this.logger.debug('<REMOVE POTION>');
 
-            const ctx = await this.expeditionService.getGameContext(client);
-            await this.potionService.remove(ctx, potionId);
-            await this.fullSyncAction.handle(client, false);
-            
-            this.logger.debug('</REMOVE POTION>');
-        });
+                const ctx = await this.expeditionService.getGameContext(client);
+                await this.potionService.remove(ctx, potionId);
+                await this.fullSyncAction.handle(client, false);
+                
+                this.logger.debug('</REMOVE POTION>');
+            }
+        );
     }
 }
