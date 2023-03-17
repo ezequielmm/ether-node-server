@@ -13,6 +13,7 @@ import { addCardEffect } from 'src/game/effects/addCard/contants';
 import { StunnedCard } from '../../card/data/stunned.card';
 import { spikesStatus } from 'src/game/status/spikes/constants';
 import { attachStatusEffect } from 'src/game/effects/attachStatus/constants';
+import { AddCardPosition } from 'src/game/effects/effects.enum';
 
 export const treantData: Enemy = {
     enemyId: 13,
@@ -196,6 +197,7 @@ export const treantData: Enemy = {
                                 value: 3,
                                 cardId: StunnedCard.cardId,
                                 destination: 'draw',
+                                position: AddCardPosition.Random,
                             },
                         },
                     ],

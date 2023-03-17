@@ -64,10 +64,12 @@ export class CombatService {
             card.oldEnergy = 0;
         });
 
-        const handCards = takeRight(shuffle(cards), initialHandPileSize);
+        const shuffledCards = shuffle(cards);
+
+        const handCards = takeRight(shuffledCards, initialHandPileSize);
 
         const drawCards = removeCardsFromPile({
-            originalPile: cards,
+            originalPile: shuffledCards,
             cardsToRemove: handCards,
         });
 
