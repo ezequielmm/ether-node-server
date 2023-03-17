@@ -18,20 +18,24 @@ export class TreasureGateway {
 
     @SubscribeMessage('ChestOpened')
     async handleOpenChest(client: Socket): Promise<void> {
-        await this.actionQueueService.push(await this.expeditionService.getExpeditionIdFromClient(client),
-        async () => {
-            this.logger.debug('<OPEN CHEST>');
+        await this.actionQueueService.push(
+            await this.expeditionService.getExpeditionIdFromClient(
+                client.id,
+            ),
+            async () => {
+                this.logger.debug('<OPEN CHEST>');
 
-            const ctx = await this.expeditionService.getGameContext(client);
+                const ctx = await this.expeditionService.getGameContext(client);
 
-            this.logger.log(
-                ctx.info,
-                `Client ${client.id} trigger message "ChestOpened"`,
-            );
+                this.logger.log(
+                    ctx.info,
+                    `Client ${client.id} trigger message "ChestOpened"`,
+                );
 
-            await this.treasureService.openChest(client);
+                await this.treasureService.openChest(client);
 
-            this.logger.debug('</OPEN CHEST>');
-        });
+                this.logger.debug('</OPEN CHEST>');
+            }
+        );
     }
 }

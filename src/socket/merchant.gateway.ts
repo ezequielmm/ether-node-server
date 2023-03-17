@@ -19,21 +19,25 @@ export class MerchantGateway {
 
     @SubscribeMessage('MerchantBuy')
     async handleItemsSelected(client: Socket, payload: string): Promise<void> {
-        await this.actionQueueService.push(await this.expeditionService.getExpeditionIdFromClient(client),
-        async () => {
-            this.logger.debug('<MERCHANT ACTION>');
+        await this.actionQueueService.push(
+            await this.expeditionService.getExpeditionIdFromClient(
+                client.id
+            ),
+            async () => {
+                this.logger.debug('<MERCHANT ACTION>');
 
-            const ctx = await this.expeditionService.getGameContext(client);
+                const ctx = await this.expeditionService.getGameContext(client);
 
-            this.logger.log(
-                ctx.info,
-                `Client ${client.id} trigger message "MerchantBuy": ${payload}`,
-            );
+                this.logger.log(
+                    ctx.info,
+                    `Client ${client.id} trigger message "MerchantBuy": ${payload}`,
+                );
 
-            const selected = JSON.parse(payload) as SelectedItem;
-            await this.merchantService.buyItem(ctx, selected);
-           
-            this.logger.debug('</MERCHANT ACTION>');
-        });
+                const selected = JSON.parse(payload) as SelectedItem;
+                await this.merchantService.buyItem(ctx, selected);
+            
+                this.logger.debug('</MERCHANT ACTION>');
+            }
+        );
     }
 }
