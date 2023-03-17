@@ -8,7 +8,7 @@ export class PlayerWin {
     wallet_id: string;
 
     @Prop()
-    event_id: string;
+    contest_id: string;
 
     @Prop()
     contract_address: string;

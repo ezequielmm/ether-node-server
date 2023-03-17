@@ -5,16 +5,17 @@ import NFTService from '../nft-library/services/nft_service';
 import { PlayerWinService } from '../playerWin/playerWin.service';
 import { PlayerWin } from '../playerWin/playerWin.schema';
 import { ContestMapService } from '../game/contestMap/contestMap.service';
+import { ContestService } from '../game/contest/contest.service';
 
 @Injectable()
 export class WalletService {
     constructor(
         private playerWinService: PlayerWinService,
         private contestMapService: ContestMapService,
+        private contestService: ContestService,
     ) {}
 
     async getTokenIdList(walletId: string): Promise<any[]> {
-     
         // the chain where are deployed the smart contracts
         const chain = Number(process.env.NFT_SERVICE_CHAIN_ID);
         //some goerli wallets

@@ -10,7 +10,12 @@ export class ContestMapService {
         private readonly contestMap: ReturnModelType<typeof ContestMap>,
     ) {}
 
-    async findAllWins(): Promise<ContestMap[]> {
+    async find(id: string): Promise<ContestMap> {
+        const map = await this.contestMap.findById(id);
+        return map;
+    }
+
+    async findAll(): Promise<ContestMap[]> {
         const items = await this.contestMap.find();
         return items;
     }

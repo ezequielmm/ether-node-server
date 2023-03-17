@@ -18,12 +18,12 @@ export class PlayerWinService {
     }
 
     async canPlay(
-        event_id: string,
+        contest_id: string,
         contract_address: string,
         token_id: string,
     ): Promise<boolean> {
         const item = await this.playerWin.findOne({
-            event_id: event_id,
+            contest_id: contest_id,
             contract_address: contract_address,
             token_id: token_id,
         });

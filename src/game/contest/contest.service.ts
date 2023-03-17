@@ -7,6 +7,10 @@ import { ReturnModelType } from '@typegoose/typegoose';
 export class ContestService {
     constructor(
         @InjectModel(Contest)
-        private readonly contestMap: ReturnModelType<typeof Contest>,
+        private readonly contest: ReturnModelType<typeof Contest>,
     ) {}
+    
+    async findActive(): Promise<Contest>{
+        return await this.contest.findOne();
+    }
 }
