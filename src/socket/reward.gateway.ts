@@ -23,24 +23,15 @@ export class RewardGateway {
         client: Socket,
         rewardId: string,
     ): Promise<string> {
-        // await this.actionQueueService.push(
-        //     await this.expeditionService.getExpeditionIdFromClient(
-        //         client.id,
-        //     ),
-        //     async () => {
-                this.logger.debug('<REWARD SELECTED>');
-                
-                // Get the game context
-                const ctx = await this.expeditionService.getGameContext(client);
+        this.logger.debug('<REWARD SELECTED>');
 
-                const response = await this.rewardService.takeReward(ctx, rewardId);
+        // Get the game context
+        const ctx = await this.expeditionService.getGameContext(client);
 
-                await this.fullSyncAction.handle(client, false);
+        const response = await this.rewardService.takeReward(ctx, rewardId);
 
-                return response; // THIS PROBABLY BREAKS IN A CHAIN OF TYPE Promise<Void>. Rework to emit a response instead of returning.
-                
-        //         this.logger.debug('<REWARD SELECTED>');
-        //     }
-        // );
+        await this.fullSyncAction.handle(client, false);
+
+        return response; // THIS PROBABLY BREAKS IN A CHAIN OF TYPE Promise<Void>. Rework to emit a response instead of returning.
     }
 }

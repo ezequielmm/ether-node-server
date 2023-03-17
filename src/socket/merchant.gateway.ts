@@ -20,9 +20,7 @@ export class MerchantGateway {
     @SubscribeMessage('MerchantBuy')
     async handleItemsSelected(client: Socket, payload: string): Promise<void> {
         await this.actionQueueService.push(
-            await this.expeditionService.getExpeditionIdFromClient(
-                client.id
-            ),
+            await this.expeditionService.getExpeditionIdFromClient(client.id),
             async () => {
                 this.logger.debug('<MERCHANT ACTION>');
 
@@ -35,9 +33,9 @@ export class MerchantGateway {
 
                 const selected = JSON.parse(payload) as SelectedItem;
                 await this.merchantService.buyItem(ctx, selected);
-            
+
                 this.logger.debug('</MERCHANT ACTION>');
-            }
+            },
         );
     }
 }
