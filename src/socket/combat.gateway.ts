@@ -32,29 +32,30 @@ export class CombatGateway {
     @SubscribeMessage('EndTurn')
     async handleEndTurn(client: Socket): Promise<void> {
         await this.actionQueueService.push(
-            await this.expeditionService.getExpeditionIdFromClient(client.id),
+            await this.expeditionService.getExpeditionIdFromClient(
+                client.id,
+            ),
             async () => {
+                this.logger.debug('<END TURN>');
                 try {
-                    const ctx = await this.expeditionService.getGameContext(
-                        client,
-                    );
+                    const ctx = await this.expeditionService.getGameContext(client);
                     const { expedition } = ctx;
 
-                    // If the combat is ended, we skip the turn
-                    if (this.expeditionService.isCurrentCombatEnded(ctx))
-                        return;
+                        // If the combat is ended, we skip the turn
+                        if (this.expeditionService.isCurrentCombatEnded(ctx))
+                            return;
 
-                    if (
-                        expedition.currentNode === null ||
-                        expedition.currentNode.nodeType !== NodeType.Combat
-                    )
-                        return;
+                        if (
+                            expedition.currentNode === null ||
+                            expedition.currentNode.nodeType !== NodeType.Combat
+                        )
+                            return;
 
-                    const {
-                        currentNode: {
-                            data: { playing },
-                        },
-                    } = expedition;
+                        const {
+                            currentNode: {
+                                data: { playing },
+                            },
+                        } = expedition;
 
                     switch (playing) {
                         case CombatTurnEnum.Player:
@@ -69,41 +70,43 @@ export class CombatGateway {
                         error,
                     });
                 }
-            },
+                this.logger.debug('</END TURN>');
+            }
         );
     }
 
     @SubscribeMessage('CardPlayed')
     async handleCardPlayed(client: Socket, payload: string): Promise<void> {
+
         await this.actionQueueService.push(
-            await this.expeditionService.getExpeditionIdFromClient(client.id),
+            await this.expeditionService.getExpeditionIdFromClient(
+                client.id,
+            ),
             async () => {
+                this.logger.debug('<PLAY CARD>');
                 try {
-                    const ctx = await this.expeditionService.getGameContext(
-                        client,
-                    );
+                    const ctx = await this.expeditionService.getGameContext(client);
+                    const { cardId, targetId }: ICardPlayed = JSON.parse(payload);
 
-                    const { cardId, targetId }: ICardPlayed =
-                        JSON.parse(payload);
+                        // Check if combat is on player turn. If not, bail without trying to play a card, because they, uh, can't.
+                        if (
+                            ctx.expedition.currentNode.data.playing !==
+                            CombatTurnEnum.Player
+                        )
+                            return;
 
-                    // Check if combat is on player turn. If not, bail without trying to play a card, because they, uh, can't.
-                    if (
-                        ctx.expedition.currentNode.data.playing !==
-                        CombatTurnEnum.Player
-                    )
-                        return;
-
-                    await this.cardPlayedAction.handle({
-                        ctx,
-                        cardId,
-                        selectedEnemyId: targetId,
-                    });
-                } catch (error) {
-                    this.logger.error({
-                        error,
-                    });
-                }
-            },
+                        await this.cardPlayedAction.handle({
+                            ctx,
+                            cardId,
+                            selectedEnemyId: targetId,
+                        });
+                    } catch (error) {
+                        this.logger.error({
+                            error,
+                        });
+                    }
+                this.logger.debug('</PLAY CARD>');
+            }
         );
     }
 }
