@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { filter } from 'lodash';
+import { filter, countBy } from 'lodash';
+import { CardRarityEnum } from '../components/card/card.enum';
 import {
     IExpeditionPlayerStateDeckCard,
     PotionInstance,
@@ -8,6 +9,7 @@ import { Expedition } from '../components/expedition/expedition.schema';
 import { Node } from '../components/expedition/node';
 import { NodeStatus } from '../components/expedition/node-status';
 import { Trinket } from '../components/trinket/trinket.schema';
+import { ExpeditionStatusEnum } from '../components/expedition/expedition.enum';
 
 export interface ScoreResponse {
     outcome: string;
@@ -41,6 +43,8 @@ export class ScoreCalculatorService {
                 gold,
             },
             status,
+            createdAt,
+            endedAt
         } = expedition;
 
         const totalBasicEnemies =
@@ -57,7 +61,7 @@ export class ScoreCalculatorService {
         const healthReamining = this.calculateHP(hpCurrent, hpMax);
 
         // Now we query how may cards we had in our deck at the end
-        const deckSize = this.calculatePlayerDeck(playerDeck);
+        const { deckSize, upgradedCards, epicPlusCards } = this.calculatePlayerDeck(playerDeck);
 
         // Now we query how many potions we have remaining
         const potionsRemaining = this.calculateRemainingPotions(potions);
@@ -67,6 +71,9 @@ export class ScoreCalculatorService {
 
         // Now we query how many coins we have remaining
         const totalCoins = this.calculateCoinsRemaining(gold);
+
+        // Now we look for points and achievements for ending within 1 hour
+        const speedRun = (status == ExpeditionStatusEnum.Victory) ? this.calculateDuration(createdAt, endedAt) : 0;
 
         // How we sum all the points to get the total
         const totalScore =
@@ -78,7 +85,10 @@ export class ScoreCalculatorService {
             deckSize +
             potionsRemaining +
             trinketsRemaining +
-            totalCoins;
+            totalCoins +
+            upgradedCards +
+            epicPlusCards +
+            speedRun;
 
         const data: ScoreResponse = {
             outcome: status,
@@ -116,6 +126,12 @@ export class ScoreCalculatorService {
                 score: healthReamining,
             });
 
+        if (speedRun > 0)
+            data.achievements.push({
+                name: "Speed Run",
+                score: speedRun,
+            });
+
         if (deckSize > 0)
             data.achievements.push({
                 name:
@@ -145,6 +161,18 @@ export class ScoreCalculatorService {
             data.achievements.push({
                 name: 'Scrooge',
                 score: totalCoins,
+            });
+
+        if (epicPlusCards == 25)
+            data.achievements.push({
+                name: 'Pauper',
+                score: 25,
+            });
+        
+        if (epicPlusCards == 10)
+            data.achievements.push({
+                name: 'Prince',
+                score: 10,
             });
 
         return data;
@@ -190,17 +218,14 @@ export class ScoreCalculatorService {
         // 26 HP = 2 Points
         // 27 HP = 3 Points
         // if the player has full HP it will sum 15 points
-        let score = 0;
-        if (hpCurrent === hpMax) score = 15;
-        if (hpCurrent === 25) score = 1;
-        if (hpCurrent === 26) score = 2;
-        if (hpCurrent === 27) score = 3;
+        let score = Math.max(0,hpCurrent - 25);
+        if (hpCurrent === hpMax) score += 15;
         return score;
     }
 
     private calculatePlayerDeck(
         cards: IExpeditionPlayerStateDeckCard[],
-    ): number {
+    ): { [key: string]: any} {
         // Here we calculate how many cards we have in the player's deck at the end
         // of the expedition
         // 20 cards or less = 40 points
@@ -211,7 +236,14 @@ export class ScoreCalculatorService {
         if (deckSize < 20) total = 40; // Lean and Mean
         if (deckSize > 35) total = 20; // Librarian
         if (deckSize > 45) total = 50; // Encyclopedia
-        return total;
+
+        let upgradedCards = filter(cards, (card) => card.isUpgraded).length * 5;
+        let epicPlusCount = filter(cards, (card) => card.rarity == CardRarityEnum.Legendary).length;
+        let epicPlusCards = 0;
+        if (epicPlusCards== 0) epicPlusCards = 25;
+        if (epicPlusCount > 10) epicPlusCards = 10;
+
+        return { total, upgradedCards, epicPlusCards };
     }
 
     private calculateRemainingPotions(potions: PotionInstance[]): number {
@@ -238,5 +270,11 @@ export class ScoreCalculatorService {
         // at the end of the expedition
         // 250 coins or more = 15 points
         return coins > 250 ? 15 : 0;
+    }
+
+    private calculateDuration(createdAt: Date, endedAt: Date): number {
+        const duration = Math.floor((endedAt.getTime() - createdAt.getTime()) / 60000);
+        const points = Math.max(60 - duration, 0);
+        return points;
     }
 }
