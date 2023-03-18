@@ -27,7 +27,7 @@ import { RewardModule } from 'src/game/reward/reward.module';
 import { EncounterModule } from '../game/components/encounter/encounter.module';
 import { UpgradeCardModule } from 'src/game/upgradeCard/upgradeCard.module';
 import { CombatModule } from '../game/combat/combat.module';
-
+import { ActionQueueModule } from 'src/actionQueue/actionQueue.module';
 
 @Module({
     imports: [
@@ -48,6 +48,7 @@ import { CombatModule } from '../game/combat/combat.module';
         EncounterModule,
         CombatModule,
         UpgradeCardModule,
+        ActionQueueModule,
     ],
     providers: [
         SocketGateway,

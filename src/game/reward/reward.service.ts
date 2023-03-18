@@ -27,8 +27,8 @@ import {
     SWARAction,
     SWARMessageType,
 } from '../standardResponse/standardResponse';
-import { Chest } from "../components/chest/chest.schema";
-import { getRandomBetween } from "../../utils";
+import { Chest } from '../components/chest/chest.schema';
+import { getRandomBetween } from '../../utils';
 
 @Injectable()
 export class RewardService {
