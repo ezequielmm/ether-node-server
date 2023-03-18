@@ -9,6 +9,9 @@ export class Score {
     basicEnemiesDefeated: number;
 
     @Prop({ default: 0 })
+    minionEnemiesDefeated: number;
+
+    @Prop({ default: 0 })
     eliteEnemiesDefeated: number;
 
     @Prop({ default: 0 })

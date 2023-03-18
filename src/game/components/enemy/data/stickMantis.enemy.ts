@@ -66,7 +66,7 @@ export const stickMantisData: Enemy = {
                             args: {
                                 value: 1,
                                 cardId: MossCard.cardId,
-                                destination: 'draw deck',
+                                destination: 'discard',
                             },
                         },
                     ],

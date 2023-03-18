@@ -12,6 +12,7 @@ import { IExpeditionPlayerStateDeckCard } from '../components/expedition/expedit
 import { ExpeditionService } from '../components/expedition/expedition.service';
 import { SettingsService } from '../components/settings/settings.service';
 import { MapService } from '../map/map.service';
+import { GearItem } from '../../playerGear/gearItem';
 
 @Injectable()
 export class InitExpeditionProcess {
@@ -31,14 +32,23 @@ export class InitExpeditionProcess {
         playerName,
         email,
         nftId,
+        equippedGear,
+        character_class,
     }: {
         playerId: number;
         playerName: string;
         email: string;
         nftId: number;
+        equippedGear: GearItem[];
+        character_class: string;
     }): Promise<void> {
+        let character_class_enum = CharacterClassEnum.Knight;
+        if (character_class === 'Villager')
+            character_class_enum = CharacterClassEnum.Villager;
+        if (character_class === 'BlessedVillager')
+            character_class_enum = CharacterClassEnum.BlessedVillager;
         const character = await this.characterService.findOne({
-            characterClass: CharacterClassEnum.Knight,
+            characterClass: character_class_enum,
         });
 
         // Get initial player stats
@@ -57,6 +67,7 @@ export class InitExpeditionProcess {
                 basicEnemiesDefeated: 0,
                 eliteEnemiesDefeated: 0,
                 bossEnemiesDefeated: 0,
+                minionEnemiesDefeated: 0,
             },
             mapSeedId: getTimestampInSeconds(),
             actConfig: {
@@ -67,6 +78,7 @@ export class InitExpeditionProcess {
                 playerId: randomUUID(),
                 playerName,
                 nftId,
+                equippedGear,
                 characterClass: character.characterClass,
                 hpMax: character.initialHealth,
                 hpCurrent: character.initialHealth,
@@ -76,6 +88,7 @@ export class InitExpeditionProcess {
                 cardUpgradeCount: 0,
                 cardDestroyCount: 0,
                 trinkets: [],
+                lootboxRarity: character.lootboxRarity,
             },
             status: ExpeditionStatusEnum.InProgress,
             isCurrentlyPlaying: false,

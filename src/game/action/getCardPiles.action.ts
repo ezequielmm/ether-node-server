@@ -5,6 +5,7 @@ import { EffectGenerator } from '../effects/EffectGenerator';
 import { JsonEffect } from '../effects/effects.interface';
 import { JsonStatus } from '../status/interfaces';
 import { StatusGenerator } from '../status/statusGenerator';
+import { sortBy } from 'lodash';
 
 @Injectable()
 export class GetCardPilesAction {
@@ -54,7 +55,7 @@ export class GetCardPilesAction {
                     );
                 return card;
             }),
-            draw,
+            draw: sortBy(draw, ['name', 'isUpgraded']),
             discard,
             exhausted,
             energy,

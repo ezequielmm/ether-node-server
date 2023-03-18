@@ -13,3 +13,9 @@ export enum EffectOwner {
     Player = 'player',
     Enemy = 'enemy',
 }
+
+export enum AddCardPosition {
+    Top = 'top',
+    Bottom = 'bottom',
+    Random = 'random',
+}

@@ -49,7 +49,7 @@ export class RepositionEffect implements EffectHandler {
         await this.drawCardAction.handle({
             ctx,
             amountToTake: cardsToDrawBack,
-            cardType: undefined,
+            filterType: undefined,
             SWARMessageTypeToSend,
         });
     }

@@ -36,7 +36,7 @@ import mongoose from 'mongoose';
 import { TrinketService } from '../components/trinket/trinket.service';
 import { TrinketRarityEnum } from '../components/trinket/trinket.enum';
 import { GameContext } from '../components/interfaces';
-import { filter } from 'lodash';
+import { filter, find } from 'lodash';
 
 @Injectable()
 export class MerchantService {
@@ -327,25 +327,28 @@ export class MerchantService {
         const itemsData: Item[] = [];
 
         for (const card of cards) {
-            let cost: number = null;
+            let cost = 0;
 
             switch (card.rarity) {
                 case CardRarityEnum.Common:
-                    cost = getRandomBetween(
+                    cost = this.getCardPrice(
                         CardCommon.minPrice,
                         CardCommon.maxPrice,
+                        card.isUpgraded,
                     );
                     break;
                 case CardRarityEnum.Uncommon:
-                    cost = getRandomBetween(
+                    cost = this.getCardPrice(
                         CardUncommon.minPrice,
                         CardUncommon.maxPrice,
+                        card.isUpgraded,
                     );
                     break;
                 case CardRarityEnum.Rare:
-                    cost = getRandomBetween(
+                    cost = this.getCardPrice(
                         CardRare.minPrice,
                         CardRare.maxPrice,
+                        card.isUpgraded,
                     );
                     break;
             }
@@ -388,6 +391,15 @@ export class MerchantService {
         };
 
         return itemsData;
+    }
+
+    private getCardPrice(
+        minPrice: number,
+        maxPrice: number,
+        isCardUpgraded: boolean,
+    ): number {
+        const priceIncrease = isCardUpgraded ? maxPrice - minPrice : 0;
+        return getRandomBetween(minPrice, maxPrice) + priceIncrease;
     }
 
     private async failure(
@@ -483,7 +495,7 @@ export class MerchantService {
         });
 
         // Now we get the card id from the selected item
-        const cardId = selectedItem.targetId;
+        const cardId = selectedItem.targetId as string;
 
         // Now we need the price to upgrade the card
         const upgradedPrice = 75 + 25 * playerState.cardUpgradeCount;
@@ -492,8 +504,20 @@ export class MerchantService {
         if (playerState.gold < upgradedPrice)
             return this.failure(client, PurchaseFailureEnum.NoEnoughGold);
 
+        // Now we find the card in the player state to get its card id
+        const cardFromPlayerState = find(
+            playerState.cards,
+            ({ id }) => id === cardId,
+        );
+
+        // If we can't find the card we return an error
+        if (!cardFromPlayerState)
+            return this.failure(client, PurchaseFailureEnum.InvalidId);
+
         // Now we query the card information to check if we can upgrade it
-        const card = await this.cardService.findOne({ _id: cardId });
+        const card = await this.cardService.findOne({
+            cardId: cardFromPlayerState.cardId,
+        });
 
         // If we can't find the card we return an error
         if (!card) return this.failure(client, PurchaseFailureEnum.InvalidId);
@@ -627,49 +651,45 @@ export class MerchantService {
         );
     }
 
-    async cardDestroy(client: Socket, selectedItem: SelectedItem) {
+    async cardDestroy(
+        client: Socket,
+        selectedItem: SelectedItem,
+    ): Promise<void> {
+        // First we need to get the player state with the card data
         const playerState = await this.expeditionService.getPlayerState({
             clientId: client.id,
         });
 
+        // Now we get the card id from the selected item
+        const cardId = selectedItem.targetId as string;
+
+        // Now we need the price to destroy the card
         const destroyPrice = 75 + 25 * playerState.cardDestroyCount;
 
-        if (playerState.gold < destroyPrice) {
-            client.emit('ErrorMessage', {
-                message: `Not enough gold`,
-            });
-            return;
-        }
+        // Now we need to check if the player has enough gold
+        if (playerState.gold < destroyPrice)
+            return this.failure(client, PurchaseFailureEnum.NoEnoughGold);
 
-        const card = await this.cardService.findById(selectedItem.targetId);
+        // Now we find the card in the player state and remove it
+        const newCardDeck = filter(
+            playerState.cards,
+            ({ id }) => id !== cardId,
+        );
 
-        let cardIndex: number = null;
+        // Now we reduce the coin cost of the upgrade
+        const newGold = playerState.gold - destroyPrice;
 
-        if (card) {
-            for (let i = 0; i < playerState.cards.length; i++) {
-                if (card.cardId == playerState.cards[i].cardId) {
-                    cardIndex = i;
-                    break;
-                }
-            }
-        }
+        // Now we increase the card destroy count
+        const newCardDestroyCount = playerState.cardDestroyCount + 1;
 
-        if (cardIndex === null) {
-            client.emit('ErrorMessage', {
-                message: `Card not in merchant offer`,
-            });
-            return;
-        }
-
-        playerState.cards.splice(cardIndex, 1);
-        playerState.cardDestroyCount = playerState.cardDestroyCount + 1;
-        playerState.gold = playerState.gold - destroyPrice;
-
+        // Now we update the player state
         await this.expeditionService.updateByFilter(
             { clientId: client.id },
             {
                 $set: {
-                    playerState,
+                    'playerState.cards': newCardDeck,
+                    'playerState.gold': newGold,
+                    'playerState.cardDestroyCount': newCardDestroyCount,
                 },
             },
         );

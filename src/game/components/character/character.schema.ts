@@ -32,4 +32,13 @@ export class Character {
 
     @Prop()
     contractId?: string;
+
+    @Prop({ type: Object })
+    lootboxRarity?: {
+        common: number;
+        uncommon: number;
+        rare: number;
+        epic: number;
+        legendary: number;
+    };
 }

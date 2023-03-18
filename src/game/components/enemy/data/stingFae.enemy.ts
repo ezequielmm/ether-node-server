@@ -96,7 +96,7 @@ export const stingFaeData: Enemy = {
                             args: {
                                 value: 1,
                                 cardId: PoisonedCard.cardId,
-                                destination: 'draw',
+                                destination: 'discard',
                             },
                         },
                     ],

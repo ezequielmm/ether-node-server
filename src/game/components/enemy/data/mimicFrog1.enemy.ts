@@ -12,6 +12,7 @@ import { fatigue } from 'src/game/status/fatigue/constants';
 import { StunnedCard } from '../../card/data/stunned.card';
 import { addCardEffect } from 'src/game/effects/addCard/contants';
 import { attachStatusEffect } from 'src/game/effects/attachStatus/constants';
+import { AddCardPosition } from 'src/game/effects/effects.enum';
 
 export const mimicFrog1Data: Enemy = {
     enemyId: 8,
@@ -59,6 +60,7 @@ export const mimicFrog1Data: Enemy = {
                                 value: 2,
                                 cardId: StunnedCard.cardId,
                                 destination: 'draw',
+                                position: AddCardPosition.Random,
                             },
                         },
                     ],
