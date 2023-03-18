@@ -13,6 +13,9 @@ import { ExpeditionService } from '../components/expedition/expedition.service';
 import { SettingsService } from '../components/settings/settings.service';
 import { MapService } from '../map/map.service';
 import { GearItem } from '../../playerGear/gearItem';
+import { Contest } from '../contest/contest.schema';
+import { ContestService } from '../contest/contest.service';
+import { ContestMapService } from '../contestMap/contestMap.service';
 
 @Injectable()
 export class InitExpeditionProcess {
@@ -25,6 +28,7 @@ export class InitExpeditionProcess {
         private readonly customDeckService: CustomDeckService,
         private readonly settingsService: SettingsService,
         private readonly mapService: MapService,
+        private readonly contestService: ContestMapService,
     ) {}
 
     async handle({
@@ -34,7 +38,7 @@ export class InitExpeditionProcess {
         nftId,
         equippedGear,
         character_class,
-        event_id,
+        contest,
     }: {
         playerId: number;
         playerName: string;
@@ -42,7 +46,7 @@ export class InitExpeditionProcess {
         nftId: number;
         equippedGear: GearItem[];
         character_class: string;
-        event_id: string;
+        contest: Contest;
     }): Promise<void> {
         const wallet_id = ''; //todo make into param
         const contract_address = ''; //todo make into param
@@ -61,7 +65,19 @@ export class InitExpeditionProcess {
         const { initialPotionChance } =
             await this.settingsService.getSettings();
 
-        // const map = this.expeditionService.getMap();
+        /*
+        //todo replace nodes with contestMap
+        let event_id = '-1';   
+        let map = [];
+        if (contest) {
+            const contest_map = await this.contestService.find(contest.map_id);
+            event_id = contest.event_id;
+            map = contest_map.node;
+        } else {
+            map = this.mapService.getActZero();
+        }
+        */
+        const event_id = '-1';
         const map = this.mapService.getActZero();
 
         const cards = await this.generatePlayerDeck(character, email);

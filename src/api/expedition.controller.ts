@@ -156,7 +156,7 @@ export class ExpeditionController {
                     nftId,
                     equippedGear,
                     character_class,
-                    event_id,
+                    contest,
                 });
 
                 return { expeditionCreated: true };
