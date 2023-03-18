@@ -215,6 +215,9 @@ export class StatusService {
         let { effectDTO } = dto;
         let isUpdate = false;
 
+        // Collection of all statuses
+        const fullCollection = this.getStatuses(collectionOwner);
+
         for (const type in collection) {
             const statuses = collection[type];
             const statusesToRemove: Status[] = [];
@@ -236,13 +239,23 @@ export class StatusService {
                     ctx,
                     effectDTO,
                     status: status,
-                    update(args) {
+                    update: (args) => {
                         status.args = args;
                         isUpdate = true;
+
+                        this.logger.log(
+                            { ...ctx.info, status },
+                            'Updating status',
+                        );
                     },
-                    remove() {
+                    remove: () => {
                         statusesToRemove.push(status);
                         isUpdate = true;
+
+                        this.logger.log(
+                            { ...ctx.info, status },
+                            'Removing status',
+                        );
                     },
                 });
 
@@ -252,14 +265,19 @@ export class StatusService {
                 );
             }
             if (statusesToRemove.length > 0) {
-                collection[type] = statuses.filter(
+                fullCollection[type] = fullCollection[type].filter(
                     (status) => !statusesToRemove.includes(status),
                 );
             }
         }
 
-        if (isUpdate)
-            await this.updateStatuses(ctx, collectionOwner, collection);
+        if (isUpdate) {
+            await this.updateStatuses(ctx, collectionOwner, fullCollection);
+            this.logger.log(
+                { ...ctx.info, collection },
+                'Updated status collection',
+            );
+        }
 
         return effectDTO;
     }
@@ -268,7 +286,14 @@ export class StatusService {
         entity: ExpeditionEntity,
         direction: StatusDirection,
     ): StatusCollection {
+        const statuses = this.getStatuses(entity);
+
+        return this.filterCollectionByDirection(statuses, direction);
+    }
+
+    public getStatuses(entity: ExpeditionEntity): StatusCollection {
         let statuses: StatusCollection;
+
         if (PlayerService.isPlayer(entity)) {
             statuses = entity.value.combatState.statuses;
         } else if (EnemyService.isEnemy(entity)) {
@@ -279,7 +304,7 @@ export class StatusService {
             throw new Error(`Could not find statuses for ${entity.type}`);
         }
 
-        return this.filterCollectionByDirection(statuses, direction);
+        return statuses;
     }
 
     public filterCollectionByDirection(
