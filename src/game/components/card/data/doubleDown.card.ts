@@ -9,7 +9,7 @@ export const DoubleDownCardUpgraded: Card = {
     cardType: CardTypeEnum.Skill,
     pool: 'knight',
     energy: 0,
-    description: `Your next attack this turn does 2x damage`,
+    description: `Your next attack this turn does double damage`,
     keywords: [],
     properties: {
         effects: [],
