@@ -65,18 +65,21 @@ export class InitExpeditionProcess {
         const { initialPotionChance } =
             await this.settingsService.getSettings();
 
-        /*
-        //todo replace nodes with contestMap
-        let event_id = '-1';   
-        let map = [];
-        if (contest) {
-            const contest_map = await this.contestService.find(contest.map_id);
-            event_id = contest.event_id;
-            map = contest_map.node;
-        } else {
-            map = this.mapService.getActZero();
+        if (false) {
+            //todo replace nodes with contestMap
+            let event_id = '-1';
+            let map = [];
+            if (contest) {
+                const contest_map = await this.contestService.find(
+                    contest.map_id,
+                );
+                event_id = contest.event_id;
+                map = contest_map.node;
+            } else {
+                map = this.mapService.getActZero();
+            }
         }
-        */
+
         const event_id = '-1';
         const map = this.mapService.getActZero();
 
