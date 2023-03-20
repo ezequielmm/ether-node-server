@@ -112,7 +112,4 @@ export class Expedition {
 
     @Prop()
     endedAt?: Date;
-
-    @Prop()
-    lootbox?: Gear[];
 }
