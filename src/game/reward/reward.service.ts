@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { randomUUID } from 'crypto';
-import { chain, find, includes, map, pick } from 'lodash';
+import { chain, filter, find, includes, map, pick } from 'lodash';
 import { CustomException, ErrorBehavior } from 'src/socket/custom.exception';
 import { CardDescriptionFormatter } from '../cardDescriptionFormatter/cardDescriptionFormatter';
 import { CardRarityEnum, CardTypeEnum } from '../components/card/card.enum';
@@ -81,6 +81,7 @@ export class RewardService {
                 trinketsToGenerate,
             );
 
+            // Only if we get trinkets for the rewards
             if (trinkets.length > 0) rewards.push(...trinkets);
         }
 
@@ -96,7 +97,7 @@ export class RewardService {
         return rewards;
     }
 
-    async takeReward(ctx: GameContext, rewardId: string): Promise<void> {
+    async takeReward(ctx: GameContext, rewardId: string): Promise<Reward[]> {
         // Get the updated expedition
         const expedition = ctx.expedition;
 
@@ -172,6 +173,13 @@ export class RewardService {
                 [`currentNode.${rewardPath}.rewards`]: rewards,
             },
         });
+
+        // Now we get the rewards that are pending to be taken
+        const pendingRewards = filter(rewards, {
+            taken: false,
+        });
+
+        return pendingRewards;
     }
 
     private async generateCards(

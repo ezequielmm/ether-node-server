@@ -6,6 +6,12 @@ import { RewardService } from 'src/game/reward/reward.service';
 import { corsSocketSettings } from './socket.enum';
 import { ActionQueueService } from 'src/actionQueue/actionQueue.service';
 import { Logger } from '@nestjs/common';
+import { NodeType } from 'src/game/components/expedition/node-type';
+import {
+    StandardResponse,
+    SWARMessageType,
+    SWARAction,
+} from 'src/game/standardResponse/standardResponse';
 
 @WebSocketGateway(corsSocketSettings)
 export class RewardGateway {
@@ -32,7 +38,42 @@ export class RewardGateway {
                         client,
                     );
 
-                    await this.rewardService.takeReward(ctx, rewardId);
+                    // Here we deestructure the expedition from the context
+                    // to get the current node type and check if it's a node that can take rewards
+                    const {
+                        expedition: {
+                            currentNode: { nodeType },
+                        },
+                    } = ctx;
+
+                    // Now we create a list of node types that can take rewards
+                    const rewardNodeTypes = [
+                        NodeType.Combat,
+                        NodeType.Treasure,
+                    ];
+
+                    // If the node type is not a reward node, we skip the reward selection
+                    if (!rewardNodeTypes.includes(nodeType)) return;
+
+                    // Now we take the remaining rewards and send them back to the client
+                    await this.rewardService
+                        .takeReward(ctx, rewardId)
+                        .then((rewards) => {
+                            // Now we need to send the rewards to the client
+                            ctx.client.emit(
+                                'RewardList',
+                                StandardResponse.respond({
+                                    message_type:
+                                        nodeType === NodeType.Treasure
+                                            ? SWARMessageType.EndTreasure
+                                            : SWARMessageType.EndCombat,
+                                    action: SWARAction.SelectAnotherReward,
+                                    data: {
+                                        rewards,
+                                    },
+                                }),
+                            );
+                        });
 
                     await this.fullSyncAction.handle(client, false);
                 } catch (error) {
