@@ -71,10 +71,13 @@ export class EndCombatProcess {
 
             ctx.expedition.status = ExpeditionStatusEnum.Victory;
             ctx.expedition.finalScore = score;
+            ctx.expedition.finalScore.lootbox =
+                await this.gearService.getLootbox(
+                    3,
+                    ctx.expedition.playerState.lootboxRarity,
+                );
             ctx.expedition.completedAt = new Date();
             ctx.expedition.endedAt = new Date();
-            ctx.expedition.lootbox = await this.gearService.getLootbox(3,ctx.expedition.playerState.lootboxRarity);
-            ctx.expedition.finalScore.lootbox = ctx.expedition.lootbox;
             // TODO: Create a playerWin record for the current contest (how do we get event_id?)
 
             //message client
