@@ -259,6 +259,14 @@ export class PlayerService {
 
         let finalStatusAttached: AttachedStatus;
 
+        if (args.counterDynamic) {
+            switch (args.counterDynamic) {
+                case 'PlayerEnergy':
+                    args.counter = ctx.expedition.currentNode.data.player.energy;
+                break;
+            }
+        }
+
         if (oldStatus) {
             this.logger.log(
                 ctx.info,
