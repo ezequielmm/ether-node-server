@@ -30,11 +30,8 @@ export class Character {
     @Prop()
     isActive: boolean;
 
-    @Prop()
-    contractId?: string;
-
     @Prop({ type: Object })
-    lootboxRarity?: {
+    lootboxRarity: {
         common: number;
         uncommon: number;
         rare: number;
