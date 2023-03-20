@@ -65,8 +65,11 @@ export class ScoreCalculatorService {
         const healthReamining = this.calculateHP(hpCurrent, hpMax);
 
         // Now we query how may cards we had in our deck at the end
-        const { deckSize, upgradedCards, epicPlusCards } =
-            this.calculatePlayerDeck(playerDeck);
+        const {
+            total: deckSize,
+            upgradedCards,
+            epicPlusCards,
+        } = this.calculatePlayerDeck(playerDeck);
 
         // Now we query how many potions we have remaining
         const potionsRemaining = this.calculateRemainingPotions(potions);
@@ -234,7 +237,9 @@ export class ScoreCalculatorService {
     }
 
     private calculatePlayerDeck(cards: IExpeditionPlayerStateDeckCard[]): {
-        [key: string]: any;
+        total: number;
+        upgradedCards: number;
+        epicPlusCards: number;
     } {
         // Here we calculate how many cards we have in the player's deck at the end
         // of the expedition

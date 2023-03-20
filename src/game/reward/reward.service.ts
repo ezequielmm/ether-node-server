@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { randomUUID } from 'crypto';
-import { chain, filter, find, includes, map, pick } from 'lodash';
+import { chain, find, includes, map, pick } from 'lodash';
 import { CustomException, ErrorBehavior } from 'src/socket/custom.exception';
 import { CardDescriptionFormatter } from '../cardDescriptionFormatter/cardDescriptionFormatter';
 import { CardRarityEnum, CardTypeEnum } from '../components/card/card.enum';
@@ -22,11 +22,6 @@ import { PotionService } from '../components/potion/potion.service';
 import { TrinketRarityEnum } from '../components/trinket/trinket.enum';
 import { Trinket } from '../components/trinket/trinket.schema';
 import { TrinketService } from '../components/trinket/trinket.service';
-import {
-    StandardResponse,
-    SWARAction,
-    SWARMessageType,
-} from '../standardResponse/standardResponse';
 import { Chest } from '../components/chest/chest.schema';
 import { getRandomBetween } from '../../utils';
 
@@ -107,7 +102,7 @@ export class RewardService {
         return rewards;
     }
 
-    async takeReward(ctx: GameContext, rewardId: string): Promise<string> {
+    async takeReward(ctx: GameContext, rewardId: string): Promise<void> {
         // Get the updated expedition
         const expedition = ctx.expedition;
 
@@ -175,33 +170,12 @@ export class RewardService {
         }
 
         // Next we save the reward on the expedition
-        if (nodeType === NodeType.Treasure) {
-            await this.expeditionService.updateById(expedition._id.toString(), {
-                $set: {
-                    'currentNode.treasureData.rewards': rewards,
-                },
-            });
-        } else {
-            await this.expeditionService.updateById(expedition._id.toString(), {
-                $set: {
-                    'currentNode.data.rewards': rewards,
-                },
-            });
-        }
+        const rewardPath =
+            nodeType === NodeType.Treasure ? 'treasureData' : 'data';
 
-        // Now we get the rewards that are pending to be taken
-        const pendingRewards = filter(rewards, {
-            taken: false,
-        });
-
-        return StandardResponse.respond({
-            message_type:
-                nodeType === NodeType.Treasure
-                    ? SWARMessageType.EndTreasure
-                    : SWARMessageType.EndCombat,
-            action: SWARAction.SelectAnotherReward,
-            data: {
-                rewards: pendingRewards,
+        await this.expeditionService.updateById(expedition._id.toString(), {
+            $set: {
+                [`currentNode.${rewardPath}.rewards`]: rewards,
             },
         });
     }
