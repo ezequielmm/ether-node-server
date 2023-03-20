@@ -34,8 +34,6 @@ export class RewardService {
         private readonly expeditionService: ExpeditionService,
     ) {}
 
-    private node: Node;
-
     async generateRewards({
         ctx,
         cardsToGenerate,
@@ -53,8 +51,6 @@ export class RewardService {
         trinketsToGenerate: TrinketRarityEnum[];
         chest?: Chest;
     }): Promise<Reward[]> {
-        this.node = node;
-
         const rewards: Reward[] = [];
 
         if (coinsToGenerate > 0) {
@@ -67,7 +63,7 @@ export class RewardService {
         }
 
         if (cardsToGenerate.length > 0) {
-            const cards = await this.generateCards(cardsToGenerate);
+            const cards = await this.generateCards(cardsToGenerate, node);
             // Only if we get cards for the rewards
             if (cards.length > 0) rewards.push(...cards);
         }
@@ -88,15 +84,13 @@ export class RewardService {
             if (trinkets.length > 0) rewards.push(...trinkets);
         }
 
-        if (chest) {
-            if (rewards.length === 0) {
-                rewards.push({
-                    id: randomUUID(),
-                    type: IExpeditionNodeReward.Gold,
-                    amount: getRandomBetween(chest.minCoins, chest.maxCoins), // see https://robotseamonster.monday.com/boards/2075844718/views/90131469/pulses/3979452615
-                    taken: false,
-                });
-            }
+        if (chest && rewards.length === 0) {
+            rewards.push({
+                id: randomUUID(),
+                type: IExpeditionNodeReward.Gold,
+                amount: getRandomBetween(chest.minCoins, chest.maxCoins), // see https://robotseamonster.monday.com/boards/2075844718/views/90131469/pulses/3979452615
+                taken: false,
+            });
         }
 
         return rewards;
@@ -182,6 +176,7 @@ export class RewardService {
 
     private async generateCards(
         cardsToGenerate: CardRarityEnum[],
+        node: Node,
     ): Promise<CardReward[]> {
         const cardRewards: CardReward[] = [];
 
@@ -198,7 +193,7 @@ export class RewardService {
                 rarity: cardsToGenerate[i],
                 cardType: { $nin: [CardTypeEnum.Curse, CardTypeEnum.Status] },
                 cardId: { $nin: cardIds },
-                isUpgraded: this.node.act > 1,
+                isUpgraded: node.act > 1,
             });
 
             const cardPreview = pick(card, [

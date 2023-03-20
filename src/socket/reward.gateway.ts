@@ -23,8 +23,6 @@ export class RewardGateway {
         client: Socket,
         rewardId: string,
     ): Promise<void> {
-        this.logger.debug('<REWARD SELECTED>');
-
         await this.actionQueueService.push(
             await this.expeditionService.getExpeditionIdFromClient(client.id),
             async () => {
