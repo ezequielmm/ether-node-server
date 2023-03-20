@@ -121,7 +121,7 @@ export class StatusGenerator {
             case drained.name:
                 return `Next turn, lose ${value} Energy`;
             case resist.name:
-                return `Resist the next ${value} negative statuses`;
+                return `Resist the next ${counter} negative statuses`;
             default:
                 return `Unknown status`;
         }
