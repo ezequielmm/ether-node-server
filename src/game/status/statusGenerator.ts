@@ -25,6 +25,7 @@ import { summoned } from './summoned/constants';
 import { tasteOfBloodBuff, tasteOfBloodDebuff } from './tasteOfBlood/constants';
 import { trapped } from './trapped/constants';
 import { turtling } from './turtling/constants';
+import { resist } from './resist/constants';
 
 export interface IStatusesList {
     name: string;
@@ -68,7 +69,7 @@ export class StatusGenerator {
         // TODO Add description property to status type and remove this switch
         switch (name) {
             case resolveStatus.name:
-                return `Increases all Attack damage by ${counter} per instance`;
+                return `Increase all Attack damage by ${counter}`;
             case confusion.name:
                 return `For ${counter} turns, all actions will be redirected to random targets`;
             case dodge.name:
@@ -119,6 +120,12 @@ export class StatusGenerator {
                 return `Summoned enemies are banished if all masters are defeated`;
             case drained.name:
                 return `Next turn, lose ${value} Energy`;
+            case resist.name:
+                return `Resist the next ${counter} negative statuses`;
+            case tasteOfBloodBuff.name:
+                return `Deal double damage`;
+            case tasteOfBloodDebuff.name:
+                return `Take double damage`;
             default:
                 return `Unknown status`;
         }

@@ -14,13 +14,14 @@ import { Gear } from '../components/gear/gear.schema';
 
 export interface ScoreResponse {
     outcome: string;
+    expeditionType: string;
     totalScore: number;
     achievements: {
         name: string;
         score: number;
     }[];
     notifyNoLoot: boolean;
-    lootbox: Gear[];
+    lootbox?: Gear[];
 }
 
 @Injectable()
@@ -48,7 +49,6 @@ export class ScoreCalculatorService {
             status,
             createdAt,
             endedAt,
-            lootbox,
         } = expedition;
 
         const totalBasicEnemies =
@@ -66,9 +66,10 @@ export class ScoreCalculatorService {
 
         // Now we query how may cards we had in our deck at the end
         const {
-            total: deckSize,
+            deckSizePoints,
             upgradedCards,
             epicPlusCards,
+            deckSizeAchievement,
         } = this.calculatePlayerDeck(playerDeck);
 
         // Now we query how many potions we have remaining
@@ -93,7 +94,7 @@ export class ScoreCalculatorService {
             totalBossEnemies +
             nodesCompleted +
             healthReamining +
-            deckSize +
+            deckSizePoints +
             potionsRemaining +
             trinketsRemaining +
             totalCoins +
@@ -103,10 +104,10 @@ export class ScoreCalculatorService {
 
         const data: ScoreResponse = {
             outcome: status,
+            expeditionType: 'Casual',
             totalScore,
             achievements: [],
             notifyNoLoot: false,
-            lootbox,
         };
 
         if (totalBasicEnemies > 0)
@@ -145,18 +146,12 @@ export class ScoreCalculatorService {
                 score: speedRun,
             });
 
-        if (deckSize > 0)
+        if (deckSizePoints > 0) {
             data.achievements.push({
-                name:
-                    deckSize < 20
-                        ? 'Lean and Mean'
-                        : deckSize > 35
-                        ? 'Librarian'
-                        : deckSize > 45
-                        ? 'Encyclopedia'
-                        : 'Lean and Mean',
-                score: deckSize,
+                name: deckSizeAchievement,
+                score: deckSizePoints,
             });
+        }
 
         if (potionsRemaining > 0)
             data.achievements.push({
@@ -237,9 +232,10 @@ export class ScoreCalculatorService {
     }
 
     private calculatePlayerDeck(cards: IExpeditionPlayerStateDeckCard[]): {
-        total: number;
+        deckSizePoints: number;
         upgradedCards: number;
         epicPlusCards: number;
+        deckSizeAchievement: string;
     } {
         // Here we calculate how many cards we have in the player's deck at the end
         // of the expedition
@@ -247,10 +243,20 @@ export class ScoreCalculatorService {
         // 35 cards or more = 20 points
         // 45 cards or more = 50 points (overrides Librarian)
         const deckSize = cards.length;
-        let total = 0;
-        if (deckSize < 20) total = 40; // Lean and Mean
-        if (deckSize > 35) total = 20; // Librarian
-        if (deckSize > 45) total = 50; // Encyclopedia
+        let deckSizePoints = 0;
+        let deckSizeAchievement = '';
+        if (deckSize < 20) {
+            deckSizePoints = 40; // Lean and Mean
+            deckSizeAchievement = 'Lean and Mean';
+        }
+        if (deckSize > 35) {
+            deckSizePoints = 20; // Librarian
+            deckSizeAchievement = 'Librarian';
+        }
+        if (deckSize > 45) {
+            deckSizePoints = 50; // Encyclopedia
+            deckSizeAchievement = 'Encyclopedia';
+        }
 
         const upgradedCards =
             filter(cards, (card) => card.isUpgraded).length * 5;
@@ -262,7 +268,12 @@ export class ScoreCalculatorService {
         if (epicPlusCount == 0) epicPlusCards = 25;
         if (epicPlusCount > 10) epicPlusCards = 10;
 
-        return { total, upgradedCards, epicPlusCards };
+        return {
+            deckSizePoints,
+            upgradedCards,
+            epicPlusCards,
+            deckSizeAchievement,
+        };
     }
 
     private calculateRemainingPotions(potions: PotionInstance[]): number {
