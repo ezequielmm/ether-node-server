@@ -129,13 +129,15 @@ export class ExpeditionController {
             const { equippedGear } = payload;
             const character_class = payload.tokenType;
 
-            // validate equippedGear vs ownedGeared
-            const all_are_owned = await this.playerGearService.allAreOwned(
-                playerId,
-                equippedGear,
-            );
-            if (!all_are_owned) {
-                return { expeditionCreated: false, reason: 'wrong gear' };
+            if (equippedGear?.length === 0) {
+                // validate equippedGear vs ownedGeared
+                const all_are_owned = await this.playerGearService.allAreOwned(
+                    playerId,
+                    equippedGear,
+                );
+                if (!all_are_owned) {
+                    return { expeditionCreated: false, reason: 'wrong gear' };
+                }
             }
 
             const hasExpedition =
