@@ -55,12 +55,11 @@ export class Player {
     cardDestroyCount: number;
 
     @Prop({ type: Object })
-    lootboxRarity?: {
+    lootboxRarity: {
         common: number;
         uncommon: number;
         rare: number;
         epic: number;
         legendary: number;
     };
-
 }

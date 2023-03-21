@@ -38,6 +38,14 @@ export class RegenerationStatus implements StatusEventHandler {
                     },
                 },
             });
+
+            // degrade by 1 each turn.
+            if (status.args.counter > 1) {
+                status.args.counter--;
+                dto.update(status.args);
+            } else {
+                dto.remove();
+            }
         }
     }
 }
