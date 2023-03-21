@@ -262,8 +262,9 @@ export class PlayerService {
         if (args.counterDynamic) {
             switch (args.counterDynamic) {
                 case 'PlayerEnergy':
-                    args.counter = ctx.expedition.currentNode.data.player.energy;
-                break;
+                    args.counter =
+                        ctx.expedition.currentNode.data.player.energy;
+                    break;
             }
         }
 
