@@ -66,7 +66,7 @@ export class InitExpeditionProcess {
             await this.settingsService.getSettings();
 
         if (false) {
-            //todo replace nodes with contestMap
+            //todo CONTEST replace nodes with contestMap
             let event_id = '-1';
             let map = [];
             if (contest) {
