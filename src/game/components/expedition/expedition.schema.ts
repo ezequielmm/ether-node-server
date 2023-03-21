@@ -16,8 +16,6 @@ import { ExpeditionActConfig } from './expeditionActConfig.schema';
 import { EncounterInterface } from '../encounter/encounter.interfaces';
 import { Score } from './scores';
 import { ScoreResponse } from 'src/game/scoreCalculator/scoreCalculator.service';
-import { Gear } from '../gear/gear.schema';
-import { PlayerWinInfo } from "../../../playerWin/playerWin.schema";
 import { Contest } from 'src/game/contest/contest.schema';
 
 export type ExpeditionDocument = HydratedDocument<Expedition>;
