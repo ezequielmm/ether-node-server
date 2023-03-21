@@ -12,10 +12,3 @@ export class PlayerWin {
     @Prop()
     playerToken: IPlayerToken;
 }
-
-export class PlayerWinInfo {
-    wallet_id: string;
-    event_id: string;
-    contract_address: string;
-    token_id: number;
-}
