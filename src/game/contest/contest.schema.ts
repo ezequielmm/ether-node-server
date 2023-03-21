@@ -1,5 +1,5 @@
 import { ModelOptions, Prop } from '@typegoose/typegoose';
-import { Schema } from 'mongoose';
+import { Date, Schema } from 'mongoose';
 
 @ModelOptions({
     schemaOptions: { collection: 'contests', versionKey: false },
@@ -12,4 +12,10 @@ export class Contest {
 
     @Prop()
     event_id: string;
+
+    @Prop()
+    available_at: Date;
+
+    @Prop()
+    valid_until?: Date;
 }
