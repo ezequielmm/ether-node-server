@@ -89,7 +89,7 @@ import {
     QuickToAdaptCardUpgraded,
 } from './data/quickToAdapt.card';
 // import { RecoverCard, RecoverCardUpgraded } from './data/recover.data';
-import { Refocus } from './data/refocus.card';
+import { RefocusCard, RefocusCardUpgraded } from './data/refocus.card';
 import { RepositionCard, RepositionCardUpgraded } from './data/reposition.card';
 import { RoundHouseCard, RoundHouseCardUpgraded } from './data/roundHouse.card';
 // import { ShakeItOffCard, ShakeItOffCardUpgraded } from './data/shakeItOff.card';
@@ -205,7 +205,8 @@ export const data: Card[] = [
     LastResortCardUpgraded,
     FlurryCard,
     FlurryCardUpgraded,
-    Refocus,
+    RefocusCard,
+    RefocusCardUpgraded,
     BackHandCard,
     BackHandCardUpgraded,
     UltraLethalityCard,

@@ -9,6 +9,10 @@ export class ActionQueueService {
     private actionQueues: ActionQueue<Promise<void>> = {};
 
     public async push(queueId: string, fn: () => Promise<void>) {
+        if (process.env.ASYNC_MESSAGES) {
+            return await fn();
+        }
+        
         if (this.actionQueues[queueId] === undefined)
             this.actionQueues[queueId] = Promise.resolve();
 
