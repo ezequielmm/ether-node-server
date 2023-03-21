@@ -5,7 +5,9 @@ import { Headers, Param } from '@nestjs/common/decorators/http/route-params.deco
 import { Gear } from '../game/components/gear/gear.schema';
 import { AuthGatewayService } from 'src/authGateway/authGateway.service';
 import { GearItem } from './gearItem';
-
+import { Expedition } from 'src/game/components/expedition/expedition.schema';
+import { ReturnModelType } from '@typegoose/typegoose';
+import { GearTraitEnum } from 'src/game/components/gear/gear.enum';
 
 class AlterGearApiDTO {
     @ApiProperty()
@@ -18,7 +20,7 @@ class AlterGearApiDTO {
     readonly action: GearActionApiEnum;
 
     @ApiProperty()
-    readonly gear: GearItem[];
+    readonly gear: number[];
 }
 
 enum GearActionApiEnum {
@@ -35,12 +37,13 @@ interface ITokenCheck {
 @Controller('gearChainBridge')
 export class GearChainBridgeController {
     constructor(
+        private readonly expedition: ReturnModelType<typeof Expedition>,
         private readonly authGatewayService: AuthGatewayService,
         private playerGearService: PlayerGearService
     ) {}
 
     private async checkSecurityToken(check: ITokenCheck): Promise<boolean> {
-        const sharedSalt = process.env.GEARAPI_SALT;
+        const sharedSalt = process.env.GEARAPI_SALT ?? 'sharedSalt';
         const timestamp = new Date().setUTCHours(0,0,0,0).valueOf();
         const crypto = require('node:crypto');
         const localHash = crypto.createHash('md5').update(timestamp + check.wallet + sharedSalt).digest('hex');
@@ -51,9 +54,15 @@ export class GearChainBridgeController {
     private async getPlayerIdFromWallet(
         wallet: string,
     ): Promise<number> {
-        const playerId = 0;
+        
+        const latestExpedition = await this.expedition
+            .findOne({
+                'playerToken.wallet_id': wallet
+            }).sort({createdAt: -1}); 
+        
+        if (!latestExpedition) return; 
 
-        return playerId;
+        return latestExpedition.playerId;
     }
 
     @ApiOperation({ summary: 'Get player owned gear list for API' })
@@ -62,16 +71,15 @@ export class GearChainBridgeController {
         @Param('wallet') wallet: string, 
         @Param('token') token: string
     ): Promise<any> {
-        
-        // confirm token (security layer) and get PlayerId
-        if (!this.checkSecurityToken({wallet, token})) {
+        // confirm token (security layer)
+        if (!this.checkSecurityToken({ wallet, token })) {
             return "Bad Token";
         }
 
         // get player id from wallet address?
         const playerId = await this.getPlayerIdFromWallet(wallet);
         if (!playerId) {
-            return "Unknown Player";
+            return "Unknown Wallet";
         }
 
         return await this.playerGearService.getGear(playerId);
@@ -90,17 +98,23 @@ export class GearChainBridgeController {
         // get player id from wallet address?
         const playerId = await this.getPlayerIdFromWallet(payload.wallet);
         if (!playerId) {
-            return "Unknown Player";
+            return "Unknown Wallet";
         }
+
+        const playerGear = await this.playerGearService.getGear(playerId);
 
         switch (payload.action) {
             case GearActionApiEnum.AddGear:
-                
+                await this.playerGearService.addGearToPlayerById(playerId, payload.gear);
                 break;
             case GearActionApiEnum.RemoveGear:
-
+                await this.playerGearService.removeGearFromPlayerById(playerId, payload.gear);
                 break;
         }
+
+        const newGear = await this.playerGearService.getGear(playerId);
+
+        return { oldGear: playerGear, newGear: newGear };
 
     }
 
