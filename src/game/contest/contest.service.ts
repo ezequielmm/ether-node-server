@@ -26,5 +26,11 @@ export class ContestService {
         return current;
     }
 
+    async isValid(contest: Contest) {
+        // TODO: Make this work once dates are in.
+        // Check if current time > contest.valid_until, once contest.valid_until is actually being populated in the findActive function.
+        return true;
+    }
+
 
 }
