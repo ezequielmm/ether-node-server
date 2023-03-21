@@ -16,6 +16,7 @@ import { GearItem } from '../../playerGear/gearItem';
 import { Contest } from '../contest/contest.schema';
 import { ContestService } from '../contest/contest.service';
 import { ContestMapService } from '../contestMap/contestMap.service';
+import { IPlayerToken } from '../components/expedition/expedition.schema';
 
 @Injectable()
 export class InitExpeditionProcess {
@@ -35,7 +36,7 @@ export class InitExpeditionProcess {
         playerId,
         playerName,
         email,
-        nftId,
+        playerToken,
         equippedGear,
         character_class,
         contest,
@@ -43,14 +44,11 @@ export class InitExpeditionProcess {
         playerId: number;
         playerName: string;
         email: string;
-        nftId: number;
+        playerToken: IPlayerToken;
         equippedGear: GearItem[];
         character_class: string;
         contest: Contest;
     }): Promise<void> {
-        const wallet_id = ''; //todo make into param
-        const contract_address = ''; //todo make into param
-        const token_id = 0; //todo make into param
 
         let character_class_enum = CharacterClassEnum.Knight;
         if (character_class === 'Villager')
@@ -101,8 +99,8 @@ export class InitExpeditionProcess {
             playerState: {
                 email,
                 playerId: randomUUID(),
+                playerToken,
                 playerName,
-                nftId,
                 equippedGear,
                 characterClass: character.characterClass,
                 hpMax: character.initialHealth,
@@ -115,12 +113,7 @@ export class InitExpeditionProcess {
                 trinkets: [],
                 lootboxRarity: character.lootboxRarity,
             },
-            contest: {
-                wallet_id: wallet_id,
-                event_id: event_id,
-                contract_address: contract_address,
-                token_id: token_id,
-            },
+            contest,
             status: ExpeditionStatusEnum.InProgress,
             isCurrentlyPlaying: false,
             createdAt: new Date(),

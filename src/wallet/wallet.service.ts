@@ -47,7 +47,7 @@ export class WalletService {
         const all_wins = await this.playerWinService.findAllWins(walletId);
         const win_counts = countBy(
             all_wins,
-            (win) => win.contract_address + win.token_id,
+            (win) => win.playerToken.contractId + win.playerToken.tokenId,
         );
         const contest = await this.contestService.findActive();
         const event_id = contest?.event_id ?? '';

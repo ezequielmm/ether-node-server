@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from 'kindagoose';
 import { PlayerWin, PlayerWinInfo } from './playerWin.schema';
 import { ReturnModelType } from '@typegoose/typegoose';
+
 @Injectable()
 export class PlayerWinService {
     constructor(
@@ -13,7 +14,7 @@ export class PlayerWinService {
     }
     async findAllWins(wallet_id: string) {
         const items = await this.playerWin.find({
-            wallet_id,
+            playerToken: { $elemMatch: { wallet_id: wallet_id } },
         });
         return items;
     }
@@ -29,8 +30,7 @@ export class PlayerWinService {
         if (wins === undefined) {
             wins = await this.playerWin.find({
                 event_id: event_id,
-                contract_address: contract_address,
-                token_id: token_id,
+                playerToken: { $elemMatch: { contractId: contract_address, tokenId: token_id } }
             }).length;
         }
 
