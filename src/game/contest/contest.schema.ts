@@ -1,5 +1,5 @@
 import { ModelOptions, Prop } from '@typegoose/typegoose';
-import { Date, Schema } from 'mongoose';
+import { Schema } from 'mongoose';
 
 @ModelOptions({
     schemaOptions: { collection: 'contests', versionKey: false },

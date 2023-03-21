@@ -11,18 +11,20 @@ export class ContestService {
     ) {}
 
     async findActive(): Promise<Contest> {
-        var start = new Date();
-        start.setUTCHours(0,0,0,0);
-        
-        var end = new Date();
-        end.setUTCHours(23,59,59,999);
+        const start = new Date();
+        start.setUTCHours(0, 0, 0, 0);
 
-        const current = await this.contest.findOne({"available_at": {"$gte": start, "$lte": end}}); // find the one that starts on this day.
+        const end = new Date();
+        end.setUTCHours(23, 59, 59, 999);
 
-        // TODO: Figure out how to make this valid in Typescript, since mongoose casts on retrieval.
-        // current.valid_until = current.available_at;
-        // current.valid_until.setTime(current.available_at.getTime() + (h*60*60*1000));
-        
+        const current = await this.contest.findOne({
+            available_at: { $gte: start, $lte: end },
+        }); // find the one that starts on this day.
+        current.valid_until = current.available_at;
+        current.valid_until.setTime(
+            current.available_at.getTime() + 6 * 60 * 60 * 1000,
+        );
+
         return current;
     }
 
