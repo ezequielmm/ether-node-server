@@ -6,7 +6,8 @@ import { Gear } from '../game/components/gear/gear.schema';
 import { AuthGatewayService } from 'src/authGateway/authGateway.service';
 import { GearItem } from './gearItem';
 
-class AddGearFromChainApiDTO {
+
+class AlterGearApiDTO {
     @ApiProperty()
     readonly wallet: string;
 
@@ -14,23 +15,20 @@ class AddGearFromChainApiDTO {
     readonly token: string;
 
     @ApiProperty()
-    readonly gearToAdd: GearItem[];
-}
-
-class DeleteGearFromChainApiDTO {
-    @ApiProperty()
-    readonly wallet: string;
-    
-    @ApiProperty()
-    readonly token: string;
+    readonly action: GearActionApiEnum;
 
     @ApiProperty()
-    readonly gearToRemove: GearItem[];
+    readonly gear: GearItem[];
 }
 
 enum GearActionApiEnum {
     AddGear = 'add',
     RemoveGear = 'delete',
+}
+
+interface ITokenCheck {
+    wallet: string;
+    token: string;
 }
 
 @ApiTags('gearChainBridge')
@@ -41,6 +39,23 @@ export class GearChainBridgeController {
         private playerGearService: PlayerGearService
     ) {}
 
+    private async checkSecurityToken(check: ITokenCheck): Promise<boolean> {
+        const sharedSalt = process.env.GEARAPI_SALT;
+        const timestamp = new Date().setUTCHours(0,0,0,0).valueOf();
+        const crypto = require('node:crypto');
+        const localHash = crypto.createHash('md5').update(timestamp + check.wallet + sharedSalt).digest('hex');
+
+        return (localHash == check.token);
+    }
+
+    private async getPlayerIdFromWallet(
+        wallet: string,
+    ): Promise<number> {
+        const playerId = 0;
+
+        return playerId;
+    }
+
     @ApiOperation({ summary: 'Get player owned gear list for API' })
     @Get('/list')
     async getList(
@@ -49,74 +64,43 @@ export class GearChainBridgeController {
     ): Promise<any> {
         
         // confirm token (security layer) and get PlayerId
-        if (!this.checkToken(payload.wallet, payload.token)) {
+        if (!this.checkSecurityToken({wallet, token})) {
             return "Bad Token";
         }
+
         // get player id from wallet address?
-        const playerId = await this.getPlayerIdFromWallet(payload.wallet);
+        const playerId = await this.getPlayerIdFromWallet(wallet);
+        if (!playerId) {
+            return "Unknown Player";
+        }
 
         return await this.playerGearService.getGear(playerId);
     }
 
     @ApiOperation({ summary: 'Get player owned gear list for API' })
-    @Post('/add')
-    async postAdd(
-        @Body() payload: AddGearFromChainApiDTO,
+    @Post('/modify')
+    async postModify(
+        @Body() payload: AlterGearApiDTO,
     ): Promise<any> {
-        
         // confirm token (security layer) and get PlayerId
-        if (!this.checkToken(payload.wallet, payload.token)) {
+        if (!this.checkSecurityToken({wallet: payload.wallet, token: payload.token})) {
             return "Bad Token";
         }
 
         // get player id from wallet address?
         const playerId = await this.getPlayerIdFromWallet(payload.wallet);
-
-        return await this.alterPlayerGear(playerId, GearActionApiEnum.AddGear, payload.gearToAdd);
-    }
-
-    @ApiOperation({ summary: 'Get player owned gear list for API' })
-    @Post('/remove')
-    async postAdd(
-        @Body() payload: AddGearFromChainApiDTO,
-    ): Promise<any> {
-        
-        // confirm token (security layer) and get PlayerId
-        if (!this.checkToken(payload.wallet, payload.token)) {
-            return "Bad Token";
+        if (!playerId) {
+            return "Unknown Player";
         }
 
-        // get player id from wallet address?
-        const playerId = await this.getPlayerIdFromWallet(payload.wallet);
+        switch (payload.action) {
+            case GearActionApiEnum.AddGear:
+                
+                break;
+            case GearActionApiEnum.RemoveGear:
 
-        return await this.alterPlayerGear(playerId, GearActionApiEnum.RemoveGear, payload.gearToAdd);
-    }
-
-
-    private async getPlayerIdFromWallet(
-        wallet: string,
-    ): Promise<number> {
-        // STUB: TODO: Make this actually return the player ID based on the wallet address (or fail)
-        const playerId = 0;
-        return playerId;
-    }
-
-    private async checkToken(
-        wallet: string,
-        token: string,
-    ): Promise<bool> {
-        // STUB: TODO: Make this actually check the token value.
-        const validToken = true;
-        return validToken;
-    }
-
-    private async alterPlayerGear(
-        playerId: string, 
-        action: GearActionApiEnum,
-        gearList: GearItem[],
-    ): Promise<any> {
-
-        // STUB: TODO: Add or Remove (action) gear (gearList) from player (playerId)
+                break;
+        }
 
     }
 
