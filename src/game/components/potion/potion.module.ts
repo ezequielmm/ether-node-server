@@ -1,5 +1,6 @@
 import { forwardRef, Module } from '@nestjs/common';
 import { KindagooseModule } from 'kindagoose';
+import { ActionQueueModule } from 'src/actionQueue/actionQueue.module';
 import { ActionModule } from 'src/game/action/action.module';
 import { EffectModule } from 'src/game/effects/effects.module';
 import { CombatQueueModule } from '../combatQueue/combatQueue.module';
@@ -17,6 +18,7 @@ import { PotionService } from './potion.service';
         forwardRef(() => ActionModule),
         PlayerModule,
         CombatQueueModule,
+        ActionQueueModule,
     ],
     providers: [PotionService, PotionGateway],
     exports: [PotionService],

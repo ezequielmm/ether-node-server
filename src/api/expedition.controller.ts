@@ -242,9 +242,7 @@ export class ExpeditionController {
 
             if (!expedition) return null;
 
-            return this.scoreCalculatorService.calculate({
-                expedition,
-            });
+            return expedition.finalScore;
         } catch (e) {
             this.logger.error(e.stack);
             throw new HttpException(

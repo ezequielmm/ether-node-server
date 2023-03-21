@@ -22,14 +22,14 @@ export enum GearTraitEnum {
 }
 
 export enum GearCategoryEnum {
-    Helmet = 'Helmet',
-    Shield = 'Shield',
-    Weapon = 'Weapon',
-    Breastplate = 'Breastplate',
-    Legguard = 'Legguard',
+    Helmet = 'Helmets',
+    Shield = 'Shields',
+    Weapon = 'Weapons',
+    Breastplate = 'Breastplates',
+    Legguard = 'Legguards',
     Gauntlets = 'Gauntlets',
     Boots = 'Boots',
     Pauldrons = 'Pauldrons',
     Vambraces = 'Vambraces',
-    Padding = 'Padding',
+    Padding = 'Paddings',
 }

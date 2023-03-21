@@ -24,6 +24,7 @@ export class PlayerWinService {
         token_id: number,
         wins?: number,
     ): Promise<boolean> {
+        if (event_id == '') return true;
         if (wins == 0) return true;
 
         if (wins === undefined) {
