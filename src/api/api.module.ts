@@ -11,6 +11,7 @@ import { ShowVersionController } from './showVersion.controller';
 import { ShowNftNetworkController } from './showNftNetwork.controller';
 import { PlayerGearModule } from '../playerGear/playerGear.module';
 import { ContestModule } from '../game/contest/contest.module';
+import { PlayerWinModule } from '../playerWin/playerWin.module';
 
 @Module({
     imports: [
@@ -20,6 +21,7 @@ import { ContestModule } from '../game/contest/contest.module';
         MerchantModule,
         ScoreCalculatorModule,
         PlayerGearModule,
+        PlayerWinModule,
         ContestModule,
     ],
     controllers: [

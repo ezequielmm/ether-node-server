@@ -61,6 +61,7 @@ import { ContestMapModule } from "../contestMap/contestMap.module";
         ScoreCalculatorModule,
         GearModule,
         PlayerWinModule,
+        ContestModule,
         ContestMapModule,
     ],
     providers: [
