@@ -10,8 +10,6 @@ import { healEffect } from 'src/game/effects/heal/constants';
 import { StatusEventDTO, StatusEventHandler } from '../interfaces';
 import { StatusDecorator } from '../status.decorator';
 import { regeneration } from './contants';
-import { OnEvent } from '@nestjs/event-emitter';
-import { GameContext } from 'src/game/components/interfaces';
 
 @StatusDecorator({
     status: regeneration,
@@ -44,11 +42,10 @@ export class RegenerationStatus implements StatusEventHandler {
             // degrade by 1 each turn.
             if (status.args.counter > 1) {
                 status.args.counter--;
-                dto.update(status.args);                  
+                dto.update(status.args);
             } else {
                 dto.remove();
             }
         }
     }
-    
 }
