@@ -20,19 +20,28 @@ export class ContestService {
         const current = await this.contest.findOne({
             available_at: { $gte: start, $lte: end },
         }); // find the one that starts on this day.
-        current.valid_until = current.available_at;
-        current.valid_until.setTime(
-            current.available_at.getTime() + 6 * 60 * 60 * 1000,
-        );
 
+        current.valid_until = this.getValidUntil(current.available_at);
+        
         return current;
     }
 
-    async isValid(contest: Contest) {
-        // TODO: Make this work once dates are in.
-        // Check if current time > contest.valid_until, once contest.valid_until is actually being populated in the findActive function.
-        return true;
+    private getValidUntil(startTime: Date) {
+        const contest_duration = 24;
+        const valid_extension = 6;
+        const valid_until = new Date();
+        valid_until.setTime(
+            startTime.getTime() + 
+            ( 
+                (contest_duration + valid_extension) 
+                * 60 * 60 * 1000
+            )
+        );
+        return valid_until;
     }
 
+    async isValid(contest: Contest) {
+        return new Date() <= (contest.valid_until ?? this.getValidUntil(contest.available_at));
+    }
 
 }
