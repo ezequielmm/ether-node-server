@@ -21,6 +21,8 @@ export class ContestService {
             available_at: { $gte: start, $lte: end },
         }); // find the one that starts on this day.
 
+        if (!current) return;
+
         current.valid_until = this.getValidUntil(current.available_at);
         
         return current;
