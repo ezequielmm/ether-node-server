@@ -44,9 +44,12 @@ export class PlayerWinService {
         }
         if (wins == 0) return true;
 
-        const character = await this.characterService.getCharacterByContractId(contract_address);
-        if (!character || character.name != "Knight") return wins < 1;
-        
+        const character = await this.characterService.getCharacterByContractId(
+            contract_address,
+        );
+
+        if (!character || character.name != 'Knight') return wins < 1;
+
         // at this point, it's a knight
         if (token_id <= 500) {
             return wins < 3; // genesis knight
