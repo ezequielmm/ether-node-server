@@ -23,26 +23,15 @@ export class ContestService {
 
         if (!current) return;
 
-        current.valid_until = this.getValidUntil(current.available_at);
+        current.updateEndTimes();
 
         return current;
     }
 
-    private getValidUntil(startTime: Date): Date {
-        const contest_duration = 24;
-        const valid_extension = 6;
-        const valid_until = new Date();
-        valid_until.setTime(
-            startTime.getTime() +
-                (contest_duration + valid_extension) * 60 * 60 * 1000,
-        );
-        return valid_until;
-    }
-
     async isValid(contest: Contest): Promise<boolean> {
+        contest.updateEndTimes();
         return (
-            new Date() <=
-            (contest.valid_until ?? this.getValidUntil(contest.available_at))
+            new Date() <= contest.valid_until
         );
     }
 }
