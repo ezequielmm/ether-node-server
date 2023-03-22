@@ -1,6 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
-import { HttpService } from '@nestjs/axios';
-import { ConfigService } from '@nestjs/config';
+import { Injectable } from '@nestjs/common';
 import NFTService from '../nft-library/services/nft_service';
 import { PlayerWinService } from '../playerWin/playerWin.service';
 import { PlayerWin } from '../playerWin/playerWin.schema';
