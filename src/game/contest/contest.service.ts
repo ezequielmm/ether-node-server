@@ -33,14 +33,34 @@ export class ContestService {
             available_at: { $gte: start, $lte: end },
         }); // find the one that starts on this day.
 
-        if (!current) return;
+        if (!current) {
+            const valid_until = new Date();
+            valid_until.setTime(start.getTime() + 30 * 60 * 60 * 1000);
+
+            return {
+                map_id: '',
+                event_id: '',
+                available_at: start,
+                ends_at: end,
+                valid_until: valid_until,
+                // eslint-disable-next-line @typescript-eslint/no-empty-function
+                updateEndTimes(): void {},
+            };
+        }
+
         current.updateEndTimes();
 
         return current;
     }
 
     async isValid(contest: Contest): Promise<boolean> {
-        contest.updateEndTimes();
+        if (!(contest.valid_until instanceof Date)) {
+            if (typeof contest.updateEndTimes === 'function') {
+                contest.updateEndTimes();
+            } else {
+                return false;
+            }
+        }
         return new Date() <= contest.valid_until;
     }
 }
