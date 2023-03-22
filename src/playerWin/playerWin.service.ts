@@ -10,9 +10,13 @@ export class PlayerWinService {
         private readonly playerWin: ReturnModelType<typeof PlayerWin>,
     ) {}
 
+    async create(contest_info: PlayerWin) {
+        return await this.playerWin.create(contest_info);
+    }
+
     async findAllWins(wallet_id: string) {
         const items = await this.playerWin.find({
-            wallet_id,
+            playerToken: { $elemMatch: { wallet_id: wallet_id } },
         });
         return items;
     }
@@ -24,17 +28,26 @@ export class PlayerWinService {
         wins?: number,
     ): Promise<boolean> {
         if (event_id == '') return true;
-        if (wins == 0) return true;
 
         if (wins === undefined) {
             wins = await this.playerWin.find({
                 event_id: event_id,
-                contract_address: contract_address,
-                token_id: token_id,
+                playerToken: {
+                    $elemMatch: {
+                        contractId: contract_address,
+                        tokenId: token_id,
+                    },
+                },
             }).length;
         }
-        
-        if (['0x32A322C7C77840c383961B8aB503c9f45440c81f','0x80e2109a826148b9b1a41b0958ca53a4cdc64b70'].includes(contract_address)) {
+        if (wins == 0) return true;
+
+        if (
+            [
+                '0x32A322C7C77840c383961B8aB503c9f45440c81f',
+                '0x80e2109a826148b9b1a41b0958ca53a4cdc64b70',
+            ].includes(contract_address)
+        ) {
             if (token_id <= 500) {
                 return wins < 3; // genesis knight
             }

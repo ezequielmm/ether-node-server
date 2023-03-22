@@ -1,13 +1,20 @@
 import { Injectable } from '@nestjs/common';
 import NFTService from '../nft-library/services/nft_service';
 import { PlayerWinService } from '../playerWin/playerWin.service';
+import { PlayerWin } from '../playerWin/playerWin.schema';
+import { ContestMapService } from '../game/contestMap/contestMap.service';
+import { ContestService } from '../game/contest/contest.service';
 import { countBy } from 'lodash';
 
 @Injectable()
 export class WalletService {
-    constructor(private playerWinService: PlayerWinService) {}
+    constructor(
+        private playerWinService: PlayerWinService,
+        private contestMapService: ContestMapService,
+        private contestService: ContestService,
+    ) {}
 
-    async getTokenIdList(walletId: string): Promise<string[]> {
+    async getTokenIdList(walletId: string): Promise<any[]> {
         // the chain where are deployed the smart contracts
         const chain = Number(process.env.NFT_SERVICE_CHAIN_ID);
         //some goerli wallets
@@ -38,9 +45,10 @@ export class WalletService {
         const all_wins = await this.playerWinService.findAllWins(walletId);
         const win_counts = countBy(
             all_wins,
-            (win) => win.contract_address + win.token_id,
+            (win) => win.playerToken.contractId + win.playerToken.tokenId,
         );
-        const event_id = ''; // TODO: get current event id
+        const contest = await this.contestService.findActive();
+        const event_id = contest?.event_id ?? '';
 
         for (let i = 0; i < nfts.tokens.length; i++) {
             const contract_address = nfts.tokens[i].contract_address;

@@ -13,6 +13,10 @@ import { ExpeditionService } from '../components/expedition/expedition.service';
 import { SettingsService } from '../components/settings/settings.service';
 import { MapService } from '../map/map.service';
 import { GearItem } from '../../playerGear/gearItem';
+import { Contest } from '../contest/contest.schema';
+// import { ContestService } from '../contest/contest.service';
+import { ContestMapService } from '../contestMap/contestMap.service';
+import { IPlayerToken } from '../components/expedition/expedition.schema';
 
 @Injectable()
 export class InitExpeditionProcess {
@@ -25,22 +29,25 @@ export class InitExpeditionProcess {
         private readonly customDeckService: CustomDeckService,
         private readonly settingsService: SettingsService,
         private readonly mapService: MapService,
+        private readonly contestService: ContestMapService,
     ) {}
 
     async handle({
         playerId,
         playerName,
         email,
-        nftId,
+        playerToken,
         equippedGear,
         character_class,
+        contest,
     }: {
         playerId: number;
         playerName: string;
         email: string;
-        nftId: number;
+        playerToken: IPlayerToken;
         equippedGear: GearItem[];
         character_class: string;
+        contest: Contest;
     }): Promise<void> {
         let character_class_enum = CharacterClassEnum.Knight;
         if (character_class === 'Villager')
@@ -55,7 +62,22 @@ export class InitExpeditionProcess {
         const { initialPotionChance } =
             await this.settingsService.getSettings();
 
-        // const map = this.expeditionService.getMap();
+        // if (false) {
+        //     //todo CONTEST replace nodes with contestMap
+        //     let event_id = '-1';
+        //     let map = [];
+        //     if (contest) {
+        //         const contest_map = await this.contestService.find(
+        //             contest.map_id,
+        //         );
+        //         event_id = contest.event_id;
+        //         map = contest_map.node;
+        //     } else {
+        //         map = this.mapService.getActZero();
+        //     }
+        // }
+
+        // const event_id = '-1';
         const map = this.mapService.getActZero();
 
         const cards = await this.generatePlayerDeck(character, email);
@@ -76,8 +98,8 @@ export class InitExpeditionProcess {
             playerState: {
                 email,
                 playerId: randomUUID(),
+                playerToken,
                 playerName,
-                nftId,
                 equippedGear,
                 characterClass: character.characterClass,
                 hpMax: character.initialHealth,
@@ -90,6 +112,7 @@ export class InitExpeditionProcess {
                 trinkets: [],
                 lootboxRarity: character.lootboxRarity,
             },
+            contest,
             status: ExpeditionStatusEnum.InProgress,
             isCurrentlyPlaying: false,
             createdAt: new Date(),
