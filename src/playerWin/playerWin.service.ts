@@ -28,7 +28,6 @@ export class PlayerWinService {
         wins?: number,
     ): Promise<boolean> {
         if (event_id == '') return true;
-        if (wins == 0) return true;
 
         if (wins === undefined) {
             wins = await this.playerWin.find({
@@ -41,6 +40,7 @@ export class PlayerWinService {
                 },
             }).length;
         }
+        if (wins == 0) return true;
 
         if (
             [
