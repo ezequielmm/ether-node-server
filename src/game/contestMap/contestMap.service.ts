@@ -11,12 +11,10 @@ export class ContestMapService {
     ) {}
 
     async find(id: string): Promise<ContestMap> {
-        const map = await this.contestMap.findById(id);
-        return map;
+        return await this.contestMap.findById(id);
     }
 
     async findAll(): Promise<ContestMap[]> {
-        const items = await this.contestMap.find();
-        return items;
+        return await this.contestMap.find();
     }
 }
