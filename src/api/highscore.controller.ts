@@ -7,7 +7,7 @@ export class HighscroreController {
         private readonly expeditionService: ExpeditionService,
     ){}
     @Get('/')
-    async getVersion(): Promise<any> {
+    async getHighscrores(): Promise<any> {
         const what = { value: 'nothing' };
         const who = await this.expeditionService.findTopScores();
         return who;
