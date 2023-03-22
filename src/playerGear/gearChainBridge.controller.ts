@@ -58,7 +58,7 @@ export class GearChainBridgeController {
         const latestExpedition = await this.expedition
             .findOne({
                 'playerToken.wallet_id': wallet
-            }).sort({createdAt: -1}); 
+            },{ playerId: 1 }).sort({createdAt: -1}).lean(); 
         
         if (!latestExpedition) return; 
 
