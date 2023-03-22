@@ -43,8 +43,6 @@ export class ContestService {
                 available_at: start,
                 ends_at: end,
                 valid_until: valid_until,
-                // eslint-disable-next-line @typescript-eslint/no-empty-function
-                updateEndTimes(): void {},
             };
         }
 
