@@ -138,6 +138,9 @@ export class RewardService {
         // If the reward is invalid we throw and exception
         if (!reward) throw new Error(`Reward ${rewardId} not found`);
 
+        // If the reward is already taken, we throw an exception
+        if (reward.taken) throw new Error(`Reward ${rewardId} already claimed`);
+        
         // Now we set that we took the reward
         reward.taken = true;
 
