@@ -41,7 +41,7 @@ export class ContestService {
     }
 
     async isValid(contest: Contest): Promise<boolean> {
-        contest.updateEndTimes();
+        if(contest.updateEndTimes) contest.updateEndTimes();
         return new Date() <= contest.valid_until;
     }
 }
