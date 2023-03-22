@@ -23,7 +23,10 @@ export class TaskService {
 
         // First we query the database to confirm if we have a map contest
         // for today
-        const contest = await this.contestService.findActive();
+        const targetDate = new Date();
+        targetDate.setTime( targetDate.getTime() + 2*60*60*1000);
+
+        const contest = await this.contestService.findContestByDate(targetDate);
 
         // If we have a contest, we don't need to create a new map
         if (contest) {
@@ -32,7 +35,7 @@ export class TaskService {
         }
 
         // We get the current date
-        const now = new Date();
+        const now = targetDate;
         now.setUTCHours(0, 0, 0, 0);
 
         // If we don't have a contest, we generate the first map

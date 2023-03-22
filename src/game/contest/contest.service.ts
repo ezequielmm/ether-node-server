@@ -22,21 +22,25 @@ export class ContestService {
         return last ? parseInt(last.event_id) : 0;
     }
 
-    async findActive(): Promise<Contest> {
-        const start = new Date();
+    async findContestByDate(targetDate: Date): Promise<Contest> {
+        const start = targetDate;
         start.setUTCHours(0, 0, 0, 0);
 
-        const end = new Date();
+        const end = targetDate;
         end.setUTCHours(23, 59, 59, 999);
 
-        const current = await this.contest.findOne({
+        const contest = await this.contest.findOne({
             available_at: { $gte: start, $lte: end },
-        }); // find the one that starts on this day.
+        }).lean(); // find the one that starts on this day.
 
-        if (!current) return;
-        current.updateEndTimes();
+        if (!contest) return;
+        contest.updateEndTimes();
 
-        return current;
+        return contest;
+    }
+
+    async findActive(): Promise<Contest> {
+        return this.findContestByDate(new Date());
     }
 
     async isValid(contest: Contest): Promise<boolean> {
