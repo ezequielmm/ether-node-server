@@ -26,7 +26,6 @@ export interface IPlayerToken {
     tokenId: number;
 }
 
-
 @modelOptions({
     schemaOptions: { collection: 'expeditions', versionKey: false },
     options: { allowMixed: Severity.ALLOW },
