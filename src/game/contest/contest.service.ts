@@ -15,6 +15,13 @@ export class ContestService {
         return await this.contest.create(payload);
     }
 
+    async getLastEventId(): Promise<number> {
+        const last = await this.contest
+            .findOne({}, { event_id: 1 })
+            .sort({ event_id: -1 });
+        return last ? last.event_id : 0;
+    }
+
     async findActive(): Promise<Contest> {
         const start = new Date();
         start.setUTCHours(0, 0, 0, 0);

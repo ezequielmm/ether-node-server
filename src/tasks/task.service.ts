@@ -35,10 +35,14 @@ export class TaskService {
             node: map,
         });
 
+        // Now we get the last event_id from the database, this filed is used to
+        // show the map on the admin panel calendar
+        const event_id = await this.contestService.getLastEventId();
+
         // Now we schedule the contest to the day
         const newContest = await this.contestService.create({
             map_id: contestMap.id,
-            event_id: null,
+            event_id: event_id + 1,
             available_at: now,
         });
     }
