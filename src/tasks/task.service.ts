@@ -1,8 +1,10 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
+import { last } from 'lodash';
 import { ContestService } from 'src/game/contest/contest.service';
 import { ContestMapService } from 'src/game/contestMap/contestMap.service';
 import { MapService } from 'src/game/map/map.service';
+import buildActOne from 'src/game/map/act/act-one/index';
 
 @Injectable()
 export class TaskService {
@@ -19,7 +21,9 @@ export class TaskService {
         timeZone: 'UTC',
     })
     async handleMapCreation(): Promise<void> {
-        this.logger.log('Checking if we need to create a new map...');
+        this.logger.log(
+            'Checking if we need to create a new map for today contest...',
+        );
 
         // First we query the database to confirm if we have a map contest
         // for today
@@ -39,8 +43,18 @@ export class TaskService {
         now.setUTCHours(0, 0, 0, 0);
 
         // If we don't have a contest, we generate the first map
-        // and create a contest for it
+        // and create a contest for it, first we generate act 0
         const map = this.mapService.getActZero();
+
+        // Now we generate the rest of nodes for the map
+        // First we we the last node id to keep it consistent
+        const lastNodeId = last(map)?.id ?? 0;
+
+        // Now we generate the rest of the nodes
+        const nodes = buildActOne(lastNodeId + 1);
+
+        // Now we add the nodes to the map
+        map.push(...nodes);
 
         // We create the map first
         const contestMap = await this.contestMapService.create({

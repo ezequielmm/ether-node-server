@@ -23,7 +23,7 @@ export class Contest {
     @Prop()
     valid_until?: Date;
 
-    updateEndTimes(): void {
+    updateEndTimes?(): void {
         const contest_duration = 24 * 60 * 60 * 1000; // 24 hours in microseconds
         // const valid_extension = 6 * 60 * 60 * 1000; // 6 hours in microseconds
         const ends_at = new Date();

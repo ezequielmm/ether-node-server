@@ -33,7 +33,19 @@ export class ContestService {
             available_at: { $gte: start, $lte: end },
         }).lean(); // find the one that starts on this day.
 
-        if (!contest) return;
+        if (!contest) {
+            const valid_until = new Date();
+            valid_until.setTime(start.getTime() + 30 * 60 * 60 * 1000);
+
+            return {
+                map_id: '',
+                event_id: '',
+                available_at: start,
+                ends_at: end,
+                valid_until: valid_until,
+            };
+        }
+
         contest.updateEndTimes();
 
         return contest;
@@ -44,7 +56,13 @@ export class ContestService {
     }
 
     async isValid(contest: Contest): Promise<boolean> {
-        contest.updateEndTimes();
+        if (!(contest.valid_until instanceof Date)) {
+            if (typeof contest.updateEndTimes === 'function') {
+                contest.updateEndTimes();
+            } else {
+                return false;
+            }
+        }
         return new Date() <= contest.valid_until;
     }
 }
