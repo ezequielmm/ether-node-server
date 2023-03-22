@@ -98,7 +98,8 @@ export class ExpeditionController {
 
             const hasExpedition =
                 expedition !== null && !expedition.isCurrentlyPlaying;
-            const contractId = expedition?.playerState?.playerToken?.contractId ?? "-1";
+            const contractId =
+                expedition?.playerState?.playerToken?.contractId ?? '-1';
             const nftId = expedition?.playerState?.playerToken?.tokenId ?? -1; // tokenId is not enough to avoid conflicts between collections. We have to check contract as well.
             const equippedGear = expedition?.playerState?.equippedGear ?? [];
             const tokenType =
@@ -106,7 +107,14 @@ export class ExpeditionController {
             //todo parse for front end
             const contest = expedition?.contest;
 
-            return { hasExpedition, contractId, nftId, tokenType, equippedGear, contest };
+            return {
+                hasExpedition,
+                contractId,
+                nftId,
+                tokenType,
+                equippedGear,
+                contest,
+            };
         } catch (e) {
             this.logger.error(e.stack);
             throw new HttpException(
@@ -142,10 +150,10 @@ export class ExpeditionController {
             } = await this.authGatewayService.getUser(authorization);
 
             const { equippedGear, tokenType: character_class } = payload;
-            const playerToken: IPlayerToken = { 
-                walletId: payload.walletId, 
-                contractId: payload.contractId, 
-                tokenId: payload.nftId 
+            const playerToken: IPlayerToken = {
+                walletId: payload.walletId,
+                contractId: payload.contractId,
+                tokenId: payload.nftId,
             };
 
             // validate equippedGear vs ownedGeared
@@ -171,7 +179,10 @@ export class ExpeditionController {
                 );
 
                 if (!can_play) {
-                    return { expeditionCreated: false, reason: 'ineligible token' };
+                    return {
+                        expeditionCreated: false,
+                        reason: 'ineligible token',
+                    };
                 }
 
                 await this.initExpeditionProcess.handle({
