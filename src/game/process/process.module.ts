@@ -36,7 +36,7 @@ import { ScoreCalculatorModule } from '../scoreCalculator/scoreCalculator.module
 import { GearModule } from '../components/gear/gear.module';
 import { PlayerWinModule } from '../../playerWin/playerWin.module';
 import { ContestModule } from '../contest/contest.module';
-import { ContestMapModule } from "../contestMap/contestMap.module";
+import { ContestMapModule } from '../contestMap/contestMap.module';
 
 @Module({
     imports: [

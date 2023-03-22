@@ -13,7 +13,7 @@ export class PlayerWinService {
     async create(contest_info: PlayerWin) {
         return await this.playerWin.create(contest_info);
     }
-    
+
     async findAllWins(wallet_id: string) {
         const items = await this.playerWin.find({
             playerToken: { $elemMatch: { wallet_id: wallet_id } },
@@ -33,7 +33,12 @@ export class PlayerWinService {
         if (wins === undefined) {
             wins = await this.playerWin.find({
                 event_id: event_id,
-                playerToken: { $elemMatch: { contractId: contract_address, tokenId: token_id } }
+                playerToken: {
+                    $elemMatch: {
+                        contractId: contract_address,
+                        tokenId: token_id,
+                    },
+                },
             }).length;
         }
 
