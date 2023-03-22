@@ -26,10 +26,20 @@ import {
 } from 'src/game/scoreCalculator/scoreCalculator.service';
 import { GearItem } from '../playerGear/gearItem';
 import { PlayerGearService } from '../playerGear/playerGear.service';
+import { ContestService } from '../game/contest/contest.service';
+import { Contest } from 'src/game/contest/contest.schema';
+import { IPlayerToken } from 'src/game/components/expedition/expedition.schema';
+import { PlayerWinService } from 'src/playerWin/playerWin.service';
 
 class CreateExpeditionApiDTO {
     @ApiProperty({ default: 'Knight' })
     readonly tokenType: string;
+
+    @ApiProperty()
+    readonly walletId: string;
+
+    @ApiProperty()
+    readonly contractId: string;
 
     @ApiProperty()
     readonly nftId: number;
@@ -49,6 +59,8 @@ export class ExpeditionController {
         private readonly initExpeditionProcess: InitExpeditionProcess,
         private readonly scoreCalculatorService: ScoreCalculatorService,
         private readonly playerGearService: PlayerGearService,
+        private readonly playerWinService: PlayerWinService,
+        private contestService: ContestService,
     ) {}
 
     private readonly logger: Logger = new Logger(ExpeditionController.name);
@@ -59,9 +71,11 @@ export class ExpeditionController {
     @Get('/status')
     async handleGetExpeditionStatus(@Headers() headers): Promise<{
         hasExpedition: boolean;
+        contractId: string;
         nftId: number;
         tokenType: string;
         equippedGear: GearItem[];
+        contest: Contest;
     }> {
         this.logger.log(`Client called GET route "/expeditions/status"`);
 
@@ -84,13 +98,23 @@ export class ExpeditionController {
 
             const hasExpedition =
                 expedition !== null && !expedition.isCurrentlyPlaying;
-            const nftId = expedition?.playerState?.nftId ?? -1;
+            const contractId =
+                expedition?.playerState?.playerToken?.contractId ?? '-1';
+            const nftId = expedition?.playerState?.playerToken?.tokenId ?? -1; // tokenId is not enough to avoid conflicts between collections. We have to check contract as well.
             const equippedGear = expedition?.playerState?.equippedGear ?? [];
             const tokenType =
                 expedition?.playerState?.characterClass ?? 'missing';
             //todo parse for front end
+            const contest = expedition?.contest;
 
-            return { hasExpedition, nftId, tokenType, equippedGear };
+            return {
+                hasExpedition,
+                contractId,
+                nftId,
+                tokenType,
+                equippedGear,
+                contest,
+            };
         } catch (e) {
             this.logger.error(e.stack);
             throw new HttpException(
@@ -125,9 +149,12 @@ export class ExpeditionController {
                 email,
             } = await this.authGatewayService.getUser(authorization);
 
-            const { nftId } = payload;
-            const { equippedGear } = payload;
-            const character_class = payload.tokenType;
+            const { equippedGear, tokenType: character_class } = payload;
+            const playerToken: IPlayerToken = {
+                walletId: payload.walletId,
+                contractId: payload.contractId,
+                tokenId: payload.nftId,
+            };
 
             if (equippedGear?.length === 0) {
                 // validate equippedGear vs ownedGeared
@@ -146,13 +173,28 @@ export class ExpeditionController {
                 });
 
             if (!hasExpedition) {
+                const contest = await this.contestService.findActive();
+                const can_play = await this.playerWinService.canPlay(
+                    contest.event_id,
+                    playerToken.contractId,
+                    playerToken.tokenId,
+                );
+
+                if (!can_play) {
+                    return {
+                        expeditionCreated: false,
+                        reason: 'ineligible token',
+                    };
+                }
+
                 await this.initExpeditionProcess.handle({
                     playerId,
                     playerName,
                     email,
-                    nftId,
+                    playerToken,
                     equippedGear,
                     character_class,
+                    contest,
                 });
 
                 return { expeditionCreated: true };
