@@ -8,6 +8,8 @@ import { FindWeaknessCard } from "../../card/data/findWeakness.card";
 
 export const VillagerCharacter: Character = {
     name: 'Villager',
+    contractId: '',
+    contractIdTest: '0xF0aA34f832c34b32478B8D9696DC8Ad1c8065D2d',
     description: 'Villager Character',
     initialHealth: 50,
     initialGold: 0,
