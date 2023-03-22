@@ -9,7 +9,7 @@ export class HighscoreController {
         private contestService: ContestService,
     ) {}
     @Get('/')
-    async getHighscrores(@Query('limit') limit: number): Promise<any> {
+    async getHighscores(@Query('limit') limit: number): Promise<any> {
         if (!limit) limit = 10;
         const contest = await this.contestService.findActive();
         const who = await this.expeditionService.findTopScores(
