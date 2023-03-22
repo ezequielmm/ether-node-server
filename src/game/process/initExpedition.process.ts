@@ -14,8 +14,6 @@ import { SettingsService } from '../components/settings/settings.service';
 import { MapService } from '../map/map.service';
 import { GearItem } from '../../playerGear/gearItem';
 import { Contest } from '../contest/contest.schema';
-// import { ContestService } from '../contest/contest.service';
-import { ContestMapService } from '../contestMap/contestMap.service';
 import { IPlayerToken } from '../components/expedition/expedition.schema';
 
 @Injectable()
@@ -29,7 +27,6 @@ export class InitExpeditionProcess {
         private readonly customDeckService: CustomDeckService,
         private readonly settingsService: SettingsService,
         private readonly mapService: MapService,
-        private readonly contestService: ContestMapService,
     ) {}
 
     async handle({
