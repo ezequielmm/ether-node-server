@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ReturnModelType } from '@typegoose/typegoose';
 import { InjectModel } from 'kindagoose';
+import { compact } from 'lodash';
 import { GetCharacterDTO } from './character.dto';
 import { Character } from './character.schema';
 
@@ -44,9 +45,9 @@ export class CharacterService {
         if (characters.length > 0) {
             switch (chain) {
                 case 1:
-                    return characters.map((c) => c.contractId);
+                    return compact(characters.map((c) => c.contractId));
                 case 5:
-                    return characters.map((c) => c.contractIdTest);
+                    return compact(characters.map((c) => c.contractIdTest));
             }
         }
 
