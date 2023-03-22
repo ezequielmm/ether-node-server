@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from 'kindagoose';
 import { Contest } from './contest.schema';
 import { ReturnModelType } from '@typegoose/typegoose';
+import { CreateContestDTO } from './contest.dto';
 
 @Injectable()
 export class ContestService {
@@ -9,6 +10,10 @@ export class ContestService {
         @InjectModel(Contest)
         private readonly contest: ReturnModelType<typeof Contest>,
     ) {}
+
+    async create(payload: CreateContestDTO): Promise<Contest> {
+        return await this.contest.create(payload);
+    }
 
     async findActive(): Promise<Contest> {
         const start = new Date();
@@ -22,7 +27,6 @@ export class ContestService {
         }); // find the one that starts on this day.
 
         if (!current) return;
-
         current.updateEndTimes();
 
         return current;
@@ -30,8 +34,6 @@ export class ContestService {
 
     async isValid(contest: Contest): Promise<boolean> {
         contest.updateEndTimes();
-        return (
-            new Date() <= contest.valid_until
-        );
+        return new Date() <= contest.valid_until;
     }
 }
