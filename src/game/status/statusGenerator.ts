@@ -25,6 +25,7 @@ import { summoned } from './summoned/constants';
 import { tasteOfBloodBuff, tasteOfBloodDebuff } from './tasteOfBlood/constants';
 import { trapped } from './trapped/constants';
 import { turtling } from './turtling/constants';
+import { resist } from './resist/constants';
 
 export interface IStatusesList {
     name: string;
@@ -119,6 +120,8 @@ export class StatusGenerator {
                 return `Summoned enemies are banished if all masters are defeated`;
             case drained.name:
                 return `Next turn, lose ${value} Energy`;
+            case resist.name:
+                return `Resist the next ${counter} negative statuses`;
             case tasteOfBloodBuff.name:
                 return `Deal double damage`;
             case tasteOfBloodDebuff.name:

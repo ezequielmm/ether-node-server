@@ -126,6 +126,7 @@ export type StatusName = string;
 
 export interface StatusArgs extends Record<string, any> {
     counter: number;
+    counterDynamic?: string;
     description?: string;
 }
 
@@ -167,6 +168,7 @@ export interface AttachedStatus {
         counter?: number;
         // This is for armored up status
         cardsToAdd?: number[];
+        counterDynamic?: string;
     } & Record<string, any>;
 }
 
