@@ -12,6 +12,11 @@ export interface EffectMetadata {
     effect: Effect;
 }
 
+export interface IActionHint {
+    name?: string;
+    hint?: string;
+}
+
 export interface EffectDTO<
     Args extends Record<string, any> = Record<string, any>,
 > {
@@ -22,6 +27,7 @@ export interface EffectDTO<
         readonly initialValue: number;
         currentValue: number;
     } & Args;
+    action?: IActionHint;
 }
 
 export interface JsonEffect {
@@ -32,10 +38,7 @@ export interface JsonEffect {
         value?: number;
         description?: string;
     } & Record<string, any>;
-    action?: {
-        name?: string;
-        hint?: string;
-    };
+    action?: IActionHint;
 }
 
 export interface EffectHandler {

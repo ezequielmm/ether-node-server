@@ -22,6 +22,7 @@ import { PlayerService } from '../player/player.service';
 import { CombatQueueTargetEffectTypeEnum } from './combatQueue.enum';
 import { CreateCombatQueueDTO, PushActionDTO } from './combatQueue.interface';
 import { CombatQueue } from './combatQueue.schema';
+import { IActionHint } from 'src/game/effects/effects.interface';
 
 @Injectable()
 export class CombatQueueService {
@@ -52,7 +53,7 @@ export class CombatQueueService {
     }
 
     async push(dto: PushActionDTO): Promise<void> {
-        const { ctx, source, target, args } = dto;
+        const { ctx, source, target, args, action } = dto;
 
         await this.combatQueue.findOneAndUpdate(
             {
@@ -70,6 +71,7 @@ export class CombatQueueService {
                                 ...args,
                             },
                         ],
+                        action,
                     },
                 },
             },
@@ -117,6 +119,7 @@ export class CombatQueueService {
         ctx: GameContext;
         source: ExpeditionEntity;
         target: ExpeditionEntity;
+        action?: IActionHint
     }): Promise<void> {
         await this.addStatusesToCombatQueue(args);
     }
@@ -134,17 +137,20 @@ export class CombatQueueService {
         ctx: GameContext;
         source: ExpeditionEntity;
         target: ExpeditionEntity;
+        action?: IActionHint;
     }) {
-        const { ctx, source, target } = args;
+        const { ctx, source, target, action } = args;
 
         const statuses = PlayerService.isPlayer(target)
             ? target.value.combatState.statuses
             : target.value.statuses;
 
         await this.pushStatuses(ctx, source, target, [
-            ...statuses.buff,
-            ...statuses.debuff,
-        ]);
+                ...statuses.buff,
+                ...statuses.debuff,
+            ],
+            action,
+        );
     }
 
     public async pushStatuses(
@@ -152,6 +158,7 @@ export class CombatQueueService {
         source: ExpeditionEntity,
         target: ExpeditionEntity,
         statuses: AttachedStatus[],
+        action?: IActionHint,
     ): Promise<void> {
         const statusesInfo: IStatusesList[] = [];
 
@@ -169,6 +176,7 @@ export class CombatQueueService {
                 finalDefense: 0,
                 statuses: statusesInfo,
             },
+            action,
         });
     }
 }
