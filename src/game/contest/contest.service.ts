@@ -19,7 +19,7 @@ export class ContestService {
         const last = await this.contest
             .findOne({}, { event_id: 1 })
             .sort({ event_id: -1 });
-        return last ? last.event_id : 0;
+        return last ? parseInt(last.event_id) : 0;
     }
 
     async findActive(): Promise<Contest> {

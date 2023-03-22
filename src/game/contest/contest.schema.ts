@@ -1,14 +1,18 @@
 import { ModelOptions, Prop } from '@typegoose/typegoose';
 
 @ModelOptions({
-    schemaOptions: { collection: 'contests', versionKey: false },
+    schemaOptions: {
+        collection: 'contests',
+        versionKey: false,
+        timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' },
+    },
 })
 export class Contest {
     @Prop()
     map_id: string;
 
     @Prop()
-    event_id: number;
+    event_id: string;
 
     @Prop()
     available_at: Date;
