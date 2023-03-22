@@ -2,8 +2,8 @@ import { Controller, Get, Param, Query } from '@nestjs/common';
 import { ExpeditionService } from '../game/components/expedition/expedition.service';
 import { ContestService } from '../game/contest/contest.service';
 
-@Controller('highscrore')
-export class HighscroreController {
+@Controller('highscore')
+export class HighscoreController {
     constructor(
         private readonly expeditionService: ExpeditionService,
         private contestService: ContestService,
