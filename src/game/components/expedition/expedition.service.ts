@@ -390,4 +390,26 @@ export class ExpeditionService {
 
         await ctx.expedition.save();
     }
+
+    async findTopScores(): Promise<any[]> {
+        const expedition = await this.expedition
+            .find()
+            .sort({ 'finalScore.totalScore': -1 })
+            .limit(50);
+
+        const finalScores = [];
+        expedition.forEach((item) => {
+            if (item.finalScore) {
+                const summary = {
+                    totalScore: item.finalScore.totalScore,
+                    playerName: item.playerState.playerName,
+                    characterClass: item.playerState.characterClass,
+                    endedAt: item.endedAt,
+                }
+                finalScores.push(summary);
+            };
+        });
+
+        return finalScores;
+    }
 }

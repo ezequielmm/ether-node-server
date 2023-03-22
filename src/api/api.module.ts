@@ -10,6 +10,7 @@ import { TokenController } from './token.controller';
 import { ShowVersionController } from './showVersion.controller';
 import { ShowNftNetworkController } from './showNftNetwork.controller';
 import { PlayerGearModule } from "../playerGear/playerGear.module";
+import { HighscroreController } from "./highscore.controller";
 
 @Module({
     imports: [
@@ -26,6 +27,7 @@ import { PlayerGearModule } from "../playerGear/playerGear.module";
         TokenController,
         ShowVersionController,
         ShowNftNetworkController,
+        HighscroreController,
     ],
 })
 export class ApiModule {}
