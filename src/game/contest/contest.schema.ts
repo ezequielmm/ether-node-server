@@ -8,6 +8,9 @@ export class Contest {
     map_id: string;
 
     @Prop()
+    event_id: string;
+
+    @Prop()
     available_at: Date;
 
     @Prop()
