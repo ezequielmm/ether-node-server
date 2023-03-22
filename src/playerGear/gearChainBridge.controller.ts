@@ -1,5 +1,5 @@
 import { ApiOperation, ApiTags, ApiProperty } from '@nestjs/swagger';
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, Inject, Post } from "@nestjs/common";
 import { PlayerGearService } from './playerGear.service';
 import { Headers, Param } from '@nestjs/common/decorators/http/route-params.decorator';
 import { Gear } from '../game/components/gear/gear.schema';
@@ -8,6 +8,7 @@ import { GearItem } from './gearItem';
 import { Expedition } from 'src/game/components/expedition/expedition.schema';
 import { ReturnModelType } from '@typegoose/typegoose';
 import { GearTraitEnum } from 'src/game/components/gear/gear.enum';
+import { getModelToken } from "kindagoose";
 
 class AlterGearApiDTO {
     @ApiProperty()
@@ -37,6 +38,7 @@ interface ITokenCheck {
 @Controller('gearChainBridge')
 export class GearChainBridgeController {
     constructor(
+        @Inject(getModelToken('Expedition'))
         private readonly expedition: ReturnModelType<typeof Expedition>,
         private readonly authGatewayService: AuthGatewayService,
         private playerGearService: PlayerGearService
