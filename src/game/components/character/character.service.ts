@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ReturnModelType } from '@typegoose/typegoose';
 import { InjectModel } from 'kindagoose';
-import { reduce } from 'lodash';
 import { GetCharacterDTO } from './character.dto';
 import { Character } from './character.schema';
 
@@ -36,21 +35,21 @@ export class CharacterService {
 
     async findAllContractIds(): Promise<Array<string>> {
         const chain = Number(process.env.NFT_SERVICE_CHAIN_ID);
-        
-        const characters = this.character.find(
+
+        const characters = await this.character.find(
             { isActive: true, contractId: { $ne: '' } },
-            { contractId: 1, contractIdTest: 1 });
+            { contractId: 1, contractIdTest: 1 },
+        );
 
         if (characters.length > 0) {
             switch (chain) {
                 case 1:
                     return characters.map((c) => c.contractId);
-                    break;
                 case 5:
                     return characters.map((c) => c.contractIdTest);
-                    break;
             }
         }
+
         return [];
     }
 }
