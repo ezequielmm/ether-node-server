@@ -3,13 +3,24 @@ import { randomUUID } from 'crypto';
 import { CardDescriptionFormatter } from '../cardDescriptionFormatter/cardDescriptionFormatter';
 import { CardService } from '../components/card/card.service';
 import { ExpeditionService } from '../components/expedition/expedition.service';
-
+import { sample } from 'lodash';
 @Injectable()
 export class GetMerchantDataAction {
     constructor(
         private readonly expeditionService: ExpeditionService,
         private readonly cardService: CardService,
     ) {}
+
+    private getRandomGreeting(): string {
+        const greetings = [
+            "Greetings, Traveler! Best wares in the Fen. What'll it be?",
+            "Welcome Adventurer! Some fine items for ye, I've got. What catches your eye?",
+            "A customer! It's been so long! Mayhaps some of these could be of use?",
+            "No need to dawdle. Make your choices and move along...",
+        ];
+
+        return greetings[0]; //sample(greetings);
+    }
 
     async handle(clientId: string) {
         const {
@@ -23,7 +34,7 @@ export class GetMerchantDataAction {
         const data = {
             coins: playerState.gold,
             shopkeeper: 1,
-            speechBubble: 'Hello',
+            speechBubble: this.getRandomGreeting(),
             upgradeableCards: [],
             upgradedCards: [],
             playerCards: cards,
