@@ -14,7 +14,7 @@ import { SettingsService } from '../components/settings/settings.service';
 import { MapService } from '../map/map.service';
 import { GearItem } from '../../playerGear/gearItem';
 import { Contest } from '../contest/contest.schema';
-import { ContestService } from '../contest/contest.service';
+// import { ContestService } from '../contest/contest.service';
 import { ContestMapService } from '../contestMap/contestMap.service';
 import { IPlayerToken } from '../components/expedition/expedition.schema';
 
@@ -49,7 +49,6 @@ export class InitExpeditionProcess {
         character_class: string;
         contest: Contest;
     }): Promise<void> {
-
         let character_class_enum = CharacterClassEnum.Knight;
         if (character_class === 'Villager')
             character_class_enum = CharacterClassEnum.Villager;
@@ -63,22 +62,22 @@ export class InitExpeditionProcess {
         const { initialPotionChance } =
             await this.settingsService.getSettings();
 
-        if (false) {
-            //todo CONTEST replace nodes with contestMap
-            let event_id = '-1';
-            let map = [];
-            if (contest) {
-                const contest_map = await this.contestService.find(
-                    contest.map_id,
-                );
-                event_id = contest.event_id;
-                map = contest_map.node;
-            } else {
-                map = this.mapService.getActZero();
-            }
-        }
+        // if (false) {
+        //     //todo CONTEST replace nodes with contestMap
+        //     let event_id = '-1';
+        //     let map = [];
+        //     if (contest) {
+        //         const contest_map = await this.contestService.find(
+        //             contest.map_id,
+        //         );
+        //         event_id = contest.event_id;
+        //         map = contest_map.node;
+        //     } else {
+        //         map = this.mapService.getActZero();
+        //     }
+        // }
 
-        const event_id = '-1';
+        // const event_id = '-1';
         const map = this.mapService.getActZero();
 
         const cards = await this.generatePlayerDeck(character, email);
