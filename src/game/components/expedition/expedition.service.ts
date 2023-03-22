@@ -390,4 +390,34 @@ export class ExpeditionService {
 
         await ctx.expedition.save();
     }
+
+    async findTopScores(event_id: string, limit: number): Promise<any[]> {
+        limit = limit > 50 ? 50 : limit;
+        limit = limit < 10 ? 10 : limit;
+        const expedition = await this.expedition
+            .find({ 'contest.event_id': event_id })
+            .sort({ 'finalScore.totalScore': -1 })
+            .limit(limit);
+
+        const finalScores = [];
+        expedition.forEach((item) => {
+            if (item.finalScore) {
+                const endedAt = item.endedAt;
+                const startedAt = item.createdAt;
+                const duration = Math.floor(
+                    (endedAt.getTime() - startedAt.getTime()) / 1000,
+                );
+                const summary = {
+                    totalScore: item.finalScore.totalScore,
+                    playerName: item.playerState.playerName,
+                    characterClass: item.playerState.characterClass,
+                    duration,
+                    endedAt,
+                };
+                finalScores.push(summary);
+            }
+        });
+
+        return finalScores;
+    }
 }

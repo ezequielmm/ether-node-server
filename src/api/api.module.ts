@@ -9,6 +9,7 @@ import { ScoreCalculatorModule } from 'src/game/scoreCalculator/scoreCalculator.
 import { TokenController } from './token.controller';
 import { ShowVersionController } from './showVersion.controller';
 import { ShowNftNetworkController } from './showNftNetwork.controller';
+import { HighscoreController } from './highscore.controller';
 import { PlayerGearModule } from '../playerGear/playerGear.module';
 import { ContestModule } from '../game/contest/contest.module';
 import { PlayerWinModule } from '../playerWin/playerWin.module';
@@ -30,6 +31,7 @@ import { PlayerWinModule } from '../playerWin/playerWin.module';
         TokenController,
         ShowVersionController,
         ShowNftNetworkController,
+        HighscoreController,
     ],
 })
 export class ApiModule {}
