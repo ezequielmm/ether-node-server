@@ -34,50 +34,10 @@ export class ContestService {
         const last = await this.contest
             .findOne({}, { event_id: 1 })
             .sort({ event_id: -1 });
-        return last ? parseInt(last.event_id) : 0;
-    }
-
-    async findContestByDate(targetDate: Date): Promise<Contest> {
-        const start = targetDate;
-        start.setUTCHours(0, 0, 0, 0);
-
-        const end = targetDate;
-        end.setUTCHours(23, 59, 59, 999);
-
-        const contest = await this.findOne({
-            available_at: { $gte: start, $lte: end },
-        }); // find the one that starts on this day.
-
-        if (!contest) {
-            const valid_until = new Date();
-            valid_until.setTime(start.getTime() + 30 * 60 * 60 * 1000);
-
-            return {
-                map_id: '',
-                event_id: '',
-                available_at: start,
-                ends_at: end,
-                valid_until: valid_until,
-            };
-        }
-
-        contest.updateEndTimes();
-
-        return contest;
-    }
-
-    async findActive(): Promise<Contest> {
-        return this.findContestByDate(new Date());
+        return last ? last.event_id : 0;
     }
 
     async isValid(contest: Contest): Promise<boolean> {
-        if (!(contest.valid_until instanceof Date)) {
-            if (typeof contest.updateEndTimes === 'function') {
-                contest.updateEndTimes();
-            } else {
-                return false;
-            }
-        }
         return new Date() <= contest.valid_until;
     }
 }

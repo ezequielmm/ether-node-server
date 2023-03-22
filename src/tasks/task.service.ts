@@ -16,7 +16,7 @@ export class TaskService {
         private readonly contestMapService: ContestMapService,
     ) {}
 
-    @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT, {
+    @Cron(CronExpression.EVERY_DAY_AT_11PM, {
         name: 'Create Contest Map',
         timeZone: 'UTC',
     })
@@ -24,6 +24,8 @@ export class TaskService {
         this.logger.log(
             'Checking if we need to create a new map for today contest...',
         );
+
+        // First we query the database to confirm if we have a map contest
 
         // First we query the database to confirm if we have a map contest
         // for today

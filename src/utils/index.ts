@@ -184,3 +184,11 @@ export function snakeCaseToTitleCase(text: string): string {
         .replace(/^[-_]*(.)/, (_, c) => c.toUpperCase())
         .replace(/[-_]+(.)/g, (_, c) => ' ' + c.toUpperCase());
 }
+
+/**
+ * Add 1 hour to a given date
+ * return Date
+ */
+export function addHoursToDate(givenDate: Date, hours = 1): Date {
+    return new Date(givenDate.getTime() + hours * 60 * 60 * 1000);
+}

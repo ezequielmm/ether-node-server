@@ -3,6 +3,7 @@ import { InjectModel } from 'kindagoose';
 import { ContestMap, ContestMapDocument } from './contestMap.schema';
 import { ReturnModelType } from '@typegoose/typegoose';
 import { CreateContestMapDTO } from './contestMap.dto';
+import { FilterQuery, ProjectionFields } from 'mongoose';
 
 @Injectable()
 export class ContestMapService {
@@ -15,11 +16,21 @@ export class ContestMapService {
         return await this.contestMap.create(payload);
     }
 
-    async find(id: string): Promise<ContestMap> {
-        return await this.contestMap.findById(id);
+    async findById(id: string): Promise<ContestMap> {
+        return await this.contestMap.findById(id).lean();
     }
 
-    async findAll(): Promise<ContestMap[]> {
-        return await this.contestMap.find();
+    async findOne(
+        filter: FilterQuery<ContestMap>,
+        projection?: ProjectionFields<ContestMap>,
+    ): Promise<ContestMap> {
+        return await this.contestMap.findOne(filter, projection).lean();
+    }
+
+    async find(
+        filter: FilterQuery<ContestMap>,
+        projection?: ProjectionFields<ContestMap>,
+    ): Promise<ContestMap[]> {
+        return await this.contestMap.find(filter, projection).lean();
     }
 }
