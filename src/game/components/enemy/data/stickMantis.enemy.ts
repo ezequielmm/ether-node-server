@@ -41,6 +41,10 @@ export const stickMantisData: Enemy = {
                                 value: 4,
                                 multiplier: 2,
                             },
+                            action: {
+                                name: 'Stab',
+                                hint: 'attack1_stab',
+                            },
                         },
                     ],
                 },
@@ -67,6 +71,10 @@ export const stickMantisData: Enemy = {
                                 value: 1,
                                 cardId: MossCard.cardId,
                                 destination: 'discard',
+                            },
+                            action: {
+                                name: 'Fling Moss',
+                                hint: 'cast1_flingmoss',
                             },
                         },
                     ],
@@ -96,6 +104,10 @@ export const stickMantisData: Enemy = {
                             target: CardTargetedEnum.RandomEnemy,
                             args: {
                                 value: 8,
+                            },
+                            action: {
+                                name: 'Block',
+                                hint: 'cast2_block',
                             },
                         },
                     ],

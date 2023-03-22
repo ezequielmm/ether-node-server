@@ -43,6 +43,10 @@ export const trapelicanData: Enemy = {
                             args: {
                                 value: 7,
                             },
+                            action: {
+                                name: 'Bite',
+                                hint: 'attack1',
+                            },
                         },
                     ],
                 },
@@ -71,6 +75,10 @@ export const trapelicanData: Enemy = {
                             target: CardTargetedEnum.Self,
                             args: {
                                 value: 4,
+                            },
+                            action: {
+                                name: 'Swoop',
+                                hint: 'cast1',
                             },
                         },
                     ],
@@ -117,6 +125,10 @@ export const trapelicanData: Enemy = {
                                 statusArgs: {
                                     counter: 1,
                                 },
+                            },
+                            action: {
+                                name: 'Lure',
+                                hint: 'lure_start',
                             },
                         },
                     ],

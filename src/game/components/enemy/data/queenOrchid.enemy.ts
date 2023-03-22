@@ -46,6 +46,10 @@ export const queenOrchidData: Enemy = {
                                 cardId: ChokingCard.cardId, //
                                 destination: 'discard',
                             },
+                            action: {
+                                name: 'Pheromone Cloud',
+                                hint: 'cast1',
+                            },
                         },
                     ],
                 },
@@ -74,6 +78,10 @@ export const queenOrchidData: Enemy = {
                                     counter: 2,
                                 },
                             },
+                            action: {
+                                name: 'Constrict',
+                                hint: 'attack3',
+                            },
                         },
                     ],
                 },
@@ -98,6 +106,10 @@ export const queenOrchidData: Enemy = {
                             target: CardTargetedEnum.Player,
                             args: {
                                 value: 10,
+                            },
+                            action: {
+                                name: 'Bite',
+                                hint: 'attack2',
                             },
                         },
                     ],

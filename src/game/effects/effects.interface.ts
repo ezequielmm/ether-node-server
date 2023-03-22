@@ -32,6 +32,10 @@ export interface JsonEffect {
         value?: number;
         description?: string;
     } & Record<string, any>;
+    action?: {
+        name?: string;
+        hint?: string;
+    };
 }
 
 export interface EffectHandler {

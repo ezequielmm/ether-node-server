@@ -75,6 +75,10 @@ export const thornWolfPupData: Enemy = {
                             effect: damageEffect.name,
                             target: CardTargetedEnum.Player,
                             args: { value: 7 },
+                            action: {
+                                name: 'Bite',
+                                hint: 'attack1',
+                            },
                         },
                     ],
                 },
@@ -103,6 +107,10 @@ export const thornWolfPupData: Enemy = {
                             target: CardTargetedEnum.Self,
                             args: {
                                 value: 4,
+                            },
+                            action: {
+                                name: 'Bristle',
+                                hint: 'cast1',
                             },
                         },
                     ],
@@ -148,6 +156,10 @@ export const thornWolfPupData: Enemy = {
                             effect: fleeEffect.name,
                             target: CardTargetedEnum.Self,
                             args: { value: 1 },
+                            action: {
+                                name: 'Flee',
+                                hint: 'flee',
+                            },
                         },
                     ],
                 },

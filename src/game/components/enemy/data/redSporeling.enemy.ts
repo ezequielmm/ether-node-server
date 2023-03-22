@@ -20,9 +20,34 @@ export const redSporelingData: Enemy = {
     healthRange: [12, 14],
     scripts: [
         {
+            id: -1,
+            intentions: [],
+            next: [
+                {
+                    probability: 1,
+                    scriptId: 0,
+                },
+            ],
+        },
+        {
+            // we need a summoned status
             id: 0,
             intentions: [
-                // TODO: Create Summoned status
+                {
+                    type: EnemyIntentionType.Debuff,
+                    target: CardTargetedEnum.Self,
+                    value: 1,
+                    effects: [
+                        {
+                            effect: attachStatusEffect.name,
+                            target: CardTargetedEnum.Self,
+                            args: {
+                                statusName: summoned.name,
+                                statusArgs: {},
+                            },
+                        },
+                    ],
+                },
             ],
             next: [
                 {
@@ -52,6 +77,10 @@ export const redSporelingData: Enemy = {
                                     counter: 2,
                                 },
                             },
+                            action: {
+                                name: 'Infect',
+                                hint: 'cast',
+                            },
                         },
                     ],
                 },
@@ -80,6 +109,10 @@ export const redSporelingData: Enemy = {
                             target: CardTargetedEnum.Player,
                             args: {
                                 value: 5,
+                            },
+                            action: {
+                                name: 'Attack',
+                                hint: 'attack',
                             },
                         },
                     ],

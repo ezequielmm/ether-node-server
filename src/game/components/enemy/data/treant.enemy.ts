@@ -47,6 +47,10 @@ export const treantData: Enemy = {
                                     counter: 5,
                                 },
                             },
+                            action: {
+                                name: 'Rage',
+                                hint: 'attack1',
+                            },
                         },
                     ],
                 },
@@ -75,6 +79,10 @@ export const treantData: Enemy = {
                             target: CardTargetedEnum.Player,
                             args: {
                                 value: 5,
+                            },
+                            action: {
+                                name: 'Beat',
+                                hint: 'attack2',
                             },
                         },
                     ],
@@ -123,6 +131,10 @@ export const treantData: Enemy = {
                                 value: 5,
                                 multiplier: 2,
                             },
+                            action: {
+                                name: 'Pummel',
+                                hint: 'attack3',
+                            },
                         },
                     ],
                 },
@@ -167,6 +179,10 @@ export const treantData: Enemy = {
                                 value: 5,
                                 multiplier: 3,
                             },
+                            action: {
+                                name: 'Rampage',
+                                hint: 'attack1',
+                            },
                         },
                     ],
                 },
@@ -199,6 +215,10 @@ export const treantData: Enemy = {
                                 destination: 'draw',
                                 position: AddCardPosition.Random,
                             },
+                            action: {
+                                name: 'Shockwave',
+                                hint: 'cast1',
+                            },
                         },
                     ],
                 },
@@ -230,6 +250,10 @@ export const treantData: Enemy = {
                                 statusArgs: {
                                     counter: 1,
                                 },
+                            },
+                            action: {
+                                name: 'Shield',
+                                hint: 'cast2',
                             },
                         },
                     ],

@@ -42,6 +42,10 @@ export const ancientOneData: Enemy = {
                                 statusArgs: {
                                     counter: 2,
                                 },
+                                action: {
+                                    name: 'Roar',
+                                    hint: 'cast1',
+                                },
                             },
                         },
                     ],
@@ -72,6 +76,10 @@ export const ancientOneData: Enemy = {
                             args: {
                                 value: 22,
                             },
+                            action: {
+                                name: 'Bite',
+                                hint: 'attack1',
+                            },
                         },
                     ],
                 },
@@ -101,6 +109,10 @@ export const ancientOneData: Enemy = {
                             args: {
                                 value: 18,
                             },
+                            action: {
+                                name: 'Charge',
+                                hint: 'attack2',
+                            },
                         },
                     ],
                 },
@@ -125,6 +137,10 @@ export const ancientOneData: Enemy = {
                             target: CardTargetedEnum.Self,
                             args: {
                                 value: 18,
+                            },
+                            action: {
+                                name: 'Fade',
+                                hint: 'cast2',
                             },
                         },
                     ],
