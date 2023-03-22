@@ -174,11 +174,14 @@ export class ExpeditionController {
 
             if (!hasExpedition) {
                 const contest = await this.contestService.findActive();
-                const can_play = await this.playerWinService.canPlay(
+                const can_play = true;
+                /* todo very temporary
+                    await this.playerWinService.canPlay(
                     contest.event_id,
                     playerToken.contractId,
                     playerToken.tokenId,
                 );
+                */
 
                 if (!can_play) {
                     return {

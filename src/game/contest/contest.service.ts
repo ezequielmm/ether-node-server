@@ -17,9 +17,13 @@ export class ContestService {
         const end = new Date();
         end.setUTCHours(23, 59, 59, 999);
 
-        const current = await this.contest.findOne({
+        const current = await this.contest.findOne(
+        /* todo very temporary 
+            {
             available_at: { $gte: start, $lte: end },
-        }); // find the one that starts on this day.
+        }
+        */
+        ); // find the one that starts on this day.
 
         if (!current) return;
 
