@@ -20,7 +20,7 @@ import {
     SWARMessageType,
 } from '../standardResponse/standardResponse';
 import { GearService } from '../components/gear/gear.service';
-import { PlayerWinService } from "../../playerWin/playerWin.service";
+import { PlayerWinService } from '../../playerWin/playerWin.service';
 import { ContestService } from '../contest/contest.service';
 
 @Injectable()
@@ -84,15 +84,15 @@ export class EndCombatProcess {
                         3,
                         ctx.expedition.playerState.lootboxRarity,
                     );
-                    ctx.expedition.finalScore.notifyNoLoot = false;
+                ctx.expedition.finalScore.notifyNoLoot = false;
             } else {
                 ctx.expedition.finalScore.lootbox = [];
                 ctx.expedition.finalScore.notifyNoLoot = true;
             }
-            
+
             await this.playerWinService.create({
-                event_id: ctx.expedition.contest.event_id, 
-                playerToken: ctx.expedition.playerState.playerToken
+                event_id: ctx.expedition.contest.event_id,
+                playerToken: ctx.expedition.playerState.playerToken,
             });
 
             //message client
