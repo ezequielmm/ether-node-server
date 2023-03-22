@@ -11,9 +11,11 @@ import { LoggerModule } from 'nestjs-pino';
 import { createWriteStream } from 'pino-papertrail';
 import { PlayerGearModule } from './playerGear/playerGear.module';
 import { serverEnvironments } from './utils';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
     imports: [
+        ScheduleModule.forRoot(),
         LoggerModule.forRootAsync({
             inject: [ConfigService],
             useFactory: (configService: ConfigService) => ({
