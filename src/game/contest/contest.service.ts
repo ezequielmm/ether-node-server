@@ -17,15 +17,23 @@ export class ContestService {
         const end = new Date();
         end.setUTCHours(23, 59, 59, 999);
 
-        const current = await this.contest.findOne(
-        /* todo very temporary 
-            {
+        const current = await this.contest.findOne({
             available_at: { $gte: start, $lte: end },
-        }
-        */
-        ); // find the one that starts on this day.
+        }); // find the one that starts on this day.
 
-        if (!current) return;
+        if (!current) {
+            const valid_until = new Date;
+            valid_until.setTime(start.getTime() + 30*60*60*1000);
+
+            return {
+                map_id: '',
+                event_id: '',
+                available_at: start,
+                ends_at: end,
+                valid_until: valid_until,
+                updateEndTimes: () => undefined,
+            };
+        }
 
         current.updateEndTimes();
 
@@ -34,8 +42,6 @@ export class ContestService {
 
     async isValid(contest: Contest): Promise<boolean> {
         contest.updateEndTimes();
-        return (
-            new Date() <= contest.valid_until
-        );
+        return new Date() <= contest.valid_until;
     }
 }
