@@ -40,7 +40,7 @@ export class TaskService {
         const event_id = await this.contestService.getLastEventId();
 
         // Now we schedule the contest to the day
-        const newContest = await this.contestService.create({
+        await this.contestService.create({
             map_id: contestMap.id,
             event_id: event_id + 1,
             available_at: now,
