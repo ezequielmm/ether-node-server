@@ -9,6 +9,7 @@ import {
     EnemyIntentionType,
 } from '../enemy.enum';
 import { Enemy } from '../enemy.schema';
+import { summoned } from 'src/game/status/summoned/constants';
 
 export const redSporelingData: Enemy = {
     enemyId: 15,
