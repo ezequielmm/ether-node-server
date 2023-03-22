@@ -22,8 +22,8 @@ export class ContestService {
         }); // find the one that starts on this day.
 
         if (!current) {
-            const valid_until = new Date;
-            valid_until.setTime(start.getTime() + 30*60*60*1000);
+            const valid_until = new Date();
+            valid_until.setTime(start.getTime() + 30 * 60 * 60 * 1000);
 
             return {
                 map_id: '',
