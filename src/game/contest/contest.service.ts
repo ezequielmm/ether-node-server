@@ -3,6 +3,7 @@ import { InjectModel } from 'kindagoose';
 import { Contest } from './contest.schema';
 import { ReturnModelType } from '@typegoose/typegoose';
 import { CreateContestDTO } from './contest.dto';
+import { FilterQuery, ProjectionFields } from 'mongoose';
 
 @Injectable()
 export class ContestService {
@@ -13,6 +14,20 @@ export class ContestService {
 
     async create(payload: CreateContestDTO): Promise<Contest> {
         return await this.contest.create(payload);
+    }
+
+    async findAll(
+        filter?: FilterQuery<Contest>,
+        projection?: ProjectionFields<Contest>,
+    ): Promise<Contest[]> {
+        return await this.contest.find(filter, projection).lean();
+    }
+
+    async findOne(
+        filter?: FilterQuery<Contest>,
+        projection?: ProjectionFields<Contest>,
+    ): Promise<Contest> {
+        return await this.contest.findOne(filter, projection).lean();
     }
 
     async getLastEventId(): Promise<number> {
@@ -29,9 +44,9 @@ export class ContestService {
         const end = targetDate;
         end.setUTCHours(23, 59, 59, 999);
 
-        const contest = await this.contest.findOne({
+        const contest = await this.findOne({
             available_at: { $gte: start, $lte: end },
-        }).lean(); // find the one that starts on this day.
+        }); // find the one that starts on this day.
 
         if (!contest) {
             const valid_until = new Date();

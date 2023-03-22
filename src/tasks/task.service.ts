@@ -28,7 +28,7 @@ export class TaskService {
         // First we query the database to confirm if we have a map contest
         // for today
         const targetDate = new Date();
-        targetDate.setTime( targetDate.getTime() + 2*60*60*1000);
+        targetDate.setTime(targetDate.getTime() + 2 * 60 * 60 * 1000);
 
         const contest = await this.contestService.findContestByDate(targetDate);
 

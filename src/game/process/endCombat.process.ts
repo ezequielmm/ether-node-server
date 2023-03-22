@@ -78,7 +78,11 @@ export class EndCombatProcess {
             ctx.expedition.completedAt = new Date();
             ctx.expedition.endedAt = new Date();
 
-            if (await this.contestService.isValid(ctx.expedition.contest)) {
+            const isContestValid = await this.contestService.isValid(
+                ctx.expedition.contest,
+            );
+
+            if (isContestValid) {
                 ctx.expedition.finalScore.lootbox =
                     await this.gearService.getLootbox(
                         3,
