@@ -88,8 +88,8 @@ export class CombatQueueService {
         if (!combatQueues) return;
 
         const data = combatQueues.queue.map(
-            ({ originType, originId, targets }) => {
-                return { originType, originId, targets };
+            ({ originType, originId, targets, action }) => {
+                return { originType, originId, targets, action };
             },
         );
 
@@ -119,7 +119,7 @@ export class CombatQueueService {
         ctx: GameContext;
         source: ExpeditionEntity;
         target: ExpeditionEntity;
-        action?: IActionHint
+        action?: IActionHint;
     }): Promise<void> {
         await this.addStatusesToCombatQueue(args);
     }
@@ -145,10 +145,11 @@ export class CombatQueueService {
             ? target.value.combatState.statuses
             : target.value.statuses;
 
-        await this.pushStatuses(ctx, source, target, [
-                ...statuses.buff,
-                ...statuses.debuff,
-            ],
+        await this.pushStatuses(
+            ctx,
+            source,
+            target,
+            [...statuses.buff, ...statuses.debuff],
             action,
         );
     }
