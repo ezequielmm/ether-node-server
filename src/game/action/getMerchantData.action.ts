@@ -28,7 +28,7 @@ export class GetMerchantDataAction {
                 "Greetings, Traveler! Best wares in the Fen. What'll it be?",
                 "Welcome Adventurer! Some fine items for ye, I've got. What catches your eye?",
                 "A customer! It's been so long! Perhaps I've something that could be of use?",
-                'No need to dawdle. Make your choices and move along...',
+                "No need to dawdle. Make your choices and move along..."
             ]),
             upgradeableCards: [],
             upgradedCards: [],
