@@ -15,7 +15,6 @@ import {
     EffectHandler,
     EffectMetadata,
     MutateDTO,
-    IActionHint,
 } from './effects.interface';
 
 @Injectable()
