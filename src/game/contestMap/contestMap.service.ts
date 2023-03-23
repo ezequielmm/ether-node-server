@@ -21,7 +21,7 @@ export class ContestMapService {
     }
 
     async findOne(
-        filter: FilterQuery<ContestMap>,
+        filter?: FilterQuery<ContestMap>,
         projection?: ProjectionFields<ContestMap>,
     ): Promise<ContestMap> {
         return await this.contestMap.findOne(filter, projection).lean();

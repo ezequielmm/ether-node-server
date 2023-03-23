@@ -24,6 +24,10 @@ export class ContestService {
         return await this.contest.find(filter, projection).lean();
     }
 
+    async deleteMany(filter?: FilterQuery<Contest>): Promise<void> {
+        await this.contest.deleteMany(filter);
+    }
+
     async findOne(
         filter?: FilterQuery<Contest>,
         projection?: ProjectionFields<Contest>,

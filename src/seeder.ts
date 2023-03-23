@@ -18,8 +18,10 @@ import { EncounterSeeder } from './game/components/encounter/encounter.seeder';
 import { Encounter } from './game/components/encounter/encounter.schema';
 import { GearSeeder } from './game/components/gear/gear.seeder';
 import { Gear } from './game/components/gear/gear.schema';
-import { Contest } from './game/contest/contest.schema';
+import { ContestMapSeeder } from './game/contestMap/contestMap.seeder';
+import { MapModule } from './game/map/map/map.module';
 import { ContestMap } from './game/contestMap/contestMap.schema';
+import { ContestModule } from './game/contest/contest.module';
 
 seeder({
     imports: [
@@ -46,9 +48,10 @@ seeder({
             Chest,
             Encounter,
             Gear,
-            Contest,
             ContestMap,
         ]),
+        MapModule,
+        ContestModule,
     ],
 }).run([
     CardSeeder,
@@ -59,4 +62,5 @@ seeder({
     ChestSeeder,
     GearSeeder,
     EncounterSeeder,
+    ContestMapSeeder,
 ]);
