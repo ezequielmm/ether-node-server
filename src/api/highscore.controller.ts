@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Query } from '@nestjs/common';
+import { Controller, Get, Query } from '@nestjs/common';
 import { ExpeditionService } from '../game/components/expedition/expedition.service';
 import { ContestService } from '../game/contest/contest.service';
 
