@@ -32,15 +32,15 @@ export class PlayerWinService {
         if (event_id == '') return true;
 
         if (wins === undefined) {
-            wins = await this.playerWin.find({
-                event_id: event_id,
-                playerToken: {
-                    $elemMatch: {
-                        contractId: contract_address,
-                        tokenId: token_id,
-                    },
-                },
-            }).length;
+            wins = await this.playerWin.countDocuments({
+                        event_id: event_id,
+                        playerToken: {
+                            $elemMatch: {
+                                contractId: contract_address,
+                                tokenId: token_id,
+                            },
+                        }
+                    }) ?? 0;  
         }
         if (wins == 0) return true;
 
