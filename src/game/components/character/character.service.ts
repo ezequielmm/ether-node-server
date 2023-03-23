@@ -38,7 +38,7 @@ export class CharacterService {
         const chain = Number(process.env.NFT_SERVICE_CHAIN_ID);
 
         const characters = await this.character.find(
-            { isActive: true, contractId: { $ne: '' } },
+            { isActive: true },
             { contractId: 1, contractIdTest: 1 },
         );
 
