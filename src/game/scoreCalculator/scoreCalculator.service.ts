@@ -9,8 +9,8 @@ import { Expedition } from '../components/expedition/expedition.schema';
 import { Node } from '../components/expedition/node';
 import { NodeStatus } from '../components/expedition/node-status';
 import { Trinket } from '../components/trinket/trinket.schema';
-import { Gear } from '../components/gear/gear.schema';
 import { ExpeditionStatusEnum } from '../components/expedition/expedition.enum';
+import { Gear } from '../components/gear/gear.schema';
 
 export interface ScoreResponse {
     outcome: string;

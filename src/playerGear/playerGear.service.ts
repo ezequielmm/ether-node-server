@@ -1,11 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectModel } from 'kindagoose';
 import { PlayerGear } from './playerGear.schema';
-import { Prop, ReturnModelType } from '@typegoose/typegoose';
-import { AuthGatewayService } from 'src/authGateway/authGateway.service';
-import { HttpService } from '@nestjs/axios';
-import { ConfigService } from '@nestjs/config';
-import { firstValueFrom } from 'rxjs';
+import { ReturnModelType } from '@typegoose/typegoose';
 import { data } from '../game/components/gear/gear.data';
 import { Gear } from '../game/components/gear/gear.schema';
 import { GearItem } from './gearItem';
@@ -16,7 +12,7 @@ import {
 } from '../game/components/gear/gear.enum';
 import { ExpeditionService } from '../game/components/expedition/expedition.service';
 import { ExpeditionStatusEnum } from '../game/components/expedition/expedition.enum';
-import { filter } from 'lodash';
+import { filter, isEqual } from 'lodash';
 
 @Injectable()
 export class PlayerGearService {
@@ -25,13 +21,12 @@ export class PlayerGearService {
     constructor(
         @InjectModel(PlayerGear)
         private readonly playerGear: ReturnModelType<typeof PlayerGear>,
-        private readonly authGatewayService: AuthGatewayService,
-        private readonly expeditionService: ExpeditionService,
-        private readonly httpService: HttpService,
-        private readonly configService: ConfigService,
     ) {}
 
-    async findUnownedEquippedGear(playerId: number, equipped: GearItem[]): Promise<GearItem[]> {
+    async findUnownedEquippedGear(
+        playerId: number,
+        equipped: GearItem[],
+    ): Promise<GearItem[]> {
         const owned = await this.getGear(playerId);
 
         return equipped.filter((gear) => {
@@ -46,7 +41,10 @@ export class PlayerGearService {
         playerId: number,
         equipped_gear_list: GearItem[],
     ): Promise<boolean> {
-        const unownedGear = await this.findUnownedEquippedGear(playerId, equipped_gear_list);
+        const unownedGear = await this.findUnownedEquippedGear(
+            playerId,
+            equipped_gear_list,
+        );
         return unownedGear.length === 0;
     }
 
@@ -54,12 +52,36 @@ export class PlayerGearService {
         const errorMessage = await this.dev_addLootForDevelopmentTesting(
             playerId,
         );
-        
-        let {gear: ownedGear} = await this.playerGear.findOne({
-                playerId: playerId,
-            });
-       
+
+        const { gear: ownedGear } = await this.playerGear.findOne({
+            playerId: playerId,
+        });
+
         return ownedGear;
+    }
+
+    async addGearToPlayerById(
+        playerId: number,
+        gear: number[],
+    ): Promise<void> {
+        const gearItems = gear.map(function(item) {
+                          return this.toGearItem(data[item]);
+                        });
+        this.playerGear.updateOne({playerId: playerId}, { $push: { gear: { $each: gearItems } } });
+    }
+
+    async removeGearFromPlayerById(
+        playerId: number,
+        gear: number[],
+    ): Promise<void> {
+        const playerGear = await this.getGear(playerId);
+
+        gear.forEach(function(item) {
+            const index = playerGear.findIndex(i => i.gearId === item);
+            playerGear.splice(index, 1);
+        });
+
+        this.playerGear.updateOne({ playerId: playerId }, { gear: playerGear });
     }
 
     async dev_addLootForDevelopmentTesting(playerId: number) {
