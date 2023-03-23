@@ -18,6 +18,8 @@ import { EncounterSeeder } from './game/components/encounter/encounter.seeder';
 import { Encounter } from './game/components/encounter/encounter.schema';
 import { GearSeeder } from './game/components/gear/gear.seeder';
 import { Gear } from './game/components/gear/gear.schema';
+import { Contest } from './game/contest/contest.schema';
+import { ContestMap } from './game/contestMap/contestMap.schema';
 
 seeder({
     imports: [
@@ -44,6 +46,8 @@ seeder({
             Chest,
             Encounter,
             Gear,
+            Contest,
+            ContestMap,
         ]),
     ],
 }).run([

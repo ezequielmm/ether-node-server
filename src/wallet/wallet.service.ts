@@ -1,8 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import NFTService from '../nft-library/services/nft_service';
 import { PlayerWinService } from '../playerWin/playerWin.service';
-import { PlayerWin } from '../playerWin/playerWin.schema';
-import { ContestMapService } from '../game/contestMap/contestMap.service';
 import { ContestService } from '../game/contest/contest.service';
 import { countBy } from 'lodash';
 
@@ -10,7 +8,6 @@ import { countBy } from 'lodash';
 export class WalletService {
     constructor(
         private playerWinService: PlayerWinService,
-        private contestMapService: ContestMapService,
         private contestService: ContestService,
     ) {}
 
@@ -47,8 +44,8 @@ export class WalletService {
             all_wins,
             (win) => win.playerToken.contractId + win.playerToken.tokenId,
         );
-        const contest = await this.contestService.findActive();
-        const event_id = contest?.event_id ?? '';
+        const contest = await this.contestService.findActiveContest();
+        const event_id = contest?.event_id ?? 0;
 
         for (let i = 0; i < nfts.tokens.length; i++) {
             const contract_address = nfts.tokens[i].contract_address;

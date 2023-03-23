@@ -1,5 +1,3 @@
-export class CreateContestDTO {
-    map_id: string;
-    event_id: number;
-    available_at: Date;
-}
+import { Contest } from './contest.schema';
+
+export class CreateContestDTO extends Contest {}

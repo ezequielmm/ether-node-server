@@ -173,7 +173,7 @@ export class ExpeditionController {
                 });
 
             if (!hasExpedition) {
-                const contest = await this.contestService.findActive();
+                const contest = await this.contestService.findActiveContest();
                 const can_play = await this.playerWinService.canPlay(
                     contest.event_id,
                     playerToken.contractId,

@@ -192,3 +192,35 @@ export function snakeCaseToTitleCase(text: string): string {
 export function addHoursToDate(givenDate: Date, hours = 1): Date {
     return new Date(givenDate.getTime() + hours * 60 * 60 * 1000);
 }
+
+/**
+ * Add x days to a given date
+ * return Date
+ */
+export function addDaysToDate(givenDate: Date, days = 1): Date {
+    return new Date(givenDate.getTime() + days * 24 * 60 * 60 * 1000);
+}
+
+/**
+ * Set hours, minutes and seconds to a given date in UTC
+ * return Date
+ */
+export function setHoursMinutesSecondsToUTCDate(
+    givenDate: Date,
+    hours = 0,
+    minutes = 0,
+    seconds = 0,
+    ms = 0,
+): Date {
+    return new Date(
+        Date.UTC(
+            givenDate.getFullYear(),
+            givenDate.getMonth(),
+            givenDate.getDate(),
+            hours,
+            minutes,
+            seconds,
+            ms,
+        ),
+    );
+}

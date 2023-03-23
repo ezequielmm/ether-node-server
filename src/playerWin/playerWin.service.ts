@@ -22,12 +22,12 @@ export class PlayerWinService {
     }
 
     async canPlay(
-        event_id: string,
+        event_id: number,
         contract_address: string,
         token_id: number,
         wins?: number,
     ): Promise<boolean> {
-        if (event_id == '') return true;
+        if (event_id === 0) return true;
 
         if (wins === undefined) {
             wins = await this.playerWin.find({

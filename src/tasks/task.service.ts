@@ -5,6 +5,11 @@ import { ContestService } from 'src/game/contest/contest.service';
 import { ContestMapService } from 'src/game/contestMap/contestMap.service';
 import { MapService } from 'src/game/map/map.service';
 import buildActOne from 'src/game/map/act/act-one/index';
+import {
+    addDaysToDate,
+    addHoursToDate,
+    setHoursMinutesSecondsToUTCDate,
+} from 'src/utils';
 
 @Injectable()
 export class TaskService {
@@ -16,7 +21,7 @@ export class TaskService {
         private readonly contestMapService: ContestMapService,
     ) {}
 
-    @Cron(CronExpression.EVERY_DAY_AT_11PM, {
+    @Cron(CronExpression.EVERY_5_SECONDS, {
         name: 'Create Contest Map',
         timeZone: 'UTC',
     })
@@ -25,31 +30,39 @@ export class TaskService {
             'Checking if we need to create a new map for today contest...',
         );
 
-        // First we query the database to confirm if we have a map contest
+        // First we get the current date and add 24 hours to it
+        // then we set the time to 00:00:00 to get the available_at date
+        const now = new Date();
 
-        // First we query the database to confirm if we have a map contest
-        // for today
-        const targetDate = new Date();
-        targetDate.setTime(targetDate.getTime() + 2 * 60 * 60 * 1000);
+        const availableAt = addDaysToDate(now);
+        availableAt.setUTCHours(0, 0, 0, 0);
 
-        const contest = await this.contestService.findContestByDate(targetDate);
+        const contestExists = await this.contestService.findActiveContest(
+            availableAt,
+        );
 
         // If we have a contest, we don't need to create a new map
-        if (contest) {
+        if (contestExists !== null) {
             this.logger.log('We have a contest for today, skipping...');
             return;
         }
 
-        // We get the current date
-        const now = targetDate;
-        now.setUTCHours(0, 0, 0, 0);
+        // Now we calculate the valid_until from the ends_at date
+        const endsAt = setHoursMinutesSecondsToUTCDate(
+            availableAt,
+            23,
+            59,
+            59,
+            999,
+        );
+        const validUntil = addHoursToDate(endsAt, 6);
 
         // If we don't have a contest, we generate the first map
         // and create a contest for it, first we generate act 0
         const map = this.mapService.getActZero();
 
         // Now we generate the rest of nodes for the map
-        // First we we the last node id to keep it consistent
+        // First we get the last node id to keep it consistent
         const lastNodeId = last(map)?.id ?? 0;
 
         // Now we generate the rest of the nodes
@@ -72,7 +85,9 @@ export class TaskService {
         await this.contestService.create({
             map_id: contestMap.id,
             event_id: event_id + 1,
-            available_at: now,
+            available_at: availableAt,
+            ends_at: endsAt,
+            valid_until: validUntil,
         });
 
         this.logger.log(
