@@ -77,10 +77,10 @@ export const blueSporelingData: Enemy = {
                                 statusArgs: {
                                     counter: 2,
                                 },
-                                action: {
-                                    name: 'Infect',
-                                    hint: 'cast',
-                                },
+                            },
+                            action: {
+                                name: 'Infect',
+                                hint: 'cast',
                             },
                         },
                     ],
