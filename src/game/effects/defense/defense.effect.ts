@@ -41,6 +41,7 @@ export class DefenseEffect implements EffectHandler {
                 useAttackingEnemies,
                 useEnergyAsMultiplier,
             },
+            action,
         } = payload;
 
         let newDefense = currentValue;
@@ -143,6 +144,7 @@ export class DefenseEffect implements EffectHandler {
                     finalHealth: 0,
                     statuses: [],
                 },
+                action,
             });
         }
 
@@ -173,6 +175,7 @@ export class DefenseEffect implements EffectHandler {
                     finalHealth: 0,
                     statuses: [],
                 },
+                action,
             });
         }
     }
