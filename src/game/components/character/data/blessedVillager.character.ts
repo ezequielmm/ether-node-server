@@ -11,7 +11,7 @@ export const BlessedVillagerCharacter: Character = {
     contractId: '',
     contractIdTest: '0x55abb816b145CA8F34ffA22D63fBC5bc57186690',
     description: 'Blessed Villager Character',
-    initialHealth: 50,
+    initialHealth: 70,
     initialGold: 0,
     characterClass: CharacterClassEnum.BlessedVillager,
     isActive: true,
