@@ -13,6 +13,7 @@ import { HighscoreController } from './highscore.controller';
 import { PlayerGearModule } from '../playerGear/playerGear.module';
 import { ContestModule } from '../game/contest/contest.module';
 import { PlayerWinModule } from '../playerWin/playerWin.module';
+import { ShowContestController } from './showContest.controller';
 
 @Module({
     imports: [
@@ -32,6 +33,7 @@ import { PlayerWinModule } from '../playerWin/playerWin.module';
         ShowVersionController,
         ShowNftNetworkController,
         HighscoreController,
+        ShowContestController,
     ],
 })
 export class ApiModule {}
