@@ -22,7 +22,10 @@ export class CampGateway {
     ) {}
 
     @SubscribeMessage('CampRecoverHealth')
-    async handleRecoverHealth(client: Socket): Promise<void> {
+    async handleRecoverHealth(client: Socket): Promise<string> {
+
+        const waiter = { done: false, data: "" };
+
         await this.actionQueueService.push(
             await this.expeditionService.getExpeditionIdFromClient(client.id),
             async () => {
@@ -76,17 +79,26 @@ export class CampGateway {
                     }),
                 );
 
-                client.emit(
-                    'CampUpdateResponse',
+                waiter.data =
                     StandardResponse.respond({
                         message_type: SWARMessageType.CampUpdate,
                         action: SWARAction.HealAmount,
                         data: { healed: newHp - hpCurrent },
-                    })
-                );
+                    });
+                waiter.done = true;
 
                 this.logger.debug('</CAMP RECOVER HEALTH>');
             }
         );
+
+        const wait = (ms) => new Promise(res => setTimeout(res, ms));
+        let loopBreak = 50;
+
+        while (!waiter.done || loopBreak <= 0) {
+            await wait(100);
+            loopBreak--;
+        }
+
+        return (waiter.done) ? waiter.data : undefined;
     }
 }
