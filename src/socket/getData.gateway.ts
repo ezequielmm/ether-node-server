@@ -41,7 +41,7 @@ export class GetDataGateway {
         private readonly getRewardsAction: GetRewardsAction,
         private readonly getEncounterAction: GetEncounterDataAction,
         private readonly expeditionService: ExpeditionService,
-        private readonly actionQueueService: ActionQueueService
+        private readonly actionQueueService: ActionQueueService,
     ) {}
 
     @SubscribeMessage('GetData')
@@ -55,7 +55,9 @@ export class GetDataGateway {
 
                 const logger = this.logger.logger.child(ctx.info);
 
-                logger.info(`Client ${client.id} trigger message "GetData": ${types}`);
+                logger.info(
+                    `Client ${client.id} trigger message "GetData": ${types}`,
+                );
 
                 try {
                     let data = null;
@@ -66,27 +68,39 @@ export class GetDataGateway {
                             break;
 
                         case DataWSRequestTypesEnum.CardsPiles:
-                            data = await this.getCardPilesAction.handle(client.id);
+                            data = await this.getCardPilesAction.handle(
+                                client.id,
+                            );
                             break;
 
                         case DataWSRequestTypesEnum.Enemies:
-                            data = await this.getEnemiesAction.handle(client.id);
+                            data = await this.getEnemiesAction.handle(
+                                client.id,
+                            );
                             break;
 
                         case DataWSRequestTypesEnum.Players:
-                            data = await this.getPlayerInfoAction.handle(client.id);
+                            data = await this.getPlayerInfoAction.handle(
+                                client.id,
+                            );
                             break;
 
                         case DataWSRequestTypesEnum.Statuses:
-                            data = await this.getStatusesAction.handle(client.id);
+                            data = await this.getStatusesAction.handle(
+                                client.id,
+                            );
                             break;
 
                         case DataWSRequestTypesEnum.EnemyIntents:
-                            data = await this.sendEnemyIntentsProcess.handle(ctx);
+                            data = await this.sendEnemyIntentsProcess.handle(
+                                ctx,
+                            );
                             break;
 
                         case DataWSRequestTypesEnum.PlayerDeck:
-                            data = await this.getPlayerDeckAction.handle(client.id);
+                            data = await this.getPlayerDeckAction.handle(
+                                client.id,
+                            );
                             break;
 
                         case DataWSRequestTypesEnum.CurrentNode:
@@ -94,19 +108,27 @@ export class GetDataGateway {
                             break;
 
                         case DataWSRequestTypesEnum.UpgradableCards:
-                            data = await this.getUpgradableCards.handle(client.id);
+                            data = await this.getUpgradableCards.handle(
+                                client.id,
+                            );
                             break;
 
                         case DataWSRequestTypesEnum.MerchantData:
-                            data = await this.getMerchantDataAction.handle(client.id);
+                            data = await this.getMerchantDataAction.handle(
+                                client.id,
+                            );
                             break;
 
                         case DataWSRequestTypesEnum.TreasureData:
-                            data = await this.getTreasureDataAction.handle(client);
+                            data = await this.getTreasureDataAction.handle(
+                                client,
+                            );
                             break;
 
                         case DataWSRequestTypesEnum.Rewards:
-                            data = await this.getRewardsAction.handle(client.id);
+                            data = await this.getRewardsAction.handle(
+                                client.id,
+                            );
                             break;
 
                         case DataWSRequestTypesEnum.EncounterData:
