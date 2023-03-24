@@ -176,6 +176,13 @@ export class ExpeditionController {
 
             if (!hasExpedition) {
                 const contest = await this.contestService.findActiveContest();
+                if (!contest) {
+                    return {
+                        expeditionCreated: false,
+                        reason: 'no contest found',
+                    };
+                }
+
                 const can_play = await this.playerWinService.canPlay(
                     contest.event_id,
                     playerToken.contractId,
