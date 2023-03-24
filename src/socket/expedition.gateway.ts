@@ -6,6 +6,7 @@ import { ExpeditionService } from 'src/game/components/expedition/expedition.ser
 import { corsSocketSettings } from './socket.enum';
 import { ContinueExpeditionProcess } from 'src/game/process/continueExpedition.process';
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
+import { ActionQueueService } from 'src/actionQueue/actionQueue.service';
 
 @WebSocketGateway(corsSocketSettings)
 export class ExpeditionGateway {
@@ -16,17 +17,25 @@ export class ExpeditionGateway {
         private readonly fullSyncAction: FullSyncAction,
         private readonly expeditionService: ExpeditionService,
         private readonly continueExpeditionProcess: ContinueExpeditionProcess,
+        private readonly actionQueueService: ActionQueueService,
     ) {}
 
     @SubscribeMessage('SyncExpedition')
     async handleSyncExpedition(client: Socket): Promise<void> {
-        const ctx = await this.expeditionService.getGameContext(client);
-        this.logger.info(
-            ctx.info,
-            `Client ${client.id} trigger message "SyncExpedition"`,
-        );
+        await this.actionQueueService.push(
+            await this.expeditionService.getExpeditionIdFromClient(client.id),
+            async () => {
+                this.logger.debug('<SYNC EXPEDITION>');
+                const ctx = await this.expeditionService.getGameContext(client);
+                this.logger.info(
+                    ctx.info,
+                    `Client ${client.id} trigger message "SyncExpedition"`,
+                );
 
-        await this.fullSyncAction.handle(client);
+                await this.fullSyncAction.handle(client);
+                this.logger.debug('</SYNC EXPEDITION>');
+            }
+        );
     }
 
     @SubscribeMessage('NodeSelected')
