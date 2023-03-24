@@ -34,15 +34,15 @@ export class MoveCardGateway {
                     `Client ${client.id} trigger message "MoveCard": ${payload}`,
                 );
 
-                const encounterData = await this.encounterService.getEncounterData(
-                    client,
-                );
+                const encounterData =
+                    await this.encounterService.getEncounterData(client);
+
                 if (encounterData) {
                     await this.encounterService.handleMoveCard(client, payload);
-                    return;
+                } else {
+                    await this.combatService.handleMoveCard(ctx, payload);
                 }
 
-                await this.combatService.handleMoveCard(ctx, payload);
                 this.logger.debug('</MOVE CARD>');
             },
         );
