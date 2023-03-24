@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { EnemyService } from 'dist/game/components/enemy/enemy.service';
 import { EnemyIntentionType } from '../components/enemy/enemy.enum';
 import { GameContext } from '../components/interfaces';
 import { EffectService } from '../effects/effects.service';
 import { damageEffect } from '../effects/damage/constants';
+import { EnemyService } from '../components/enemy/enemy.service';
 
 interface EnemyIntentsResponse {
     id: string;
@@ -22,52 +22,63 @@ export class SendEnemyIntentProcess {
     ) {}
 
     async handle(ctx: GameContext): Promise<EnemyIntentsResponse[]> {
-        
         const intentValues: EnemyIntentsResponse[] = [];
-        const enemies = this.enemyService.getAll(ctx);
+        const allEnemies = this.enemyService.getAll(ctx);
+        const enemies = allEnemies.filter((enemy) => enemy.value.hpCurrent > 0);
 
-        for(let enemyIndex = 0; enemyIndex < enemies.length; ++enemyIndex) {
-            const enemy = enemies[enemyIndex];
-            let enemyIntent: EnemyIntentsResponse = {
+        enemies.forEach((enemy) => {
+            const enemyIntent: EnemyIntentsResponse = {
                 id: enemy.value.id,
-                intents: []
+                intents: [],
             };
-            
-            for (let intentIndex = 0; intentIndex < enemy.value.currentScript.intentions.length ?? 0; ++intentIndex) {
-                const intent = enemy.value.currentScript.intentions[intentIndex];
-                let value = intent.value;
 
-                if (intent.type === EnemyIntentionType.Attack) {
-                    const effects = intent.effects ?? [];
-                    for (let effectIndex = 0; effectIndex < intent.effects.length ?? 0; ++effectIndex) {
-                        if (effects[effectIndex].effect == damageEffect.name) {
-                            const preview = await this.effectService.preview({
-                                ctx,
-                                dto: {
-                                    ctx,
-                                    source: enemy,
-                                    args: {
-                                        initialValue: effects[effectIndex].args.value ?? 0,
-                                        currentValue: effects[effectIndex].args.value ?? 0,
-                                    },
-                                },
-                                effect: effects[effectIndex].effect,
+            if (enemy.value.currentScript.intentions.length > 0) {
+                enemy.value.currentScript.intentions.forEach(async (intent) => {
+                    let value = intent.value;
+
+                    if (intent.type === EnemyIntentionType.Attack) {
+                        const effects = intent.effects ?? [];
+
+                        if (effects.length > 0) {
+                            effects.forEach(async (effect) => {
+                                if (effect.effect === damageEffect.name) {
+                                    const preview =
+                                        await this.effectService.preview({
+                                            ctx,
+                                            dto: {
+                                                ctx,
+                                                source: enemy,
+                                                args: {
+                                                    initialValue:
+                                                        effect.args.value ?? 0,
+                                                    currentValue:
+                                                        effect.args.value ?? 0,
+                                                },
+                                            },
+                                            effect: effect.effect,
+                                        });
+
+                                    value += preview.args.currentValue;
+                                }
                             });
-
-                            value += preview.args.currentValue;
-                            // TODO: Confirm if multiplier actually works on damage effects (i.e. multi attacks)
-                            // value += preview.args.currentValue * (effects[effectIndex].args.multiplier ?? 1);
                         }
                     }
-                }
-                enemyIntent.intents.push({
-                    ...(intent.type === EnemyIntentionType.Attack && { value }),
-                    description: this.descriptionGenerator(intent.type, value),
-                    type: intent.type,
+
+                    enemyIntent.intents.push({
+                        ...(intent.type === EnemyIntentionType.Attack && {
+                            value,
+                        }),
+                        description: this.descriptionGenerator(
+                            intent.type,
+                            value,
+                        ),
+                        type: intent.type,
+                    });
                 });
+
+                intentValues.push(enemyIntent);
             }
-            intentValues.push(enemyIntent);
-        } 
+        });
 
         return intentValues;
     }
