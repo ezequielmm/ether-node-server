@@ -45,7 +45,10 @@ export class GetDataGateway {
     ) {}
 
     @SubscribeMessage('GetData')
-    async handleGetData(client: Socket, types: string): Promise<void> {
+    async handleGetData(client: Socket, types: string): Promise<string> {
+        
+        const waiter = { done: false, data: "" };
+
         await this.actionQueueService.push(
             await this.expeditionService.getExpeditionIdFromClient(client.id),
             async () => {
@@ -136,14 +139,21 @@ export class GetDataGateway {
                             break;
                     }
 
-                    client.emit(
-                        'PutData',
-                        StandardResponse.respond({
-                            message_type: SWARMessageType.GenericData,
-                            action: types,
-                            data,
-                        }),
-                    );
+                    waiter.data = StandardResponse.respond({
+                        message_type: SWARMessageType.GenericData,
+                        action: types,
+                        data,
+                    });
+                    waiter.done = true;
+
+                    // client.emit(
+                    //     'PutData',
+                    //     StandardResponse.respond({
+                    //         message_type: SWARMessageType.GenericData,
+                    //         action: types,
+                    //         data,
+                    //     }),
+                    // );
                 } catch (e) {
                     logger.error(ctx.info, e.message);
                     logger.error(ctx.info, e.trace);
@@ -151,10 +161,21 @@ export class GetDataGateway {
                     client.emit('ErrorMessage', {
                         message: `An Error has ocurred getting ${types}`,
                     });
+                    waiter.done = true;
                 }
 
                 this.logger.debug('</GETDATA: ' + types + '>');
             },
         );
+
+        const wait = (ms) => new Promise(res => setTimeout(res, ms));
+        let loopBreak = 50;
+
+        while (!waiter.done || loopBreak <= 0) {
+            await wait(100);
+            loopBreak--;
+        }
+
+        return (waiter.done) ? waiter.data : undefined;
     }
 }
