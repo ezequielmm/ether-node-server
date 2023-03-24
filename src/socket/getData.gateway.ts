@@ -115,7 +115,7 @@ export class GetDataGateway {
                     }
 
                     client.emit(
-                        'GenericDataMessage',
+                        'PutData',
                         StandardResponse.respond({
                             message_type: SWARMessageType.GenericData,
                             action: types,
