@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { find, last } from 'lodash';
+import { find, findIndex, slice, last } from 'lodash';
 import { NodeStatus } from '../components/expedition/node-status';
 import { Node } from '../components/expedition/node';
 import { GameContext } from '../components/interfaces';
@@ -9,6 +9,8 @@ import buildActTwo from './act/act-two/index';
 import { ModuleRef } from '@nestjs/core';
 import { NodeStrategy } from './map/strategies/node-strategy';
 import { strategies } from './map/strategies/index';
+import { NodeType } from '../components/expedition/node-type';
+import { NodeStatus } from '../components/expedition/node-status';
 
 @Injectable()
 export class MapService {
@@ -109,5 +111,33 @@ export class MapService {
     public nodeIsSelectable(ctx: GameContext, nodeId: number): boolean {
         const node = this.findNodeById(ctx, nodeId);
         return node.isSelectable();
+    }
+
+    public getClientSafeMap(ctx: GameContext): Node[] { 
+
+        // Find the next portal that is not complete
+        const nextPortalIndex: number = findIndex(
+            ctx.expedition.map, 
+            (node) => (node.type === NodeType.Portal && node.status !== NodeStatus.Completed)
+        );
+
+        // We only need to sanitize (and return) up to that portal, so let's ditch the rest
+        const map: Node[] = slice(
+            ctx.expedition.map,
+            0,
+            (nextPortalIndex !== -1) ? nextPortalIndex + 1 : ctx.expedition.map.length
+        );
+        
+        // Now let's return the map after purging all state info from nodes that aren't completed or currently active
+        return map.map((node) => {
+            if (node.status === NodeStatus.Completed || node.status == NodeStatus.Active) {
+                return node;
+            }
+
+            delete node.private_data;
+            delete node.state;
+
+            return node;
+        });
     }
 }
