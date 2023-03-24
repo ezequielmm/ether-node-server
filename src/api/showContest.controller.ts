@@ -6,13 +6,11 @@ import { ContestService } from 'src/game/contest/contest.service';
 @ApiTags('showContest')
 @Controller('showContest')
 export class ShowContestController {
-    constructor(
-        private readonly contestService: ContestService,
-    ) {}
+    constructor(private readonly contestService: ContestService) {}
 
     @ApiOperation({ summary: 'Show version' })
     @Get('/')
     async getVersion(): Promise<Contest> {
-        return await this.contestService.findActive();
+        return await this.contestService.findActiveContest();
     }
 }

@@ -105,7 +105,9 @@ export class ExpeditionController {
             const tokenType =
                 expedition?.playerState?.characterClass ?? 'missing';
             //todo parse for front end
-            const contest = expedition?.contest ?? await this.contestService.findActive();
+            const contest =
+                expedition?.contest ??
+                (await this.contestService.findActiveContest());
 
             return {
                 hasExpedition,
