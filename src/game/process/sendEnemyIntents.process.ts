@@ -33,7 +33,7 @@ export class SendEnemyIntentProcess {
             };
 
             if (enemy.value.currentScript.intentions.length > 0) {
-                enemy.value.currentScript.intentions.forEach(async (intent) => {
+                enemy.value.currentScript.intentions.forEach((intent) => {
                     let value = intent.value;
 
                     if (intent.type === EnemyIntentionType.Attack) {
