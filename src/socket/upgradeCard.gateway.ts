@@ -10,6 +10,12 @@ import { UpgradeCardService } from 'src/game/upgradeCard/upgradeCard.service';
 import { corsSocketSettings } from './socket.enum';
 import { EncounterService } from '../game/components/encounter/encounter.service';
 import { ExpeditionService } from 'src/game/components/expedition/expedition.service';
+import { ActionQueueService } from 'src/actionQueue/actionQueue.service';
+
+export enum UpgradeCardNodeTypes {
+    Encounter = 'encounter',
+    Camp = 'camp',
+}
 
 @WebSocketGateway(corsSocketSettings)
 export class UpgradeCardGateway {
@@ -19,6 +25,7 @@ export class UpgradeCardGateway {
         private readonly upgradeCardService: UpgradeCardService,
         private readonly encounterService: EncounterService,
         private readonly expeditionService: ExpeditionService,
+        private readonly actionQueueService: ActionQueueService,
     ) {}
 
     @SubscribeMessage('CardUpgradeSelected')
@@ -26,49 +33,103 @@ export class UpgradeCardGateway {
         client: Socket,
         cardId: string,
     ): Promise<string> {
-        const ctx = await this.expeditionService.getGameContext(client);
 
-        this.logger.log(
-            ctx.info,
-            `Client ${client.id} trigger message "CardUpgradeSelected": cardId: ${cardId}`,
+        const waiter = { done: false, data: "" };
+
+        await this.actionQueueService.push(
+            await this.expeditionService.getExpeditionIdFromClient(client.id),
+            async () => {
+                this.logger.debug('<UPGRADE SELECTED>');
+                const ctx = await this.expeditionService.getGameContext(client);
+
+                this.logger.log(
+                    ctx.info,
+                    `Client ${client.id} trigger message "CardUpgradeSelected": cardId: ${cardId}`,
+                );
+
+                try {
+                    waiter.data = await this.upgradeCardService.showUpgradablePair(client, cardId);
+                    waiter.done = true;
+                } catch (e) {
+                    this.logger.error(e);
+                    client.emit('ErrorMessage', {
+                        message: e.message ?? 'An Error has occurred finding the upgraded card.',
+                    });
+                    waiter.done = true;
+                }
+                
+                this.logger.debug('<UPGRADE SELECTED>');
+            }
         );
 
-        return await this.upgradeCardService.showUpgradablePair(client, cardId);
+        const wait = (ms) => new Promise(res => setTimeout(res, ms));
+        let loopBreak = 50;
+
+        while (!waiter.done || loopBreak <= 0) {
+            await wait(100);
+            loopBreak--;
+        }
+
+        return (waiter.done) ? waiter.data : undefined;
     }
 
     @SubscribeMessage('UpgradeCard')
     async handleUpgradeCard(client: Socket, cardId: string): Promise<string> {
-        const ctx = await this.expeditionService.getGameContext(client);
+        const waiter = { done: false, data: "" };
 
-        this.logger.log(
-            ctx.info,
-            `Client ${client.id} trigger message "UpgradeCard": cardId: ${cardId}`,
+        await this.actionQueueService.push(
+            await this.expeditionService.getExpeditionIdFromClient(client.id),
+            async () => {
+                this.logger.debug('<UPGRADE CARD>');
+                const ctx = await this.expeditionService.getGameContext(client);
+
+                this.logger.log(
+                    ctx.info,
+                    `Client ${client.id} trigger message "UpgradeCard": cardId: ${cardId}`,
+                );
+
+                const response = await this.upgradeCardService.upgradeCard(
+                    client,
+                    cardId,
+                );
+
+                const upgradeLocation = (await this.encounterService.getEncounterData(client)) 
+                                        ? UpgradeCardNodeTypes.Encounter 
+                                        : UpgradeCardNodeTypes.Camp;
+
+                switch (upgradeLocation) {
+                    case UpgradeCardNodeTypes.Encounter:
+                        await this.encounterService.handleUpgradeCard(client, cardId);
+                        break;
+                    case UpgradeCardNodeTypes.Camp:
+                    default:
+                        client.emit(
+                            'PutData',
+                            StandardResponse.respond({
+                                message_type: SWARMessageType.CampUpdate,
+                                action: SWARAction.FinishCamp,
+                                data: null,
+                            }),
+                        );
+                        break;
+                }
+
+                waiter.data = response;
+                waiter.done = true;
+
+                // TODO: add validation to confirm if the user can upgrade more cards
+                this.logger.debug('<UPGRADE CARD>');
+            }
         );
 
-        const response = await this.upgradeCardService.upgradeCard(
-            client,
-            cardId,
-        );
+        const wait = (ms) => new Promise(res => setTimeout(res, ms));
+        let loopBreak = 50;
 
-        const encounterData = await this.encounterService.getEncounterData(
-            client,
-        );
-        if (encounterData) {
-            await this.encounterService.handleUpgradeCard(client, cardId);
-            return response;
+        while (!waiter.done || loopBreak <= 0) {
+            await wait(100);
+            loopBreak--;
         }
 
-        client.emit(
-            'PutData',
-            StandardResponse.respond({
-                message_type: SWARMessageType.CampUpdate,
-                action: SWARAction.FinishCamp,
-                data: null,
-            }),
-        );
-
-        return response;
-
-        // TODO: add validation to confirm if the user can upgrade more cards
+        return (waiter.done) ? waiter.data : undefined;
     }
 }
