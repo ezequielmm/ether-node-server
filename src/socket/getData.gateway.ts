@@ -75,7 +75,7 @@ export class GetDataGateway {
                     break;
 
                 case DataWSRequestTypesEnum.EnemyIntents:
-                    data = await this.sendEnemyIntentsProcess.handle(client.id);
+                    data = await this.sendEnemyIntentsProcess.handle(ctx);
                     break;
 
                 case DataWSRequestTypesEnum.PlayerDeck:

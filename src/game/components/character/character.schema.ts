@@ -10,6 +10,12 @@ export class Character {
     name: string;
 
     @Prop()
+    contractId: string;
+
+    @Prop()
+    contractIdTest: string;
+
+    @Prop()
     description: string;
 
     @Prop()

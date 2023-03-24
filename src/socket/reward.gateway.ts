@@ -58,6 +58,7 @@ export class RewardGateway {
                     // Now we take the remaining rewards and send them back to the client
                     await this.rewardService
                         .takeReward(ctx, rewardId)
+                        .catch((error) => this.logger.error({error,}))
                         .then((rewards) => {
                             // Now we need to send the rewards to the client
                             ctx.client.emit(

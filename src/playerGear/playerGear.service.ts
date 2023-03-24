@@ -5,6 +5,14 @@ import { ReturnModelType } from '@typegoose/typegoose';
 import { data } from '../game/components/gear/gear.data';
 import { Gear } from '../game/components/gear/gear.schema';
 import { GearItem } from './gearItem';
+import {
+    GearCategoryEnum,
+    GearRarityEnum,
+    GearTraitEnum,
+} from '../game/components/gear/gear.enum';
+import { ExpeditionService } from '../game/components/expedition/expedition.service';
+import { ExpeditionStatusEnum } from '../game/components/expedition/expedition.enum';
+import { filter, isEqual } from 'lodash';
 
 @Injectable()
 export class PlayerGearService {
@@ -50,6 +58,30 @@ export class PlayerGearService {
         });
 
         return ownedGear;
+    }
+
+    async addGearToPlayerById(
+        playerId: number,
+        gear: number[],
+    ): Promise<void> {
+        const gearItems = gear.map(function(item) {
+                          return this.toGearItem(data[item]);
+                        });
+        this.playerGear.updateOne({playerId: playerId}, { $push: { gear: { $each: gearItems } } });
+    }
+
+    async removeGearFromPlayerById(
+        playerId: number,
+        gear: number[],
+    ): Promise<void> {
+        const playerGear = await this.getGear(playerId);
+
+        gear.forEach(function(item) {
+            const index = playerGear.findIndex(i => i.gearId === item);
+            playerGear.splice(index, 1);
+        });
+
+        this.playerGear.updateOne({ playerId: playerId }, { gear: playerGear });
     }
 
     async dev_addLootForDevelopmentTesting(playerId: number) {
