@@ -22,6 +22,7 @@ import {
 import { GearService } from '../components/gear/gear.service';
 import { PlayerWinService } from '../../playerWin/playerWin.service';
 import { ContestService } from '../contest/contest.service';
+import { PlayerGearService } from 'src/playerGear/playerGear.service';
 
 @Injectable()
 export class EndCombatProcess {
@@ -36,6 +37,7 @@ export class EndCombatProcess {
         private readonly gearService: GearService,
         private readonly playerWinService: PlayerWinService,
         private readonly contestService: ContestService,
+        private readonly playerGearService: PlayerGearService,
     ) {}
 
     @OnEvent(EVENT_AFTER_DAMAGE_EFFECT)
@@ -88,6 +90,13 @@ export class EndCombatProcess {
                         3,
                         ctx.expedition.playerState.lootboxRarity,
                     );
+            
+                // actually save the gear to the player
+                await this.playerGearService.addGearToPlayer(
+                    ctx.expedition.playerId, 
+                    ctx.expedition.finalScore.lootbox
+                );
+            
                 ctx.expedition.finalScore.notifyNoLoot = false;
             } else {
                 ctx.expedition.finalScore.lootbox = [];
