@@ -39,34 +39,57 @@ export class ExpeditionGateway {
     }
 
     @SubscribeMessage('NodeSelected')
-    async handleNodeSelected(client: Socket, node_id: number): Promise<string> {
-        const ctx = await this.expeditionService.getGameContext(client);
-        const logger = this.logger.logger.child(ctx.info);
+    async handleNodeSelected(client: Socket, node_id: number): Promise<void> {
+        await this.actionQueueService.push(
+            await this.expeditionService.getExpeditionIdFromClient(client.id),
+            async () => {
+                this.logger.debug('<NODE SELECTED>');
+                const ctx = await this.expeditionService.getGameContext(client);
+                const logger = this.logger.logger.child(ctx.info);
 
-        logger.info(
-            ctx.info,
-            `Client ${client.id} trigger message "NodeSelected": ${node_id}`,
+                logger.info(
+                    ctx.info,
+                    `Client ${client.id} trigger message "NodeSelected": ${node_id}`,
+                );
+
+                try {
+                    const response = await this.nodeSelectedProcess.handle(ctx, node_id);
+                    client.emit(
+                        'NodeSelectedResponse',
+                        response
+                    );
+                } catch (e) {
+                    logger.error(e);
+                    client.emit('ErrorMessage', {
+                        message: `An Error has ocurred selecting the node`,
+                    });
+                }
+
+                this.logger.debug('</NODE SELECTED>');
+            }
         );
-
-        try {
-            return await this.nodeSelectedProcess.handle(ctx, node_id);
-        } catch (e) {
-            logger.error(e);
-            client.emit('ErrorMessage', {
-                message: `An Error has ocurred selecting the node`,
-            });
-        }
     }
 
     @SubscribeMessage('ContinueExpedition')
-    async handleContinueExpedition(client: Socket): Promise<string> {
-        const ctx = await this.expeditionService.getGameContext(client);
-        this.logger.info(
-            ctx.info,
-            `Client ${client.id} will advance to the next node`,
-        );
+    async handleContinueExpedition(client: Socket): Promise<void> {
+        await this.actionQueueService.push(
+            await this.expeditionService.getExpeditionIdFromClient(client.id),
+            async () => {
+                this.logger.debug('<CONTINUTE EXPEDITION>');
+                const ctx = await this.expeditionService.getGameContext(client);
+                this.logger.info(
+                    ctx.info,
+                    `Client ${client.id} will advance to the next node`,
+                );
 
-        return this.continueExpeditionProcess.handle(ctx);
+                ctx.client.emit(
+                    'ContinueExpeditionResponse',
+                    await this.continueExpeditionProcess.handle(ctx),
+                );
+                
+                this.logger.debug('</CONTINUTE EXPEDITION>');
+            }
+        );
     }
 
     @SubscribeMessage('NodeSkipped')
