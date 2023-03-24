@@ -32,7 +32,10 @@ export class UpgradeCardGateway {
     async handleCardUpgradeSelected(
         client: Socket,
         cardId: string,
-    ): Promise<void> {
+    ): Promise<string> {
+
+        const waiter = { done: false, data: "" };
+
         await this.actionQueueService.push(
             await this.expeditionService.getExpeditionIdFromClient(client.id),
             async () => {
@@ -45,24 +48,35 @@ export class UpgradeCardGateway {
                 );
 
                 try {
-                    client.emit(
-                        'CardUpgradeSelectedResponse',
-                        await this.upgradeCardService.showUpgradablePair(client, cardId),
-                    );
+                    waiter.data = await this.upgradeCardService.showUpgradablePair(client, cardId);
+                    waiter.done = true;
                 } catch (e) {
                     this.logger.error(e);
                     client.emit('ErrorMessage', {
                         message: e.message ?? 'An Error has occurred finding the upgraded card.',
                     });
+                    waiter.done = true;
                 }
                 
                 this.logger.debug('<UPGRADE SELECTED>');
             }
         );
+
+        const wait = (ms) => new Promise(res => setTimeout(res, ms));
+        let loopBreak = 50;
+
+        while (!waiter.done || loopBreak <= 0) {
+            await wait(100);
+            loopBreak--;
+        }
+
+        return (waiter.done) ? waiter.data : undefined;
     }
 
     @SubscribeMessage('UpgradeCard')
-    async handleUpgradeCard(client: Socket, cardId: string): Promise<void> {
+    async handleUpgradeCard(client: Socket, cardId: string): Promise<string> {
+        const waiter = { done: false, data: "" };
+
         await this.actionQueueService.push(
             await this.expeditionService.getExpeditionIdFromClient(client.id),
             async () => {
@@ -100,14 +114,22 @@ export class UpgradeCardGateway {
                         break;
                 }
 
-                client.emit(
-                    'UpgradeCardResponse',
-                    response
-                );
+                waiter.data = response;
+                waiter.done = true;
 
                 // TODO: add validation to confirm if the user can upgrade more cards
                 this.logger.debug('<UPGRADE CARD>');
             }
         );
+
+        const wait = (ms) => new Promise(res => setTimeout(res, ms));
+        let loopBreak = 50;
+
+        while (!waiter.done || loopBreak <= 0) {
+            await wait(100);
+            loopBreak--;
+        }
+
+        return (waiter.done) ? waiter.data : undefined;
     }
 }
