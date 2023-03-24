@@ -43,6 +43,10 @@ export const groundMothData: Enemy = {
                             args: {
                                 value: 5,
                             },
+                            action: {
+                                name: 'Claw',
+                                hint: 'attack1',
+                            },
                         },
                     ],
                 },
@@ -82,6 +86,10 @@ export const groundMothData: Enemy = {
                             args: {
                                 value: 6,
                             },
+                            action: {
+                                name: 'Rumble',
+                                hint: 'cast1',
+                            },
                         },
                     ],
                 },
@@ -110,6 +118,10 @@ export const groundMothData: Enemy = {
                             target: CardTargetedEnum.Player,
                             args: {
                                 value: 10,
+                            },
+                            action: {
+                                name: 'Proboscis',
+                                hint: 'attack2',
                             },
                         },
                     ],

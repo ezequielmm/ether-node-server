@@ -47,6 +47,10 @@ export const fungalBruteData: Enemy = {
                             args: {
                                 value: 4,
                             },
+                            action: {
+                                name: 'Stomp',
+                                hint: 'attack1',
+                            },
                         },
                     ],
                 },
@@ -61,8 +65,7 @@ export const fungalBruteData: Enemy = {
                             args: {
                                 value: 2,
                                 cardId: StunnedCard.cardId,
-                                destination: 'draw',
-                                position: AddCardPosition.Random,
+                                destination: 'discard',
                             },
                         },
                     ],
@@ -93,6 +96,10 @@ export const fungalBruteData: Enemy = {
                             args: {
                                 value: 8,
                             },
+                            action: {
+                                name: 'Rumble',
+                                hint: 'cast1',
+                            },
                         },
                     ],
                 },
@@ -117,6 +124,10 @@ export const fungalBruteData: Enemy = {
                             target: CardTargetedEnum.Player,
                             args: {
                                 value: 28,
+                            },
+                            action: {
+                                name: 'Crush',
+                                hint: 'attack2',
                             },
                         },
                     ],
@@ -149,6 +160,10 @@ export const fungalBruteData: Enemy = {
                                     redSporelingData.enemyId,
                                     yellowSporelingData.enemyId,
                                 ],
+                            },
+                            action: {
+                                name: 'Spawn',
+                                hint: 'cast2',
                             },
                         },
                     ],

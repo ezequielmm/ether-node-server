@@ -1,4 +1,5 @@
 import { ModelOptions, Prop } from '@typegoose/typegoose';
+import { IActionHint } from 'src/game/effects/effects.interface';
 import { ExpeditionEntity } from '../interfaces';
 import { ICombatQueueTarget } from './combatQueue.interface';
 
@@ -14,5 +15,6 @@ export class CombatQueue {
         originType: ExpeditionEntity['type'];
         originId: string;
         targets?: ICombatQueueTarget[];
+        action: IActionHint;
     }[];
 }

@@ -57,6 +57,10 @@ export const rockElementalData: Enemy = {
                             args: {
                                 value: 6,
                             },
+                            action: {
+                                name: 'Ram',
+                                hint: 'Attack1_Ram',
+                            },
                         },
                     ],
                 },
@@ -88,6 +92,10 @@ export const rockElementalData: Enemy = {
                                 statusArgs: {
                                     counter: 3,
                                 },
+                            },
+                            action: {
+                                name: 'Stomp',
+                                hint: 'cast1_stomp',
                             },
                         },
                     ],

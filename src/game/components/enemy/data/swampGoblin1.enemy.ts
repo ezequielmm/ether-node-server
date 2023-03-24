@@ -43,6 +43,10 @@ export const swampGoblin1Data: Enemy = {
                             args: {
                                 value: 4,
                             },
+                            action: {
+                                name: 'Club',
+                                hint: 'attack',
+                            },
                         },
                     ],
                 },
@@ -71,6 +75,10 @@ export const swampGoblin1Data: Enemy = {
                             target: CardTargetedEnum.Self,
                             args: {
                                 value: 10,
+                            },
+                            action: {
+                                name: 'Gather Shadow',
+                                hint: 'cast1',
                             },
                         },
                     ],
@@ -102,6 +110,10 @@ export const swampGoblin1Data: Enemy = {
                                 value: 1,
                                 cardId: ChokingCard.cardId,
                                 destination: 'discard',
+                            },
+                            action: {
+                                name: 'Spore Cloud',
+                                hint: 'cast2',
                             },
                         },
                     ],

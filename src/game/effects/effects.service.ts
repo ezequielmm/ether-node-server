@@ -73,6 +73,7 @@ export class EffectService {
             effect: name,
             times = 1,
             args: { value, ...args } = {},
+            action: action,
         } = effect;
 
         let effectDTO: EffectDTO = {
@@ -91,6 +92,9 @@ export class EffectService {
             dto: effectDTO,
             effect: name,
         });
+
+        // attach action after mutate, rather than pipe it through
+        effectDTO.action = action;
 
         for (let i = 1; i <= times; i++) {
             const { metadata, instance } = this.findContainerByName(name);

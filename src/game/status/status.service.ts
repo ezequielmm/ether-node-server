@@ -24,7 +24,7 @@ import {
     EVENT_AFTER_STATUS_ATTACH,
     EVENT_BEFORE_STATUS_ATTACH,
 } from '../constants';
-import { EffectDTO } from '../effects/effects.interface';
+import { EffectDTO, IActionHint } from '../effects/effects.interface';
 import { ProviderContainer } from '../provider/interfaces';
 import { ProviderService } from '../provider/provider.service';
 import { STATUS_METADATA_KEY } from './contants';
@@ -60,6 +60,7 @@ export interface AfterStatusAttachEvent {
     targetId: TargetId;
     source: ExpeditionEntity;
     status: AttachedStatus;
+    action?: IActionHint;
 }
 export interface AfterStatusesUpdateEvent {
     ctx: GameContext;
@@ -142,7 +143,7 @@ export class StatusService {
      * @param dto Dto parameters
      */
     public async attach(dto: AttachDTO) {
-        const { ctx, source, target, statusName, statusArgs } = dto;
+        const { ctx, source, target, statusName, statusArgs, action } = dto;
 
         const eventBeforeStatusAttach: BeforeStatusAttachEvent = {
             ctx,
@@ -202,6 +203,7 @@ export class StatusService {
             status: finalStatus,
             target,
             targetId: target.value.id,
+            action: action,
         };
 
         await this.eventEmitter.emitAsync(
