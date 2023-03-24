@@ -5,6 +5,8 @@ import { Gear } from './gear.schema';
 import { GearRarityEnum } from './gear.enum';
 import { getRandomBetween } from "../../../utils";
 import { ILootboxRarityOdds } from './gear.interface';
+import { data as gearData } from './gear.data';
+import { find } from 'lodash';
 
 @Injectable()
 export class GearService {
@@ -49,4 +51,14 @@ export class GearService {
         const which_one = getRandomBetween(0, all.length);
         return all[which_one];
     }
+
+    getGearById(id: number): Gear | undefined {
+        const gear = 
+            (gearData[id].gearId == id) 
+            ? gearData[id] 
+            : find(gearData, (i) => { return i.gearId == id; });
+        
+        return gear ?? undefined;
+    }
+
 }
