@@ -46,6 +46,10 @@ export const swampGoblin4Data: Enemy = {
                                     counter: 3,
                                 },
                             },
+                            action: {
+                                name: 'Enrage',
+                                hint: 'cast1',
+                            },
                         },
                     ],
                 },
@@ -70,6 +74,10 @@ export const swampGoblin4Data: Enemy = {
                             target: CardTargetedEnum.Player,
                             args: {
                                 value: 4,
+                            },
+                            action: {
+                                name: 'Strike',
+                                hint: 'attack1',
                             },
                         },
                     ],

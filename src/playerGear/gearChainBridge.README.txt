@@ -1,0 +1,41 @@
+How to interact with The GearChainBridge API:
+
+Token Generation:
+        Both endpoints require a "token". This is a simple shared secret based hash. Not incredibly secure, but enough to prevent simple abuse.
+
+        To generate the token value, cooncatenate the day's unix timestamp, the wallet, address, and a sharedSalt as follows:
+                const timestamp = new Date().setUTCHours(0,0,0,0).valueOf();
+                const token = crypto.createHash('md5').update(timestamp + wallet_address + sharedSalt).digest('hex');
+
+        We check token validity by generating one on our end as well and simply comparing.
+
+        The sharedSalt is to be determined separately. For development purposes, it is 'sharedSalt';
+
+Endpoints:
+
+POST: /gearChainBridge/list
+        This route will list the players inventory as full gear item records.
+
+        Parameters:
+        - wallet: string representing wallet address
+        - token: string representing security token hash
+
+        Return:
+        Array of objects representing all gear in player inventory.
+
+POST: /gearChainBridge/modify
+        This route will add to or remove from the player's inventory the gear listed by id.
+
+        Parameters:
+        - wallet: string representing player wallet address
+        - token: security token as previously described
+        - action: 'add' or 'remove'
+        - gear: array of gear ids
+
+        Return:
+        Object with two gear array properties:
+        - oldGear: the gear the player had BEFORE the operation
+        - newGear: the gear the player has AFTER the operation
+
+        The expectation is for final validation of the change to occur on the API consumer side.
+

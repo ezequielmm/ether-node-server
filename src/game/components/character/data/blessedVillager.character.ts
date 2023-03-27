@@ -1,15 +1,17 @@
 import { CharacterClassEnum } from '../character.enum';
 import { Character } from '../character.schema';
-import { AttackCard } from "../../card/data/attack.card";
-import { DefenseCard } from "../../card/data/defend.card";
-import { BraceCard } from "../../card/data/brace.card";
-import { CounterCard } from "../../card/data/counter.card";
-import { FindWeaknessCard } from "../../card/data/findWeakness.card";
+import { AttackCard } from '../../card/data/attack.card';
+import { DefenseCard } from '../../card/data/defend.card';
+import { BraceCard } from '../../card/data/brace.card';
+import { CounterCard } from '../../card/data/counter.card';
+import { FindWeaknessCard } from '../../card/data/findWeakness.card';
 
 export const BlessedVillagerCharacter: Character = {
     name: 'Blessed Villager',
+    contractId: '',
+    contractIdTest: '0x55abb816b145CA8F34ffA22D63fBC5bc57186690',
     description: 'Blessed Villager Character',
-    initialHealth: 50,
+    initialHealth: 70,
     initialGold: 0,
     characterClass: CharacterClassEnum.BlessedVillager,
     isActive: true,

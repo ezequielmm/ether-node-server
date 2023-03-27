@@ -10,6 +10,12 @@ export class Character {
     name: string;
 
     @Prop()
+    contractId: string;
+
+    @Prop()
+    contractIdTest: string;
+
+    @Prop()
     description: string;
 
     @Prop()
@@ -30,11 +36,8 @@ export class Character {
     @Prop()
     isActive: boolean;
 
-    @Prop()
-    contractId?: string;
-
     @Prop({ type: Object })
-    lootboxRarity?: {
+    lootboxRarity: {
         common: number;
         uncommon: number;
         rare: number;

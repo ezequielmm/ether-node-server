@@ -9,7 +9,11 @@ import { ScoreCalculatorModule } from 'src/game/scoreCalculator/scoreCalculator.
 import { TokenController } from './token.controller';
 import { ShowVersionController } from './showVersion.controller';
 import { ShowNftNetworkController } from './showNftNetwork.controller';
-import { PlayerGearModule } from "../playerGear/playerGear.module";
+import { HighscoreController } from './highscore.controller';
+import { PlayerGearModule } from '../playerGear/playerGear.module';
+import { ContestModule } from '../game/contest/contest.module';
+import { PlayerWinModule } from '../playerWin/playerWin.module';
+import { ShowContestController } from './showContest.controller';
 
 @Module({
     imports: [
@@ -19,6 +23,8 @@ import { PlayerGearModule } from "../playerGear/playerGear.module";
         MerchantModule,
         ScoreCalculatorModule,
         PlayerGearModule,
+        PlayerWinModule,
+        ContestModule,
     ],
     controllers: [
         ProfileController,
@@ -26,6 +32,8 @@ import { PlayerGearModule } from "../playerGear/playerGear.module";
         TokenController,
         ShowVersionController,
         ShowNftNetworkController,
+        HighscoreController,
+        ShowContestController,
     ],
 })
 export class ApiModule {}

@@ -45,6 +45,10 @@ export const mimicFrog1Data: Enemy = {
                             args: {
                                 value: 11,
                             },
+                            action: {
+                                name: 'Croak',
+                                hint: 'attack2',
+                            },
                         },
                     ],
                 },
@@ -91,6 +95,10 @@ export const mimicFrog1Data: Enemy = {
                             args: {
                                 value: 6,
                             },
+                            action: {
+                                name: 'Swipe',
+                                hint: 'attack1',
+                            },
                         },
                     ],
                 },
@@ -123,6 +131,10 @@ export const mimicFrog1Data: Enemy = {
                                     counter: 2,
                                 },
                             },
+                            action: {
+                                name: 'Lick',
+                                hint: 'cast1',
+                            },
                         },
                     ],
                 },
@@ -151,6 +163,10 @@ export const mimicFrog1Data: Enemy = {
                             target: CardTargetedEnum.Self,
                             args: {
                                 value: 13,
+                            },
+                            action: {
+                                name: 'Hide',
+                                hint: 'hide_start',
                             },
                         },
                     ],

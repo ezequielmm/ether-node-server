@@ -6,13 +6,14 @@ import {
     PotionInstance,
 } from './expedition.interface';
 import { GearItem } from '../../../playerGear/gearItem';
+import { IPlayerToken } from './expedition.schema';
 
 export class Player {
     @Prop()
     playerId: string;
 
     @Prop()
-    nftId?: number;
+    playerToken: IPlayerToken;
 
     @Prop()
     equippedGear?: GearItem[];
@@ -54,12 +55,11 @@ export class Player {
     cardDestroyCount: number;
 
     @Prop({ type: Object })
-    lootboxRarity?: {
+    lootboxRarity: {
         common: number;
         uncommon: number;
         rare: number;
         epic: number;
         legendary: number;
     };
-
 }

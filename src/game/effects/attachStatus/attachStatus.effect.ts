@@ -12,7 +12,7 @@ export class AttachStatusEffect implements EffectHandler {
     constructor(private readonly statusService: StatusService) {}
 
     async handle(payload: EffectDTO): Promise<void> {
-        const { ctx, source, target, args } = payload;
+        const { ctx, source, target, args, action } = payload;
 
         await this.statusService.attach({
             ctx,
@@ -20,6 +20,7 @@ export class AttachStatusEffect implements EffectHandler {
             target,
             statusName: args.statusName,
             statusArgs: args.statusArgs,
+            action: action,
         });
     }
 }

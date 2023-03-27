@@ -21,26 +21,35 @@ export class SpikesStatus implements StatusEffectHandler {
     async handle(
         dto: StatusEffectDTO<DamageArgs>,
     ): Promise<EffectDTO<DamageArgs>> {
-        // Return the damage to the source with the value of the status
-        const applyDTO: ApplyDTO = {
-            ctx: dto.ctx,
-            source: dto.effectDTO.target,
-            target: dto.effectDTO.source,
-            effect: {
-                effect: damageEffect.name,
-                args: {
-                    value: dto.status.args.counter,
-                    type: 'spikes',
-                },
-            },
-        };
-
         // Apply damage to the source
-        if (dto.effectDTO.args.type === undefined) {
-            await this.effectService.apply(applyDTO);
+        const {
+            ctx,
+            effectDTO,
+            effectDTO: { target, source },
+            status,
+        } = dto;
+
+        // Apply damage to the source, if incoming damage is untyped
+        if (effectDTO.args.type === undefined) {
+            
+            // Return the damage to the source with the value of the status
+            const applyDTO: ApplyDTO = {
+                ctx: ctx,
+                source: effectDTO.target,
+                target: effectDTO.source,
+                effect: {
+                    effect: damageEffect.name,
+                    args: {
+                        value: status.args.counter,
+                        type: 'spikes',
+                    },
+                },
+            };
+
+             await this.effectService.apply(applyDTO);
         }
 
         // Don't modify the args, the target will be damaged as well.
-        return dto.effectDTO;
+        return effectDTO;
     }
 }
