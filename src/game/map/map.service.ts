@@ -10,7 +10,6 @@ import { ModuleRef } from '@nestjs/core';
 import { NodeStrategy } from './map/strategies/node-strategy';
 import { strategies } from './map/strategies/index';
 import { NodeType } from '../components/expedition/node-type';
-import { NodeStatus } from '../components/expedition/node-status';
 
 @Injectable()
 export class MapService {
