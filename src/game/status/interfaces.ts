@@ -1,7 +1,7 @@
 import { CardTargetedEnum } from '../components/card/card.enum';
 import { EnemyId } from '../components/enemy/enemy.type';
 import { GameContext, ExpeditionEntity } from '../components/interfaces';
-import { Effect, EffectDTO } from '../effects/effects.interface';
+import { Effect, EffectDTO, IActionHint } from '../effects/effects.interface';
 import { TargetId } from '../effects/effects.types';
 
 export enum StatusType {
@@ -305,6 +305,7 @@ export interface AttachDTO {
     target: ExpeditionEntity;
     statusName: StatusName;
     statusArgs: StatusArgs;
+    action?: IActionHint;
 }
 
 export interface AttachToPlayerDTO {

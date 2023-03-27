@@ -47,6 +47,10 @@ export const thornWolfData: Enemy = {
                             args: {
                                 value: 15,
                             },
+                            action: {
+                                name: 'Bite',
+                                hint: 'attack1',
+                            },
                         },
                     ],
                 },
@@ -76,6 +80,10 @@ export const thornWolfData: Enemy = {
                             args: {
                                 value: 6,
                             },
+                            action: {
+                                name: 'Claw',
+                                hint: 'attack2',
+                            },
                         },
                     ],
                 },
@@ -89,6 +97,10 @@ export const thornWolfData: Enemy = {
                             target: CardTargetedEnum.Player,
                             args: {
                                 value: 6,
+                            },
+                            action: {
+                                name: 'Claw',
+                                hint: 'attack2',
                             },
                         },
                     ],
@@ -118,6 +130,10 @@ export const thornWolfData: Enemy = {
                             target: CardTargetedEnum.Self,
                             args: {
                                 value: 5,
+                            },
+                            action: {
+                                name: 'Bristle',
+                                hint: 'cast1',
                             },
                         },
                     ],
@@ -164,6 +180,10 @@ export const thornWolfData: Enemy = {
                             target: CardTargetedEnum.Self,
                             args: {
                                 enemiesToSpawn: [thornWolfPupData.enemyId],
+                            },
+                            action: {
+                                name: 'Howl',
+                                hint: 'cast2',
                             },
                         },
                     ],

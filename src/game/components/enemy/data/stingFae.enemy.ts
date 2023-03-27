@@ -42,6 +42,10 @@ export const stingFaeData: Enemy = {
                             args: {
                                 value: 5,
                             },
+                            action: {
+                                name: 'Stab',
+                                hint: 'attack1',
+                            },
                         },
                     ],
                 },
@@ -66,6 +70,10 @@ export const stingFaeData: Enemy = {
                             target: CardTargetedEnum.Self,
                             args: {
                                 value: 5,
+                            },
+                            action: {
+                                name: 'Dodge',
+                                hint: 'cast1',
                             },
                         },
                     ],
@@ -97,6 +105,10 @@ export const stingFaeData: Enemy = {
                                 value: 1,
                                 cardId: PoisonedCard.cardId,
                                 destination: 'discard',
+                            },
+                            action: {
+                                name: 'Sting',
+                                hint: 'attack2',
                             },
                         },
                     ],

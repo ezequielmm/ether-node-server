@@ -20,6 +20,7 @@ import { corsSocketSettings, DataWSRequestTypesEnum } from './socket.enum';
 import { GetEncounterDataAction } from 'src/game/action/getEncounterDataAction';
 import { ExpeditionService } from 'src/game/components/expedition/expedition.service';
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
+import { ActionQueueService } from 'src/actionQueue/actionQueue.service';
 
 @WebSocketGateway(corsSocketSettings)
 export class GetDataGateway {
@@ -40,85 +41,141 @@ export class GetDataGateway {
         private readonly getRewardsAction: GetRewardsAction,
         private readonly getEncounterAction: GetEncounterDataAction,
         private readonly expeditionService: ExpeditionService,
+        private readonly actionQueueService: ActionQueueService,
     ) {}
 
     @SubscribeMessage('GetData')
     async handleGetData(client: Socket, types: string): Promise<string> {
-        const ctx = await this.expeditionService.getGameContext(client);
+        
+        const waiter = { done: false, data: "" };
 
-        const logger = this.logger.logger.child(ctx.info);
+        await this.actionQueueService.push(
+            await this.expeditionService.getExpeditionIdFromClient(client.id),
+            async () => {
+                this.logger.debug('<GETDATA: ' + types + '>');
 
-        logger.info(`Client ${client.id} trigger message "GetData": ${types}`);
+                const ctx = await this.expeditionService.getGameContext(client);
 
-        try {
-            let data = null;
+                const logger = this.logger.logger.child(ctx.info);
 
-            switch (types) {
-                case DataWSRequestTypesEnum.Energy:
-                    data = await this.getEnergyAction.handle(client.id);
-                    break;
+                logger.info(
+                    `Client ${client.id} trigger message "GetData": ${types}`,
+                );
 
-                case DataWSRequestTypesEnum.CardsPiles:
-                    data = await this.getCardPilesAction.handle(client.id);
-                    break;
+                try {
+                    let data = null;
 
-                case DataWSRequestTypesEnum.Enemies:
-                    data = await this.getEnemiesAction.handle(client.id);
-                    break;
+                    switch (types) {
+                        case DataWSRequestTypesEnum.Energy:
+                            data = await this.getEnergyAction.handle(client.id);
+                            break;
 
-                case DataWSRequestTypesEnum.Players:
-                    data = await this.getPlayerInfoAction.handle(client.id);
-                    break;
+                        case DataWSRequestTypesEnum.CardsPiles:
+                            data = await this.getCardPilesAction.handle(
+                                client.id,
+                            );
+                            break;
 
-                case DataWSRequestTypesEnum.Statuses:
-                    data = await this.getStatusesAction.handle(client.id);
-                    break;
+                        case DataWSRequestTypesEnum.Enemies:
+                            data = await this.getEnemiesAction.handle(
+                                client.id,
+                            );
+                            break;
 
-                case DataWSRequestTypesEnum.EnemyIntents:
-                    data = await this.sendEnemyIntentsProcess.handle(client.id);
-                    break;
+                        case DataWSRequestTypesEnum.Players:
+                            data = await this.getPlayerInfoAction.handle(
+                                client.id,
+                            );
+                            break;
 
-                case DataWSRequestTypesEnum.PlayerDeck:
-                    data = await this.getPlayerDeckAction.handle(client.id);
-                    break;
+                        case DataWSRequestTypesEnum.Statuses:
+                            data = await this.getStatusesAction.handle(
+                                client.id,
+                            );
+                            break;
 
-                case DataWSRequestTypesEnum.CurrentNode:
-                    data = await this.getCurrentStepAction.handle(ctx);
-                    break;
+                        case DataWSRequestTypesEnum.EnemyIntents:
+                            data = await this.sendEnemyIntentsProcess.handle(
+                                ctx,
+                            );
+                            break;
 
-                case DataWSRequestTypesEnum.UpgradableCards:
-                    data = await this.getUpgradableCards.handle(client.id);
-                    break;
+                        case DataWSRequestTypesEnum.PlayerDeck:
+                            data = await this.getPlayerDeckAction.handle(
+                                client.id,
+                            );
+                            break;
 
-                case DataWSRequestTypesEnum.MerchantData:
-                    data = await this.getMerchantDataAction.handle(client.id);
-                    break;
+                        case DataWSRequestTypesEnum.CurrentNode:
+                            data = await this.getCurrentStepAction.handle(ctx);
+                            break;
 
-                case DataWSRequestTypesEnum.TreasureData:
-                    data = await this.getTreasureDataAction.handle(client);
-                    break;
+                        case DataWSRequestTypesEnum.UpgradableCards:
+                            data = await this.getUpgradableCards.handle(
+                                client.id,
+                            );
+                            break;
 
-                case DataWSRequestTypesEnum.Rewards:
-                    data = await this.getRewardsAction.handle(client.id);
-                    break;
+                        case DataWSRequestTypesEnum.MerchantData:
+                            data = await this.getMerchantDataAction.handle(
+                                client.id,
+                            );
+                            break;
 
-                case DataWSRequestTypesEnum.EncounterData:
-                    data = await this.getEncounterAction.handle(client);
-                    break;
-            }
+                        case DataWSRequestTypesEnum.TreasureData:
+                            data = await this.getTreasureDataAction.handle(
+                                client,
+                            );
+                            break;
 
-            return StandardResponse.respond({
-                message_type: SWARMessageType.GenericData,
-                action: types,
-                data,
-            });
-        } catch (e) {
-            logger.error(ctx.info, e.message);
-            logger.error(ctx.info, e.trace);
+                        case DataWSRequestTypesEnum.Rewards:
+                            data = await this.getRewardsAction.handle(
+                                client.id,
+                            );
+                            break;
 
-            client.emit('ErrorMessage', {
-                message: `An Error has ocurred getting ${types}`,
-            });
+                        case DataWSRequestTypesEnum.EncounterData:
+                            data = await this.getEncounterAction.handle(client);
+                            break;
+                    }
+
+                    waiter.data = StandardResponse.respond({
+                        message_type: SWARMessageType.GenericData,
+                        action: types,
+                        data,
+                    });
+                    waiter.done = true;
+
+                    // client.emit(
+                    //     'PutData',
+                    //     StandardResponse.respond({
+                    //         message_type: SWARMessageType.GenericData,
+                    //         action: types,
+                    //         data,
+                    //     }),
+                    // );
+                } catch (e) {
+                    logger.error(ctx.info, e.message);
+                    logger.error(ctx.info, e.trace);
+
+                    client.emit('ErrorMessage', {
+                        message: `An Error has ocurred getting ${types}`,
+                    });
+                    waiter.done = true;
+                }
+
+                this.logger.debug('</GETDATA: ' + types + '>');
+            },
+        );
+
+        const wait = (ms) => new Promise(res => setTimeout(res, ms));
+        let loopBreak = 50;
+
+        while (!waiter.done || loopBreak <= 0) {
+            await wait(100);
+            loopBreak--;
         }
+
+        return (waiter.done) ? waiter.data : undefined;
     }
 }

@@ -39,6 +39,10 @@ export const centipionData: Enemy = {
                                 value: 7,
                                 multiplier: 2,
                             },
+                            action: {
+                                name: 'Claws',
+                                hint: 'attack1_claws',
+                            },
                         },
                     ],
                 },
@@ -63,6 +67,10 @@ export const centipionData: Enemy = {
                             target: CardTargetedEnum.Self,
                             args: {
                                 value: 10,
+                            },
+                            action: {
+                                name: 'Bite',
+                                hint: 'attack2_bite',
                             },
                         },
                     ],
@@ -90,6 +98,10 @@ export const centipionData: Enemy = {
                                 value: 2,
                                 cardId: WoundedCard.cardId,
                                 destination: 'discard',
+                            },
+                            action: {
+                                name: 'Acid Spittle',
+                                hint: 'cast1_AcidSpittle',
                             },
                         },
                     ],

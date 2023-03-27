@@ -51,6 +51,7 @@ export class DamageEffect implements EffectHandler {
                 useEnergyAsValue,
                 onARoll,
             },
+            action,
         } = payload;
 
         const {
@@ -137,6 +138,7 @@ export class DamageEffect implements EffectHandler {
                 finalDefense: newDefense,
                 statuses: [],
             },
+            action: action,
         });
 
         await this.eventEmitter.emitAsync(EVENT_AFTER_DAMAGE_EFFECT, {

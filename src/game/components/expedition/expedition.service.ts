@@ -391,7 +391,7 @@ export class ExpeditionService {
         await ctx.expedition.save();
     }
 
-    async findTopScores(event_id: string, limit: number): Promise<any[]> {
+    async findTopScores(event_id: number, limit: number): Promise<any[]> {
         limit = limit > 50 ? 50 : limit;
         limit = limit < 10 ? 10 : limit;
         const expedition = await this.expedition

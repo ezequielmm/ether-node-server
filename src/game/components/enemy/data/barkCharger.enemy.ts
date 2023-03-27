@@ -42,6 +42,10 @@ export const barkChargerData: Enemy = {
                             args: {
                                 value: 5,
                             },
+                            action: {
+                                name: 'Thrust',
+                                hint: 'attack1',
+                            },
                         },
                     ],
                 },
@@ -84,6 +88,10 @@ export const barkChargerData: Enemy = {
                             target: CardTargetedEnum.Self,
                             args: {
                                 value: 6,
+                            },
+                            action: {
+                                name: 'Brace',
+                                hint: 'brace_start',
                             },
                         },
                     ],
@@ -130,6 +138,10 @@ export const barkChargerData: Enemy = {
                             target: CardTargetedEnum.Player,
                             args: {
                                 value: 10,
+                            },
+                            action: {
+                                name: 'Charge',
+                                hint: 'attack2',
                             },
                         },
                     ],

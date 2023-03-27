@@ -9,6 +9,7 @@ import {
     EnemyIntentionType,
 } from '../enemy.enum';
 import { Enemy } from '../enemy.schema';
+import { summoned } from 'src/game/status/summoned/constants';
 
 export const blueSporelingData: Enemy = {
     enemyId: 14,
@@ -20,9 +21,34 @@ export const blueSporelingData: Enemy = {
     healthRange: [12, 14],
     scripts: [
         {
+            id: -1,
+            intentions: [],
+            next: [
+                {
+                    probability: 1,
+                    scriptId: 0,
+                },
+            ],
+        },
+        {
+            // we need a summoned status
             id: 0,
             intentions: [
-                // TODO: Create Summoned status
+                {
+                    type: EnemyIntentionType.Debuff,
+                    target: CardTargetedEnum.Self,
+                    value: 1,
+                    effects: [
+                        {
+                            effect: attachStatusEffect.name,
+                            target: CardTargetedEnum.Self,
+                            args: {
+                                statusName: summoned.name,
+                                statusArgs: {},
+                            },
+                        },
+                    ],
+                },
             ],
             next: [
                 {
@@ -52,6 +78,10 @@ export const blueSporelingData: Enemy = {
                                     counter: 2,
                                 },
                             },
+                            action: {
+                                name: 'Infect',
+                                hint: 'cast',
+                            },
                         },
                     ],
                 },
@@ -80,6 +110,10 @@ export const blueSporelingData: Enemy = {
                             target: CardTargetedEnum.Player,
                             args: {
                                 value: 6,
+                            },
+                            action: {
+                                name: 'Attack',
+                                hint: 'attack',
                             },
                         },
                     ],

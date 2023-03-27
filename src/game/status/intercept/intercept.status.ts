@@ -22,7 +22,7 @@ export class InterceptStatus implements StatusEffectHandler {
         const effectDTO = dto.effectDTO;
 
         effectDTO.args.currentValue = Math.max(
-            effectDTO.args.currentValue / 2,
+            Math.ceil(effectDTO.args.currentValue / 2),
             0,
         );
 
