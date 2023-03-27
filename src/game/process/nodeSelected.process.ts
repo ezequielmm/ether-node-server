@@ -56,10 +56,13 @@ export class NodeSelectedProcess {
     ): Promise<string> {
         const logger = this.logger.logger.child(ctx.info);
 
-        const { mapSeedId, map } = ctx.expedition;
-
         this.mapService.selectNode(ctx, node.id);
         await ctx.expedition.save();
+
+        // moved to after selecting node, so that it would be active on return to client. 
+        // TODO: test if this breaks things.
+        const { mapSeedId, map } = ctx.expedition;
+        const safeMap = this.mapService.makeClientSafe(map);
 
         switch (node.type) {
             case NodeType.Portal:
@@ -69,7 +72,7 @@ export class NodeSelectedProcess {
                     message_type: SWARMessageType.MapUpdate,
                     seed: mapSeedId,
                     action: SWARAction.ExtendMap,
-                    data: map,
+                    data: safeMap,
                 });
             case NodeType.RoyalHouse:
             case NodeType.RoyalHouseA:
@@ -82,7 +85,7 @@ export class NodeSelectedProcess {
                     message_type: SWARMessageType.MapUpdate,
                     seed: mapSeedId,
                     action: SWARAction.ActivatePortal,
-                    data: map,
+                    data: safeMap,
                 });
             case NodeType.Combat:
             case NodeType.CombatBoss:
@@ -98,7 +101,7 @@ export class NodeSelectedProcess {
                     message_type: SWARMessageType.MapUpdate,
                     seed: mapSeedId,
                     action: SWARAction.MapUpdate,
-                    data: map,
+                    data: safeMap,
                 });
             case NodeType.Camp:
             case NodeType.CampHouse:
