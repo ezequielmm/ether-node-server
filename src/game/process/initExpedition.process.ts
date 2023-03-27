@@ -15,6 +15,8 @@ import { MapService } from '../map/map.service';
 import { GearItem } from '../../playerGear/gearItem';
 import { Contest } from '../contest/contest.schema';
 import { IPlayerToken } from '../components/expedition/expedition.schema';
+import { ContestService } from '../contest/contest.service';
+import { ContestMapService } from '../contestMap/contestMap.service';
 
 @Injectable()
 export class InitExpeditionProcess {
@@ -27,6 +29,8 @@ export class InitExpeditionProcess {
         private readonly customDeckService: CustomDeckService,
         private readonly settingsService: SettingsService,
         private readonly mapService: MapService,
+        private readonly contestService: ContestService,
+        private readonly contestMapService: ContestMapService,
     ) {}
 
     async handle({
@@ -59,23 +63,12 @@ export class InitExpeditionProcess {
         const { initialPotionChance } =
             await this.settingsService.getSettings();
 
-        // if (false) {
-        //     //todo CONTEST replace nodes with contestMap
-        //     let event_id = '-1';
-        //     let map = [];
-        //     if (contest) {
-        //         const contest_map = await this.contestService.find(
-        //             contest.map_id,
-        //         );
-        //         event_id = contest.event_id;
-        //         map = contest_map.node;
-        //     } else {
-        //         map = this.mapService.getActZero();
-        //     }
-        // }
-
-        // const event_id = '-1';
-        const map = this.mapService.getActZero();
+        let map = [];
+        if (contest) {
+            map = await this.contestMapService.getMapForContest(contest);
+        } else {
+            map = this.mapService.getActZero();
+        }
 
         const cards = await this.generatePlayerDeck(character, email);
 

@@ -4,6 +4,7 @@ import { ContestMap, ContestMapDocument } from './contestMap.schema';
 import { ReturnModelType } from '@typegoose/typegoose';
 import { CreateContestMapDTO } from './contestMap.dto';
 import { FilterQuery, ProjectionFields } from 'mongoose';
+import { Contest } from '../contest/contest.schema';
 
 @Injectable()
 export class ContestMapService {
@@ -32,5 +33,10 @@ export class ContestMapService {
         projection?: ProjectionFields<ContestMap>,
     ): Promise<ContestMap[]> {
         return await this.contestMap.find(filter, projection).lean();
+    }
+
+    async getMapForContest(contest: Contest) {
+        const map = await this.findById( contest.map_id );
+        return map.nodes ?? [];
     }
 }
