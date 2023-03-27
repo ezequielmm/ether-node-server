@@ -71,6 +71,7 @@ export class EndCombatProcess {
         // If combat boss, update expedition status to victory
         // and emit show score
         if (isCombatBoss) {
+
             const score = this.scoreCalculatorService.calculate({
                 expedition: ctx.expedition,
             });
@@ -91,11 +92,11 @@ export class EndCombatProcess {
                         ctx.expedition.playerState.lootboxRarity,
                     );
 
-                // actually save the gear to the player
-                await this.playerGearService.addGearToPlayer(
-                    ctx.expedition.playerId,
-                    ctx.expedition.finalScore.lootbox,
-                );
+                // // actually save the gear to the player
+                // await this.playerGearService.addGearToPlayer(
+                //     ctx.expedition.playerId,
+                //     ctx.expedition.finalScore.lootbox,
+                // );
 
                 ctx.expedition.finalScore.notifyNoLoot = false;
             } else {
@@ -108,7 +109,12 @@ export class EndCombatProcess {
                 playerToken: ctx.expedition.playerState.playerToken,
             });
 
-            //message client
+            // finalize changes and save the whole thing - expedition is DONE.
+            ctx.expedition.currentNode.showRewards = false;
+            ctx.expedition.markModified('currentNode.showRewards');    
+            await ctx.expedition.save();
+
+            //message client to end combat and show score
             ctx.client.emit(
                 'PutData',
                 StandardResponse.respond({
@@ -117,15 +123,13 @@ export class EndCombatProcess {
                     data: null,
                 }),
             );
-        }
+        } else {
 
-        ctx.expedition.currentNode.showRewards = true;
-        ctx.expedition.markModified('currentNode.showRewards');
-
-        await ctx.expedition.save();
-
-        // If not combat boss, emit enemies defeated
-        if (!isCombatBoss) {
+            ctx.expedition.currentNode.showRewards = true;
+            ctx.expedition.markModified('currentNode.showRewards');
+            await ctx.expedition.save();
+    
+            // message client to end combat, enemies defeated
             ctx.client.emit(
                 'PutData',
                 StandardResponse.respond({
