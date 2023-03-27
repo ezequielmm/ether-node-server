@@ -90,13 +90,13 @@ export class EndCombatProcess {
                         3,
                         ctx.expedition.playerState.lootboxRarity,
                     );
-            
+
                 // actually save the gear to the player
                 await this.playerGearService.addGearToPlayer(
-                    ctx.expedition.playerId, 
-                    ctx.expedition.finalScore.lootbox
+                    ctx.expedition.playerId,
+                    ctx.expedition.finalScore.lootbox,
                 );
-            
+
                 ctx.expedition.finalScore.notifyNoLoot = false;
             } else {
                 ctx.expedition.finalScore.lootbox = [];
