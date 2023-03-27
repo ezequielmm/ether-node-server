@@ -112,19 +112,17 @@ export class MapService {
         return node.isSelectable();
     }
 
-    public getClientSafeMap(ctx: GameContext): Node[] { 
-
-        // Find the next portal that is not complete
+    public makeClientSafe(map: Node[]): Node[] {
         const nextPortalIndex: number = findIndex(
-            ctx.expedition.map, 
+            map, 
             (node) => (node.type === NodeType.Portal && node.status !== NodeStatus.Completed)
         );
 
         // We only need to sanitize (and return) up to that portal, so let's ditch the rest
-        const map: Node[] = slice(
-            ctx.expedition.map,
+        map = slice(
+            map,
             0,
-            (nextPortalIndex !== -1) ? nextPortalIndex + 1 : ctx.expedition.map.length
+            (nextPortalIndex !== -1) ? nextPortalIndex + 1 : map.length
         );
         
         // Now let's return the map after purging all state info from nodes that aren't completed or currently active
@@ -138,5 +136,9 @@ export class MapService {
 
             return node;
         });
+    }
+
+    public getClientSafeMap(ctx: GameContext): Node[] { 
+        return this.makeClientSafe(ctx.expedition.map);
     }
 }
