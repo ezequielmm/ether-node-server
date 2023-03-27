@@ -35,12 +35,15 @@ export class PortalNodeStrategy
                 break;
         }
 
+        const safeMap = this.mapService.makeClientSafe(ctx.expedition.map);
+        
+        // TODO: This also appears to emit in the nodeSelected process. Is that a dupe, or is this?
         ctx.client.emit(
             StandardResponse.respond({
                 message_type: SWARMessageType.MapUpdate,
                 seed: ctx.expedition.mapSeedId,
                 action: SWARAction.ExtendMap,
-                data: ctx.expedition.map,
+                data: safeMap,
             }),
         );
     }
