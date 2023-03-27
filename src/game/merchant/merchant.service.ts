@@ -36,6 +36,7 @@ import mongoose from 'mongoose';
 import { TrinketService } from '../components/trinket/trinket.service';
 import { TrinketRarityEnum } from '../components/trinket/trinket.enum';
 import { GameContext } from '../components/interfaces';
+import { filter, find } from 'lodash';
 
 @Injectable()
 export class MerchantService {
@@ -472,55 +473,66 @@ export class MerchantService {
         );
     }
 
-    async cardUpgrade(client: Socket, selectedItem: SelectedItem) {
+    async cardUpgrade(
+        client: Socket,
+        selectedItem: SelectedItem,
+    ): Promise<void> {
+        // First we need to get the player state with the card data
         const playerState = await this.expeditionService.getPlayerState({
             clientId: client.id,
         });
 
-        const cardId = selectedItem.targetId;
+        // Now we get the card id from the selected item
+        const cardId = selectedItem.targetId as string;
 
+        // Now we need the price to upgrade the card
         const upgradedPrice = 75 + 25 * playerState.cardUpgradeCount;
 
-        if (playerState.gold < upgradedPrice) {
-            client.emit('ErrorMessage', {
-                message: `Not enough gold`,
-            });
-            return;
-        }
+        // Now we need to check if the player has enough gold
+        if (playerState.gold < upgradedPrice)
+            return this.failure(client, PurchaseFailureEnum.NoEnoughGold);
 
-        const card = await this.cardService.findById(cardId);
-
-        if (card) {
-            for (let i = 0; i < playerState.cards.length; i++) {
-                if (card.cardId == playerState.cards[i].cardId) {
-                    break;
-                } else if (i === playerState.cards.length - 1) {
-                    client.emit('ErrorMessage', {
-                        message: `Card not in merchant offer`,
-                    });
-                    return;
-                }
-            }
-        } else {
-            client.emit('ErrorMessage', {
-                message: `Card not in merchant offer`,
-            });
-            return;
-        }
-        if (!card.isUpgraded && !card.upgradedCardId) {
-            client.emit('ErrorMessage', {
-                message: `Card could be not upgraded`,
-            });
-            return;
-        }
-
-        const upgradedCardData = await this.cardService.findById(
-            card.upgradedCardId,
+        // Now we find the card in the player state to get its card id
+        const cardFromPlayerState = find(
+            playerState.cards,
+            ({ id }) => id === cardId,
         );
 
+        // If we can't find the card we return an error
+        if (!cardFromPlayerState)
+            return this.failure(client, PurchaseFailureEnum.InvalidId);
+
+        // Now we query the card information to check if we can upgrade it
+        const card = await this.cardService.findOne({
+            cardId: cardFromPlayerState.cardId,
+        });
+
+        // If we can't find the card we return an error
+        if (!card) return this.failure(client, PurchaseFailureEnum.InvalidId);
+
+        // Now we check if the card is already upgraded
+        if (card.isUpgraded && !card.upgradedCardId)
+            return this.failure(
+                client,
+                PurchaseFailureEnum.CardAlreadyUpgraded,
+            );
+
+        // Now we check if the card is a status card, this ones can't be upgraded
+        if (card.cardType === CardTypeEnum.Status)
+            return this.failure(client, PurchaseFailureEnum.CardCantBeUpgraded);
+
+        // Now we query the upgraded information of the card
+        const upgradedCardData = await this.cardService.findOne({
+            cardId: card.upgradedCardId,
+        });
+
+        if (!upgradedCardData)
+            return this.failure(client, PurchaseFailureEnum.InvalidId);
+
+        // Here we create the card object to be added to the player state
         const upgradedCard: IExpeditionPlayerStateDeckCard = {
             id: randomUUID(),
-            cardId: card.cardId,
+            cardId: upgradedCardData.cardId,
             name: upgradedCardData.name,
             cardType: upgradedCardData.cardType,
             energy: upgradedCardData.energy,
@@ -535,32 +547,29 @@ export class MerchantService {
             isActive: true,
         };
 
-        let isUpgraded = false;
+        // Now we need to remove the old card from the player state
+        const newCardDeck = filter(
+            playerState.cards,
+            ({ id }) => id !== cardId,
+        );
 
-        const newCard = playerState.cards.map((item) => {
-            if (item.cardId == card.cardId && !isUpgraded) {
-                isUpgraded = true;
-                return upgradedCard;
-            } else {
-                return item;
-            }
-        });
+        // Now we add the new card to the player state
+        newCardDeck.push(upgradedCard);
 
+        // Now we reduce the coin cost of the upgrade
         const newGold = playerState.gold - upgradedPrice;
+
+        // Now we increase the card upgrade count
         const newCardUpgradeCount = playerState.cardUpgradeCount + 1;
 
-        const newPlayerState = {
-            ...playerState, //don't toObject() here
-            cards: newCard,
-            gold: newGold,
-            cardUpgradeCount: newCardUpgradeCount,
-        };
-
+        // Now we update the player state
         await this.expeditionService.updateByFilter(
             { clientId: client.id },
             {
                 $set: {
-                    playerState: newPlayerState,
+                    'playerState.cards': newCardDeck,
+                    'playerState.gold': newGold,
+                    'playerState.cardUpgradeCount': newCardUpgradeCount,
                 },
             },
         );
@@ -630,49 +639,45 @@ export class MerchantService {
         );
     }
 
-    async cardDestroy(client: Socket, selectedItem: SelectedItem) {
+    async cardDestroy(
+        client: Socket,
+        selectedItem: SelectedItem,
+    ): Promise<void> {
+        // First we need to get the player state with the card data
         const playerState = await this.expeditionService.getPlayerState({
             clientId: client.id,
         });
 
+        // Now we get the card id from the selected item
+        const cardId = selectedItem.targetId as string;
+
+        // Now we need the price to destroy the card
         const destroyPrice = 75 + 25 * playerState.cardDestroyCount;
 
-        if (playerState.gold < destroyPrice) {
-            client.emit('ErrorMessage', {
-                message: `Not enough gold`,
-            });
-            return;
-        }
+        // Now we need to check if the player has enough gold
+        if (playerState.gold < destroyPrice)
+            return this.failure(client, PurchaseFailureEnum.NoEnoughGold);
 
-        const card = await this.cardService.findById(selectedItem.targetId);
+        // Now we find the card in the player state and remove it
+        const newCardDeck = filter(
+            playerState.cards,
+            ({ id }) => id !== cardId,
+        );
 
-        let cardIndex: number = null;
+        // Now we reduce the coin cost of the upgrade
+        const newGold = playerState.gold - destroyPrice;
 
-        if (card) {
-            for (let i = 0; i < playerState.cards.length; i++) {
-                if (card.cardId == playerState.cards[i].cardId) {
-                    cardIndex = i;
-                    break;
-                }
-            }
-        }
+        // Now we increase the card destroy count
+        const newCardDestroyCount = playerState.cardDestroyCount + 1;
 
-        if (cardIndex === null) {
-            client.emit('ErrorMessage', {
-                message: `Card not in merchant offer`,
-            });
-            return;
-        }
-
-        playerState.cards.splice(cardIndex, 1);
-        playerState.cardDestroyCount = playerState.cardDestroyCount + 1;
-        playerState.gold = playerState.gold - destroyPrice;
-
+        // Now we update the player state
         await this.expeditionService.updateByFilter(
             { clientId: client.id },
             {
                 $set: {
-                    playerState,
+                    'playerState.cards': newCardDeck,
+                    'playerState.gold': newGold,
+                    'playerState.cardDestroyCount': newCardDestroyCount,
                 },
             },
         );

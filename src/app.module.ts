@@ -9,6 +9,8 @@ import { BugReportModule } from './bugReport/bugReport.module';
 import { WalletModule } from './wallet/wallet.module';
 import { LoggerModule } from 'nestjs-pino';
 import { createWriteStream } from 'pino-papertrail';
+import { PlayerGearModule } from './playerGear/playerGear.module';
+import { serverEnvironments } from './utils';
 
 @Module({
     imports: [
@@ -22,20 +24,22 @@ import { createWriteStream } from 'pino-papertrail';
                             bindings: (bindings) => ({
                                 pid: bindings.pid,
                                 hostname: bindings.hostname,
-                                serverVersion: configService.get(
+                                serverVersion: configService.get<string>(
                                     'npm_package_version',
                                 ),
                             }),
                         },
                         transport:
-                            process.env.NODE_ENV !== 'production'
+                            configService.get<serverEnvironments>(
+                                'NODE_ENV',
+                            ) !== serverEnvironments.production
                                 ? {
                                       target: 'pino-pretty',
                                       options: {
                                           colorize: true,
                                       },
                                   }
-                                : undefined,
+                                : undefined, // Use default transport
                     },
                     createWriteStream({
                         appname: configService.get('PAPERTRAIL_APP_NAME'),
@@ -46,6 +50,7 @@ import { createWriteStream } from 'pino-papertrail';
             }),
         }),
         BugReportModule,
+        PlayerGearModule,
         WalletModule,
         ApiModule,
         ConfigModule.forRoot({ isGlobal: true, cache: true }),

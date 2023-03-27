@@ -8,25 +8,20 @@ services:
         ports:
             - '27017:27017'
         volumes:
-            - mongodb-data:/data/db
+            - ./data:/data/db
         networks:
             - kote-network
     core:
         container_name: kote-core
+        image: kote-gameplay-stack-core
         build: .
         restart: always
         env_file:
             - .env
         ports:
             - '${APP_PORT:-3000}:3000'
-        depends_on:
-            - mongodb
         networks:
             - kote-network
-
 networks:
     kote-network:
         external: true
-
-volumes:
-    mongodb-data:

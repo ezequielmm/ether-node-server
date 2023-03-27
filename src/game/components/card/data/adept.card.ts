@@ -25,7 +25,7 @@ export const AdeptCardUpgraded: Card = {
     },
     showPointer: false,
     isUpgraded: true,
-    isActive: true,
+    isActive: false,
 };
 
 export const AdeptCard: Card = {
@@ -52,5 +52,5 @@ export const AdeptCard: Card = {
     showPointer: false,
     isUpgraded: false,
     upgradedCardId: AdeptCardUpgraded.cardId,
-    isActive: true,
+    isActive: false,
 };

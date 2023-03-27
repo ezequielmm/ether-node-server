@@ -20,10 +20,8 @@ import { TrinketService } from '../trinket/trinket.service';
 import { IExpeditionPlayerStateDeckCard } from '../expedition/expedition.interface';
 import { randomUUID } from 'crypto';
 import { CardDescriptionFormatter } from '../../cardDescriptionFormatter/cardDescriptionFormatter';
-import { PotionService } from '../potion/potion.service';
 import { Player } from '../expedition/player';
 import { CardRarityEnum } from '../card/card.enum';
-import { logger } from '@typegoose/typegoose/lib/logSettings';
 
 @Injectable()
 export class EncounterService {
@@ -34,7 +32,6 @@ export class EncounterService {
 
         private readonly cardService: CardService,
         private readonly trinketService: TrinketService,
-        private readonly potionService: PotionService,
     ) {}
 
     async generateEncounter(ctx: GameContext): Promise<EncounterInterface> {

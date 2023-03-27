@@ -27,6 +27,8 @@ import {
     SWARAction,
     SWARMessageType,
 } from '../standardResponse/standardResponse';
+import { Chest } from "../components/chest/chest.schema";
+import { getRandomBetween } from "../../utils";
 
 @Injectable()
 export class RewardService {
@@ -46,6 +48,7 @@ export class RewardService {
         trinketsToGenerate,
         coinsToGenerate,
         node,
+        chest = null,
     }: {
         ctx: GameContext;
         node: Node;
@@ -53,6 +56,7 @@ export class RewardService {
         cardsToGenerate: CardRarityEnum[];
         potionsToGenerate: PotionRarityEnum[];
         trinketsToGenerate: TrinketRarityEnum[];
+        chest?: Chest;
     }): Promise<Reward[]> {
         this.node = node;
 
@@ -87,6 +91,17 @@ export class RewardService {
             );
 
             if (trinkets.length > 0) rewards.push(...trinkets);
+        }
+
+        if (chest) {
+            if (rewards.length === 0) {
+                rewards.push({
+                    id: randomUUID(),
+                    type: IExpeditionNodeReward.Gold,
+                    amount: getRandomBetween(chest.minCoins, chest.maxCoins), // see https://robotseamonster.monday.com/boards/2075844718/views/90131469/pulses/3979452615
+                    taken: false,
+                });
+            }
         }
 
         return rewards;

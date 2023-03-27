@@ -9,6 +9,7 @@ import { CombatTurnEnum } from 'src/game/components/expedition/expedition.enum';
 import { EndEnemyTurnProcess } from 'src/game/process/endEnemyTurn.process';
 import { corsSocketSettings } from './socket.enum';
 import { NodeType } from 'src/game/components/expedition/node-type';
+import { Logger } from '@nestjs/common';
 
 interface ICardPlayed {
     cardId: CardId;
@@ -24,34 +25,42 @@ export class CombatGateway {
         private readonly expeditionService: ExpeditionService,
     ) {}
 
+    private readonly logger: Logger = new Logger(CombatGateway.name);
+
     @SubscribeMessage('EndTurn')
     async handleEndTurn(client: Socket): Promise<void> {
-        const ctx = await this.expeditionService.getGameContext(client);
+        try {
+            const ctx = await this.expeditionService.getGameContext(client);
 
-        // If the combat is ended, we skip the turn
-        if (this.expeditionService.isCurrentCombatEnded(ctx)) return;
+            // If the combat is ended, we skip the turn
+            if (this.expeditionService.isCurrentCombatEnded(ctx)) return;
 
-        const { expedition } = ctx;
+            const { expedition } = ctx;
 
-        if (
-            expedition.currentNode === null ||
-            expedition.currentNode.nodeType !== NodeType.Combat
-        )
-            return;
+            if (
+                expedition.currentNode === null ||
+                expedition.currentNode.nodeType !== NodeType.Combat
+            )
+                return;
 
-        const {
-            currentNode: {
-                data: { playing },
-            },
-        } = expedition;
+            const {
+                currentNode: {
+                    data: { playing },
+                },
+            } = expedition;
 
-        switch (playing) {
-            case CombatTurnEnum.Player:
-                await this.endPlayerTurnProcess.handle({ ctx });
-                break;
-            case CombatTurnEnum.Enemy:
-                await this.endEnemyTurnProcess.handle({ ctx });
-                break;
+            switch (playing) {
+                case CombatTurnEnum.Player:
+                    await this.endPlayerTurnProcess.handle({ ctx });
+                    break;
+                case CombatTurnEnum.Enemy:
+                    await this.endEnemyTurnProcess.handle({ ctx });
+                    break;
+            }
+        } catch (error) {
+            this.logger.error({
+                error,
+            });
         }
     }
 
