@@ -14,8 +14,12 @@ export class ActionQueueService {
     private maximumWaitTime: number = 5000;
     private readonly wait = (ms) => new Promise(res => setTimeout(res, ms));
         
-
-    async pushWithReturn(queueId: string, fn: () => Promise<any>): Promise<any> {
+    async pushWithReturn(
+        queueId: string, 
+        fn: () => Promise<any>, 
+        maxTime: number = this.maximumWaitTime, 
+        loopTime: number = this.loopWaitTime,
+    ): Promise<any> {
         
         const waiter = { 
             done: false, 
@@ -31,9 +35,9 @@ export class ActionQueueService {
         );
 
         let waitTime = 0;
-        while (!waiter.done || waitTime < this.maximumWaitTime) {
-            await this.wait(this.loopWaitTime);
-            waitTime += this.loopWaitTime;
+        while (!waiter.done || waitTime < maxTime) {
+            await this.wait(loopTime);
+            waitTime += loopTime;
         }
 
         return (waiter.done) ? waiter.data : undefined;
