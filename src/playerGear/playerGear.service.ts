@@ -6,12 +6,14 @@ import { Gear } from '../game/components/gear/gear.schema';
 import { GearItem } from './gearItem';
 import { compact } from 'lodash';
 import { FilterQuery } from 'mongoose';
+import { Logger } from '@nestjs/common';
 
 @Injectable()
 export class PlayerGearService {
     private readonly defaultGear: number[] = [
         0, 1, 2, 24, 41, 71, 91, 112, 131, 151, 169, 182,
     ];
+    private readonly logger: Logger = new Logger(PlayerGearService.name);
 
     constructor(
         @InjectModel(PlayerGear)
@@ -54,11 +56,15 @@ export class PlayerGearService {
             })
             .lean();
 
-        if (player === null || typeof player.gear === 'undefined' || player.gear.length === 0)
+        if (player === null || typeof player.gear === 'undefined' || player.gear.length === 0) {
+
+            this.logger.debug("Player Gear Not Found for #"+playerId+". Adding...");
+
             player = await this.addGearToPlayer(
                 playerId,
                 await this.getGearByIds(this.defaultGear),
             );
+        }
 
         if (player === null || typeof player.gear === 'undefined') return [];
 
@@ -77,7 +83,7 @@ export class PlayerGearService {
                 { new: true, upsert: true },
             );
         } catch (e) {
-            // TODO: Handle error saving
+            this.logger.error(e.message);
         }
     }
 
