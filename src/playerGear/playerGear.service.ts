@@ -47,7 +47,7 @@ export class PlayerGearService {
 
     async getGear(
         playerId: number,
-        filter?: FilterQuery<PlayerGear>,
+        filter: FilterQuery<PlayerGear> = {},
     ): Promise<GearItem[]> {
         let player: PlayerGear = await this.playerGear
             .findOne({
