@@ -71,7 +71,6 @@ export class EndCombatProcess {
         // If combat boss, update expedition status to victory
         // and emit show score
         if (isCombatBoss) {
-
             const score = this.scoreCalculatorService.calculate({
                 expedition: ctx.expedition,
             });
@@ -111,7 +110,7 @@ export class EndCombatProcess {
 
             // finalize changes and save the whole thing - expedition is DONE.
             ctx.expedition.currentNode.showRewards = false;
-            ctx.expedition.markModified('currentNode.showRewards');    
+            ctx.expedition.markModified('currentNode.showRewards');
             await ctx.expedition.save();
 
             //message client to end combat and show score
@@ -124,11 +123,10 @@ export class EndCombatProcess {
                 }),
             );
         } else {
-
             ctx.expedition.currentNode.showRewards = true;
             ctx.expedition.markModified('currentNode.showRewards');
             await ctx.expedition.save();
-    
+
             // message client to end combat, enemies defeated
             ctx.client.emit(
                 'PutData',
