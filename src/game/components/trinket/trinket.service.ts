@@ -63,8 +63,11 @@ export class TrinketService {
         return sampleSize(this.find(filter), amount);
     }
 
-    public async playerHasTrinket(ctx: GameContext, trinket: number | Trinket): Promise<boolean> {
-        if (typeof trinket === "number") {
+    public async playerHasTrinket(
+        ctx: GameContext,
+        trinket: number | Trinket,
+    ): Promise<boolean> {
+        if (typeof trinket === 'number') {
             trinket = this.findOne({ trinketId: trinket });
         }
 
