@@ -60,7 +60,7 @@ export class PlayerGearService {
                 await this.getGearByIds(this.defaultGear),
             );
 
-        return player.gear;
+        return player.gear ?? [];
     }
 
     async addGearToPlayer(playerId: number, gear: Gear[]): Promise<PlayerGear> {
