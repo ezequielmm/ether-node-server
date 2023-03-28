@@ -42,11 +42,12 @@ export class PlayerGearService {
         return unownedGear.length === 0;
     }
 
-    async getGear(playerId: number): Promise<GearItem[]> {
+    async getGear(playerId: number, filter?: {}): Promise<GearItem[]> {
         try {
             let player: PlayerGear = await this.playerGear.findOneAndUpdate(
                 {
                     playerId: playerId,
+                    ...filter
                 },
                 {},
                 { new: true, upsert: true },
@@ -77,26 +78,23 @@ export class PlayerGearService {
         );
     }
 
-    async addGearToPlayerById(
-        playerId: number,
-        gear: number[],
-    ): Promise<PlayerGear> {
+    async getGearByIds(gear: number[]) {
         const gears: Gear[] = compact(
             gear.map(function (item) {
-                return this.gearService.getGearById(item);
+                const g = this.gearService.getGearById(item);
             }),
         ); // TODO: ensure this does something non-silent if a gear ID doesn't match gear
-        return await this.addGearToPlayer(playerId, gears);
-    }
+        return gears;      
+    };
 
-    async removeGearFromPlayerById(
+    async removeGearFromPlayer(
         playerId: number,
-        gear: number[],
+        gear: Gear[],
     ): Promise<PlayerGear> {
         const playerGear = await this.getGear(playerId);
 
-        gear.forEach((item) => {
-            const index = playerGear.findIndex((i) => i.gearId === item);
+        gear.forEach((toRemove) => {
+            const index = playerGear.findIndex((i) => i.gearId === toRemove.gearId);
             playerGear.splice(index, 1);
         });
 

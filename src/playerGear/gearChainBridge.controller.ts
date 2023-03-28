@@ -9,6 +9,8 @@ import { Expedition } from 'src/game/components/expedition/expedition.schema';
 import { ReturnModelType } from '@typegoose/typegoose';
 import { GearTraitEnum } from 'src/game/components/gear/gear.enum';
 import { getModelToken } from "kindagoose";
+import { GearRarityEnum } from 'src/game/components/gear/gear.enum';
+import { remove } from 'lodash';
 
 class AlterGearApiDTO {
     @ApiProperty()
@@ -43,6 +45,14 @@ export class GearChainBridgeController {
         private readonly authGatewayService: AuthGatewayService,
         private playerGearService: PlayerGearService
     ) {}
+
+    private nonChainRarities = [GearRarityEnum.Common,GearRarityEnum.Uncommon];
+
+    private nonChainRarityFilter = { 
+        rarity: { 
+            $nin: this.nonChainRarities
+        }
+    };
 
     private async checkSecurityToken(check: ITokenCheck): Promise<boolean> {
         const sharedSalt = process.env.GEARAPI_SALT ?? 'sharedSalt';
@@ -84,7 +94,7 @@ export class GearChainBridgeController {
             return "Unknown Wallet";
         }
 
-        return await this.playerGearService.getGear(playerId);
+        return await this.playerGearService.getGear(playerId, this.nonChainRarityFilter);
     }
 
     @ApiOperation({ summary: 'Get player owned gear list for API' })
@@ -103,20 +113,22 @@ export class GearChainBridgeController {
             return "Unknown Wallet";
         }
 
-        const playerGear = await this.playerGearService.getGear(playerId);
+        const playerGear = await this.playerGearService.getGear(playerId, this.nonChainRarityFilter);
+        const gears = await this.playerGearService.getGearByIds(payload.gear);
+        const removedGears = remove(gears, (g: Gear) => this.nonChainRarities.includes(g.rarity));
 
         switch (payload.action) {
             case GearActionApiEnum.AddGear:
-                await this.playerGearService.addGearToPlayerById(playerId, payload.gear);
+                await this.playerGearService.addGearToPlayer(playerId, gears);
                 break;
             case GearActionApiEnum.RemoveGear:
-                await this.playerGearService.removeGearFromPlayerById(playerId, payload.gear);
+                await this.playerGearService.removeGearFromPlayer(playerId, gears);
                 break;
         }
 
-        const newGear = await this.playerGearService.getGear(playerId);
+        const newGear = await this.playerGearService.getGear(playerId, this.nonChainRarityFilter);
 
-        return { oldGear: playerGear, newGear: newGear };
+        return { oldGear: playerGear, newGear: newGear, ignoredGear: removedGears };
 
     }
 
