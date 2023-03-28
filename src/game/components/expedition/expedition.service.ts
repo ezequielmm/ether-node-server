@@ -87,7 +87,8 @@ export class ExpeditionService {
     ): Promise<ExpeditionDocument> {
         return await this.expedition
             .findOne(filter, projection)
-            .sort({ createdAt: 1 });
+            .sort({ createdAt: 1 })
+            .lean();
     }
 
     async findOneTimeDesc(
