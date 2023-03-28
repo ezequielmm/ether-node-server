@@ -31,7 +31,7 @@ export class PlayerWinService {
     ): Promise<boolean> {
         if (event_id === 0) return true;
 
-        if (wins === undefined) {
+        if (typeof wins === 'undefined') {
             wins =
                 (await this.playerWin.countDocuments({
                     event_id: event_id,
