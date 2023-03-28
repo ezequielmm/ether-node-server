@@ -106,12 +106,12 @@ export class MapService {
     }
 
     public setupActOne(ctx: GameContext): void {
-        const previousNodeId = last(ctx.expedition.map)?.id || 0;
+        const previousNodeId = last(ctx.expedition.map)?.id ?? -1;
         ctx.expedition.map.push(...this.getActOne(previousNodeId+1));
     }
 
     public setupActTwo(ctx: GameContext): void {
-        const previousNodeId = last(ctx.expedition.map)?.id || 0;
+        const previousNodeId = last(ctx.expedition.map)?.id ?? -1;
         ctx.expedition.map.push(...this.getActTwo(previousNodeId+1));
     }
 
