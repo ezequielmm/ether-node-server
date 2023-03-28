@@ -46,13 +46,12 @@ export class GetDataGateway {
 
     @SubscribeMessage('GetData')
     async handleGetData(client: Socket, types: string): Promise<string> {
-        
-        const waiter = { done: false, data: "" };
+        const waiter = { done: false, data: '' };
 
         await this.actionQueueService.push(
             await this.expeditionService.getExpeditionIdFromClient(client.id),
             async () => {
-                this.logger.debug('<GETDATA: ' + types + '>');
+                this.logger.debug(`<GETDATA: ${types}>`);
 
                 const ctx = await this.expeditionService.getGameContext(client);
 
@@ -164,11 +163,11 @@ export class GetDataGateway {
                     waiter.done = true;
                 }
 
-                this.logger.debug('</GETDATA: ' + types + '>');
+                this.logger.debug(`</GETDATA: ${types}>`);
             },
         );
 
-        const wait = (ms) => new Promise(res => setTimeout(res, ms));
+        const wait = (ms: number) => new Promise((res) => setTimeout(res, ms));
         let loopBreak = 50;
 
         while (!waiter.done || loopBreak <= 0) {
@@ -176,6 +175,6 @@ export class GetDataGateway {
             loopBreak--;
         }
 
-        return (waiter.done) ? waiter.data : undefined;
+        return waiter.done ? waiter.data : undefined;
     }
 }
