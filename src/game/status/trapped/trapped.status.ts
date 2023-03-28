@@ -36,7 +36,7 @@ export class TrappedStatus implements StatusEffectHandler {
         const { ctx, effectDTO, remove } = dto;
         const { source, target } = effectDTO;
 
-        if (effectDTO.args.type === undefined) {
+        if (typeof effectDTO.args.type === 'undefined') {
             // Deal 12 damage to the player
             await this.effectService.apply({
                 ctx,

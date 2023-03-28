@@ -106,7 +106,7 @@ export class SocketGateway
                 this.logger.log(ctx.info, `Client connected to expedition`);
 
                 // Here we check if the player is in a node already
-                if (expedition.currentNode !== undefined) {
+                if (typeof expedition.currentNode !== 'undefined') {
                     const { nodeType } = expedition.currentNode;
 
                     if (
