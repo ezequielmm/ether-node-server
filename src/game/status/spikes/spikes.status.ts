@@ -30,7 +30,7 @@ export class SpikesStatus implements StatusEffectHandler {
         } = dto;
 
         // Apply damage to the source, if incoming damage is untyped
-        if (effectDTO.args.type === undefined) {
+        if (typeof effectDTO.args.type === 'undefined') {
             
             // Return the damage to the source with the value of the status
             const applyDTO: ApplyDTO = {
