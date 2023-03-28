@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { Socket } from 'socket.io';
 import { CustomException, ErrorBehavior } from 'src/socket/custom.exception';
 import { ExpeditionService } from '../components/expedition/expedition.service';
+import { MapService } from '../map/map.service';
 import {
     StandardResponse,
     SWARMessageType,
@@ -12,7 +13,10 @@ import {
 export class FullSyncAction {
     private readonly logger: Logger = new Logger(FullSyncAction.name);
 
-    constructor(private readonly expeditionService: ExpeditionService) {}
+    constructor(
+        private readonly expeditionService: ExpeditionService,
+        private readonly mapService: MapService,
+    ) {}
 
     async handle(client: Socket, sendShowMap = true): Promise<void> {
         const expedition = await this.expeditionService.findOne({
@@ -42,7 +46,7 @@ export class FullSyncAction {
                     message_type: SWARMessageType.MapUpdate,
                     seed: mapSeedId,
                     action: SWARAction.ShowMap,
-                    data: map,
+                    data: this.mapService.makeClientSafe(map),
                 }),
             );
         }

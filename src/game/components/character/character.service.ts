@@ -42,15 +42,15 @@ export class CharacterService {
             { contractId: 1, contractIdTest: 1 },
         );
 
-        if (characters.length > 0) {
-            switch (chain) {
-                case 1:
-                    return compact(characters.map((c) => c.contractId));
-                case 5:
-                    return compact(characters.map((c) => c.contractIdTest));
-            }
-        }
+        if (characters.length === 0) return [];
 
-        return [];
+        switch (chain) {
+            case 1:
+                return compact(characters.map((c) => c.contractId));
+            case 5:
+                return compact(characters.map((c) => c.contractIdTest));
+            default:
+                return [];
+        }
     }
 }
