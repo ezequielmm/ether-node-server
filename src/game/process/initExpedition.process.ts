@@ -75,7 +75,7 @@ export class InitExpeditionProcess {
         // }
 
         // const event_id = '-1';
-        const map = this.mapService.getActZero();
+        const map = this.mapService.getActOne(0);
 
         const cards = await this.generatePlayerDeck(character, email);
 
