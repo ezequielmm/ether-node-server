@@ -35,7 +35,7 @@ export class GetPlayerInfoAction {
                 ErrorBehavior.ReturnToMainMenu,
             );
 
-        if (expedition.currentNode !== undefined) {
+        if (typeof expedition.currentNode !== 'undefined') {
             const {
                 playerId,
                 playerState: {
@@ -50,7 +50,7 @@ export class GetPlayerInfoAction {
                 currentNode,
             } = expedition;
 
-            if (currentNode.data !== undefined) {
+            if (typeof currentNode.data !== 'undefined') {
                 const {
                     data: {
                         player: {

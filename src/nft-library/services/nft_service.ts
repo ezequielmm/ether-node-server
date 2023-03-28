@@ -14,14 +14,14 @@ class NFTService {
         const tokens = response.raw.result;
         const nfts = [];
 
-        if (tokens != undefined) {
+        if (typeof tokens != 'undefined') {
             for (let i = 0; i < contracts.length; i++) {
                 const contract = contracts[i].toLowerCase();
                 const collection = [];
 
                 for (let j = 0; j < tokens.length; j++) {
                     const token = tokens[j];
-                    if (token.token_address === undefined) {
+                    if (typeof token.token_address === 'undefined') {
                         console.log('token.token_address===undefined');
                     }
                     let metadata = '';

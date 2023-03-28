@@ -217,7 +217,7 @@ export class EffectService {
             metadata: { effect: { name } },
         });
 
-        if (container === undefined)
+        if (typeof container === 'undefined')
             throw new Error(`Effect ${name} not found`);
 
         return container;
