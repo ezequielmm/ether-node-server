@@ -54,14 +54,11 @@ export class PlayerGearService {
             })
             .lean();
 
-        if (player === null) return null;
-
-        if (player.gear.length > 0) player.gear;
-
-        player = await this.addGearToPlayer(
-            playerId,
-            await this.getGearByIds(this.defaultGear),
-        );
+        if (player === null || player.gear.length === 0)
+            player = await this.addGearToPlayer(
+                playerId,
+                await this.getGearByIds(this.defaultGear),
+            );
 
         return player.gear;
     }
