@@ -49,7 +49,7 @@ export class GetDataGateway {
         return await this.actionQueueService.pushWithReturn(
             await this.expeditionService.getExpeditionIdFromClient(client.id),
             async () => {
-                this.logger.debug('<GETDATA: ' + types + '>');
+                this.logger.debug(`<GETDATA: ${types}>`);
 
                 const ctx = await this.expeditionService.getGameContext(client);
 

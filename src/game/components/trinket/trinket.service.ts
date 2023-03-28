@@ -9,6 +9,7 @@ import {
     last,
     sample,
     sampleSize,
+    includes,
 } from 'lodash';
 import { MutateDTO } from 'src/game/effects/effects.interface';
 import {
@@ -62,6 +63,17 @@ export class TrinketService {
         return sampleSize(this.find(filter), amount);
     }
 
+    public async playerHasTrinket(
+        ctx: GameContext,
+        trinket: number | Trinket,
+    ): Promise<boolean> {
+        if (typeof trinket === 'number') {
+            trinket = this.findOne({ trinketId: trinket });
+        }
+
+        return includes(ctx.expedition.playerState.trinkets, trinket);
+    }
+
     public async add(ctx: GameContext, trinketId: number): Promise<boolean> {
         const trinket = this.findOne({ trinketId });
 
@@ -72,6 +84,20 @@ export class TrinketService {
                     message_type: SWARMessageType.AddTrinket,
                     action: SWARAction.TrinketNotFoundInDatabase,
                     data: { trinketId },
+                }),
+            );
+            return false;
+        }
+
+        const playerHasTrinket = await this.playerHasTrinket(ctx, trinket);
+
+        if (playerHasTrinket) {
+            ctx.client.emit(
+                'PutData',
+                StandardResponse.respond({
+                    message_type: SWARMessageType.AddTrinket,
+                    action: SWARAction.TrinketAlreadyOwned,
+                    data: { trinket: trinket.trinketId },
                 }),
             );
             return false;
