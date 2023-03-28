@@ -79,7 +79,6 @@ export class PlayerGearService {
         } catch (e) {
             // TODO: Handle error saving
         }
-        
     }
 
     async addGearToPlayerById(
