@@ -54,13 +54,15 @@ export class PlayerGearService {
             })
             .lean();
 
-        if (player === null || player.gear.length === 0)
+        if (player === null || typeof player.gear === 'undefined' || player.gear.length === 0)
             player = await this.addGearToPlayer(
                 playerId,
                 await this.getGearByIds(this.defaultGear),
             );
 
-        return player.gear ?? [];
+        if (player === null || typeof player.gear === 'undefined') return [];
+
+        return player.gear;
     }
 
     async addGearToPlayer(playerId: number, gear: Gear[]): Promise<PlayerGear> {
