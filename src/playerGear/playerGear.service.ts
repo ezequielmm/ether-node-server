@@ -68,11 +68,15 @@ export class PlayerGearService {
             return this.toGearItem(item);
         });
 
-        return await this.playerGear.findOneAndUpdate(
-            { playerId: playerId },
-            { $push: { gear: { $each: gearItems } } },
-            { new: true, upsert: true },
-        );
+        try {
+            return await this.playerGear.findOneAndUpdate(
+                { playerId: playerId },
+                { $push: { gear: { $each: gearItems } } },
+                { new: true, upsert: true },
+            );
+        } catch (e) {
+            // TODO: Handle error saving
+        }
     }
 
     async getGearByIds(gear: number[]): Promise<Gear[]> {
