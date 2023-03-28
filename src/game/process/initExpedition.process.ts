@@ -51,10 +51,22 @@ export class InitExpeditionProcess {
         contest: Contest;
     }): Promise<void> {
         let character_class_enum = CharacterClassEnum.Knight;
-        if (character_class === 'Villager')
-            character_class_enum = CharacterClassEnum.Villager;
-        if (character_class === 'BlessedVillager')
-            character_class_enum = CharacterClassEnum.BlessedVillager;
+
+        switch (character_class) {
+            case 'Knight':
+                character_class_enum = CharacterClassEnum.Knight;
+                break;
+            case 'Villager':
+                character_class_enum = CharacterClassEnum.Villager;
+                break;
+            case 'BlessedVillager':
+                character_class_enum = CharacterClassEnum.BlessedVillager;
+                break;
+            default:
+                character_class_enum = CharacterClassEnum.Knight;
+                break;
+        }
+
         const character = await this.characterService.findOne({
             characterClass: character_class_enum,
         });
@@ -63,12 +75,9 @@ export class InitExpeditionProcess {
         const { initialPotionChance } =
             await this.settingsService.getSettings();
 
-        let map = [];
-        if (contest) {
-            map = await this.contestMapService.getMapForContest(contest);
-        } else {
-            map = this.mapService.getActZero();
-        }
+        const map = contest
+            ? await this.contestMapService.getMapForContest(contest)
+            : this.mapService.getActZero();
 
         const cards = await this.generatePlayerDeck(character, email);
 
