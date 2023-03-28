@@ -16,7 +16,7 @@ export class ActionQueueService {
             return await fn();
         }
 
-        if (this.actionQueues[queueId] === undefined)
+        if (typeof this.actionQueues[queueId] === 'undefined')
             this.actionQueues[queueId] = Promise.resolve();
 
         this.actionQueues[queueId] = this.actionQueues[queueId]

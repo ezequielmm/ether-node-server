@@ -222,7 +222,7 @@ export class ExpeditionService {
             },
             {
                 $set: {
-                    ...(newRound !== undefined && {
+                    ...(typeof newRound !== 'undefined' && {
                         'currentNode.data.round': newRound,
                     }),
                     'currentNode.data.playing': playing,
