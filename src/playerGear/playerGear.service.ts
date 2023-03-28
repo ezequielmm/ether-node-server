@@ -5,6 +5,7 @@ import { ReturnModelType } from '@typegoose/typegoose';
 import { Gear } from '../game/components/gear/gear.schema';
 import { GearItem } from './gearItem';
 import { compact } from 'lodash';
+import { FilterQuery } from 'mongoose';
 
 @Injectable()
 export class PlayerGearService {
@@ -42,32 +43,31 @@ export class PlayerGearService {
         return unownedGear.length === 0;
     }
 
-    async getGear(playerId: number, filter?: {}): Promise<GearItem[]> {
-        try {
-            let player: PlayerGear = await this.playerGear.findOneAndUpdate(
-                {
-                    playerId: playerId,
-                    ...filter
-                },
-                {},
-                { new: true, upsert: true },
-            );
+    async getGear(
+        playerId: number,
+        filter?: FilterQuery<PlayerGear>,
+    ): Promise<GearItem[]> {
+        let player: PlayerGear = await this.playerGear
+            .findOne({
+                playerId: playerId,
+                ...filter,
+            })
+            .lean();
 
-            if (!player.gear.length) {
-                player = await this.addGearToPlayer(
-                    playerId,
-                    await this.getGearByIds(this.defaultGear),
-                );
-            }
+        if (player === null) return null;
 
-            return player.gear;
-        } catch (e) {
-            return;
-        }
+        if (player.gear.length > 0) player.gear;
+
+        player = await this.addGearToPlayer(
+            playerId,
+            await this.getGearByIds(this.defaultGear),
+        );
+
+        return player.gear;
     }
 
     async addGearToPlayer(playerId: number, gear: Gear[]): Promise<PlayerGear> {
-        const gearItems = gear.map(function (item) {
+        const gearItems = gear.map((item) => {
             return this.toGearItem(item);
         });
 
@@ -84,8 +84,8 @@ export class PlayerGearService {
                 return this.gearService.getGearById(item);
             }),
         ); // TODO: ensure this does something non-silent if a gear ID doesn't match gear
-        return gears;      
-    };
+        return gears;
+    }
 
     async removeGearFromPlayer(
         playerId: number,
@@ -94,7 +94,9 @@ export class PlayerGearService {
         const playerGear = await this.getGear(playerId);
 
         gear.forEach((toRemove) => {
-            const index = playerGear.findIndex((i) => i.gearId === toRemove.gearId);
+            const index = playerGear.findIndex(
+                (i) => i.gearId === toRemove.gearId,
+            );
             playerGear.splice(index, 1);
         });
 
