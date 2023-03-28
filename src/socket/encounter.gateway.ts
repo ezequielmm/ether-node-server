@@ -21,10 +21,7 @@ export class EncounterGateway {
         client: Socket,
         choiceIdx: string,
     ): Promise<string> {
-
-        const waiter = { done: false, data: "" };
-
-        await this.actionQueueService.push(
+        return await this.actionQueueService.pushWithReturn(
             await this.expeditionService.getExpeditionIdFromClient(client.id),
             async () => {
                 this.logger.debug('<ENCOUNTER CHOICE>');
@@ -35,25 +32,13 @@ export class EncounterGateway {
                     `Client ${client.id} trigger message "EncounterChoice" with choiceId: ${choiceIdx}`,
                 );
 
-                waiter.data =
-                    await this.encounterService.encounterChoice(
-                        client,
-                        parseInt(choiceIdx),
-                    );
-                waiter.done = true;
-
                 this.logger.debug('</ENCOUNTER CHOICE>');
-            }
+
+                return await this.encounterService.encounterChoice(
+                    client,
+                    parseInt(choiceIdx),
+                );
+            },
         );
-
-        const wait = (ms) => new Promise(res => setTimeout(res, ms));
-        let loopBreak = 50;
-
-        while (!waiter.done || loopBreak <= 0) {
-            await wait(100);
-            loopBreak--;
-        }
-
-        return (waiter.done) ? waiter.data : undefined;
     }
 }

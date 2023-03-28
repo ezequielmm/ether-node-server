@@ -382,7 +382,7 @@ export class MerchantService {
             });
         }
 
-        const randomIndex: number = getRandomBetween(0, itemsData.length);
+        const randomIndex: number = getRandomBetween(0, itemsData.length - 1);
 
         itemsData[randomIndex] = {
             ...itemsData[randomIndex],

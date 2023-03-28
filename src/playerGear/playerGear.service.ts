@@ -5,6 +5,7 @@ import { ReturnModelType } from '@typegoose/typegoose';
 import { Gear } from '../game/components/gear/gear.schema';
 import { GearItem } from './gearItem';
 import { compact } from 'lodash';
+import { FilterQuery } from 'mongoose';
 
 @Injectable()
 export class PlayerGearService {
@@ -42,61 +43,61 @@ export class PlayerGearService {
         return unownedGear.length === 0;
     }
 
-    async getGear(playerId: number): Promise<GearItem[]> {
-        try {
-            let player: PlayerGear = await this.playerGear.findOneAndUpdate(
-                {
-                    playerId: playerId,
-                },
-                {},
-                { new: true, upsert: true },
+    async getGear(
+        playerId: number,
+        filter?: FilterQuery<PlayerGear>,
+    ): Promise<GearItem[]> {
+        let player: PlayerGear = await this.playerGear
+            .findOne({
+                playerId: playerId,
+                ...filter,
+            })
+            .lean();
+
+        if (player === null || player.gear.length === 0)
+            player = await this.addGearToPlayer(
+                playerId,
+                await this.getGearByIds(this.defaultGear),
             );
 
-            if (!player.gear.length) {
-                player = await this.addGearToPlayerById(
-                    playerId,
-                    this.defaultGear,
-                );
-            }
-
-            return player.gear;
-        } catch (e) {
-            return;
-        }
+        return player.gear ?? [];
     }
 
     async addGearToPlayer(playerId: number, gear: Gear[]): Promise<PlayerGear> {
-        const gearItems = gear.map(function (item) {
+        const gearItems = gear.map((item) => {
             return this.toGearItem(item);
         });
 
-        return await this.playerGear.findOneAndUpdate(
-            { playerId: playerId },
-            { $push: { gear: { $each: gearItems } } },
-            { new: true, upsert: true },
-        );
+        try {
+            return await this.playerGear.findOneAndUpdate(
+                { playerId: playerId },
+                { $push: { gear: { $each: gearItems } } },
+                { new: true, upsert: true },
+            );
+        } catch (e) {
+            // TODO: Handle error saving
+        }
     }
 
-    async addGearToPlayerById(
-        playerId: number,
-        gear: number[],
-    ): Promise<PlayerGear> {
+    async getGearByIds(gear: number[]): Promise<Gear[]> {
         const gears: Gear[] = compact(
             gear.map(function (item) {
                 return this.gearService.getGearById(item);
             }),
         ); // TODO: ensure this does something non-silent if a gear ID doesn't match gear
-        return await this.addGearToPlayer(playerId, gears);
+        return gears;
     }
 
-    async removeGearFromPlayerById(
+    async removeGearFromPlayer(
         playerId: number,
-        gear: number[],
+        gear: Gear[],
     ): Promise<PlayerGear> {
         const playerGear = await this.getGear(playerId);
 
-        gear.forEach((item) => {
-            const index = playerGear.findIndex((i) => i.gearId === item);
+        gear.forEach((toRemove) => {
+            const index = playerGear.findIndex(
+                (i) => i.gearId === toRemove.gearId,
+            );
             playerGear.splice(index, 1);
         });
 

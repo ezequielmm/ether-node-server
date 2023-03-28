@@ -63,7 +63,7 @@ export class TaskService {
 
         // Now we generate the rest of nodes for the map
         // First we get the last node id to keep it consistent
-        const lastNodeId = last(map)?.id ?? 0;
+        const lastNodeId = last(map)?.id ?? -1;
 
         // Now we generate the rest of the nodes
         const nodes = buildActOne(lastNodeId + 1);
