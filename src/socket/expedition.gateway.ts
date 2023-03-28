@@ -34,17 +34,15 @@ export class ExpeditionGateway {
 
                 await this.fullSyncAction.handle(client);
                 this.logger.debug('</SYNC EXPEDITION>');
-            }
+            },
         );
     }
 
     @SubscribeMessage('NodeSelected')
     async handleNodeSelected(client: Socket, node_id: number): Promise<string> {
-
         return await this.actionQueueService.pushWithReturn(
             await this.expeditionService.getExpeditionIdFromClient(client.id),
             async () => {
-
                 this.logger.debug('<NODE SELECTED>');
                 const ctx = await this.expeditionService.getGameContext(client);
                 const logger = this.logger.logger.child(ctx.info);
@@ -56,7 +54,10 @@ export class ExpeditionGateway {
 
                 let returnData = undefined;
                 try {
-                    returnData = await this.nodeSelectedProcess.handle(ctx, node_id);
+                    returnData = await this.nodeSelectedProcess.handle(
+                        ctx,
+                        node_id,
+                    );
                 } catch (e) {
                     logger.error(e);
                     client.emit('ErrorMessage', {
@@ -66,7 +67,7 @@ export class ExpeditionGateway {
 
                 this.logger.debug('</NODE SELECTED>');
                 return returnData;
-            }
+            },
         );
     }
 
@@ -85,7 +86,7 @@ export class ExpeditionGateway {
                 this.logger.debug('</CONTINUTE EXPEDITION>');
 
                 return await this.continueExpeditionProcess.handle(ctx);
-            }
+            },
         );
     }
 
@@ -107,7 +108,7 @@ export class ExpeditionGateway {
                     nodeId: ~~nodeId,
                 });
                 this.logger.debug('</NODE SKIPPED>');
-            }
+            },
         );
     }
 }

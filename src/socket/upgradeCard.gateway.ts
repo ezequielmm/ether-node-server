@@ -33,7 +33,6 @@ export class UpgradeCardGateway {
         client: Socket,
         cardId: string,
     ): Promise<string> {
-
         return await this.actionQueueService.pushWithReturn(
             await this.expeditionService.getExpeditionIdFromClient(client.id),
             async () => {
@@ -47,23 +46,28 @@ export class UpgradeCardGateway {
 
                 let returnData = undefined;
                 try {
-                    returnData = await this.upgradeCardService.showUpgradablePair(client, cardId);
+                    returnData =
+                        await this.upgradeCardService.showUpgradablePair(
+                            client,
+                            cardId,
+                        );
                 } catch (e) {
                     this.logger.error(e);
                     client.emit('ErrorMessage', {
-                        message: e.message ?? 'An Error has occurred finding the upgraded card.',
+                        message:
+                            e.message ??
+                            'An Error has occurred finding the upgraded card.',
                     });
                 }
-                
+
                 this.logger.debug('<UPGRADE SELECTED>');
                 return returnData;
-            }
+            },
         );
     }
 
     @SubscribeMessage('UpgradeCard')
     async handleUpgradeCard(client: Socket, cardId: string): Promise<string> {
-
         return await this.actionQueueService.pushWithReturn(
             await this.expeditionService.getExpeditionIdFromClient(client.id),
             async () => {
@@ -80,13 +84,17 @@ export class UpgradeCardGateway {
                     cardId,
                 );
 
-                const upgradeLocation = (await this.encounterService.getEncounterData(client)) 
-                                        ? UpgradeCardNodeTypes.Encounter 
-                                        : UpgradeCardNodeTypes.Camp;
+                const upgradeLocation =
+                    (await this.encounterService.getEncounterData(client))
+                        ? UpgradeCardNodeTypes.Encounter
+                        : UpgradeCardNodeTypes.Camp;
 
                 switch (upgradeLocation) {
                     case UpgradeCardNodeTypes.Encounter:
-                        await this.encounterService.handleUpgradeCard(client, cardId);
+                        await this.encounterService.handleUpgradeCard(
+                            client,
+                            cardId,
+                        );
                         break;
                     case UpgradeCardNodeTypes.Camp:
                     default:
@@ -103,10 +111,9 @@ export class UpgradeCardGateway {
 
                 // TODO: add validation to confirm if the user can upgrade more cards
                 this.logger.debug('<UPGRADE CARD>');
-                
+
                 return response;
-               
-            }
+            },
         );
     }
 }

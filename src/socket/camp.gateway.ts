@@ -23,11 +23,9 @@ export class CampGateway {
 
     @SubscribeMessage('CampRecoverHealth')
     async handleRecoverHealth(client: Socket): Promise<string> {
-
         return await this.actionQueueService.pushWithReturn(
             await this.expeditionService.getExpeditionIdFromClient(client.id),
             async () => {
-                
                 this.logger.debug('<CAMP RECOVER HEALTH>');
                 // First we get the actual player state to get the
                 // actual health and max health for the player
@@ -40,7 +38,9 @@ export class CampGateway {
                 // Now we calculate the new health for the player
                 // Here we increase the health by 30% or set it to the
                 // hpMax value is the result is higher than hpMax
-                const newHp = Math.floor(Math.min(hpMax, hpCurrent + hpMax * 0.3));
+                const newHp = Math.floor(
+                    Math.min(hpMax, hpCurrent + hpMax * 0.3),
+                );
 
                 // Now we update the current hp for the player
                 await this.playerService.setGlobalHp(ctx, newHp);
@@ -54,7 +54,8 @@ export class CampGateway {
                             playerState: {
                                 id: ctx.expedition.playerState.playerId,
                                 playerId: ctx.expedition.playerId,
-                                playerName: ctx.expedition.playerState.playerName,
+                                playerName:
+                                    ctx.expedition.playerState.playerName,
                                 characterClass:
                                     ctx.expedition.playerState.characterClass,
                                 hpMax: ctx.expedition.playerState.hpMax,
@@ -77,17 +78,15 @@ export class CampGateway {
                         data: null,
                     }),
                 );
-                
+
                 this.logger.debug('</CAMP RECOVER HEALTH>');
 
                 return StandardResponse.respond({
-                        message_type: SWARMessageType.CampUpdate,
-                        action: SWARAction.HealAmount,
-                        data: { healed: newHp - hpCurrent },
-                    });
-
-            }
+                    message_type: SWARMessageType.CampUpdate,
+                    action: SWARAction.HealAmount,
+                    data: { healed: newHp - hpCurrent },
+                });
+            },
         );
-
     }
 }

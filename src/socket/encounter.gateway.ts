@@ -21,7 +21,6 @@ export class EncounterGateway {
         client: Socket,
         choiceIdx: string,
     ): Promise<string> {
-
         return await this.actionQueueService.pushWithReturn(
             await this.expeditionService.getExpeditionIdFromClient(client.id),
             async () => {
@@ -36,11 +35,10 @@ export class EncounterGateway {
                 this.logger.debug('</ENCOUNTER CHOICE>');
 
                 return await this.encounterService.encounterChoice(
-                        client,
-                        parseInt(choiceIdx),
-                    );
-            }
+                    client,
+                    parseInt(choiceIdx),
+                );
+            },
         );
-        
     }
 }
