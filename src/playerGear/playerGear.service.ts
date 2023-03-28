@@ -54,9 +54,9 @@ export class PlayerGearService {
             );
 
             if (!player.gear.length) {
-                player = await this.addGearToPlayerById(
+                player = await this.addGearToPlayer(
                     playerId,
-                    this.defaultGear,
+                    await this.getGearByIds(this.defaultGear),
                 );
             }
 
@@ -78,10 +78,10 @@ export class PlayerGearService {
         );
     }
 
-    async getGearByIds(gear: number[]) {
+    async getGearByIds(gear: number[]): Promise<Gear[]> {
         const gears: Gear[] = compact(
             gear.map(function (item) {
-                const g = this.gearService.getGearById(item);
+                return this.gearService.getGearById(item);
             }),
         ); // TODO: ensure this does something non-silent if a gear ID doesn't match gear
         return gears;      
