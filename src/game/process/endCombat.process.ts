@@ -93,10 +93,10 @@ export class EndCombatProcess {
                     );
 
                 // actually save the gear to the player
-                await this.playerGearService.addGearToPlayer(
-                    ctx.expedition.playerId,
-                    ctx.expedition.finalScore.lootbox,
-                );
+                // await this.playerGearService.addGearToPlayer(
+                //     ctx.expedition.playerId,
+                //     ctx.expedition.finalScore.lootbox,
+                // );
 
                 ctx.expedition.finalScore.notifyNoLoot = false;
             } else {
