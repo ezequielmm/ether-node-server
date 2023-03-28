@@ -5,7 +5,7 @@ import { Gear } from './gear.schema';
 import { GearRarityEnum } from './gear.enum';
 import { getRandomBetween } from '../../../utils';
 import { ILootboxRarityOdds } from './gear.interface';
-import { data as gearData } from './gear.data';
+import { data as GearData } from './gear.data';
 import { find, sample } from 'lodash';
 
 @Injectable()
@@ -14,6 +14,8 @@ export class GearService {
         @InjectModel(Gear)
         private readonly gearModel: ReturnModelType<typeof Gear>,
     ) {}
+
+    private gearData = GearData;
 
     private selectRandomRarity(rarities: ILootboxRarityOdds) {
         const { common, uncommon, rare, epic, legendary } = rarities;
@@ -70,9 +72,9 @@ export class GearService {
 
     getGearById(id: number): Gear | undefined {
         const gear =
-            gearData[id].gearId == id
-                ? gearData[id]
-                : find(gearData, (i) => {
+            this.gearData[id].gearId == id
+                ? this.gearData[id]
+                : find(this.gearData, (i) => {
                       return i.gearId == id;
                   });
 
