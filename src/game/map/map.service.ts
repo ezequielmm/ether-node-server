@@ -97,22 +97,22 @@ export class MapService {
         return []; //buildActZero();
     }
 
-    public getActOne(previousNodeId): Node[] {
-        return buildActOne(previousNodeId + 1);
+    public getActOne(initialNodeId): Node[] {
+        return buildActOne(initialNodeId);
     }
 
-    public getActTwo(previousNodeId): Node[] {
-        return buildActTwo(previousNodeId + 1);
+    public getActTwo(initialNodeId): Node[] {
+        return buildActTwo(initialNodeId);
     }
 
     public setupActOne(ctx: GameContext): void {
         const previousNodeId = last(ctx.expedition.map)?.id || 0;
-        ctx.expedition.map.push(...this.getActOne(previousNodeId));
+        ctx.expedition.map.push(...this.getActOne(previousNodeId+1));
     }
 
     public setupActTwo(ctx: GameContext): void {
         const previousNodeId = last(ctx.expedition.map)?.id || 0;
-        ctx.expedition.map.push(...this.getActTwo(previousNodeId));
+        ctx.expedition.map.push(...this.getActTwo(previousNodeId+1));
     }
 
     public nodeIsSelectable(ctx: GameContext, nodeId: number): boolean {
