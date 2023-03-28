@@ -40,11 +40,11 @@ export class ExpeditionGateway {
 
     @SubscribeMessage('NodeSelected')
     async handleNodeSelected(client: Socket, node_id: number): Promise<string> {
-        const waiter = { done: false, data: "" };
 
-        await this.actionQueueService.push(
+        return await this.actionQueueService.pushWithReturn(
             await this.expeditionService.getExpeditionIdFromClient(client.id),
             async () => {
+
                 this.logger.debug('<NODE SELECTED>');
                 const ctx = await this.expeditionService.getGameContext(client);
                 const logger = this.logger.logger.child(ctx.info);
@@ -54,9 +54,9 @@ export class ExpeditionGateway {
                     `Client ${client.id} trigger message "NodeSelected": ${node_id}`,
                 );
 
+                let returnData = undefined;
                 try {
-                    waiter.data = await this.nodeSelectedProcess.handle(ctx, node_id);
-                    waiter.done = true;
+                    returnData = await this.nodeSelectedProcess.handle(ctx, node_id);
                 } catch (e) {
                     logger.error(e);
                     client.emit('ErrorMessage', {
@@ -65,25 +65,14 @@ export class ExpeditionGateway {
                 }
 
                 this.logger.debug('</NODE SELECTED>');
+                return returnData;
             }
         );
-
-        const wait = (ms) => new Promise(res => setTimeout(res, ms));
-        let loopBreak = 50;
-
-        while (!waiter.done || loopBreak <= 0) {
-            await wait(100);
-            loopBreak--;
-        }
-
-        return (waiter.done) ? waiter.data : undefined;
     }
 
     @SubscribeMessage('ContinueExpedition')
     async handleContinueExpedition(client: Socket): Promise<string> {
-        const waiter = { done: false, data: "" };
-
-        await this.actionQueueService.push(
+        return await this.actionQueueService.pushWithReturn(
             await this.expeditionService.getExpeditionIdFromClient(client.id),
             async () => {
                 this.logger.debug('<CONTINUTE EXPEDITION>');
@@ -93,22 +82,11 @@ export class ExpeditionGateway {
                     `Client ${client.id} will advance to the next node`,
                 );
 
-                waiter.data = await this.continueExpeditionProcess.handle(ctx);
-                waiter.done = true;
-                
                 this.logger.debug('</CONTINUTE EXPEDITION>');
+
+                return await this.continueExpeditionProcess.handle(ctx);
             }
         );
-
-        const wait = (ms) => new Promise(res => setTimeout(res, ms));
-        let loopBreak = 50;
-
-        while (!waiter.done || loopBreak <= 0) {
-            await wait(100);
-            loopBreak--;
-        }
-
-        return (waiter.done) ? waiter.data : undefined;
     }
 
     @SubscribeMessage('NodeSkipped')

@@ -24,11 +24,10 @@ export class CampGateway {
     @SubscribeMessage('CampRecoverHealth')
     async handleRecoverHealth(client: Socket): Promise<string> {
 
-        const waiter = { done: false, data: "" };
-
-        await this.actionQueueService.push(
+        return await this.actionQueueService.pushWithReturn(
             await this.expeditionService.getExpeditionIdFromClient(client.id),
             async () => {
+                
                 this.logger.debug('<CAMP RECOVER HEALTH>');
                 // First we get the actual player state to get the
                 // actual health and max health for the player
@@ -78,27 +77,17 @@ export class CampGateway {
                         data: null,
                     }),
                 );
+                
+                this.logger.debug('</CAMP RECOVER HEALTH>');
 
-                waiter.data =
-                    StandardResponse.respond({
+                return StandardResponse.respond({
                         message_type: SWARMessageType.CampUpdate,
                         action: SWARAction.HealAmount,
                         data: { healed: newHp - hpCurrent },
                     });
-                waiter.done = true;
 
-                this.logger.debug('</CAMP RECOVER HEALTH>');
             }
         );
 
-        const wait = (ms) => new Promise(res => setTimeout(res, ms));
-        let loopBreak = 50;
-
-        while (!waiter.done || loopBreak <= 0) {
-            await wait(100);
-            loopBreak--;
-        }
-
-        return (waiter.done) ? waiter.data : undefined;
     }
 }

@@ -34,9 +34,7 @@ export class UpgradeCardGateway {
         cardId: string,
     ): Promise<string> {
 
-        const waiter = { done: false, data: "" };
-
-        await this.actionQueueService.push(
+        return await this.actionQueueService.pushWithReturn(
             await this.expeditionService.getExpeditionIdFromClient(client.id),
             async () => {
                 this.logger.debug('<UPGRADE SELECTED>');
@@ -47,37 +45,26 @@ export class UpgradeCardGateway {
                     `Client ${client.id} trigger message "CardUpgradeSelected": cardId: ${cardId}`,
                 );
 
+                let returnData = undefined;
                 try {
-                    waiter.data = await this.upgradeCardService.showUpgradablePair(client, cardId);
-                    waiter.done = true;
+                    returnData = await this.upgradeCardService.showUpgradablePair(client, cardId);
                 } catch (e) {
                     this.logger.error(e);
                     client.emit('ErrorMessage', {
                         message: e.message ?? 'An Error has occurred finding the upgraded card.',
                     });
-                    waiter.done = true;
                 }
                 
                 this.logger.debug('<UPGRADE SELECTED>');
+                return returnData;
             }
         );
-
-        const wait = (ms) => new Promise(res => setTimeout(res, ms));
-        let loopBreak = 50;
-
-        while (!waiter.done || loopBreak <= 0) {
-            await wait(100);
-            loopBreak--;
-        }
-
-        return (waiter.done) ? waiter.data : undefined;
     }
 
     @SubscribeMessage('UpgradeCard')
     async handleUpgradeCard(client: Socket, cardId: string): Promise<string> {
-        const waiter = { done: false, data: "" };
 
-        await this.actionQueueService.push(
+        return await this.actionQueueService.pushWithReturn(
             await this.expeditionService.getExpeditionIdFromClient(client.id),
             async () => {
                 this.logger.debug('<UPGRADE CARD>');
@@ -114,22 +101,12 @@ export class UpgradeCardGateway {
                         break;
                 }
 
-                waiter.data = response;
-                waiter.done = true;
-
                 // TODO: add validation to confirm if the user can upgrade more cards
                 this.logger.debug('<UPGRADE CARD>');
+                
+                return response;
+               
             }
         );
-
-        const wait = (ms) => new Promise(res => setTimeout(res, ms));
-        let loopBreak = 50;
-
-        while (!waiter.done || loopBreak <= 0) {
-            await wait(100);
-            loopBreak--;
-        }
-
-        return (waiter.done) ? waiter.data : undefined;
     }
 }
