@@ -10,21 +10,20 @@ export class ActionQueueService {
     private readonly logger: Logger = new Logger(ActionQueueService.name);
 
     private actionQueues: ActionQueue<Promise<void>> = {};
-    private loopWaitTime: number = 100;
-    private maximumWaitTime: number = 5000;
-        
+    private loopWaitTime = 100;
+    private maximumWaitTime = 5000;
+
     async pushWithReturn(
         queueId: string,
         fn: () => Promise<any>,
         maxTime: number = this.maximumWaitTime,
         loopTime: number = this.loopWaitTime,
     ): Promise<any> {
+        const wait = (ms: number) => new Promise((res) => setTimeout(res, ms));
 
-        const wait = (ms) => new Promise(res => setTimeout(res, ms));
-
-        const waiter = { 
-            done: false, 
-            data: undefined
+        const waiter = {
+            done: false,
+            data: undefined,
         };
 
         await this.push(queueId, async () => {
