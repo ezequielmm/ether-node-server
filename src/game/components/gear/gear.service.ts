@@ -6,7 +6,7 @@ import { GearRarityEnum } from './gear.enum';
 import { getRandomBetween } from '../../../utils';
 import { ILootboxRarityOdds } from './gear.interface';
 import { data as gearData } from './gear.data';
-import { find } from 'lodash';
+import { find, sample } from 'lodash';
 
 @Injectable()
 export class GearService {
@@ -64,9 +64,8 @@ export class GearService {
     }
 
     async getOneGear(rarity: GearRarityEnum): Promise<Gear> {
-        const all = await this.gearModel.find({ rarity });
-        const which_one = getRandomBetween(0, all.length);
-        return all[which_one];
+        const availableGear = await this.gearModel.find({ rarity });
+        return sample(availableGear);
     }
 
     getGearById(id: number): Gear | undefined {
