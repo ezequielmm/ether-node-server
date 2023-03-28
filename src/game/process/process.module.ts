@@ -37,6 +37,7 @@ import { GearModule } from '../components/gear/gear.module';
 import { PlayerWinModule } from '../../playerWin/playerWin.module';
 import { ContestModule } from '../contest/contest.module';
 import { ContestMapModule } from '../contestMap/contestMap.module';
+import { PlayerGearModule } from 'src/playerGear/playerGear.module';
 
 @Module({
     imports: [
@@ -63,6 +64,7 @@ import { ContestMapModule } from '../contestMap/contestMap.module';
         PlayerWinModule,
         ContestModule,
         ContestMapModule,
+        PlayerGearModule,
     ],
     providers: [
         SendEnemyIntentProcess,

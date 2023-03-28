@@ -59,7 +59,7 @@ export class NodeSelectedProcess {
         this.mapService.selectNode(ctx, node.id);
         await ctx.expedition.save();
 
-        // moved to after selecting node, so that it would be active on return to client. 
+        // moved to after selecting node, so that it would be active on return to client.
         // TODO: test if this breaks things.
         const { mapSeedId, map } = ctx.expedition;
         const safeMap = this.mapService.makeClientSafe(map);

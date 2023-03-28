@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { PlayerGearController } from './playerGear.controller';
 import { KindagooseModule } from 'kindagoose';
 import { PlayerGear } from './playerGear.schema';
@@ -13,10 +13,10 @@ import { GearChainBridgeController } from './gearChainBridge.controller';
     imports: [
         KindagooseModule.forFeature([PlayerGear]),
         HttpModule,
-        ExpeditionModule,
+        forwardRef(() => ExpeditionModule),
         AuthGatewayModule,
     ],
     providers: [PlayerGearService],
-    exports:[PlayerGearService],
+    exports: [PlayerGearService],
 })
 export class PlayerGearModule {}

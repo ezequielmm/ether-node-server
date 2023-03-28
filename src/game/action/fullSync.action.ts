@@ -15,7 +15,7 @@ export class FullSyncAction {
 
     constructor(
         private readonly expeditionService: ExpeditionService,
-        private readonly mapService: MapService
+        private readonly mapService: MapService,
     ) {}
 
     async handle(client: Socket, sendShowMap = true): Promise<void> {
