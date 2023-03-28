@@ -21,7 +21,7 @@ export class ContestMapSeeder implements Seeder {
     async seed(): Promise<any> {
         const map = this.mapService.getActZero();
 
-        const lastNodeId = last(map)?.id ?? 0;
+        const lastNodeId = last(map)?.id ?? -1;
 
         const nodes = buildActOne(lastNodeId + 1);
 
