@@ -24,7 +24,7 @@ export class PlayerGearController {
             authHeader,
         );
         if (!playerId) return 'no playerId';
-        
+
         const ownedGearGear = await this.playerGearService.getGear(playerId);
         
         return { ownedGear: ownedGearGear };

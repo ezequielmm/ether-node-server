@@ -18,21 +18,21 @@ export class ContestMapService {
     }
 
     async findById(id: string): Promise<ContestMap> {
-        return await this.contestMap.findById(id).lean();
+        return await this.contestMap.findById(id);
     }
 
     async findOne(
         filter?: FilterQuery<ContestMap>,
         projection?: ProjectionFields<ContestMap>,
     ): Promise<ContestMap> {
-        return await this.contestMap.findOne(filter, projection).lean();
+        return await this.contestMap.findOne(filter, projection);
     }
 
     async find(
         filter: FilterQuery<ContestMap>,
         projection?: ProjectionFields<ContestMap>,
     ): Promise<ContestMap[]> {
-        return await this.contestMap.find(filter, projection).lean();
+        return await this.contestMap.find(filter, projection);
     }
 
     async getMapForContest(contest: Contest) {

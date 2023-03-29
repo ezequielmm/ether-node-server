@@ -7,6 +7,7 @@ import { HttpModule } from '@nestjs/axios';
 import { ExpeditionModule } from '../game/components/expedition/expedition.module';
 import { AuthGatewayModule } from '../authGateway/authGateway.module';
 import { GearChainBridgeController } from './gearChainBridge.controller';
+import { GearModule } from 'src/game/components/gear/gear.module';
 
 @Module({
     controllers: [PlayerGearController, GearChainBridgeController],
@@ -15,6 +16,7 @@ import { GearChainBridgeController } from './gearChainBridge.controller';
         HttpModule,
         forwardRef(() => ExpeditionModule),
         AuthGatewayModule,
+        GearModule,
     ],
     providers: [PlayerGearService],
     exports: [PlayerGearService],

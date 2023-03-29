@@ -19,13 +19,11 @@ export class ContestMapSeeder implements Seeder {
     ) {}
 
     async seed(): Promise<any> {
-        const map = this.mapService.getActZero();
+        const map = buildActOne();
 
-        const lastNodeId = last(map)?.id ?? -1;
-
-        const nodes = buildActOne(lastNodeId + 1);
-
-        map.push(...nodes);
+        // const lastNodeId = last(map)?.id ?? 0;
+        // const nodes = buildActOne(lastNodeId + 1);
+        // map.push(...nodes);
 
         const contestMap = await this.contestMap.create({
             name: 'Default Contest Map',

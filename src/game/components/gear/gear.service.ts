@@ -71,13 +71,14 @@ export class GearService {
     }
 
     getGearById(id: number): Gear | undefined {
-        const gear =
-            this.gearData[id].gearId == id
-                ? this.gearData[id]
-                : find(this.gearData, (i) => {
-                      return i.gearId == id;
-                  });
+        if (this.gearData[id] 
+            && this.gearData[id].gearId 
+            && this.gearData[id].gearId == id) return this.gearData[id];
 
-        return gear ?? undefined;
+        const gear = find(this.gearData, (i) => {
+                      return i.gearId == id;
+                     });
+
+        return gear;
     }
 }

@@ -59,11 +59,11 @@ export class TaskService {
 
         // If we don't have a contest, we generate the first map
         // and create a contest for it, first we generate act 0
-        const map = this.mapService.getActZero();
+        const map = buildActOne();
 
         // Now we generate the rest of nodes for the map
         // First we get the last node id to keep it consistent
-        const lastNodeId = last(map)?.id ?? -1;
+        const lastNodeId = last(map)?.id ?? 0;
 
         // Now we generate the rest of the nodes
         const nodes = buildActOne(lastNodeId + 1);

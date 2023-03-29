@@ -13,7 +13,9 @@ import { NodeType } from '../components/expedition/node-type';
 
 @Injectable()
 export class MapService {
-    constructor(private readonly moduleRef: ModuleRef) {}
+    constructor(
+        private readonly moduleRef: ModuleRef,
+    ) {}
 
     public selectNode(ctx: GameContext, nodeId: number): void {
         const node = this.findNodeById(ctx, nodeId);
@@ -94,7 +96,7 @@ export class MapService {
     }
 
     public getActZero(): Node[] {
-        return []; //buildActZero();
+        return buildActZero();
     }
 
     public getActOne(initialNodeId): Node[] {
@@ -106,12 +108,12 @@ export class MapService {
     }
 
     public setupActOne(ctx: GameContext): void {
-        const previousNodeId = last(ctx.expedition.map)?.id ?? -1;
+        const previousNodeId = last(ctx.expedition.map)?.id ?? 0;
         ctx.expedition.map.push(...this.getActOne(previousNodeId+1));
     }
 
     public setupActTwo(ctx: GameContext): void {
-        const previousNodeId = last(ctx.expedition.map)?.id ?? -1;
+        const previousNodeId = last(ctx.expedition.map)?.id ?? 0;
         ctx.expedition.map.push(...this.getActTwo(previousNodeId+1));
     }
 

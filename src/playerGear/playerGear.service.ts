@@ -4,20 +4,22 @@ import { PlayerGear } from './playerGear.schema';
 import { ReturnModelType } from '@typegoose/typegoose';
 import { Gear } from '../game/components/gear/gear.schema';
 import { GearItem } from './gearItem';
-import { compact } from 'lodash';
+import { compact, isEmpty } from 'lodash';
 import { FilterQuery } from 'mongoose';
 import { Logger } from '@nestjs/common';
+import { GearService } from 'src/game/components/gear/gear.service';
 
 @Injectable()
 export class PlayerGearService {
     private readonly defaultGear: number[] = [
-        0, 1, 2, 24, 41, 71, 91, 112, 131, 151, 169, 182,
+        1, 2, 24, 41, 71, 91, 112, 131, 151, 169, 182,
     ];
     private readonly logger: Logger = new Logger(PlayerGearService.name);
 
     constructor(
         @InjectModel(PlayerGear)
         private readonly playerGear: ReturnModelType<typeof PlayerGear>,
+        private readonly gearService: GearService,
     ) {}
 
     async findUnownedEquippedGear(
@@ -48,33 +50,35 @@ export class PlayerGearService {
     async getGear(
         playerId: number,
         filter: FilterQuery<PlayerGear> = {},
-    ): Promise<GearItem[]> {
+    ): Promise<any> {
+
         let player: PlayerGear = await this.playerGear
             .findOne({
                 playerId: playerId,
                 ...filter,
             })
             .lean();
+        
+        if (player === null) {
+            this.logger.debug("Player Gear Not Found for #"+playerId+". Creating...");
 
-        if (player === null || typeof player.gear === 'undefined' || player.gear.length === 0) {
-
-            this.logger.debug("Player Gear Not Found for #"+playerId+". Adding...");
-
-            player = await this.addGearToPlayer(
-                playerId,
-                await this.getGearByIds(this.defaultGear),
+            const startingGear = this.toGearItems(
+                this.getGearByIds(this.defaultGear)
             );
+            
+            player = await this.playerGear.create({
+                playerId: playerId,
+                gear: startingGear
+            });
         }
 
-        if (player === null || typeof player.gear === 'undefined') return [];
+        if (player === null) return [];
 
         return player.gear;
     }
 
     async addGearToPlayer(playerId: number, gear: Gear[]): Promise<PlayerGear> {
-        const gearItems = gear.map((item) => {
-            return this.toGearItem(item);
-        });
+        const gearItems = this.toGearItems(gear);
 
         try {
             return await this.playerGear.findOneAndUpdate(
@@ -87,12 +91,12 @@ export class PlayerGearService {
         }
     }
 
-    async getGearByIds(gear: number[]): Promise<Gear[]> {
+    getGearByIds(gear: number[]): Gear[] {
         const gears: Gear[] = compact(
-            gear.map(function (item) {
-                return this.gearService.getGearById(item);
-            }),
-        ); // TODO: ensure this does something non-silent if a gear ID doesn't match gear
+            gear.map((id) => this.gearService.getGearById(id))
+        );
+
+         // TODO: ensure this does something non-silent if a gear ID doesn't match gear
         return gears;
     }
 
@@ -124,5 +128,9 @@ export class PlayerGearService {
             category: gear.category,
             rarity: gear.rarity,
         };
+    }
+
+    toGearItems(gear: Gear[]): GearItem[] {
+        return gear.map((g) => this.toGearItem(g));
     }
 }
