@@ -71,15 +71,15 @@ export class EndCombatProcess {
         // If combat boss, update expedition status to victory
         // and emit show score
         if (isCombatBoss) {
-            const score = this.scoreCalculatorService.calculate({
-                expedition: ctx.expedition,
-            });
-
             ctx.expedition.status = ExpeditionStatusEnum.Victory;
-            ctx.expedition.finalScore = score;
             ctx.expedition.completedAt = new Date();
             ctx.expedition.endedAt = new Date();
 
+            const score = this.scoreCalculatorService.calculate({
+                expedition: ctx.expedition,
+            });
+            ctx.expedition.finalScore = score;
+            
             const isContestValid = await this.contestService.isValid(
                 ctx.expedition.contest,
             );
@@ -149,6 +149,20 @@ export class EndCombatProcess {
     ): Promise<void> {
         await this.combatQueueService.end(ctx);
 
+        ctx.expedition.status = ExpeditionStatusEnum.Defeated;
+        ctx.expedition.isCurrentlyPlaying = false;
+        ctx.expedition.defeatedAt = new Date();
+        ctx.expedition.endedAt = new Date();
+        ctx.expedition.currentNode.showRewards = false;
+        ctx.expedition.markModified('currentNode.showRewards');
+
+        const score = this.scoreCalculatorService.calculate({
+            expedition: ctx.expedition,
+        });
+        ctx.expedition.finalScore = score;
+
+        await ctx.expedition.save();
+
         ctx.client.emit(
             'PutData',
             StandardResponse.respond({
@@ -157,18 +171,6 @@ export class EndCombatProcess {
                 data: null,
             }),
         );
-
-        const score = this.scoreCalculatorService.calculate({
-            expedition: ctx.expedition,
-        });
-
-        ctx.expedition.status = ExpeditionStatusEnum.Defeated;
-        ctx.expedition.finalScore = score;
-        ctx.expedition.isCurrentlyPlaying = false;
-        ctx.expedition.defeatedAt = new Date();
-        ctx.expedition.endedAt = new Date();
-
-        await ctx.expedition.save();
 
         logger.info(`Combat ended for client ${ctx.client.id}`);
     }
