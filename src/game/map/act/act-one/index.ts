@@ -6,6 +6,8 @@ import { DefaultActBuilder, NodeConfig } from '../act.builder';
 import { NodeTypePool } from '../node-type-pool';
 import { NodeConnectionManager } from '../node-connection-manager';
 import { ActOneNodeDataFiller } from './node-data-generator/index';
+import { getRandomItemByWeight } from 'src/utils';
+import { map } from 'lodash';
 
 const basicCombatNode: NodeConfig = {
     title: 'Combat',
@@ -19,23 +21,40 @@ const elitCombatNode: NodeConfig = {
     subType: NodeType.CombatElite,
 };
 
-const bossNode: NodeConfig = {
-    title: 'Boss',
-    type: NodeType.Combat,
-    subType: NodeType.CombatBoss,
-    data: {
-        enemies: [
-            {
-                enemies: [treantData.enemyId],
-                probability: 0.5,
+const bossNodes: { config: NodeConfig, probability: number }[] = [
+    { 
+        config: {
+            title: 'Boss: Treant',
+            type: NodeType.Combat,
+            subType: NodeType.CombatBoss,
+            data: {
+                enemies: [
+                    {
+                        enemies: [treantData.enemyId],
+                        probability: 1,
+                    },
+                ],
             },
-            {
-                enemies: [fungalBruteData.enemyId],
-                probability: 0.5,
-            },
-        ],
+        },
+        probability: 0.5,
     },
-};
+    {
+        config: {
+            title: 'Boss: Fungal Brute',
+            type: NodeType.Combat,
+            subType: NodeType.CombatBoss,
+            data: {
+                enemies: [
+                    {
+                        enemies: [fungalBruteData.enemyId],
+                        probability: 1,
+                    },
+                ],
+            },
+        },
+        probability: 0.5,
+    }
+];
 
 const portalNode: NodeConfig = {
     type: NodeType.Portal,
@@ -77,13 +96,18 @@ export default function (initialNodeId = 0) {
         step.addNode(campNode);
     });
 
-    actBuilder.addStep((step) => {
-        step.addNode(bossNode);
-    });
+    const bossConfig = getRandomItemByWeight(
+        bossNodes.map(({ config }) => config),
+        bossNodes.map(({ probability }) => probability),
+    );
 
     actBuilder.addStep((step) => {
-        step.addNode(portalNode);
+        step.addNode(bossConfig);
     });
+
+    // actBuilder.addStep((step) => {
+    //     step.addNode(portalNode);
+    // });
 
     // Set node types from pool
     let pool: NodeTypePool;
