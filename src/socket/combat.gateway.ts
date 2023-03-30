@@ -12,11 +12,8 @@ import { NodeType } from 'src/game/components/expedition/node-type';
 import { Logger } from '@nestjs/common';
 import { ActionQueueService } from 'src/actionQueue/actionQueue.service';
 import { SendEnemyIntentProcess } from 'src/game/process/sendEnemyIntents.process';
-import { StatusService } from 'src/game/status/status.service';
-import { isEqual, filter, map } from 'lodash';
 import { DataWSRequestTypesEnum } from './socket.enum';
 import { SWARMessageType, StandardResponse } from 'src/game/standardResponse/standardResponse';
-import { StatusesGlobalCollection } from 'src/game/status/interfaces';
 import { EnemyService } from 'src/game/components/enemy/enemy.service';
 
 interface ICardPlayed {
@@ -33,7 +30,6 @@ export class CombatGateway {
         private readonly expeditionService: ExpeditionService,
         private readonly actionQueueService: ActionQueueService,
         private readonly sendEnemyIntentsProcess: SendEnemyIntentProcess,
-        private readonly statusService: StatusService,
         private readonly enemyService: EnemyService,
     ) {}
 
