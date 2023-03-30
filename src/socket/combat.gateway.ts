@@ -11,6 +11,13 @@ import { corsSocketSettings } from './socket.enum';
 import { NodeType } from 'src/game/components/expedition/node-type';
 import { Logger } from '@nestjs/common';
 import { ActionQueueService } from 'src/actionQueue/actionQueue.service';
+import { SendEnemyIntentProcess } from 'src/game/process/sendEnemyIntents.process';
+import { StatusService } from 'src/game/status/status.service';
+import { isEqual, filter, map } from 'lodash';
+import { DataWSRequestTypesEnum } from './socket.enum';
+import { SWARMessageType, StandardResponse } from 'src/game/standardResponse/standardResponse';
+import { StatusesGlobalCollection } from 'src/game/status/interfaces';
+import { EnemyService } from 'src/game/components/enemy/enemy.service';
 
 interface ICardPlayed {
     cardId: CardId;
@@ -25,6 +32,9 @@ export class CombatGateway {
         private readonly endEnemyTurnProcess: EndEnemyTurnProcess,
         private readonly expeditionService: ExpeditionService,
         private readonly actionQueueService: ActionQueueService,
+        private readonly sendEnemyIntentsProcess: SendEnemyIntentProcess,
+        private readonly statusService: StatusService,
+        private readonly enemyService: EnemyService,
     ) {}
 
     private readonly logger: Logger = new Logger(CombatGateway.name);
@@ -95,11 +105,29 @@ export class CombatGateway {
                     )
                         return;
 
+                    const enemyComparisonStatuses = this.enemyService.getEnemyStatuses(ctx);
+
                     await this.cardPlayedAction.handle({
                         ctx,
                         cardId,
                         selectedEnemyId: targetId,
                     });
+
+                    // reload ctx because cardPlayedAction somehow switches to "newCtx" halfway through, so reference likely breaks
+                    const afterctx = await this.expeditionService.getGameContext(client);
+
+                    // currently we are comparing ALL statuses, not just enemy ones, but the intents process doesn't factor in player statuses
+                    if (this.enemyService.haveChangedStatuses(afterctx, enemyComparisonStatuses)) {
+                        client.emit(
+                            'PutData',
+                            StandardResponse.respond({
+                                message_type: SWARMessageType.GenericData,
+                                action: DataWSRequestTypesEnum.EnemyIntents,
+                                data: await this.sendEnemyIntentsProcess.handle(afterctx),
+                            })
+                        );
+                    }
+
                 } catch (error) {
                     this.logger.error({
                         error,

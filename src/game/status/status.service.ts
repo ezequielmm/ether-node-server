@@ -597,7 +597,7 @@ export class StatusService {
         return collection;
     }
 
-    private getAllFromEnemies(ctx: GameContext): StatusesGlobalCollection {
+    getAllFromEnemies(ctx: GameContext): StatusesGlobalCollection {
         const collection: StatusesGlobalCollection = [];
         const { expedition } = ctx;
         for (const enemy of expedition.currentNode.data.enemies) {

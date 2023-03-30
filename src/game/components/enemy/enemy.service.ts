@@ -5,7 +5,7 @@ import { EnemyId, enemyIdField, enemySelector } from './enemy.type';
 import { GameContext, ExpeditionEntity } from '../interfaces';
 import { EnemyScript, ExpeditionEnemy } from './enemy.interface';
 import { CardTargetedEnum } from '../card/card.enum';
-import { find, reject, sample, isEmpty } from 'lodash';
+import { find, reject, sample, isEmpty, each, isEqual } from 'lodash';
 import { ExpeditionService } from '../expedition/expedition.service';
 import {
     ENEMY_CURRENT_SCRIPT_PATH,
@@ -18,6 +18,7 @@ import {
     AttachedStatus,
     Status,
     StatusCounterType,
+    StatusesGlobalCollection,
 } from 'src/game/status/interfaces';
 import { StatusService } from 'src/game/status/status.service';
 import { EnemyCategoryEnum, EnemyIntentionType } from './enemy.enum';
@@ -106,6 +107,38 @@ export class EnemyService {
             type: CardTargetedEnum.Enemy,
             value: enemy,
         }));
+    }
+
+    public getLiving(ctx: GameContext): ExpeditionEnemy[] {
+        return this.getAll(ctx).filter((enemy) => !this.isDead(enemy));
+    }
+
+    public getEnemyStatuses(ctx: GameContext): StatusesGlobalCollection {
+        return this.statusService.getAllFromEnemies(ctx)
+                .filter((entity) => (entity.target.type == CardTargetedEnum.Enemy && entity.target.value.hpCurrent > 0));
+    }
+
+    public haveChangedStatuses(ctx: GameContext, priorStatuses: StatusesGlobalCollection): boolean {
+        let changesFound: boolean = false;
+        const currentStatuses = this.getEnemyStatuses(ctx);
+        
+        each(currentStatuses, (enemy) => {
+            if (!isEqual(
+                    enemy.statuses, 
+                    find(
+                        priorStatuses, (e) =>  
+                        (e.target.type == CardTargetedEnum.Enemy 
+                        && enemy.target.type == CardTargetedEnum.Enemy 
+                        && e.target.value.enemyId == enemy.target.value.enemyId)
+                    ).statuses
+                )
+            ) {
+                changesFound = true;
+                return false; // end 'each'
+            }
+        });
+        
+        return changesFound;
     }
 
     /**
