@@ -28,6 +28,7 @@ import { EncounterModule } from '../game/components/encounter/encounter.module';
 import { UpgradeCardModule } from 'src/game/upgradeCard/upgradeCard.module';
 import { CombatModule } from '../game/combat/combat.module';
 import { ActionQueueModule } from 'src/actionQueue/actionQueue.module';
+import { EnemyModule } from 'src/game/components/enemy/enemy.module';
 
 @Module({
     imports: [
@@ -49,6 +50,7 @@ import { ActionQueueModule } from 'src/actionQueue/actionQueue.module';
         CombatModule,
         UpgradeCardModule,
         ActionQueueModule,
+        EnemyModule,
     ],
     providers: [
         SocketGateway,
