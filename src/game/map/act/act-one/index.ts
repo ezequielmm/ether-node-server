@@ -70,7 +70,7 @@ const campNode: NodeConfig = {
 };
 
 export default function (initialNodeId = 0) {
-    const actBuilder = new DefaultActBuilder(0, initialNodeId);
+    const actBuilder = new DefaultActBuilder(1, initialNodeId);
 
     actBuilder.addRangeOfSteps(3, (step) => {
         step.addRangeOfNodes(3, 5, basicCombatNode);
