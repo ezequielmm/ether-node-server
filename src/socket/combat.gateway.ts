@@ -110,16 +110,16 @@ export class CombatGateway {
                     });
 
                     // reload ctx because cardPlayedAction somehow switches to "newCtx" halfway through, so reference likely breaks
-                    const afterctx = await this.expeditionService.getGameContext(client);
+                    // const afterctx = await this.expeditionService.getGameContext(client);
 
                     // currently we are comparing ALL statuses, not just enemy ones, but the intents process doesn't factor in player statuses
-                    if (this.enemyService.haveChangedStatuses(afterctx, enemyComparisonStatuses)) {
+                    if (this.enemyService.haveChangedStatuses(ctx, enemyComparisonStatuses)) {
                         client.emit(
                             'PutData',
                             StandardResponse.respond({
                                 message_type: SWARMessageType.GenericData,
                                 action: DataWSRequestTypesEnum.EnemyIntents,
-                                data: await this.sendEnemyIntentsProcess.handle(afterctx),
+                                data: await this.sendEnemyIntentsProcess.handle(ctx),
                             })
                         );
                     }

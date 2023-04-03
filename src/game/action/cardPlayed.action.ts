@@ -169,12 +169,12 @@ export class CardPlayedAction {
                 });
             }
 
-            const newCtx = await this.expeditionService.getGameContext(
-                ctx.client,
-            );
+            // const newCtx = await this.expeditionService.getGameContext(
+            //     ctx.client,
+            // );
 
             await this.effectService.applyAll({
-                ctx: newCtx,
+                ctx,
                 source,
                 effects,
                 selectedEnemy: selectedEnemyId,
@@ -188,7 +188,7 @@ export class CardPlayedAction {
             }
 
             await this.statusService.attachAll({
-                ctx: newCtx,
+                ctx,
                 statuses,
                 targetId: selectedEnemyId,
                 source,
@@ -216,10 +216,10 @@ export class CardPlayedAction {
 
             logger.info(`Ended combat queue for client ${ctx.client.id}`);
 
-            await this.combatQueueService.end(newCtx);
+            await this.combatQueueService.end(ctx);
 
             await this.eventEmitter.emitAsync(EVENT_AFTER_CARD_PLAY, {
-                ctx: newCtx,
+                ctx,
                 card,
                 cardSource: source,
                 cardSourceReference: sourceReference,
@@ -227,7 +227,7 @@ export class CardPlayedAction {
             });
 
             if (endTurn)
-                await this.endPlayerTurnProcess.handle({ ctx: newCtx });
+                await this.endPlayerTurnProcess.handle({ ctx });
         }
     }
 

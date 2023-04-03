@@ -10,6 +10,7 @@ import {
     SWARAction,
     SWARMessageType,
 } from '../standardResponse/standardResponse';
+import { GameContext } from '../components/interfaces';
 
 @Injectable()
 export class DiscardCardAction {
@@ -23,18 +24,22 @@ export class DiscardCardAction {
     async handle({
         client,
         cardId,
+        ctx,
     }: {
         readonly client: Socket;
         readonly cardId: CardId;
+        ctx?: GameContext;
     }): Promise<void> {
         // First we get the game context
-        const ctx = await this.expeditionService.getGameContext(client);
+        if (!ctx) {
+            ctx = await this.expeditionService.getGameContext(client);
+        }
 
         // Now we set the logger context
         const logger = this.logger.logger.child(ctx.info);
 
         // now we get the hand and discard piles from the current game context
-        const {
+        let {
             expedition: {
                 currentNode: {
                     data: {
@@ -50,7 +55,7 @@ export class DiscardCardAction {
         // Also remove it from the hand pile
         let cardToDiscard: IExpeditionPlayerStateDeckCard = null;
 
-        const newHand = hand.filter((card) => {
+        hand = hand.filter((card) => {
             const field = getCardIdField(cardId);
 
             if (card[field] === cardId) cardToDiscard = card;
@@ -92,13 +97,12 @@ export class DiscardCardAction {
 
         // Them add the card to the discard pile
         discard.push(cardToDiscard);
-
         await this.expeditionService.updateHandPiles({
             clientId: client.id,
-            hand: newHand,
+            hand,
             discard,
         });
-
+        
         logger.info(
             `Sent message PutData to client ${client.id}: ${SWARAction.MoveCard}`,
         );
