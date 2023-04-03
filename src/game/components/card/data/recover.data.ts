@@ -9,7 +9,7 @@ export const RecoverCardUpgraded: Card = {
     cardType: CardTypeEnum.Skill,
     pool: 'knight',
     energy: 1,
-    description: `Draw {${drawCardEffect.name}} cards. If an enemy is Confused, they both cost 0 this turn.`,
+    description: `Draw {${drawCardEffect.name}} cards. If an enemy is Confused, {p:${drawCardEffect.name}:they cost:it costs} 0 this turn.`,
     keywords: [],
     properties: {
         effects: [
@@ -36,7 +36,7 @@ export const RecoverCard: Card = {
     cardType: CardTypeEnum.Skill,
     pool: 'knight',
     energy: 1,
-    description: `Draw {${drawCardEffect.name}} cards. If an enemy is Confused, they both cost 0 this turn.`,
+    description: `Draw {${drawCardEffect.name}} cards. If an enemy is Confused, {p:${drawCardEffect.name}:they cost:it costs} 0 this turn.`,
     keywords: [],
     properties: {
         effects: [

@@ -9,7 +9,7 @@ export const PerfectTimingCardUpgraded: Card = {
     cardType: CardTypeEnum.Defend,
     pool: 'knight',
     energy: 1,
-    description: `If the enemy intends to attack. Draw {${drawCardEffect.name}} defense cards`,
+    description: `If the enemy intends to attack. Draw {${drawCardEffect.name}} defense {p:${drawCardEffect.name}:card:cards}`,
     keywords: [],
     properties: {
         effects: [
@@ -36,7 +36,7 @@ export const PerfectTimingCard: Card = {
     cardType: CardTypeEnum.Defend,
     pool: 'knight',
     energy: 1,
-    description: `If the enemy intends to attack. Draw {${drawCardEffect.name}} defense cards`,
+    description: `If the enemy intends to attack. Draw {${drawCardEffect.name}} defense {p:${drawCardEffect.name}:card:cards}`,
     keywords: [],
     properties: {
         effects: [

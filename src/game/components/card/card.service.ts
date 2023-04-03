@@ -54,6 +54,10 @@ export class CardService {
         private readonly moveCardAction: MoveCardAction,
     ) {}
 
+    getDescriptionFromCard(card: IExpeditionPlayerStateDeckCard): string {
+        return CardDescriptionFormatter.process(card);
+    }
+
     async findAll(): Promise<Card[]> {
         return await this.card.find({ isActive: true }).lean();
     }

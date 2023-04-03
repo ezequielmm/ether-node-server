@@ -9,7 +9,7 @@ export const SharpenBladeCardUpgraded: Card = {
     cardType: CardTypeEnum.Power,
     pool: 'knight',
     energy: 2,
-    description: `Start each turn with {${sharpenBlade.name}} Fine Edge card.`,
+    description: `Start each turn with {${sharpenBlade.name}} Fine Edge {p:${sharpenBlade.name}:card:cards}.`,
     keywords: [],
     properties: {
         effects: [],
@@ -36,7 +36,7 @@ export const SharpenBladeCard: Card = {
     cardType: CardTypeEnum.Power,
     pool: 'knight',
     energy: 2,
-    description: `Start each turn with {${sharpenBlade.name}} Fine Edge card.`,
+    description: `Start each turn with {${sharpenBlade.name}} Fine Edge {p:${sharpenBlade.name}:card:cards}.`,
     keywords: [],
     properties: {
         effects: [],

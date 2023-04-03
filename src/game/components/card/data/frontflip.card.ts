@@ -10,7 +10,7 @@ export const FrontflipCardUpgraded: Card = {
     cardType: CardTypeEnum.Skill,
     pool: 'knight',
     energy: 1,
-    description: `Choose {${chooseCardEffect.name}} card from your draw pile. It costs 0 this turn.`,
+    description: `Choose {${chooseCardEffect.name}} {p:${chooseCardEffect.name}:card:cards} from your draw pile. {p:${chooseCardEffect.name}:It costs:They cost} 0 this turn.`,
     keywords: [],
     properties: {
         effects: [
@@ -37,7 +37,7 @@ export const FrontflipCard: Card = {
     cardType: CardTypeEnum.Skill,
     pool: 'knight',
     energy: 1,
-    description: `Choose {${chooseCardEffect.name}} card from your draw pile. It costs 0 this turn.`,
+    description: `Choose {${chooseCardEffect.name}} {p:${chooseCardEffect.name}:card:cards} from your draw pile. {p:${chooseCardEffect.name}:It costs:They cost} 0 this turn.`,
     keywords: [],
     properties: {
         effects: [
