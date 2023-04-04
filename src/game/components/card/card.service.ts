@@ -73,12 +73,12 @@ export class CardService {
     async getRandomCard(
         filter: FilterQuery<Card> = { isActive: true },
     ): Promise<Card> {
-        const [card] = await this.card.aggregate<Card>([
+        const card = await this.card.aggregate<Card>([
             { $match: filter },
             { $sample: { size: 1 } },
         ]);
 
-        return card;
+        return card[0];
     }
 
     async findByType(card_type: CardTypeEnum): Promise<Card[]> {

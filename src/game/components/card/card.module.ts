@@ -16,6 +16,6 @@ import { CardService } from './card.service';
         forwardRef(() => PlayerModule),
     ],
     providers: [CardService],
-    exports: [CardService],
+    exports: [CardService, KindagooseModule],
 })
 export class CardModule {}

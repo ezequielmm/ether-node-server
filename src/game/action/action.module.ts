@@ -34,6 +34,7 @@ import { SetCombatTurnAction } from './setCombatTurn.action';
 import { GetEncounterDataAction } from './getEncounterDataAction';
 import { EncounterModule } from '../components/encounter/encounter.module';
 import { MapModule } from '../map/map/map.module';
+import { CombatModule } from '../combat/combat.module';
 
 const actions = [
     FullSyncAction,
@@ -70,11 +71,12 @@ const actions = [
         forwardRef(() => CardModule),
         forwardRef(() => PotionModule),
         forwardRef(() => TrinketModule),
+        forwardRef(() => CombatModule),
         PlayerModule,
         HistoryModule,
         CombatQueueModule,
         EncounterModule,
-        MapModule,
+        forwardRef(() => MapModule),
     ],
     providers: actions,
     exports: actions,

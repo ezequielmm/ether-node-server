@@ -1,5 +1,5 @@
-import { Card } from '../components/card/card.schema';
 import { IExpeditionPlayerStateDeckCard } from '../components/expedition/expedition.interface';
+import { Card } from '../components/card/card.schema';
 
 export class CardDescriptionFormatter {
 
@@ -28,9 +28,10 @@ export class CardDescriptionFormatter {
 
     public static process(card: IExpeditionPlayerStateDeckCard | Card): string {
         // First we deestructure the effect array
-        const {
-            properties: { effects, statuses },
-        } = card;
+        try {
+            const {
+                properties: { effects, statuses },
+            } = card;
 
         // Next we loop over all the effects to find the value on the text
         // and update it with the correct value
@@ -51,6 +52,9 @@ export class CardDescriptionFormatter {
                 .replace(`[${name}]`, `<color=#0066cc>${name}</color>`);
         });
 
+        } catch (e) {
+            console.log({ card });
+        }
         // Finally we return the card with the next description
         return card.description;
     }

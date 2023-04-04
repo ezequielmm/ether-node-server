@@ -18,6 +18,7 @@ import { GearRarityEnum } from 'src/game/components/gear/gear.enum';
 import { remove } from 'lodash';
 import { createHash } from 'crypto';
 import { GearItem } from './gearItem';
+import { ConfigService } from '@nestjs/config';
 
 class AlterGearApiDTO {
     @ApiProperty()
@@ -50,6 +51,7 @@ export class GearChainBridgeController {
         @Inject(getModelToken('Expedition'))
         private readonly expedition: ReturnModelType<typeof Expedition>,
         private playerGearService: PlayerGearService,
+        private readonly configService: ConfigService,
     ) {}
 
     private nonChainRarities = [GearRarityEnum.Common, GearRarityEnum.Uncommon];
@@ -61,7 +63,10 @@ export class GearChainBridgeController {
     };
 
     private async checkSecurityToken(check: ITokenCheck): Promise<boolean> {
-        const sharedSalt = process.env.GEARAPI_SALT ?? 'sharedSalt';
+        const sharedSalt = this.configService.get<string>(
+            'GEARAPI_SALT',
+            'sharedSalt',
+        );
         const timestamp = new Date().setUTCHours(0, 0, 0, 0).valueOf();
         const localHash = createHash('md5')
             .update(timestamp + check.wallet + sharedSalt)

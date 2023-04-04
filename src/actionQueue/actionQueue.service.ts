@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Logger } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 
 interface ActionQueue<Type> {
     [key: string]: Type;
@@ -9,10 +10,13 @@ interface ActionQueue<Type> {
 export class ActionQueueService {
     private readonly logger: Logger = new Logger(ActionQueueService.name);
 
+    constructor(private readonly configService: ConfigService) {}
+
     private actionQueues: ActionQueue<Promise<void>> = {};
     private loopWaitTime = 100;
     private maximumWaitTime = 5000;
-    private readonly wait = (ms: number) => new Promise((res) => setTimeout(res, ms));
+    private readonly wait = (ms: number) =>
+        new Promise((res) => setTimeout(res, ms));
 
     async pushWithReturn(
         queueId: string,
@@ -20,7 +24,6 @@ export class ActionQueueService {
         maxTime: number = this.maximumWaitTime,
         loopTime: number = this.loopWaitTime,
     ): Promise<any> {
-
         const waiter = {
             done: false,
             data: undefined,
@@ -40,10 +43,13 @@ export class ActionQueueService {
         return waiter.done ? waiter.data : undefined;
     }
 
-    async push(queueId: string, fn: () => Promise<void>) {
-        if (process.env.ASYNC_MESSAGES) {
-            return await fn();
-        }
+    async push(queueId: string, fn: () => Promise<void>): Promise<void> {
+        const useAsyncMessages = this.configService.get<boolean>(
+            'ASYNC_MESSAGES',
+            false,
+        );
+
+        if (useAsyncMessages) return await fn();
 
         if (typeof this.actionQueues[queueId] === 'undefined')
             this.actionQueues[queueId] = Promise.resolve();

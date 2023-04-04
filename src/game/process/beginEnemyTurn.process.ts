@@ -21,6 +21,7 @@ import {
     StandardResponse,
     SWARMessageType,
 } from '../standardResponse/standardResponse';
+import { CombatService } from '../combat/combat.service';
 
 @Injectable()
 export class BeginEnemyTurnProcess {
@@ -29,10 +30,13 @@ export class BeginEnemyTurnProcess {
         private readonly logger: PinoLogger,
         @Inject(forwardRef(() => ExpeditionService))
         private readonly expeditionService: ExpeditionService,
+        @Inject(forwardRef(() => EffectService))
         private readonly effectService: EffectService,
         private readonly eventEmitter: EventEmitter2,
         private readonly combatQueueService: CombatQueueService,
         private readonly changeTurnAction: ChangeTurnAction,
+        @Inject(forwardRef(() => CombatService))
+        private readonly combatService: CombatService,
     ) {}
 
     async handle({ ctx }: { ctx: GameContext }): Promise<void> {
@@ -98,7 +102,7 @@ export class BeginEnemyTurnProcess {
                         selectedEnemy: enemy.id,
                     });
 
-                    if (this.expeditionService.isCurrentCombatEnded(ctx)) {
+                    if (this.combatService.isCurrentCombatEnded(ctx)) {
                         logger.info(
                             'Combat ended, skipping rest of enemies, intentions and effects',
                         );

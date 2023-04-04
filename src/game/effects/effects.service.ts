@@ -1,6 +1,6 @@
 import { forwardRef, Inject, Injectable, Logger } from '@nestjs/common';
 import { find } from 'lodash';
-import { ExpeditionService } from '../components/expedition/expedition.service';
+import { CombatService } from '../combat/combat.service';
 import { TrinketService } from '../components/trinket/trinket.service';
 import { HistoryService } from '../history/history.service';
 import { ProviderContainer } from '../provider/interfaces';
@@ -25,18 +25,18 @@ export class EffectService {
     constructor(
         private readonly providerService: ProviderService,
         private readonly statusService: StatusService,
-        @Inject(forwardRef(() => ExpeditionService))
-        private readonly expeditionService: ExpeditionService,
         private readonly historyService: HistoryService,
         @Inject(forwardRef(() => TrinketService))
         private readonly trinketService: TrinketService,
+        @Inject(forwardRef(() => CombatService))
+        private readonly combatService: CombatService,
     ) {}
 
     async applyAll(dto: ApplyAllDTO): Promise<void> {
         const { ctx, source, effects, selectedEnemy } = dto;
 
         for (const effect of effects) {
-            const targets = this.expeditionService.getEntitiesByType(
+            const targets = this.combatService.getEntitiesByType(
                 ctx,
                 effect.target,
                 source,
@@ -101,7 +101,7 @@ export class EffectService {
 
             // Check if the combat has ended
             if (
-                this.expeditionService.isCurrentCombatEnded(ctx) &&
+                this.combatService.isCurrentCombatEnded(ctx) &&
                 !metadata.effect.ghost
             ) {
                 this.logger.log(
@@ -113,7 +113,7 @@ export class EffectService {
 
             // Check if the target is dead, if so, skip the effect
             if (
-                this.expeditionService.isEntityDead(ctx, target) &&
+                this.combatService.isEntityDead(ctx, target) &&
                 !metadata.effect.ghost
             ) {
                 this.logger.log(

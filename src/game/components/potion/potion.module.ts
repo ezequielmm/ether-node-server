@@ -21,6 +21,6 @@ import { PotionService } from './potion.service';
         ActionQueueModule,
     ],
     providers: [PotionService, PotionGateway],
-    exports: [PotionService],
+    exports: [PotionService, KindagooseModule],
 })
 export class PotionModule {}

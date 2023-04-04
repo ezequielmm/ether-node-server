@@ -77,7 +77,7 @@ export class InitExpeditionProcess {
 
         const map = contest
             ? await this.contestMapService.getMapForContest(contest)
-            : this.mapService.getActOne(0);
+            : await this.mapService.getActOne(0);
 
         const cards = await this.generatePlayerDeck(character, email);
 

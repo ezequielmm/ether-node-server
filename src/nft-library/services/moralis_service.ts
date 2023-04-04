@@ -1,10 +1,10 @@
 import Moralis from 'moralis';
 
 class MoralisService {
-    initialize() {
+    initialize(apiKey: string, logLevel: string) {
         Moralis.start({
-            apiKey: process.env.MORALIS_KEY,
-            logLevel: process.env.MORALIS_LOG_LEVEL,
+            apiKey,
+            logLevel,
         });
     }
 }

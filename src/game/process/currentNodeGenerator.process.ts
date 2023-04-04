@@ -49,6 +49,7 @@ export class CurrentNodeGeneratorProcess {
     ): Promise<IExpeditionCurrentNode> {
         const encounterData = await this.encounterService.generateEncounter(
             ctx,
+            node,
         );
 
         return {
@@ -99,7 +100,10 @@ export class CurrentNodeGeneratorProcess {
         } = ctx || {};
 
         if (isEmpty(currentNode)) {
-            const merchantItems = await this.merchantService.generateMerchant();
+            const merchantItems = await this.merchantService.generateMerchant(
+                ctx,
+                node,
+            );
 
             return {
                 nodeId: node.id,
@@ -117,7 +121,10 @@ export class CurrentNodeGeneratorProcess {
         } = ctx || {};
 
         if (isEmpty(merchantItems))
-            merchantItems = await this.merchantService.generateMerchant();
+            merchantItems = await this.merchantService.generateMerchant(
+                ctx,
+                node,
+            );
 
         return {
             nodeId: node.id,

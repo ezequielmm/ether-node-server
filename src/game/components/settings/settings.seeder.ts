@@ -1,22 +1,23 @@
 import { Injectable } from '@nestjs/common';
-import { InjectModel } from 'kindagoose';
 import { Seeder } from 'nestjs-seeder';
-import { Settings } from './settings.schema';
-import { settingsData } from './settings.data';
-import { ReturnModelType } from '@typegoose/typegoose';
+import { SettingsService } from './settings.service';
 
 @Injectable()
 export class SettingsSeeder implements Seeder {
-    constructor(
-        @InjectModel(Settings)
-        private readonly settings: ReturnModelType<typeof Settings>,
-    ) {}
+    constructor(private readonly settingsService: SettingsService) {}
 
     async seed(): Promise<any> {
-        return this.settings.insertMany(settingsData);
+        return this.settingsService.create({
+            initialEnergy: 3,
+            maxEnergy: 3,
+            initialHandPileSize: 5,
+            initialDeckSize: 10,
+            initialPotionChance: 40,
+            maxCardRewardsInCombat: 3,
+        });
     }
 
     async drop(): Promise<any> {
-        return this.settings.deleteMany({});
+        return this.settingsService.deleteMany({});
     }
 }

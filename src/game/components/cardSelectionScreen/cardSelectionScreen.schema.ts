@@ -1,8 +1,9 @@
-import { ModelOptions, Prop } from '@typegoose/typegoose';
+import { ModelOptions, Prop, Severity } from '@typegoose/typegoose';
 import { CardSelectionScreenOriginPileEnum } from './cardSelectionScreen.enum';
 
 @ModelOptions({
     schemaOptions: { collection: 'cardSelectionScreens', versionKey: false },
+    options: { allowMixed: Severity.ALLOW },
 })
 export class CardSelectionScreen {
     @Prop()

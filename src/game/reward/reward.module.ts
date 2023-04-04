@@ -9,8 +9,8 @@ import { RewardService } from './reward.service';
     imports: [
         forwardRef(() => CardModule),
         forwardRef(() => ExpeditionModule),
-        PotionModule,
-        TrinketModule,
+        forwardRef(() => PotionModule),
+        forwardRef(() => TrinketModule),
     ],
     providers: [RewardService],
     exports: [RewardService],

@@ -1,29 +1,28 @@
+
 import { Injectable } from '@nestjs/common';
 import { ReturnModelType } from '@typegoose/typegoose';
 import { InjectModel } from 'kindagoose';
-import { last } from 'lodash';
 import { Seeder } from 'nestjs-seeder';
-import { MapService } from '../map/map.service';
 import { ContestMap } from './contestMap.schema';
 import buildActOne from 'src/game/map/act/act-one/index';
 import { addHoursToDate, setHoursMinutesSecondsToUTCDate } from 'src/utils';
 import { ContestService } from '../contest/contest.service';
+import { MapPopulationService } from '../map/mapPopulation.service';
+import { mongoose } from '@typegoose/typegoose';
 
 @Injectable()
 export class ContestMapSeeder implements Seeder {
     constructor(
         @InjectModel(ContestMap)
         private readonly contestMap: ReturnModelType<typeof ContestMap>,
-        private readonly mapService: MapService,
+        private readonly mapPopulationService: MapPopulationService,
         private readonly contestService: ContestService,
-    ) {}
+    ) {
+        // mongoose.set('debug', true);
+    }
 
     async seed(): Promise<any> {
-        const map = buildActOne();
-
-        // const lastNodeId = last(map)?.id ?? 0;
-        // const nodes = buildActOne(lastNodeId + 1);
-        // map.push(...nodes);
+        const map = await this.mapPopulationService.populateNodes(buildActOne());
 
         const contestMap = await this.contestMap.create({
             name: 'Default Contest Map',
@@ -51,12 +50,12 @@ export class ContestMapSeeder implements Seeder {
             ends_at: endsAt,
             valid_until: validUntil,
         });
-
+        
         return contestMap;
     }
 
     async drop(): Promise<any> {
-        await this.contestService.deleteMany();
-        return this.contestMap.deleteMany({});
+        await this.contestService.deleteMany({});
+        return await this.contestMap.deleteMany({});
     }
 }

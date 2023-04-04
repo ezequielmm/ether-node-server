@@ -6,6 +6,6 @@ import { CharacterService } from './character.service';
 @Module({
     imports: [KindagooseModule.forFeature([Character])],
     providers: [CharacterService],
-    exports: [CharacterService],
+    exports: [CharacterService, KindagooseModule],
 })
 export class CharacterModule {}

@@ -6,6 +6,6 @@ import { ContestService } from './contest.service';
 @Module({
     imports: [KindagooseModule.forFeature([Contest])],
     providers: [ContestService],
-    exports: [ContestService],
+    exports: [ContestService, KindagooseModule],
 })
 export class ContestModule {}

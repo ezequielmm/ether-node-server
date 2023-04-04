@@ -16,7 +16,6 @@ import { EnemyService } from '../components/enemy/enemy.service';
 import { enemyIdField } from '../components/enemy/enemy.type';
 import { ExpeditionStatusEnum } from '../components/expedition/expedition.enum';
 import { Expedition } from '../components/expedition/expedition.schema';
-import { ExpeditionService } from '../components/expedition/expedition.service';
 import { GameContext, ExpeditionEntity } from '../components/interfaces';
 import { PlayerService } from '../components/player/player.service';
 import {
@@ -53,6 +52,7 @@ import {
 import * as cliColor from 'cli-color';
 import { TargetId } from '../effects/effects.types';
 import { ReturnModelType } from '@typegoose/typegoose';
+import { CombatService } from '../combat/combat.service';
 
 export interface AfterStatusAttachEvent {
     ctx: GameContext;
@@ -78,13 +78,13 @@ export class StatusService {
         @Inject(getModelToken('Expedition'))
         private readonly expedition: ReturnModelType<typeof Expedition>,
         private readonly providerService: ProviderService,
-        @Inject(forwardRef(() => ExpeditionService))
-        private readonly expeditionService: ExpeditionService,
         @Inject(forwardRef(() => PlayerService))
         private readonly playerService: PlayerService,
         @Inject(forwardRef(() => EnemyService))
         private readonly enemyService: EnemyService,
         private readonly eventEmitter: EventEmitter2,
+        @Inject(forwardRef(() => CombatService))
+        private readonly combatService: CombatService,
     ) {
         // Use event emitter to listen to events and trigger the handlers
         this.eventEmitter.onAny(async (event, args) => {
@@ -116,7 +116,7 @@ export class StatusService {
 
         for (const status of statuses) {
             const { attachTo } = status;
-            const targets = this.expeditionService.getEntitiesByType(
+            const targets = this.combatService.getEntitiesByType(
                 ctx,
                 attachTo,
                 source,

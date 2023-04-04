@@ -4,12 +4,14 @@ import { InjectModel } from 'kindagoose';
 import { compact } from 'lodash';
 import { GetCharacterDTO } from './character.dto';
 import { Character } from './character.schema';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class CharacterService {
     constructor(
         @InjectModel(Character)
         private readonly character: ReturnModelType<typeof Character>,
+        private readonly configService: ConfigService,
     ) {}
 
     async findAll(): Promise<Character[]> {
@@ -21,7 +23,7 @@ export class CharacterService {
     }
 
     async getCharacterByContractId(idToFind: string): Promise<Character> {
-        const chain = Number(process.env.NFT_SERVICE_CHAIN_ID);
+        const chain = this.getChainId();
         let filter = undefined;
         switch (chain) {
             case 1:
@@ -35,7 +37,7 @@ export class CharacterService {
     }
 
     async findAllContractIds(): Promise<Array<string>> {
-        const chain = Number(process.env.NFT_SERVICE_CHAIN_ID);
+        const chain = this.getChainId();
 
         const characters = await this.character.find(
             { isActive: true },
@@ -52,5 +54,9 @@ export class CharacterService {
             default:
                 return [];
         }
+    }
+
+    private getChainId(): number {
+        return Number(this.configService.get('NFT_SERVICE_CHAIN_ID'));
     }
 }

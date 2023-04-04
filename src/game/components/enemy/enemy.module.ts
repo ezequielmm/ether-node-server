@@ -14,6 +14,6 @@ import { EnemyService } from './enemy.service';
         CombatQueueModule,
     ],
     providers: [EnemyService],
-    exports: [EnemyService],
+    exports: [EnemyService, KindagooseModule],
 })
 export class EnemyModule {}

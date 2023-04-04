@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { Socket } from 'socket.io';
 import { getRandomBetween, getRandomItemByWeight } from 'src/utils';
 import { ChestSizeEnum } from '../components/chest/chest.enum';
-import { Chest } from '../components/chest/chest.schema';
 import { ChestService } from '../components/chest/chest.service';
 import { Node } from '../components/expedition/node';
 import { ExpeditionService } from '../components/expedition/expedition.service';
@@ -26,21 +25,16 @@ export class TreasureService {
         private readonly rewardService: RewardService,
     ) {}
 
-    private chest: Chest;
+    // private chest: Chest;
 
-    async generateTreasure(
-        ctx: GameContext,
-        node: Node,
-    ): Promise<TreasureInterface> {
+    async generateBaseTreasure(node: Node): Promise<TreasureInterface> {
         const chest = await this.chestService.getRandomChest();
-
-        this.chest = chest;
 
         const randomCoinChance = getRandomBetween(1, 100);
         const randomPotionChance = getRandomBetween(1, 100);
 
         const rewards = await this.rewardService.generateRewards({
-            ctx,
+            ctx: null,
             node,
             coinsToGenerate:
                 randomCoinChance <= chest.coinChance
@@ -51,7 +45,7 @@ export class TreasureService {
                 randomPotionChance <= chest.potionChance
                     ? [this.getPotionRarityProbability()]
                     : [],
-            trinketsToGenerate: [this.getTrinketRarityProbability()],
+            trinketsToGenerate: [this.getTrinketRarityProbability(chest)],
             chest,
         });
 
@@ -62,6 +56,20 @@ export class TreasureService {
             rewards,
             type: TreasureTypeEnum.NoTrap,
         };
+    }
+
+    async generateTreasure(
+        ctx: GameContext,
+        node: Node,
+    ): Promise<TreasureInterface> {
+       const treasure = node.private_data ?? await this.generateBaseTreasure(node);
+       
+        treasure.rewards = await this.rewardService.liveUpdateRewards(
+            ctx,
+            treasure.rewards,
+        );
+
+        return treasure;
     }
 
     async openChest(client: Socket): Promise<void> {
@@ -108,8 +116,8 @@ export class TreasureService {
         );
     }
 
-    private getTrinketRarityProbability(): TrinketRarityEnum {
-        switch (this.chest.size) {
+    private getTrinketRarityProbability(chest): TrinketRarityEnum {
+        switch (chest.size) {
             case ChestSizeEnum.Small:
                 return getRandomItemByWeight(
                     [TrinketRarityEnum.Common, TrinketRarityEnum.Uncommon],

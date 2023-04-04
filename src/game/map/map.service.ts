@@ -13,9 +13,7 @@ import { NodeType } from '../components/expedition/node-type';
 
 @Injectable()
 export class MapService {
-    constructor(
-        private readonly moduleRef: ModuleRef,
-    ) {}
+    constructor(private readonly moduleRef: ModuleRef) {}
 
     public selectNode(ctx: GameContext, nodeId: number): void {
         const node = this.findNodeById(ctx, nodeId);
@@ -99,22 +97,22 @@ export class MapService {
         return buildActZero();
     }
 
-    public getActOne(initialNodeId): Node[] {
+    public async getActOne(initialNodeId): Promise<Node[]> {
         return buildActOne(initialNodeId);
     }
 
-    public getActTwo(initialNodeId): Node[] {
+    public async getActTwo(initialNodeId): Promise<Node[]> {
         return buildActTwo(initialNodeId);
     }
 
     public setupActOne(ctx: GameContext): void {
         const previousNodeId = last(ctx.expedition.map)?.id ?? 0;
-        ctx.expedition.map.push(...this.getActOne(previousNodeId+1));
+        ctx.expedition.map.push(...buildActOne(previousNodeId + 1));
     }
 
     public setupActTwo(ctx: GameContext): void {
         const previousNodeId = last(ctx.expedition.map)?.id ?? 0;
-        ctx.expedition.map.push(...this.getActTwo(previousNodeId+1));
+        ctx.expedition.map.push(...buildActTwo(previousNodeId + 1));
     }
 
     public nodeIsSelectable(ctx: GameContext, nodeId: number): boolean {

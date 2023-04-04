@@ -62,16 +62,20 @@ export class PlayerService {
     public get(ctx: GameContext): ExpeditionPlayer {
         const { expedition } = ctx;
 
-        return {
+        const player: ExpeditionPlayer = {
             type: CardTargetedEnum.Player,
             value: {
                 id: expedition.playerId,
                 globalState: expedition.playerState,
-                ...(typeof expedition.currentNode.data !=='undefined' && {
-                    combatState: expedition.currentNode.data.player,
-                }),
+                combatState: null,
             },
         };
+
+        if (typeof expedition.currentNode.data !== 'undefined') {
+            player.value.combatState = expedition.currentNode.data.player;
+        }
+
+        return player;
     }
 
     /**

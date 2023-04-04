@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { AuthGatewayModule } from '../authGateway/authGateway.module';
 import { ExpeditionModule } from '../game/components/expedition/expedition.module';
 import { SocketGateway } from './socket.gateway';
@@ -51,6 +51,7 @@ import { EnemyModule } from 'src/game/components/enemy/enemy.module';
         UpgradeCardModule,
         ActionQueueModule,
         EnemyModule,
+        forwardRef(() => CombatModule),
     ],
     providers: [
         SocketGateway,
