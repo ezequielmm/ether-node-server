@@ -39,3 +39,14 @@ POST: /gearChainBridge/modify
 
         The expectation is for final validation of the change to occur on the API consumer side.
 
+Sample Token Generation (for Node):
+------
+const crypto = require('crypto');
+
+var wallet_address = <wallet address string>;
+
+const timestamp = new Date().setUTCHours(0,0,0,0).valueOf();
+const token = crypto.createHash('md5').update(timestamp + wallet_address + "sharedSalt").digest('hex');
+
+console.log(token);
+-----
