@@ -13,10 +13,10 @@ export class EnemySeeder implements Seeder {
     ) {}
 
     async seed(): Promise<any> {
-        return this.enemy.insertMany(data);
+        return await this.enemy.insertMany(data);
     }
 
     async drop(): Promise<any> {
-        return this.enemy.deleteMany({});
+        return await this.enemy.deleteMany({});
     }
 }

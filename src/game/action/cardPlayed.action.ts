@@ -29,6 +29,7 @@ import {
 import { StatusService } from '../status/status.service';
 import { DiscardCardAction } from './discardCard.action';
 import { ExhaustCardAction } from './exhaustCard.action';
+import { CardService } from '../components/card/card.service';
 
 @Injectable()
 export class CardPlayedAction {
@@ -43,6 +44,8 @@ export class CardPlayedAction {
         private readonly combatService: CombatService,
         @Inject(forwardRef(() => EffectService))
         private readonly effectService: EffectService,
+        @Inject(forwardRef(() => CardService))
+        private readonly cardService: CardService,
         private readonly statusService: StatusService,
         private readonly playerService: PlayerService,
         private readonly discardCardAction: DiscardCardAction,
@@ -147,19 +150,16 @@ export class CardPlayedAction {
             cardTargetId: selectedEnemyId,
         });
 
-        // if the card can be played, we update the energy, apply the effects
-        // and move the card to the desired pile
+        // go ahead and send the appropriate movement message now, before applying things, so the screen looks cool.
         if (exhaust) {
-            await this.exhaustCardAction.handle({
-                client: ctx.client,
-                cardId,
+            this.exhaustCardAction.emit({
                 ctx,
+                cardId,
             });
         } else {
-            await this.discardCardAction.handle({
-                client: ctx.client,
-                cardId,
+            this.discardCardAction.emit({
                 ctx,
+                cardId,
             });
         }
 
@@ -207,6 +207,54 @@ export class CardPlayedAction {
             energyMax,
             logger,
         );
+
+        // Before we move it to the discard pile, we check if the
+        // card has to double its effect values
+        // First we loop the card effects
+        let syncCard = false;
+        for (const effect of card.properties.effects) {
+            // If is true, we double the values for the card
+            // before moving it to the discard pile
+            if (typeof effect.args.doubleValuesWhenPlayed !== 'undefined') {
+                effect.args.value *= 2;
+                if (typeof effect.times !== 'undefined') effect.times *= 2;
+                syncCard = true;
+            }
+
+            // Also we check if the card has to lower its values every time is used
+            if (typeof effect.args.decreaseValue !== 'undefined') {
+                // We lower the value (won't be reduce below 1)
+                const newValue = Math.max(
+                    1,
+                    effect.args.value - effect.args.decrementBy,
+                );
+                effect.args.value = newValue;
+                syncCard = true;
+            }
+
+        }
+        // Them add the card to the discard pile
+        if (syncCard) {
+            await this.cardService.updateCardDescription({ ctx, card })
+        }
+
+        // now, with all else done, do the actual exhaust/discard routines, without emitting again
+        if (exhaust) {
+            await this.exhaustCardAction.handle({
+                client: ctx.client,
+                cardId,
+                ctx,
+                emit: false
+            });
+        } else {
+            await this.discardCardAction.handle({
+                client: ctx.client,
+                cardId,
+                ctx,
+                emit: false
+            });
+        }
+
 
         logger.info(`Ended combat queue for client ${ctx.client.id}`);
 

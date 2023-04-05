@@ -7,7 +7,7 @@ export class SettingsSeeder implements Seeder {
     constructor(private readonly settingsService: SettingsService) {}
 
     async seed(): Promise<any> {
-        return this.settingsService.create({
+        return await this.settingsService.create({
             initialEnergy: 3,
             maxEnergy: 3,
             initialHandPileSize: 5,
@@ -23,6 +23,6 @@ export class SettingsSeeder implements Seeder {
     }
 
     async drop(): Promise<any> {
-        return this.settingsService.deleteMany({});
+        return await this.settingsService.deleteMany({});
     }
 }

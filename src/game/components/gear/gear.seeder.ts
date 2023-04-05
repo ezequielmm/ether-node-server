@@ -12,11 +12,11 @@ export class GearSeeder implements Seeder {
         @InjectModel(Gear) private readonly gear: ReturnModelType<typeof Gear>,
     ) {}
 
-    seed(): Promise<any> {
-        return this.gear.insertMany(data);
+    async seed(): Promise<any> {
+        return await this.gear.insertMany(data);
     }
 
     async drop(): Promise<any> {
-        return this.gear.deleteMany({});
+        return await this.gear.deleteMany({});
     }
 }

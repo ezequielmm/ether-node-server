@@ -20,14 +20,36 @@ export class ExhaustCardAction {
         private readonly expeditionService: ExpeditionService,
     ) {}
 
+    emit({ctx, cardId}: {
+        ctx: GameContext;
+        cardId: CardId;
+    }) {
+        ctx.client.emit(
+            'PutData',
+            StandardResponse.respond({
+                message_type: SWARMessageType.PlayerAffected,
+                action: SWARAction.MoveCard,
+                data: [
+                    {
+                        source: 'hand',
+                        destination: 'exhaust',
+                        id: cardId,
+                    },
+                ],
+            }),
+        );
+    }
+
     async handle({
         client,
         cardId,
         ctx,
+        emit = true,
     }: {
         readonly client: Socket;
         readonly cardId: CardId;
         ctx?: GameContext;
+        emit?: boolean;
     }): Promise<void> {
         // First we get the game context
         if (!ctx) {
@@ -75,19 +97,6 @@ export class ExhaustCardAction {
             `Sent message PutData to client ${client.id}: ${SWARAction.MoveCard}`,
         );
 
-        client.emit(
-            'PutData',
-            StandardResponse.respond({
-                message_type: SWARMessageType.PlayerAffected,
-                action: SWARAction.MoveCard,
-                data: [
-                    {
-                        source: 'hand',
-                        destination: 'exhaust',
-                        id: cardId,
-                    },
-                ],
-            }),
-        );
+        if (emit) this.emit({ctx, cardId});
     }
 }
