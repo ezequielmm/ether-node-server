@@ -31,6 +31,7 @@ import { SendEnemyIntentProcess } from './sendEnemyIntents.process';
 import { InitEncounterProcess } from './initEncounter.process';
 import { EncounterModule } from '../components/encounter/encounter.module';
 import { ContinueExpeditionProcess } from './continueExpedition.process';
+import { EndExpeditionProcess } from './endExpedition.process';
 import { MapModule } from '../map/map/map.module';
 import { ScoreCalculatorModule } from '../scoreCalculator/scoreCalculator.module';
 import { GearModule } from '../components/gear/gear.module';
@@ -82,6 +83,7 @@ import { PlayerGearModule } from 'src/playerGear/playerGear.module';
         InitTreasureProcess,
         InitEncounterProcess,
         ContinueExpeditionProcess,
+        EndExpeditionProcess,
     ],
     exports: [
         SendEnemyIntentProcess,
@@ -99,6 +101,7 @@ import { PlayerGearModule } from 'src/playerGear/playerGear.module';
         InitTreasureProcess,
         InitEncounterProcess,
         ContinueExpeditionProcess,
+        EndExpeditionProcess,
     ],
 })
 export class ProcessModule {}
