@@ -3,6 +3,7 @@ import { InjectModel } from 'kindagoose';
 import { PlayerWin } from './playerWin.schema';
 import { ReturnModelType } from '@typegoose/typegoose';
 import { CharacterService } from 'src/game/components/character/character.service';
+import { CharacterClassEnum } from 'src/game/components/character/character.enum';
 
 @Injectable()
 export class PlayerWinService {
@@ -24,16 +25,10 @@ export class PlayerWinService {
     }
 
     async classCanWin(
-        characterClass: string
+        characterClass: CharacterClassEnum
     ): Promise<boolean> {
-        switch (characterClass) {
-            case "villager":
-            case "blessed-villager":
-            case "knight":
-                return true;
-            default:
-                return false;
-        }
+        const character = await this.characterService.findOne({ characterClass });
+        return character.canCompete;
     }
 
     async canPlay(

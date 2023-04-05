@@ -6,15 +6,15 @@ import { BraceCard } from '../../card/data/brace.card';
 import { CounterCard } from '../../card/data/counter.card';
 import { FindWeaknessCard } from '../../card/data/findWeakness.card';
 
-export const VillagerCharacter: Character = {
-    name: 'Villager',
+export const NonTokenVillagerCharacter: Character = {
+    name: 'Lowly Villager',
     contractId: '',
-    contractIdTest: '0xF0aA34f832c34b32478B8D9696DC8Ad1c8065D2d',
-    description: 'Villager Character',
-    canCompete: true,
+    contractIdTest: '',
+    description: 'Non-Token Villager Character',
+    canCompete: false,
     initialHealth: 70,
     initialGold: 0,
-    characterClass: CharacterClassEnum.Villager,
+    characterClass: CharacterClassEnum.NonTokenVillager,
     isActive: true,
     cards: [
         {
@@ -39,8 +39,8 @@ export const VillagerCharacter: Character = {
         },
     ],
     lootboxRarity: {
-        common: 60,
-        uncommon: 40,
+        common: 100,
+        uncommon: 0,
         rare: 0,
         epic: 0,
         legendary: 0,

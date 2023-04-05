@@ -19,6 +19,9 @@ export class Character {
     description: string;
 
     @Prop()
+    canCompete: boolean;
+
+    @Prop()
     initialHealth: number;
 
     @Prop()

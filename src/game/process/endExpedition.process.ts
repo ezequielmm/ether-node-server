@@ -12,6 +12,7 @@ import { GearService } from '../components/gear/gear.service';
 import { PlayerWinService } from '../../playerWin/playerWin.service';
 import { ContestService } from '../contest/contest.service';
 import { PlayerGearService } from 'src/playerGear/playerGear.service';
+import { CharacterClassEnum } from '../components/character/character.enum';
 
 export interface IEndExpeditionProcessParameters {
     ctx: GameContext;
@@ -46,8 +47,8 @@ export class EndExpeditionProcess {
         });
         ctx.expedition.finalScore = score;
         ctx.expedition.finalScore.lootbox = [];
-
-        const canWin = await this.playerWinService.classCanWin(ctx.expedition.playerState.characterClass);
+        
+        const canWin = await this.playerWinService.classCanWin(CharacterClassEnum[ctx.expedition.playerState.characterClass]);
 
         if (canWin) {
             const isContestValid = await this.contestService.isValid(
