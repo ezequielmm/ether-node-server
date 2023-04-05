@@ -26,59 +26,57 @@ export class SendEnemyIntentProcess {
         const allEnemies = this.enemyService.getAll(ctx);
         const enemies = allEnemies.filter((enemy) => enemy.value.hpCurrent > 0);
 
-        enemies.forEach((enemy) => {
+        for await (const enemy of enemies) {
             const enemyIntent: EnemyIntentsResponse = {
                 id: enemy.value.id,
                 intents: [],
             };
 
-            if (enemy.value.currentScript.intentions.length > 0) {
-                enemy.value.currentScript.intentions.forEach((intent) => {
-                    let value = intent.value;
+            for await (const intent of enemy.value.currentScript.intentions) {
+                let value = intent.value;
 
-                    if (intent.type === EnemyIntentionType.Attack) {
-                        const effects = intent.effects ?? [];
+                if (intent.type === EnemyIntentionType.Attack) {
+                    let newValue = 0;
+                    const effects = intent.effects ?? [];
 
-                        if (effects.length > 0) {
-                            effects.forEach(async (effect) => {
-                                if (effect.effect === damageEffect.name) {
-                                    const preview =
-                                        await this.effectService.preview({
-                                            ctx,
-                                            dto: {
-                                                ctx,
-                                                source: enemy,
-                                                args: {
-                                                    initialValue:
-                                                        effect.args.value ?? 0,
-                                                    currentValue:
-                                                        effect.args.value ?? 0,
-                                                },
-                                            },
-                                            effect: effect.effect,
-                                        });
+                    for await (const effect of effects) {
+                        if (effect.effect !== damageEffect.name) continue;
 
-                                    value += preview.args.currentValue;
-                                }
+                        const preview =
+                            await this.effectService.preview({
+                                ctx,
+                                dto: {
+                                    ctx,
+                                    source: enemy,
+                                    args: {
+                                        initialValue:
+                                            effect.args.value ?? 0,
+                                        currentValue:
+                                            effect.args.value ?? 0,
+                                    },
+                                },
+                                effect: effect.effect,
                             });
-                        }
+
+                        newValue += preview.args.currentValue;
                     }
+                    value = newValue;
+                }
 
-                    enemyIntent.intents.push({
-                        ...(intent.type === EnemyIntentionType.Attack && {
-                            value,
-                        }),
-                        description: this.descriptionGenerator(
-                            intent.type,
-                            value,
-                        ),
-                        type: intent.type,
-                    });
+                enemyIntent.intents.push({
+                    ...(intent.type === EnemyIntentionType.Attack && {
+                        value,
+                    }),
+                    description: this.descriptionGenerator(
+                        intent.type,
+                        value,
+                    ),
+                    type: intent.type,
                 });
+            }  
 
-                intentValues.push(enemyIntent);
-            }
-        });
+            intentValues.push(enemyIntent);
+        }
 
         return intentValues;
     }
