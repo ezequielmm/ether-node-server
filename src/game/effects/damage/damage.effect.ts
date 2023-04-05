@@ -22,6 +22,7 @@ export interface DamageArgs {
         energyToRestore: number;
     };
     type?: string;
+    statusIgnoreForRemove?: boolean;
 }
 
 @EffectDecorator({

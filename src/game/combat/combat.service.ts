@@ -401,7 +401,7 @@ export class CombatService {
                 targets.push(source);
                 break;
             case CardTargetedEnum.AllEnemies:
-                targets.push(...this.enemyService.getAll(ctx));
+                targets.push(...this.enemyService.getLiving(ctx));
                 break;
             case CardTargetedEnum.RandomEnemy:
                 targets.push({

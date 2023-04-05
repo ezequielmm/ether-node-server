@@ -16,6 +16,7 @@ import {
     EffectMetadata,
     MutateDTO,
 } from './effects.interface';
+import { CardTargetedEnum } from '../components/card/card.enum';
 
 @Injectable()
 export class EffectService {
@@ -43,7 +44,14 @@ export class EffectService {
                 selectedEnemy,
             );
 
+            // if it's a single attack targeting all enemies, ensure we don't remove buffs until the attack generated effects are over
+            let effectBuffer = (effect.target == CardTargetedEnum.AllEnemies) ? targets.length : 1;
+
             for (const target of targets) {
+                // immediately remove some buffer, and if it's not enough, no longer will the status survive
+                effectBuffer--;
+                effect.args.statusIgnoreForRemove = (effectBuffer > 0);
+                
                 await this.apply({
                     ctx,
                     source,
