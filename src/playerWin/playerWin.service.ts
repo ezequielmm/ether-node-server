@@ -23,6 +23,19 @@ export class PlayerWinService {
         return items;
     }
 
+    async classCanWin(
+        characterClass: string
+    ): Promise<boolean> {
+        switch (characterClass) {
+            case "villager":
+            case "blessed-villager":
+            case "knight":
+                return true;
+            default:
+                return false;
+        }
+    }
+
     async canPlay(
         event_id: number,
         contract_address: string,
@@ -30,6 +43,7 @@ export class PlayerWinService {
         wins?: number,
     ): Promise<boolean> {
         if (event_id === 0) return true;
+        if (contract_address === 'NONE') return true;
 
         if (typeof wins === 'undefined') {
             wins =

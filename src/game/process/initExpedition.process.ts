@@ -62,6 +62,8 @@ export class InitExpeditionProcess {
             case 'BlessedVillager':
                 character_class_enum = CharacterClassEnum.BlessedVillager;
                 break;
+            case 'NonTokenVillager':
+                character_class_enum = CharacterClassEnum.NonTokenVillager;
             default:
                 character_class_enum = CharacterClassEnum.Knight;
                 break;

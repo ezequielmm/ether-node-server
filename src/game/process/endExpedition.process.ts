@@ -45,34 +45,39 @@ export class EndExpeditionProcess {
             expedition: ctx.expedition,
         });
         ctx.expedition.finalScore = score;
-        
-        const isContestValid = await this.contestService.isValid(
-            ctx.expedition.contest,
-        );
+        ctx.expedition.finalScore.lootbox = [];
 
-        if (isContestValid) {
-            ctx.expedition.finalScore.lootbox =
-                await this.gearService.getLootbox(
-                    3,
-                    ctx.expedition.playerState.lootboxRarity,
-                );
+        const canWin = await this.playerWinService.classCanWin(ctx.expedition.playerState.characterClass);
 
-            // actually save the gear to the player
-            await this.playerGearService.addGearToPlayer(
-                ctx.expedition.playerId,
-                ctx.expedition.finalScore.lootbox,
+        if (canWin) {
+            const isContestValid = await this.contestService.isValid(
+                ctx.expedition.contest,
             );
-
-            ctx.expedition.finalScore.notifyNoLoot = false;
-        } else {
-            ctx.expedition.finalScore.lootbox = [];
-            ctx.expedition.finalScore.notifyNoLoot = true;
+    
+            if (isContestValid) {
+                ctx.expedition.finalScore.lootbox =
+                    await this.gearService.getLootbox(
+                        3,
+                        ctx.expedition.playerState.lootboxRarity,
+                    );
+    
+                // actually save the gear to the player
+                await this.playerGearService.addGearToPlayer(
+                    ctx.expedition.playerId,
+                    ctx.expedition.finalScore.lootbox,
+                );
+    
+                ctx.expedition.finalScore.notifyNoLoot = false;
+            } else {
+                ctx.expedition.finalScore.lootbox = [];
+                ctx.expedition.finalScore.notifyNoLoot = true;
+            }
+    
+            await this.playerWinService.create({
+                event_id: ctx.expedition.contest.event_id,
+                playerToken: ctx.expedition.playerState.playerToken,
+            });    
         }
-
-        await this.playerWinService.create({
-            event_id: ctx.expedition.contest.event_id,
-            playerToken: ctx.expedition.playerState.playerToken,
-        });
 
         // finalize changes and save the whole thing - expedition is DONE.
         await ctx.expedition.save();
