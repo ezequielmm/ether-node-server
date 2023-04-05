@@ -18,7 +18,7 @@ export const TightenGripCardUpgraded: Card = {
                 name: imbued.name,
                 attachTo: CardTargetedEnum.Player,
                 args: {
-                    counter: Number.NaN,
+                    counter: null,
                 },
             },
         ],
@@ -44,7 +44,7 @@ export const TightenGripCard: Card = {
                 name: imbued.name,
                 attachTo: CardTargetedEnum.Player,
                 args: {
-                    counter: Number.NaN,
+                    counter: null,
                 },
             },
         ],

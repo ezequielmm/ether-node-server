@@ -14,6 +14,11 @@ export class SettingsSeeder implements Seeder {
             initialDeckSize: 10,
             initialPotionChance: 40,
             maxCardRewardsInCombat: 3,
+            maxSteps: 10,
+            maxNodes: 6,
+            maxCardsOnMerchantNode: 6,
+            maxPotionsOnMerchantNode: 5,
+            maxTrinketsOnMerchantNode: 5,
         });
     }
 

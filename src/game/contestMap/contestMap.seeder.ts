@@ -1,14 +1,17 @@
-
 import { Injectable } from '@nestjs/common';
 import { ReturnModelType } from '@typegoose/typegoose';
 import { InjectModel } from 'kindagoose';
 import { Seeder } from 'nestjs-seeder';
 import { ContestMap } from './contestMap.schema';
 import buildActOne from 'src/game/map/act/act-one/index';
-import { addHoursToDate, setHoursMinutesSecondsToUTCDate } from 'src/utils';
+import {
+    addHoursToDate,
+    countSteps,
+    findStepWithMostNodes,
+    setHoursMinutesSecondsToUTCDate,
+} from 'src/utils';
 import { ContestService } from '../contest/contest.service';
 import { MapPopulationService } from '../map/mapPopulation.service';
-import { mongoose } from '@typegoose/typegoose';
 
 @Injectable()
 export class ContestMapSeeder implements Seeder {
@@ -17,16 +20,22 @@ export class ContestMapSeeder implements Seeder {
         private readonly contestMap: ReturnModelType<typeof ContestMap>,
         private readonly mapPopulationService: MapPopulationService,
         private readonly contestService: ContestService,
-    ) {
-        // mongoose.set('debug', true);
-    }
+    ) {}
 
     async seed(): Promise<any> {
-        const map = await this.mapPopulationService.populateNodes(buildActOne());
+        const map = await this.mapPopulationService.populateNodes(
+            buildActOne(),
+        );
+
+        // Here we calculate how many steps we have in the map
+        const maxSteps = countSteps(map);
+        const maxNodes = findStepWithMostNodes(map);
 
         const contestMap = await this.contestMap.create({
             name: 'Default Contest Map',
             nodes: map,
+            maxSteps,
+            maxNodes,
         });
 
         const today = new Date();
@@ -50,7 +59,7 @@ export class ContestMapSeeder implements Seeder {
             ends_at: endsAt,
             valid_until: validUntil,
         });
-        
+
         return contestMap;
     }
 

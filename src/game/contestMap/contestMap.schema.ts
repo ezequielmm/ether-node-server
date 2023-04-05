@@ -15,6 +15,12 @@ export class ContestMap {
 
     @Prop({ type: () => [Node] }, PropType.ARRAY)
     nodes: Node[];
+
+    @Prop()
+    maxSteps: number;
+
+    @Prop()
+    maxNodes: number;
 }
 
 export type ContestMapDocument = HydratedDocument<ContestMap>;

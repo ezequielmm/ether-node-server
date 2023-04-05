@@ -23,7 +23,7 @@ export const RefocusCardUpgraded: Card = {
                 effect: removeDebuff.name,
                 target: CardTargetedEnum.Player,
                 args: {
-                    value: Number.NaN, // non finite number will remove all debuffs
+                    value: null, // non finite number will remove all debuffs
                 },
             },
         ],

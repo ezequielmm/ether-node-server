@@ -18,7 +18,7 @@ export const ImbueCardUpgraded: Card = {
                 name: imbued.name,
                 attachTo: CardTargetedEnum.Player,
                 args: {
-                    counter: Number.NaN,
+                    counter: null,
                 },
             },
         ],
@@ -44,7 +44,7 @@ export const ImbueCard: Card = {
                 name: imbued.name,
                 attachTo: CardTargetedEnum.Player,
                 args: {
-                    counter: Number.NaN,
+                    counter: null,
                 },
             },
         ],
