@@ -13,6 +13,7 @@ import { summoned } from 'src/game/status/summoned/constants';
 
 export const yellowSporelingData: Enemy = {
     enemyId: 16,
+    isActive: true,
     name: 'Yellow Sporeling',
     type: EnemyTypeEnum.Plant,
     category: EnemyCategoryEnum.Minion,

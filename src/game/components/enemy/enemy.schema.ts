@@ -11,6 +11,9 @@ export class Enemy {
     enemyId: number;
 
     @Prop()
+    isActive: boolean;
+
+    @Prop()
     name: string;
 
     @Prop({ type: String, enum: EnemyTypeEnum })

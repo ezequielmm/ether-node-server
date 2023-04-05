@@ -15,6 +15,7 @@ import { thornWolfPupData } from './thornWolfPup.enemy';
 
 export const thornWolfData: Enemy = {
     enemyId: 11,
+    isActive: true,
     name: 'ThornWolf',
     type: EnemyTypeEnum.Plant,
     category: EnemyCategoryEnum.Elite,

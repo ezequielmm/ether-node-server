@@ -13,6 +13,7 @@ import { Enemy } from '../enemy.schema';
 
 export const groundMothData: Enemy = {
     enemyId: 2,
+    isActive: true,
     name: 'GroundMoth',
     type: EnemyTypeEnum.Beast,
     category: EnemyCategoryEnum.Basic,
