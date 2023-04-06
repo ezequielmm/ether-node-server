@@ -1,8 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from 'kindagoose';
 import { ReturnModelType } from '@typegoose/typegoose';
-import { IParticipationResponse, ILeaderboardScoreResponse } from './leaderboard.controller';
+import { GetLeaderboardPayload, ILeaderboardParticipationItem, ILeaderboardScoreItem } from './leaderboard.controller';
 import { Expedition } from 'src/game/components/expedition/expedition.schema';
+import { ExpeditionStatusEnum } from 'src/game/components/expedition/expedition.enum';
 
 @Injectable()
 export class LeaderboardService {
@@ -11,27 +12,29 @@ export class LeaderboardService {
         private readonly expedition: ReturnModelType<typeof Expedition>,
     ) {}
 
-    normalizeDates({ start, end }: { start: Date; end: Date; }): { start: Date; end: Date; } {
-        start.setUTCHours(0,0,0,0);
-        end.setUTCHours(23,59,59,999);
-        return { start, end };
+    normalizeDates({ startDate, endDate }: { startDate: Date; endDate: Date; }): { start: Date; end: Date; } {
+        startDate.setUTCHours(0,0,0,0);
+        endDate.setUTCHours(23,59,59,999);
+        return { start: startDate, end: endDate };
     }
 
-    async getParticipation({ start, end, addresses }: { 
-        addresses: string[];
-        start: Date; 
-        end: Date;
-    }): Promise<IParticipationResponse[]> {
-        const result: IParticipationResponse[] = [];
-        
-        const { start: startDate, end: endDate } = this.normalizeDates({start, end});
+    async getParticipation(payload: GetLeaderboardPayload): Promise<ILeaderboardParticipationItem[]> {
+        const result: ILeaderboardParticipationItem[] = [];
+        const { startDate, endDate, addresses, onlyWin, limit, skip } = payload;
+        const { start, end } = this.normalizeDates({startDate, endDate});
 
         const match = {
             createdAt: { 
-                $gte: startDate, 
-                $lte: endDate 
+                $gte: start, 
+                $lte: end 
             }
         };
+
+        if (onlyWin) {
+            match['status'] = ExpeditionStatusEnum.Victory;
+        } else {
+            match['status'] = { $in: [ExpeditionStatusEnum.Victory, ExpeditionStatusEnum.Defeated]};
+        }
 
         if (addresses && addresses.length) {
             match["$playerState.playerToken.walletId"] = { $in: addresses };
@@ -89,26 +92,36 @@ export class LeaderboardService {
                     daysPlayed: 1,
                     walletAddress: "$_id",
                 }
-            }
+            },
+            { $sort: {daysPlayed: -1 }},
+            { $skip: skip ?? 0 },
+            { $limit: limit ?? 500 }
         ]);
     }
 
-    async getHighScores({ addresses, start, end, limit }: {
+    async getHighScores({ addresses, startDate, endDate, limit, skip, onlyWin }: {
         addresses: string[];
-        start: Date;
-        end: Date;
+        startDate: Date;
+        endDate: Date;
         limit?: number;
-    }): Promise<ILeaderboardScoreResponse[]>  {
-        const result: ILeaderboardScoreResponse[] = []
-        const { start: startDate, end: endDate } = this.normalizeDates({start, end});
+        skip?: number;
+        onlyWin?: boolean;
+    }): Promise<ILeaderboardScoreItem[]>  {
+        const result: ILeaderboardScoreItem[] = [];
+
+        const { start, end } = this.normalizeDates({startDate, endDate});
 
         const match = {
                 createdAt: { 
-                    $gte: startDate, 
-                    $lte: endDate 
+                    $gte: start, 
+                    $lte: end 
                 },
                 finalScore: { $exists: true },
             };
+
+        if (onlyWin) {
+            match['status'] = ExpeditionStatusEnum.Victory;
+        }
 
         if (addresses && addresses.length) {
             match["$playerState.playerToken.walletId"] = { $in: addresses };
@@ -129,8 +142,11 @@ export class LeaderboardService {
                     highScore: 1,
                 }
             },
+            { $sort: { highScore: -1 }},
+            { $skip: skip ?? 0 },
             { $limit: limit ?? 500 }
         ]);
+
     }
 
 }
