@@ -161,15 +161,19 @@ export class CardService {
     }
 
     async addCardToDeck(ctx: GameContext, cardId: number): Promise<void> {
-        const newCard = await this.findById(cardId);
+        const card = await this.findById(cardId);
         const deck = ctx.expedition.playerState.cards;
 
-        deck.push({
+        let newCard: IExpeditionPlayerStateDeckCard = {
             id: randomUUID(),
             isTemporary: false,
-            description: CardDescriptionFormatter.process(newCard),
-            ...newCard,
-        });
+            originalDescription: card.description,
+            ...card
+        };
+
+        newCard.description = CardDescriptionFormatter.process(newCard, card.description);
+
+        deck.push(newCard);
 
         this.logger.log(ctx.info, `Adding card ${cardId} to deck`);
 
@@ -438,7 +442,7 @@ export class CardService {
             for (const effect of card.properties.effects) {
                 if (!CardDescriptionFormatter.impactedByEffectName(card.originalDescription, effect.effect)) //continue;
                 if (!impactedEffects.includes(effect.effect)) {
-                    ctx.client.emit('CARD:458: skipp on impacted effect via array : ' + effect.effect + ' vs '+impactedEffects);
+                    ctx.client.emit('CARD FORMAT: skip on impacted effect via array : ' + effect.effect + ' vs '+impactedEffects);
                     // continue;
                 }
 
@@ -465,7 +469,7 @@ export class CardService {
             }
 
             const description = CardDescriptionFormatter.process(card, card.originalDescription, mutatedEffects); 
-            ctx.client.emit('C: '+card.originalDescription+' -> '+description+ ' v '+card.description);
+
             if (description !== card.description) {
                 card.description = description;
                 ctx.client.emit(
