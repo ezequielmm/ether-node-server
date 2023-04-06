@@ -33,7 +33,7 @@ export class GobletTrinket extends OneUseTrinket {
             strict: false,
         });
 
-        await playerService.raiseMaxHp(ctx, this.raiseHp);
+        await playerService.raiseMaxHp(ctx, this.raiseHp, true);
         await this.markAsUsed(ctx);
 
         this.trigger(ctx);

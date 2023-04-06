@@ -1,8 +1,11 @@
 import { Item } from 'src/game/merchant/merchant.interface';
 import { NodeType } from './node-type';
 import { NodeStatus } from './node-status';
-import { Prop } from '@typegoose/typegoose';
+import { modelOptions, Prop, Severity } from '@typegoose/typegoose';
 
+@modelOptions({
+    options: { allowMixed: Severity.ALLOW }
+})
 export class Node {
     constructor(partial: Partial<Node>) {
         Object.assign(this, partial);

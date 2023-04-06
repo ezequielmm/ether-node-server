@@ -15,10 +15,10 @@ export class ChestSeeder implements Seeder {
     ) {}
 
     async seed(): Promise<any> {
-        return this.chest.insertMany([SmallChest, MediumChest, LargeChest]);
+        return await this.chest.insertMany([SmallChest, MediumChest, LargeChest]);
     }
 
     async drop(): Promise<any> {
-        return this.chest.deleteMany({});
+        return await this.chest.deleteMany({});
     }
 }

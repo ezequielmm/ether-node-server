@@ -63,11 +63,9 @@ export class ContestService {
         // then we set the time to 00:00:00
         availableAt.setUTCHours(0, 0, 0, 0);
 
-        const contest = await this.findOne({
+        return await this.findOne({
             available_at: { $gte: availableAt },
             ends_at: { $lte: endsAt },
         });
-
-        return contest;
     }
 }

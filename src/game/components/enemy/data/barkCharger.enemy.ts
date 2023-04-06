@@ -13,6 +13,7 @@ import { attachStatusEffect } from 'src/game/effects/attachStatus/constants';
 
 export const barkChargerData: Enemy = {
     enemyId: 6,
+    isActive: true,
     name: 'BarkCharger',
     type: EnemyTypeEnum.Beast,
     category: EnemyCategoryEnum.Basic,

@@ -10,6 +10,8 @@ import {
     SWARAction,
     SWARMessageType,
 } from '../standardResponse/standardResponse';
+import { GameContext } from '../components/interfaces';
+import { CardService } from '../components/card/card.service';
 
 @Injectable()
 export class DiscardCardAction {
@@ -18,23 +20,51 @@ export class DiscardCardAction {
         private readonly logger: PinoLogger,
         @Inject(forwardRef(() => ExpeditionService))
         private readonly expeditionService: ExpeditionService,
+        @Inject(forwardRef(() => CardService))
+        private readonly cardService: CardService,
     ) {}
+
+    emit({ctx, cardId}: {
+        ctx: GameContext;
+        cardId: CardId;
+    }) {
+        ctx.client.emit(
+            'PutData',
+            StandardResponse.respond({
+                message_type: SWARMessageType.PlayerAffected,
+                action: SWARAction.MoveCard,
+                data: [
+                    {
+                        source: 'hand',
+                        destination: 'discard',
+                        id: cardId,
+                    },
+                ],
+            }),
+        );
+    }
 
     async handle({
         client,
         cardId,
+        ctx,
+        emit = true,
     }: {
         readonly client: Socket;
         readonly cardId: CardId;
+        ctx?: GameContext;
+        emit?: boolean;
     }): Promise<void> {
         // First we get the game context
-        const ctx = await this.expeditionService.getGameContext(client);
+        if (!ctx) {
+            ctx = await this.expeditionService.getGameContext(client);
+        }
 
         // Now we set the logger context
         const logger = this.logger.logger.child(ctx.info);
 
         // now we get the hand and discard piles from the current game context
-        const {
+        let {
             expedition: {
                 currentNode: {
                     data: {
@@ -50,7 +80,7 @@ export class DiscardCardAction {
         // Also remove it from the hand pile
         let cardToDiscard: IExpeditionPlayerStateDeckCard = null;
 
-        const newHand = hand.filter((card) => {
+        hand = hand.filter((card) => {
             const field = getCardIdField(cardId);
 
             if (card[field] === cardId) cardToDiscard = card;
@@ -58,29 +88,11 @@ export class DiscardCardAction {
             return card[field] !== cardId;
         });
 
-        // Before we move it to the discard pile, we check if the
-        // card has to double its effect values
-        // First we loop the card effects
-        cardToDiscard.properties.effects.map((effect) => {
-            // If is true, we double the values for the card
-            // before moving it to the discard pile
-            if (isNotUndefined(effect.args.doubleValuesWhenPlayed)) {
-                effect.args.value *= 2;
-                if (typeof effect.times !== 'undefined') effect.times *= 2;
-            }
+        logger.info(
+            `Sent message PutData to client ${client.id}: ${SWARAction.MoveCard}`,
+        );
 
-            // Also we check if the card has to lower its values every time is used
-            if (isNotUndefined(effect.args.decreaseValue)) {
-                // We lower the value (won't be reduce below 1)
-                const newValue = Math.max(
-                    1,
-                    effect.args.value - effect.args.decrementBy,
-                );
-                effect.args.value = newValue;
-            }
-
-            return effect;
-        });
+        if (emit) this.emit({ctx, cardId});
 
         // Next we check if the card has the key oldEnergy greater
         // than 0, if it is true them we set the card energy to the
@@ -89,33 +101,14 @@ export class DiscardCardAction {
             cardToDiscard.oldEnergy > 0
                 ? cardToDiscard.oldEnergy
                 : cardToDiscard.energy;
-
-        // Them add the card to the discard pile
+        
         discard.push(cardToDiscard);
-
+        
         await this.expeditionService.updateHandPiles({
             clientId: client.id,
-            hand: newHand,
+            hand,
             discard,
         });
 
-        logger.info(
-            `Sent message PutData to client ${client.id}: ${SWARAction.MoveCard}`,
-        );
-
-        client.emit(
-            'PutData',
-            StandardResponse.respond({
-                message_type: SWARMessageType.PlayerAffected,
-                action: SWARAction.MoveCard,
-                data: [
-                    {
-                        source: 'hand',
-                        destination: 'discard',
-                        id: cardId,
-                    },
-                ],
-            }),
-        );
     }
 }

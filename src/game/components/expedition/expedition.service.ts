@@ -24,11 +24,7 @@ import {
 import { Node } from './node';
 import { Player } from './player';
 import { ClientId, getClientIdField } from './expedition.type';
-import { CardTargetedEnum } from '../card/card.enum';
-import { GameContext, ExpeditionEntity } from '../interfaces';
-import { PlayerService } from '../player/player.service';
-import { EnemyService } from '../enemy/enemy.service';
-import { EnemyId } from '../enemy/enemy.type';
+import { GameContext } from '../interfaces';
 import { Socket } from 'socket.io';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { ReturnModelType } from '@typegoose/typegoose';
@@ -41,8 +37,6 @@ export class ExpeditionService {
     constructor(
         @InjectModel(Expedition)
         private readonly expedition: ReturnModelType<typeof Expedition>,
-        private readonly playerService: PlayerService,
-        private readonly enemyService: EnemyService,
         private readonly moduleRef: ModuleRef,
         private readonly mapService: MapService,
         private readonly configService: ConfigService,
@@ -88,7 +82,7 @@ export class ExpeditionService {
         return await this.expedition
             .findOne(filter, projection)
             .sort({ createdAt: 1 });
-            // NOTE: This cannot be lean without breaking map node objects!
+        // NOTE: This cannot be lean without breaking map node objects!
     }
 
     async findOneTimeDesc(
@@ -291,66 +285,6 @@ export class ExpeditionService {
                 { new: true },
             )
             .lean();
-    }
-
-    /**
-     * Get entities based on the type and the context
-     *
-     * @param ctx Context
-     * @param type Type of the entity
-     * @param source Source of the action
-     * @param [selectedEnemy] Preselected enemy
-     *
-     * @returns Array of expedition entities
-     *
-     * @throws Error if the type is not found
-     */
-    public getEntitiesByType(
-        ctx: GameContext,
-        type: CardTargetedEnum,
-        source: ExpeditionEntity,
-        selectedEnemy: EnemyId,
-    ): ExpeditionEntity[] {
-        const targets: ExpeditionEntity[] = [];
-
-        switch (type) {
-            case CardTargetedEnum.Player:
-                targets.push(this.playerService.get(ctx));
-                break;
-            case CardTargetedEnum.Self:
-                targets.push(source);
-                break;
-            case CardTargetedEnum.AllEnemies:
-                targets.push(...this.enemyService.getAll(ctx));
-                break;
-            case CardTargetedEnum.RandomEnemy:
-                targets.push({
-                    type: CardTargetedEnum.Enemy,
-                    value: this.enemyService.getRandom(ctx).value,
-                });
-                break;
-            case CardTargetedEnum.Enemy:
-                targets.push(this.enemyService.get(ctx, selectedEnemy));
-                break;
-        }
-
-        if (!targets) throw new Error(`Target ${type} not found`);
-
-        return targets;
-    }
-
-    public isCurrentCombatEnded(ctx: GameContext): boolean {
-        return (
-            this.playerService.isDead(ctx) || this.enemyService.isAllDead(ctx)
-        );
-    }
-
-    public isEntityDead(ctx: GameContext, target: ExpeditionEntity): boolean {
-        if (PlayerService.isPlayer(target)) {
-            return this.playerService.isDead(ctx);
-        } else if (EnemyService.isEnemy(target)) {
-            return this.enemyService.isDead(target);
-        }
     }
 
     async updatePlayerDeck(payload: UpdatePlayerDeckDTO): Promise<Expedition> {

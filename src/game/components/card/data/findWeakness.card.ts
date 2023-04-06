@@ -9,7 +9,7 @@ export const FindWeaknessCardUpgraded: Card = {
     cardType: CardTypeEnum.Attack,
     pool: 'knight',
     energy: 1,
-    description: `Deal {${damageEffect.name}} damage 1 time. Double these values this combat.`,
+    description: `Deal {${damageEffect.name}} damage {${damageEffect.name}|times} {p:${damageEffect.name}|times:time:times}. Double these values this combat.`,
     keywords: [],
     properties: {
         effects: [
@@ -37,7 +37,7 @@ export const FindWeaknessCard: Card = {
     cardType: CardTypeEnum.Attack,
     pool: 'knight',
     energy: 2,
-    description: `Deal {${damageEffect.name}} damage 1 time. Double these values this combat.`,
+    description: `Deal {${damageEffect.name}} damage {${damageEffect.name}|times} {p:${damageEffect.name}|times:time:times}. Double these values this combat.`,
     keywords: [],
     properties: {
         effects: [

@@ -9,6 +9,7 @@ import {
     StandardResponse,
     SWARMessageType,
 } from '../standardResponse/standardResponse';
+import { GameContext } from '../components/interfaces';
 
 @Injectable()
 export class ExhaustCardAction {
@@ -19,21 +20,47 @@ export class ExhaustCardAction {
         private readonly expeditionService: ExpeditionService,
     ) {}
 
+    emit({ctx, cardId}: {
+        ctx: GameContext;
+        cardId: CardId;
+    }) {
+        ctx.client.emit(
+            'PutData',
+            StandardResponse.respond({
+                message_type: SWARMessageType.PlayerAffected,
+                action: SWARAction.MoveCard,
+                data: [
+                    {
+                        source: 'hand',
+                        destination: 'exhaust',
+                        id: cardId,
+                    },
+                ],
+            }),
+        );
+    }
+
     async handle({
         client,
         cardId,
+        ctx,
+        emit = true,
     }: {
         readonly client: Socket;
         readonly cardId: CardId;
+        ctx?: GameContext;
+        emit?: boolean;
     }): Promise<void> {
         // First we get the game context
-        const ctx = await this.expeditionService.getGameContext(client);
+        if (!ctx) {
+            ctx = await this.expeditionService.getGameContext(client);
+        } 
 
         // Now we set the logger context
         const logger = this.logger.logger.child(ctx.info);
 
         // Now we get the hand and discard piles from the current node object
-        const {
+        let {
             expedition: {
                 currentNode: {
                     data: {
@@ -49,7 +76,7 @@ export class ExhaustCardAction {
         // Also remove it from the hand pile
         let cardToDiscard: IExpeditionPlayerStateDeckCard = null;
 
-        const newHand = hand.filter((card) => {
+        hand = hand.filter((card) => {
             const field = typeof cardId === 'string' ? 'id' : 'cardId';
 
             if (card[field] === cardId) cardToDiscard = card;
@@ -62,7 +89,7 @@ export class ExhaustCardAction {
 
         await this.expeditionService.updateHandPiles({
             clientId: client.id,
-            hand: newHand,
+            hand,
             exhausted,
         });
 
@@ -70,19 +97,6 @@ export class ExhaustCardAction {
             `Sent message PutData to client ${client.id}: ${SWARAction.MoveCard}`,
         );
 
-        client.emit(
-            'PutData',
-            StandardResponse.respond({
-                message_type: SWARMessageType.PlayerAffected,
-                action: SWARAction.MoveCard,
-                data: [
-                    {
-                        source: 'hand',
-                        destination: 'exhaust',
-                        id: cardId,
-                    },
-                ],
-            }),
-        );
+        if (emit) this.emit({ctx, cardId});
     }
 }

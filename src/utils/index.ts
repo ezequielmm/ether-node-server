@@ -1,6 +1,7 @@
 import jwtDecode from 'jwt-decode';
 import { random } from 'lodash';
 import { IExpeditionPlayerStateDeckCard } from 'src/game/components/expedition/expedition.interface';
+import { Node } from 'src/game/components/expedition/node';
 
 /**
  * Gets a bearer token string and removes the word 'Bearer'
@@ -223,4 +224,37 @@ export function setHoursMinutesSecondsToUTCDate(
             ms,
         ),
     );
+}
+
+/**
+ * Calculates how many steps are in a map array
+ * return number
+ */
+export function countSteps(map: Node[]): number {
+    return map.reduce((acc, node) => {
+        if (node.step > acc) return node.step;
+        return acc;
+    }, 0);
+}
+
+/**
+ * Calculates the highest number of nodes in a map array grouped by step
+ * return number
+ */
+export function findStepWithMostNodes(nodes: Node[]): number {
+    const stepsMap = new Map<number, number>();
+
+    // Count number of nodes in each step
+    nodes.forEach((node) => {
+        const stepCount = stepsMap.get(node.step) ?? 0;
+        stepsMap.set(node.step, stepCount + 1);
+    });
+
+    // Find step with highest number of nodes
+    let maxCount = 0;
+    for (const count of stepsMap.values()) {
+        if (count > maxCount) maxCount = count;
+    }
+
+    return maxCount;
 }

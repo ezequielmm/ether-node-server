@@ -1,4 +1,4 @@
-import { Prop } from '@typegoose/typegoose';
+import { modelOptions, Prop, Severity } from '@typegoose/typegoose';
 import * as Trinkets from '../trinket/collection';
 import { Trinket } from '../trinket/trinket.schema';
 import {
@@ -8,6 +8,7 @@ import {
 import { GearItem } from '../../../playerGear/gearItem';
 import { IPlayerToken } from './expedition.schema';
 
+@modelOptions({ options: { allowMixed: Severity.ALLOW }})
 export class Player {
     @Prop()
     playerId: string;

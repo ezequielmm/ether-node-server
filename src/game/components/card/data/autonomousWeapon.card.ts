@@ -19,7 +19,7 @@ export const AutonomousWeaponCardUpgraded: Card = {
                 effect: autonomousWeaponEffect.name,
                 target: CardTargetedEnum.Player,
                 args: {
-                    value: Number.NaN,
+                    value: null,
                 },
             },
             {
@@ -52,7 +52,7 @@ export const AutonomousWeaponCard: Card = {
                 effect: autonomousWeaponEffect.name,
                 target: CardTargetedEnum.Player,
                 args: {
-                    value: Number.NaN,
+                    value: null,
                 },
             },
             {

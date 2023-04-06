@@ -23,8 +23,8 @@ export class EncounterSeeder implements Seeder {
         private readonly encounter: ReturnModelType<typeof Encounter>,
     ) {}
 
-    seed(): Promise<any> {
-        return this.encounter.insertMany([
+    async seed(): Promise<any> {
+        return await this.encounter.insertMany([
             AbandonedAltarEncounter,
             RugburnEncounter,
             NagpraEncounter,
@@ -40,6 +40,6 @@ export class EncounterSeeder implements Seeder {
         ]);
     }
     async drop(): Promise<any> {
-        return this.encounter.deleteMany({});
+        return await this.encounter.deleteMany({});
     }
 }

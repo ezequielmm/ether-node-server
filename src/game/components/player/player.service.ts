@@ -1,5 +1,5 @@
 import { forwardRef, Inject, Injectable, Logger } from '@nestjs/common';
-import { find, set } from 'lodash';
+import { find, get, set } from 'lodash';
 import { HistoryService } from 'src/game/history/history.service';
 import {
     AttachedStatus,
@@ -62,16 +62,20 @@ export class PlayerService {
     public get(ctx: GameContext): ExpeditionPlayer {
         const { expedition } = ctx;
 
-        return {
+        const player: ExpeditionPlayer = {
             type: CardTargetedEnum.Player,
             value: {
                 id: expedition.playerId,
                 globalState: expedition.playerState,
-                ...(typeof expedition.currentNode.data !=='undefined' && {
-                    combatState: expedition.currentNode.data.player,
-                }),
+                combatState: null,
             },
         };
+
+        if (typeof expedition.currentNode.data !== 'undefined') {
+            player.value.combatState = expedition.currentNode.data.player;
+        }
+
+        return player;
     }
 
     /**
@@ -133,6 +137,13 @@ export class PlayerService {
         return newHp;
     }
 
+    public async heal(ctx: GameContext, amount: number): Promise<number> {
+        const player = this.get(ctx);
+        const playerHp = get(ctx.expedition, PLAYER_CURRENT_HP_PATH) ?? player.value.globalState.hpCurrent ?? 0;
+
+        return await this.setHp(ctx, playerHp + amount);
+    }
+
     /**
      * Set the player's global hp
      */
@@ -156,11 +167,15 @@ export class PlayerService {
     public async raiseMaxHp(
         ctx: GameContext,
         raiseHp: number,
+        heal: boolean = false
     ): Promise<number> {
         ctx.expedition.playerState.hpMax += raiseHp;
         if (ctx.expedition.currentNode?.data?.player)
             ctx.expedition.currentNode.data.player.hpMax += raiseHp;
 
+        if (heal)
+            await this.heal(ctx, raiseHp);
+        
         const newHpMax = ctx.expedition.playerState.hpMax;
 
         ctx.expedition.markModified('currentNode.data.player.hpMax');

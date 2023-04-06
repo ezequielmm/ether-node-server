@@ -4,8 +4,7 @@ import { PotionRarityEnum, PotionTargetEnum } from '../potion.enum';
 import { Potion } from '../potion.schema';
 
 export const weaknessGasPotion: Potion = {
-    // TODO: Define the weakness gas potion id
-    potionId: Number.NaN,
+    potionId: 25,
     name: 'Weakness Gas',
     rarity: PotionRarityEnum.Common,
     description: 'Apply 3 Fatigue to an enemy',

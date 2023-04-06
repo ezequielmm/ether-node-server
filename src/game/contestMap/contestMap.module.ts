@@ -6,6 +6,6 @@ import { ContestMapService } from './contestMap.service';
 @Module({
     imports: [KindagooseModule.forFeature([ContestMap])],
     providers: [ContestMapService],
-    exports: [ContestMapService],
+    exports: [ContestMapService, KindagooseModule],
 })
 export class ContestMapModule {}

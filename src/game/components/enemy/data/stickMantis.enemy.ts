@@ -13,6 +13,7 @@ import { Enemy } from '../enemy.schema';
 
 export const stickMantisData: Enemy = {
     enemyId: 20,
+    isActive: false,
     name: 'Stick Mantis',
     type: EnemyTypeEnum.Beast,
     category: EnemyCategoryEnum.Basic,

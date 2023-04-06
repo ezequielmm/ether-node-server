@@ -62,6 +62,9 @@ export class InitExpeditionProcess {
             case 'BlessedVillager':
                 character_class_enum = CharacterClassEnum.BlessedVillager;
                 break;
+            case 'NonTokenVillager':
+                character_class_enum = CharacterClassEnum.NonTokenVillager;
+                break;
             default:
                 character_class_enum = CharacterClassEnum.Knight;
                 break;
@@ -77,7 +80,7 @@ export class InitExpeditionProcess {
 
         const map = contest
             ? await this.contestMapService.getMapForContest(contest)
-            : this.mapService.getActOne(0);
+            : await this.mapService.getActOne(0);
 
         const cards = await this.generatePlayerDeck(character, email);
 

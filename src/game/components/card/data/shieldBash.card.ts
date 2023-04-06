@@ -20,7 +20,7 @@ export const ShieldBashCardUpgraded: Card = {
                 effect: shieldBashUpgradedEffect.name,
                 target: CardTargetedEnum.Enemy,
                 args: {
-                    value: Number.NaN,
+                    value: null,
                 },
             },
         ],
@@ -46,7 +46,7 @@ export const ShieldBashCard: Card = {
                 effect: shieldBashEffect.name,
                 target: CardTargetedEnum.Enemy,
                 args: {
-                    value: Number.NaN,
+                    value: null,
                 },
             },
         ],

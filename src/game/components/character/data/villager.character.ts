@@ -11,6 +11,7 @@ export const VillagerCharacter: Character = {
     contractId: '',
     contractIdTest: '0xF0aA34f832c34b32478B8D9696DC8Ad1c8065D2d',
     description: 'Villager Character',
+    canCompete: true,
     initialHealth: 70,
     initialGold: 0,
     characterClass: CharacterClassEnum.Villager,

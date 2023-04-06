@@ -13,8 +13,12 @@ import { Logger } from '@nestjs/common';
 import { ActionQueueService } from 'src/actionQueue/actionQueue.service';
 import { SendEnemyIntentProcess } from 'src/game/process/sendEnemyIntents.process';
 import { DataWSRequestTypesEnum } from './socket.enum';
-import { SWARMessageType, StandardResponse } from 'src/game/standardResponse/standardResponse';
+import {
+    SWARMessageType,
+    StandardResponse,
+} from 'src/game/standardResponse/standardResponse';
 import { EnemyService } from 'src/game/components/enemy/enemy.service';
+import { CombatService } from 'src/game/combat/combat.service';
 
 interface ICardPlayed {
     cardId: CardId;
@@ -31,6 +35,7 @@ export class CombatGateway {
         private readonly actionQueueService: ActionQueueService,
         private readonly sendEnemyIntentsProcess: SendEnemyIntentProcess,
         private readonly enemyService: EnemyService,
+        private readonly combatService: CombatService,
     ) {}
 
     private readonly logger: Logger = new Logger(CombatGateway.name);
@@ -48,8 +53,7 @@ export class CombatGateway {
                     const { expedition } = ctx;
 
                     // If the combat is ended, we skip the turn
-                    if (this.expeditionService.isCurrentCombatEnded(ctx))
-                        return;
+                    if (this.combatService.isCurrentCombatEnded(ctx)) return;
 
                     if (
                         expedition.currentNode === null ||
@@ -101,7 +105,8 @@ export class CombatGateway {
                     )
                         return;
 
-                    const enemyComparisonStatuses = this.enemyService.getEnemyStatuses(ctx);
+                    const enemyComparisonStatuses =
+                        this.enemyService.getEnemyStatuses(ctx);
 
                     await this.cardPlayedAction.handle({
                         ctx,
@@ -110,20 +115,19 @@ export class CombatGateway {
                     });
 
                     // reload ctx because cardPlayedAction somehow switches to "newCtx" halfway through, so reference likely breaks
-                    const afterctx = await this.expeditionService.getGameContext(client);
+                    // const afterctx = await this.expeditionService.getGameContext(client);
 
                     // currently we are comparing ALL statuses, not just enemy ones, but the intents process doesn't factor in player statuses
-                    if (this.enemyService.haveChangedStatuses(afterctx, enemyComparisonStatuses)) {
+                    if (this.enemyService.haveChangedStatuses(ctx, enemyComparisonStatuses)) {
                         client.emit(
                             'PutData',
                             StandardResponse.respond({
                                 message_type: SWARMessageType.GenericData,
                                 action: DataWSRequestTypesEnum.EnemyIntents,
-                                data: await this.sendEnemyIntentsProcess.handle(afterctx),
+                                data: await this.sendEnemyIntentsProcess.handle(ctx),
                             })
                         );
                     }
-
                 } catch (error) {
                     this.logger.error({
                         error,

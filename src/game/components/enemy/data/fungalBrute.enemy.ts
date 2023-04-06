@@ -17,6 +17,7 @@ import { yellowSporelingData } from './yellowSporeling.enemy';
 
 export const fungalBruteData: Enemy = {
     enemyId: 7,
+    isActive: true,
     name: 'FungalBrute',
     type: EnemyTypeEnum.Plant,
     category: EnemyCategoryEnum.Boss,

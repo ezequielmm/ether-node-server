@@ -4,18 +4,20 @@ import { PlayerWinService } from '../playerWin/playerWin.service';
 import { ContestService } from '../game/contest/contest.service';
 import { countBy } from 'lodash';
 import { CharacterService } from 'src/game/components/character/character.service';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class WalletService {
     constructor(
-        private playerWinService: PlayerWinService,
-        private contestService: ContestService,
-        private characterService: CharacterService,
+        private readonly playerWinService: PlayerWinService,
+        private readonly contestService: ContestService,
+        private readonly characterService: CharacterService,
+        private readonly configService: ConfigService,
     ) {}
 
     async getTokenIdList(walletId: string): Promise<any[]> {
         // the chain where are deployed the smart contracts
-        const chain = Number(process.env.NFT_SERVICE_CHAIN_ID);
+        const chain = this.configService.get<number>('NFT_SERVICE_CHAIN_ID');
 
         //some goerli wallets
         //walletId = '0xa10f15b66a2e05c4e376f8bfc35ae662438153be'; //many knights

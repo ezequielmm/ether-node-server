@@ -25,7 +25,7 @@ export const KnockDownCardUpgraded: Card = {
                 effect: knockDown.name,
                 target: CardTargetedEnum.Enemy,
                 args: {
-                    value: Number.NaN,
+                    value: null,
                 },
             },
         ],
@@ -58,7 +58,7 @@ export const KnockDownCard: Card = {
                 effect: knockDown.name,
                 target: CardTargetedEnum.Enemy,
                 args: {
-                    value: Number.NaN,
+                    value: null,
                 },
             },
         ],

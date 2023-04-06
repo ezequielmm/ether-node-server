@@ -17,7 +17,7 @@ export const TwistTheBladeCardUpgraded: Card = {
                 effect: twistTheBlade.name,
                 target: CardTargetedEnum.Enemy,
                 args: {
-                    value: Number.NaN,
+                    value: null,
                 },
             },
         ],
@@ -43,7 +43,7 @@ export const TwistTheBladeCard: Card = {
                 effect: twistTheBlade.name,
                 target: CardTargetedEnum.Enemy,
                 args: {
-                    value: Number.NaN,
+                    value: null,
                 },
             },
         ],

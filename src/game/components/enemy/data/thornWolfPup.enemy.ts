@@ -15,6 +15,7 @@ import { Enemy } from '../enemy.schema';
 
 export const thornWolfPupData: Enemy = {
     enemyId: 17,
+    isActive: true,
     name: 'ThornWolfPup',
     type: EnemyTypeEnum.Plant,
     category: EnemyCategoryEnum.Minion,

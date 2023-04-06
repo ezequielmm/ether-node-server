@@ -13,6 +13,7 @@ import { PlayerGearModule } from './playerGear/playerGear.module';
 import { serverEnvironments } from './utils';
 import { ScheduleModule } from '@nestjs/schedule';
 import { TaskModule } from './tasks/task.module';
+import { LeaderboardModule } from './leaderboard/leaderboard.module';
 
 @Module({
     imports: [
@@ -56,6 +57,7 @@ import { TaskModule } from './tasks/task.module';
         BugReportModule,
         PlayerGearModule,
         WalletModule,
+        LeaderboardModule,
         ApiModule,
         ConfigModule.forRoot({ isGlobal: true, cache: true }),
         SocketModule,

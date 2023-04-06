@@ -1,7 +1,8 @@
-import { ModelOptions, Prop } from '@typegoose/typegoose';
+import { ModelOptions, Prop, Severity } from '@typegoose/typegoose';
 
 @ModelOptions({
     schemaOptions: { collection: 'customDecks', versionKey: false },
+    options: { allowMixed: Severity.ALLOW },
 })
 export class CustomDeck {
     @Prop()

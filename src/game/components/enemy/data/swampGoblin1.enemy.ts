@@ -13,6 +13,7 @@ import { Enemy } from '../enemy.schema';
 
 export const swampGoblin1Data: Enemy = {
     enemyId: 3,
+    isActive: true,
     name: 'SwampGoblin1',
     type: EnemyTypeEnum.Fae,
     category: EnemyCategoryEnum.Basic,

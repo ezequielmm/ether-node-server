@@ -6,6 +6,6 @@ import { ChestService } from './chest.service';
 @Module({
     imports: [KindagooseModule.forFeature([Chest])],
     providers: [ChestService],
-    exports: [ChestService],
+    exports: [ChestService, KindagooseModule],
 })
 export class ChestModule {}

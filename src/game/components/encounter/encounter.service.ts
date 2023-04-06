@@ -22,6 +22,7 @@ import { randomUUID } from 'crypto';
 import { CardDescriptionFormatter } from '../../cardDescriptionFormatter/cardDescriptionFormatter';
 import { Player } from '../expedition/player';
 import { CardRarityEnum } from '../card/card.enum';
+import { Node } from '../expedition/node';
 
 @Injectable()
 export class EncounterService {
@@ -29,42 +30,50 @@ export class EncounterService {
         @InjectModel(Encounter)
         private readonly encounterModel: ReturnModelType<typeof Encounter>,
         private readonly expeditionService: ExpeditionService,
-
         private readonly cardService: CardService,
         private readonly trinketService: TrinketService,
     ) {}
 
-    async generateEncounter(ctx: GameContext): Promise<EncounterInterface> {
+    async getRandomEncounter(): Promise<EncounterInterface> {
+        return {
+            encounterId: getRandomItemByWeight(
+                [
+                    EncounterIdEnum.AbandonedAltar, // [3 jan 2023] customer is not going to provide art
+                    EncounterIdEnum.Rugburn, // [3 jan 2023] wont do
+                    EncounterIdEnum.Nagpra, //3
+                    EncounterIdEnum.TreeCarving,
+                    EncounterIdEnum.Naiad,
+                    EncounterIdEnum.WillOWisp, //6 working [13 jan 2023]
+                    EncounterIdEnum.DancingSatyr, //7 working [13 jan 2023]
+                    EncounterIdEnum.EnchantedForest, //8 working [13 jan 2023]
+                    EncounterIdEnum.MossyTroll,
+                    EncounterIdEnum.YoungWizard,
+                    EncounterIdEnum.Oddbarks, // 11
+                    EncounterIdEnum.RunicBehive,
+                ],
+                //       1  2  3  4  5  6  7  8  9 10 11 12
+                [0, 0, 1, 0, 0, 1, 1, 1, 0, 0, 0, 0],
+            ),
+            stage: 0,
+        };
+    }
+    async generateEncounter(
+        ctx: GameContext,
+        node?: Node,
+    ): Promise<EncounterInterface> {
         //generate encounter
-        let encounterId = getRandomItemByWeight(
-            [
-                EncounterIdEnum.AbandonedAltar, // [3 jan 2023] customer is not going to provide art
-                EncounterIdEnum.Rugburn, // [3 jan 2023] wont do
-                EncounterIdEnum.Nagpra, //3
-                EncounterIdEnum.TreeCarving,
-                EncounterIdEnum.Naiad,
-                EncounterIdEnum.WillOWisp, //6 working [13 jan 2023]
-                EncounterIdEnum.DancingSatyr, //7 working [13 jan 2023]
-                EncounterIdEnum.EnchantedForest, //8 working [13 jan 2023]
-                EncounterIdEnum.MossyTroll,
-                EncounterIdEnum.YoungWizard,
-                EncounterIdEnum.Oddbarks, // 11
-                EncounterIdEnum.RunicBehive,
-            ],
-            //       1  2  3  4  5  6  7  8  9 10 11 12
-            [0, 0, 1, 0, 0, 1, 1, 1, 0, 0, 0, 0],
-        );
+        const encounter: EncounterInterface =
+            node && node.private_data
+                ? node.private_data
+                : await this.getRandomEncounter();
 
         //fetch existing encounter if there is one
         const encounterData = await this.getEncounterData(ctx.client);
         if (encounterData) {
-            encounterId = encounterData.encounterId;
+            encounter.encounterId = encounterData.encounterId;
         }
 
-        return {
-            encounterId,
-            stage: 0,
-        };
+        return encounter;
     }
 
     async encounterChoice(client: Socket, choiceIdx: number): Promise<string> {

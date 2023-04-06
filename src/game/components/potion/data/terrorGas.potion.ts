@@ -5,7 +5,7 @@ import { Potion } from '../potion.schema';
 
 export const terrorGasPotion: Potion = {
     // TODO: Declare the potionId
-    potionId: Number.NaN,
+    potionId: null,
     name: 'Terror Gas',
     rarity: PotionRarityEnum.Common,
     description: 'Apply 3 Distraught to an enemy',

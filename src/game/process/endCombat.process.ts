@@ -5,7 +5,6 @@ import pino from 'pino';
 import { CombatQueueService } from '../components/combatQueue/combatQueue.service';
 import { EnemyService } from '../components/enemy/enemy.service';
 import { ExpeditionStatusEnum } from '../components/expedition/expedition.enum';
-import { ExpeditionService } from '../components/expedition/expedition.service';
 import { NodeType } from '../components/expedition/node-type';
 import { GameContext } from '../components/interfaces';
 import { PlayerService } from '../components/player/player.service';
@@ -19,10 +18,7 @@ import {
     SWARAction,
     SWARMessageType,
 } from '../standardResponse/standardResponse';
-import { GearService } from '../components/gear/gear.service';
-import { PlayerWinService } from '../../playerWin/playerWin.service';
-import { ContestService } from '../contest/contest.service';
-import { PlayerGearService } from 'src/playerGear/playerGear.service';
+import { EndExpeditionProcess, ExpeditionEndingTypeEnum } from './endExpedition.process';
 
 @Injectable()
 export class EndCombatProcess {
@@ -31,13 +27,9 @@ export class EndCombatProcess {
         private readonly logger: PinoLogger,
         private readonly playerService: PlayerService,
         private readonly enemyService: EnemyService,
-        private readonly expeditionService: ExpeditionService,
         private readonly combatQueueService: CombatQueueService,
         private readonly scoreCalculatorService: ScoreCalculatorService,
-        private readonly gearService: GearService,
-        private readonly playerWinService: PlayerWinService,
-        private readonly contestService: ContestService,
-        private readonly playerGearService: PlayerGearService,
+        private readonly endExpeditionProcess: EndExpeditionProcess,
     ) {}
 
     @OnEvent(EVENT_AFTER_DAMAGE_EFFECT)
@@ -71,47 +63,10 @@ export class EndCombatProcess {
         // If combat boss, update expedition status to victory
         // and emit show score
         if (isCombatBoss) {
-            ctx.expedition.status = ExpeditionStatusEnum.Victory;
-            ctx.expedition.completedAt = new Date();
-            ctx.expedition.endedAt = new Date();
-
-            const score = this.scoreCalculatorService.calculate({
-                expedition: ctx.expedition,
-            });
-            ctx.expedition.finalScore = score;
-            
-            const isContestValid = await this.contestService.isValid(
-                ctx.expedition.contest,
-            );
-
-            if (isContestValid) {
-                ctx.expedition.finalScore.lootbox =
-                    await this.gearService.getLootbox(
-                        3,
-                        ctx.expedition.playerState.lootboxRarity,
-                    );
-
-                // actually save the gear to the player
-                await this.playerGearService.addGearToPlayer(
-                    ctx.expedition.playerId,
-                    ctx.expedition.finalScore.lootbox,
-                );
-
-                ctx.expedition.finalScore.notifyNoLoot = false;
-            } else {
-                ctx.expedition.finalScore.lootbox = [];
-                ctx.expedition.finalScore.notifyNoLoot = true;
-            }
-
-            await this.playerWinService.create({
-                event_id: ctx.expedition.contest.event_id,
-                playerToken: ctx.expedition.playerState.playerToken,
-            });
-
-            // finalize changes and save the whole thing - expedition is DONE.
             ctx.expedition.currentNode.showRewards = false;
             ctx.expedition.markModified('currentNode.showRewards');
-            await ctx.expedition.save();
+
+            await this.endExpeditionProcess.handle({ ctx, win: ExpeditionEndingTypeEnum.VICTORY, emit: false });
 
             //message client to end combat and show score
             ctx.client.emit(
@@ -148,20 +103,11 @@ export class EndCombatProcess {
         logger: pino.Logger<pino.LoggerOptions & pino.ChildLoggerOptions>,
     ): Promise<void> {
         await this.combatQueueService.end(ctx);
-
-        ctx.expedition.status = ExpeditionStatusEnum.Defeated;
-        ctx.expedition.isCurrentlyPlaying = false;
-        ctx.expedition.defeatedAt = new Date();
-        ctx.expedition.endedAt = new Date();
+        
         ctx.expedition.currentNode.showRewards = false;
         ctx.expedition.markModified('currentNode.showRewards');
 
-        const score = this.scoreCalculatorService.calculate({
-            expedition: ctx.expedition,
-        });
-        ctx.expedition.finalScore = score;
-
-        await ctx.expedition.save();
+        await this.endExpeditionProcess.handle({ ctx, win: ExpeditionEndingTypeEnum.DEFEAT, emit: false });
 
         ctx.client.emit(
             'PutData',

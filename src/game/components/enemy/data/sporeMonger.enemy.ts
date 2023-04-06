@@ -13,6 +13,7 @@ import { Enemy } from '../enemy.schema';
 
 export const sporeMongerData: Enemy = {
     enemyId: 1,
+    isActive: true,
     name: 'Sporemonger',
     type: EnemyTypeEnum.Plant,
     category: EnemyCategoryEnum.Basic,

@@ -17,6 +17,7 @@ import { AddCardPosition } from 'src/game/effects/effects.enum';
 
 export const treantData: Enemy = {
     enemyId: 13,
+    isActive: true,
     name: 'Treant',
     type: EnemyTypeEnum.Plant,
     category: EnemyCategoryEnum.Boss,

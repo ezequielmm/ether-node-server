@@ -12,6 +12,7 @@ import { Enemy } from '../enemy.schema';
 
 export const centipionData: Enemy = {
     enemyId: 19,
+    isActive: false,
     name: 'Centipion',
     type: EnemyTypeEnum.Beast,
     category: EnemyCategoryEnum.Basic,

@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { forwardRef, Inject, Injectable, Logger } from '@nestjs/common';
 import { InjectModel } from 'kindagoose';
 import { Potion } from './potion.schema';
 import { GameContext } from '../interfaces';
@@ -30,8 +30,10 @@ export class PotionService {
     constructor(
         @InjectModel(Potion)
         private readonly potion: ReturnModelType<typeof Potion>,
+        @Inject(forwardRef(() => EffectService))
         private readonly effectService: EffectService,
         private readonly playerService: PlayerService,
+        @Inject(forwardRef(() => ExpeditionService))
         private readonly expeditionService: ExpeditionService,
         private readonly combatQueueService: CombatQueueService,
     ) {}
