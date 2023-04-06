@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import NFTService from '../nft-library/services/nft_service';
 import { PlayerWinService } from '../playerWin/playerWin.service';
 import { ContestService } from '../game/contest/contest.service';
-import { countBy } from 'lodash';
+import { countBy, sortBy } from 'lodash';
 import { CharacterService } from 'src/game/components/character/character.service';
 import { ConfigService } from '@nestjs/config';
 
@@ -42,6 +42,9 @@ export class WalletService {
 
         for (let i = 0; i < nfts.tokens.length; i++) {
             const contract_address = nfts.tokens[i].contract_address;
+            
+            sortBy(nfts.tokens[i].tokens, (token) => token.token_id);
+            
             for (let j = 0; j < nfts.tokens[i].tokens.length; j++) {
                 const token_id = nfts.tokens[i].tokens[j].token_id;
                 nfts.tokens[i].tokens[j].can_play =
