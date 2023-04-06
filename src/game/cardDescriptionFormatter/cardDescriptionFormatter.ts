@@ -68,7 +68,7 @@ export class CardDescriptionFormatter {
             description = CardDescriptionFormatter.replaceAll(description, `{${name}}`, mutant?.args?.currentValue?.toString() ?? args?.value?.toString() ?? '');
             if (mutant?.times || times) {
                 description = CardDescriptionFormatter.pluralizeByKey(description, name+'|times', mutant?.times ?? times ?? 1);
-                description = CardDescriptionFormatter.replaceAll(description, `{${name}|times}`, mutant?.times?.toString() ?? times.toString() ?? '');
+                description = CardDescriptionFormatter.replaceAll(description, `{${name}|times}`, mutant?.times?.toString() ?? times?.toString() ?? '');
             }
         });
 
@@ -76,7 +76,7 @@ export class CardDescriptionFormatter {
         // and update it with the correct value
         statuses.forEach(({ name, args: { counter: value } }) => {
             description = description
-                .replace(`{${name}}`, value.toString() ?? '')
+                .replace(`{${name}}`, value?.toString() ?? '')
                 .replace(`[${name}]`, `<color=#0066cc>${name}</color>`);
         });
 

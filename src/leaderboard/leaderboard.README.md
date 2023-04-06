@@ -1,11 +1,15 @@
+Base Staging URL: https://gateway.stage.kote.robotseamonster.com/gsrv/v1
+
 #### Leaderboard && Users Highest Score (Quest)
  
+GET /leaderboard/scores
+
 List all expeditions and their score in a certain time range, results will need be paginated.
 
 Parameters:
 - `startDate` (REQUIRED) ISO formatted date
 - `endDate` (REQUIRED) ISO formatted date
-- `addresses` (OPTIONAL) a list of user wallet addresses
+- `addresses` (OPTIONAL) a list of user wallet addresses to filter results to
 - `onlyWin` (OPTIONAL) If true, only retrieve scores for expeditions ending in a victory. Default false. 
 - `limit` (OPTIONAL) the maximum number of results. If excluded, default to 500.
 - `skip` (OPTIONAL) skip this number of results before retrieving more. If excluded, skip 0.
@@ -35,6 +39,8 @@ Returns:
 This could also include a full score breakdown but for now only the total score matters.
 
 #### Participation (Quest)
+
+POST /leaderboard/participation
 
 A batched query to check how many days players have played over a certain time period.
 
