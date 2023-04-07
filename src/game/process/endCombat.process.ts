@@ -66,17 +66,7 @@ export class EndCombatProcess {
             ctx.expedition.currentNode.showRewards = false;
             ctx.expedition.markModified('currentNode.showRewards');
 
-            await this.endExpeditionProcess.handle({ ctx, win: ExpeditionEndingTypeEnum.VICTORY, emit: false });
-
-            //message client to end combat and show score
-            ctx.client.emit(
-                'PutData',
-                StandardResponse.respond({
-                    message_type: SWARMessageType.EndCombat,
-                    action: SWARAction.ShowScore,
-                    data: null,
-                }),
-            );
+            await this.endExpeditionProcess.handle({ ctx, win: ExpeditionEndingTypeEnum.VICTORY, emit: true });
         } else {
             ctx.expedition.currentNode.showRewards = true;
             ctx.expedition.markModified('currentNode.showRewards');

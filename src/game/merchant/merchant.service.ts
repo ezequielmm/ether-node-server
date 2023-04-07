@@ -56,34 +56,34 @@ export class MerchantService {
         ctx?: GameContext | null,
         node?: Node,
     ): Promise<MerchantItems> {
-        if (!node || !node.private_data || !ctx) {
-            const potions = await this.getPotions();
-            const cards = await this.getCards();
-            const trinkets = await this.getTrinkets();
+        const cards = node?.private_data?.cards || await this.getCards();
+        const potions = node?.private_data?.potions || await this.getPotions();
+        let trinkets = node?.private_data?.trinkets || await this.getTrinkets();
 
-            return {
-                cards,
-                potions,
-                trinkets,
-            };
+        if (ctx) {
+            const trinketsInInventory = map<Trinket>(
+                ctx.expedition.playerState.trinkets,
+                'trinketId',
+            );
+    
+            trinkets = trinkets.map(function (trinket) {
+                if (trinketsInInventory.includes(trinket.itemId)) {
+                    trinket.isSold = true;
+                    trinket.cost =
+                        trinket.cost < ctx.expedition.playerState.gold
+                            ? ctx.expedition.playerState.gold *
+                              (1 + Math.random() / 3)
+                            : trinket.cost;
+                }
+                return trinket;
+            });
         }
-
-        const trinketsInInventory = map<Trinket>(
-            ctx.expedition.playerState.trinkets,
-            'trinketId',
-        );
-
-        return node.private_data.trinkets.map(function (trinket) {
-            if (trinketsInInventory.includes(trinket.itemId)) {
-                trinket.isSold = true;
-                trinket.cost =
-                    trinket.cost < ctx.expedition.playerState.gold
-                        ? ctx.expedition.playerState.gold *
-                          (1 + Math.random() / 3)
-                        : trinket.cost;
-            }
-            return trinket;
-        });
+        
+        return {
+            cards,
+            potions,
+            trinkets
+        }
     }
 
     async buyItem(ctx: GameContext, selectedItem: SelectedItem): Promise<void> {
