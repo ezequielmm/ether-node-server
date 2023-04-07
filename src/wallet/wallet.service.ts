@@ -1,10 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import { ConsoleLogger, Injectable } from '@nestjs/common';
 import NFTService from '../nft-library/services/nft_service';
 import { PlayerWinService } from '../playerWin/playerWin.service';
 import { ContestService } from '../game/contest/contest.service';
-import { countBy } from 'lodash';
+import { countBy, sortBy } from 'lodash';
 import { CharacterService } from 'src/game/components/character/character.service';
 import { ConfigService } from '@nestjs/config';
+import { Console } from 'console';
 
 @Injectable()
 export class WalletService {
@@ -24,14 +25,6 @@ export class WalletService {
         //walletId = '0x66956Fe08D7Bc88fe70216502fD8a6e4b7f269c5';//2 knights
         //walletId = '0x2F2CF39D0325A9792f0C9E0de73cdc0820C5c65e'; //many knights
 
-        // The contracts to filter from all the user collections
-        const contracts = await this.characterService.findAllContractIds();
-
-        const nfts = await NFTService.listByContracts(
-            chain,
-            walletId,
-            contracts,
-        );
         const all_wins = await this.playerWinService.findAllWins(walletId);
         const win_counts = countBy(
             all_wins,
@@ -40,18 +33,25 @@ export class WalletService {
         const contest = await this.contestService.findActiveContest();
         const event_id = contest?.event_id ?? 0;
 
-        for (let i = 0; i < nfts.tokens.length; i++) {
-            const contract_address = nfts.tokens[i].contract_address;
-            for (let j = 0; j < nfts.tokens[i].tokens.length; j++) {
-                const token_id = nfts.tokens[i].tokens[j].token_id;
-                nfts.tokens[i].tokens[j].can_play =
+        // The contracts to filter from all the user collections
+        const contracts = await this.characterService.findAllContractIds();
+        const nfts = await NFTService.listByContracts(
+            chain,
+            walletId,
+            contracts,
+        );
+
+        for await (const contract of nfts.tokens) {
+            for await (const token of contract.tokens) {
+                token.can_play =
                     await this.playerWinService.canPlay(
                         event_id,
-                        contract_address,
-                        token_id,
-                        win_counts[contract_address + token_id] || 0,
+                        contract.contract_address,
+                        token.token_id,
+                        win_counts[contract.contract_address + token.token_id] || 0,
                     );
             }
+            contract.tokens = sortBy(contract.tokens, [(token) => <number>token.token_id]);
         }
 
         return nfts;

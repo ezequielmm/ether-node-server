@@ -47,37 +47,32 @@ export class EndExpeditionProcess {
         });
         ctx.expedition.finalScore = score;
         ctx.expedition.finalScore.lootbox = [];
+        ctx.expedition.finalScore.notifyNoLoot = false;
         
         const canWin = await this.playerWinService.classCanWin(CharacterClassEnum[ctx.expedition.playerState.characterClass]);
+        const contestIsValid = await this.contestService.isValid(
+            ctx.expedition.contest,
+        );
 
-        if (canWin) {
-            const isContestValid = await this.contestService.isValid(
-                ctx.expedition.contest,
-            );
-    
-            if (isContestValid) {
-                ctx.expedition.finalScore.lootbox =
-                    await this.gearService.getLootbox(
-                        3,
-                        ctx.expedition.playerState.lootboxRarity,
-                    );
-    
-                // actually save the gear to the player
-                await this.playerGearService.addGearToPlayer(
-                    ctx.expedition.playerId,
-                    ctx.expedition.finalScore.lootbox,
+        if (canWin && contestIsValid) {
+            ctx.expedition.finalScore.lootbox =
+                await this.gearService.getLootbox(
+                    3,
+                    ctx.expedition.playerState.lootboxRarity,
                 );
-    
-                ctx.expedition.finalScore.notifyNoLoot = false;
-            } else {
-                ctx.expedition.finalScore.lootbox = [];
-                ctx.expedition.finalScore.notifyNoLoot = true;
-            }
-    
+
+            // actually save the gear to the player
+            await this.playerGearService.addGearToPlayer(
+                ctx.expedition.playerId,
+                ctx.expedition.finalScore.lootbox,
+            );
+
             await this.playerWinService.create({
                 event_id: ctx.expedition.contest.event_id,
                 playerToken: ctx.expedition.playerState.playerToken,
-            });    
+            });
+
+            ctx.expedition.finalScore.notifyNoLoot = false;
         }
 
         // finalize changes and save the whole thing - expedition is DONE.
