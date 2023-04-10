@@ -50,7 +50,7 @@ export const RefocusCard: Card = {
     cardType: CardTypeEnum.Skill,
     pool: 'knight',
     energy: CardEnergyEnum.All,
-    description: `Remove 1 debuff\nGain X Resist`,
+    description: `Remove {${removeDebuff.name}} debuff\nGain X Resist`,
     keywords: [],
     properties: {
         effects: [

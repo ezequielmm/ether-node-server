@@ -10,7 +10,7 @@ export const WrathCardUpgraded: Card = {
     cardType: CardTypeEnum.Skill,
     pool: 'knight',
     energy: 1,
-    description: 'Gain 2 Resolve\nGain 2 Fortitude',
+    description: `Gain {${resolveStatus.name}} Resolve\nGain {${fortitude.name}} Fortitude`,
     keywords: [],
     properties: {
         effects: [],
@@ -43,7 +43,7 @@ export const WrathCard: Card = {
     cardType: CardTypeEnum.Skill,
     pool: 'knight',
     energy: 1,
-    description: 'Gain 1 Resolve\nGain 1 Fortitude',
+    description: `Gain {${resolveStatus.name}} Resolve\nGain {${fortitude.name}} Fortitude`,
     keywords: [],
     properties: {
         effects: [],

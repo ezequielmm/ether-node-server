@@ -10,7 +10,7 @@ export const BraceCardUpgraded: Card = {
     cardType: CardTypeEnum.Defend,
     pool: 'knight',
     energy: 2,
-    description: `Gain 11 Defense and 2 resolve`,
+    description: `Gain {${defenseEffect.name}} Defense and {${resolveStatus.name}} resolve`,
     keywords: [],
     properties: {
         effects: [
@@ -44,7 +44,7 @@ export const BraceCard: Card = {
     cardType: CardTypeEnum.Defend,
     pool: 'knight',
     energy: 2,
-    description: `Gain 8 Defense and 1 Resolve`,
+    description: `Gain {${defenseEffect.name}} Defense and {${resolveStatus.name}} resolve`,
     keywords: [],
     properties: {
         effects: [
