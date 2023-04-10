@@ -208,18 +208,21 @@ export class RewardService {
                 isUpgraded: node.act > 1,
             });
 
-            const cardPreview = pick(card, [
-                'cardId',
-                'name',
-                'description',
-                'energy',
-                'rarity',
-                'cardType',
-                'pool',
-                'isUpgraded',
-            ]) as unknown as CardPreview;
+            const cardFormattedDescription = CardDescriptionFormatter.process(card);
 
-            cardPreview.description = CardDescriptionFormatter.process(card);
+            const cardPreview = {
+                description: cardFormattedDescription,
+                ...pick(card, [
+                    'cardId',
+                    'name',
+                    'energy',
+                    'rarity',
+                    'cardType',
+                    'pool',
+                    'isUpgraded',
+                    'properties',
+                ])
+            } as unknown as CardPreview;
 
             cardRewards.push({
                 id: randomUUID(),
