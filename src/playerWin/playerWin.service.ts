@@ -28,7 +28,7 @@ export class PlayerWinService {
         characterClass: CharacterClassEnum
     ): Promise<boolean> {
         const character = await this.characterService.findOne({ characterClass });
-        return character.canCompete;
+        return character?.canCompete;
     }
 
     async canPlay(

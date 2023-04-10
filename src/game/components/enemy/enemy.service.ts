@@ -103,10 +103,16 @@ export class EnemyService {
         if (!expedition.currentNode?.data?.enemies)
             throw new Error('Current node has no enemies');
 
-        return expedition.currentNode.data.enemies.map((enemy) => ({
-            type: CardTargetedEnum.Enemy,
-            value: enemy,
-        }));
+        const enemiesToReturn: ExpeditionEnemy[] = [];
+
+        for (const enemy of expedition.currentNode.data.enemies) {
+            enemiesToReturn.push({
+                type: CardTargetedEnum.Enemy,
+                value: enemy
+            });
+        }
+
+        return enemiesToReturn;
     }
 
     public getLiving(ctx: GameContext): ExpeditionEnemy[] {
@@ -151,11 +157,11 @@ export class EnemyService {
     public get(ctx: GameContext, id: EnemyId): ExpeditionEnemy {
         const enemies = this.getAll(ctx);
 
-        return find(enemies, {
-            value: {
-                [enemyIdField(id)]: id,
-            },
-        });
+        for (const enemy of enemies) {
+            if (enemy.value[enemyIdField(id)] == id) return enemy;
+        }
+
+        return null;
     }
 
     /**
@@ -288,6 +294,7 @@ export class EnemyService {
         id: EnemyId,
         damage: number,
     ): Promise<number> {
+        
         const { value: enemy } = this.get(ctx, id);
 
         const { client } = ctx;
@@ -321,6 +328,7 @@ export class EnemyService {
         await this.setDefense(ctx, id, enemy.defense);
 
         if (enemy.hpCurrent === 0) {
+
             await this.eventEmitter.emitAsync(EVENT_ENEMY_DEAD, { ctx, enemy });
 
             await this.expeditionService.updateByFilter(

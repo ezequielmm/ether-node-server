@@ -47,32 +47,36 @@ export class EndExpeditionProcess {
         });
         ctx.expedition.finalScore = score;
         ctx.expedition.finalScore.lootbox = [];
-        ctx.expedition.finalScore.notifyNoLoot = true;
-        
-        const canWin = await this.playerWinService.classCanWin(CharacterClassEnum[ctx.expedition.playerState.characterClass]);
+        ctx.expedition.finalScore.notifyNoLoot = false;
+
+        const canWin = await this.playerWinService.classCanWin(ctx.expedition.playerState.characterClass as CharacterClassEnum);
         const contestIsValid = await this.contestService.isValid(
-            ctx.expedition.contest,
+            ctx.expedition.contest
         );
 
-        if (canWin && contestIsValid) {
-            ctx.expedition.finalScore.lootbox =
-                await this.gearService.getLootbox(
-                    3,
-                    ctx.expedition.playerState.lootboxRarity,
+        if (canWin) {
+            ctx.expedition.finalScore.notifyNoLoot = true;
+
+            if (contestIsValid) {
+                ctx.expedition.finalScore.lootbox =
+                    await this.gearService.getLootbox(
+                        3,
+                        ctx.expedition.playerState.lootboxRarity,
+                    );
+
+                // actually save the gear to the player
+                await this.playerGearService.addGearToPlayer(
+                    ctx.expedition.playerId,
+                    ctx.expedition.finalScore.lootbox,
                 );
 
-            // actually save the gear to the player
-            await this.playerGearService.addGearToPlayer(
-                ctx.expedition.playerId,
-                ctx.expedition.finalScore.lootbox,
-            );
+                await this.playerWinService.create({
+                    event_id: ctx.expedition.contest.event_id,
+                    playerToken: ctx.expedition.playerState.playerToken,
+                });
 
-            await this.playerWinService.create({
-                event_id: ctx.expedition.contest.event_id,
-                playerToken: ctx.expedition.playerState.playerToken,
-            });
-
-            ctx.expedition.finalScore.notifyNoLoot = false;
+                ctx.expedition.finalScore.notifyNoLoot = false;
+            }
         }
 
         // finalize changes and save the whole thing - expedition is DONE.
@@ -130,5 +134,6 @@ export class EndExpeditionProcess {
                 await this.handleDefeat(ctx, emit);
                 break;
         }
+
     }
 }
