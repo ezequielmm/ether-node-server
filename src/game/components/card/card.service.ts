@@ -44,6 +44,8 @@ import { MoveCardAction } from 'src/game/action/moveCard.action';
 import { ReturnModelType } from '@typegoose/typegoose';
 import { Expedition } from '../expedition/expedition.schema';
 import { Status } from 'aws-sdk/clients/directconnect';
+import { StatusGenerator } from 'src/game/status/statusGenerator';
+import { EffectGenerator } from 'src/game/effects/EffectGenerator';
 
 interface IOriginalDescription {
     cardId: number;
@@ -469,6 +471,8 @@ export class CardService {
             }
 
             const description = CardDescriptionFormatter.process(card, card.originalDescription, mutatedEffects); 
+            this.addStatusDescriptions(card);
+            //this.addEffectsDescriptions(card);
 
             if (description !== card.description) {
                 card.description = description;
@@ -486,6 +490,30 @@ export class CardService {
         }
 
         return cards;
+    }
+
+    addStatusDescriptions(card: IExpeditionPlayerStateDeckCard | Card) {
+        card.properties.statuses.map((status) => {
+                status.args.description = StatusGenerator.generateDescription(
+                    status.name,
+                    status.args.counter,
+                );
+                return status;
+            }
+        );
+    }
+
+    addEffectsDescriptions(card: IExpeditionPlayerStateDeckCard | Card, mutatedEffects?: JsonEffect[]) {
+        card.properties.effects.map((effect) => {
+                const mutant = find(mutatedEffects, (m) => m.effect === effect.effect);
+
+                effect.args.description = EffectGenerator.generateDescription(
+                    effect.effect,
+                    mutant?.args?.value ?? effect.args?.value ?? null,
+                );
+                return effect;
+            }
+        );
     }
 
     async syncAllCardsByStatusMutated(
