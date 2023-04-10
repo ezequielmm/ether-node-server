@@ -9,7 +9,7 @@ export const BulkUpCardUpgraded: Card = {
     cardType: CardTypeEnum.Defend,
     pool: 'knight',
     energy: 2,
-    description: `Gain 3 Resolve`,
+    description: `Gain {${resolveStatus.name}} Resolve`,
     keywords: [],
     properties: {
         effects: [],
@@ -35,7 +35,7 @@ export const BulkUpCard: Card = {
     cardType: CardTypeEnum.Power,
     pool: 'knight',
     energy: 2,
-    description: `Gain 2 Resolve`,
+    description: `Gain {${resolveStatus.name}} Resolve`,
     keywords: [],
     properties: {
         effects: [],
