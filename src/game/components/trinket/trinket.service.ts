@@ -10,6 +10,7 @@ import {
     sample,
     sampleSize,
     includes,
+    toNumber,
 } from 'lodash';
 import { MutateDTO } from 'src/game/effects/effects.interface';
 import {
@@ -74,7 +75,7 @@ export class TrinketService {
         return includes(ctx.expedition.playerState.trinkets, trinket);
     }
 
-    public async add(ctx: GameContext, trinketId: number): Promise<boolean> {
+    public async add(ctx: GameContext, trinketId: number, trinketReplaces?: number[], trinketConflicts?: number[]): Promise<boolean> {
         const trinket = this.findOne({ trinketId });
 
         if (!trinket) {
@@ -89,7 +90,15 @@ export class TrinketService {
             return false;
         }
 
-        const playerHasTrinket = await this.playerHasTrinket(ctx, trinket);
+        let playerHasTrinket = await this.playerHasTrinket(ctx, trinket);
+        if (trinketConflicts) {
+            for (const tcId in trinketConflicts) {
+                if (await this.playerHasTrinket(ctx, toNumber(tcId))) {
+                    playerHasTrinket = true;
+                    break;
+                }
+            }
+        }
 
         if (playerHasTrinket) {
             ctx.client.emit(

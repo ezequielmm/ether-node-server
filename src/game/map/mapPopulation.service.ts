@@ -15,11 +15,11 @@ export class MapPopulationService {
         private readonly merchantService: MerchantService,
     ) {}
 
-    public async populateNode(node: Node): Promise<Node> {
+    public async populateNode(node: Node, nodes: Node[]): Promise<Node> {
         switch (node.type) {
             case NodeType.Encounter:
                 node.private_data =
-                    await this.encounterService.getRandomEncounter();
+                    await this.encounterService.getRandomEncounter(node.id, nodes);
                 break;
             case NodeType.Treasure:
                 node.private_data =
@@ -44,7 +44,7 @@ export class MapPopulationService {
 
     public async populateNodes(nodes: Node[]): Promise<Node[]> {
         for await (const node of nodes) {
-            await this.populateNode(node);
+            await this.populateNode(node, nodes);
         }
 
         return nodes;
