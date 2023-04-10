@@ -47,7 +47,7 @@ export class EndExpeditionProcess {
         });
         ctx.expedition.finalScore = score;
         ctx.expedition.finalScore.lootbox = [];
-        ctx.expedition.finalScore.notifyNoLoot = false;
+        ctx.expedition.finalScore.notifyNoLoot = true;
         
         const canWin = await this.playerWinService.classCanWin(CharacterClassEnum[ctx.expedition.playerState.characterClass]);
         const contestIsValid = await this.contestService.isValid(
