@@ -23,6 +23,8 @@ import { CardDescriptionFormatter } from '../../cardDescriptionFormatter/cardDes
 import { Player } from '../expedition/player';
 import { CardRarityEnum } from '../card/card.enum';
 import { Node } from '../expedition/node';
+import { NodeType } from '../expedition/node-type';
+import { filter, map, sample, uniq } from 'lodash';
 
 @Injectable()
 export class EncounterService {
@@ -34,29 +36,67 @@ export class EncounterService {
         private readonly trinketService: TrinketService,
     ) {}
 
-    async getRandomEncounter(): Promise<EncounterInterface> {
+    async getRandomEncounter(currentNode?: Node, nodes?: Node[]): Promise<EncounterInterface> {
+        const encounters = [
+            EncounterIdEnum.Nagpra,
+            EncounterIdEnum.WillOWisp,
+            EncounterIdEnum.DancingSatyr,
+            EncounterIdEnum.EnchantedForest,
+            // EncounterIdEnum.TreeCarving,
+            // EncounterIdEnum.Naiad,
+            // EncounterIdEnum.AbandonedAltar, // [3 jan 2023] customer is not going to provide art
+            // EncounterIdEnum.Rugburn, // [3 jan 2023] wont do
+            // EncounterIdEnum.MossyTroll,
+            // EncounterIdEnum.YoungWizard,
+            // EncounterIdEnum.Oddbarks, // 11
+            // EncounterIdEnum.RunicBehive,
+        ];
+
+        const encounterNodes = 
+            (nodes) ?
+            filter(
+                nodes, 
+                (node) => (node.type == NodeType.Encounter && node.id < currentNode.id)
+            )
+            : [];
+
+        const thisStep = 
+            (encounterNodes.length > 0) ?
+            filter(
+                encounterNodes,
+                (node) => (node.step == currentNode.step)
+            )
+            : [];
+
+        // if there is already an encounter in this step, use the same encounterId to preserve options on other steps
+        if (thisStep.length > 0) {
+            return {
+                encounterId: thisStep[0].private_data.encounterId,
+                stage: 0
+            };
+        }
+
+        const alreadySelectedEncounters = 
+            (nodes) ?
+            uniq(
+                map(
+                    encounterNodes,
+                    (n) => n.private_data.encounterId
+                )
+            )
+            : [];
+
+        const safeEncounters = 
+            (alreadySelectedEncounters.length >= encounters.length) 
+            ? encounters 
+            : filter(encounters, (e) => !alreadySelectedEncounters.includes(e));
+
         return {
-            encounterId: getRandomItemByWeight(
-                [
-                    EncounterIdEnum.AbandonedAltar, // [3 jan 2023] customer is not going to provide art
-                    EncounterIdEnum.Rugburn, // [3 jan 2023] wont do
-                    EncounterIdEnum.Nagpra, //3
-                    EncounterIdEnum.TreeCarving,
-                    EncounterIdEnum.Naiad,
-                    EncounterIdEnum.WillOWisp, //6 working [13 jan 2023]
-                    EncounterIdEnum.DancingSatyr, //7 working [13 jan 2023]
-                    EncounterIdEnum.EnchantedForest, //8 working [13 jan 2023]
-                    EncounterIdEnum.MossyTroll,
-                    EncounterIdEnum.YoungWizard,
-                    EncounterIdEnum.Oddbarks, // 11
-                    EncounterIdEnum.RunicBehive,
-                ],
-                //       1  2  3  4  5  6  7  8  9 10 11 12
-                [0, 0, 1, 0, 0, 1, 1, 1, 0, 0, 0, 0],
-            ),
-            stage: 0,
+            encounterId: sample(safeEncounters),
+            stage: 0
         };
     }
+
     async generateEncounter(
         ctx: GameContext,
         node?: Node,
@@ -242,13 +282,13 @@ export class EncounterService {
                             await this.trinketService.add(ctx, 23);
                             break;
                         case 'pan_flute': //satyr
-                            await this.trinketService.add(ctx, 45);
+                            await this.trinketService.add(ctx, 45, undefined, [46,47]);
                             break;
                         case 'silver_pan_flute': //satyr
-                            await this.trinketService.add(ctx, 46);
+                            await this.trinketService.add(ctx, 46, undefined, [45,47]);
                             break;
                         case 'golden_pan_flute': //satyr
-                            await this.trinketService.add(ctx, 47);
+                            await this.trinketService.add(ctx, 47, undefined, [45,46]);
                             break;
                     }
                     break;

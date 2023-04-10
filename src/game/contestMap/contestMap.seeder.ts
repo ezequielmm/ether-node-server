@@ -22,7 +22,10 @@ export class ContestMapSeeder implements Seeder {
         private readonly contestService: ContestService,
     ) {}
 
+    defaultName = 'Default Contest Map';
+
     async seed(): Promise<any> {
+        
         const map = await this.mapPopulationService.populateNodes(
             buildActOne(),
         );
@@ -32,7 +35,7 @@ export class ContestMapSeeder implements Seeder {
         const maxNodes = findStepWithMostNodes(map);
 
         const contestMap = await this.contestMap.create({
-            name: 'Default Contest Map',
+            name: this.defaultName,
             nodes: map,
             maxSteps,
             maxNodes,
@@ -64,7 +67,30 @@ export class ContestMapSeeder implements Seeder {
     }
 
     async drop(): Promise<any> {
+
         await this.contestService.deleteMany({});
         return await this.contestMap.deleteMany({});
+
+        // const today = new Date();
+        // const availableAt = setHoursMinutesSecondsToUTCDate(today);
+        // const endsAt = setHoursMinutesSecondsToUTCDate(
+        //     availableAt,
+        //     23,
+        //     59,
+        //     59,
+        //     999,
+        // );
+
+        // const mapFound = await this.contestService.findOne({
+        //     name: this.defaultName,
+        //     created_at: { $gte: availableAt },
+        //     ends_at: { $lte: endsAt }
+        // });
+
+        // if (mapFound) {
+        //     await this.contestService.deleteMany({map_id: mapFound.id });
+        //     return await this.contestMap.deleteMany({ _id: mapFound.id });
+        // }
+        // return;
     }
 }
