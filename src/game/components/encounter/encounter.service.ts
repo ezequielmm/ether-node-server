@@ -36,7 +36,7 @@ export class EncounterService {
         private readonly trinketService: TrinketService,
     ) {}
 
-    async getRandomEncounter(nodeId?: number, nodes?: Node[]): Promise<EncounterInterface> {
+    async getRandomEncounter(currentNode?: Node, nodes?: Node[]): Promise<EncounterInterface> {
         const encounters = [
             EncounterIdEnum.Nagpra,
             EncounterIdEnum.WillOWisp,
@@ -52,14 +52,35 @@ export class EncounterService {
             // EncounterIdEnum.RunicBehive,
         ];
 
+        const encounterNodes = 
+            (nodes) ?
+            filter(
+                nodes, 
+                (node) => (node.type == NodeType.Encounter && node.id < currentNode.id)
+            )
+            : [];
+
+        const thisStep = 
+            (encounterNodes.length > 0) ?
+            filter(
+                encounterNodes,
+                (node) => (node.step == currentNode.step)
+            )
+            : [];
+
+        // if there is already an encounter in this step, use the same encounterId to preserve options on other steps
+        if (thisStep.length > 0) {
+            return {
+                encounterId: thisStep[0].private_data.encounterId,
+                stage: 0
+            };
+        }
+
         const alreadySelectedEncounters = 
             (nodes) ?
             uniq(
                 map(
-                    filter(
-                        nodes, 
-                        (node) => (node.type == NodeType.Encounter && node.id < nodeId)
-                    ), 
+                    encounterNodes,
                     (n) => n.private_data.encounterId
                 )
             )
