@@ -18,7 +18,7 @@ export const GNCardUpgraded: Card = {
     pool: 'knight',
     energy: 2,
     description:
-        'Gain 1 Resolve, 1 Fortitude, 1 Spirited and 1 Spikes. End turn.',
+        `Gain {${resolveStatus.name}} Resolve, {${fortitude.name}} Fortitude, {${spirited.name}} Spirited and {${spikesStatus.name}} Spikes. End turn.`,
     keywords: [CardKeywordEnum.EndTurn],
     properties: {
         effects: [],
@@ -66,7 +66,7 @@ export const GNCard: Card = {
     pool: 'knight',
     energy: 3,
     description:
-        'Gain 1 Resolve, 1 Fortitude, 1 Spirited and 1 Spikes. End turn.',
+        `Gain {${resolveStatus.name}} Resolve, {${fortitude.name}} Fortitude, {${spirited.name}} Spirited and {${spikesStatus.name}} Spikes. End turn.`,
     keywords: [CardKeywordEnum.EndTurn],
     properties: {
         effects: [],

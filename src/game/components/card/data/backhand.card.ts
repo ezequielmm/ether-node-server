@@ -11,7 +11,7 @@ export const BackHandCardUpgraded: Card = {
     pool: 'knight',
     energy: 2,
     description: `Deal {${damageEffect.name}} damage. 
-    Inflict 2 Distraught.`,
+    Inflict {${distraught.name}} Distraught.`,
     keywords: [],
     properties: {
         effects: [
@@ -46,7 +46,7 @@ export const BackHandCard: Card = {
     pool: 'knight',
     energy: 2,
     description: `Deal {${damageEffect.name}} damage. 
-    Inflict 1 Distraught.`,
+    Inflict {${distraught.name}} Distraught.`,
     keywords: [],
     properties: {
         effects: [
