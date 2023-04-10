@@ -19,7 +19,7 @@ export class MapPopulationService {
         switch (node.type) {
             case NodeType.Encounter:
                 node.private_data =
-                    await this.encounterService.getRandomEncounter(node.id, nodes);
+                    await this.encounterService.getRandomEncounter(node, nodes);
                 break;
             case NodeType.Treasure:
                 node.private_data =
