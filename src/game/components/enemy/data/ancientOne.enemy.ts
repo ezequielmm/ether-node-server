@@ -1,5 +1,7 @@
 import { damageEffect } from 'src/game/effects/damage/constants';
 import { defenseEffect } from 'src/game/effects/defense/constants';
+import { fatigue } from 'src/game/status/fatigue/constants';
+import { attachStatusEffect } from 'src/game/effects/attachStatus/constants';
 import { CardTargetedEnum } from '../../card/card.enum';
 import {
     EnemyTypeEnum,
@@ -11,6 +13,7 @@ import { Enemy } from '../enemy.schema';
 
 export const ancientOneData: Enemy = {
     enemyId: 5,
+    isActive: true,
     name: 'AncientOne',
     type: EnemyTypeEnum.Spirit,
     category: EnemyCategoryEnum.Elite,
@@ -33,10 +36,17 @@ export const ancientOneData: Enemy = {
                     value: 2,
                     effects: [
                         {
-                            effect: damageEffect.name,
+                            effect: attachStatusEffect.name,
                             target: CardTargetedEnum.Player,
                             args: {
-                                value: 2,
+                                statusName: fatigue.name,
+                                statusArgs: {
+                                    counter: 2,
+                                },
+                                action: {
+                                    name: 'Roar',
+                                    hint: 'cast1',
+                                },
                             },
                         },
                     ],
@@ -67,6 +77,10 @@ export const ancientOneData: Enemy = {
                             args: {
                                 value: 22,
                             },
+                            action: {
+                                name: 'Bite',
+                                hint: 'attack1',
+                            },
                         },
                     ],
                 },
@@ -96,6 +110,10 @@ export const ancientOneData: Enemy = {
                             args: {
                                 value: 18,
                             },
+                            action: {
+                                name: 'Charge',
+                                hint: 'attack2',
+                            },
                         },
                     ],
                 },
@@ -120,6 +138,10 @@ export const ancientOneData: Enemy = {
                             target: CardTargetedEnum.Self,
                             args: {
                                 value: 18,
+                            },
+                            action: {
+                                name: 'Fade',
+                                hint: 'cast2',
                             },
                         },
                     ],

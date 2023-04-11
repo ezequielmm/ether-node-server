@@ -16,6 +16,6 @@ import { PotionModule } from '../potion/potion.module';
         forwardRef(() => PotionModule),
     ],
     providers: [EncounterService],
-    exports: [EncounterService],
+    exports: [EncounterService, KindagooseModule],
 })
 export class EncounterModule {}

@@ -1,6 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable, forwardRef } from '@nestjs/common';
 import { randomUUID } from 'crypto';
-import { chain, filter, find, includes, map, pick } from 'lodash';
+import { chain, compact, filter, find, includes, isEmpty, map, pick, remove } from 'lodash';
 import { CustomException, ErrorBehavior } from 'src/socket/custom.exception';
 import { CardDescriptionFormatter } from '../cardDescriptionFormatter/cardDescriptionFormatter';
 import { CardRarityEnum, CardTypeEnum } from '../components/card/card.enum';
@@ -22,13 +22,8 @@ import { PotionService } from '../components/potion/potion.service';
 import { TrinketRarityEnum } from '../components/trinket/trinket.enum';
 import { Trinket } from '../components/trinket/trinket.schema';
 import { TrinketService } from '../components/trinket/trinket.service';
-import {
-    StandardResponse,
-    SWARAction,
-    SWARMessageType,
-} from '../standardResponse/standardResponse';
-import { Chest } from "../components/chest/chest.schema";
-import { getRandomBetween } from "../../utils";
+import { Chest } from '../components/chest/chest.schema';
+import { getRandomBetween } from '../../utils';
 
 @Injectable()
 export class RewardService {
@@ -36,10 +31,9 @@ export class RewardService {
         private readonly cardService: CardService,
         private readonly potionService: PotionService,
         private readonly trinketService: TrinketService,
+        @Inject(forwardRef(() => ExpeditionService))
         private readonly expeditionService: ExpeditionService,
     ) {}
-
-    private node: Node;
 
     async generateRewards({
         ctx,
@@ -50,7 +44,7 @@ export class RewardService {
         node,
         chest = null,
     }: {
-        ctx: GameContext;
+        ctx: GameContext | null;
         node: Node;
         coinsToGenerate: number;
         cardsToGenerate: CardRarityEnum[];
@@ -58,8 +52,6 @@ export class RewardService {
         trinketsToGenerate: TrinketRarityEnum[];
         chest?: Chest;
     }): Promise<Reward[]> {
-        this.node = node;
-
         const rewards: Reward[] = [];
 
         if (coinsToGenerate > 0) {
@@ -72,7 +64,7 @@ export class RewardService {
         }
 
         if (cardsToGenerate.length > 0) {
-            const cards = await this.generateCards(cardsToGenerate);
+            const cards = await this.generateCards(cardsToGenerate, node);
             // Only if we get cards for the rewards
             if (cards.length > 0) rewards.push(...cards);
         }
@@ -90,24 +82,23 @@ export class RewardService {
                 trinketsToGenerate,
             );
 
+            // Only if we get trinkets for the rewards
             if (trinkets.length > 0) rewards.push(...trinkets);
         }
 
-        if (chest) {
-            if (rewards.length === 0) {
-                rewards.push({
-                    id: randomUUID(),
-                    type: IExpeditionNodeReward.Gold,
-                    amount: getRandomBetween(chest.minCoins, chest.maxCoins), // see https://robotseamonster.monday.com/boards/2075844718/views/90131469/pulses/3979452615
-                    taken: false,
-                });
-            }
+        if (chest && rewards.length === 0) {
+            rewards.push({
+                id: randomUUID(),
+                type: IExpeditionNodeReward.Gold,
+                amount: getRandomBetween(chest.minCoins, chest.maxCoins), // see https://robotseamonster.monday.com/boards/2075844718/views/90131469/pulses/3979452615
+                taken: false,
+            });
         }
 
         return rewards;
     }
 
-    async takeReward(ctx: GameContext, rewardId: string): Promise<string> {
+    async takeReward(ctx: GameContext, rewardId: string): Promise<Reward[]> {
         // Get the updated expedition
         const expedition = ctx.expedition;
 
@@ -137,6 +128,9 @@ export class RewardService {
 
         // If the reward is invalid we throw and exception
         if (!reward) throw new Error(`Reward ${rewardId} not found`);
+
+        // If the reward is already taken, we throw an exception
+        if (reward.taken) throw new Error(`Reward ${rewardId} already claimed`);
 
         // Now we set that we took the reward
         reward.taken = true;
@@ -175,39 +169,26 @@ export class RewardService {
         }
 
         // Next we save the reward on the expedition
-        if (nodeType === NodeType.Treasure) {
-            await this.expeditionService.updateById(expedition._id.toString(), {
-                $set: {
-                    'currentNode.treasureData.rewards': rewards,
-                },
-            });
-        } else {
-            await this.expeditionService.updateById(expedition._id.toString(), {
-                $set: {
-                    'currentNode.data.rewards': rewards,
-                },
-            });
-        }
+        const rewardPath =
+            nodeType === NodeType.Treasure ? 'treasureData' : 'data';
+
+        await this.expeditionService.updateById(expedition._id.toString(), {
+            $set: {
+                [`currentNode.${rewardPath}.rewards`]: rewards,
+            },
+        });
 
         // Now we get the rewards that are pending to be taken
         const pendingRewards = filter(rewards, {
             taken: false,
         });
 
-        return StandardResponse.respond({
-            message_type:
-                nodeType === NodeType.Treasure
-                    ? SWARMessageType.EndTreasure
-                    : SWARMessageType.EndCombat,
-            action: SWARAction.SelectAnotherReward,
-            data: {
-                rewards: pendingRewards,
-            },
-        });
+        return pendingRewards;
     }
 
     private async generateCards(
         cardsToGenerate: CardRarityEnum[],
+        node: Node,
     ): Promise<CardReward[]> {
         const cardRewards: CardReward[] = [];
 
@@ -224,21 +205,24 @@ export class RewardService {
                 rarity: cardsToGenerate[i],
                 cardType: { $nin: [CardTypeEnum.Curse, CardTypeEnum.Status] },
                 cardId: { $nin: cardIds },
-                isUpgraded: this.node.act > 1,
+                isUpgraded: node.act > 1,
             });
 
-            const cardPreview = pick(card, [
-                'cardId',
-                'name',
-                'description',
-                'energy',
-                'rarity',
-                'cardType',
-                'pool',
-                'isUpgraded',
-            ]) as unknown as CardPreview;
+            const cardFormattedDescription = CardDescriptionFormatter.process(card);
 
-            cardPreview.description = CardDescriptionFormatter.process(card);
+            const cardPreview = {
+                description: cardFormattedDescription,
+                ...pick(card, [
+                    'cardId',
+                    'name',
+                    'energy',
+                    'rarity',
+                    'cardType',
+                    'pool',
+                    'isUpgraded',
+                    'properties',
+                ])
+            } as unknown as CardPreview;
 
             cardRewards.push({
                 id: randomUUID(),
@@ -274,16 +258,66 @@ export class RewardService {
         return potionRewards;
     }
 
-    private async generateTrinkets(
+    async liveUpdateRewards(
         ctx: GameContext,
-        trinketsToGenerate: TrinketRarityEnum[],
-    ): Promise<TrinketReward[]> {
-        if (trinketsToGenerate.length === 0) return [];
+        rewards: Reward[],
+    ): Promise<Reward[]> {
+        // let's start with trinkets
+        const trinketRewards: TrinketReward[] = remove(
+            rewards,
+            ({ type }) => type == IExpeditionNodeReward.Trinket,
+        ).map<TrinketReward>((reward) => <TrinketReward>reward);
 
+        if (!isEmpty(trinketRewards))
+            rewards.push(...(await this.replaceOwnedTrinkets(ctx, trinketRewards) ?? []));
+
+        // here's where we could get funky with potions
+
+        return rewards;
+    }
+
+    async replaceOwnedTrinkets(
+        ctx: GameContext,
+        trinkets: TrinketReward[],
+    ): Promise<TrinketReward[]> {
         const trinketsInInventory = map<Trinket>(
             ctx.expedition.playerState.trinkets,
             'trinketId',
         );
+
+        const dupeTrinketRarities = 
+            compact(
+                remove(
+                    trinkets,
+                    ({ trinket: { trinketId } }) =>
+                        includes(trinketsInInventory, trinketId),
+                ).map(
+                    ({ trinket: { trinketId } }) =>
+                        this.trinketService.findOne({ trinketId }).rarity
+                )
+            );
+            
+
+        for await (const rarity of dupeTrinketRarities) {
+            trinkets.push(...(await this.generateTrinkets(ctx, [rarity]) ?? []));
+        }
+
+        return trinkets;
+    }
+
+    private async generateTrinkets(
+        ctx: GameContext | null,
+        trinketsToGenerate: TrinketRarityEnum[],
+    ): Promise<TrinketReward[]> {
+        if (trinketsToGenerate.length === 0) return [];
+
+        const trinketsInInventory =
+            ctx === null
+                ? []
+                : map<Trinket>(
+                      ctx.expedition.playerState.trinkets,
+                      'trinketId',
+                  );
 
         return chain(this.trinketService.findAll())
             .shuffle()

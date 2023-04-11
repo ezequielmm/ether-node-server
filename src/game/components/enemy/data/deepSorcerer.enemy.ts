@@ -15,6 +15,7 @@ import { defenseEffect } from 'src/game/effects/defense/constants';
 
 export const deepSorcererData: Enemy = {
     enemyId: 22,
+    isActive: false,
     name: 'Deep Sorcerer',
     type: EnemyTypeEnum.Human,
     category: EnemyCategoryEnum.Elite,
@@ -41,6 +42,10 @@ export const deepSorcererData: Enemy = {
                             target: CardTargetedEnum.Player,
                             args: {
                                 value: 5,
+                            },
+                            action: {
+                                name: 'Strike',
+                                hint: 'attack1_strike',
                             },
                         },
                     ],
@@ -85,6 +90,10 @@ export const deepSorcererData: Enemy = {
                             args: {
                                 value: 18,
                             },
+                            action: {
+                                name: 'Blast',
+                                hint: 'attack2_blast',
+                            },
                         },
                     ],
                 },
@@ -115,6 +124,10 @@ export const deepSorcererData: Enemy = {
                                 statusName: blightedStatus.name,
                                 statusArgs: {
                                     counter: 1,
+                                },
+                                action: {
+                                    name: 'Blight',
+                                    hint: 'cast1_blight',
                                 },
                             },
                         },
@@ -147,6 +160,10 @@ export const deepSorcererData: Enemy = {
                                 statusName: fatigue.name,
                                 statusArgs: {
                                     counter: 2,
+                                },
+                                action: {
+                                    name: 'Sap',
+                                    hint: 'cast2_Sap',
                                 },
                             },
                         },

@@ -21,6 +21,7 @@ export class BurnStatus implements StatusEventHandler {
                 effect: damageEffect.name,
                 args: {
                     value: dto.status.args.counter,
+                    type: 'burn',
                 },
             },
         });

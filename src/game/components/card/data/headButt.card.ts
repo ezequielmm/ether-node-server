@@ -25,7 +25,7 @@ export const HeadButtCardUpgraded: Card = {
                 effect: headButt.name,
                 target: CardTargetedEnum.Enemy,
                 args: {
-                    value: Number.NaN,
+                    value: null,
                 },
             },
         ],
@@ -58,7 +58,7 @@ export const HeadButtCard: Card = {
                 effect: headButt.name,
                 target: CardTargetedEnum.Enemy,
                 args: {
-                    value: Number.NaN,
+                    value: null,
                 },
             },
         ],

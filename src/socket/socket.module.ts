@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { AuthGatewayModule } from '../authGateway/authGateway.module';
 import { ExpeditionModule } from '../game/components/expedition/expedition.module';
 import { SocketGateway } from './socket.gateway';
@@ -27,7 +27,8 @@ import { RewardModule } from 'src/game/reward/reward.module';
 import { EncounterModule } from '../game/components/encounter/encounter.module';
 import { UpgradeCardModule } from 'src/game/upgradeCard/upgradeCard.module';
 import { CombatModule } from '../game/combat/combat.module';
-
+import { ActionQueueModule } from 'src/actionQueue/actionQueue.module';
+import { EnemyModule } from 'src/game/components/enemy/enemy.module';
 
 @Module({
     imports: [
@@ -48,6 +49,9 @@ import { CombatModule } from '../game/combat/combat.module';
         EncounterModule,
         CombatModule,
         UpgradeCardModule,
+        ActionQueueModule,
+        EnemyModule,
+        forwardRef(() => CombatModule),
     ],
     providers: [
         SocketGateway,

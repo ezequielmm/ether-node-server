@@ -12,6 +12,7 @@ import { Enemy } from '../enemy.schema';
 
 export const swampGoblin2Data: Enemy = {
     enemyId: 4,
+    isActive: true,
     name: 'SwampGoblin2',
     type: EnemyTypeEnum.Fae,
     category: EnemyCategoryEnum.Basic,
@@ -45,6 +46,10 @@ export const swampGoblin2Data: Enemy = {
                                     counter: 3,
                                 },
                             },
+                            action: {
+                                name: 'Enrage',
+                                hint: 'cast1',
+                            },
                         },
                     ],
                 },
@@ -69,6 +74,10 @@ export const swampGoblin2Data: Enemy = {
                             target: CardTargetedEnum.Player,
                             args: {
                                 value: 6,
+                            },
+                            action: {
+                                name: 'Strike',
+                                hint: 'attack1',
                             },
                         },
                     ],

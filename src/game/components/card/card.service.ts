@@ -2,7 +2,7 @@ import { forwardRef, Inject, Injectable, Logger } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
 import { InjectModel } from 'kindagoose';
 import { randomUUID } from 'crypto';
-import { filter } from 'lodash';
+import { each, filter, find, first, map, uniq } from 'lodash';
 import { FilterQuery } from 'mongoose';
 import { CardPlayedAction } from 'src/game/action/cardPlayed.action';
 import {
@@ -13,9 +13,11 @@ import {
 } from 'src/game/constants';
 import {
     AttachedStatus,
+    StatusCollection,
     StatusDirection,
     StatusEffect,
     StatusMetadata,
+    StatusTrigger,
 } from 'src/game/status/interfaces';
 import {
     AfterStatusAttachEvent,
@@ -24,12 +26,12 @@ import {
 } from 'src/game/status/status.service';
 import { IExpeditionPlayerStateDeckCard } from '../expedition/expedition.interface';
 import { ExpeditionService } from '../expedition/expedition.service';
-import { GameContext } from '../interfaces';
+import { ExpeditionEntity, GameContext } from '../interfaces';
 import { PlayerService } from '../player/player.service';
 import { CardKeywordEnum, CardRarityEnum, CardTypeEnum } from './card.enum';
 import { Card } from './card.schema';
 import { CardId, getCardIdField } from './card.type';
-import { EffectDTO } from '../../effects/effects.interface';
+import { EffectDTO, JsonEffect } from '../../effects/effects.interface';
 import {
     StandardResponse,
     SWARAction,
@@ -40,6 +42,15 @@ import { getRandomNumber } from 'src/utils';
 import { AfterDrawCardEvent } from 'src/game/action/drawCard.action';
 import { MoveCardAction } from 'src/game/action/moveCard.action';
 import { ReturnModelType } from '@typegoose/typegoose';
+import { Expedition } from '../expedition/expedition.schema';
+import { Status } from 'aws-sdk/clients/directconnect';
+import { StatusGenerator } from 'src/game/status/statusGenerator';
+import { EffectGenerator } from 'src/game/effects/EffectGenerator';
+
+interface IOriginalDescription {
+    cardId: number;
+    originalDescription: string;
+}
 
 @Injectable()
 export class CardService {
@@ -53,6 +64,10 @@ export class CardService {
         private readonly playerService: PlayerService,
         private readonly moveCardAction: MoveCardAction,
     ) {}
+
+    getDescriptionFromCard(card: IExpeditionPlayerStateDeckCard): string {
+        return CardDescriptionFormatter.process(card);
+    }
 
     async findAll(): Promise<Card[]> {
         return await this.card.find({ isActive: true }).lean();
@@ -69,12 +84,12 @@ export class CardService {
     async getRandomCard(
         filter: FilterQuery<Card> = { isActive: true },
     ): Promise<Card> {
-        const [card] = await this.card.aggregate<Card>([
+        const card = await this.card.aggregate<Card>([
             { $match: filter },
             { $sample: { size: 1 } },
         ]);
 
-        return card;
+        return card[0];
     }
 
     async findByType(card_type: CardTypeEnum): Promise<Card[]> {
@@ -148,15 +163,19 @@ export class CardService {
     }
 
     async addCardToDeck(ctx: GameContext, cardId: number): Promise<void> {
-        const newCard = await this.findById(cardId);
+        const card = await this.findById(cardId);
         const deck = ctx.expedition.playerState.cards;
 
-        deck.push({
+        let newCard: IExpeditionPlayerStateDeckCard = {
             id: randomUUID(),
             isTemporary: false,
-            description: CardDescriptionFormatter.process(newCard),
-            ...newCard,
-        });
+            originalDescription: card.description,
+            ...card
+        };
+
+        newCard.description = CardDescriptionFormatter.process(newCard, card.description);
+
+        deck.push(newCard);
 
         this.logger.log(ctx.info, `Adding card ${cardId} to deck`);
 
@@ -271,100 +290,352 @@ export class CardService {
         }
     }
 
-    async syncAllCardsByStatusMutated(
-        ctx: GameContext,
-        status: AttachedStatus = undefined,
-    ): Promise<void> {
-        if (this.statusService.isStatusEffect(status.name)) {
-            const metadata = this.statusService.getMetadataByName(
-                status.name,
-            ) as StatusMetadata<StatusEffect>;
+    async getOriginalDescriptionsById(ctx: GameContext, cardIds: number[]): Promise<IOriginalDescription[]> {
+        const player = this.playerService.get(ctx);
+        const cardIdsToFind = uniq(cardIds);
+        
+        // Extract original descriptions from cards in player deck, where possible, for speed
+        let originalDescriptions: IOriginalDescription[] = filter(
+            player.value.globalState.cards,
+            (pCard) => (pCard.originalDescription && cardIdsToFind.includes(pCard.cardId))
+        ).map((pCard) => 
+            <IOriginalDescription>{ 
+              cardId: pCard.cardId, 
+              originalDescription: pCard.originalDescription,
+            }
+        );
 
-            // Ignore statuses:incoming
-            if (metadata.status.direction == StatusDirection.Incoming) return;
+        // if we didn't get them all, retrieve the rest
+        if (originalDescriptions.length !== cardIdsToFind.length) {
+            const foundIds = map(originalDescriptions, (oDesc) => oDesc.cardId);
 
-            const effectsAffected = metadata.status.effects.map(
-                (effect) => effect.name,
+            const cardIdsToRetrieve = filter(
+                cardIdsToFind,
+                (cardId) => !foundIds.includes(cardId)
             );
-            const player = this.playerService.get(ctx);
 
-            for (const pile in player.value.combatState.cards) {
-                const cards = player.value.combatState.cards[
-                    pile
-                ] as IExpeditionPlayerStateDeckCard[];
+            const cardsRetrieved = await this.findCardsById(cardIdsToRetrieve);
+            for (const retrieved of cardsRetrieved) {
+                // update cards that exist in the globalstate, for potential future speed
+                each(player.value.globalState.cards, function (card){
+                    if(!card.originalDescription && card.cardId == retrieved.cardId) {
+                        card.originalDescription = retrieved.description;
+                    }
+                });
 
-                for (const card of cards) {
-                    const originalCard = await this.findById(card.cardId);
-                    const originalDescription = originalCard.description;
+                // add original description for ids as retrieved
+                originalDescriptions.push(
+                    <IOriginalDescription>{
+                        cardId: retrieved.cardId,
+                        originalDescription: retrieved.description
+                    }
+                );
+            }
+        }
+    
+        return originalDescriptions;
+    }
 
-                    const effects = originalCard.properties.effects.filter(
-                        (effect) =>
-                            // Effect is included in the affected effects
-                            effectsAffected.includes(effect.effect) &&
-                            // Effect is used in the description
-                            originalDescription.includes(`{${effect.effect}}`),
-                    );
+    async applyOriginalDescriptions(
+        ctx: GameContext, 
+        cards: IExpeditionPlayerStateDeckCard[],
+        preserveExisting: boolean = false,
+    ): Promise<IExpeditionPlayerStateDeckCard[]> {
 
-                    if (effects.length) {
-                        let finalDescription: string = originalDescription;
-                        for (const effect of effects) {
-                            const {
-                                effect: effectName,
-                                args: { value, ...args } = {},
-                            } = effect;
+        const originalDescriptions = await this.getOriginalDescriptionsById(
+            ctx,
+            cards.filter((card) => (!preserveExisting || !card.originalDescription)).map<number>((card) => card.cardId)
+        );
 
-                            let effectDTO: EffectDTO = {
-                                ctx,
-                                source: player,
-                                args: {
-                                    initialValue: value,
-                                    currentValue: value,
-                                    ...args,
-                                },
-                            };
+        for (const card of cards) {
+            const oDesc = find(originalDescriptions,
+                    (originalDesc) => originalDesc.cardId == card.cardId
+                );
 
-                            effectDTO = await this.statusService.mutate({
-                                ctx,
-                                collectionOwner: player,
-                                collection: player.value.combatState.statuses,
-                                effect: effectName,
-                                effectDTO: effectDTO,
-                                preview: true,
-                            });
+            if (oDesc && (!preserveExisting || !card.originalDescription)) {
+                card.originalDescription = oDesc.originalDescription;
+            }
+            if (!card.originalDescription) card.originalDescription = card.description;
+        }
 
-                            finalDescription = originalDescription.replace(
-                                `{${effectName}}`,
-                                effectDTO.args.currentValue.toString(),
-                            );
+        return cards;
+    }
 
-                            // Update description with new effect values
-                            card.description = finalDescription;
+    async updateCardDescription(UpdateDescriptionDTO: {
+        ctx: GameContext;
+        card: IExpeditionPlayerStateDeckCard;
+        target?: ExpeditionEntity;
+        statusFilter?: AttachedStatus;
+    }): Promise<string> {
+        const { ctx, card, target, statusFilter } = UpdateDescriptionDTO;
+        const result = await this.updateCardDescriptions({
+            ctx,
+            cards: [card],
+            target: target,
+            statusFilter: statusFilter
+        });
+        return result[0].description;
+    }
 
-                            // Format card description
-                            card.description =
-                                CardDescriptionFormatter.process(card);
+    async updateCardDescriptions(UpdateDescriptionsDTO: {
+        ctx: GameContext;
+        cards: IExpeditionPlayerStateDeckCard[];
+        target?: ExpeditionEntity;
+        statusFilter?: AttachedStatus;
+    }): Promise<IExpeditionPlayerStateDeckCard[]> {
+        const { ctx, cards, target, statusFilter } = UpdateDescriptionsDTO;
+
+        // now, where appropriate, generate the mutated effects array for the card formatter
+        const player = this.playerService.get(ctx);
+        const playerStatuses = this.statusService.getStatuses(player);
+                
+        const statuses: {
+            player: StatusCollection;
+            target: StatusCollection;
+        } = {
+            player: playerStatuses,
+            target: (target && !PlayerService.isPlayer(target)) ? this.statusService.getStatuses(target) : undefined,
+        };
+        
+        const impactedEffects: string[] = [];
+        if (statusFilter) {
+            const metadata = this.statusService.getMetadataByName(statusFilter.name) as StatusMetadata<StatusEffect>;
+        
+            // we do not ignore Incoming here, because a status might be attached to an enemy, and we can't tell from AttachedStatus
+            if (metadata.status.trigger !== StatusTrigger.Effect) {
+                return cards;
+            }
+            
+            impactedEffects.push(...map(metadata.status.effects, (e) => { ctx.client.emit('CARD: pushing '+e.name); return e.name }));
+        } else {
+        
+            // pre determine which effects are impacted by active relevant statuses
+            const statusesActive: string[] = [];
+
+            for (const entity in statuses) {
+                const direction = (entity == 'player') ? StatusDirection.Outgoing : StatusDirection.Incoming;
+                if (statuses[entity] !== 'undefined') {
+                    for (const type in statuses[entity]) {
+                        if (statuses[entity][type].length === 0) continue;
+                        for (const status of statuses[entity][type]) {
+                            
+                            // no need to check the same status twice
+                            if (statusesActive.includes(status.name)) continue;
+
+                            const metadata = this.statusService.getMetadataByName(status.name);
+                            
+                            if (metadata.status.trigger !== StatusTrigger.Effect || metadata.status.direction != direction) continue;
+                            
+                            statusesActive.push(status.name);
+                            impactedEffects.push(...map(metadata.status.effects, (e) => e.name));
                         }
-
-                        await this.expeditionService.updateHandPiles({
-                            clientId: ctx.client.id,
-                            [pile]: cards,
-                        });
-
-                        // Update card message
-                        ctx.client.emit(
-                            'PutData',
-                            StandardResponse.respond({
-                                message_type: SWARMessageType.CardUpdated,
-                                action: SWARAction.UpdateCardDescription,
-                                data: {
-                                    card,
-                                    pile,
-                                },
-                            }),
-                        );
                     }
                 }
             }
         }
+        // ensure all cards that need them have original descriptions attached to start from
+        await this.applyOriginalDescriptions(ctx, cards, true);
+        
+        for (const card of cards) {
+            // if it doesn't require formatting, skip it
+            if (!CardDescriptionFormatter.requiresFormatting(card.originalDescription)) continue;
+
+            const mutatedEffects: JsonEffect[] =[];
+            for (const effect of card.properties.effects) {
+                if (!CardDescriptionFormatter.impactedByEffectName(card.originalDescription, effect.effect)) //continue;
+                if (!impactedEffects.includes(effect.effect)) {
+                    ctx.client.emit('CARD FORMAT: skip on impacted effect via array : ' + effect.effect + ' vs '+impactedEffects);
+                    // continue;
+                }
+
+                const mutated = await this.statusService.mutate({
+                        ctx,
+                        collectionOwner: player,
+                        collection: statuses.player,
+                        effect: effect.effect,
+                        effectDTO: {
+                            ctx,
+                            source: player,
+                            target: target,
+                            args: {
+                                initialValue: effect.args?.value,
+                                currentValue: effect.args?.value,
+                                ...effect.args
+                            }
+                        },
+                        preview: true
+                    });
+
+                mutatedEffects.push({ effect: effect.effect, args: mutated.args });      
+                
+            }
+
+            const description = CardDescriptionFormatter.process(card, card.originalDescription, mutatedEffects); 
+            this.addStatusDescriptions(card);
+            //this.addEffectsDescriptions(card);
+
+            if (description !== card.description) {
+                card.description = description;
+                ctx.client.emit(
+                    'PutData',
+                    StandardResponse.respond({
+                        message_type: SWARMessageType.CardUpdated,
+                        action: SWARAction.UpdateCardDescription,
+                        data: {
+                            card,
+                        },
+                    }),
+                );
+            }
+        }
+
+        return cards;
     }
+
+    addStatusDescriptions(card: IExpeditionPlayerStateDeckCard | Card) {
+        card.properties.statuses.map((status) => {
+                status.args.description = StatusGenerator.generateDescription(
+                    status.name,
+                    status.args.counter,
+                );
+                return status;
+            }
+        );
+    }
+
+    addEffectsDescriptions(card: IExpeditionPlayerStateDeckCard | Card, mutatedEffects?: JsonEffect[]) {
+        card.properties.effects.map((effect) => {
+                const mutant = find(mutatedEffects, (m) => m.effect === effect.effect);
+
+                effect.args.description = EffectGenerator.generateDescription(
+                    effect.effect,
+                    mutant?.args?.value ?? effect.args?.value ?? null,
+                );
+                return effect;
+            }
+        );
+    }
+
+    async syncAllCardsByStatusMutated(
+        ctx: GameContext,
+        status: AttachedStatus = undefined,
+    ): Promise<void> {
+        if (!this.statusService.isStatusEffect(status.name)) return;
+
+        const cards: IExpeditionPlayerStateDeckCard[] = [];
+        const player = this.playerService.get(ctx);
+
+        for (const pile in player.value.combatState.cards) {
+            for (const card of player.value.combatState.cards[pile]) {
+                cards.push(card);
+            }
+        }
+
+        // update card descriptions directly on the card objects, referenced to hand piles
+        await this.updateCardDescriptions({ctx, cards, statusFilter: status});
+        
+        // then save hand piles
+        await this.expeditionService.updateHandPiles({
+            clientId: ctx.client.id,
+        });
+
+        //await this.syncAllCardsByStatusMutatedOld(ctx,status);
+    };
+
+    // async syncAllCardsByStatusMutatedOld(
+    //     ctx: GameContext,
+    //     status: AttachedStatus = undefined,
+    // ): Promise<void> {
+    //     if (this.statusService.isStatusEffect(status.name)) {
+    //         const metadata = this.statusService.getMetadataByName(
+    //             status.name,
+    //         ) as StatusMetadata<StatusEffect>;
+
+    //         // Ignore statuses:incoming
+    //         if (metadata.status.direction == StatusDirection.Incoming) return;
+
+    //         const effectsAffected = metadata.status.effects.map(
+    //             (effect) => effect.name,
+    //         );
+    //         const player = this.playerService.get(ctx);
+
+    //         for (const pile in player.value.combatState.cards) {
+    //             const cards = player.value.combatState.cards[
+    //                 pile
+    //             ] as IExpeditionPlayerStateDeckCard[];
+
+    //             for (const card of cards) {
+    //                 const originalCard = await this.findById(card.cardId);
+    //                 const originalDescription = originalCard.description;
+
+    //                 const effects = originalCard.properties.effects.filter(
+    //                     (effect) =>
+    //                         // Effect is included in the affected effects
+    //                         effectsAffected.includes(effect.effect) &&
+    //                         // Effect is used in the description
+    //                         originalDescription.includes(`{${effect.effect}}`),
+    //                 );
+
+    //                 if (effects.length) {
+    //                     let finalDescription: string = originalDescription;
+    //                     for (const effect of effects) {
+    //                         const {
+    //                             effect: effectName,
+    //                             args: { value, ...args } = {},
+    //                         } = effect;
+
+    //                         let effectDTO: EffectDTO = {
+    //                             ctx,
+    //                             source: player,
+    //                             args: {
+    //                                 initialValue: value,
+    //                                 currentValue: value,
+    //                                 ...args,
+    //                             },
+    //                         };
+
+    //                         effectDTO = await this.statusService.mutate({
+    //                             ctx,
+    //                             collectionOwner: player,
+    //                             collection: player.value.combatState.statuses,
+    //                             effect: effectName,
+    //                             effectDTO: effectDTO,
+    //                             preview: true,
+    //                         });
+
+    //                         finalDescription = originalDescription.replace(
+    //                             `{${effectName}}`,
+    //                             effectDTO.args.currentValue.toString(),
+    //                         );
+
+    //                         // Update description with new effect values
+    //                         card.description = finalDescription;
+
+    //                         // Format card description
+    //                         card.description =
+    //                             CardDescriptionFormatter.process(card);
+    //                     }
+
+    //                     await this.expeditionService.updateHandPiles({
+    //                         clientId: ctx.client.id,
+    //                         [pile]: cards,
+    //                     });
+
+    //                     // Update card message
+    //                     ctx.client.emit(
+    //                         'PutData',
+    //                         StandardResponse.respond({
+    //                             message_type: SWARMessageType.CardUpdated,
+    //                             action: SWARAction.UpdateCardDescription,
+    //                             data: {
+    //                                 card,
+    //                                 pile,
+    //                             },
+    //                         }),
+    //                     );
+    //                 }
+    //             }
+    //         }
+    //     }
+    // }
 }

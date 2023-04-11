@@ -14,6 +14,7 @@ import { Enemy } from '../enemy.schema';
 
 export const queenOrchidData: Enemy = {
     enemyId: 9,
+    isActive: true,
     name: 'QueenOrchid',
     type: EnemyTypeEnum.Plant,
     category: EnemyCategoryEnum.Elite,
@@ -44,7 +45,11 @@ export const queenOrchidData: Enemy = {
                             args: {
                                 value: 1,
                                 cardId: ChokingCard.cardId, //
-                                destination: 'draw',
+                                destination: 'discard',
+                            },
+                            action: {
+                                name: 'Pheromone Cloud',
+                                hint: 'cast1',
                             },
                         },
                     ],
@@ -74,6 +79,10 @@ export const queenOrchidData: Enemy = {
                                     counter: 2,
                                 },
                             },
+                            action: {
+                                name: 'Constrict',
+                                hint: 'attack3',
+                            },
                         },
                     ],
                 },
@@ -98,6 +107,10 @@ export const queenOrchidData: Enemy = {
                             target: CardTargetedEnum.Player,
                             args: {
                                 value: 10,
+                            },
+                            action: {
+                                name: 'Bite',
+                                hint: 'attack2',
                             },
                         },
                     ],

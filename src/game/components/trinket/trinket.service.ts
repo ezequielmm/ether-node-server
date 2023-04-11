@@ -9,6 +9,8 @@ import {
     last,
     sample,
     sampleSize,
+    includes,
+    toNumber,
 } from 'lodash';
 import { MutateDTO } from 'src/game/effects/effects.interface';
 import {
@@ -62,7 +64,18 @@ export class TrinketService {
         return sampleSize(this.find(filter), amount);
     }
 
-    public async add(ctx: GameContext, trinketId: number): Promise<boolean> {
+    public async playerHasTrinket(
+        ctx: GameContext,
+        trinket: number | Trinket,
+    ): Promise<boolean> {
+        if (typeof trinket === 'number') {
+            trinket = this.findOne({ trinketId: trinket });
+        }
+
+        return includes(ctx.expedition.playerState.trinkets, trinket);
+    }
+
+    public async add(ctx: GameContext, trinketId: number, trinketReplaces?: number[], trinketConflicts?: number[]): Promise<boolean> {
         const trinket = this.findOne({ trinketId });
 
         if (!trinket) {
@@ -72,6 +85,28 @@ export class TrinketService {
                     message_type: SWARMessageType.AddTrinket,
                     action: SWARAction.TrinketNotFoundInDatabase,
                     data: { trinketId },
+                }),
+            );
+            return false;
+        }
+
+        let playerHasTrinket = await this.playerHasTrinket(ctx, trinket);
+        if (trinketConflicts) {
+            for (const tcId in trinketConflicts) {
+                if (await this.playerHasTrinket(ctx, toNumber(tcId))) {
+                    playerHasTrinket = true;
+                    break;
+                }
+            }
+        }
+
+        if (playerHasTrinket) {
+            ctx.client.emit(
+                'PutData',
+                StandardResponse.respond({
+                    message_type: SWARMessageType.AddTrinket,
+                    action: SWARAction.TrinketAlreadyOwned,
+                    data: { trinket: trinket.trinketId },
                 }),
             );
             return false;

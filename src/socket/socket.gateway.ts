@@ -53,6 +53,7 @@ export class SocketGateway
                 'Client has an invalid auth token',
             );
             client.disconnect(true);
+            return;
         }
 
         try {
@@ -60,10 +61,22 @@ export class SocketGateway
                 authorization,
             );
 
-            await this.expeditionService.updateClientId({
+            const clientUpdated = await this.expeditionService.updateClientId({
                 playerId,
                 clientId: client.id,
             });
+
+            if (!clientUpdated) {
+                this.logger.log(
+                    {
+                        authorization,
+                        clientId: client.id,
+                    },
+                    'Player did not have an expedition. This should never happen.',
+                );
+                client.disconnect(true);
+                return;
+            }
 
             const ctx = await this.expeditionService.getGameContext(client);
             const expedition = ctx.expedition;
@@ -106,7 +119,7 @@ export class SocketGateway
                 this.logger.log(ctx.info, `Client connected to expedition`);
 
                 // Here we check if the player is in a node already
-                if (expedition.currentNode !== undefined) {
+                if (typeof expedition.currentNode !== 'undefined') {
                     const { nodeType } = expedition.currentNode;
 
                     if (

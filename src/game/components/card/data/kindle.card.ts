@@ -19,7 +19,7 @@ export const KindleCardUpgraded: Card = {
                 effect: attachStatusEffect.name,
                 target: CardTargetedEnum.Enemy,
                 args: {
-                    value: Number.NaN,
+                    value: null,
                     statusName: burn.name,
                     statusArgs: {
                         counter: 2,
@@ -56,7 +56,7 @@ export const KindleCard: Card = {
                 effect: attachStatusEffect.name,
                 target: CardTargetedEnum.Enemy,
                 args: {
-                    value: Number.NaN,
+                    value: null,
                     statusName: burn.name,
                     statusArgs: {
                         counter: 1,

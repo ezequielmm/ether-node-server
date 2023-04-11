@@ -33,21 +33,27 @@ export class TrappedStatus implements StatusEffectHandler {
     async handle(
         dto: StatusEffectDTO<DamageArgs>,
     ): Promise<EffectDTO<DamageArgs>> {
-        const { ctx, effectDTO } = dto;
+        const { ctx, effectDTO, remove } = dto;
         const { source, target } = effectDTO;
 
-        // Deal 12 damage to the player
-        await this.effectService.apply({
-            ctx,
-            source: target,
-            target: source,
-            effect: {
-                effect: damageEffect.name,
-                args: {
-                    value: 12,
+        if (typeof effectDTO.args.type === 'undefined') {
+            // Deal 12 damage to the player
+            await this.effectService.apply({
+                ctx,
+                source: target,
+                target: source,
+                effect: {
+                    effect: damageEffect.name,
+                    args: {
+                        value: 12,
+                        type: 'trapped',
+                    },
                 },
-            },
-        });
+            });
+
+            // Remove the status
+            remove();
+        }
 
         return effectDTO;
     }

@@ -41,10 +41,11 @@ export class InitCombatProcess {
             await this.continueCombat();
         } else {
             await this.createCombat();
+            // Combat is initialized, emit event
+            await this.ctx.events.emitAsync(EVENT_AFTER_INIT_COMBAT, { ctx });
         }
 
         await this.ctx.expedition.save();
-        await this.ctx.events.emitAsync(EVENT_AFTER_INIT_COMBAT, { ctx });
     }
 
     async createCombat(): Promise<void> {

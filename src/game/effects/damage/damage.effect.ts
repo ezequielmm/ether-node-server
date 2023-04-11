@@ -21,6 +21,8 @@ export interface DamageArgs {
     onARoll?: {
         energyToRestore: number;
     };
+    type?: string;
+    statusIgnoreForRemove?: boolean;
 }
 
 @EffectDecorator({
@@ -50,6 +52,7 @@ export class DamageEffect implements EffectHandler {
                 useEnergyAsValue,
                 onARoll,
             },
+            action,
         } = payload;
 
         const {
@@ -75,7 +78,7 @@ export class DamageEffect implements EffectHandler {
 
             oldHp = target.value.hpCurrent;
             oldDefense = target.value.defense;
-
+            
             await this.enemyService.damage(ctx, target.value.id, damage);
 
             newHp = target.value.hpCurrent;
@@ -136,6 +139,7 @@ export class DamageEffect implements EffectHandler {
                 finalDefense: newDefense,
                 statuses: [],
             },
+            action: action,
         });
 
         await this.eventEmitter.emitAsync(EVENT_AFTER_DAMAGE_EFFECT, {

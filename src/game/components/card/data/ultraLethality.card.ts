@@ -32,7 +32,7 @@ export const UltraLethalityCardUpgraded: Card = {
                 effect: doubleResolve.name,
                 target: CardTargetedEnum.Player,
                 args: {
-                    value: Number.NaN,
+                    value: null,
                 },
             },
         ],
@@ -72,7 +72,7 @@ export const UltraLethalityCard: Card = {
                 effect: doubleResolve.name,
                 target: CardTargetedEnum.Player,
                 args: {
-                    value: Number.NaN,
+                    value: null,
                 },
             },
         ],

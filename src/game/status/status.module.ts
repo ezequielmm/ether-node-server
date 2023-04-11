@@ -53,6 +53,7 @@ import { SummonedStatus } from './summoned/summoned.status';
 import { ProcessModule } from '../process/process.module';
 import { PeacockFeatherStatus } from './peacockFeather/peacockFeather.status';
 import { BlightedStatus } from './blighted/blighted.status';
+import { CombatModule } from '../combat/combat.module';
 
 @Module({
     imports: [
@@ -63,6 +64,7 @@ import { BlightedStatus } from './blighted/blighted.status';
         forwardRef(() => CardModule),
         forwardRef(() => ActionModule),
         forwardRef(() => ProcessModule),
+        forwardRef(() => CombatModule),
         CombatQueueModule,
         ProviderModule,
         HistoryModule,

@@ -10,7 +10,16 @@ export class Character {
     name: string;
 
     @Prop()
+    contractId: string;
+
+    @Prop()
+    contractIdTest: string;
+
+    @Prop()
     description: string;
+
+    @Prop()
+    canCompete: boolean;
 
     @Prop()
     initialHealth: number;
@@ -30,6 +39,12 @@ export class Character {
     @Prop()
     isActive: boolean;
 
-    @Prop()
-    contractId?: string;
+    @Prop({ type: Object })
+    lootboxRarity: {
+        common: number;
+        uncommon: number;
+        rare: number;
+        epic: number;
+        legendary: number;
+    };
 }

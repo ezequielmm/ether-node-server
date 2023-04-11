@@ -12,9 +12,11 @@ import { fatigue } from 'src/game/status/fatigue/constants';
 import { StunnedCard } from '../../card/data/stunned.card';
 import { addCardEffect } from 'src/game/effects/addCard/contants';
 import { attachStatusEffect } from 'src/game/effects/attachStatus/constants';
+import { AddCardPosition } from 'src/game/effects/effects.enum';
 
 export const mimicFrog1Data: Enemy = {
     enemyId: 8,
+    isActive: true,
     name: 'MimicFrog1',
     type: EnemyTypeEnum.Plant,
     category: EnemyCategoryEnum.Basic,
@@ -44,6 +46,10 @@ export const mimicFrog1Data: Enemy = {
                             args: {
                                 value: 11,
                             },
+                            action: {
+                                name: 'Croak',
+                                hint: 'attack2',
+                            },
                         },
                     ],
                 },
@@ -59,6 +65,7 @@ export const mimicFrog1Data: Enemy = {
                                 value: 2,
                                 cardId: StunnedCard.cardId,
                                 destination: 'draw',
+                                position: AddCardPosition.Random,
                             },
                         },
                     ],
@@ -88,6 +95,10 @@ export const mimicFrog1Data: Enemy = {
                             target: CardTargetedEnum.Player,
                             args: {
                                 value: 6,
+                            },
+                            action: {
+                                name: 'Swipe',
+                                hint: 'attack1',
                             },
                         },
                     ],
@@ -121,6 +132,10 @@ export const mimicFrog1Data: Enemy = {
                                     counter: 2,
                                 },
                             },
+                            action: {
+                                name: 'Lick',
+                                hint: 'cast1',
+                            },
                         },
                     ],
                 },
@@ -149,6 +164,10 @@ export const mimicFrog1Data: Enemy = {
                             target: CardTargetedEnum.Self,
                             args: {
                                 value: 13,
+                            },
+                            action: {
+                                name: 'Hide',
+                                hint: 'hide_start',
                             },
                         },
                     ],

@@ -13,6 +13,7 @@ import { Enemy } from '../enemy.schema';
 
 export const groundMothData: Enemy = {
     enemyId: 2,
+    isActive: true,
     name: 'GroundMoth',
     type: EnemyTypeEnum.Beast,
     category: EnemyCategoryEnum.Basic,
@@ -42,6 +43,10 @@ export const groundMothData: Enemy = {
                             target: CardTargetedEnum.Player,
                             args: {
                                 value: 5,
+                            },
+                            action: {
+                                name: 'Claw',
+                                hint: 'attack1',
                             },
                         },
                     ],
@@ -82,6 +87,10 @@ export const groundMothData: Enemy = {
                             args: {
                                 value: 6,
                             },
+                            action: {
+                                name: 'Rumble',
+                                hint: 'cast1',
+                            },
                         },
                     ],
                 },
@@ -110,6 +119,10 @@ export const groundMothData: Enemy = {
                             target: CardTargetedEnum.Player,
                             args: {
                                 value: 10,
+                            },
+                            action: {
+                                name: 'Proboscis',
+                                hint: 'attack2',
                             },
                         },
                     ],

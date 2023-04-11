@@ -26,7 +26,7 @@ export class PotionSeeder implements Seeder {
     ) {}
 
     async seed(): Promise<any> {
-        return this.potion.insertMany([
+        return await this.potion.insertMany([
             healingPotion,
             defensePotion,
             springWaterFlask,
@@ -39,12 +39,12 @@ export class PotionSeeder implements Seeder {
             arcaneBrewPotion,
             philterOfRedemptionPotion,
             dewDropElixirPotion,
-            pavaRootPotion,
+            // pavaRootPotion,
             //phantomPhialPotion,
         ]);
     }
 
     async drop(): Promise<any> {
-        return this.potion.deleteMany({});
+        return await this.potion.deleteMany({});
     }
 }

@@ -11,7 +11,7 @@ export const AutonomousWeaponCardUpgraded: Card = {
     cardType: CardTypeEnum.Attack,
     pool: 'knight',
     energy: 3,
-    description: `Choose {${chooseCardEffect.name}} card from your discard pile. It costs 0 this turn.`,
+    description: `Deal {${damageEffect.name}} damage. This card shuffles back into your draw pile.`,
     keywords: [],
     properties: {
         effects: [
@@ -19,7 +19,7 @@ export const AutonomousWeaponCardUpgraded: Card = {
                 effect: autonomousWeaponEffect.name,
                 target: CardTargetedEnum.Player,
                 args: {
-                    value: Number.NaN,
+                    value: null,
                 },
             },
             {
@@ -52,7 +52,7 @@ export const AutonomousWeaponCard: Card = {
                 effect: autonomousWeaponEffect.name,
                 target: CardTargetedEnum.Player,
                 args: {
-                    value: Number.NaN,
+                    value: null,
                 },
             },
             {

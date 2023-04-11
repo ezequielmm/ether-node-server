@@ -1,10 +1,10 @@
+import Service from './nft-library/services/moralis_service';
 import { ValidationPipe, VersioningType } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import { TransformDataResource } from './interceptors/TransformDataResource.interceptor';
 import * as compression from 'compression';
-import { existsSync, readFileSync } from 'fs';
 import { IoAdapter } from '@nestjs/platform-socket.io';
 import { ConfigService } from '@nestjs/config';
 import { serverEnvironments } from './utils';
@@ -15,29 +15,23 @@ import { json, urlencoded } from 'express';
 import * as cors from 'cors';
 
 async function bootstrap() {
-    let app: NestExpressApplication;
+    const app = await NestFactory.create<NestExpressApplication>(AppModule, {
+        bufferLogs: true,
+    });
 
-    const certFilePath = process.env.SSL_CERT_PATH;
-    const keyFilePath = process.env.SSL_KEY_PATH;
+    // Get configService
+    const configService = app.get(ConfigService);
 
-    if (certFilePath && keyFilePath) {
-        if (existsSync(certFilePath) && existsSync(keyFilePath)) {
-            app = await NestFactory.create<NestExpressApplication>(AppModule, {
-                httpsOptions: {
-                    cert: readFileSync(certFilePath),
-                    key: readFileSync(keyFilePath),
-                },
-                bufferLogs: true,
-            });
-        }
-    } else {
-        app = await NestFactory.create<NestExpressApplication>(AppModule, {
-            bufferLogs: true,
-        });
-    }
     // Pino Logger
     app.useLogger(app.get(Logger));
 
+    const moralisApiKey = configService.get<string>('MORALIS_KEY');
+    const moralisLogLevel = configService.get<string>('MORALIS_LOG_LEVEL');
+
+    // Initialize Moralis Service
+    Service.initialize(moralisApiKey, moralisLogLevel);
+
+    // Initialize Websocket Adapter
     app.useWebSocketAdapter(new IoAdapter(app));
 
     //Enable Validation
@@ -55,14 +49,12 @@ async function bootstrap() {
     app.use(json({ limit: '40mb' }));
     app.use(urlencoded({ extended: true, limit: '40mb' })); // prevent 423 errors from bug reports
 
+    // Enable CORS
     app.use(
         cors({
             origin: '*',
         }),
     );
-
-    // Get configService
-    const configService = app.get(ConfigService);
 
     // Enable Swagger for API docs for dev only
     const env = configService.get<serverEnvironments>('NODE_ENV');
@@ -88,8 +80,10 @@ async function bootstrap() {
         app.use(compression());
     }
 
+    const port = configService.get<number>('PORT', 3000);
+
     // Starts server
-    await app.listen(3000);
+    await app.listen(port);
 }
 
 bootstrap();

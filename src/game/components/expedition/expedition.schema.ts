@@ -16,8 +16,15 @@ import { ExpeditionActConfig } from './expeditionActConfig.schema';
 import { EncounterInterface } from '../encounter/encounter.interfaces';
 import { Score } from './scores';
 import { ScoreResponse } from 'src/game/scoreCalculator/scoreCalculator.service';
+import { Contest } from 'src/game/contest/contest.schema';
 
 export type ExpeditionDocument = HydratedDocument<Expedition>;
+
+export interface IPlayerToken {
+    walletId: string;
+    contractId: string;
+    tokenId: number;
+}
 
 @modelOptions({
     schemaOptions: { collection: 'expeditions', versionKey: false },
@@ -83,6 +90,9 @@ export class Expedition {
         treasureData?: TreasureInterface;
         encounterData?: EncounterInterface;
     };
+
+    @Prop({ type: Object })
+    contest: Contest;
 
     @Prop({
         default: ExpeditionStatusEnum.InProgress,

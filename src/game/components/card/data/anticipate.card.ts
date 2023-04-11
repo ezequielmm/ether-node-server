@@ -25,7 +25,7 @@ export const AnticipateCardUpgraded: Card = {
                 effect: anticipatingEffect.name,
                 target: CardTargetedEnum.Player,
                 args: {
-                    value: Number.NaN,
+                    value: null,
                 },
             },
         ],
@@ -58,7 +58,7 @@ export const AnticipateCard: Card = {
                 effect: anticipatingEffect.name,
                 target: CardTargetedEnum.Player,
                 args: {
-                    value: Number.NaN,
+                    value: null,
                 },
             },
         ],

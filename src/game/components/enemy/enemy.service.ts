@@ -5,7 +5,7 @@ import { EnemyId, enemyIdField, enemySelector } from './enemy.type';
 import { GameContext, ExpeditionEntity } from '../interfaces';
 import { EnemyScript, ExpeditionEnemy } from './enemy.interface';
 import { CardTargetedEnum } from '../card/card.enum';
-import { find, reject, sample, isEmpty } from 'lodash';
+import { find, reject, sample, isEmpty, each, isEqual } from 'lodash';
 import { ExpeditionService } from '../expedition/expedition.service';
 import {
     ENEMY_CURRENT_SCRIPT_PATH,
@@ -18,6 +18,7 @@ import {
     AttachedStatus,
     Status,
     StatusCounterType,
+    StatusesGlobalCollection,
 } from 'src/game/status/interfaces';
 import { StatusService } from 'src/game/status/status.service';
 import { EnemyCategoryEnum, EnemyIntentionType } from './enemy.enum';
@@ -102,10 +103,48 @@ export class EnemyService {
         if (!expedition.currentNode?.data?.enemies)
             throw new Error('Current node has no enemies');
 
-        return expedition.currentNode.data.enemies.map((enemy) => ({
-            type: CardTargetedEnum.Enemy,
-            value: enemy,
-        }));
+        const enemiesToReturn: ExpeditionEnemy[] = [];
+
+        for (const enemy of expedition.currentNode.data.enemies) {
+            enemiesToReturn.push({
+                type: CardTargetedEnum.Enemy,
+                value: enemy
+            });
+        }
+
+        return enemiesToReturn;
+    }
+
+    public getLiving(ctx: GameContext): ExpeditionEnemy[] {
+        return this.getAll(ctx).filter((enemy) => !this.isDead(enemy));
+    }
+
+    public getEnemyStatuses(ctx: GameContext): StatusesGlobalCollection {
+        return this.statusService.getAllFromEnemies(ctx)
+                .filter((entity) => (entity.target.type == CardTargetedEnum.Enemy && entity.target.value.hpCurrent > 0));
+    }
+
+    public haveChangedStatuses(ctx: GameContext, priorStatuses: StatusesGlobalCollection): boolean {
+        let changesFound: boolean = false;
+        const currentStatuses = this.getEnemyStatuses(ctx);
+        
+        each(currentStatuses, (enemy) => {
+            if (!isEqual(
+                    enemy.statuses, 
+                    find(
+                        priorStatuses, (e) =>  
+                        (e.target.type == CardTargetedEnum.Enemy 
+                        && enemy.target.type == CardTargetedEnum.Enemy 
+                        && e.target.value.enemyId == enemy.target.value.enemyId)
+                    ).statuses
+                )
+            ) {
+                changesFound = true;
+                return false; // end 'each'
+            }
+        });
+        
+        return changesFound;
     }
 
     /**
@@ -118,11 +157,11 @@ export class EnemyService {
     public get(ctx: GameContext, id: EnemyId): ExpeditionEnemy {
         const enemies = this.getAll(ctx);
 
-        return find(enemies, {
-            value: {
-                [enemyIdField(id)]: id,
-            },
-        });
+        for (const enemy of enemies) {
+            if (enemy.value[enemyIdField(id)] == id) return enemy;
+        }
+
+        return null;
     }
 
     /**
@@ -255,6 +294,7 @@ export class EnemyService {
         id: EnemyId,
         damage: number,
     ): Promise<number> {
+        
         const { value: enemy } = this.get(ctx, id);
 
         const { client } = ctx;
@@ -288,6 +328,7 @@ export class EnemyService {
         await this.setDefense(ctx, id, enemy.defense);
 
         if (enemy.hpCurrent === 0) {
+
             await this.eventEmitter.emitAsync(EVENT_ENEMY_DEAD, { ctx, enemy });
 
             await this.expeditionService.updateByFilter(
@@ -300,7 +341,7 @@ export class EnemyService {
                             'scores.basicEnemiesDefeated': 1,
                         }),
                         ...(enemy.category === EnemyCategoryEnum.Minion && {
-                            'scores.basicEnemiesDefeated': 1,
+                            'scores.minionEnemiesDefeated': 1,
                         }),
                         ...(enemy.category === EnemyCategoryEnum.Elite && {
                             'scores.eliteEnemiesDefeated': 1,

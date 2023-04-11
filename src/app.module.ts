@@ -11,9 +11,14 @@ import { LoggerModule } from 'nestjs-pino';
 import { createWriteStream } from 'pino-papertrail';
 import { PlayerGearModule } from './playerGear/playerGear.module';
 import { serverEnvironments } from './utils';
+import { ScheduleModule } from '@nestjs/schedule';
+import { TaskModule } from './tasks/task.module';
+import { LeaderboardModule } from './leaderboard/leaderboard.module';
 
 @Module({
     imports: [
+        ScheduleModule.forRoot(),
+        TaskModule,
         LoggerModule.forRootAsync({
             inject: [ConfigService],
             useFactory: (configService: ConfigService) => ({
@@ -52,6 +57,7 @@ import { serverEnvironments } from './utils';
         BugReportModule,
         PlayerGearModule,
         WalletModule,
+        LeaderboardModule,
         ApiModule,
         ConfigModule.forRoot({ isGlobal: true, cache: true }),
         SocketModule,

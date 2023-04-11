@@ -31,6 +31,8 @@ export class ContinueExpeditionProcess {
 
         await ctx.expedition.save();
 
+        const safeMap = this.mapService.makeClientSafe(map);
+
         // Send the final message with the map updated
         return StandardResponse.respond({
             message_type:
@@ -39,7 +41,7 @@ export class ContinueExpeditionProcess {
                     : SWARMessageType.EndNode,
             seed: ctx.expedition.mapSeedId,
             action: SWARAction.ShowMap,
-            data: map,
+            data: safeMap,
         });
     }
 

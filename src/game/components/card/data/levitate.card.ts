@@ -9,7 +9,7 @@ export const LevitateCardUpgraded: Card = {
     cardType: CardTypeEnum.Skill,
     pool: 'knight',
     energy: 0,
-    description: `Gain 1 Dodge`,
+    description: `Gain {${dodge.name}} Dodge`,
     keywords: [],
     properties: {
         effects: [],
@@ -35,7 +35,7 @@ export const LevitateCard: Card = {
     cardType: CardTypeEnum.Skill,
     pool: 'knight',
     energy: 1,
-    description: `Gain 1 Dodge`,
+    description: `Gain {${dodge.name}} Dodge`,
     keywords: [],
     properties: {
         effects: [],

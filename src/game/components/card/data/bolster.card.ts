@@ -9,7 +9,7 @@ export const BolsterCardUpgraded: Card = {
     cardType: CardTypeEnum.Defend,
     pool: 'knight',
     energy: 0,
-    description: `Gain 3 defense for each card played this turn`,
+    description: `Gain {${bolstered.name}} defense for each card played this turn`,
     keywords: [],
     properties: {
         effects: [],
@@ -35,7 +35,7 @@ export const BolsterCard: Card = {
     cardType: CardTypeEnum.Defend,
     pool: 'knight',
     energy: 0,
-    description: `For the rest of the turn, gain 2 Defense for each card played`,
+    description: `For the rest of the turn, gain {${bolstered.name}} Defense for each card played`,
     keywords: [],
     properties: {
         effects: [],

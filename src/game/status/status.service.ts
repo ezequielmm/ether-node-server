@@ -16,7 +16,6 @@ import { EnemyService } from '../components/enemy/enemy.service';
 import { enemyIdField } from '../components/enemy/enemy.type';
 import { ExpeditionStatusEnum } from '../components/expedition/expedition.enum';
 import { Expedition } from '../components/expedition/expedition.schema';
-import { ExpeditionService } from '../components/expedition/expedition.service';
 import { GameContext, ExpeditionEntity } from '../components/interfaces';
 import { PlayerService } from '../components/player/player.service';
 import {
@@ -24,7 +23,7 @@ import {
     EVENT_AFTER_STATUS_ATTACH,
     EVENT_BEFORE_STATUS_ATTACH,
 } from '../constants';
-import { EffectDTO } from '../effects/effects.interface';
+import { EffectDTO, IActionHint } from '../effects/effects.interface';
 import { ProviderContainer } from '../provider/interfaces';
 import { ProviderService } from '../provider/provider.service';
 import { STATUS_METADATA_KEY } from './contants';
@@ -53,6 +52,7 @@ import {
 import * as cliColor from 'cli-color';
 import { TargetId } from '../effects/effects.types';
 import { ReturnModelType } from '@typegoose/typegoose';
+import { CombatService } from '../combat/combat.service';
 
 export interface AfterStatusAttachEvent {
     ctx: GameContext;
@@ -60,6 +60,7 @@ export interface AfterStatusAttachEvent {
     targetId: TargetId;
     source: ExpeditionEntity;
     status: AttachedStatus;
+    action?: IActionHint;
 }
 export interface AfterStatusesUpdateEvent {
     ctx: GameContext;
@@ -77,13 +78,13 @@ export class StatusService {
         @Inject(getModelToken('Expedition'))
         private readonly expedition: ReturnModelType<typeof Expedition>,
         private readonly providerService: ProviderService,
-        @Inject(forwardRef(() => ExpeditionService))
-        private readonly expeditionService: ExpeditionService,
         @Inject(forwardRef(() => PlayerService))
         private readonly playerService: PlayerService,
         @Inject(forwardRef(() => EnemyService))
         private readonly enemyService: EnemyService,
         private readonly eventEmitter: EventEmitter2,
+        @Inject(forwardRef(() => CombatService))
+        private readonly combatService: CombatService,
     ) {
         // Use event emitter to listen to events and trigger the handlers
         this.eventEmitter.onAny(async (event, args) => {
@@ -115,7 +116,7 @@ export class StatusService {
 
         for (const status of statuses) {
             const { attachTo } = status;
-            const targets = this.expeditionService.getEntitiesByType(
+            const targets = this.combatService.getEntitiesByType(
                 ctx,
                 attachTo,
                 source,
@@ -142,7 +143,7 @@ export class StatusService {
      * @param dto Dto parameters
      */
     public async attach(dto: AttachDTO) {
-        const { ctx, source, target, statusName, statusArgs } = dto;
+        const { ctx, source, target, statusName, statusArgs, action } = dto;
 
         const eventBeforeStatusAttach: BeforeStatusAttachEvent = {
             ctx,
@@ -202,6 +203,7 @@ export class StatusService {
             status: finalStatus,
             target,
             targetId: target.value.id,
+            action: action,
         };
 
         await this.eventEmitter.emitAsync(
@@ -214,6 +216,9 @@ export class StatusService {
         const { ctx, collectionOwner, collection, effect, preview } = dto;
         let { effectDTO } = dto;
         let isUpdate = false;
+
+        // Collection of all statuses
+        const fullCollection = this.getStatuses(collectionOwner);
 
         for (const type in collection) {
             const statuses = collection[type];
@@ -236,13 +241,23 @@ export class StatusService {
                     ctx,
                     effectDTO,
                     status: status,
-                    update(args) {
+                    update: (args) => {
                         status.args = args;
                         isUpdate = true;
+
+                        this.logger.log(
+                            { ...ctx.info, status },
+                            'Updating status',
+                        );
                     },
-                    remove() {
+                    remove: () => {
                         statusesToRemove.push(status);
                         isUpdate = true;
+
+                        this.logger.log(
+                            { ...ctx.info, status },
+                            'Removing status',
+                        );
                     },
                 });
 
@@ -252,14 +267,19 @@ export class StatusService {
                 );
             }
             if (statusesToRemove.length > 0) {
-                collection[type] = statuses.filter(
+                fullCollection[type] = fullCollection[type].filter(
                     (status) => !statusesToRemove.includes(status),
                 );
             }
         }
 
-        if (isUpdate)
-            await this.updateStatuses(ctx, collectionOwner, collection);
+        if (isUpdate) {
+            await this.updateStatuses(ctx, collectionOwner, fullCollection);
+            this.logger.log(
+                { ...ctx.info, collection },
+                'Updated status collection',
+            );
+        }
 
         return effectDTO;
     }
@@ -268,7 +288,14 @@ export class StatusService {
         entity: ExpeditionEntity,
         direction: StatusDirection,
     ): StatusCollection {
+        const statuses = this.getStatuses(entity);
+
+        return this.filterCollectionByDirection(statuses, direction);
+    }
+
+    public getStatuses(entity: ExpeditionEntity): StatusCollection {
         let statuses: StatusCollection;
+
         if (PlayerService.isPlayer(entity)) {
             statuses = entity.value.combatState.statuses;
         } else if (EnemyService.isEnemy(entity)) {
@@ -279,7 +306,7 @@ export class StatusService {
             throw new Error(`Could not find statuses for ${entity.type}`);
         }
 
-        return this.filterCollectionByDirection(statuses, direction);
+        return statuses;
     }
 
     public filterCollectionByDirection(
@@ -570,7 +597,7 @@ export class StatusService {
         return collection;
     }
 
-    private getAllFromEnemies(ctx: GameContext): StatusesGlobalCollection {
+    getAllFromEnemies(ctx: GameContext): StatusesGlobalCollection {
         const collection: StatusesGlobalCollection = [];
         const { expedition } = ctx;
         for (const enemy of expedition.currentNode.data.enemies) {

@@ -1,50 +1,67 @@
-import { Injectable, Logger } from '@nestjs/common';
-import { HttpService } from '@nestjs/axios';
-import { firstValueFrom } from 'rxjs';
+import { ConsoleLogger, Injectable } from '@nestjs/common';
+import NFTService from '../nft-library/services/nft_service';
+import { PlayerWinService } from '../playerWin/playerWin.service';
+import { ContestService } from '../game/contest/contest.service';
+import { countBy, sortBy } from 'lodash';
+import { CharacterService } from 'src/game/components/character/character.service';
 import { ConfigService } from '@nestjs/config';
+import { Console } from 'console';
 
 @Injectable()
 export class WalletService {
-    private readonly logger: Logger = new Logger(WalletService.name);
     constructor(
-        private readonly httpService: HttpService,
+        private readonly playerWinService: PlayerWinService,
+        private readonly contestService: ContestService,
+        private readonly characterService: CharacterService,
         private readonly configService: ConfigService,
     ) {}
 
-    async getTokenIdList(walletId: string): Promise<string[]> {
-        const domain = this.configService.get<string>('NFT_SERVICE_URL');
-        const contract_id = this.configService.get<string>(
-            'NFT_SERVICE_CONTRACT_ID',
-        );
-        const chain_id = this.configService.get<string>('NFT_SERVICE_CHAIN_ID');
-        const authorization = this.configService.get<string>(
-            'NFT_SERVICE_AUTHORIZATION',
-        );
-        const url = `${domain}/v1/accounts/${walletId}/contracts/${contract_id}/chains/${chain_id}/tokens`;
-        // a main chain wallet https://api.dev.kote.robotseamonster.com/v1/wallets/0xbd22537d05207e470A458773683041012ddcAB65
-        // a goerli wallet http://localhost:3000/v1/wallets/0xA10f15B66a2e05c4e376F8bfC35aE662438153Be
-        const tokenArray: string[] = [];
-        try {
-            const data = await firstValueFrom(
-                this.httpService.get<any[]>(url, {
-                    headers: {
-                        Authorization: authorization,
-                    },
-                }),
-            );
+    private getHttpFromIpfsURI(ipfs: string): string {
+        return (ipfs) ? "https://ipfs.io/ipfs/" + ipfs.substring(7) : undefined;
+    }
 
-            const sub_data = data.data as any;
-            const content = sub_data.data;
-            const tokens = content.tokens;
-            for (let i = 0; i < tokens.length; i++) {
-                const token = tokens[i];
-                tokenArray.push(token.tokenID);
+    async getTokenIdList(walletId: string): Promise<any[]> {
+        // the chain where are deployed the smart contracts
+        const chain = this.configService.get<number>('NFT_SERVICE_CHAIN_ID');
+
+        //some goerli wallets
+        //walletId = '0xa10f15b66a2e05c4e376f8bfc35ae662438153be'; //many knights
+        //walletId = '0x66956Fe08D7Bc88fe70216502fD8a6e4b7f269c5';//2 knights
+        //walletId = '0x2F2CF39D0325A9792f0C9E0de73cdc0820C5c65e'; //many knights
+
+        const all_wins = await this.playerWinService.findAllWins(walletId);
+        const win_counts = countBy(
+            all_wins,
+            (win) => win.playerToken.contractId + win.playerToken.tokenId,
+        );
+        const contest = await this.contestService.findActiveContest();
+        const event_id = contest?.event_id ?? 0;
+
+        // The contracts to filter from all the user collections
+        const contracts = await this.characterService.findAllContractIds();
+        const nfts = await NFTService.listByContracts(
+            chain,
+            walletId,
+            contracts,
+        );
+
+        for await (const contract of nfts.tokens) {
+            const character = await this.characterService.getCharacterByContractId(contract.contract_address);
+            contract.characterClass = character?.characterClass ?? 'unknown';
+            for await (const token of contract.tokens) {
+                token.characterClass = character?.characterClass ?? 'unknown';
+                token.adaptedImageURI = this.getHttpFromIpfsURI(token.metadata?.image);
+                token.can_play =
+                    await this.playerWinService.canPlay(
+                        event_id,
+                        contract.contract_address,
+                        token.token_id,
+                        win_counts[contract.contract_address + token.token_id] || 0,
+                    );
             }
-        } catch (e) {
-            this.logger.log(e);
-            throw e;
+            contract.tokens = sortBy(contract.tokens, [(token) => <number>token.token_id]);
         }
 
-        return tokenArray;
+        return nfts;
     }
 }

@@ -2,6 +2,7 @@ import { IStatusesList } from 'src/game/status/statusGenerator';
 import { GameContext, ExpeditionEntity } from '../interfaces';
 import { CombatQueueTargetEffectTypeEnum } from './combatQueue.enum';
 import { CombatQueue } from './combatQueue.schema';
+import { IActionHint } from 'src/game/effects/effects.interface';
 
 export interface ICombatQueueArgs {
     effectType: CombatQueueTargetEffectTypeEnum;
@@ -22,6 +23,7 @@ export interface PushActionDTO {
     source: ExpeditionEntity;
     target: ExpeditionEntity;
     args: ICombatQueueArgs;
+    action?: IActionHint;
 }
 
 export type CreateCombatQueueDTO = CombatQueue;

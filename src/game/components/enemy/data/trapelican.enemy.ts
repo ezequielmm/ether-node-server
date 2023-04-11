@@ -14,6 +14,7 @@ import { attachStatusEffect } from 'src/game/effects/attachStatus/constants';
 
 export const trapelicanData: Enemy = {
     enemyId: 12,
+    isActive: true,
     name: 'Trapelican',
     type: EnemyTypeEnum.Plant,
     category: EnemyCategoryEnum.Basic,
@@ -43,6 +44,10 @@ export const trapelicanData: Enemy = {
                             args: {
                                 value: 7,
                             },
+                            action: {
+                                name: 'Bite',
+                                hint: 'attack1',
+                            },
                         },
                     ],
                 },
@@ -71,6 +76,10 @@ export const trapelicanData: Enemy = {
                             target: CardTargetedEnum.Self,
                             args: {
                                 value: 4,
+                            },
+                            action: {
+                                name: 'Swoop',
+                                hint: 'cast1',
                             },
                         },
                     ],
@@ -117,6 +126,10 @@ export const trapelicanData: Enemy = {
                                 statusArgs: {
                                     counter: 1,
                                 },
+                            },
+                            action: {
+                                name: 'Lure',
+                                hint: 'lure_start',
                             },
                         },
                     ],

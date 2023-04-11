@@ -12,10 +12,10 @@ export class CardSeeder implements Seeder {
     ) {}
 
     async seed(): Promise<any> {
-        return this.card.insertMany(data);
+        return await this.card.insertMany(data);
     }
 
     async drop(): Promise<any> {
-        return this.card.deleteMany({});
+        return await this.card.deleteMany({});
     }
 }

@@ -24,11 +24,7 @@ import {
 import { Node } from './node';
 import { Player } from './player';
 import { ClientId, getClientIdField } from './expedition.type';
-import { CardTargetedEnum } from '../card/card.enum';
-import { GameContext, ExpeditionEntity } from '../interfaces';
-import { PlayerService } from '../player/player.service';
-import { EnemyService } from '../enemy/enemy.service';
-import { EnemyId } from '../enemy/enemy.type';
+import { GameContext } from '../interfaces';
 import { Socket } from 'socket.io';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { ReturnModelType } from '@typegoose/typegoose';
@@ -41,12 +37,15 @@ export class ExpeditionService {
     constructor(
         @InjectModel(Expedition)
         private readonly expedition: ReturnModelType<typeof Expedition>,
-        private readonly playerService: PlayerService,
-        private readonly enemyService: EnemyService,
         private readonly moduleRef: ModuleRef,
         private readonly mapService: MapService,
         private readonly configService: ConfigService,
     ) {}
+
+    async getExpeditionIdFromClient(clientId: string): Promise<string> {
+        const expedition = await this.findOne({ clientId }, { id: 1 });
+        return expedition.id;
+    }
 
     async getGameContext(client: Socket): Promise<GameContext> {
         const expedition = await this.findOne({ clientId: client.id });
@@ -83,6 +82,7 @@ export class ExpeditionService {
         return await this.expedition
             .findOne(filter, projection)
             .sort({ createdAt: 1 });
+        // NOTE: This cannot be lean without breaking map node objects!
     }
 
     async findOneTimeDesc(
@@ -217,7 +217,7 @@ export class ExpeditionService {
             },
             {
                 $set: {
-                    ...(newRound !== undefined && {
+                    ...(typeof newRound !== 'undefined' && {
                         'currentNode.data.round': newRound,
                     }),
                     'currentNode.data.playing': playing,
@@ -287,66 +287,6 @@ export class ExpeditionService {
             .lean();
     }
 
-    /**
-     * Get entities based on the type and the context
-     *
-     * @param ctx Context
-     * @param type Type of the entity
-     * @param source Source of the action
-     * @param [selectedEnemy] Preselected enemy
-     *
-     * @returns Array of expedition entities
-     *
-     * @throws Error if the type is not found
-     */
-    public getEntitiesByType(
-        ctx: GameContext,
-        type: CardTargetedEnum,
-        source: ExpeditionEntity,
-        selectedEnemy: EnemyId,
-    ): ExpeditionEntity[] {
-        const targets: ExpeditionEntity[] = [];
-
-        switch (type) {
-            case CardTargetedEnum.Player:
-                targets.push(this.playerService.get(ctx));
-                break;
-            case CardTargetedEnum.Self:
-                targets.push(source);
-                break;
-            case CardTargetedEnum.AllEnemies:
-                targets.push(...this.enemyService.getAll(ctx));
-                break;
-            case CardTargetedEnum.RandomEnemy:
-                targets.push({
-                    type: CardTargetedEnum.Enemy,
-                    value: this.enemyService.getRandom(ctx).value,
-                });
-                break;
-            case CardTargetedEnum.Enemy:
-                targets.push(this.enemyService.get(ctx, selectedEnemy));
-                break;
-        }
-
-        if (!targets) throw new Error(`Target ${type} not found`);
-
-        return targets;
-    }
-
-    public isCurrentCombatEnded(ctx: GameContext): boolean {
-        return (
-            this.playerService.isDead(ctx) || this.enemyService.isAllDead(ctx)
-        );
-    }
-
-    public isEntityDead(ctx: GameContext, target: ExpeditionEntity): boolean {
-        if (PlayerService.isPlayer(target)) {
-            return this.playerService.isDead(ctx);
-        } else if (EnemyService.isEnemy(target)) {
-            return this.enemyService.isDead(target);
-        }
-    }
-
     async updatePlayerDeck(payload: UpdatePlayerDeckDTO): Promise<Expedition> {
         const { clientId, deck } = payload;
 
@@ -384,5 +324,35 @@ export class ExpeditionService {
         };
 
         await ctx.expedition.save();
+    }
+
+    async findTopScores(event_id: number, limit: number): Promise<any[]> {
+        limit = limit > 50 ? 50 : limit;
+        limit = limit < 10 ? 10 : limit;
+        const expedition = await this.expedition
+            .find({ 'contest.event_id': event_id })
+            .sort({ 'finalScore.totalScore': -1 })
+            .limit(limit);
+
+        const finalScores = [];
+        expedition.forEach((item) => {
+            if (item.finalScore) {
+                const endedAt = item.endedAt;
+                const startedAt = item.createdAt;
+                const duration = Math.floor(
+                    (endedAt.getTime() - startedAt.getTime()) / 1000,
+                );
+                const summary = {
+                    totalScore: item.finalScore.totalScore,
+                    playerName: item.playerState.playerName,
+                    characterClass: item.playerState.characterClass,
+                    duration,
+                    endedAt,
+                };
+                finalScores.push(summary);
+            }
+        });
+
+        return finalScores;
     }
 }

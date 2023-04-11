@@ -6,6 +6,6 @@ import { GearService } from './gear.service';
 @Module({
     imports: [KindagooseModule.forFeature([Gear])],
     providers: [GearService],
-    exports: [GearService],
+    exports: [GearService, KindagooseModule],
 })
 export class GearModule {}

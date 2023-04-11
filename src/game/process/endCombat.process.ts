@@ -5,7 +5,6 @@ import pino from 'pino';
 import { CombatQueueService } from '../components/combatQueue/combatQueue.service';
 import { EnemyService } from '../components/enemy/enemy.service';
 import { ExpeditionStatusEnum } from '../components/expedition/expedition.enum';
-import { ExpeditionService } from '../components/expedition/expedition.service';
 import { NodeType } from '../components/expedition/node-type';
 import { GameContext } from '../components/interfaces';
 import { PlayerService } from '../components/player/player.service';
@@ -19,6 +18,7 @@ import {
     SWARAction,
     SWARMessageType,
 } from '../standardResponse/standardResponse';
+import { EndExpeditionProcess, ExpeditionEndingTypeEnum } from './endExpedition.process';
 
 @Injectable()
 export class EndCombatProcess {
@@ -27,9 +27,9 @@ export class EndCombatProcess {
         private readonly logger: PinoLogger,
         private readonly playerService: PlayerService,
         private readonly enemyService: EnemyService,
-        private readonly expeditionService: ExpeditionService,
         private readonly combatQueueService: CombatQueueService,
         private readonly scoreCalculatorService: ScoreCalculatorService,
+        private readonly endExpeditionProcess: EndExpeditionProcess,
     ) {}
 
     @OnEvent(EVENT_AFTER_DAMAGE_EFFECT)
@@ -63,32 +63,16 @@ export class EndCombatProcess {
         // If combat boss, update expedition status to victory
         // and emit show score
         if (isCombatBoss) {
-            const score = this.scoreCalculatorService.calculate({
-                expedition: ctx.expedition,
-            });
+            ctx.expedition.currentNode.showRewards = false;
+            ctx.expedition.markModified('currentNode.showRewards');
 
-            ctx.expedition.status = ExpeditionStatusEnum.Victory;
-            ctx.expedition.finalScore = score;
-            ctx.expedition.completedAt = new Date();
-            ctx.expedition.endedAt = new Date();
+            await this.endExpeditionProcess.handle({ ctx, win: ExpeditionEndingTypeEnum.VICTORY, emit: true });
+        } else {
+            ctx.expedition.currentNode.showRewards = true;
+            ctx.expedition.markModified('currentNode.showRewards');
+            await ctx.expedition.save();
 
-            ctx.client.emit(
-                'PutData',
-                StandardResponse.respond({
-                    message_type: SWARMessageType.EndCombat,
-                    action: SWARAction.ShowScore,
-                    data: null,
-                }),
-            );
-        }
-
-        ctx.expedition.currentNode.showRewards = true;
-        ctx.expedition.markModified('currentNode.showRewards');
-
-        await ctx.expedition.save();
-
-        // If not combat boss, emit enemies defeated
-        if (!isCombatBoss) {
+            // message client to end combat, enemies defeated
             ctx.client.emit(
                 'PutData',
                 StandardResponse.respond({
@@ -109,6 +93,11 @@ export class EndCombatProcess {
         logger: pino.Logger<pino.LoggerOptions & pino.ChildLoggerOptions>,
     ): Promise<void> {
         await this.combatQueueService.end(ctx);
+        
+        ctx.expedition.currentNode.showRewards = false;
+        ctx.expedition.markModified('currentNode.showRewards');
+
+        await this.endExpeditionProcess.handle({ ctx, win: ExpeditionEndingTypeEnum.DEFEAT, emit: false });
 
         ctx.client.emit(
             'PutData',
@@ -118,18 +107,6 @@ export class EndCombatProcess {
                 data: null,
             }),
         );
-
-        const score = this.scoreCalculatorService.calculate({
-            expedition: ctx.expedition,
-        });
-
-        ctx.expedition.status = ExpeditionStatusEnum.Defeated;
-        ctx.expedition.finalScore = score;
-        ctx.expedition.isCurrentlyPlaying = false;
-        ctx.expedition.defeatedAt = new Date();
-        ctx.expedition.endedAt = new Date();
-
-        await ctx.expedition.save();
 
         logger.info(`Combat ended for client ${ctx.client.id}`);
     }

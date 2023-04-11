@@ -10,7 +10,7 @@ export const ShoutCardUpgraded: Card = {
     cardType: CardTypeEnum.Skill,
     pool: 'knight',
     energy: 1,
-    description: `Inflict 2 Fatigue. \nGain 2 Resolve.`,
+    description: `Inflict {${fatigue.name}} Fatigue. \nGain {${resolveStatus.name}} Resolve.`,
     keywords: [],
     properties: {
         effects: [],
@@ -43,7 +43,7 @@ export const ShoutCard: Card = {
     cardType: CardTypeEnum.Skill,
     pool: 'knight',
     energy: 1,
-    description: `Inflict 1 Fatigue. \nGain 1 Resolve.`,
+    description: `Inflict {${fatigue.name}} Fatigue. \nGain {${resolveStatus.name}} Resolve.`,
     keywords: [],
     properties: {
         effects: [],

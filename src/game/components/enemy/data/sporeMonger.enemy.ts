@@ -13,6 +13,7 @@ import { Enemy } from '../enemy.schema';
 
 export const sporeMongerData: Enemy = {
     enemyId: 1,
+    isActive: true,
     name: 'Sporemonger',
     type: EnemyTypeEnum.Plant,
     category: EnemyCategoryEnum.Basic,
@@ -43,6 +44,10 @@ export const sporeMongerData: Enemy = {
                             args: {
                                 value: 11,
                             },
+                            action: {
+                                name: 'Swipe',
+                                hint: 'attack1',
+                            },
                         },
                     ],
                 },
@@ -72,6 +77,10 @@ export const sporeMongerData: Enemy = {
                             args: {
                                 value: 7,
                             },
+                            action: {
+                                name: 'Rattle',
+                                hint: 'cast1',
+                            },
                         },
                     ],
                 },
@@ -96,6 +105,10 @@ export const sporeMongerData: Enemy = {
                             target: CardTargetedEnum.Player,
                             args: {
                                 value: 4,
+                            },
+                            action: {
+                                name: 'Toxic Spit',
+                                hint: 'mouthOpen',
                             },
                         },
                     ],

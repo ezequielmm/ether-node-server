@@ -13,10 +13,10 @@ export class CharacterSeeder implements Seeder {
     ) {}
 
     async seed(): Promise<any> {
-        return this.character.create(CharacterData);
+        return await this.character.create(CharacterData);
     }
 
     async drop(): Promise<any> {
-        return this.character.deleteMany({});
+        return await this.character.deleteMany({});
     }
 }

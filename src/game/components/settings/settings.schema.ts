@@ -22,4 +22,19 @@ export class Settings {
 
     @Prop()
     maxCardRewardsInCombat: number;
+
+    @Prop()
+    maxSteps: number;
+
+    @Prop()
+    maxNodes: number;
+
+    @Prop()
+    maxCardsOnMerchantNode: number;
+
+    @Prop()
+    maxPotionsOnMerchantNode: number;
+
+    @Prop()
+    maxTrinketsOnMerchantNode: number;
 }

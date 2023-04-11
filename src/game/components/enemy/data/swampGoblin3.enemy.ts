@@ -14,6 +14,7 @@ import { Enemy } from '../enemy.schema';
 // Nerf version of swampGoblin1Data
 export const swampGoblin3Data: Enemy = {
     enemyId: 33,
+    isActive: true,
     name: 'SwampGoblin3',
     type: EnemyTypeEnum.Fae,
     category: EnemyCategoryEnum.Basic,
@@ -44,6 +45,10 @@ export const swampGoblin3Data: Enemy = {
                             args: {
                                 value: 6,
                             },
+                            action: {
+                                name: 'Club',
+                                hint: 'attack',
+                            },
                         },
                     ],
                 },
@@ -72,6 +77,10 @@ export const swampGoblin3Data: Enemy = {
                             target: CardTargetedEnum.Self,
                             args: {
                                 value: 10,
+                            },
+                            action: {
+                                name: 'Gather Shadow',
+                                hint: 'cast1',
                             },
                         },
                     ],
@@ -103,6 +112,10 @@ export const swampGoblin3Data: Enemy = {
                                 value: 1,
                                 cardId: ChokingCard.cardId,
                                 destination: 'discard',
+                            },
+                            action: {
+                                name: 'Spore Cloud',
+                                hint: 'cast2',
                             },
                         },
                     ],

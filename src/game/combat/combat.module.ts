@@ -7,6 +7,7 @@ import { CombatService } from './combat.service';
 import { CardSelectionScreenModule } from '../components/cardSelectionScreen/cardSelectionScreen.module';
 import { ActionModule } from '../action/action.module';
 import { CardModule } from '../components/card/card.module';
+import { PlayerModule } from '../components/player/player.module';
 
 @Module({
     imports: [
@@ -14,6 +15,7 @@ import { CardModule } from '../components/card/card.module';
         forwardRef(() => EnemyModule),
         forwardRef(() => ActionModule),
         forwardRef(() => CardModule),
+        forwardRef(() => PlayerModule),
         SettingsModule,
         RewardModule,
         CardSelectionScreenModule,

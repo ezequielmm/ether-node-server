@@ -30,31 +30,63 @@ import { IMoveCard } from '../../socket/moveCard.gateway';
 import { CustomException, ErrorBehavior } from '../../socket/custom.exception';
 import { CardSelectionScreenOriginPileEnum } from '../components/cardSelectionScreen/cardSelectionScreen.enum';
 import { CardService } from '../components/card/card.service';
+import { PlayerService } from '../components/player/player.service';
+import { ExpeditionEntity } from '../components/interfaces';
+import { CardTargetedEnum } from '../components/card/card.enum';
 
 @Injectable()
 export class CombatService {
     constructor(
         private readonly settingsService: SettingsService,
+        @Inject(forwardRef(() => ExpeditionService))
         private readonly expeditionService: ExpeditionService,
         private readonly enemyService: EnemyService,
         private readonly rewardService: RewardService,
         private readonly cardSelectionService: CardSelectionScreenService,
         private readonly moveCardAction: MoveCardAction,
-        @Inject(forwardRef(() => CardService))
         private readonly cardService: CardService,
+        private readonly playerService: PlayerService,
     ) {}
+
+    async generateRewards(node, ctx: GameContext | null) {
+        const { maxCardRewardsInCombat } =
+            await this.settingsService.getSettings();
+
+        const trinketsToGenerate = [this.getTrinketRarityProbability(node)];    
+        
+        return await this.rewardService.generateRewards({
+            ctx: ctx,
+            node: node,
+            coinsToGenerate: this.generateCoins(node),
+            cardsToGenerate: this.getCardRarityProbability(
+                node,
+                maxCardRewardsInCombat,
+            ),
+            potionsToGenerate: [this.getPotionRarityProbability()],
+            trinketsToGenerate: filter(
+                trinketsToGenerate,
+                (trinket) => trinket !== null,
+            ),
+        });
+    }
+
+    async generateBaseState(node: Node) {
+        const enemies = await this.getEnemies(node);
+        const rewards = await this.generateRewards(node, null);
+
+        return {
+            enemies,
+            rewards,
+        };
+    }
 
     async generate(
         ctx: GameContext,
         node: Node,
     ): Promise<IExpeditionCurrentNode> {
         // Get initial player stats
-        const {
-            initialEnergy,
-            maxEnergy,
-            initialHandPileSize,
-            maxCardRewardsInCombat,
-        } = await this.settingsService.getSettings();
+        const { initialEnergy, maxEnergy, initialHandPileSize } =
+            await this.settingsService.getSettings();
 
         // Get current health
         const { hpCurrent, hpMax, cards } = ctx.expedition.playerState;
@@ -64,43 +96,22 @@ export class CombatService {
             card.oldEnergy = 0;
         });
 
-        const handCards = takeRight(shuffle(cards), initialHandPileSize);
+        const shuffledCards = shuffle(cards);
+
+        const handCards = takeRight(shuffledCards, initialHandPileSize);
 
         const drawCards = removeCardsFromPile({
-            originalPile: cards,
+            originalPile: shuffledCards,
             cardsToRemove: handCards,
         });
 
-        const {
-            actConfig: { potionChance },
-        } = ctx.expedition;
+        const rewards = (typeof node?.private_data?.rewards === 'undefined') 
+            ? await this.generateRewards(node, ctx)
+            : await this.rewardService.liveUpdateRewards(ctx, node.private_data.rewards);
 
-        const shouldGeneratePotion = getRandomBetween(1, 100) < potionChance;
-        const trinketsToGenerate = [this.getTrinketRarityProbability(node)];
-
-        const enemies = await this.getEnemies(node);
-        const rewards = await this.rewardService.generateRewards({
-            ctx,
-            node: node,
-            coinsToGenerate: this.generateCoins(node),
-            cardsToGenerate: this.getCardRarityProbability(
-                node,
-                maxCardRewardsInCombat,
-            ),
-            potionsToGenerate: shouldGeneratePotion
-                ? [this.getPotionRarityProbability()]
-                : [],
-            trinketsToGenerate: filter(
-                trinketsToGenerate,
-                (trinket) => trinket !== null,
-            ),
-        });
-
-        await this.updatePotionChance(
-            ctx.client.id,
-            potionChance,
-            shouldGeneratePotion,
-        );
+        const enemies = (typeof node?.private_data?.enemies === 'undefined')
+            ? await this.getEnemies(node)
+            : node.private_data.enemies;
 
         return {
             nodeId: node.id,
@@ -200,9 +211,7 @@ export class CombatService {
         }
     }
 
-    private async getEnemies(
-        node: Node,
-    ): Promise<IExpeditionCurrentNodeDataEnemy[]> {
+    async getEnemies(node: Node): Promise<IExpeditionCurrentNodeDataEnemy[]> {
         const enemyGroup = getRandomItemByWeight<EnemyId[]>(
             node.private_data.enemies.map(({ enemies }) => enemies),
             node.private_data.enemies.map(({ probability }) => probability),
@@ -347,5 +356,66 @@ export class CombatService {
                 },
             );
         }
+    }
+
+    // Methods below migrated from ExpeditionService to avoid circular dependencies
+    public isCurrentCombatEnded(ctx: GameContext): boolean {
+        return (
+            this.playerService.isDead(ctx) || this.enemyService.isAllDead(ctx)
+        );
+    }
+
+    public isEntityDead(ctx: GameContext, target: ExpeditionEntity): boolean {
+        if (PlayerService.isPlayer(target)) {
+            return this.playerService.isDead(ctx);
+        } else if (EnemyService.isEnemy(target)) {
+            return this.enemyService.isDead(target);
+        }
+    }
+
+    /**
+     * Get entities based on the type and the context
+     *
+     * @param ctx Context
+     * @param type Type of the entity
+     * @param source Source of the action
+     * @param [selectedEnemy] Preselected enemy
+     *
+     * @returns Array of expedition entities
+     *
+     * @throws Error if the type is not found
+     */
+    public getEntitiesByType(
+        ctx: GameContext,
+        type: CardTargetedEnum,
+        source: ExpeditionEntity,
+        selectedEnemy: EnemyId,
+    ): ExpeditionEntity[] {
+        const targets: ExpeditionEntity[] = [];
+
+        switch (type) {
+            case CardTargetedEnum.Player:
+                targets.push(this.playerService.get(ctx));
+                break;
+            case CardTargetedEnum.Self:
+                targets.push(source);
+                break;
+            case CardTargetedEnum.AllEnemies:
+                targets.push(...this.enemyService.getLiving(ctx));
+                break;
+            case CardTargetedEnum.RandomEnemy:
+                targets.push({
+                    type: CardTargetedEnum.Enemy,
+                    value: this.enemyService.getRandom(ctx).value,
+                });
+                break;
+            case CardTargetedEnum.Enemy:
+                targets.push(this.enemyService.get(ctx, selectedEnemy));
+                break;
+        }
+
+        if (!targets) throw new Error(`Target ${type} not found`);
+
+        return targets;
     }
 }

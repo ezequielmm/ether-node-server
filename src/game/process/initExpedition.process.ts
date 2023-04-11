@@ -12,6 +12,11 @@ import { IExpeditionPlayerStateDeckCard } from '../components/expedition/expedit
 import { ExpeditionService } from '../components/expedition/expedition.service';
 import { SettingsService } from '../components/settings/settings.service';
 import { MapService } from '../map/map.service';
+import { GearItem } from '../../playerGear/gearItem';
+import { Contest } from '../contest/contest.schema';
+import { IPlayerToken } from '../components/expedition/expedition.schema';
+import { ContestService } from '../contest/contest.service';
+import { ContestMapService } from '../contestMap/contestMap.service';
 
 @Injectable()
 export class InitExpeditionProcess {
@@ -24,29 +29,58 @@ export class InitExpeditionProcess {
         private readonly customDeckService: CustomDeckService,
         private readonly settingsService: SettingsService,
         private readonly mapService: MapService,
+        private readonly contestService: ContestService,
+        private readonly contestMapService: ContestMapService,
     ) {}
 
     async handle({
         playerId,
         playerName,
         email,
-        nftId,
+        playerToken,
+        equippedGear,
+        character_class,
+        contest,
     }: {
         playerId: number;
         playerName: string;
         email: string;
-        nftId: number;
+        playerToken: IPlayerToken;
+        equippedGear: GearItem[];
+        character_class: string;
+        contest: Contest;
     }): Promise<void> {
+        let character_class_enum = CharacterClassEnum.Knight;
+
+        switch (character_class) {
+            case 'Knight':
+                character_class_enum = CharacterClassEnum.Knight;
+                break;
+            case 'Villager':
+                character_class_enum = CharacterClassEnum.Villager;
+                break;
+            case 'BlessedVillager':
+                character_class_enum = CharacterClassEnum.BlessedVillager;
+                break;
+            case 'NonTokenVillager':
+                character_class_enum = CharacterClassEnum.NonTokenVillager;
+                break;
+            default:
+                character_class_enum = CharacterClassEnum.Knight;
+                break;
+        }
+
         const character = await this.characterService.findOne({
-            characterClass: CharacterClassEnum.Knight,
+            characterClass: character_class_enum,
         });
 
         // Get initial player stats
         const { initialPotionChance } =
             await this.settingsService.getSettings();
 
-        // const map = this.expeditionService.getMap();
-        const map = this.mapService.getActZero();
+        const map = contest
+            ? await this.contestMapService.getMapForContest(contest)
+            : await this.mapService.getActOne(0);
 
         const cards = await this.generatePlayerDeck(character, email);
 
@@ -57,6 +91,7 @@ export class InitExpeditionProcess {
                 basicEnemiesDefeated: 0,
                 eliteEnemiesDefeated: 0,
                 bossEnemiesDefeated: 0,
+                minionEnemiesDefeated: 0,
             },
             mapSeedId: getTimestampInSeconds(),
             actConfig: {
@@ -65,8 +100,9 @@ export class InitExpeditionProcess {
             playerState: {
                 email,
                 playerId: randomUUID(),
+                playerToken,
                 playerName,
-                nftId,
+                equippedGear,
                 characterClass: character.characterClass,
                 hpMax: character.initialHealth,
                 hpCurrent: character.initialHealth,
@@ -76,7 +112,9 @@ export class InitExpeditionProcess {
                 cardUpgradeCount: 0,
                 cardDestroyCount: 0,
                 trinkets: [],
+                lootboxRarity: character.lootboxRarity,
             },
+            contest,
             status: ExpeditionStatusEnum.InProgress,
             isCurrentlyPlaying: false,
             createdAt: new Date(),

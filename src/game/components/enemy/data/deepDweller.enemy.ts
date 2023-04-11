@@ -14,6 +14,7 @@ import { resolveStatus } from 'src/game/status/resolve/constants';
 
 export const deepDwellerData: Enemy = {
     enemyId: 97, // TODO: TEMP ID
+    isActive: false,
     name: 'Deep Dweller',
     type: EnemyTypeEnum.Beast,
     category: EnemyCategoryEnum.Boss,

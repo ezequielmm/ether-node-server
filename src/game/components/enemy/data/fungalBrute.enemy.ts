@@ -1,6 +1,7 @@
 import { addCardEffect } from 'src/game/effects/addCard/contants';
 import { damageEffect } from 'src/game/effects/damage/constants';
 import { defenseEffect } from 'src/game/effects/defense/constants';
+import { AddCardPosition } from 'src/game/effects/effects.enum';
 import { spawnEnemyEffect } from 'src/game/effects/spawnEnemy/contants';
 import { CardTargetedEnum } from '../../card/card.enum';
 import { StunnedCard } from '../../card/data/stunned.card';
@@ -16,6 +17,7 @@ import { yellowSporelingData } from './yellowSporeling.enemy';
 
 export const fungalBruteData: Enemy = {
     enemyId: 7,
+    isActive: true,
     name: 'FungalBrute',
     type: EnemyTypeEnum.Plant,
     category: EnemyCategoryEnum.Boss,
@@ -46,6 +48,10 @@ export const fungalBruteData: Enemy = {
                             args: {
                                 value: 4,
                             },
+                            action: {
+                                name: 'Stomp',
+                                hint: 'attack1',
+                            },
                         },
                     ],
                 },
@@ -60,7 +66,7 @@ export const fungalBruteData: Enemy = {
                             args: {
                                 value: 2,
                                 cardId: StunnedCard.cardId,
-                                destination: 'draw',
+                                destination: 'discard',
                             },
                         },
                     ],
@@ -91,6 +97,10 @@ export const fungalBruteData: Enemy = {
                             args: {
                                 value: 8,
                             },
+                            action: {
+                                name: 'Rumble',
+                                hint: 'cast1',
+                            },
                         },
                     ],
                 },
@@ -115,6 +125,10 @@ export const fungalBruteData: Enemy = {
                             target: CardTargetedEnum.Player,
                             args: {
                                 value: 28,
+                            },
+                            action: {
+                                name: 'Crush',
+                                hint: 'attack2',
                             },
                         },
                     ],
@@ -147,6 +161,10 @@ export const fungalBruteData: Enemy = {
                                     redSporelingData.enemyId,
                                     yellowSporelingData.enemyId,
                                 ],
+                            },
+                            action: {
+                                name: 'Spawn',
+                                hint: 'cast2',
                             },
                         },
                     ],

@@ -13,16 +13,18 @@ import { addCardEffect } from 'src/game/effects/addCard/contants';
 import { StunnedCard } from '../../card/data/stunned.card';
 import { spikesStatus } from 'src/game/status/spikes/constants';
 import { attachStatusEffect } from 'src/game/effects/attachStatus/constants';
+import { AddCardPosition } from 'src/game/effects/effects.enum';
 
 export const treantData: Enemy = {
     enemyId: 13,
+    isActive: true,
     name: 'Treant',
     type: EnemyTypeEnum.Plant,
     category: EnemyCategoryEnum.Boss,
     size: EnemySizeEnum.Giant,
     description:
         'An elemental giant with a terrifying giant hand that reaches for knights and CRUSHES them, or claws the ground to send a shockwave of dirt and rocks their way',
-    healthRange: [160, 160],
+    healthRange: [200, 200],
     scripts: [
         {
             id: 0,
@@ -45,6 +47,10 @@ export const treantData: Enemy = {
                                 statusArgs: {
                                     counter: 5,
                                 },
+                            },
+                            action: {
+                                name: 'Rage',
+                                hint: 'attack1',
                             },
                         },
                     ],
@@ -75,6 +81,27 @@ export const treantData: Enemy = {
                             args: {
                                 value: 5,
                             },
+                            action: {
+                                name: 'Beat',
+                                hint: 'attack2',
+                            },
+                        },
+                    ],
+                },
+                {
+                    type: EnemyIntentionType.Buff,
+                    target: CardTargetedEnum.Self,
+                    value: 5,
+                    effects: [
+                        {
+                            effect: attachStatusEffect.name,
+                            target: CardTargetedEnum.Self,
+                            args: {
+                                statusName: resolveStatus.name,
+                                statusArgs: {
+                                    counter: 5,
+                                },
+                            },
                         },
                     ],
                 },
@@ -104,6 +131,10 @@ export const treantData: Enemy = {
                             args: {
                                 value: 5,
                                 multiplier: 2,
+                            },
+                            action: {
+                                name: 'Pummel',
+                                hint: 'attack3',
                             },
                         },
                     ],
@@ -149,6 +180,10 @@ export const treantData: Enemy = {
                                 value: 5,
                                 multiplier: 3,
                             },
+                            action: {
+                                name: 'Rampage',
+                                hint: 'attack1',
+                            },
                         },
                     ],
                 },
@@ -179,6 +214,11 @@ export const treantData: Enemy = {
                                 value: 3,
                                 cardId: StunnedCard.cardId,
                                 destination: 'draw',
+                                position: AddCardPosition.Random,
+                            },
+                            action: {
+                                name: 'Shockwave',
+                                hint: 'cast1',
                             },
                         },
                     ],
@@ -211,6 +251,10 @@ export const treantData: Enemy = {
                                 statusArgs: {
                                     counter: 1,
                                 },
+                            },
+                            action: {
+                                name: 'Shield',
+                                hint: 'cast2',
                             },
                         },
                     ],

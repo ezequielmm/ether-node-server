@@ -13,6 +13,7 @@ import { Enemy } from '../enemy.schema';
 // Nerf version of swampGoblin2Data
 export const swampGoblin4Data: Enemy = {
     enemyId: 44,
+    isActive: true,
     name: 'SwampGoblin4',
     type: EnemyTypeEnum.Fae,
     category: EnemyCategoryEnum.Basic,
@@ -46,6 +47,10 @@ export const swampGoblin4Data: Enemy = {
                                     counter: 3,
                                 },
                             },
+                            action: {
+                                name: 'Enrage',
+                                hint: 'cast1',
+                            },
                         },
                     ],
                 },
@@ -70,6 +75,10 @@ export const swampGoblin4Data: Enemy = {
                             target: CardTargetedEnum.Player,
                             args: {
                                 value: 4,
+                            },
+                            action: {
+                                name: 'Strike',
+                                hint: 'attack1',
                             },
                         },
                     ],

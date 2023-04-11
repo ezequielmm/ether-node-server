@@ -1,7 +1,7 @@
 import { CardTargetedEnum } from '../components/card/card.enum';
 import { EnemyId } from '../components/enemy/enemy.type';
 import { GameContext, ExpeditionEntity } from '../components/interfaces';
-import { Effect, EffectDTO } from '../effects/effects.interface';
+import { Effect, EffectDTO, IActionHint } from '../effects/effects.interface';
 import { TargetId } from '../effects/effects.types';
 
 export enum StatusType {
@@ -126,6 +126,7 @@ export type StatusName = string;
 
 export interface StatusArgs extends Record<string, any> {
     counter: number;
+    counterDynamic?: string;
     description?: string;
 }
 
@@ -167,6 +168,7 @@ export interface AttachedStatus {
         counter?: number;
         // This is for armored up status
         cardsToAdd?: number[];
+        counterDynamic?: string;
     } & Record<string, any>;
 }
 
@@ -303,6 +305,7 @@ export interface AttachDTO {
     target: ExpeditionEntity;
     statusName: StatusName;
     statusArgs: StatusArgs;
+    action?: IActionHint;
 }
 
 export interface AttachToPlayerDTO {

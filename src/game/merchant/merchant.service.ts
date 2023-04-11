@@ -37,6 +37,9 @@ import { TrinketService } from '../components/trinket/trinket.service';
 import { TrinketRarityEnum } from '../components/trinket/trinket.enum';
 import { GameContext } from '../components/interfaces';
 import { filter, find } from 'lodash';
+import { Node } from '../components/expedition/node';
+import { Trinket } from '../components/trinket/trinket.schema';
+import { map } from 'lodash';
 
 @Injectable()
 export class MerchantService {
@@ -49,16 +52,38 @@ export class MerchantService {
         private readonly trinketService: TrinketService,
     ) {}
 
-    async generateMerchant(): Promise<MerchantItems> {
-        const potions = await this.getPotions();
-        const cards = await this.getCards();
-        const trinkets = await this.getTrinkets();
+    async generateMerchant(
+        ctx?: GameContext | null,
+        node?: Node,
+    ): Promise<MerchantItems> {
+        const cards = node?.private_data?.cards || await this.getCards();
+        const potions = node?.private_data?.potions || await this.getPotions();
+        let trinkets = node?.private_data?.trinkets || await this.getTrinkets();
 
+        if (ctx) {
+            const trinketsInInventory = map<Trinket>(
+                ctx.expedition.playerState.trinkets,
+                'trinketId',
+            );
+    
+            trinkets = trinkets.map(function (trinket) {
+                if (trinketsInInventory.includes(trinket.itemId)) {
+                    trinket.isSold = true;
+                    trinket.cost =
+                        trinket.cost < ctx.expedition.playerState.gold
+                            ? ctx.expedition.playerState.gold *
+                              (1 + Math.random() / 3)
+                            : trinket.cost;
+                }
+                return trinket;
+            });
+        }
+        
         return {
             cards,
             potions,
-            trinkets,
-        };
+            trinkets
+        }
     }
 
     async buyItem(ctx: GameContext, selectedItem: SelectedItem): Promise<void> {
@@ -327,25 +352,28 @@ export class MerchantService {
         const itemsData: Item[] = [];
 
         for (const card of cards) {
-            let cost: number = null;
+            let cost = 0;
 
             switch (card.rarity) {
                 case CardRarityEnum.Common:
-                    cost = getRandomBetween(
+                    cost = this.getCardPrice(
                         CardCommon.minPrice,
                         CardCommon.maxPrice,
+                        card.isUpgraded,
                     );
                     break;
                 case CardRarityEnum.Uncommon:
-                    cost = getRandomBetween(
+                    cost = this.getCardPrice(
                         CardUncommon.minPrice,
                         CardUncommon.maxPrice,
+                        card.isUpgraded,
                     );
                     break;
                 case CardRarityEnum.Rare:
-                    cost = getRandomBetween(
+                    cost = this.getCardPrice(
                         CardRare.minPrice,
                         CardRare.maxPrice,
+                        card.isUpgraded,
                     );
                     break;
             }
@@ -379,7 +407,7 @@ export class MerchantService {
             });
         }
 
-        const randomIndex: number = getRandomBetween(0, itemsData.length);
+        const randomIndex: number = getRandomBetween(0, itemsData.length - 1);
 
         itemsData[randomIndex] = {
             ...itemsData[randomIndex],
@@ -388,6 +416,15 @@ export class MerchantService {
         };
 
         return itemsData;
+    }
+
+    private getCardPrice(
+        minPrice: number,
+        maxPrice: number,
+        isCardUpgraded: boolean,
+    ): number {
+        const priceIncrease = isCardUpgraded ? maxPrice - minPrice : 0;
+        return getRandomBetween(minPrice, maxPrice) + priceIncrease;
     }
 
     private async failure(

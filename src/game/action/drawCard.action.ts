@@ -1,6 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { isNotUndefined, removeCardsFromPile } from 'src/utils';
-import { CardTypeEnum } from '../components/card/card.enum';
+import {
+    CardTypeEnum,
+    CardDrawDepletedStrategyEnum,
+} from '../components/card/card.enum';
 import { IExpeditionPlayerStateDeckCard } from '../components/expedition/expedition.interface';
 import { ExpeditionService } from '../components/expedition/expedition.service';
 import {
@@ -13,7 +16,7 @@ import { CardService } from '../components/card/card.service';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { EVENT_AFTER_DRAW_CARDS } from '../constants';
 import { GameContext } from '../components/interfaces';
-import { shuffle, takeRight } from 'lodash';
+import { shuffle, takeRight, sampleSize } from 'lodash';
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 
 export interface AfterDrawCardEvent {
@@ -36,27 +39,29 @@ export class DrawCardAction {
     async handle({
         ctx,
         amountToTake,
-        cardType,
+        filterType,
         SWARMessageTypeToSend,
         useEnemiesConfusedAsValue,
     }: {
         ctx: GameContext;
         readonly amountToTake: number;
         readonly SWARMessageTypeToSend: SWARMessageType;
-        readonly cardType?: CardTypeEnum;
+        readonly filterType?: CardTypeEnum;
         readonly useEnemiesConfusedAsValue?: boolean;
     }): Promise<void> {
-        const { client } = ctx;
+        if (amountToTake < 1) return;
 
+        const { client } = ctx;
         const logger = this.logger.logger.child(ctx.info);
 
-        const cardTypeFilter = cardType === undefined ? 'All' : cardType;
+        const filterPile = function (
+            pile: IExpeditionPlayerStateDeckCard[],
+        ): IExpeditionPlayerStateDeckCard[] {
+            return (typeof filterType === 'undefined')
+                ? pile
+                : pile.filter(({ cardType }) => cardType === filterType);
+        };
 
-        // First we check if we receive a cardType parameter
-        // if not we set the filter to get all the cards
-
-        // First we get the hand and draw piles from the current node object
-        // Also we get the discard pile for a later step
         const {
             data: {
                 player: {
@@ -66,80 +71,59 @@ export class DrawCardAction {
             },
         } = ctx.expedition.currentNode;
 
-        // First we check is we have to take at least 1 card
-        if (amountToTake > 0) {
-            // Now we check if we have a condition to filter the cards
-            // by type
+        const drawFiltered = filterPile(draw);
+        const discardFiltered = filterPile(discard);
 
-            let drawPile = draw;
-            let discardPile = discard;
+        // First, draw from draw pile
+        let cardsTaken: IExpeditionPlayerStateDeckCard[] = takeRight(
+            drawFiltered,
+            Math.min(amountToTake, drawFiltered.length),
+        );
 
-            if (cardTypeFilter !== 'All') {
-                drawPile = draw.filter(
-                    ({ cardType }) => cardType === cardTypeFilter,
+        // Remove Drawn Cards from full current draw pile
+        let newDraw = removeCardsFromPile({
+            originalPile: draw,
+            cardsToRemove: cardsTaken,
+        });
+
+        // Tell client to draw the cards available in the draw pile.
+        logger.info(
+            `Sent message PutData to client ${client.id}: ${SWARAction.MoveCard}`,
+        );
+
+        client.emit(
+            'PutData',
+            StandardResponse.respond({
+                message_type: SWARMessageTypeToSend,
+                action: SWARAction.MoveCard,
+                data: cardsTaken.map(({ id }) => ({
+                    source: 'draw',
+                    destination: 'hand',
+                    id,
+                })),
+            }),
+        );
+
+        // Do we still need more cards?
+        let newDiscard = [...discard];
+        if (cardsTaken.length < amountToTake && discardFiltered.length > 0) {
+            const drawDepletedStrategy =
+                (typeof filterType === 'undefined')
+                    ? CardDrawDepletedStrategyEnum.ShuffleDiscard
+                    : CardDrawDepletedStrategyEnum.SampleDiscard;
+            let remainingCardsTaken: IExpeditionPlayerStateDeckCard[] = [];
+
+            if (
+                drawDepletedStrategy ===
+                CardDrawDepletedStrategyEnum.SampleDiscard
+            ) {
+                // sampleSize grabs unique random elements up to value as collection
+                remainingCardsTaken = sampleSize(
+                    discardFiltered,
+                    amountToTake - cardsTaken.length,
                 );
 
-                discardPile = discard.filter(
-                    ({ cardType }) => cardType === cardTypeFilter,
-                );
-            }
-
-            // Verify how many card we need from the draw pile
-            // And how many we might need from the discard pile
-            const amountToTakeFromDraw = Math.min(
-                amountToTake,
-                drawPile.length,
-            );
-            const amountToTakeFromDiscard = Math.max(
-                0,
-                Math.min(amountToTake - drawPile.length, discardPile.length),
-            );
-
-            // Now, we will always take from the draw pile first
-            // we will create the array that will store those cards first
-            let cardsToMoveToHand: IExpeditionPlayerStateDeckCard[] = [];
-
-            // Now we take the cards we need from the draw pile
-            cardsToMoveToHand = takeRight(drawPile, amountToTakeFromDraw);
-
-            // Remove the cards taken from the draw pile
-            let newDraw = removeCardsFromPile({
-                originalPile: draw,
-                cardsToRemove: cardsToMoveToHand,
-            });
-
-            // Set the discard pile in case we don't need
-            let newDiscard = [...discardPile];
-
-            // Send create message for the new cards
-            // source: draw
-            // destination: hand
-            logger.info(
-                `Sent message PutData to client ${client.id}: ${SWARAction.MoveCard}`,
-            );
-
-            client.emit(
-                'PutData',
-                StandardResponse.respond({
-                    message_type: SWARMessageTypeToSend,
-                    action: SWARAction.MoveCard,
-                    data: cardsToMoveToHand.map(({ id }) => ({
-                        source: 'draw',
-                        destination: 'hand',
-                        id,
-                    })),
-                }),
-            );
-
-            // Now we check if we have to take cards from the discard pile
-            if (amountToTakeFromDiscard > 0) {
-                // First we move all the cards from the discard pile to the
-                // draw pile and shuffle it
-                newDraw = shuffle([...newDraw, ...discard]);
-
-                // Send create message for the cards
-                // source: discard
-                // destination: draw
+                // Tell client to move cards from discard to hand.
                 logger.info(
                     `Sent message PutData to client ${client.id}: ${SWARAction.MoveCard}`,
                 );
@@ -149,7 +133,39 @@ export class DrawCardAction {
                     StandardResponse.respond({
                         message_type: SWARMessageTypeToSend,
                         action: SWARAction.MoveCard,
-                        data: discardPile.map(({ id }) => ({
+                        data: remainingCardsTaken.map(({ id }) => ({
+                            source: 'discard',
+                            destination: 'hand',
+                            id,
+                        })),
+                    }),
+                );
+
+                newDiscard = removeCardsFromPile({
+                    originalPile: discard,
+                    cardsToRemove: remainingCardsTaken,
+                });
+            }
+
+            if (
+                drawDepletedStrategy ===
+                CardDrawDepletedStrategyEnum.ShuffleDiscard
+            ) {
+                // First, shuffle the discard pile and place it on the bottom of the draw pile.
+                // Typically, newDraw will be empty here, but if filtering, perhaps not
+                newDraw = [...newDraw, ...shuffle(discard)];
+                newDiscard = [];
+
+                logger.info(
+                    `Sent message PutData to client ${client.id}: ${SWARAction.MoveCard}`,
+                );
+
+                client.emit(
+                    'PutData',
+                    StandardResponse.respond({
+                        message_type: SWARMessageTypeToSend,
+                        action: SWARAction.MoveCard,
+                        data: discard.map(({ id }) => ({
                             source: 'discard',
                             destination: 'draw',
                             id,
@@ -157,28 +173,17 @@ export class DrawCardAction {
                     }),
                 );
 
-                newDiscard = [];
-
-                // Here we get the rest of cards to take from the discard pile
-                const restOfCardsToTake = takeRight(
-                    newDraw,
-                    amountToTakeFromDiscard,
+                // Now, take the remaining cards from the new draw pile, respecting filtered type
+                remainingCardsTaken = takeRight(
+                    filterPile(newDraw),
+                    amountToTake - cardsTaken.length,
                 );
-
-                // next we take the rest of the card that we need
-                cardsToMoveToHand = [
-                    ...cardsToMoveToHand,
-                    ...restOfCardsToTake,
-                ];
 
                 newDraw = removeCardsFromPile({
                     originalPile: newDraw,
-                    cardsToRemove: cardsToMoveToHand,
+                    cardsToRemove: remainingCardsTaken,
                 });
 
-                // Send create message for the new cards
-                // source: draw
-                // destination: hand
                 logger.info(
                     `Sent message PutData to client ${client.id}: ${SWARAction.MoveCard}`,
                 );
@@ -188,7 +193,7 @@ export class DrawCardAction {
                     StandardResponse.respond({
                         message_type: SWARMessageTypeToSend,
                         action: SWARAction.MoveCard,
-                        data: restOfCardsToTake.map(({ id }) => ({
+                        data: remainingCardsTaken.map(({ id }) => ({
                             source: 'draw',
                             destination: 'hand',
                             id,
@@ -197,52 +202,50 @@ export class DrawCardAction {
                 );
             }
 
-            // Here we check if we have to modify the energy cost
-            // of the taken cards if there is at least one
-            // enemy with a confusion status
-            if (isNotUndefined(useEnemiesConfusedAsValue)) {
-                // First we initialize a boolean for the confused
-                // enemies
-
-                // Next go to all the enemies and check if we have
-                // at least one enemy confused
-                const hasConfusedEnemies = enemies.some(
-                    ({ statuses: { debuff: debuffs } }) =>
-                        debuffs.some(
-                            (debuff) => debuff.name === confusion.name,
-                        ),
-                );
-
-                // If it does, we modify the cost for the cards to 0
-                if (hasConfusedEnemies)
-                    cardsToMoveToHand.forEach((card) => {
-                        card.energy = 0;
-                    });
-            }
-
-            // Move the cards to the hand pile
-            const newHand = [...hand, ...cardsToMoveToHand];
-
-            // Reset the energy of the cards in the hand
-            for (const card of newHand) {
-                const { energy } = await this.cardService.findById(card.cardId);
-                card.energy = energy;
-            }
-
-            // Update piles
-            await this.expeditionService.updateHandPiles({
-                clientId: client.id,
-                hand: newHand,
-                draw: newDraw,
-                discard: newDiscard,
-            });
-
-            await this.eventEmitter2.emitAsync(EVENT_AFTER_DRAW_CARDS, {
-                ctx,
-                newHand,
-                newDraw,
-                newDiscard,
-            });
+            // Consolidate all cards taken to one list
+            cardsTaken = [...cardsTaken, ...remainingCardsTaken];
         }
+
+        // This modificationNow modify cards taken if necessary
+        if (isNotUndefined(useEnemiesConfusedAsValue)) {
+            // is there a confused enemy?
+            const hasConfusedEnemies = enemies.some(
+                ({ statuses: { debuff: debuffs } }) =>
+                    debuffs.some((debuff) => debuff.name === confusion.name),
+            );
+
+            // If so, cards cost 0
+            if (hasConfusedEnemies)
+                cardsTaken.forEach((card) => {
+                    card.energy = 0;
+                });
+        }
+
+        // Move the cards taken to the hand pile
+        const newHand = [...hand, ...cardsTaken];
+
+        // FIX ME: This shouldn't be here. It cancels out the discounts on draw, and cards should be resetting as they are discarded, if they are meant to
+        /*
+        // Reset the energy of the cards in the hand
+        for (const card of newHand) {
+            const { energy } = await this.cardService.findById(card.cardId);
+            card.energy = energy;
+        }
+        */
+
+        // Update piles
+        await this.expeditionService.updateHandPiles({
+            clientId: client.id,
+            hand: newHand,
+            draw: newDraw,
+            discard: newDiscard,
+        });
+
+        await this.eventEmitter2.emitAsync(EVENT_AFTER_DRAW_CARDS, {
+            ctx,
+            newHand,
+            newDraw,
+            newDiscard,
+        });
     }
 }

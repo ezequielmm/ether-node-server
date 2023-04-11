@@ -24,13 +24,28 @@ import {
     ScoreCalculatorService,
     ScoreResponse,
 } from 'src/game/scoreCalculator/scoreCalculator.service';
+import { GearItem } from '../playerGear/gearItem';
+import { PlayerGearService } from '../playerGear/playerGear.service';
+import { ContestService } from '../game/contest/contest.service';
+import { Contest } from 'src/game/contest/contest.schema';
+import { IPlayerToken } from 'src/game/components/expedition/expedition.schema';
+import { PlayerWinService } from 'src/playerWin/playerWin.service';
 
 class CreateExpeditionApiDTO {
-    @ApiProperty({ default: 'knight' })
-    readonly class: string;
+    @ApiProperty({ default: 'Knight' })
+    readonly tokenType: string;
+
+    @ApiProperty()
+    readonly walletId: string;
+
+    @ApiProperty()
+    readonly contractId: string;
 
     @ApiProperty()
     readonly nftId: number;
+
+    @ApiProperty()
+    readonly equippedGear: GearItem[];
 }
 
 @ApiBearerAuth()
@@ -43,6 +58,9 @@ export class ExpeditionController {
         private readonly expeditionService: ExpeditionService,
         private readonly initExpeditionProcess: InitExpeditionProcess,
         private readonly scoreCalculatorService: ScoreCalculatorService,
+        private readonly playerGearService: PlayerGearService,
+        private readonly playerWinService: PlayerWinService,
+        private contestService: ContestService,
     ) {}
 
     private readonly logger: Logger = new Logger(ExpeditionController.name);
@@ -51,12 +69,19 @@ export class ExpeditionController {
         summary: 'Check if the given user has an expedition in progress or not',
     })
     @Get('/status')
-    async handleGetExpeditionStatus(
-        @Headers() headers,
-    ): Promise<{ hasExpedition: boolean; nftId: number }> {
+    async handleGetExpeditionStatus(@Headers() headers): Promise<{
+        hasExpedition: boolean;
+        contractId: string;
+        nftId: number;
+        tokenType: string;
+        equippedGear: GearItem[];
+        contest: Contest;
+    }> {
         this.logger.log(`Client called GET route "/expeditions/status"`);
 
         const { authorization } = headers;
+
+        //todo add class knight, villager, blessedvillager
 
         try {
             const { id: playerId } = await this.authGatewayService.getUser(
@@ -73,9 +98,25 @@ export class ExpeditionController {
 
             const hasExpedition =
                 expedition !== null && !expedition.isCurrentlyPlaying;
-            const nftId = expedition?.playerState?.nftId ?? -1;
+            const contractId =
+                expedition?.playerState?.playerToken?.contractId ?? '-1';
+            const nftId = expedition?.playerState?.playerToken?.tokenId ?? -1; // tokenId is not enough to avoid conflicts between collections. We have to check contract as well.
+            const equippedGear = expedition?.playerState?.equippedGear ?? [];
+            const tokenType =
+                expedition?.playerState?.characterClass ?? 'missing';
+            //todo parse for front end
+            const contest =
+                expedition?.contest ??
+                (await this.contestService.findActiveContest());
 
-            return { hasExpedition, nftId };
+            return {
+                hasExpedition,
+                contractId,
+                nftId,
+                tokenType,
+                equippedGear,
+                contest,
+            };
         } catch (e) {
             this.logger.error(e.stack);
             throw new HttpException(
@@ -97,6 +138,7 @@ export class ExpeditionController {
         @Body() payload: CreateExpeditionApiDTO,
     ): Promise<{
         expeditionCreated: boolean;
+        reason?: string;
     }> {
         this.logger.log(`Client called POST route "/expeditions"`);
 
@@ -109,7 +151,23 @@ export class ExpeditionController {
                 email,
             } = await this.authGatewayService.getUser(authorization);
 
-            const { nftId } = payload;
+            const { equippedGear, tokenType: character_class } = payload;
+            const playerToken: IPlayerToken = {
+                walletId: payload.walletId,
+                contractId: payload.contractId,
+                tokenId: payload.nftId,
+            };
+
+            if (equippedGear?.length === 0) {
+                // validate equippedGear vs ownedGeared
+                const all_are_owned = await this.playerGearService.allAreOwned(
+                    playerId,
+                    equippedGear,
+                );
+                if (!all_are_owned) {
+                    return { expeditionCreated: false, reason: 'wrong gear' };
+                }
+            }
 
             const hasExpedition =
                 await this.expeditionService.playerHasExpeditionInProgress({
@@ -117,11 +175,35 @@ export class ExpeditionController {
                 });
 
             if (!hasExpedition) {
+                const contest = await this.contestService.findActiveContest();
+                if (!contest) {
+                    return {
+                        expeditionCreated: false,
+                        reason: 'no contest found',
+                    };
+                }
+
+                const can_play = await this.playerWinService.canPlay(
+                    contest.event_id,
+                    playerToken.contractId,
+                    playerToken.tokenId,
+                );
+
+                if (!can_play) {
+                    return {
+                        expeditionCreated: false,
+                        reason: 'ineligible token',
+                    };
+                }
+
                 await this.initExpeditionProcess.handle({
                     playerId,
                     playerName,
                     email,
-                    nftId,
+                    playerToken,
+                    equippedGear,
+                    character_class,
+                    contest,
                 });
 
                 return { expeditionCreated: true };
@@ -207,9 +289,7 @@ export class ExpeditionController {
 
             if (!expedition) return null;
 
-            return this.scoreCalculatorService.calculate({
-                expedition,
-            });
+            return expedition.finalScore;
         } catch (e) {
             this.logger.error(e.stack);
             throw new HttpException(

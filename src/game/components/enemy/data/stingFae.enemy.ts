@@ -13,6 +13,7 @@ import { Enemy } from '../enemy.schema';
 
 export const stingFaeData: Enemy = {
     enemyId: 10,
+    isActive: true,
     name: 'StingFae1',
     type: EnemyTypeEnum.Fae,
     category: EnemyCategoryEnum.Basic,
@@ -42,6 +43,10 @@ export const stingFaeData: Enemy = {
                             args: {
                                 value: 5,
                             },
+                            action: {
+                                name: 'Stab',
+                                hint: 'attack1',
+                            },
                         },
                     ],
                 },
@@ -66,6 +71,10 @@ export const stingFaeData: Enemy = {
                             target: CardTargetedEnum.Self,
                             args: {
                                 value: 5,
+                            },
+                            action: {
+                                name: 'Dodge',
+                                hint: 'cast1',
                             },
                         },
                     ],
@@ -96,7 +105,11 @@ export const stingFaeData: Enemy = {
                             args: {
                                 value: 1,
                                 cardId: PoisonedCard.cardId,
-                                destination: 'draw',
+                                destination: 'discard',
+                            },
+                            action: {
+                                name: 'Sting',
+                                hint: 'attack2',
                             },
                         },
                     ],
