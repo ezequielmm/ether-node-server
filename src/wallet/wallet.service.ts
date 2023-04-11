@@ -42,9 +42,9 @@ export class WalletService {
         );
 
         for await (const contract of nfts.tokens) {
-            const characterClass = this.characterService.getCharacterByContractId(contract.contract_address);
+            const character = await this.characterService.getCharacterByContractId(contract.contract_address);
             for await (const token of contract.tokens) {
-                token.characterClass = characterClass;
+                token.characterClass = character?.characterClass ?? 'unknown';
                 token.can_play =
                     await this.playerWinService.canPlay(
                         event_id,
