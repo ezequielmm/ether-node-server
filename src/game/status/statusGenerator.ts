@@ -127,7 +127,7 @@ export class StatusGenerator {
             case tasteOfBloodDebuff.name:
                 return `Take double damage`;
             default:
-                return `Unknown status`;
+                return undefined;
         }
     }
 }
