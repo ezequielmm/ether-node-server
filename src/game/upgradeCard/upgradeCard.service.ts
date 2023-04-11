@@ -158,13 +158,16 @@ export class UpgradeCardService {
     private generateUpgradedCardData(
         upgradedCard: Card,
     ): IExpeditionPlayerStateDeckCard {
+        upgradedCard.description = CardDescriptionFormatter.process(upgradedCard);
+        this.cardService.addStatusDescriptions(upgradedCard);
+
         return {
             id: randomUUID(),
             cardId: upgradedCard.cardId,
             name: upgradedCard.name,
             cardType: upgradedCard.cardType,
             energy: upgradedCard.energy,
-            description: CardDescriptionFormatter.process(upgradedCard),
+            description: upgradedCard.description,
             isTemporary: false,
             rarity: upgradedCard.rarity,
             properties: upgradedCard.properties,

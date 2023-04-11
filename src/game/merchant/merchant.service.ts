@@ -383,6 +383,9 @@ export class MerchantService {
                     break;
             }
 
+            card.description = CardDescriptionFormatter.process(card);
+            this.cardService.addStatusDescriptions(card);
+
             const itemId = randomUUID();
 
             itemsData.push({
@@ -400,7 +403,7 @@ export class MerchantService {
                     cardType: card.cardType,
                     pool: card.pool,
                     energy: card.energy,
-                    description: CardDescriptionFormatter.process(card),
+                    description: card.description,
                     isTemporary: false,
                     properties: card.properties,
                     keywords: card.keywords,
@@ -575,6 +578,9 @@ export class MerchantService {
         if (!upgradedCardData)
             return this.failure(client, PurchaseFailureEnum.InvalidId);
 
+        upgradedCardData.description = CardDescriptionFormatter.process(upgradedCardData);
+        this.cardService.addStatusDescriptions(upgradedCardData);
+
         // Here we create the card object to be added to the player state
         const upgradedCard: IExpeditionPlayerStateDeckCard = {
             id: randomUUID(),
@@ -582,7 +588,7 @@ export class MerchantService {
             name: upgradedCardData.name,
             cardType: upgradedCardData.cardType,
             energy: upgradedCardData.energy,
-            description: CardDescriptionFormatter.process(upgradedCardData),
+            description: upgradedCardData.description,
             isTemporary: false,
             rarity: upgradedCardData.rarity,
             properties: upgradedCardData.properties,

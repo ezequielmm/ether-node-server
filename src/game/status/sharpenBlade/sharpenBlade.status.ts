@@ -31,6 +31,8 @@ export class SharpenBladeStatus implements StatusEventHandler {
                 ? FineEdgeCardUpgraded.cardId
                 : FineEdgeCard.cardId,
         );
+        card.description = CardDescriptionFormatter.process(card);
+        this.cardService.addStatusDescriptions(card);
 
         const cards: IExpeditionPlayerStateDeckCard[] = [];
 
@@ -39,9 +41,7 @@ export class SharpenBladeStatus implements StatusEventHandler {
                 cardId: card.cardId,
                 id: randomUUID(),
                 name: card.name,
-                description: CardDescriptionFormatter.process(
-                    card as unknown as IExpeditionPlayerStateDeckCard,
-                ),
+                description: card.description,
                 rarity: card.rarity,
                 energy: card.energy,
                 cardType: card.cardType,

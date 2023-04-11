@@ -211,6 +211,7 @@ export class RewardService {
 
             if (card) {
                 const cardFormattedDescription = CardDescriptionFormatter.process(card);
+                this.cardService.addStatusDescriptions(card);
 
                 const cardPreview = {
                     description: cardFormattedDescription,
