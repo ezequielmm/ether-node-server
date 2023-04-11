@@ -27,10 +27,10 @@ export class CharacterService {
         let filter = undefined;
         switch (chain) {
             case 1:
-                filter = { contractId: idToFind };
+            filter = { contractId: { $regex: idToFind, $options: "i" } };
                 break;
             case 5:
-                filter = { contractIdTest: idToFind };
+                filter = { contractIdTest: { $regex: idToFind, $options: "i" } };
                 break;
         }
         return this.character.findOne(filter).lean();
