@@ -191,6 +191,7 @@ export class RewardService {
         node: Node,
     ): Promise<CardReward[]> {
         const cardRewards: CardReward[] = [];
+        let tryAgainIfUndef = true;
 
         // First we create a loop for 3 cards
         for (let i = 0; i < cardsToGenerate.length; i++) {
@@ -208,28 +209,35 @@ export class RewardService {
                 isUpgraded: node.act > 1,
             });
 
-            const cardFormattedDescription = CardDescriptionFormatter.process(card);
+            if (card) {
+                const cardFormattedDescription = CardDescriptionFormatter.process(card);
 
-            const cardPreview = {
-                description: cardFormattedDescription,
-                ...pick(card, [
-                    'cardId',
-                    'name',
-                    'energy',
-                    'rarity',
-                    'cardType',
-                    'pool',
-                    'isUpgraded',
-                    'properties',
-                ])
-            } as unknown as CardPreview;
+                const cardPreview = {
+                    description: cardFormattedDescription,
+                    ...pick(card, [
+                        'cardId',
+                        'name',
+                        'energy',
+                        'rarity',
+                        'cardType',
+                        'pool',
+                        'isUpgraded',
+                        'properties',
+                    ])
+                } as unknown as CardPreview;
+    
+                cardRewards.push({
+                    id: randomUUID(),
+                    type: IExpeditionNodeReward.Card,
+                    card: cardPreview,
+                    taken: false,
+                });
 
-            cardRewards.push({
-                id: randomUUID(),
-                type: IExpeditionNodeReward.Card,
-                card: cardPreview,
-                taken: false,
-            });
+                tryAgainIfUndef = true;
+            } else {
+                if (tryAgainIfUndef) i--;
+                tryAgainIfUndef = false;
+            }
         }
 
         return cardRewards;
