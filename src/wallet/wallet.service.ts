@@ -16,6 +16,10 @@ export class WalletService {
         private readonly configService: ConfigService,
     ) {}
 
+    private getHttpFromIpfsURI(ipfs: string): string {
+        return (ipfs) ? "https://ipfs.io/ipfs/" + ipfs.substring(7) : undefined;
+    }
+
     async getTokenIdList(walletId: string): Promise<any[]> {
         // the chain where are deployed the smart contracts
         const chain = this.configService.get<number>('NFT_SERVICE_CHAIN_ID');
@@ -46,6 +50,7 @@ export class WalletService {
             contract.characterClass = character?.characterClass ?? 'unknown';
             for await (const token of contract.tokens) {
                 token.characterClass = character?.characterClass ?? 'unknown';
+                token.adaptedImageURI = this.getHttpFromIpfsURI(token.metadata?.image);
                 token.can_play =
                     await this.playerWinService.canPlay(
                         event_id,
