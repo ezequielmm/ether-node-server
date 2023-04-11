@@ -123,8 +123,6 @@ export class EndExpeditionProcess {
         win = ExpeditionEndingTypeEnum.DEFEAT,
         emit = true
     }:IEndExpeditionProcessParameters): Promise<void> {
-        const logger = this.logger.logger.child(ctx.info);
-
         switch (win) {
             case ExpeditionEndingTypeEnum.VICTORY:
                 await this.handleVictory(ctx, emit);

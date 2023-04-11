@@ -127,11 +127,13 @@ export class PlayerService {
         const player = this.get(ctx);
         const newHp = Math.min(hp, player.value.globalState.hpMax);
 
-        await this.expeditionService.updateById(ctx.expedition._id.toString(), {
+        await this.expeditionService.updateById(ctx.expedition._id.toString(), { 
             [PLAYER_CURRENT_HP_PATH]: newHp,
+            [PLAYER_STATE_HP_CURRENT_PATH]: newHp
         });
 
-        set(ctx.expedition, PLAYER_CURRENT_HP_PATH, newHp);
+        player.value.globalState.hpCurrent = newHp;
+        player.value.combatState.hpCurrent = newHp;
         this.logger.log(ctx.info, `Player hp set to ${newHp}`);
 
         return newHp;
@@ -148,17 +150,18 @@ export class PlayerService {
      * Set the player's global hp
      */
     public async setGlobalHp(ctx: GameContext, hp: number): Promise<number> {
-        const player = this.get(ctx);
-        const newHp = Math.min(hp, player.value.globalState.hpMax);
+        return await this.setHp(ctx, hp);
+        // const player = this.get(ctx);
+        // const newHp = Math.min(hp, player.value.globalState.hpMax);
 
-        await this.expeditionService.updateById(ctx.expedition._id.toString(), {
-            [PLAYER_STATE_HP_CURRENT_PATH]: newHp,
-        });
+        // await this.expeditionService.updateById(ctx.expedition._id.toString(), {
+        //     [PLAYER_STATE_HP_CURRENT_PATH]: newHp,
+        // });
 
-        set(ctx.expedition, PLAYER_STATE_HP_CURRENT_PATH, newHp);
-        this.logger.log(ctx.info, `Player hp set to ${newHp}`);
+        // set(ctx.expedition, PLAYER_STATE_HP_CURRENT_PATH, newHp);
+        // this.logger.log(ctx.info, `Player hp set to ${newHp}`);
 
-        return newHp;
+        // return newHp;
     }
 
     /**
