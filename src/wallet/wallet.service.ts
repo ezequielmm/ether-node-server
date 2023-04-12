@@ -5,7 +5,6 @@ import { ContestService } from '../game/contest/contest.service';
 import { countBy, sortBy } from 'lodash';
 import { CharacterService } from 'src/game/components/character/character.service';
 import { ConfigService } from '@nestjs/config';
-import { Console } from 'console';
 
 @Injectable()
 export class WalletService {
