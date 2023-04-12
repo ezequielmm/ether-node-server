@@ -60,6 +60,8 @@ export class CreateCardAction {
         newCards = newCards.map((card) => {
             card.id = randomUUID();
             card.description = CardDescriptionFormatter.process(card);
+            this.cardService.addStatusDescriptions(card);
+
             return card;
         });
 
@@ -85,7 +87,7 @@ export class CreateCardAction {
                     data: newCards.map(({ id }) => {
                         return {
                             source: null,
-                            destination: 'hand',
+                            destination,
                             id,
                         };
                     }),

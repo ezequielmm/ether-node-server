@@ -165,23 +165,28 @@ export class InitExpeditionProcess {
 
                 return newDeckCards;
             }, [])
-            .map((card) => ({
-                id: randomUUID(),
-                cardId: card.cardId,
-                name: card.name,
-                cardType: card.cardType,
-                energy: card.energy,
-                description: CardDescriptionFormatter.process(card),
-                isTemporary: false,
-                rarity: card.rarity,
-                properties: card.properties,
-                keywords: card.keywords,
-                showPointer: card.showPointer,
-                pool: card.pool,
-                isUpgraded: card.isUpgraded,
-                upgradedCardId: card?.upgradedCardId,
-                triggerAtEndOfTurn: card.triggerAtEndOfTurn,
-                isActive: true,
-            }));
+            .map((card) => {
+                card.description = CardDescriptionFormatter.process(card);
+                this.cardService.addStatusDescriptions(card);
+
+                return {
+                    id: randomUUID(),
+                    cardId: card.cardId,
+                    name: card.name,
+                    cardType: card.cardType,
+                    energy: card.energy,
+                    description: card.description,
+                    isTemporary: false,
+                    rarity: card.rarity,
+                    properties: card.properties,
+                    keywords: card.keywords,
+                    showPointer: card.showPointer,
+                    pool: card.pool,
+                    isUpgraded: card.isUpgraded,
+                    upgradedCardId: card?.upgradedCardId,
+                    triggerAtEndOfTurn: card.triggerAtEndOfTurn,
+                    isActive: true,
+                };
+            });
     }
 }

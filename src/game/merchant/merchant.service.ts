@@ -60,6 +60,12 @@ export class MerchantService {
         const potions = node?.private_data?.potions || await this.getPotions();
         let trinkets = node?.private_data?.trinkets || await this.getTrinkets();
 
+        const result: MerchantItems = {
+            cards,
+            potions,
+            trinkets
+        };
+        
         if (ctx) {
             const trinketsInInventory = map<Trinket>(
                 ctx.expedition.playerState.trinkets,
@@ -77,13 +83,12 @@ export class MerchantService {
                 }
                 return trinket;
             });
+
+            result.destroyCost = this.cardDestroyPrice(ctx.expedition.playerState.cardDestroyCount);
+            result.upgradeCost = this.cardUpgradePrice(ctx.expedition.playerState.cardUpgradeCount);
         }
         
-        return {
-            cards,
-            potions,
-            trinkets
-        }
+        return result;
     }
 
     async buyItem(ctx: GameContext, selectedItem: SelectedItem): Promise<void> {
@@ -378,6 +383,9 @@ export class MerchantService {
                     break;
             }
 
+            card.description = CardDescriptionFormatter.process(card);
+            this.cardService.addStatusDescriptions(card);
+
             const itemId = randomUUID();
 
             itemsData.push({
@@ -395,7 +403,7 @@ export class MerchantService {
                     cardType: card.cardType,
                     pool: card.pool,
                     energy: card.energy,
-                    description: CardDescriptionFormatter.process(card),
+                    description: card.description,
                     isTemporary: false,
                     properties: card.properties,
                     keywords: card.keywords,
@@ -510,6 +518,10 @@ export class MerchantService {
         );
     }
 
+    cardUpgradePrice(cardUpgradeCount: number): number {
+        return 75 + 25 * cardUpgradeCount;
+    }
+
     async cardUpgrade(
         client: Socket,
         selectedItem: SelectedItem,
@@ -523,7 +535,7 @@ export class MerchantService {
         const cardId = selectedItem.targetId as string;
 
         // Now we need the price to upgrade the card
-        const upgradedPrice = 75 + 25 * playerState.cardUpgradeCount;
+        const upgradedPrice = this.cardUpgradePrice(playerState.cardUpgradeCount);
 
         // Now we need to check if the player has enough gold
         if (playerState.gold < upgradedPrice)
@@ -566,6 +578,9 @@ export class MerchantService {
         if (!upgradedCardData)
             return this.failure(client, PurchaseFailureEnum.InvalidId);
 
+        upgradedCardData.description = CardDescriptionFormatter.process(upgradedCardData);
+        this.cardService.addStatusDescriptions(upgradedCardData);
+
         // Here we create the card object to be added to the player state
         const upgradedCard: IExpeditionPlayerStateDeckCard = {
             id: randomUUID(),
@@ -573,7 +588,7 @@ export class MerchantService {
             name: upgradedCardData.name,
             cardType: upgradedCardData.cardType,
             energy: upgradedCardData.energy,
-            description: CardDescriptionFormatter.process(upgradedCardData),
+            description: upgradedCardData.description,
             isTemporary: false,
             rarity: upgradedCardData.rarity,
             properties: upgradedCardData.properties,
@@ -676,6 +691,10 @@ export class MerchantService {
         );
     }
 
+    cardDestroyPrice(cardDestroyCount: number): number {
+        return 75 + 25 * cardDestroyCount;
+    }
+
     async cardDestroy(
         client: Socket,
         selectedItem: SelectedItem,
@@ -689,7 +708,7 @@ export class MerchantService {
         const cardId = selectedItem.targetId as string;
 
         // Now we need the price to destroy the card
-        const destroyPrice = 75 + 25 * playerState.cardDestroyCount;
+        const destroyPrice = this.cardDestroyPrice(playerState.cardDestroyCount);
 
         // Now we need to check if the player has enough gold
         if (playerState.gold < destroyPrice)
