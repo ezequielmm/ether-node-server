@@ -535,13 +535,16 @@ export class EncounterService {
             card.upgradedCardId,
         );
 
+        upgradedCardData.description = CardDescriptionFormatter.process(upgradedCardData);
+        this.cardService.addStatusDescriptions(upgradedCardData);
+
         const upgradedCard: IExpeditionPlayerStateDeckCard = {
             id: randomUUID(),
             cardId: card.cardId,
             name: upgradedCardData.name,
             cardType: upgradedCardData.cardType,
             energy: upgradedCardData.energy,
-            description: CardDescriptionFormatter.process(upgradedCardData),
+            description: upgradedCardData.description,
             isTemporary: false,
             rarity: upgradedCardData.rarity,
             properties: upgradedCardData.properties,

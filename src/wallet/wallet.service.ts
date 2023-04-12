@@ -20,16 +20,11 @@ export class WalletService {
         return (ipfs) ? "https://ipfs.io/ipfs/" + ipfs.substring(7) : undefined;
     }
 
-    async getTokenIdList(walletId: string): Promise<any[]> {
+    async getTokenIdList(walletAddress: string): Promise<any[]> {
         // the chain where are deployed the smart contracts
         const chain = this.configService.get<number>('NFT_SERVICE_CHAIN_ID');
 
-        //some goerli wallets
-        //walletId = '0xa10f15b66a2e05c4e376f8bfc35ae662438153be'; //many knights
-        //walletId = '0x66956Fe08D7Bc88fe70216502fD8a6e4b7f269c5';//2 knights
-        //walletId = '0x2F2CF39D0325A9792f0C9E0de73cdc0820C5c65e'; //many knights
-
-        const all_wins = await this.playerWinService.findAllWins(walletId);
+        const all_wins = await this.playerWinService.findAllWins(walletAddress);
         const win_counts = countBy(
             all_wins,
             (win) => win.playerToken.contractId + win.playerToken.tokenId,
@@ -38,12 +33,13 @@ export class WalletService {
         const event_id = contest?.event_id ?? 0;
 
         // The contracts to filter from all the user collections
-        const contracts = await this.characterService.findAllContractIds();
-        const nfts = await NFTService.listByContracts(
+        const tokenAddresses = await this.characterService.findAllContractIds();
+
+        const nfts = await NFTService.listByContracts({
             chain,
-            walletId,
-            contracts,
-        );
+            walletAddress,
+            tokenAddresses,
+        });
 
         for await (const contract of nfts.tokens) {
             const character = await this.characterService.getCharacterByContractId(contract.contract_address);

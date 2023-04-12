@@ -31,4 +31,6 @@ export interface MerchantItems {
     potions: Item[];
     cards: Item[];
     trinkets: Item[];
+    upgradeCost?: number;
+    destroyCost?: number;
 }

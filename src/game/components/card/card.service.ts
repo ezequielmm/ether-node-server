@@ -174,6 +174,7 @@ export class CardService {
         };
 
         newCard.description = CardDescriptionFormatter.process(newCard, card.description);
+        this.addStatusDescriptions(newCard);
 
         deck.push(newCard);
 

@@ -49,11 +49,13 @@ export class CombatService {
     ) {}
 
     async generateRewards(node, ctx: GameContext | null) {
-        const { maxCardRewardsInCombat } =
+        const { maxCardRewardsInCombat, initialPotionChance } =
             await this.settingsService.getSettings();
 
         const trinketsToGenerate = [this.getTrinketRarityProbability(node)];    
         
+        const potionsToGenerate = (initialPotionChance/100 < Math.random()) ? [this.getPotionRarityProbability()] : [];
+
         return await this.rewardService.generateRewards({
             ctx: ctx,
             node: node,
@@ -62,7 +64,7 @@ export class CombatService {
                 node,
                 maxCardRewardsInCombat,
             ),
-            potionsToGenerate: [this.getPotionRarityProbability()],
+            potionsToGenerate: potionsToGenerate,
             trinketsToGenerate: filter(
                 trinketsToGenerate,
                 (trinket) => trinket !== null,

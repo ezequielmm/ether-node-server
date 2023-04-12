@@ -53,13 +53,16 @@ export class GetMerchantDataAction {
         const upgradedCards = await this.cardService.findCardsById(cardIds);
 
         for (const card of upgradedCards) {
+            card.description = CardDescriptionFormatter.process(card);
+            this.cardService.addStatusDescriptions(card);
+
             data.upgradedCards.push({
                 id: randomUUID(),
                 cardId: card.cardId,
                 name: card.name,
                 cardType: card.cardType,
                 energy: card.energy,
-                description: CardDescriptionFormatter.process(card),
+                description: card.description,
                 isTemporary: false,
                 rarity: card.rarity,
                 properties: card.properties,
