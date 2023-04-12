@@ -73,7 +73,7 @@ import {
 } from './data/lastReminder.card';
 import { LastResortCard, LastResortCardUpgraded } from './data/lastResort.card';
 import { LevitateCard, LevitateCardUpgraded } from './data/levitate.card';
-import { LungeCard, LungeCardUpgraded } from './data/lunge.card';
+// import { LungeCard, LungeCardUpgraded } from './data/lunge.card';
 import { MossCard } from './data/moss.card';
 import { OnARollCard, OnARollCardUpgraded } from './data/onARoll.card';
 import { ParryCard, ParryCardUpgraded } from './data/parry.card';
@@ -137,8 +137,8 @@ export const data: Card[] = [
     AttackCardUpgraded,
     DefenseCard,
     DefenseCardUpgraded,
-    LungeCard,
-    LungeCardUpgraded,
+    // LungeCard,
+    // LungeCardUpgraded,
     CounterCard,
     CounterCardUpgraded,
     FindWeaknessCard,
