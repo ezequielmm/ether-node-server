@@ -329,8 +329,27 @@ export class EnemyService {
 
         if (enemy.hpCurrent === 0) {
 
-            await this.eventEmitter.emitAsync(EVENT_ENEMY_DEAD, { ctx, enemy });
+            let pathToUpdate = undefined;
+            switch (enemy.category) {
+                case EnemyCategoryEnum.Basic:
+                    pathToUpdate = 'basicEnemiesDefeated';
+                    break;
+                case EnemyCategoryEnum.Minion:
+                    pathToUpdate = 'minionEnemiesDefeated';
+                    break;
+                case EnemyCategoryEnum.Elite:
+                    pathToUpdate = 'eliteEnemiesDefeated';
+                    break;
+                case EnemyCategoryEnum.Boss:
+                    pathToUpdate = 'bossEnemiesDefeated';
+                    break;
+            }
 
+            if (pathToUpdate) {
+                ctx.expedition.scores[pathToUpdate]++;
+            }
+
+            //TODO: Refactor the below to just use pathToUpdate, when there's time to test it.
             await this.expeditionService.updateByFilter(
                 {
                     clientId: client.id,
@@ -352,6 +371,9 @@ export class EnemyService {
                     },
                 },
             );
+
+            await this.eventEmitter.emitAsync(EVENT_ENEMY_DEAD, { ctx, enemy });
+
         }
 
         return enemy.hpCurrent;
