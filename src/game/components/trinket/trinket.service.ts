@@ -114,6 +114,7 @@ export class TrinketService {
 
         ctx.expedition.playerState.trinkets.push(trinket);
         await last(ctx.expedition.playerState.trinkets).onAttach(ctx);
+        ctx.expedition.markModified('playerState.trinkets');
         await ctx.expedition.save();
 
         ctx.client.emit(
