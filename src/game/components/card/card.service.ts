@@ -402,8 +402,7 @@ export class CardService {
         if (statusFilter) {
             const metadata = this.statusService.getMetadataByName(statusFilter.name) as StatusMetadata<StatusEffect>;
         
-            // we do not ignore Incoming here, because a status might be attached to an enemy, and we can't tell from AttachedStatus
-            if (metadata.status.trigger !== StatusTrigger.Effect) {
+            if (metadata.status.trigger !== StatusTrigger.Effect || metadata.status.direction === StatusDirection.Incoming) {
                 return cards;
             }
             
@@ -525,7 +524,7 @@ export class CardService {
 
         const cards: IExpeditionPlayerStateDeckCard[] = [];
         const player = this.playerService.get(ctx);
-
+    
         for (const pile in player.value.combatState.cards) {
             for (const card of player.value.combatState.cards[pile]) {
                 cards.push(card);
