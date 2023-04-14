@@ -40,14 +40,14 @@ export class RewardService {
         cardsToGenerate,
         potionsToGenerate,
         trinketsToGenerate,
+        upgradeCards = false,
         coinsToGenerate,
-        node,
         chest = null,
     }: {
         ctx: GameContext | null;
-        node: Node;
         coinsToGenerate: number;
         cardsToGenerate: CardRarityEnum[];
+        upgradeCards?: boolean;
         potionsToGenerate: PotionRarityEnum[];
         trinketsToGenerate: TrinketRarityEnum[];
         chest?: Chest;
@@ -64,7 +64,7 @@ export class RewardService {
         }
 
         if (cardsToGenerate.length > 0) {
-            const cards = await this.generateCards(cardsToGenerate, node);
+            const cards = await this.generateCards(cardsToGenerate, upgradeCards);
             // Only if we get cards for the rewards
             if (cards.length > 0) rewards.push(...cards);
         }
@@ -188,7 +188,7 @@ export class RewardService {
 
     private async generateCards(
         cardsToGenerate: CardRarityEnum[],
-        node: Node,
+        upgradeCards: Boolean = false,
     ): Promise<CardReward[]> {
         const cardRewards: CardReward[] = [];
         let tryAgainIfUndef = true;
@@ -206,7 +206,7 @@ export class RewardService {
                 rarity: cardsToGenerate[i],
                 cardType: { $nin: [CardTypeEnum.Curse, CardTypeEnum.Status] },
                 cardId: { $nin: cardIds },
-                isUpgraded: node.act > 1,
+                isUpgraded: upgradeCards,
             });
 
             if (card) {

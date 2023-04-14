@@ -1,4 +1,4 @@
-import { NodeType } from '../../../components/expedition/node-type';
+import { NodeType } from '../../components/expedition/node-type';
 import { NodeStrategy } from './node-strategy';
 import { RoyalHouseNodeStrategy } from './royal-house-node-strategy';
 import { PortalNodeStrategy } from './portal-node-strategy';

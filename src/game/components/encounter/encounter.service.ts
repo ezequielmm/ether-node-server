@@ -38,10 +38,7 @@ export class EncounterService {
         private readonly playerService: PlayerService,
     ) {}
 
-    async getRandomEncounter(
-        currentNode?: Node,
-        nodes?: Node[],
-    ): Promise<EncounterInterface> {
+    async getRandomEncounter(excludeIfPossible?: number[]): Promise<EncounterInterface> {
         const encounters = [
             EncounterIdEnum.Nagpra,
             EncounterIdEnum.WillOWisp,
@@ -57,42 +54,10 @@ export class EncounterService {
             // EncounterIdEnum.RunicBehive,
         ];
 
-        const encounterNodes = nodes
-            ? filter(
-                  nodes,
-                  (node) =>
-                      node.type == NodeType.Encounter &&
-                      node.id < currentNode.id,
-              )
-            : [];
-
-        const thisStep =
-            encounterNodes.length > 0
-                ? filter(
-                      encounterNodes,
-                      (node) => node.step == currentNode.step,
-                  )
-                : [];
-
-        // if there is already an encounter in this step, use the same encounterId to preserve options on other steps
-        if (thisStep.length > 0) {
-            return {
-                encounterId: thisStep[0].private_data.encounterId,
-                stage: 0,
-            };
-        }
-
-        const alreadySelectedEncounters = nodes
-            ? uniq(map(encounterNodes, (n) => n.private_data.encounterId))
-            : [];
-
-        const safeEncounters =
-            alreadySelectedEncounters.length >= encounters.length
-                ? encounters
-                : filter(
-                      encounters,
-                      (e) => !alreadySelectedEncounters.includes(e),
-                  );
+        const safeEncounters = 
+            (excludeIfPossible.length >= encounters.length) 
+            ? encounters 
+            : filter(encounters, (e) => !excludeIfPossible.includes(e));
 
         return {
             encounterId: sample(safeEncounters),

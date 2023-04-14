@@ -1,6 +1,6 @@
 import { forwardRef, Module } from '@nestjs/common';
 import { CombatModule } from 'src/game/combat/combat.module';
-import { MapService } from '../map.service';
+import { MapService } from './map.service';
 import { CampNodeStrategy } from './strategies/camp-node-strategy';
 import { EncounterNodeStrategy } from './strategies/encounter-node-strategy';
 import { PortalNodeStrategy } from './strategies/portal-node-strategy';

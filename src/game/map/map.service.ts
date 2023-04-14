@@ -3,12 +3,9 @@ import { find, findIndex, slice, last } from 'lodash';
 import { NodeStatus } from '../components/expedition/node-status';
 import { Node } from '../components/expedition/node';
 import { GameContext } from '../components/interfaces';
-import buildActZero from './act/act-zero/index';
-import buildActOne from './act/act-one/index';
-import buildActTwo from './act/act-two/index';
 import { ModuleRef } from '@nestjs/core';
-import { NodeStrategy } from './map/strategies/node-strategy';
-import { strategies } from './map/strategies/index';
+import { NodeStrategy } from './strategies/node-strategy';
+import { strategies } from './strategies/index';
 import { NodeType } from '../components/expedition/node-type';
 
 @Injectable()
@@ -93,27 +90,27 @@ export class MapService {
         });
     }
 
-    public getActZero(): Node[] {
-        return buildActZero();
-    }
+    // public getActZero(): Node[] {
+    //     return buildActZero();
+    // }
 
-    public async getActOne(initialNodeId): Promise<Node[]> {
-        return buildActOne(initialNodeId);
-    }
+    // public async getActOne(initialNodeId): Promise<Node[]> {
+    //     return buildActOne(initialNodeId);
+    // }
 
-    public async getActTwo(initialNodeId): Promise<Node[]> {
-        return buildActTwo(initialNodeId);
-    }
+    // public async getActTwo(initialNodeId): Promise<Node[]> {
+    //     return buildActTwo(initialNodeId);
+    // }
 
-    public setupActOne(ctx: GameContext): void {
-        const previousNodeId = last(ctx.expedition.map)?.id ?? 0;
-        ctx.expedition.map.push(...buildActOne(previousNodeId + 1));
-    }
+    // public setupActOne(ctx: GameContext): void {
+    //     const previousNodeId = last(ctx.expedition.map)?.id ?? 0;
+    //     ctx.expedition.map.push(...buildActOne(previousNodeId + 1));
+    // }
 
-    public setupActTwo(ctx: GameContext): void {
-        const previousNodeId = last(ctx.expedition.map)?.id ?? 0;
-        ctx.expedition.map.push(...buildActTwo(previousNodeId + 1));
-    }
+    // public setupActTwo(ctx: GameContext): void {
+    //     const previousNodeId = last(ctx.expedition.map)?.id ?? 0;
+    //     ctx.expedition.map.push(...buildActTwo(previousNodeId + 1));
+    // }
 
     public nodeIsSelectable(ctx: GameContext, nodeId: number): boolean {
         const node = this.findNodeById(ctx, nodeId);

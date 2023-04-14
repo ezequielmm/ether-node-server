@@ -10,7 +10,6 @@ import { KindagooseModule } from 'kindagoose';
 import { EncounterSeeder } from './game/components/encounter/encounter.seeder';
 import { GearSeeder } from './game/components/gear/gear.seeder';
 import { ContestMapSeeder } from './game/contestMap/contestMap.seeder';
-import { MapPopulationModule } from './game/map/mapPopulation.module';
 import { ContestModule } from './game/contest/contest.module';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { LoggerModule } from 'nestjs-pino';
@@ -23,25 +22,28 @@ import { ChestModule } from './game/components/chest/chest.module';
 import { CharacterModule } from './game/components/character/character.module';
 import { GearModule } from './game/components/gear/gear.module';
 import { ContestMapModule } from './game/contestMap/contestMap.module';
+import { MapBuilderModule } from './game/map/builder/mapBuilder.module';
 
 seeder({
     imports: [
         ConfigModule.forRoot({ isGlobal: true, cache: false }),
         EventEmitterModule.forRoot(),
         LoggerModule.forRootAsync({
-            useFactory: async () => { return {
-                pinoHttp: {},
-            }; }
+            useFactory: async () => {
+                return {
+                    pinoHttp: {},
+                };
+            },
         }),
         KindagooseModule.forRootAsync({
             inject: [ConfigService],
             useFactory: (configService: ConfigService) => {
                 const uri = configService.get<string>('MONGODB_URL');
- 
+
                 return { uri, useNewUrlParser: true, useUnifiedTopology: true };
             },
         }),
-        MapPopulationModule,
+        MapBuilderModule,
         ContestModule,
         EnemyModule,
         CardModule,

@@ -48,20 +48,19 @@ export class CombatService {
         private readonly playerService: PlayerService,
     ) {}
 
-    async generateRewards(node, ctx: GameContext | null) {
+    async generateRewards(nodeOption, act?: number, ctx?: GameContext | null) {
         const { maxCardRewardsInCombat, initialPotionChance } =
             await this.settingsService.getSettings();
 
-        const trinketsToGenerate = [this.getTrinketRarityProbability(node)];    
+        const trinketsToGenerate = [this.getTrinketRarityProbability(nodeOption)];    
         
         const potionsToGenerate = (initialPotionChance/100 < Math.random()) ? [this.getPotionRarityProbability()] : [];
 
         return await this.rewardService.generateRewards({
             ctx: ctx,
-            node: node,
-            coinsToGenerate: this.generateCoins(node),
+            coinsToGenerate: this.generateCoins(nodeOption.subType),
             cardsToGenerate: this.getCardRarityProbability(
-                node,
+                nodeOption.subType,
                 maxCardRewardsInCombat,
             ),
             potionsToGenerate: potionsToGenerate,
@@ -69,12 +68,18 @@ export class CombatService {
                 trinketsToGenerate,
                 (trinket) => trinket !== null,
             ),
+            upgradeCards: ((act ?? 1) > 1)
         });
     }
 
-    async generateBaseState(node: Node) {
-        const enemies = await this.getEnemies(node);
-        const rewards = await this.generateRewards(node, null);
+    async generateBaseState(nodeOption, act: number) {
+        const enemies = [];
+        for await (const enemyId of nodeOption.nodeConfig.enemies) {
+            const enemy = await this.getNewEnemyById(enemyId, nodeOption.nodeConfig.healthMultiplier ?? 1);
+            enemies.push(enemy);
+        }
+
+        const rewards = await this.generateRewards(nodeOption, act);
 
         return {
             enemies,
@@ -107,13 +112,16 @@ export class CombatService {
             cardsToRemove: handCards,
         });
 
-        const rewards = (typeof node?.private_data?.rewards === 'undefined') 
-            ? await this.generateRewards(node, ctx)
-            : await this.rewardService.liveUpdateRewards(ctx, node.private_data.rewards);
+        const { enemies } = node.private_data;
+        const rewards = await this.rewardService.liveUpdateRewards(ctx, node.private_data.rewards);
 
-        const enemies = (typeof node?.private_data?.enemies === 'undefined')
-            ? await this.getEnemies(node)
-            : node.private_data.enemies;
+        // const rewards = (typeof node?.private_data?.rewards === 'undefined') 
+        //     ? await this.generateRewards(node, node.act, ctx)
+        //     : await this.rewardService.liveUpdateRewards(ctx, node.private_data.rewards);
+
+        // const enemies = (typeof node?.private_data?.enemies === 'undefined')
+        //     ? await this.getEnemiesForNode(node)
+        //     : node.private_data.enemies;
 
         return {
             nodeId: node.id,
@@ -213,49 +221,53 @@ export class CombatService {
         }
     }
 
-    async getEnemies(node: Node): Promise<IExpeditionCurrentNodeDataEnemy[]> {
-        const enemyGroup = getRandomItemByWeight<EnemyId[]>(
-            node.private_data.enemies.map(({ enemies }) => enemies),
-            node.private_data.enemies.map(({ probability }) => probability),
-        );
+    async getNewEnemyById(enemyId: EnemyId, healthMultiplier: number = 1) {
+        const enemy = await this.enemyService.findById(enemyId);
+
+        let newHealth = getRandomBetween(
+            enemy.healthRange[0],
+            enemy.healthRange[1],
+        ) * healthMultiplier;
+
+        return {
+            id: randomUUID(),
+            defense: 0,
+            name: enemy.name,
+            enemyId: enemy.enemyId,
+            type: enemy.type,
+            category: enemy.category,
+            size: enemy.size,
+            hpCurrent: newHealth,
+            hpMax: newHealth,
+            statuses: {
+                [StatusType.Buff]: [],
+                [StatusType.Debuff]: [],
+            },
+        };
+    }
+
+    async getEnemiesByProbability(enemies, probability, healthMultiplier: number = 1) {
+        const enemyGroup = getRandomItemByWeight<EnemyId[]>(enemies, probability);
 
         return await Promise.all(
             enemyGroup.map(async (enemyId: EnemyId) => {
-                const enemy = await this.enemyService.findById(enemyId);
-
-                let newHealth = getRandomBetween(
-                    enemy.healthRange[0],
-                    enemy.healthRange[1],
-                );
-
-                if (
-                    HARD_MODE_NODE_START <= node.step &&
-                    node.step <= HARD_MODE_NODE_END
-                ) {
-                    newHealth = Math.floor(newHealth * 1.5);
-                }
-
-                return {
-                    id: randomUUID(),
-                    defense: 0,
-                    name: enemy.name,
-                    enemyId: enemy.enemyId,
-                    type: enemy.type,
-                    category: enemy.category,
-                    size: enemy.size,
-                    hpCurrent: newHealth,
-                    hpMax: newHealth,
-                    statuses: {
-                        [StatusType.Buff]: [],
-                        [StatusType.Debuff]: [],
-                    },
-                };
+                return this.getNewEnemyById(enemyId, healthMultiplier);
             }),
         );
     }
 
-    private generateCoins(node: Node): number {
-        switch (node.subType) {
+    async getEnemiesForNode(node: Node): Promise<IExpeditionCurrentNodeDataEnemy[]> {
+        const enemies = node.private_data.enemies.map(({ enemies }) => enemies);
+        const probability = node.private_data.enemies.map(({ probability }) => probability);
+        
+        const healthMultiplier = ( HARD_MODE_NODE_START <= node.step && node.step <= HARD_MODE_NODE_END ) ? 1.5 : 1;
+        
+        return await this.getEnemiesByProbability(enemies, probability, healthMultiplier);
+    }
+
+    private generateCoins(nodeType: NodeType): number {
+        switch (nodeType) {
+            case NodeType.Combat:
             case NodeType.CombatStandard:
                 return getRandomBetween(10, 20);
             case NodeType.CombatElite:
@@ -268,13 +280,13 @@ export class CombatService {
     }
 
     private getCardRarityProbability(
-        node: Node,
+        type: NodeType,
         cardsToGenerate: number,
     ): CardRarityEnum[] {
         const rarities: CardRarityEnum[] = [];
 
         for (let i = 1; i <= cardsToGenerate; i++) {
-            switch (node.subType) {
+            switch (type) {
                 case NodeType.CombatStandard:
                     rarities.push(
                         getRandomItemByWeight(
@@ -325,8 +337,8 @@ export class CombatService {
         );
     }
 
-    private getTrinketRarityProbability(node: Node): TrinketRarityEnum {
-        switch (node.subType) {
+    private getTrinketRarityProbability(type: NodeType): TrinketRarityEnum {
+        switch (type) {
             case NodeType.CombatElite:
                 return getRandomItemByWeight(
                     [

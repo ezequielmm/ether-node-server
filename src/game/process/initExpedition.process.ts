@@ -11,12 +11,13 @@ import { ExpeditionStatusEnum } from '../components/expedition/expedition.enum';
 import { IExpeditionPlayerStateDeckCard } from '../components/expedition/expedition.interface';
 import { ExpeditionService } from '../components/expedition/expedition.service';
 import { SettingsService } from '../components/settings/settings.service';
-import { MapService } from '../map/map.service';
 import { GearItem } from '../../playerGear/gearItem';
 import { Contest } from '../contest/contest.schema';
 import { IPlayerToken } from '../components/expedition/expedition.schema';
-import { ContestService } from '../contest/contest.service';
 import { ContestMapService } from '../contestMap/contestMap.service';
+// import { MapBuilderService } from '../map/builder/mapBuilder.service';
+import { ActOneConfig } from '../map/builder/actOne.config';
+import { ContestService } from '../contest/contest.service';
 
 @Injectable()
 export class InitExpeditionProcess {
@@ -28,7 +29,7 @@ export class InitExpeditionProcess {
         private readonly characterService: CharacterService,
         private readonly customDeckService: CustomDeckService,
         private readonly settingsService: SettingsService,
-        private readonly mapService: MapService,
+        // private readonly mapBuilderService: MapBuilderService,
         private readonly contestService: ContestService,
         private readonly contestMapService: ContestMapService,
     ) {}
@@ -78,9 +79,11 @@ export class InitExpeditionProcess {
         const { initialPotionChance } =
             await this.settingsService.getSettings();
 
-        const map = contest
-            ? await this.contestMapService.getMapForContest(contest)
-            : await this.mapService.getActOne(0);
+        // const map = contest
+        //     ? await this.contestMapService.getMapForContest(contest)
+        //     : await this.mapBuilderService.createMap({ actConfig: ActOneConfig, makeAvailable: true});
+
+        const map = await this.contestMapService.getMapForContest(contest);
 
         const cards = await this.generatePlayerDeck(character, email);
 
