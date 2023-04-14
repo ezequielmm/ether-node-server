@@ -58,10 +58,12 @@ export class CardPlayedAction {
         cardId,
         selectedEnemyId,
         ctx,
+        forceExhaust = false,
     }: {
         readonly ctx: GameContext;
         readonly cardId: CardId;
         readonly selectedEnemyId: TargetId;
+        readonly forceExhaust?: boolean;
     }): Promise<void> {
         const logger = this.logger.logger.child(ctx.info);
 
@@ -239,7 +241,7 @@ export class CardPlayedAction {
         }
 
         // now, with all else done, do the actual exhaust/discard routines, without emitting again
-        if (exhaust) {
+        if (exhaust || forceExhaust) {
             await this.exhaustCardAction.handle({
                 client: ctx.client,
                 cardId,

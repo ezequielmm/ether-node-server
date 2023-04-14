@@ -219,50 +219,69 @@ export class CardService {
         }
     }
 
-    @OnEvent(EVENT_BEFORE_PLAYER_TURN_END)
+    // called explicitly instead of via event now
+    // @OnEvent(EVENT_BEFORE_PLAYER_TURN_END)
     async onBeforePlayerTurnEnd(payload: { ctx: GameContext }) {
-        const ctx = payload.ctx as GameContext;
+        const { ctx } = payload;
+        let forceExhaust = false;
+        const exhaustCardIds = [];
 
-        const cards = filter(
-            ctx.expedition.currentNode.data.player.cards.hand,
-            {
-                triggerAtEndOfTurn: true,
-            },
-        );
-
-        if (cards.length > 0) {
-            for (const card of cards) {
+        for (const card of ctx.expedition.currentNode.data.player.cards.hand) {
+            forceExhaust = false;
+            if (card.keywords.includes(CardKeywordEnum.Fade)) {
+                // fade cards exhaust if unplayed during turn
+                forceExhaust = true;
+            }
+            if (typeof card.triggerAtEndOfTurn !== 'undefined') {
+                // play card if triggered
                 this.logger.log(
                     ctx.info,
                     `Auto playing card ${card.cardId}:${card.name}`,
                 );
+
+                card.properties = card.triggerAtEndOfTurn;
+
                 await this.cardPlayedAction.handle({
                     ctx,
                     cardId: card.id,
                     selectedEnemyId: undefined,
+                    forceExhaust,
                 });
+            } else if (forceExhaust) {
+                // fade card wasn't exhausted due to trigger, so add to bulk list
+                exhaustCardIds.push(card.id);
             }
+        }
+
+        // if we have a bulk exhaust list, use it now
+        if (exhaustCardIds.length > 0) {
+            await this.moveCardAction.handle({
+                    client: ctx.client,
+                    cardIds: exhaustCardIds,
+                    originPile: 'hand',
+                    targetPile: 'exhausted',
+                });
         }
     }
 
-    @OnEvent(EVENT_BEFORE_PLAYER_TURN_END)
-    async onMoveFadeCard(payload: { ctx: GameContext }) {
-        const { ctx } = payload;
+    // @OnEvent(EVENT_BEFORE_PLAYER_TURN_END)
+    // async onMoveFadeCard(payload: { ctx: GameContext }) {
+    //     const { ctx } = payload;
 
-        const cards = filter(
-            ctx.expedition.currentNode.data.player.cards.hand,
-            {
-                keywords: [CardKeywordEnum.Fade],
-            },
-        );
+    //     const cards = filter(
+    //         ctx.expedition.currentNode.data.player.cards.hand,
+    //         {
+    //             keywords: [CardKeywordEnum.Fade],
+    //         },
+    //     );
 
-        await this.moveCardAction.handle({
-            client: ctx.client,
-            cardIds: cards.map((card) => card.id),
-            originPile: 'hand',
-            targetPile: 'exhausted',
-        });
-    }
+    //     await this.moveCardAction.handle({
+    //         client: ctx.client,
+    //         cardIds: cards.map((card) => card.id),
+    //         originPile: 'hand',
+    //         targetPile: 'exhausted',
+    //     });
+    // }
 
     @OnEvent(EVENT_AFTER_STATUS_ATTACH)
     async afterStatusAttachEvent(args: AfterStatusAttachEvent) {

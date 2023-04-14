@@ -14,9 +14,15 @@ export const PoisonedCard: Card = {
     cardType: CardTypeEnum.Status,
     pool: 'knight',
     energy: 1,
-    description: `Take 4 damage at end of turn. \nExhaust`,
-    keywords: [CardKeywordEnum.Exhaust, CardKeywordEnum.Unplayable],
+    description: `Take 4 damage if in hand at end of turn. \nExhaust`,
+    keywords: [CardKeywordEnum.Exhaust],
     properties: {
+        effects: [],
+        statuses: [],
+    },
+    showPointer: false,
+    isUpgraded: false,
+    triggerAtEndOfTurn: {
         effects: [
             {
                 effect: damageEffect.name,
@@ -28,8 +34,5 @@ export const PoisonedCard: Card = {
         ],
         statuses: [],
     },
-    showPointer: false,
-    isUpgraded: false,
-    triggerAtEndOfTurn: true,
     isActive: true,
 };

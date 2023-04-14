@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Inject, Injectable, Logger, forwardRef } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { filter } from 'lodash';
 import { ChangeTurnAction } from '../action/changeTurn.action';
@@ -13,6 +13,7 @@ import {
 } from '../constants';
 import { SWARMessageType } from '../standardResponse/standardResponse';
 import { BeginEnemyTurnProcess } from './beginEnemyTurn.process';
+import { CardService } from '../components/card/card.service';
 
 @Injectable()
 export class EndPlayerTurnProcess {
@@ -25,6 +26,8 @@ export class EndPlayerTurnProcess {
         private readonly combatQueueService: CombatQueueService,
         private readonly changeTurnAction: ChangeTurnAction,
         private readonly enemyService: EnemyService,
+        @Inject(forwardRef(() => CardService))
+        private readonly cardService: CardService,
     ) {}
 
     async handle({ ctx }: { ctx: GameContext }): Promise<void> {
@@ -34,6 +37,9 @@ export class EndPlayerTurnProcess {
         const { client, expedition } = ctx;
 
         await this.combatQueueService.start(ctx);
+
+        // explicitly handle hand cards instead of using event emitter
+        await this.cardService.onBeforePlayerTurnEnd({ ctx });
 
         await this.eventEmitter.emitAsync(EVENT_BEFORE_PLAYER_TURN_END, {
             ctx,
