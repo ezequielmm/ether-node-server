@@ -74,6 +74,7 @@ export class TaskService {
             nodes: map,
             maxSteps,
             maxNodes,
+            isGenerated: true,
         });
 
         // Now we get the last event_id from the database, this filed is used to

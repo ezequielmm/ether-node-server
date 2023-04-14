@@ -22,10 +22,9 @@ export class ContestMapSeeder implements Seeder {
         private readonly contestService: ContestService,
     ) {}
 
-    defaultName = 'Default Contest Map';
+    private defaultName = 'Default Contest Map';
 
     async seed(): Promise<any> {
-        
         const map = await this.mapPopulationService.populateNodes(
             buildActOne(),
         );
@@ -39,6 +38,7 @@ export class ContestMapSeeder implements Seeder {
             nodes: map,
             maxSteps,
             maxNodes,
+            isGenerated: true,
         });
 
         const today = new Date();
@@ -67,7 +67,6 @@ export class ContestMapSeeder implements Seeder {
     }
 
     async drop(): Promise<any> {
-
         await this.contestService.deleteMany({});
         return await this.contestMap.deleteMany({});
 
