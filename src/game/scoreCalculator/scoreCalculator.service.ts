@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { filter } from 'lodash';
+import { filter, reduce } from 'lodash';
 import { CardRarityEnum } from '../components/card/card.enum';
 import {
     IExpeditionPlayerStateDeckCard,
@@ -87,30 +87,15 @@ export class ScoreCalculatorService {
                 ? this.calculateDuration(createdAt, endedAt)
                 : 0;
 
-        // How we sum all the points to get the total
-        const totalScore =
-            totalBasicEnemies +
-            totalEliteEnemies +
-            totalBossEnemies +
-            nodesCompleted +
-            healthReamining +
-            deckSizePoints +
-            potionsRemaining +
-            trinketsRemaining +
-            totalCoins +
-            upgradedCards +
-            epicPlusCards +
-            speedRun;
-
         const data: ScoreResponse = {
             outcome: status,
             expeditionType: 'Casual',
-            totalScore,
+            totalScore: 0,
             achievements: [],
             notifyNoLoot: false,
         };
 
-        if (totalBasicEnemies > 0)
+        if (totalBasicEnemies > 0) {}
             data.achievements.push({
                 name: 'Monsters slain',
                 score: totalBasicEnemies,
@@ -140,18 +125,17 @@ export class ScoreCalculatorService {
                 score: healthReamining,
             });
 
-        if (speedRun > 0)
-            data.achievements.push({
-                name: 'Speed Run',
-                score: speedRun,
-            });
-
-        if (deckSizePoints > 0) {
+        if (deckSizePoints > 0) 
             data.achievements.push({
                 name: deckSizeAchievement,
                 score: deckSizePoints,
             });
-        }
+        
+        if (upgradedCards > 0)
+            data.achievements.push({
+                name: 'Such Upgrade, Much Wow',
+                score: upgradedCards,
+            });
 
         if (potionsRemaining > 0)
             data.achievements.push({
@@ -165,6 +149,12 @@ export class ScoreCalculatorService {
                 score: trinketsRemaining,
             });
 
+        if (speedRun > 0)
+            data.achievements.push({
+                name: 'Speed Run',
+                score: speedRun,
+            });
+        
         if (totalCoins > 0)
             data.achievements.push({
                 name: 'Scrooge',
@@ -183,6 +173,9 @@ export class ScoreCalculatorService {
                 score: 10,
             });
 
+        // Now we sum all the points to get the total
+        data.totalScore = reduce(data.achievements, (totalScore, item) => totalScore += item.score, 0);
+        
         return data;
     }
 
@@ -260,6 +253,7 @@ export class ScoreCalculatorService {
 
         const upgradedCards =
             filter(cards, (card) => card.isUpgraded).length * 5;
+
         const epicPlusCount = filter(
             cards,
             (card) => card.rarity == CardRarityEnum.Legendary,
