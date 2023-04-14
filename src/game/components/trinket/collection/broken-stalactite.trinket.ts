@@ -23,7 +23,7 @@ export class BrokenStalactiteTrinket extends Trinket {
     @Prop({ default: TrinketRarityEnum.Common })
     rarity: TrinketRarityEnum;
 
-    onAttach(ctx: GameContext): void {
+    async onAttach(ctx: GameContext): Promise<void> {
         ctx.events.addListener(EVENT_AFTER_INIT_COMBAT, async () => {
             const effectService = ctx.moduleRef.get(EffectService, {
                 strict: false,

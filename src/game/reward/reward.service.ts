@@ -1,6 +1,16 @@
 import { Inject, Injectable, forwardRef } from '@nestjs/common';
 import { randomUUID } from 'crypto';
-import { chain, compact, filter, find, includes, isEmpty, map, pick, remove } from 'lodash';
+import {
+    chain,
+    compact,
+    filter,
+    find,
+    includes,
+    isEmpty,
+    map,
+    pick,
+    remove,
+} from 'lodash';
 import { CustomException, ErrorBehavior } from 'src/socket/custom.exception';
 import { CardDescriptionFormatter } from '../cardDescriptionFormatter/cardDescriptionFormatter';
 import { CardRarityEnum, CardTypeEnum } from '../components/card/card.enum';
@@ -161,10 +171,10 @@ export class RewardService {
                 });
                 break;
             case IExpeditionNodeReward.Trinket:
-                reward.taken = await this.trinketService.add(
+                reward.taken = await this.trinketService.add({
                     ctx,
-                    reward.trinket.trinketId,
-                );
+                    trinketId: reward.trinket.trinketId,
+                });
                 break;
         }
 
@@ -210,7 +220,8 @@ export class RewardService {
             });
 
             if (card) {
-                const cardFormattedDescription = CardDescriptionFormatter.process(card);
+                const cardFormattedDescription =
+                    CardDescriptionFormatter.process(card);
                 this.cardService.addStatusDescriptions(card);
 
                 const cardPreview = {
@@ -224,9 +235,9 @@ export class RewardService {
                         'pool',
                         'isUpgraded',
                         'properties',
-                    ])
+                    ]),
                 } as unknown as CardPreview;
-    
+
                 cardRewards.push({
                     id: randomUUID(),
                     type: IExpeditionNodeReward.Card,
@@ -278,7 +289,10 @@ export class RewardService {
         ).map<TrinketReward>((reward) => <TrinketReward>reward);
 
         if (!isEmpty(trinketRewards))
-            rewards.push(...(await this.replaceOwnedTrinkets(ctx, trinketRewards) ?? []));
+            rewards.push(
+                ...((await this.replaceOwnedTrinkets(ctx, trinketRewards)) ??
+                    []),
+            );
 
         // here's where we could get funky with potions
 
@@ -294,21 +308,19 @@ export class RewardService {
             'trinketId',
         );
 
-        const dupeTrinketRarities = 
-            compact(
-                remove(
-                    trinkets,
-                    ({ trinket: { trinketId } }) =>
-                        includes(trinketsInInventory, trinketId),
-                ).map(
-                    ({ trinket: { trinketId } }) =>
-                        this.trinketService.findOne({ trinketId }).rarity
-                )
-            );
-            
+        const dupeTrinketRarities = compact(
+            remove(trinkets, ({ trinket: { trinketId } }) =>
+                includes(trinketsInInventory, trinketId),
+            ).map(
+                ({ trinket: { trinketId } }) =>
+                    this.trinketService.findOne({ trinketId }).rarity,
+            ),
+        );
 
         for await (const rarity of dupeTrinketRarities) {
-            trinkets.push(...(await this.generateTrinkets(ctx, [rarity]) ?? []));
+            trinkets.push(
+                ...((await this.generateTrinkets(ctx, [rarity])) ?? []),
+            );
         }
 
         return trinkets;

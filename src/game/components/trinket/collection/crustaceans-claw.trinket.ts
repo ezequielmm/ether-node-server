@@ -29,7 +29,7 @@ export class CrustaceansClawTrinket extends Trinket {
     @Prop({ default: 1 })
     cardsToDraw: number;
 
-    onAttach(ctx: GameContext): void {
+    async onAttach(ctx: GameContext): Promise<void> {
         ctx.events.addListener(EVENT_AFTER_INIT_COMBAT, async () => {
             const moveCardAction = ctx.moduleRef.get(MoveCardAction, {
                 strict: false,

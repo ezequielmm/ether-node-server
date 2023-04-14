@@ -257,38 +257,39 @@ export class EncounterService {
                 case 'trinket':
                     switch (effect.item) {
                         case 'birdcage': //nagpra
-                            await this.trinketService.add(ctx, 3);
+                            await this.trinketService.add({
+                                ctx,
+                                trinketId: 3,
+                            });
                             break;
                         case 'runic_tome': //young wizard
-                            await this.trinketService.add(ctx, 23);
+                            await this.trinketService.add({
+                                ctx,
+                                trinketId: 23,
+                            });
                             break;
                         case 'pan_flute': //satyr
-                            await this.trinketService.add(
+                            await this.trinketService.add({
                                 ctx,
-                                45,
-                                undefined,
-                                [46, 47],
-                            );
+                                trinketId: 45,
+                                trinketConflicts: [46, 47],
+                            });
                             break;
                         case 'silver_pan_flute': //satyr
-                            await this.trinketService.add(
+                            await this.trinketService.add({
                                 ctx,
-                                46,
-                                undefined,
-                                [45, 47],
-                            );
+                                trinketId: 46,
+                                trinketConflicts: [45, 47],
+                            });
                             break;
                         case 'golden_pan_flute': //satyr
-                            await this.trinketService.add(
+                            await this.trinketService.add({
                                 ctx,
-                                47,
-                                undefined,
-                                [45, 46],
-                            );
+                                trinketId: 47,
+                                trinketConflicts: [45, 46],
+                            });
                             break;
                     }
-                    break;
-                case 'brimbles_quest': // mossy troll
                     break;
             }
         }
@@ -670,7 +671,7 @@ export class EncounterService {
         );
     }
 
-    async handleUpgradeCard(client: Socket, cardId: string): Promise<void> {
+    async handleUpgradeCard(client: Socket): Promise<void> {
         await this.postModalStage(client);
     }
 

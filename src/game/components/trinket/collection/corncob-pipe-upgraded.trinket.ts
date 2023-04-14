@@ -2,6 +2,9 @@ import { Prop } from '@typegoose/typegoose';
 import { CorncobPipeTrinket } from './corncob-pipe.trinket';
 
 export class CorncobPipeUpgradedTrinket extends CorncobPipeTrinket {
+    @Prop({ default: 10 })
+    trinketId: number;
+
     @Prop({ default: 'Corncob Pipe+' })
     name: string;
 

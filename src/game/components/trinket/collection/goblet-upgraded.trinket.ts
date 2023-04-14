@@ -5,6 +5,9 @@ import { GobletTrinket } from './goblet.trinket';
  * Birdcage Upgraded Trinket
  */
 export class GobletUpgradedTrinket extends GobletTrinket {
+    @Prop({ default: 25 })
+    trinketId: number;
+
     @Prop({ default: 'Goblet+' })
     name: string;
 

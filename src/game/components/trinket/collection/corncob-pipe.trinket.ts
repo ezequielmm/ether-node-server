@@ -25,7 +25,7 @@ export class CorncobPipeTrinket extends Trinket {
     @Prop({ default: 1 })
     burnIncrement: number;
 
-    onAttach(ctx: GameContext): void {
+    async onAttach(ctx: GameContext): Promise<void> {
         ctx.events.addListener(
             EVENT_BEFORE_STATUS_ATTACH,
             (args: BeforeStatusAttachEvent) => {

@@ -5,6 +5,9 @@ import { BirdcageTrinket } from './birdcage.trinket';
  * Birdcage Upgraded Trinket
  */
 export class BirdcageUpgradedTrinket extends BirdcageTrinket {
+    @Prop({ default: 4 })
+    trinketId: number;
+
     @Prop({ default: 'Birdcage+' })
     name: string;
 
