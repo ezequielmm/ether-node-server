@@ -25,24 +25,22 @@ export class PotionGateway {
 
     @SubscribeMessage('UsePotion')
     async use(client: Socket, payload: string): Promise<void> {
-        await this.actionQueueService.push(
-            await this.expeditionService.getExpeditionIdFromClient(client.id),
-            async () => {
-                this.logger.debug('<USE POTION>');
+        const expeditionId =
+            await this.expeditionService.getExpeditionIdFromClient(client.id);
 
-                const { potionId, targetId } = JSON.parse(
-                    payload,
-                ) as UsePotionDTO;
+        await this.actionQueueService.push(expeditionId, async () => {
+            this.logger.debug('<USE POTION>');
 
-                const ctx = await this.expeditionService.getGameContext(client);
+            const { potionId, targetId } = JSON.parse(payload) as UsePotionDTO;
 
-                await this.potionService.use(ctx, potionId, targetId);
+            const ctx = await this.expeditionService.getGameContext(client);
 
-                await this.fullSyncAction.handle(client, false);
+            await this.potionService.use(ctx, potionId, targetId);
 
-                this.logger.debug('</USE POTION>');
-            },
-        );
+            await this.fullSyncAction.handle(client, false);
+
+            this.logger.debug('</USE POTION>');
+        });
     }
 
     @SubscribeMessage('RemovePotion')

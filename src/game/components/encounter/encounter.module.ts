@@ -6,6 +6,7 @@ import { Encounter } from './encounter.schema';
 import { CardModule } from '../card/card.module';
 import { TrinketModule } from '../trinket/trinket.module';
 import { PotionModule } from '../potion/potion.module';
+import { PlayerModule } from '../player/player.module';
 
 @Module({
     imports: [
@@ -14,6 +15,7 @@ import { PotionModule } from '../potion/potion.module';
         forwardRef(() => CardModule),
         forwardRef(() => TrinketModule),
         forwardRef(() => PotionModule),
+        forwardRef(() => PlayerModule),
     ],
     providers: [EncounterService],
     exports: [EncounterService, KindagooseModule],

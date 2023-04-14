@@ -9,6 +9,7 @@ import { CombatQueueService } from 'src/game/components/combatQueue/combatQueue.
 import { ExpeditionEntity, GameContext } from 'src/game/components/interfaces';
 import { ExpeditionEnemy } from 'src/game/components/enemy/enemy.interface';
 import { ExpeditionPlayer } from 'src/game/components/player/interfaces';
+import { ExpeditionService } from 'src/game/components/expedition/expedition.service';
 
 export interface HealArgs {
     value: number;
@@ -23,6 +24,7 @@ export class HealEffect implements EffectHandler {
         private readonly playerService: PlayerService,
         private readonly enemyService: EnemyService,
         private readonly combatQueueService: CombatQueueService,
+        private readonly expeditionService: ExpeditionService,
     ) {}
 
     async handle(payload: EffectDTO<HealArgs>): Promise<void> {
@@ -37,7 +39,7 @@ export class HealEffect implements EffectHandler {
         if (PlayerService.isPlayer(target)) {
             if (this.playerService.isDead(ctx)) return;
 
-            await this.applyHPToPlayer(ctx, source, target, hpToAdd);
+            await this.applyHPToPlayer(ctx, target, hpToAdd);
             return;
         }
 
@@ -52,29 +54,24 @@ export class HealEffect implements EffectHandler {
 
     private async applyHPToPlayer(
         ctx: GameContext,
-        source: ExpeditionEntity,
-        player: ExpeditionPlayer,
-        hp: number,
+        target: ExpeditionPlayer,
+        newHP: number,
     ): Promise<void> {
-        const hpCurrent = player.value.combatState.hpCurrent;
+        const newHPCurrent = await this.playerService.heal(ctx, newHP);
 
-        await this.playerService.setGlobalHp(
-            ctx,
-            player.value.combatState.hpCurrent + hp,
-        );
+        const isCombat = this.expeditionService.isPlayerInCombat(ctx);
 
-        const newHp = await this.playerService.setHp(
-            ctx,
-            player.value.combatState.hpCurrent + hp,
-        );
+        if (isCombat) {
+            const hpCurrent = target.value.combatState.hpCurrent;
 
-        await this.sendToCombatQueue(
-            ctx,
-            source,
-            player,
-            newHp - hpCurrent,
-            newHp,
-        );
+            await this.sendToCombatQueue(
+                ctx,
+                target,
+                target,
+                newHPCurrent - hpCurrent,
+                newHPCurrent,
+            );
+        }
     }
 
     private async applyHPToEnemy(

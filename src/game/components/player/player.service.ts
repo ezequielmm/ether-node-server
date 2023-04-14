@@ -50,7 +50,10 @@ export class PlayerService {
      * @returns If the player is dead
      */
     public isDead(ctx: GameContext): boolean {
-        return ctx.expedition.currentNode.data.player.hpCurrent <= 0;
+        const isCombat = this.expeditionService.isPlayerInCombat(ctx);
+        return isCombat
+            ? ctx.expedition.currentNode.data.player.hpCurrent <= 0
+            : ctx.expedition.playerState.hpCurrent <= 0;
     }
 
     /**
@@ -125,15 +128,16 @@ export class PlayerService {
      */
     public async setHp(ctx: GameContext, hp: number): Promise<number> {
         const player = this.get(ctx);
-        const newHp = Math.min(hp, player.value.globalState.hpMax);
+        const newHp = Math.max(0, Math.min(hp, player.value.globalState.hpMax));
+        const isCombat = this.expeditionService.isPlayerInCombat(ctx);
 
-        await this.expeditionService.updateById(ctx.expedition._id.toString(), { 
+        await this.expeditionService.updateById(ctx.expedition._id.toString(), {
             [PLAYER_CURRENT_HP_PATH]: newHp,
-            [PLAYER_STATE_HP_CURRENT_PATH]: newHp
+            [PLAYER_STATE_HP_CURRENT_PATH]: newHp,
         });
 
         player.value.globalState.hpCurrent = newHp;
-        player.value.combatState.hpCurrent = newHp;
+        if (isCombat) player.value.combatState.hpCurrent = newHp;
         this.logger.log(ctx.info, `Player hp set to ${newHp}`);
 
         return newHp;
@@ -141,7 +145,10 @@ export class PlayerService {
 
     public async heal(ctx: GameContext, amount: number): Promise<number> {
         const player = this.get(ctx);
-        const playerHp = get(ctx.expedition, PLAYER_CURRENT_HP_PATH) ?? player.value.globalState.hpCurrent ?? 0;
+        const playerHp =
+            get(ctx.expedition, PLAYER_CURRENT_HP_PATH) ??
+            player.value.globalState.hpCurrent ??
+            0;
 
         return await this.setHp(ctx, playerHp + amount);
     }
@@ -151,17 +158,6 @@ export class PlayerService {
      */
     public async setGlobalHp(ctx: GameContext, hp: number): Promise<number> {
         return await this.setHp(ctx, hp);
-        // const player = this.get(ctx);
-        // const newHp = Math.min(hp, player.value.globalState.hpMax);
-
-        // await this.expeditionService.updateById(ctx.expedition._id.toString(), {
-        //     [PLAYER_STATE_HP_CURRENT_PATH]: newHp,
-        // });
-
-        // set(ctx.expedition, PLAYER_STATE_HP_CURRENT_PATH, newHp);
-        // this.logger.log(ctx.info, `Player hp set to ${newHp}`);
-
-        // return newHp;
     }
 
     /**
@@ -170,23 +166,40 @@ export class PlayerService {
     public async raiseMaxHp(
         ctx: GameContext,
         raiseHp: number,
-        heal: boolean = false
+        heal = false,
     ): Promise<number> {
-        ctx.expedition.playerState.hpMax += raiseHp;
-        if (ctx.expedition.currentNode?.data?.player)
-            ctx.expedition.currentNode.data.player.hpMax += raiseHp;
+        return await this.adjustMaxHp(ctx, raiseHp, heal);
+    }
 
-        if (heal)
-            await this.heal(ctx, raiseHp);
-        
-        const newHpMax = ctx.expedition.playerState.hpMax;
+    public async adjustMaxHp(
+        ctx: GameContext,
+        adjustment: number,
+        heal = false,
+    ): Promise<number> {
+        ctx.expedition.playerState.hpMax += adjustment;
+        ctx.expedition.playerState.hpCurrent = Math.min(
+            ctx.expedition.playerState.hpCurrent,
+            ctx.expedition.playerState.hpMax,
+        );
 
-        ctx.expedition.markModified('currentNode.data.player.hpMax');
+        const combatPlayer = ctx.expedition.currentNode?.data?.player;
+        if (combatPlayer) {
+            combatPlayer.hpMax += adjustment;
+            combatPlayer.hpCurrent = Math.min(
+                combatPlayer.hpCurrent,
+                combatPlayer.hpMax,
+            );
+            ctx.expedition.markModified('currentNode.data.player.hpMax');
+            ctx.expedition.markModified('currentNode.data.player.hpCurrent');
+        }
+
+        if (heal && adjustment > 0) await this.heal(ctx, adjustment);
+
         await ctx.expedition.save();
 
-        this.logger.log(ctx.info, `Player raise Max HP by  ${raiseHp}`);
+        this.logger.log(ctx.info, `Player adjust Max HP by  ${adjustment}`);
 
-        return newHpMax;
+        return ctx.expedition.playerState.hpMax;
     }
 
     /**
