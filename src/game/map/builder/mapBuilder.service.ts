@@ -197,7 +197,7 @@ export class MapBuilderService {
             
                     populatedData = {
                         encounterId: stepValues.encounterId,
-                        step: 0,
+                        stage: 0,
                     };
             
                 } else {
