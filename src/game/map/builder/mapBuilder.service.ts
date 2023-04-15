@@ -195,7 +195,10 @@ export class MapBuilderService {
             case NodeType.Encounter:
                 if (stepValues?.encounterId) {
             
-                    populatedData = stepValues.encounterId;
+                    populatedData = {
+                        encounterId: stepValues.encounterId,
+                        step: 0,
+                    };
             
                 } else {
             
