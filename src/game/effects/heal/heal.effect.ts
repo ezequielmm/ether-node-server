@@ -103,9 +103,9 @@ export class HealEffect implements EffectHandler {
         finalHealth: number,
     ): Promise<void> {
         await this.combatQueueService.push({
-            ctx: ctx,
-            source: source,
-            target: target,
+            ctx,
+            source,
+            target,
             args: {
                 effectType: CombatQueueTargetEffectTypeEnum.Heal,
                 defenseDelta: 0,
