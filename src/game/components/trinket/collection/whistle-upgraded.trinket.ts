@@ -5,7 +5,7 @@ import { WhistleTrinket } from './whistle.trinket';
  * Whistle Upgraded Trinket
  */
 export class WhistleUpgradedTrinket extends WhistleTrinket {
-    @Prop({ default: 26 })
+    @Prop({ default: 55 })
     trinketId: number;
 
     @Prop({ default: 'Whistle+' })

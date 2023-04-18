@@ -5,7 +5,7 @@ import { GoldNeedleTrinket } from './gold-needle.trinket';
  * Gold needle Trinket upgraded
  */
 export class GoldNeedleUpgradedTrinket extends GoldNeedleTrinket {
-    @Prop({ default: 20 })
+    @Prop({ default: 52 })
     trinketId: number;
 
     @Prop({ default: 'Gold Needle+' })
