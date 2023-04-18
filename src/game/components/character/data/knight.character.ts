@@ -39,10 +39,10 @@ export const KnightCharacter: Character = {
         },
     ],
     lootboxRarity: {
-        common: 20,
-        uncommon: 20,
+        common: 45,
+        uncommon: 25,
         rare: 20,
-        epic: 20,
-        legendary: 20,
+        epic: 9.8,
+        legendary: 0.2,
     },
 };
