@@ -40,4 +40,10 @@ export class Settings {
 
     @Prop()
     maxTrinketsOnMerchantNode: number;
+
+    @Prop()
+    minLootboxSize: number;
+
+    @Prop()
+    maxLootboxSize: number;
 }

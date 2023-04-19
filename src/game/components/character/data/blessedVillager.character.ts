@@ -45,4 +45,5 @@ export const BlessedVillagerCharacter: Character = {
         epic: 4.9,
         legendary: 0.1,
     },
+    lootboxSize: 3,
 };

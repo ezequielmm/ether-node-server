@@ -20,6 +20,8 @@ export class SettingsSeeder implements Seeder {
             maxPotionsOnMerchantNode: 5,
             maxTrinketsOnMerchantNode: 5,
             healPercentageInCamp: 0.3,
+            minLootboxSize: 0,
+            maxLootboxSize: 6,
         });
     }
 

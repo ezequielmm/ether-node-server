@@ -45,4 +45,5 @@ export const VillagerCharacter: Character = {
         epic: 0,
         legendary: 0,
     },
+    lootboxSize: 2,
 };

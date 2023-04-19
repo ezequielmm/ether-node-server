@@ -45,4 +45,5 @@ export const KnightCharacter: Character = {
         epic: 9.8,
         legendary: 0.2,
     },
+    lootboxSize: 3,
 };
