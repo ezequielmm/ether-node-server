@@ -32,7 +32,7 @@ export class ExhaustCardAction {
                 data: [
                     {
                         source: 'hand',
-                        destination: 'exhaust',
+                        destination: 'exhausted',
                         id: cardId,
                     },
                 ],

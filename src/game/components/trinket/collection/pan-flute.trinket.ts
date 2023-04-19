@@ -25,7 +25,7 @@ export class PanFluteTrinket extends Trinket {
     @Prop({ default: 1 })
     resolveToGain: number;
 
-    onAttach(ctx: GameContext): void {
+    async onAttach(ctx: GameContext): Promise<void> {
         ctx.events.addListener(EVENT_AFTER_INIT_COMBAT, async () => {
             const playerService = ctx.moduleRef.get(PlayerService, {
                 strict: false,

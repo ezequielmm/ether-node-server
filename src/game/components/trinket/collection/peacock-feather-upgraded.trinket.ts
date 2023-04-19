@@ -5,6 +5,9 @@ import { PeacockFeatherTrinket } from './peacock-feather.trinket';
  * Peacock Feather Upgraded Trinket
  */
 export class PeacockFeatherUpgradedTrinket extends PeacockFeatherTrinket {
+    @Prop({ default: 58 })
+    trinketId: number;
+
     @Prop({ default: 'Peacock Feather+' })
     name: string;
 

@@ -31,6 +31,7 @@ import { ReturnModelType } from '@typegoose/typegoose';
 import { ModuleRef } from '@nestjs/core';
 import { MapService } from 'src/game/map/map.service';
 import { ConfigService } from '@nestjs/config';
+import { NodeType } from './node-type';
 
 @Injectable()
 export class ExpeditionService {
@@ -182,6 +183,11 @@ export class ExpeditionService {
 
     async getExpeditionMap(ctx: GameContext): Promise<Node[]> {
         return ctx.expedition.map;
+    }
+
+    isPlayerInCombat(ctx: GameContext): boolean {
+        const nodeType = ctx.expedition?.currentNode?.nodeType;
+        return nodeType === NodeType.Combat;
     }
 
     async getDeckCards(

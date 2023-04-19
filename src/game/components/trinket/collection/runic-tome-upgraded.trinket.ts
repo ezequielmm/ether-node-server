@@ -5,6 +5,9 @@ import { RunicTomeTrinket } from './runic-tome.trinket';
  * Runict Tome Trinket
  */
 export class RunicTomeUpgradedTrinket extends RunicTomeTrinket {
+    @Prop({ default: 53 })
+    trinketId: number;
+
     @Prop({ default: 'Runic Tome+' })
     name: string;
 

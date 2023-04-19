@@ -14,7 +14,7 @@ import { spiritVialPotion } from './data/spiritVial.potion';
 import { arcaneBrewPotion } from './data/arcaneBrew.potion';
 // import { phantomPhialPotion } from './data/phantomPhial.potion';
 import { philterOfRedemptionPotion } from './data/philterOfRedemption.potion';
-import { pavaRootPotion } from './data/pavaRoot.potion';
+//import { pavaRootPotion } from './data/pavaRoot.potion';
 import { dewDropElixirPotion } from './data/dewDropElixir.potion';
 import { ReturnModelType } from '@typegoose/typegoose';
 
@@ -40,7 +40,7 @@ export class PotionSeeder implements Seeder {
             philterOfRedemptionPotion,
             dewDropElixirPotion,
             // pavaRootPotion,
-            //phantomPhialPotion,
+            // phantomPhialPotion,
         ]);
     }
 

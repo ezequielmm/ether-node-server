@@ -18,6 +18,6 @@ export class TrinketModifier extends Trinket {
     }
 
     public static isModifier(trinket: Trinket): trinket is TrinketModifier {
-        return (typeof (trinket as TrinketModifier).mutate !== 'undefined');
+        return typeof (trinket as TrinketModifier).mutate !== 'undefined';
     }
 }

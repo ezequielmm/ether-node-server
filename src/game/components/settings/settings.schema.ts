@@ -24,6 +24,9 @@ export class Settings {
     maxCardRewardsInCombat: number;
 
     @Prop()
+    healPercentageInCamp: number;
+
+    @Prop()
     maxSteps: number;
 
     @Prop()
@@ -37,4 +40,10 @@ export class Settings {
 
     @Prop()
     maxTrinketsOnMerchantNode: number;
+
+    @Prop()
+    minLootboxSize: number;
+
+    @Prop()
+    maxLootboxSize: number;
 }

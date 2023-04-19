@@ -39,10 +39,11 @@ export const BlessedVillagerCharacter: Character = {
         },
     ],
     lootboxRarity: {
-        common: 20,
-        uncommon: 20,
-        rare: 20,
-        epic: 20,
-        legendary: 20,
+        common: 50,
+        uncommon: 30,
+        rare: 15,
+        epic: 4.9,
+        legendary: 0.1,
     },
+    lootboxSize: 3,
 };

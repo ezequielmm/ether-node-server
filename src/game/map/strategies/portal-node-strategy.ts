@@ -6,7 +6,7 @@ import {
     SWARAction,
     SWARMessageType,
 } from 'src/game/standardResponse/standardResponse';
-import { MapService } from '../../map.service';
+import { MapService } from '../map.service';
 import { AutoCompleteNodeStrategy } from './auto-complete-node-strategy';
 import { NodeStrategy } from './node-strategy';
 
@@ -23,17 +23,17 @@ export class PortalNodeStrategy
     onCompleted(ctx: GameContext): void {
         this.logger.log(ctx.info, `Map extended for client ${ctx.client.id}`);
 
-        // Get current act
-        const act = maxBy(ctx.expedition.map, 'act');
+        // // Get current act
+        // const act = maxBy(ctx.expedition.map, 'act');
 
-        switch (act.act) {
-            case 0:
-                this.mapService.setupActOne(ctx);
-                break;
-            case 1:
-                this.mapService.setupActTwo(ctx);
-                break;
-        }
+        // switch (act.act) {
+        //     case 0:
+        //         this.mapService.setupActOne(ctx);
+        //         break;
+        //     case 1:
+        //         this.mapService.setupActTwo(ctx);
+        //         break;
+        // }
 
         const safeMap = this.mapService.makeClientSafe(ctx.expedition.map);
 

@@ -54,13 +54,13 @@ export class EndExpeditionProcess {
             ctx.expedition.contest
         );
 
-        if (canWin) {
+        if (canWin && ctx.expedition.playerState.lootboxSize > 0) {
             ctx.expedition.finalScore.notifyNoLoot = true;
 
             if (contestIsValid) {
                 ctx.expedition.finalScore.lootbox =
                     await this.gearService.getLootbox(
-                        3,
+                        ctx.expedition.playerState.lootboxSize,
                         ctx.expedition.playerState.lootboxRarity,
                     );
 

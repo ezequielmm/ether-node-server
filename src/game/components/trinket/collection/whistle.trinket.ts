@@ -35,7 +35,7 @@ export class WhistleTrinket extends Trinket {
     @Prop({ default: 1 })
     fortitudeToAdd: number;
 
-    onAttach(ctx: GameContext): void {
+    async onAttach(ctx: GameContext): Promise<void> {
         ctx.events.addListener(
             EVENT_AFTER_PLAYER_TURN_START,
             async (event: GameEvent) => {

@@ -53,7 +53,7 @@ export class DiscardAllCardsAction {
         for (const card of [...cardsToExhaust, ...cardsToDiscard]) {
             data.push({
                 source: 'hand',
-                destination: isFade(card) ? 'exhaust' : 'discard',
+                destination: isFade(card) ? 'exhausted' : 'discard',
                 id: card.id,
             });
         }

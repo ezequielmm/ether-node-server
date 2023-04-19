@@ -108,7 +108,7 @@ export class EnemyService {
         for (const enemy of expedition.currentNode.data.enemies) {
             enemiesToReturn.push({
                 type: CardTargetedEnum.Enemy,
-                value: enemy
+                value: enemy,
             });
         }
 
@@ -120,30 +120,41 @@ export class EnemyService {
     }
 
     public getEnemyStatuses(ctx: GameContext): StatusesGlobalCollection {
-        return this.statusService.getAllFromEnemies(ctx)
-                .filter((entity) => (entity.target.type == CardTargetedEnum.Enemy && entity.target.value.hpCurrent > 0));
+        return this.statusService
+            .getAllFromEnemies(ctx)
+            .filter(
+                (entity) =>
+                    entity.target.type == CardTargetedEnum.Enemy &&
+                    entity.target.value.hpCurrent > 0,
+            );
     }
 
-    public haveChangedStatuses(ctx: GameContext, priorStatuses: StatusesGlobalCollection): boolean {
-        let changesFound: boolean = false;
+    public haveChangedStatuses(
+        ctx: GameContext,
+        priorStatuses: StatusesGlobalCollection,
+    ): boolean {
+        let changesFound = false;
         const currentStatuses = this.getEnemyStatuses(ctx);
-        
+
         each(currentStatuses, (enemy) => {
-            if (!isEqual(
-                    enemy.statuses, 
+            if (
+                !isEqual(
+                    enemy.statuses,
                     find(
-                        priorStatuses, (e) =>  
-                        (e.target.type == CardTargetedEnum.Enemy 
-                        && enemy.target.type == CardTargetedEnum.Enemy 
-                        && e.target.value.enemyId == enemy.target.value.enemyId)
-                    ).statuses
+                        priorStatuses,
+                        (e) =>
+                            e.target.type == CardTargetedEnum.Enemy &&
+                            enemy.target.type == CardTargetedEnum.Enemy &&
+                            e.target.value.enemyId ==
+                                enemy.target.value.enemyId,
+                    ).statuses,
                 )
             ) {
                 changesFound = true;
                 return false; // end 'each'
             }
         });
-        
+
         return changesFound;
     }
 
@@ -158,7 +169,7 @@ export class EnemyService {
         const enemies = this.getAll(ctx);
 
         for (const enemy of enemies) {
-            if (enemy.value[enemyIdField(id)] == id) return enemy;
+            if (enemy.value[enemyIdField(id)] === id) return enemy;
         }
 
         return null;
@@ -294,7 +305,6 @@ export class EnemyService {
         id: EnemyId,
         damage: number,
     ): Promise<number> {
-        
         const { value: enemy } = this.get(ctx, id);
 
         const { client } = ctx;
@@ -328,9 +338,27 @@ export class EnemyService {
         await this.setDefense(ctx, id, enemy.defense);
 
         if (enemy.hpCurrent === 0) {
+            let pathToUpdate = undefined;
+            switch (enemy.category) {
+                case EnemyCategoryEnum.Basic:
+                    pathToUpdate = 'basicEnemiesDefeated';
+                    break;
+                case EnemyCategoryEnum.Minion:
+                    pathToUpdate = 'minionEnemiesDefeated';
+                    break;
+                case EnemyCategoryEnum.Elite:
+                    pathToUpdate = 'eliteEnemiesDefeated';
+                    break;
+                case EnemyCategoryEnum.Boss:
+                    pathToUpdate = 'bossEnemiesDefeated';
+                    break;
+            }
 
-            await this.eventEmitter.emitAsync(EVENT_ENEMY_DEAD, { ctx, enemy });
+            if (pathToUpdate) {
+                ctx.expedition.scores[pathToUpdate]++;
+            }
 
+            //TODO: Refactor the below to just use pathToUpdate, when there's time to test it.
             await this.expeditionService.updateByFilter(
                 {
                     clientId: client.id,
@@ -352,6 +380,8 @@ export class EnemyService {
                     },
                 },
             );
+
+            await this.eventEmitter.emitAsync(EVENT_ENEMY_DEAD, { ctx, enemy });
         }
 
         return enemy.hpCurrent;
