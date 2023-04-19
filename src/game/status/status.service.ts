@@ -542,7 +542,7 @@ export class StatusService {
             source = {
                 type: CardTargetedEnum.Player,
                 value: {
-                    id: expedition.playerId,
+                    id: expedition.userAddress,
                     globalState: expedition.playerState,
                     combatState: expedition.currentNode.data.player,
                 },
@@ -584,7 +584,7 @@ export class StatusService {
             target: {
                 type: CardTargetedEnum.Player,
                 value: {
-                    id: expedition.playerId,
+                    id: expedition.userAddress,
                     globalState: expedition.playerState,
                     combatState: expedition.currentNode?.data.player,
                 },

@@ -52,8 +52,8 @@ export class CampGateway {
                         action: SWARAction.UpdatePlayerState,
                         data: {
                             playerState: {
-                                id: ctx.expedition.playerState.playerId,
-                                playerId: ctx.expedition.playerId,
+                                id: ctx.expedition.playerState.userAddress,
+                                userAddress: ctx.expedition.userAddress,
                                 playerName:
                                     ctx.expedition.playerState.playerName,
                                 characterClass:

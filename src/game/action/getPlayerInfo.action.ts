@@ -6,7 +6,7 @@ import { Player } from '../components/expedition/player';
 
 export interface PlayerInfoResponse {
     id: string;
-    playerId: number;
+    userAddress: string;
     playerName: string;
     characterClass: string;
     hpCurrent: number;
@@ -37,13 +37,13 @@ export class GetPlayerInfoAction {
 
         if (typeof expedition.currentNode !== 'undefined') {
             const {
-                playerId,
+                userAddress,
                 playerState: {
                     playerName,
                     characterClass,
                     gold,
                     cards,
-                    playerId: id,
+                    userAddress: id,
                     potions,
                     trinkets,
                 },
@@ -65,7 +65,7 @@ export class GetPlayerInfoAction {
 
                 return this.returnResponse({
                     id,
-                    playerId,
+                    userAddress,
                     playerName,
                     characterClass,
                     hpCurrent,
@@ -85,7 +85,7 @@ export class GetPlayerInfoAction {
 
                 return this.returnResponse({
                     id,
-                    playerId,
+                    userAddress,
                     playerName,
                     characterClass,
                     hpCurrent,
@@ -101,13 +101,13 @@ export class GetPlayerInfoAction {
             }
         } else {
             const {
-                playerId,
+                userAddress,
                 playerState: {
                     playerName,
                     characterClass,
                     gold,
                     cards,
-                    playerId: id,
+                    userAddress: id,
                     hpCurrent,
                     hpMax,
                     potions,
@@ -117,7 +117,7 @@ export class GetPlayerInfoAction {
 
             return this.returnResponse({
                 id,
-                playerId,
+                userAddress,
                 playerName,
                 characterClass,
                 hpCurrent,

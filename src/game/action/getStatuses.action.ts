@@ -21,7 +21,7 @@ export class GetStatusesAction {
         // First we get the expedition to the player's id and the
         // rest of the information from the current node
         const {
-            playerState: { playerId },
+            playerState: { userAddress },
             currentNode: {
                 data: {
                     player: {
@@ -38,7 +38,7 @@ export class GetStatusesAction {
         // Add the player information first and its statuses first
         response.push({
             targetEntity: TargetEntityEnum.Player,
-            id: playerId,
+            id: userAddress,
             statuses: [
                 ...StatusGenerator.formatStatusesToArray(buff),
                 ...StatusGenerator.formatStatusesToArray(debuff),

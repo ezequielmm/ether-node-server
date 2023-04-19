@@ -23,7 +23,7 @@ import {
 } from './expedition.interface';
 import { Node } from './node';
 import { Player } from './player';
-import { ClientId, getClientIdField } from './expedition.type';
+import { getClientIdField } from './expedition.type';
 import { GameContext } from '../interfaces';
 import { Socket } from 'socket.io';
 import { EventEmitter2 } from '@nestjs/event-emitter';
@@ -62,7 +62,7 @@ export class ExpeditionService {
             moduleRef: this.moduleRef,
             info: {
                 env: this.configService.get<string>('PAPERTRAIL_ENV'),
-                account: expedition?.playerState.email,
+                account: expedition?.playerState.userAddress,
                 expeditionId: expedition !== null ? expedition.id : null,
                 service: this.configService.get<string>('PAPERTRAIL_SERVICE'),
             },
@@ -131,7 +131,7 @@ export class ExpeditionService {
     }
 
     async update(
-        clientId: ClientId,
+        clientId: string,
         payload: UpdateExpeditionDTO,
     ): Promise<ExpeditionDocument> {
         const clientField = getClientIdField(clientId);
@@ -165,9 +165,9 @@ export class ExpeditionService {
     async updateClientId(
         payload: UpdateClientIdDTO,
     ): Promise<ExpeditionDocument> {
-        const { clientId, playerId } = payload;
+        const { clientId, userAddress } = payload;
         return await this.expedition.findOneAndUpdate(
-            { playerId, status: ExpeditionStatusEnum.InProgress },
+            { userAddress, status: ExpeditionStatusEnum.InProgress },
             { clientId, isCurrentlyPlaying: true },
         );
     }

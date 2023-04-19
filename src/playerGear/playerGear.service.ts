@@ -4,7 +4,7 @@ import { PlayerGear } from './playerGear.schema';
 import { ReturnModelType } from '@typegoose/typegoose';
 import { Gear } from '../game/components/gear/gear.schema';
 import { GearItem } from './gearItem';
-import { compact, isEmpty } from 'lodash';
+import { compact } from 'lodash';
 import { FilterQuery } from 'mongoose';
 import { Logger } from '@nestjs/common';
 import { GearService } from 'src/game/components/gear/gear.service';
@@ -23,10 +23,10 @@ export class PlayerGearService {
     ) {}
 
     async findUnownedEquippedGear(
-        playerId: number,
+        userAddress: string,
         equipped: GearItem[],
     ): Promise<GearItem[]> {
-        const owned = await this.getGear(playerId);
+        const owned = await this.getGear(userAddress);
 
         return equipped.filter((gear) => {
             //is doing !owned.includes(gear);
@@ -37,38 +37,39 @@ export class PlayerGearService {
     }
 
     async allAreOwned(
-        playerId: number,
+        userAddress: string,
         equipped_gear_list: GearItem[],
     ): Promise<boolean> {
         const unownedGear = await this.findUnownedEquippedGear(
-            playerId,
+            userAddress,
             equipped_gear_list,
         );
         return unownedGear.length === 0;
     }
 
     async getGear(
-        playerId: number,
+        userAddress: string,
         filter: FilterQuery<PlayerGear> = {},
     ): Promise<any> {
-
         let player: PlayerGear = await this.playerGear
             .findOne({
-                playerId: playerId,
+                userAddress,
                 ...filter,
             })
             .lean();
-        
+
         if (player === null) {
-            this.logger.debug("Player Gear Not Found for #"+playerId+". Creating...");
+            this.logger.debug(
+                `Player Gear Not Found for ${userAddress}. Creating...`,
+            );
 
             const startingGear = this.toGearItems(
-                this.getGearByIds(this.defaultGear)
+                this.getGearByIds(this.defaultGear),
             );
-            
+
             player = await this.playerGear.create({
-                playerId: playerId,
-                gear: startingGear
+                userAddress,
+                gear: startingGear,
             });
         }
 
@@ -77,12 +78,15 @@ export class PlayerGearService {
         return player.gear;
     }
 
-    async addGearToPlayer(playerId: number, gear: Gear[]): Promise<PlayerGear> {
+    async addGearToPlayer(
+        userAddress: string,
+        gear: Gear[],
+    ): Promise<PlayerGear> {
         const gearItems = this.toGearItems(gear);
 
         try {
             return await this.playerGear.findOneAndUpdate(
-                { playerId: playerId },
+                { userAddress },
                 { $push: { gear: { $each: gearItems } } },
                 { new: true, upsert: true },
             );
@@ -93,18 +97,18 @@ export class PlayerGearService {
 
     getGearByIds(gear: number[]): Gear[] {
         const gears: Gear[] = compact(
-            gear.map((id) => this.gearService.getGearById(id))
+            gear.map((id) => this.gearService.getGearById(id)),
         );
 
-         // TODO: ensure this does something non-silent if a gear ID doesn't match gear
+        // TODO: ensure this does something non-silent if a gear ID doesn't match gear
         return gears;
     }
 
     async removeGearFromPlayer(
-        playerId: number,
+        userAddress: string,
         gear: Gear[],
     ): Promise<PlayerGear> {
-        const playerGear = await this.getGear(playerId);
+        const playerGear = await this.getGear(userAddress);
 
         gear.forEach((toRemove) => {
             const index = playerGear.findIndex(
@@ -114,7 +118,7 @@ export class PlayerGearService {
         });
 
         return await this.playerGear.findOneAndUpdate(
-            { playerId: playerId },
+            { userAddress },
             { gear: playerGear },
             { new: true },
         );

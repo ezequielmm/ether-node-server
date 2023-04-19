@@ -1,5 +1,4 @@
 import { forwardRef, Module } from '@nestjs/common';
-import { AuthGatewayModule } from '../authGateway/authGateway.module';
 import { ExpeditionModule } from '../game/components/expedition/expedition.module';
 import { SocketGateway } from './socket.gateway';
 import { CardModule } from '../game/components/card/card.module';
@@ -32,7 +31,6 @@ import { EnemyModule } from 'src/game/components/enemy/enemy.module';
 
 @Module({
     imports: [
-        AuthGatewayModule,
         ExpeditionModule,
         CardModule,
         ActionModule,

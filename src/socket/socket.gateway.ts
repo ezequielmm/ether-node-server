@@ -4,10 +4,7 @@ import {
     OnGatewayInit,
     WebSocketGateway,
 } from '@nestjs/websockets';
-import { Logger } from '@nestjs/common';
-import { Socket } from 'socket.io';
-import { isValidAuthToken } from 'src/utils';
-import { AuthGatewayService } from 'src/authGateway/authGateway.service';
+import { Logger, UseGuards } from '@nestjs/common';
 import { ExpeditionService } from 'src/game/components/expedition/expedition.service';
 import { FullSyncAction } from 'src/game/action/fullSync.action';
 import { NodeType } from 'src/game/components/expedition/node-type';
@@ -16,15 +13,17 @@ import { CombatQueueService } from 'src/game/components/combatQueue/combatQueue.
 import { CardSelectionScreenService } from 'src/game/components/cardSelectionScreen/cardSelectionScreen.service';
 import { corsSocketSettings } from './socket.enum';
 import { isEmpty } from 'lodash';
+import { WebsocketAuthGuard } from 'src/auth/websocketAuth.guard';
+import { AuthorizedSocket } from 'src/auth/auth.types';
 
 @WebSocketGateway(corsSocketSettings)
+@UseGuards(WebsocketAuthGuard)
 export class SocketGateway
     implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
 {
     private readonly logger: Logger = new Logger(SocketGateway.name);
 
     constructor(
-        private readonly authGatewayService: AuthGatewayService,
         private readonly expeditionService: ExpeditionService,
         private readonly fullSyncAction: FullSyncAction,
         private readonly playerService: PlayerService,
@@ -36,40 +35,24 @@ export class SocketGateway
         this.logger.log(`Socket Initiated`);
     }
 
-    async handleConnection(client: Socket): Promise<void> {
+    async handleConnection(client: AuthorizedSocket): Promise<void> {
         this.logger.log(
             client.handshake,
             `Client attempting a connection: ${client.id}`,
         );
 
-        const { authorization } = client.handshake.headers;
-
-        if (!isValidAuthToken(authorization)) {
-            this.logger.log(
-                {
-                    authorization,
-                    clientId: client.id,
-                },
-                'Client has an invalid auth token',
-            );
-            client.disconnect(true);
-            return;
-        }
-
         try {
-            const { id: playerId } = await this.authGatewayService.getUser(
-                authorization,
-            );
+            const userAddress = client.userAddress;
 
             const clientUpdated = await this.expeditionService.updateClientId({
-                playerId,
+                userAddress,
                 clientId: client.id,
             });
 
             if (!clientUpdated) {
                 this.logger.log(
                     {
-                        authorization,
+                        userAddress,
                         clientId: client.id,
                     },
                     'Player did not have an expedition. This should never happen.',
@@ -137,8 +120,8 @@ export class SocketGateway
             } else {
                 this.logger.log(
                     {
+                        userAddress,
                         clientId: client.id,
-                        playerId,
                     },
                     'There is no expedition in progress for this player',
                 );
@@ -151,21 +134,21 @@ export class SocketGateway
         }
     }
 
-    async handleDisconnect(client: Socket): Promise<void> {
+    async handleDisconnect(client: AuthorizedSocket): Promise<void> {
         const ctx = await this.expeditionService.getGameContext(client);
 
         // Clear Combat queue
         await this.combatQueueService.deleteCombatQueueByClientId(client.id);
         this.logger.log(
             ctx.info,
-            `Deleted combat queue for client ${client.id}`,
+            `Deleted combat queue for client ${client.id}, ${client.userAddress}`,
         );
 
         // Clear Card Selection Queue
         await this.cardSelectionScreenService.deleteByClientId(client.id);
         this.logger.log(
             ctx.info,
-            `Deleted card selection screen items for client ${client.id}`,
+            `Deleted card selection screen items for client ${client.id}, ${client.userAddress}`,
         );
 
         // Update player connection status
@@ -175,6 +158,9 @@ export class SocketGateway
         });
 
         // Log disconnection event
-        this.logger.log(ctx.info, `Client disconnected: ${client.id}`);
+        this.logger.log(
+            ctx.info,
+            `Client disconnected: ${client.id}, ${client.userAddress}`,
+        );
     }
 }

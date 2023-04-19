@@ -5,7 +5,6 @@ import { PlayerGear } from './playerGear.schema';
 import { PlayerGearService } from './playerGear.service';
 import { HttpModule } from '@nestjs/axios';
 import { ExpeditionModule } from '../game/components/expedition/expedition.module';
-import { AuthGatewayModule } from '../authGateway/authGateway.module';
 import { GearChainBridgeController } from './gearChainBridge.controller';
 import { GearModule } from 'src/game/components/gear/gear.module';
 
@@ -15,7 +14,6 @@ import { GearModule } from 'src/game/components/gear/gear.module';
         KindagooseModule.forFeature([PlayerGear]),
         HttpModule,
         forwardRef(() => ExpeditionModule),
-        AuthGatewayModule,
         GearModule,
     ],
     providers: [PlayerGearService],

@@ -7,10 +7,9 @@ import {
     IExpeditionPlayerStateDeckCard,
 } from './expedition.interface';
 import { Expedition } from './expedition.schema';
-import { ClientId } from './expedition.type';
 
 interface BaseDTO {
-    clientId?: ClientId;
+    clientId?: string;
 }
 
 export type FindOneExpeditionDTO = BaseDTO;
@@ -19,7 +18,7 @@ export class CreateExpeditionDTO extends Expedition implements BaseDTO {}
 export type UpdateExpeditionDTO = DeepPartial<CreateExpeditionDTO>;
 export class UpdateClientIdDTO {
     readonly clientId: string;
-    readonly playerId: number;
+    readonly userAddress: string;
 }
 export type GetExpeditionMapDTO = BaseDTO;
 export type GetDeckCardsDTO = BaseDTO;

@@ -65,7 +65,7 @@ export class PlayerService {
         const player: ExpeditionPlayer = {
             type: CardTargetedEnum.Player,
             value: {
-                id: expedition.playerId,
+                id: expedition.userAddress,
                 globalState: expedition.playerState,
                 combatState: null,
             },
@@ -127,9 +127,9 @@ export class PlayerService {
         const player = this.get(ctx);
         const newHp = Math.min(hp, player.value.globalState.hpMax);
 
-        await this.expeditionService.updateById(ctx.expedition._id.toString(), { 
+        await this.expeditionService.updateById(ctx.expedition._id.toString(), {
             [PLAYER_CURRENT_HP_PATH]: newHp,
-            [PLAYER_STATE_HP_CURRENT_PATH]: newHp
+            [PLAYER_STATE_HP_CURRENT_PATH]: newHp,
         });
 
         player.value.globalState.hpCurrent = newHp;
@@ -141,7 +141,10 @@ export class PlayerService {
 
     public async heal(ctx: GameContext, amount: number): Promise<number> {
         const player = this.get(ctx);
-        const playerHp = get(ctx.expedition, PLAYER_CURRENT_HP_PATH) ?? player.value.globalState.hpCurrent ?? 0;
+        const playerHp =
+            get(ctx.expedition, PLAYER_CURRENT_HP_PATH) ??
+            player.value.globalState.hpCurrent ??
+            0;
 
         return await this.setHp(ctx, playerHp + amount);
     }
@@ -170,15 +173,14 @@ export class PlayerService {
     public async raiseMaxHp(
         ctx: GameContext,
         raiseHp: number,
-        heal: boolean = false
+        heal: boolean = false,
     ): Promise<number> {
         ctx.expedition.playerState.hpMax += raiseHp;
         if (ctx.expedition.currentNode?.data?.player)
             ctx.expedition.currentNode.data.player.hpMax += raiseHp;
 
-        if (heal)
-            await this.heal(ctx, raiseHp);
-        
+        if (heal) await this.heal(ctx, raiseHp);
+
         const newHpMax = ctx.expedition.playerState.hpMax;
 
         ctx.expedition.markModified('currentNode.data.player.hpMax');

@@ -1,5 +1,4 @@
 import { IExpeditionPlayerStateDeckCard } from '../components/expedition/expedition.interface';
-import { ClientId } from '../components/expedition/expedition.type';
 import { JsonEffect } from '../effects/effects.interface';
 import { EntityReferenceDTO } from '../status/interfaces';
 
@@ -28,8 +27,8 @@ export interface DamageRegistry extends Registry {
 }
 
 export interface RegisterEffectDTO {
-    clientId: ClientId;
+    clientId: string;
     registry: CardRegistry | EffectRegistry | DamageRegistry;
 }
 
-export type HistoryDictionary = Map<ClientId, Registry[]>;
+export type HistoryDictionary = Map<string, Registry[]>;

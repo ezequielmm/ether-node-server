@@ -34,17 +34,15 @@ export class InitExpeditionProcess {
     ) {}
 
     async handle({
-        playerId,
+        userAddress,
         playerName,
-        email,
         playerToken,
         equippedGear,
         character_class,
         contest,
     }: {
-        playerId: number;
+        userAddress: string;
         playerName: string;
-        email: string;
         playerToken: IPlayerToken;
         equippedGear: GearItem[];
         character_class: string;
@@ -82,10 +80,10 @@ export class InitExpeditionProcess {
             ? await this.contestMapService.getMapForContest(contest)
             : await this.mapService.getActOne(0);
 
-        const cards = await this.generatePlayerDeck(character, email);
+        const cards = await this.generatePlayerDeck(character, userAddress);
 
         const expedition = await this.expeditionService.create({
-            playerId,
+            userAddress,
             map,
             scores: {
                 basicEnemiesDefeated: 0,
@@ -98,8 +96,7 @@ export class InitExpeditionProcess {
                 potionChance: initialPotionChance,
             },
             playerState: {
-                email,
-                playerId: randomUUID(),
+                userAddress,
                 playerToken,
                 playerName,
                 equippedGear,
@@ -124,19 +121,21 @@ export class InitExpeditionProcess {
             {
                 expId: expedition.id,
             },
-            `Created expedition for player id: ${playerId}`,
+            `Created expedition for player: ${userAddress}`,
         );
     }
 
     private async generatePlayerDeck(
         character: Character,
-        email: string,
+        userAddress: string,
     ): Promise<IExpeditionPlayerStateDeckCard[]> {
         // We destructure the cards from the character
         const { cards: characterDeck } = character;
 
         // Now we get any custom deck that we have available
-        const customDeck = await this.customDeckService.findByEmail(email);
+        const customDeck = await this.customDeckService.findByUserAddress(
+            userAddress,
+        );
 
         // Get card ids as an array of integers
         const cardIds = !customDeck
@@ -155,7 +154,7 @@ export class InitExpeditionProcess {
                 deck.forEach(({ cardId, amount }) => {
                     if (card.cardId === cardId) {
                         this.logger.log(
-                            `Added ${amount} ${card.name} cards to ${email} deck`,
+                            `Added ${amount} ${card.name} cards to ${userAddress} deck`,
                         );
                         for (let i = 1; i <= amount; i++) {
                             newDeckCards.push(card);

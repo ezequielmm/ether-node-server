@@ -9,7 +9,7 @@ export class CustomDeck {
     name: string;
 
     @Prop()
-    email: string;
+    userAddress: string;
 
     @Prop({ type: Object })
     cards: {

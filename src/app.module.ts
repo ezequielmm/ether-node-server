@@ -14,6 +14,7 @@ import { serverEnvironments } from './utils';
 import { ScheduleModule } from '@nestjs/schedule';
 import { TaskModule } from './tasks/task.module';
 import { LeaderboardModule } from './leaderboard/leaderboard.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
     imports: [
@@ -59,6 +60,7 @@ import { LeaderboardModule } from './leaderboard/leaderboard.module';
         WalletModule,
         LeaderboardModule,
         ApiModule,
+        AuthModule,
         ConfigModule.forRoot({ isGlobal: true, cache: true }),
         SocketModule,
         KindagooseModule.forRootAsync({
