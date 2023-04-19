@@ -33,6 +33,7 @@ import { CardService } from '../components/card/card.service';
 import { PlayerService } from '../components/player/player.service';
 import { ExpeditionEntity } from '../components/interfaces';
 import { CardTargetedEnum } from '../components/card/card.enum';
+import { IActNodeOption } from '../map/builder/mapBuilder.interface';
 
 @Injectable()
 export class CombatService {
@@ -52,9 +53,14 @@ export class CombatService {
         const { maxCardRewardsInCombat, initialPotionChance } =
             await this.settingsService.getSettings();
 
-        const trinketsToGenerate = [this.getTrinketRarityProbability(nodeOption)];    
-        
-        const potionsToGenerate = (initialPotionChance/100 < Math.random()) ? [this.getPotionRarityProbability()] : [];
+        const trinketsToGenerate = [
+            this.getTrinketRarityProbability(nodeOption),
+        ];
+
+        const potionsToGenerate =
+            initialPotionChance / 100 < Math.random()
+                ? [this.getPotionRarityProbability()]
+                : [];
 
         return await this.rewardService.generateRewards({
             ctx: ctx,
@@ -68,14 +74,17 @@ export class CombatService {
                 trinketsToGenerate,
                 (trinket) => trinket !== null,
             ),
-            upgradeCards: ((act ?? 1) > 1)
+            upgradeCards: (act ?? 1) > 1,
         });
     }
 
-    async generateBaseState(nodeOption, act: number) {
+    async generateBaseState(nodeOption: IActNodeOption, act: number) {
         const enemies = [];
         for await (const enemyId of nodeOption.nodeConfig.enemies) {
-            const enemy = await this.getNewEnemyById(enemyId, nodeOption.nodeConfig.healthMultiplier ?? 1);
+            const enemy = await this.getNewEnemyById(
+                enemyId,
+                nodeOption.nodeConfig.healthMultiplier ?? 1,
+            );
             enemies.push(enemy);
         }
 
@@ -113,9 +122,12 @@ export class CombatService {
         });
 
         const { enemies } = node.private_data;
-        const rewards = await this.rewardService.liveUpdateRewards(ctx, node.private_data.rewards);
+        const rewards = await this.rewardService.liveUpdateRewards(
+            ctx,
+            node.private_data.rewards,
+        );
 
-        // const rewards = (typeof node?.private_data?.rewards === 'undefined') 
+        // const rewards = (typeof node?.private_data?.rewards === 'undefined')
         //     ? await this.generateRewards(node, node.act, ctx)
         //     : await this.rewardService.liveUpdateRewards(ctx, node.private_data.rewards);
 
@@ -221,13 +233,12 @@ export class CombatService {
         }
     }
 
-    async getNewEnemyById(enemyId: EnemyId, healthMultiplier: number = 1) {
+    async getNewEnemyById(enemyId: EnemyId, healthMultiplier = 1) {
         const enemy = await this.enemyService.findById(enemyId);
 
-        let newHealth = getRandomBetween(
-            enemy.healthRange[0],
-            enemy.healthRange[1],
-        ) * healthMultiplier;
+        const newHealth =
+            getRandomBetween(enemy.healthRange[0], enemy.healthRange[1]) *
+            healthMultiplier;
 
         return {
             id: randomUUID(),
@@ -246,8 +257,15 @@ export class CombatService {
         };
     }
 
-    async getEnemiesByProbability(enemies, probability, healthMultiplier: number = 1) {
-        const enemyGroup = getRandomItemByWeight<EnemyId[]>(enemies, probability);
+    async getEnemiesByProbability(
+        enemies: EnemyId[][],
+        probability: number[],
+        healthMultiplier = 1,
+    ) {
+        const enemyGroup = getRandomItemByWeight<EnemyId[]>(
+            enemies,
+            probability,
+        );
 
         return await Promise.all(
             enemyGroup.map(async (enemyId: EnemyId) => {
@@ -256,13 +274,24 @@ export class CombatService {
         );
     }
 
-    async getEnemiesForNode(node: Node): Promise<IExpeditionCurrentNodeDataEnemy[]> {
+    async getEnemiesForNode(
+        node: Node,
+    ): Promise<IExpeditionCurrentNodeDataEnemy[]> {
         const enemies = node.private_data.enemies.map(({ enemies }) => enemies);
-        const probability = node.private_data.enemies.map(({ probability }) => probability);
-        
-        const healthMultiplier = ( HARD_MODE_NODE_START <= node.step && node.step <= HARD_MODE_NODE_END ) ? 1.5 : 1;
-        
-        return await this.getEnemiesByProbability(enemies, probability, healthMultiplier);
+        const probability = node.private_data.enemies.map(
+            ({ probability }) => probability,
+        );
+
+        const healthMultiplier =
+            HARD_MODE_NODE_START <= node.step && node.step <= HARD_MODE_NODE_END
+                ? 1.5
+                : 1;
+
+        return await this.getEnemiesByProbability(
+            enemies,
+            probability,
+            healthMultiplier,
+        );
     }
 
     private generateCoins(nodeType: NodeType): number {

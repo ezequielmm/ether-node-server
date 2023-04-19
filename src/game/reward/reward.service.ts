@@ -24,7 +24,6 @@ import {
     TrinketReward,
 } from '../components/expedition/expedition.interface';
 import { ExpeditionService } from '../components/expedition/expedition.service';
-import { Node } from '../components/expedition/node';
 import { NodeType } from '../components/expedition/node-type';
 import { GameContext } from '../components/interfaces';
 import { PotionRarityEnum } from '../components/potion/potion.enum';
@@ -74,7 +73,10 @@ export class RewardService {
         }
 
         if (cardsToGenerate.length > 0) {
-            const cards = await this.generateCards(cardsToGenerate, upgradeCards);
+            const cards = await this.generateCards(
+                cardsToGenerate,
+                upgradeCards,
+            );
             // Only if we get cards for the rewards
             if (cards.length > 0) rewards.push(...cards);
         }
@@ -198,7 +200,7 @@ export class RewardService {
 
     private async generateCards(
         cardsToGenerate: CardRarityEnum[],
-        upgradeCards: Boolean = false,
+        upgradeCards = false,
     ): Promise<CardReward[]> {
         const cardRewards: CardReward[] = [];
         let tryAgainIfUndef = true;

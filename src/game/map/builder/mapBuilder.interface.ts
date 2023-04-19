@@ -4,14 +4,14 @@ export interface IActStepOption {
     key: string;
     probability: number;
     maxStepsInRange?: number;
-    nodeConfig?: Object;
+    nodeConfig?: any;
 }
 
 export interface IActNodeFixedOption {
     type: NodeType;
     subType: NodeType;
     title: string;
-    nodeConfig?: Object;
+    nodeConfig?: any;
 }
 
 export interface IActNodeOption extends IActNodeFixedOption {
@@ -22,18 +22,18 @@ export interface IActConfiguration {
     actNumber: number;
     stepCount: number;
     maxNodesPerStep: number;
-    
+
     stepRangeConfig: {
         [id: string]: {
             fixedNodes?: IActNodeFixedOption[];
             minNodes?: number;
             maxNodes?: number;
             nodeOptions?: IActStepOption[];
-        }
+        };
     };
 
-    // each node has to be /something/, so let's give each of the things it can be a name. That name refers to one or more specifi    
-    nodeOptions: { 
-        [id: string] : IActNodeOption[]
+    // each node has to be /something/, so let's give each of the things it can be a name. That name refers to one or more specifi
+    nodeOptions: {
+        [id: string]: IActNodeOption[];
     };
 }
