@@ -4,7 +4,7 @@ import { NodeStatus } from './node-status';
 import { modelOptions, Prop, Severity } from '@typegoose/typegoose';
 
 @modelOptions({
-    options: { allowMixed: Severity.ALLOW }
+    options: { allowMixed: Severity.ALLOW },
 })
 export class Node {
     constructor(partial: Partial<Node>) {

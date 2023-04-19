@@ -24,6 +24,9 @@ export class Settings {
     maxCardRewardsInCombat: number;
 
     @Prop()
+    healPercentageInCamp: number;
+
+    @Prop()
     maxSteps: number;
 
     @Prop()

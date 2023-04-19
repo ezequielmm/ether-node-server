@@ -23,8 +23,7 @@ import { CardDescriptionFormatter } from '../../cardDescriptionFormatter/cardDes
 import { Player } from '../expedition/player';
 import { CardRarityEnum } from '../card/card.enum';
 import { Node } from '../expedition/node';
-import { NodeType } from '../expedition/node-type';
-import { filter, map, sample, uniq } from 'lodash';
+import { filter, sample } from 'lodash';
 import { PlayerService } from '../player/player.service';
 
 @Injectable()
@@ -38,7 +37,9 @@ export class EncounterService {
         private readonly playerService: PlayerService,
     ) {}
 
-    async getRandomEncounter(excludeIfPossible?: number[]): Promise<EncounterInterface> {
+    async getRandomEncounter(
+        excludeIfPossible?: number[],
+    ): Promise<EncounterInterface> {
         const encounters = [
             EncounterIdEnum.Nagpra,
             EncounterIdEnum.WillOWisp,
@@ -54,10 +55,10 @@ export class EncounterService {
             // EncounterIdEnum.RunicBehive,
         ];
 
-        const safeEncounters = 
-            (excludeIfPossible.length >= encounters.length) 
-            ? encounters 
-            : filter(encounters, (e) => !excludeIfPossible.includes(e));
+        const safeEncounters =
+            excludeIfPossible.length >= encounters.length
+                ? encounters
+                : filter(encounters, (e) => !excludeIfPossible.includes(e));
 
         return {
             encounterId: sample(safeEncounters),
@@ -77,9 +78,7 @@ export class EncounterService {
 
         //fetch existing encounter if there is one
         const encounterData = await this.getEncounterData(ctx.client);
-        if (encounterData) {
-            encounter.encounterId = encounterData.encounterId;
-        }
+        if (encounterData) encounter.encounterId = encounterData.encounterId;
 
         return encounter;
     }
@@ -191,21 +190,24 @@ export class EncounterService {
                 case 'hp_max_random': //eg will o wisp
                     const max = parseInt(effect.max);
                     const min = parseInt(effect.min);
-                    await this.playerService.adjustMaxHp(
+                    await this.playerService.setMaxHPDelta(
                         ctx,
                         getRandomBetween(min, max),
                         true,
                     );
                     break;
                 case 'hp_max':
-                    await this.playerService.adjustMaxHp(
+                    await this.playerService.setMaxHPDelta(
                         ctx,
                         parseInt(effect.amount),
                         true,
                     );
                     break;
                 case 'hit_points': //eg rug burn
-                    await this.playerService.heal(ctx, parseInt(effect.amount));
+                    await this.playerService.setHPDelta({
+                        ctx,
+                        hpDelta: parseInt(effect.amount),
+                    });
                     break;
                 case 'upgrade_random_card': //eg will o wisp
                     await this.upgradeRandomCard(
@@ -766,8 +768,6 @@ export class EncounterService {
         removeMe: IExpeditionPlayerStateDeckCard,
     ): Promise<void> {
         const ctx = await this.expeditionService.getGameContext(client);
-        const expedition = ctx.expedition;
-        const expeditionId = expedition._id.toString();
         switch (effect) {
             case 'abandon_altar':
                 switch (removeMe.rarity) {
@@ -775,16 +775,22 @@ export class EncounterService {
                     case CardRarityEnum.Starter:
                         break;
                     case CardRarityEnum.Common:
-                        await this.playerService.heal(ctx, 5);
+                        await this.playerService.setHPDelta({
+                            ctx,
+                            hpDelta: 5,
+                        });
                         break;
                     case CardRarityEnum.Uncommon:
-                        await this.playerService.setHp(ctx, playerState.hpMax);
+                        await this.playerService.setHP({
+                            ctx,
+                            newHPCurrent: playerState.hpMax,
+                        });
                         break;
                     case CardRarityEnum.Rare:
-                        await this.playerService.adjustMaxHp(ctx, 10, true);
+                        await this.playerService.setMaxHPDelta(ctx, 10, true);
                         break;
                     case CardRarityEnum.Legendary:
-                        await this.playerService.adjustMaxHp(ctx, 20, true);
+                        await this.playerService.setMaxHPDelta(ctx, 20, true);
                         break;
                 }
                 break;

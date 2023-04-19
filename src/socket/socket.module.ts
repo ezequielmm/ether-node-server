@@ -29,6 +29,7 @@ import { UpgradeCardModule } from 'src/game/upgradeCard/upgradeCard.module';
 import { CombatModule } from '../game/combat/combat.module';
 import { ActionQueueModule } from 'src/actionQueue/actionQueue.module';
 import { EnemyModule } from 'src/game/components/enemy/enemy.module';
+import { SettingsModule } from 'src/game/components/settings/settings.module';
 
 @Module({
     imports: [
@@ -52,6 +53,7 @@ import { EnemyModule } from 'src/game/components/enemy/enemy.module';
         ActionQueueModule,
         EnemyModule,
         forwardRef(() => CombatModule),
+        SettingsModule,
     ],
     providers: [
         SocketGateway,

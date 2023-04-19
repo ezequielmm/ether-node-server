@@ -258,3 +258,16 @@ export function findStepWithMostNodes(nodes: Node[]): number {
 
     return maxCount;
 }
+
+/**
+ * Check is the given number is a float or an integer
+ * @param value the number to evaluate
+ * @returns boolean
+ */
+export function isFloat(value: number): boolean {
+    return (
+        typeof value === 'number' &&
+        !Number.isNaN(value) &&
+        !Number.isInteger(value)
+    );
+}

@@ -7,6 +7,7 @@ import { EffectDTO, EffectHandler } from '../effects.interface';
 import { EffectService } from '../effects.service';
 import { healEffect, healPercentageEffect } from './constants';
 import { ExpeditionService } from 'src/game/components/expedition/expedition.service';
+import { isFloat } from 'src/utils';
 
 export interface HealPercentageArgs {
     value: number;
@@ -47,26 +48,19 @@ export class HealPercentageEffect implements EffectHandler {
         percentage: number,
         ctx: GameContext,
     ): number {
-        /*
-        To calculate the percentage to apply first we need to get the hpCurrent from the player
-        And calculate the percentage based on that value
-        */
         let newHpCurrent = 0;
-        const convertedPercentage = percentage / 100;
+        const convertedPercentage = isFloat(percentage)
+            ? percentage
+            : percentage / 100;
 
         if (PlayerService.isPlayer(entity)) {
             const isCombatNode = this.expeditionService.isPlayerInCombat(ctx);
 
-            const hpCurrent = isCombatNode
-                ? entity.value.combatState.hpCurrent
-                : entity.value.globalState.hpCurrent;
             const hpMax = isCombatNode
                 ? entity.value.combatState.hpMax
                 : entity.value.globalState.hpMax;
 
-            const hpToAdd = Math.round(hpMax * convertedPercentage);
-
-            newHpCurrent = Math.min(hpMax, hpCurrent + hpToAdd);
+            newHpCurrent = Math.round(hpMax * convertedPercentage);
         }
 
         if (EnemyService.isEnemy(entity)) {

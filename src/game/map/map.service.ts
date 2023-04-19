@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { find, findIndex, slice, last } from 'lodash';
+import { find, findIndex, slice } from 'lodash';
 import { NodeStatus } from '../components/expedition/node-status';
 import { Node } from '../components/expedition/node';
 import { GameContext } from '../components/interfaces';

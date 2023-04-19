@@ -1,5 +1,5 @@
 import { forwardRef, Inject, Injectable, Logger } from '@nestjs/common';
-import { find, get, set } from 'lodash';
+import { find, set } from 'lodash';
 import { HistoryService } from 'src/game/history/history.service';
 import {
     AttachedStatus,
@@ -11,10 +11,8 @@ import { CardTargetedEnum } from '../card/card.enum';
 import { ExpeditionService } from '../expedition/expedition.service';
 import { GameContext, ExpeditionEntity } from '../interfaces';
 import {
-    PLAYER_CURRENT_HP_PATH,
     PLAYER_DEFENSE_PATH,
     PLAYER_ENERGY_PATH,
-    PLAYER_STATE_HP_CURRENT_PATH,
     PLAYER_STATUSES_PATH,
 } from './contants';
 import { ExpeditionPlayer } from './interfaces';
@@ -120,61 +118,76 @@ export class PlayerService {
     }
 
     /**
-     * Set the player's hp
+     * Set or increases the player's hp
      *
      * @param ctx Context
-     * @param hp New hp value
+     * @param hpToCalculate New hp value to set
      * @returns Return the new hp value
      */
-    public async setHp(ctx: GameContext, hp: number): Promise<number> {
-        const player = this.get(ctx);
-        const newHp = Math.max(0, Math.min(hp, player.value.globalState.hpMax));
-        const isCombat = this.expeditionService.isPlayerInCombat(ctx);
+    async setHP({
+        ctx,
+        newHPCurrent,
+    }: {
+        ctx: GameContext;
+        newHPCurrent: number;
+    }): Promise<number> {
+        const isPlayerInCombat = this.expeditionService.isPlayerInCombat(ctx);
 
-        await this.expeditionService.updateById(ctx.expedition._id.toString(), {
-            [PLAYER_CURRENT_HP_PATH]: newHp,
-            [PLAYER_STATE_HP_CURRENT_PATH]: newHp,
-        });
+        const {
+            expedition: {
+                playerState: { hpMax },
+            },
+        } = ctx;
 
-        player.value.globalState.hpCurrent = newHp;
-        if (isCombat) player.value.combatState.hpCurrent = newHp;
-        this.logger.log(ctx.info, `Player hp set to ${newHp}`);
+        const newHp = Math.max(0, Math.min(newHPCurrent, hpMax));
+
+        ctx.expedition.playerState.hpCurrent = newHp;
+        ctx.expedition.markModified('playerState.hpCurrent');
+
+        if (isPlayerInCombat) {
+            ctx.expedition.currentNode.data.player.hpCurrent = newHp;
+            ctx.expedition.markModified('currentNode.data.player.hpCurrent');
+        }
+
+        await ctx.expedition.save();
+
+        this.logger.log(ctx.info, `Player hp set to ${newHp} HP`);
 
         return newHp;
     }
 
-    public async heal(ctx: GameContext, amount: number): Promise<number> {
-        const player = this.get(ctx);
-        const playerHp =
-            get(ctx.expedition, PLAYER_CURRENT_HP_PATH) ??
-            player.value.globalState.hpCurrent ??
-            0;
+    /**
+     *
+     * @param ctx the game context
+     * @param hpDelta the hp value to increase
+     * @returns number
+     */
+    async setHPDelta({
+        ctx,
+        hpDelta,
+    }: {
+        ctx: GameContext;
+        hpDelta: number;
+    }): Promise<number> {
+        const {
+            expedition: {
+                playerState: { hpCurrent },
+            },
+        } = ctx;
 
-        return await this.setHp(ctx, playerHp + amount);
+        const newHPCurrent = hpCurrent + hpDelta;
+
+        return this.setHP({ ctx, newHPCurrent });
     }
 
     /**
-     * Set the player's global hp
+     * Adjust the player's global Max HP by a given amount
+     * @returns number
      */
-    public async setGlobalHp(ctx: GameContext, hp: number): Promise<number> {
-        return await this.setHp(ctx, hp);
-    }
-
-    /**
-     * Raise the player's global Max HP
-     */
-    public async raiseMaxHp(
-        ctx: GameContext,
-        raiseHp: number,
-        heal = false,
-    ): Promise<number> {
-        return await this.adjustMaxHp(ctx, raiseHp, heal);
-    }
-
-    public async adjustMaxHp(
+    public async setMaxHPDelta(
         ctx: GameContext,
         adjustment: number,
-        heal = false,
+        shouldHeal = false,
     ): Promise<number> {
         ctx.expedition.playerState.hpMax += adjustment;
         ctx.expedition.playerState.hpCurrent = Math.min(
@@ -182,25 +195,28 @@ export class PlayerService {
             ctx.expedition.playerState.hpMax,
         );
 
-        const combatPlayer = ctx.expedition.currentNode?.data?.player;
-        if (combatPlayer) {
-            combatPlayer.hpMax += adjustment;
-            combatPlayer.hpCurrent = Math.min(
-                combatPlayer.hpCurrent,
-                combatPlayer.hpMax,
+        const isPlayerInCombat = this.expeditionService.isPlayerInCombat(ctx);
+
+        if (isPlayerInCombat) {
+            ctx.expedition.currentNode.data.player.hpMax += adjustment;
+            ctx.expedition.currentNode.data.player.hpCurrent = Math.min(
+                ctx.expedition.currentNode.data.player.hpCurrent,
+                ctx.expedition.currentNode.data.player.hpMax,
             );
             ctx.expedition.markModified('currentNode.data.player.hpMax');
             ctx.expedition.markModified('currentNode.data.player.hpCurrent');
         }
 
-        if (heal && adjustment > 0) await this.heal(ctx, adjustment);
+        if (shouldHeal && adjustment > 0)
+            await this.setHPDelta({ ctx, hpDelta: adjustment });
 
         await ctx.expedition.save();
 
-        this.logger.log(ctx.info, `Player adjust Max HP by  ${adjustment}`);
+        this.logger.log(ctx.info, `Player adjust Max HP by ${adjustment}`);
 
         return ctx.expedition.playerState.hpMax;
     }
+
 
     /**
      * Apply damage to the player
@@ -243,7 +259,7 @@ export class PlayerService {
 
         // Update the player's defense and new health
         await this.setDefense(ctx, newDefense);
-        await this.setHp(ctx, newHp);
+        await this.setHP({ ctx, newHPCurrent: newHp });
 
         // Add damage to history
         this.historyService.register({

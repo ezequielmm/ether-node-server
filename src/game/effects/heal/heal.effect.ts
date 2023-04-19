@@ -32,14 +32,14 @@ export class HealEffect implements EffectHandler {
             ctx,
             source,
             target,
-            args: { currentValue: hpToAdd },
+            args: { currentValue: hpDelta },
         } = payload;
 
         // Here we check is the target to heal is the player
         if (PlayerService.isPlayer(target)) {
             if (this.playerService.isDead(ctx)) return;
 
-            await this.applyHPToPlayer(ctx, target, hpToAdd);
+            await this.applyHPToPlayer(ctx, target, hpDelta);
             return;
         }
 
@@ -47,7 +47,7 @@ export class HealEffect implements EffectHandler {
         if (EnemyService.isEnemy(target)) {
             if (this.enemyService.isDead(target)) return;
 
-            await this.applyHPToEnemy(ctx, source, target, hpToAdd);
+            await this.applyHPToEnemy(ctx, source, target, hpDelta);
             return;
         }
     }
@@ -57,19 +57,24 @@ export class HealEffect implements EffectHandler {
         target: ExpeditionPlayer,
         newHP: number,
     ): Promise<void> {
-        const newHPCurrent = await this.playerService.heal(ctx, newHP);
-
         const isCombat = this.expeditionService.isPlayerInCombat(ctx);
 
+        const hpCurrent = target.value.combatState.hpCurrent;
+
+        const finalHealth = await this.playerService.setHPDelta({
+            ctx,
+            hpDelta: newHP,
+        });
+
         if (isCombat) {
-            const hpCurrent = target.value.combatState.hpCurrent;
+            const healhDelta = finalHealth - hpCurrent;
 
             await this.sendToCombatQueue(
                 ctx,
                 target,
                 target,
-                newHPCurrent - hpCurrent,
-                newHPCurrent,
+                healhDelta,
+                finalHealth,
             );
         }
     }

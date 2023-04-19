@@ -78,7 +78,7 @@ export class DamageEffect implements EffectHandler {
 
             oldHp = target.value.hpCurrent;
             oldDefense = target.value.defense;
-            
+
             await this.enemyService.damage(ctx, target.value.id, damage);
 
             newHp = target.value.hpCurrent;

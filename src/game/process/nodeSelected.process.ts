@@ -35,11 +35,20 @@ export class NodeSelectedProcess {
 
         const node = this.mapService.findNodeById(ctx, node_id);
 
+        if (!node) {
+            logger.error('Selected node is not available');
+            ctx.client.emit('ErrorMessage', {
+                message: `An Error has ocurred selecting the node`,
+            });
+            return;
+        }
+
         if (!this.mapService.nodeIsSelectable(ctx, node.id)) {
             logger.error('Selected node is not available');
             ctx.client.emit('ErrorMessage', {
                 message: `An Error has ocurred selecting the node`,
             });
+            return;
         }
 
         switch (node.status) {
