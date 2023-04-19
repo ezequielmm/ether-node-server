@@ -46,7 +46,7 @@ class NFTService {
           // parse page into return object here
           if (typeof response.raw.result !== 'undefined') {
             for (const token of response.raw.result) {
-                if (typeof tokenCollections[token.token_address] === 'undefined') continue;
+                if (typeof tokenCollections[token.token_address.toLowerCase()] === 'undefined') continue;
 
                 let metadata = '';
                 try {
@@ -55,7 +55,7 @@ class NFTService {
                     metadata = '';
                 }
                 
-                tokenCollections[token.token_address].tokens.push({
+                tokenCollections[token.token_address.toLowerCase()].tokens.push({
                     token_id: token.token_id,
                     amount: token.amount,
                     owner_of: token.owner_of,

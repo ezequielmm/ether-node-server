@@ -1,7 +1,7 @@
-import { Node } from '../../../components/expedition/node';
-import { GameContext } from '../../../components/interfaces';
+import { Node } from '../../components/expedition/node';
+import { GameContext } from '../../components/interfaces';
 import { NodeStrategy } from './node-strategy';
-import { MapService } from '../../map.service';
+import { MapService } from '../map.service';
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
 
 @Injectable()

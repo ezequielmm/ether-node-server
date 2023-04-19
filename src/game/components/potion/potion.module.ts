@@ -9,6 +9,7 @@ import { PlayerModule } from '../player/player.module';
 import { PotionGateway } from './potion.gateway';
 import { Potion } from './potion.schema';
 import { PotionService } from './potion.service';
+import { CardModule } from '../card/card.module';
 
 @Module({
     imports: [
@@ -19,6 +20,7 @@ import { PotionService } from './potion.service';
         PlayerModule,
         CombatQueueModule,
         ActionQueueModule,
+        forwardRef(() => CardModule),
     ],
     providers: [PotionService, PotionGateway],
     exports: [PotionService, KindagooseModule],

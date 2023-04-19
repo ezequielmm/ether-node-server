@@ -28,7 +28,6 @@ export class EndCombatProcess {
         private readonly playerService: PlayerService,
         private readonly enemyService: EnemyService,
         private readonly combatQueueService: CombatQueueService,
-        private readonly scoreCalculatorService: ScoreCalculatorService,
         private readonly endExpeditionProcess: EndExpeditionProcess,
     ) {}
 

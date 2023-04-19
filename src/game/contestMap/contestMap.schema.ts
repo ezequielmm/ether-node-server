@@ -21,6 +21,9 @@ export class ContestMap {
 
     @Prop()
     maxNodes: number;
+
+    @Prop()
+    isGenerated: boolean;
 }
 
 export type ContestMapDocument = HydratedDocument<ContestMap>;

@@ -32,13 +32,14 @@ import { InitEncounterProcess } from './initEncounter.process';
 import { EncounterModule } from '../components/encounter/encounter.module';
 import { ContinueExpeditionProcess } from './continueExpedition.process';
 import { EndExpeditionProcess } from './endExpedition.process';
-import { MapModule } from '../map/map/map.module';
+import { MapModule } from '../map/map.module';
 import { ScoreCalculatorModule } from '../scoreCalculator/scoreCalculator.module';
 import { GearModule } from '../components/gear/gear.module';
 import { PlayerWinModule } from '../../playerWin/playerWin.module';
 import { ContestModule } from '../contest/contest.module';
 import { ContestMapModule } from '../contestMap/contestMap.module';
 import { PlayerGearModule } from 'src/playerGear/playerGear.module';
+import { MapBuilderModule } from '../map/builder/mapBuilder.module';
 
 @Module({
     imports: [
@@ -66,6 +67,7 @@ import { PlayerGearModule } from 'src/playerGear/playerGear.module';
         ContestModule,
         ContestMapModule,
         PlayerGearModule,
+        MapBuilderModule,
     ],
     providers: [
         SendEnemyIntentProcess,

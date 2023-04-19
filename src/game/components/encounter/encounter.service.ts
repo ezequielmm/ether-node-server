@@ -23,8 +23,8 @@ import { CardDescriptionFormatter } from '../../cardDescriptionFormatter/cardDes
 import { Player } from '../expedition/player';
 import { CardRarityEnum } from '../card/card.enum';
 import { Node } from '../expedition/node';
-import { NodeType } from '../expedition/node-type';
-import { filter, map, sample, uniq } from 'lodash';
+import { filter, sample } from 'lodash';
+import { PlayerService } from '../player/player.service';
 
 @Injectable()
 export class EncounterService {
@@ -34,9 +34,12 @@ export class EncounterService {
         private readonly expeditionService: ExpeditionService,
         private readonly cardService: CardService,
         private readonly trinketService: TrinketService,
+        private readonly playerService: PlayerService,
     ) {}
 
-    async getRandomEncounter(currentNode?: Node, nodes?: Node[]): Promise<EncounterInterface> {
+    async getRandomEncounter(
+        excludeIfPossible?: number[],
+    ): Promise<EncounterInterface> {
         const encounters = [
             EncounterIdEnum.Nagpra,
             EncounterIdEnum.WillOWisp,
@@ -52,48 +55,14 @@ export class EncounterService {
             // EncounterIdEnum.RunicBehive,
         ];
 
-        const encounterNodes = 
-            (nodes) ?
-            filter(
-                nodes, 
-                (node) => (node.type == NodeType.Encounter && node.id < currentNode.id)
-            )
-            : [];
-
-        const thisStep = 
-            (encounterNodes.length > 0) ?
-            filter(
-                encounterNodes,
-                (node) => (node.step == currentNode.step)
-            )
-            : [];
-
-        // if there is already an encounter in this step, use the same encounterId to preserve options on other steps
-        if (thisStep.length > 0) {
-            return {
-                encounterId: thisStep[0].private_data.encounterId,
-                stage: 0
-            };
-        }
-
-        const alreadySelectedEncounters = 
-            (nodes) ?
-            uniq(
-                map(
-                    encounterNodes,
-                    (n) => n.private_data.encounterId
-                )
-            )
-            : [];
-
-        const safeEncounters = 
-            (alreadySelectedEncounters.length >= encounters.length) 
-            ? encounters 
-            : filter(encounters, (e) => !alreadySelectedEncounters.includes(e));
+        const safeEncounters =
+            excludeIfPossible.length >= encounters.length
+                ? encounters
+                : filter(encounters, (e) => !excludeIfPossible.includes(e));
 
         return {
             encounterId: sample(safeEncounters),
-            stage: 0
+            stage: 0,
         };
     }
 
@@ -109,9 +78,7 @@ export class EncounterService {
 
         //fetch existing encounter if there is one
         const encounterData = await this.getEncounterData(ctx.client);
-        if (encounterData) {
-            encounter.encounterId = encounterData.encounterId;
-        }
+        if (encounterData) encounter.encounterId = encounterData.encounterId;
 
         return encounter;
     }
@@ -147,7 +114,7 @@ export class EncounterService {
             buttonPressed.effects = randomStage.effects;
             buttonPressed.nextStage = randomStage.nextStage;
         }
-        await this.applyEffects(buttonPressed.effects, client);
+        await this.applyEffects(buttonPressed.effects, ctx);
 
         if (buttonPressed.awaitModal) {
             await this.expeditionService.updateById(expedition._id.toString(), {
@@ -172,102 +139,118 @@ export class EncounterService {
         });
     }
 
-    private async incrMaxHp(
-        amount: number,
-        playerState: Player,
-        expeditionId: string,
-    ) {
-        if (playerState.hpMax + amount < 0) {
-            amount = -playerState.hpMax;
-        }
-        await this.expeditionService.updateById(expeditionId, {
-            $inc: {
-                'playerState.hpMax': amount,
-            },
-        });
-    }
+    // private async incrMaxHp(
+    //     amount: number,
+    //     playerState: Player,
+    //     expeditionId: string,
+    // ) {
+    //     this.playerService.adjustMaxHp()
+    //     if (playerState.hpMax + amount < 0) {
+    //         amount = -playerState.hpMax;
+    //     }
+    //     await this.expeditionService.updateById(expeditionId, {
+    //         $inc: {
+    //             'playerState.hpMax': amount,
+    //         },
+    //     });
+    // }
 
-    private async incrHp(
-        amount: number,
-        playerState: Player,
-        expeditionId: string,
-    ) {
-        if (playerState.hpCurrent + amount < 0) {
-            amount = -playerState.hpCurrent;
-        }
-        if (playerState.hpCurrent + amount < playerState.hpMax) {
-            amount = playerState.hpMax - playerState.hpCurrent;
-        }
-        await this.expeditionService.updateById(expeditionId, {
-            $inc: {
-                'playerState.hpCurrent': amount,
-            },
-        });
-    }
+    // private async incrHp(
+    //     amount: number,
+    //     playerState: Player,
+    //     expeditionId: string,
+    // ) {
+    //     if (playerState.hpCurrent + amount < 0) {
+    //         amount = -playerState.hpCurrent;
+    //     }
+    //     if (playerState.hpCurrent + amount < playerState.hpMax) {
+    //         amount = playerState.hpMax - playerState.hpCurrent;
+    //     }
+    //     await this.expeditionService.updateById(expeditionId, {
+    //         $inc: {
+    //             'playerState.hpCurrent': amount,
+    //         },
+    //     });
+    // }
 
-    private async applyEffects(effects: any[], client: Socket): Promise<void> {
-        for (let i = 0; i < effects.length; i++) {
-            const effect = effects[i];
-            const ctx = await this.expeditionService.getGameContext(client);
-            const expedition = ctx.expedition;
-            const expeditionId = expedition._id.toString();
-            const playerState = await this.expeditionService.getPlayerState({
-                clientId: client.id,
-            });
-            let amount = 0;
-
+    private async applyEffects(
+        effects: any[],
+        ctx: GameContext,
+    ): Promise<void> {
+        for await (const effect of effects) {
             switch (effect.kind) {
                 case 'coin': //eg nagpra
-                    amount = parseInt(effect.amount);
-
-                    if (playerState.gold + amount < 0) {
-                        // no negative gold
-                        amount = -playerState.gold;
-                    }
-
-                    await this.expeditionService.updateById(expeditionId, {
-                        $inc: {
-                            'playerState.gold': amount,
-                        },
-                    });
+                    ctx.expedition.playerState.gold = Math.min(
+                        ctx.expedition.playerState.gold +
+                            parseInt(effect.amount),
+                        0,
+                    );
+                    ctx.expedition.markModified('playerState.gold');
                     break;
                 case 'hp_max_random': //eg will o wisp
                     const max = parseInt(effect.max);
                     const min = parseInt(effect.min);
-                    amount = getRandomBetween(min, max);
-                    await this.incrMaxHp(amount, playerState, expeditionId);
+                    await this.playerService.setMaxHPDelta(
+                        ctx,
+                        getRandomBetween(min, max),
+                        true,
+                    );
                     break;
                 case 'hp_max':
-                    amount = parseInt(effect.amount);
-                    await this.incrMaxHp(amount, playerState, expeditionId);
+                    await this.playerService.setMaxHPDelta(
+                        ctx,
+                        parseInt(effect.amount),
+                        true,
+                    );
                     break;
                 case 'hit_points': //eg rug burn
-                    amount = parseInt(effect.amount);
-                    await this.incrHp(amount, playerState, expeditionId);
+                    await this.playerService.setHPDelta({
+                        ctx,
+                        hpDelta: parseInt(effect.amount),
+                    });
                     break;
-
                 case 'upgrade_random_card': //eg will o wisp
-                    await this.upgradeRandomCard(client, playerState);
+                    await this.upgradeRandomCard(
+                        ctx.client,
+                        ctx.expedition.playerState,
+                    );
                     break;
                 case 'loose_random_card':
-                    await this.looseRandomCard(client, playerState);
+                    await this.looseRandomCard(
+                        ctx.client,
+                        ctx.expedition.playerState,
+                    );
                     break;
                 case 'card_add_to_library': //eg naiad
-                    const cardId = parseInt(effect.cardId);
-                    await this.cardService.addCardToDeck(ctx, cardId);
+                    await this.cardService.addCardToDeck(
+                        ctx,
+                        parseInt(effect.cardId),
+                    );
                     break;
                 case 'choose_trinket':
-                    amount = parseInt(effect.amount);
-                    await this.chooseTrinket(client, playerState, amount);
+                    await this.chooseTrinket(
+                        ctx.client,
+                        ctx.expedition.playerState,
+                        parseInt(effect.amount),
+                    );
                     break;
                 case 'choose_card_to_sacrifice': // abandon altar
-                    await this.chooseCardRemove(client, playerState);
+                    await this.chooseCardRemove(
+                        ctx.client,
+                        ctx.expedition.playerState,
+                    );
                     break;
                 case 'choose_card_remove': // Enchanted Forest
-                    await this.chooseCardRemove(client, playerState);
+                    await this.chooseCardRemove(
+                        ctx.client,
+                        ctx.expedition.playerState,
+                    );
                     break;
                 case 'choose_card_upgrade': // Enchanted Forest
-                    await this.chooseCardUpgrade(client, playerState);
+                    await this.chooseCardUpgrade(
+                        ctx.client,
+                        ctx.expedition.playerState,
+                    );
                     break;
                 case 'fatigue': // tree carving
                 case 'imbued': // tree carving
@@ -276,26 +259,132 @@ export class EncounterService {
                 case 'trinket':
                     switch (effect.item) {
                         case 'birdcage': //nagpra
-                            await this.trinketService.add(ctx, 3);
+                            await this.trinketService.add({
+                                ctx,
+                                trinketId: 3,
+                            });
                             break;
                         case 'runic_tome': //young wizard
-                            await this.trinketService.add(ctx, 23);
+                            await this.trinketService.add({
+                                ctx,
+                                trinketId: 23,
+                            });
                             break;
                         case 'pan_flute': //satyr
-                            await this.trinketService.add(ctx, 45, undefined, [46,47]);
+                            await this.trinketService.add({
+                                ctx,
+                                trinketId: 45,
+                                trinketConflicts: [46, 47],
+                            });
                             break;
                         case 'silver_pan_flute': //satyr
-                            await this.trinketService.add(ctx, 46, undefined, [45,47]);
+                            await this.trinketService.add({
+                                ctx,
+                                trinketId: 46,
+                                trinketConflicts: [45, 47],
+                            });
                             break;
                         case 'golden_pan_flute': //satyr
-                            await this.trinketService.add(ctx, 47, undefined, [45,46]);
+                            await this.trinketService.add({
+                                ctx,
+                                trinketId: 47,
+                                trinketConflicts: [45, 46],
+                            });
                             break;
                     }
                     break;
-                case 'brimbles_quest': // mossy troll
-                    break;
             }
         }
+        // for (let i = 0; i < effects.length; i++) {
+        //     const effect = effects[i];
+        //     const ctx = await this.expeditionService.getGameContext(client);
+        //     const expedition = ctx.expedition;
+        //     const expeditionId = expedition._id.toString();
+        //     const playerState = await this.expeditionService.getPlayerState({
+        //         clientId: client.id,
+        //     });
+        //     let amount = 0;
+
+        //     switch (effect.kind) {
+        //         case 'coin': //eg nagpra
+        //             amount = parseInt(effect.amount);
+
+        //             if (playerState.gold + amount < 0) {
+        //                 // no negative gold
+        //                 amount = -playerState.gold;
+        //             }
+
+        //             await this.expeditionService.updateById(expeditionId, {
+        //                 $inc: {
+        //                     'playerState.gold': amount,
+        //                 },
+        //             });
+        //             break;
+        //         case 'hp_max_random': //eg will o wisp
+        //             const max = parseInt(effect.max);
+        //             const min = parseInt(effect.min);
+        //             amount = getRandomBetween(min, max);
+        //             await this.incrMaxHp(amount, playerState, expeditionId);
+        //             break;
+        //         case 'hp_max':
+        //             amount = parseInt(effect.amount);
+        //             await this.incrMaxHp(amount, playerState, expeditionId);
+        //             break;
+        //         case 'hit_points': //eg rug burn
+        //             amount = parseInt(effect.amount);
+        //             await this.incrHp(amount, playerState, expeditionId);
+        //             break;
+
+        //         case 'upgrade_random_card': //eg will o wisp
+        //             await this.upgradeRandomCard(client, playerState);
+        //             break;
+        //         case 'loose_random_card':
+        //             await this.looseRandomCard(client, playerState);
+        //             break;
+        //         case 'card_add_to_library': //eg naiad
+        //             const cardId = parseInt(effect.cardId);
+        //             await this.cardService.addCardToDeck(ctx, cardId);
+        //             break;
+        //         case 'choose_trinket':
+        //             amount = parseInt(effect.amount);
+        //             await this.chooseTrinket(client, playerState, amount);
+        //             break;
+        //         case 'choose_card_to_sacrifice': // abandon altar
+        //             await this.chooseCardRemove(client, playerState);
+        //             break;
+        //         case 'choose_card_remove': // Enchanted Forest
+        //             await this.chooseCardRemove(client, playerState);
+        //             break;
+        //         case 'choose_card_upgrade': // Enchanted Forest
+        //             await this.chooseCardUpgrade(client, playerState);
+        //             break;
+        //         case 'fatigue': // tree carving
+        //         case 'imbued': // tree carving
+        //         case 'feeble': // tree carving
+        //             break;
+        //         case 'trinket':
+        //             switch (effect.item) {
+        //                 case 'birdcage': //nagpra
+        //                     await this.trinketService.add(ctx, 3);
+        //                     break;
+        //                 case 'runic_tome': //young wizard
+        //                     await this.trinketService.add(ctx, 23);
+        //                     break;
+        //                 case 'pan_flute': //satyr
+        //                     await this.trinketService.add(ctx, 45, undefined, [46,47]);
+        //                     break;
+        //                 case 'silver_pan_flute': //satyr
+        //                     await this.trinketService.add(ctx, 46, undefined, [45,47]);
+        //                     break;
+        //                 case 'golden_pan_flute': //satyr
+        //                     await this.trinketService.add(ctx, 47, undefined, [45,46]);
+        //                     break;
+        //             }
+        //             break;
+        //         case 'brimbles_quest': // mossy troll
+        //             break;
+        //     }
+        // }
     }
 
     private async chooseTrinket(
@@ -535,7 +624,8 @@ export class EncounterService {
             card.upgradedCardId,
         );
 
-        upgradedCardData.description = CardDescriptionFormatter.process(upgradedCardData);
+        upgradedCardData.description =
+            CardDescriptionFormatter.process(upgradedCardData);
         this.cardService.addStatusDescriptions(upgradedCardData);
 
         const upgradedCard: IExpeditionPlayerStateDeckCard = {
@@ -583,7 +673,7 @@ export class EncounterService {
         );
     }
 
-    async handleUpgradeCard(client: Socket, cardId: string): Promise<void> {
+    async handleUpgradeCard(client: Socket): Promise<void> {
         await this.postModalStage(client);
     }
 
@@ -678,8 +768,6 @@ export class EncounterService {
         removeMe: IExpeditionPlayerStateDeckCard,
     ): Promise<void> {
         const ctx = await this.expeditionService.getGameContext(client);
-        const expedition = ctx.expedition;
-        const expeditionId = expedition._id.toString();
         switch (effect) {
             case 'abandon_altar':
                 switch (removeMe.rarity) {
@@ -687,20 +775,22 @@ export class EncounterService {
                     case CardRarityEnum.Starter:
                         break;
                     case CardRarityEnum.Common:
-                        await this.incrHp(5, playerState, expeditionId);
+                        await this.playerService.setHPDelta({
+                            ctx,
+                            hpDelta: 5,
+                        });
                         break;
                     case CardRarityEnum.Uncommon:
-                        await this.incrHp(
-                            playerState.hpMax - playerState.hpCurrent,
-                            playerState,
-                            expeditionId,
-                        );
+                        await this.playerService.setHP({
+                            ctx,
+                            newHPCurrent: playerState.hpMax,
+                        });
                         break;
                     case CardRarityEnum.Rare:
-                        await this.incrMaxHp(10, playerState, expeditionId);
+                        await this.playerService.setMaxHPDelta(ctx, 10, true);
                         break;
                     case CardRarityEnum.Legendary:
-                        await this.incrMaxHp(20, playerState, expeditionId);
+                        await this.playerService.setMaxHPDelta(ctx, 20, true);
                         break;
                 }
                 break;

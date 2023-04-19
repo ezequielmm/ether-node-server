@@ -103,7 +103,7 @@ $(document).ready(function () {
     });
 
     $('#btnCampRecoverHealth').click(function () {
-        socket.emit('CampRecoverHealth', key, (response) => {
+        socket.emit('CampRecoverHealth', (response) => {
             showJSON(response);
         });
     });

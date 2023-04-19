@@ -30,7 +30,7 @@ export class DreamAmuletTrinket extends Trinket {
     @Prop({ default: 1 })
     cardsToDraw: number;
 
-    onAttach(ctx: GameContext): void {
+    async onAttach(ctx: GameContext): Promise<void> {
         // Once the combat is created, it is generated with the player's hand cards created
         // We can then add the extra card to the player's hand
         // The add card process is only necessary once, after modify the hand size will be

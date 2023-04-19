@@ -59,7 +59,7 @@ export class GetDataGateway {
                     `Client ${client.id} trigger message "GetData": ${types}`,
                 );
 
-                let returnData = undefined;
+                let returnData = null;
 
                 try {
                     let data = null;
@@ -143,15 +143,6 @@ export class GetDataGateway {
                         action: types,
                         data,
                     });
-
-                    // client.emit(
-                    //     'PutData',
-                    //     StandardResponse.respond({
-                    //         message_type: SWARMessageType.GenericData,
-                    //         action: types,
-                    //         data,
-                    //     }),
-                    // );
                 } catch (e) {
                     logger.error(ctx.info, e.message);
                     logger.error(ctx.info, e.trace);

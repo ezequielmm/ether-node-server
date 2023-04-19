@@ -75,7 +75,16 @@ export class TrinketService {
         return includes(ctx.expedition.playerState.trinkets, trinket);
     }
 
-    public async add(ctx: GameContext, trinketId: number, trinketReplaces?: number[], trinketConflicts?: number[]): Promise<boolean> {
+    public async add({
+        ctx,
+        trinketId,
+        trinketConflicts,
+    }: {
+        ctx: GameContext;
+        trinketId: number;
+        trinketReplaces?: number[];
+        trinketConflicts?: number[];
+    }): Promise<boolean> {
         const trinket = this.findOne({ trinketId });
 
         if (!trinket) {
@@ -91,6 +100,7 @@ export class TrinketService {
         }
 
         let playerHasTrinket = await this.playerHasTrinket(ctx, trinket);
+
         if (trinketConflicts) {
             for (const tcId in trinketConflicts) {
                 if (await this.playerHasTrinket(ctx, toNumber(tcId))) {
@@ -114,6 +124,7 @@ export class TrinketService {
 
         ctx.expedition.playerState.trinkets.push(trinket);
         await last(ctx.expedition.playerState.trinkets).onAttach(ctx);
+        ctx.expedition.markModified('playerState.trinkets');
         await ctx.expedition.save();
 
         ctx.client.emit(

@@ -14,9 +14,15 @@ export const BurnedCard: Card = {
     cardType: CardTypeEnum.Status,
     pool: 'knight',
     energy: 0,
-    description: `Take {${damageEffect.name}} damage at end of turn. Fade`,
-    keywords: [CardKeywordEnum.Fade, CardKeywordEnum.Unplayable],
+    description: `Take {${damageEffect.name}} damage if in hand at end of turn. Fade`,
+    keywords: [CardKeywordEnum.Fade],
     properties: {
+        effects: [],
+        statuses: [],
+    },
+    showPointer: true,
+    isUpgraded: false,
+    triggerAtEndOfTurn: {
         effects: [
             {
                 effect: damageEffect.name,
@@ -28,8 +34,5 @@ export const BurnedCard: Card = {
         ],
         statuses: [],
     },
-    showPointer: true,
-    isUpgraded: false,
-    triggerAtEndOfTurn: true,
     isActive: true,
 };

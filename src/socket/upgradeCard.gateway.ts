@@ -91,10 +91,7 @@ export class UpgradeCardGateway {
 
                 switch (upgradeLocation) {
                     case UpgradeCardNodeTypes.Encounter:
-                        await this.encounterService.handleUpgradeCard(
-                            client,
-                            cardId,
-                        );
+                        await this.encounterService.handleUpgradeCard(client);
                         break;
                     case UpgradeCardNodeTypes.Camp:
                     default:

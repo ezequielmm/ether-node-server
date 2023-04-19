@@ -6,7 +6,7 @@ import { CrustaceansClawTrinket } from './crustaceans-claw.trinket';
  * Crustacean's Claw Upgraded Trinket
  */
 export class CrustaceansClawUpgradedTrinket extends CrustaceansClawTrinket {
-    @Prop({ default: 14 })
+    @Prop({ default: 51 })
     trinketId: number;
 
     @Prop({ default: "Crustacean's Claw+" })
@@ -14,7 +14,7 @@ export class CrustaceansClawUpgradedTrinket extends CrustaceansClawTrinket {
 
     @Prop({
         default:
-            'At the beginning of combat, draw 2 extra card, which costs 0 this turn',
+            'At the beginning of combat, draw 2 extra cards, which cost 0 this turn',
     })
     description: string;
 
