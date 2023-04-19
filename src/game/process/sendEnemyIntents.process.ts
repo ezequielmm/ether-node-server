@@ -23,8 +23,7 @@ export class SendEnemyIntentProcess {
 
     async handle(ctx: GameContext): Promise<EnemyIntentsResponse[]> {
         const intentValues: EnemyIntentsResponse[] = [];
-        const allEnemies = this.enemyService.getAll(ctx);
-        const enemies = allEnemies.filter((enemy) => enemy.value.hpCurrent > 0);
+        const enemies = this.enemyService.getLiving(ctx);
 
         for await (const enemy of enemies) {
             const enemyIntent: EnemyIntentsResponse = {
@@ -42,21 +41,18 @@ export class SendEnemyIntentProcess {
                     for await (const effect of effects) {
                         if (effect.effect !== damageEffect.name) continue;
 
-                        const preview =
-                            await this.effectService.preview({
+                        const preview = await this.effectService.preview({
+                            ctx,
+                            dto: {
                                 ctx,
-                                dto: {
-                                    ctx,
-                                    source: enemy,
-                                    args: {
-                                        initialValue:
-                                            effect.args.value ?? 0,
-                                        currentValue:
-                                            effect.args.value ?? 0,
-                                    },
+                                source: enemy,
+                                args: {
+                                    initialValue: effect.args.value ?? 0,
+                                    currentValue: effect.args.value ?? 0,
                                 },
-                                effect: effect.effect,
-                            });
+                            },
+                            effect: effect.effect,
+                        });
 
                         newValue += preview.args.currentValue;
                     }
@@ -64,16 +60,11 @@ export class SendEnemyIntentProcess {
                 }
 
                 enemyIntent.intents.push({
-                    ...(intent.type === EnemyIntentionType.Attack && {
-                        value,
-                    }),
-                    description: this.descriptionGenerator(
-                        intent.type,
-                        value,
-                    ),
+                    ...(intent.type === EnemyIntentionType.Attack && { value }),
+                    description: this.descriptionGenerator(intent.type, value),
                     type: intent.type,
                 });
-            }  
+            }
 
             intentValues.push(enemyIntent);
         }
@@ -89,7 +80,7 @@ export class SendEnemyIntentProcess {
             case EnemyIntentionType.Attack:
                 return `This Enemy will attack for ${value} Damage`;
             case EnemyIntentionType.Defend:
-                return `This Enemy will Defend`;
+                return `This Enemy will defend`;
             case EnemyIntentionType.Buff:
                 return `This Enemy is plotting to gain a Buff effect`;
             case EnemyIntentionType.Debuff:
