@@ -20,7 +20,7 @@ import { CardModule } from '../card/card.module';
         PlayerModule,
         CombatQueueModule,
         ActionQueueModule,
-        CardModule,
+        forwardRef(() => CardModule),
     ],
     providers: [PotionService, PotionGateway],
     exports: [PotionService, KindagooseModule],
