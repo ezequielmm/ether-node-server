@@ -1,6 +1,5 @@
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import { some } from 'lodash';
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 import pino from 'pino';
 import { Socket } from 'socket.io';
@@ -203,12 +202,7 @@ export class CardPlayedAction {
 
         await this.playerService.setEnergy(ctx, newEnergy);
 
-        this.sendUpdateEnergyMessage(
-            ctx.client,
-            newEnergy,
-            energyMax,
-            logger,
-        );
+        this.sendUpdateEnergyMessage(ctx.client, newEnergy, energyMax, logger);
 
         // Before we move it to the discard pile, we check if the
         // card has to double its effect values
@@ -233,12 +227,10 @@ export class CardPlayedAction {
                 effect.args.value = newValue;
                 syncCard = true;
             }
-
         }
         // Them add the card to the discard pile
-        if (syncCard) {
-            await this.cardService.updateCardDescription({ ctx, card })
-        }
+        if (syncCard)
+            await this.cardService.updateCardDescription({ ctx, card });
 
         // now, with all else done, do the actual exhaust/discard routines, without emitting again
         if (exhaust || forceExhaust) {
@@ -246,17 +238,16 @@ export class CardPlayedAction {
                 client: ctx.client,
                 cardId,
                 ctx,
-                emit: false
+                emit: false,
             });
         } else {
             await this.discardCardAction.handle({
                 client: ctx.client,
                 cardId,
                 ctx,
-                emit: false
+                emit: false,
             });
         }
-
 
         logger.info(`Ended combat queue for client ${ctx.client.id}`);
 
@@ -270,9 +261,7 @@ export class CardPlayedAction {
             cardTargetId: selectedEnemyId,
         });
 
-        if (endTurn)
-            await this.endPlayerTurnProcess.handle({ ctx });
-    
+        if (endTurn) await this.endPlayerTurnProcess.handle({ ctx });
     }
 
     private sendInvalidCardMessage(

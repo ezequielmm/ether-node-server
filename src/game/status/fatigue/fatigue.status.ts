@@ -44,9 +44,8 @@ export class FatigueStatus implements StatusEffectHandler {
     }
 
     @OnEvent(EVENT_BEFORE_ENEMIES_TURN_START)
-    async onEnemiesTurnStart(args: { ctx: GameContext }): Promise<void> {
-        const { ctx } = args;
-        const enemies = this.enemyService.getAll(ctx);
+    async onEnemiesTurnStart({ ctx }: { ctx: GameContext }): Promise<void> {
+        const enemies = this.enemyService.getLiving(ctx);
 
         for (const enemy of enemies) {
             await this.statusService.decreaseCounterAndRemove(
@@ -59,8 +58,7 @@ export class FatigueStatus implements StatusEffectHandler {
     }
 
     @OnEvent(EVENT_BEFORE_PLAYER_TURN_START)
-    async onPlayerTurnStart(args: { ctx: GameContext }): Promise<void> {
-        const { ctx } = args;
+    async onPlayerTurnStart({ ctx }: { ctx: GameContext }): Promise<void> {
         const player = this.playerService.get(ctx);
         const {
             value: {
