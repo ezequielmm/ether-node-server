@@ -27,7 +27,7 @@ export class PhoenixEggTrinket extends Trinket {
     @Prop({ default: 1 })
     hitPointsToAdd: number;
 
-    onAttach(ctx: GameContext): void {
+    async onAttach(ctx: GameContext): Promise<void> {
         ctx.events.addListener(EVENT_AFTER_INIT_COMBAT, async () => {
             const opts = {
                 strict: false,

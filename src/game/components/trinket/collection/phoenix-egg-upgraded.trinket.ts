@@ -6,7 +6,7 @@ import { PhoenixEggTrinket } from './phoenix-egg.trinket';
  * Phoenix Egg Upgraded Trinket
  */
 export class PhoenixEggUpgradedTrinket extends PhoenixEggTrinket {
-    @Prop({ default: 29 })
+    @Prop({ default: 56 })
     trinketId: number;
 
     @Prop({ default: 'Phoenix Egg+' })

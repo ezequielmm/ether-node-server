@@ -2,9 +2,12 @@ import { Prop } from '@typegoose/typegoose';
 import { GoldNeedleTrinket } from './gold-needle.trinket';
 
 /**
- * Gold needle Trinket
+ * Gold needle Trinket upgraded
  */
 export class GoldNeedleUpgradedTrinket extends GoldNeedleTrinket {
+    @Prop({ default: 52 })
+    trinketId: number;
+
     @Prop({ default: 'Gold Needle+' })
     name: string;
 

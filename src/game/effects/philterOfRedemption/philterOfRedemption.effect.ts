@@ -18,22 +18,39 @@ export class PhilterOfRedemptionEffect implements EffectHandler {
     ) {}
 
     async handle(dto: EffectDTO): Promise<void> {
-        const { ctx, source, target } = dto;
-        const damages = filter(this.historyService.get(ctx.client.id), {
-            type: 'damage',
-            turn: dto.ctx.expedition.currentNode.data.round - 1,
-        });
-
-        await this.effectService.apply({
+        const {
             ctx,
             source,
-            target,
-            effect: {
-                effect: healEffect.name,
-                args: {
-                    value: sumBy(damages, 'damage'),
+            ctx: {
+                expedition: {
+                    currentNode: {
+                        data: { round },
+                    },
                 },
             },
+        } = dto;
+
+        const damages = filter(this.historyService.get(ctx.client.id), {
+            type: 'damage',
+            turn: Math.max(round - 1, 1),
         });
+
+        if (damages.length > 0) {
+            const totalToRecover = sumBy(damages, 'damage');
+
+            if (totalToRecover > 0) {
+                await this.effectService.apply({
+                    ctx,
+                    source,
+                    target: source,
+                    effect: {
+                        effect: healEffect.name,
+                        args: {
+                            value: totalToRecover,
+                        },
+                    },
+                });
+            }
+        }
     }
 }

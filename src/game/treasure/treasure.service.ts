@@ -27,7 +27,7 @@ export class TreasureService {
 
     // private chest: Chest;
 
-    async generateBaseTreasure(node: Node): Promise<TreasureInterface> {
+    async generateBaseTreasure(nodeOption?): Promise<TreasureInterface> {
         const chest = await this.chestService.getRandomChest();
 
         const randomCoinChance = getRandomBetween(1, 100);
@@ -35,12 +35,12 @@ export class TreasureService {
 
         const rewards = await this.rewardService.generateRewards({
             ctx: null,
-            node,
             coinsToGenerate:
                 randomCoinChance <= chest.coinChance
                     ? getRandomBetween(chest.minCoins, chest.maxCoins)
                     : 0,
             cardsToGenerate: [],
+            upgradeCards: nodeOption?.upgradeCards,
             potionsToGenerate:
                 randomPotionChance <= chest.potionChance
                     ? [this.getPotionRarityProbability()]
@@ -62,7 +62,7 @@ export class TreasureService {
         ctx: GameContext,
         node: Node,
     ): Promise<TreasureInterface> {
-       const treasure = node.private_data ?? await this.generateBaseTreasure(node);
+       const treasure = node.private_data ?? await this.generateBaseTreasure();
        
         treasure.rewards = await this.rewardService.liveUpdateRewards(
             ctx,

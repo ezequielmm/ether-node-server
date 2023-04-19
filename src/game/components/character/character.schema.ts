@@ -47,4 +47,7 @@ export class Character {
         epic: number;
         legendary: number;
     };
+
+    @Prop()
+    lootboxSize?: number;
 }

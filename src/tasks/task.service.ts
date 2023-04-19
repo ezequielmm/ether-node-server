@@ -2,7 +2,6 @@ import { Injectable, Logger } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { ContestService } from 'src/game/contest/contest.service';
 import { ContestMapService } from 'src/game/contestMap/contestMap.service';
-import buildActOne from 'src/game/map/act/act-one/index';
 import {
     addDaysToDate,
     addHoursToDate,
@@ -10,14 +9,15 @@ import {
     findStepWithMostNodes,
     setHoursMinutesSecondsToUTCDate,
 } from 'src/utils';
-import { MapPopulationService } from 'src/game/map/mapPopulation.service';
+import { MapBuilderService } from 'src/game/map/builder/mapBuilder.service';
+import { ActOneConfig } from 'src/game/map/builder/actOne.config';
 
 @Injectable()
 export class TaskService {
     private readonly logger: Logger = new Logger(TaskService.name);
 
     constructor(
-        private readonly mapPopulationService: MapPopulationService,
+        private readonly mapBuilderService: MapBuilderService,
         private readonly contestService: ContestService,
         private readonly contestMapService: ContestMapService,
     ) {}
@@ -60,10 +60,11 @@ export class TaskService {
 
         // If we don't have a contest, we generate the first map
         // and create a contest for it, first we generate act 0
-        const map = await this.mapPopulationService.populateNodes(
-            buildActOne(),
-        );
-
+        const map = await this.mapBuilderService.createMap({
+            actConfig: ActOneConfig,
+            makeAvailable: true
+        });
+        
         // Here we calculate how many steps we have in the map
         const maxSteps = countSteps(map);
         const maxNodes = findStepWithMostNodes(map);
@@ -74,6 +75,7 @@ export class TaskService {
             nodes: map,
             maxSteps,
             maxNodes,
+            isGenerated: true,
         });
 
         // Now we get the last event_id from the database, this filed is used to

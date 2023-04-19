@@ -9,6 +9,7 @@ import { CombatQueueService } from 'src/game/components/combatQueue/combatQueue.
 import { ExpeditionEntity, GameContext } from 'src/game/components/interfaces';
 import { ExpeditionEnemy } from 'src/game/components/enemy/enemy.interface';
 import { ExpeditionPlayer } from 'src/game/components/player/interfaces';
+import { ExpeditionService } from 'src/game/components/expedition/expedition.service';
 
 export interface HealArgs {
     value: number;
@@ -23,6 +24,7 @@ export class HealEffect implements EffectHandler {
         private readonly playerService: PlayerService,
         private readonly enemyService: EnemyService,
         private readonly combatQueueService: CombatQueueService,
+        private readonly expeditionService: ExpeditionService,
     ) {}
 
     async handle(payload: EffectDTO<HealArgs>): Promise<void> {
@@ -30,14 +32,14 @@ export class HealEffect implements EffectHandler {
             ctx,
             source,
             target,
-            args: { currentValue: hpToAdd },
+            args: { currentValue: hpDelta },
         } = payload;
 
         // Here we check is the target to heal is the player
         if (PlayerService.isPlayer(target)) {
             if (this.playerService.isDead(ctx)) return;
 
-            await this.applyHPToPlayer(ctx, source, target, hpToAdd);
+            await this.applyHPToPlayer(ctx, target, hpDelta);
             return;
         }
 
@@ -45,36 +47,36 @@ export class HealEffect implements EffectHandler {
         if (EnemyService.isEnemy(target)) {
             if (this.enemyService.isDead(target)) return;
 
-            await this.applyHPToEnemy(ctx, source, target, hpToAdd);
+            await this.applyHPToEnemy(ctx, source, target, hpDelta);
             return;
         }
     }
 
     private async applyHPToPlayer(
         ctx: GameContext,
-        source: ExpeditionEntity,
-        player: ExpeditionPlayer,
-        hp: number,
+        target: ExpeditionPlayer,
+        newHP: number,
     ): Promise<void> {
-        const hpCurrent = player.value.combatState.hpCurrent;
+        const isCombat = this.expeditionService.isPlayerInCombat(ctx);
 
-        await this.playerService.setGlobalHp(
-            ctx,
-            player.value.combatState.hpCurrent + hp,
-        );
+        const hpCurrent = target.value.combatState.hpCurrent;
 
-        const newHp = await this.playerService.setHp(
+        const finalHealth = await this.playerService.setHPDelta({
             ctx,
-            player.value.combatState.hpCurrent + hp,
-        );
+            hpDelta: newHP,
+        });
 
-        await this.sendToCombatQueue(
-            ctx,
-            source,
-            player,
-            newHp - hpCurrent,
-            newHp,
-        );
+        if (isCombat) {
+            const healhDelta = finalHealth - hpCurrent;
+
+            await this.sendToCombatQueue(
+                ctx,
+                target,
+                target,
+                healhDelta,
+                finalHealth,
+            );
+        }
     }
 
     private async applyHPToEnemy(
@@ -106,9 +108,9 @@ export class HealEffect implements EffectHandler {
         finalHealth: number,
     ): Promise<void> {
         await this.combatQueueService.push({
-            ctx: ctx,
-            source: source,
-            target: target,
+            ctx,
+            source,
+            target,
             args: {
                 effectType: CombatQueueTargetEffectTypeEnum.Heal,
                 defenseDelta: 0,

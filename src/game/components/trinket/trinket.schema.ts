@@ -34,7 +34,7 @@ export class Trinket<T = any> {
     @Prop()
     description: string;
 
-    onAttach(_ctx: GameContext) {
+    async onAttach(_ctx: GameContext) {
         //throw new Error('Method not implemented.');
     }
 

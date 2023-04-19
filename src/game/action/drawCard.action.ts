@@ -57,7 +57,7 @@ export class DrawCardAction {
         const filterPile = function (
             pile: IExpeditionPlayerStateDeckCard[],
         ): IExpeditionPlayerStateDeckCard[] {
-            return (typeof filterType === 'undefined')
+            return typeof filterType === 'undefined'
                 ? pile
                 : pile.filter(({ cardType }) => cardType === filterType);
         };
@@ -106,9 +106,10 @@ export class DrawCardAction {
 
         // Do we still need more cards?
         let newDiscard = [...discard];
+
         if (cardsTaken.length < amountToTake && discardFiltered.length > 0) {
             const drawDepletedStrategy =
-                (typeof filterType === 'undefined')
+                typeof filterType === 'undefined'
                     ? CardDrawDepletedStrategyEnum.ShuffleDiscard
                     : CardDrawDepletedStrategyEnum.SampleDiscard;
             let remainingCardsTaken: IExpeditionPlayerStateDeckCard[] = [];

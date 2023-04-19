@@ -25,15 +25,13 @@ export class GobletTrinket extends OneUseTrinket {
 
     async onAttach(ctx: GameContext): Promise<void> {
         // If the trinket has already been used, we don't need to do anything
-        if (this.isUsed()) {
-            return;
-        }
+        if (this.isUsed()) return;
 
         const playerService = ctx.moduleRef.get(PlayerService, {
             strict: false,
         });
 
-        await playerService.raiseMaxHp(ctx, this.raiseHp, true);
+        await playerService.setMaxHPDelta(ctx, this.raiseHp, true);
         await this.markAsUsed(ctx);
 
         this.trigger(ctx);

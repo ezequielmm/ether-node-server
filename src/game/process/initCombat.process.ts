@@ -4,7 +4,6 @@ import { SetCombatTurnAction } from '../action/setCombatTurn.action';
 import { EnemyService } from '../components/enemy/enemy.service';
 import { CombatTurnEnum } from '../components/expedition/expedition.enum';
 import { Node } from '../components/expedition/node';
-import { ExpeditionService } from '../components/expedition/expedition.service';
 import { GameContext } from '../components/interfaces';
 import {
     EVENT_AFTER_CREATE_COMBAT,
@@ -22,55 +21,46 @@ export class InitCombatProcess {
     constructor(
         private readonly currentNodeGeneratorProcess: CurrentNodeGeneratorProcess,
         private readonly enemyService: EnemyService,
-        private readonly expeditionService: ExpeditionService,
         private readonly setCombatTurnAction: SetCombatTurnAction,
     ) {}
-
-    private node: Node;
-    private ctx: GameContext;
 
     async process(
         ctx: GameContext,
         node: Node,
         continueCombat: boolean,
     ): Promise<void> {
-        this.node = node;
-        this.ctx = ctx;
-
         if (continueCombat) {
-            await this.continueCombat();
+            await this.continueCombat(ctx);
         } else {
-            await this.createCombat();
+            await this.createCombat(ctx, node);
             // Combat is initialized, emit event
-            await this.ctx.events.emitAsync(EVENT_AFTER_INIT_COMBAT, { ctx });
+            await ctx.events.emitAsync(EVENT_AFTER_INIT_COMBAT, { ctx });
         }
 
-        await this.ctx.expedition.save();
+        await ctx.expedition.save();
     }
 
-    async createCombat(): Promise<void> {
+    async createCombat(ctx: GameContext, node: Node): Promise<void> {
         const currentNode =
             await this.currentNodeGeneratorProcess.getCurrentNodeData(
-                this.ctx,
-                this.node,
+                ctx,
+                node,
             );
 
-        this.ctx.expedition.currentNode = currentNode;
+        ctx.expedition.currentNode = currentNode;
 
         // Combat is created, emit event
-        await this.ctx.events.emitAsync(EVENT_AFTER_CREATE_COMBAT, {
-            ctx: this.ctx,
-        });
+        await ctx.events.emitAsync(EVENT_AFTER_CREATE_COMBAT, { ctx });
 
         await this.setCombatTurnAction.handle({
-            clientId: this.ctx.client.id,
+            clientId: ctx.client.id,
             newRound: 1,
             playing: CombatTurnEnum.Player,
         });
 
-        await this.enemyService.calculateNewIntentions(this.ctx);
+        await this.enemyService.calculateNewIntentions(ctx);
 
-        this.ctx.client.emit(
+        ctx.client.emit(
             'InitCombat',
             StandardResponse.respond({
                 message_type: SWARMessageType.CombatUpdate,
@@ -80,26 +70,15 @@ export class InitCombatProcess {
         );
     }
 
-    async continueCombat(): Promise<void> {
-        const expedition = await this.expeditionService.findOne({
-            clientId: this.ctx.client.id,
-        });
-
-        const expeditionId = expedition._id.toString();
-        const { currentNode } = expedition;
-
-        const enemiesAreDead = every(currentNode.data.enemies, {
+    async continueCombat(ctx: GameContext): Promise<void> {
+        const enemiesAreDead = every(ctx.expedition.currentNode.data.enemies, {
             hpCurrent: 0,
         });
 
         if (enemiesAreDead) {
-            await this.expeditionService.updateById(expeditionId, {
-                $set: {
-                    'currentNode.showRewards': true,
-                },
-            });
+            ctx.expedition.currentNode.showRewards = true;
 
-            this.ctx.client.emit(
+            ctx.client.emit(
                 'PutData',
                 StandardResponse.respond({
                     message_type: SWARMessageType.EndCombat,
@@ -109,14 +88,14 @@ export class InitCombatProcess {
             );
         } else {
             await this.setCombatTurnAction.handle({
-                clientId: this.ctx.client.id,
+                clientId: ctx.client.id,
                 newRound: 1,
                 playing: CombatTurnEnum.Player,
             });
 
-            await this.enemyService.calculateNewIntentions(this.ctx);
+            await this.enemyService.calculateNewIntentions(ctx);
 
-            this.ctx.client.emit(
+            ctx.client.emit(
                 'InitCombat',
                 StandardResponse.respond({
                     message_type: SWARMessageType.CombatUpdate,

@@ -3,7 +3,6 @@ import { InjectModel } from 'kindagoose';
 import { Potion } from './potion.schema';
 import { GameContext } from '../interfaces';
 import { Document, FilterQuery } from 'mongoose';
-import { NodeType } from '../expedition/node-type';
 import { EffectService } from 'src/game/effects/effects.service';
 import { PlayerService } from '../player/player.service';
 import { ExpeditionService } from '../expedition/expedition.service';
@@ -22,6 +21,7 @@ import { getRandomNumber } from 'src/utils';
 import { CustomException, ErrorBehavior } from 'src/socket/custom.exception';
 import { CombatQueueService } from '../combatQueue/combatQueue.service';
 import { ReturnModelType } from '@typegoose/typegoose';
+import { CardService } from '../card/card.service';
 
 @Injectable()
 export class PotionService {
@@ -36,6 +36,7 @@ export class PotionService {
         @Inject(forwardRef(() => ExpeditionService))
         private readonly expeditionService: ExpeditionService,
         private readonly combatQueueService: CombatQueueService,
+        private readonly cardService: CardService,
     ) {}
 
     async findAll(): Promise<Potion[]> {
@@ -108,8 +109,7 @@ export class PotionService {
             );
         }
 
-        const inCombat =
-            ctx.expedition.currentNode.nodeType === NodeType.Combat;
+        const inCombat = this.expeditionService.isPlayerInCombat(ctx);
 
         // Check if potion is usable in the current context
         if (!inCombat && !potion.usableOutsideCombat) {
@@ -151,6 +151,20 @@ export class PotionService {
                 `Ended combat queue for client ${ctx.client.id}`,
             );
             await this.combatQueueService.end(ctx);
+
+            const {
+                expedition: {
+                    currentNode: {
+                        data: {
+                            player: {
+                                cards: { exhausted, hand, discard, draw },
+                            },
+                        },
+                    },
+                },
+            } = ctx;
+
+            await this.cardService.syncAllCardsByStatusMutated(ctx);
         }
 
         // Once potion is used, remove it from the player's inventory

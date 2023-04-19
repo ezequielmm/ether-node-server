@@ -17,6 +17,7 @@ import {
     MutateDTO,
 } from './effects.interface';
 import { CardTargetedEnum } from '../components/card/card.enum';
+import { ExpeditionService } from '../components/expedition/expedition.service';
 
 @Injectable()
 export class EffectService {
@@ -27,6 +28,8 @@ export class EffectService {
         private readonly providerService: ProviderService,
         private readonly statusService: StatusService,
         private readonly historyService: HistoryService,
+        @Inject(forwardRef(() => ExpeditionService))
+        private readonly expeditionService: ExpeditionService,
         @Inject(forwardRef(() => TrinketService))
         private readonly trinketService: TrinketService,
         @Inject(forwardRef(() => CombatService))
@@ -45,13 +48,20 @@ export class EffectService {
             );
 
             // if it's a single attack targeting all enemies, ensure we don't remove buffs until the attack generated effects are over
-            let effectBuffer = (effect.target == CardTargetedEnum.AllEnemies) ? targets.length : 1;
+            let effectBuffer =
+                effect.target === CardTargetedEnum.AllEnemies
+                    ? targets.length
+                    : 1;
 
             for (const target of targets) {
+                const hasToIgnoreStatusForRemove =
+                    effect.args?.statusIgnoreForRemove === undefined;
                 // immediately remove some buffer, and if it's not enough, no longer will the status survive
-                effectBuffer--;
-                effect.args.statusIgnoreForRemove = (effectBuffer > 0);
-                
+                if (!hasToIgnoreStatusForRemove) {
+                    effectBuffer--;
+                    effect.args.statusIgnoreForRemove = effectBuffer > 0;
+                }
+
                 await this.apply({
                     ctx,
                     source,
@@ -95,11 +105,15 @@ export class EffectService {
             },
         };
 
-        effectDTO = await this.mutate({
-            ctx,
-            dto: effectDTO,
-            effect: name,
-        });
+        const isCombat = this.expeditionService.isPlayerInCombat(ctx);
+
+        if (isCombat) {
+            effectDTO = await this.mutate({
+                ctx,
+                dto: effectDTO,
+                effect: name,
+            });
+        }
 
         // attach action after mutate, rather than pipe it through
         effectDTO.action = action;
@@ -107,28 +121,30 @@ export class EffectService {
         for (let i = 1; i <= times; i++) {
             const { metadata, instance } = this.findContainerByName(name);
 
-            // Check if the combat has ended
-            if (
-                this.combatService.isCurrentCombatEnded(ctx) &&
-                !metadata.effect.ghost
-            ) {
-                this.logger.log(
-                    ctx.info,
-                    `Combat ended, skipping effect ${effect.effect}`,
-                );
-                return;
-            }
+            if (isCombat) {
+                // Check if the combat has ended
+                if (
+                    this.combatService.isCurrentCombatEnded(ctx) &&
+                    !metadata.effect.ghost
+                ) {
+                    this.logger.log(
+                        ctx.info,
+                        `Combat ended, skipping effect ${effect.effect}`,
+                    );
+                    return;
+                }
 
-            // Check if the target is dead, if so, skip the effect
-            if (
-                this.combatService.isEntityDead(ctx, target) &&
-                !metadata.effect.ghost
-            ) {
-                this.logger.log(
-                    ctx.info,
-                    `Target is dead, skipping effect ${effect.effect}`,
-                );
-                return;
+                // Check if the target is dead, if so, skip the effect
+                if (
+                    this.combatService.isEntityDead(ctx, target) &&
+                    !metadata.effect.ghost
+                ) {
+                    this.logger.log(
+                        ctx.info,
+                        `Target is dead, skipping effect ${effect.effect}`,
+                    );
+                    return;
+                }
             }
 
             // Send the queue id to the effects to add the target

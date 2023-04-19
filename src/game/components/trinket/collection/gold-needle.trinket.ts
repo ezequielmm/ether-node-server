@@ -26,7 +26,7 @@ export class GoldNeedleTrinket extends Trinket {
     @Prop({ default: 3 })
     hitPointsToAdd: number;
 
-    onAttach(ctx: GameContext): void {
+    async onAttach(ctx: GameContext): Promise<void> {
         ctx.events.addListener(EVENT_AFTER_END_COMBAT, async () => {
             const playerService = ctx.moduleRef.get(PlayerService, {
                 strict: false,

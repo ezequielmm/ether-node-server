@@ -7,12 +7,10 @@ import {
 import { Logger, UseGuards } from '@nestjs/common';
 import { ExpeditionService } from 'src/game/components/expedition/expedition.service';
 import { FullSyncAction } from 'src/game/action/fullSync.action';
-import { NodeType } from 'src/game/components/expedition/node-type';
 import { PlayerService } from 'src/game/components/player/player.service';
 import { CombatQueueService } from 'src/game/components/combatQueue/combatQueue.service';
 import { CardSelectionScreenService } from 'src/game/components/cardSelectionScreen/cardSelectionScreen.service';
 import { corsSocketSettings } from './socket.enum';
-import { isEmpty } from 'lodash';
 import { WebsocketAuthGuard } from 'src/auth/websocketAuth.guard';
 import { AuthorizedSocket } from 'src/auth/auth.types';
 
@@ -100,21 +98,6 @@ export class SocketGateway
 
             if (expedition) {
                 this.logger.log(ctx.info, `Client connected to expedition`);
-
-                // Here we check if the player is in a node already
-                if (typeof expedition.currentNode !== 'undefined') {
-                    const { nodeType } = expedition.currentNode;
-
-                    if (
-                        nodeType === NodeType.Combat &&
-                        !isEmpty(expedition.currentNode.data)
-                    ) {
-                        await this.playerService.setGlobalHp(
-                            ctx,
-                            expedition.currentNode.data.player.hpCurrent,
-                        );
-                    }
-                }
 
                 await this.fullSyncAction.handle(client, true);
             } else {
