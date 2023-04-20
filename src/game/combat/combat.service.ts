@@ -237,8 +237,10 @@ export class CombatService {
         const enemy = await this.enemyService.findById(enemyId);
 
         const newHealth =
-            getRandomBetween(enemy.healthRange[0], enemy.healthRange[1]) *
-            healthMultiplier;
+            Math.floor(
+                getRandomBetween(enemy.healthRange[0], enemy.healthRange[1]) *
+                healthMultiplier
+            );
 
         return {
             id: randomUUID(),
