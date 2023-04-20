@@ -138,13 +138,13 @@ export class MapBuilderService {
                     );
 
                     // 2b: merge step and node level config
-                    nodeConfig = {
+                    nodeOption.nodeConfig = {
                         ...nodeOption.nodeConfig, // node level
                         ...nodeType.nodeConfig, // step level values override node level values
                     };
 
                     // 3a: Determine node population method
-                    populatedData = await this.populate(nodeOption, nodeConfig, stepValues, mapValues);
+                    populatedData = await this.populate(nodeOption, stepValues, mapValues);
 
                     // figure out how to populate the node
                     // save stepvalues to key, for passing into future nodes this step
@@ -183,7 +183,7 @@ export class MapBuilderService {
         return map;
     }
 
-    public async populate(nodeOption: IActNodeOption, nodeConfig, stepValues?, mapValues?) {
+    public async populate(nodeOption: IActNodeOption, stepValues?, mapValues?) {
         let populatedData = undefined;
         switch (nodeOption.type) {
 
