@@ -287,24 +287,6 @@ const ActOneConfig: IActConfiguration = {
                 subType: NodeType.CombatStandard,
                 title: "Combat",
                 nodeConfig: {
-                    enemies: [sporeMongerData.enemyId],
-                },
-                probability: 10,
-            },
-            {
-                type: NodeType.Combat,
-                subType: NodeType.CombatStandard,
-                title: "Combat",
-                nodeConfig: {
-                    enemies: [mimicFrog1Data.enemyId],
-                },
-                probability: 10,
-            },
-            {
-                type: NodeType.Combat,
-                subType: NodeType.CombatStandard,
-                title: "Combat",
-                nodeConfig: {
                     enemies: [barkChargerData.enemyId, swampGoblin2Data.enemyId],
                 },
                 probability: 9,
