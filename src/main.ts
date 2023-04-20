@@ -80,7 +80,7 @@ async function bootstrap() {
         app.use(compression());
     }
 
-    const port = configService.get<number>('PORT', 3000);
+    const port = configService.get<number>('APP_PORT', 3000);
 
     // Starts server
     await app.listen(port);
