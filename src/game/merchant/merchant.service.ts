@@ -678,7 +678,7 @@ export class MerchantService {
         const mewMerchantItems = {
             ...merchantItems,
         };
-        mewMerchantItems.cards[itemIndex].isSold = true;
+        mewMerchantItems.trinkets[itemIndex].isSold = true;
 
         await this.expeditionService.updateByFilter(
             { clientId: client.id },

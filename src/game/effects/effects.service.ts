@@ -54,13 +54,10 @@ export class EffectService {
                     : 1;
 
             for (const target of targets) {
-                const hasToIgnoreStatusForRemove =
-                    effect.args?.statusIgnoreForRemove === undefined;
+
                 // immediately remove some buffer, and if it's not enough, no longer will the status survive
-                if (!hasToIgnoreStatusForRemove) {
-                    effectBuffer--;
-                    effect.args.statusIgnoreForRemove = effectBuffer > 0;
-                }
+                effectBuffer--;
+                effect.args.statusIgnoreForRemove = effectBuffer > 0;
 
                 await this.apply({
                     ctx,
@@ -69,6 +66,7 @@ export class EffectService {
                     effect,
                 });
             }
+
         }
     }
 
