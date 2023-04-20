@@ -17,7 +17,7 @@ export const yellowSporelingData: Enemy = {
     name: 'Yellow Sporeling',
     type: EnemyTypeEnum.Plant,
     category: EnemyCategoryEnum.Minion,
-    size: EnemySizeEnum.Tiny,
+    size: EnemySizeEnum.Medium,
     description: 'Minion creature to FungalBrute',
     healthRange: [12, 14],
     scripts: [
