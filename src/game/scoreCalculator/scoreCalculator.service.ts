@@ -215,11 +215,12 @@ export class ScoreCalculatorService {
         // Here we calculate how many points the player will
         // get based on how much HP remanining it got when the calculation is
         // made
-        // 25 HP = 1 Point
-        // 26 HP = 2 Points
-        // 27 HP = 3 Points
+        // 26 HP = 1 Point
+        // 27 HP = 2 Points
+        // 28 HP = 3 Points
+        // ...
         // if the player has full HP it will sum 15 points
-        let score = Math.max(0, hpCurrent - 24);
+        let score = Math.max(0, hpCurrent - 25);
         if (hpCurrent === hpMax) score += 15;
         return score;
     }
