@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { findLast } from 'lodash';
 import { DeepPartial } from 'src/utils';
-import { ClientId } from '../components/expedition/expedition.type';
 import {
     CardRegistry,
     EffectRegistry,
@@ -40,7 +39,7 @@ export class HistoryService {
      * @param clientId Client id
      * @returns History of the client
      */
-    get = (clientId: ClientId): Registry[] =>
+    get = (clientId: string): Registry[] =>
         this.historyDictionary.get(clientId) || [];
 
     /**
@@ -51,7 +50,7 @@ export class HistoryService {
      * @returns Returns the last registry that matches the registry
      */
     findLast<T extends EffectRegistry | CardRegistry = EffectRegistry>(
-        clientId: ClientId,
+        clientId: string,
         registry: DeepPartial<T>,
     ): T | undefined {
         // Get the history of the client
@@ -69,7 +68,7 @@ export class HistoryService {
      *
      * @param clientId Client id
      */
-    clear(clientId: ClientId): void {
+    clear(clientId: string): void {
         this.historyDictionary.delete(clientId);
     }
 }

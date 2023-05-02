@@ -8,6 +8,7 @@ import {
     HttpStatus,
     Post,
     Body,
+    Req,
 } from '@nestjs/common';
 import {
     ApiBearerAuth,
@@ -15,9 +16,8 @@ import {
     ApiProperty,
     ApiTags,
 } from '@nestjs/swagger';
-import { AuthGuard } from '../guards/auth.guard';
+import { AuthGuard } from '../auth/auth.guard';
 import { ExpeditionService } from '../game/components/expedition/expedition.service';
-import { AuthGatewayService } from 'src/authGateway/authGateway.service';
 import { ExpeditionStatusEnum } from 'src/game/components/expedition/expedition.enum';
 import { InitExpeditionProcess } from 'src/game/process/initExpedition.process';
 import {
@@ -30,6 +30,8 @@ import { ContestService } from '../game/contest/contest.service';
 import { Contest } from 'src/game/contest/contest.schema';
 import { IPlayerToken } from 'src/game/components/expedition/expedition.schema';
 import { PlayerWinService } from 'src/playerWin/playerWin.service';
+import { AuthorizedRequest } from 'src/auth/auth.types';
+import { TroveService } from 'src/trove/trove.service';
 
 class CreateExpeditionApiDTO {
     @ApiProperty({ default: 'Knight' })
@@ -51,15 +53,15 @@ class CreateExpeditionApiDTO {
 @ApiBearerAuth()
 @ApiTags('Expedition')
 @Controller('expeditions')
-@UseGuards(new AuthGuard())
+@UseGuards(AuthGuard)
 export class ExpeditionController {
     constructor(
-        private readonly authGatewayService: AuthGatewayService,
         private readonly expeditionService: ExpeditionService,
         private readonly initExpeditionProcess: InitExpeditionProcess,
         private readonly scoreCalculatorService: ScoreCalculatorService,
         private readonly playerGearService: PlayerGearService,
         private readonly playerWinService: PlayerWinService,
+        private readonly troveService: TroveService,
         private contestService: ContestService,
     ) {}
 
@@ -69,7 +71,9 @@ export class ExpeditionController {
         summary: 'Check if the given user has an expedition in progress or not',
     })
     @Get('/status')
-    async handleGetExpeditionStatus(@Headers() headers): Promise<{
+    async handleGetExpeditionStatus(
+        @Req() { userAddress }: AuthorizedRequest,
+    ): Promise<{
         hasExpedition: boolean;
         contractId: string;
         nftId: number;
@@ -79,18 +83,12 @@ export class ExpeditionController {
     }> {
         this.logger.log(`Client called GET route "/expeditions/status"`);
 
-        const { authorization } = headers;
-
         //todo add class knight, villager, blessedvillager
 
         try {
-            const { id: playerId } = await this.authGatewayService.getUser(
-                authorization,
-            );
-
             const expedition = await this.expeditionService.findOne(
                 {
-                    playerId: playerId,
+                    userAddress,
                     status: ExpeditionStatusEnum.InProgress,
                 },
                 { playerState: 1, isCurrentlyPlaying: 1 },
@@ -134,7 +132,7 @@ export class ExpeditionController {
     })
     @Post()
     async handleCreateExpedition(
-        @Headers() headers,
+        @Req() { userAddress }: AuthorizedRequest,
         @Body() payload: CreateExpeditionApiDTO,
     ): Promise<{
         expeditionCreated: boolean;
@@ -142,83 +140,67 @@ export class ExpeditionController {
     }> {
         this.logger.log(`Client called POST route "/expeditions"`);
 
-        const { authorization } = headers;
+        const { equippedGear, tokenType: character_class } = payload;
+        const playerToken: IPlayerToken = {
+            walletId: payload.walletId,
+            contractId: payload.contractId,
+            tokenId: payload.nftId,
+        };
 
-        try {
-            const {
-                id: playerId,
-                name: playerName,
-                email,
-            } = await this.authGatewayService.getUser(authorization);
-
-            const { equippedGear, tokenType: character_class } = payload;
-            const playerToken: IPlayerToken = {
-                walletId: payload.walletId,
-                contractId: payload.contractId,
-                tokenId: payload.nftId,
-            };
-
-            if (equippedGear?.length === 0) {
-                // validate equippedGear vs ownedGeared
-                const all_are_owned = await this.playerGearService.allAreOwned(
-                    playerId,
-                    equippedGear,
-                );
-                if (!all_are_owned) {
-                    return { expeditionCreated: false, reason: 'wrong gear' };
-                }
-            }
-
-            const hasExpedition =
-                await this.expeditionService.playerHasExpeditionInProgress({
-                    clientId: playerId,
-                });
-
-            if (!hasExpedition) {
-                const contest = await this.contestService.findActiveContest();
-                if (!contest) {
-                    return {
-                        expeditionCreated: false,
-                        reason: 'no contest found',
-                    };
-                }
-
-                const can_play = await this.playerWinService.canPlay(
-                    contest.event_id,
-                    playerToken.contractId,
-                    playerToken.tokenId,
-                );
-
-                if (!can_play) {
-                    return {
-                        expeditionCreated: false,
-                        reason: 'ineligible token',
-                    };
-                }
-
-                await this.initExpeditionProcess.handle({
-                    playerId,
-                    playerName,
-                    email,
-                    playerToken,
-                    equippedGear,
-                    character_class,
-                    contest,
-                });
-
-                return { expeditionCreated: true };
-            } else {
-                return { expeditionCreated: true };
-            }
-        } catch (e) {
-            this.logger.error(e.stack);
-            throw new HttpException(
-                {
-                    status: HttpStatus.UNAUTHORIZED,
-                    error: e.message,
-                },
-                HttpStatus.UNAUTHORIZED,
+        if (equippedGear?.length === 0) {
+            // validate equippedGear vs ownedGeared
+            const all_are_owned = await this.playerGearService.allAreOwned(
+                userAddress,
+                equippedGear,
             );
+            if (!all_are_owned) {
+                return { expeditionCreated: false, reason: 'wrong gear' };
+            }
+        }
+
+        const hasExpedition =
+            await this.expeditionService.playerHasExpeditionInProgress({
+                clientId: userAddress,
+            });
+
+        if (!hasExpedition) {
+            const contest = await this.contestService.findActiveContest();
+            if (!contest) {
+                return {
+                    expeditionCreated: false,
+                    reason: 'no contest found',
+                };
+            }
+
+            const can_play = await this.playerWinService.canPlay(
+                contest.event_id,
+                playerToken.contractId,
+                playerToken.tokenId,
+            );
+
+            if (!can_play) {
+                return {
+                    expeditionCreated: false,
+                    reason: 'ineligible token',
+                };
+            }
+
+            const playerName = await this.troveService.getAccountDisplayName(
+                userAddress,
+            );
+
+            await this.initExpeditionProcess.handle({
+                userAddress,
+                playerName,
+                playerToken,
+                equippedGear,
+                character_class,
+                contest,
+            });
+
+            return { expeditionCreated: true };
+        } else {
+            return { expeditionCreated: true };
         }
     }
 
@@ -226,42 +208,27 @@ export class ExpeditionController {
         summary: `Cancel the expedition`,
     })
     @Post('/cancel')
-    async handleCancelExpedition(@Headers() headers): Promise<{
+    async handleCancelExpedition(
+        @Req() { userAddress }: AuthorizedRequest,
+    ): Promise<{
         canceledExpedition: boolean;
     }> {
         this.logger.log(`Client called POST route "/expedition/cancel"`);
 
-        const { authorization } = headers;
+        const hasExpedition =
+            await this.expeditionService.playerHasExpeditionInProgress({
+                clientId: userAddress,
+            });
 
-        try {
-            const { id: playerId } = await this.authGatewayService.getUser(
-                authorization,
-            );
+        if (hasExpedition) {
+            await this.expeditionService.update(userAddress, {
+                status: ExpeditionStatusEnum.Canceled,
+                isCurrentlyPlaying: false,
+            });
 
-            const hasExpedition =
-                await this.expeditionService.playerHasExpeditionInProgress({
-                    clientId: playerId,
-                });
-
-            if (hasExpedition) {
-                await this.expeditionService.update(playerId, {
-                    status: ExpeditionStatusEnum.Canceled,
-                    isCurrentlyPlaying: false,
-                });
-
-                return { canceledExpedition: true };
-            } else {
-                return { canceledExpedition: false };
-            }
-        } catch (e) {
-            this.logger.error(e.stack);
-            throw new HttpException(
-                {
-                    status: HttpStatus.UNAUTHORIZED,
-                    error: e.message,
-                },
-                HttpStatus.UNAUTHORIZED,
-            );
+            return { canceledExpedition: true };
+        } else {
+            return { canceledExpedition: false };
         }
     }
 
@@ -269,36 +236,21 @@ export class ExpeditionController {
         summary: 'Query the expedition score',
     })
     @Get('/score')
-    async handleGetScore(@Headers() headers): Promise<ScoreResponse> {
+    async handleGetScore(
+        @Req() { userAddress }: AuthorizedRequest,
+    ): Promise<ScoreResponse> {
         this.logger.log(`Client called GET route "/expedition/score"`);
 
-        const { authorization } = headers;
+        const expedition = await this.expeditionService.findOneTimeDesc({
+            userAddress,
+            $or: [
+                { status: ExpeditionStatusEnum.Victory },
+                { status: ExpeditionStatusEnum.Defeated },
+            ],
+        });
 
-        try {
-            const { id: playerId } = await this.authGatewayService.getUser(
-                authorization,
-            );
+        if (!expedition) return null;
 
-            const expedition = await this.expeditionService.findOneTimeDesc({
-                playerId,
-                $or: [
-                    { status: ExpeditionStatusEnum.Victory },
-                    { status: ExpeditionStatusEnum.Defeated },
-                ],
-            });
-
-            if (!expedition) return null;
-
-            return expedition.finalScore;
-        } catch (e) {
-            this.logger.error(e.stack);
-            throw new HttpException(
-                {
-                    status: HttpStatus.UNAUTHORIZED,
-                    error: e.message,
-                },
-                HttpStatus.UNAUTHORIZED,
-            );
-        }
+        return expedition.finalScore;
     }
 }

@@ -37,7 +37,10 @@ export class EndExpeditionProcess {
         private readonly playerGearService: PlayerGearService,
     ) {}
 
-    private async handleVictory(ctx: GameContext, emit: boolean): Promise<void> {
+    private async handleVictory(
+        ctx: GameContext,
+        emit: boolean,
+    ): Promise<void> {
         ctx.expedition.status = ExpeditionStatusEnum.Victory;
         ctx.expedition.completedAt = new Date();
         ctx.expedition.endedAt = new Date();
@@ -49,9 +52,11 @@ export class EndExpeditionProcess {
         ctx.expedition.finalScore.lootbox = [];
         ctx.expedition.finalScore.notifyNoLoot = false;
 
-        const canWin = await this.playerWinService.classCanWin(ctx.expedition.playerState.characterClass as CharacterClassEnum);
+        const canWin = await this.playerWinService.classCanWin(
+            ctx.expedition.playerState.characterClass as CharacterClassEnum,
+        );
         const contestIsValid = await this.contestService.isValid(
-            ctx.expedition.contest
+            ctx.expedition.contest,
         );
 
         if (canWin && ctx.expedition.playerState.lootboxSize > 0) {
@@ -66,7 +71,7 @@ export class EndExpeditionProcess {
 
                 // actually save the gear to the player
                 await this.playerGearService.addGearToPlayer(
-                    ctx.expedition.playerId,
+                    ctx.expedition.userAddress,
                     ctx.expedition.finalScore.lootbox,
                 );
 
@@ -83,7 +88,7 @@ export class EndExpeditionProcess {
         await ctx.expedition.save();
 
         //message client to end combat and show score
-        if (emit) 
+        if (emit)
             ctx.client.emit(
                 'PutData',
                 StandardResponse.respond({
@@ -121,8 +126,8 @@ export class EndExpeditionProcess {
     async handle({
         ctx,
         win = ExpeditionEndingTypeEnum.DEFEAT,
-        emit = true
-    }:IEndExpeditionProcessParameters): Promise<void> {
+        emit = true,
+    }: IEndExpeditionProcessParameters): Promise<void> {
         switch (win) {
             case ExpeditionEndingTypeEnum.VICTORY:
                 await this.handleVictory(ctx, emit);
@@ -132,6 +137,6 @@ export class EndExpeditionProcess {
                 await this.handleDefeat(ctx, emit);
                 break;
         }
-
     }
 }
+

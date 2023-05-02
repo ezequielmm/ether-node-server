@@ -1,5 +1,3 @@
-export type ClientId = string | number;
-
-export function getClientIdField(clientId: ClientId): string {
-    return typeof clientId === 'string' ? 'clientId' : 'playerId';
+export function getClientIdField(clientIdOrUserAddress: string): string {
+    return clientIdOrUserAddress.startsWith('0x') ? 'userAddress' : 'clientId';
 }

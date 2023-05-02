@@ -10,7 +10,9 @@ export class CustomDeckService {
         private readonly customDeck: ReturnModelType<typeof CustomDeck>,
     ) {}
 
-    async findByEmail(email: string): Promise<CustomDeck> {
-        return await this.customDeck.findOne({ email, isDefault: true }).lean();
+    async findByUserAddress(userAddress: string): Promise<CustomDeck> {
+        return await this.customDeck
+            .findOne({ userAddress, isDefault: true })
+            .lean();
     }
 }

@@ -33,7 +33,7 @@ export class FullSyncAction {
             map,
             playerState,
             mapSeedId,
-            playerId,
+            userAddress,
             id: expeditionId,
         } = expedition || {};
 
@@ -62,8 +62,8 @@ export class FullSyncAction {
                     expeditionId: expeditionId,
                     expeditionCreatedAt: expedition.createdAt,
                     playerState: {
-                        id: playerState.playerId,
-                        playerId,
+                        id: playerState.userAddress,
+                        userAddress,
                         playerName: playerState.playerName,
                         characterClass: playerState.characterClass,
                         hpMax: playerState.hpMax,

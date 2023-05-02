@@ -1,6 +1,6 @@
 import { Body, Controller, Post } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
-import { ethers } from 'ethers';
+import { ethers } from 'ethers6';
 
 @ApiTags('Tokens')
 @Controller('tokens')

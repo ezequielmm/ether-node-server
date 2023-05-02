@@ -8,10 +8,10 @@ import {
 import { GearItem } from '../../../playerGear/gearItem';
 import { IPlayerToken } from './expedition.schema';
 
-@modelOptions({ options: { allowMixed: Severity.ALLOW }})
+@modelOptions({ options: { allowMixed: Severity.ALLOW } })
 export class Player {
     @Prop()
-    playerId: string;
+    userAddress: string;
 
     @Prop()
     playerToken: IPlayerToken;
@@ -21,9 +21,6 @@ export class Player {
 
     @Prop()
     playerName: string;
-
-    @Prop()
-    email?: string;
 
     @Prop()
     characterClass: string;

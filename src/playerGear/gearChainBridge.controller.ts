@@ -4,7 +4,6 @@ import {
     Controller,
     Get,
     Inject,
-    NotFoundException,
     Post,
     UnauthorizedException,
 } from '@nestjs/common';
@@ -75,22 +74,6 @@ export class GearChainBridgeController {
         return localHash === check.token;
     }
 
-    private async getPlayerIdFromWallet(wallet: string): Promise<number> {
-        const latestExpedition = await this.expedition
-            .findOne(
-                {
-                    'playerToken.wallet_id': wallet,
-                },
-                { playerId: 1 },
-            )
-            .sort({ createdAt: -1 })
-            .lean();
-
-        if (!latestExpedition) return;
-
-        return latestExpedition.playerId;
-    }
-
     @ApiOperation({ summary: 'Get player owned gear list for API' })
     @Get('/list')
     async getList(
@@ -101,12 +84,8 @@ export class GearChainBridgeController {
         if (!this.checkSecurityToken({ wallet, token }))
             throw new UnauthorizedException('Bad Token');
 
-        // get player id from wallet address?
-        const playerId = await this.getPlayerIdFromWallet(wallet);
-        if (!playerId) throw new NotFoundException('Unknown Wallet');
-
         return await this.playerGearService.getGear(
-            playerId,
+            wallet,
             this.nonChainRarityFilter,
         );
     }
@@ -124,12 +103,8 @@ export class GearChainBridgeController {
         if (!this.checkSecurityToken({ wallet, token }))
             throw new UnauthorizedException('Bad Token');
 
-        // get player id from wallet address?
-        const playerId = await this.getPlayerIdFromWallet(payload.wallet);
-        if (!playerId) throw new NotFoundException('Unknown Wallet');
-
         const playerGear = await this.playerGearService.getGear(
-            playerId,
+            wallet,
             this.nonChainRarityFilter,
         );
         const gears = await this.playerGearService.getGearByIds(payload.gear);
@@ -139,18 +114,18 @@ export class GearChainBridgeController {
 
         switch (payload.action) {
             case GearActionApiEnum.AddGear:
-                await this.playerGearService.addGearToPlayer(playerId, gears);
+                await this.playerGearService.addGearToPlayer(wallet, gears);
                 break;
             case GearActionApiEnum.RemoveGear:
                 await this.playerGearService.removeGearFromPlayer(
-                    playerId,
+                    wallet,
                     gears,
                 );
                 break;
         }
 
         const newGear = await this.playerGearService.getGear(
-            playerId,
+            wallet,
             this.nonChainRarityFilter,
         );
 

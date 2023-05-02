@@ -7,7 +7,7 @@ import {
 export interface ExpeditionPlayer {
     readonly type: CardTargetedEnum.Player;
     value: {
-        id: number;
+        id: string;
         globalState: IExpeditionPlayerGlobalState;
         combatState: IExpeditionPlayerCombatState;
     };

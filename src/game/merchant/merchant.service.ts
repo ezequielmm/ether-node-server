@@ -56,22 +56,24 @@ export class MerchantService {
         ctx?: GameContext | null,
         node?: Node,
     ): Promise<MerchantItems> {
-        const cards = node?.private_data?.cards || await this.getCards();
-        const potions = node?.private_data?.potions || await this.getPotions();
-        let trinkets = node?.private_data?.trinkets || await this.getTrinkets();
+        const cards = node?.private_data?.cards || (await this.getCards());
+        const potions =
+            node?.private_data?.potions || (await this.getPotions());
+        let trinkets =
+            node?.private_data?.trinkets || (await this.getTrinkets());
 
         const result: MerchantItems = {
             cards,
             potions,
-            trinkets
+            trinkets,
         };
-        
+
         if (ctx) {
             const trinketsInInventory = map<Trinket>(
                 ctx.expedition.playerState.trinkets,
                 'trinketId',
             );
-    
+
             trinkets = trinkets.map(function (trinket) {
                 if (trinketsInInventory.includes(trinket.itemId)) {
                     trinket.isSold = true;
@@ -84,10 +86,14 @@ export class MerchantService {
                 return trinket;
             });
 
-            result.destroyCost = this.cardDestroyPrice(ctx.expedition.playerState.cardDestroyCount);
-            result.upgradeCost = this.cardUpgradePrice(ctx.expedition.playerState.cardUpgradeCount);
+            result.destroyCost = this.cardDestroyPrice(
+                ctx.expedition.playerState.cardDestroyCount,
+            );
+            result.upgradeCost = this.cardUpgradePrice(
+                ctx.expedition.playerState.cardUpgradeCount,
+            );
         }
-        
+
         return result;
     }
 
@@ -454,7 +460,7 @@ export class MerchantService {
             clientId: client.id,
         });
 
-        const { playerState, playerId } = expedition || {};
+        const { playerState, userAddress } = expedition || {};
 
         client.emit(
             'PutData',
@@ -472,8 +478,8 @@ export class MerchantService {
                 action: SWARAction.UpdatePlayerState,
                 data: {
                     playerState: {
-                        id: playerState.playerId,
-                        playerId,
+                        id: playerState.userAddress,
+                        userAddress,
                         playerName: playerState.playerName,
                         characterClass: playerState.characterClass,
                         hpMax: playerState.hpMax,
@@ -535,7 +541,9 @@ export class MerchantService {
         const cardId = selectedItem.targetId as string;
 
         // Now we need the price to upgrade the card
-        const upgradedPrice = this.cardUpgradePrice(playerState.cardUpgradeCount);
+        const upgradedPrice = this.cardUpgradePrice(
+            playerState.cardUpgradeCount,
+        );
 
         // Now we need to check if the player has enough gold
         if (playerState.gold < upgradedPrice)
@@ -578,7 +586,8 @@ export class MerchantService {
         if (!upgradedCardData)
             return this.failure(client, PurchaseFailureEnum.InvalidId);
 
-        upgradedCardData.description = CardDescriptionFormatter.process(upgradedCardData);
+        upgradedCardData.description =
+            CardDescriptionFormatter.process(upgradedCardData);
         this.cardService.addStatusDescriptions(upgradedCardData);
 
         // Here we create the card object to be added to the player state
@@ -708,7 +717,9 @@ export class MerchantService {
         const cardId = selectedItem.targetId as string;
 
         // Now we need the price to destroy the card
-        const destroyPrice = this.cardDestroyPrice(playerState.cardDestroyCount);
+        const destroyPrice = this.cardDestroyPrice(
+            playerState.cardDestroyCount,
+        );
 
         // Now we need to check if the player has enough gold
         if (playerState.gold < destroyPrice)

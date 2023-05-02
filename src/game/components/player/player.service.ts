@@ -66,7 +66,7 @@ export class PlayerService {
         const player: ExpeditionPlayer = {
             type: CardTargetedEnum.Player,
             value: {
-                id: expedition.playerId,
+                id: expedition.userAddress,
                 globalState: expedition.playerState,
                 combatState: null,
             },
@@ -138,6 +138,7 @@ export class PlayerService {
                 playerState: { hpMax },
             },
         } = ctx;
+
 
         const newHp = Math.max(0, Math.min(newHPCurrent, hpMax));
 

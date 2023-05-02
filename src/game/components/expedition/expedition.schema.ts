@@ -35,7 +35,7 @@ export class Expedition {
     clientId?: string;
 
     @Prop()
-    playerId: number;
+    userAddress: string;
 
     @Prop()
     actConfig?: ExpeditionActConfig;
