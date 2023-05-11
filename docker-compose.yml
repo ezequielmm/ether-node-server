@@ -28,7 +28,7 @@ services:
         build:
             context: ../kote-game-react
             dockerfile: Dockerfile
-        image: blightfell-web
+        image: 121760970575.dkr.ecr.us-east-1.amazonaws.com/blightfell-web-react:latest
         restart: always
         env_file:
             - .env
