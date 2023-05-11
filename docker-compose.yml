@@ -1,5 +1,4 @@
 version: '3'
-name: kote-gameplay-stack
 services:
     mongodb:
         container_name: kote-mongodb
@@ -13,8 +12,10 @@ services:
             - kote-network
     core:
         container_name: kote-core
-        image: kote-gameplay-stack-core
-        build: .
+        build:
+            context: .
+            dockerfile: Dockerfile
+        image: 121760970575.dkr.ecr.us-east-1.amazonaws.com/blightfell-development:v0.0.1
         restart: always
         env_file:
             - .env
