@@ -54,6 +54,8 @@ export class LeaderboardController {
         @Param('skip') skip: number = 0,
         @Param('onlyWin') onlyWin: boolean = false,
     ): Promise<ILeaderboardResponse>  {
+        console.log('scores');
+        console.log({ startDate,endDate, addresses })
         return { 
             data: await this.leaderboardService.getHighScores({
                     startDate,
@@ -74,7 +76,10 @@ export class LeaderboardController {
     async getParticipation(
         @Body() payload: GetLeaderboardPayload,
     ): Promise<ILeaderboardResponse> {
+        console.log("Payload for participation ");
+        console.log(payload);
         return {
+            
             data: await this.leaderboardService.getParticipation(payload)
         };
     }

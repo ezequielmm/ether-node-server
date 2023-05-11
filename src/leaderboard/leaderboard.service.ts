@@ -21,12 +21,18 @@ export class LeaderboardService {
     async getParticipation(payload: GetLeaderboardPayload): Promise<ILeaderboardParticipationItem[]> {
         const result: ILeaderboardParticipationItem[] = [];
         const { startDate, endDate, addresses, onlyWin, limit, skip } = payload;
-        const { start, end } = this.normalizeDates({startDate, endDate});
-
+       /* const newStartDate = new Date(startDate.toISOString());
+        const newEndDate = new Date(endDate.toISOString());
+        const dates = {
+            startDate: newStartDate,
+            endDate: newEndDate
+        }*/
+       // let { start, end } = this.normalizeDates({ startDate, endDate });
+       // const { start, end } = this.normalizeDates({ startDate, endDate });
         const match = {
             createdAt: { 
-                $gte: start, 
-                $lte: end 
+                $gte: startDate, 
+                $lte: endDate 
             }
         };
 
@@ -37,7 +43,7 @@ export class LeaderboardService {
         }
 
         if (addresses && addresses.length) {
-            match["$playerState.playerToken.walletId"] = { $in: addresses };
+            match["playerState.walletId"] = { $in: addresses };
         }
 
         return await this.expedition.aggregate([
@@ -47,7 +53,7 @@ export class LeaderboardService {
             {
                 $setWindowFields: {
                     partitionBy: {
-                        wallet: "$playerState.playerToken.walletId",
+                        wallet: "$playerState.walletId",
                         day: {
                             $dateToString: {
                                 format: "%Y-%m-%d",
@@ -69,7 +75,7 @@ export class LeaderboardService {
             {
                 $group: {
                     _id: {
-                        wallet: "$playerState.playerToken.walletId",
+                        wallet: "$playerState.walletId",
                         date: {
                             $dateToString: {
                                 format: "%Y-%m-%d",
@@ -109,12 +115,20 @@ export class LeaderboardService {
     }): Promise<ILeaderboardScoreItem[]>  {
         const result: ILeaderboardScoreItem[] = [];
 
-        const { start, end } = this.normalizeDates({startDate, endDate});
+       /* const newStartDate = new Date(startDate.toISOString());
+        const newEndDate = new Date(endDate.toISOString());
+        const dates = {
+            startDate: newStartDate,
+            endDate: newEndDate
+        }
+        */
+
+       // let { start, end } = this.normalizeDates({ startDate, endDate });
 
         const match = {
                 createdAt: { 
-                    $gte: start, 
-                    $lte: end 
+                    $gte: startDate, 
+                    $lte: endDate 
                 },
                 finalScore: { $exists: true },
             };
