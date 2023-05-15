@@ -15,7 +15,7 @@ services:
         build:
             context: .
             dockerfile: Dockerfile
-        image: 121760970575.dkr.ecr.us-east-1.amazonaws.com/blightfell-development:v0.0.1
+        image: 121760970575.dkr.ecr.us-east-1.amazonaws.com/blightfell-development:latest
         restart: always
         env_file:
             - .env
@@ -28,14 +28,16 @@ services:
         build:
             context: ../kote-game-react
             dockerfile: Dockerfile
-        image: 121760970575.dkr.ecr.us-east-1.amazonaws.com/blightfell-web-react:latest
+        image: 121760970575.dkr.ecr.us-east-1.amazonaws.com/blightfell-web-react:v0.0.1
         restart: always
-        env_file:
-            - .env
         ports:
             - '8080:8080'
         networks:
             - kote-network
+        environment:
+            - ALCHEMY_KEY=8JGfLagFCLP8RPXluDTc7GnHEo39dQRN
+            - GAME_SERVER_URL=https://dev.knightsoftheether.com:3001
+            - UNITY_URL=https://dev.knightsoftheether.com
 networks:
     kote-network:
         external: true
