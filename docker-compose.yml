@@ -17,8 +17,6 @@ services:
             dockerfile: Dockerfile
         image: 121760970575.dkr.ecr.us-east-1.amazonaws.com/blightfell-development:latest
         restart: always
-        env_file:
-            - .env
         ports:
             - '${DOCKER_APP_PORT:-3000}:${APP_PORT:-3000}'
         networks:
@@ -28,7 +26,7 @@ services:
         build:
             context: ../kote-game-react
             dockerfile: Dockerfile
-        image: 121760970575.dkr.ecr.us-east-1.amazonaws.com/blightfell-web-react:v0.0.1
+        image: 121760970575.dkr.ecr.us-east-1.amazonaws.com/blightfell-web-react:latest
         restart: always
         ports:
             - '8080:8080'
