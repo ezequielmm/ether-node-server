@@ -40,7 +40,9 @@ export class SocketGateway
         );
 
         try {
-            const userAddress = client.userAddress;
+            const userAddress = client.handshake.headers["useraddress"].toString();
+            this.logger.log(`[handleConnection] userAddress: ${userAddress}`);
+            this.logger.log(client);
 
             const clientUpdated = await this.expeditionService.updateClientId({
                 userAddress,
