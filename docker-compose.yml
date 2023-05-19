@@ -32,10 +32,6 @@ services:
             - '8080:8080'
         networks:
             - kote-network
-        environment:
-            - ALCHEMY_KEY=8JGfLagFCLP8RPXluDTc7GnHEo39dQRN
-            - GAME_SERVER_URL=https://dev.knightsoftheether.com:3001
-            - UNITY_URL=https://dev.knightsoftheether.com
 networks:
     kote-network:
         external: true
