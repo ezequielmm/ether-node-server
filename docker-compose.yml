@@ -21,17 +21,8 @@ services:
             - '${DOCKER_APP_PORT:-3000}:${APP_PORT:-3000}'
         networks:
             - kote-network
-    web:
-        container_name: kote-web
-        build:
-            context: ../kote-game-react
-            dockerfile: Dockerfile
-        image: 121760970575.dkr.ecr.us-east-1.amazonaws.com/blightfell-web-react:latest
-        restart: always
-        ports:
-            - '8080:8080'
-        networks:
-            - kote-network
+        env_file:
+            - .env
 networks:
     kote-network:
         external: true
