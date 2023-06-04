@@ -91,7 +91,7 @@ export class PlayerGearService {
                 { new: true, upsert: true },
             );
         } catch (e) {
-            this.logger.error(e.message);
+            this.logger.error(e.stack);
         }
     }
 

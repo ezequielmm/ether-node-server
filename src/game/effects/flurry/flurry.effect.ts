@@ -35,7 +35,7 @@ export class FlurryEffect implements EffectHandler {
             }
 
             if (!target) {
-                this.logger.error(ctx.info, 'No target found for Flurry');
+                this.logger.debug(ctx.info, 'No target found for Flurry');
                 return;
             }
 

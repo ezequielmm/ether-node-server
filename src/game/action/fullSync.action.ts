@@ -8,6 +8,7 @@ import {
     SWARMessageType,
     SWARAction,
 } from '../standardResponse/standardResponse';
+import { ExpeditionStatusEnum } from '../components/expedition/expedition.enum';
 
 @Injectable()
 export class FullSyncAction {
@@ -19,8 +20,8 @@ export class FullSyncAction {
     ) {}
 
     async handle(client: Socket, sendShowMap = true): Promise<void> {
-        const expedition = await this.expeditionService.findOne({
-            clientId: client.id,
+        const expedition = await this.expeditionService.findOneTimeDesc({
+            userAddress: client.request.headers.useraddress
         });
 
         if (!expedition)

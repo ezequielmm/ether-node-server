@@ -5,7 +5,6 @@ import {
     EnemySizeEnum,
     EnemyTypeEnum,
 } from '../components/enemy/enemy.enum';
-import { EnemyService } from '../components/enemy/enemy.service';
 
 interface IEnemiesResponse {
     id: string;
@@ -22,8 +21,7 @@ interface IEnemiesResponse {
 @Injectable()
 export class GetEnemiesAction {
     constructor(
-        private readonly expeditionService: ExpeditionService,
-        private readonly enemyService: EnemyService,
+        private readonly expeditionService: ExpeditionService
     ) {}
 
     async handle(clientId: string): Promise<IEnemiesResponse[]> {
