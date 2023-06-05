@@ -37,8 +37,30 @@ export interface ILeaderboardResponse {
 export interface ILeaderboardItem {
     address: string;
     score: number;
+    finalScore: IFinalScore;
 }
 
+export interface IFinalScore {
+    outcome: string;
+    expeditionType: string;
+    totalScore: number;
+    achievements: {
+        name: string;
+        score: number;
+    }[];
+    notifyNoLoot: boolean;
+    lootbox: {
+        _id: {
+            $oid: string;
+        };
+        gearId: number;
+        name: string;
+        trait: string;
+        category: string;
+        rarity: string;
+        isActive: boolean;
+    }[];
+}
 export interface ILeaderboardParticipationItem {
     address: string;
     daysPlayed: number;

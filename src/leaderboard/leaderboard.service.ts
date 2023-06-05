@@ -21,6 +21,8 @@ export class LeaderboardService {
                 $group: {
                     _id: "$playerState.playerToken.walletId",
                     score: { $max: "$finalScore.totalScore" },
+                    finalScore: { $first: "$finalScore" }, // Include the 'finalScore' field
+
                 }
             },
             { $count: "total" }
@@ -40,6 +42,11 @@ export class LeaderboardService {
                 $group: {
                     _id: "$playerState.playerToken.walletId",
                     score: { $max: "$finalScore.totalScore" },
+                    finalScore: { $max: "$finalScore" },  // Include the finalScore field
+                    createdAt: { $first: "$createdAt" },
+                    endedAt: { $first: "$endedAt" }
+                       
+
                 }
             },
             {
@@ -47,7 +54,9 @@ export class LeaderboardService {
                     _id: 0,
                     address: "$_id",
                     score: 1,
-                    endedAt: 1
+                    endedAt: 1,
+                    finalScore: 1,  // Include the finalScore field
+                    totalTime: { $subtract: ["$endedAt", "$createdAt"] }
                 }
             },
             { $sort: { score: -1, endedAt: -1 }},

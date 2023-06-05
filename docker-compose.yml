@@ -1,15 +1,5 @@
 version: '3'
 services:
-    mongodb:
-        container_name: kote-mongodb
-        image: mongo:6.0
-        restart: always
-        ports:
-            - '27017:27017'
-        volumes:
-            - ./data:/data/db
-        networks:
-            - kote-network
     core:
         container_name: kote-core
         build:
