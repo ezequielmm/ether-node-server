@@ -1,27 +1,18 @@
 version: '3'
-name: kote-gameplay-stack
 services:
-    mongodb:
-        container_name: kote-mongodb
-        image: mongo:6.0
-        restart: always
-        ports:
-            - '27017:27017'
-        volumes:
-            - ./data:/data/db
-        networks:
-            - kote-network
     core:
         container_name: kote-core
-        image: kote-gameplay-stack-core
-        build: .
+        build:
+            context: .
+            dockerfile: Dockerfile
+        image: 121760970575.dkr.ecr.us-east-1.amazonaws.com/blightfell-development:latest
         restart: always
-        env_file:
-            - .env
         ports:
             - '${DOCKER_APP_PORT:-3000}:${APP_PORT:-3000}'
         networks:
             - kote-network
+        env_file:
+            - .env
 networks:
     kote-network:
         external: true

@@ -121,8 +121,8 @@ export class MerchantService {
     ): Promise<void> {
         const { targetId, type } = selectedItem;
 
-        const expedition = await this.expeditionService.findOne({
-            clientId: client.id,
+        const expedition = await this.expeditionService.findOneTimeDesc({
+            userAddress: client.request.headers.useraddress
         });
 
         const {
@@ -456,8 +456,8 @@ export class MerchantService {
     }
 
     private async success(client: Socket): Promise<void> {
-        const expedition = await this.expeditionService.findOne({
-            clientId: client.id,
+        const expedition = await this.expeditionService.findOneTimeDesc({
+            userAddress: client.request.headers.useraddress
         });
 
         const { playerState, userAddress } = expedition || {};

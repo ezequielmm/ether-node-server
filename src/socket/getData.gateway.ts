@@ -145,7 +145,7 @@ export class GetDataGateway {
                     });
                 } catch (e) {
                     logger.error(ctx.info, e.message);
-                    logger.error(ctx.info, e.trace);
+                    logger.error(e.stack);
 
                     client.emit('ErrorMessage', {
                         message: `An Error has ocurred getting ${types}`,

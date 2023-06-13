@@ -20,40 +20,57 @@ import { AuthModule } from './auth/auth.module';
     imports: [
         ScheduleModule.forRoot(),
         TaskModule,
-        LoggerModule.forRootAsync({
-            inject: [ConfigService],
-            useFactory: (configService: ConfigService) => ({
-                pinoHttp: [
-                    {
-                        messageKey: 'message',
-                        formatters: {
-                            bindings: (bindings) => ({
-                                pid: bindings.pid,
-                                hostname: bindings.hostname,
-                                serverVersion: configService.get<string>(
-                                    'npm_package_version',
-                                ),
-                            }),
-                        },
-                        transport:
-                            configService.get<serverEnvironments>(
-                                'NODE_ENV',
-                            ) !== serverEnvironments.production
-                                ? {
-                                      target: 'pino-pretty',
-                                      options: {
-                                          colorize: true,
-                                      },
-                                  }
-                                : undefined, // Use default transport
-                    },
-                    createWriteStream({
-                        appname: configService.get('PAPERTRAIL_APP_NAME'),
-                        host: configService.get('PAPERTRAIL_HOSTNAME'),
-                        port: configService.get('PAPERTRAIL_PORT'),
-                    }),
-                ],
-            }),
+        // LoggerModule.forRootAsync({
+        //     inject: [ConfigService],
+        //     useFactory: (configService: ConfigService) => ({
+        //         pinoHttp: [
+        //             {
+        //                 level: 'warn',
+        //                 messageKey: 'message',
+                        
+        //                 formatters: {
+        //                     bindings: (bindings) => ({
+        //                         pid: bindings.pid,
+        //                         hostname: bindings.hostname,
+        //                         serverVersion: configService.get<string>(
+        //                             'npm_package_version',
+        //                         ),
+        //                     }),
+        //                 },
+        //                 customLevels: {
+        //                     error: 50,
+        //                 },
+        //                 transport:
+        //                     configService.get<serverEnvironments>('NODE_ENV',) !== serverEnvironments.production
+        //                         ? {
+        //                                 target: 'pino-pretty',
+        //                                 options: {
+        //                                     colorize: true,
+        //                                 },
+        //                         }
+        //                         : undefined, // Use default transport
+        //             },
+        //             createWriteStream({
+        //                 appname: configService.get('PAPERTRAIL_APP_NAME'),
+        //                 host: configService.get('PAPERTRAIL_HOSTNAME'),
+        //                 port: configService.get('PAPERTRAIL_PORT'),
+        //             }),
+        //         ],
+        //         stackTrace: true,
+        //     }),
+        // }),
+        LoggerModule.forRoot({
+            pinoHttp: {
+                level: 'warn',
+                transport:{
+                    target: "pino-pretty",
+                    options: {
+                        messageKey: "message",
+                        colorize: true
+                    }
+                },
+                messageKey: "message"
+            }
         }),
         BugReportModule,
         PlayerGearModule,

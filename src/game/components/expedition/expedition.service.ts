@@ -49,7 +49,10 @@ export class ExpeditionService {
     }
 
     async getGameContext(client: Socket): Promise<GameContext> {
-        const expedition = await this.findOne({ clientId: client.id });
+        const expedition = await this.findOneTimeDesc(
+            { 
+                userAddress: client.request.headers.useraddress
+            });
         const events = new EventEmitter2();
 
         if (!expedition?.playerState) {
