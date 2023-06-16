@@ -77,7 +77,7 @@ export class EndExpeditionProcess {
 
                 await this.playerWinService.create({
                     event_id: ctx.expedition.contest.event_id,
-                    playerToken: ctx.expedition.playerState.playerToken,
+                    playerToken: ctx.expedition.playerState.playerToken
                 });
 
                 ctx.expedition.finalScore.notifyNoLoot = false;

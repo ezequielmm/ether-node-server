@@ -1,10 +1,9 @@
-import { ConsoleLogger, Injectable } from '@nestjs/common';
-import NFTService from '../nft-library/services/nft_service';
+import { Injectable } from '@nestjs/common';
 import { PlayerWinService } from '../playerWin/playerWin.service';
 import { ContestService } from '../game/contest/contest.service';
 import { countBy, sortBy } from 'lodash';
 import { CharacterService } from 'src/game/components/character/character.service';
-import { ConfigService } from '@nestjs/config';
+import { NFTService } from 'src/nft-library/services/nft_service';
 
 @Injectable()
 export class WalletService {
@@ -12,7 +11,7 @@ export class WalletService {
         private readonly playerWinService: PlayerWinService,
         private readonly contestService: ContestService,
         private readonly characterService: CharacterService,
-        private readonly configService: ConfigService,
+        private readonly nftService: NFTService
     ) {}
 
     private getHttpFromIpfsURI(ipfs: string): string {
@@ -20,9 +19,6 @@ export class WalletService {
     }
 
     async getTokenIdList(walletAddress: string): Promise<any[]> {
-        // the chain where are deployed the smart contracts
-        const chain = this.configService.get<number>('NFT_SERVICE_CHAIN_ID');
-
         const all_wins = await this.playerWinService.findAllWins(walletAddress);
         const win_counts = countBy(
             all_wins,
@@ -34,10 +30,9 @@ export class WalletService {
         // The contracts to filter from all the user collections
         const tokenAddresses = await this.characterService.findAllContractIds();
 
-        const nfts = await NFTService.listByContracts({
-            chain,
+        const nfts = await this.nftService.listByContracts({
             walletAddress,
-            tokenAddresses,
+            tokenAddresses
         });
 
         for await (const contract of nfts.tokens) {

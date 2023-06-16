@@ -31,12 +31,8 @@ export class PlayerWinService {
         return character?.canCompete;
     }
 
-    async canPlay(
-        event_id: number,
-        contract_address: string,
-        token_id: number,
-        wins?: number,
-    ): Promise<boolean> {
+    async canPlay(event_id: number, contract_address: string, token_id: number, wins?: number) : Promise<boolean> {
+        
         if (event_id === 0) return true;
         if (contract_address === 'NONE') return true;
 

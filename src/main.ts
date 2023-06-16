@@ -1,4 +1,3 @@
-import Service from './nft-library/services/moralis_service';
 import { ValidationPipe, VersioningType } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
@@ -24,12 +23,6 @@ async function bootstrap() {
 
     // Pino Logger
     app.useLogger(app.get(Logger));
-
-    const moralisApiKey = configService.get<string>('MORALIS_KEY');
-    const moralisLogLevel = configService.get<string>('MORALIS_LOG_LEVEL');
-
-    // Initialize Moralis Service
-    Service.initialize(moralisApiKey, moralisLogLevel);
 
     // Initialize Websocket Adapter
     app.useWebSocketAdapter(new IoAdapter(app));

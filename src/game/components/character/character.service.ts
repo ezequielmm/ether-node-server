@@ -5,6 +5,7 @@ import { compact } from 'lodash';
 import { GetCharacterDTO } from './character.dto';
 import { Character } from './character.schema';
 import { ConfigService } from '@nestjs/config';
+import { AlchemyService } from 'src/nft-library/services/alchemy_service';
 
 @Injectable()
 export class CharacterService {
@@ -23,13 +24,13 @@ export class CharacterService {
     }
 
     async getCharacterByContractId(idToFind: string): Promise<Character> {
-        const chain = this.getChainId();
+        const net = this.getNetType();
         let filter = undefined;
-        switch (chain) {
-            case 1:
-            filter = { contractId: { $regex: idToFind, $options: "i" } };
+        switch (net) {
+            case AlchemyService.MAINNET:
+                filter = { contractId: { $regex: idToFind, $options: "i" } };
                 break;
-            case 5:
+            case AlchemyService.TESTNET:
                 filter = { contractIdTest: { $regex: idToFind, $options: "i" } };
                 break;
         }
@@ -37,7 +38,7 @@ export class CharacterService {
     }
 
     async findAllContractIds(): Promise<Array<string>> {
-        const chain = this.getChainId();
+        const net = this.getNetType();
 
         const characters = await this.character.find(
             { isActive: true },
@@ -46,17 +47,17 @@ export class CharacterService {
 
         if (characters.length === 0) return [];
 
-        switch (chain) {
-            case 1:
+        switch (net) {
+            case AlchemyService.MAINNET:
                 return compact(characters.map((c) => c.contractId));
-            case 5:
+            case AlchemyService.TESTNET:
                 return compact(characters.map((c) => c.contractIdTest));
             default:
                 return [];
         }
     }
 
-    private getChainId(): number {
-        return Number(this.configService.get('NFT_SERVICE_CHAIN_ID'));
+    private getNetType(): string {
+        return this.configService.get('NFT_SERVICE_NET');
     }
 }
