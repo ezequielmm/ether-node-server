@@ -40,18 +40,20 @@ export class NFTService {
             totalPages = Math.ceil(nftsArbitrum.totalCount / pageSize);
 
             for(const token of nftsArbitrum.ownedNfts){
-                tokenCollections[token.contract.address.toLowerCase()].tokens.push({
-                    token_id: token.tokenId,
-                    amount: token.balance, 
-                    owner_of: "owner",
-                    contract_type: token.contract.tokenType,
-                    name: token.title,
-                    symbol: token.contract.symbol,
-                    token_uri: token.tokenUri,
-                    last_token_uri_sync: "yesterday",
-                    last_metadata_sync: "yesterday",
-                    metadata: "meta",
-                });
+                if(tokenCollections[token.contract.address.toLowerCase()]){
+                    tokenCollections[token.contract.address.toLowerCase()].tokens.push({
+                        token_id: token.tokenId,
+                        amount: token.balance, 
+                        owner_of: "owner",
+                        contract_type: token.contract.tokenType,
+                        name: token.title,
+                        symbol: token.contract.symbol,
+                        token_uri: token.tokenUri,
+                        last_token_uri_sync: "yesterday",
+                        last_metadata_sync: "yesterday",
+                        metadata: "meta",
+                    });
+                }
             }
 
             if(nftsArbitrum.pageKey){
@@ -76,18 +78,20 @@ export class NFTService {
             totalPages = Math.ceil(nftsEthereum.totalCount / pageSize);
 
             for(const token of nftsEthereum.ownedNfts){
-                tokenCollections[token.contract.address.toLowerCase()].tokens.push({
-                    token_id: token.tokenId,
-                    amount: token.balance, 
-                    owner_of: "owner",
-                    contract_type: token.contract.tokenType,
-                    name: token.title,
-                    symbol: token.contract.symbol,
-                    token_uri: token.tokenUri,
-                    last_token_uri_sync: "yesterday",
-                    last_metadata_sync: "yesterday",
-                    metadata: "meta",
-                });
+                if(tokenCollections[token.contract.address.toLowerCase()]){
+                    tokenCollections[token.contract.address.toLowerCase()].tokens.push({
+                        token_id: token.tokenId,
+                        amount: token.balance, 
+                        owner_of: "owner",
+                        contract_type: token.contract.tokenType,
+                        name: token.title,
+                        symbol: token.contract.symbol,
+                        token_uri: token.tokenUri,
+                        last_token_uri_sync: "yesterday",
+                        last_metadata_sync: "yesterday",
+                        metadata: "meta",
+                    });
+                }
             }
 
             if(nftsEthereum.pageKey){
