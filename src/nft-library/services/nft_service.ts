@@ -1,18 +1,14 @@
-import { forEach, values } from 'lodash';
-import Moralis from 'moralis';
+import { forEach } from 'lodash';
+import { AlchemyService } from './alchemy_service';
+import { Injectable } from '@nestjs/common';
 
-class NFTService {
+@Injectable()
+export class NFTService {
 
-    async listByContracts({
-        chain,
-        walletAddress,
-        tokenAddresses
-    }: {
-        chain: number;
-        walletAddress: string,
-        tokenAddresses?: string[]
-    }): Promise<any> {
+    constructor(private readonly alchemyService: AlchemyService){}
 
+    async listByContracts({walletAddress, tokenAddresses}: {walletAddress: string, tokenAddresses?: string[]}): Promise<any> 
+    {
         // prep a collector for tokens by address
         let tokenCollections: { 
             [id: string] : { 
@@ -32,48 +28,81 @@ class NFTService {
         });
 
         // aggregate results across multiple pages
-        let cursor = null;
+        const pageSize = 100;
+        let pageKey = undefined;
+        let totalPages = 0;
+        let actualPage = 0;
+
+        const alchemySettings = this.alchemyService.getInstance();
+        
         do {
+            const nftsArbitrum = await alchemySettings.arbitrum.nft.getNftsForOwner(walletAddress, { pageSize, pageKey });
+            totalPages = Math.ceil(nftsArbitrum.totalCount / pageSize);
 
-          const response = await Moralis.EvmApi.nft.getWalletNFTs({
-            address: walletAddress,
-            chain,
-            tokenAddresses,
-            limit: 100,
-            cursor: cursor,
-          });
-
-          // parse page into return object here
-          if (typeof response.raw.result !== 'undefined') {
-            for (const token of response.raw.result) {
-                if (typeof tokenCollections[token.token_address.toLowerCase()] === 'undefined') continue;
-
-                let metadata = '';
-                try {
-                    metadata = JSON.parse(token.metadata ?? '');
-                } catch (e) {
-                    metadata = '';
+            for(const token of nftsArbitrum.ownedNfts){
+                if(tokenCollections[token.contract.address.toLowerCase()]){
+                    tokenCollections[token.contract.address.toLowerCase()].tokens.push({
+                        token_id: token.tokenId,
+                        amount: token.balance, 
+                        owner_of: "owner",
+                        contract_type: token.contract.tokenType,
+                        name: token.title,
+                        symbol: token.contract.symbol,
+                        token_uri: token.tokenUri,
+                        last_token_uri_sync: "yesterday",
+                        last_metadata_sync: "yesterday",
+                        metadata: "meta",
+                    });
                 }
-                
-                tokenCollections[token.token_address.toLowerCase()].tokens.push({
-                    token_id: token.token_id,
-                    amount: token.amount,
-                    owner_of: token.owner_of,
-                    contract_type: token.contract_type,
-                    name: token.name,
-                    symbol: token.symbol,
-                    token_uri: token.token_uri,
-                    last_token_uri_sync: token.last_token_uri_sync,
-                    last_metadata_sync: token.last_metadata_sync,
-                    metadata: metadata,
-                });
             }
-          }
 
-          // set cursor if there is one
-          cursor = response.raw.cursor ?? null;
+            if(nftsArbitrum.pageKey){
+                pageKey = nftsArbitrum.pageKey;
+            }else{
+                actualPage = totalPages;
+            }
 
-        } while (cursor != "" && cursor != null);
+            actualPage++;
+
+        } while (actualPage < totalPages);
+        
+
+        //- Ethereum Chain: ----------------------------------
+
+        pageKey = undefined;
+        totalPages = 0;
+        actualPage = 0;
+        
+        do {
+            const nftsEthereum = await alchemySettings.ethereum.nft.getNftsForOwner(walletAddress, { pageSize, pageKey });
+            totalPages = Math.ceil(nftsEthereum.totalCount / pageSize);
+
+            for(const token of nftsEthereum.ownedNfts){
+                if(tokenCollections[token.contract.address.toLowerCase()]){
+                    tokenCollections[token.contract.address.toLowerCase()].tokens.push({
+                        token_id: token.tokenId,
+                        amount: token.balance, 
+                        owner_of: "owner",
+                        contract_type: token.contract.tokenType,
+                        name: token.title,
+                        symbol: token.contract.symbol,
+                        token_uri: token.tokenUri,
+                        last_token_uri_sync: "yesterday",
+                        last_metadata_sync: "yesterday",
+                        metadata: "meta",
+                    });
+                }
+            }
+
+            if(nftsEthereum.pageKey){
+                pageKey = nftsEthereum.pageKey;
+            }else{
+                actualPage = 1;
+            }
+
+            actualPage++;
+
+        } while (actualPage < totalPages);
 
         // return collections in an order matching the provided tokenAddresses
         const collections = [];
@@ -88,57 +117,6 @@ class NFTService {
         
     }
 
-
-/*
-    const tokens = response.raw.result;
-    const nfts = [];
-
-    if (typeof tokens != 'undefined') {
-        for (let i = 0; i < contracts.length; i++) {
-            const contract = contracts[i].toLowerCase();
-            const collection = [];
-
-            for (let j = 0; j < tokens.length; j++) {
-                const token = tokens[j];
-                if (typeof token.token_address === 'undefined') {
-                    console.log('token.token_address===undefined');
-                }
-                let metadata = '';
-                try {
-                    metadata = JSON.parse(token.metadata ?? '');
-                } catch (e) {
-                    metadata = '';
-                }
-                if (token.token_address.toLowerCase() == contract) {
-                    collection.push({
-                        token_id: token.token_id,
-                        amount: token.amount,
-                        owner_of: token.owner_of,
-                        contract_type: token.contract_type,
-                        name: token.name,
-                        symbol: token.symbol,
-                        token_uri: token.token_uri,
-                        last_token_uri_sync: token.last_token_uri_sync,
-                        last_metadata_sync: token.last_metadata_sync,
-                        metadata: metadata,
-                    });
-                }
-            }
-
-            nfts.push({
-                contract_address: contract,
-                token_count: collection.length,
-                tokens: collection,
-            });
-        }
-    }
-
-    return {
-        wallet: address,
-        tokens: nfts,
-    };
-*/
-
 }
 
-export default new NFTService();
+
