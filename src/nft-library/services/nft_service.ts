@@ -7,7 +7,7 @@ export class NFTService {
 
     constructor(private readonly alchemyService: AlchemyService){}
 
-    async listByContracts({walletAddress, tokenAddresses}: {walletAddress: string, tokenAddresses?: string[]}): Promise<any> 
+    async listByContracts({walletAddress, tokenAddresses, amount}: {walletAddress: string, tokenAddresses?: string[], amount}): Promise<any> 
     {
         // prep a collector for tokens by address
         let tokenCollections: { 
@@ -41,18 +41,20 @@ export class NFTService {
 
             for(const token of nftsArbitrum.ownedNfts){
                 if(tokenCollections[token.contract.address.toLowerCase()]){
-                    tokenCollections[token.contract.address.toLowerCase()].tokens.push({
-                        token_id: token.tokenId,
-                        amount: token.balance, 
-                        owner_of: "owner",
-                        contract_type: token.contract.tokenType,
-                        name: token.title,
-                        symbol: token.contract.symbol,
-                        token_uri: token.tokenUri,
-                        last_token_uri_sync: "yesterday",
-                        last_metadata_sync: "yesterday",
-                        metadata: "meta",
-                    });
+                    if (tokenCollections[token.contract.address.toLowerCase()].tokens.length < amount) {
+                        tokenCollections[token.contract.address.toLowerCase()].tokens.push({
+                            token_id: token.tokenId,
+                            amount: token.balance, 
+                            owner_of: "owner",
+                            contract_type: token.contract.tokenType,
+                            name: token.title,
+                            symbol: token.contract.symbol,
+                            token_uri: token.tokenUri,
+                            last_token_uri_sync: "yesterday",
+                            last_metadata_sync: "yesterday",
+                            metadata: token.rawMetadata,
+                        });
+                    }
                 }
             }
 
@@ -79,18 +81,20 @@ export class NFTService {
 
             for(const token of nftsEthereum.ownedNfts){
                 if(tokenCollections[token.contract.address.toLowerCase()]){
-                    tokenCollections[token.contract.address.toLowerCase()].tokens.push({
-                        token_id: token.tokenId,
-                        amount: token.balance, 
-                        owner_of: "owner",
-                        contract_type: token.contract.tokenType,
-                        name: token.title,
-                        symbol: token.contract.symbol,
-                        token_uri: token.tokenUri,
-                        last_token_uri_sync: "yesterday",
-                        last_metadata_sync: "yesterday",
-                        metadata: "meta",
-                    });
+                    if (tokenCollections[token.contract.address.toLowerCase()].tokens.length < amount) {
+                        tokenCollections[token.contract.address.toLowerCase()].tokens.push({
+                            token_id: token.tokenId,
+                            amount: token.balance, 
+                            owner_of: "owner",
+                            contract_type: token.contract.tokenType,
+                            name: token.title,
+                            symbol: token.contract.symbol,
+                            token_uri: token.tokenUri,
+                            last_token_uri_sync: "yesterday",
+                            last_metadata_sync: "yesterday",
+                            metadata: token.rawMetadata,
+                        });
+                    }
                 }
             }
 

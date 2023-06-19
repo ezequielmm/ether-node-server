@@ -18,7 +18,7 @@ export class WalletService {
         return (ipfs) ? "https://ipfs.io/ipfs/" + ipfs.substring(7) : undefined;
     }
 
-    async getTokenIdList(walletAddress: string): Promise<any[]> {
+    async getTokenIdList(walletAddress: string, amount:number): Promise<any[]> {
         const all_wins = await this.playerWinService.findAllWins(walletAddress);
         const win_counts = countBy(
             all_wins,
@@ -32,7 +32,8 @@ export class WalletService {
 
         const nfts = await this.nftService.listByContracts({
             walletAddress,
-            tokenAddresses
+            tokenAddresses,
+            amount
         });
 
         for await (const contract of nfts.tokens) {
