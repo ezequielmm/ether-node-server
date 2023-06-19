@@ -36,10 +36,8 @@ export class PlayerGearService {
         });
     }
 
-    async allAreOwned(
-        userAddress: string,
-        equipped_gear_list: GearItem[],
-    ): Promise<boolean> {
+    async allAreOwned(userAddress: string, equipped_gear_list: GearItem[]): Promise<boolean> 
+    {
         const unownedGear = await this.findUnownedEquippedGear(
             userAddress,
             equipped_gear_list,
@@ -47,25 +45,18 @@ export class PlayerGearService {
         return unownedGear.length === 0;
     }
 
-    async getGear(
-        userAddress: string,
-        filter: FilterQuery<PlayerGear> = {},
-    ): Promise<any> {
-        let player: PlayerGear = await this.playerGear
-            .findOne({
+    async getGear(userAddress: string, filter: FilterQuery<PlayerGear> = {}): Promise<any> 
+    {
+        let player: PlayerGear = await this.playerGear.findOne({
                 userAddress,
                 ...filter,
             })
             .lean();
 
         if (player === null) {
-            this.logger.debug(
-                `Player Gear Not Found for ${userAddress}. Creating...`,
-            );
+            this.logger.debug(`Player Gear Not Found for ${userAddress}. Creating...`);
 
-            const startingGear = this.toGearItems(
-                this.getGearByIds(this.defaultGear),
-            );
+            const startingGear = this.toGearItems(this.getGearByIds(this.defaultGear));
 
             player = await this.playerGear.create({
                 userAddress,
@@ -78,10 +69,8 @@ export class PlayerGearService {
         return player.gear;
     }
 
-    async addGearToPlayer(
-        userAddress: string,
-        gear: Gear[],
-    ): Promise<PlayerGear> {
+    async addGearToPlayer(userAddress: string, gear: Gear[]): Promise<PlayerGear> 
+    {
         const gearItems = this.toGearItems(gear);
 
         try {
@@ -104,10 +93,8 @@ export class PlayerGearService {
         return gears;
     }
 
-    async removeGearFromPlayer(
-        userAddress: string,
-        gear: Gear[],
-    ): Promise<PlayerGear> {
+    async removeGearFromPlayer(userAddress: string, gear: Gear[]): Promise<PlayerGear> 
+    {    
         const playerGear = await this.getGear(userAddress);
 
         gear.forEach((toRemove) => {
