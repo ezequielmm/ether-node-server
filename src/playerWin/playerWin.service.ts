@@ -17,9 +17,10 @@ export class PlayerWinService {
         return await this.playerWin.create(contest_info);
     }
 
-    async findAllWins(wallet_id: string) {
+    async findAllWins(wallet_id: string, event_id:number) {
         const items = await this.playerWin.find({
-            playerToken: { $elemMatch: { wallet_id: wallet_id } },
+            'playerToken.walletId': wallet_id,
+            event_id: event_id
         });
         return items;
     }
@@ -32,8 +33,8 @@ export class PlayerWinService {
     }
 
     async canPlay(event_id: number, contract_address: string, token_id: number, wins?: number) : Promise<boolean> {
-        
         if (event_id === 0) return true;
+
         if (contract_address === 'NONE') return true;
 
         if (typeof wins === 'undefined') {

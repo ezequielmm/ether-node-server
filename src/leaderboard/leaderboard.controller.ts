@@ -88,9 +88,6 @@ export class LeaderboardController {
         @Query('pageSize', ParseIntPipe) pageSize: number,
         @Query('page', ParseIntPipe) page: number,
         @Query('onlyWin', ParseBoolPipe) onlyWin: boolean): Promise<ILeaderboardResponse> {
-            
-        console.log('--------------------------------------leaderboards--------------------------------------');
-        console.log({ startDate, endDate, pageSize, page, onlyWin });
         
         const fStartDate:Date  = startDate ? new Date(startDate) : new Date();
         const fEndDate:Date    = endDate   ? new Date(endDate) : new Date();
@@ -119,9 +116,6 @@ export class LeaderboardController {
     })
     @Post('participation')
     async getParticipation(@Body() payload: GetLeaderboardPayload): Promise<ILeaderboardParticipationItem[]> {
-        console.log("--------------------------------------participation--------------------------------------");
-        console.log(payload);
-
         payload.startDate = payload.startDate ? new Date(payload.startDate) : new Date();
         payload.endDate   = payload.endDate   ? new Date(payload.endDate) : new Date();
         
@@ -133,9 +127,6 @@ export class LeaderboardController {
     })
     @Post('scores')
     async getHighScores(@Body() payload: GetLeaderboardPayload): Promise<ILeaderboardScoreItem[]>  {
-        console.log('--------------------------------------scores--------------------------------------');
-        console.log(payload)
-
         payload.startDate = payload.startDate ? new Date(payload.startDate) : new Date();
         payload.endDate   = payload.endDate   ? new Date(payload.endDate) : new Date();
 

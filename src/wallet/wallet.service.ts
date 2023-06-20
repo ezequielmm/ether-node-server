@@ -19,13 +19,18 @@ export class WalletService {
     }
 
     async getTokenIdList(walletAddress: string, amount:number): Promise<any[]> {
-        const all_wins = await this.playerWinService.findAllWins(walletAddress);
+        
+        const contest = await this.contestService.findActiveContest();
+        const event_id = contest?.event_id ?? 0;
+
+        const all_wins = await this.playerWinService.findAllWins(walletAddress, event_id);
+
         const win_counts = countBy(
             all_wins,
             (win) => win.playerToken.contractId + win.playerToken.tokenId,
         );
-        const contest = await this.contestService.findActiveContest();
-        const event_id = contest?.event_id ?? 0;
+        
+        
 
         // The contracts to filter from all the user collections
         const tokenAddresses = await this.characterService.findAllContractIds();
