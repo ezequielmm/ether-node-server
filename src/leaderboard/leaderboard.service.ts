@@ -45,7 +45,6 @@ export class LeaderboardService {
                     finalScore: { $max: "$finalScore" },  // Include the finalScore field
                     createdAt: { $first: "$createdAt" },
                     endedAt: { $first: "$endedAt" }
-                       
 
                 }
             },
@@ -95,14 +94,10 @@ export class LeaderboardService {
         }
 
         result = await this.expedition.aggregate([
-            //- Acá ya parto de una coleccion de expediciones dentro de las fechas indicadas,
-            //  con el status indicado y vinculadas a los usuarios filtrados.
-            //  Las próximas lineas trabajaran sobre ese resultado:
             {
                 $match: match
             },
 
-            //- Acá crea un subset con dos columnas si fuera una tabla (wallet y day)
 
             {
                 $setWindowFields: {

@@ -100,12 +100,13 @@ export class GearChainBridgeController {
             throw new UnauthorizedException('Bad Token');
         }
 
-        const playerGear = await this.playerGearService.getGear(
+        let playerGear = await this.playerGearService.getGear(
             wallet,
             this.nonChainRarityFilter,
         );
 
-        const gears = await this.playerGearService.getGearByIds(payload.gear);
+
+        let gears = await this.playerGearService.getGearByIds(payload.gear);
 
         const removedGears = remove(gears, (g) =>
             this.nonChainRarities.includes(g.rarity),
@@ -113,9 +114,15 @@ export class GearChainBridgeController {
 
         switch (payload.action) {
             case GearActionApiEnum.AddGear:
+                gears = gears.filter((g) => {
+                    return !playerGear.some((pg) => pg.gearId === g.gearId)
+                });
                 await this.playerGearService.addGearToPlayer(wallet, gears);
                 break;
             case GearActionApiEnum.RemoveGear:
+                gears = gears.filter((g) => {
+                    return playerGear.some((pg) => pg.gearId === g.gearId)
+                });
                 await this.playerGearService.removeGearFromPlayer(wallet,gears);
                 break;
         }
