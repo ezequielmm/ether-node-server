@@ -8,7 +8,7 @@ import {
     UnauthorizedException,
 } from '@nestjs/common';
 import { PlayerGearService } from './playerGear.service';
-import { Param } from '@nestjs/common/decorators/http/route-params.decorator';
+import { Query } from '@nestjs/common/decorators/http/route-params.decorator';
 import { Gear } from '../game/components/gear/gear.schema';
 import { Expedition } from 'src/game/components/expedition/expedition.schema';
 import { ReturnModelType } from '@typegoose/typegoose';
@@ -46,6 +46,7 @@ interface ITokenCheck {
 @ApiTags('gearChainBridge')
 @Controller('gearChainBridge')
 export class GearChainBridgeController {
+
     constructor(
         @Inject(getModelToken('Expedition'))
         private readonly expedition: ReturnModelType<typeof Expedition>,
@@ -70,19 +71,17 @@ export class GearChainBridgeController {
         const localHash = createHash('md5')
             .update(timestamp + check.wallet + sharedSalt)
             .digest('hex');
-
+        
         return localHash === check.token;
     }
 
     @ApiOperation({ summary: 'Get player owned gear list for API' })
-    @Get('/list')
-    async getList(
-        @Param('wallet') wallet: string,
-        @Param('token') token: string,
-    ): Promise<GearItem[]> {
+    @Get('/list') async getList(@Query('wallet') wallet: string, @Query('token') token: string): Promise<GearItem[]> {
         // confirm token (security layer)
-        if (!this.checkSecurityToken({ wallet, token }))
+        let validToken = await this.checkSecurityToken({ wallet, token });
+        if (!validToken){
             throw new UnauthorizedException('Bad Token');
+        }
 
         return await this.playerGearService.getGear(
             wallet,
@@ -92,22 +91,22 @@ export class GearChainBridgeController {
 
     @ApiOperation({ summary: 'Get player owned gear list for API' })
     @Post('/modify')
-    async postModify(@Body() payload: AlterGearApiDTO): Promise<{
-        oldGear: GearItem[];
-        newGear: GearItem[];
-        ignoredGear: Gear[];
-    }> {
+    async postModify(@Body() payload: AlterGearApiDTO): Promise<{oldGear: GearItem[]; newGear: GearItem[]; ignoredGear: Gear[];}> {
+        
         const { wallet, token } = payload;
 
         // confirm token (security layer) and get PlayerId
-        if (!this.checkSecurityToken({ wallet, token }))
+        if (!this.checkSecurityToken({ wallet, token })){
             throw new UnauthorizedException('Bad Token');
+        }
 
         const playerGear = await this.playerGearService.getGear(
             wallet,
             this.nonChainRarityFilter,
         );
+
         const gears = await this.playerGearService.getGearByIds(payload.gear);
+
         const removedGears = remove(gears, (g) =>
             this.nonChainRarities.includes(g.rarity),
         );
@@ -117,10 +116,7 @@ export class GearChainBridgeController {
                 await this.playerGearService.addGearToPlayer(wallet, gears);
                 break;
             case GearActionApiEnum.RemoveGear:
-                await this.playerGearService.removeGearFromPlayer(
-                    wallet,
-                    gears,
-                );
+                await this.playerGearService.removeGearFromPlayer(wallet,gears);
                 break;
         }
 

@@ -24,12 +24,12 @@ POST: /gearChainBridge/list
         Array of objects representing all gear in player inventory.
 
 POST: /gearChainBridge/modify
-        This route will add to or remove from the player's inventory the gear listed by id.
+        This route will add to or delete from the player's inventory the gear listed by id.
 
         Parameters:
         - wallet: string representing player wallet address
         - token: security token as previously described
-        - action: 'add' or 'remove'
+        - action: 'add' or 'delete'
         - gear: array of gear ids
 
         Return:

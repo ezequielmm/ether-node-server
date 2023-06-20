@@ -1,4 +1,4 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import { Controller, Get, Param, ParseIntPipe, Query } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { WalletService } from './wallet.service';
 
@@ -11,7 +11,7 @@ export class WalletController {
         summary: 'Get NFT',
     })
     @Get(':id')
-    async getTokenList(@Param('id') walletId: string): Promise<string[]> {
-        return await this.walletService.getTokenIdList(walletId);
+    async getTokenList(@Param('id') walletId: string, @Query('amount', ParseIntPipe) amount: number): Promise<string[]> {
+        return await this.walletService.getTokenIdList(walletId, amount);
     }
 }
