@@ -101,7 +101,7 @@ export class NFTService {
             if(nftsEthereum.pageKey){
                 pageKey = nftsEthereum.pageKey;
             }else{
-                actualPage = 1;
+                actualPage = totalPages;
             }
 
             actualPage++;
