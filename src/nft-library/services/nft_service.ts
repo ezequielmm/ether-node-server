@@ -1,11 +1,12 @@
 import { forEach } from 'lodash';
 import { AlchemyService } from './alchemy_service';
 import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class NFTService {
 
-    constructor(private readonly alchemyService: AlchemyService){}
+    constructor(private readonly alchemyService: AlchemyService, private readonly configService: ConfigService){}
 
     async listByContracts({walletAddress, tokenAddresses, amount}: {walletAddress: string, tokenAddresses?: string[], amount}): Promise<any> 
     {
@@ -15,6 +16,7 @@ export class NFTService {
                 contract_address: string; 
                 token_count: number; 
                 tokens: any[];
+                isFull: boolean;
             }
         } = {};
         
@@ -23,15 +25,19 @@ export class NFTService {
             tokenCollections[address.toLowerCase()] = {
                 contract_address: address.toLowerCase(),
                 token_count: 0,
-                tokens: []
+                tokens: [],
+                isFull: false
             };
         });
 
         // aggregate results across multiple pages
+        const net = this.configService.get("NFT_SERVICE_NET");
+
         const pageSize = 100;
         let pageKey = undefined;
         let totalPages = 0;
         let actualPage = 0;
+        let tokenFullList = true;
 
         const alchemySettings = this.alchemyService.getInstance();
         
@@ -54,9 +60,32 @@ export class NFTService {
                             last_metadata_sync: "yesterday",
                             metadata: token.rawMetadata,
                         });
+                    }else{
+                        tokenCollections[token.contract.address.toLowerCase()].isFull = true;
                     }
                 }
             }
+
+
+            // <---- HotFix for demo:
+            if(net === "mainnet"){
+                if(tokenCollections["0x292Ff0F0c19373dd9c50faBba574Aaaf6E1BC11B".toLowerCase()].isFull 
+                    && tokenCollections["0x73DdCE2656c343dc6655e76202768c703D1f540B".toLowerCase()].isFull){
+                    tokenFullList = true;
+                }else{
+                    tokenFullList = false;
+                }
+            }else if(net === "testnet"){
+                if(tokenCollections["0x913dB69145f33Af291F46E980e4c0CaBBfcC27AA".toLowerCase()].isFull 
+                    && tokenCollections["0xbFfd759b9F7d07ac76797cc13974031Eb23e5757".toLowerCase()].isFull){
+                    tokenFullList = true;
+                }else{
+                    tokenFullList = false;
+                }
+            }
+
+            // End HotFix for demo --->
+
 
             if(nftsArbitrum.pageKey){
                 pageKey = nftsArbitrum.pageKey;
@@ -66,7 +95,7 @@ export class NFTService {
 
             actualPage++;
 
-        } while (actualPage < totalPages);
+        } while (!tokenFullList && actualPage < totalPages);
         
 
         //- Ethereum Chain: ----------------------------------
@@ -74,6 +103,7 @@ export class NFTService {
         pageKey = undefined;
         totalPages = 0;
         actualPage = 0;
+        tokenFullList = true;
         
         do {
             const nftsEthereum = await alchemySettings.ethereum.nft.getNftsForOwner(walletAddress, { pageSize, pageKey });
@@ -94,9 +124,29 @@ export class NFTService {
                             last_metadata_sync: "yesterday",
                             metadata: token.rawMetadata,
                         });
+                    }else{
+                        tokenCollections[token.contract.address.toLowerCase()].isFull = true;
                     }
                 }
             }
+
+            // <---- HotFix for demo:
+            if(net === "mainnet"){
+                if(tokenCollections["0x32A322C7C77840c383961B8aB503c9f45440c81f".toLowerCase()].isFull){
+                    tokenFullList = true;
+                }else{
+                    tokenFullList = false;
+                }
+            }else if(net === "testnet"){
+                if(tokenCollections["0x450210F1f501E94DB0DeA2eD1Cfc880aa803931a".toLowerCase()].isFull){
+                    tokenFullList = true;
+                }else{
+                    tokenFullList = false;
+                }
+            }
+
+            // End HotFix for demo --->
+
 
             if(nftsEthereum.pageKey){
                 pageKey = nftsEthereum.pageKey;
@@ -106,7 +156,7 @@ export class NFTService {
 
             actualPage++;
 
-        } while (actualPage < totalPages);
+        } while (!tokenFullList && actualPage < totalPages);
 
         // return collections in an order matching the provided tokenAddresses
         const collections = [];
