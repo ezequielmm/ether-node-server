@@ -219,14 +219,14 @@ export class LeaderboardService {
 
     getWhereConditions({fStartDate, fEndDate, onlyWin} : {fStartDate: Date, fEndDate: Date, onlyWin:boolean}){
 
-        const { start, end } = this.normalizeDates({ fStartDate, fEndDate });
+        //const { start, end } = this.normalizeDates({ fStartDate, fEndDate });
 
         const match = {
             createdAt: { 
-                $gte: start
+                $gte: fStartDate
             },
             endedAt: {
-                $lte: end 
+                $lte: fEndDate 
             },
             finalScore: { $exists: true },
         };
