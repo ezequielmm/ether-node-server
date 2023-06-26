@@ -6,6 +6,20 @@ import { ConfigService } from '@nestjs/config';
 @Injectable()
 export class NFTService {
 
+    // Hotfix Demo:
+    
+    //- Arbitrum:
+    private MAIN_VILLAGER_CONTRACT_ID = "0x292Ff0F0c19373dd9c50faBba574Aaaf6E1BC11B"
+    private TEST_VILLAGER_CONTRACT_ID = "0x913dB69145f33Af291F46E980e4c0CaBBfcC27AA"
+    private MAIN_BLESSED_CONTRACT_ID = "0x73DdCE2656c343dc6655e76202768c703D1f540B"
+    private TEST_BLESSED_CONTRACT_ID = "0xbFfd759b9F7d07ac76797cc13974031Eb23e5757"
+
+    //- Ethereum:
+    private MAIN_KNIGHT_CONTRACT_ID = "0x32A322C7C77840c383961B8aB503c9f45440c81f"
+    private TEST_KNIGHT_CONTRACT_ID = "0x450210F1f501E94DB0DeA2eD1Cfc880aa803931a"
+    
+    // Hotfix Demo
+
     constructor(private readonly alchemyService: AlchemyService, private readonly configService: ConfigService){}
 
     async listByContracts({walletAddress, tokenAddresses, amount}: {walletAddress: string, tokenAddresses?: string[], amount}): Promise<any> 
@@ -69,15 +83,15 @@ export class NFTService {
 
             // <---- HotFix for demo:
             if(net === "mainnet"){
-                if(tokenCollections["0x292Ff0F0c19373dd9c50faBba574Aaaf6E1BC11B".toLowerCase()].isFull 
-                    && tokenCollections["0x73DdCE2656c343dc6655e76202768c703D1f540B".toLowerCase()].isFull){
+                if(tokenCollections[this.MAIN_VILLAGER_CONTRACT_ID.toLowerCase()].isFull 
+                    && tokenCollections[this.MAIN_BLESSED_CONTRACT_ID.toLowerCase()].isFull){
                     tokenFullList = true;
                 }else{
                     tokenFullList = false;
                 }
             }else if(net === "testnet"){
-                if(tokenCollections["0x913dB69145f33Af291F46E980e4c0CaBBfcC27AA".toLowerCase()].isFull 
-                    && tokenCollections["0xbFfd759b9F7d07ac76797cc13974031Eb23e5757".toLowerCase()].isFull){
+                if(tokenCollections[this.TEST_VILLAGER_CONTRACT_ID.toLowerCase()].isFull 
+                    && tokenCollections[this.TEST_BLESSED_CONTRACT_ID.toLowerCase()].isFull){
                     tokenFullList = true;
                 }else{
                     tokenFullList = false;
@@ -132,13 +146,13 @@ export class NFTService {
 
             // <---- HotFix for demo:
             if(net === "mainnet"){
-                if(tokenCollections["0x32A322C7C77840c383961B8aB503c9f45440c81f".toLowerCase()].isFull){
+                if(tokenCollections[this.MAIN_KNIGHT_CONTRACT_ID.toLowerCase()].isFull){
                     tokenFullList = true;
                 }else{
                     tokenFullList = false;
                 }
             }else if(net === "testnet"){
-                if(tokenCollections["0x450210F1f501E94DB0DeA2eD1Cfc880aa803931a".toLowerCase()].isFull){
+                if(tokenCollections[this.TEST_KNIGHT_CONTRACT_ID.toLowerCase()].isFull){
                     tokenFullList = true;
                 }else{
                     tokenFullList = false;
