@@ -2,6 +2,7 @@ import { forEach } from 'lodash';
 import { AlchemyService } from './alchemy_service';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { OwnedNft } from 'alchemy-sdk';
 
 @Injectable()
 export class NFTService {
@@ -29,8 +30,7 @@ export class NFTService {
             [id: string] : { 
                 contract_address: string; 
                 token_count: number; 
-                tokens: any[];
-                isFull: boolean;
+                tokens: any[]
             }
         } = {};
         
@@ -39,138 +39,28 @@ export class NFTService {
             tokenCollections[address.toLowerCase()] = {
                 contract_address: address.toLowerCase(),
                 token_count: 0,
-                tokens: [],
-                isFull: false
+                tokens: []
             };
         });
 
         // aggregate results across multiple pages
         const net = this.configService.get("NFT_SERVICE_NET");
-
-        const pageSize = 100;
-        let pageKey = undefined;
-        let totalPages = 0;
-        let actualPage = 0;
-        let tokenFullList = true;
-
         const alchemySettings = this.alchemyService.getInstance();
-        
-        do {
-            const nftsArbitrum = await alchemySettings.arbitrum.nft.getNftsForOwner(walletAddress, { pageSize, pageKey });
-            totalPages = Math.ceil(nftsArbitrum.totalCount / pageSize);
 
-            for(const token of nftsArbitrum.ownedNfts){
-                if(tokenCollections[token.contract.address.toLowerCase()]){
-                    if (tokenCollections[token.contract.address.toLowerCase()].tokens.length < amount) {
-                        tokenCollections[token.contract.address.toLowerCase()].tokens.push({
-                            token_id: token.tokenId,
-                            amount: token.balance, 
-                            owner_of: "owner",
-                            contract_type: token.contract.tokenType,
-                            name: token.title,
-                            symbol: token.contract.symbol,
-                            token_uri: token.tokenUri,
-                            last_token_uri_sync: "yesterday",
-                            last_metadata_sync: "yesterday",
-                            metadata: token.rawMetadata,
-                        });
-                    }else{
-                        tokenCollections[token.contract.address.toLowerCase()].isFull = true;
-                    }
-                }
-            }
+        const pageSize = amount <= 100 ? amount : 100;
 
+        let villagerAddress = net === AlchemyService.MAINNET ? this.MAIN_VILLAGER_CONTRACT_ID : this.TEST_VILLAGER_CONTRACT_ID;
+        const villagers = await alchemySettings.arbitrum.nft.getNftsForOwner(walletAddress, { pageSize, contractAddresses: [villagerAddress] });
 
-            // <---- HotFix for demo:
-            if(net === "mainnet"){
-                if(tokenCollections[this.MAIN_VILLAGER_CONTRACT_ID.toLowerCase()].isFull 
-                    && tokenCollections[this.MAIN_BLESSED_CONTRACT_ID.toLowerCase()].isFull){
-                    tokenFullList = true;
-                }else{
-                    tokenFullList = false;
-                }
-            }else if(net === "testnet"){
-                if(tokenCollections[this.TEST_VILLAGER_CONTRACT_ID.toLowerCase()].isFull 
-                    && tokenCollections[this.TEST_BLESSED_CONTRACT_ID.toLowerCase()].isFull){
-                    tokenFullList = true;
-                }else{
-                    tokenFullList = false;
-                }
-            }
+        let blessedVillagerAddress = net === AlchemyService.MAINNET ? this.MAIN_BLESSED_CONTRACT_ID : this.TEST_BLESSED_CONTRACT_ID;
+        const blessedVillagers = await alchemySettings.arbitrum.nft.getNftsForOwner(walletAddress, { pageSize, contractAddresses: [blessedVillagerAddress] });
 
-            // End HotFix for demo --->
+        let knightAddress = net === AlchemyService.MAINNET ? this.MAIN_KNIGHT_CONTRACT_ID : this.TEST_KNIGHT_CONTRACT_ID;
+        const knights = await alchemySettings.ethereum.nft.getNftsForOwner(walletAddress, { pageSize, contractAddresses: [knightAddress] });
 
-
-            if(nftsArbitrum.pageKey){
-                pageKey = nftsArbitrum.pageKey;
-            }else{
-                actualPage = totalPages;
-            }
-
-            actualPage++;
-
-        } while (!tokenFullList && actualPage < totalPages);
-        
-
-        //- Ethereum Chain: ----------------------------------
-
-        pageKey = undefined;
-        totalPages = 0;
-        actualPage = 0;
-        tokenFullList = true;
-        
-        do {
-            const nftsEthereum = await alchemySettings.ethereum.nft.getNftsForOwner(walletAddress, { pageSize, pageKey });
-            totalPages = Math.ceil(nftsEthereum.totalCount / pageSize);
-
-            for(const token of nftsEthereum.ownedNfts){
-                if(tokenCollections[token.contract.address.toLowerCase()]){
-                    if (tokenCollections[token.contract.address.toLowerCase()].tokens.length < amount) {
-                        tokenCollections[token.contract.address.toLowerCase()].tokens.push({
-                            token_id: token.tokenId,
-                            amount: token.balance, 
-                            owner_of: "owner",
-                            contract_type: token.contract.tokenType,
-                            name: token.title,
-                            symbol: token.contract.symbol,
-                            token_uri: token.tokenUri,
-                            last_token_uri_sync: "yesterday",
-                            last_metadata_sync: "yesterday",
-                            metadata: token.rawMetadata,
-                        });
-                    }else{
-                        tokenCollections[token.contract.address.toLowerCase()].isFull = true;
-                    }
-                }
-            }
-
-            // <---- HotFix for demo:
-            if(net === "mainnet"){
-                if(tokenCollections[this.MAIN_KNIGHT_CONTRACT_ID.toLowerCase()].isFull){
-                    tokenFullList = true;
-                }else{
-                    tokenFullList = false;
-                }
-            }else if(net === "testnet"){
-                if(tokenCollections[this.TEST_KNIGHT_CONTRACT_ID.toLowerCase()].isFull){
-                    tokenFullList = true;
-                }else{
-                    tokenFullList = false;
-                }
-            }
-
-            // End HotFix for demo --->
-
-
-            if(nftsEthereum.pageKey){
-                pageKey = nftsEthereum.pageKey;
-            }else{
-                actualPage = totalPages;
-            }
-
-            actualPage++;
-
-        } while (!tokenFullList && actualPage < totalPages);
+        this.loadNftsByCharacterType(tokenCollections, villagerAddress.toLowerCase(), villagers.ownedNfts,  amount);
+        this.loadNftsByCharacterType(tokenCollections, blessedVillagerAddress.toLowerCase(), blessedVillagers.ownedNfts, amount);
+        this.loadNftsByCharacterType(tokenCollections, knightAddress.toLowerCase(), knights.ownedNfts, amount);
 
         // return collections in an order matching the provided tokenAddresses
         const collections = [];
@@ -183,6 +73,28 @@ export class NFTService {
             tokens: collections
         };
         
+    }
+
+    private loadNftsByCharacterType(tokenCollections, address:string, ownedNFTS:OwnedNft[],  amount: number){
+        for(let nft of ownedNFTS){
+            tokenCollections[address].token_count = 1 + tokenCollections[address].token_count;
+            tokenCollections[address].tokens.push({
+                token_id: nft.tokenId,
+                amount: nft.balance, 
+                owner_of: "owner",
+                contract_type: nft.contract.tokenType,
+                name: nft.title,
+                symbol: nft.contract.symbol,
+                token_uri: nft.tokenUri,
+                last_token_uri_sync: "yesterday",
+                last_metadata_sync: "yesterday",
+                metadata: nft.rawMetadata,
+            });
+
+            if(tokenCollections[address].token_count >= amount){
+                break;
+            }
+        }
     }
 
 }

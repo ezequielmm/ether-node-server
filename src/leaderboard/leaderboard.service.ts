@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from 'kindagoose';
 import { ReturnModelType } from '@typegoose/typegoose';
-import { GetLeaderboardPayload, ILeaderboardItem, ILeaderboardParticipationItem, ILeaderboardScoreItem } from './leaderboard.controller';
+import { GetLeaderboardPayload, ILeaderboardParticipationItem, ILeaderboardScoreItem } from './leaderboard.controller';
 import { Expedition } from 'src/game/components/expedition/expedition.schema';
 import { ExpeditionStatusEnum } from 'src/game/components/expedition/expedition.enum';
 
@@ -15,20 +15,9 @@ export class LeaderboardService {
     async getLeaderboardCount({fStartDate, fEndDate, onlyWin} : {fStartDate: Date, fEndDate: Date, onlyWin:boolean}) : Promise<number>{
         const match = this.getWhereConditions({fStartDate, fEndDate, onlyWin});
 
-        const count = await this.expedition.aggregate([
-            { $match: match },
-            {
-                $group: {
-                    _id: "$playerState.playerToken.walletId",
-                    score: { $max: "$finalScore.totalScore" },
-                    finalScore: { $first: "$finalScore" }, // Include the 'finalScore' field
-
-                }
-            },
-            { $count: "total" }
-        ]);
-
-        return count[0] ? count[0].total : 0;
+        const count = await this.expedition.countDocuments(match);
+        
+        return count;
     }
 
     async getLeaderboard({ fStartDate, fEndDate, limit, skip, onlyWin } : { fStartDate: Date, fEndDate: Date, limit: number, skip: number, onlyWin: boolean }): Promise<any[]>{
@@ -39,20 +28,10 @@ export class LeaderboardService {
         return await this.expedition.aggregate([
             {   $match: match },
             {
-                $group: {
-                    _id: "$playerState.playerToken.walletId",
-                    score: { $max: "$finalScore.totalScore" },
-                    finalScore: { $max: "$finalScore" },  // Include the finalScore field
-                    createdAt: { $first: "$createdAt" },
-                    endedAt: { $first: "$endedAt" }
-
-                }
-            },
-            {
                 $project: {
                     _id: 0,
                     address: "$_id",
-                    score: 1,
+                    score: "$scores",
                     endedAt: 1,
                     finalScore: 1,  // Include the finalScore field
                     totalTime: { $subtract: ["$endedAt", "$createdAt"] }
@@ -218,9 +197,6 @@ export class LeaderboardService {
     }
 
     getWhereConditions({fStartDate, fEndDate, onlyWin} : {fStartDate: Date, fEndDate: Date, onlyWin:boolean}){
-
-        //const { start, end } = this.normalizeDates({ fStartDate, fEndDate });
-
         const match = {
             createdAt: { 
                 $gte: fStartDate
