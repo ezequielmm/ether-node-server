@@ -23,13 +23,13 @@ export class AlchemyService {
         const net = this.configService.get("NFT_SERVICE_NET");
 
         const arbitrumSettings = {
-            apiKey:  net == AlchemyService.MAINNET ? this.configService.get("NFT_SERVICE_ARB_MAINTEST_API_KEY") : this.configService.get("NFT_SERVICE_ARB_TESTNET_API_KEY"),
-            network: net == AlchemyService.MAINNET ? Network.ETH_MAINNET : Network.ARB_GOERLI
+            apiKey:  net == AlchemyService.MAINNET ? this.configService.get("NFT_SERVICE_ARB_MAINNET_API_KEY") : this.configService.get("NFT_SERVICE_ARB_TESTNET_API_KEY"),
+            network: net == AlchemyService.MAINNET ? Network.ARB_MAINNET : Network.ARB_GOERLI
         };
     
         const ethereumSettings = {
             apiKey:  net == AlchemyService.MAINNET ? this.configService.get("NFT_SERVICE_ETH_MAINNET_API_KEY") : this.configService.get("NFT_SERVICE_ETH_TESTNET_API_KEY"),
-            network: net == AlchemyService.MAINNET ? Network.ARB_MAINNET : Network.ETH_GOERLI,
+            network: net == AlchemyService.MAINNET ? Network.ETH_MAINNET : Network.ETH_GOERLI,
         };
     
         return {
