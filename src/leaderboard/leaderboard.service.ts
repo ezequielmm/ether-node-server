@@ -30,7 +30,7 @@ export class LeaderboardService {
             {
                 $project: {
                     _id: 0,
-                    address: "$_id",
+                    address: "$userAddress",
                     score: "$scores",
                     endedAt: 1,
                     finalScore: 1,  // Include the finalScore field
