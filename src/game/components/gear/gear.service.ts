@@ -3,7 +3,7 @@ import { InjectModel } from 'kindagoose';
 import { ReturnModelType } from '@typegoose/typegoose';
 import { Gear } from './gear.schema';
 import { GearRarityEnum } from './gear.enum';
-import { getRandomBetween } from '../../../utils';
+import { getDecimalRandomBetween } from '../../../utils';
 import { ILootboxRarityOdds } from './gear.interface';
 import { data as GearData } from './gear.data';
 import { find, sample } from 'lodash';
@@ -20,7 +20,7 @@ export class GearService {
     private selectRandomRarity(rarities: ILootboxRarityOdds) {
         const { common, uncommon, rare, epic, legendary } = rarities;
         const maxThreshold = common + uncommon + rare + epic + legendary;
-        const d100 = getRandomBetween(0, maxThreshold);
+        const d100 = getDecimalRandomBetween(0, maxThreshold);
 
         let threshold = maxThreshold - legendary;
 
