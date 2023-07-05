@@ -87,6 +87,10 @@ export function getRandomBetween(min: number, max: number): number {
     return Math.floor(Math.random() * (max - min)) + min;
 }
 
+export function getDecimalRandomBetween(min: number, max: number): number {
+    return parseFloat((Math.random() * (max - min) + min).toFixed(2));
+}
+
 /**
  * Checks is input is odd or even number
  */
