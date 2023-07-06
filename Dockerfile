@@ -7,21 +7,23 @@ FROM node:16.18.0-alpine3.16
 
 # Working directory
 WORKDIR /user/src/app
- 
-# Copy the files from the host to the container
-COPY . .
- 
+
+COPY package*.json ./
+
 # Install the dependencies
 RUN npm ci 
- 
+
+# Copy the files from the host to the container
+COPY . .
+
 # Build the application
 RUN npm run build
- 
+
 # Expose the port
 EXPOSE 3000
 
 # Run the application as a non-root user
 USER node
- 
+
 # Run the application in production mode
 CMD ["npm", "run", "start:prod"]
