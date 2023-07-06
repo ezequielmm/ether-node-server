@@ -36,8 +36,8 @@ jobs:
           elif [[ ${{ github.ref }} == 'refs/heads/main' ]]; then
             DOCKER_TAG="demo-$(git rev-parse --short HEAD)"
           fi
-          docker build -t ${{ secrets.AWS_ECR_URI }}:${DOCKER_TAG} .
-          docker tag ${{ secrets.AWS_ECR_URI }}:${DOCKER_TAG} ${{ secrets.AWS_ECR_URI }}:${DOCKER_TAG}
+          docker build -t blightfell-backend:${DOCKER_TAG} .
+          docker tag blightfell-backend:${DOCKER_TAG} ${{ secrets.AWS_ECR_URI }}/blightfell-backend:${DOCKER_TAG}
 
       - name: Push Docker image to AWS ECR
-        run: docker push ${{ secrets.AWS_ECR_URI }}:${DOCKER_TAG}
+        run: docker push ${{ secrets.AWS_ECR_URI }}/blightfell-backend:${DOCKER_TAG}
