@@ -38,4 +38,4 @@ jobs:
           fi
           docker build -t blightfell-backend:${DOCKER_TAG} .
           docker tag blightfell-backend:${DOCKER_TAG} ${{ secrets.AWS_ECR_URI }}/blightfell-backend:${DOCKER_TAG}
-          run: docker push ${{ secrets.AWS_ECR_URI }}/blightfell-backend:${DOCKER_TAG}        
+          docker push ${{ secrets.AWS_ECR_URI }}/blightfell-backend:${DOCKER_TAG}        
