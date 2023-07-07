@@ -39,15 +39,14 @@ jobs:
         run: docker push ${{ secrets.AWS_ECR_URI }}/blightfell-backend:${{ steps.build.outputs.TAG }} 
 
       - name: SSH into EC2 instance
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.DEV_EC2_IP }}
-          username: ${{ secrets.DEV_EC2_USER }}
-          key: ${{ secrets.DEV_EC2_PRIVATE_KEY }}
-
-      - name: Pull changes and restart containers on EC2
         env:
-          AWS_EC2_METADATA_DISABLED: true
-          AWS_DEFAULT_REGION: us-east-1
+            PRIVATE_KEY: ${{ secrets.DEV_EC2_PRIVATE_KEY }}
+            HOSTNAME: ${{secrets.DEV_EC2_IP}}
+            USER_NAME: ${secrets.DEV_EC2_USER}
         run: |
-          ssh ${{ secrets.DEV_EC2_USER }}@${{ secrets.DEV_EC2_IP }} 'ls -al'
+          echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
+          ssh -o StrictHostKeyChecking=no -i private_key ${USER_NAME}@${HOSTNAME} '
+
+              # Now we have got the access of EC2 and we will start the deploy .
+              ls -al
+              '
