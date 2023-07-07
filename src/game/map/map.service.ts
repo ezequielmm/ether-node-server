@@ -26,6 +26,8 @@ export class MapService {
         // Set node as active
         node.status = NodeStatus.Active;
 
+        node.timesSelected = 1;
+
         // Call node strategy
         this.getNodeStrategy(node)?.onSelect?.(ctx, node);
     }

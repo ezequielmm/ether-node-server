@@ -142,6 +142,8 @@ export class NodeSelectedProcess {
     private async nodeIsActive(ctx: GameContext, node: Node): Promise<string> {
         const logger = this.logger.logger.child(ctx.info);
 
+        node.timesSelected = node.timesSelected ? node.timesSelected + 1 : 1;
+
         switch (node.type) {
             case NodeType.Combat:
             case NodeType.Combat:

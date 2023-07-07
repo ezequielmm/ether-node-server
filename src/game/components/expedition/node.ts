@@ -36,6 +36,9 @@ export class Node {
     enter: number[];
 
     @Prop()
+    timesSelected?: number;
+
+    @Prop()
     title?: string;
 
     @Prop()
