@@ -46,5 +46,8 @@ jobs:
           key: ${{ secrets.DEV_EC2_PRIVATE_KEY }}
 
       - name: Pull changes and restart containers on EC2
+        env:
+          AWS_EC2_METADATA_DISABLED: true
+          AWS_DEFAULT_REGION: us-east-1
         run: |
           ssh ${{ secrets.DEV_EC2_USER }}@${{ secrets.DEV_EC2_IP }} 'ls -al'
