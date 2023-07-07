@@ -53,4 +53,4 @@ jobs:
 
       - name: Pull changes and restart containers on EC2
         run: |
-          ssh ubuntu@54.175.84.235 'ls -al'
+          ssh -i ${{ secrets.DEV_EC2_PRIVATE_KEY }} ubuntu@54.175.84.235 'ls -al'
