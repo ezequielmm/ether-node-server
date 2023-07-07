@@ -43,3 +43,14 @@ jobs:
 
       - name: Push Docker image to AWS ECR
         run: docker push ${{ secrets.AWS_ECR_URI }}/blightfell-backend:${{ steps.build.outputs.TAG }} 
+
+      - name: SSH into EC2 instance
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ vars.DEV_EC2_IP }}
+          username: ${{ vars.DEV_EC2_IP }}
+          key: ${{ secrets.DEV_EC2_PRIVATE_KEY }}
+
+      - name: Pull changes and restart containers on EC2
+        run: |
+          ssh ${{ vars.DEV_EC2_IP }}@${{ vars.DEV_EC2_IP }} 'ls -al'
