@@ -41,4 +41,4 @@ jobs:
           echo "::set-output name=DOCKER_TAG::${DOCKER_TAG}"
 
       - name: Push Docker image to AWS ECR
-        run: docker push ${{ secrets.AWS_ECR_URI }}/blightfell-backend:${DOCKER_TAG}        
+        run: docker push ${{ secrets.AWS_ECR_URI }}/blightfell-backend:${{ steps.build.outputs.DOCKER_TAG }} 
