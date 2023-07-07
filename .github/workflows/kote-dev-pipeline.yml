@@ -1,11 +1,9 @@
-name: Build, Tag and Publish Gameplay.
+name: Build, Tag and Publish Gameplay DEV.
 
 on:
   push:
     branches:
       - develop
-      - test
-      - main
 
 jobs:
   build-tag-publish:
@@ -32,10 +30,6 @@ jobs:
           DOCKER_TAG=""
           if [[ ${{ github.ref }} == 'refs/heads/develop' ]]; then
             DOCKER_TAG="dev-$(git rev-parse --short HEAD)"
-          elif [[ ${{ github.ref }} == 'refs/heads/test' ]]; then
-            DOCKER_TAG="test-$(git rev-parse --short HEAD)"
-          elif [[ ${{ github.ref }} == 'refs/heads/main' ]]; then
-            DOCKER_TAG="demo-$(git rev-parse --short HEAD)"
           fi
           docker build -t blightfell-backend:${DOCKER_TAG} .
           docker tag blightfell-backend:${DOCKER_TAG} ${{ secrets.AWS_ECR_URI }}/blightfell-backend:${DOCKER_TAG}
@@ -47,10 +41,10 @@ jobs:
       - name: SSH into EC2 instance
         uses: appleboy/ssh-action@master
         with:
-          host: 54.175.84.235 #${{ env.DEV_EC2_IP }}
-          username: ubuntu #${{ env.DEV_EC2_IP }}
+          host: ${{ env.DEV_EC2_IP }}
+          username: ${{ env.DEV_EC2_USER }}
           key: ${{ secrets.DEV_EC2_PRIVATE_KEY }}
 
       - name: Pull changes and restart containers on EC2
         run: |
-          ssh -i ${{ secrets.DEV_EC2_PRIVATE_KEY }} ubuntu@54.175.84.235 'ls -al'
+          ssh ${{ env.DEV_EC2_USER }}@${{ env.DEV_EC2_IP }} 'ls -al'
