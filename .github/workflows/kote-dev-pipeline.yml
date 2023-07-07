@@ -46,6 +46,7 @@ jobs:
         run: |
           echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
           ssh -o StrictHostKeyChecking=no -i private_key ${USER_NAME}@${HOSTNAME} '
+              aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${{ secrets.AWS_ECR_URI }} &&
               cd /home/ubuntu/kote &&
               /bin/sh deploy.sh ${{ steps.build.outputs.TAG }} 
               '
