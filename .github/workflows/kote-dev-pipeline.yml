@@ -38,7 +38,7 @@ jobs:
       - name: Push Docker image to AWS ECR
         run: docker push ${{ secrets.AWS_ECR_URI }}/blightfell-backend:${{ steps.build.outputs.TAG }} 
 
-      - name: SSH into EC2 instance
+      - name: SSH into EC2 and Pull new version.
         env:
             PRIVATE_KEY: ${{ secrets.DEV_EC2_PRIVATE_KEY }}
             HOSTNAME: ${{secrets.DEV_EC2_IP}}
@@ -46,7 +46,5 @@ jobs:
         run: |
           echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
           ssh -o StrictHostKeyChecking=no -i private_key ${USER_NAME}@${HOSTNAME} '
-
-              # Now we have got the access of EC2 and we will start the deploy .
-              ls -al
+              /bin/sh /home/ubuntu/kote/deploy.sh ${{ steps.build.outputs.TAG }} 
               '
