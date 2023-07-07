@@ -41,10 +41,10 @@ jobs:
       - name: SSH into EC2 instance
         uses: appleboy/ssh-action@master
         with:
-          host: ${{ env.DEV_EC2_IP }}
-          username: ${{ env.DEV_EC2_USER }}
+          host: ${{ secrets.DEV_EC2_IP }}
+          username: ${{ secrets.DEV_EC2_USER }}
           key: ${{ secrets.DEV_EC2_PRIVATE_KEY }}
 
       - name: Pull changes and restart containers on EC2
         run: |
-          ssh ${{ env.DEV_EC2_USER }}@${{ env.DEV_EC2_IP }} 'ls -al'
+          ssh ${{ secrets.DEV_EC2_USER }}@${{ secrets.DEV_EC2_IP }} 'ls -al'
