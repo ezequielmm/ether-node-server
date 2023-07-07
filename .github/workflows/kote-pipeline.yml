@@ -26,7 +26,7 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
 
-      - name: Build, tag and push Docker image
+      - name: Build and tag Docker image
         run: |
           DOCKER_TAG=""
           if [[ ${{ github.ref }} == 'refs/heads/develop' ]]; then
@@ -38,4 +38,7 @@ jobs:
           fi
           docker build -t blightfell-backend:${DOCKER_TAG} .
           docker tag blightfell-backend:${DOCKER_TAG} ${{ secrets.AWS_ECR_URI }}/blightfell-backend:${DOCKER_TAG}
+          echo "::set-output name=DOCKER_TAG::${DOCKER_TAG}"
+
+      - name: Push Docker image to AWS ECR
           docker push ${{ secrets.AWS_ECR_URI }}/blightfell-backend:${DOCKER_TAG}        

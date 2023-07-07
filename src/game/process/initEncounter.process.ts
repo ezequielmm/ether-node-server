@@ -86,11 +86,11 @@ export class InitEncounterProcess {
         //     clientId: this.ctx.client.id,
         // });
 
-        const nodeType = getRandomItemByWeight(
-            [NodeType.Encounter, NodeType.Merchant, NodeType.Camp],
-            [85, 10, 5],
-        );
-        return await this.executeNode(nodeType);
+        // const nodeType = getRandomItemByWeight(
+        //     [NodeType.Encounter, NodeType.Merchant, NodeType.Camp],
+        //     [85, 10, 5],
+        // );
+        return await this.executeNode(NodeType.Encounter);
     }
 
     private async continueEncounter(): Promise<string> {
