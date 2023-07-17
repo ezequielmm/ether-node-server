@@ -15,8 +15,6 @@ import { GearItem } from '../../playerGear/gearItem';
 import { Contest } from '../contest/contest.schema';
 import { IPlayerToken } from '../components/expedition/expedition.schema';
 import { ContestMapService } from '../contestMap/contestMap.service';
-// import { MapBuilderService } from '../map/builder/mapBuilder.service';
-import { ActOneConfig } from '../map/builder/actOne.config';
 import { ContestService } from '../contest/contest.service';
 
 @Injectable()
