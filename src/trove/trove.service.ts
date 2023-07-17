@@ -1,14 +1,26 @@
 import { Injectable } from '@nestjs/common';
 import axios from 'axios';
 import { TroveAccountDomains } from './trove.types';
+import { ConfigService } from '@nestjs/config';
 
 const TROVE_API_URL = 'https://trove-api.treasure.lol';
 
 @Injectable()
 export class TroveService {
+
+    constructor(private readonly configService: ConfigService) {}
+
     async getAccountDomains(userAddress: string): Promise<TroveAccountDomains> {
+
+        const api_key = this.configService.get<string>('TRESAURE_API_KEY');
+
         const res = await axios.get<TroveAccountDomains>(
             `${TROVE_API_URL}/domain/${userAddress}`,
+            {
+                headers: {
+                    "X-API-Key": api_key,
+                },
+            }
         );
         return res.data;
     }

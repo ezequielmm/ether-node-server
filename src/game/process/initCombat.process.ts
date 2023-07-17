@@ -93,8 +93,6 @@ export class InitCombatProcess {
                 playing: CombatTurnEnum.Player,
             });
 
-            await this.enemyService.calculateNewIntentions(ctx);
-
             ctx.client.emit(
                 'InitCombat',
                 StandardResponse.respond({

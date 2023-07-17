@@ -64,443 +64,503 @@ const ActOneNodeDifficultCombatProbabilities = [
     }
 ];
 
-const ActOneConfig: IActConfiguration = {
-    actNumber: 1,
-
-    stepCount: 22,
-    maxNodesPerStep: 6,
-
-    stepRangeConfig: {
-        'DEFAULT': {
-            minNodes: 3,
-            maxNodes: 5,
-            nodeOptions: [
-                {
-                    key: "InitialCombat",
-                    probability: 100,
-                }
-            ]
+const nodeOptions = {
+    'Camp': [
+        {
+            type: NodeType.Camp,
+            subType: NodeType.CampRegular,
+            title: 'Spirit Well',
+            nodeConfig: {},
+            probability: 100,
+        }
+    ],
+    'Merchant': [
+        {
+            type: NodeType.Merchant,
+            subType: NodeType.Merchant,
+            title: 'Merchant',
+            nodeConfig: {},
+            probability: 100,
+        }
+    ],
+    'Treasure': [
+        {
+            type: NodeType.Treasure,
+            subType: NodeType.Treasure,
+            title: 'Treasure',
+            nodeConfig: {},
+            probability: 100,
+        }
+    ],
+    'Encounter': [
+        {
+            type: NodeType.Encounter,
+            subType: NodeType.Encounter,
+            title: 'Encounter',
+            nodeConfig: {},
+            probability: 100,
+        }
+    ],
+    'InitialCombat': [
+        {
+            type: NodeType.Combat,
+            subType: NodeType.CombatStandard,
+            title: "Combat",
+            nodeConfig: {
+                enemies: [stingFaeData.enemyId, stingFaeData.enemyId],
+            },
+            probability: 25,
         },
-        'STEP-3': { 
-            minNodes: 2,
-            maxNodes: 4,
-            nodeOptions: [
-                ...ActOneNodeProbabilities,
-                ...ActOneNodeCombatProbabilities,
-                {
-                    key: "Encounter",
-                    probability: 20,
-                    maxStepsInRange: 2,
-                },
-            ]
+        {
+            type: NodeType.Combat,
+            subType: NodeType.CombatStandard,
+            title: "Combat",
+            nodeConfig: {
+                enemies: [barkChargerData.enemyId, barkChargerData.enemyId],
+            },
+            probability: 25,
         },
-        'STEP-11': {
-            minNodes: 3,
-            maxNodes: 5,
-            nodeOptions: [
-                {
-                    key: "EliteCombat",
-                    probability: 100,
-                }
-            ],
+        {
+            type: NodeType.Combat,
+            subType: NodeType.CombatStandard,
+            title: "Combat",
+            nodeConfig: {
+                enemies: [sporeMongerData.enemyId],
+            },
+            probability: 25,
         },
-        'STEP-12': {
-            minNodes: 3,
-            maxNodes: 5,
-            nodeOptions: [
-                {
-                    key: "Camp",
-                    probability: 100,
-                }
-            ],
+        {
+            type: NodeType.Combat,
+            subType: NodeType.CombatStandard,
+            title: "Combat",
+            nodeConfig: {
+                enemies: [mimicFrog1Data.enemyId],
+            },
+            probability: 25,
+        }
+    ],
+    'StandardCombat': [
+        {
+            type: NodeType.Combat,
+            subType: NodeType.CombatStandard,
+            title: "Combat",
+            nodeConfig: {
+                enemies: [mimicFrog1Data.enemyId, mimicFrog1Data.enemyId]
+            },
+            probability: 12
         },
-        'STEP-13': {
-            minNodes: 2,
-            maxNodes: 4,
-            nodeOptions: [
-                ...ActOneNodeProbabilities,
-                ...ActOneNodeDifficultCombatProbabilities,
-                {
-                    key: "Encounter",
-                    probability: 20,
-                    maxStepsInRange: 2,
-                },
-            ]
+        {
+            type: NodeType.Combat,
+            subType: NodeType.CombatStandard,
+            title: "Combat",
+            nodeConfig: {
+                enemies: [groundMothData.enemyId]
+            },
+            probability: 11,
         },
-        'STEP-20': {
-            minNodes: 1,
-            maxNodes: 1,
-            nodeOptions: [
-                {
-                    key: "Camp",
-                    probability: 100,
-                }
-            ],
+        {
+            type: NodeType.Combat,
+            subType: NodeType.CombatStandard,
+            title: "Combat",
+            nodeConfig: {
+                enemies: [
+                    stingFaeData.enemyId,
+                    stingFaeData.enemyId,
+                    swampGoblin1Data.enemyId,
+                ],
+            },
+            probability: 11,
         },
-        'FINAL': {
-            minNodes: 1,
-            maxNodes: 1,
-            nodeOptions: [
-                {
-                    key: "BossCombat",
-                    probability: 100,
-                }
-            ]
+        {
+            type: NodeType.Combat,
+            subType: NodeType.CombatStandard,
+            title: "Combat",
+            nodeConfig: {
+                enemies: [
+                    barkChargerData.enemyId,
+                    barkChargerData.enemyId,
+                    barkChargerData.enemyId,
+                ],
+            },
+            probability: 10,
         },
-    },
-    
-    nodeOptions: {
-        'Camp': [
-            {
-                type: NodeType.Camp,
-                subType: NodeType.CampRegular,
-                title: 'Spirit Well',
-                nodeConfig: {},
-                probability: 100,
-            }
-        ],
-        'Merchant': [
-            {
-                type: NodeType.Merchant,
-                subType: NodeType.Merchant,
-                title: 'Merchant',
-                nodeConfig: {},
-                probability: 100,
-            }
-        ],
-        'Treasure': [
-            {
-                type: NodeType.Treasure,
-                subType: NodeType.Treasure,
-                title: 'Treasure',
-                nodeConfig: {},
-                probability: 100,
-            }
-        ],
-        'Encounter': [
-            {
-                type: NodeType.Encounter,
-                subType: NodeType.Encounter,
-                title: 'Encounter',
-                nodeConfig: {},
-                probability: 100,
-            }
-        ],
-        'InitialCombat': [
-            {
-                type: NodeType.Combat,
-                subType: NodeType.CombatStandard,
-                title: "Combat",
-                nodeConfig: {
-                    enemies: [stingFaeData.enemyId, stingFaeData.enemyId],
-                },
-                probability: 25,
+        {
+            type: NodeType.Combat,
+            subType: NodeType.CombatStandard,
+            title: "Combat",
+            nodeConfig: {
+                enemies: [
+                    swampGoblin2Data.enemyId,
+                    swampGoblin2Data.enemyId,
+                    swampGoblin1Data.enemyId,
+                ],
             },
-            {
-                type: NodeType.Combat,
-                subType: NodeType.CombatStandard,
-                title: "Combat",
-                nodeConfig: {
-                    enemies: [barkChargerData.enemyId, barkChargerData.enemyId],
-                },
-                probability: 25,
+            probability: 10,
+        },
+        {
+            type: NodeType.Combat,
+            subType: NodeType.CombatStandard,
+            title: "Combat",
+            nodeConfig: {
+                enemies: [barkChargerData.enemyId, swampGoblin2Data.enemyId],
             },
-            {
-                type: NodeType.Combat,
-                subType: NodeType.CombatStandard,
-                title: "Combat",
-                nodeConfig: {
-                    enemies: [sporeMongerData.enemyId],
-                },
-                probability: 25,
+            probability: 9,
+        },
+        {
+            type: NodeType.Combat,
+            subType: NodeType.CombatStandard,
+            title: "Combat",
+            nodeConfig: {
+                enemies: [
+                    stingFaeData.enemyId,
+                    stingFaeData.enemyId,
+                    stingFaeData.enemyId,
+                    stingFaeData.enemyId,
+                ],
             },
-            {
-                type: NodeType.Combat,
-                subType: NodeType.CombatStandard,
-                title: "Combat",
-                nodeConfig: {
-                    enemies: [mimicFrog1Data.enemyId],
-                },
-                probability: 25,
-            }
-        ],
-        'StandardCombat': [
-            {
-                type: NodeType.Combat,
-                subType: NodeType.CombatStandard,
-                title: "Combat",
-                nodeConfig: {
-                    enemies: [mimicFrog1Data.enemyId, mimicFrog1Data.enemyId]
-                },
-                probability: 12
+            probability: 9,
+        },
+        {
+            type: NodeType.Combat,
+            subType: NodeType.CombatStandard,
+            title: "Combat",
+            nodeConfig: {
+                enemies: [
+                    stingFaeData.enemyId,
+                    groundMothData.enemyId,
+                    stingFaeData.enemyId,
+                ],
             },
-            {
-                type: NodeType.Combat,
-                subType: NodeType.CombatStandard,
-                title: "Combat",
-                nodeConfig: {
-                    enemies: [groundMothData.enemyId]
-                },
-                probability: 11,
+            probability: 8,
+        },
+    ],
+    'DifficultCombat': [
+        {
+            type: NodeType.Combat,
+            subType: NodeType.CombatStandard,
+            title: "Combat",
+            nodeConfig: {
+                enemies: [
+                    mimicFrog1Data.enemyId,
+                    mimicFrog1Data.enemyId,
+                    sporeMongerData.enemyId,
+                ],
             },
-            {
-                type: NodeType.Combat,
-                subType: NodeType.CombatStandard,
-                title: "Combat",
-                nodeConfig: {
-                    enemies: [
-                        stingFaeData.enemyId,
-                        stingFaeData.enemyId,
-                        swampGoblin1Data.enemyId,
-                    ],
-                },
-                probability: 11,
+            probability: 12,
+        },
+        {
+            type: NodeType.Combat,
+            subType: NodeType.CombatStandard,
+            title: "Combat",
+            nodeConfig: {
+                enemies: [
+                    groundMothData.enemyId, 
+                    sporeMongerData.enemyId
+                ],
             },
-            {
-                type: NodeType.Combat,
-                subType: NodeType.CombatStandard,
-                title: "Combat",
-                nodeConfig: {
-                    enemies: [
-                        barkChargerData.enemyId,
-                        barkChargerData.enemyId,
-                        barkChargerData.enemyId,
-                    ],
-                },
-                probability: 10,
+            probability: 11,
+        },
+        {
+            type: NodeType.Combat,
+            subType: NodeType.CombatStandard,
+            title: "Combat",
+            nodeConfig: {
+                enemies: [
+                    barkChargerData.enemyId,
+                    barkChargerData.enemyId,
+                    stingFaeData.enemyId,
+                    stingFaeData.enemyId,
+                ],
             },
-            {
-                type: NodeType.Combat,
-                subType: NodeType.CombatStandard,
-                title: "Combat",
-                nodeConfig: {
-                    enemies: [
-                        swampGoblin2Data.enemyId,
-                        swampGoblin2Data.enemyId,
-                        swampGoblin1Data.enemyId,
-                    ],
-                },
-                probability: 10,
+            probability: 11,
+        },
+        {
+            type: NodeType.Combat,
+            subType: NodeType.CombatStandard,
+            title: "Combat",
+            nodeConfig: {
+                enemies: [
+                    stingFaeData.enemyId,
+                    stingFaeData.enemyId,
+                    swampGoblin1Data.enemyId,
+                    swampGoblin2Data.enemyId,
+                ],
             },
-            {
-                type: NodeType.Combat,
-                subType: NodeType.CombatStandard,
-                title: "Combat",
-                nodeConfig: {
-                    enemies: [barkChargerData.enemyId, swampGoblin2Data.enemyId],
-                },
-                probability: 9,
+            probability: 10,
+        },
+        {
+            type: NodeType.Combat,
+            subType: NodeType.CombatStandard,
+            title: "Combat",
+            nodeConfig: {
+                enemies: [
+                    swampGoblin1Data.enemyId,
+                    swampGoblin2Data.enemyId,
+                    swampGoblin1Data.enemyId,
+                    swampGoblin2Data.enemyId,
+                ],
             },
-            {
-                type: NodeType.Combat,
-                subType: NodeType.CombatStandard,
-                title: "Combat",
-                nodeConfig: {
-                    enemies: [
-                        stingFaeData.enemyId,
-                        stingFaeData.enemyId,
-                        stingFaeData.enemyId,
-                        stingFaeData.enemyId,
-                    ],
-                },
-                probability: 9,
+            probability: 10,
+        },
+        {
+            type: NodeType.Combat,
+            subType: NodeType.CombatStandard,
+            title: "Combat",
+            nodeConfig: {
+                enemies: [
+                    sporeMongerData.enemyId,
+                    sporeMongerData.enemyId,
+                    stingFaeData.enemyId,
+                ],
             },
-            {
-                type: NodeType.Combat,
-                subType: NodeType.CombatStandard,
-                title: "Combat",
-                nodeConfig: {
-                    enemies: [
-                        stingFaeData.enemyId,
-                        groundMothData.enemyId,
-                        stingFaeData.enemyId,
-                    ],
-                },
-                probability: 8,
+            probability: 10,
+        },
+        {
+            type: NodeType.Combat,
+            subType: NodeType.CombatStandard,
+            title: "Combat",
+            nodeConfig: {
+                enemies: [
+                    swampGoblin1Data.enemyId,
+                    swampGoblin2Data.enemyId,
+                    mimicFrog1Data.enemyId,
+                ],
             },
-        ],
-        'DifficultCombat': [
-            {
-                type: NodeType.Combat,
-                subType: NodeType.CombatStandard,
-                title: "Combat",
-                nodeConfig: {
-                    enemies: [
-                        mimicFrog1Data.enemyId,
-                        mimicFrog1Data.enemyId,
-                        sporeMongerData.enemyId,
-                    ],
-                },
-                probability: 12,
+            probability: 10,
+        },
+        {
+            type: NodeType.Combat,
+            subType: NodeType.CombatStandard,
+            title: "Combat",
+            nodeConfig: {
+                enemies: [
+                    barkChargerData.enemyId,
+                    barkChargerData.enemyId,
+                    swampGoblin2Data.enemyId,
+                ],
             },
-            {
-                type: NodeType.Combat,
-                subType: NodeType.CombatStandard,
-                title: "Combat",
-                nodeConfig: {
-                    enemies: [
-                        groundMothData.enemyId, 
-                        sporeMongerData.enemyId
-                    ],
-                },
-                probability: 11,
+            probability: 9,
+        },
+        {
+            type: NodeType.Combat,
+            subType: NodeType.CombatStandard,
+            title: "Combat",
+            nodeConfig: {
+                enemies: [
+                    stingFaeData.enemyId,
+                    stingFaeData.enemyId,
+                    stingFaeData.enemyId,
+                    stingFaeData.enemyId,
+                    stingFaeData.enemyId,
+                ],
             },
-            {
-                type: NodeType.Combat,
-                subType: NodeType.CombatStandard,
-                title: "Combat",
-                nodeConfig: {
-                    enemies: [
-                        barkChargerData.enemyId,
-                        barkChargerData.enemyId,
-                        stingFaeData.enemyId,
-                        stingFaeData.enemyId,
-                    ],
-                },
-                probability: 11,
+            probability: 9,
+        },
+        {
+            type: NodeType.Combat,
+            subType: NodeType.CombatStandard,
+            title: "Combat",
+            nodeConfig: {
+                enemies: [groundMothData.enemyId, groundMothData.enemyId],
             },
-            {
-                type: NodeType.Combat,
-                subType: NodeType.CombatStandard,
-                title: "Combat",
-                nodeConfig: {
-                    enemies: [
-                        stingFaeData.enemyId,
-                        stingFaeData.enemyId,
-                        swampGoblin1Data.enemyId,
-                        swampGoblin2Data.enemyId,
-                    ],
-                },
-                probability: 10,
+            probability: 8,
+        },
+    ],
+    'EliteCombat': [
+        {
+            type: NodeType.Combat,
+            subType: NodeType.CombatElite,
+            title: "Elite Combat",
+            nodeConfig: {
+                enemies: [thornWolfData.enemyId],
             },
-            {
-                type: NodeType.Combat,
-                subType: NodeType.CombatStandard,
-                title: "Combat",
-                nodeConfig: {
-                    enemies: [
-                        swampGoblin1Data.enemyId,
-                        swampGoblin2Data.enemyId,
-                        swampGoblin1Data.enemyId,
-                        swampGoblin2Data.enemyId,
-                    ],
-                },
-                probability: 10,
+            probability: 33.3,
+        },
+        {
+            type: NodeType.Combat,
+            subType: NodeType.CombatElite,
+            title: "Elite Combat",
+            nodeConfig: {
+                enemies: [queenOrchidData.enemyId],
             },
-            {
-                type: NodeType.Combat,
-                subType: NodeType.CombatStandard,
-                title: "Combat",
-                nodeConfig: {
-                    enemies: [
-                        sporeMongerData.enemyId,
-                        sporeMongerData.enemyId,
-                        stingFaeData.enemyId,
-                    ],
-                },
-                probability: 10,
+            probability: 33.3,
+        },
+        {
+            type: NodeType.Combat,
+            subType: NodeType.CombatElite,
+            title: "Elite Combat",
+            nodeConfig: {
+                enemies: [ancientOneData.enemyId],
             },
-            {
-                type: NodeType.Combat,
-                subType: NodeType.CombatStandard,
-                title: "Combat",
-                nodeConfig: {
-                    enemies: [
-                        swampGoblin1Data.enemyId,
-                        swampGoblin2Data.enemyId,
-                        mimicFrog1Data.enemyId,
-                    ],
-                },
-                probability: 10,
+            probability: 33.3,
+        },
+    ],
+    'BossCombat': [
+        { 
+            type: NodeType.Combat,
+            subType: NodeType.CombatBoss,
+            title: 'Boss: Treant',
+            nodeConfig: {
+                enemies: [treantData.enemyId],
             },
-            {
-                type: NodeType.Combat,
-                subType: NodeType.CombatStandard,
-                title: "Combat",
-                nodeConfig: {
-                    enemies: [
-                        barkChargerData.enemyId,
-                        barkChargerData.enemyId,
-                        swampGoblin2Data.enemyId,
-                    ],
-                },
-                probability: 9,
+            probability: 0.5,
+        },
+        { 
+            type: NodeType.Combat,
+            subType: NodeType.CombatBoss,
+            title: 'Boss: Fungal Brute',
+            nodeConfig: {
+                enemies: [fungalBruteData.enemyId],
             },
-            {
-                type: NodeType.Combat,
-                subType: NodeType.CombatStandard,
-                title: "Combat",
-                nodeConfig: {
-                    enemies: [
-                        stingFaeData.enemyId,
-                        stingFaeData.enemyId,
-                        stingFaeData.enemyId,
-                        stingFaeData.enemyId,
-                        stingFaeData.enemyId,
-                    ],
-                },
-                probability: 9,
-            },
-            {
-                type: NodeType.Combat,
-                subType: NodeType.CombatStandard,
-                title: "Combat",
-                nodeConfig: {
-                    enemies: [groundMothData.enemyId, groundMothData.enemyId],
-                },
-                probability: 8,
-            },
-        ],
-        'EliteCombat': [
-            {
-                type: NodeType.Combat,
-                subType: NodeType.CombatElite,
-                title: "Elite Combat",
-                nodeConfig: {
-                    enemies: [thornWolfData.enemyId],
-                },
-                probability: 33.3,
-            },
-            {
-                type: NodeType.Combat,
-                subType: NodeType.CombatElite,
-                title: "Elite Combat",
-                nodeConfig: {
-                    enemies: [queenOrchidData.enemyId],
-                },
-                probability: 33.3,
-            },
-            {
-                type: NodeType.Combat,
-                subType: NodeType.CombatElite,
-                title: "Elite Combat",
-                nodeConfig: {
-                    enemies: [ancientOneData.enemyId],
-                },
-                probability: 33.3,
-            },
-        ],
-        'BossCombat': [
-            { 
-                type: NodeType.Combat,
-                subType: NodeType.CombatBoss,
-                title: 'Boss: Treant',
-                nodeConfig: {
-                    enemies: [treantData.enemyId],
-                },
-                probability: 0.5,
-            },
-            { 
-                type: NodeType.Combat,
-                subType: NodeType.CombatBoss,
-                title: 'Boss: Fungal Brute',
-                nodeConfig: {
-                    enemies: [fungalBruteData.enemyId],
-                },
-                probability: 0.5,
-            },
-        ],
-    },
+            probability: 0.5,
+        },
+    ],
 };
 
-export { ActOneConfig };
+const createMoreOrEquals12NodesMap = (maxStepsVar: number): IActConfiguration => {
+
+    let maxSteps = maxStepsVar <= 30 ? maxStepsVar : 30;
+    const halfWay     = Math.floor(maxSteps / 2) -1;
+    const quarterWay  = Math.floor(halfWay / 2);
+    const onePlusHalf = 1 + halfWay;
+    const twoPlusHalf = 2 + halfWay;
+    const beforeBoss  = maxSteps - 2;
+
+    return {
+        
+        actNumber: 1,
+        stepCount: maxSteps,
+        maxNodesPerStep: 6,
+
+        stepRangeConfig: {
+            'DEFAULT': {
+                minNodes: 3,
+                maxNodes: 5,
+                nodeOptions: [
+                    {
+                        key: "InitialCombat",
+                        probability: 100,
+                    }
+                ]
+            },
+            [`STEP-${quarterWay}`]: { 
+                minNodes: 2,
+                maxNodes: 4,
+                nodeOptions: [
+                    ...ActOneNodeProbabilities,
+                    ...ActOneNodeCombatProbabilities,
+                    {
+                        key: "Encounter",
+                        probability: 20,
+                        maxStepsInRange: 2,
+                    },
+                ]
+            },
+            [`STEP-${halfWay}`]: {
+                minNodes: 3,
+                maxNodes: 5,
+                nodeOptions: [
+                    {
+                        key: "EliteCombat",
+                        probability: 100,
+                    }
+                ],
+            },
+            [`STEP-${onePlusHalf}`]: {
+                minNodes: 3,
+                maxNodes: 5,
+                nodeOptions: [
+                    {
+                        key: "Camp",
+                        probability: 100,
+                    }
+                ],
+            },
+            [`STEP-${twoPlusHalf}`]: {
+                minNodes: 2,
+                maxNodes: 4,
+                nodeOptions: [
+                    ...ActOneNodeProbabilities,
+                    ...ActOneNodeDifficultCombatProbabilities,
+                    {
+                        key: "Encounter",
+                        probability: 20,
+                        maxStepsInRange: 2,
+                    },
+                ]
+            },
+            [`STEP-${beforeBoss}`]: {
+                minNodes: 1,
+                maxNodes: 1,
+                nodeOptions: [
+                    {
+                        key: "Camp",
+                        probability: 100,
+                    }
+                ],
+            },
+            'FINAL': {
+                minNodes: 1,
+                maxNodes: 1,
+                nodeOptions: [
+                    {
+                        key: "BossCombat",
+                        probability: 100,
+                    }
+                ]
+            },
+        },
+        
+        nodeOptions: nodeOptions
+    }
+};
+
+const createLess12NodesMap = (maxStepsVar: number): IActConfiguration => {
+    let maxSteps = maxStepsVar >= 5 ? maxStepsVar : 5;
+    const beforeBoss  = maxSteps - 2;
+
+    return {
+        
+        actNumber: 1,
+        stepCount: maxSteps,
+        maxNodesPerStep: 6,
+
+        stepRangeConfig: {
+            'DEFAULT': {
+                minNodes: 3,
+                maxNodes: 5,
+                nodeOptions: [
+                    {
+                        key: "InitialCombat",
+                        probability: 100,
+                    }
+                ]
+            },
+            [`STEP-${beforeBoss}`]: {
+                minNodes: 1,
+                maxNodes: 1,
+                nodeOptions: [
+                    {
+                        key: "Camp",
+                        probability: 100,
+                    }
+                ],
+            },
+            'FINAL': {
+                minNodes: 1,
+                maxNodes: 1,
+                nodeOptions: [
+                    {
+                        key: "BossCombat",
+                        probability: 100,
+                    }
+                ]
+            },
+        },
+        
+        nodeOptions: nodeOptions
+    }
+}
+
+
+export { createMoreOrEquals12NodesMap, createLess12NodesMap };

@@ -10,7 +10,6 @@ import { NodeStatus } from '../../components/expedition/node-status';
 import { NodeConnectionManager } from './node-connection-manager';
 import { filter, random } from 'lodash';
 import { getRandomItemByWeight } from 'src/utils';
-import { ActOneConfig } from './actOne.config';
 
 @Injectable()
 export class MapBuilderService {
@@ -21,17 +20,8 @@ export class MapBuilderService {
         private readonly merchantService: MerchantService,
     ) {}
 
-    public async getActOneConfig() {
-        return ActOneConfig;
-    };
 
-    public async createMap({
-        actConfig,
-        initialStepId = 0,
-        initialNodeId = 0,
-        initialConnectFrom,
-        makeAvailable = true,
-    }: {
+    public async createMap({ actConfig, initialStepId = 0, initialNodeId = 0, initialConnectFrom, makeAvailable = true }: {
         actConfig: IActConfiguration,
         initialStepId?: number,
         initialNodeId?: number,
@@ -162,7 +152,7 @@ export class MapBuilderService {
                         title: nodeOption.title,
                         private_data: populatedData, 
                         
-                        status: NodeStatus.Disabled,
+                        status: (currentStepId == initialStepId ? NodeStatus.Available : NodeStatus.Disabled),
                         enter: (currentStepId == initialStepId && initialConnectFrom) ? [initialConnectFrom] : [],
                         exits: [],
                     })
@@ -171,14 +161,6 @@ export class MapBuilderService {
         }
 
         new NodeConnectionManager(1, 3).configureConnections(map);
-
-        // Enable entrance nodes
-        if(makeAvailable) 
-            map
-                .filter((node) => node.step == initialStepId)
-                .forEach((node) => {
-                    node.status = NodeStatus.Available;
-                });
 
         return map;
     }
