@@ -4,6 +4,7 @@ export enum GearRarityEnum {
     Rare = 'Rare',
     Epic = 'Epic',
     Legendary = 'Legendary',
+    iOP = 'iOP'
 }
 
 export enum GearTraitEnum {
