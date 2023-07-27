@@ -29,7 +29,7 @@ jobs:
         run: |          
           DOCKER_TAG_DEV="dev-$(git rev-parse --short HEAD)"
           docker build -t blightfell-backend:${DOCKER_TAG_DEV} .
-          docker tag blightfell-backend:${DOCKER_TAG_DEV} ${{ secrets.AWS_ECR_URI }}/blightfell-backend:${DOCKER_TAG}
+          docker tag blightfell-backend:${DOCKER_TAG_DEV} ${{ secrets.AWS_ECR_URI }}/blightfell-backend:${DOCKER_TAG_DEV}
 
           DOCKER_TAG_TEST="test-$(git rev-parse --short HEAD)"
           docker build -t blightfell-backend:${DOCKER_TAG_TEST} .
