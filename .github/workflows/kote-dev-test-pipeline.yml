@@ -1,4 +1,4 @@
-name: Build, Tag and Publish Gameplay TEST.
+name: Build, Tag and Publish Gameplay DEV & TEST.
 
 on:
   push:

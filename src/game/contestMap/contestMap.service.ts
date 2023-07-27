@@ -39,4 +39,8 @@ export class ContestMapService {
         const map = await this.findById(contest.map_id);
         return map.nodes ?? [];
     }
+
+    async getCompleteMapForContest(contest: Contest) {
+        return await this.findById(contest.map_id);
+    }
 }
