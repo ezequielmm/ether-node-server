@@ -13,6 +13,7 @@ import { PlayerWinService } from '../../playerWin/playerWin.service';
 import { ContestService } from '../contest/contest.service';
 import { PlayerGearService } from 'src/playerGear/playerGear.service';
 import { CharacterClassEnum } from '../components/character/character.enum';
+import { SquiresService } from 'src/squires-api/squires.service';
 
 export interface IEndExpeditionProcessParameters {
     ctx: GameContext;
@@ -35,6 +36,7 @@ export class EndExpeditionProcess {
         private readonly playerWinService: PlayerWinService,
         private readonly contestService: ContestService,
         private readonly playerGearService: PlayerGearService,
+        private readonly squiresService:SquiresService
     ) {}
 
     private async handleVictory(
@@ -63,17 +65,25 @@ export class EndExpeditionProcess {
             ctx.expedition.finalScore.notifyNoLoot = true;
 
             if (contestIsValid) {
-                ctx.expedition.finalScore.lootbox =
-                    await this.gearService.getLootbox(
-                        ctx.expedition.playerState.lootboxSize,
-                        ctx.expedition.playerState.lootboxRarity,
-                    );
+                //------------------------------------------------------------------------------------------
+                //- Lootbox when event not Active:
+                ctx.expedition.finalScore.rewards = await this.squiresService.getAccountRewards(ctx.expedition.userAddress, ctx.expedition.playerState.equippedGear);
+                //------------------------------------------------------------------------------------------
+                
+                //------------------------------------------------------------------------------------------
+                //- Lootbox when event Active. Following 2 blocks:
+                
+                // ctx.expedition.finalScore.lootbox = await this.gearService.getLootbox
+                //     (
+                //         ctx.expedition.playerState.lootboxSize,
+                //         ctx.expedition.playerState.lootboxRarity,
+                //     );
 
-                // actually save the gear to the player
-                await this.playerGearService.addGearToPlayer(
-                    ctx.expedition.userAddress,
-                    ctx.expedition.finalScore.lootbox,
-                );
+                // await this.playerGearService.addGearToPlayer(
+                //     ctx.expedition.userAddress,
+                //     ctx.expedition.finalScore.lootbox,
+                // );
+                //------------------------------------------------------------------------------------------
 
                 await this.playerWinService.create({
                     event_id: ctx.expedition.contest.event_id,

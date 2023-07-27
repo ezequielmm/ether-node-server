@@ -22,6 +22,7 @@ export interface ScoreResponse {
     }[];
     notifyNoLoot: boolean;
     lootbox?: Gear[];
+    rewards?: {name:string, image:string}[];
 }
 
 @Injectable()

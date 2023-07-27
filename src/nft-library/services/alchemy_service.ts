@@ -5,13 +5,14 @@ import { ConfigService } from '@nestjs/config';
 @Injectable()
 export class AlchemyService {
 
-    private alchemyInstance;
     public static MAINNET = "mainnet";
     public static TESTNET = "testnet";
 
+    private alchemyInstance:Alchemy;
+
     constructor(private readonly configService: ConfigService) {}
     
-    public getInstance(): { arbitrum: Alchemy; ethereum: Alchemy } {
+    public getInstance(): Alchemy {
         if (!this.alchemyInstance) {
             this.alchemyInstance = this.getAlchemySettings();
         }
@@ -19,23 +20,16 @@ export class AlchemyService {
         return this.alchemyInstance;
     }
     
-    private getAlchemySettings(){
+    private getAlchemySettings(): Alchemy {
+
         const net = this.configService.get("NFT_SERVICE_NET");
 
-        const arbitrumSettings = {
+        const arbitrum = new Alchemy({
             apiKey:  net == AlchemyService.MAINNET ? this.configService.get("NFT_SERVICE_ARB_MAINNET_API_KEY") : this.configService.get("NFT_SERVICE_ARB_TESTNET_API_KEY"),
             network: net == AlchemyService.MAINNET ? Network.ARB_MAINNET : Network.ARB_GOERLI
-        };
-    
-        const ethereumSettings = {
-            apiKey:  net == AlchemyService.MAINNET ? this.configService.get("NFT_SERVICE_ETH_MAINNET_API_KEY") : this.configService.get("NFT_SERVICE_ETH_TESTNET_API_KEY"),
-            network: net == AlchemyService.MAINNET ? Network.ETH_MAINNET : Network.ETH_GOERLI,
-        };
-    
-        return {
-            arbitrum: new Alchemy(arbitrumSettings),
-            ethereum: new Alchemy(ethereumSettings)
-        }
+        });
+
+        return arbitrum;
     }
 }
 

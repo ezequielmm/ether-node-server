@@ -12,12 +12,10 @@ export class NFTService {
     //- Arbitrum:
     private MAIN_VILLAGER_CONTRACT_ID = "0x292Ff0F0c19373dd9c50faBba574Aaaf6E1BC11B"
     private TEST_VILLAGER_CONTRACT_ID = "0x913dB69145f33Af291F46E980e4c0CaBBfcC27AA"
-    private MAIN_BLESSED_CONTRACT_ID = "0x73DdCE2656c343dc6655e76202768c703D1f540B"
-    private TEST_BLESSED_CONTRACT_ID = "0xbFfd759b9F7d07ac76797cc13974031Eb23e5757"
-
-    //- Ethereum:
-    private MAIN_KNIGHT_CONTRACT_ID = "0x32A322C7C77840c383961B8aB503c9f45440c81f"
-    private TEST_KNIGHT_CONTRACT_ID = "0x450210F1f501E94DB0DeA2eD1Cfc880aa803931a"
+    private MAIN_BLESSED_CONTRACT_ID  = "0x73DdCE2656c343dc6655e76202768c703D1f540B"
+    private TEST_BLESSED_CONTRACT_ID  = "0xbFfd759b9F7d07ac76797cc13974031Eb23e5757"
+    private MAIN_KNIGHT_CONTRACT_ID   = "0xb52d71C3DdE0cEE0faD2dCE0a9cA33fDfE06aEc9"
+    private TEST_KNIGHT_CONTRACT_ID   = "0x450210F1f501E94DB0DeA2eD1Cfc880aa803931a"
     
     // Hotfix Demo
 
@@ -50,13 +48,13 @@ export class NFTService {
         const pageSize = amount <= 100 ? amount : 100;
 
         let villagerAddress = net === AlchemyService.MAINNET ? this.MAIN_VILLAGER_CONTRACT_ID : this.TEST_VILLAGER_CONTRACT_ID;
-        const villagers = await alchemySettings.arbitrum.nft.getNftsForOwner(walletAddress, { pageSize, contractAddresses: [villagerAddress] });
+        const villagers = await alchemySettings.nft.getNftsForOwner(walletAddress, { pageSize, contractAddresses: [villagerAddress] });
 
         let blessedVillagerAddress = net === AlchemyService.MAINNET ? this.MAIN_BLESSED_CONTRACT_ID : this.TEST_BLESSED_CONTRACT_ID;
-        const blessedVillagers = await alchemySettings.arbitrum.nft.getNftsForOwner(walletAddress, { pageSize, contractAddresses: [blessedVillagerAddress] });
+        const blessedVillagers = await alchemySettings.nft.getNftsForOwner(walletAddress, { pageSize, contractAddresses: [blessedVillagerAddress] });
 
         let knightAddress = net === AlchemyService.MAINNET ? this.MAIN_KNIGHT_CONTRACT_ID : this.TEST_KNIGHT_CONTRACT_ID;
-        const knights = await alchemySettings.ethereum.nft.getNftsForOwner(walletAddress, { pageSize, contractAddresses: [knightAddress] });
+        const knights = await alchemySettings.nft.getNftsForOwner(walletAddress, { pageSize, contractAddresses: [knightAddress] });
 
         this.loadNftsByCharacterType(tokenCollections, villagerAddress.toLowerCase(), villagers.ownedNfts,  amount);
         this.loadNftsByCharacterType(tokenCollections, blessedVillagerAddress.toLowerCase(), blessedVillagers.ownedNfts, amount);
@@ -74,6 +72,7 @@ export class NFTService {
         };
         
     }
+
 
     private loadNftsByCharacterType(tokenCollections, address:string, ownedNFTS:OwnedNft[],  amount: number){
         for(let nft of ownedNFTS){

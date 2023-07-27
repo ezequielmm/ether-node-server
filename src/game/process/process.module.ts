@@ -40,6 +40,7 @@ import { ContestModule } from '../contest/contest.module';
 import { ContestMapModule } from '../contestMap/contestMap.module';
 import { PlayerGearModule } from 'src/playerGear/playerGear.module';
 import { MapBuilderModule } from '../map/builder/mapBuilder.module';
+import { SquiresModule } from 'src/squires-api/squires.module';
 
 @Module({
     imports: [
@@ -68,6 +69,7 @@ import { MapBuilderModule } from '../map/builder/mapBuilder.module';
         ContestMapModule,
         PlayerGearModule,
         MapBuilderModule,
+        SquiresModule
     ],
     providers: [
         SendEnemyIntentProcess,
