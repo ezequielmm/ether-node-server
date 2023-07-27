@@ -41,6 +41,7 @@ import { ContestMapModule } from '../contestMap/contestMap.module';
 import { PlayerGearModule } from 'src/playerGear/playerGear.module';
 import { MapBuilderModule } from '../map/builder/mapBuilder.module';
 import { SquiresModule } from 'src/squires-api/squires.module';
+import { MapDeckModule } from '../components/mapDeck/mapDeck.module';
 
 @Module({
     imports: [
@@ -58,6 +59,7 @@ import { SquiresModule } from 'src/squires-api/squires.module';
         CharacterModule,
         PlayerModule,
         CustomDeckModule,
+        MapDeckModule,
         CombatQueueModule,
         TrinketModule,
         EncounterModule,

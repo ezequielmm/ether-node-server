@@ -17,6 +17,9 @@ export class ContestMap {
     nodes: Node[];
 
     @Prop()
+    deck_id?: string;
+
+    @Prop()
     maxSteps: number;
 
     @Prop()

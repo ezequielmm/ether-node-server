@@ -16,6 +16,7 @@ import { Contest } from '../contest/contest.schema';
 import { IPlayerToken } from '../components/expedition/expedition.schema';
 import { ContestMapService } from '../contestMap/contestMap.service';
 import { ContestService } from '../contest/contest.service';
+import { MapDeckService } from '../components/mapDeck/mapDeck.service';
 
 @Injectable()
 export class InitExpeditionProcess {
@@ -30,6 +31,7 @@ export class InitExpeditionProcess {
         // private readonly mapBuilderService: MapBuilderService,
         private readonly contestService: ContestService,
         private readonly contestMapService: ContestMapService,
+        private readonly mapDeckService:MapDeckService
     ) {}
 
     async handle({
@@ -81,7 +83,7 @@ export class InitExpeditionProcess {
 
         const map = await this.contestMapService.getMapForContest(contest);
 
-        const cards = await this.generatePlayerDeck(character, userAddress);
+        const cards = await this.generatePlayerDeck(character, userAddress, contest);
 
         const expedition = await this.expeditionService.create({
             userAddress,
@@ -130,22 +132,30 @@ export class InitExpeditionProcess {
     private async generatePlayerDeck(
         character: Character,
         userAddress: string,
+        contest:Contest
     ): Promise<IExpeditionPlayerStateDeckCard[]> {
         // We destructure the cards from the character
         const { cards: characterDeck } = character;
 
         // Now we get any custom deck that we have available
-        const customDeck = await this.customDeckService.findByUserAddress(
-            userAddress,
-        );
+        //const customDeck = await this.customDeckService.findByUserAddress(
+        //    userAddress,
+        //);
+
+        const map = await this.contestMapService.getCompleteMapForContest(contest);
+        let mapDeck = undefined ;
+
+        if(map.deck_id){
+            mapDeck = await this.mapDeckService.findById(map.deck_id);
+        }
 
         // Get card ids as an array of integers
-        const cardIds = !customDeck
+        const cardIds = !mapDeck
             ? characterDeck.map(({ cardId }) => Math.round(cardId))
-            : customDeck.cards.map(({ cardId }) => Math.round(cardId));
+            : mapDeck.cards.map(({ cardId }) => Math.round(cardId));
 
         // Set deck to get the amount of cards
-        const deck = !customDeck ? characterDeck : customDeck.cards;
+        const deck = !mapDeck ? characterDeck : mapDeck.cards;
 
         // Get all the cards
         const cards = await this.cardService.findCardsById(cardIds);
