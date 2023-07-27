@@ -191,6 +191,24 @@ import { Padding_Padding_Yellow } from './data/Padding_Padding_Yellow.data';
 import { Padding_Padding_Purple } from './data/Padding_Padding_Purple.data';
 import { Padding_Padding_White } from './data/Padding_Padding_White.data';
 import { Padding_Padding_Black } from './data/Padding_Padding_Black.data';
+import { Breastplate_Breastplate_Chaos } from './data/Breastplate_Breastplate_Chaos.data';
+import { Breastplate_Breastplate_Neandersmol } from './data/Breastplate_Breastplate_Neandersmol.data';
+import { Breastplate_Breastplate_Smol } from './data/Breastplate_Breastplate_Smol.data';
+import { Gauntlet_Gauntlets_Boxing } from './data/Guantlet_Guantlets_Boxing.data';
+import { Helmet_Helmet_Cultist_Hood } from './data/Helmet_Helmet_Cultist_Hood.data';
+import { Helmet_Helmet_Egg } from './data/Helmet_Helmet_Egg.data';
+import { Helmet_Helmet_Ellerian } from './data/Helmet_Helmet_Ellerian.data';
+import { Helmet_Helmet_Pink_Punk } from './data/Helmet_Helmet_Pink_Punk.data';
+import { Helmet_Helmet_Pyramid } from './data/Helmet_Helmet_Pyramid.data';
+import { Helmet_Helmet_Smithonian } from './data/Helmet_Helmet_Smithonian.data';
+import { Helmet_Helmet_Warrior } from './data/Helmet_Helmet_Warrior.data';
+import { Helmet_Helmet_Water_Mask } from './data/Helmet_Helmet_Water_Mask.data';
+import { Pauldrons_Pauldrons_Defender } from './data/Pauldrons_Pauldrons_Defender.data';
+import { Shield_Shield_Holo } from './data/Shield_Shield_Holo.data';
+import { Shield_Shield_Toadstool } from './data/Shield_Shield_Toadstool.data';
+import { Weapon_Weapon_Clockwork_Sword } from './data/Weapon_Weapon_Clockwork_Sword.data';
+import { Weapon_Weapon_Fishing_Rod } from './data/Weapon_Weapon_Fishing_Rod.data';
+import { Weapon_Weapon_Spellsword } from './data/Weapon_Weapon_Spellsword.data';
 
 export const data: Gear[] = [
     Helmet_Helmet_Hounskull,
@@ -216,6 +234,14 @@ export const data: Gear[] = [
     Helmet_Helmet_Prince,
     Helmet_Helmet_Hood,
     Helmet_Helmet_Hood_W__Pipe,
+    Helmet_Helmet_Cultist_Hood,
+    Helmet_Helmet_Egg,
+    Helmet_Helmet_Ellerian,
+    Helmet_Helmet_Pink_Punk,
+    Helmet_Helmet_Pyramid,
+    Helmet_Helmet_Smithonian,
+    Helmet_Helmet_Warrior,
+    Helmet_Helmet_Water_Mask,
     Shield_Shield_Wooden_Circle,
     Shield_Shield_Triangle,
     Shield_Shield_Black_Triangle,
@@ -233,6 +259,8 @@ export const data: Gear[] = [
     Shield_Shield_Dragon,
     Shield_Shield_Legendary,
     Shield_Shield_King,
+    Shield_Shield_Holo,
+    Shield_Shield_Toadstool,
     Weapon_Weapon_Flail,
     Weapon_Weapon_Morningstar,
     Weapon_Weapon_Tapered_Sword,
@@ -263,6 +291,9 @@ export const data: Gear[] = [
     Weapon_Weapon_Red_Energy_Blade,
     Weapon_Weapon_Green_Energy_Blade,
     Weapon_Weapon_Yellow_Energy_Blade,
+    Weapon_Weapon_Clockwork_Sword,
+    Weapon_Weapon_Fishing_Rod,
+    Weapon_Weapon_Spellsword,
     Breastplate_Breastplate_Gothic,
     Breastplate_Breastplate_Engraved,
     Breastplate_Breastplate_Royal_Guard,
@@ -283,6 +314,9 @@ export const data: Gear[] = [
     Breastplate_Breastplate_Gold_Gothic,
     Breastplate_Breastplate_Gold_Engraved,
     Breastplate_Breastplate_Gold_Royal_Guard,
+    Breastplate_Breastplate_Chaos,
+    Breastplate_Breastplate_Neandersmol,
+    Breastplate_Breastplate_Smol,
     Legguard_Legguard_Gothic,
     Legguard_Legguard_Engraved,
     Legguard_Legguard_Royal_Guard,
@@ -323,6 +357,7 @@ export const data: Gear[] = [
     Gauntlet_Gauntlets_Gold_Dread,
     Gauntlet_Gauntlets_Flaming,
     Gauntlet_Gauntlets_Blue_Flaming,
+    Gauntlet_Gauntlets_Boxing,
     Boots_Boots_Churburg_Hourglass,
     Boots_Boots_Articulated,
     Boots_Boots_Balthasar,
@@ -361,6 +396,7 @@ export const data: Gear[] = [
     Pauldrons_Pauldrons_Gold_Wolf,
     Pauldrons_Pauldrons_Gold_Lion,
     Pauldrons_Pauldrons_Gold_Unicorn,
+    Pauldrons_Pauldrons_Defender,
     Vambrace_Vambraces_Silver_Polished,
     Vambrace_Vambraces_Silver_Strapped_Elbow,
     Vambrace_Vambraces_Gothic,

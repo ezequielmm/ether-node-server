@@ -417,7 +417,7 @@ const nodeOptions = {
     ],
 };
 
-const createMoreOrEquals12NodesMap = (maxStepsVar: number): IActConfiguration => {
+const createMoreOrEquals12NodesMap = (maxStepsVar: number, maxNodesVar: number): IActConfiguration => {
 
     let maxSteps = maxStepsVar <= 30 ? maxStepsVar : 30;
     const halfWay     = Math.floor(maxSteps / 2) -1;
@@ -430,8 +430,8 @@ const createMoreOrEquals12NodesMap = (maxStepsVar: number): IActConfiguration =>
         
         actNumber: 1,
         stepCount: maxSteps,
-        maxNodesPerStep: 6,
-
+        maxNodesPerStep: maxNodesVar,
+        nodeOptions: nodeOptions,
         stepRangeConfig: {
             'DEFAULT': {
                 minNodes: 3,
@@ -510,12 +510,65 @@ const createMoreOrEquals12NodesMap = (maxStepsVar: number): IActConfiguration =>
                 ]
             },
         },
-        
-        nodeOptions: nodeOptions
     }
 };
 
-const createLess12NodesMap = (maxStepsVar: number): IActConfiguration => {
+const createLess5NodesMap = (maxStepsVar: number, maxNodesVar:number): IActConfiguration => {
+    let maxSteps = maxStepsVar >= 1 ? maxStepsVar : 1;
+
+    if(maxSteps == 1){
+        return{
+            actNumber: 1,
+            stepCount: 1,
+            maxNodesPerStep: maxNodesVar, // will be 1 anyway
+            nodeOptions: nodeOptions,
+            stepRangeConfig: {
+                'FINAL': {
+                    minNodes: 1,
+                    maxNodes: 1,
+                    nodeOptions: [
+                        {
+                            key: "BossCombat",
+                            probability: 100,
+                        }
+                    ]
+                },
+            },
+        }
+    }else{
+        //- More than 1 step, less than 5:
+        return {
+            actNumber: 1,
+            stepCount: maxSteps,
+            maxNodesPerStep: maxNodesVar,
+            nodeOptions: nodeOptions,
+            stepRangeConfig: {
+                'DEFAULT': {
+                    minNodes: 3,
+                    maxNodes: 5,
+                    nodeOptions: [
+                        {
+                            key: "InitialCombat",
+                            probability: 100,
+                        }
+                    ]
+                },
+                'FINAL': {
+                    minNodes: 1,
+                    maxNodes: 1,
+                    nodeOptions: [
+                        {
+                            key: "BossCombat",
+                            probability: 100,
+                        }
+                    ]
+                },
+            }
+        }
+    }
+}
+
+const createLess12NodesMap = (maxStepsVar: number, maxNodesVar:number): IActConfiguration => {
     let maxSteps = maxStepsVar >= 5 ? maxStepsVar : 5;
     const beforeBoss  = maxSteps - 2;
 
@@ -523,8 +576,8 @@ const createLess12NodesMap = (maxStepsVar: number): IActConfiguration => {
         
         actNumber: 1,
         stepCount: maxSteps,
-        maxNodesPerStep: 6,
-
+        maxNodesPerStep: maxNodesVar,
+        nodeOptions: nodeOptions,
         stepRangeConfig: {
             'DEFAULT': {
                 minNodes: 3,
@@ -557,10 +610,8 @@ const createLess12NodesMap = (maxStepsVar: number): IActConfiguration => {
                 ]
             },
         },
-        
-        nodeOptions: nodeOptions
     }
 }
 
 
-export { createMoreOrEquals12NodesMap, createLess12NodesMap };
+export { createMoreOrEquals12NodesMap, createLess12NodesMap, createLess5NodesMap };
