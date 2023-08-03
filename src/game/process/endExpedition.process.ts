@@ -61,7 +61,7 @@ export class EndExpeditionProcess {
             ctx.expedition.contest,
         );
 
-        if (canWin && ctx.expedition.playerState.lootboxSize > 0) {
+        if (canWin) {
             ctx.expedition.finalScore.notifyNoLoot = true;
 
             if (contestIsValid) {

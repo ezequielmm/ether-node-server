@@ -58,11 +58,10 @@ export class MapBuilderService {
 
             let nodesToAddForStep = currentStepConfig.fixedNodes?.length ?? 0;
 
-            // How many non-fixed nodes should we add to the step (never more than grid supports)?
             if (currentStepConfig.minNodes && currentStepConfig.maxNodes) {
                 nodesToAddForStep += random(
                     Math.min(currentStepConfig.minNodes, actConfig.maxNodesPerStep), 
-                    Math.min(currentStepConfig.maxNodes,actConfig.maxNodesPerStep)
+                    Math.min(currentStepConfig.maxNodes, actConfig.maxNodesPerStep)
                 );                
             }
             
@@ -72,14 +71,35 @@ export class MapBuilderService {
 
                 //node IDs are not sequential, but are instead based on placement within the overall map grid
                 const currentNodeId = initialNodeId + ((stepsCreated * actConfig.maxNodesPerStep) + nodeOfStep);
-
-                // odds of a node in slot change based on nodes to place and how many are left
-                const oddsOfNode = nodesToAddForStep / (actConfig.maxNodesPerStep - nodeOfStep);
-                const compare = Math.random();
-
-                // if no node this time, skip rest of loop
-                if (oddsOfNode < compare) continue;
                 
+                //- Fixing positioning of the funnel nodes
+                if(currentStepConfig.funnel && actConfig.maxNodesPerStep > 3){
+                    if(actConfig.maxNodesPerStep == 5 && (nodeOfStep == 0 || nodeOfStep == 4)){
+                        continue;
+                    }else if(actConfig.maxNodesPerStep == 4 && (nodeOfStep == 0 || nodeOfStep == 3)){
+                        continue;
+                    }
+                }
+
+                //- Fixing positioning of the final camp and boss
+                if((currentStepConfig.prevBoss || currentStepConfig.boss) && actConfig.maxNodesPerStep > 2){
+                    if(actConfig.maxNodesPerStep == 3){
+                        if(nodeOfStep == 0 || nodeOfStep == 2){
+                            continue;
+                        }
+                    }
+                    else if(actConfig.maxNodesPerStep == 4){
+                        if(nodeOfStep == 0 ||  nodeOfStep == 2 || nodeOfStep == 3){
+                            continue;
+                        }
+                    }else if(actConfig.maxNodesPerStep == 5){
+                        if(nodeOfStep == 0 || nodeOfStep == 1 || nodeOfStep == 3 || nodeOfStep == 4){
+                            continue;
+                        }
+                    }
+                }
+
+
                 // if we get here, we're adding a node to the slot!
                 nodesToAddForStep--;
 
@@ -160,7 +180,7 @@ export class MapBuilderService {
             }
         }
 
-        new NodeConnectionManager(1, 3).configureConnections(map);
+        new NodeConnectionManager(1, 3).configureConnections(map, actConfig.maxNodesPerStep);
 
         return map;
     }
