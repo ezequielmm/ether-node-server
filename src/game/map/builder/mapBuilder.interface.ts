@@ -29,6 +29,9 @@ export interface IActConfiguration {
             minNodes?: number;
             maxNodes?: number;
             nodeOptions?: IActStepOption[];
+            funnel?: boolean;
+            prevBoss?: boolean;
+            boss?:boolean;
         };
     };
 
