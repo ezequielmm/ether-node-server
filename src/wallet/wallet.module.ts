@@ -17,5 +17,6 @@ import { AlchemyService } from 'src/nft-library/services/alchemy_service';
         CharacterModule,
     ],
     providers: [WalletService, NFTService, AlchemyService],
+    exports: [NFTService]
 })
 export class WalletModule {}

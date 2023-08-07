@@ -18,6 +18,9 @@ import { remove } from 'lodash';
 import { createHash } from 'crypto';
 import { GearItem } from './gearItem';
 import { ConfigService } from '@nestjs/config';
+import { InitiationBridgeResponse, InitiationRequestDTO } from 'src/bridge-api/bridge.types';
+import { NFTService } from 'src/nft-library/services/nft_service';
+import { BridgeService } from 'src/bridge-api/bridge.service';
 
 class AlterGearApiDTO {
     @ApiProperty()
@@ -52,6 +55,8 @@ export class GearChainBridgeController {
         private readonly expedition: ReturnModelType<typeof Expedition>,
         private playerGearService: PlayerGearService,
         private readonly configService: ConfigService,
+        private readonly nftService:NFTService,
+        private readonly bridgeService:BridgeService
     ) {}
 
     private nonChainRarities = [GearRarityEnum.Common, GearRarityEnum.Uncommon];
@@ -137,5 +142,52 @@ export class GearChainBridgeController {
             newGear: newGear,
             ignoredGear: removedGears,
         };
+    }
+
+    @ApiOperation({ summary: 'Forwards to the Item Bridge server with an initiation command.' })
+    @Post('/initiation')
+    async inititation(@Body() payload: InitiationRequestDTO): Promise<InitiationBridgeResponse> {
+
+        //- Validate the tokenId is owned by the given wallet:
+        const NFTFromWallet = await this.nftService.isTokenIdFromWallet(payload.contract, payload.tokenId, payload.wallet);
+        if (!NFTFromWallet){
+            return {
+                success: false,
+                message: "NFT is not owned by the given wallet address."
+            }
+        }
+
+        //- Validate the wallet has the Gears:
+        const ownedGears = await this.playerGearService.allAreOwnedById(payload.wallet, payload.gearIds);
+
+        if(!ownedGears){
+            return {
+                success: false,
+                message: "Not all gears are associated with the walletId."
+            }
+        }
+
+        try{
+            //- Validate the tokenId is not in inititation progress already:
+
+            const NFTinProgerss = await this.bridgeService.isTokenIdInProgress(payload.tokenId, payload.contract);
+            if(NFTinProgerss){
+                return {
+                    success: false,
+                    message: "NFT already in progress."
+                }
+            }
+
+            //- Invoke Bridge to make the inititalization:
+            const response = await this.bridgeService.createInititation(payload);
+
+            return response;
+
+        }catch{
+            return {
+                success: false,
+                message: "Error connecting to Bridge API"
+            }
+        }   
     }
 }
