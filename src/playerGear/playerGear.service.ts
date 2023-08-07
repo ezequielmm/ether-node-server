@@ -30,7 +30,7 @@ export class PlayerGearService {
 
         return equipped.filter((gear) => {
             //is doing !owned.includes(gear);
-            !owned.find((owned_gear) => {
+            return !owned.find((owned_gear) => {
                 return owned_gear.gearId === gear.gearId;
             });
         });
@@ -43,6 +43,26 @@ export class PlayerGearService {
             equipped_gear_list,
         );
         return unownedGear.length === 0;
+    }
+
+    async allAreOwnedById(userAddress: string, equipped_gear_list: number[]): Promise<boolean> 
+    {
+        const unownedGear = await this.findUnownedEquippedGearById(
+            userAddress,
+            equipped_gear_list,
+        );
+
+        return unownedGear.length === 0;
+    }
+
+    async findUnownedEquippedGearById(userAddress: string, equipped: number[]): Promise<number[]> {
+        const owned = await this.getGear(userAddress);
+
+        return equipped.filter((gearId) => {
+            return !owned.find((owned_gear) => {
+                return owned_gear.gearId === gearId;
+            });
+        });
     }
 
     async getGear(userAddress: string, filter: FilterQuery<PlayerGear> = {}): Promise<any> 

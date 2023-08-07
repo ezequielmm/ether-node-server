@@ -19,7 +19,31 @@ export class NFTService {
     
     // Hotfix Demo
 
-    constructor(private readonly alchemyService: AlchemyService, private readonly configService: ConfigService){}
+    constructor(private readonly alchemyService: AlchemyService, 
+                private readonly configService: ConfigService){}
+
+    async isTokenIdFromWallet(contract:string, tokenId: number, walletAddress: string): Promise<boolean>{
+        let NFTOwnedByWallet = false;
+        const owners = await this.getOwnersForTokenAndContract(contract, tokenId);
+
+        const lowercaseOwners = owners.map((owner) => owner.toLowerCase());
+        const lowercaseWalletAddress = walletAddress.toLowerCase();
+
+        if (lowercaseOwners.includes(lowercaseWalletAddress)) {
+            NFTOwnedByWallet = true;
+        }
+
+        return NFTOwnedByWallet;
+    }
+
+    async getOwnersForTokenAndContract(contract: string, tokenId: number): Promise<string[]> {
+        try{
+            return (await this.alchemyService.getInstance().nft.getOwnersForNft(contract, tokenId)).owners;
+        }catch(error) {
+            console.error("Error connecting to alchemy api:", error.message);
+            return Promise.resolve([]);
+        }
+    }
 
     async listByContracts({walletAddress, tokenAddresses, amount}: {walletAddress: string, tokenAddresses?: string[], amount}): Promise<any> 
     {
