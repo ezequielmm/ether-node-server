@@ -105,13 +105,7 @@ export class ExpeditionController {
                 expedition?.playerState?.characterClass ?? 'missing';
             //todo parse for front end
             const player = expedition?.currentNode?.data?.player ?? null;
-            console.log('player');
-            console.log(player);
-            if(player == null)
-            {
-                console.error('no player');
-                console.log(expedition.currentNode.data);
-            }
+           
             const contest =
                 expedition?.contest ??
                 (await this.contestService.findActiveContest());
