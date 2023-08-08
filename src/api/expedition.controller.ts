@@ -63,7 +63,7 @@ export class ExpeditionController {
         private readonly playerWinService: PlayerWinService,
         private readonly troveService: TroveService,
         private contestService: ContestService,
-    ) {}
+    ) { }
 
     private readonly logger: Logger = new Logger(ExpeditionController.name);
 
@@ -80,6 +80,7 @@ export class ExpeditionController {
         tokenType: string;
         equippedGear: GearItem[];
         contest: Contest;
+        player: any;
     }> {
         this.logger.log(`Client called GET route "/expeditions/status"`);
 
@@ -89,9 +90,9 @@ export class ExpeditionController {
             const expedition = await this.expeditionService.findOne(
                 {
                     userAddress,
-                    status: ExpeditionStatusEnum.InProgress,
+                    status: ExpeditionStatusEnum.InProgress
                 },
-                { playerState: 1, isCurrentlyPlaying: 1 },
+                { playerState: 1, isCurrentlyPlaying: 1, currentNode: 1 },
             );
 
             const hasExpedition =
@@ -103,6 +104,7 @@ export class ExpeditionController {
             const tokenType =
                 expedition?.playerState?.characterClass ?? 'missing';
             //todo parse for front end
+            const player = expedition?.currentNode?.data?.player ?? null;
             const contest =
                 expedition?.contest ??
                 (await this.contestService.findActiveContest());
@@ -114,6 +116,7 @@ export class ExpeditionController {
                 tokenType,
                 equippedGear,
                 contest,
+                player
             };
         } catch (e) {
             this.logger.error(e.stack);
