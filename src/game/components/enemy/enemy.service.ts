@@ -34,6 +34,7 @@ import { ProjectionFields } from 'mongoose';
 
 @Injectable()
 export class EnemyService {
+   
 
     private readonly logger: Logger = new Logger(EnemyService.name);
 
@@ -56,7 +57,9 @@ export class EnemyService {
     public static isEnemy(entity: ExpeditionEntity): entity is ExpeditionEnemy {
         return entity.type === CardTargetedEnum.Enemy;
     }
-
+    public static getEnemy(target: ExpeditionEntity) {
+        return (target as ExpeditionEnemy);
+    }
     /**
      * Check if the enemy is dead
      *

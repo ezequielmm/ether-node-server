@@ -22,6 +22,7 @@ export class RemoveDefenseEffect implements EffectHandler {
         const { ctx, source, target } = payload;
 
         let oldDefense: number;
+        let finalHealth: number;
 
         if (EnemyService.isEnemy(target)) {
             oldDefense = target.value.defense;
@@ -30,7 +31,15 @@ export class RemoveDefenseEffect implements EffectHandler {
             oldDefense = target.value.combatState.defense;
             await this.playerService.setDefense(ctx, 0);
         }
+        const enemy = EnemyService.getEnemy(target)
+        const player = PlayerService.isPlayer(target);
 
+        if(enemy)
+        {
+          
+            finalHealth = enemy.value.hpCurrent;
+        }
+     
         await this.combatQueueService.push({
             ctx,
             source,
@@ -39,8 +48,8 @@ export class RemoveDefenseEffect implements EffectHandler {
                 effectType: CombatQueueTargetEffectTypeEnum.Defense,
                 defenseDelta: -oldDefense,
                 finalDefense: 0,
-                healthDelta: undefined,
-                finalHealth: undefined,
+                healthDelta: 0,
+                finalHealth: finalHealth,
                 statuses: [],
             },
         });
