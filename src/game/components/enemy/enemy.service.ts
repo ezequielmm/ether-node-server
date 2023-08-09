@@ -34,6 +34,7 @@ import { ProjectionFields } from 'mongoose';
 
 @Injectable()
 export class EnemyService {
+
     private readonly logger: Logger = new Logger(EnemyService.name);
 
     constructor(
@@ -75,7 +76,12 @@ export class EnemyService {
     public isAllDead(ctx: GameContext): boolean {
         return this.getAll(ctx).every((enemy) => this.isDead(enemy));
     }
-
+    public isBossDead(ctx: GameContext): boolean {
+        return this.getAll(ctx).some(enemy => 
+            enemy.value.category === EnemyCategoryEnum.Boss && this.isDead(enemy)
+        );
+    }
+    
     /**
      * Returns enemy by id or enemyId
      *
