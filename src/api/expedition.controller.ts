@@ -80,7 +80,7 @@ export class ExpeditionController {
         tokenType: string;
         equippedGear: GearItem[];
         contest: Contest;
-        player: any;
+        playerState: any;
     }> {
         this.logger.log(`Client called GET route "/expeditions/status"`);
 
@@ -104,7 +104,7 @@ export class ExpeditionController {
             const tokenType =
                 expedition?.playerState?.characterClass ?? 'missing';
             //todo parse for front end
-            const player = expedition?.currentNode?.data?.player ?? null;
+            const playerState = expedition?.playerState ?? null;
            
             const contest =
                 expedition?.contest ??
@@ -117,7 +117,7 @@ export class ExpeditionController {
                 tokenType,
                 equippedGear,
                 contest,
-                player
+                playerState
             };
         } catch (e) {
             this.logger.error(e.stack);
