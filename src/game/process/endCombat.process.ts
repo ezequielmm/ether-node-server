@@ -38,16 +38,23 @@ export class EndCombatProcess {
         logger.info(
             `Checking if combat should end for client ${ctx.client.id}`,
         );
-
         if (this.playerService.isDead(ctx)) {
             logger.info('Player is dead. Ending combat');
             await this.emitPlayerDefeated(ctx, logger);
         }
-
-        if (this.enemyService.isAllDead(ctx)) {
-            logger.info('All enemies are dead. Ending combat');
+        
+        if(this.enemyService.isBossDead(ctx))
+        {
+            logger.info('The boss is dead. Ending combat');
             await this.endCombat(ctx, logger);
         }
+        else {
+            if (this.enemyService.isAllDead(ctx)) {
+                logger.info('All enemies are dead. Ending combat');
+                await this.endCombat(ctx, logger);
+            }
+        }
+       
     }
 
     private async endCombat(
