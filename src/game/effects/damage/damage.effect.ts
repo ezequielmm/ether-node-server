@@ -23,6 +23,7 @@ export interface DamageArgs {
     };
     type?: string;
     statusIgnoreForRemove?: boolean;
+    doubleValuesWhenPlayed?:boolean;
 }
 
 @EffectDecorator({
