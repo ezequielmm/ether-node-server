@@ -12,6 +12,7 @@ import { burn } from './constants';
 export class BurnStatus implements StatusEventHandler {
     constructor(private readonly effectService: EffectService) {}
 
+    //- It is only executed when the attack of the enemies ends, to add one of burn to those who are burned
     async handle(dto: StatusEventDTO): Promise<void> {
         await this.effectService.apply({
             ctx: dto.ctx,

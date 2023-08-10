@@ -535,7 +535,7 @@ export class EnemyService {
             // If the status is already attached, we update it
             if (metadata.status.counterType != StatusCounterType.None) {
                 // If the status has a counter, we increment it
-                oldStatus.args.counter++;
+                oldStatus.args.counter+= args.counter;
                 this.logger.log(
                     ctx.info,
                     `Status ${name} counter incremented to ${oldStatus.args.counter}`,

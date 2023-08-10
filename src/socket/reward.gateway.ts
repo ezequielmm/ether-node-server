@@ -30,7 +30,7 @@ export class RewardGateway {
         rewardId: string,
     ): Promise<void> {
         await this.actionQueueService.push(
-            await this.expeditionService.getExpeditionIdFromClient(client.id),
+            await this.expeditionService.getExpeditionIdFromClient(client),
             async () => {
                 this.logger.debug('<REWARD SELECTED>');
                 try {

@@ -18,6 +18,7 @@ import {
 } from './effects.interface';
 import { CardTargetedEnum } from '../components/card/card.enum';
 import { ExpeditionService } from '../components/expedition/expedition.service';
+import { EffectName } from './effects.enum';
 
 @Injectable()
 export class EffectService {
@@ -48,23 +49,14 @@ export class EffectService {
             );
 
             // if it's a single attack targeting all enemies, ensure we don't remove buffs until the attack generated effects are over
-            let effectBuffer =
-                effect.target === CardTargetedEnum.AllEnemies
-                    ? targets.length
-                    : 1;
+            let effectBuffer = effect.target === CardTargetedEnum.AllEnemies ? targets.length : 1;
 
             for (const target of targets) {
-
                 // immediately remove some buffer, and if it's not enough, no longer will the status survive
                 effectBuffer--;
                 effect.args.statusIgnoreForRemove = effectBuffer > 0;
 
-                await this.apply({
-                    ctx,
-                    source,
-                    target,
-                    effect,
-                });
+                await this.apply({ctx, source, target, effect});
             }
 
         }
@@ -121,10 +113,7 @@ export class EffectService {
 
             if (isCombat) {
                 // Check if the combat has ended
-                if (
-                    this.combatService.isCurrentCombatEnded(ctx) &&
-                    !metadata.effect.ghost
-                ) {
+                if (this.combatService.isCurrentCombatEnded(ctx) && !metadata.effect.ghost) {
                     this.logger.log(
                         ctx.info,
                         `Combat ended, skipping effect ${effect.effect}`,
@@ -133,10 +122,7 @@ export class EffectService {
                 }
 
                 // Check if the target is dead, if so, skip the effect
-                if (
-                    this.combatService.isEntityDead(ctx, target) &&
-                    !metadata.effect.ghost
-                ) {
+                if (this.combatService.isEntityDead(ctx, target) && !metadata.effect.ghost) {
                     this.logger.log(
                         ctx.info,
                         `Target is dead, skipping effect ${effect.effect}`,
@@ -154,6 +140,9 @@ export class EffectService {
                 `Effect ${name} applied to ${target.type}`,
             );
 
+            // console.log("----------INSTANCE:")
+            // console.log(instance)
+            // console.log("---------------------")
             await instance.handle(effectDTO);
         }
     }
@@ -176,19 +165,23 @@ export class EffectService {
             StatusDirection.Incoming,
         );
 
-        // Trinkets are applied before statuses
-        effectDTO = await this.trinketService.pipeline(dto);
+        //- if it is burn we ignore the buffs of the player:
+        if(dto.dto.args.type != EffectName.Burn){
+            
+            // Trinkets are applied before statuses
+            effectDTO = await this.trinketService.pipeline(dto);
 
-        // Apply statuses to the outgoing effects 🔫  →
-        effectDTO = await this.statusService.mutate({
-            ctx,
-            collection: outgoingStatuses,
-            collectionOwner: source,
-            effectDTO: effectDTO,
-            effect,
-            preview: false,
-        });
-
+            // Apply statuses to the outgoing effects 🔫  →
+            effectDTO = await this.statusService.mutate({
+                ctx,
+                collection: outgoingStatuses,
+                collectionOwner: source,
+                effectDTO: effectDTO,
+                effect,
+                preview: false,
+            });
+        }
+        
         // Apply statuses to the incoming effects → 🛡
         effectDTO = await this.statusService.mutate({
             ctx,

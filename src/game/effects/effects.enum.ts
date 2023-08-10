@@ -7,6 +7,8 @@ export enum EffectName {
     ModifyHPMax = 'modifyHPMax',
     Heal = 'heal',
     RemoveDefense = 'RemoveDefense',
+    DoubleBurn = "doubleBurn",
+    Burn = "burn"
 }
 
 export enum EffectOwner {

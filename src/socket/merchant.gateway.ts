@@ -20,7 +20,7 @@ export class MerchantGateway {
     @SubscribeMessage('MerchantBuy')
     async handleItemsSelected(client: Socket, payload: string): Promise<void> {
         await this.actionQueueService.push(
-            await this.expeditionService.getExpeditionIdFromClient(client.id),
+            await this.expeditionService.getExpeditionIdFromClient(client),
             async () => {
                 this.logger.debug('<MERCHANT ACTION>');
 

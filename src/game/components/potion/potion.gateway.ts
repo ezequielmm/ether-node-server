@@ -26,7 +26,7 @@ export class PotionGateway {
     @SubscribeMessage('UsePotion')
     async use(client: Socket, payload: string): Promise<void> {
         const expeditionId =
-            await this.expeditionService.getExpeditionIdFromClient(client.id);
+            await this.expeditionService.getExpeditionIdFromClient(client);
 
         await this.actionQueueService.push(expeditionId, async () => {
             this.logger.debug('<USE POTION>');
@@ -46,7 +46,7 @@ export class PotionGateway {
     @SubscribeMessage('RemovePotion')
     async remove(client: Socket, potionId: string): Promise<void> {
         await this.actionQueueService.push(
-            await this.expeditionService.getExpeditionIdFromClient(client.id),
+            await this.expeditionService.getExpeditionIdFromClient(client),
             async () => {
                 this.logger.debug('<REMOVE POTION>');
 

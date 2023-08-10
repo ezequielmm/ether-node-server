@@ -23,7 +23,7 @@ export class ExpeditionGateway {
     @SubscribeMessage('SyncExpedition')
     async handleSyncExpedition(client: Socket): Promise<void> {
         await this.actionQueueService.push(
-            await this.expeditionService.getExpeditionIdFromClient(client.id),
+            await this.expeditionService.getExpeditionIdFromClient(client),
             async () => {
                 this.logger.debug('<SYNC EXPEDITION>');
                 const ctx = await this.expeditionService.getGameContext(client);
@@ -41,7 +41,7 @@ export class ExpeditionGateway {
     @SubscribeMessage('NodeSelected')
     async handleNodeSelected(client: Socket, node_id: number): Promise<string> {
         return await this.actionQueueService.pushWithReturn(
-            await this.expeditionService.getExpeditionIdFromClient(client.id),
+            await this.expeditionService.getExpeditionIdFromClient(client),
             async () => {
                 this.logger.debug('<NODE SELECTED>');
                 const ctx = await this.expeditionService.getGameContext(client);
@@ -74,7 +74,7 @@ export class ExpeditionGateway {
     @SubscribeMessage('ContinueExpedition')
     async handleContinueExpedition(client: Socket): Promise<string> {
         return await this.actionQueueService.pushWithReturn(
-            await this.expeditionService.getExpeditionIdFromClient(client.id),
+            await this.expeditionService.getExpeditionIdFromClient(client),
             async () => {
                 this.logger.debug('<CONTINUTE EXPEDITION>');
                 const ctx = await this.expeditionService.getGameContext(client);
@@ -93,7 +93,7 @@ export class ExpeditionGateway {
     @SubscribeMessage('NodeSkipped')
     async handleNodeSkipped(client: Socket, nodeId: number): Promise<void> {
         await this.actionQueueService.push(
-            await this.expeditionService.getExpeditionIdFromClient(client.id),
+            await this.expeditionService.getExpeditionIdFromClient(client),
             async () => {
                 this.logger.debug('<NODE SKIPPED>');
                 const ctx = await this.expeditionService.getGameContext(client);

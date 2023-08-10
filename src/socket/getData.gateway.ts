@@ -47,7 +47,7 @@ export class GetDataGateway {
     @SubscribeMessage('GetData')
     async handleGetData(client: Socket, types: string): Promise<string> {
         return await this.actionQueueService.pushWithReturn(
-            await this.expeditionService.getExpeditionIdFromClient(client.id),
+            await this.expeditionService.getExpeditionIdFromClient(client),
             async () => {
                 this.logger.debug(`<GETDATA: ${types}>`);
 

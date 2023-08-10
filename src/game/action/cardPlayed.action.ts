@@ -53,52 +53,37 @@ export class CardPlayedAction {
         private readonly eventEmitter: EventEmitter2,
     ) {}
 
-    async handle({
-        cardId,
-        selectedEnemyId,
-        ctx,
-        forceExhaust = false,
-    }: {
-        readonly ctx: GameContext;
-        readonly cardId: CardId;
-        readonly selectedEnemyId: TargetId;
-        readonly forceExhaust?: boolean;
-    }): Promise<void> {
-        const logger = this.logger.logger.child(ctx.info);
-
-        const {
-            expedition: {
-                currentNode: {
-                    data: {
-                        player: {
-                            energy: availableEnergy,
-                            cards: { hand },
+    async handle({cardId, selectedEnemyId, ctx, forceExhaust = false}: 
+        {readonly ctx: GameContext; readonly cardId: CardId; readonly selectedEnemyId: TargetId; readonly forceExhaust?: boolean;}): Promise<void> 
+        {
+            const logger = this.logger.logger.child(ctx.info);
+            const {
+                expedition: {
+                    currentNode: {
+                        data: {
+                            player: {
+                                energy: availableEnergy,
+                                cards: { hand },
+                            },
                         },
                     },
                 },
-            },
-        } = ctx;
+            } = ctx;
 
-        // If everything goes right, we get the card information from
-        // the player hand pile
+        //- Getting the played Card
         const card = hand.find((card) => {
             const field = getCardIdField(cardId);
-
             return card[field] === cardId;
         });
 
+        //- I don't have the card in my hand:
         if (!card) {
             this.sendInvalidCardMessage(ctx.client, logger);
             return;
         }
-
-        const {
-            properties: { effects, statuses },
-            keywords,
-        } = card;
-
-        const { exhaust, endTurn, unplayable } =
-            CardKeywordPipeline.process(keywords);
+        
+        const { properties: { effects, statuses }, keywords } = card;
+        const { exhaust, endTurn, unplayable } = CardKeywordPipeline.process(keywords);
 
         // Here we check if the card has a keyword for unplayable
         if (unplayable) {
@@ -110,29 +95,27 @@ export class CardPlayedAction {
             return;
         }
 
-        logger.info(`Started combat queue for client ${ctx.client.id}`);
+        // Make sure that the card can be played and the user has enough energy
+        const { canPlayCard, message } = canPlayerPlayCard(card.energy, availableEnergy);
 
-        await this.combatQueueService.start(ctx);
-
-        // Next we make sure that the card can be played and the user has
-        // enough energy
-        const { canPlayCard, message } = canPlayerPlayCard(
-            card.energy,
-            availableEnergy,
-        );
-
-        // next we inform the player that is not possible to play the card
+        // If not we inform the player that is not possible to play the card
         if (!canPlayCard) {
             this.sendNotEnoughEnergyMessage(ctx.client, message, logger);
             return;
         }
 
         logger.info(`Player ${ctx.client.id} played card: ${card.name}`);
+        logger.info(`Started combat queue for client ${ctx.client.id}`);
+        
+        await this.combatQueueService.start(ctx);
 
+        //- Source is just a parse to ExpeditionPlayer
         const source = this.playerService.get(ctx);
-        const sourceReference =
-            this.statusService.getReferenceFromEntity(source);
 
+        //- sourceReference is just: type: CardTargetedEnum.Player
+        const sourceReference = this.statusService.getReferenceFromEntity(source);
+
+        //- Creates an entry in the history:
         this.historyService.register({
             clientId: ctx.client.id,
             registry: {
@@ -151,7 +134,7 @@ export class CardPlayedAction {
             cardTargetId: selectedEnemyId,
         });
 
-        // go ahead and send the appropriate movement message now, before applying things, so the screen looks cool.
+        //- Enables an animation in unity:
         if (exhaust) {
             this.exhaustCardAction.emit({
                 ctx,
@@ -164,10 +147,7 @@ export class CardPlayedAction {
             });
         }
 
-        // const newCtx = await this.expeditionService.getGameContext(
-        //     ctx.client,
-        // );
-
+        //- Apply effects:
         await this.effectService.applyAll({
             ctx,
             source,
@@ -175,19 +155,27 @@ export class CardPlayedAction {
             selectedEnemy: selectedEnemyId,
         });
 
-        // After applying the effects, check if the current
-        // combat has ended and if so, skip all next steps
+        //- Check if combat has ended and if so, skip all next steps
         if (this.combatService.isCurrentCombatEnded(ctx)) {
             logger.info('Current node is completed. Skipping next actions');
             return;
         }
 
+        //- Apply statuses:
         await this.statusService.attachAll({
             ctx,
             statuses,
             targetId: selectedEnemyId,
             source,
         });
+
+
+
+
+
+
+
+
 
         const {
             data: {
@@ -197,8 +185,8 @@ export class CardPlayedAction {
             clientId: ctx.client.id,
         });
 
-        const newEnergy =
-            card.energy === CardEnergyEnum.All ? 0 : energy - card.energy;
+        let newEnergy = card.energy === CardEnergyEnum.All ? 0 : energy - card.energy;
+        newEnergy = newEnergy < 0 ? 0 : newEnergy;
 
         await this.playerService.setEnergy(ctx, newEnergy);
 
@@ -228,7 +216,7 @@ export class CardPlayedAction {
                 syncCard = true;
             }
         }
-        // Them add the card to the discard pile
+        // If at least one card was updated
         if (syncCard)
             await this.cardService.updateCardDescription({ ctx, card });
 

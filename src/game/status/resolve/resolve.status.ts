@@ -10,15 +10,13 @@ import { resolveStatus } from './constants';
 })
 @Injectable()
 export class ResolveStatus implements StatusEffectHandler {
-    async preview(
-        args: StatusEffectDTO<DamageArgs>,
-    ): Promise<EffectDTO<DamageArgs>> {
+    
+    async preview(args: StatusEffectDTO<DamageArgs>): Promise<EffectDTO<DamageArgs>> {
         return this.handle(args);
     }
 
-    async handle(
-        dto: StatusEffectDTO<DamageArgs>,
-    ): Promise<EffectDTO<DamageArgs>> {
+    async handle(dto: StatusEffectDTO<DamageArgs>): Promise<EffectDTO<DamageArgs>> {
+        
         const effectDTO = dto.effectDTO;
 
         effectDTO.args.currentValue = Math.max(

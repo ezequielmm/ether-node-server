@@ -43,8 +43,8 @@ export class ExpeditionService {
         private readonly configService: ConfigService,
     ) {}
 
-    async getExpeditionIdFromClient(clientId: string): Promise<string> {
-        const expedition = await this.findOne({ clientId }, { id: 1 });
+    async getExpeditionIdFromClient(client: Socket): Promise<string> {
+        const expedition = await this.findOneTimeDesc({userAddress: client.request.headers.useraddress});
         return expedition.id;
     }
 
