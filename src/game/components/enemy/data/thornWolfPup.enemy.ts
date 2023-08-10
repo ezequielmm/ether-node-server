@@ -144,28 +144,6 @@ export const thornWolfPupData: Enemy = {
                     scriptId: 3,
                 },
             ],
-        },
-        {
-            id: 3,
-            intentions: [
-                {
-                    type: EnemyIntentionType.Special,
-                    target: CardTargetedEnum.Self,
-                    value: 1,
-                    effects: [
-                        {
-                            effect: fleeEffect.name,
-                            target: CardTargetedEnum.Self,
-                            args: { value: 1 },
-                            action: {
-                                name: 'Flee',
-                                hint: 'flee',
-                            },
-                        },
-                    ],
-                },
-            ],
-            next: [],
-        },
+        }
     ],
 };
