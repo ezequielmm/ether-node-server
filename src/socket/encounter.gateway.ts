@@ -22,7 +22,7 @@ export class EncounterGateway {
         choiceIdx: string,
     ): Promise<string> {
         return await this.actionQueueService.pushWithReturn(
-            await this.expeditionService.getExpeditionIdFromClient(client.id),
+            await this.expeditionService.getExpeditionIdFromClient(client),
             async () => {
                 this.logger.debug('<ENCOUNTER CHOICE>');
                 const ctx = await this.expeditionService.getGameContext(client);

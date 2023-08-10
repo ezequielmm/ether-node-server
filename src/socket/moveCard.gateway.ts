@@ -24,7 +24,7 @@ export class MoveCardGateway {
     @SubscribeMessage('MoveCard')
     async handleMoveCard(client: Socket, payload: string): Promise<void> {
         await this.actionQueueService.push(
-            await this.expeditionService.getExpeditionIdFromClient(client.id),
+            await this.expeditionService.getExpeditionIdFromClient(client),
             async () => {
                 this.logger.debug('<MOVE CARD>');
                 const ctx = await this.expeditionService.getGameContext(client);

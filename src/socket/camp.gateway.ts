@@ -29,7 +29,7 @@ export class CampGateway {
             await this.settingsService.getSettings();
 
         return await this.actionQueueService.pushWithReturn(
-            await this.expeditionService.getExpeditionIdFromClient(client.id),
+            await this.expeditionService.getExpeditionIdFromClient(client),
             async () => {
                 this.logger.debug('<CAMP RECOVER HEALTH>');
                 // First we get the actual player state to get the

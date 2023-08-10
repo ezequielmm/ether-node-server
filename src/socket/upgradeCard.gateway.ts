@@ -34,7 +34,7 @@ export class UpgradeCardGateway {
         cardId: string,
     ): Promise<string> {
         return await this.actionQueueService.pushWithReturn(
-            await this.expeditionService.getExpeditionIdFromClient(client.id),
+            await this.expeditionService.getExpeditionIdFromClient(client),
             async () => {
                 this.logger.debug('<UPGRADE SELECTED>');
                 const ctx = await this.expeditionService.getGameContext(client);
@@ -69,7 +69,7 @@ export class UpgradeCardGateway {
     @SubscribeMessage('UpgradeCard')
     async handleUpgradeCard(client: Socket, cardId: string): Promise<string> {
         return await this.actionQueueService.pushWithReturn(
-            await this.expeditionService.getExpeditionIdFromClient(client.id),
+            await this.expeditionService.getExpeditionIdFromClient(client),
             async () => {
                 this.logger.debug('<UPGRADE CARD>');
                 const ctx = await this.expeditionService.getGameContext(client);

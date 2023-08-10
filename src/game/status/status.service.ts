@@ -213,6 +213,7 @@ export class StatusService {
     }
 
     public async mutate(dto: MutateEffectArgsDTO): Promise<EffectDTO> {
+
         const { ctx, collectionOwner, collection, effect, preview } = dto;
         let { effectDTO } = dto;
         let isUpdate = false;
@@ -222,12 +223,11 @@ export class StatusService {
 
         for (const type in collection) {
             const statuses = collection[type];
+
             const statusesToRemove: Status[] = [];
+
             for (const status of statuses) {
-                const container = this.findHandlerContainer<
-                    StatusEffect,
-                    StatusEffectHandler
-                >({
+                const container = this.findHandlerContainer<StatusEffect, StatusEffectHandler>({
                     name: status.name,
                     trigger: StatusTrigger.Effect,
                     effects: [{ name: effect }],
@@ -235,8 +235,10 @@ export class StatusService {
 
                 if (!container) continue;
 
+                //- We know it is some child of StatusEffectHandler:
                 const instance = container.instance as StatusEffectHandler;
 
+                //- I call the handle or preview method:
                 effectDTO = await instance[preview ? 'preview' : 'handle']({
                     ctx,
                     effectDTO,
@@ -284,12 +286,8 @@ export class StatusService {
         return effectDTO;
     }
 
-    public findStatusesByDirection(
-        entity: ExpeditionEntity,
-        direction: StatusDirection,
-    ): StatusCollection {
+    public findStatusesByDirection(entity: ExpeditionEntity, direction: StatusDirection): StatusCollection {
         const statuses = this.getStatuses(entity);
-
         return this.filterCollectionByDirection(statuses, direction);
     }
 
@@ -309,15 +307,9 @@ export class StatusService {
         return statuses;
     }
 
-    public filterCollectionByDirection(
-        collection: StatusCollection,
-        direction: StatusDirection,
-    ): StatusCollection {
+    public filterCollectionByDirection(collection: StatusCollection, direction: StatusDirection): StatusCollection {
         const filter = (status) => {
-            const container = this.findHandlerContainer<
-                StatusEffect,
-                StatusEffectHandler
-            >({
+            const container = this.findHandlerContainer<StatusEffect, StatusEffectHandler>({
                 name: status.name,
                 trigger: StatusTrigger.Effect,
             });
@@ -488,12 +480,9 @@ export class StatusService {
         }
     }
 
-    public findHandlerContainer<S extends Status, H extends StatusHandler>(
-        status: Partial<S>,
-    ): ProviderContainer<StatusMetadata<S>, H> {
-        this.handlers =
-            this.handlers ||
-            this.providerService.findByMetadataKey(STATUS_METADATA_KEY);
+    public findHandlerContainer<S extends Status, H extends StatusHandler>(status: Partial<S>): ProviderContainer<StatusMetadata<S>, H> {
+        
+        this.handlers = this.handlers || this.providerService.findByMetadataKey(STATUS_METADATA_KEY);
 
         const container = find(
             this.handlers,

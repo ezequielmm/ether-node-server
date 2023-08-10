@@ -1,4 +1,3 @@
-import { doubleBurn } from 'src/game/effects/doubleBurn/constants';
 import { burn } from 'src/game/status/burn/constants';
 import { CardRarityEnum, CardTypeEnum, CardTargetedEnum } from '../card.enum';
 import { Card } from '../card.schema';
@@ -10,7 +9,7 @@ export const SparkCardUpgraded: Card = {
     cardType: CardTypeEnum.Skill,
     pool: 'knight',
     energy: 0,
-    description: `Inflict {${doubleBurn.name}} Burn`,
+    description: `Inflict {${burn.name}} Burn`,
     keywords: [],
     properties: {
         effects: [],
@@ -36,7 +35,7 @@ export const SparkCard: Card = {
     cardType: CardTypeEnum.Skill,
     pool: 'knight',
     energy: 1,
-    description: `Inflict {${doubleBurn.name}} Burn`,
+    description: `Inflict {${burn.name}} Burn`,
     keywords: [],
     properties: {
         effects: [],

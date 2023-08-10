@@ -43,7 +43,7 @@ export class CombatGateway {
     @SubscribeMessage('EndTurn')
     async handleEndTurn(client: Socket): Promise<void> {
         await this.actionQueueService.push(
-            await this.expeditionService.getExpeditionIdFromClient(client.id),
+            await this.expeditionService.getExpeditionIdFromClient(client),
             async () => {
                 this.logger.debug('<END TURN>');
                 try {
@@ -88,7 +88,7 @@ export class CombatGateway {
     @SubscribeMessage('CardPlayed')
     async handleCardPlayed(client: Socket, payload: string): Promise<void> {
         await this.actionQueueService.push(
-            await this.expeditionService.getExpeditionIdFromClient(client.id),
+            await this.expeditionService.getExpeditionIdFromClient(client),
             async () => {
                 this.logger.debug('<PLAY CARD>');
                 try {
@@ -99,14 +99,11 @@ export class CombatGateway {
                         JSON.parse(payload);
 
                     // Check if combat is on player turn. If not, bail without trying to play a card, because they, uh, can't.
-                    if (
-                        ctx.expedition.currentNode.data.playing !==
-                        CombatTurnEnum.Player
-                    )
+                    if (ctx.expedition.currentNode.data.playing !== CombatTurnEnum.Player){
                         return;
+                    }
 
-                    const enemyComparisonStatuses =
-                        this.enemyService.getEnemyStatuses(ctx);
+                    const enemyComparisonStatuses = this.enemyService.getEnemyStatuses(ctx);
 
                     await this.cardPlayedAction.handle({
                         ctx,
