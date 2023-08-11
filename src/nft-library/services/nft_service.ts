@@ -58,7 +58,6 @@ export class NFTService {
         const pageSize = amount <= 100 ? amount : 100;
 
         for(let address of tokenAddresses){
-            console.log(address)
             const nftsByCharacter = await alchemySettings.nft.getNftsForOwner(walletAddress, { pageSize, contractAddresses: [address] });
             this.loadNftsByCharacterType(tokenCollections, address.toLowerCase(), nftsByCharacter.ownedNfts,  amount);
         }
