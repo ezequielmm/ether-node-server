@@ -44,9 +44,9 @@ export class CharacterService {
             { isActive: true },
             { contractId: 1, contractIdTest: 1 },
         );
-
+        
         if (characters.length === 0) return [];
-
+            
         switch (net) {
             case AlchemyService.MAINNET:
                 return compact(characters.map((c) => c.contractId));
