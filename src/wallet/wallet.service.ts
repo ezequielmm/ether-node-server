@@ -42,9 +42,15 @@ export class WalletService {
         });
 
         for await (const contract of nfts.tokens) {
+            if(contract.contract_address == "0xb52d71C3DdE0cEE0faD2dCE0a9cA33fDfE06aEc9")
+            {
+                //sorry camilo, hardcoded for test env.
+                contract.contract_address = "0x16Ed951d479b87634d5E9e7C05a8316672A4c926";
+            }
             const character = await this.characterService.getCharacterByContractId(contract.contract_address);
             contract.characterClass = character?.characterClass ?? 'unknown';
             contract.contract_address = character.contractId;
+           
             for await (const token of contract.tokens) {
                 token.characterClass = character?.characterClass ?? 'unknown';
                 token.adaptedImageURI = this.getHttpFromIpfsURI(token.metadata?.image);
