@@ -35,6 +35,13 @@ export class WalletService {
         // The contracts to filter from all the user collections
         const tokenAddresses = await this.characterService.findAllContractIds();
 
+        for(let i = 0 ; i < tokenAddresses.length; i++ )
+        {   
+            if(tokenAddresses[i] == "0xb52d71C3DdE0cEE0faD2dCE0a9cA33fDfE06aEc9")
+            {
+                tokenAddresses[i]="0x16Ed951d479b87634d5E9e7C05a8316672A4c926";
+            }
+        }
         const nfts = await this.nftService.listByContracts({
             walletAddress,
             tokenAddresses,
