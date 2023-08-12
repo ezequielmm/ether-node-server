@@ -44,6 +44,7 @@ export class WalletService {
         for await (const contract of nfts.tokens) {
             const character = await this.characterService.getCharacterByContractId(contract.contract_address);
             contract.characterClass = character?.characterClass ?? 'unknown';
+            contract.contract_address = character.contractId;
             for await (const token of contract.tokens) {
                 token.characterClass = character?.characterClass ?? 'unknown';
                 token.adaptedImageURI = this.getHttpFromIpfsURI(token.metadata?.image);
