@@ -46,13 +46,7 @@ export class CharacterService {
         );
         
         if (characters.length === 0) return [];
-        characters.forEach(character => {
-            if(character?.characterClass == 'knight')
-            {
-                character.contractId = "0x16Ed951d479b87634d5E9e7C05a8316672A4c926";
-                character.contractIdTest = "0x16Ed951d479b87634d5E9e7C05a8316672A4c926";
-            }
-        })
+        
         switch (net) {
             case AlchemyService.MAINNET:
                 return compact(characters.map((c) => c.contractId));
