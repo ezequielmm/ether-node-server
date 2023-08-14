@@ -18,7 +18,6 @@ import {
 } from './effects.interface';
 import { CardTargetedEnum } from '../components/card/card.enum';
 import { ExpeditionService } from '../components/expedition/expedition.service';
-import { EffectName } from './effects.enum';
 
 @Injectable()
 export class EffectService {
@@ -165,9 +164,8 @@ export class EffectService {
             StatusDirection.Incoming,
         );
 
-        //- if it is burn we ignore the buffs of the player:
-        if(dto.dto.args.type != EffectName.Burn){
-            
+        //- if it is especial attack we ignore the buffs of the player:    
+        if(!dto.dto.args.type){
             // Trinkets are applied before statuses
             effectDTO = await this.trinketService.pipeline(dto);
 
