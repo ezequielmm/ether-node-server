@@ -26,6 +26,9 @@ export class ContestMap {
     maxNodes: number;
 
     @Prop()
+    actNumber?: number;
+
+    @Prop()
     isGenerated: boolean;
 }
 
