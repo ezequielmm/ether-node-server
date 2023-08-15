@@ -22,6 +22,7 @@ import { CustomException, ErrorBehavior } from 'src/socket/custom.exception';
 import { CombatQueueService } from '../combatQueue/combatQueue.service';
 import { ReturnModelType } from '@typegoose/typegoose';
 import { CardService } from '../card/card.service';
+import { EffectProducer } from 'src/game/effects/effects.interface';
 
 @Injectable()
 export class PotionService {
@@ -86,11 +87,7 @@ export class PotionService {
             .lean();
     }
 
-    async use(
-        ctx: GameContext,
-        potionUniqueId: string,
-        targetId: TargetId,
-    ): Promise<void> {
+    async use(ctx: GameContext, potionUniqueId: string, targetId: TargetId): Promise<void> {
         const potion = this.findFromInventory(ctx, potionUniqueId);
 
         // Check if potion is available
@@ -143,6 +140,7 @@ export class PotionService {
             source: player,
             effects: potion.effects,
             selectedEnemy: targetId,
+            producer: EffectProducer.Potion
         });
 
         if (inCombat) {
@@ -171,10 +169,7 @@ export class PotionService {
         await this.remove(ctx, potionUniqueId);
     }
 
-    private findFromInventory(
-        ctx: GameContext,
-        potionUniqueId: string,
-    ): PotionInstance {
+    private findFromInventory(ctx: GameContext, potionUniqueId: string): PotionInstance {
         return find(ctx.expedition.playerState.potions, { id: potionUniqueId });
     }
 
