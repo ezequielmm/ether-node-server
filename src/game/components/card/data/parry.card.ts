@@ -61,7 +61,7 @@ export const ParryCard: Card = {
                 name: fortitude.name,
                 attachTo: CardTargetedEnum.Player,
                 args: {
-                    counter: 2,
+                    counter: 1,
                 },
             },
         ],

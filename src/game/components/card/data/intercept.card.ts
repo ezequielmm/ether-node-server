@@ -8,7 +8,7 @@ export const InterceptCardUpgraded: Card = {
     rarity: CardRarityEnum.Common,
     cardType: CardTypeEnum.Skill,
     pool: 'knight',
-    energy: 2,
+    energy: 0,
     description: `Reduce damage taken by 50% for 2 turns`,
     keywords: [],
     properties: {
@@ -34,7 +34,7 @@ export const InterceptCard: Card = {
     rarity: CardRarityEnum.Common,
     cardType: CardTypeEnum.Skill,
     pool: 'knight',
-    energy: 2,
+    energy: 1,
     description: `Reduce damage taken by 50% for this turn`,
     keywords: [],
     properties: {

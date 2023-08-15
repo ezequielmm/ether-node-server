@@ -34,7 +34,7 @@ export const FeintCard: Card = {
     rarity: CardRarityEnum.Uncommon,
     cardType: CardTypeEnum.Skill,
     pool: 'knight',
-    energy: 1,
+    energy: 0,
     description: `Remove all Defense from an enemy`,
     keywords: [],
     properties: {

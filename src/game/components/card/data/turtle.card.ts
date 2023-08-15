@@ -34,7 +34,7 @@ export const TurtleCard: Card = {
     rarity: CardRarityEnum.Common,
     cardType: CardTypeEnum.Defend,
     pool: 'knight',
-    energy: 0,
+    energy: 1,
     description: `At the end of this turn, double your defense`,
     keywords: [],
     properties: {

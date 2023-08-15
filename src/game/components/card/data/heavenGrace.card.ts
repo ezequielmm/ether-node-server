@@ -1,5 +1,5 @@
 import { healEffect } from 'src/game/effects/heal/constants';
-import { CardRarityEnum, CardTypeEnum, CardTargetedEnum } from '../card.enum';
+import { CardRarityEnum, CardTypeEnum, CardTargetedEnum, CardKeywordEnum } from '../card.enum';
 import { Card } from '../card.schema';
 
 export const HeavenGraceCardUpgraded: Card = {
@@ -10,14 +10,14 @@ export const HeavenGraceCardUpgraded: Card = {
     pool: 'knight',
     energy: 1,
     description: `Heal {${healEffect.name}} hp`,
-    keywords: [],
+    keywords: [CardKeywordEnum.Exhaust],
     properties: {
         effects: [
             {
                 effect: healEffect.name,
                 target: CardTargetedEnum.Player,
                 args: {
-                    value: 4,
+                    value: 12,
                 },
             },
         ],
@@ -36,14 +36,14 @@ export const HeavenGraceCard: Card = {
     pool: 'knight',
     energy: 1,
     description: `Heal {${healEffect.name}} hp`,
-    keywords: [],
+    keywords: [CardKeywordEnum.Exhaust],
     properties: {
         effects: [
             {
                 effect: healEffect.name,
                 target: CardTargetedEnum.Player,
                 args: {
-                    value: 2,
+                    value: 8,
                 },
             },
         ],
