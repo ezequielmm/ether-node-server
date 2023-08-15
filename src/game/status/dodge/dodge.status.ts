@@ -4,6 +4,7 @@ import { DamageArgs } from '../../effects/damage/damage.effect';
 import { StatusEffectDTO, StatusEffectHandler } from '../interfaces';
 import { StatusDecorator } from '../status.decorator';
 import { dodge } from './constants';
+import { CardTargetedEnum } from 'src/game/components/card/card.enum';
 
 @StatusDecorator({
     status: dodge,
@@ -16,14 +17,15 @@ export class DodgeStatus implements StatusEffectHandler {
         return this.cancelDamage(args.effectDTO);
     }
 
-    async handle(
-        dto: StatusEffectDTO<DamageArgs>,
-    ): Promise<EffectDTO<DamageArgs>> {
+    async handle(dto: StatusEffectDTO<DamageArgs>): Promise<EffectDTO<DamageArgs>> {
         const args = dto.status.args;
 
-        this.cancelDamage(dto.effectDTO);
 
-        args.counter--;
+        if(dto.effectDTO.source.type == CardTargetedEnum.Enemy){
+            args.counter--;
+        }
+        
+        this.cancelDamage(dto.effectDTO);
 
         if (args.counter <= 0) {
             dto.remove();
