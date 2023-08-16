@@ -25,18 +25,16 @@ export class PotionGateway {
 
     @SubscribeMessage('UsePotion')
     async use(client: Socket, payload: string): Promise<void> {
-        const expeditionId =
-            await this.expeditionService.getExpeditionIdFromClient(client);
+        const expeditionId = await this.expeditionService.getExpeditionIdFromClient(client);
 
         await this.actionQueueService.push(expeditionId, async () => {
+            
             this.logger.debug('<USE POTION>');
 
             const { potionId, targetId } = JSON.parse(payload) as UsePotionDTO;
-
             const ctx = await this.expeditionService.getGameContext(client);
 
             await this.potionService.use(ctx, potionId, targetId);
-
             await this.fullSyncAction.handle(client, false);
 
             this.logger.debug('</USE POTION>');

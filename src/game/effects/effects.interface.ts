@@ -28,6 +28,7 @@ export interface EffectDTO<
         currentValue: number;
     } & Args;
     action?: IActionHint;
+    producer?: EffectProducer; 
 }
 
 export interface JsonEffect {
@@ -50,6 +51,13 @@ export interface ApplyAllDTO {
     source: ExpeditionEntity;
     effects: JsonEffect[];
     selectedEnemy?: EnemyId;
+    producer?: EffectProducer; 
+}
+
+export enum EffectProducer {
+    Potion  = "potion",
+    Trinket = "trinket",
+    Card    = "card"
 }
 
 export interface ApplyDTO {
@@ -57,6 +65,7 @@ export interface ApplyDTO {
     source: ExpeditionEntity;
     target: ExpeditionEntity;
     effect: JsonEffect;
+    producer?: EffectProducer;
 }
 
 export interface FindTargetsDTO {

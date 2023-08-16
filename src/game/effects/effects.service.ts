@@ -14,11 +14,11 @@ import {
     EffectDTO,
     EffectHandler,
     EffectMetadata,
+    EffectProducer,
     MutateDTO,
 } from './effects.interface';
 import { CardTargetedEnum } from '../components/card/card.enum';
 import { ExpeditionService } from '../components/expedition/expedition.service';
-import { EffectName } from './effects.enum';
 
 @Injectable()
 export class EffectService {
@@ -38,7 +38,7 @@ export class EffectService {
     ) {}
 
     async applyAll(dto: ApplyAllDTO): Promise<void> {
-        const { ctx, source, effects, selectedEnemy } = dto;
+        const { ctx, source, effects, selectedEnemy, producer } = dto;
 
         for (const effect of effects) {
             const targets = this.combatService.getEntitiesByType(
@@ -55,15 +55,15 @@ export class EffectService {
                 // immediately remove some buffer, and if it's not enough, no longer will the status survive
                 effectBuffer--;
                 effect.args.statusIgnoreForRemove = effectBuffer > 0;
-               
-                await this.apply({ctx, source, target, effect});
+
+                await this.apply({ctx, source, target, effect, producer});
             }
 
         }
     }
 
     public async apply(dto: ApplyDTO) {
-        const { ctx, source, target, effect } = dto;
+        const { ctx, source, target, effect, producer } = dto;
         const { client } = ctx;
 
         // Register the effect in the history
@@ -93,6 +93,7 @@ export class EffectService {
                 currentValue: value,
                 ...args,
             },
+            producer: producer
         };
 
         const isCombat = this.expeditionService.isPlayerInCombat(ctx);
@@ -167,9 +168,12 @@ export class EffectService {
             StatusDirection.Incoming,
         );
 
-        //- if it is burn we ignore the buffs of the player:
-        if(dto.dto.args.type != EffectName.Burn){
-            
+
+        const specialAttack = dto.dto.args.type ? true : false;
+        const potionAttack  = dto.dto.producer && dto.dto.producer == EffectProducer.Potion;
+
+        //- if it is especial attack we ignore the buffs of the player:    
+        if(!specialAttack && !potionAttack){
             // Trinkets are applied before statuses
             effectDTO = await this.trinketService.pipeline(dto);
 

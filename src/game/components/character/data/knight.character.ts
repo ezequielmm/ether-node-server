@@ -8,7 +8,7 @@ import { Character } from '../character.schema';
 
 export const KnightCharacter: Character = {
     name: 'Knight',
-    contractId: '0x16Ed951d479b87634d5E9e7C05a8316672A4c926',
+    contractId: '0xb52d71C3DdE0cEE0faD2dCE0a9cA33fDfE06aEc9',
     contractIdTest: '0x16Ed951d479b87634d5E9e7C05a8316672A4c926',
     description: 'Initial Player',
     canCompete: true,
