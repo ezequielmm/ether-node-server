@@ -49,8 +49,15 @@ export class PhilterOfRedemptionEffect implements EffectHandler {
                             value: totalToRecover,
                         },
                     },
+                }).finally(() => {
                 });
             }
+            else {
+            }
         }
+        else {
+            console.log("There are no damages so potion wont work");
+        }
+
     }
 }

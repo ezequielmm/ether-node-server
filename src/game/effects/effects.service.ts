@@ -55,7 +55,7 @@ export class EffectService {
                 // immediately remove some buffer, and if it's not enough, no longer will the status survive
                 effectBuffer--;
                 effect.args.statusIgnoreForRemove = effectBuffer > 0;
-
+               
                 await this.apply({ctx, source, target, effect});
             }
 
@@ -103,6 +103,8 @@ export class EffectService {
                 dto: effectDTO,
                 effect: name,
             });
+        }
+        else {
         }
 
         // attach action after mutate, rather than pipe it through
