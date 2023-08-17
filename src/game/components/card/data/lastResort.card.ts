@@ -14,10 +14,18 @@ export const LastResortCardUpgraded: Card = {
     cardType: CardTypeEnum.Attack,
     pool: 'knight',
     energy: CardEnergyEnum.All,
-    description: `Deal X damage to yourself and X times {${damageEffect.name}} damage to an enemy`,
+    description: `Deal X damage to yourself and X times {${damageEffect.name}} damage to all enemies`,
     keywords: [],
     properties: {
         effects: [
+            {
+                effect: damageEffect.name,
+                target: CardTargetedEnum.AllEnemies,
+                args: {
+                    value: 12,
+                    useEnergyAsMultiplier: true,
+                },
+            },
             {
                 effect: damageEffect.name,
                 target: CardTargetedEnum.Player,
@@ -25,15 +33,7 @@ export const LastResortCardUpgraded: Card = {
                     value: 1,
                     useEnergyAsValue: true,
                 },
-            },
-            {
-                effect: damageEffect.name,
-                target: CardTargetedEnum.AllEnemies,
-                args: {
-                    value: 9,
-                    useEnergyAsMultiplier: true,
-                },
-            },
+            }
         ],
         statuses: [],
     },
@@ -55,20 +55,20 @@ export const LastResortCard: Card = {
         effects: [
             {
                 effect: damageEffect.name,
+                target: CardTargetedEnum.Enemy,
+                args: {
+                    value: 12,
+                    useEnergyAsMultiplier: true,
+                },
+            },
+            {
+                effect: damageEffect.name,
                 target: CardTargetedEnum.Player,
                 args: {
                     value: 1,
                     useEnergyAsValue: true,
                 },
-            },
-            {
-                effect: damageEffect.name,
-                target: CardTargetedEnum.Enemy,
-                args: {
-                    value: 9,
-                    useEnergyAsMultiplier: true,
-                },
-            },
+            }
         ],
         statuses: [],
     },
