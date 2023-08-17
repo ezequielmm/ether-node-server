@@ -1,9 +1,9 @@
-name: Build, Tag and Publish Gameplay DEV & TEST.
+name: Build, Tag and Publish Gameplay to TEST.
 
 on:
   push:
     branches:
-      - develop
+      - test
 
 jobs:
   build-tag-publish:
@@ -27,34 +27,15 @@ jobs:
       - name: Build and tag Docker image
         id: build
         run: |          
-          DOCKER_TAG_DEV="dev-$(git rev-parse --short HEAD)"
-          docker build -t blightfell-backend:${DOCKER_TAG_DEV} .
-          docker tag blightfell-backend:${DOCKER_TAG_DEV} ${{ secrets.AWS_ECR_URI }}/blightfell-backend:${DOCKER_TAG_DEV}
-
           DOCKER_TAG_TEST="test-$(git rev-parse --short HEAD)"
           docker build -t blightfell-backend:${DOCKER_TAG_TEST} .
           docker tag blightfell-backend:${DOCKER_TAG_TEST} ${{ secrets.AWS_ECR_URI }}/blightfell-backend:${DOCKER_TAG_TEST}
           
-          echo "DEV_TAG=$DOCKER_TAG_DEV" >> $GITHUB_OUTPUT
           echo "TEST_TAG=$DOCKER_TAG_TEST" >> $GITHUB_OUTPUT
 
       - name: Push Docker image to AWS ECR
         run: |
-          docker push ${{ secrets.AWS_ECR_URI }}/blightfell-backend:${{ steps.build.outputs.DEV_TAG }} 
           docker push ${{ secrets.AWS_ECR_URI }}/blightfell-backend:${{ steps.build.outputs.TEST_TAG }} 
-
-      - name: SSH into DEV EC2 and Pull new version.
-        env:
-            PRIVATE_KEY: ${{ secrets.DEV_EC2_PRIVATE_KEY }}
-            HOSTNAME: ${{secrets.DEV_EC2_IP}}
-            USER_NAME: ${{secrets.DEV_EC2_USER}}
-        run: |
-          echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
-          ssh -o StrictHostKeyChecking=no -i private_key ${USER_NAME}@${HOSTNAME} '
-              aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${{ secrets.AWS_ECR_URI }} &&
-              cd /home/ubuntu/kote &&
-              /bin/sh deploy.sh ${{ steps.build.outputs.DEV_TAG }} 
-              '
 
       - name: SSH into TEST EC2 and Pull new version.
         env:
