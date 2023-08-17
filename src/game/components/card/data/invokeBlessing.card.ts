@@ -9,7 +9,7 @@ export const InvokeBlessingCardUpgraded: Card = {
     cardType: CardTypeEnum.Power,
     pool: 'knight',
     energy: 2,
-    description: `Gain {${regeneration.name}} Regeneration`,
+    description: `Gain {${regeneration.name}} Regeneration. Exhaust`,
     keywords: [CardKeywordEnum.Exhaust],
     properties: {
         effects: [],
@@ -35,7 +35,7 @@ export const InvokeBlessingCard: Card = {
     cardType: CardTypeEnum.Power,
     pool: 'knight',
     energy: 2,
-    description: `Gain {${regeneration.name}} Regeneration`,
+    description: `Gain {${regeneration.name}} Regeneration. Exhaust`,
     keywords: [CardKeywordEnum.Exhaust],
     properties: {
         effects: [],

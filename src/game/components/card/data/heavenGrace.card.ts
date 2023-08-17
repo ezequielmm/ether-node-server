@@ -9,7 +9,7 @@ export const HeavenGraceCardUpgraded: Card = {
     cardType: CardTypeEnum.Skill,
     pool: 'knight',
     energy: 1,
-    description: `Heal {${healEffect.name}} hp`,
+    description: `Heal {${healEffect.name}} hp. Exhaust`,
     keywords: [CardKeywordEnum.Exhaust],
     properties: {
         effects: [
@@ -35,7 +35,7 @@ export const HeavenGraceCard: Card = {
     cardType: CardTypeEnum.Skill,
     pool: 'knight',
     energy: 1,
-    description: `Heal {${healEffect.name}} hp`,
+    description: `Heal {${healEffect.name}} hp. Exhaust`,
     keywords: [CardKeywordEnum.Exhaust],
     properties: {
         effects: [
