@@ -30,7 +30,7 @@ export class PlayerGearService {
 
         return equipped.filter((gear) => {
             //is doing !owned.includes(gear);
-            return !owned.find((owned_gear) => {
+            !owned.find((owned_gear) => {
                 return owned_gear.gearId === gear.gearId;
             });
         });
