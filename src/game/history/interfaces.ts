@@ -7,6 +7,8 @@ export interface Registry {
     source?: EntityReferenceDTO;
     target?: EntityReferenceDTO;
     type: 'status' | 'effect' | 'card' | 'damage';
+    
+    round?: number;
 }
 
 export interface EffectRegistry extends Registry {

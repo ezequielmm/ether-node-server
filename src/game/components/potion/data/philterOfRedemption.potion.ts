@@ -1,5 +1,4 @@
 import { philterOfRedemptionEffect } from 'src/game/effects/philterOfRedemption/constants';
-import { healEffect } from 'src/game/effects/heal/constants';
 
 import { PotionRarityEnum, PotionTargetEnum } from '../potion.enum';
 import { Potion } from '../potion.schema';
@@ -11,10 +10,10 @@ export const philterOfRedemptionPotion: Potion = {
     description: 'Heal however much health you lost last turn',
     effects: [
         {
-            effect: healEffect.name,
+            effect: philterOfRedemptionEffect.name,
             target: PotionTargetEnum.Player,
             args: {
-                value: 12,
+                value: 1,
             },
         },
     ],
