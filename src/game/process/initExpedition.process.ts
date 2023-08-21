@@ -197,6 +197,7 @@ export class InitExpeditionProcess {
                     upgradedCardId: card?.upgradedCardId,
                     triggerAtEndOfTurn: card.triggerAtEndOfTurn,
                     isActive: true,
+                    isFirstPlay: false
                 };
             });
     }
