@@ -13,14 +13,48 @@ export class DewDropStatus implements StatusEventHandler {
 
     async handle(args: StatusEventDTO): Promise<any> {
         const { ctx, eventArgs } = args;
-
+        const round = ctx.expedition.currentNode.data.round;
         const cardPlayed = this.historyService.findLast(ctx.client.id, {
             type: 'card',
-            round: ctx.expedition.currentNode.data.round,
+            round: round,
         });
         if(cardPlayed)
         {
-            eventArgs.card.energy = Math.max(0, eventArgs.card.energy - 1);
+            
+            const all = this.historyService.get(ctx.client.id);
+            const cards = [];
+            all.forEach(c => {
+                if(c.type == "card")
+                {
+                    cards.push(c);
+                }
+            });
+            const cardsThisTurn = [];
+            cards.forEach( card => {
+                if(card.round == round)
+                {
+                    cardsThisTurn.push(card);
+                }
+            })
+            cardsThisTurn.forEach(card => {
+                const isFirst = cardsThisTurn.indexOf(card) == 0;
+                card.isFirstPlay = isFirst;
+                if(isFirst)
+                {
+                    if(card.energy > 0)
+                    {
+                        const energy = Math.max(0, eventArgs.card.energy - 1);
+                        eventArgs.card.energy = energy;
+                    }
+                   
+                }
+            })
+
+
+
+
+       
+
         }
             
     }

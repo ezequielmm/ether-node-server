@@ -63,4 +63,7 @@ export class Card {
 
     @Prop()
     isActive: boolean;
+
+    @Prop({ default: false })
+    isFirstPlay?: boolean;
 }
