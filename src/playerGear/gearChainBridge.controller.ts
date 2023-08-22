@@ -119,9 +119,6 @@ export class GearChainBridgeController {
 
         switch (payload.action) {
             case GearActionApiEnum.AddGear:
-                gears = gears.filter((g) => {
-                    return !playerGear.some((pg) => pg.gearId === g.gearId)
-                });
                 await this.playerGearService.addGearToPlayer(wallet, gears);
                 break;
             case GearActionApiEnum.RemoveGear:
