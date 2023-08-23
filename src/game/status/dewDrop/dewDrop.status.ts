@@ -36,26 +36,24 @@ export class DewDropStatus implements StatusEventHandler {
                     cardsThisTurn.push(card);
                 }
             })
+            let isDone = false;
             cardsThisTurn.forEach(card => {
                 const isFirst = cardsThisTurn.indexOf(card) == 0;
                 card.isFirstPlay = isFirst;
-                if(isFirst)
+                if(isFirst && !isDone)
                 {
-                    if(card.energy > 0)
+                    if(eventArgs.card.energy > 0 )
                     {
-                        const energy = Math.max(0, eventArgs.card.energy - 1);
-                        eventArgs.card.energy = energy;
+                        const newEnergy =  eventArgs.card.energy;
+                        eventArgs.card.energy = newEnergy - 1;
+                        isDone = true;
                     }
-                   
                 }
             })
 
 
-
-
-       
-
         }
+
             
     }
 }
