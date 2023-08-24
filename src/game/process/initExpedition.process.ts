@@ -41,6 +41,7 @@ export class InitExpeditionProcess {
         equippedGear,
         character_class,
         contest,
+        stage
     }: {
         userAddress: string;
         playerName: string;
@@ -48,42 +49,15 @@ export class InitExpeditionProcess {
         equippedGear: GearItem[];
         character_class: string;
         contest: Contest;
-    }): Promise<void> {
-        let character_class_enum = CharacterClassEnum.Knight;
+        stage: number;
+    }): Promise<void> 
+    {
+        const character_class_enum = this.getCharcterName(character_class);
+        const character = await this.characterService.findOne({characterClass: character_class_enum});
+        const { initialPotionChance } = await this.settingsService.getSettings();
 
-        switch (character_class) {
-            case 'Knight':
-                character_class_enum = CharacterClassEnum.Knight;
-                break;
-            case 'Villager':
-                character_class_enum = CharacterClassEnum.Villager;
-                break;
-            case 'BlessedVillager':
-                character_class_enum = CharacterClassEnum.BlessedVillager;
-                break;
-            case 'NonTokenVillager':
-                character_class_enum = CharacterClassEnum.NonTokenVillager;
-                break;
-            default:
-                character_class_enum = CharacterClassEnum.Knight;
-                break;
-        }
-
-        const character = await this.characterService.findOne({
-            characterClass: character_class_enum,
-        });
-
-        // Get initial player stats
-        const { initialPotionChance } =
-            await this.settingsService.getSettings();
-
-        // const map = contest
-        //     ? await this.contestMapService.getMapForContest(contest)
-        //     : await this.mapBuilderService.createMap({ actConfig: ActOneConfig, makeAvailable: true});
-
-        const map = await this.contestMapService.getMapForContest(contest);
-
-        const cards = await this.generatePlayerDeck(character, userAddress, contest);
+        const map = await this.contestMapService.getMapForContest(contest.stages[stage -1]);
+        const cards = await this.generatePlayerDeck(character, userAddress, contest, stage);
 
         const expedition = await this.expeditionService.create({
             userAddress,
@@ -121,19 +95,11 @@ export class InitExpeditionProcess {
             createdAt: new Date(),
         });
 
-        this.logger.log(
-            {
-                expId: expedition.id,
-            },
-            `Created expedition for player: ${userAddress}`,
-        );
+        this.logger.log({ expId: expedition.id}, `Created expedition for player: ${userAddress}`);
     }
 
-    private async generatePlayerDeck(
-        character: Character,
-        userAddress: string,
-        contest:Contest
-    ): Promise<IExpeditionPlayerStateDeckCard[]> {
+    private async generatePlayerDeck(character: Character, userAddress: string, contest:Contest, stage:number): Promise<IExpeditionPlayerStateDeckCard[]> {
+        
         // We destructure the cards from the character
         const { cards: characterDeck } = character;
 
@@ -142,7 +108,7 @@ export class InitExpeditionProcess {
         //    userAddress,
         //);
 
-        const map = await this.contestMapService.getCompleteMapForContest(contest);
+        const map = await this.contestMapService.getCompleteMapForContest(contest.stages[stage-1]);
         let mapDeck = undefined ;
 
         if(map.deck_id){
@@ -200,5 +166,20 @@ export class InitExpeditionProcess {
                     isFirstPlay: false
                 };
             });
+    }
+
+    private getCharcterName(characterClass):CharacterClassEnum{
+        switch (characterClass) {
+            case 'Knight':
+                return CharacterClassEnum.Knight;
+            case 'Villager':
+                return CharacterClassEnum.Villager;
+            case 'BlessedVillager':
+                return CharacterClassEnum.BlessedVillager;
+            case 'NonTokenVillager':
+                return CharacterClassEnum.NonTokenVillager;
+            default:
+                return CharacterClassEnum.Knight;
+        }
     }
 }

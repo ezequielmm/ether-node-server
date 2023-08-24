@@ -9,7 +9,7 @@ import { ModelOptions, Prop } from '@typegoose/typegoose';
 })
 export class Contest {
     @Prop()
-    map_id: string;
+    stages: string[];
 
     @Prop()
     event_id: number;
@@ -22,4 +22,7 @@ export class Contest {
 
     @Prop()
     valid_until: Date;
+
+    @Prop()
+    name: string;
 }

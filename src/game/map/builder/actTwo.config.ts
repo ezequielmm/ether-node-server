@@ -15,7 +15,7 @@ import { ancientOneData } from 'src/game/components/enemy/data/ancientOne.enemy'
 import { queenOrchidData } from 'src/game/components/enemy/data/queenOrchid.enemy';
 import { thornWolfData } from 'src/game/components/enemy/data/thornWolf.enemy';
 
-const ActOneNodeProbabilities = [
+const ActTwoNodeProbabilities = [
         {
             key: "Merchant",
             probability: 5,
@@ -30,7 +30,7 @@ const ActOneNodeProbabilities = [
         },
 ];
 
-const ActOneNodeCombatProbabilities = [
+const ActTwoNodeCombatProbabilities = [
     {
         key: "EliteCombat",
         probability: 8,
@@ -47,7 +47,7 @@ const ActOneNodeCombatProbabilities = [
     }
 ];
 
-const ActOneNodeDifficultCombatProbabilities = [
+const ActTwoNodeDifficultCombatProbabilities = [
     {
         key: "EliteCombat",
         probability: 8,
@@ -417,7 +417,7 @@ const nodeOptions = {
     ],
 };
 
-const createStage1NewMap = (maxStepsVar: number, maxNodesVar: number): IActConfiguration => {
+const createStage2NewMap = (maxStepsVar: number, maxNodesVar: number): IActConfiguration => {
     if(maxStepsVar >= 12){
         return createMoreOrEquals12NodesMap(maxStepsVar, maxNodesVar);
     } 
@@ -461,8 +461,8 @@ const createMoreOrEquals12NodesMap = (maxStepsVar: number, maxNodesVar: number):
                 minNodes: maxNodes,
                 maxNodes: maxNodes,
                 nodeOptions: [
-                    ...ActOneNodeProbabilities,
-                    ...ActOneNodeCombatProbabilities,
+                    ...ActTwoNodeProbabilities,
+                    ...ActTwoNodeCombatProbabilities,
                     {
                         key: "Encounter",
                         probability: 20,
@@ -494,8 +494,8 @@ const createMoreOrEquals12NodesMap = (maxStepsVar: number, maxNodesVar: number):
                 minNodes: maxNodes,
                 maxNodes: maxNodes,
                 nodeOptions: [
-                    ...ActOneNodeProbabilities,
-                    ...ActOneNodeDifficultCombatProbabilities,
+                    ...ActTwoNodeProbabilities,
+                    ...ActTwoNodeDifficultCombatProbabilities,
                     {
                         key: "Encounter",
                         probability: 20,
@@ -703,4 +703,4 @@ const createLess12NodesMap = (maxStepsVar: number, maxNodesVar:number): IActConf
 }
 
 
-export { createStage1NewMap };
+export { createStage2NewMap };

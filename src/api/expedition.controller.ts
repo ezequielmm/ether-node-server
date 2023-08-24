@@ -135,13 +135,9 @@ export class ExpeditionController {
         summary: `Creates a new expedition for the player`,
     })
     @Post()
-    async handleCreateExpedition(
-        @Req() { userAddress }: AuthorizedRequest,
-        @Body() payload: CreateExpeditionApiDTO,
-    ): Promise<{
-        expeditionCreated: boolean;
-        reason?: string;
-    }> {
+    async handleCreateExpedition(@Req() { userAddress }: AuthorizedRequest, @Body() payload: CreateExpeditionApiDTO)
+        : Promise<{expeditionCreated: boolean; reason?: string;}> 
+    {
         this.logger.log(`Client called POST route "/expeditions"`);
 
         const { equippedGear, tokenType: character_class } = payload;
@@ -151,6 +147,7 @@ export class ExpeditionController {
             tokenId: payload.nftId,
         };
 
+        //- Does the following method make sense??
         if (equippedGear?.length === 0) {
             // validate equippedGear vs ownedGeared
             const all_are_owned = await this.playerGearService.allAreOwned(
@@ -162,50 +159,44 @@ export class ExpeditionController {
             }
         }
 
-        const hasExpedition =
-            await this.expeditionService.playerHasExpeditionInProgress({
-                clientId: userAddress,
-            });
-
-        if (!hasExpedition) {
-            const contest = await this.contestService.findActiveContest();
-            if (!contest) {
-                return {
-                    expeditionCreated: false,
-                    reason: 'no contest found',
-                };
-            }
-
-            const can_play = await this.playerWinService.canPlay(
-                contest.event_id,
-                playerToken.contractId,
-                playerToken.tokenId,
-            );
-
-            if (!can_play) {
-                return {
-                    expeditionCreated: false,
-                    reason: 'ineligible token',
-                };
-            }
-
-            const playerName = await this.troveService.getAccountDisplayName(
-                userAddress,
-            );
-
-            await this.initExpeditionProcess.handle({
-                userAddress,
-                playerName,
-                playerToken,
-                equippedGear,
-                character_class,
-                contest,
-            });
-
-            return { expeditionCreated: true };
-        } else {
+        //- Validate if has expedition.. I understand that a new one is being created, therefore another one should not be reused..
+        const hasExpedition = await this.expeditionService.playerHasExpeditionInProgress({clientId: userAddress});
+        if(hasExpedition){
             return { expeditionCreated: true };
         }
+
+        //- Validates if a Contest was created for today:
+        const contest = await this.contestService.findActiveContest();
+        if (!contest) {
+            return {
+                expeditionCreated: false,
+                reason: 'no contest found',
+            };
+        }
+
+        //- Validates that the selected nft has not exceeded the daily games
+        const can_play = await this.playerWinService.canPlay(contest.event_id, playerToken.contractId, playerToken.tokenId);
+        if (!can_play) {
+            return {
+                expeditionCreated: false,
+                reason: 'ineligible token',
+            };
+        }
+
+        const playerName = await this.troveService.getAccountDisplayName(userAddress);
+
+        await this.initExpeditionProcess.handle({
+            userAddress,
+            playerName,
+            playerToken,
+            equippedGear,
+            character_class,
+            contest,
+            stage: 1
+        });
+
+        return { expeditionCreated: true };
+        
     }
 
     @ApiOperation({
