@@ -105,6 +105,12 @@ export class Expedition {
     isCurrentlyPlaying: boolean;
 
     @Prop()
+    currentStage: number;
+
+    @Prop()
+    stageScores: ScoreResponse[];
+
+    @Prop()
     createdAt: Date;
 
     @Prop()
