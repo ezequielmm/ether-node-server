@@ -54,26 +54,23 @@ export class EndCombatProcess {
                 await this.endCombat(ctx, logger);
             }
         }
-       
     }
 
-    private async endCombat(
-        ctx: GameContext,
-        logger: pino.Logger<pino.LoggerOptions & pino.ChildLoggerOptions>,
-    ): Promise<void> {
+    private async endCombat(ctx: GameContext, logger: pino.Logger<pino.LoggerOptions & pino.ChildLoggerOptions>): Promise<void> {
+        
         await this.combatQueueService.end(ctx);
+        const isCombatBoss = ctx.expedition.currentNode.nodeSubType == NodeType.CombatBoss;
 
-        const isCombatBoss =
-            ctx.expedition.currentNode.nodeSubType == NodeType.CombatBoss;
-
-        // If combat boss, update expedition status to victory
-        // and emit show score
+        //- End of Boss Combat:
         if (isCombatBoss) {
             ctx.expedition.currentNode.showRewards = false;
             ctx.expedition.markModified('currentNode.showRewards');
 
             await this.endExpeditionProcess.handle({ ctx, win: ExpeditionEndingTypeEnum.VICTORY, emit: true });
-        } else {
+        } 
+        
+        //- End of normal Combat:
+        else {
             ctx.expedition.currentNode.showRewards = true;
             ctx.expedition.markModified('currentNode.showRewards');
             await ctx.expedition.save();
