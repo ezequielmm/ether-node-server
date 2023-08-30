@@ -56,30 +56,31 @@ export class GearService {
     ): Promise<Gear[]> {
         const gear_list: Gear[] = [];
         const uniqueGearIds: Set<string> = new Set(); // To keep track of unique gearIds
-    
+
+        // for the mini tournament sake, this is a hardcoded earn, todo: remove it when we finish this.
+        const targetGearSet = 'Siege';
+
         // Populate uniqueGearIds with gearIds from userGear
         userGear.forEach(gear => uniqueGearIds.add(gear.gearId.toString()));
-    
-        for (let i = 0; i < size; i++) {
-            let one_gear = await this.getOneGear(this.selectRandomRarity(rarities));
-    
-            // Check for 'onlyOneAllowed' and for duplicates in uniqueGearIds
-            while (
-                one_gear?.onlyOneAllowed &&
-                uniqueGearIds.has(one_gear.gearId.toString())
-            ) {
-                one_gear = await this.getOneGear(this.selectRandomRarity(rarities));
-            }
-    
-            if (one_gear) {
-                // If gear is 'onlyOneAllowed', add its gearId to uniqueGearIds
-                if (one_gear.onlyOneAllowed) {
-                    uniqueGearIds.add(one_gear.gearId.toString());
-                }
-                gear_list.push(one_gear);
-            }
-        }
         
+        try {
+            const newGear = await this.getGearByName(targetGearSet, this.selectRandomRarity(rarities));
+
+            if (newGear) {
+                if (uniqueGearIds.has(newGear.gearId.toString())) {
+                    // Use a more sophisticated logging system here
+                    console.log("The new gear is already in the inventory");
+                } else {
+                    console.log("The gear is not in the inventory, so you can put it in the gear list");
+                    gear_list.push(newGear);
+                }
+            }
+
+        } catch (error) {
+            // Handle your error here
+            console.error("An error occurred while fetching new gear", error);
+        }
+
         return gear_list;
     }
 
@@ -87,7 +88,14 @@ export class GearService {
         const availableGear = await this.gearModel.find({ rarity });
         return sample(availableGear);
     }
-
+    async getGearByName(name: string, rarity: GearRarityEnum): Promise<Gear> {
+        try {
+            return await this.gearModel.findOne({ name, rarity });
+        } catch (error) {
+            console.error(`An error occurred while fetching gear by name: ${name} and rarity: ${rarity}`, error);
+            return null;
+        }
+    }
     getGearById(id: number): Gear | undefined {
         if (this.gearData[id] 
             && this.gearData[id].gearId 
