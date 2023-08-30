@@ -81,6 +81,9 @@ export class EndExpeditionProcess {
                      );
                 let lootbox: Gear[] = ctx.expedition.finalScore.lootbox;
                 const allGear = (await this.playerWinService.getAllLootboxesByTokenId(ctx.expedition.playerState.playerToken.tokenId)).flat();
+            
+                const gearByWallet = (await this.playerWinService.getAllLootByWallet(ctx.expedition.playerState.userAddress)).flat();
+                allGear.push(gearByWallet);
 
                 if (lootbox.length > 0) {
                     const newLootbox = lootbox.filter(lootItem => {
