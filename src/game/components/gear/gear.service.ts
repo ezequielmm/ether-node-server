@@ -69,9 +69,7 @@ export class GearService {
             if (newGear) {
                 if (uniqueGearIds.has(newGear.gearId.toString())) {
                     // Use a more sophisticated logging system here
-                    console.log("The new gear is already in the inventory");
                 } else {
-                    console.log("The gear is not in the inventory, so you can put it in the gear list");
                     gear_list.push(newGear);
                 }
             }

@@ -14,7 +14,7 @@ import { ContestService } from '../contest/contest.service';
 import { PlayerGearService } from 'src/playerGear/playerGear.service';
 import { CharacterClassEnum } from '../components/character/character.enum';
 import { SquiresService } from 'src/squires-api/squires.service';
-
+import { Gear } from 'src/game/components/gear/gear.schema';
 export interface IEndExpeditionProcessParameters {
     ctx: GameContext;
     win?: ExpeditionEndingTypeEnum;
@@ -79,16 +79,30 @@ export class EndExpeditionProcess {
                          ctx.expedition.playerState.lootboxRarity, 
                          userGear
                      );
-                console.log(ctx.expedition.finalScore.lootbox)
+                let lootbox: Gear[] = ctx.expedition.finalScore.lootbox;
+                const allGear = (await this.playerWinService.getAllLootboxesByTokenId(ctx.expedition.playerState.playerToken.tokenId)).flat();
+
+                if (lootbox.length > 0) {
+                    const newLootbox = lootbox.filter(lootItem => {
+                      // Keep only the items that are NOT found in allGear
+                      return !allGear.some(allGearItem => allGearItem.gearId === lootItem.gearId);
+                    });
+                    lootbox = newLootbox;
+                    ctx.expedition.finalScore.lootbox=  newLootbox;
+                    // newLootbox now contains only the items that are not in allGear
+                  }
+
                  await this.playerGearService.addGearToPlayer(
                      ctx.expedition.userAddress,
-                     ctx.expedition.finalScore.lootbox,
+                     lootbox,
                  );
                 //------------------------------------------------------------------------------------------
-
+       
+                
                 await this.playerWinService.create({
                     event_id: ctx.expedition.contest.event_id,
-                    playerToken: ctx.expedition.playerState.playerToken
+                    playerToken: ctx.expedition.playerState.playerToken, lootbox
+                    
                 });
 
                 ctx.expedition.finalScore.notifyNoLoot = false;
@@ -98,7 +112,6 @@ export class EndExpeditionProcess {
         await ctx.expedition.save();
         //message client to end combat and show score
         if (emit)
-            console.log("Emit end expedition now");
             ctx.client.emit(
                 'PutData',
                 StandardResponse.respond({
