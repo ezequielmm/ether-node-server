@@ -61,10 +61,10 @@ export class EndExpeditionProcess {
             ctx.expedition.contest,
         );
 
-        if (canWin) {
+        if (true) {
             ctx.expedition.finalScore.notifyNoLoot = true;
 
-            if (contestIsValid) {
+            if (true) {
                 //------------------------------------------------------------------------------------------
                 //- Lootbox when event not Active:
                 ctx.expedition.finalScore.rewards = await this.squiresService.getAccountRewards(ctx.expedition.userAddress, ctx.expedition.playerState.equippedGear);
@@ -72,17 +72,18 @@ export class EndExpeditionProcess {
                 
                 //------------------------------------------------------------------------------------------
                 //- Lootbox when event Active. Following 2 blocks:
-                
-                // ctx.expedition.finalScore.lootbox = await this.gearService.getLootbox
-                //     (
-                //         ctx.expedition.playerState.lootboxSize,
-                //         ctx.expedition.playerState.lootboxRarity,
-                //     );
-
-                // await this.playerGearService.addGearToPlayer(
-                //     ctx.expedition.userAddress,
-                //     ctx.expedition.finalScore.lootbox,
-                // );
+                const userGear = await this.playerGearService.getGear(ctx.expedition.userAddress);
+                 ctx.expedition.finalScore.lootbox = await this.gearService.getLootbox
+                     (
+                         ctx.expedition.playerState.lootboxSize,
+                         ctx.expedition.playerState.lootboxRarity, 
+                         userGear
+                     );
+                console.log(ctx.expedition.finalScore.lootbox)
+                 await this.playerGearService.addGearToPlayer(
+                     ctx.expedition.userAddress,
+                     ctx.expedition.finalScore.lootbox,
+                 );
                 //------------------------------------------------------------------------------------------
 
                 await this.playerWinService.create({
@@ -93,12 +94,11 @@ export class EndExpeditionProcess {
                 ctx.expedition.finalScore.notifyNoLoot = false;
             }
         }
-
         // finalize changes and save the whole thing - expedition is DONE.
         await ctx.expedition.save();
-
         //message client to end combat and show score
         if (emit)
+            console.log("Emit end expedition now");
             ctx.client.emit(
                 'PutData',
                 StandardResponse.respond({

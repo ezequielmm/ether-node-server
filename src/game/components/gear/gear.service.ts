@@ -52,16 +52,34 @@ export class GearService {
     async getLootbox(
         size: number,
         rarities?: ILootboxRarityOdds,
+        userGear: Gear[] = []  // Default value added for safety
     ): Promise<Gear[]> {
         const gear_list: Gear[] = [];
-
+        const uniqueGearIds: Set<string> = new Set(); // To keep track of unique gearIds
+    
+        // Populate uniqueGearIds with gearIds from userGear
+        userGear.forEach(gear => uniqueGearIds.add(gear.gearId.toString()));
+    
         for (let i = 0; i < size; i++) {
-            const one_gear = await this.getOneGear(
-                this.selectRandomRarity(rarities),
-            );
-            gear_list.push(one_gear);
+            let one_gear = await this.getOneGear(this.selectRandomRarity(rarities));
+    
+            // Check for 'onlyOneAllowed' and for duplicates in uniqueGearIds
+            while (
+                one_gear?.onlyOneAllowed &&
+                uniqueGearIds.has(one_gear.gearId.toString())
+            ) {
+                one_gear = await this.getOneGear(this.selectRandomRarity(rarities));
+            }
+    
+            if (one_gear) {
+                // If gear is 'onlyOneAllowed', add its gearId to uniqueGearIds
+                if (one_gear.onlyOneAllowed) {
+                    uniqueGearIds.add(one_gear.gearId.toString());
+                }
+                gear_list.push(one_gear);
+            }
         }
-
+        
         return gear_list;
     }
 
