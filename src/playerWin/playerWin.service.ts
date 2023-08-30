@@ -4,7 +4,7 @@ import { PlayerWin } from './playerWin.schema';
 import { ReturnModelType } from '@typegoose/typegoose';
 import { CharacterService } from 'src/game/components/character/character.service';
 import { CharacterClassEnum } from 'src/game/components/character/character.enum';
-
+import { Gear } from 'src/game/components/gear/gear.schema'
 @Injectable()
 export class PlayerWinService {
     constructor(
@@ -16,7 +16,17 @@ export class PlayerWinService {
     async create(contest_info: PlayerWin) {
         return await this.playerWin.create(contest_info);
     }
+    async getAllLootboxesByTokenId(tokenId: number): Promise<any[]> {
+        // Query PlayerWin documents where the tokenId matches
+        const winsWithMatchingToken = await this.playerWin.find({
+            'playerToken.tokenId': tokenId
+        }).select('lootbox').exec();
 
+        // Aggregate all lootboxes
+        const allLootboxes = winsWithMatchingToken.map(win => win.lootbox);
+
+        return allLootboxes;
+    }
     async findAllWins(wallet_id: string, event_id:number) {
         const items = await this.playerWin.find({
             'playerToken.walletId': wallet_id,

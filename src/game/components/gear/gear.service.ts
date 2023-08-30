@@ -52,14 +52,31 @@ export class GearService {
     async getLootbox(
         size: number,
         rarities?: ILootboxRarityOdds,
+        userGear: Gear[] = []  // Default value added for safety
     ): Promise<Gear[]> {
         const gear_list: Gear[] = [];
+        const uniqueGearIds: Set<string> = new Set(); // To keep track of unique gearIds
 
-        for (let i = 0; i < size; i++) {
-            const one_gear = await this.getOneGear(
-                this.selectRandomRarity(rarities),
-            );
-            gear_list.push(one_gear);
+        // for the mini tournament sake, this is a hardcoded earn, todo: remove it when we finish this.
+        const targetGearSet = 'Siege';
+
+        // Populate uniqueGearIds with gearIds from userGear
+        userGear.forEach(gear => uniqueGearIds.add(gear.gearId.toString()));
+        
+        try {
+            const newGear = await this.getGearByName(targetGearSet, this.selectRandomRarity(rarities));
+
+            if (newGear) {
+                if (uniqueGearIds.has(newGear.gearId.toString())) {
+                    // Use a more sophisticated logging system here
+                } else {
+                    gear_list.push(newGear);
+                }
+            }
+
+        } catch (error) {
+            // Handle your error here
+            console.error("An error occurred while fetching new gear", error);
         }
 
         return gear_list;
@@ -69,7 +86,14 @@ export class GearService {
         const availableGear = await this.gearModel.find({ rarity });
         return sample(availableGear);
     }
-
+    async getGearByName(name: string, rarity: GearRarityEnum): Promise<Gear> {
+        try {
+            return await this.gearModel.findOne({ name, rarity });
+        } catch (error) {
+            console.error(`An error occurred while fetching gear by name: ${name} and rarity: ${rarity}`, error);
+            return null;
+        }
+    }
     getGearById(id: number): Gear | undefined {
         if (this.gearData[id] 
             && this.gearData[id].gearId 

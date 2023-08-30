@@ -14,7 +14,7 @@ import { ContestService } from '../contest/contest.service';
 import { PlayerGearService } from 'src/playerGear/playerGear.service';
 import { CharacterClassEnum } from '../components/character/character.enum';
 import { SquiresService } from 'src/squires-api/squires.service';
-
+import { Gear } from 'src/game/components/gear/gear.schema';
 export interface IEndExpeditionProcessParameters {
     ctx: GameContext;
     win?: ExpeditionEndingTypeEnum;
@@ -61,10 +61,10 @@ export class EndExpeditionProcess {
             ctx.expedition.contest,
         );
 
-        if (canWin) {
+        if (true) {
             ctx.expedition.finalScore.notifyNoLoot = true;
 
-            if (contestIsValid) {
+            if (true) {
                 //------------------------------------------------------------------------------------------
                 //- Lootbox when event not Active:
                 ctx.expedition.finalScore.rewards = await this.squiresService.getAccountRewards(ctx.expedition.userAddress, ctx.expedition.playerState.equippedGear);
@@ -72,31 +72,44 @@ export class EndExpeditionProcess {
                 
                 //------------------------------------------------------------------------------------------
                 //- Lootbox when event Active. Following 2 blocks:
-                
-                // ctx.expedition.finalScore.lootbox = await this.gearService.getLootbox
-                //     (
-                //         ctx.expedition.playerState.lootboxSize,
-                //         ctx.expedition.playerState.lootboxRarity,
-                //     );
+                const userGear = await this.playerGearService.getGear(ctx.expedition.userAddress);
+                 ctx.expedition.finalScore.lootbox = await this.gearService.getLootbox
+                     (
+                         ctx.expedition.playerState.lootboxSize,
+                         ctx.expedition.playerState.lootboxRarity, 
+                         userGear
+                     );
+                let lootbox: Gear[] = ctx.expedition.finalScore.lootbox;
+                const allGear = (await this.playerWinService.getAllLootboxesByTokenId(ctx.expedition.playerState.playerToken.tokenId)).flat();
 
-                // await this.playerGearService.addGearToPlayer(
-                //     ctx.expedition.userAddress,
-                //     ctx.expedition.finalScore.lootbox,
-                // );
+                if (lootbox.length > 0) {
+                    const newLootbox = lootbox.filter(lootItem => {
+                      // Keep only the items that are NOT found in allGear
+                      return !allGear.some(allGearItem => allGearItem.gearId === lootItem.gearId);
+                    });
+                    lootbox = newLootbox;
+                    ctx.expedition.finalScore.lootbox=  newLootbox;
+                    // newLootbox now contains only the items that are not in allGear
+                  }
+
+                 await this.playerGearService.addGearToPlayer(
+                     ctx.expedition.userAddress,
+                     lootbox,
+                 );
                 //------------------------------------------------------------------------------------------
-
+       
+                
                 await this.playerWinService.create({
                     event_id: ctx.expedition.contest.event_id,
-                    playerToken: ctx.expedition.playerState.playerToken
+                    playerToken: ctx.expedition.playerState.playerToken, lootbox
+                    
                 });
 
                 ctx.expedition.finalScore.notifyNoLoot = false;
             }
         }
-
         // finalize changes and save the whole thing - expedition is DONE.
         await ctx.expedition.save();
-
         //message client to end combat and show score
         if (emit)
             ctx.client.emit(
