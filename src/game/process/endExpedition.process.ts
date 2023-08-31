@@ -43,7 +43,6 @@ export class EndExpeditionProcess {
         ctx: GameContext,
         emit: boolean,
     ): Promise<void> {
-        console.log("[START] Handle Victory");
         // Update the expedition status and time
         this.updateExpeditionStatusAndTime(ctx);
     
@@ -66,7 +65,6 @@ export class EndExpeditionProcess {
         // Save the updated expedition
         await ctx.expedition.save();
     
-        console.log("[END] Handle Victory");
 
         // Notify the client, if necessary
         if (emit) {
@@ -81,7 +79,6 @@ export class EndExpeditionProcess {
         ctx.expedition.completedAt = new Date();
         ctx.expedition.endedAt = new Date();
     
-        console.log('Expedition status and time updated.'); // Added log
     }
     
     // Calculate the final score
@@ -107,18 +104,20 @@ export class EndExpeditionProcess {
             userGear,
         );
         const filteredLootbox = await this.filterNewLootItems(ctx, lootbox);
+        
     
         await this.playerGearService.addGearToPlayer(
             ctx.expedition.userAddress,
             filteredLootbox,
         );
-        console.log("Gear added to player is ", filteredLootbox.map(g => [g.gearId, g.name]));
         await this.playerWinService.create({
             event_id: ctx.expedition.contest.event_id,
             playerToken: ctx.expedition.playerState.playerToken,
             lootbox: filteredLootbox,
         });
-    
+        
+        ctx.expedition.finalScore.lootbox = filteredLootbox;
+        ctx.expedition.finalScore.rewards = await this.squiresService.getAccountRewards(ctx.expedition.userAddress, ctx.expedition.playerState.equippedGear);
     }
     
     // Filter out loot items that the player already has
