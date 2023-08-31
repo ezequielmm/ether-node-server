@@ -81,6 +81,7 @@ export class ExpeditionController {
         equippedGear: GearItem[];
         contest: Contest;
         playerState: any;
+        currentStage:number;
     }> {
         this.logger.log(`Client called GET route "/expeditions/status"`);
 
@@ -95,17 +96,15 @@ export class ExpeditionController {
                 { playerState: 1, isCurrentlyPlaying: 1, currentNode: 1 },
             );
 
-            const hasExpedition =
-                expedition !== null && !expedition.isCurrentlyPlaying;
-            const contractId =
-                expedition?.playerState?.playerToken?.contractId ?? '-1';
+            const hasExpedition = expedition !== null && !expedition.isCurrentlyPlaying;
+            const contractId = expedition?.playerState?.playerToken?.contractId ?? '-1';
             const nftId = expedition?.playerState?.playerToken?.tokenId ?? -1; // tokenId is not enough to avoid conflicts between collections. We have to check contract as well.
             const equippedGear = expedition?.playerState?.equippedGear ?? [];
-            const tokenType =
-                expedition?.playerState?.characterClass ?? 'missing';
+            const tokenType = expedition?.playerState?.characterClass ?? 'missing';
+            const currentStage = expedition?.currentStage ?? 1;
             //todo parse for front end
             const playerState = expedition?.playerState ?? null;
-           
+
             const contest =
                 expedition?.contest ??
                 (await this.contestService.findActiveContest());
@@ -117,7 +116,8 @@ export class ExpeditionController {
                 tokenType,
                 equippedGear,
                 contest,
-                playerState
+                playerState,
+                currentStage
             };
         } catch (e) {
             this.logger.error(e.stack);
