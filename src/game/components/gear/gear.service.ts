@@ -58,46 +58,65 @@ export class GearService {
   async getLootbox(
     size: number,
     rarities?: ILootboxRarityOdds,
-    userGear: Gear[] = [], // Default value added for safety
+    userGear: Gear[] = [],
   ): Promise<Gear[]> {
-    console.log('Starting to generate lootbox...');  // Added log
+    console.log('Starting to generate lootbox...');
     const gear_list: Gear[] = [];
     const uniqueGearIds: Set<string> = new Set();
-
+  
     userGear.forEach((gear) => uniqueGearIds.add(gear.gearId.toString()));
-    
-    console.log(`Initial unique gear IDs: ${Array.from(uniqueGearIds).join(', ')}`);  // Added log
-
-    let targetRarity = this.selectRandomRarity(rarities);
-    console.log(`Initial target rarity: ${targetRarity}`);  // Added log
-    
-    let targetGearSet = 'Siege';
-
-    while (true) {
+  
+    console.log(`Initial unique gear IDs: ${Array.from(uniqueGearIds).join(', ')}`);
+  
+    let itemsAdded = 0;
+    let maxRerolls = 3;
+    let rerolls = 0;
+    while (itemsAdded < size) {
+      let targetRarity = this.selectRandomRarity(rarities);
+      console.log(`Selected target rarity: ${targetRarity}`);
+      
+      let targetGearSet = 'Siege';
+  
       try {
-        const newGear = await this.getGearByName(targetGearSet, targetRarity);
+        const newGear = await this.getRandomGearByRarityAndSet(targetRarity, targetGearSet, uniqueGearIds);
         if (newGear) {
           if (!uniqueGearIds.has(newGear.gearId.toString())) {
-            console.log(`Found new gear with ID: ${newGear.gearId} and rarity: ${targetRarity}`);  // Added log
+            console.log(`Found new gear with ID: ${newGear.gearId} and rarity: ${targetRarity}`);
             gear_list.push(newGear);
-            break;
+            uniqueGearIds.add(newGear.gearId.toString());
+            itemsAdded++;
           } else {
-            console.log(`Duplicate gear found. Downgrading rarity...`);  // Added log
+           
+            console.log(`Duplicate gear found. Re-rolling...`);
+            // If the rarity is Common, reroll instead of downgrade
+            if (targetRarity === GearRarityEnum.Common) {
+              console.log('Rerolling within Common rarity...');
+              continue; // Continue to the next iteration of the loop
+            }
+            // Otherwise, downgrade rarity
             targetRarity = this.downgradeRarity(targetRarity);
             if (targetRarity === null) {
-              console.log('No lower rarity available. Exiting...');  // Added log
+              console.log('No lower rarity available. Exiting...');
               break;
             }
           }
         }
+        if(rerolls > maxRerolls)
+        {
+            console.log("Max rerolls reached, break loop");
+            break;
+        }
+        rerolls++;
+
       } catch (error) {
         console.error('An error occurred while fetching new gear', error);
         break;
       }
     }
-
+  
     return gear_list;
   }
+  
 
   private downgradeRarity(
     currentRarity: GearRarityEnum,
@@ -134,6 +153,24 @@ export class GearService {
         `An error occurred while fetching gear by name: ${name} and rarity: ${rarity}`,
         error,
       );
+      return null;
+    }
+  }
+  async getRandomGearByRarityAndSet(rarity: GearRarityEnum, setName: string, excludeGearIds: Set<string>): Promise<Gear | null> {
+    try {
+      const availableGear = await this.gearModel.find({ 
+        rarity, 
+        name: setName, 
+        'gearId': { $nin: Array.from(excludeGearIds) } 
+      });
+      
+      if (availableGear.length === 0) {
+        return null;
+      }
+  
+      return sample(availableGear); // Assuming you are using lodash's sample method
+    } catch (error) {
+      console.error(`An error occurred while fetching gear by rarity: ${rarity} and set: ${setName}`, error);
       return null;
     }
   }
