@@ -69,8 +69,8 @@ export class GearService {
     console.log(`Initial unique gear IDs: ${Array.from(uniqueGearIds).join(', ')}`);
   
     let itemsAdded = 0;
-    let maxRerolls = 3;
-    let rerolls = 1;
+    let maxRerolls = 1;
+    let rerolls = 0;
     while (itemsAdded < size) {
       let targetRarity = this.selectRandomRarity(rarities);
       console.log(`Selected target rarity: ${targetRarity}`);
@@ -100,6 +100,8 @@ export class GearService {
               break;
             }
           }
+
+          console.log("Target rarity: " + targetRarity);
         }
         if(rerolls > maxRerolls)
         {
