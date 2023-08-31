@@ -73,7 +73,8 @@ export class GearService {
     let rerolls = 0;
     while (itemsAdded < size) {
       let targetRarity = this.selectRandomRarity(rarities);
-      console.log(`Selected target rarity: ${targetRarity}`);
+      console.log(`Selected target rarity: ${targetRarity} from rarity obj `);
+      console.log(rarities);
       
       let targetGearSet = 'Siege';
   
