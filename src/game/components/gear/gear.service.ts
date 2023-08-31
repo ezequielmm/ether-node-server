@@ -70,7 +70,7 @@ export class GearService {
   
     let itemsAdded = 0;
     let maxRerolls = 3;
-    let rerolls = 0;
+    let rerolls = 1;
     while (itemsAdded < size) {
       let targetRarity = this.selectRandomRarity(rarities);
       console.log(`Selected target rarity: ${targetRarity}`);
