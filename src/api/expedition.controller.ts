@@ -231,17 +231,15 @@ export class ExpeditionController {
         summary: 'Query the expedition score',
     })
     @Get('/score')
-    async handleGetScore(
-        @Req() { userAddress }: AuthorizedRequest,
-    ): Promise<ScoreResponse> {
+    async handleGetScore(@Req() { userAddress }: AuthorizedRequest): Promise<ScoreResponse> {
         this.logger.log(`Client called GET route "/expedition/score"`);
 
         const expedition = await this.expeditionService.findOneTimeDesc({
             userAddress,
-            $or: [
-                { status: ExpeditionStatusEnum.Victory },
-                { status: ExpeditionStatusEnum.Defeated },
-            ],
+            // $or: [
+            //     { status: ExpeditionStatusEnum.Victory },
+            //     { status: ExpeditionStatusEnum.Defeated },
+            // ],
         });
 
         if (!expedition) return null;
