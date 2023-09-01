@@ -242,6 +242,12 @@ export class ExpeditionController {
             // ],
         });
 
+        console.log("Al menos está invocando el /score, expedition:")
+        console.log(expedition);
+
+        console.log("------------------------------------------------------------------------------------------------------------------------");
+        
+
         if (!expedition) return null;
 
         return expedition.finalScore;
