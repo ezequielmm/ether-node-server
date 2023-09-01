@@ -236,17 +236,12 @@ export class ExpeditionController {
 
         const expedition = await this.expeditionService.findOneTimeDesc({
             userAddress,
-            // $or: [
-            //     { status: ExpeditionStatusEnum.Victory },
-            //     { status: ExpeditionStatusEnum.Defeated },
-            // ],
+            $or: [
+                { status: ExpeditionStatusEnum.Victory },
+                { status: ExpeditionStatusEnum.Defeated },
+            ],
         });
 
-        console.log("Al menos está invocando el /score, expedition:")
-        console.log(expedition);
-
-        console.log("------------------------------------------------------------------------------------------------------------------------");
-        
 
         if (!expedition) return null;
 
