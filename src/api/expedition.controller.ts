@@ -232,6 +232,9 @@ export class ExpeditionController {
     async handleGetScore(@Req() { userAddress }: AuthorizedRequest): Promise<ScoreResponse> {
         this.logger.log(`Client called GET route "/expedition/score"`);
 
+        console.log("Enters /score wallet: ");
+        console.log(userAddress)
+
         const expedition = await this.expeditionService.findOneTimeDesc({
             userAddress,
             $or: [
@@ -241,6 +244,8 @@ export class ExpeditionController {
             ],
         });
 
+        console.log("Expedition:")
+        console.log(expedition)
 
         if (!expedition) return null;
 
