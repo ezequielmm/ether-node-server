@@ -88,11 +88,6 @@ export class EndExpeditionProcess {
             await this.calculateRewards(ctx, isLastStage);
             await ctx.expedition.save();
 
-            //- devolver esto como data no serviría? para ahorrar otra invocacion....
-            //devolver el expedition o el context entero no se.
-
-            // si lo de arriba no es posible, el siguiente stage tendrá que ser creado cuando unity invoque un nuevo metodo.
-            // pero en caso de que lo de arriba sea posible ya voy creando la siguiente stage:
             await this.initExpeditionService.createNextStage(ctx);
 
             //- Message client to end combat and show score
@@ -115,6 +110,10 @@ export class EndExpeditionProcess {
         ctx.expedition.stageScores[currentStage - 1] = score;
         ctx.expedition.stageScores[currentStage - 1].lootbox = [];
         ctx.expedition.stageScores[currentStage - 1].notifyNoLoot = false;
+
+        ctx.expedition.finalScore = score;
+        ctx.expedition.finalScore.lootbox = [];
+        ctx.expedition.finalScore.notifyNoLoot = false;
 
         //- Clean score so we can use it in next stage if so
         ctx.expedition.scores = new Score();
