@@ -8,6 +8,7 @@ export interface EnemyIntention {
     target: CardTargetedEnum;
     value: any;
     effects?: JsonEffect[];
+    negateDamage?: number;
 }
 
 export interface EnemyNextScript {
@@ -18,10 +19,21 @@ export interface EnemyNextScript {
 export interface EnemyScript {
     id: number;
     intentions: EnemyIntention[];
-    next: EnemyNextScript[];
+    next?: EnemyNextScript[];
 }
 
 export interface ExpeditionEnemy {
     type: CardTargetedEnum.Enemy;
     value: IExpeditionCurrentNodeDataEnemy;
+}
+
+export interface EnemyAction {
+    options: IntentOption[];
+}
+
+export interface IntentOption {
+    id: number;
+    probability: number;
+    intents: EnemyIntention[];
+    cooldown: number;
 }

@@ -3,17 +3,18 @@ import { InjectModel } from 'kindagoose';
 import { Enemy } from './enemy.schema';
 import { EnemyId, enemyIdField, enemySelector } from './enemy.type';
 import { GameContext, ExpeditionEntity } from '../interfaces';
-import { EnemyScript, ExpeditionEnemy } from './enemy.interface';
+import { EnemyAction, EnemyScript, ExpeditionEnemy, IntentOption } from './enemy.interface';
 import { CardTargetedEnum } from '../card/card.enum';
 import { find, reject, sample, isEmpty, each, isEqual } from 'lodash';
 import { ExpeditionService } from '../expedition/expedition.service';
 import {
+    ENEMY_CURRENT_COOLDOWN_PATH,
     ENEMY_CURRENT_SCRIPT_PATH,
     ENEMY_DEFENSE_PATH,
     ENEMY_HP_CURRENT_PATH,
     ENEMY_STATUSES_PATH,
 } from './constants';
-import { getRandomItemByWeight } from 'src/utils';
+import { getDecimalRandomBetween, getRandomItemByWeight } from 'src/utils';
 import {
     AttachedStatus,
     Status,
@@ -31,12 +32,21 @@ import {
 import { ReturnModelType } from '@typegoose/typegoose';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { ProjectionFields } from 'mongoose';
+import { IntentCooldown } from '../expedition/expedition.interface';
 
 @Injectable()
 export class EnemyService {
    
 
     private readonly logger: Logger = new Logger(EnemyService.name);
+
+    //------------------------------------------------------------------------------------------------------------------------------------
+    //- I created this condition for security, 
+    // it should not be necessary but there is a possibility 
+    // that all attacks have a cooldown greater than 0, 
+    // and that would imply that the while is executed endlessly
+    private readonly MAX_INTENTS_ITERATIONS = 50;
+    //------------------------------------------------------------------------------------------------------------------------------------
 
     constructor(
         @InjectModel(Enemy)
@@ -409,43 +419,64 @@ export class EnemyService {
         );
 
         for (const enemy of enemiesAlive) {
-            const { scripts } = await this.findById(enemy.value.enemyId);
+            
+            const enemy_DB = await this.findById(enemy.value.enemyId);
+            const { scripts, attackLevels } = enemy_DB;
             const currentScript = enemy.value.currentScript;
+            let decreasedCooldowns = undefined;
             let nextScript: EnemyScript;
 
-            if (currentScript) {
-                nextScript = this.getNextScript(scripts, currentScript);
-            } else {
-                nextScript = scripts[0];
-
-                // If the first script does not have intentions,
-                // then it is used only to calculate the next possible script
-                if (isEmpty(nextScript.intentions)) {
-                    nextScript = this.getNextScript(scripts, nextScript);
+            if(scripts){
+                if (currentScript) {
+                    nextScript = this.getNextScript(scripts, currentScript);
+                } else {
+                    nextScript = scripts[0];
+    
+                    // If the first script does not have intentions,
+                    // then it is used only to calculate the next possible script
+                    if (isEmpty(nextScript.intentions)) {
+                        nextScript = this.getNextScript(scripts, nextScript);
+                    }
                 }
+                
+                // Increase damage for node from 14 to 20
+                const node = ctx.expedition.map.find((node) => node.id == ctx.expedition.currentNode.nodeId);
+
+                if (HARD_MODE_NODE_START <= node.step && node.step <= HARD_MODE_NODE_END) {
+                    this.increaseScriptDamage(nextScript);
+                }
+
+                await this.expeditionService.updateByFilter(
+                    {
+                        clientId: ctx.client.id,
+                        ...enemySelector(enemy.value.id),
+                    },
+                    {
+                        [ENEMY_CURRENT_SCRIPT_PATH]: nextScript,
+                    },
+                );
             }
+            else if(attackLevels){
+                const enemyAggressiveness = enemy.value.aggressiveness ? enemy.value.aggressiveness : enemy_DB.aggressiveness;
+                nextScript = this.getNextScriptWithAggressiveness(attackLevels, enemyAggressiveness, enemy.value.intentCooldowns);
+                const nextAttackCooldown = this.getFullCoolDownIntent(nextScript.id, enemy_DB);
 
-            // Increase damage for node from 14 to 20
-            const node = ctx.expedition.map.find(
-                (node) => node.id == ctx.expedition.currentNode.nodeId,
-            );
+                decreasedCooldowns = this.decreaseCooldowns(enemy.value.intentCooldowns);
+                decreasedCooldowns = this.setCooldownCurrentAttack(enemy.value.intentCooldowns, nextScript.id, nextAttackCooldown);
 
-            if (
-                HARD_MODE_NODE_START <= node.step &&
-                node.step <= HARD_MODE_NODE_END
-            ) {
-                this.increaseScriptDamage(nextScript);
+                enemy.value.intentCooldowns = decreasedCooldowns;
+
+                await this.expeditionService.updateByFilter(
+                    {
+                        clientId: ctx.client.id,
+                        ...enemySelector(enemy.value.id),
+                    },
+                    {
+                        [ENEMY_CURRENT_SCRIPT_PATH]: nextScript,
+                        [ENEMY_CURRENT_COOLDOWN_PATH]: decreasedCooldowns
+                    },
+                );
             }
-
-            await this.expeditionService.updateByFilter(
-                {
-                    clientId: ctx.client.id,
-                    ...enemySelector(enemy.value.id),
-                },
-                {
-                    [ENEMY_CURRENT_SCRIPT_PATH]: nextScript,
-                },
-            );
 
             enemy.value.currentScript = nextScript;
 
@@ -457,13 +488,99 @@ export class EnemyService {
                 ctx.info,
                 `New script: ${JSON.stringify(nextScript)}`,
             );
+            
         }
     }
 
-    private getNextScript(
-        scripts: EnemyScript[],
-        currentScript: EnemyScript,
-    ): EnemyScript {
+    //- Set the cooldown for the current attack. 
+    private setCooldownCurrentAttack(cooldowns: IntentCooldown[], intentId:number, cooldown:number): IntentCooldown[]{
+        cooldowns.forEach((intentCooldown) => {
+            if(intentCooldown.idIntent === intentId){
+                intentCooldown.cooldown = cooldown;
+            }
+        });
+
+        return cooldowns;
+    }
+
+    //- After a turn all the cooldowns should de decreased.
+    private decreaseCooldowns(cooldowns: IntentCooldown[]): IntentCooldown[] {
+        cooldowns.forEach((intentCooldown) => {
+            if(intentCooldown.cooldown > 0){
+                intentCooldown.cooldown -= 1;
+            }
+        });
+
+        return cooldowns;
+    }
+
+    //- Returns intent cooldown from the original Enemy.
+    private getFullCoolDownIntent(intentId:number, enemy:Enemy): number {
+        enemy.attackLevels.forEach(level => {
+            level.options.forEach(option => {
+                if(option.id === intentId){
+                    return option.cooldown;
+                }
+            });
+        });
+
+        return 0;
+    }
+
+    
+    //- Returns next attack available (not cooldown) based on aggressiveness
+    private getNextScriptWithAggressiveness(attackLevels: EnemyAction[], aggressiveness: number, cooldowns: IntentCooldown[]): EnemyScript{
+
+        //- Get an attack from the selected list that does not have active cooldown
+        let validAttack = false;
+        let possibleAttack:EnemyScript;
+        let count = 1;
+        let selectsFrom = 0;
+
+        while(!validAttack && count <= this.MAX_INTENTS_ITERATIONS){
+
+            //- Aggressiveness determines the chances of taking an attack from the list of strong attacks:
+            const randomValue = getDecimalRandomBetween(0, 1);
+            selectsFrom = 0;
+
+            if(randomValue < aggressiveness){
+                selectsFrom = 1;
+            }
+            
+            //- Get one possible attack from selected list:
+            possibleAttack = this.getAttackFromList(attackLevels[selectsFrom].options);
+
+            //- Check if the Attack has cooldown greater than 0
+            const attackCooldown = cooldowns.find(intent => intent.idIntent === possibleAttack.id);
+            if(!attackCooldown || attackCooldown.cooldown == 0){
+                validAttack = true;
+            }else{
+                count ++;
+            }
+        }
+
+        return possibleAttack;
+    }
+
+    private getAttackFromList(options: IntentOption[]): EnemyScript{
+        
+        //- A random is created to determine which attack from the selected list is selected:
+        const randomValue = getDecimalRandomBetween(0, 1);
+        let cumulativeProbability = 0;
+
+        for(const option of options){
+            cumulativeProbability += option.probability;
+
+            if (randomValue <= cumulativeProbability) {
+                return {
+                    id: option.id,
+                    intentions: option.intents
+                };
+            }
+        }
+    }
+
+    private getNextScript(scripts: EnemyScript[], currentScript: EnemyScript): EnemyScript {
         return find(scripts, {
             id: getRandomItemByWeight(
                 currentScript.next,

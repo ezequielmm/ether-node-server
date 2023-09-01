@@ -32,4 +32,5 @@ export enum EnemyIntentionType {
     Buff = 'buff',
     Debuff = 'debuff',
     Special = 'special',
+    Signature = 'signature',
 }

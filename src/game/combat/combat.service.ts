@@ -13,6 +13,7 @@ import { NodeType } from '../components/expedition/node-type';
 import {
     IExpeditionCurrentNode,
     IExpeditionCurrentNodeDataEnemy,
+    IntentCooldown,
 } from '../components/expedition/expedition.interface';
 import { Node } from '../components/expedition/node';
 import { ExpeditionService } from '../components/expedition/expedition.service';
@@ -80,11 +81,9 @@ export class CombatService {
 
     async generateBaseState(nodeOption: IActNodeOption, act: number) {
         const enemies = [];
+
         for await (const enemyId of nodeOption.nodeConfig.enemies) {
-            const enemy = await this.getNewEnemyById(
-                enemyId,
-                nodeOption.nodeConfig.healthMultiplier ?? 1,
-            );
+            const enemy = await this.getNewEnemyById(enemyId, nodeOption.nodeConfig.healthMultiplier ?? 1);
             enemies.push(enemy);
         }
 
@@ -233,16 +232,18 @@ export class CombatService {
         }
     }
 
-    async getNewEnemyById(enemyId: EnemyId, healthMultiplier = 1) {
+    async getNewEnemyById(enemyId: EnemyId, healthMultiplier = 1): Promise<IExpeditionCurrentNodeDataEnemy> {
         const enemy = await this.enemyService.findById(enemyId);
+        const newHealth = Math.floor(getRandomBetween(enemy.healthRange[0], enemy.healthRange[1]) * healthMultiplier);
 
-        const newHealth =
-            Math.floor(
-                getRandomBetween(enemy.healthRange[0], enemy.healthRange[1]) *
-                healthMultiplier
-            );
+        let cooldowns: IntentCooldown[] = [];
+        enemy.attackLevels?.forEach(level => {
+            level.options.forEach(option => {
+                cooldowns.push({idIntent: option.id, cooldown: option.cooldown});
+            })
+        });
 
-        return {
+        let newEnemy:IExpeditionCurrentNodeDataEnemy = {
             id: randomUUID(),
             defense: 0,
             name: enemy.name,
@@ -257,6 +258,13 @@ export class CombatService {
                 [StatusType.Debuff]: [],
             },
         };
+
+        if(enemy.aggressiveness){
+            newEnemy.aggressiveness = enemy.aggressiveness;
+            newEnemy.intentCooldowns = cooldowns;
+        }
+
+        return newEnemy;
     }
 
     async getEnemiesByProbability(
