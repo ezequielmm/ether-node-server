@@ -42,54 +42,28 @@ export class BeginEnemyTurnProcess {
     async handle({ ctx }: { ctx: GameContext }): Promise<void> {
         // First we set the loggers context
         const logger = this.logger.logger.child(ctx.info);
-
         logger.info(`Beginning enemies turn`);
 
         const { client, expedition } = ctx;
 
-        await this.expeditionService.updateByFilter(
-            { clientId: client.id },
-            {
-                'currentNode.data.playing': CombatTurnEnum.Enemy,
-            },
-        );
+        await this.expeditionService.updateByFilter({ clientId: client.id }, { 'currentNode.data.playing': CombatTurnEnum.Enemy });
 
         // Set combat turn change
-        this.changeTurnAction.handle({
-            client,
-            type: SWARMessageType.BeginTurn,
-            entity: CombatTurnEnum.Enemy,
-        });
+        this.changeTurnAction.handle({ client, type: SWARMessageType.BeginTurn, entity: CombatTurnEnum.Enemy });
 
-        const {
-            currentNode: {
-                data: { enemies: allEnemies },
-            },
-        } = expedition;
-
-        const enemies = filter(allEnemies, ({ hpCurrent }) => hpCurrent > 0);
+        const allEnemies = expedition.currentNode?.data?.enemies;
+        const enemiesAlive = filter(allEnemies, ({ hpCurrent }) => hpCurrent > 0);
 
         await this.combatQueueService.start(ctx);
+        await this.eventEmitter.emitAsync(EVENT_BEFORE_ENEMIES_TURN_START, { ctx });
 
-        await this.eventEmitter.emitAsync(EVENT_BEFORE_ENEMIES_TURN_START, {
-            ctx,
-        });
+        // Then we loop over them and get their intentions and effects:
+        for (const enemy of enemiesAlive) {
+            
+            const intentions = enemy.currentScript?.intentions;
+            const source: ExpeditionEnemy = { type: CardTargetedEnum.Enemy, value: enemy };
 
-        // Then we loop over them and get their intentions and effects
-        for (const enemy of enemies) {
-            const {
-                currentScript: { intentions },
-            } = enemy;
-
-            const source: ExpeditionEnemy = {
-                type: CardTargetedEnum.Enemy,
-                value: enemy,
-            };
-
-            await this.eventEmitter.emitAsync(EVENT_BEFORE_ENEMY_INTENTIONS, {
-                ctx,
-                enemy,
-            });
+            await this.eventEmitter.emitAsync(EVENT_BEFORE_ENEMY_INTENTIONS, { ctx, enemy });
 
             for (const intention of intentions) {
                 const { effects } = intention;
@@ -103,9 +77,7 @@ export class BeginEnemyTurnProcess {
                     });
 
                     if (this.combatService.isCurrentCombatEnded(ctx)) {
-                        logger.info(
-                            'Combat ended, skipping rest of enemies, intentions and effects',
-                        );
+                        logger.info('Combat ended, skipping rest of enemies, intentions and effects');
                         return;
                     }
                 }
@@ -113,11 +85,7 @@ export class BeginEnemyTurnProcess {
         }
 
         await this.sendUpdatedEnemiesData(ctx, logger);
-
-        await this.eventEmitter.emitAsync(EVENT_AFTER_ENEMIES_TURN_START, {
-            ctx,
-        });
-
+        await this.eventEmitter.emitAsync(EVENT_AFTER_ENEMIES_TURN_START, { ctx });
         await this.combatQueueService.end(ctx);
     }
 

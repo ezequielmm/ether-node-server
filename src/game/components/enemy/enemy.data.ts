@@ -21,6 +21,7 @@ import { deepDwellerData } from './data/deepDweller.enemy';
 import { rockElementalData } from './data/rockElemental.enemy';
 import { thornWolfPupData } from './data/thornWolfPup.enemy';
 import { deepSorcererData } from './data/deepSorcerer.enemy';
+import { caveGoblinData } from './data/caveGoblin.enemy';
 
 export const data: Enemy[] = [
     sporeMongerData,
@@ -45,4 +46,7 @@ export const data: Enemy[] = [
     rockElementalData,
     thornWolfPupData,
     deepSorcererData,
+
+    //- Stage 2:
+    caveGoblinData
 ];

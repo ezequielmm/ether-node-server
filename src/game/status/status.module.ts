@@ -54,6 +54,7 @@ import { ProcessModule } from '../process/process.module';
 import { PeacockFeatherStatus } from './peacockFeather/peacockFeather.status';
 import { BlightedStatus } from './blighted/blighted.status';
 import { CombatModule } from '../combat/combat.module';
+import { HiddenStatus } from './hidden/hidden.status';
 
 @Module({
     imports: [
@@ -116,6 +117,7 @@ import { CombatModule } from '../combat/combat.module';
         SummonedStatus,
         PeacockFeatherStatus,
         BlightedStatus,
+        HiddenStatus
     ],
     exports: [StatusService],
 })
