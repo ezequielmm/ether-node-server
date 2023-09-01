@@ -71,9 +71,7 @@ export class ExpeditionController {
         summary: 'Check if the given user has an expedition in progress or not',
     })
     @Get('/status')
-    async handleGetExpeditionStatus(
-        @Req() { userAddress }: AuthorizedRequest,
-    ): Promise<{
+    async handleGetExpeditionStatus(@Req() { userAddress }: AuthorizedRequest): Promise<{
         hasExpedition: boolean;
         contractId: string;
         nftId: number;
@@ -239,6 +237,7 @@ export class ExpeditionController {
             $or: [
                 { status: ExpeditionStatusEnum.Victory },
                 { status: ExpeditionStatusEnum.Defeated },
+                { status: ExpeditionStatusEnum.InProgress },
             ],
         });
 
