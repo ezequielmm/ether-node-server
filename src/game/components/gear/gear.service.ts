@@ -59,10 +59,7 @@ export class GearService {
     let reroll = 0;
     let maxReroll = 1;
 
-    let testReRoll = 30;
-    for(let i = 0; i < testReRoll; i++)
-    {
-      console.log("Index: ", i);
+  
       let itemsAdded = 0;
       while (itemsAdded < size) {
         let targetRarity = this.selectRandomRarity(rarities);
@@ -83,30 +80,30 @@ export class GearService {
               gear_list.push(newGear);
               uniqueGearIds.add(newGear.gearId.toString());
               itemsAdded++;
-              console.log("Add: ", newGear.gearId);
+              console.log("Add: ", newGear.gearId, newGear.rarity, newGear.trait);
             } else {
              
-              console.log(`Duplicate gear found. Re-rolling...`);
+              //console.log(`Duplicate gear found. Re-rolling...`);
               // If the rarity is Common, reroll instead of downgrade
               if (targetRarity === GearRarityEnum.Common) {
-                console.log('Rerolling within Common rarity...');
+                //console.log('Rerolling within Common rarity...');
                 continue; // Continue to the next iteration of the loop
               }
               // Otherwise, downgrade rarity
               targetRarity = this.downgradeRarity(targetRarity);
               if (targetRarity === null) {
-                console.log('No lower rarity available. Exiting...');
+                //console.log('No lower rarity available. Exiting...');
                 break;
               }
             }
-            console.log("Target rarity: " + targetRarity);
+            //console.log("Target rarity: " + targetRarity);
           }
           else {
             console.log("No Gear, downgrade -->  " + targetRarity);
             if(targetRarity == GearRarityEnum.Common)
             {
               console.log("[No Common Available]");
-              break;
+              return gear_list;
             }
             targetRarity = this.downgradeRarity(targetRarity);
           
@@ -124,7 +121,7 @@ export class GearService {
           break;
         }
       }
-    }
+    
   
     return gear_list;
   }
