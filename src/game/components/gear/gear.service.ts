@@ -66,16 +66,16 @@ export class GearService {
     rarities?: ILootboxRarityOdds,
     userGear: Gear[] = [],
   ): Promise<Gear[]> {
-    console.log('Starting to generate lootbox...');
+    //console.log('Starting to generate lootbox...');
     const gear_list: Gear[] = [];
     const uniqueGearIds: Set<string> = new Set();
 
     userGear.forEach((gear) => uniqueGearIds.add(gear.gearId.toString()));
 
-    console.log(
+   /* console.log(
       `Initial unique gear IDs: ${Array.from(uniqueGearIds).join(', ')}`,
     );
-
+*/
     let targetGearSet = 'Siege';
     let allGear: Gear[] = await this.getAllGear();
     allGear = allGear.filter((gear) => gear.name === targetGearSet);
@@ -87,13 +87,13 @@ export class GearService {
       const newGear = this.getRandomGearByRarity(allGear, targetRarity);
 
       if (uniqueGearIds.has(newGear.gearId.toString())) {
-        console.log(
+       /* console.log(
           `Repeated: ${newGear.gearId.toString()} - ${newGear.rarity}`,
-        );
+        );*/
         targetRarity = this.downgradeRarity(targetRarity);
 
         if (targetRarity === null) {
-          console.log('Target rarity null, break');
+          //console.log('Target rarity null, break');
           break;
         }
       } else {
@@ -110,23 +110,23 @@ export class GearService {
   private downgradeRarity(
     currentRarity: GearRarityEnum,
   ): GearRarityEnum | null {
-    console.log(`Current rarity: ${currentRarity}. Attempting to downgrade...`); // Added log
+    //console.log(`Current rarity: ${currentRarity}. Attempting to downgrade...`); // Added log
 
     switch (currentRarity) {
       case GearRarityEnum.Legendary:
-        console.log(`Downgraded from Legendary to Epic`); // Added log
+        //console.log(`Downgraded from Legendary to Epic`); // Added log
         return GearRarityEnum.Epic;
       case GearRarityEnum.Epic:
-        console.log(`Downgraded from Epic to Rare`); // Added log
+        //console.log(`Downgraded from Epic to Rare`); // Added log
         return GearRarityEnum.Rare;
       case GearRarityEnum.Rare:
-        console.log(`Downgraded from Rare to Uncommon`); // Added log
+        //console.log(`Downgraded from Rare to Uncommon`); // Added log
         return GearRarityEnum.Uncommon;
       case GearRarityEnum.Uncommon:
-        console.log(`Downgraded from Uncommon to Common`); // Added log
+        //console.log(`Downgraded from Uncommon to Common`); // Added log
         return GearRarityEnum.Common;
       default:
-        console.log('No lower rarity available'); // Added log
+        //console.log('No lower rarity available'); // Added log
         return null;
     }
   }
