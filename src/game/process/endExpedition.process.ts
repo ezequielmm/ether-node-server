@@ -55,7 +55,7 @@ export class EndExpeditionProcess {
     
     
         // Force true in canWin and contestIsValid for contest sake.
-        canWin = true;
+         //canWin = true;
         contestIsValid = true;
         
         if(ctx.expedition.playerState.characterClass === "non-token-villager")
