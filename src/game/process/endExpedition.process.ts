@@ -55,12 +55,16 @@ export class EndExpeditionProcess {
     
     
         // Force true in canWin and contestIsValid for contest sake.
-        canWin = true;
+         //canWin = true;
         contestIsValid = true;
-    
+        
+        if(ctx.expedition.playerState.characterClass === "non-token-villager")
+        {
+            canWin = false;
+        }
     
         // Handle loot and rewards
-        await this.handleActiveEventLoot(ctx);
+        await this.handleActiveEventLoot(ctx, canWin);
     
         // Save the updated expedition
         await ctx.expedition.save();
@@ -95,7 +99,7 @@ export class EndExpeditionProcess {
     }
     
     // Handle loot when the event is active
-    private async handleActiveEventLoot(ctx: GameContext) {
+    private async handleActiveEventLoot(ctx: GameContext, canWin:boolean) {
     
         const userGear = await this.playerGearService.getGear(ctx.expedition.userAddress);
         const lootbox = await this.gearService.getLootbox(
@@ -116,8 +120,18 @@ export class EndExpeditionProcess {
             lootbox: filteredLootbox,
         });
         
-        ctx.expedition.finalScore.lootbox = filteredLootbox;
-        ctx.expedition.finalScore.rewards = await this.squiresService.getAccountRewards(ctx.expedition.userAddress, ctx.expedition.playerState.equippedGear);
+        if(canWin)
+        {
+
+            ctx.expedition.finalScore.lootbox = filteredLootbox;
+            ctx.expedition.finalScore.rewards = await this.squiresService.getAccountRewards(ctx.expedition.userAddress, ctx.expedition.playerState.equippedGear);
+
+        }
+        else {
+            ctx.expedition.finalScore.lootbox = [];
+            ctx.expedition.finalScore.rewards = [];
+
+        }
     }
     
     // Filter out loot items that the player already has
