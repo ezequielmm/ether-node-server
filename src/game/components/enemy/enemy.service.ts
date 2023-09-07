@@ -426,7 +426,7 @@ export class EnemyService {
             let decreasedCooldowns = undefined;
             let nextScript: EnemyScript;
 
-            if(scripts){
+            if(scripts && scripts.length > 0){
                 if (currentScript) {
                     nextScript = this.getNextScript(scripts, currentScript);
                 } else {
