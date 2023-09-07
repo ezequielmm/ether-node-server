@@ -94,6 +94,10 @@ export class ExpeditionController {
                 { playerState: 1, isCurrentlyPlaying: 1, currentNode: 1 },
             );
 
+            console.log("------------------------------------------------------")
+            console.log(expedition.currentStage);
+            console.log("------------------------------------------------------")
+
             const hasExpedition = expedition !== null && !expedition.isCurrentlyPlaying;
             const contractId = expedition?.playerState?.playerToken?.contractId ?? '-1';
             const nftId = expedition?.playerState?.playerToken?.tokenId ?? -1; // tokenId is not enough to avoid conflicts between collections. We have to check contract as well.

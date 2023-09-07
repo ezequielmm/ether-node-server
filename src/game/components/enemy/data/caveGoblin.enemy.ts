@@ -104,7 +104,7 @@ const DebuffFeeble: EnemyIntention =
     effects: [
         {
             effect: attachStatusEffect.name,
-            target: CardTargetedEnum.Self,
+            target: CardTargetedEnum.Player,
             args: {
                 statusName: feebleStatus.name,
                 statusArgs: {
