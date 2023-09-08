@@ -468,7 +468,7 @@ export class EnemyService {
                 console.log("Cooldown antes de setear el actual:")
                 console.log(decreasedCooldowns)
                 
-                decreasedCooldowns = this.setCooldownCurrentAttack(enemy.value.intentCooldowns, nextScript.id, nextAttackCooldown);
+                decreasedCooldowns = this.setCooldownCurrentAttack(decreasedCooldowns, nextScript.id, nextAttackCooldown);
 
                 // console.log("--------------------------------------------------")
                 // console.log("decreasedCooldowns:")
