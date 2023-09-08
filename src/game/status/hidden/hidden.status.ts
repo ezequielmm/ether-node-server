@@ -1,5 +1,4 @@
 import { Injectable } from "@nestjs/common";
-import { DamageArgs } from "src/game/effects/damage/damage.effect";
 import { EffectDTO } from "src/game/effects/effects.interface";
 import {
     EVENT_BEFORE_ENEMIES_TURN_START,
@@ -24,11 +23,11 @@ export class HiddenStatus implements StatusEffectHandler {
                 private readonly enemyService:EnemyService,
                 private readonly playerService:PlayerService){}
     
-    async preview(args: StatusEffectDTO<DamageArgs>): Promise<EffectDTO<DamageArgs>> {
+    async preview(args: StatusEffectDTO): Promise<EffectDTO> {
         return this.handle(args);
     }
 
-    async handle(dto: StatusEffectDTO<DamageArgs>): Promise<EffectDTO<DamageArgs>> {
+    async handle(dto: StatusEffectDTO): Promise<EffectDTO> {
         
         const { effectDTO } = dto;
 
