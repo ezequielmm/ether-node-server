@@ -423,7 +423,6 @@ export class EnemyService {
             const enemy_DB = await this.findById(enemy.value.enemyId);
             const { scripts, attackLevels } = enemy_DB;
             const currentScript = enemy.value.currentScript;
-            let decreasedCooldowns = undefined;
             let nextScript: EnemyScript;
 
             if(scripts && scripts.length > 0){
@@ -457,12 +456,20 @@ export class EnemyService {
                 );
             }
             else if(attackLevels){
+                console.log("--------------------------------------------------")
+                console.log("enemy.value.intentCooldowns:")
+                console.log(enemy.value.intentCooldowns)
+
                 const enemyAggressiveness = enemy.value.aggressiveness ? enemy.value.aggressiveness : enemy_DB.aggressiveness;
                 nextScript = this.getNextScriptWithAggressiveness(attackLevels, enemyAggressiveness, enemy.value.intentCooldowns);
                 const nextAttackCooldown = this.getFullCoolDownIntent(nextScript.id, enemy_DB);
 
-                decreasedCooldowns = this.decreaseCooldowns(enemy.value.intentCooldowns);
+                let decreasedCooldowns = this.decreaseCooldowns(enemy.value.intentCooldowns);
                 decreasedCooldowns = this.setCooldownCurrentAttack(enemy.value.intentCooldowns, nextScript.id, nextAttackCooldown);
+
+                console.log("--------------------------------------------------")
+                console.log("decreasedCooldowns:")
+                console.log(decreasedCooldowns)
 
                 enemy.value.intentCooldowns = decreasedCooldowns;
 
