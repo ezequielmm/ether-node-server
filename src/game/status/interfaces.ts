@@ -12,6 +12,7 @@ export enum StatusType {
 export enum StatusDirection {
     Incoming = 'incoming',
     Outgoing = 'outgoing',
+    Both     = 'both',
 }
 
 export enum StatusCounterType {

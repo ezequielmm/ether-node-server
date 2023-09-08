@@ -484,11 +484,14 @@ export class StatusService {
         
         this.handlers = this.handlers || this.providerService.findByMetadataKey(STATUS_METADATA_KEY);
 
+        // We want statuses that affect both directions to always be returned
+        const statusWithBoth = { ...status, status: 'both' };
+
         const container = find(
             this.handlers,
             matches({
                 metadata: {
-                    status,
+                    statusWithBoth,
                 },
             }),
         );

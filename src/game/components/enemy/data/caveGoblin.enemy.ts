@@ -36,7 +36,7 @@ const SecondAttack: EnemyIntention =
 {
     type: EnemyIntentionType.Attack,
     target: CardTargetedEnum.Player,
-    value: 12,
+    value: 4,
     effects: [
         {
             effect: damageEffect.name,

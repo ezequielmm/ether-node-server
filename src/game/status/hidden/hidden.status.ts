@@ -12,6 +12,7 @@ import { GameContext } from "src/game/components/interfaces";
 import { StatusService } from "../status.service";
 import { EnemyService } from "src/game/components/enemy/enemy.service";
 import { PlayerService } from "src/game/components/player/player.service";
+import { CardTargetedEnum } from "src/game/components/card/card.enum";
 
 @StatusDecorator({
     status: hiddenStatus,
@@ -36,6 +37,13 @@ export class HiddenStatus implements StatusEffectHandler {
         // const player = this.playerService.get(ctx);
         // const originalDefense = player.value.combatState.defense
         const originalAttack  = effectDTO.args.currentValue;
+
+
+        if(effectDTO.source.type == CardTargetedEnum.Player){
+            console.log("sería outgoing")
+        }else{
+            console.log("sería incoming")
+        }
         
         // if(originalDefense && originalDefense > 0 && originalAttack && originalAttack > 0){
 
@@ -62,13 +70,13 @@ export class HiddenStatus implements StatusEffectHandler {
 
         //- For Incoming
         //- Incoming effect of Hiddent status is getting 25/ less damage:
-        if(originalAttack && originalAttack > 0){
-            console.log("originalAttack:")
-            console.log(originalAttack)
-            console.log("modifiedAttack:")
-            effectDTO.args.currentValue = originalAttack / 1.25;
-            console.log(effectDTO.args.currentValue)
-        }
+        // if(originalAttack && originalAttack > 0){
+        //     console.log("originalAttack:")
+        //     console.log(originalAttack)
+        //     console.log("modifiedAttack:")
+        //     effectDTO.args.currentValue = Math.floor(originalAttack / 1.25);
+        //     console.log(effectDTO.args.currentValue)
+        // }
 
         return effectDTO;
     }
