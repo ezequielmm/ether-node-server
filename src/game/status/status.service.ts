@@ -316,7 +316,15 @@ export class StatusService {
 
             if (!container) return false;
 
-            return container.metadata.status.direction === direction;
+            if(container.metadata.status.direction === direction)
+                return true;
+            else if(container.metadata.status.direction === StatusDirection.Both){
+                return true;
+            }
+            else{
+                return false;
+            }
+            //return container.metadata.status.direction === direction;
         };
 
         return {
@@ -484,14 +492,11 @@ export class StatusService {
         
         this.handlers = this.handlers || this.providerService.findByMetadataKey(STATUS_METADATA_KEY);
 
-        // We want statuses that affect both directions to always be returned
-        const statusWithBoth = { ...status, status: 'both' };
-
         const container = find(
             this.handlers,
             matches({
                 metadata: {
-                    statusWithBoth,
+                    status,
                 },
             }),
         );
