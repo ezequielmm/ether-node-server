@@ -30,54 +30,39 @@ export class HiddenStatus implements StatusEffectHandler {
 
     async handle(dto: StatusEffectDTO): Promise<EffectDTO> {
         
-        //- For Outgoing:
-        //- Outgoing effect of Hidden status is make 25% more damage to player defense.
-        
         const { ctx, effectDTO } = dto;
-        // const player = this.playerService.get(ctx);
-        // const originalDefense = player.value.combatState.defense
         const originalAttack  = effectDTO.args.currentValue;
 
-
         if(effectDTO.source.type == CardTargetedEnum.Player){
-            console.log("sería incoming")
+            //- For Incoming
+            //- Incoming effect of Hiddent status is getting 25/ less damage:
+            if(originalAttack && originalAttack > 0){
+                console.log("originalAttack:")
+                console.log(originalAttack)
+                console.log("modifiedAttack:")
+                effectDTO.args.currentValue = Math.floor(originalAttack / 1.25);
+                console.log(effectDTO.args.currentValue)
+            }
         }else{
-            console.log("sería outgoing")
+            //- For Outgoing:
+            //- Outgoing effect of Hidden status is make 25% more damage to player defense.
+            const player = this.playerService.get(ctx);
+            const originalDefense = player.value.combatState.defense
+
+            if(originalDefense && originalDefense > 0 && originalAttack && originalAttack > 0){
+                if(originalAttack >= originalDefense){
+                    const newAttack = Math.floor(originalDefense * 1.25) + (originalAttack - originalDefense);
+                    effectDTO.args.currentValue = newAttack;
+                }else{
+                    let newAttack = Math.floor(originalAttack * 1.25);
+                    if(newAttack > originalDefense){
+                        newAttack = Math.floor((newAttack - originalDefense) / 1.25) + (newAttack - originalDefense);    
+                    }
+                    effectDTO.args.currentValue = newAttack;
+                }
+            }
         }
         
-        // if(originalDefense && originalDefense > 0 && originalAttack && originalAttack > 0){
-
-        //     console.log("-----------------------------------------------------------------------------");
-        //     console.log("originalAttack:")
-        //     console.log(effectDTO.args.currentValue)
-        //     console.log("defense:")
-        //     console.log(originalDefense)
-
-        //     if(originalAttack >= originalDefense){
-        //         const newAttack = Math.floor(originalDefense * 1.25) + (originalAttack - originalDefense);
-        //         effectDTO.args.currentValue = newAttack;
-        //     }else{
-        //         let newAttack = Math.floor(originalAttack * 1.25);
-        //         if(newAttack > originalDefense){
-        //             newAttack = Math.floor((newAttack - originalDefense) / 1.25) + (newAttack - originalDefense);    
-        //         }
-        //         effectDTO.args.currentValue = newAttack;
-        //     }
-            
-        //     console.log("Final attack:")
-        //     console.log(effectDTO.args.currentValue)
-        // }
-
-        //- For Incoming
-        //- Incoming effect of Hiddent status is getting 25/ less damage:
-        // if(originalAttack && originalAttack > 0){
-        //     console.log("originalAttack:")
-        //     console.log(originalAttack)
-        //     console.log("modifiedAttack:")
-        //     effectDTO.args.currentValue = Math.floor(originalAttack / 1.25);
-        //     console.log(effectDTO.args.currentValue)
-        // }
-
         return effectDTO;
     }
 
