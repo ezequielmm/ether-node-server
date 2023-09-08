@@ -36,6 +36,10 @@ export class HiddenStatus implements StatusEffectHandler {
         const player = this.playerService.get(ctx);
         
         const originalDefense = player.value.combatState.defense
+        
+        console.log("Ataque del enemigo:")
+        console.log(effectDTO.args.currentValue)
+        
         console.log("Defensa del player:")
         console.log(originalDefense)
         
