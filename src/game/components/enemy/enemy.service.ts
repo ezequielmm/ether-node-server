@@ -464,15 +464,19 @@ export class EnemyService {
                 console.log(nextAttackCooldown)
 
                 let decreasedCooldowns = this.decreaseCooldowns(enemy.value.intentCooldowns);
+                
+                console.log("Cooldown antes de setear el actual:")
+                console.log(decreasedCooldowns)
+                
                 decreasedCooldowns = this.setCooldownCurrentAttack(enemy.value.intentCooldowns, nextScript.id, nextAttackCooldown);
 
                 // console.log("--------------------------------------------------")
                 // console.log("decreasedCooldowns:")
                 // console.log(decreasedCooldowns)
 
-                console.log("Cooldown resutante:")
+                console.log("Cooldown resultante:")
                 console.log(decreasedCooldowns)
-                
+
                 enemy.value.intentCooldowns = decreasedCooldowns;
 
                 await this.expeditionService.updateByFilter(
@@ -505,6 +509,8 @@ export class EnemyService {
     private setCooldownCurrentAttack(cooldowns: IntentCooldown[], intentId: number, cooldown: number): IntentCooldown[] {
         return cooldowns.map((intentCooldown) => {
             if (intentCooldown.idIntent === intentId) {
+                console.log("encontró el cooldown id: " + intentCooldown.idIntent)
+                console.log(cooldown)
                 return { ...intentCooldown, cooldown };
             }
             return intentCooldown;

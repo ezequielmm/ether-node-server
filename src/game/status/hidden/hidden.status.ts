@@ -1,7 +1,9 @@
 import { Injectable } from "@nestjs/common";
 import { EffectDTO } from "src/game/effects/effects.interface";
 import {
+    EVENT_BEFORE_ENEMIES_TURN_END,
     EVENT_BEFORE_ENEMIES_TURN_START,
+    EVENT_BEFORE_PLAYER_TURN_END,
     EVENT_BEFORE_PLAYER_TURN_START,
 } from 'src/game/constants';
 import { StatusEffectHandler, StatusEffectDTO } from "../interfaces";
@@ -61,8 +63,8 @@ export class HiddenStatus implements StatusEffectHandler {
         
         return effectDTO;
     }
-
-    @OnEvent(EVENT_BEFORE_ENEMIES_TURN_START)
+    
+    @OnEvent(EVENT_BEFORE_ENEMIES_TURN_END)
     async onEnemiesTurnStart(args: { ctx: GameContext }): Promise<void> {
         const { ctx } = args;
         const enemies = this.enemyService.getAll(ctx);
@@ -78,7 +80,7 @@ export class HiddenStatus implements StatusEffectHandler {
         }
     }
 
-    @OnEvent(EVENT_BEFORE_PLAYER_TURN_START)
+    @OnEvent(EVENT_BEFORE_PLAYER_TURN_END)
     async onPlayerTurnStart(args: { ctx: GameContext }): Promise<void> {
         const { ctx } = args;
         const player = this.playerService.get(ctx);
