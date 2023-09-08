@@ -59,7 +59,7 @@ export class GearChainBridgeController {
         private readonly bridgeService:BridgeService
     ) {}
 
-    private nonChainRarities = [GearRarityEnum.Common, GearRarityEnum.Uncommon];
+    private nonChainRarities = [];
 
     private nonChainRarityFilter = {
         rarity: {
