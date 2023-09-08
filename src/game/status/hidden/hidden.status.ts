@@ -40,9 +40,9 @@ export class HiddenStatus implements StatusEffectHandler {
 
 
         if(effectDTO.source.type == CardTargetedEnum.Player){
-            console.log("sería outgoing")
-        }else{
             console.log("sería incoming")
+        }else{
+            console.log("sería outgoing")
         }
         
         // if(originalDefense && originalDefense > 0 && originalAttack && originalAttack > 0){

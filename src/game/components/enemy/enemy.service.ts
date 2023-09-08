@@ -456,10 +456,6 @@ export class EnemyService {
                 );
             }
             else if(attackLevels){
-                console.log("--------------------------------------------------")
-                console.log("enemy.value.intentCooldowns:")
-                console.log(enemy.value.intentCooldowns)
-
                 const enemyAggressiveness = enemy.value.aggressiveness ? enemy.value.aggressiveness : enemy_DB.aggressiveness;
                 nextScript = this.getNextScriptWithAggressiveness(attackLevels, enemyAggressiveness, enemy.value.intentCooldowns);
                 const nextAttackCooldown = this.getFullCoolDownIntent(nextScript.id, enemy_DB);
@@ -526,13 +522,13 @@ export class EnemyService {
 
     //- Returns intent cooldown from the original Enemy.
     private getFullCoolDownIntent(intentId:number, enemy:Enemy): number {
-        enemy.attackLevels.forEach(level => {
-            level.options.forEach(option => {
-                if(option.id === intentId){
+        for (const level of enemy.attackLevels) {
+            for (const option of level.options) {
+                if (option.id === intentId) {
                     return option.cooldown;
                 }
-            });
-        });
+            }
+        }
 
         return 0;
     }
