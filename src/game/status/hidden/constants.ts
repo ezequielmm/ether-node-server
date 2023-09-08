@@ -12,7 +12,7 @@ export const hiddenStatus: StatusEffect = {
     name: 'hidden',
     type: StatusType.Buff,
     counterType: StatusCounterType.Counter,
-    direction: StatusDirection.Incoming,
+    direction: StatusDirection.Both,
     trigger: StatusTrigger.Effect,
     effects: [damageEffect, defenseEffect],
 };
