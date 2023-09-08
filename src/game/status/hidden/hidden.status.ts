@@ -37,11 +37,7 @@ export class HiddenStatus implements StatusEffectHandler {
             //- For Incoming
             //- Incoming effect of Hiddent status is getting 25/ less damage:
             if(originalAttack && originalAttack > 0){
-                console.log("originalAttack:")
-                console.log(originalAttack)
-                console.log("modifiedAttack:")
                 effectDTO.args.currentValue = Math.floor(originalAttack / 1.25);
-                console.log(effectDTO.args.currentValue)
             }
         }else{
             //- For Outgoing:
