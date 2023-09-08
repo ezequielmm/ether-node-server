@@ -184,10 +184,10 @@ export const caveGoblinData: Enemy = {
     enemyId: 23,
     isActive: true,
     name: 'Cave Goblin',
-    type: EnemyTypeEnum.Beast,
+    type: EnemyTypeEnum.Goblin,
     category: EnemyCategoryEnum.Basic,
     size: EnemySizeEnum.Medium,
-    description: 'todo: Cave Goblin Description',
+    description: 'These savage and opportunistic creatures dwell in caves, lurking in the shadows and pouncing on unsuspecting prey.',
     healthRange: [20, 30],
     aggressiveness: 0.4,
     attackLevels: [
