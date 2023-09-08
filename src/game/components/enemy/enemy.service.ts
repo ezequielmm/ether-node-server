@@ -466,10 +466,13 @@ export class EnemyService {
                 let decreasedCooldowns = this.decreaseCooldowns(enemy.value.intentCooldowns);
                 decreasedCooldowns = this.setCooldownCurrentAttack(enemy.value.intentCooldowns, nextScript.id, nextAttackCooldown);
 
-                console.log("--------------------------------------------------")
-                console.log("decreasedCooldowns:")
-                console.log(decreasedCooldowns)
+                // console.log("--------------------------------------------------")
+                // console.log("decreasedCooldowns:")
+                // console.log(decreasedCooldowns)
 
+                console.log("Cooldown resutante:")
+                console.log(decreasedCooldowns)
+                
                 enemy.value.intentCooldowns = decreasedCooldowns;
 
                 await this.expeditionService.updateByFilter(
@@ -499,25 +502,23 @@ export class EnemyService {
     }
 
     //- Set the cooldown for the current attack. 
-    private setCooldownCurrentAttack(cooldowns: IntentCooldown[], intentId:number, cooldown:number): IntentCooldown[]{
-        cooldowns.forEach((intentCooldown) => {
-            if(intentCooldown.idIntent === intentId){
-                intentCooldown.cooldown = cooldown;
+    private setCooldownCurrentAttack(cooldowns: IntentCooldown[], intentId: number, cooldown: number): IntentCooldown[] {
+        return cooldowns.map((intentCooldown) => {
+            if (intentCooldown.idIntent === intentId) {
+                return { ...intentCooldown, cooldown };
             }
+            return intentCooldown;
         });
-
-        return cooldowns;
     }
 
     //- After a turn all the cooldowns should de decreased.
     private decreaseCooldowns(cooldowns: IntentCooldown[]): IntentCooldown[] {
-        cooldowns.forEach((intentCooldown) => {
-            if(intentCooldown.cooldown > 0){
-                intentCooldown.cooldown -= 1;
+        return cooldowns.map((intentCooldown) => {
+            if (intentCooldown.cooldown > 0) {
+                return { ...intentCooldown, cooldown: intentCooldown.cooldown - 1 };
             }
+            return intentCooldown;
         });
-
-        return cooldowns;
     }
 
     //- Returns intent cooldown from the original Enemy.
@@ -525,6 +526,7 @@ export class EnemyService {
         for (const level of enemy.attackLevels) {
             for (const option of level.options) {
                 if (option.id === intentId) {
+                    console.log("Encuentra el cooldown en el enemy original")
                     return option.cooldown;
                 }
             }
@@ -543,25 +545,40 @@ export class EnemyService {
         let count = 1;
         let selectsFrom = 0;
 
+        console.log("------------------------------------------------------------")
+        console.log("Comienza una iteración de ataque:")
+        console.log("Agresividad del enemigo:" + aggressiveness)
+
         while(!validAttack && count <= this.MAX_INTENTS_ITERATIONS){
 
             //- Aggressiveness determines the chances of taking an attack from the list of strong attacks:
             const randomValue = getDecimalRandomBetween(0, 1);
+            console.log("Random number: " + randomValue)
             selectsFrom = 0;
 
             if(randomValue < aggressiveness){
                 selectsFrom = 1;
+                console.log("Selecciona de la lista de ataques fuertes.")
+            }else {
+                console.log("Selecciona de la lista de ataques debiles.")
             }
+
             
             //- Get one possible attack from selected list:
             possibleAttack = this.getAttackFromList(attackLevels[selectsFrom].options);
 
+            console.log("Id de Tentativa de ataque: " + possibleAttack.id)
+
             //- Check if the Attack has cooldown greater than 0
             const attackCooldown = cooldowns.find(intent => intent.idIntent === possibleAttack.id);
+            console.log("Cooldown del ataque particular: " + attackCooldown.cooldown);
+
             if(!attackCooldown || attackCooldown.cooldown == 0){
                 validAttack = true;
+                console.log("Es un ataque válido.")
             }else{
                 count ++;
+                console.log("No es un ataque válido, repitiendo proceso..")
             }
         }
 
