@@ -463,6 +463,9 @@ export class EnemyService {
                 const enemyAggressiveness = enemy.value.aggressiveness ? enemy.value.aggressiveness : enemy_DB.aggressiveness;
                 nextScript = this.getNextScriptWithAggressiveness(attackLevels, enemyAggressiveness, enemy.value.intentCooldowns);
                 const nextAttackCooldown = this.getFullCoolDownIntent(nextScript.id, enemy_DB);
+                
+                console.log("next attack cooldown:")
+                console.log(nextAttackCooldown)
 
                 let decreasedCooldowns = this.decreaseCooldowns(enemy.value.intentCooldowns);
                 decreasedCooldowns = this.setCooldownCurrentAttack(enemy.value.intentCooldowns, nextScript.id, nextAttackCooldown);
