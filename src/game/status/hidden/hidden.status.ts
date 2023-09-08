@@ -30,30 +30,41 @@ export class HiddenStatus implements StatusEffectHandler {
     async handle(dto: StatusEffectDTO): Promise<EffectDTO> {
         
         //- For outgoing:
-        console.log("-----------------------------------------------------------------------------");
-
+        //- Outgoing effect of Hidden status is make 25% more damage to player defense.
+        
         const { ctx, effectDTO } = dto;
         const player = this.playerService.get(ctx);
-        
         const originalDefense = player.value.combatState.defense
+        const originalAttack  = effectDTO.args.currentValue;
         
-        console.log("Ataque del enemigo:")
-        console.log(effectDTO.args.currentValue)
-        
-        console.log("Defensa del player:")
-        console.log(originalDefense)
-        
-        // effectDTO.args.currentValue = Math.max(
-        //     effectDTO.args.currentValue + dto.status.args.counter,
-        //     0,
-        // );
+        if(originalDefense && originalDefense > 0 && originalAttack && originalAttack > 0){
+
+            console.log("-----------------------------------------------------------------------------");
+            console.log("originalAttack:")
+            console.log(effectDTO.args.currentValue)
+            console.log("defense:")
+            console.log(originalDefense)
+
+            if(originalAttack >= originalDefense){
+                const newAttack = Math.floor(originalDefense * 1.25) + (originalAttack - originalDefense);
+                effectDTO.args.currentValue = newAttack;
+            }else{
+                let newAttack = Math.floor(originalAttack * 1.25);
+                if(newAttack > originalDefense){
+                    newAttack = Math.floor((newAttack - originalDefense) / 1.25) + (newAttack - originalDefense);    
+                }
+                effectDTO.args.currentValue = newAttack;
+            }
+            
+            console.log("Final attack:")
+            console.log(effectDTO.args.currentValue)
+        }
 
         return effectDTO;
     }
 
     @OnEvent(EVENT_BEFORE_ENEMIES_TURN_START)
     async onEnemiesTurnStart(args: { ctx: GameContext }): Promise<void> {
-        console.log("------------------- BEFORE ENEMY TURN START");
         const { ctx } = args;
         const enemies = this.enemyService.getAll(ctx);
 
@@ -70,7 +81,6 @@ export class HiddenStatus implements StatusEffectHandler {
 
     @OnEvent(EVENT_BEFORE_PLAYER_TURN_START)
     async onPlayerTurnStart(args: { ctx: GameContext }): Promise<void> {
-        console.log("------------------- BEFORE PLAYER TURN START");
         const { ctx } = args;
         const player = this.playerService.get(ctx);
         const statuses = player.value.combatState.statuses;
