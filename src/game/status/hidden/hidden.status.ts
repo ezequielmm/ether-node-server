@@ -29,20 +29,16 @@ export class HiddenStatus implements StatusEffectHandler {
 
     async handle(dto: StatusEffectDTO): Promise<EffectDTO> {
         
-        const { effectDTO } = dto;
+        //- For outgoing:
+        console.log("-----------------------------------------------------------------------------");
 
-        console.log("-----------------------------------------------------------------------------")
-        console.log("-----------------------------------------------------------------------------")
-        console.log("Checking Hidden Status");
-        console.log("effectDTO.args.currentValue:")
-        console.log(effectDTO.args.currentValue)
-
-        console.log("effectDTO.args:");
-        console.log(effectDTO.args)
-
-        console.log("dto.status");
-        console.log(dto.status)
-
+        const { ctx, effectDTO } = dto;
+        const player = this.playerService.get(ctx);
+        
+        const originalDefense = player.value.combatState.defense
+        console.log("Defensa del player:")
+        console.log(originalDefense)
+        
         // effectDTO.args.currentValue = Math.max(
         //     effectDTO.args.currentValue + dto.status.args.counter,
         //     0,
