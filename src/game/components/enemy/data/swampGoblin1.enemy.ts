@@ -46,7 +46,7 @@ export const swampGoblin1Data: Enemy = {
                             },
                             action: {
                                 name: 'Club',
-                                hint: 'attack',
+                                hint: 'debuff',
                             },
                         },
                     ],
