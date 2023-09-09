@@ -100,6 +100,8 @@ export class GearChainBridgeController {
         
         const { wallet, token } = payload;
 
+        console.log(payload);
+
         // confirm token (security layer) and get PlayerId
         if (!this.checkSecurityToken({ wallet, token })){
             throw new UnauthorizedException('Bad Token');
@@ -111,21 +113,14 @@ export class GearChainBridgeController {
         );
 
 
-        let gears = await this.playerGearService.getGearByIds(payload.gear);
-
-        const removedGears = remove(gears, (g) =>
-            this.nonChainRarities.includes(g.rarity),
-        );
+        let gears = this.playerGearService.getGearByIds(payload.gear);
 
         switch (payload.action) {
             case GearActionApiEnum.AddGear:
                 await this.playerGearService.addGearToPlayer(wallet, gears);
                 break;
             case GearActionApiEnum.RemoveGear:
-                gears = gears.filter((g) => {
-                    return playerGear.some((pg) => pg.gearId === g.gearId)
-                });
-                await this.playerGearService.removeGearFromPlayer(wallet,gears);
+                await this.playerGearService.removeGearFromPlayer(wallet, gears);
                 break;
         }
 
@@ -137,7 +132,7 @@ export class GearChainBridgeController {
         return {
             oldGear: playerGear,
             newGear: newGear,
-            ignoredGear: removedGears,
+            ignoredGear: [],
         };
     }
 

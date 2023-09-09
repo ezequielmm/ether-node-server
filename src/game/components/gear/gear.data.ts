@@ -209,8 +209,19 @@ import { Shield_Shield_Toadstool } from './data/Shield_Shield_Toadstool.data';
 import { Weapon_Weapon_Clockwork_Sword } from './data/Weapon_Weapon_Clockwork_Sword.data';
 import { Weapon_Weapon_Fishing_Rod } from './data/Weapon_Weapon_Fishing_Rod.data';
 import { Weapon_Weapon_Spellsword } from './data/Weapon_Weapon_Spellsword.data';
+import { Weapon_Weapon_Siege } from './data/Weapon_Weapon_Siege';
+import { Boots_Boots_Siege } from './data/Boots_Boots_Siege';
+import { Breastplate_Breastplate_Siege } from './data/Breastplate_Breastplate_Siege';
+import { Gauntlet_Gauntlets_Siege } from './data/Gauntlet_Gauntlets_Siege';
+import { Helmet_Helmet_Siege } from './data/Helmet_Helmet_Siege';
+import { Legguard_Legguards_Siege } from './data/Legguard_Legguard_Siege';
+import { Pauldrons_Pauldrons_Siege } from './data/Pauldrons_Pauldrons_Siege';
+import { Shield_Shield_Siege } from './data/Shield_Shield_Siege';
+import { Vambrace_Vambraces_Siege } from './data/Vambrace_Vambraces_Siege';
+
 
 export const data: Gear[] = [
+    Helmet_Helmet_Siege,
     Helmet_Helmet_Hounskull,
     Helmet_Helmet_Templar,
     Helmet_Helmet_Vented,
@@ -242,6 +253,7 @@ export const data: Gear[] = [
     Helmet_Helmet_Smithonian,
     Helmet_Helmet_Warrior,
     Helmet_Helmet_Water_Mask,
+    Shield_Shield_Siege,
     Shield_Shield_Wooden_Circle,
     Shield_Shield_Triangle,
     Shield_Shield_Black_Triangle,
@@ -261,6 +273,7 @@ export const data: Gear[] = [
     Shield_Shield_King,
     Shield_Shield_Holo,
     Shield_Shield_Toadstool,
+    Weapon_Weapon_Siege,
     Weapon_Weapon_Flail,
     Weapon_Weapon_Morningstar,
     Weapon_Weapon_Tapered_Sword,
@@ -294,6 +307,7 @@ export const data: Gear[] = [
     Weapon_Weapon_Clockwork_Sword,
     Weapon_Weapon_Fishing_Rod,
     Weapon_Weapon_Spellsword,
+    Breastplate_Breastplate_Siege,
     Breastplate_Breastplate_Gothic,
     Breastplate_Breastplate_Engraved,
     Breastplate_Breastplate_Royal_Guard,
@@ -317,6 +331,7 @@ export const data: Gear[] = [
     Breastplate_Breastplate_Chaos,
     Breastplate_Breastplate_Neandersmol,
     Breastplate_Breastplate_Smol,
+    Legguard_Legguards_Siege,
     Legguard_Legguard_Gothic,
     Legguard_Legguard_Engraved,
     Legguard_Legguard_Royal_Guard,
@@ -337,6 +352,7 @@ export const data: Gear[] = [
     Legguard_Legguard_Gold_Gothic,
     Legguard_Legguard_Gold_Engraved,
     Legguard_Legguard_Gold_Royal_Guard,
+    Gauntlet_Gauntlets_Siege,
     Gauntlet_Gauntlets_Churburg_Hourglass,
     Gauntlet_Gauntlets_Articulated,
     Gauntlet_Gauntlets_Balthasar,
@@ -358,6 +374,7 @@ export const data: Gear[] = [
     Gauntlet_Gauntlets_Flaming,
     Gauntlet_Gauntlets_Blue_Flaming,
     Gauntlet_Gauntlets_Boxing,
+    Boots_Boots_Siege,
     Boots_Boots_Churburg_Hourglass,
     Boots_Boots_Articulated,
     Boots_Boots_Balthasar,
@@ -378,6 +395,7 @@ export const data: Gear[] = [
     Boots_Boots_Gold_Dread,
     Boots_Boots_Flaming,
     Boots_Boots_Blue_Flaming,
+    Pauldrons_Pauldrons_Siege,
     Pauldrons_Pauldrons_Leather_Edged,
     Pauldrons_Pauldrons_Fine_Leather,
     Pauldrons_Pauldrons_Silver_Flared,
@@ -397,6 +415,7 @@ export const data: Gear[] = [
     Pauldrons_Pauldrons_Gold_Lion,
     Pauldrons_Pauldrons_Gold_Unicorn,
     Pauldrons_Pauldrons_Defender,
+    Vambrace_Vambraces_Siege,
     Vambrace_Vambraces_Silver_Polished,
     Vambrace_Vambraces_Silver_Strapped_Elbow,
     Vambrace_Vambraces_Gothic,
