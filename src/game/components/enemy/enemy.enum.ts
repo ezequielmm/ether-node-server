@@ -7,7 +7,8 @@ export enum EnemyTypeEnum {
     Clockwork = 'clockwork',
     Eldritch = 'eldritch',
     Human = 'human',
-    Goblin = "goblin"
+    Goblin = "goblin",
+    Insectoid = "insectoid"
 }
 
 export enum EnemyCategoryEnum {

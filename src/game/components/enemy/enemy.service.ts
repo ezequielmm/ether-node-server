@@ -425,6 +425,8 @@ export class EnemyService {
             const currentScript = enemy.value.currentScript;
             let nextScript: EnemyScript;
 
+            console.log("Ataque de enemigo: " + enemy_DB.name)
+
             if(scripts && scripts.length > 0){
                 if (currentScript) {
                     nextScript = this.getNextScript(scripts, currentScript);
@@ -469,10 +471,6 @@ export class EnemyService {
                 console.log(decreasedCooldowns)
                 
                 decreasedCooldowns = this.setCooldownCurrentAttack(decreasedCooldowns, nextScript.id, nextAttackCooldown);
-
-                // console.log("--------------------------------------------------")
-                // console.log("decreasedCooldowns:")
-                // console.log(decreasedCooldowns)
 
                 console.log("Cooldown resultante:")
                 console.log(decreasedCooldowns)

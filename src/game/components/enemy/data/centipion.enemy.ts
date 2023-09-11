@@ -1,119 +1,63 @@
-import { addCardEffect } from 'src/game/effects/addCard/contants';
-import { damageEffect } from 'src/game/effects/damage/constants';
-import { CardTargetedEnum } from '../../card/card.enum';
-import { WoundedCard } from '../../card/data/bound.card';
 import {
     EnemyTypeEnum,
     EnemyCategoryEnum,
     EnemySizeEnum,
-    EnemyIntentionType,
 } from '../enemy.enum';
 import { Enemy } from '../enemy.schema';
+import { EnemyAction, EnemyIntention } from '../enemy.interface';
+import { EnemyBuilderService } from '../enemy-builder.service';
+import { spikesStatus } from 'src/game/status/spikes/constants';
+import { resolveStatus } from 'src/game/status/resolve/constants';
+import { feebleStatus } from 'src/game/status/feeble/constants';
 
+
+//-------------------------------------------------------------------------------------------------------------------------------------------------------
+//- Intents:
+//-------------------------------------------------------------------------------------------------------------------------------------------------------
+const BasicAttack:     EnemyIntention = EnemyBuilderService.createBasicAttackIntent(8);
+const SecondAttack:    EnemyIntention = EnemyBuilderService.createMultiplierAttackIntent(8, 2);
+const BasicDefense:    EnemyIntention = EnemyBuilderService.createDefenseIntent(8);
+const BuffSpikes:      EnemyIntention = EnemyBuilderService.createBasicBuffIntent(1, spikesStatus.name);
+const BuffResolve:     EnemyIntention = EnemyBuilderService.createBasicBuffIntent(1, resolveStatus.name);
+const DebuffFeeble:    EnemyIntention = EnemyBuilderService.createBasicDebuffIntent(1, feebleStatus.name);
+const SignatureAttack: EnemyIntention = null;
+
+//-------------------------------------------------------------------------------------------------------------------------------------------------------
+//- Attack Tables:
+//-------------------------------------------------------------------------------------------------------------------------------------------------------
+const BasicIntents: EnemyAction = {
+    options:[
+        { id: 1, probability: 0.2, cooldown: 0, intents: [BasicAttack] },
+        { id: 2, probability: 0.2, cooldown: 0, intents: [SecondAttack] },
+        { id: 3, probability: 0.1, cooldown: 0, intents: [BasicDefense] },
+        { id: 4, probability: 0.2, cooldown: 0, intents: [BuffSpikes] },
+        { id: 5, probability: 0.1, cooldown: 0, intents: [BuffResolve] },
+        { id: 6, probability: 0.2, cooldown: 0, intents: [DebuffFeeble] },
+        //{ id: 7, probability: 0.1, cooldown: 0, intents: [SignatureAttack] },
+    ]
+}
+
+const AdvancedIntents: EnemyAction = {
+    options: [
+        { id: 8,  probability: 0.4, cooldown: 0, intents: [BasicAttack, BuffResolve] },
+        { id: 9,  probability: 0.3, cooldown: 0, intents: [BasicDefense, BuffSpikes] },
+        { id: 10, probability: 0.3, cooldown: 0, intents: [BasicDefense, DebuffFeeble] },
+        //{ id: 11, probability: 0.2, cooldown: 0, intents: [SignatureAttack, DebuffFeeble] },
+    ]
+}
+
+//-------------------------------------------------------------------------------------------------------------------------------------------------------
+//- Enemy:
+//-------------------------------------------------------------------------------------------------------------------------------------------------------
 export const centipionData: Enemy = {
     enemyId: 19,
-    isActive: false,
+    isActive: true,
     name: 'Centipion',
-    type: EnemyTypeEnum.Beast,
+    type: EnemyTypeEnum.Insectoid,
     category: EnemyCategoryEnum.Basic,
     size: EnemySizeEnum.Medium,
-    description: 'Giant mutant centipede ',
-    healthRange: [40, 45],
-    scripts: [
-        {
-            id: 0,
-            intentions: [],
-            next: [{ probability: 1, scriptId: 1 }],
-        },
-        {
-            id: 1,
-            intentions: [
-                {
-                    type: EnemyIntentionType.Attack,
-                    target: CardTargetedEnum.Player,
-                    value: 7,
-                    effects: [
-                        {
-                            effect: damageEffect.name,
-                            target: CardTargetedEnum.Player,
-                            args: {
-                                value: 7,
-                                multiplier: 2,
-                            },
-                            action: {
-                                name: 'Claws',
-                                hint: 'attack1_claws',
-                            },
-                        },
-                    ],
-                },
-            ],
-            next: [
-                {
-                    probability: 1,
-                    scriptId: 2,
-                },
-            ],
-        },
-        {
-            id: 2,
-            intentions: [
-                {
-                    type: EnemyIntentionType.Attack,
-                    target: CardTargetedEnum.Self,
-                    value: 10,
-                    effects: [
-                        {
-                            effect: damageEffect.name,
-                            target: CardTargetedEnum.Self,
-                            args: {
-                                value: 10,
-                            },
-                            action: {
-                                name: 'Bite',
-                                hint: 'attack2_bite',
-                            },
-                        },
-                    ],
-                },
-            ],
-            next: [
-                {
-                    probability: 1,
-                    scriptId: 1,
-                },
-            ],
-        },
-        {
-            id: 3,
-            intentions: [
-                {
-                    type: EnemyIntentionType.Debuff,
-                    target: CardTargetedEnum.Player,
-                    value: 2,
-                    effects: [
-                        {
-                            effect: addCardEffect.name,
-                            target: CardTargetedEnum.Player,
-                            args: {
-                                value: 2,
-                                cardId: WoundedCard.cardId,
-                                destination: 'discard',
-                            },
-                            action: {
-                                name: 'Acid Spittle',
-                                hint: 'cast1_AcidSpittle',
-                            },
-                        },
-                    ],
-                },
-            ],
-            next: [
-                {
-                    probability: 1,
-                    scriptId: 1,
-                },
-            ],
-        },
-    ],
+    description: 'A human-sized centipede that has been completely overtaken by the Mold. It´s long dead, but its carcass serves the Mold as an instrument for locomotion, expansion, and more crucially, nourishment.',
+    healthRange: [15, 25],
+    aggressiveness: 0.4,
+    attackLevels: [BasicIntents, AdvancedIntents]
 };

@@ -22,6 +22,10 @@ import { rockElementalData } from './data/rockElemental.enemy';
 import { thornWolfPupData } from './data/thornWolfPup.enemy';
 import { deepSorcererData } from './data/deepSorcerer.enemy';
 import { caveGoblinData } from './data/caveGoblin.enemy';
+import { trollData } from './data/troll.enemy';
+import { mutantSpiderData } from './data/mutantSpider.enemy';
+import { swarmCocoonData } from './data/swarmCocoon.enemy';
+import { swarmMasterData } from './data/swarmMaster.enemy';
 
 export const data: Enemy[] = [
     sporeMongerData,
@@ -40,13 +44,18 @@ export const data: Enemy[] = [
     blueSporelingData,
     redSporelingData,
     yellowSporelingData,
-    centipionData,
     stickMantisData,
     deepDwellerData,
     rockElementalData,
     thornWolfPupData,
     deepSorcererData,
-
+    
     //- Stage 2:
-    caveGoblinData
+    caveGoblinData,
+    centipionData,
+    trollData,
+    mutantSpiderData,
+    swarmCocoonData,
+    swarmMasterData
+
 ];
