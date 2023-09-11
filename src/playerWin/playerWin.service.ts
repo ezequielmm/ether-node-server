@@ -12,7 +12,7 @@ export class PlayerWinService {
     @InjectModel(PlayerWin)
     private readonly playerWin: ReturnModelType<typeof PlayerWin>,
     private readonly characterService: CharacterService,
-  ) {}
+  ) { }
 
   async create(contest_info: PlayerWin) {
     return await this.playerWin.create(contest_info);
@@ -58,95 +58,91 @@ export class PlayerWinService {
     return character?.canCompete;
   }
 
-  async canPlay(
-  event_id: number,
-  contract_address: string,
-  token_id: number,
-  wins?: number,
-): Promise<boolean> {
+  async canPlay(event_id: number, contract_address: string, token_id: number, wins?: number) : Promise<boolean> {
+    if (event_id === 0) return true;
 
- // console.log(`Checking if can play with event_id: ${event_id}, contract_address: ${contract_address}, token_id: ${token_id}, wins: ${wins}`);
+    if (contract_address === 'NONE') return true;
 
-  if (event_id === 0) {
-  //  console.log('Event ID is 0, can play.');
-    return true;
-  }
+    if (typeof wins === 'undefined') {
+        wins =
+            (await this.playerWin.countDocuments({
+                event_id: event_id,
+                playerToken: {
+                    $elemMatch: {
+                        contractId: contract_address,
+                        tokenId: token_id,
+                    },
+                },
+            })) ?? 0;
+    }
+    if (wins == 0) return true;
 
-  if (contract_address === 'NONE') {
-  //  console.log('Contract address is NONE, can play.');
-    return true;
-  }
+    const character = await this.characterService.getCharacterByContractId(
+        contract_address,
+    );
 
-  wins = await this.getWinsCountByTokenId(token_id);
- // console.log("Wins is " + wins);
-  if (wins === 0) {
-   // console.log('Wins is 0, can play.');
-    return true;
-  }
+    if (!character || character.name != 'Knight') return wins < 1;
 
-  const character = await this.getCharacterOrLog(contract_address);
+    // at this point, it's a knight
+    if (token_id <= 500) {
+        return wins < 3; // genesis knight
+    }
 
-  if (!character || character.name !== 'Knight') {
-    //console.log(`Character is ${character ? character.name : 'not available'}, can play if wins < 1: ${wins < 1}`);
-    return wins < 1;
-  }
-
-  return this.canKnightPlay(token_id, wins);
+    return wins < 2; // knight
 }
 
-async getWins(wins: number | undefined, event_id: number, contract_address: string, token_id: number): Promise<number> {
+  async getWins(wins: number | undefined, event_id: number, contract_address: string, token_id: number): Promise<number> {
 
-  try {
-    
-  wins =
-  (await this.playerWin.countDocuments({
-    event_id: event_id,
-    playerToken: {
-      $elemMatch: {
-        contractId: contract_address,
-        tokenId: token_id,
-      },
-    },
-  })) ?? 0;
+    try {
 
+      wins =
+        (await this.playerWin.countDocuments({
+          event_id: event_id,
+          playerToken: {
+            $elemMatch: {
+              contractId: contract_address,
+              tokenId: token_id,
+            },
+          },
+        })) ?? 0;
+
+    }
+    catch (exception) {
+      console.error(exception);
+    }
+    return wins;
   }
-  catch(exception)
-  {
-    console.error(exception);
-  }
-  return wins;
-}
-async getWinsCountByTokenId(token_id: number): Promise<number> {
-  try {
-    //console.log(`Attempting to fetch win count for token_id: ${token_id}`);
-    
-    const query = { "playerToken.tokenId": Number(token_id) };
-    
-    //console.log('Query:', query);
-    
-    const winCount = await this.playerWin.countDocuments(query);
-    
-    //console.log(`Fetched win count for token_id ${token_id}: ${winCount}`);
-    return winCount;
-  } catch (exception) {
-    console.error(`Failed to fetch win count for token_id ${token_id}: ${exception}`);
-    return 0;
-  }
-}
+  async getWinsCountByTokenId(token_id: number): Promise<number> {
+    try {
+      //console.log(`Attempting to fetch win count for token_id: ${token_id}`);
 
-async getCharacterOrLog(contract_address: string): Promise<Character | null> { // Assuming Character is a type you've defined
-  const character = await this.characterService.getCharacterByContractId(contract_address);
-  //console.log(`Fetched character: ${character ? character.name : 'null'}`);
-  return character;
-}
+      const query = { "playerToken.tokenId": Number(token_id) };
 
-canKnightPlay(token_id: number, wins: number): boolean {
-  if (token_id <= 500) {
-    //console.log('Token ID <= 500 (Genesis Knight), can play if wins < 3');
-    return wins < 3; // genesis knight
+      //console.log('Query:', query);
+
+      const winCount = await this.playerWin.countDocuments(query);
+
+      //console.log(`Fetched win count for token_id ${token_id}: ${winCount}`);
+      return winCount;
+    } catch (exception) {
+      console.error(`Failed to fetch win count for token_id ${token_id}: ${exception}`);
+      return 0;
+    }
   }
 
-  //console.log('Token ID > 500 (Knight), can play if wins < 2');
-  return wins < 2; // knight
-}
+  async getCharacterOrLog(contract_address: string): Promise<Character | null> { // Assuming Character is a type you've defined
+    const character = await this.characterService.getCharacterByContractId(contract_address);
+    //console.log(`Fetched character: ${character ? character.name : 'null'}`);
+    return character;
+  }
+
+  canKnightPlay(token_id: number, wins: number): boolean {
+    if (token_id <= 500) {
+      //console.log('Token ID <= 500 (Genesis Knight), can play if wins < 3');
+      return wins < 3; // genesis knight
+    }
+
+    //console.log('Token ID > 500 (Knight), can play if wins < 2');
+    return wins < 2; // knight
+  }
 }
