@@ -55,6 +55,7 @@ import { PeacockFeatherStatus } from './peacockFeather/peacockFeather.status';
 import { BlightedStatus } from './blighted/blighted.status';
 import { CombatModule } from '../combat/combat.module';
 import { HiddenStatus } from './hidden/hidden.status';
+import { HatchingStatus } from './hatching/hatching.status';
 
 @Module({
     imports: [
@@ -117,7 +118,8 @@ import { HiddenStatus } from './hidden/hidden.status';
         SummonedStatus,
         PeacockFeatherStatus,
         BlightedStatus,
-        HiddenStatus
+        HiddenStatus,
+        HatchingStatus
     ],
     exports: [StatusService],
 })
