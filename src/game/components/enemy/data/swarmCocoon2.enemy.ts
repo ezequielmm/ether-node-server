@@ -20,8 +20,8 @@ const BasicIntents: EnemyAction = {
 //-------------------------------------------------------------------------------------------------------------------------------------------------------
 //- Enemy:
 //-------------------------------------------------------------------------------------------------------------------------------------------------------
-export const swarmCocoonData: Enemy = {
-    enemyId: 62,
+export const swarmCocoon2Data: Enemy = {
+    enemyId: 64,
     isActive: true,
     name: 'Swarm Cocoon',
     type: EnemyTypeEnum.Beast,

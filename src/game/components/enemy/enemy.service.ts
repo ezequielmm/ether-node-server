@@ -716,4 +716,16 @@ export class EnemyService {
 
         return finalStatusAttached;
     }
+
+    public enemyIntentsToExpeditionEnemyCooldowns(enemy:Enemy):IntentCooldown[]{
+        const intentOptionsList: IntentOption[][] = enemy.attackLevels.map((enemyAction) => enemyAction.options);
+        const allIntentOptions:  IntentOption[] = intentOptionsList.flat();
+
+        const formattedIntents: IntentCooldown[] = allIntentOptions.map((intentOption) => ({
+            idIntent: intentOption.id,
+            cooldown: intentOption.cooldown,
+        }));
+
+        return formattedIntents;
+    }
 }

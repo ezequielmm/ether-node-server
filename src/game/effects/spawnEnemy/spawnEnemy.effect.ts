@@ -10,7 +10,7 @@ import { thornWolfPupData } from 'src/game/components/enemy/data/thornWolfPup.en
 import { yellowSporelingData } from 'src/game/components/enemy/data/yellowSporeling.enemy';
 import { EnemyService } from 'src/game/components/enemy/enemy.service';
 import { ExpeditionStatusEnum } from 'src/game/components/expedition/expedition.enum';
-import { IExpeditionCurrentNodeDataEnemy } from 'src/game/components/expedition/expedition.interface';
+import { IExpeditionCurrentNodeDataEnemy, IntentCooldown } from 'src/game/components/expedition/expedition.interface';
 import { ExpeditionService } from 'src/game/components/expedition/expedition.service';
 import {
     StandardResponse,
@@ -22,6 +22,8 @@ import { getRandomBetween } from 'src/utils';
 import { EffectDecorator } from '../effects.decorator';
 import { EffectDTO, EffectHandler } from '../effects.interface';
 import { spawnEnemyEffect } from './contants';
+import { Enemy } from 'src/game/components/enemy/enemy.schema';
+import { IntentOption } from 'src/game/components/enemy/enemy.interface';
 
 export interface SpawnEnemyArgs {
     enemiesToSpawn: number[];
@@ -115,21 +117,7 @@ export class SpawnEnemyEffect implements EffectHandler {
                     enemy.healthRange[1],
                 );
 
-                return {
-                    id: randomUUID(),
-                    enemyId: enemy.enemyId,
-                    name: enemy.name,
-                    category: enemy.category,
-                    type: enemy.type,
-                    size: enemy.size,
-                    defense: 0,
-                    hpCurrent: newHealth,
-                    hpMax: newHealth,
-                    statuses: {
-                        [StatusType.Buff]: [],
-                        [StatusType.Debuff]: [],
-                    },
-                };
+                return this.buildMinionEnemy(enemy, newHealth);
             },
         );
 
@@ -173,6 +161,52 @@ export class SpawnEnemyEffect implements EffectHandler {
             }
         });
 
+    }
+
+    private buildMinionEnemy(enemy:Enemy, newHealth:number):IExpeditionCurrentNodeDataEnemy {
+        
+        let newMinionEnemy:IExpeditionCurrentNodeDataEnemy;
+
+        //- New Enemies
+        if(enemy.aggressiveness){
+            const formattedCooldowns = this.enemyService.enemyIntentsToExpeditionEnemyCooldowns(enemy);
+            newMinionEnemy = {
+                id: randomUUID(),
+                enemyId: enemy.enemyId,
+                name: enemy.name,
+                category: enemy.category,
+                type: enemy.type,
+                size: enemy.size,
+                defense: 0,
+                hpCurrent: newHealth,
+                hpMax: newHealth,
+                statuses: {
+                    [StatusType.Buff]: [],
+                    [StatusType.Debuff]: [],
+                },
+                aggressiveness: enemy.aggressiveness,
+                intentCooldowns: formattedCooldowns
+            }
+        }
+        //- Old Enemies:
+        else{
+            newMinionEnemy = {
+                id: randomUUID(),
+                enemyId: enemy.enemyId,
+                name: enemy.name,
+                category: enemy.category,
+                type: enemy.type,
+                size: enemy.size,
+                defense: 0,
+                hpCurrent: newHealth,
+                hpMax: newHealth,
+                statuses: {
+                    [StatusType.Buff]: [],
+                    [StatusType.Debuff]: [],
+                },
+            }
+        }
+        return newMinionEnemy;
     }
 
     private getSporelingsIds = (): number[] => [
