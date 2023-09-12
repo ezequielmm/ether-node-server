@@ -219,8 +219,18 @@ import { Pauldrons_Pauldrons_Siege } from './data/Pauldrons_Pauldrons_Siege';
 import { Shield_Shield_Siege } from './data/Shield_Shield_Siege';
 import { Vambrace_Vambraces_Siege } from './data/Vambrace_Vambraces_Siege';
 
+import { Helmet_Helmet_Gold_Prince } from './data/Helmet_Helmet_Gold_Prince.data'
+import { Helmet_Helmet_Silver_Prince} from './data/Helmet_Helmet_Silver_Prince.data'
+import { Helmet_Helmet_Red_Hound} from './data/Helmet_Helmet_Red_Hound.data'
+import { Helmet_Helmet_Red_Hounskull} from './data/Helmet_Helmet_Red_Hounskull.data'
+import { Helmet_Helmet_Blue_Praying_Hands} from './data/Helmet_Helmet_Blue_Praying_Hands.data'
 
 export const data: Gear[] = [
+    Helmet_Helmet_Gold_Prince,
+    Helmet_Helmet_Silver_Prince,
+    Helmet_Helmet_Red_Hound,
+    Helmet_Helmet_Red_Hounskull,
+    Helmet_Helmet_Blue_Praying_Hands,
     Helmet_Helmet_Siege,
     Helmet_Helmet_Hounskull,
     Helmet_Helmet_Templar,
