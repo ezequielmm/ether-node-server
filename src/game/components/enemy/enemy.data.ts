@@ -23,8 +23,10 @@ import { thornWolfPupData } from './data/thornWolfPup.enemy';
 import { deepSorcererData } from './data/deepSorcerer.enemy';
 import { caveGoblinData } from './data/caveGoblin.enemy';
 import { trollData } from './data/troll.enemy';
-import { mutantSpiderData } from './data/mutantSpider.enemy';
-import { swarmCocoonData } from './data/swarmCocoon.enemy';
+import { mutantSpider1Data } from './data/mutantSpider1.enemy';
+import { swarmCocoon1Data } from './data/swarmCocoon1.enemy';
+import { mutantSpider2Data } from './data/mutantSpider2.enemy';
+import { swarmCocoon2Data } from './data/swarmCocoon2.enemy';
 import { swarmMasterData } from './data/swarmMaster.enemy';
 
 export const data: Enemy[] = [
@@ -54,8 +56,10 @@ export const data: Enemy[] = [
     caveGoblinData,
     centipionData,
     trollData,
-    mutantSpiderData,
-    swarmCocoonData,
+    mutantSpider1Data,
+    swarmCocoon1Data,
+    mutantSpider2Data,
+    swarmCocoon2Data,
     swarmMasterData
 
 ];
