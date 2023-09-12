@@ -425,6 +425,8 @@ export class EnemyService {
             const currentScript = enemy.value.currentScript;
             let nextScript: EnemyScript;
 
+            console.log("------------------------------------------------------------");
+            console.log("------------------------------------------------------------")
             console.log("Ataque de enemigo: " + enemy_DB.name)
 
             if(scripts && scripts.length > 0){
@@ -462,18 +464,11 @@ export class EnemyService {
                 nextScript = this.getNextScriptWithAggressiveness(attackLevels, enemyAggressiveness, enemy.value.intentCooldowns);
                 const nextAttackCooldown = this.getFullCoolDownIntent(nextScript.id, enemy_DB);
                 
-                console.log("next attack cooldown:")
+                console.log("Next attack cooldown:")
                 console.log(nextAttackCooldown)
 
                 let decreasedCooldowns = this.decreaseCooldowns(enemy.value.intentCooldowns);
-                
-                console.log("Cooldown antes de setear el actual:")
-                console.log(decreasedCooldowns)
-                
                 decreasedCooldowns = this.setCooldownCurrentAttack(decreasedCooldowns, nextScript.id, nextAttackCooldown);
-
-                console.log("Cooldown resultante:")
-                console.log(decreasedCooldowns)
 
                 enemy.value.intentCooldowns = decreasedCooldowns;
 
@@ -530,7 +525,6 @@ export class EnemyService {
         for (const level of enemy.attackLevels) {
             for (const option of level.options) {
                 if (option.id === intentId) {
-                    console.log("Encuentra el cooldown en el enemy original")
                     return option.cooldown;
                 }
             }
