@@ -167,9 +167,26 @@ export class SpawnEnemyEffect implements EffectHandler {
         
         let newMinionEnemy:IExpeditionCurrentNodeDataEnemy;
 
-        //- New Enemies
-        if(enemy.aggressiveness){
-            console.log("Considera el 0 un valor para entrar al if------------------------")
+        //- Old Enemies
+        if(enemy.scripts && enemy.scripts.length > 0){
+            newMinionEnemy = {
+                id: randomUUID(),
+                enemyId: enemy.enemyId,
+                name: enemy.name,
+                category: enemy.category,
+                type: enemy.type,
+                size: enemy.size,
+                defense: 0,
+                hpCurrent: newHealth,
+                hpMax: newHealth,
+                statuses: {
+                    [StatusType.Buff]: [],
+                    [StatusType.Debuff]: [],
+                },
+            }
+        }
+        //- New Enemies:
+        else{
             const formattedCooldowns = this.enemyService.enemyIntentsToExpeditionEnemyCooldowns(enemy);
             newMinionEnemy = {
                 id: randomUUID(),
@@ -187,24 +204,6 @@ export class SpawnEnemyEffect implements EffectHandler {
                 },
                 aggressiveness: enemy.aggressiveness,
                 intentCooldowns: formattedCooldowns
-            }
-        }
-        //- Old Enemies:
-        else{
-            newMinionEnemy = {
-                id: randomUUID(),
-                enemyId: enemy.enemyId,
-                name: enemy.name,
-                category: enemy.category,
-                type: enemy.type,
-                size: enemy.size,
-                defense: 0,
-                hpCurrent: newHealth,
-                hpMax: newHealth,
-                statuses: {
-                    [StatusType.Buff]: [],
-                    [StatusType.Debuff]: [],
-                },
             }
         }
         return newMinionEnemy;
