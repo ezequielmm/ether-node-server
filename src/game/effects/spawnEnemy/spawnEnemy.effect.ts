@@ -169,6 +169,7 @@ export class SpawnEnemyEffect implements EffectHandler {
 
         //- New Enemies
         if(enemy.aggressiveness){
+            console.log("Considera el 0 un valor para entrar al if------------------------")
             const formattedCooldowns = this.enemyService.enemyIntentsToExpeditionEnemyCooldowns(enemy);
             newMinionEnemy = {
                 id: randomUUID(),
