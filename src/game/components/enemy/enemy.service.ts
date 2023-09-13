@@ -754,11 +754,16 @@ export class EnemyService {
         console.log("----------------")
         console.log(currentScript)
         console.log("----------------")
-        if(!currentScript){
-            return {id: intents[0].id, intentions: intents[0].intents};
-        }else{
-            return {id: intents[1].id, intentions: intents[1].intents};
+        if(currentScript){
+            if(currentScript.id == -1){
+                return {id: intents[1].id, intentions: intents[1].intents};
+            }
+                
+            return {id: intents[2].id, intentions: intents[2].intents};
         }
+
+        return {id: intents[1].id, intentions: intents[1].intents}; 
+        
     }
 
     private getNextSwarmMasterScript(ctx:GameContext, currentScript:EnemyScript, intents:IntentOption[], enemyHP:number): EnemyScript{
