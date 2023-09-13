@@ -826,24 +826,47 @@ export class EnemyService {
         const lessThan2Spiders = amountOfSpiders < 2;
 
         if(lessThan2Cocoons && lessThan2Spiders && !(enemiesOnScreen >= 5)){
-            //- %25 chance to invoke 1 Spider, 1 Cocoon, 2 spiders, 2 cocoons
             const spider  = { id: intents[1].id, intentions: intents[1].intents }
             const spider2 = { id: intents[2].id, intentions: intents[2].intents }
             const cocoon  = { id: intents[0].id, intentions: intents[0].intents }
             const cocoon2 = { id: intents[3].id, intentions: intents[3].intents }
 
-            return getRandomItemByWeight([spider, cocoon, spider2, cocoon2], [25, 25, 25, 25]);
+            if(amountOfCocoons == 0 && amountOfSpiders == 0){
+                return getRandomItemByWeight([cocoon, cocoon2, spider, spider2], [25, 25, 25, 25]);
+            }
+
+            if(amountOfCocoons == 1 && amountOfSpiders == 0){
+                return getRandomItemByWeight([cocoon, spider, spider2], [34, 33, 33]);
+            }
+
+            if(amountOfCocoons == 0 && amountOfSpiders == 1){
+                return getRandomItemByWeight([cocoon, cocoon2, spider], [34, 33, 33]);
+            }
+
+            if(amountOfCocoons == 1 && amountOfSpiders == 1){
+                return getRandomItemByWeight([cocoon, spider], [50, 50]);
+            }
         }
         if(!lessThan2Cocoons && lessThan2Spiders && !(enemiesOnScreen >= 5)){
             //- Summon 1 or 2 Spider:
             const spider  = { id: intents[1].id, intentions: intents[1].intents }
             const spider2 = { id: intents[3].id, intentions: intents[3].intents }
+            
+            if(enemiesOnScreen >= 4){
+                return spider;
+            }
+
             return getRandomItemByWeight([spider, spider2], [50, 50]);
         }
         if(lessThan2Cocoons && !lessThan2Spiders && !(enemiesOnScreen >= 5)){
             //- Summon 1 Cocoon:
             const cocoon = { id: intents[0].id, intentions: intents[0].intents }
             const cocoon2 = { id: intents[2].id, intentions: intents[2].intents }
+            
+            if(enemiesOnScreen >= 4){
+                return cocoon;
+            }
+
             return getRandomItemByWeight([cocoon, cocoon2], [50, 50]);
         }
         
@@ -874,18 +897,21 @@ export class EnemyService {
             const cocoon  = { id: intents[0].id, intentions: intents[0].intents }
             const cocoon2 = { id: intents[3].id, intentions: intents[3].intents }
 
-            if(enemiesOnScreen >= 4){
-                if(amountOfCocoons >= 2){
-                    return spider;
-                }
-                return cocoon;
-            }else{
-                if(amountOfCocoons >= 1){
-                    return spider2;
-                }
-                return cocoon2;
+            if(amountOfCocoons == 0 && amountOfSpiders == 0){
+                return getRandomItemByWeight([cocoon, cocoon2, spider, spider2], [25, 25, 25, 25]);
             }
 
+            if(amountOfCocoons == 1 && amountOfSpiders == 0){
+                return getRandomItemByWeight([cocoon, spider, spider2], [34, 33, 33]);
+            }
+
+            if(amountOfCocoons == 0 && amountOfSpiders == 1){
+                return getRandomItemByWeight([cocoon, cocoon2, spider], [34, 33, 33]);
+            }
+
+            if(amountOfCocoons == 1 && amountOfSpiders == 1){
+                return getRandomItemByWeight([cocoon, spider], [50, 50]);
+            }
         }
         if(!lessThan2Cocoons && lessThan2Spiders && !(enemiesOnScreen >= 5)){
             //- Summon 1 or 2 Spider:
@@ -898,7 +924,7 @@ export class EnemyService {
                 return spider;
             }
 
-            return spider2;
+            return getRandomItemByWeight([spider, spider2], [50, 50]);
         }
         if(lessThan2Cocoons && !lessThan2Spiders && !(enemiesOnScreen >= 5)){
             //- Summon 1 Cocoon:
@@ -910,7 +936,7 @@ export class EnemyService {
                 return cocoon;
             }
 
-            return cocoon2;
+            return getRandomItemByWeight([cocoon, cocoon2], [50, 50]);
         }
         
         console.log("Last option")
