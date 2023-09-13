@@ -6,6 +6,7 @@ import { EnemyIntention } from "./enemy.interface";
 import { defenseEffect } from "src/game/effects/defense/constants";
 import { attachStatusEffect } from "src/game/effects/attachStatus/constants";
 import { spawnEnemyEffect } from "src/game/effects/spawnEnemy/contants";
+import { noEffect } from "src/game/effects/noEffects/constants";
 
 export class EnemyBuilderService {
     
@@ -73,11 +74,22 @@ export class EnemyBuilderService {
         }
     }
 
-    // public static createDoNothingIntent = (): EnemyIntenton => {
-    //     return {
-
-    //     }
-    // }
+    public static createDoNothingIntent = (): EnemyIntention => {
+        return {
+            type: EnemyIntentionType.DontMove,
+            target: CardTargetedEnum.Self,
+            value: 0,
+            effects: [
+                {
+                    effect: noEffect.name,
+                    target: CardTargetedEnum.Self,
+                    args: {
+                        value: 0,
+                    },
+                },
+            ],
+        }
+    }
 
     public static createBasicBuffIntent = (value:number, name:string):EnemyIntention  => {
         return {
