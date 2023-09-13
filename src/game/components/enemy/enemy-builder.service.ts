@@ -73,6 +73,12 @@ export class EnemyBuilderService {
         }
     }
 
+    // public static createDoNothingIntent = (): EnemyIntenton => {
+    //     return {
+
+    //     }
+    // }
+
     public static createBasicBuffIntent = (value:number, name:string):EnemyIntention  => {
         return {
             type: EnemyIntentionType.Buff,

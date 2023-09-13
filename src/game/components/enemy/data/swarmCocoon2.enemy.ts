@@ -13,7 +13,8 @@ const BuffHatching: EnemyIntention = EnemyBuilderService.createBasicBuffIntent(2
 //-------------------------------------------------------------------------------------------------------------------------------------------------------
 const BasicIntents: EnemyAction = {
     options: [
-        { id: 1, probability: 1, cooldown: 0, intents:[BuffHatching] }
+        { id: 1,  probability: 1, cooldown: 0, intents:[BuffHatching] },
+        { id: -1, probability: 0, cooldown: 0, intents:[] }
     ]
 }
 

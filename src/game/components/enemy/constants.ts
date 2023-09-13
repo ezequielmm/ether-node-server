@@ -6,3 +6,4 @@ export const ENEMY_CURRENT_COOLDOWN_PATH = 'currentNode.data.enemies.$.intentCoo
 export const ENEMY_STATUSES_PATH = 'currentNode.data.enemies.$.statuses';
 
 export const ENEMY_SWARM_MASTER_ID = 60;
+export const ENEMY_SWARM_COCOON_IDS = [62, 64];
