@@ -34,8 +34,8 @@ const SpecialAttack: EnemyIntention =
                 },
             },
             action: {
-                name: 'hidden_start',
-                hint: 'hidden_start',
+                name: 'special',
+                hint: 'special',
             },
         },
     ],
@@ -56,8 +56,8 @@ const SignatureAttack: EnemyIntention =
                 multiplier: 3,
             },
             action: {
-                name: 'attack1',
-                hint: 'attack1',
+                name: 'signature_move',
+                hint: 'signature_move',
             },
         },
         {
@@ -70,8 +70,8 @@ const SignatureAttack: EnemyIntention =
                 },
             },
             action: {
-                name: 'hidden_start',
-                hint: 'hidden_start',
+                name: 'signature_move',
+                hint: 'signature_move',
             },
         },
     ],

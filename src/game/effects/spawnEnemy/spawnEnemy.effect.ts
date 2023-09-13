@@ -23,7 +23,6 @@ import { EffectDecorator } from '../effects.decorator';
 import { EffectDTO, EffectHandler } from '../effects.interface';
 import { spawnEnemyEffect } from './contants';
 import { Enemy } from 'src/game/components/enemy/enemy.schema';
-import { IntentOption } from 'src/game/components/enemy/enemy.interface';
 
 export interface SpawnEnemyArgs {
     enemiesToSpawn: number[];
@@ -44,11 +43,6 @@ export class SpawnEnemyEffect implements EffectHandler {
         const ctx            = dto.ctx;
         const enemies        = dto.ctx.expedition.currentNode.data.enemies;
         const enemiesToSpawn = dto.args.enemiesToSpawn;
-
-        console.log("------------------------------------------------------------------------------------------------------------------------------------------------")
-        console.log("enemiesToSpawn:")
-        console.log(enemiesToSpawn)
-        console.log("------------------------------------------------------------------------------------------------------------------------------------------------")
 
         // First we check if the current combat has any sporelings alive,
         // only spawn in when there are no sporelings (this is temporary)
