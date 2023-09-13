@@ -14,6 +14,7 @@ const DoNothing:    EnemyIntention = EnemyBuilderService.createDoNothingIntent()
 //-------------------------------------------------------------------------------------------------------------------------------------------------------
 const BasicIntents: EnemyAction = {
     options: [
+        { id: -1, probability: 1, cooldown: 0, intents:[DoNothing] },
         { id: 1, probability: 1, cooldown: 0, intents:[BuffHatching] },
         { id: 2, probability: 0, cooldown: 0, intents:[DoNothing] }
     ]
