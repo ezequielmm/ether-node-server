@@ -64,21 +64,21 @@ export class HiddenStatus implements StatusEffectHandler {
         return effectDTO;
     }
     
-    @OnEvent(EVENT_BEFORE_ENEMIES_TURN_START)
-    async onEnemiesTurnStart(args: { ctx: GameContext }): Promise<void> {
-        const { ctx } = args;
-        const enemies = this.enemyService.getAll(ctx);
+    // @OnEvent(EVENT_BEFORE_ENEMIES_TURN_START)
+    // async onEnemiesTurnStart(args: { ctx: GameContext }): Promise<void> {
+    //     const { ctx } = args;
+    //     const enemies = this.enemyService.getAll(ctx);
 
 
-        for (const enemy of enemies) {
-            await this.statusService.decreaseCounterAndRemove(
-                ctx,
-                enemy.value.statuses,
-                enemy,
-                hiddenStatus,
-            );
-        }
-    }
+    //     for (const enemy of enemies) {
+    //         await this.statusService.decreaseCounterAndRemove(
+    //             ctx,
+    //             enemy.value.statuses,
+    //             enemy,
+    //             hiddenStatus,
+    //         );
+    //     }
+    // }
 
     // @OnEvent(EVENT_BEFORE_PLAYER_TURN_START)
     // async onPlayerTurnStart(args: { ctx: GameContext }): Promise<void> {
