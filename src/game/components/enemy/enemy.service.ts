@@ -751,6 +751,9 @@ export class EnemyService {
     }
 
     private getNextSwarmCocoonScript(currentScript:EnemyScript, intents:IntentOption[]): EnemyScript{
+        console.log("----------------")
+        console.log(currentScript)
+        console.log("----------------")
         if(!currentScript){
             return {id: intents[0].id, intentions: intents[0].intents};
         }else{
