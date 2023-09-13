@@ -382,7 +382,7 @@ export class EnemyService {
             //TODO: Refactor the below to just use pathToUpdate, when there's time to test it.
             await this.expeditionService.updateByFilter(
                 {
-                    _id: ctx.expedition._id,
+                    clientId: client.id,
                 },
                 {
                     $inc: {
@@ -464,7 +464,7 @@ export class EnemyService {
 
                 await this.expeditionService.updateByFilter(
                     {
-                        _id: ctx.expedition._id,
+                        clientId: ctx.client.id,
                         ...enemySelector(enemy.value.id),
                     },
                     {
@@ -496,7 +496,7 @@ export class EnemyService {
     
                     await this.expeditionService.updateByFilter(
                         {
-                            _id: ctx.expedition._id,
+                            clientId: ctx.client.id,
                             ...enemySelector(enemy.value.id),
                         },
                         {
