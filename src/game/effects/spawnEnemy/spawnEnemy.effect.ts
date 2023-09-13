@@ -23,6 +23,11 @@ import { EffectDecorator } from '../effects.decorator';
 import { EffectDTO, EffectHandler } from '../effects.interface';
 import { spawnEnemyEffect } from './contants';
 import { Enemy } from 'src/game/components/enemy/enemy.schema';
+import { swarmMasterData } from 'src/game/components/enemy/data/swarmMaster.enemy';
+import { swarmCocoon1Data } from 'src/game/components/enemy/data/swarmCocoon1.enemy';
+import { swarmCocoon2Data } from 'src/game/components/enemy/data/swarmCocoon2.enemy';
+import { mutantSpider1Data } from 'src/game/components/enemy/data/mutantSpider1.enemy';
+import { mutantSpider2Data } from 'src/game/components/enemy/data/mutantSpider2.enemy';
 
 export interface SpawnEnemyArgs {
     enemiesToSpawn: number[];
@@ -42,7 +47,7 @@ export class SpawnEnemyEffect implements EffectHandler {
         
         const ctx            = dto.ctx;
         const enemies        = dto.ctx.expedition.currentNode.data.enemies;
-        const enemiesToSpawn = dto.args.enemiesToSpawn;
+        let enemiesToSpawn = dto.args.enemiesToSpawn;
 
         // First we check if the current combat has any sporelings alive,
         // only spawn in when there are no sporelings (this is temporary)
@@ -53,6 +58,10 @@ export class SpawnEnemyEffect implements EffectHandler {
 
         const combatHasThornWolf = some(enemies, {
             enemyId: thornWolfData.enemyId,
+        });
+
+        const combatHasSwarmMaster = some(enemies, {
+            enemyId: swarmMasterData.enemyId,
         });
 
         if (combatHasFungalBrute) {
@@ -85,7 +94,22 @@ export class SpawnEnemyEffect implements EffectHandler {
 
             if (!combatHasThornWolfPups)
                 await this.spawnEnemies(enemiesToSpawn, enemies, ctx.client);
-        } else {
+        } 
+        else if(combatHasSwarmMaster){
+            if(enemiesToSpawn.length == 1){
+                if(enemiesToSpawn.includes(swarmCocoon1Data.enemyId)){
+                    enemiesToSpawn = [swarmCocoon2Data.enemyId]
+                }else if(enemiesToSpawn.includes(swarmCocoon2Data.enemyId)){
+                    enemiesToSpawn = [swarmCocoon1Data.enemyId]
+                }else if(enemiesToSpawn.includes(mutantSpider1Data.enemyId)){
+                    enemiesToSpawn = [mutantSpider2Data.enemyId]
+                }else if(enemiesToSpawn.includes(mutantSpider2Data.enemyId)){
+                    enemiesToSpawn = [mutantSpider1Data.enemyId]
+                }
+            }
+            await this.spawnEnemies(enemiesToSpawn, enemies, ctx.client);
+        }
+        else {
             await this.spawnEnemies(enemiesToSpawn, enemies, ctx.client);
         }
     }
