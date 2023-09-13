@@ -780,14 +780,16 @@ export class EnemyService {
         
         if(enemyHP >= 200){
             //- Large:
+            console.log("Enemy Large")
             return this.swarmMasterLargeScript(isThereLessThan2Cocoons, isThereLessThan2Spiders, maxEnemiesOnScreen, intents);
         }
         if(enemyHP > 99 && enemyHP < 200){
             //- Normal:
+            console.log("Enemy Normal")
             return this.swarmMasterNormalScript(isThereLessThan2Cocoons, isThereLessThan2Spiders, maxEnemiesOnScreen, intents);
             
         }
-        
+        console.log("Enemy Saggy")
         return this.swarmMasterSaggyScript(isThereLessThan2Cocoons, isThereLessThan2Spiders, maxEnemiesOnScreen, intents);
     }
 
@@ -847,9 +849,15 @@ export class EnemyService {
     }
 
     private swarmMasterSaggyScript(isThereLessThan2Cocoons:boolean, isThereLessThan2Spiders:boolean, maxEnemiesOnScreen:boolean, intents:IntentOption[]): EnemyScript{
+        
+        console.log({isThereLessThan2Cocoons})
+        console.log({isThereLessThan2Spiders})
+        console.log({maxEnemiesOnScreen})
+        
         //- Saggy:
         if(isThereLessThan2Cocoons && isThereLessThan2Spiders && !maxEnemiesOnScreen){
             //- %25 chance to invoke 1 Spider, 1 Cocoon, 2 spiders, 2 cocoons
+            console.log("First option")
             const spider  = { id: intents[1].id, intentions: intents[1].intents }
             const spider2 = { id: intents[2].id, intentions: intents[2].intents }
             const cocoon  = { id: intents[0].id, intentions: intents[0].intents }
@@ -859,17 +867,20 @@ export class EnemyService {
         }
         if(!isThereLessThan2Cocoons && isThereLessThan2Spiders && !maxEnemiesOnScreen){
             //- Summon 1 or 2 Spider:
+            console.log("Second option")
             const spider  = { id: intents[1].id, intentions: intents[1].intents }
             const spider2 = { id: intents[3].id, intentions: intents[3].intents }
             return getRandomItemByWeight([spider, spider2], [50, 50]);
         }
         if(isThereLessThan2Cocoons && !isThereLessThan2Spiders && !maxEnemiesOnScreen){
             //- Summon 1 Cocoon:
+            console.log("Third option")
             const cocoon = { id: intents[0].id, intentions: intents[0].intents }
             const cocoon2 = { id: intents[2].id, intentions: intents[2].intents }
             return getRandomItemByWeight([cocoon, cocoon2], [50, 50]);
         }
-            
+        
+        console.log("Last option")
         //- %25 chance of use Attack, Defense, 
         const defense = { id: intents[4].id, intentions: intents[4].intents }
         const redThunder =    { id: intents[6].id, intentions: intents[6].intents }

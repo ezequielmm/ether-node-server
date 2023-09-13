@@ -76,7 +76,7 @@ export class EnemyBuilderService {
 
     public static createDoNothingIntent = (): EnemyIntention => {
         return {
-            type: EnemyIntentionType.DontMove,
+            type: EnemyIntentionType.DoNothing,
             target: CardTargetedEnum.Self,
             value: 0,
             effects: [
