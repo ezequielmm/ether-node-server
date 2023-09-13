@@ -940,8 +940,7 @@ export class EnemyService {
         }
         
         console.log("Last option")
-        //- %25 chance of use Attack, Defense, 
-        const defense = { id: intents[4].id, intentions: intents[4].intents }
+        const defense =       { id: intents[4].id, intentions: intents[4].intents }
         const redThunder =    { id: intents[6].id, intentions: intents[6].intents }
         const greenThunder  = { id: intents[7].id, intentions: intents[7].intents }
         //const signature  = { id: intents[8].id, intentions: intents[8].intents }

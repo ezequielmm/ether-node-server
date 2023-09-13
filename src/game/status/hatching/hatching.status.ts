@@ -9,7 +9,6 @@ import { hatchingStatus } from "./constants";
 import { OnEvent } from "@nestjs/event-emitter";
 import { GameContext } from "src/game/components/interfaces";
 import { EVENT_BEFORE_ENEMIES_TURN_END, EVENT_BEFORE_PLAYER_TURN_END } from "src/game/constants";
-import { hiddenStatus } from "../hidden/constants";
 
 @StatusDecorator({
     status: hatchingStatus,
@@ -26,6 +25,10 @@ export class HatchingStatus implements StatusEffectHandler {
     }
 
     async handle(dto: StatusEffectDTO): Promise<EffectDTO> {
+        console.log("-----------------------------------------------------------------------------------")
+        console.log("Hatching value:")
+        console.log(dto.effectDTO.args.currentValue)
+        console.log("-----------------------------------------------------------------------------------")
         return dto.effectDTO;
     }
 

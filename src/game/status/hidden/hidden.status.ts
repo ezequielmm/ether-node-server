@@ -1,16 +1,8 @@
 import { Injectable } from "@nestjs/common";
 import { EffectDTO } from "src/game/effects/effects.interface";
-import {
-    EVENT_BEFORE_ENEMIES_TURN_END,
-    EVENT_BEFORE_ENEMIES_TURN_START,
-    EVENT_BEFORE_PLAYER_TURN_END,
-    EVENT_BEFORE_PLAYER_TURN_START,
-} from 'src/game/constants';
 import { StatusEffectHandler, StatusEffectDTO } from "../interfaces";
 import { StatusDecorator } from "../status.decorator";
 import { hiddenStatus } from "./constants";
-import { OnEvent } from "@nestjs/event-emitter";
-import { GameContext } from "src/game/components/interfaces";
 import { StatusService } from "../status.service";
 import { EnemyService } from "src/game/components/enemy/enemy.service";
 import { PlayerService } from "src/game/components/player/player.service";
@@ -63,34 +55,4 @@ export class HiddenStatus implements StatusEffectHandler {
         
         return effectDTO;
     }
-    
-    // @OnEvent(EVENT_BEFORE_ENEMIES_TURN_START)
-    // async onEnemiesTurnStart(args: { ctx: GameContext }): Promise<void> {
-    //     const { ctx } = args;
-    //     const enemies = this.enemyService.getAll(ctx);
-
-
-    //     for (const enemy of enemies) {
-    //         await this.statusService.decreaseCounterAndRemove(
-    //             ctx,
-    //             enemy.value.statuses,
-    //             enemy,
-    //             hiddenStatus,
-    //         );
-    //     }
-    // }
-
-    // @OnEvent(EVENT_BEFORE_PLAYER_TURN_START)
-    // async onPlayerTurnStart(args: { ctx: GameContext }): Promise<void> {
-    //     const { ctx } = args;
-    //     const player = this.playerService.get(ctx);
-    //     const statuses = player.value.combatState.statuses;
-
-    //     await this.statusService.decreaseCounterAndRemove(
-    //         ctx,
-    //         statuses,
-    //         player,
-    //         hiddenStatus,
-    //     );
-    // }
 }
