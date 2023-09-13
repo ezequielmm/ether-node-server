@@ -80,17 +80,17 @@ export class HiddenStatus implements StatusEffectHandler {
         }
     }
 
-    @OnEvent(EVENT_BEFORE_PLAYER_TURN_START)
-    async onPlayerTurnStart(args: { ctx: GameContext }): Promise<void> {
-        const { ctx } = args;
-        const player = this.playerService.get(ctx);
-        const statuses = player.value.combatState.statuses;
+    // @OnEvent(EVENT_BEFORE_PLAYER_TURN_START)
+    // async onPlayerTurnStart(args: { ctx: GameContext }): Promise<void> {
+    //     const { ctx } = args;
+    //     const player = this.playerService.get(ctx);
+    //     const statuses = player.value.combatState.statuses;
 
-        await this.statusService.decreaseCounterAndRemove(
-            ctx,
-            statuses,
-            player,
-            hiddenStatus,
-        );
-    }
+    //     await this.statusService.decreaseCounterAndRemove(
+    //         ctx,
+    //         statuses,
+    //         player,
+    //         hiddenStatus,
+    //     );
+    // }
 }
