@@ -13,6 +13,7 @@ import {
     ENEMY_DEFENSE_PATH,
     ENEMY_HP_CURRENT_PATH,
     ENEMY_STATUSES_PATH,
+    ENEMY_SWARM_COCOON_IDS,
     ENEMY_SWARM_MASTER_ID,
 } from './constants';
 import { getDecimalRandomBetween, getRandomItemByWeight } from 'src/utils';
@@ -476,6 +477,9 @@ export class EnemyService {
                 if(enemy_DB.enemyId === ENEMY_SWARM_MASTER_ID){
                     nextScript = this.getNextSwarmMasterScript(ctx, currentScript, attackLevels[0].options, enemy.value.hpCurrent);
                     this.setCurrentScript(ctx, enemy.value.id, nextScript);
+                } else if(ENEMY_SWARM_COCOON_IDS.includes(enemy_DB.enemyId)){
+                    nextScript = this.getNextSwarmCocoonScript(currentScript, attackLevels[0].options);
+                    this.setCurrentScript(ctx, enemy.value.id, nextScript);
                 }
                 else{
                     const enemyAggressiveness = enemy.value.aggressiveness ? enemy.value.aggressiveness : enemy_DB.aggressiveness;
@@ -746,6 +750,13 @@ export class EnemyService {
         return formattedIntents;
     }
 
+    private getNextSwarmCocoonScript(currentScript:EnemyScript, intents:IntentOption[]): EnemyScript{
+        if(!currentScript){
+            return {id: intents[0].id, intentions: intents[0].intents};
+        }else{
+            return {id: intents[1].id, intentions: intents[1].intents};
+        }
+    }
 
     private getNextSwarmMasterScript(ctx:GameContext, currentScript:EnemyScript, intents:IntentOption[], enemyHP:number): EnemyScript{
 
