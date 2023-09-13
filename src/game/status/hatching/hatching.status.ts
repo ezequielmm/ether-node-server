@@ -34,13 +34,13 @@ export class HatchingStatus implements StatusEffectHandler {
         const { ctx } = args;
         const enemies = this.enemyService.getAll(ctx);
 
-
+        console.log("EVENT_BEFORE_ENEMIES_TURN_END")
         for (const enemy of enemies) {
             await this.statusService.decreaseCounterAndRemove(
                 ctx,
                 enemy.value.statuses,
                 enemy,
-                hiddenStatus,
+                hatchingStatus,
             );
         }
     }
@@ -51,11 +51,13 @@ export class HatchingStatus implements StatusEffectHandler {
         const player = this.playerService.get(ctx);
         const statuses = player.value.combatState.statuses;
 
+        console.log("EVENT_BEFORE_PLAYER_TURN_END")
+
         await this.statusService.decreaseCounterAndRemove(
             ctx,
             statuses,
             player,
-            hiddenStatus,
+            hatchingStatus,
         );
     }
 }

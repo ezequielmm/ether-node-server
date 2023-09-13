@@ -35,5 +35,5 @@ export enum EnemyIntentionType {
     Debuff = 'debuff',
     Special = 'special',
     Signature = 'signature',
-    DontMove = 'dontmove',
+    DoNothing = 'do_nothing',
 }
