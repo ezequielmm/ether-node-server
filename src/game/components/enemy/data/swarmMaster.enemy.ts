@@ -1,11 +1,9 @@
-import { spawnEnemyEffect } from "src/game/effects/spawnEnemy/contants";
 import { EnemyBuilderService } from "../enemy-builder.service";
 import { EnemyTypeEnum, EnemyCategoryEnum, EnemySizeEnum } from "../enemy.enum";
 import { EnemyAction, EnemyIntention } from "../enemy.interface";
 import { Enemy } from "../enemy.schema";
 import { swarmCocoon1Data } from "./swarmCocoon1.enemy";
 import { swarmCocoon2Data } from "./swarmCocoon2.enemy";
-import { CardTargetedEnum } from "../../card/card.enum";
 import { mutantSpider1Data } from "./mutantSpider1.enemy";
 import { mutantSpider2Data } from "./mutantSpider2.enemy";
 import { burn } from "src/game/status/burn/constants";
@@ -30,10 +28,10 @@ const SignatureAttack: EnemyIntention = null;
 //-------------------------------------------------------------------------------------------------------------------------------------------------------
 const BasicIntents: EnemyAction = {
     options:[
-        //{ id: 1, probability: 0.2, cooldown: 0, intents: [Summon1Cocoon] },
-        { id: 2, probability: 0.2, cooldown: 0, intents: [Summon1Spider] },
-        //{ id: 3, probability: 0.1, cooldown: 0, intents: [Summon2Cocoon] },
-        { id: 4, probability: 0.2, cooldown: 0, intents: [Summon2Spider] },
+        { id: 1, probability: 0.1, cooldown: 0, intents: [Summon1Cocoon] },
+        { id: 2, probability: 0.1, cooldown: 0, intents: [Summon1Spider] },
+        { id: 3, probability: 0.1, cooldown: 0, intents: [Summon2Cocoon] },
+        { id: 4, probability: 0.1, cooldown: 0, intents: [Summon2Spider] },
         { id: 5, probability: 0.2, cooldown: 0, intents: [BasicDefense] },
         { id: 6, probability: 0.2, cooldown: 0, intents: [BasicAttack] },
         { id: 7, probability: 0.1, cooldown: 0, intents: [SecondAttack, DebuffBurn] },
@@ -51,7 +49,7 @@ export const swarmMasterData: Enemy = {
     name: 'Swarm Master',
     type: EnemyTypeEnum.Beast,
     category: EnemyCategoryEnum.Boss,
-    size: EnemySizeEnum.Giant,
+    size: EnemySizeEnum.Large,
     description: 'todo:..',
     healthRange: [300, 300],
     aggressiveness: 0,

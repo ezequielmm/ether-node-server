@@ -13,6 +13,7 @@ import {
     ENEMY_DEFENSE_PATH,
     ENEMY_HP_CURRENT_PATH,
     ENEMY_STATUSES_PATH,
+    ENEMY_SWARM_MASTER_ID,
 } from './constants';
 import { getDecimalRandomBetween, getRandomItemByWeight } from 'src/utils';
 import {
@@ -33,6 +34,10 @@ import { ReturnModelType } from '@typegoose/typegoose';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { ProjectionFields } from 'mongoose';
 import { IntentCooldown } from '../expedition/expedition.interface';
+import { swarmCocoon1Data } from './data/swarmCocoon1.enemy';
+import { swarmCocoon2Data } from './data/swarmCocoon2.enemy';
+import { mutantSpider1Data } from './data/mutantSpider1.enemy';
+import { mutantSpider2Data } from './data/mutantSpider2.enemy';
 
 @Injectable()
 export class EnemyService {
@@ -221,11 +226,7 @@ export class EnemyService {
      * @param script Enemy script value
      * @returns Enemy script value
      */
-    public async setCurrentScript(
-        ctx: GameContext,
-        id: EnemyId,
-        script: EnemyScript,
-    ): Promise<EnemyScript> {
+    public async setCurrentScript(ctx: GameContext, id: EnemyId, script: EnemyScript): Promise<EnemyScript> {
         const enemy = this.get(ctx, id);
 
         await this.expeditionService.updateByFilter(
@@ -380,7 +381,7 @@ export class EnemyService {
             //TODO: Refactor the below to just use pathToUpdate, when there's time to test it.
             await this.expeditionService.updateByFilter(
                 {
-                    clientId: client.id,
+                    _id: ctx.expedition._id,
                 },
                 {
                     $inc: {
@@ -406,17 +407,28 @@ export class EnemyService {
         return enemy.hpCurrent;
     }
 
+    public getAmountOfEnemiesByIds(ctx: GameContext, enemiesIds:number[]): number{
+        const enemiesAlive = this.getLiving(ctx);
+        const enemiesAliveIds = enemiesAlive.map(e => e.value.enemyId);
+        let counter = 0;
+
+        for(let enemyAliveId of enemiesAliveIds){
+            if(enemiesIds.includes(enemyAliveId)){
+                counter ++;
+            }
+        }
+
+        return counter;
+    }
+
+
     /**
      * Calculate new scripts for all enemies
      *
      * @param ctx Context
      */
     async calculateNewIntentions(ctx: GameContext): Promise<void> {
-        const enemies = this.getAll(ctx);
-
-        const enemiesAlive = enemies.filter(
-            (enemy) => enemy.value.hpCurrent > 0,
-        );
+        const enemiesAlive = this.getLiving(ctx);
 
         for (const enemy of enemiesAlive) {
             
@@ -451,7 +463,7 @@ export class EnemyService {
 
                 await this.expeditionService.updateByFilter(
                     {
-                        clientId: ctx.client.id,
+                        _id: ctx.expedition._id,
                         ...enemySelector(enemy.value.id),
                     },
                     {
@@ -460,28 +472,36 @@ export class EnemyService {
                 );
             }
             else if(attackLevels){
-                const enemyAggressiveness = enemy.value.aggressiveness ? enemy.value.aggressiveness : enemy_DB.aggressiveness;
-                nextScript = this.getNextScriptWithAggressiveness(attackLevels, enemyAggressiveness, enemy.value.intentCooldowns);
-                const nextAttackCooldown = this.getFullCoolDownIntent(nextScript.id, enemy_DB);
-                
-                console.log("Next attack cooldown:")
-                console.log(nextAttackCooldown)
 
-                let decreasedCooldowns = this.decreaseCooldowns(enemy.value.intentCooldowns);
-                decreasedCooldowns = this.setCooldownCurrentAttack(decreasedCooldowns, nextScript.id, nextAttackCooldown);
+                if(enemy_DB.enemyId === ENEMY_SWARM_MASTER_ID){
+                    nextScript = this.getNextSwarmMasterScript(ctx, currentScript, attackLevels[0].options, enemy.value.hpCurrent);
+                    this.setCurrentScript(ctx, enemy.value.id, nextScript);
+                }
+                else{
+                    const enemyAggressiveness = enemy.value.aggressiveness ? enemy.value.aggressiveness : enemy_DB.aggressiveness;
+                    nextScript = this.getNextScriptWithAggressiveness(attackLevels, enemyAggressiveness, enemy.value.intentCooldowns);
+                    const nextAttackCooldown = this.getFullCoolDownIntent(nextScript.id, enemy_DB);
+                    
+                    console.log("Next attack cooldown:")
+                    console.log(nextAttackCooldown)
+    
+                    let decreasedCooldowns = this.decreaseCooldowns(enemy.value.intentCooldowns);
+                    decreasedCooldowns = this.setCooldownCurrentAttack(decreasedCooldowns, nextScript.id, nextAttackCooldown);
+    
+                    enemy.value.intentCooldowns = decreasedCooldowns;
+    
+                    await this.expeditionService.updateByFilter(
+                        {
+                            _id: ctx.expedition._id,
+                            ...enemySelector(enemy.value.id),
+                        },
+                        {
+                            [ENEMY_CURRENT_SCRIPT_PATH]: nextScript,
+                            [ENEMY_CURRENT_COOLDOWN_PATH]: decreasedCooldowns
+                        },
+                    );
+                }
 
-                enemy.value.intentCooldowns = decreasedCooldowns;
-
-                await this.expeditionService.updateByFilter(
-                    {
-                        clientId: ctx.client.id,
-                        ...enemySelector(enemy.value.id),
-                    },
-                    {
-                        [ENEMY_CURRENT_SCRIPT_PATH]: nextScript,
-                        [ENEMY_CURRENT_COOLDOWN_PATH]: decreasedCooldowns
-                    },
-                );
             }
 
             enemy.value.currentScript = nextScript;
@@ -502,8 +522,6 @@ export class EnemyService {
     private setCooldownCurrentAttack(cooldowns: IntentCooldown[], intentId: number, cooldown: number): IntentCooldown[] {
         return cooldowns.map((intentCooldown) => {
             if (intentCooldown.idIntent === intentId) {
-                console.log("encontró el cooldown id: " + intentCooldown.idIntent)
-                console.log(cooldown)
                 return { ...intentCooldown, cooldown };
             }
             return intentCooldown;
@@ -532,7 +550,6 @@ export class EnemyService {
 
         return 0;
     }
-
     
     //- Returns next attack available (not cooldown) based on aggressiveness
     private getNextScriptWithAggressiveness(attackLevels: EnemyAction[], aggressiveness: number, cooldowns: IntentCooldown[]): EnemyScript{
@@ -573,7 +590,7 @@ export class EnemyService {
 
             if(!attackCooldown || attackCooldown.cooldown == 0){
                 validAttack = true;
-                console.log("Es un ataque válido.")
+                console.log("Ataque válido.")
             }else{
                 count ++;
                 console.log("No es un ataque válido, repitiendo proceso..")
@@ -727,5 +744,119 @@ export class EnemyService {
         }));
 
         return formattedIntents;
+    }
+
+
+    private getNextSwarmMasterScript(ctx:GameContext, currentScript:EnemyScript, intents:IntentOption[], enemyHP:number): EnemyScript{
+
+        if(!currentScript){
+            //- First intent:
+            return {id: intents[2].id, intentions: intents[2].intents};
+        }
+
+        //- Next attacks will be determinated by the enemy's HP:
+        const isThereLessThan2Cocoons = this.getAmountOfEnemiesByIds(ctx, [swarmCocoon1Data.enemyId, swarmCocoon2Data.enemyId]) < 2;
+        const isThereLessThan2Spiders = this.getAmountOfEnemiesByIds(ctx, [mutantSpider1Data.enemyId, mutantSpider2Data.enemyId]) < 2;
+        const maxEnemiesOnScreen = this.getLiving(ctx).length > 5;
+        
+        if(enemyHP >= 200){
+            //- Large:
+            return this.swarmMasterLargeScript(isThereLessThan2Cocoons, isThereLessThan2Spiders, maxEnemiesOnScreen, intents);
+        }
+        if(enemyHP > 99 && enemyHP < 200){
+            //- Normal:
+            return this.swarmMasterNormalScript(isThereLessThan2Cocoons, isThereLessThan2Spiders, maxEnemiesOnScreen, intents);
+            
+        }
+        
+        return this.swarmMasterSaggyScript(isThereLessThan2Cocoons, isThereLessThan2Spiders, maxEnemiesOnScreen, intents);
+    }
+
+    private swarmMasterLargeScript(isThereLessThan2Cocoons:boolean, isThereLessThan2Spiders:boolean, maxEnemiesOnScreen:boolean, intents:IntentOption[]): EnemyScript{
+        if(isThereLessThan2Cocoons && isThereLessThan2Spiders && !maxEnemiesOnScreen){
+            //- %50 chance to invoke 1 Spider or 1 Cocoon
+            const spider = { id: intents[1].id, intentions: intents[1].intents }
+            const cocoon = { id: intents[0].id, intentions: intents[0].intents }
+            return getRandomItemByWeight([spider, cocoon], [50, 50]);
+        }
+        if(!isThereLessThan2Cocoons && isThereLessThan2Spiders && !maxEnemiesOnScreen){
+            //- Summon 1 Spider:
+            return { id: intents[1].id, intentions: intents[1].intents }
+        }
+        if(isThereLessThan2Cocoons && !isThereLessThan2Spiders && !maxEnemiesOnScreen){
+            //- Summon 1 Cocoon:
+            return { id: intents[0].id, intentions: intents[0].intents }
+        }
+            
+        //- Va a elegir 50 50 entre id 5 y 6
+        const defense = { id: intents[4].id, intentions: intents[4].intents }
+        const attack  = { id: intents[5].id, intentions: intents[5].intents }
+        return getRandomItemByWeight([defense, attack], [50, 50]);
+    }
+
+
+    private swarmMasterNormalScript(isThereLessThan2Cocoons:boolean, isThereLessThan2Spiders:boolean, maxEnemiesOnScreen:boolean, intents:IntentOption[]): EnemyScript{
+        if(isThereLessThan2Cocoons && isThereLessThan2Spiders && !maxEnemiesOnScreen){
+            //- %25 chance to invoke 1 Spider, 1 Cocoon, 2 spiders, 2 cocoons
+            const spider  = { id: intents[1].id, intentions: intents[1].intents }
+            const spider2 = { id: intents[2].id, intentions: intents[2].intents }
+            const cocoon  = { id: intents[0].id, intentions: intents[0].intents }
+            const cocoon2 = { id: intents[3].id, intentions: intents[3].intents }
+
+            return getRandomItemByWeight([spider, cocoon, spider2, cocoon2], [25, 25, 25, 25]);
+        }
+        if(!isThereLessThan2Cocoons && isThereLessThan2Spiders && !maxEnemiesOnScreen){
+            //- Summon 1 or 2 Spider:
+            const spider  = { id: intents[1].id, intentions: intents[1].intents }
+            const spider2 = { id: intents[3].id, intentions: intents[3].intents }
+            return getRandomItemByWeight([spider, spider2], [50, 50]);
+        }
+        if(isThereLessThan2Cocoons && !isThereLessThan2Spiders && !maxEnemiesOnScreen){
+            //- Summon 1 Cocoon:
+            const cocoon = { id: intents[0].id, intentions: intents[0].intents }
+            const cocoon2 = { id: intents[2].id, intentions: intents[2].intents }
+            return getRandomItemByWeight([cocoon, cocoon2], [50, 50]);
+        }
+        
+        //- %25 chance of use Attack, Defense, 
+        const defense = { id: intents[4].id, intentions: intents[4].intents }
+        const attack  = { id: intents[5].id, intentions: intents[5].intents }
+        const redThunder =    { id: intents[6].id, intentions: intents[6].intents }
+        const greenThunder  = { id: intents[7].id, intentions: intents[7].intents }
+        
+        return getRandomItemByWeight([defense, attack, redThunder, greenThunder], [25, 25, 25, 25]);
+    }
+
+    private swarmMasterSaggyScript(isThereLessThan2Cocoons:boolean, isThereLessThan2Spiders:boolean, maxEnemiesOnScreen:boolean, intents:IntentOption[]): EnemyScript{
+        //- Saggy:
+        if(isThereLessThan2Cocoons && isThereLessThan2Spiders && !maxEnemiesOnScreen){
+            //- %25 chance to invoke 1 Spider, 1 Cocoon, 2 spiders, 2 cocoons
+            const spider  = { id: intents[1].id, intentions: intents[1].intents }
+            const spider2 = { id: intents[2].id, intentions: intents[2].intents }
+            const cocoon  = { id: intents[0].id, intentions: intents[0].intents }
+            const cocoon2 = { id: intents[3].id, intentions: intents[3].intents }
+
+            return getRandomItemByWeight([spider, cocoon, spider2, cocoon2], [25, 25, 25, 25]);
+        }
+        if(!isThereLessThan2Cocoons && isThereLessThan2Spiders && !maxEnemiesOnScreen){
+            //- Summon 1 or 2 Spider:
+            const spider  = { id: intents[1].id, intentions: intents[1].intents }
+            const spider2 = { id: intents[3].id, intentions: intents[3].intents }
+            return getRandomItemByWeight([spider, spider2], [50, 50]);
+        }
+        if(isThereLessThan2Cocoons && !isThereLessThan2Spiders && !maxEnemiesOnScreen){
+            //- Summon 1 Cocoon:
+            const cocoon = { id: intents[0].id, intentions: intents[0].intents }
+            const cocoon2 = { id: intents[2].id, intentions: intents[2].intents }
+            return getRandomItemByWeight([cocoon, cocoon2], [50, 50]);
+        }
+            
+        //- %25 chance of use Attack, Defense, 
+        const defense = { id: intents[4].id, intentions: intents[4].intents }
+        const redThunder =    { id: intents[6].id, intentions: intents[6].intents }
+        const greenThunder  = { id: intents[7].id, intentions: intents[7].intents }
+        //const signature  = { id: intents[8].id, intentions: intents[8].intents }
+        
+        return getRandomItemByWeight([defense, redThunder, greenThunder], [50, 25, 25]);
     }
 }
