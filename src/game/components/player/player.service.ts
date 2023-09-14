@@ -277,6 +277,41 @@ export class PlayerService {
     }
 
     /**
+     * Apply damage to the player ignoring defense
+     *
+     * @param ctx Context
+     * @param damage Damage to apply
+     * @returns The new hp of the player
+     */
+    public async breach(ctx: GameContext, damage: number): Promise<number> {
+        
+        const player = this.get(ctx);
+        const currentHp = player.value.combatState.hpCurrent;
+
+        let newHp = Math.max(0, currentHp - damage);
+        
+        this.logger.log(
+            ctx.info,
+            `Player received damage for ${damage} points`,
+        );
+
+        await this.setHP({ ctx, newHPCurrent: newHp });
+
+        // Add damage to history
+        this.historyService.register({
+            clientId: ctx.client.id,
+            registry: {
+                type: 'damage',
+                damage,
+                turn: ctx.expedition.currentNode.data.round,
+                target: player,
+            },
+        });
+
+        return newHp;
+    }
+
+    /**
      * Attach a status to an enemy
      *
      * @param ctx Context
