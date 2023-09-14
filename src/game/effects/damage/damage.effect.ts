@@ -12,6 +12,8 @@ import { EffectDTO, EffectHandler } from '../effects.interface';
 import { EffectService } from '../effects.service';
 import { energyEffect } from '../energy/constants';
 import { damageEffect } from './constants';
+import { counterEffect } from '../counter/constants';
+import { EnemyIntentionType } from 'src/game/components/enemy/enemy.enum';
 
 export interface DamageArgs {
     useDefense?: boolean;
@@ -81,6 +83,28 @@ export class DamageEffect implements EffectHandler {
             oldDefense = target.value.defense;
 
             await this.enemyService.damage(ctx, target.value.id, damage);
+
+
+            const enemyIntentions = target.value.currentScript.intentions;
+            for(const intention of enemyIntentions){
+                const effects = intention.effects;
+
+                for(const effect of effects){
+                    if(effect.effect === counterEffect.name){
+                        console.log("********************The enemy attacked by the user had counter intentions..")
+                        effect.args.value += damage;
+                    }
+                }
+            }
+
+            for(const intention of enemyIntentions){
+                if(intention.type == EnemyIntentionType.Signature){
+                    console.log("********************The enemy attacked by the user had signature attack intentions..")
+                    if(damage >= intention.negateDamage){
+                        console.log("********************The signature attack would be negated..")
+                    }
+                }                
+            }
 
             newHp = target.value.hpCurrent;
             newDefense = target.value.defense;

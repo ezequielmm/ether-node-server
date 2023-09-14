@@ -85,6 +85,12 @@ export class SendEnemyIntentProcess {
                 return `This Enemy is plotting to gain a Buff effect`;
             case EnemyIntentionType.Debuff:
                 return `This Enemy is scheming to apply a Debuff effect`;
+            case EnemyIntentionType.Signature:
+                return `This Enemy is scheming to make his Signature Attack`;
+            case EnemyIntentionType.Breach:
+                return `This Enemy is scheming breach yout Defense`;
+            case EnemyIntentionType.Counter:
+                return `This Enemy is scheming to reflect all the recieved Attack`;
             default:
                 return `Unknown intentions`;
         }

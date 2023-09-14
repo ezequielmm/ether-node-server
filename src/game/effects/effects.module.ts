@@ -45,6 +45,9 @@ import {
 } from './shieldBash/shieldBash.effect';
 import { SpawnEnemyEffect } from './spawnEnemy/spawnEnemy.effect';
 import { TwistTheBladeEffect } from './twistTheBlade/twistTheBlade.effect';
+import { NoEffectEffect } from './noEffects/noEffect.effect';
+import { BreachEffect } from './breach/breach.effect';
+import { CounterEffect } from './counter/counter.efect';
 
 @Module({
     imports: [
@@ -95,6 +98,10 @@ import { TwistTheBladeEffect } from './twistTheBlade/twistTheBlade.effect';
         FleeEffect,
         ShieldBashEffect,
         ShieldBashEffectUpgraded,
+        NoEffectEffect,
+        BreachEffect,
+        CounterEffect
+
     ],
     exports: [EffectService],
 })

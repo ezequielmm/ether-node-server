@@ -7,6 +7,7 @@ import { defenseEffect } from "src/game/effects/defense/constants";
 import { attachStatusEffect } from "src/game/effects/attachStatus/constants";
 import { spawnEnemyEffect } from "src/game/effects/spawnEnemy/contants";
 import { noEffect } from "src/game/effects/noEffects/constants";
+import { breachEffect } from "src/game/effects/breach/constants";
 
 export class EnemyBuilderService {
     
@@ -21,6 +22,48 @@ export class EnemyBuilderService {
                     target: CardTargetedEnum.Player,
                     args: {
                         value: attack,
+                    },
+                    action: {
+                        name: 'attack1',
+                        hint: 'attack1',
+                    },
+                },
+            ],
+        }
+    }
+
+    public static createBreachAttack = (breach:number): EnemyIntention => {
+        return {
+            type: EnemyIntentionType.Breach,
+            target: CardTargetedEnum.Player,
+            value: breach,
+            effects: [
+                {
+                    effect: breachEffect.name,
+                    target: CardTargetedEnum.Player,
+                    args: {
+                        value: breach,
+                    },
+                    action: {
+                        name: 'attack1',
+                        hint: 'attack1',
+                    },
+                },
+            ],
+        }
+    }
+
+    public static createCounterAttack = (): EnemyIntention => {
+        return {
+            type: EnemyIntentionType.Counter,
+            target: CardTargetedEnum.Player,
+            value: 0,
+            effects: [
+                {
+                    effect: damageEffect.name,
+                    target: CardTargetedEnum.Player,
+                    args: {
+                        value: 0,
                     },
                     action: {
                         name: 'attack1',
