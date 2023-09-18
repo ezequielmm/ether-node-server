@@ -929,7 +929,7 @@ export class EnemyService {
         if(lessThan2Cocoons && !lessThan2Spiders && !(enemiesOnScreen >= 5)){
             //- Summon 1 Cocoon:
             console.log("Third option")
-            const cocoon = { id: intents[0].id, intentions: intents[0].intents }
+            const cocoon  = { id: intents[0].id, intentions: intents[0].intents }
             const cocoon2 = { id: intents[2].id, intentions: intents[2].intents }
 
             if(enemiesOnScreen >= 4){
@@ -940,10 +940,10 @@ export class EnemyService {
         }
         
         console.log("Last option")
-        const defense =       { id: intents[4].id, intentions: intents[4].intents }
-        const redThunder =    { id: intents[6].id, intentions: intents[6].intents }
-        const greenThunder  = { id: intents[7].id, intentions: intents[7].intents }
-        //const signature  = { id: intents[8].id, intentions: intents[8].intents }
+        const defense      = { id: intents[4].id, intentions: intents[4].intents }
+        const redThunder   = { id: intents[6].id, intentions: intents[6].intents }
+        const greenThunder = { id: intents[7].id, intentions: intents[7].intents }
+        //const signature    = { id: intents[8].id, intentions: intents[8].intents }
         
         return getRandomItemByWeight([defense, redThunder, greenThunder], [50, 25, 25]);
     }

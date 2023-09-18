@@ -14,6 +14,9 @@ import { energyEffect } from '../energy/constants';
 import { damageEffect } from './constants';
 import { counterEffect } from '../counter/constants';
 import { EnemyIntentionType } from 'src/game/components/enemy/enemy.enum';
+import { breachEffect } from '../breach/constants';
+import { absorbEffect } from '../absorb/constants';
+import { EnemyBuilderService } from 'src/game/components/enemy/enemy-builder.service';
 
 export interface DamageArgs {
     useDefense?: boolean;
@@ -85,25 +88,47 @@ export class DamageEffect implements EffectHandler {
             await this.enemyService.damage(ctx, target.value.id, damage);
 
 
+            //- Counter, Breach & Absorb, negate signature and increment signature counter:
             const enemyIntentions = target.value.currentScript.intentions;
-            for(const intention of enemyIntentions){
-                const effects = intention.effects;
 
-                for(const effect of effects){
-                    if(effect.effect === counterEffect.name){
-                        console.log("********************The enemy attacked by the user had counter intentions..")
-                        effect.args.value += damage;
-                    }
+            let nextScriptChanged = false;
+            for(const intention of enemyIntentions){
+                switch(intention.type){
+                    case EnemyIntentionType.Signature:
+                        console.log("********************The enemy attacked by the user had signature attack intentions..")
+                        if(intention.negateDamage && damage >= intention.negateDamage){
+                            console.log("********************The signature attack would be negated..");
+                            target.value.currentScript = {id: 0, intentions: [EnemyBuilderService.createDoNothingIntent()]};
+                            nextScriptChanged = true;
+                        }
+                        if(intention.damageToIncrementCounter && damage >= intention.damageToIncrementCounter){
+                            if(intention[0].effect.args.value < 2){
+                                intention[0].effect.args.value += 1;
+                                nextScriptChanged = true;
+                            }
+                        }
+                        break;
+                    case EnemyIntentionType.Counter:
+                        console.log("********************The enemy attacked by the user had Counter intentions..")
+                        intention[0].effect.args.value += damage;
+                        nextScriptChanged = true;
+                        break;
+                    case EnemyIntentionType.Breach:
+                        console.log("********************The enemy attacked by the user had Breach intentions..")
+                        intention[0].effect.args.value = Math.max(0, (intention[0].effect.args.value - damage));
+                        nextScriptChanged = true;
+                        break;
+                    case EnemyIntentionType.Absorb:
+                        console.log("********************The enemy attacked by the user had Absorb intentions..")
+                        intention[0].effect.args.value += damage;
+                        nextScriptChanged = true;
+                        break;
+
                 }
-            }
 
-            for(const intention of enemyIntentions){
-                if(intention.type == EnemyIntentionType.Signature){
-                    console.log("********************The enemy attacked by the user had signature attack intentions..")
-                    if(damage >= intention.negateDamage){
-                        console.log("********************The signature attack would be negated..")
-                    }
-                }                
+                if(nextScriptChanged){
+                    this.enemyService.setCurrentScript(ctx, target.value.id, target.value.currentScript);
+                }
             }
 
             newHp = target.value.hpCurrent;
