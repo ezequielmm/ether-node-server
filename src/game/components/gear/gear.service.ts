@@ -116,7 +116,17 @@ export class GearService {
     const availableGear = await this.gearModel.find({ rarity });
     return sample(availableGear);
   }
-
+  async getGearByName(name: string, rarity: GearRarityEnum): Promise<Gear> {
+    try {
+      return await this.gearModel.findOne({ name, rarity });
+    } catch (error) {
+      console.error(
+        `An error occurred while fetching gear by name: ${name} and rarity: ${rarity}`,
+        error,
+      );
+      return null;
+    }
+  }
   async getAllGear(): Promise<Gear[] | null> {
     try {
       const allGear = await this.gearModel.find({});
