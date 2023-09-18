@@ -13,7 +13,7 @@ export class GearService {
   constructor(
     @InjectModel(Gear)
     private readonly gearModel: ReturnModelType<typeof Gear>,
-  ) {}
+  ) { }
 
   private gearData = GearData;
   private selectRandomRarity(rarities: ILootboxRarityOdds) {
@@ -61,47 +61,18 @@ export class GearService {
     }
     return rarity;
   }
+
   async getLootbox(
     size: number,
     rarities?: ILootboxRarityOdds,
-    userGear: Gear[] = [],
   ): Promise<Gear[]> {
-    //console.log('Starting to generate lootbox...');
     const gear_list: Gear[] = [];
-    const uniqueGearIds: Set<string> = new Set();
 
-    userGear.forEach((gear) => uniqueGearIds.add(gear.gearId.toString()));
-
-   /* console.log(
-      `Initial unique gear IDs: ${Array.from(uniqueGearIds).join(', ')}`,
-    );
-*/
-    let targetGearSet = 'Siege';
-    let allGear: Gear[] = await this.getAllGear();
-    allGear = allGear.filter((gear) => gear.name === targetGearSet);
-
-    let itemAdded = false;
-    let targetRarity = this.selectRandomRarity(rarities);
-
-    while (itemAdded === false) {
-      const newGear = this.getRandomGearByRarity(allGear, targetRarity);
-
-      if (uniqueGearIds.has(newGear.gearId.toString())) {
-       /* console.log(
-          `Repeated: ${newGear.gearId.toString()} - ${newGear.rarity}`,
-        );*/
-        targetRarity = this.downgradeRarity(targetRarity);
-
-        if (targetRarity === null) {
-          //console.log('Target rarity null, break');
-          break;
-        }
-      } else {
-        console.log(`Adding: ${newGear.gearId} - ${newGear.rarity}`);
-        gear_list.push(newGear);
-        uniqueGearIds.add(newGear.gearId.toString());
-        itemAdded = true;
-      }
+    for (let i = 0; i < size; i++) {
+      const one_gear = await this.getOneGear(
+        this.selectRandomRarity(rarities),
+      );
+      gear_list.push(one_gear);
     }
 
     return gear_list;
@@ -145,17 +116,7 @@ export class GearService {
     const availableGear = await this.gearModel.find({ rarity });
     return sample(availableGear);
   }
-  async getGearByName(name: string, rarity: GearRarityEnum): Promise<Gear> {
-    try {
-      return await this.gearModel.findOne({ name, rarity });
-    } catch (error) {
-      console.error(
-        `An error occurred while fetching gear by name: ${name} and rarity: ${rarity}`,
-        error,
-      );
-      return null;
-    }
-  }
+
   async getAllGear(): Promise<Gear[] | null> {
     try {
       const allGear = await this.gearModel.find({});
