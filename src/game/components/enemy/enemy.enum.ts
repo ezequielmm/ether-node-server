@@ -8,7 +8,8 @@ export enum EnemyTypeEnum {
     Eldritch = 'eldritch',
     Human = 'human',
     Goblin = "goblin",
-    Insectoid = "insectoid"
+    Insectoid = "insectoid",
+    Mold = 'mold'
 }
 
 export enum EnemyCategoryEnum {
