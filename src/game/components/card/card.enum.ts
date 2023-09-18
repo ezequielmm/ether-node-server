@@ -55,6 +55,7 @@ export enum CardDestinationEnum {
     Discard = 'discard',
     DrawRandom = 'drawRandom',
     DrawTop = 'drawTop',
+    Draw = 'draw'
 }
 
 export enum CardDrawDepletedStrategyEnum {

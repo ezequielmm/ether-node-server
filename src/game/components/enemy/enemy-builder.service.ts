@@ -1,6 +1,5 @@
-import { Injectable } from "@nestjs/common";
 import { damageEffect } from "src/game/effects/damage/constants";
-import { CardTargetedEnum } from "../card/card.enum";
+import { CardDestinationEnum, CardTargetedEnum } from "../card/card.enum";
 import { EnemyIntentionType } from "./enemy.enum";
 import { EnemyIntention } from "./enemy.interface";
 import { defenseEffect } from "src/game/effects/defense/constants";
@@ -8,6 +7,9 @@ import { attachStatusEffect } from "src/game/effects/attachStatus/constants";
 import { spawnEnemyEffect } from "src/game/effects/spawnEnemy/contants";
 import { noEffect } from "src/game/effects/noEffects/constants";
 import { breachEffect } from "src/game/effects/breach/constants";
+import { addCardEffect } from "src/game/effects/addCard/contants";
+import { AddCardPosition } from "src/game/effects/effects.enum";
+import { Card } from "../card/card.schema";
 
 export class EnemyBuilderService {
     
@@ -56,6 +58,27 @@ export class EnemyBuilderService {
     public static createCounterAttack = (): EnemyIntention => {
         return {
             type: EnemyIntentionType.Counter,
+            target: CardTargetedEnum.Player,
+            value: 0,
+            effects: [
+                {
+                    effect: damageEffect.name,
+                    target: CardTargetedEnum.Player,
+                    args: {
+                        value: 0,
+                    },
+                    action: {
+                        name: 'attack1',
+                        hint: 'attack1',
+                    },
+                },
+            ],
+        }
+    }
+
+    public static createAbsorbAttack = (): EnemyIntention => {
+        return {
+            type: EnemyIntentionType.Absorb,
             target: CardTargetedEnum.Player,
             value: 0,
             effects: [
@@ -179,6 +202,30 @@ export class EnemyBuilderService {
                     },
                 },
             ],
+        }
+    }
+
+    public static createAddCardIntent = (amount:number, card:Card, destination: CardDestinationEnum):EnemyIntention  => {
+        return {
+            type: EnemyIntentionType.Debuff,
+            target: CardTargetedEnum.Player,
+            value: amount,
+            effects:[
+                {
+                    effect: addCardEffect.name,
+                    target: CardTargetedEnum.Player,
+                    args: {
+                        value: amount,
+                        cardId: card.cardId,     
+                        destination: destination,
+                        position: AddCardPosition.Random,
+                    },
+                    action: {
+                        name: 'cast1',
+                        hint: 'cast1',
+                    },
+                }
+            ]
         }
     }
 

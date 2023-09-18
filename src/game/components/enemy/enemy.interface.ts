@@ -9,6 +9,7 @@ export interface EnemyIntention {
     value: any;
     effects?: JsonEffect[];
     negateDamage?: number;
+    damageToIncrementCounter?: number;
 }
 
 export interface EnemyNextScript {
