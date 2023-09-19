@@ -123,11 +123,6 @@ export class DamageEffect implements EffectHandler {
                         intention.effects[0].args.value += damage;
                         nextIntentValueChanged = true;
                         break;
-                    case EnemyIntentionType.Breach:
-                        console.log("********************The enemy attacked by the user had Breach intentions..")
-                        intention.effects[0].args.value = Math.max(0, (intention.effects[0].args.value - damage));
-                        nextIntentValueChanged = true;
-                        break;
                     case EnemyIntentionType.Absorb:
                         console.log("********************The enemy attacked by the user had Absorb intentions..")
                         intention.effects[0].args.value += damage;
