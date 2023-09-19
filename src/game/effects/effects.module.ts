@@ -50,8 +50,6 @@ import { BreachEffect } from './breach/breach.effect';
 import { CounterEffect } from './counter/counter.efect';
 import { AbsorbEffect } from './absorb/absorb.effect';
 import { CannibalizeEffect } from './cannibalize/cannibalize.effect';
-import { TransformEffect } from './transform/transform.effect';
-
 
 @Module({
     imports: [
@@ -107,7 +105,6 @@ import { TransformEffect } from './transform/transform.effect';
         CounterEffect,
         AbsorbEffect,
         CannibalizeEffect,
-        TransformEffect
 
     ],
     exports: [EffectService],

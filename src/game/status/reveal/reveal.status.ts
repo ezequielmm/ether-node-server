@@ -1,6 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { EffectDTO } from "src/game/effects/effects.interface";
-import { StatusEffectHandler, StatusEffectDTO } from "../interfaces";
+import { StatusEventDTO, StatusEventHandler } from "../interfaces";
 import { StatusDecorator } from "../status.decorator";
 import { revealStatus } from "./constants";
 import { OnEvent } from "@nestjs/event-emitter";
@@ -13,31 +12,38 @@ import { EnemyService } from "src/game/components/enemy/enemy.service";
     status: revealStatus,
 })
 @Injectable()
-export class RevealStatus implements StatusEffectHandler {
+export class RevealStatus implements StatusEventHandler {
 
     constructor(private readonly enemyService:EnemyService, private readonly statusService:StatusService){}
-    
-    async preview(args: StatusEffectDTO): Promise<EffectDTO> {
-        return this.handle(args);
-    }
 
-    async handle(dto: StatusEffectDTO): Promise<EffectDTO> {
+
+    async handle(dto: StatusEventDTO): Promise<void> {
         console.log("Reveal status-----------")
-        return dto.effectDTO;
-    }
+        const { ctx, update, remove, status, source, target } = dto;
+        // Decrease counter
+        status.args.counter--;
 
-    @OnEvent(EVENT_BEFORE_ENEMIES_TURN_START)
-    async onEnemiesTurnStart(args: { ctx: GameContext }): Promise<void> {
-        const { ctx } = args;
-        const enemies = this.enemyService.getAll(ctx);
-
-        for (const enemy of enemies) {
-            await this.statusService.decreaseCounterAndRemove(
-                ctx,
-                enemy.value.statuses,
-                enemy,
-                revealStatus,
-            );
+        // Remove status if counter is 0
+        if (status.args.counter === 0) {
+            console.log("Acá mataríamos al cofre e invocaríamos al mimic")
+            remove();
+        } else {
+            update(status.args);
         }
     }
+
+    // @OnEvent(EVENT_BEFORE_ENEMIES_TURN_START)
+    // async onEnemiesTurnStart(args: { ctx: GameContext }): Promise<void> {
+    //     const { ctx } = args;
+    //     const enemies = this.enemyService.getAll(ctx);
+
+    //     for (const enemy of enemies) {
+    //         await this.statusService.decreaseCounterAndRemove(
+    //             ctx,
+    //             enemy.value.statuses,
+    //             enemy,
+    //             revealStatus,
+    //         );
+    //     }
+    // }
 }
