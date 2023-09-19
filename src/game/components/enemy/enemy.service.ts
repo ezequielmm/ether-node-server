@@ -103,6 +103,35 @@ export class EnemyService {
         );
     }
 
+    public async createNewStage2Enemy(enemy:Enemy): Promise<IExpeditionCurrentNodeDataEnemy>{
+        const formattedCooldowns = this.enemyIntentsToExpeditionEnemyCooldowns(enemy);
+        
+        const newHealth = getRandomBetween(
+            enemy.healthRange[0],
+            enemy.healthRange[1],
+        );
+        
+        const newEnemyInstance = {
+            id: randomUUID(),
+            enemyId: enemy.enemyId,
+            name: enemy.name,
+            category: enemy.category,
+            type: enemy.type,
+            size: enemy.size,
+            defense: 0,
+            hpCurrent: newHealth,
+            hpMax: newHealth,
+            statuses: {
+                [StatusType.Buff]: [],
+                [StatusType.Debuff]: [],
+            },
+            aggressiveness: enemy.aggressiveness,
+            intentCooldowns: formattedCooldowns
+        }
+
+        return newEnemyInstance;
+    }
+
     public async createNewStage2EnemyWithStatuses(enemy:Enemy, buffs:AttachedStatus[], debuffs:AttachedStatus[]): Promise<IExpeditionCurrentNodeDataEnemy>{
         const formattedCooldowns = this.enemyIntentsToExpeditionEnemyCooldowns(enemy);
         
