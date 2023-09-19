@@ -1,3 +1,4 @@
+import { damageEffect } from 'src/game/effects/damage/constants';
 import {
     StatusCounterType,
     StatusDirection,
@@ -10,8 +11,8 @@ import { transformEffect } from 'src/game/effects/transform/constants';
 export const revealStatus: StatusEffect = {
     name: 'reveal',
     trigger: StatusTrigger.Effect,
-    direction: StatusDirection.Outgoing,
-    effects: [transformEffect],
+    direction: StatusDirection.Incoming,
+    effects: [damageEffect],
     type: StatusType.Buff,
     counterType: StatusCounterType.Counter,
 };
