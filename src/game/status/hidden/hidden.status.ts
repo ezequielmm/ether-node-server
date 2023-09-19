@@ -70,7 +70,7 @@ export class HiddenStatus implements StatusEffectHandler {
                 ctx,
                 enemy.value.statuses,
                 enemy,
-                feebleStatus,
+                hiddenStatus,
             );
         }
     }

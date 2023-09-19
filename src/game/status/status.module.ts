@@ -56,6 +56,8 @@ import { BlightedStatus } from './blighted/blighted.status';
 import { CombatModule } from '../combat/combat.module';
 import { HiddenStatus } from './hidden/hidden.status';
 import { HatchingStatus } from './hatching/hatching.status';
+import { ChargingBeamStatus } from './chargingBeam/chargingBeam.status';
+import { RevealStatus } from './reveal/reveal.status';
 
 @Module({
     imports: [
@@ -119,7 +121,10 @@ import { HatchingStatus } from './hatching/hatching.status';
         PeacockFeatherStatus,
         BlightedStatus,
         HiddenStatus,
-        HatchingStatus
+        HatchingStatus,
+        ChargingBeamStatus,
+        RevealStatus
+
     ],
     exports: [StatusService],
 })

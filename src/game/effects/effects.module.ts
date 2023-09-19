@@ -48,6 +48,8 @@ import { TwistTheBladeEffect } from './twistTheBlade/twistTheBlade.effect';
 import { NoEffectEffect } from './noEffects/noEffect.effect';
 import { BreachEffect } from './breach/breach.effect';
 import { CounterEffect } from './counter/counter.efect';
+import { AbsorbEffect } from './absorb/absorb.effect';
+import { CannibalizeEffect } from './cannibalize/cannibalize.effect';
 
 @Module({
     imports: [
@@ -100,7 +102,10 @@ import { CounterEffect } from './counter/counter.efect';
         ShieldBashEffectUpgraded,
         NoEffectEffect,
         BreachEffect,
-        CounterEffect
+        CounterEffect,
+        AbsorbEffect,
+        CannibalizeEffect,
+        
 
     ],
     exports: [EffectService],

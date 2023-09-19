@@ -102,28 +102,24 @@ export class DamageEffect implements EffectHandler {
                             nextScriptChanged = true;
                         }
                         if(intention.damageToIncrementCounter && damage >= intention.damageToIncrementCounter){
-                            if(intention[0].effect.args.value < 2){
-                                intention[0].effect.args.value += 1;
+                            if(intention.effects[0].args.value < 2){
+                                intention.effects[0].args.value += 1;
                                 nextScriptChanged = true;
                             }
                         }
                         break;
                     case EnemyIntentionType.Counter:
-                        console.log("********************The enemy attacked by the user had Counter intentions..")
-                        console.log({damage})
-                        console.log("intention.effects[0].args.value:")
-                        console.log(intention.effects[0].args.value)
                         intention.effects[0].args.value += damage;
                         nextScriptChanged = true;
                         break;
                     case EnemyIntentionType.Breach:
                         console.log("********************The enemy attacked by the user had Breach intentions..")
-                        intention[0].effect.args.value = Math.max(0, (intention[0].effect.args.value - damage));
+                        intention.effects[0].args.value = Math.max(0, (intention.effects[0].args.value - damage));
                         nextScriptChanged = true;
                         break;
                     case EnemyIntentionType.Absorb:
                         console.log("********************The enemy attacked by the user had Absorb intentions..")
-                        intention[0].effect.args.value += damage;
+                        intention.effects[0].args.value += damage;
                         nextScriptChanged = true;
                         break;
 
