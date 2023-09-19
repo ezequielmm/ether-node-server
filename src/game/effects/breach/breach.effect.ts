@@ -20,6 +20,8 @@ export class BreachEffect implements EffectHandler {
 
     async handle(dto: EffectDTO<Record<string, any>>): Promise<void> {
         
+        console.log("Breach effect invoked---------------")
+
         const target = dto.target;
         const ctx    = dto.ctx;
         const damage = dto.args.currentValue;
