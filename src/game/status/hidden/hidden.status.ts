@@ -7,6 +7,10 @@ import { StatusService } from "../status.service";
 import { EnemyService } from "src/game/components/enemy/enemy.service";
 import { PlayerService } from "src/game/components/player/player.service";
 import { CardTargetedEnum } from "src/game/components/card/card.enum";
+import { OnEvent } from "@nestjs/event-emitter";
+import { GameContext } from "src/game/components/interfaces";
+import { EVENT_BEFORE_ENEMIES_TURN_START } from "src/game/constants";
+import { feebleStatus } from "../feeble/constants";
 
 @StatusDecorator({
     status: hiddenStatus,
@@ -54,5 +58,20 @@ export class HiddenStatus implements StatusEffectHandler {
         }
         
         return effectDTO;
+    }
+
+    @OnEvent(EVENT_BEFORE_ENEMIES_TURN_START)
+    async onEnemiesTurnStart(args: { ctx: GameContext }): Promise<void> {
+        const { ctx } = args;
+        const enemies = this.enemyService.getAll(ctx);
+
+        for (const enemy of enemies) {
+            await this.statusService.decreaseCounterAndRemove(
+                ctx,
+                enemy.value.statuses,
+                enemy,
+                feebleStatus,
+            );
+        }
     }
 }
