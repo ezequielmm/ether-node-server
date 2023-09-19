@@ -90,8 +90,8 @@ export class DamageEffect implements EffectHandler {
 
             //- Counter, Breach & Absorb, negate signature and increment signature counter:
             const enemyIntentions = target.value.currentScript.intentions;
+            let nextIntentValueChanged = false;
 
-            let nextScriptChanged = false;
             for(const intention of enemyIntentions){
                 switch(intention.type){
                     case EnemyIntentionType.Signature:
@@ -101,36 +101,37 @@ export class DamageEffect implements EffectHandler {
                             
                             if(damage >= intention.negateDamage){
                                 target.value.currentScript = {id: 0, intentions: [EnemyBuilderService.createDoNothingIntent()]};
+                                this.enemyService.setCurrentScript(ctx, target.value.id, target.value.currentScript);
                             }else{
                                 intention.negateDamage -= damage;
+                                nextIntentValueChanged = true;
                             }
-                            nextScriptChanged = true;
                         }
                         if(intention.damageToIncrementCounter && damage >= intention.damageToIncrementCounter){
                             if(intention.effects[0].args.value < 2){
                                 intention.effects[0].args.value += 1;
-                                nextScriptChanged = true;
+                                nextIntentValueChanged = true;
                             }
                         }
                         break;
                     case EnemyIntentionType.Counter:
                         intention.effects[0].args.value += damage;
-                        nextScriptChanged = true;
+                        nextIntentValueChanged = true;
                         break;
                     case EnemyIntentionType.Breach:
                         console.log("********************The enemy attacked by the user had Breach intentions..")
                         intention.effects[0].args.value = Math.max(0, (intention.effects[0].args.value - damage));
-                        nextScriptChanged = true;
+                        nextIntentValueChanged = true;
                         break;
                     case EnemyIntentionType.Absorb:
                         console.log("********************The enemy attacked by the user had Absorb intentions..")
                         intention.effects[0].args.value += damage;
-                        nextScriptChanged = true;
+                        nextIntentValueChanged = true;
                         break;
 
                 }
 
-                if(nextScriptChanged){
+                if(nextIntentValueChanged){
                     console.log("Llega al nextScriptChanged")
                     console.log("New enemyIntentions:")
                     console.log(enemyIntentions)
