@@ -112,7 +112,7 @@ export class DamageEffect implements EffectHandler {
                         console.log("********************The enemy attacked by the user had Counter intentions..")
                         console.log({damage})
                         console.log("intention[0].effect.args.value:")
-                        console.log(intention[0].effect.args.value)
+                        console.log(intention[0].effect)
                         intention[0].effect.args.value += damage;
                         nextScriptChanged = true;
                         break;
