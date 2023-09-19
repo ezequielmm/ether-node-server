@@ -16,12 +16,13 @@ import {
     ENEMY_SWARM_COCOON_IDS,
     ENEMY_SWARM_MASTER_ID,
 } from './constants';
-import { getDecimalRandomBetween, getRandomItemByWeight } from 'src/utils';
+import { getDecimalRandomBetween, getRandomBetween, getRandomItemByWeight } from 'src/utils';
 import {
     AttachedStatus,
     Status,
     StatusCounterType,
     StatusesGlobalCollection,
+    StatusType,
 } from 'src/game/status/interfaces';
 import { StatusService } from 'src/game/status/status.service';
 import { EnemyCategoryEnum, EnemyIntentionType } from './enemy.enum';
@@ -34,11 +35,12 @@ import {
 import { ReturnModelType } from '@typegoose/typegoose';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { ProjectionFields } from 'mongoose';
-import { IntentCooldown } from '../expedition/expedition.interface';
+import { IExpeditionCurrentNodeDataEnemy, IntentCooldown } from '../expedition/expedition.interface';
 import { swarmCocoon1Data } from './data/swarmCocoon1.enemy';
 import { swarmCocoon2Data } from './data/swarmCocoon2.enemy';
 import { mutantSpider1Data } from './data/mutantSpider1.enemy';
 import { mutantSpider2Data } from './data/mutantSpider2.enemy';
+import { randomUUID } from 'crypto';
 
 @Injectable()
 export class EnemyService {
@@ -99,6 +101,35 @@ export class EnemyService {
         return this.getAll(ctx).some(enemy => 
             enemy.value.category === EnemyCategoryEnum.Boss && this.isDead(enemy)
         );
+    }
+
+    public async createNewStage2EnemyWithStatuses(enemy:Enemy, buffs:AttachedStatus[], debuffs:AttachedStatus[]): Promise<IExpeditionCurrentNodeDataEnemy>{
+        const formattedCooldowns = this.enemyIntentsToExpeditionEnemyCooldowns(enemy);
+        
+        const newHealth = getRandomBetween(
+            enemy.healthRange[0],
+            enemy.healthRange[1],
+        );
+        
+        const newEnemyInstance = {
+            id: randomUUID(),
+            enemyId: enemy.enemyId,
+            name: enemy.name,
+            category: enemy.category,
+            type: enemy.type,
+            size: enemy.size,
+            defense: 0,
+            hpCurrent: newHealth,
+            hpMax: newHealth,
+            statuses: {
+                [StatusType.Buff]: buffs,
+                [StatusType.Debuff]: debuffs,
+            },
+            aggressiveness: enemy.aggressiveness,
+            intentCooldowns: formattedCooldowns
+        }
+
+        return newEnemyInstance;
     }
     
     /**

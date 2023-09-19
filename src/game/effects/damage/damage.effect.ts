@@ -17,6 +17,11 @@ import { EnemyIntentionType } from 'src/game/components/enemy/enemy.enum';
 import { breachEffect } from '../breach/constants';
 import { absorbEffect } from '../absorb/constants';
 import { EnemyBuilderService } from 'src/game/components/enemy/enemy-builder.service';
+import { ENEMY_BOOBY_TRAP_ID, ENEMY_MIMIC_ID } from 'src/game/components/enemy/constants';
+import { StatusType } from 'src/game/status/interfaces';
+import { StandardResponse, SWARMessageType, SWARAction } from 'src/game/standardResponse/standardResponse';
+import { ExpeditionService } from 'src/game/components/expedition/expedition.service';
+import { ExpeditionStatusEnum } from 'src/game/components/expedition/expedition.enum';
 
 export interface DamageArgs {
     useDefense?: boolean;
@@ -43,6 +48,7 @@ export class DamageEffect implements EffectHandler {
         private readonly combatQueueService: CombatQueueService,
         private readonly effectService: EffectService,
         private readonly getEnergyAction: GetEnergyAction,
+        private readonly expeditionService:ExpeditionService
     ) {}
 
     async handle(payload: EffectDTO<DamageArgs>): Promise<void> {
@@ -66,6 +72,8 @@ export class DamageEffect implements EffectHandler {
                 combatState: { energy, defense },
             },
         } = this.playerService.get(ctx);
+
+        const enemies = payload.ctx.expedition.currentNode.data.enemies;
 
         let oldHp = 0;
         let newHp = 0;
@@ -141,6 +149,45 @@ export class DamageEffect implements EffectHandler {
             // or executioner's blow
             // effect only if the enemy's health is 0
             if (newHp === 0) {
+                if(target.value.enemyId === ENEMY_BOOBY_TRAP_ID){
+                    const enemyFromDB = await this.enemyService.findById(ENEMY_MIMIC_ID);
+
+                    if(enemyFromDB){
+                        const newEnemy = await this.enemyService.createNewStage2EnemyWithStatuses(enemyFromDB, target.value.statuses[StatusType.Buff], target.value.statuses[StatusType.Debuff]);
+                        
+                        enemies.unshift(...[newEnemy]);
+                        
+                        //- todo: Este mensaje puede cambiar para que se ejecute otra animacion en unity
+                        ctx.client.emit(
+                            'PutData',
+                            StandardResponse.respond({
+                                message_type: SWARMessageType.CombatUpdate,
+                                action: SWARAction.SpawnEnemies,
+                                data: newEnemy,
+                            }),
+                        );
+
+                        await this.expeditionService.updateByFilter(
+                            {
+                                _id: ctx.expedition._id,
+                                status: ExpeditionStatusEnum.InProgress,
+                            },
+                            { $set: { 'currentNode.data.enemies': enemies } },
+                        );
+
+                        // Now we generate a new ctx to generate the new enemy intentions
+                        const newCtx = await this.expeditionService.getGameContext(ctx.client);
+
+                        await this.enemyService.setCurrentScript(
+                            newCtx,
+                            enemyFromDB.enemyId,
+                            {id: enemyFromDB.attackLevels[0].options[0].id, 
+                            intentions: enemyFromDB.attackLevels[0].options[0].intents},
+                        );
+                        
+                    }
+                }
+
                 // If we have on a roll effect, we return energy when the
                 // enemy es defeated
                 if (onARoll && onARoll.energyToRestore) {
