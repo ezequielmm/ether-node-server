@@ -5,13 +5,13 @@ import {
     StatusTrigger,
     StatusType,
 } from '../interfaces';
-import { noEffect } from 'src/game/effects/noEffects/constants';
+import { transformEffect } from 'src/game/effects/transform/constants';
 
 export const revealStatus: StatusEffect = {
     name: 'reveal',
     trigger: StatusTrigger.Effect,
     direction: StatusDirection.Outgoing,
-    effects: [noEffect],
+    effects: [transformEffect],
     type: StatusType.Buff,
     counterType: StatusCounterType.Counter,
 };
