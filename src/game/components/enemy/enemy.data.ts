@@ -28,6 +28,11 @@ import { swarmCocoon1Data } from './data/swarmCocoon1.enemy';
 import { mutantSpider2Data } from './data/mutantSpider2.enemy';
 import { swarmCocoon2Data } from './data/swarmCocoon2.enemy';
 import { swarmMasterData } from './data/swarmMaster.enemy';
+import { mimicData } from './data/mimic.enemy';
+import { boobyTrapData } from './data/boobyTrap.enemy';
+import { deepGoblinData } from './data/deepGoblin.enemy';
+import { deepDwellerMonsterData } from './data/deepDwellerMonster.enemy';
+import { deepDwellerLureData } from './data/deepDwellerLure.enemy';
 
 export const data: Enemy[] = [
     sporeMongerData,
@@ -60,6 +65,11 @@ export const data: Enemy[] = [
     swarmCocoon1Data,
     mutantSpider2Data,
     swarmCocoon2Data,
-    swarmMasterData
+    swarmMasterData,
+    deepDwellerLureData,
+    deepDwellerMonsterData,
+    boobyTrapData,
+    mimicData,
+    deepGoblinData
 
 ];

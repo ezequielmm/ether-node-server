@@ -5,7 +5,6 @@ import { feebleStatus } from 'src/game/status/feeble/constants';
 import { fatigue } from 'src/game/status/fatigue/constants';
 import { EnemyAction, EnemyIntention } from '../enemy.interface';
 import { EnemyBuilderService } from '../enemy-builder.service';
-import { Signature } from 'ethers6';
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------------
 //- Intents:
