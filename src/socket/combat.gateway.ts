@@ -76,6 +76,8 @@ export class CombatGateway {
                             break;
                     }
                 } catch (error) {
+                    console.log("combat.gateway#handleEndTurn Error:")
+                    console.log(error)
                     this.logger.error({
                         error,
                     });
@@ -126,6 +128,8 @@ export class CombatGateway {
                         );
                     }
                 } catch (error) {
+                    console.log("combat.gateway#handleCardPlayed Error:")
+                    console.log(error)
                     this.logger.error({
                         error,
                     });
