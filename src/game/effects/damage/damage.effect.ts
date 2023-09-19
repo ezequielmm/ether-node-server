@@ -110,6 +110,9 @@ export class DamageEffect implements EffectHandler {
                         break;
                     case EnemyIntentionType.Counter:
                         console.log("********************The enemy attacked by the user had Counter intentions..")
+                        console.log({damage})
+                        console.log("intention[0].effect.args.value:")
+                        console.log(intention[0].effect.args.value)
                         intention[0].effect.args.value += damage;
                         nextScriptChanged = true;
                         break;
@@ -127,6 +130,10 @@ export class DamageEffect implements EffectHandler {
                 }
 
                 if(nextScriptChanged){
+                    console.log("Llega al nextScriptChanged")
+                    console.log("New enemyIntentions:")
+                    console.log(enemyIntentions)
+                    target.value.currentScript.intentions = enemyIntentions;
                     this.enemyService.setCurrentScript(ctx, target.value.id, target.value.currentScript);
                 }
             }
