@@ -12,13 +12,9 @@ import { EffectDTO, EffectHandler } from '../effects.interface';
 import { EffectService } from '../effects.service';
 import { energyEffect } from '../energy/constants';
 import { damageEffect } from './constants';
-import { counterEffect } from '../counter/constants';
 import { EnemyIntentionType } from 'src/game/components/enemy/enemy.enum';
-import { breachEffect } from '../breach/constants';
-import { absorbEffect } from '../absorb/constants';
 import { EnemyBuilderService } from 'src/game/components/enemy/enemy-builder.service';
-import { ENEMY_BOOBY_TRAP_ID, ENEMY_MIMIC_ID } from 'src/game/components/enemy/constants';
-import { StatusType } from 'src/game/status/interfaces';
+import { ENEMY_DEEP_DWELLER_LURE_ID, ENEMY_DEEP_DWELLER_MONSTER_ID } from 'src/game/components/enemy/constants';
 import { StandardResponse, SWARMessageType, SWARAction } from 'src/game/standardResponse/standardResponse';
 import { ExpeditionService } from 'src/game/components/expedition/expedition.service';
 import { ExpeditionStatusEnum } from 'src/game/components/expedition/expedition.enum';
@@ -148,11 +144,11 @@ export class DamageEffect implements EffectHandler {
             // or executioner's blow
             // effect only if the enemy's health is 0
             if (newHp === 0) {
-                if(target.value.enemyId === ENEMY_BOOBY_TRAP_ID){
-                    const enemyFromDB = await this.enemyService.findById(ENEMY_MIMIC_ID);
+                if(target.value.enemyId === ENEMY_DEEP_DWELLER_LURE_ID){
+                    const enemyFromDB = await this.enemyService.findById(ENEMY_DEEP_DWELLER_MONSTER_ID);
 
                     if(enemyFromDB){
-                        const newEnemy = await this.enemyService.createNewStage2EnemyWithStatuses(enemyFromDB, target.value.statuses[StatusType.Buff], target.value.statuses[StatusType.Debuff]);
+                        const newEnemy = await this.enemyService.createNewStage2Enemy(enemyFromDB);
                         
                         enemies.unshift(...[newEnemy]);
                         
@@ -180,8 +176,7 @@ export class DamageEffect implements EffectHandler {
                         await this.enemyService.setCurrentScript(
                             newCtx,
                             enemyFromDB.enemyId,
-                            {id: enemyFromDB.attackLevels[0].options[0].id, 
-                            intentions: enemyFromDB.attackLevels[0].options[0].intents},
+                            {id: 0, intentions: [EnemyBuilderService.createDoNothingIntent()]},
                         );
                         
                     }
