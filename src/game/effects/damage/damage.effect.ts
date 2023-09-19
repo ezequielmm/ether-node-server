@@ -96,7 +96,7 @@ export class DamageEffect implements EffectHandler {
             await this.enemyService.damage(ctx, target.value.id, damage);
 
 
-            //- Counter, Breach & Absorb, negate signature and increment signature counter:
+            //- Counter & Absorb, negate signature and increment signature counter:
             const enemyIntentions = target.value.currentScript.intentions;
             let nextIntentValueChanged = false;
 
@@ -120,13 +120,17 @@ export class DamageEffect implements EffectHandler {
                         }
                         break;
                     case EnemyIntentionType.Counter:
-                        intention.effects[0].args.value += damage;
-                        nextIntentValueChanged = true;
+                        if(damage > oldDefense){
+                            intention.effects[0].args.value += (damage - oldDefense);
+                            nextIntentValueChanged = true;
+                        }
                         break;
                     case EnemyIntentionType.Absorb:
                         console.log("********************The enemy attacked by the user had Absorb intentions..")
-                        intention.effects[0].args.value += damage;
-                        nextIntentValueChanged = true;
+                        if(damage > oldDefense){
+                            intention.effects[0].args.value += (damage - oldDefense);
+                            nextIntentValueChanged = true;
+                        }
                         break;
 
                 }
