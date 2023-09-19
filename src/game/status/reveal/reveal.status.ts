@@ -39,7 +39,8 @@ export class RevealStatus implements StatusEventHandler {
                     enemyFromDB = await this.enemyService.findById(ENEMY_MIMIC_ID);
 
                 if(enemyFromDB){
-                    const newEnemy = await this.enemyService.createNewStage2EnemyWithStatuses(enemyFromDB, source.value.statuses[StatusType.Buff], source.value.statuses[StatusType.Debuff]);
+                    const buffs = source.value.statuses[StatusType.Buff].filter(buff => buff.name !== revealStatus.name);
+                    const newEnemy = await this.enemyService.createNewStage2EnemyWithStatuses(enemyFromDB, buffs, source.value.statuses[StatusType.Debuff]);
                     enemies.unshift(...[newEnemy]);
 
                     //- todo: Este mensaje puede cambiar para que se ejecute otra animacion en unity
