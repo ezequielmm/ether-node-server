@@ -1,18 +1,16 @@
-import { damageEffect } from 'src/game/effects/damage/constants';
 import {
     StatusCounterType,
-    StatusDirection,
-    StatusEffect,
+    StatusEvent,
     StatusTrigger,
     StatusType,
 } from '../interfaces';
-import { transformEffect } from 'src/game/effects/transform/constants';
+import { EVENT_BEFORE_ENEMIES_TURN_START } from 'src/game/constants';
 
-export const revealStatus: StatusEffect = {
+export const revealStatus: StatusEvent = {
     name: 'reveal',
-    trigger: StatusTrigger.Effect,
-    direction: StatusDirection.Incoming,
-    effects: [damageEffect],
+    trigger: StatusTrigger.Event,
     type: StatusType.Buff,
     counterType: StatusCounterType.Counter,
+    event: EVENT_BEFORE_ENEMIES_TURN_START,
 };
+
