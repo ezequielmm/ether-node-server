@@ -39,9 +39,10 @@ export class RevealStatus implements StatusEventHandler {
                     enemyFromDB = await this.enemyService.findById(ENEMY_MIMIC_ID);
 
                 if(enemyFromDB){
+                    const aliveEnemies = enemies.filter(enemy => enemy.hpCurrent > 0)
                     const buffs = source.value.statuses[StatusType.Buff].filter(buff => buff.name !== revealStatus.name);
                     const newEnemy = await this.enemyService.createNewStage2EnemyWithStatuses(enemyFromDB, buffs, source.value.statuses[StatusType.Debuff]);
-                    enemies.unshift(...[newEnemy]);
+                    aliveEnemies.unshift(...[newEnemy]);
 
                     //- todo: Este mensaje puede cambiar para que se ejecute otra animacion en unity
                     ctx.client.emit(
@@ -58,7 +59,7 @@ export class RevealStatus implements StatusEventHandler {
                             _id: ctx.expedition._id,
                             status: ExpeditionStatusEnum.InProgress,
                         },
-                        { $set: { 'currentNode.data.enemies': enemies } },
+                        { $set: { 'currentNode.data.enemies': aliveEnemies } },
                     );
 
                     // Now we generate a new ctx to generate the new enemy intentions
