@@ -111,9 +111,9 @@ export class DamageEffect implements EffectHandler {
                     case EnemyIntentionType.Counter:
                         console.log("********************The enemy attacked by the user had Counter intentions..")
                         console.log({damage})
-                        console.log("intention[0].effect.args.value:")
-                        console.log(intention)
-                        intention[0].effect.args.value += damage;
+                        console.log("intention.effects[0].args.value:")
+                        console.log(intention.effects[0].args.value)
+                        intention.effects[0].args.value += damage;
                         nextScriptChanged = true;
                         break;
                     case EnemyIntentionType.Breach:
