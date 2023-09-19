@@ -92,7 +92,7 @@ export const mimicData: Enemy = {
     size: EnemySizeEnum.Medium,
     description: 'This shapeshifting fiend possesses the ability to probe into the heart of men. Sensing the avarice of those who venture beyond the portal, it takes the shape of a treasure chest and feeds off adventurers avarice… and limbs.',
     healthRange: [60, 75],
-    aggressiveness: 0.4,
+    aggressiveness: 0.5,
     attackLevels: [BasicIntents, AdvancedIntents]
 }
 

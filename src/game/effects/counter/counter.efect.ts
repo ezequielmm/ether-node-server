@@ -14,6 +14,8 @@ export class CounterEffect implements EffectHandler {
 
     async handle(dto: EffectDTO<Record<string, any>>): Promise<void> {
 
+        console.log("Inside counter effect")
+
         const target = dto.target;
         const ctx    = dto.ctx;
         const damage = dto.args.currentValue;

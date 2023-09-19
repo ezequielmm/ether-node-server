@@ -23,6 +23,8 @@ export class DodgeStatus implements StatusEffectHandler {
 
         if(dto.effectDTO.source.type == CardTargetedEnum.Enemy){
             args.counter--;
+        }else if(dto.effectDTO.source.type == CardTargetedEnum.Player){
+            args.counter--;
         }
         
         this.cancelDamage(dto.effectDTO);
