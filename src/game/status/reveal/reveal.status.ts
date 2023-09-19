@@ -22,6 +22,7 @@ export class RevealStatus implements StatusEffectHandler {
     }
 
     async handle(dto: StatusEffectDTO): Promise<EffectDTO> {
+        console.log("Reveal status-----------")
         return dto.effectDTO;
     }
 
