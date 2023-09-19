@@ -95,10 +95,7 @@ export class DamageEffect implements EffectHandler {
             for(const intention of enemyIntentions){
                 switch(intention.type){
                     case EnemyIntentionType.Signature:
-                        console.log("********************The enemy attacked by the user had signature attack intentions..")
                         if(intention.negateDamage && intention.negateDamage > 0){
-                            console.log("********************The signature attack would be negated..");
-                            
                             if(damage >= intention.negateDamage){
                                 target.value.currentScript = {id: 0, intentions: [EnemyBuilderService.createDoNothingIntent()]};
                                 this.enemyService.setCurrentScript(ctx, target.value.id, target.value.currentScript);
@@ -132,9 +129,6 @@ export class DamageEffect implements EffectHandler {
                 }
 
                 if(nextIntentValueChanged){
-                    console.log("Llega al nextScriptChanged")
-                    console.log("New enemyIntentions:")
-                    console.log(enemyIntentions)
                     target.value.currentScript.intentions = enemyIntentions;
                     this.enemyService.setCurrentScript(ctx, target.value.id, target.value.currentScript);
                 }
