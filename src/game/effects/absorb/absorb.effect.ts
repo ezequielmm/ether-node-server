@@ -10,6 +10,6 @@ import { absorbEffect } from "./constants";
 export class AbsorbEffect implements EffectHandler {
 
     async handle(dto: EffectDTO<Record<string, any>>): Promise<void> {
-        // todo:
+        console.log("Absorb effect invoked-----------------------")
     }
 }
