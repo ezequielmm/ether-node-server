@@ -3,17 +3,19 @@ import { Enemy } from '../enemy.schema';
 import { resolveStatus } from 'src/game/status/resolve/constants';
 import { EnemyAction, EnemyIntention } from '../enemy.interface';
 import { EnemyBuilderService } from '../enemy-builder.service'
+import { CardDestinationEnum } from '../../card/card.enum';
+
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------------
 //- Intents:
 //-------------------------------------------------------------------------------------------------------------------------------------------------------
 const BasicAttack:     EnemyIntention = EnemyBuilderService.createBasicAttackIntent(7);
 //put destination
-//const Poison:    EnemyIntention = EnemyBuilderService.createAddCardIntent(7,PoisonedCard, DESTINATION);
+//const Poison:    EnemyIntention = EnemyBuilderService.createAddCardIntent(2,PoisonedCard, CardDestinationEnum.Draw);
 const BasicDefense:    EnemyIntention = EnemyBuilderService.createDefenseIntent(16);
 const BuffResolve:     EnemyIntention = EnemyBuilderService.createBasicBuffIntent(2, resolveStatus.name);
 //Mold card does not exist; put destination
-//const DebuffMoldCard:  EnemyIntention = EnemyBuilderService.createAddCardIntent(1,Mold, DESTINATION);
+//const DebuffMoldCard:  EnemyIntention = EnemyBuilderService.createAddCardIntent(1,Mold, CardDestinationEnum.Draw);
 const SecondAttack:    EnemyIntention = EnemyBuilderService.createMultiplierAttackIntent(8, 2); 
 
 /*

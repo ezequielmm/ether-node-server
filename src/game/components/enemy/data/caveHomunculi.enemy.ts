@@ -11,8 +11,8 @@ import { CardDestinationEnum } from '../../card/card.enum';
 //-------------------------------------------------------------------------------------------------------------------------------------------------------
 const BasicAttack:     EnemyIntention = EnemyBuilderService.createBasicAttackIntent(17);
 const BasicDefense:    EnemyIntention = EnemyBuilderService.createDefenseIntent(15);
-const BuffResolve:     EnemyIntention = EnemyBuilderService.createBasicBuffIntent(2, resolveStatus.name);
-const BuffResolve2:     EnemyIntention = EnemyBuilderService.createBasicBuffIntent(3, resolveStatus.name);
+const Buff2Resolve:     EnemyIntention = EnemyBuilderService.createBasicBuffIntent(2, resolveStatus.name);
+const Buff3Resolve:     EnemyIntention = EnemyBuilderService.createBasicBuffIntent(3, resolveStatus.name);
 const Absorb:  EnemyIntention = EnemyBuilderService.createAbsorbAttack();
 const DebuffFeeble:    EnemyIntention = EnemyBuilderService.createBasicDebuffIntent(2, feebleStatus.name); 
 const Breach:    EnemyIntention = EnemyBuilderService.createBreachAttack(12);
@@ -40,7 +40,7 @@ const BasicIntents: EnemyAction = {
     options:[
         { id: 1, probability: 0.3, cooldown: 0, intents: [BasicAttack] }, 
         { id: 4, probability: 0.1, cooldown: 0, intents: [BasicDefense] },
-        { id: 3, probability: 0.1, cooldown: 0, intents: [BuffResolve] }, 
+        { id: 3, probability: 0.1, cooldown: 0, intents: [Buff2Resolve] }, 
         { id: 5, probability: 0.1, cooldown: 0, intents: [Absorb] },
         { id: 3, probability: 0.1, cooldown: 0, intents: [DebuffFeeble] },
         //{ id: 6, probability: 0.1, cooldown: 0, intents: [CallForReinforcements] },
@@ -54,10 +54,10 @@ const AdvancedIntents: EnemyAction = {
         //{ id: 6, probability: 0.1, cooldown: 0, intents: [CallForReinforcements] },
         { id: 10, probability: 0.1, cooldown: 0, intents: [BasicAttack, DebuffFeeble] },
         { id: 11, probability: 0.1, cooldown: 0, intents: [Absorb, BasicDefense] },
-        { id: 12, probability: 0.1, cooldown: 0, intents: [BuffResolve2] },//  gives 3 resolve
+        { id: 12, probability: 0.1, cooldown: 0, intents: [Buff3Resolve] },//  gives 3 resolve
         //{ id: 13, probability: 0.1, cooldown: 0, intents: [Mistify] },
         //{ id: 14, probability: 0.1, cooldown: 0, intents: [Infect] },
-        { id: 15, probability: 0.1, cooldown: 0, intents: [Counter, BuffResolve] },
+        { id: 15, probability: 0.1, cooldown: 0, intents: [Counter, Buff2Resolve] },
         //{ id: 15, probability: 0.05, cooldown: 0, intents: [DebuffMoldCard] },
         //{ id: 15, probability: 0.05, cooldown: 0, intents: [SignatureMove] }
     ]
