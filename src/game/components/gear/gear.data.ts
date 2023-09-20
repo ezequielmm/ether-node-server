@@ -226,12 +226,12 @@ import { Helmet_Helmet_Red_Hounskull} from './data/Helmet_Helmet_Red_Hounskull.d
 import { Helmet_Helmet_Blue_Praying_Hands} from './data/Helmet_Helmet_Blue_Praying_Hands.data'
 
 export const data: Gear[] = [
+    Helmet_Helmet_Siege,
     Helmet_Helmet_Gold_Prince,
     Helmet_Helmet_Silver_Prince,
     Helmet_Helmet_Red_Hound,
     Helmet_Helmet_Red_Hounskull,
     Helmet_Helmet_Blue_Praying_Hands,
-    Helmet_Helmet_Siege,
     Helmet_Helmet_Hounskull,
     Helmet_Helmet_Templar,
     Helmet_Helmet_Vented,
