@@ -81,6 +81,8 @@ export class HatchingStatus implements StatusEventHandler {
                     },
                     { $set: { 'currentNode.data.enemies': aliveEnemies } },
                 );
+
+                dto.ctx.expedition.currentNode.data.enemies = aliveEnemies;
             }
             console.log("-----------------------------------------------------------------------------------")
         }
