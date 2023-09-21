@@ -1,14 +1,10 @@
 import { Injectable } from "@nestjs/common";
 import { EnemyService } from "src/game/components/enemy/enemy.service";
-import { PlayerService } from "src/game/components/player/player.service";
 import { StatusEventDTO, StatusEventHandler } from "../interfaces";
 import { StatusDecorator } from "../status.decorator";
-import { StatusService } from "../status.service";
 import { hatchingStatus } from "./constants";
 import { ENEMY_SWARM_MASTER_ID } from "src/game/components/enemy/constants";
 import { ExpeditionService } from "src/game/components/expedition/expedition.service";
-import { ExpeditionStatusEnum } from "src/game/components/expedition/expedition.enum";
-import { StandardResponse, SWARMessageType, SWARAction } from "src/game/standardResponse/standardResponse";
 
 @StatusDecorator({
     status: hatchingStatus,
@@ -24,6 +20,16 @@ export class HatchingStatus implements StatusEventHandler {
         const { ctx, update, remove, status, source } = dto;
         const enemies = ctx.expedition.currentNode.data.enemies;
         
+        console.log("-----------------------------------------------------------------------------------")
+        console.log("Hatching..")
+        if(EnemyService.isEnemy(source)){
+            console.log(source.value.enemyId)
+        }
+        else{
+            console.log("Not enemy sorce")
+        }
+        console.log("-----------------------------------------------------------------------------------")
+
         // Decrease counter
         status.args.counter--;
 
