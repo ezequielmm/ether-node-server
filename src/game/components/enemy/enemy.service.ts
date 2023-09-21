@@ -808,7 +808,7 @@ export class EnemyService {
         console.log(currentScript)
         console.log("----------------")
         if(currentScript){
-            if(currentScript.id == -1){
+            if(currentScript.id == 0){
                 return {id: intents[1].id, intentions: intents[1].intents};
             }
                 
