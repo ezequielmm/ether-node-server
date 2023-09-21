@@ -15,9 +15,9 @@ import { PoisonedCard } from "../../card/data/poisoned.card";
 //- Intents:
 //-------------------------------------------------------------------------------------------------------------------------------------------------------
 const Summon1Cocoon:   EnemyIntention = EnemyBuilderService.invokeMinionsIntent([swarmCocoon1Data.enemyId]);
-const Summon1Spider:   EnemyIntention = EnemyBuilderService.invokeMinionsIntent([mutantSpider2Data.enemyId]);
+const Summon1Spider:   EnemyIntention = EnemyBuilderService.invokeMinionsIntent([mutantSpider1Data.enemyId]);
 const SummonSecondCocoon:   EnemyIntention = EnemyBuilderService.invokeMinionsIntent([swarmCocoon2Data.enemyId]);
-const SummonSecondSpider:   EnemyIntention = EnemyBuilderService.invokeMinionsIntent([mutantSpider1Data.enemyId]);
+const SummonSecondSpider:   EnemyIntention = EnemyBuilderService.invokeMinionsIntent([mutantSpider2Data.enemyId]);
 const Summon2Cocoon:   EnemyIntention = EnemyBuilderService.invokeMinionsIntent([swarmCocoon1Data.enemyId, swarmCocoon2Data.enemyId]);
 const Summon2Spider:   EnemyIntention = EnemyBuilderService.invokeMinionsIntent([mutantSpider1Data.enemyId, mutantSpider2Data.enemyId]);
 const BasicDefense:    EnemyIntention = EnemyBuilderService.createDefenseIntent(15);
