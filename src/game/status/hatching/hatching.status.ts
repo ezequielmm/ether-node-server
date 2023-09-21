@@ -19,13 +19,6 @@ export class HatchingStatus implements StatusEventHandler {
     async handle(dto: StatusEventDTO): Promise<void> {
         
         const { ctx, update, remove, status, source } = dto;
-        
-        console.log("-----------------------------------------------------------------------------------")
-        console.log("Hatching..")
-        if(EnemyService.isEnemy(source)){
-            console.log(source.value.enemyId)
-        }
-        
 
         // Decrease counter
         status.args.counter--;
@@ -34,6 +27,12 @@ export class HatchingStatus implements StatusEventHandler {
         if(status.args.counter === 0){
              //- If counter is 0 remove the status and make the effect:
             if(EnemyService.isEnemy(source)){
+
+                console.log("-----------------------------------------------------------------------------------")
+                console.log("Hatching..")
+                console.log(source.value.enemyId)
+
+                remove();
                 //- Kill the current enemy:
                 this.enemyService.setHp(ctx, source.value.enemyId, 0);
 
@@ -71,6 +70,9 @@ export class HatchingStatus implements StatusEventHandler {
                 }
 
                 const aliveEnemies = enemies.filter(enemy => enemy.hpCurrent > 0)
+
+                console.log("Enemies alive:")
+                aliveEnemies.forEach(enemy => console.log(enemy.enemyId + " - " + enemy.name))
 
                 await this.expeditionService.updateByFilter(
                     {
