@@ -20,61 +20,61 @@ export class RevealStatus implements StatusEventHandler {
 
 
     async handle(dto: StatusEventDTO): Promise<void> {
+
         const { ctx, update, remove, status, source } = dto;
         const enemies = ctx.expedition.currentNode.data.enemies;
         
         // Decrease counter
         status.args.counter--;
-
-        // Remove status if counter is 0
-        if (status.args.counter === 0) {
-            remove();
-            
-            if(EnemyService.isEnemy(source)){
-                this.enemyService.setHp(ctx, source.value.enemyId, 0);
-
-                let enemyFromDB;
-
-                if(ENEMY_BOOBY_TRAP_ID)
-                    enemyFromDB = await this.enemyService.findById(ENEMY_MIMIC_ID);
-
-                if(enemyFromDB){
-                    const aliveEnemies = enemies.filter(enemy => enemy.hpCurrent > 0)
-                    const buffs = source.value.statuses[StatusType.Buff].filter(buff => buff.name !== revealStatus.name);
-                    const newEnemy = await this.enemyService.createNewStage2EnemyWithStatuses(enemyFromDB, buffs, source.value.statuses[StatusType.Debuff]);
-                    aliveEnemies.unshift(...[newEnemy]);
-
-                    //- todo: Este mensaje puede cambiar para que se ejecute otra animacion en unity
-                    ctx.client.emit(
-                        'PutData',
-                        StandardResponse.respond({
-                            message_type: SWARMessageType.CombatUpdate,
-                            action: SWARAction.SpawnEnemies,
-                            data: newEnemy,
-                        }),
-                    );
-
-                    await this.expeditionService.updateByFilter(
-                        {
-                            _id: ctx.expedition._id,
-                            status: ExpeditionStatusEnum.InProgress,
-                        },
-                        { $set: { 'currentNode.data.enemies': aliveEnemies } },
-                    );
-
-                    // Now we generate a new ctx to generate the new enemy intentions
-                    const newCtx = await this.expeditionService.getGameContext(ctx.client);
-
-                    await this.enemyService.setCurrentScript(
-                        newCtx,
-                        enemyFromDB.enemyId,
-                        {id: 0, intentions: [EnemyBuilderService.createDoNothingIntent()]},
-                    );
-                }
-            }
-
-        } else {
+        if(status.args.counter > 0){
             update(status.args);
+            return;
+        }
+
+        //- If counter is 0 remove the status and make the effect:
+        remove();
+        
+        if(EnemyService.isEnemy(source)){
+            this.enemyService.setHp(ctx, source.value.enemyId, 0);
+
+            let enemyFromDB;
+
+            if(ENEMY_BOOBY_TRAP_ID)
+                enemyFromDB = await this.enemyService.findById(ENEMY_MIMIC_ID);
+
+            if(enemyFromDB){
+                const aliveEnemies = enemies.filter(enemy => enemy.hpCurrent > 0)
+                const buffs = source.value.statuses[StatusType.Buff].filter(buff => buff.name !== revealStatus.name);
+                const newEnemy = await this.enemyService.createNewStage2EnemyWithStatuses(enemyFromDB, buffs, source.value.statuses[StatusType.Debuff]);
+                aliveEnemies.unshift(...[newEnemy]);
+
+                //- todo: Este mensaje puede cambiar para que se ejecute otra animacion en unity
+                ctx.client.emit(
+                    'PutData',
+                    StandardResponse.respond({
+                        message_type: SWARMessageType.CombatUpdate,
+                        action: SWARAction.SpawnEnemies,
+                        data: newEnemy,
+                    }),
+                );
+
+                await this.expeditionService.updateByFilter(
+                    {
+                        _id: ctx.expedition._id,
+                        status: ExpeditionStatusEnum.InProgress,
+                    },
+                    { $set: { 'currentNode.data.enemies': aliveEnemies } },
+                );
+
+                // Now we generate a new ctx to generate the new enemy intentions
+                const newCtx = await this.expeditionService.getGameContext(ctx.client);
+
+                await this.enemyService.setCurrentScript(
+                    newCtx,
+                    enemyFromDB.enemyId,
+                    {id: 0, intentions: [EnemyBuilderService.createDoNothingIntent()]},
+                );
+            }
         }
     }
 }

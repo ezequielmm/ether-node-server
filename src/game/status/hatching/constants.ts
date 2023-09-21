@@ -1,10 +1,10 @@
-import { StatusEffect, StatusType, StatusCounterType, StatusDirection, StatusTrigger } from "../interfaces";
+import { EVENT_BEFORE_ENEMIES_TURN_START } from "src/game/constants";
+import { StatusType, StatusCounterType, StatusTrigger, StatusEvent } from "../interfaces";
 
-export const hatchingStatus: StatusEffect = {
+export const hatchingStatus: StatusEvent = {
     name: 'hatching',
     type: StatusType.Buff,
     counterType: StatusCounterType.Counter,
-    direction: StatusDirection.Outgoing,
-    trigger: StatusTrigger.Effect,
-    effects: [],
+    trigger: StatusTrigger.Event,
+    event: EVENT_BEFORE_ENEMIES_TURN_START,
 };

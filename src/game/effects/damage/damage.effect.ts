@@ -150,7 +150,8 @@ export class DamageEffect implements EffectHandler {
                     if(enemyFromDB){
                         const newEnemy = await this.enemyService.createNewStage2Enemy(enemyFromDB);
                         
-                        enemies.unshift(...[newEnemy]);
+                        const aliveEnemies = enemies.filter(enemy => enemy.hpCurrent > 0)
+                        aliveEnemies.unshift(...[newEnemy]);
                         
                         //- todo: Este mensaje puede cambiar para que se ejecute otra animacion en unity
                         ctx.client.emit(
@@ -167,7 +168,7 @@ export class DamageEffect implements EffectHandler {
                                 _id: ctx.expedition._id,
                                 status: ExpeditionStatusEnum.InProgress,
                             },
-                            { $set: { 'currentNode.data.enemies': enemies } },
+                            { $set: { 'currentNode.data.enemies': aliveEnemies } },
                         );
 
                         // Now we generate a new ctx to generate the new enemy intentions

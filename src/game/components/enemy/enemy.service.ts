@@ -347,13 +347,9 @@ export class EnemyService {
      * @param hp Health value
      * @returns Health value
      */
-    public async setHp(
-        ctx: GameContext,
-        id: EnemyId,
-        hp: number,
-    ): Promise<number> {
+    public async setHp(ctx: GameContext, id: EnemyId, hp: number): Promise<number> {
+        
         const enemy = this.get(ctx, id);
-
         const newHp = Math.min(hp, enemy.value.hpMax);
 
         await this.expeditionService.updateByFilter(
