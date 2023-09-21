@@ -67,35 +67,17 @@ export class GearService {
     rarities?: ILootboxRarityOdds,
     userGear: Gear[] = [],
   ): Promise<Gear[]> {
-    //console.log('Starting to generate lootbox...');
     const gear_list: Gear[] = [];
-    const uniqueGearIds: Set<string> = new Set();
 
-  // Populate uniqueGearIds with gearIds from userGear
-  userGear.forEach(gear => uniqueGearIds.add(gear.gearId.toString()));
-
-  for (let i = 0; i < size; i++) {
-      let one_gear = await this.getOneGear(this.selectRandomRarity(rarities));
-
-      // Check for 'onlyOneAllowed' and for duplicates in uniqueGearIds
-      while (
-          one_gear?.onlyOneAllowed &&
-          uniqueGearIds.has(one_gear.gearId.toString())
-      ) {
-          one_gear = await this.getOneGear(this.selectRandomRarity(rarities));
-      }
-
-      if (one_gear) {
-          // If gear is 'onlyOneAllowed', add its gearId to uniqueGearIds
-          if (one_gear.onlyOneAllowed) {
-              uniqueGearIds.add(one_gear.gearId.toString());
-          }
-              gear_list.push(one_gear);
-          }
-        }
-
-      return gear_list;
+    for (let i = 0; i < size; i++) {
+        const one_gear = await this.getOneGear(
+            this.selectRandomRarity(rarities),
+        );
+        gear_list.push(one_gear);
     }
+
+    return gear_list;
+}
 
   private downgradeRarity(
     currentRarity: GearRarityEnum,
