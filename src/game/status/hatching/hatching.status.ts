@@ -25,10 +25,7 @@ export class HatchingStatus implements StatusEventHandler {
         if(EnemyService.isEnemy(source)){
             console.log(source.value.enemyId)
         }
-        else{
-            console.log("Not enemy sorce")
-        }
-        console.log("-----------------------------------------------------------------------------------")
+        
 
         // Decrease counter
         status.args.counter--;
@@ -59,6 +56,8 @@ export class HatchingStatus implements StatusEventHandler {
                 //         data: newEnemy,
                 //     }),
                 // );
+
+                const newCtx = await this.expeditionService.getGameContext(ctx.client);
             }
 
             // const aliveEnemies = enemies.filter(enemy => enemy.hpCurrent > 0)
@@ -71,5 +70,6 @@ export class HatchingStatus implements StatusEventHandler {
             //     { $set: { 'currentNode.data.enemies': aliveEnemies } },
             // );
         }
+        console.log("-----------------------------------------------------------------------------------")
     }
 }
