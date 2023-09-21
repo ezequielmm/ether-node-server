@@ -39,7 +39,6 @@ export class HatchingStatus implements StatusEventHandler {
         }
 
         //- If counter is 0 remove the status and make the effect:
-        remove();
 
         if(EnemyService.isEnemy(source)){
             //- Kill the current enemy:
