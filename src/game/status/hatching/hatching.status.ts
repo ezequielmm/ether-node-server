@@ -36,11 +36,15 @@ export class HatchingStatus implements StatusEventHandler {
         remove();
 
         if(EnemyService.isEnemy(source)){
+            console.log("Inside source is enemy")
             //- Kill the current enemy:
             this.enemyService.setHp(ctx, source.value.enemyId, 0);
 
             const swarmMaster = enemies.find(enemy => enemy.enemyId == ENEMY_SWARM_MASTER_ID);
 
+            console.log("swarmCocoon:")
+            console.log(swarmMaster)
+            
             if(swarmMaster){
                 const newHp = swarmMaster.hpCurrent + source.value.hpMax;
                 this.enemyService.setHp(ctx, source.value.enemyId, newHp);
@@ -56,15 +60,15 @@ export class HatchingStatus implements StatusEventHandler {
                 // );
             }
 
-            const aliveEnemies = enemies.filter(enemy => enemy.hpCurrent > 0)
+            // const aliveEnemies = enemies.filter(enemy => enemy.hpCurrent > 0)
 
-            await this.expeditionService.updateByFilter(
-                {
-                    _id: ctx.expedition._id,
-                    status: ExpeditionStatusEnum.InProgress,
-                },
-                { $set: { 'currentNode.data.enemies': aliveEnemies } },
-            );
+            // await this.expeditionService.updateByFilter(
+            //     {
+            //         _id: ctx.expedition._id,
+            //         status: ExpeditionStatusEnum.InProgress,
+            //     },
+            //     { $set: { 'currentNode.data.enemies': aliveEnemies } },
+            // );
         }
     }
 }
