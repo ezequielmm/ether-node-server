@@ -1,63 +1,70 @@
 import { Injectable } from "@nestjs/common";
 import { EnemyService } from "src/game/components/enemy/enemy.service";
 import { PlayerService } from "src/game/components/player/player.service";
-import { EffectDTO } from "src/game/effects/effects.interface";
-import { StatusEffectHandler, StatusEffectDTO } from "../interfaces";
+import { StatusEventDTO, StatusEventHandler } from "../interfaces";
 import { StatusDecorator } from "../status.decorator";
 import { StatusService } from "../status.service";
 import { hatchingStatus } from "./constants";
-import { OnEvent } from "@nestjs/event-emitter";
-import { GameContext } from "src/game/components/interfaces";
-import { EVENT_BEFORE_ENEMIES_TURN_END, EVENT_BEFORE_PLAYER_TURN_END } from "src/game/constants";
+import { ENEMY_SWARM_MASTER_ID } from "src/game/components/enemy/constants";
+import { ExpeditionService } from "src/game/components/expedition/expedition.service";
+import { ExpeditionStatusEnum } from "src/game/components/expedition/expedition.enum";
+import { StandardResponse, SWARMessageType, SWARAction } from "src/game/standardResponse/standardResponse";
 
 @StatusDecorator({
     status: hatchingStatus,
 })
 @Injectable()
-export class HatchingStatus implements StatusEffectHandler {
+export class HatchingStatus implements StatusEventHandler {
 
-    constructor(private readonly statusService:StatusService,
-                private readonly enemyService:EnemyService,
-                private readonly playerService:PlayerService){}
-    
-    async preview(args: StatusEffectDTO): Promise<EffectDTO> {
-        return this.handle(args);
-    }
+    constructor(private readonly enemyService:EnemyService,
+                private readonly expeditionService:ExpeditionService){}
 
-    async handle(dto: StatusEffectDTO): Promise<EffectDTO> {
-        console.log("-----------------------------------------------------------------------------------")
-        console.log("Hatching value:")
-        console.log(dto.effectDTO.args.currentValue)
-        console.log("-----------------------------------------------------------------------------------")
-        return dto.effectDTO;
-    }
+    async handle(dto: StatusEventDTO): Promise<void> {
+        
+        const { ctx, update, remove, status, source } = dto;
+        const enemies = ctx.expedition.currentNode.data.enemies;
+        
+        // Decrease counter
+        status.args.counter--;
 
-    @OnEvent(EVENT_BEFORE_ENEMIES_TURN_END)
-    async onEnemiesTurnStart(args: { ctx: GameContext }): Promise<void> {
-        const { ctx } = args;
-        const enemies = this.enemyService.getAll(ctx);
+        if (status.args.counter > 0) {
+            update(status.args);
+            return;
+        }
 
-        for (const enemy of enemies) {
-            await this.statusService.decreaseCounterAndRemove(
-                ctx,
-                enemy.value.statuses,
-                enemy,
-                hatchingStatus,
+        //- If counter is 0 remove the status and make the effect:
+        remove();
+
+        if(EnemyService.isEnemy(source)){
+            //- Kill the current enemy:
+            this.enemyService.setHp(ctx, source.value.enemyId, 0);
+
+            const swarmMaster = enemies.find(enemy => enemy.enemyId == ENEMY_SWARM_MASTER_ID);
+
+            if(swarmMaster){
+                const newHp = swarmMaster.hpCurrent + source.value.hpMax;
+                this.enemyService.setHp(ctx, source.value.enemyId, newHp);
+
+                //- todo: Este mensaje puede cambiar para que se ejecute otra animacion en unity
+                // ctx.client.emit(
+                //     'PutData',
+                //     StandardResponse.respond({
+                //         message_type: SWARMessageType.CombatUpdate,
+                //         action: SWARAction.SpawnEnemies,
+                //         data: newEnemy,
+                //     }),
+                // );
+            }
+
+            const aliveEnemies = enemies.filter(enemy => enemy.hpCurrent > 0)
+
+            await this.expeditionService.updateByFilter(
+                {
+                    _id: ctx.expedition._id,
+                    status: ExpeditionStatusEnum.InProgress,
+                },
+                { $set: { 'currentNode.data.enemies': aliveEnemies } },
             );
         }
-    }
-
-    @OnEvent(EVENT_BEFORE_PLAYER_TURN_END)
-    async onPlayerTurnStart(args: { ctx: GameContext }): Promise<void> {
-        const { ctx } = args;
-        const player = this.playerService.get(ctx);
-        const statuses = player.value.combatState.statuses;
-
-        await this.statusService.decreaseCounterAndRemove(
-            ctx,
-            statuses,
-            player,
-            hatchingStatus,
-        );
     }
 }
