@@ -65,48 +65,18 @@ export class GearService {
   async getLootbox(
     size: number,
     rarities?: ILootboxRarityOdds,
-    userGear: Gear[] = [],
-  ): Promise<Gear[]> {
-    //console.log('Starting to generate lootbox...');
+): Promise<Gear[]> {
     const gear_list: Gear[] = [];
-    const uniqueGearIds: Set<string> = new Set();
 
-    userGear.forEach((gear) => uniqueGearIds.add(gear.gearId.toString()));
-
-   /* console.log(
-      `Initial unique gear IDs: ${Array.from(uniqueGearIds).join(', ')}`,
-    );
-*/
-    let targetGearSet = '';
-    let allGear: Gear[] = await this.getAllGear();
-    allGear = allGear.filter((gear) => gear.name === targetGearSet);
-
-    let itemAdded = false;
-    let targetRarity = this.selectRandomRarity(rarities);
-
-    while (itemAdded === false) {
-      const newGear = this.getRandomGearByRarity(allGear, targetRarity);
-
-      if (uniqueGearIds.has(newGear.gearId.toString())) {
-       /* console.log(
-          `Repeated: ${newGear.gearId.toString()} - ${newGear.rarity}`,
-        );*/
-        targetRarity = this.downgradeRarity(targetRarity);
-
-        if (targetRarity === null) {
-          //console.log('Target rarity null, break');
-          break;
-        }
-      } else {
-        console.log(`Adding: ${newGear.gearId} - ${newGear.rarity}`);
-        gear_list.push(newGear);
-        uniqueGearIds.add(newGear.gearId.toString());
-        itemAdded = true;
-      }
+    for (let i = 0; i < size; i++) {
+        const one_gear = await this.getOneGear(
+            this.selectRandomRarity(rarities),
+        );
+        gear_list.push(one_gear);
     }
 
     return gear_list;
-  }
+}
 
   private downgradeRarity(
     currentRarity: GearRarityEnum,
