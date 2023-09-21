@@ -40,18 +40,25 @@ export class HatchingStatus implements StatusEventHandler {
         if(EnemyService.isEnemy(source)){
             //- Kill the current enemy:
             this.enemyService.setHp(ctx, source.value.enemyId, 0);
+
             let enemies = ctx.expedition.currentNode.data.enemies;
+            enemies = enemies.map(enemy => {
+                if (enemy.enemyId === source.value.enemyId) {
+                    return { ...enemy, hpCurrent: 0 }; 
+                }
+                return enemy; 
+            });
             const swarmMaster = enemies.find(enemy => enemy.enemyId == ENEMY_SWARM_MASTER_ID);
 
             if(swarmMaster){
-                let newHp = swarmMaster.hpCurrent + source.value.hpMax;
+                let newHp = swarmMaster.hpCurrent + source.value.hpCurrent;
                 newHp = await this.enemyService.setHp(ctx, swarmMaster.enemyId, newHp);
 
                 enemies = enemies.map(enemy => {
                     if (enemy.enemyId === ENEMY_SWARM_MASTER_ID) {
-                        return { ...enemy, hpCurrent: newHp }; // Modifica la salud a 200
+                        return { ...enemy, hpCurrent: newHp }; 
                     }
-                    return enemy; // Para los otros enemigos, devuelve el mismo objeto sin cambios
+                    return enemy; 
                 });
 
                 //- todo: Este mensaje puede cambiar para que se ejecute otra animacion en unity
