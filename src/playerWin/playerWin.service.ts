@@ -45,13 +45,13 @@ export class PlayerWinService {
 
   //   return allLootboxes;
   // }
-  // async findAllWins(wallet_id: string, event_id: number) {
-  //   const items = await this.playerWin.find({
-  //     'playerToken.walletId': wallet_id,
-  //     event_id: event_id,
-  //   });
-  //   return items;
-  // }
+  async findAllWins(wallet_id: string, event_id: number) {
+    const items = await this.playerWin.find({
+      'playerToken.walletId': wallet_id,
+      event_id: event_id,
+    });
+    return items;
+  }
 
   async classCanWin(characterClass: CharacterClassEnum): Promise<boolean> {
     const character = await this.characterService.findOne({ characterClass });
