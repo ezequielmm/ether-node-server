@@ -77,7 +77,7 @@ export class GearService {
       `Initial unique gear IDs: ${Array.from(uniqueGearIds).join(', ')}`,
     );
 */
-    let targetGearSet = 'Siege';
+    let targetGearSet = '';
     let allGear: Gear[] = await this.getAllGear();
     allGear = allGear.filter((gear) => gear.name === targetGearSet);
 
