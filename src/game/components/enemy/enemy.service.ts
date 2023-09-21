@@ -834,36 +834,43 @@ export class EnemyService {
         if(enemyHP >= 200){
             //- Large:
             console.log("Enemy Large")
-            return this.swarmMasterLargeScript(amountOfCocoons, amountOfSpiders, enemiesOnScreen, intents);
+            return this.swarmMasterLargeScript(ctx, amountOfCocoons, amountOfSpiders, enemiesOnScreen, intents);
         }
         if(enemyHP > 99 && enemyHP < 200){
             //- Normal:
             console.log("Enemy Normal")
-            return this.swarmMasterNormalScript(amountOfCocoons, amountOfSpiders, enemiesOnScreen, intents);
+            return this.swarmMasterNormalScript(ctx, amountOfCocoons, amountOfSpiders, enemiesOnScreen, intents);
             
         }
         console.log("Enemy Saggy")
-        return this.swarmMasterSaggyScript(amountOfCocoons, amountOfSpiders, enemiesOnScreen, intents);
+        return this.swarmMasterSaggyScript(ctx, amountOfCocoons, amountOfSpiders, enemiesOnScreen, intents);
     }
 
-    private swarmMasterLargeScript(amountOfCocoons:number, amountOfSpiders:number, enemiesOnScreen:number, intents:IntentOption[]): EnemyScript{
+    private swarmMasterLargeScript(ctx:GameContext, amountOfCocoons:number, amountOfSpiders:number, enemiesOnScreen:number, intents:IntentOption[]): EnemyScript{
         
         const lessThan2Cocoons = amountOfCocoons < 2;
         const lessThan2Spiders = amountOfSpiders < 2;
         
+        const spider = { id: intents[1].id, intentions: intents[1].intents }
+        const cocoon = { id: intents[0].id, intentions: intents[0].intents }
+        const secondCocoon = { id: intents[9].id, intentions: intents[9].intents }
+        const secondSpider = { id: intents[10].id, intentions: intents[10].intents }
+        
         if(lessThan2Cocoons && lessThan2Spiders && !(enemiesOnScreen >= 5)){
             //- %50 chance to invoke 1 Spider or 1 Cocoon
-            const spider = { id: intents[1].id, intentions: intents[1].intents }
-            const cocoon = { id: intents[0].id, intentions: intents[0].intents }
-            return getRandomItemByWeight([spider, cocoon], [50, 50]);
+            const amountSpider1 = this.getAmountOfEnemiesByIds(ctx, [mutantSpider1Data.enemyId]);
+            const amountCocoon1 = this.getAmountOfEnemiesByIds(ctx, [swarmCocoon1Data.enemyId]);
+            return getRandomItemByWeight([amountSpider1 > 0 ? secondSpider : spider, amountCocoon1 > 0 ? secondCocoon : cocoon], [50, 50]);
         }
         if(!lessThan2Cocoons && lessThan2Spiders && !(enemiesOnScreen >= 5)){
             //- Summon 1 Spider:
-            return { id: intents[1].id, intentions: intents[1].intents }
+            const amountSpider1 = this.getAmountOfEnemiesByIds(ctx, [mutantSpider1Data.enemyId]);
+            return (amountSpider1 > 0 ? secondSpider : spider)
         }
         if(lessThan2Cocoons && !lessThan2Spiders && !(enemiesOnScreen >= 5)){
             //- Summon 1 Cocoon:
-            return { id: intents[0].id, intentions: intents[0].intents }
+            const amountCocoon1 = this.getAmountOfEnemiesByIds(ctx, [swarmCocoon1Data.enemyId]);
+            return (amountCocoon1 > 0 ? secondCocoon : cocoon)
         }
             
         //- Va a elegir 50 50 entre id 5 y 6
@@ -873,39 +880,55 @@ export class EnemyService {
     }
 
 
-    private swarmMasterNormalScript(amountOfCocoons:number, amountOfSpiders:number, enemiesOnScreen:number, intents:IntentOption[]): EnemyScript{
+    private swarmMasterNormalScript(ctx:GameContext, amountOfCocoons:number, amountOfSpiders:number, enemiesOnScreen:number, intents:IntentOption[]): EnemyScript{
 
         const lessThan2Cocoons = amountOfCocoons < 2;
         const lessThan2Spiders = amountOfSpiders < 2;
 
         if(lessThan2Cocoons && lessThan2Spiders && !(enemiesOnScreen >= 5)){
-            const spider  = { id: intents[1].id, intentions: intents[1].intents }
-            const spider2 = { id: intents[2].id, intentions: intents[2].intents }
             const cocoon  = { id: intents[0].id, intentions: intents[0].intents }
-            const cocoon2 = { id: intents[3].id, intentions: intents[3].intents }
+            const spider  = { id: intents[1].id, intentions: intents[1].intents }
+            const cocoon2 = { id: intents[2].id, intentions: intents[2].intents }
+            const spider2 = { id: intents[3].id, intentions: intents[3].intents }
+            const secondCocoon = { id: intents[9].id, intentions: intents[9].intents }
+            const secondSpider = { id: intents[10].id, intentions: intents[10].intents }
 
             if(amountOfCocoons == 0 && amountOfSpiders == 0){
                 return getRandomItemByWeight([cocoon, cocoon2, spider, spider2], [25, 25, 25, 25]);
             }
 
             if(amountOfCocoons == 1 && amountOfSpiders == 0){
+                if(this.getAmountOfEnemiesByIds(ctx, [swarmCocoon1Data.enemyId]) > 0){
+                    return getRandomItemByWeight([secondCocoon, spider, spider2], [34, 33, 33]);
+                }
                 return getRandomItemByWeight([cocoon, spider, spider2], [34, 33, 33]);
             }
 
             if(amountOfCocoons == 0 && amountOfSpiders == 1){
+                if(this.getAmountOfEnemiesByIds(ctx, [mutantSpider1Data.enemyId]) > 0){
+                    return getRandomItemByWeight([cocoon, cocoon2, secondSpider], [34, 33, 33]);
+                }
                 return getRandomItemByWeight([cocoon, cocoon2, spider], [34, 33, 33]);
             }
 
             if(amountOfCocoons == 1 && amountOfSpiders == 1){
-                return getRandomItemByWeight([cocoon, spider], [50, 50]);
+                const amountSpider1 = this.getAmountOfEnemiesByIds(ctx, [mutantSpider1Data.enemyId]);
+                const amountCocoon1 = this.getAmountOfEnemiesByIds(ctx, [swarmCocoon1Data.enemyId]);
+
+                return getRandomItemByWeight([amountCocoon1 > 0 ? secondCocoon : cocoon, amountSpider1 > 0 ? secondSpider : spider], [50, 50]);
             }
         }
         if(!lessThan2Cocoons && lessThan2Spiders && !(enemiesOnScreen >= 5)){
             //- Summon 1 or 2 Spider:
             const spider  = { id: intents[1].id, intentions: intents[1].intents }
             const spider2 = { id: intents[3].id, intentions: intents[3].intents }
-            
+            const secondSpider = { id: intents[10].id, intentions: intents[10].intents }
+
             if(enemiesOnScreen >= 4){
+                if(this.getAmountOfEnemiesByIds(ctx, [mutantSpider1Data.enemyId]) > 0){
+                    return secondSpider;
+                }
+
                 return spider;
             }
 
@@ -915,8 +938,12 @@ export class EnemyService {
             //- Summon 1 Cocoon:
             const cocoon = { id: intents[0].id, intentions: intents[0].intents }
             const cocoon2 = { id: intents[2].id, intentions: intents[2].intents }
-            
+            const secondCocoon = { id: intents[9].id, intentions: intents[9].intents }
+
             if(enemiesOnScreen >= 4){
+                if(this.getAmountOfEnemiesByIds(ctx, [swarmCocoon1Data.enemyId]) > 0){
+                    return secondCocoon;
+                }
                 return cocoon;
             }
 
@@ -932,7 +959,7 @@ export class EnemyService {
         return getRandomItemByWeight([defense, attack, redThunder, greenThunder], [25, 25, 25, 25]);
     }
 
-    private swarmMasterSaggyScript(amountOfCocoons:number, amountOfSpiders:number, enemiesOnScreen:number, intents:IntentOption[]): EnemyScript{
+    private swarmMasterSaggyScript(ctx:GameContext, amountOfCocoons:number, amountOfSpiders:number, enemiesOnScreen:number, intents:IntentOption[]): EnemyScript{
         
         const lessThan2Cocoons = amountOfCocoons < 2;
         const lessThan2Spiders = amountOfSpiders < 2;
@@ -945,25 +972,36 @@ export class EnemyService {
         if(lessThan2Cocoons && lessThan2Spiders && !(enemiesOnScreen >= 5)){
             console.log("First option")
 
-            const spider  = { id: intents[1].id, intentions: intents[1].intents }
-            const spider2 = { id: intents[2].id, intentions: intents[2].intents }
             const cocoon  = { id: intents[0].id, intentions: intents[0].intents }
-            const cocoon2 = { id: intents[3].id, intentions: intents[3].intents }
+            const spider  = { id: intents[1].id, intentions: intents[1].intents }
+            const cocoon2 = { id: intents[2].id, intentions: intents[2].intents }
+            const spider2 = { id: intents[3].id, intentions: intents[3].intents }
+            const secondCocoon = { id: intents[9].id, intentions: intents[9].intents }
+            const secondSpider = { id: intents[10].id, intentions: intents[10].intents }
 
             if(amountOfCocoons == 0 && amountOfSpiders == 0){
                 return getRandomItemByWeight([cocoon, cocoon2, spider, spider2], [25, 25, 25, 25]);
             }
 
             if(amountOfCocoons == 1 && amountOfSpiders == 0){
+                if(this.getAmountOfEnemiesByIds(ctx, [swarmCocoon1Data.enemyId]) > 0){
+                    return getRandomItemByWeight([secondCocoon, spider, spider2], [34, 33, 33]);
+                }
                 return getRandomItemByWeight([cocoon, spider, spider2], [34, 33, 33]);
             }
 
             if(amountOfCocoons == 0 && amountOfSpiders == 1){
+                if(this.getAmountOfEnemiesByIds(ctx, [mutantSpider1Data.enemyId]) > 0){
+                    return getRandomItemByWeight([cocoon, cocoon2, secondSpider], [34, 33, 33]);
+                }
                 return getRandomItemByWeight([cocoon, cocoon2, spider], [34, 33, 33]);
             }
 
             if(amountOfCocoons == 1 && amountOfSpiders == 1){
-                return getRandomItemByWeight([cocoon, spider], [50, 50]);
+                const amountSpider1 = this.getAmountOfEnemiesByIds(ctx, [mutantSpider1Data.enemyId]);
+                const amountCocoon1 = this.getAmountOfEnemiesByIds(ctx, [swarmCocoon1Data.enemyId]);
+
+                return getRandomItemByWeight([amountCocoon1 > 0 ? secondCocoon : cocoon, amountSpider1 > 0 ? secondSpider : spider], [50, 50]);
             }
         }
         if(!lessThan2Cocoons && lessThan2Spiders && !(enemiesOnScreen >= 5)){
@@ -972,8 +1010,13 @@ export class EnemyService {
 
             const spider  = { id: intents[1].id, intentions: intents[1].intents }
             const spider2 = { id: intents[3].id, intentions: intents[3].intents }
+            const secondSpider = { id: intents[10].id, intentions: intents[10].intents }
 
             if(enemiesOnScreen >= 4){
+                if(this.getAmountOfEnemiesByIds(ctx, [mutantSpider1Data.enemyId]) > 0){
+                    return secondSpider;
+                }
+
                 return spider;
             }
 
@@ -984,8 +1027,12 @@ export class EnemyService {
             console.log("Third option")
             const cocoon  = { id: intents[0].id, intentions: intents[0].intents }
             const cocoon2 = { id: intents[2].id, intentions: intents[2].intents }
+            const secondCocoon = { id: intents[9].id, intentions: intents[9].intents }
 
             if(enemiesOnScreen >= 4){
+                if(this.getAmountOfEnemiesByIds(ctx, [swarmCocoon1Data.enemyId]) > 0){
+                    return secondCocoon;
+                }
                 return cocoon;
             }
 
