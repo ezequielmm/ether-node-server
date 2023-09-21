@@ -14,6 +14,7 @@ export class GearService {
     @InjectModel(Gear)
     private readonly gearModel: ReturnModelType<typeof Gear>,
   ) {}
+  
 
   private gearData = GearData;
   private selectRandomRarity(rarities: ILootboxRarityOdds) {
@@ -104,11 +105,10 @@ export class GearService {
         itemAdded = true;
       }
 
-    
+    }
 
     return gear_list;
   }
-}
 
   private downgradeRarity(
     currentRarity: GearRarityEnum,
@@ -144,7 +144,6 @@ export class GearService {
     // Use lodash's sample method to get a random gear item
     return sample(filteredGear) || null;
   }
-
   async getOneGear(rarity: GearRarityEnum): Promise<Gear> {
     const availableGear = await this.gearModel.find({ rarity });
     return sample(availableGear);
