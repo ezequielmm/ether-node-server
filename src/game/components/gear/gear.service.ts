@@ -65,7 +65,8 @@ export class GearService {
   async getLootbox(
     size: number,
     rarities?: ILootboxRarityOdds,
-): Promise<Gear[]> {
+    userGear: Gear[] = [],
+  ): Promise<Gear[]> {
     const gear_list: Gear[] = [];
 
     for (let i = 0; i < size; i++) {
