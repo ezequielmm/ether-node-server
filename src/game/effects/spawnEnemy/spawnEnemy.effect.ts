@@ -28,6 +28,7 @@ import { swarmCocoon1Data } from 'src/game/components/enemy/data/swarmCocoon1.en
 import { swarmCocoon2Data } from 'src/game/components/enemy/data/swarmCocoon2.enemy';
 import { mutantSpider1Data } from 'src/game/components/enemy/data/mutantSpider1.enemy';
 import { mutantSpider2Data } from 'src/game/components/enemy/data/mutantSpider2.enemy';
+import { EnemyBuilderService } from 'src/game/components/enemy/enemy-builder.service';
 
 export interface SpawnEnemyArgs {
     enemiesToSpawn: number[];
@@ -173,8 +174,7 @@ export class SpawnEnemyEffect implements EffectHandler {
                 await this.enemyService.setCurrentScript(
                     newCtx,
                     enemy.enemyId,
-                    {id: enemy.attackLevels[0].options[0].id, 
-                    intentions: enemy.attackLevels[0].options[0].intents},
+                    {id: 0, intentions: [EnemyBuilderService.createDoNothingIntent()]},
                 );
             }
         });

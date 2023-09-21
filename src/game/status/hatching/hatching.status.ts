@@ -5,6 +5,7 @@ import { StatusDecorator } from "../status.decorator";
 import { hatchingStatus } from "./constants";
 import { ENEMY_SWARM_MASTER_ID } from "src/game/components/enemy/constants";
 import { ExpeditionService } from "src/game/components/expedition/expedition.service";
+import { ExpeditionStatusEnum } from "src/game/components/expedition/expedition.enum";
 
 @StatusDecorator({
     status: hatchingStatus,
@@ -18,7 +19,6 @@ export class HatchingStatus implements StatusEventHandler {
     async handle(dto: StatusEventDTO): Promise<void> {
         
         const { ctx, update, remove, status, source } = dto;
-        const enemies = ctx.expedition.currentNode.data.enemies;
         
         console.log("-----------------------------------------------------------------------------------")
         console.log("Hatching..")
@@ -40,12 +40,19 @@ export class HatchingStatus implements StatusEventHandler {
         if(EnemyService.isEnemy(source)){
             //- Kill the current enemy:
             this.enemyService.setHp(ctx, source.value.enemyId, 0);
-
+            let enemies = ctx.expedition.currentNode.data.enemies;
             const swarmMaster = enemies.find(enemy => enemy.enemyId == ENEMY_SWARM_MASTER_ID);
 
             if(swarmMaster){
-                const newHp = swarmMaster.hpCurrent + source.value.hpMax;
-                this.enemyService.setHp(ctx, swarmMaster.enemyId, newHp);
+                let newHp = swarmMaster.hpCurrent + source.value.hpMax;
+                newHp = await this.enemyService.setHp(ctx, swarmMaster.enemyId, newHp);
+
+                enemies = enemies.map(enemy => {
+                    if (enemy.enemyId === ENEMY_SWARM_MASTER_ID) {
+                        return { ...enemy, hpCurrent: newHp }; // Modifica la salud a 200
+                    }
+                    return enemy; // Para los otros enemigos, devuelve el mismo objeto sin cambios
+                });
 
                 //- todo: Este mensaje puede cambiar para que se ejecute otra animacion en unity
                 // ctx.client.emit(
@@ -60,15 +67,15 @@ export class HatchingStatus implements StatusEventHandler {
                 const newCtx = await this.expeditionService.getGameContext(ctx.client);
             }
 
-            // const aliveEnemies = enemies.filter(enemy => enemy.hpCurrent > 0)
+            const aliveEnemies = enemies.filter(enemy => enemy.hpCurrent > 0)
 
-            // await this.expeditionService.updateByFilter(
-            //     {
-            //         _id: ctx.expedition._id,
-            //         status: ExpeditionStatusEnum.InProgress,
-            //     },
-            //     { $set: { 'currentNode.data.enemies': aliveEnemies } },
-            // );
+            await this.expeditionService.updateByFilter(
+                {
+                    _id: ctx.expedition._id,
+                    status: ExpeditionStatusEnum.InProgress,
+                },
+                { $set: { 'currentNode.data.enemies': aliveEnemies } },
+            );
         }
         console.log("-----------------------------------------------------------------------------------")
     }
