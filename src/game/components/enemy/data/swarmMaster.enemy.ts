@@ -15,7 +15,9 @@ import { PoisonedCard } from "../../card/data/poisoned.card";
 //- Intents:
 //-------------------------------------------------------------------------------------------------------------------------------------------------------
 const Summon1Cocoon:   EnemyIntention = EnemyBuilderService.invokeMinionsIntent([swarmCocoon1Data.enemyId]);
-const Summon1Spider:   EnemyIntention = EnemyBuilderService.invokeMinionsIntent([mutantSpider1Data.enemyId]);
+const Summon1Spider:   EnemyIntention = EnemyBuilderService.invokeMinionsIntent([mutantSpider2Data.enemyId]);
+const SummonSecondCocoon:   EnemyIntention = EnemyBuilderService.invokeMinionsIntent([swarmCocoon2Data.enemyId]);
+const SummonSecondSpider:   EnemyIntention = EnemyBuilderService.invokeMinionsIntent([mutantSpider1Data.enemyId]);
 const Summon2Cocoon:   EnemyIntention = EnemyBuilderService.invokeMinionsIntent([swarmCocoon1Data.enemyId, swarmCocoon2Data.enemyId]);
 const Summon2Spider:   EnemyIntention = EnemyBuilderService.invokeMinionsIntent([mutantSpider1Data.enemyId, mutantSpider2Data.enemyId]);
 const BasicDefense:    EnemyIntention = EnemyBuilderService.createDefenseIntent(15);
@@ -50,15 +52,17 @@ const SignatureAttack: EnemyIntention = {
 //-------------------------------------------------------------------------------------------------------------------------------------------------------
 const BasicIntents: EnemyAction = {
     options:[
-        { id: 1, probability: 0.1, cooldown: 0, intents: [Summon1Cocoon] },
-        { id: 2, probability: 0.1, cooldown: 0, intents: [Summon1Spider] },
+        { id: 1, probability: 0.05, cooldown: 0, intents: [Summon1Cocoon] },
+        { id: 2, probability: 0.05, cooldown: 0, intents: [Summon1Spider] },
         { id: 3, probability: 0.1, cooldown: 0, intents: [Summon2Cocoon] },
         { id: 4, probability: 0.1, cooldown: 0, intents: [Summon2Spider] },
-        { id: 5, probability: 0.2, cooldown: 0, intents: [BasicDefense] },
+        { id: 5, probability: 0.1, cooldown: 0, intents: [BasicDefense] },
         { id: 6, probability: 0.1, cooldown: 0, intents: [BasicAttack] },
         { id: 7, probability: 0.1, cooldown: 0, intents: [SecondAttack, DebuffBurn] },
         { id: 8, probability: 0.1, cooldown: 0, intents: [SecondAttack, DebuffPoison] },
         { id: 9, probability: 0.1, cooldown: 0, intents: [SignatureAttack] },
+        { id: 10, probability: 0.1, cooldown: 0, intents: [SummonSecondCocoon] },
+        { id: 11, probability: 0.1, cooldown: 0, intents: [SummonSecondSpider] },
     ]
 }
 
