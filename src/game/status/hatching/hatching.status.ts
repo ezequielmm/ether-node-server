@@ -36,18 +36,14 @@ export class HatchingStatus implements StatusEventHandler {
         remove();
 
         if(EnemyService.isEnemy(source)){
-            console.log("Inside source is enemy")
             //- Kill the current enemy:
             this.enemyService.setHp(ctx, source.value.enemyId, 0);
 
             const swarmMaster = enemies.find(enemy => enemy.enemyId == ENEMY_SWARM_MASTER_ID);
 
-            console.log("swarmCocoon:")
-            console.log(swarmMaster)
-            
             if(swarmMaster){
                 const newHp = swarmMaster.hpCurrent + source.value.hpMax;
-                this.enemyService.setHp(ctx, source.value.enemyId, newHp);
+                this.enemyService.setHp(ctx, swarmMaster.enemyId, newHp);
 
                 //- todo: Este mensaje puede cambiar para que se ejecute otra animacion en unity
                 // ctx.client.emit(
