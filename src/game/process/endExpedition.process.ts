@@ -101,10 +101,12 @@ export class EndExpeditionProcess {
     // Handle loot when the event is active
     private async handleActiveEventLoot(ctx: GameContext, canWin:boolean) {
     
-        // const userGear = await this.playerGearService.getGear(ctx.expedition.userAddress);
+        const userGear = await this.playerGearService.getGear(ctx.expedition.userAddress);
+        
         const lootbox = await this.gearService.getLootbox(
             ctx.expedition.playerState.lootboxSize,
-            ctx.expedition.playerState.lootboxRarity
+            ctx.expedition.playerState.lootboxRarity,
+            userGear
         );
         const filteredLootbox = await this.filterNewLootItems(ctx, lootbox);
         
