@@ -136,17 +136,21 @@ export class PlayerGearService {
         );
     }
 
-    toGearItem(gear: Gear): GearItem {
-        return {
-            gearId: gear.gearId,
-            name: gear.name,
-            trait: gear.trait,
-            category: gear.category,
-            rarity: gear.rarity,
-        };
-    }
-
     toGearItems(gear: Gear[]): GearItem[] {
-        return gear.map((g) => this.toGearItem(g));
-    }
+        const gearItems: GearItem[] = [];
+      
+        for (const gearItem of gear) {
+          const gearItemMapped: GearItem = {
+            gearId: gearItem.gearId,
+            name: gearItem.name,
+            trait: gearItem.trait,
+            category: gearItem.category,
+            rarity: gearItem.rarity,
+          };
+      
+          gearItems.push(gearItemMapped);
+        }
+      
+        return gearItems;
+      }
 }
