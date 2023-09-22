@@ -16,37 +16,15 @@ const BasicDefense:  EnemyIntention = EnemyBuilderService.createDefenseIntent(11
 const BuffSpikes:    EnemyIntention = EnemyBuilderService.createBasicBuffIntent(1, spikesStatus.name);
 const DebuffFatigue: EnemyIntention = EnemyBuilderService.createBasicDebuffIntent(1, fatigue.name);
 
-const Special:       EnemyIntention = {
-    type: EnemyIntentionType.Special,
-    target: CardTargetedEnum.Player,
-    value: 3,
-    effects: [
-        {
-            effect: attachStatusEffect.name,
-            target: CardTargetedEnum.Self,
-            args: {
-                statusName: revealStatus.name,
-                statusArgs: {
-                    counter: 3,
-                },
-            },
-            action: {
-                name: 'special',
-                hint: 'special',
-            },
-        },
-    ]
-}
-
 //-------------------------------------------------------------------------------------------------------------------------------------------------------
 //- Attack Table:
 //-------------------------------------------------------------------------------------------------------------------------------------------------------
 const BasicIntents: EnemyAction = {
     options:[
-        { id: 1, probability: 0.3, cooldown: 0, intents: [BasicDefense] },
+        { id: 1, probability: 0.4, cooldown: 0, intents: [BasicDefense] },
         { id: 2, probability: 0.3, cooldown: 0, intents: [BuffSpikes] },
-        { id: 3, probability: 0.2, cooldown: 0, intents: [DebuffFatigue] },
-        { id: 4, probability: 0.2, cooldown: 0, intents: [Special] },
+        { id: 3, probability: 0.3, cooldown: 0, intents: [DebuffFatigue] },
+        // { id: 4, probability: 0.2, cooldown: 0, intents: [Special] },
     ]
 }
 

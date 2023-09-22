@@ -24,7 +24,7 @@ export class AbsorbEffect implements EffectHandler {
             console.log(dto.args)
             const healAmount = dto.args.currentValue;
             if(healAmount && healAmount > 0){
-                const newHp = source.value.hpCurrent;
+                const newHp = source.value.hpCurrent + healAmount;
                 this.enemyService.setHp(ctx, source.value.enemyId, newHp);
             }
         }

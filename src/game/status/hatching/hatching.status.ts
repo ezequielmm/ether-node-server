@@ -34,11 +34,11 @@ export class HatchingStatus implements StatusEventHandler {
 
                 remove();
                 //- Kill the current enemy:
-                this.enemyService.setHp(ctx, source.value.enemyId, 0);
+                this.enemyService.setHp(ctx, source.value.id, 0);
 
                 let enemies = ctx.expedition.currentNode.data.enemies;
                 enemies = enemies.map(enemy => {
-                    if (enemy.enemyId === source.value.enemyId) {
+                    if (enemy.id === source.value.id) {
                         return { ...enemy, hpCurrent: 0 }; 
                     }
                     return enemy; 
@@ -47,7 +47,7 @@ export class HatchingStatus implements StatusEventHandler {
 
                 if(swarmMaster){
                     let newHp = swarmMaster.hpCurrent + source.value.hpCurrent;
-                    newHp = await this.enemyService.setHp(ctx, swarmMaster.enemyId, newHp);
+                    newHp = await this.enemyService.setHp(ctx, swarmMaster.id, newHp);
 
                     enemies = enemies.map(enemy => {
                         if (enemy.enemyId === ENEMY_SWARM_MASTER_ID) {

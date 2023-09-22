@@ -8,6 +8,7 @@ import { CardTargetedEnum } from '../card/card.enum';
 import { find, reject, sample, isEmpty, each, isEqual } from 'lodash';
 import { ExpeditionService } from '../expedition/expedition.service';
 import {
+    ENEMY_BOOBY_TRAP_ID,
     ENEMY_CURRENT_COOLDOWN_PATH,
     ENEMY_CURRENT_SCRIPT_PATH,
     ENEMY_DEFENSE_PATH,
@@ -41,6 +42,7 @@ import { swarmCocoon2Data } from './data/swarmCocoon2.enemy';
 import { mutantSpider1Data } from './data/mutantSpider1.enemy';
 import { mutantSpider2Data } from './data/mutantSpider2.enemy';
 import { randomUUID } from 'crypto';
+import { EnemyBuilderService } from './enemy-builder.service';
 
 @Injectable()
 export class EnemyService {
@@ -535,6 +537,9 @@ export class EnemyService {
                     this.setCurrentScript(ctx, enemy.value.id, nextScript);
                 } else if(ENEMY_SWARM_COCOON_IDS.includes(enemy_DB.enemyId)){
                     nextScript = this.getNextSwarmCocoonScript(currentScript, attackLevels[0].options);
+                    this.setCurrentScript(ctx, enemy.value.id, nextScript);
+                }else if(enemy_DB.enemyId === ENEMY_BOOBY_TRAP_ID && !currentScript){
+                    nextScript = {id: 0, intentions: [EnemyBuilderService.boobyTrapSpecial()]};
                     this.setCurrentScript(ctx, enemy.value.id, nextScript);
                 }
                 else{
