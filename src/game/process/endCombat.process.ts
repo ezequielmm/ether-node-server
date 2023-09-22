@@ -19,6 +19,8 @@ import {
     SWARMessageType,
 } from '../standardResponse/standardResponse';
 import { EndExpeditionProcess, ExpeditionEndingTypeEnum } from './endExpedition.process';
+import { ENEMY_DEEP_DWELLER_LURE_ID } from '../components/enemy/constants';
+import { some } from 'lodash';
 
 @Injectable()
 export class EndCombatProcess {
@@ -47,10 +49,20 @@ export class EndCombatProcess {
         {
             console.log("Boss defeated");
             console.log("Enemies ids in the combat:")
-            ctx.expedition.currentNode.data.enemies.forEach(e => console.log(e.enemyId + " - " + e.name + " - Current HP: " + e.hpCurrent))
 
-            logger.info('The boss is dead. Ending combat');
-            await this.endCombat(ctx, logger);
+            const enemies = ctx.expedition.currentNode.data.enemies;
+            const combatHasDeepDwellerLure = some(enemies, {
+                enemyId: ENEMY_DEEP_DWELLER_LURE_ID,
+                hpCurrent: 0
+            });
+
+            if(combatHasDeepDwellerLure){
+                console.log("Do nothing test")
+            }else{
+                logger.info('The boss is dead. Ending combat');
+                await this.endCombat(ctx, logger);
+            }
+
         }
         else {
             if (this.enemyService.isAllDead(ctx)) {
