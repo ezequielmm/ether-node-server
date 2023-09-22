@@ -45,6 +45,10 @@ export class EndCombatProcess {
         
         if(this.enemyService.isBossDead(ctx))
         {
+            console.log("Boss defeated");
+            console.log("Enemies ids in the combat:")
+            ctx.expedition.currentNode.data.enemies.forEach(e => console.log(e.enemyId + " - " + e.name + " - Current HP: " + e.hpCurrent))
+
             logger.info('The boss is dead. Ending combat');
             await this.endCombat(ctx, logger);
         }

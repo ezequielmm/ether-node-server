@@ -86,7 +86,6 @@ export class HatchingStatus implements StatusEventHandler {
         }
         else{
             update(status.args);
-            return;
         }
 
     }
