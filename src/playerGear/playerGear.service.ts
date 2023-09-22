@@ -89,10 +89,10 @@ export class PlayerGearService {
         return player.gear;
     }
 
-    async addGearToPlayer(userAddress: string, gear: Gear[],  payload: string): Promise<PlayerGear> 
+    async addGearToPlayer(userAddress: string, gear: Gear[]): Promise<PlayerGear> 
     {
 
-        console.log("addGearToPlayer and payload", userAddress, gear, payload);
+        console.log("addGearToPlayer", userAddress, gear);
 
         const gearItems = this.toGearItems(gear);
 
@@ -136,21 +136,17 @@ export class PlayerGearService {
         );
     }
 
+    toGearItem(gear: Gear): GearItem {
+        return {
+            gearId: gear.gearId,
+            name: gear.name,
+            trait: gear.trait,
+            category: gear.category,
+            rarity: gear.rarity,
+        };
+    }
+
     toGearItems(gear: Gear[]): GearItem[] {
-        const gearItems: GearItem[] = [];
-      
-        for (const gearItem of gear) {
-          const gearItemMapped: GearItem = {
-            gearId: gearItem.gearId,
-            name: gearItem.name,
-            trait: gearItem.trait,
-            category: gearItem.category,
-            rarity: gearItem.rarity,
-          };
-      
-          gearItems.push(gearItemMapped);
-        }
-      
-        return gearItems;
-      }
+        return gear.map((g) => this.toGearItem(g));
+    }
 }
