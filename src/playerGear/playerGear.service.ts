@@ -8,7 +8,6 @@ import { compact } from 'lodash';
 import { FilterQuery } from 'mongoose';
 import { Logger } from '@nestjs/common';
 import { GearService } from 'src/game/components/gear/gear.service';
-import { GearCategoryEnum, GearRarityEnum, GearTraitEnum } from 'src/game/components/gear/gear.enum';
 
 @Injectable()
 export class PlayerGearService {
@@ -94,79 +93,9 @@ export class PlayerGearService {
     {
 
         console.log("addGearToPlayer", userAddress, gear);
-        
+
         const gearItems = this.toGearItems(gear);
 
-        for (let i = 0; i < gear.length; i++) {
-            let gear: number = i;
-          
-            switch (gear[i]) {
-              case 3301:
-                var gearItem3301 = new GearItem();
-                gearItem3301.gearId = 3301;
-                gearItem3301.name = "Silver Prince";
-                gearItem3301.category = GearCategoryEnum.Helmet;
-                gearItem3301.rarity = GearRarityEnum.Epic;
-                gearItem3301.trait = GearTraitEnum.Helmet; 
-                
-
-                gearItems.push(gearItem3301);
-
-                break;
-              case 3302:
-                var gearItem3302 = new GearItem();
-                gearItem3302.gearId = 3302;
-                gearItem3302.name = "Gold Prince";
-                gearItem3302.category = GearCategoryEnum.Helmet;
-                gearItem3302.rarity = GearRarityEnum.Legendary;
-                gearItem3302.trait = GearTraitEnum.Helmet; 
-                
-
-                gearItems.push(gearItem3302);
-
-                break;
-              case 3303:
-                var gearItem3303 = new GearItem();
-                gearItem3303.gearId = 3303;
-                gearItem3303.name = "Blue Praying Hands";
-                gearItem3303.category = GearCategoryEnum.Helmet;
-                gearItem3303.rarity = GearRarityEnum.Epic;
-                gearItem3303.trait = GearTraitEnum.Helmet; 
-                
-
-                gearItems.push(gearItem3303);
-
-                break;
-              case 3304:
-                var gearItem3304 = new GearItem();
-                gearItem3304.gearId = 3304;
-                gearItem3304.name = "Red Hounskull";
-                gearItem3304.category = GearCategoryEnum.Helmet;
-                gearItem3304.rarity = GearRarityEnum.Rare;
-                gearItem3304.trait = GearTraitEnum.Helmet; 
-                
-
-                gearItems.push(gearItem3304);
-
-                break;
-              case 3305:
-                var gearItem3305 = new GearItem();
-                gearItem3305.gearId = 3305;
-                gearItem3305.name = "Red Hound";
-                gearItem3305.category = GearCategoryEnum.Helmet;
-                gearItem3305.rarity = GearRarityEnum.Rare;
-                gearItem3305.trait = GearTraitEnum.Helmet; 
-                
-
-                gearItems.push(gearItem3305);
-
-                break;
-              default:
-                console.log("Opción no válida");
-            }
-          }       
-        
-        
         try {
             return await this.playerGear.findOneAndUpdate(
                 { userAddress },
