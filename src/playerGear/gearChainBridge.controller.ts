@@ -13,7 +13,7 @@ import { Gear } from '../game/components/gear/gear.schema';
 import { Expedition } from 'src/game/components/expedition/expedition.schema';
 import { ReturnModelType } from '@typegoose/typegoose';
 import { getModelToken } from 'kindagoose';
-import { GearRarityEnum } from 'src/game/components/gear/gear.enum';
+import { GearCategoryEnum, GearRarityEnum, GearTraitEnum } from 'src/game/components/gear/gear.enum';
 import { remove } from 'lodash';
 import { createHash } from 'crypto';
 import { GearItem } from './gearItem';
@@ -109,6 +109,31 @@ export class GearChainBridgeController {
         }
 
         let playerGear;
+
+
+        for (let i = 0; i < payload.gear.length; i++) {
+            let gearId = payload.gear[i]; // Asigna el valor de payload.gear[i] a una variable gearId
+          
+            switch (gearId) {
+              case 3301:
+                var gearItem3301 = new Gear();
+                gearItem3301.gearId = 3301;
+                gearItem3301.name = "Silver Prince";
+                gearItem3301.category = GearCategoryEnum.Helmet;
+                gearItem3301.rarity = GearRarityEnum.Epic;
+                gearItem3301.trait = GearTraitEnum.Helmet; 
+                gearItem3301.isActive = true
+                
+                playerGear.push(gearItem3301);
+
+                break;
+
+              default:
+                console.log("Opción no válida");
+            }
+          }       
+
+
         try {
             playerGear = await this.playerGearService.getGear(
                 wallet,
@@ -121,6 +146,29 @@ export class GearChainBridgeController {
         }
 
         let gears;
+
+        for (let i = 0; i < payload.gear.length; i++) {
+            let gearId = payload.gear[i]; // Asigna el valor de payload.gear[i] a una variable gearId
+          
+            switch (gearId) {
+              case 3301:
+                var gearItem3301 = new Gear();
+                gearItem3301.gearId = 3301;
+                gearItem3301.name = "Silver Prince";
+                gearItem3301.category = GearCategoryEnum.Helmet;
+                gearItem3301.rarity = GearRarityEnum.Epic;
+                gearItem3301.trait = GearTraitEnum.Helmet; 
+                gearItem3301.isActive = true
+                
+                gears.push(gearItem3301);
+
+                break;
+
+              default:
+                console.log("Opción no válida");
+            }
+          }  
+
         try {
             gears = this.playerGearService.getGearByIds(payload.gear);
             console.log('postModify: Gears retrieved by IDs:', gears);
@@ -145,7 +193,54 @@ export class GearChainBridgeController {
             throw error;
         }
 
+        let oldGear;
+
+        for (let i = 0; i < payload.gear.length; i++) {
+            let gearId = payload.gear[i]; // Asigna el valor de payload.gear[i] a una variable gearId
+          
+            switch (gearId) {
+              case 3301:
+                var gearItem3301 = new Gear();
+                gearItem3301.gearId = 3301;
+                gearItem3301.name = "Silver Prince";
+                gearItem3301.category = GearCategoryEnum.Helmet;
+                gearItem3301.rarity = GearRarityEnum.Epic;
+                gearItem3301.trait = GearTraitEnum.Helmet; 
+                gearItem3301.isActive = true
+                
+                oldGear.push(gearItem3301);
+
+                break;
+
+              default:
+                console.log("Opción no válida");
+            }
+          }  
+
         let newGear;
+
+        for (let i = 0; i < payload.gear.length; i++) {
+            let gearId = payload.gear[i]; // Asigna el valor de payload.gear[i] a una variable gearId
+          
+            switch (gearId) {
+              case 3301:
+                var gearItem3301 = new Gear();
+                gearItem3301.gearId = 3301;
+                gearItem3301.name = "Silver Prince";
+                gearItem3301.category = GearCategoryEnum.Helmet;
+                gearItem3301.rarity = GearRarityEnum.Epic;
+                gearItem3301.trait = GearTraitEnum.Helmet; 
+                gearItem3301.isActive = true
+                
+                newGear.push(gearItem3301);
+
+                break;
+
+              default:
+                console.log("Opción no válida");
+            }
+          }  
+
         try {
             newGear = await this.playerGearService.getGear(
                 wallet,
