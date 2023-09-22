@@ -18,6 +18,9 @@ import { ENEMY_DEEP_DWELLER_LURE_ID, ENEMY_DEEP_DWELLER_MONSTER_ID } from 'src/g
 import { StandardResponse, SWARMessageType, SWARAction } from 'src/game/standardResponse/standardResponse';
 import { ExpeditionService } from 'src/game/components/expedition/expedition.service';
 import { ExpeditionStatusEnum } from 'src/game/components/expedition/expedition.enum';
+import { absorbEffect } from '../absorb/constants';
+import { counterEffect } from '../counter/constants';
+import { breachEffect } from '../breach/constants';
 
 export interface DamageArgs {
     useDefense?: boolean;
@@ -136,6 +139,35 @@ export class DamageEffect implements EffectHandler {
                     this.enemyService.setCurrentScript(ctx, target.value.id, target.value.currentScript);
                 }
             }
+
+
+            nextIntentValueChanged = false;
+
+            for(const intention of enemyIntentions){
+                for(const effect of intention.effects){
+                    switch(effect.effect){
+                        case absorbEffect.name:
+                            if(damage > oldDefense){
+                                console.log("Efecto de absorb ignorado hasta ahora");
+                                effect.args.value += (damage - oldDefense);
+                                nextIntentValueChanged = true;
+                            }
+                            break;
+                        case counterEffect.name:
+                            if(damage > oldDefense){
+                                console.log("Efecto de counter ignorado hasta ahora");
+                                effect.args.value += (damage - oldDefense);
+                                nextIntentValueChanged = true;
+                            }
+                            break;
+                    }
+                }
+            }
+
+            // if(nextIntentValueChanged){
+            //     target.value.currentScript.intentions = enemyIntentions;
+            //     this.enemyService.setCurrentScript(ctx, target.value.id, target.value.currentScript);
+            // }
 
             newHp = target.value.hpCurrent;
             newDefense = target.value.defense;
