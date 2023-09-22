@@ -51,14 +51,12 @@ export class EndCombatProcess {
             console.log("Enemies ids in the combat:")
 
             const enemies = ctx.expedition.currentNode.data.enemies;
-            const combatHasDeepDwellerLure = some(enemies, {
+            const deepDwellerLureDie = some(enemies, {
                 enemyId: ENEMY_DEEP_DWELLER_LURE_ID,
                 hpCurrent: 0
             });
 
-            if(combatHasDeepDwellerLure){
-                console.log("Do nothing test")
-            }else{
+            if(!deepDwellerLureDie){
                 logger.info('The boss is dead. Ending combat');
                 await this.endCombat(ctx, logger);
             }
