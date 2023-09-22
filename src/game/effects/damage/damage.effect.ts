@@ -117,6 +117,46 @@ export class DamageEffect implements EffectHandler {
                                 nextIntentValueChanged = true;
                             }
                         }
+                        //- Signature moves could have more than 1 effect:
+                        for(const effect of intention.effects){
+                            switch(effect.effect){
+                                case absorbEffect.name:
+                                    if(damage > oldDefense){
+                                        console.log("Efecto de absorb ignorado hasta ahora");
+                                        effect.args.value += (damage - oldDefense);
+                                        nextIntentValueChanged = true;
+                                    }
+                                    break;
+                                case counterEffect.name:
+                                    if(damage > oldDefense){
+                                        console.log("Efecto de counter ignorado hasta ahora");
+                                        effect.args.value += (damage - oldDefense);
+                                        nextIntentValueChanged = true;
+                                    }
+                                    break;
+                            }
+                        }
+                        break;
+                    case EnemyIntentionType.Special:
+                        //- Special moves could have more than 1 effect:
+                        for(const effect of intention.effects){
+                            switch(effect.effect){
+                                case absorbEffect.name:
+                                    if(damage > oldDefense){
+                                        console.log("Efecto de absorb ignorado hasta ahora");
+                                        effect.args.value += (damage - oldDefense);
+                                        nextIntentValueChanged = true;
+                                    }
+                                    break;
+                                case counterEffect.name:
+                                    if(damage > oldDefense){
+                                        console.log("Efecto de counter ignorado hasta ahora");
+                                        effect.args.value += (damage - oldDefense);
+                                        nextIntentValueChanged = true;
+                                    }
+                                    break;
+                            }
+                        }
                         break;
                     case EnemyIntentionType.Counter:
                         if(damage > oldDefense){
@@ -139,35 +179,6 @@ export class DamageEffect implements EffectHandler {
                     this.enemyService.setCurrentScript(ctx, target.value.id, target.value.currentScript);
                 }
             }
-
-
-            nextIntentValueChanged = false;
-
-            for(const intention of enemyIntentions){
-                for(const effect of intention.effects){
-                    switch(effect.effect){
-                        case absorbEffect.name:
-                            if(damage > oldDefense){
-                                console.log("Efecto de absorb ignorado hasta ahora");
-                                effect.args.value += (damage - oldDefense);
-                                nextIntentValueChanged = true;
-                            }
-                            break;
-                        case counterEffect.name:
-                            if(damage > oldDefense){
-                                console.log("Efecto de counter ignorado hasta ahora");
-                                effect.args.value += (damage - oldDefense);
-                                nextIntentValueChanged = true;
-                            }
-                            break;
-                    }
-                }
-            }
-
-            // if(nextIntentValueChanged){
-            //     target.value.currentScript.intentions = enemyIntentions;
-            //     this.enemyService.setCurrentScript(ctx, target.value.id, target.value.currentScript);
-            // }
 
             newHp = target.value.hpCurrent;
             newDefense = target.value.defense;
