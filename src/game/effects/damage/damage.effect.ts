@@ -105,7 +105,7 @@ export class DamageEffect implements EffectHandler {
                         if(intention.negateDamage && intention.negateDamage > 0){
                             if(damage >= intention.negateDamage){
                                 target.value.currentScript = {id: 0, intentions: [EnemyBuilderService.createDoNothingIntent()]};
-                                this.enemyService.setCurrentScript(ctx, target.value.id, target.value.currentScript);
+                                await this.enemyService.setCurrentScript(ctx, target.value.id, target.value.currentScript);
                             }else{
                                 intention.negateDamage -= damage;
                                 nextIntentValueChanged = true;
@@ -122,13 +122,11 @@ export class DamageEffect implements EffectHandler {
                             switch(effect.effect){
                                 case absorbEffect.name:
                                     if(damage > oldDefense){
-                                        console.log("Efecto de absorb ignorado hasta ahora");
                                         effect.args.value += (damage - oldDefense);
                                         nextIntentValueChanged = true;
                                     }
                                 case counterEffect.name:
                                     if(damage > oldDefense){
-                                        console.log("Efecto de counter ignorado hasta ahora");
                                         effect.args.value += (damage - oldDefense);
                                         nextIntentValueChanged = true;
                                     }
@@ -141,13 +139,11 @@ export class DamageEffect implements EffectHandler {
                             switch(effect.effect){
                                 case absorbEffect.name:
                                     if(damage > oldDefense){
-                                        console.log("Efecto de absorb ignorado hasta ahora");
                                         effect.args.value += (damage - oldDefense);
                                         nextIntentValueChanged = true;
                                     }
                                 case counterEffect.name:
                                     if(damage > oldDefense){
-                                        console.log("Efecto de counter ignorado hasta ahora");
                                         effect.args.value += (damage - oldDefense);
                                         nextIntentValueChanged = true;
                                     }
@@ -172,7 +168,7 @@ export class DamageEffect implements EffectHandler {
 
                 if(nextIntentValueChanged){
                     target.value.currentScript.intentions = enemyIntentions;
-                    this.enemyService.setCurrentScript(ctx, target.value.id, target.value.currentScript);
+                    await this.enemyService.setCurrentScript(ctx, target.value.id, target.value.currentScript);
                 }
             }
 

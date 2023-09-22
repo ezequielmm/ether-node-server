@@ -1,17 +1,15 @@
-import { damageEffect } from 'src/game/effects/damage/constants';
 import {
-    Status,
     StatusCounterType,
-    StatusDirection,
+    StatusEvent,
     StatusTrigger,
     StatusType,
 } from '../interfaces';
+import { EVENT_BEFORE_ENEMIES_TURN_START } from 'src/game/constants';
 
-export const chargingBeam: Status = {
+export const chargingBeam: StatusEvent = {
     name: 'chargingBeam',
     type: StatusType.Buff,
     counterType: StatusCounterType.Counter,
-    direction: StatusDirection.Outgoing,
-    trigger: StatusTrigger.Effect,
-    effects: [damageEffect],
+    trigger: StatusTrigger.Event,
+    event: EVENT_BEFORE_ENEMIES_TURN_START,
 };

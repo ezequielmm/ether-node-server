@@ -36,7 +36,7 @@ export class HatchingStatus implements StatusEventHandler {
 
                 remove();
                 //- Kill the current enemy:
-                this.enemyService.setHp(ctx, source.value.id, 0);
+                await this.enemyService.setHp(ctx, source.value.id, 0);
 
                 enemies = enemies.map(enemy => {
                     if (enemy.id === source.value.id) {
@@ -86,7 +86,6 @@ export class HatchingStatus implements StatusEventHandler {
         }
         else{
             update(status.args);
-            return;
         }
 
     }
