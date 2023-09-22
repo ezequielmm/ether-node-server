@@ -126,14 +126,12 @@ export class DamageEffect implements EffectHandler {
                                         effect.args.value += (damage - oldDefense);
                                         nextIntentValueChanged = true;
                                     }
-                                    break;
                                 case counterEffect.name:
                                     if(damage > oldDefense){
                                         console.log("Efecto de counter ignorado hasta ahora");
                                         effect.args.value += (damage - oldDefense);
                                         nextIntentValueChanged = true;
                                     }
-                                    break;
                             }
                         }
                         break;
@@ -147,14 +145,12 @@ export class DamageEffect implements EffectHandler {
                                         effect.args.value += (damage - oldDefense);
                                         nextIntentValueChanged = true;
                                     }
-                                    break;
                                 case counterEffect.name:
                                     if(damage > oldDefense){
                                         console.log("Efecto de counter ignorado hasta ahora");
                                         effect.args.value += (damage - oldDefense);
                                         nextIntentValueChanged = true;
                                     }
-                                    break;
                             }
                         }
                         break;
