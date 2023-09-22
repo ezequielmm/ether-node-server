@@ -92,7 +92,7 @@ export class PlayerGearService {
     async addGearToPlayer(userAddress: string, gear: Gear[],  payload: string): Promise<PlayerGear> 
     {
 
-        console.log("addGearToPlayer", userAddress, gear, payload);
+        console.log("addGearToPlayer and payload", userAddress, gear, payload);
 
         const gearItems = this.toGearItems(gear);
 
