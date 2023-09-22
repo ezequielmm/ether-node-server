@@ -23,7 +23,6 @@ import { EffectDecorator } from '../effects.decorator';
 import { EffectDTO, EffectHandler } from '../effects.interface';
 import { spawnEnemyEffect } from './contants';
 import { Enemy } from 'src/game/components/enemy/enemy.schema';
-import { swarmMasterData } from 'src/game/components/enemy/data/swarmMaster.enemy';
 import { EnemyBuilderService } from 'src/game/components/enemy/enemy-builder.service';
 
 export interface SpawnEnemyArgs {
