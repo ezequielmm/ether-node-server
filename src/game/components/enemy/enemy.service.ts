@@ -5,7 +5,7 @@ import { EnemyId, enemyIdField, enemySelector } from './enemy.type';
 import { GameContext, ExpeditionEntity } from '../interfaces';
 import { EnemyAction, EnemyScript, ExpeditionEnemy, IntentOption } from './enemy.interface';
 import { CardTargetedEnum } from '../card/card.enum';
-import { find, reject, sample, isEmpty, each, isEqual } from 'lodash';
+import { find, reject, sample, isEmpty, each, isEqual, values } from 'lodash';
 import { ExpeditionService } from '../expedition/expedition.service';
 import {
     ENEMY_BOOBY_TRAP_ID,
@@ -386,6 +386,10 @@ export class EnemyService {
     ): Promise<number> {
         const { value: enemy } = this.get(ctx, id);
 
+
+        console.log("--------------------------------------------------------------------------------")
+        console.log("Damage inside enemy.service id: " + enemy.enemyId)
+
         const { client } = ctx;
 
         // First we check if the enemy has defense
@@ -412,6 +416,8 @@ export class EnemyService {
             ctx.info,
             `Player ${client.id} applied damage of ${damage} to enemy ${id}`,
         );
+
+        console.log("enemy.currentHp: " + enemy.hpCurrent)
 
         await this.setHp(ctx, id, enemy.hpCurrent);
         await this.setDefense(ctx, id, enemy.defense);
@@ -460,9 +466,10 @@ export class EnemyService {
                 },
             );
 
+            console.log("Emite el evento de muerte")
             await this.eventEmitter.emitAsync(EVENT_ENEMY_DEAD, { ctx, enemy });
         }
-
+        console.log("--------------------------------------------------------------------------------")
         return enemy.hpCurrent;
     }
 
