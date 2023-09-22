@@ -1,7 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { DamageArgs } from "src/game/effects/damage/damage.effect";
-import { EffectDTO } from "src/game/effects/effects.interface";
-import { StatusEffectHandler, StatusEffectDTO } from "../interfaces";
+import { StatusEventDTO, StatusEventHandler } from "../interfaces";
 import { StatusDecorator } from "../status.decorator";
 import { chargingBeam } from "./constants";
 
@@ -9,16 +7,19 @@ import { chargingBeam } from "./constants";
     status: chargingBeam,
 })
 @Injectable()
-export class ChargingBeamStatus implements StatusEffectHandler {
+export class ChargingBeamStatus implements StatusEventHandler {
     
-    async preview(args: StatusEffectDTO<DamageArgs>): Promise<EffectDTO<DamageArgs>> {
-        return this.handle(args);
+
+    async handle(dto: StatusEventDTO): Promise<any> {
+        console.log("*******************************************Charging Beam status")
+
+        const { ctx, update, remove, status, source } = dto;
+
+        // Decrease counter
+        status.args.counter--;
+
+        if(status.args.counter !== 0){
+            update(status.args);
+        }
     }
-
-    async handle(dto: StatusEffectDTO<DamageArgs>): Promise<EffectDTO<DamageArgs>> {
-        const args = dto.status.args;
-        return null;
-    }
-
-
 }
