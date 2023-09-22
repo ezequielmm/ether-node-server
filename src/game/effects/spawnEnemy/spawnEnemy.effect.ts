@@ -96,20 +96,20 @@ export class SpawnEnemyEffect implements EffectHandler {
             if (!combatHasThornWolfPups)
                 await this.spawnEnemies(enemiesToSpawn, enemies, ctx.client);
         } 
-        else if(combatHasSwarmMaster){
-            if(enemiesToSpawn.length == 1){
-                if(enemiesToSpawn.includes(swarmCocoon1Data.enemyId)){
-                    enemiesToSpawn = [swarmCocoon2Data.enemyId]
-                }else if(enemiesToSpawn.includes(swarmCocoon2Data.enemyId)){
-                    enemiesToSpawn = [swarmCocoon1Data.enemyId]
-                }else if(enemiesToSpawn.includes(mutantSpider1Data.enemyId)){
-                    enemiesToSpawn = [mutantSpider2Data.enemyId]
-                }else if(enemiesToSpawn.includes(mutantSpider2Data.enemyId)){
-                    enemiesToSpawn = [mutantSpider1Data.enemyId]
-                }
-            }
-            await this.spawnEnemies(enemiesToSpawn, enemies, ctx.client);
-        }
+        // else if(combatHasSwarmMaster){
+        //     if(enemiesToSpawn.length == 1){
+        //         if(enemiesToSpawn.includes(swarmCocoon1Data.enemyId)){
+        //             enemiesToSpawn = [swarmCocoon2Data.enemyId]
+        //         }else if(enemiesToSpawn.includes(swarmCocoon2Data.enemyId)){
+        //             enemiesToSpawn = [swarmCocoon1Data.enemyId]
+        //         }else if(enemiesToSpawn.includes(mutantSpider1Data.enemyId)){
+        //             enemiesToSpawn = [mutantSpider2Data.enemyId]
+        //         }else if(enemiesToSpawn.includes(mutantSpider2Data.enemyId)){
+        //             enemiesToSpawn = [mutantSpider1Data.enemyId]
+        //         }
+        //     }
+        //     await this.spawnEnemies(enemiesToSpawn, enemies, ctx.client);
+        // }
         else {
             await this.spawnEnemies(enemiesToSpawn, enemies, ctx.client);
         }

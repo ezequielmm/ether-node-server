@@ -10,6 +10,7 @@ import { breachEffect } from "src/game/effects/breach/constants";
 import { addCardEffect } from "src/game/effects/addCard/contants";
 import { AddCardPosition } from "src/game/effects/effects.enum";
 import { Card } from "../card/card.schema";
+import { revealStatus } from "src/game/status/reveal/constants";
 
 export class EnemyBuilderService {
     
@@ -247,6 +248,34 @@ export class EnemyBuilderService {
                     },
                 },
             ],
+        }
+    }
+
+    
+    
+    //------------------------------------------------------Enemy Specifics:
+
+    public static boobyTrapSpecial = () => {
+        return {
+            type: EnemyIntentionType.Special,
+            target: CardTargetedEnum.Player,
+            value: 3,
+            effects: [
+                {
+                    effect: attachStatusEffect.name,
+                    target: CardTargetedEnum.Self,
+                    args: {
+                        statusName: revealStatus.name,
+                        statusArgs: {
+                            counter: 3,
+                        },
+                    },
+                    action: {
+                        name: 'special',
+                        hint: 'special',
+                    },
+                },
+            ]
         }
     }
 
