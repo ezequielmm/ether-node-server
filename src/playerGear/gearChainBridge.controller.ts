@@ -99,6 +99,8 @@ export class GearChainBridgeController {
     async postModify(@Body() payload: AlterGearApiDTO): Promise<{ oldGear: GearItem[]; newGear: GearItem[]; ignoredGear: Gear[]; }> {
 
         console.log('postModify: Entry. Payload:', payload);
+        
+        const payloadString = JSON.stringify(payload);
 
         const { wallet, token } = payload;
 
@@ -180,7 +182,7 @@ export class GearChainBridgeController {
         try {
             switch (payload.action) {
                 case GearActionApiEnum.AddGear:
-                    await this.playerGearService.addGearToPlayer(wallet, gears);
+                    await this.playerGearService.addGearToPlayer(wallet, gears, payloadString);
                     console.log('postModify: Gears added to player. Wallet:', wallet);
                     break;
                 case GearActionApiEnum.RemoveGear:
