@@ -37,9 +37,6 @@ export class HatchingStatus implements StatusEventHandler {
                 remove();
                 //- Kill the current enemy:
                 this.enemyService.setHp(ctx, source.value.id, 0);
-                const newCtx = await this.expeditionService.getGameContext(ctx.client);
-                console.log("NewContext:")
-                console.log(newCtx.expedition.currentNode.data.enemies.length)
 
                 enemies = enemies.map(enemy => {
                     if (enemy.id === source.value.id) {
@@ -74,9 +71,6 @@ export class HatchingStatus implements StatusEventHandler {
                 }
 
                 const aliveEnemies = enemies.filter(enemy => enemy.hpCurrent > 0)
-
-                console.log("Enemies alive:")
-                aliveEnemies.forEach(enemy => console.log(enemy.enemyId + " - " + enemy.name))
 
                 await this.expeditionService.updateByFilter(
                     {

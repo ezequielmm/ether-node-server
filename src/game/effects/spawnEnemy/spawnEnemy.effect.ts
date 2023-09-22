@@ -10,7 +10,7 @@ import { thornWolfPupData } from 'src/game/components/enemy/data/thornWolfPup.en
 import { yellowSporelingData } from 'src/game/components/enemy/data/yellowSporeling.enemy';
 import { EnemyService } from 'src/game/components/enemy/enemy.service';
 import { ExpeditionStatusEnum } from 'src/game/components/expedition/expedition.enum';
-import { IExpeditionCurrentNodeDataEnemy, IntentCooldown } from 'src/game/components/expedition/expedition.interface';
+import { IExpeditionCurrentNodeDataEnemy } from 'src/game/components/expedition/expedition.interface';
 import { ExpeditionService } from 'src/game/components/expedition/expedition.service';
 import {
     StandardResponse,
@@ -24,10 +24,6 @@ import { EffectDTO, EffectHandler } from '../effects.interface';
 import { spawnEnemyEffect } from './contants';
 import { Enemy } from 'src/game/components/enemy/enemy.schema';
 import { swarmMasterData } from 'src/game/components/enemy/data/swarmMaster.enemy';
-import { swarmCocoon1Data } from 'src/game/components/enemy/data/swarmCocoon1.enemy';
-import { swarmCocoon2Data } from 'src/game/components/enemy/data/swarmCocoon2.enemy';
-import { mutantSpider1Data } from 'src/game/components/enemy/data/mutantSpider1.enemy';
-import { mutantSpider2Data } from 'src/game/components/enemy/data/mutantSpider2.enemy';
 import { EnemyBuilderService } from 'src/game/components/enemy/enemy-builder.service';
 
 export interface SpawnEnemyArgs {
@@ -61,10 +57,6 @@ export class SpawnEnemyEffect implements EffectHandler {
             enemyId: thornWolfData.enemyId,
         });
 
-        const combatHasSwarmMaster = some(enemies, {
-            enemyId: swarmMasterData.enemyId,
-        });
-
         if (combatHasFungalBrute) {
             // Now if we have a fungal brute, we check if we have any sporelings alive
             const combatHasSporelings = combatHasFungalBrute
@@ -96,20 +88,6 @@ export class SpawnEnemyEffect implements EffectHandler {
             if (!combatHasThornWolfPups)
                 await this.spawnEnemies(enemiesToSpawn, enemies, ctx.client);
         } 
-        // else if(combatHasSwarmMaster){
-        //     if(enemiesToSpawn.length == 1){
-        //         if(enemiesToSpawn.includes(swarmCocoon1Data.enemyId)){
-        //             enemiesToSpawn = [swarmCocoon2Data.enemyId]
-        //         }else if(enemiesToSpawn.includes(swarmCocoon2Data.enemyId)){
-        //             enemiesToSpawn = [swarmCocoon1Data.enemyId]
-        //         }else if(enemiesToSpawn.includes(mutantSpider1Data.enemyId)){
-        //             enemiesToSpawn = [mutantSpider2Data.enemyId]
-        //         }else if(enemiesToSpawn.includes(mutantSpider2Data.enemyId)){
-        //             enemiesToSpawn = [mutantSpider1Data.enemyId]
-        //         }
-        //     }
-        //     await this.spawnEnemies(enemiesToSpawn, enemies, ctx.client);
-        // }
         else {
             await this.spawnEnemies(enemiesToSpawn, enemies, ctx.client);
         }
