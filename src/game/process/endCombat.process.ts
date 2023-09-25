@@ -47,8 +47,21 @@ export class EndCombatProcess {
         
         if(this.enemyService.isBossDead(ctx))
         {
-            logger.info('The boss is dead. Ending combat');
-            await this.endCombat(ctx, logger);
+            console.log("Boss defeated");
+            console.log("Enemies ids in the combat:")
+
+            const enemies = ctx.expedition.currentNode.data.enemies;
+            const deepDwellerLureDie = some(enemies, {
+                enemyId: ENEMY_DEEP_DWELLER_LURE_ID,
+                hpCurrent: 0
+            });
+
+            if(!deepDwellerLureDie){
+                logger.info('The boss is dead. Ending combat');
+                await this.endCombat(ctx, logger);
+            }
+            console.log("5) End combat ignores ending")
+
         }
         else {
             if (this.enemyService.isAllDead(ctx)) {
