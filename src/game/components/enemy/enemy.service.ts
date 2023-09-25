@@ -1057,16 +1057,13 @@ export class EnemyService {
         if(!currentScript || currentScript.id == 0){
             return signatureMove;
         }else{
-            console.log("-------------------")
             const statusBeam = enemy.value.statuses.buff.find(s => s.name === chargingBeam.name)
-            console.log(statusBeam);
-            console.log("-------------------")
-            console.log("getNextDeepDwellerMonsterScript buff status args:")
-            console.log(enemy.value.statuses.buff[0].args)
-            console.log("---------------------------")
-
-            //- If Signature Move was performed. It will Buff or attack. 
-            return getRandomItemByWeight([attack, buff3Resolve], [50,50]);
+            if(statusBeam && statusBeam.args.counter > 0){
+                //- If Signature Move was performed. It will Buff or attack. 
+                return getRandomItemByWeight([attack, buff3Resolve], [50,50]);
+            }
+            
+            return signatureMove;
         }
     }
 }
