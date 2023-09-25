@@ -179,50 +179,56 @@ export class DamageEffect implements EffectHandler {
             // or executioner's blow
             // effect only if the enemy's health is 0
             if (newHp === 0) {
-                // if(target.value.enemyId === ENEMY_DEEP_DWELLER_LURE_ID){
-                //     const enemyFromDB = await this.enemyService.findById(ENEMY_DEEP_DWELLER_MONSTER_ID);
+                if(target.value.enemyId === ENEMY_DEEP_DWELLER_LURE_ID){
+                    const enemyFromDB = await this.enemyService.findById(ENEMY_DEEP_DWELLER_MONSTER_ID);
 
-                //     if(enemyFromDB){
-                //         const newEnemy = await this.enemyService.createNewStage2Enemy(enemyFromDB);
+                    if(enemyFromDB){
+                        const newEnemy = await this.enemyService.createNewStage2Enemy(enemyFromDB);
                         
-                //         const aliveEnemies = enemies.filter(enemy => enemy.hpCurrent > 0)
-                //         aliveEnemies.unshift(...[newEnemy]);
+                        const aliveEnemies = enemies.filter(enemy => enemy.hpCurrent > 0)
+                        aliveEnemies.unshift(...[newEnemy]);
                         
-                //         console.log("8) Alive enemies: ")
-                //         console.log(aliveEnemies)
+                        console.log("8) Alive enemies: ")
+                        console.log(aliveEnemies)
 
-                //         //- todo: Este mensaje puede cambiar para que se ejecute otra animacion en unity
-                //         ctx.client.emit(
-                //             'PutData',
-                //             StandardResponse.respond({
-                //                 message_type: SWARMessageType.CombatUpdate,
-                //                 action: SWARAction.SpawnEnemies,
-                //                 data: newEnemy,
-                //             }),
-                //         );
+                        ctx.expedition.currentNode.data.enemies = aliveEnemies;
 
-                //         await this.expeditionService.updateByFilter(
-                //             {
-                //                 _id: ctx.expedition._id,
-                //                 status: ExpeditionStatusEnum.InProgress,
-                //             },
-                //             { $set: { 'currentNode.data.enemies': aliveEnemies } },
-                //         );
+                        ctx.expedition.markModified('currentNode.data.enemies');
+                        await ctx.expedition.save();
+                        // await this.expeditionService.updateByFilter(
+                        //     {
+                        //         _id: ctx.expedition._id,
+                        //         status: ExpeditionStatusEnum.InProgress,
+                        //     },
+                        //     { $set: { 'currentNode.data.enemies': aliveEnemies } },
+                        // );
 
-                //         // Now we generate a new ctx to generate the new enemy intentions
-                //         ctx = await this.expeditionService.getGameContext(ctx.client);
+                        //- todo: Este mensaje puede cambiar para que se ejecute otra animacion en unity
+                        ctx.client.emit(
+                            'PutData',
+                            StandardResponse.respond({
+                                message_type: SWARMessageType.CombatUpdate,
+                                action: SWARAction.SpawnEnemies,
+                                data: newEnemy,
+                            }),
+                        );
 
-                //         console.log("10) New COntext Enemies from final context:")
-                //         console.log(ctx.expedition.currentNode.data.enemies)
-
-                //         await this.enemyService.setCurrentScript(
-                //             ctx,
-                //             enemyFromDB.enemyId,
-                //             {id: 0, intentions: [EnemyBuilderService.createDoNothingIntent()]},
-                //         );
                         
-                //     }
-                // }
+
+                        // Now we generate a new ctx to generate the new enemy intentions
+                        ctx = await this.expeditionService.getGameContext(ctx.client);
+
+                        console.log("10) New COntext Enemies from final context:")
+                        console.log(ctx.expedition.currentNode.data.enemies)
+
+                        await this.enemyService.setCurrentScript(
+                            ctx,
+                            enemyFromDB.enemyId,
+                            {id: 0, intentions: [EnemyBuilderService.createDoNothingIntent()]},
+                        );
+                        
+                    }
+                }
 
                 // If we have on a roll effect, we return energy when the
                 // enemy es defeated
