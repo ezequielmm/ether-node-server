@@ -44,6 +44,7 @@ import { mutantSpider1Data } from './data/mutantSpider1.enemy';
 import { mutantSpider2Data } from './data/mutantSpider2.enemy';
 import { randomUUID } from 'crypto';
 import { EnemyBuilderService } from './enemy-builder.service';
+import { chargingBeam } from 'src/game/status/chargingBeam/constants';
 
 @Injectable()
 export class EnemyService {
@@ -635,7 +636,7 @@ export class EnemyService {
             console.log("Random number: " + randomValue)
             selectsFrom = 0;
 
-            if(randomValue < aggressiveness){
+            if(randomValue < aggressiveness && attackLevels.length > 1){
                 selectsFrom = 1;
                 console.log("Selecciona de la lista de ataques fuertes.")
             }else {
@@ -1056,8 +1057,12 @@ export class EnemyService {
         if(!currentScript || currentScript.id == 0){
             return signatureMove;
         }else{
-            console.log("getNextDeepDwellerMonsterScript statuses:")
-            console.log(enemy.value.statuses)
+            console.log("-------------------")
+            const statusBeam = enemy.value.statuses.buff.find(s => s.name === chargingBeam.name)
+            console.log(statusBeam);
+            console.log("-------------------")
+            console.log("getNextDeepDwellerMonsterScript buff status args:")
+            console.log(enemy.value.statuses.buff[0].args)
             console.log("---------------------------")
 
             //- If Signature Move was performed. It will Buff or attack. 
