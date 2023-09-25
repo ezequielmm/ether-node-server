@@ -59,6 +59,12 @@ export class HatchingStatus implements StatusEventHandler {
                         return enemy; 
                     });
 
+                    const aliveEnemies = enemies.filter(enemy => enemy.hpCurrent > 0)
+                    ctx.expedition.currentNode.data.enemies = aliveEnemies;
+
+                    ctx.expedition.markModified('currentNode.data.enemies');
+                    await ctx.expedition.save();
+
                     //- todo: Este mensaje puede cambiar para que se ejecute otra animacion en unity
                     ctx.client.emit(
                         'PutData',
@@ -70,17 +76,6 @@ export class HatchingStatus implements StatusEventHandler {
                     );
                 }
 
-                const aliveEnemies = enemies.filter(enemy => enemy.hpCurrent > 0)
-
-                await this.expeditionService.updateByFilter(
-                    {
-                        _id: ctx.expedition._id,
-                        status: ExpeditionStatusEnum.InProgress,
-                    },
-                    { $set: { 'currentNode.data.enemies': aliveEnemies } },
-                );
-
-                dto.ctx.expedition.currentNode.data.enemies = aliveEnemies;
             }
             console.log("-----------------------------------------------------------------------------------")
         }
