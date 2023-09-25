@@ -195,13 +195,6 @@ export class DamageEffect implements EffectHandler {
 
                         ctx.expedition.markModified('currentNode.data.enemies');
                         await ctx.expedition.save();
-                        // await this.expeditionService.updateByFilter(
-                        //     {
-                        //         _id: ctx.expedition._id,
-                        //         status: ExpeditionStatusEnum.InProgress,
-                        //     },
-                        //     { $set: { 'currentNode.data.enemies': aliveEnemies } },
-                        // );
 
                         //- todo: Este mensaje puede cambiar para que se ejecute otra animacion en unity
                         ctx.client.emit(
@@ -212,8 +205,6 @@ export class DamageEffect implements EffectHandler {
                                 data: newEnemy,
                             }),
                         );
-
-                        
 
                         // Now we generate a new ctx to generate the new enemy intentions
                         ctx = await this.expeditionService.getGameContext(ctx.client);
