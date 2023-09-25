@@ -45,6 +45,7 @@ import { mutantSpider2Data } from './data/mutantSpider2.enemy';
 import { randomUUID } from 'crypto';
 import { EnemyBuilderService } from './enemy-builder.service';
 import { chargingBeam } from 'src/game/status/chargingBeam/constants';
+import { deepDwellerData } from './data/deepDweller.enemy';
 
 @Injectable()
 export class EnemyService {
@@ -420,6 +421,10 @@ export class EnemyService {
         await this.setHp(ctx, id, enemy.hpCurrent);
         await this.setDefense(ctx, id, enemy.defense);
 
+        if(enemy.enemyId === deepDwellerData.enemyId){
+            return enemy.hpCurrent;
+        }
+
         if (enemy.hpCurrent === 0) {
             let pathToUpdate = undefined;
             switch (enemy.category) {
@@ -464,7 +469,6 @@ export class EnemyService {
                 },
             );
 
-            console.log("4) Emits dead event")
             await this.eventEmitter.emitAsync(EVENT_ENEMY_DEAD, { ctx, enemy });
         }
         return enemy.hpCurrent;
