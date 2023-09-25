@@ -20,9 +20,6 @@ import { ExpeditionService } from 'src/game/components/expedition/expedition.ser
 import { ExpeditionStatusEnum } from 'src/game/components/expedition/expedition.enum';
 import { absorbEffect } from '../absorb/constants';
 import { counterEffect } from '../counter/constants';
-import { breachEffect } from '../breach/constants';
-import { chargingBeam } from 'src/game/status/chargingBeam/constants';
-import { AttachedStatus } from 'src/game/status/interfaces';
 
 export interface DamageArgs {
     useDefense?: boolean;
@@ -97,14 +94,6 @@ export class DamageEffect implements EffectHandler {
             await this.enemyService.damage(ctx, target.value.id, damage);
 
 
-            if(target.value.enemyId === ENEMY_DEEP_DWELLER_MONSTER_ID){
-
-                const chargingBeam:AttachedStatus = target.value.statuses.buff.find(s => s.name === chargingBeam.name )
-                if(chargingBeam && chargingBeam.args.counter < 2){
-                    console.log("Sería momento de calcular si se puede incrementar este numero, comparando el damage efectuado con el dato del signature move para incrementar esto.")
-                }
-                
-            }
 
 
 
