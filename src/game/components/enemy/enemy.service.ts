@@ -11,6 +11,7 @@ import {
     ENEMY_BOOBY_TRAP_ID,
     ENEMY_CURRENT_COOLDOWN_PATH,
     ENEMY_CURRENT_SCRIPT_PATH,
+    ENEMY_DEEP_DWELLER_MONSTER_ID,
     ENEMY_DEFENSE_PATH,
     ENEMY_HP_CURRENT_PATH,
     ENEMY_STATUSES_PATH,
@@ -385,11 +386,6 @@ export class EnemyService {
         damage: number,
     ): Promise<number> {
         const { value: enemy } = this.get(ctx, id);
-
-
-        console.log("--------------------------------------------------------------------------------")
-        console.log("Damage inside enemy.service id: " + enemy.enemyId)
-
         const { client } = ctx;
 
         // First we check if the enemy has defense
@@ -416,8 +412,6 @@ export class EnemyService {
             ctx.info,
             `Player ${client.id} applied damage of ${damage} to enemy ${id}`,
         );
-
-        console.log("enemy.currentHp: " + enemy.hpCurrent)
 
         await this.setHp(ctx, id, enemy.hpCurrent);
         await this.setDefense(ctx, id, enemy.defense);
@@ -466,10 +460,8 @@ export class EnemyService {
                 },
             );
 
-            console.log("Emite el evento de muerte")
             await this.eventEmitter.emitAsync(EVENT_ENEMY_DEAD, { ctx, enemy });
         }
-        console.log("--------------------------------------------------------------------------------")
         return enemy.hpCurrent;
     }
 
@@ -547,6 +539,9 @@ export class EnemyService {
                     this.setCurrentScript(ctx, enemy.value.id, nextScript);
                 }else if(enemy_DB.enemyId === ENEMY_BOOBY_TRAP_ID && !currentScript){
                     nextScript = {id: 0, intentions: [EnemyBuilderService.boobyTrapSpecial()]};
+                    this.setCurrentScript(ctx, enemy.value.id, nextScript);
+                }else if(enemy_DB.enemyId === ENEMY_DEEP_DWELLER_MONSTER_ID){
+                    nextScript = this.getNextDeepDwellerMonsterScript(enemy, currentScript, attackLevels[0].options);
                     this.setCurrentScript(ctx, enemy.value.id, nextScript);
                 }
                 else{
@@ -845,16 +840,13 @@ export class EnemyService {
         
         if(enemyHP >= 200){
             //- Large:
-            console.log("Enemy Large")
             return this.swarmMasterLargeScript(ctx, amountOfCocoons, amountOfSpiders, enemiesOnScreen, intents);
         }
         if(enemyHP > 99 && enemyHP < 200){
             //- Normal:
-            console.log("Enemy Normal")
             return this.swarmMasterNormalScript(ctx, amountOfCocoons, amountOfSpiders, enemiesOnScreen, intents);
             
         }
-        console.log("Enemy Saggy")
         return this.swarmMasterSaggyScript(ctx, amountOfCocoons, amountOfSpiders, enemiesOnScreen, intents);
     }
 
@@ -982,8 +974,6 @@ export class EnemyService {
         
         //- Saggy:
         if(lessThan2Cocoons && lessThan2Spiders && !(enemiesOnScreen >= 5)){
-            console.log("First option")
-
             const cocoon  = { id: intents[0].id, intentions: intents[0].intents }
             const spider  = { id: intents[1].id, intentions: intents[1].intents }
             const cocoon2 = { id: intents[2].id, intentions: intents[2].intents }
@@ -1018,7 +1008,6 @@ export class EnemyService {
         }
         if(!lessThan2Cocoons && lessThan2Spiders && !(enemiesOnScreen >= 5)){
             //- Summon 1 or 2 Spider:
-            console.log("Second option")
 
             const spider  = { id: intents[1].id, intentions: intents[1].intents }
             const spider2 = { id: intents[3].id, intentions: intents[3].intents }
@@ -1036,7 +1025,6 @@ export class EnemyService {
         }
         if(lessThan2Cocoons && !lessThan2Spiders && !(enemiesOnScreen >= 5)){
             //- Summon 1 Cocoon:
-            console.log("Third option")
             const cocoon  = { id: intents[0].id, intentions: intents[0].intents }
             const cocoon2 = { id: intents[2].id, intentions: intents[2].intents }
             const secondCocoon = { id: intents[9].id, intentions: intents[9].intents }
@@ -1051,12 +1039,29 @@ export class EnemyService {
             return getRandomItemByWeight([cocoon, cocoon2], [50, 50]);
         }
         
-        console.log("Last option")
         const defense      = { id: intents[4].id, intentions: intents[4].intents }
         const redThunder   = { id: intents[6].id, intentions: intents[6].intents }
         const greenThunder = { id: intents[7].id, intentions: intents[7].intents }
         //const signature    = { id: intents[8].id, intentions: intents[8].intents }
         
         return getRandomItemByWeight([defense, redThunder, greenThunder], [50, 25, 25]);
+    }
+
+    private getNextDeepDwellerMonsterScript(enemy:ExpeditionEnemy, currentScript:EnemyScript, intents:IntentOption[]): EnemyScript{
+        const signatureMove = { id: intents[0].id, intentions: intents[0].intents }
+        const attack        = { id: intents[1].id, intentions: intents[1].intents }
+        const buff3Resolve  = { id: intents[2].id, intentions: intents[2].intents }
+        
+        //- First attack is Signature Move:
+        if(!currentScript || currentScript.id == 0){
+            return signatureMove;
+        }else{
+            console.log("getNextDeepDwellerMonsterScript statuses:")
+            console.log(enemy.value.statuses)
+            console.log("---------------------------")
+
+            //- If Signature Move was performed. It will Buff or attack. 
+            return getRandomItemByWeight([attack, buff3Resolve], [50,50]);
+        }
     }
 }
