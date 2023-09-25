@@ -92,7 +92,7 @@ export class DamageEffect implements EffectHandler {
             oldDefense = target.value.defense;
 
             await this.enemyService.damage(ctx, target.value.id, damage);
-
+            console.log("6) Back in damage.effect")
 
 
 
@@ -154,7 +154,6 @@ export class DamageEffect implements EffectHandler {
                         }
                         break;
                     case EnemyIntentionType.Absorb:
-                        console.log("********************The enemy attacked by the user had Absorb intentions..")
                         if(damage > oldDefense){
                             intention.effects[0].args.value += (damage - oldDefense);
                             nextIntentValueChanged = true;
@@ -172,6 +171,9 @@ export class DamageEffect implements EffectHandler {
             newHp = target.value.hpCurrent;
             newDefense = target.value.defense;
 
+
+            console.log("6) currentHP from target: " + newHp)
+
             // Here we check if the enemy was defeated to run the on a roll
             // or executioner's blow
             // effect only if the enemy's health is 0
@@ -185,6 +187,9 @@ export class DamageEffect implements EffectHandler {
                         const aliveEnemies = enemies.filter(enemy => enemy.hpCurrent > 0)
                         aliveEnemies.unshift(...[newEnemy]);
                         
+                        console.log("7) Alive enemies: ")
+                        console.log(aliveEnemies)
+
                         //- todo: Este mensaje puede cambiar para que se ejecute otra animacion en unity
                         ctx.client.emit(
                             'PutData',

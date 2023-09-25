@@ -60,6 +60,7 @@ export class EndCombatProcess {
                 logger.info('The boss is dead. Ending combat');
                 await this.endCombat(ctx, logger);
             }
+            console.log("5) End combat ignores ending")
 
         }
         else {
