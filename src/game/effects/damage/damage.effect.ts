@@ -51,7 +51,6 @@ export class DamageEffect implements EffectHandler {
 
     async handle(payload: EffectDTO<DamageArgs>): Promise<void> {
         const {
-            ctx,
             source,
             target,
             args: {
@@ -64,6 +63,8 @@ export class DamageEffect implements EffectHandler {
             },
             action,
         } = payload;
+        
+        let ctx = payload.ctx;
 
         const {
             value: {
@@ -209,13 +210,13 @@ export class DamageEffect implements EffectHandler {
                         );
 
                         // Now we generate a new ctx to generate the new enemy intentions
-                        const newCtx = await this.expeditionService.getGameContext(ctx.client);
+                        ctx = await this.expeditionService.getGameContext(ctx.client);
 
                         console.log("10) New COntext Enemies from final context:")
-                        console.log(newCtx.expedition.currentNode.data.enemies)
+                        console.log(ctx.expedition.currentNode.data.enemies)
 
                         await this.enemyService.setCurrentScript(
-                            newCtx,
+                            ctx,
                             enemyFromDB.enemyId,
                             {id: 0, intentions: [EnemyBuilderService.createDoNothingIntent()]},
                         );
