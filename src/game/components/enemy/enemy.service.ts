@@ -353,6 +353,7 @@ export class EnemyService {
      */
     public async setHp(ctx: GameContext, id: EnemyId, hp: number): Promise<number> {
         
+        console.log("2) Set HP method.")
         const enemy = this.get(ctx, id);
         const newHp = Math.min(hp, enemy.value.hpMax);
 
@@ -370,6 +371,7 @@ export class EnemyService {
 
         this.logger.log(ctx.info, `Set hpCurrent of enemy ${id} to ${hp}`);
 
+        console.log("3) SetHP returns newHP: " + newHp )
         return newHp;
     }
 
@@ -414,6 +416,7 @@ export class EnemyService {
             `Player ${client.id} applied damage of ${damage} to enemy ${id}`,
         );
 
+        console.log("1) Damage Method")
         await this.setHp(ctx, id, enemy.hpCurrent);
         await this.setDefense(ctx, id, enemy.defense);
 
@@ -461,6 +464,7 @@ export class EnemyService {
                 },
             );
 
+            console.log("4) Emits dead event")
             await this.eventEmitter.emitAsync(EVENT_ENEMY_DEAD, { ctx, enemy });
         }
         return enemy.hpCurrent;
