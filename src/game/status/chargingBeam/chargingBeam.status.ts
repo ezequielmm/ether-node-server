@@ -22,11 +22,13 @@ export class ChargingBeamStatus implements StatusEffectHandler {
         return this.handle(args);
     }
 
-    async handle(dto: StatusEffectDTO): Promise<any> {
+    async handle(dto: StatusEffectDTO): Promise<EffectDTO<Record<string, any>>> {
+        // args.currentValue (capaz que hay que multiplicarlo ver en damage) si es mayor a lo que tenga el enemigo como negacion
+        // va a haber que persistir el status modificado.
         console.log("*******************************************Charging Beam status")
         console.log(dto.effectDTO.args)
         console.log("---------")
-
+        return dto.effectDTO;
     }
 
     @OnEvent(EVENT_BEFORE_ENEMIES_TURN_START)
