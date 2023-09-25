@@ -421,6 +421,7 @@ export class EnemyService {
         await this.setHp(ctx, id, enemy.hpCurrent);
         await this.setDefense(ctx, id, enemy.defense);
 
+        console.log(enemy.enemyId)
         if(enemy.enemyId === deepDwellerData.enemyId){
             return enemy.hpCurrent;
         }

@@ -274,6 +274,8 @@ export class DamageEffect implements EffectHandler {
             action: action,
         });
 
+        console.log("10) Enemies from final context:")
+        console.log(ctx.expedition.currentNode.data.enemies)
         await this.eventEmitter.emitAsync(EVENT_AFTER_DAMAGE_EFFECT, {
             ctx,
             damageDealt: currentValue,
