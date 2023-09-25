@@ -211,6 +211,9 @@ export class DamageEffect implements EffectHandler {
                         // Now we generate a new ctx to generate the new enemy intentions
                         const newCtx = await this.expeditionService.getGameContext(ctx.client);
 
+                        console.log("10) New COntext Enemies from final context:")
+                        console.log(newCtx.expedition.currentNode.data.enemies)
+
                         await this.enemyService.setCurrentScript(
                             newCtx,
                             enemyFromDB.enemyId,
@@ -274,7 +277,7 @@ export class DamageEffect implements EffectHandler {
             action: action,
         });
 
-        console.log("10) Enemies from final context:")
+        console.log("11) In old context Enemies from final context:")
         console.log(ctx.expedition.currentNode.data.enemies)
         await this.eventEmitter.emitAsync(EVENT_AFTER_DAMAGE_EFFECT, {
             ctx,
