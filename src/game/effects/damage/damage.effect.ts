@@ -14,7 +14,7 @@ import { energyEffect } from '../energy/constants';
 import { damageEffect } from './constants';
 import { EnemyIntentionType } from 'src/game/components/enemy/enemy.enum';
 import { EnemyBuilderService } from 'src/game/components/enemy/enemy-builder.service';
-import { ENEMY_DEEP_DWELLER_LURE_ID, ENEMY_DEEP_DWELLER_MONSTER_ID } from 'src/game/components/enemy/constants';
+import { ENEMY_DEEP_DWELLER_LURE_ID, ENEMY_DEEP_DWELLER_MONSTER_ID, ENEMY_SWARM_MASTER_ID } from 'src/game/components/enemy/constants';
 import { StandardResponse, SWARMessageType, SWARAction } from 'src/game/standardResponse/standardResponse';
 import { ExpeditionService } from 'src/game/components/expedition/expedition.service';
 import { ExpeditionStatusEnum } from 'src/game/components/expedition/expedition.enum';
@@ -180,6 +180,10 @@ export class DamageEffect implements EffectHandler {
                     const newEnemy = await this.transformEnemies(ctx, aliveEnemies, target.value);
                     aliveEnemies.unshift(...[newEnemy]);
                 }
+                if(target.value.enemyId === ENEMY_SWARM_MASTER_ID){
+                    //- just for testing:
+                    aliveEnemies.unshift(...[target.value]);
+                }
 
                 // If we have on a roll effect, we return energy when the
                 // enemy es defeated
@@ -275,6 +279,8 @@ export class DamageEffect implements EffectHandler {
                 {id: 0, intentions: [EnemyBuilderService.createDoNothingIntent()]},
             );
             
+            console.log("------------------------TransformData new enemy:")
+            console.log(newEnemy)
             return newEnemy;
         }
     }
