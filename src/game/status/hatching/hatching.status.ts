@@ -51,8 +51,12 @@ export class HatchingStatus implements StatusEventHandler {
                 const swarmMaster = enemies.find(enemy => enemy.enemyId == ENEMY_SWARM_MASTER_ID);
 
                 if(swarmMaster){
-                    let newHp = swarmMaster.hpCurrent + source.value.hpCurrent;
+                    console.log("Encuentra el swarm master")
+
+                    let newHp = swarmMaster.hpCurrent + cocoonHP;
                     newHp = await this.enemyService.setHp(ctx, swarmMaster.id, newHp);
+
+                    console.log("newHP devuelta por el setHP: " + newHp)
                     source.value.hpCurrent = 0;
 
                     enemies = enemies.map(enemy => {
@@ -64,6 +68,9 @@ export class HatchingStatus implements StatusEventHandler {
 
                     const aliveEnemies = enemies.filter(enemy => enemy.hpCurrent > 0)
                     
+                    console.log("Alive enemies:")
+                    console.log(aliveEnemies)
+
                     ctx.expedition.currentNode.data.enemies = aliveEnemies;
                     ctx.expedition.markModified('currentNode.data.enemies');
                     await ctx.expedition.save();
