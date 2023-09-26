@@ -255,6 +255,16 @@ export class DamageEffect implements EffectHandler {
 
     private async transformEnemies(ctx:GameContext, aliveEnemies:IExpeditionCurrentNodeDataEnemy[], originalEnemy:IExpeditionCurrentNodeDataEnemy): Promise<IExpeditionCurrentNodeDataEnemy> {
         
+
+        console.log("------------------------------------------------------------------------------------")
+        console.log("TransformEnemies method:")
+        console.log("Alive enemies:")
+        console.log(aliveEnemies)
+        console.log("------------------")
+        console.log("originalEnemy:")
+        console.log(originalEnemy)
+        console.log("------------------")
+
         const enemyFromDB = await this.enemyService.findById(ENEMY_DEEP_DWELLER_MONSTER_ID);
         if(enemyFromDB){
             
@@ -270,8 +280,13 @@ export class DamageEffect implements EffectHandler {
                 }),
             );
 
+            ctx.expedition.currentNode.data.enemies = aliveEnemies;
+            ctx.expedition.markModified('currentNode.data.enemies');
+            await ctx.expedition.save();
+
             // Now we generate a new ctx to generate the new enemy intentions
-            ctx = await this.expeditionService.getGameContext(ctx.client);
+            //ctx = await this.expeditionService.getGameContext(ctx.client);
+
 
             await this.enemyService.setCurrentScript(
                 ctx,
