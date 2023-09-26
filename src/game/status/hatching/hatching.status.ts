@@ -4,8 +4,6 @@ import { StatusEventDTO, StatusEventHandler } from "../interfaces";
 import { StatusDecorator } from "../status.decorator";
 import { hatchingStatus } from "./constants";
 import { ENEMY_SWARM_MASTER_ID } from "src/game/components/enemy/constants";
-import { ExpeditionService } from "src/game/components/expedition/expedition.service";
-import { ExpeditionStatusEnum } from "src/game/components/expedition/expedition.enum";
 import { StandardResponse, SWARMessageType, SWARAction } from "src/game/standardResponse/standardResponse";
 
 @StatusDecorator({
@@ -14,8 +12,7 @@ import { StandardResponse, SWARMessageType, SWARAction } from "src/game/standard
 @Injectable()
 export class HatchingStatus implements StatusEventHandler {
 
-    constructor(private readonly enemyService:EnemyService,
-                private readonly expeditionService:ExpeditionService){}
+    constructor(private readonly enemyService:EnemyService){}
 
     async handle(dto: StatusEventDTO): Promise<void> {
         
@@ -30,13 +27,9 @@ export class HatchingStatus implements StatusEventHandler {
              //- If counter is 0 remove the status and make the effect:
             if(EnemyService.isEnemy(source)){
 
-                console.log("-----------------------------------------------------------------------------------")
-                console.log("Hatching..")
-
                 remove();
 
                 const cocoonHP = source.value.hpCurrent;
-                console.log("cocoonHP: " + cocoonHP);
 
                 //- Kill the current enemy:
                 await this.enemyService.setHp(ctx, source.value.id, 0);
@@ -51,12 +44,10 @@ export class HatchingStatus implements StatusEventHandler {
                 const swarmMaster = enemies.find(enemy => enemy.enemyId == ENEMY_SWARM_MASTER_ID);
 
                 if(swarmMaster){
-                    console.log("Encuentra el swarm master")
 
                     let newHp = swarmMaster.hpCurrent + cocoonHP;
                     newHp = await this.enemyService.setHp(ctx, swarmMaster.id, newHp);
 
-                    console.log("newHP devuelta por el setHP: " + newHp)
                     source.value.hpCurrent = 0;
 
                     enemies = enemies.map(enemy => {
@@ -67,10 +58,6 @@ export class HatchingStatus implements StatusEventHandler {
                     });
 
                     const aliveEnemies = enemies.filter(enemy => enemy.hpCurrent > 0)
-                    
-                    console.log("Alive enemies:")
-                    console.log(aliveEnemies)
-
                     ctx.expedition.currentNode.data.enemies = aliveEnemies;
                     ctx.expedition.markModified('currentNode.data.enemies');
                     await ctx.expedition.save();
@@ -87,7 +74,6 @@ export class HatchingStatus implements StatusEventHandler {
                 }
 
             }
-            console.log("-----------------------------------------------------------------------------------")
         }
         else{
             update(status.args);
