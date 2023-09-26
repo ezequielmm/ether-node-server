@@ -20,6 +20,8 @@ import { ExpeditionService } from 'src/game/components/expedition/expedition.ser
 import { ExpeditionStatusEnum } from 'src/game/components/expedition/expedition.enum';
 import { absorbEffect } from '../absorb/constants';
 import { counterEffect } from '../counter/constants';
+import { IExpeditionCurrentNodeDataEnemy } from 'src/game/components/expedition/expedition.interface';
+import { ExpeditionEntity, GameContext } from 'src/game/components/interfaces';
 
 export interface DamageArgs {
     useDefense?: boolean;
@@ -172,66 +174,23 @@ export class DamageEffect implements EffectHandler {
             newHp = target.value.hpCurrent;
             newDefense = target.value.defense;
 
-
-            console.log("7) currentHP from target: " + newHp)
-
-            // Here we check if the enemy was defeated to run the on a roll
-            // or executioner's blow
-            // effect only if the enemy's health is 0
+            //- The enemy was defeated:
             if (newHp === 0) {
+                const aliveEnemies = enemies.filter(enemy => enemy.hpCurrent > 0)
+                
+                //- Enemies with transformation after death:
                 if(target.value.enemyId === ENEMY_DEEP_DWELLER_LURE_ID){
-                    const enemyFromDB = await this.enemyService.findById(ENEMY_DEEP_DWELLER_MONSTER_ID);
-
-                    if(enemyFromDB){
-                        const newEnemy = await this.enemyService.createNewStage2Enemy(enemyFromDB);
-                        
-                        const aliveEnemies = enemies.filter(enemy => enemy.hpCurrent > 0)
-                        aliveEnemies.unshift(...[newEnemy]);
-
-                        ctx.expedition.currentNode.data.enemies = aliveEnemies;
-
-                        ctx.expedition.markModified('currentNode.data.enemies');
-                        await ctx.expedition.save();
-
-                        ctx.client.emit(
-                            'PutData',
-                            StandardResponse.respond({
-                                message_type: SWARMessageType.CombatUpdate,
-                                action: SWARAction.TransformEnemy,
-                                data: [target.value, newEnemy],
-                            }),
-                        );
-
-                        // Now we generate a new ctx to generate the new enemy intentions
-                        ctx = await this.expeditionService.getGameContext(ctx.client);
-
-                        await this.enemyService.setCurrentScript(
-                            ctx,
-                            enemyFromDB.enemyId,
-                            {id: 0, intentions: [EnemyBuilderService.createDoNothingIntent()]},
-                        );
-                        
-                    }
+                    await this.transformEnemies(ctx, aliveEnemies, target.value);
+                    console.log(aliveEnemies)
                 }
 
                 // If we have on a roll effect, we return energy when the
                 // enemy es defeated
                 if (onARoll && onARoll.energyToRestore) {
-                    await this.effectService.apply({
-                        ctx,
-                        source: source,
-                        target: source,
-                        effect: {
-                            effect: energyEffect.name,
-                            target: source.type,
-                            args: {
-                                value: onARoll.energyToRestore,
-                            },
-                        },
-                    });
-
-                    await this.getEnergyAction.handle(ctx.client.id);
+                    await this.applyOnRoll(ctx, source, onARoll);
                 }
+                
+                ctx.expedition.currentNode.data.enemies = aliveEnemies;
             }
         }
 
@@ -268,11 +227,6 @@ export class DamageEffect implements EffectHandler {
             action: action,
         });
 
-        const ctx2 = await this.expeditionService.getGameContext(ctx.client);
-        console.log("11) In NEW context Enemies from final context:")
-        console.log(ctx2.expedition.currentNode.data.enemies)
-        
-
         console.log("11) In old context Enemies from final context:")
         console.log(ctx.expedition.currentNode.data.enemies)
 
@@ -280,5 +234,55 @@ export class DamageEffect implements EffectHandler {
             ctx,
             damageDealt: currentValue,
         });
+    }
+
+    private async applyOnRoll(ctx:GameContext, source:ExpeditionEntity, onARoll:{energyToRestore:number}){
+        await this.effectService.apply({
+            ctx,
+            source: source,
+            target: source,
+            effect: {
+                effect: energyEffect.name,
+                target: source.type,
+                args: {
+                    value: onARoll.energyToRestore,
+                },
+            },
+        });
+
+        await this.getEnergyAction.handle(ctx.client.id);
+    }
+
+    private async transformEnemies(ctx:GameContext, aliveEnemies:IExpeditionCurrentNodeDataEnemy[], originalEnemy:IExpeditionCurrentNodeDataEnemy): Promise<IExpeditionCurrentNodeDataEnemy> {
+        
+        const enemyFromDB = await this.enemyService.findById(ENEMY_DEEP_DWELLER_MONSTER_ID);
+        if(enemyFromDB){
+            
+            const newEnemy = await this.enemyService.createNewStage2Enemy(enemyFromDB);
+            aliveEnemies.unshift(...[newEnemy]);
+
+            ctx.expedition.markModified('currentNode.data.enemies');
+            await ctx.expedition.save();
+
+            ctx.client.emit(
+                'PutData',
+                StandardResponse.respond({
+                    message_type: SWARMessageType.CombatUpdate,
+                    action: SWARAction.TransformEnemy,
+                    data: [originalEnemy, newEnemy],
+                }),
+            );
+
+            // Now we generate a new ctx to generate the new enemy intentions
+            ctx = await this.expeditionService.getGameContext(ctx.client);
+
+            await this.enemyService.setCurrentScript(
+                ctx,
+                enemyFromDB.enemyId,
+                {id: 0, intentions: [EnemyBuilderService.createDoNothingIntent()]},
+            );
+            
+            return newEnemy;
+        }
     }
 }
