@@ -269,15 +269,6 @@ export class DamageEffect implements EffectHandler {
             //     }),
             // );
 
-            ctx.client.emit(
-                'PutData',
-                StandardResponse.respond({
-                    message_type: SWARMessageType.CombatUpdate,
-                    action: SWARAction.SpawnEnemies,
-                    data: newEnemy,
-                }),
-            );
-
             ctx.expedition.currentNode.data.enemies = aliveEnemies;
             ctx.expedition.markModified('currentNode.data.enemies');
             await ctx.expedition.save();
@@ -289,6 +280,17 @@ export class DamageEffect implements EffectHandler {
                 enemyFromDB.enemyId,
                 {id: 0, intentions: [EnemyBuilderService.createDoNothingIntent()]},
             );
+
+            ctx.client.emit(
+                'PutData',
+                StandardResponse.respond({
+                    message_type: SWARMessageType.CombatUpdate,
+                    action: SWARAction.SpawnEnemies,
+                    data: newEnemy,
+                }),
+            );
+
+            
             
             console.log("------------------------TransformData new enemy:")
             console.log(newEnemy)
