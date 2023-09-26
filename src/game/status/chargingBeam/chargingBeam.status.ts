@@ -9,6 +9,7 @@ import { GameContext } from "src/game/components/interfaces";
 import { EVENT_BEFORE_ENEMIES_TURN_START } from "src/game/constants";
 import { EnemyService } from "src/game/components/enemy/enemy.service";
 import { deepDwellerData } from "src/game/components/enemy/data/deepDweller.enemy";
+import { deepDwellerMonsterData } from "src/game/components/enemy/data/deepDwellerMonster.enemy";
 
 @StatusDecorator({
     status: chargingBeam,
@@ -38,9 +39,11 @@ export class ChargingBeamStatus implements StatusEffectHandler {
         const { ctx } = args;
         const enemies = this.enemyService.getAll(ctx);
 
-        console.log("onEnemiesTurnStart from chargingBeam")
-        console.log(args)
-        console.log("onEnemiesTurnStart from chargingBeam")
+        enemies.forEach(enemy => {
+            if(enemy.value.enemyId === deepDwellerMonsterData.enemyId){
+                console.log(enemy.value.statuses)
+            }
+        });
 
         for (const enemy of enemies) {
             await this.statusService.decreaseCounterAndRemove(
