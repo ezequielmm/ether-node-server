@@ -47,7 +47,8 @@ export class ChargingBeamStatus implements StatusEffectHandler {
                 const status = enemy.value.statuses.buff.filter(s => s.name === chargingBeam.name)[0];
                 if(status){
                     if(status.args.counter === 1){
-                        this.playerService.damage(ctx, 50);
+
+                        this.playerService.damage(ctx, 45);
                     }
                 }
             }
