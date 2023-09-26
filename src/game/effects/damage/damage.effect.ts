@@ -180,7 +180,7 @@ export class DamageEffect implements EffectHandler {
                     aliveEnemies = await this.transformEnemies(ctx, aliveEnemies, target.value);
                 }
                 if(target.value.enemyId === ENEMY_SWARM_MASTER_ID){
-                    //- just for testing:
+                    //- should be just for testing:
                     aliveEnemies.unshift(...[target.value]);
                 }
 
@@ -269,16 +269,6 @@ export class DamageEffect implements EffectHandler {
             //     }),
             // );
 
-            ctx.expedition.currentNode.data.enemies = aliveEnemies;
-            ctx.expedition.markModified('currentNode.data.enemies');
-            await ctx.expedition.save();
-            
-            await this.enemyService.setCurrentScript(
-                ctx,
-                enemyFromDB.enemyId,
-                {id: 0, intentions: [EnemyBuilderService.createDoNothingIntent()]},
-            );
-
             ctx.client.emit(
                 'PutData',
                 StandardResponse.respond({
@@ -286,6 +276,18 @@ export class DamageEffect implements EffectHandler {
                     action: SWARAction.SpawnEnemies,
                     data: newEnemy,
                 }),
+            );
+
+            ctx.expedition.currentNode.data.enemies = aliveEnemies;
+            ctx.expedition.markModified('currentNode.data.enemies');
+            await ctx.expedition.save();
+            
+            const newCtx = await this.expeditionService.getGameContext(ctx.client);
+
+            await this.enemyService.setCurrentScript(
+                newCtx,
+                enemyFromDB.enemyId,
+                {id: 0, intentions: [EnemyBuilderService.createDoNothingIntent()]},
             );
             
             console.log("------------------------TransformData new enemy:")
