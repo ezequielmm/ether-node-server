@@ -40,6 +40,7 @@ export interface IExpeditionCurrentNodeDataEnemy {
     
     aggressiveness?: number;
     intentCooldowns?: IntentCooldown[];
+    backTolifeTimes?: number;
 }
 
 export interface IntentCooldown {

@@ -187,8 +187,11 @@ export class DamageEffect implements EffectHandler {
                     aliveEnemies.unshift(...[target.value]);
                 }
                 if(target.value.enemyId === trollData.enemyId){
-                    target.value.hpCurrent = 1;
-                    aliveEnemies.unshift(...[target.value]);
+                    if(!target.value.backTolifeTimes || target.value.backTolifeTimes > 0){
+                        target.value.hpCurrent = 1;
+                        target.value.backTolifeTimes = 0;
+                        aliveEnemies.unshift(...[target.value]);
+                    }
                 }
 
                 // If we have on a roll effect, we return energy when the
