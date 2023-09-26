@@ -8,6 +8,7 @@ import { OnEvent } from "@nestjs/event-emitter";
 import { GameContext } from "src/game/components/interfaces";
 import { EVENT_BEFORE_ENEMIES_TURN_START } from "src/game/constants";
 import { EnemyService } from "src/game/components/enemy/enemy.service";
+import { deepDwellerData } from "src/game/components/enemy/data/deepDweller.enemy";
 
 @StatusDecorator({
     status: chargingBeam,
@@ -27,6 +28,7 @@ export class ChargingBeamStatus implements StatusEffectHandler {
         // va a haber que persistir el status modificado.
         console.log("*******************************************Charging Beam status")
         console.log(dto.effectDTO.args)
+        
         console.log("---------")
         return dto.effectDTO;
     }
@@ -35,6 +37,10 @@ export class ChargingBeamStatus implements StatusEffectHandler {
     async onEnemiesTurnStart(args: { ctx: GameContext }): Promise<void> {
         const { ctx } = args;
         const enemies = this.enemyService.getAll(ctx);
+
+        console.log("onEnemiesTurnStart from chargingBeam")
+        console.log(args)
+        console.log("onEnemiesTurnStart from chargingBeam")
 
         for (const enemy of enemies) {
             await this.statusService.decreaseCounterAndRemove(
