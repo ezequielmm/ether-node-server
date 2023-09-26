@@ -59,8 +59,8 @@ export class HatchingStatus implements StatusEventHandler {
                     });
 
                     const aliveEnemies = enemies.filter(enemy => enemy.hpCurrent > 0)
+                    
                     ctx.expedition.currentNode.data.enemies = aliveEnemies;
-
                     ctx.expedition.markModified('currentNode.data.enemies');
                     await ctx.expedition.save();
 
