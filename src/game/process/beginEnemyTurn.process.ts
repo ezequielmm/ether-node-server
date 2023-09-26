@@ -107,10 +107,10 @@ export class BeginEnemyTurnProcess {
             `Sent message PutData to client ${client.id}: ${SWARAction.UpdateEnemy}`,
         );
 
-        console.log("-------------------------------------------------------------------------------------------------------------------------")
-        console.log("SendUdatedEnemiesData.. CurrentNode.enemies:")
-        console.log(enemies)
-        console.log("-------------------------------------------------------------------------------------------------------------------------")
+        // console.log("-------------------------------------------------------------------------------------------------------------------------")
+        // console.log("SendUdatedEnemiesData.. CurrentNode.enemies:")
+        // console.log(enemies)
+        // console.log("-------------------------------------------------------------------------------------------------------------------------")
 
 
         client.emit(

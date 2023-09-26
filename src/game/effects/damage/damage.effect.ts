@@ -251,6 +251,7 @@ export class DamageEffect implements EffectHandler {
 
     private async transformEnemies(ctx:GameContext, aliveEnemies:IExpeditionCurrentNodeDataEnemy[], originalEnemy:IExpeditionCurrentNodeDataEnemy): Promise<IExpeditionCurrentNodeDataEnemy> {
         
+        console.log("LLega al TransformEnemies")
         const enemyFromDB = await this.enemyService.findById(ENEMY_DEEP_DWELLER_MONSTER_ID);
         if(enemyFromDB){
             
@@ -267,7 +268,7 @@ export class DamageEffect implements EffectHandler {
             );
 
             // Now we generate a new ctx to generate the new enemy intentions
-            //ctx = await this.expeditionService.getGameContext(ctx.client);
+            ctx = await this.expeditionService.getGameContext(ctx.client);
 
             await this.enemyService.setCurrentScript(
                 ctx,
