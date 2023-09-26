@@ -173,11 +173,11 @@ export class DamageEffect implements EffectHandler {
 
             //- The enemy was defeated:
             if (newHp === 0) {
-                const aliveEnemies = enemies.filter(enemy => enemy.hpCurrent > 0)
+                let aliveEnemies = enemies.filter(enemy => enemy.hpCurrent > 0)
                 
                 //- Enemies with transformation after death:
                 if(target.value.enemyId === ENEMY_DEEP_DWELLER_LURE_ID){
-                    await this.transformEnemies(ctx, aliveEnemies, target.value);
+                    aliveEnemies = await this.transformEnemies(ctx, aliveEnemies, target.value);
                 }
                 if(target.value.enemyId === ENEMY_SWARM_MASTER_ID){
                     //- just for testing:
@@ -252,7 +252,7 @@ export class DamageEffect implements EffectHandler {
         await this.getEnergyAction.handle(ctx.client.id);
     }
 
-    private async transformEnemies(ctx:GameContext, aliveEnemies:IExpeditionCurrentNodeDataEnemy[], originalEnemy:IExpeditionCurrentNodeDataEnemy): Promise<IExpeditionCurrentNodeDataEnemy> {
+    private async transformEnemies(ctx:GameContext, aliveEnemies:IExpeditionCurrentNodeDataEnemy[], originalEnemy:IExpeditionCurrentNodeDataEnemy): Promise<IExpeditionCurrentNodeDataEnemy[]> {
         
 
         console.log("------------------------------------------------------------------------------------")
@@ -279,9 +279,6 @@ export class DamageEffect implements EffectHandler {
             //     }),
             // );
 
-            // Now we generate a new ctx to generate the new enemy intentions
-            ctx = await this.expeditionService.getGameContext(ctx.client);
-
             await this.enemyService.setCurrentScript(
                 ctx,
                 enemyFromDB.enemyId,
@@ -303,7 +300,7 @@ export class DamageEffect implements EffectHandler {
             
             console.log("------------------------TransformData new enemy:")
             console.log(newEnemy)
-            return newEnemy;
+            return aliveEnemies;
         }
     }
 }
