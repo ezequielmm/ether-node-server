@@ -51,7 +51,6 @@ export class DamageEffect implements EffectHandler {
         private readonly combatQueueService: CombatQueueService,
         private readonly effectService: EffectService,
         private readonly getEnergyAction: GetEnergyAction,
-        private readonly expeditionService:ExpeditionService
     ) {}
 
     async handle(payload: EffectDTO<DamageArgs>): Promise<void> {
@@ -187,6 +186,9 @@ export class DamageEffect implements EffectHandler {
                     aliveEnemies.unshift(...[target.value]);
                 }
                 if(target.value.enemyId === trollData.enemyId){
+                    console.log("-----")
+                    console.log(target.value.backTolifeTimes)
+                    console.log("-----")
                     if(!target.value.backTolifeTimes || target.value.backTolifeTimes > 0){
                         target.value.hpCurrent = 1;
                         target.value.backTolifeTimes = 0;
