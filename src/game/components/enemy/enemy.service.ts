@@ -202,8 +202,6 @@ export class EnemyService {
             });
         }
 
-        console.log("EnemiesToReturn:")
-        console.log(enemiesToReturn)
         return enemiesToReturn;
     }
 
