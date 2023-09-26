@@ -273,10 +273,10 @@ export class DamageEffect implements EffectHandler {
             ctx.expedition.markModified('currentNode.data.enemies');
             await ctx.expedition.save();
             
-            const newCtx = await this.expeditionService.getGameContext(ctx.client);
+            //const newCtx = await this.expeditionService.getGameContext(ctx.client);
 
             await this.enemyService.setCurrentScript(
-                newCtx,
+                ctx,
                 enemyFromDB.enemyId,
                 {id: 0, intentions: [EnemyBuilderService.createDoNothingIntent()]},
             );
@@ -290,8 +290,6 @@ export class DamageEffect implements EffectHandler {
                 }),
             );
 
-            
-            
             console.log("------------------------TransformData new enemy:")
             console.log(newEnemy)
             return aliveEnemies;
