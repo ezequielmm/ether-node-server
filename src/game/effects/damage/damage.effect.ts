@@ -189,7 +189,7 @@ export class DamageEffect implements EffectHandler {
                     console.log("-----")
                     console.log(target.value.backTolifeTimes)
                     console.log("-----")
-                    if(!target.value.backTolifeTimes || target.value.backTolifeTimes !== 0){
+                    if(!target.value.backTolifeTimes){
                         console.log("Inside IF backtolife")
                         target.value.hpCurrent = 1;
                         target.value.backTolifeTimes = 0;
