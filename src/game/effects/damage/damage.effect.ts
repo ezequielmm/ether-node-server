@@ -177,8 +177,7 @@ export class DamageEffect implements EffectHandler {
                 
                 //- Enemies with transformation after death:
                 if(target.value.enemyId === ENEMY_DEEP_DWELLER_LURE_ID){
-                    const newEnemy = await this.transformEnemies(ctx, aliveEnemies, target.value);
-                    aliveEnemies.unshift(...[newEnemy]);
+                    await this.transformEnemies(ctx, aliveEnemies, target.value);
                 }
                 if(target.value.enemyId === ENEMY_SWARM_MASTER_ID){
                     //- just for testing:
@@ -285,8 +284,7 @@ export class DamageEffect implements EffectHandler {
             await ctx.expedition.save();
 
             // Now we generate a new ctx to generate the new enemy intentions
-            //ctx = await this.expeditionService.getGameContext(ctx.client);
-
+            ctx = await this.expeditionService.getGameContext(ctx.client);
 
             await this.enemyService.setCurrentScript(
                 ctx,
