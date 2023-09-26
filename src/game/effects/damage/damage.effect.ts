@@ -187,30 +187,23 @@ export class DamageEffect implements EffectHandler {
                         
                         const aliveEnemies = enemies.filter(enemy => enemy.hpCurrent > 0)
                         aliveEnemies.unshift(...[newEnemy]);
-                        
-                        console.log("8) Alive enemies: ")
-                        console.log(aliveEnemies)
 
                         ctx.expedition.currentNode.data.enemies = aliveEnemies;
 
                         ctx.expedition.markModified('currentNode.data.enemies');
                         await ctx.expedition.save();
 
-                        //- todo: Este mensaje puede cambiar para que se ejecute otra animacion en unity
                         ctx.client.emit(
                             'PutData',
                             StandardResponse.respond({
                                 message_type: SWARMessageType.CombatUpdate,
-                                action: SWARAction.SpawnEnemies,
-                                data: newEnemy,
+                                action: SWARAction.TransformEnemy,
+                                data: [target.value, newEnemy],
                             }),
                         );
 
                         // Now we generate a new ctx to generate the new enemy intentions
                         ctx = await this.expeditionService.getGameContext(ctx.client);
-
-                        console.log("10) New COntext Enemies from final context:")
-                        console.log(ctx.expedition.currentNode.data.enemies)
 
                         await this.enemyService.setCurrentScript(
                             ctx,

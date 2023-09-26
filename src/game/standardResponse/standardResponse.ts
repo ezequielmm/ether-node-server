@@ -88,6 +88,7 @@ export enum SWARAction {
     FlashTrinketIcon = 'flash_trinket_icon',
     ShowRewards = 'show_rewards',
     SpawnEnemies = 'spawn_enemies',
+    TransformEnemy = 'transform_enemy',
     RemoveEnemies = 'remove_enemies',
     ShowScore = 'show_score',
     ShowNextStage = 'show_next_stage',
