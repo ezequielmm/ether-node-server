@@ -25,6 +25,7 @@ import { ExpeditionEntity, GameContext } from 'src/game/components/interfaces';
 import { trollData } from 'src/game/components/enemy/data/troll.enemy';
 import { swarmMasterData } from 'src/game/components/enemy/data/swarmMaster.enemy';
 import { deepDwellerLureData } from 'src/game/components/enemy/data/deepDwellerLure.enemy';
+import { resolveStatus } from 'src/game/status/resolve/constants';
 
 export interface DamageArgs {
     useDefense?: boolean;
@@ -189,11 +190,13 @@ export class DamageEffect implements EffectHandler {
                     console.log("-----")
                     console.log(target.value.backTolifeTimes)
                     console.log("-----")
-                    if(!target.value.backTolifeTimes){
+                    if(target.value.backTolifeTimes == undefined){
                         target.value.hpCurrent = 1;
                         target.value.backTolifeTimes = 0;
+                        
+                        //todo: add 5 resolve
+                        const status = target.value.statuses.buff.filter(s => s.name === resolveStatus.name)[0];
 
-                        // add 5 resolve
                         aliveEnemies.unshift(...[target.value]);
                     }
                 }
