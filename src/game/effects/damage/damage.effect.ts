@@ -279,12 +279,6 @@ export class DamageEffect implements EffectHandler {
             //     }),
             // );
 
-
-
-            ctx.expedition.currentNode.data.enemies = aliveEnemies;
-            ctx.expedition.markModified('currentNode.data.enemies');
-            await ctx.expedition.save();
-
             // Now we generate a new ctx to generate the new enemy intentions
             ctx = await this.expeditionService.getGameContext(ctx.client);
 
@@ -293,6 +287,10 @@ export class DamageEffect implements EffectHandler {
                 enemyFromDB.enemyId,
                 {id: 0, intentions: [EnemyBuilderService.createDoNothingIntent()]},
             );
+
+            ctx.expedition.currentNode.data.enemies = aliveEnemies;
+            ctx.expedition.markModified('currentNode.data.enemies');
+            await ctx.expedition.save();
 
             ctx.client.emit(
                 'PutData',
