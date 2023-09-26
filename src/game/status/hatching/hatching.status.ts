@@ -32,7 +32,6 @@ export class HatchingStatus implements StatusEventHandler {
 
                 console.log("-----------------------------------------------------------------------------------")
                 console.log("Hatching..")
-                console.log(source.value.id)
 
                 remove();
                 //- Kill the current enemy:

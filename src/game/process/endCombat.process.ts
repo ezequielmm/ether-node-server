@@ -35,6 +35,7 @@ export class EndCombatProcess {
 
     @OnEvent(EVENT_AFTER_DAMAGE_EFFECT)
     async handle({ ctx }: { ctx: GameContext }): Promise<void> {
+        console.log("LLega a entrar al endCombat process")
         const logger = this.logger.logger.child(ctx.info);
 
         logger.info(
@@ -60,7 +61,6 @@ export class EndCombatProcess {
                 logger.info('The boss is dead. Ending combat');
                 await this.endCombat(ctx, logger);
             }
-            console.log("5) End combat ignores ending")
 
         }
         else {
