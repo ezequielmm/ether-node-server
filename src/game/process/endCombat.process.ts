@@ -35,7 +35,6 @@ export class EndCombatProcess {
 
     @OnEvent(EVENT_AFTER_DAMAGE_EFFECT)
     async handle({ ctx }: { ctx: GameContext }): Promise<void> {
-        console.log("LLega a entrar al endCombat process")
         const logger = this.logger.logger.child(ctx.info);
 
         logger.info(

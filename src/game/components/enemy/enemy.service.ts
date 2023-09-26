@@ -202,6 +202,8 @@ export class EnemyService {
             });
         }
 
+        console.log("EnemiesToReturn:")
+        console.log(enemiesToReturn)
         return enemiesToReturn;
     }
 
@@ -465,7 +467,6 @@ export class EnemyService {
                 },
             );
 
-            console.log("Emite evento de muerte")
             await this.eventEmitter.emitAsync(EVENT_ENEMY_DEAD, { ctx, enemy });
         }
         return enemy.hpCurrent;

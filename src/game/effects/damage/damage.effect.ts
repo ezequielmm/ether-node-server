@@ -177,8 +177,8 @@ export class DamageEffect implements EffectHandler {
                 
                 //- Enemies with transformation after death:
                 if(target.value.enemyId === ENEMY_DEEP_DWELLER_LURE_ID){
-                    await this.transformEnemies(ctx, aliveEnemies, target.value);
-                    console.log(aliveEnemies)
+                    const newEnemy = await this.transformEnemies(ctx, aliveEnemies, target.value);
+                    aliveEnemies.unshift(...[newEnemy]);
                 }
 
                 // If we have on a roll effect, we return energy when the
@@ -251,7 +251,6 @@ export class DamageEffect implements EffectHandler {
 
     private async transformEnemies(ctx:GameContext, aliveEnemies:IExpeditionCurrentNodeDataEnemy[], originalEnemy:IExpeditionCurrentNodeDataEnemy): Promise<IExpeditionCurrentNodeDataEnemy> {
         
-        console.log("LLega al TransformEnemies")
         const enemyFromDB = await this.enemyService.findById(ENEMY_DEEP_DWELLER_MONSTER_ID);
         if(enemyFromDB){
             
