@@ -22,6 +22,9 @@ import { absorbEffect } from '../absorb/constants';
 import { counterEffect } from '../counter/constants';
 import { IExpeditionCurrentNodeDataEnemy } from 'src/game/components/expedition/expedition.interface';
 import { ExpeditionEntity, GameContext } from 'src/game/components/interfaces';
+import { trollData } from 'src/game/components/enemy/data/troll.enemy';
+import { swarmMasterData } from 'src/game/components/enemy/data/swarmMaster.enemy';
+import { deepDwellerLureData } from 'src/game/components/enemy/data/deepDwellerLure.enemy';
 
 export interface DamageArgs {
     useDefense?: boolean;
@@ -176,11 +179,15 @@ export class DamageEffect implements EffectHandler {
                 let aliveEnemies = enemies.filter(enemy => enemy.hpCurrent > 0)
                 
                 //- Enemies with transformation after death:
-                if(target.value.enemyId === ENEMY_DEEP_DWELLER_LURE_ID){
+                if(target.value.enemyId === deepDwellerLureData.enemyId){
                     aliveEnemies = await this.transformEnemies(ctx, aliveEnemies, target.value);
                 }
-                if(target.value.enemyId === ENEMY_SWARM_MASTER_ID){
+                if(target.value.enemyId === swarmMasterData.enemyId){
                     //- should be just for testing:
+                    aliveEnemies.unshift(...[target.value]);
+                }
+                if(target.value.enemyId === trollData.enemyId){
+                    target.value.hpCurrent = 1;
                     aliveEnemies.unshift(...[target.value]);
                 }
 
@@ -281,8 +288,6 @@ export class DamageEffect implements EffectHandler {
                 }),
             );
 
-            console.log("------------------------TransformData new enemy:")
-            console.log(newEnemy)
             return aliveEnemies;
         }
     }
