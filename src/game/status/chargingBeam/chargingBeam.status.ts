@@ -41,7 +41,12 @@ export class ChargingBeamStatus implements StatusEffectHandler {
 
         enemies.forEach(enemy => {
             if(enemy.value.enemyId === deepDwellerMonsterData.enemyId){
-                console.log(enemy.value.statuses)
+                const status = enemy.value.statuses.buff.filter(s => s.name === chargingBeam.name)[0];
+                if(status){
+                    if(status.args.counter === 1){
+                        console.log("Tira el rayo")
+                    }
+                }
             }
         });
 
