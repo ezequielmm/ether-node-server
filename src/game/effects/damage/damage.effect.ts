@@ -268,8 +268,14 @@ export class DamageEffect implements EffectHandler {
             action: action,
         });
 
+        const ctx2 = await this.expeditionService.getGameContext(ctx.client);
+        console.log("11) In NEW context Enemies from final context:")
+        console.log(ctx2.expedition.currentNode.data.enemies)
+        
+
         console.log("11) In old context Enemies from final context:")
         console.log(ctx.expedition.currentNode.data.enemies)
+
         await this.eventEmitter.emitAsync(EVENT_AFTER_DAMAGE_EFFECT, {
             ctx,
             damageDealt: currentValue,
