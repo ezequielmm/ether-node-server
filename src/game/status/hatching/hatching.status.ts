@@ -34,6 +34,10 @@ export class HatchingStatus implements StatusEventHandler {
                 console.log("Hatching..")
 
                 remove();
+
+                const cocoonHP = source.value.hpCurrent;
+                console.log("cocoonHP: " + cocoonHP);
+
                 //- Kill the current enemy:
                 await this.enemyService.setHp(ctx, source.value.id, 0);
 
