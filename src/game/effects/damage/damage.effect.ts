@@ -95,9 +95,6 @@ export class DamageEffect implements EffectHandler {
             oldDefense = target.value.defense;
 
             await this.enemyService.damage(ctx, target.value.id, damage);
-            console.log("6) Back in damage.effect")
-
-
 
 
             //- Counter & Absorb, negate signature and increment signature counter:

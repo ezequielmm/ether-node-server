@@ -353,8 +353,6 @@ export class EnemyService {
      * @returns Health value
      */
     public async setHp(ctx: GameContext, id: EnemyId, hp: number): Promise<number> {
-        
-        console.log("2) Set HP method.")
         const enemy = this.get(ctx, id);
         const newHp = Math.min(hp, enemy.value.hpMax);
 
@@ -371,8 +369,6 @@ export class EnemyService {
         enemy.value.hpCurrent = newHp;
 
         this.logger.log(ctx.info, `Set hpCurrent of enemy ${id} to ${hp}`);
-
-        console.log("3) SetHP returns newHP: " + newHp )
         return newHp;
     }
 
@@ -417,11 +413,10 @@ export class EnemyService {
             `Player ${client.id} applied damage of ${damage} to enemy ${id}`,
         );
 
-        console.log("1) Damage Method")
         await this.setHp(ctx, id, enemy.hpCurrent);
         await this.setDefense(ctx, id, enemy.defense);
 
-        console.log(enemy.enemyId)
+        // console.log(enemy.enemyId)
         if(enemy.enemyId === deepDwellerData.enemyId){
             return enemy.hpCurrent;
         }
@@ -470,6 +465,7 @@ export class EnemyService {
                 },
             );
 
+            console.log("Emite evento de muerte")
             await this.eventEmitter.emitAsync(EVENT_ENEMY_DEAD, { ctx, enemy });
         }
         return enemy.hpCurrent;
@@ -505,9 +501,9 @@ export class EnemyService {
             const currentScript = enemy.value.currentScript;
             let nextScript: EnemyScript;
 
-            console.log("------------------------------------------------------------");
-            console.log("------------------------------------------------------------")
-            console.log("Ataque de enemigo: " + enemy_DB.name)
+            // console.log("------------------------------------------------------------");
+            // console.log("------------------------------------------------------------")
+            // console.log("Ataque de enemigo: " + enemy_DB.name)
 
             if(scripts && scripts.length > 0){
                 if (currentScript) {
@@ -634,40 +630,40 @@ export class EnemyService {
         let count = 1;
         let selectsFrom = 0;
 
-        console.log("------------------------------------------------------------")
-        console.log("Comienza una iteración de ataque:")
-        console.log("Agresividad del enemigo:" + aggressiveness)
+        // console.log("------------------------------------------------------------")
+        // console.log("Comienza una iteración de ataque:")
+        // console.log("Agresividad del enemigo:" + aggressiveness)
 
         while(!validAttack && count <= this.MAX_INTENTS_ITERATIONS){
 
             //- Aggressiveness determines the chances of taking an attack from the list of strong attacks:
             const randomValue = getDecimalRandomBetween(0, 1);
-            console.log("Random number: " + randomValue)
+            // console.log("Random number: " + randomValue)
             selectsFrom = 0;
 
             if(randomValue < aggressiveness && attackLevels.length > 1){
                 selectsFrom = 1;
-                console.log("Selecciona de la lista de ataques fuertes.")
+                // console.log("Selecciona de la lista de ataques fuertes.")
             }else {
-                console.log("Selecciona de la lista de ataques debiles.")
+                // console.log("Selecciona de la lista de ataques debiles.")
             }
 
             
             //- Get one possible attack from selected list:
             possibleAttack = this.getAttackFromList(attackLevels[selectsFrom].options);
 
-            console.log("Id de Tentativa de ataque: " + possibleAttack.id)
+            // console.log("Id de Tentativa de ataque: " + possibleAttack.id)
 
             //- Check if the Attack has cooldown greater than 0
             const attackCooldown = cooldowns.find(intent => intent.idIntent === possibleAttack.id);
-            console.log("Cooldown del ataque particular: " + attackCooldown.cooldown);
+            // console.log("Cooldown del ataque particular: " + attackCooldown.cooldown);
 
             if(!attackCooldown || attackCooldown.cooldown == 0){
                 validAttack = true;
-                console.log("Ataque válido.")
+                // console.log("Ataque válido.")
             }else{
                 count ++;
-                console.log("No es un ataque válido, repitiendo proceso..")
+                // console.log("No es un ataque válido, repitiendo proceso..")
             }
         }
 
@@ -821,9 +817,9 @@ export class EnemyService {
     }
 
     private getNextSwarmCocoonScript(currentScript:EnemyScript, intents:IntentOption[]): EnemyScript{
-        console.log("----------------")
-        console.log(currentScript)
-        console.log("----------------")
+        // console.log("----------------")
+        // console.log(currentScript)
+        // console.log("----------------")
         if(currentScript){
             if(currentScript.id == 0){
                 return {id: intents[1].id, intentions: intents[1].intents};
@@ -978,9 +974,9 @@ export class EnemyService {
         const lessThan2Cocoons = amountOfCocoons < 2;
         const lessThan2Spiders = amountOfSpiders < 2;
 
-        console.log({amountOfCocoons})
-        console.log({amountOfSpiders})
-        console.log({enemiesOnScreen})
+        // console.log({amountOfCocoons})
+        // console.log({amountOfSpiders})
+        // console.log({enemiesOnScreen})
         
         //- Saggy:
         if(lessThan2Cocoons && lessThan2Spiders && !(enemiesOnScreen >= 5)){
