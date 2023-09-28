@@ -3,13 +3,12 @@ import { StatusEffectDTO, StatusEffectHandler } from "../interfaces";
 import { StatusDecorator } from "../status.decorator";
 import { chargingBeam } from "./constants";
 import { EffectDTO } from "src/game/effects/effects.interface";
-import { StatusService } from "../status.service";
-import { OnEvent } from "@nestjs/event-emitter";
+import { AfterStatusesUpdateEvent, StatusService } from "../status.service";
+import { EventEmitter2, OnEvent } from "@nestjs/event-emitter";
 import { GameContext } from "src/game/components/interfaces";
-import { EVENT_BEFORE_ENEMIES_TURN_START } from "src/game/constants";
+import { EVENT_AFTER_STATUSES_UPDATE, EVENT_BEFORE_ENEMIES_TURN_START } from "src/game/constants";
 import { EnemyService } from "src/game/components/enemy/enemy.service";
 import { deepDwellerMonsterData } from "src/game/components/enemy/data/deepDwellerMonster.enemy";
-import { EffectService } from "src/game/effects/effects.service";
 import { PlayerService } from "src/game/components/player/player.service";
 
 @StatusDecorator({
@@ -20,7 +19,7 @@ export class ChargingBeamStatus implements StatusEffectHandler {
 
     constructor(private readonly statusService:StatusService,
                 private readonly enemyService:EnemyService,
-                private readonly effectService:EffectService,
+                private readonly eventEmitter: EventEmitter2,
                 private readonly playerService:PlayerService){}
     
     preview(args: StatusEffectDTO<Record<string, any>>): Promise<EffectDTO<Record<string, any>>> {
@@ -49,6 +48,19 @@ export class ChargingBeamStatus implements StatusEffectHandler {
                     return buff;
                 })
                 await this.statusService.updateEnemyStatuses(dto.ctx.expedition, target, {buff, debuff});
+
+                const afterStatusesUpdateEvent: AfterStatusesUpdateEvent = {
+                    ctx: dto.ctx,
+                    source: target,
+                    target,
+                    collection: {buff, debuff},
+                };
+
+                //- Emit event to front
+                await this.eventEmitter.emitAsync(
+                    EVENT_AFTER_STATUSES_UPDATE,
+                    afterStatusesUpdateEvent
+                )
             }
         }
 
