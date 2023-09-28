@@ -38,7 +38,17 @@ export class ChargingBeamStatus implements StatusEffectHandler {
             console.log("Damage value: " + dto.effectDTO.args.currentValue)
 
             if(status.args.counter < 2 && dto.effectDTO.args.currentValue > 12){
-                console.log("Retrasaríamos el contador..")
+                console.log("Delay status by 1..")
+                const debuff = target.value.statuses.debuff;
+                const buff = target.value.statuses.buff.map(buff => {
+                    if(buff.name === chargingBeam.name){
+                        const modifyStatus = {...buff};
+                        modifyStatus.args.counter++;
+                        return modifyStatus;
+                    }
+                    return buff;
+                })
+                await this.statusService.updateEnemyStatuses(dto.ctx.expedition, target, {buff, debuff});
             }
         }
 
