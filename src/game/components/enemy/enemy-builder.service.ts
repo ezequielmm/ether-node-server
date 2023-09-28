@@ -251,6 +251,27 @@ export class EnemyBuilderService {
         }
     }
 
+    public static callForReinforcements = (enemies: number[]): EnemyIntention  => {
+        return {
+            type: EnemyIntentionType.Reinforcements,
+            target: CardTargetedEnum.Self,
+            value: 1,
+            effects: [
+                {
+                    effect: spawnEnemyEffect.name,
+                    target: CardTargetedEnum.Self,
+                    args: {
+                        enemiesToSpawn: enemies,
+                    },
+                    action: {
+                        name: 'cast1',
+                        hint: 'cast1',
+                    },
+                },
+            ],
+        }
+    }
+
     
     
     //------------------------------------------------------Enemy Specifics:

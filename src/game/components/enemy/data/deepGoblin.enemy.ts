@@ -13,13 +13,13 @@ import { cannibalizeEffect } from 'src/game/effects/cannibalize/constants';
 //-------------------------------------------------------------------------------------------------------------------------------------------------------
 //- Intents:
 //-------------------------------------------------------------------------------------------------------------------------------------------------------
-const BasicAttack:       EnemyIntention = EnemyBuilderService.createBasicAttackIntent(11);
-const SecondAttack:      EnemyIntention = EnemyBuilderService.createMultiplierAttackIntent(11, 2);
-const BasicDefense:      EnemyIntention = EnemyBuilderService.createDefenseIntent(10);
-const BuffResolve:       EnemyIntention = EnemyBuilderService.createBasicBuffIntent(2, resolveStatus.name);
-const DebufFeeble:       EnemyIntention = EnemyBuilderService.createBasicDebuffIntent(2, feebleStatus.name);
-const DebuffFatigue:     EnemyIntention = EnemyBuilderService.createBasicDebuffIntent(2, fatigue.name);
-const Summon1CaveGoblin: EnemyIntention = EnemyBuilderService.invokeMinionsIntent([caveGoblinData.enemyId]);
+const BasicAttack:        EnemyIntention = EnemyBuilderService.createBasicAttackIntent(11);
+const SecondAttack:       EnemyIntention = EnemyBuilderService.createMultiplierAttackIntent(11, 2);
+const BasicDefense:       EnemyIntention = EnemyBuilderService.createDefenseIntent(10);
+const BuffResolve:        EnemyIntention = EnemyBuilderService.createBasicBuffIntent(2, resolveStatus.name);
+const DebufFeeble:        EnemyIntention = EnemyBuilderService.createBasicDebuffIntent(2, feebleStatus.name);
+const DebuffFatigue:      EnemyIntention = EnemyBuilderService.createBasicDebuffIntent(2, fatigue.name);
+const CallReinforcements: EnemyIntention = EnemyBuilderService.callForReinforcements([caveGoblinData.enemyId]);
 
 const SignatureMove:     EnemyIntention = {
     type: EnemyIntentionType.Signature,
@@ -71,7 +71,7 @@ const AdvancedIntents: EnemyAction = {
         { id: 7,  probability: 0.2, cooldown: 0, intents: [BasicAttack, BuffResolve] },
         { id: 8,  probability: 0.2, cooldown: 0, intents: [BasicDefense, BuffResolve] },
         { id: 9,  probability: 0.2, cooldown: 0, intents: [BasicDefense, DebufFeeble] },
-        { id: 10, probability: 0.2, cooldown: 0, intents: [Summon1CaveGoblin] },
+        { id: 10, probability: 0.2, cooldown: 0, intents: [CallReinforcements] },
         { id: 11, probability: 0.2, cooldown: 0, intents: [SignatureMove] }
     ]
 }
