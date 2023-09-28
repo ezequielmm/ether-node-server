@@ -3,11 +3,12 @@ import { StatusEventDTO, StatusEventHandler, StatusType } from "../interfaces";
 import { StatusDecorator } from "../status.decorator";
 import { revealStatus } from "./constants";
 import { EnemyService } from "src/game/components/enemy/enemy.service";
-import { ENEMY_BOOBY_TRAP_ID, ENEMY_MIMIC_ID } from "src/game/components/enemy/constants";
 import { ExpeditionStatusEnum } from "src/game/components/expedition/expedition.enum";
 import { ExpeditionService } from "src/game/components/expedition/expedition.service";
 import { StandardResponse, SWARMessageType, SWARAction } from "src/game/standardResponse/standardResponse";
 import { EnemyBuilderService } from "src/game/components/enemy/enemy-builder.service";
+import { boobyTrapData } from "src/game/components/enemy/data/boobyTrap.enemy";
+import { mimicData } from "src/game/components/enemy/data/mimic.enemy";
 
 @StatusDecorator({
     status: revealStatus,
@@ -46,8 +47,8 @@ export class RevealStatus implements StatusEventHandler {
 
             let enemyFromDB;
 
-            if(ENEMY_BOOBY_TRAP_ID)
-                enemyFromDB = await this.enemyService.findById(ENEMY_MIMIC_ID);
+            if(source.value.enemyId === boobyTrapData.enemyId)
+                enemyFromDB = await this.enemyService.findById(mimicData.enemyId);
 
             if(enemyFromDB){
                 const aliveEnemies = enemies.filter(enemy => enemy.hpCurrent > 0)

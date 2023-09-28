@@ -3,8 +3,8 @@ import { EnemyService } from "src/game/components/enemy/enemy.service";
 import { StatusEventDTO, StatusEventHandler } from "../interfaces";
 import { StatusDecorator } from "../status.decorator";
 import { hatchingStatus } from "./constants";
-import { ENEMY_SWARM_MASTER_ID } from "src/game/components/enemy/constants";
 import { StandardResponse, SWARMessageType, SWARAction } from "src/game/standardResponse/standardResponse";
+import { swarmMasterData } from "src/game/components/enemy/data/swarmMaster.enemy";
 
 @StatusDecorator({
     status: hatchingStatus,
@@ -41,7 +41,7 @@ export class HatchingStatus implements StatusEventHandler {
                     return enemy; 
                 });
 
-                const swarmMaster = enemies.find(enemy => enemy.enemyId == ENEMY_SWARM_MASTER_ID);
+                const swarmMaster = enemies.find(enemy => enemy.enemyId == swarmMasterData.enemyId);
 
                 if(swarmMaster){
 
@@ -51,7 +51,7 @@ export class HatchingStatus implements StatusEventHandler {
                     source.value.hpCurrent = 0;
 
                     enemies = enemies.map(enemy => {
-                        if (enemy.enemyId === ENEMY_SWARM_MASTER_ID) {
+                        if (enemy.enemyId === swarmMasterData.enemyId) {
                             return { ...enemy, hpCurrent: newHp }; 
                         }
                         return enemy; 

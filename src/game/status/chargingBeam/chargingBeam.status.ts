@@ -8,10 +8,8 @@ import { OnEvent } from "@nestjs/event-emitter";
 import { GameContext } from "src/game/components/interfaces";
 import { EVENT_BEFORE_ENEMIES_TURN_START } from "src/game/constants";
 import { EnemyService } from "src/game/components/enemy/enemy.service";
-import { deepDwellerData } from "src/game/components/enemy/data/deepDweller.enemy";
 import { deepDwellerMonsterData } from "src/game/components/enemy/data/deepDwellerMonster.enemy";
 import { EffectService } from "src/game/effects/effects.service";
-import { damageEffect } from "src/game/effects/damage/constants";
 import { PlayerService } from "src/game/components/player/player.service";
 
 @StatusDecorator({
@@ -30,10 +28,16 @@ export class ChargingBeamStatus implements StatusEffectHandler {
     }
 
     async handle(dto: StatusEffectDTO): Promise<EffectDTO<Record<string, any>>> {
-        // args.currentValue (capaz que hay que multiplicarlo ver en damage) si es mayor a lo que tenga el enemigo como negacion
-        // va a haber que persistir el status modificado.
-        console.log(dto.effectDTO.args)
+        const {source} = dto.effectDTO;
     
+        if(EnemyService.isEnemy(source)){
+            const status = source.value.statuses.buff.filter(s => s.name === chargingBeam.name)[0];
+
+            if(status.args.counter < 2 && dto.effectDTO.args.currentValue > 12){
+                console.log("Retrasaríamos el contador..")
+            }
+        }
+
         return dto.effectDTO;
     }
 
@@ -47,7 +51,6 @@ export class ChargingBeamStatus implements StatusEffectHandler {
                 const status = enemy.value.statuses.buff.filter(s => s.name === chargingBeam.name)[0];
                 if(status){
                     if(status.args.counter === 1){
-
                         this.playerService.damage(ctx, 45);
                     }
                 }
