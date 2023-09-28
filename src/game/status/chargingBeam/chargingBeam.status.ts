@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { StatusEffectDTO, StatusEffectHandler } from "../interfaces";
+import { AttachDTO, StatusEffectDTO, StatusEffectHandler } from "../interfaces";
 import { StatusDecorator } from "../status.decorator";
 import { chargingBeam } from "./constants";
 import { EffectDTO } from "src/game/effects/effects.interface";
@@ -11,6 +11,7 @@ import { EnemyService } from "src/game/components/enemy/enemy.service";
 import { deepDwellerMonsterData } from "src/game/components/enemy/data/deepDwellerMonster.enemy";
 import { PlayerService } from "src/game/components/player/player.service";
 import { StandardResponse, SWARMessageType, SWARAction } from "src/game/standardResponse/standardResponse";
+import { resolveStatus } from "../resolve/constants";
 
 @StatusDecorator({
     status: chargingBeam,
@@ -39,29 +40,40 @@ export class ChargingBeamStatus implements StatusEffectHandler {
 
             if(status.args.counter < 2 && dto.effectDTO.args.currentValue > 12){
                 console.log("Delay status by 1..")
-                const debuff = target.value.statuses.debuff;
-                const buff = target.value.statuses.buff.map(buff => {
-                    if(buff.name === chargingBeam.name){
-                        const modifyStatus = {...buff};
-                        modifyStatus.args.counter++;
-                        return modifyStatus;
-                    }
-                    return buff;
-                })
-                await this.statusService.updateEnemyStatuses(dto.ctx.expedition, target, {buff, debuff});
-
-                const afterStatusesUpdateEvent: AfterStatusesUpdateEvent = {
+                const resolveToAttach: AttachDTO = {
                     ctx: dto.ctx,
                     source: target,
                     target,
-                    collection: {buff, debuff},
-                };
+                    statusName: chargingBeam.name,
+                    statusArgs: {counter: (status.args.counter + 1)},
+                }
+                
+                await this.statusService.attach(resolveToAttach)
+                // const debuff = target.value.statuses.debuff;
+                // const buff = target.value.statuses.buff.map(buff => {
+                //     if(buff.name === chargingBeam.name){
+                //         const modifyStatus = {...buff};
+                //         modifyStatus.args.counter++;
+                //         return modifyStatus;
+                //     }
+                //     return buff;
+                // })
 
-                //- Emit internal event
-                await this.eventEmitter.emitAsync(
-                    EVENT_AFTER_STATUSES_UPDATE,
-                    afterStatusesUpdateEvent
-                )
+                
+                // await this.statusService.updateEnemyStatuses(dto.ctx.expedition, target, {buff, debuff});
+
+                // const afterStatusesUpdateEvent: AfterStatusesUpdateEvent = {
+                //     ctx: dto.ctx,
+                //     source: target,
+                //     target,
+                //     collection: {buff, debuff},
+                // };
+
+                // //- Emit internal event
+                // await this.eventEmitter.emitAsync(
+                //     EVENT_AFTER_STATUSES_UPDATE,
+                //     afterStatusesUpdateEvent
+                // )
 
             }
         }
