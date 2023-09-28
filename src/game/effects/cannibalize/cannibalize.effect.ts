@@ -38,14 +38,15 @@ export class CannibalizeEffect implements EffectHandler {
 
             enemies.forEach(async enemy => {
                 if(enemy.enemyId === caveGoblinData.enemyId){
-                    enemy.hpCurrent = await this.enemyService.setHp(ctx, enemy.id, 0);
+                    await this.enemyService.setHp(ctx, enemy.id, 0);
+                    return {...enemy, hpCurrent: 0}
                 }else if(enemy.enemyId === deepGoblinData.enemyId){
-                    enemy.hpCurrent = await this.enemyService.setHp(ctx, source.value.id, newHp);
+                    const deepHP = await this.enemyService.setHp(ctx, source.value.id, newHp);
+                    return {...enemy, hpCurrent: deepHP}
                 }
             });
 
             const amountCaveGoblins = enemies.filter(enemy => enemy.enemyId === caveGoblinData.enemyId).length;
-            
             const updatedEnemies = enemies.filter(enemy => enemy.hpCurrent > 0);
 
             console.log("Updated Enemies amount: " + updatedEnemies.length)
