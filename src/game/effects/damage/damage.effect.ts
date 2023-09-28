@@ -208,15 +208,15 @@ export class DamageEffect implements EffectHandler {
                             })
                         }else{
                             //- Create status
-                            const resolveToAttach: AttachDTO = {
-                                ctx,
-                                source,
-                                target,
-                                statusName: resolveStatus.name,
-                                statusArgs: {counter: 5},
-                            }
+                            // const resolveToAttach: AttachDTO = {
+                            //     ctx,
+                            //     source,
+                            //     target,
+                            //     statusName: resolveStatus.name,
+                            //     statusArgs: {counter: 5},
+                            // }
                             
-                            await this.statusService.attach(resolveToAttach)
+                            // await this.statusService.attach(resolveToAttach)
 
                             const status: AttachedStatus = {
                                 name: resolveStatus.name,
