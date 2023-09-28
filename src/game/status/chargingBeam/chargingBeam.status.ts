@@ -27,17 +27,11 @@ export class ChargingBeamStatus implements StatusEffectHandler {
     }
 
     async handle(dto: StatusEffectDTO): Promise<EffectDTO<Record<string, any>>> {
-        const {target} = dto.effectDTO;
-    
-        if(EnemyService.isEnemy(target)){
+        if(EnemyService.isEnemy(dto.effectDTO.target)){
+            const {target} = dto.effectDTO;
             const status = target.value.statuses.buff.filter(s => s.name === chargingBeam.name)[0];
 
-            console.log("------------------------------------------------ ChargingBeam")
-            console.log("Charging counter: " + status.args.counter)
-            console.log("Damage value: " + dto.effectDTO.args.currentValue)
-
-            if(status.args.counter < 2 && dto.effectDTO.args.currentValue > 12){
-                console.log("Delay status by 1..")
+            if(status.args.counter < 2 && dto.effectDTO.args.currentValue >= 10){
                 // const resolveToAttach: AttachDTO = {
                 //     ctx: dto.ctx,
                 //     source: target,
@@ -72,7 +66,8 @@ export class ChargingBeamStatus implements StatusEffectHandler {
                     EVENT_AFTER_STATUSES_UPDATE,
                     afterStatusesUpdateEvent
                 )
-
+                
+                dto.effectDTO.target.value.statuses.buff = buff;
             }
         }
 
