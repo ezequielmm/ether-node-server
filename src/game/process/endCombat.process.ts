@@ -4,7 +4,6 @@ import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 import pino from 'pino';
 import { CombatQueueService } from '../components/combatQueue/combatQueue.service';
 import { EnemyService } from '../components/enemy/enemy.service';
-import { ExpeditionStatusEnum } from '../components/expedition/expedition.enum';
 import { NodeType } from '../components/expedition/node-type';
 import { GameContext } from '../components/interfaces';
 import { PlayerService } from '../components/player/player.service';
@@ -12,15 +11,14 @@ import {
     EVENT_AFTER_DAMAGE_EFFECT,
     EVENT_AFTER_END_COMBAT,
 } from '../constants';
-import { ScoreCalculatorService } from '../scoreCalculator/scoreCalculator.service';
 import {
     StandardResponse,
     SWARAction,
     SWARMessageType,
 } from '../standardResponse/standardResponse';
 import { EndExpeditionProcess, ExpeditionEndingTypeEnum } from './endExpedition.process';
-import { ENEMY_DEEP_DWELLER_LURE_ID } from '../components/enemy/constants';
 import { some } from 'lodash';
+import { deepDwellerLureData } from '../components/enemy/data/deepDwellerLure.enemy';
 
 @Injectable()
 export class EndCombatProcess {
@@ -52,7 +50,7 @@ export class EndCombatProcess {
 
             const enemies = ctx.expedition.currentNode.data.enemies;
             const deepDwellerLureDie = some(enemies, {
-                enemyId: ENEMY_DEEP_DWELLER_LURE_ID,
+                enemyId: deepDwellerLureData.enemyId,
                 hpCurrent: 0
             });
 

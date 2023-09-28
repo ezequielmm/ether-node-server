@@ -14,10 +14,7 @@ import { energyEffect } from '../energy/constants';
 import { damageEffect } from './constants';
 import { EnemyIntentionType } from 'src/game/components/enemy/enemy.enum';
 import { EnemyBuilderService } from 'src/game/components/enemy/enemy-builder.service';
-import { ENEMY_DEEP_DWELLER_LURE_ID, ENEMY_DEEP_DWELLER_MONSTER_ID, ENEMY_SWARM_MASTER_ID } from 'src/game/components/enemy/constants';
 import { StandardResponse, SWARMessageType, SWARAction } from 'src/game/standardResponse/standardResponse';
-import { ExpeditionService } from 'src/game/components/expedition/expedition.service';
-import { ExpeditionStatusEnum } from 'src/game/components/expedition/expedition.enum';
 import { absorbEffect } from '../absorb/constants';
 import { counterEffect } from '../counter/constants';
 import { IExpeditionCurrentNodeDataEnemy } from 'src/game/components/expedition/expedition.interface';
@@ -26,6 +23,7 @@ import { trollData } from 'src/game/components/enemy/data/troll.enemy';
 import { swarmMasterData } from 'src/game/components/enemy/data/swarmMaster.enemy';
 import { deepDwellerLureData } from 'src/game/components/enemy/data/deepDwellerLure.enemy';
 import { resolveStatus } from 'src/game/status/resolve/constants';
+import { deepDwellerMonsterData } from 'src/game/components/enemy/data/deepDwellerMonster.enemy';
 
 export interface DamageArgs {
     useDefense?: boolean;
@@ -187,9 +185,6 @@ export class DamageEffect implements EffectHandler {
                     aliveEnemies.unshift(...[target.value]);
                 }
                 if(target.value.enemyId === trollData.enemyId){
-                    console.log("-----")
-                    console.log(target.value.backTolifeTimes)
-                    console.log("-----")
                     if(target.value.backTolifeTimes == undefined){
                         target.value.hpCurrent = 1;
                         target.value.backTolifeTimes = 0;
@@ -271,7 +266,7 @@ export class DamageEffect implements EffectHandler {
 
     private async transformEnemies(ctx:GameContext, aliveEnemies:IExpeditionCurrentNodeDataEnemy[], originalEnemy:IExpeditionCurrentNodeDataEnemy): Promise<IExpeditionCurrentNodeDataEnemy[]> {
 
-        const enemyFromDB = await this.enemyService.findById(ENEMY_DEEP_DWELLER_MONSTER_ID);
+        const enemyFromDB = await this.enemyService.findById(deepDwellerMonsterData.enemyId);
         if(enemyFromDB){
             
             const newEnemy = await this.enemyService.createNewStage2Enemy(enemyFromDB);

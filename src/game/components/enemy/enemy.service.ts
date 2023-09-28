@@ -5,18 +5,15 @@ import { EnemyId, enemyIdField, enemySelector } from './enemy.type';
 import { GameContext, ExpeditionEntity } from '../interfaces';
 import { EnemyAction, EnemyScript, ExpeditionEnemy, IntentOption } from './enemy.interface';
 import { CardTargetedEnum } from '../card/card.enum';
-import { find, reject, sample, isEmpty, each, isEqual, values } from 'lodash';
+import { find, reject, sample, isEmpty, each, isEqual } from 'lodash';
 import { ExpeditionService } from '../expedition/expedition.service';
 import {
-    ENEMY_BOOBY_TRAP_ID,
     ENEMY_CURRENT_COOLDOWN_PATH,
     ENEMY_CURRENT_SCRIPT_PATH,
-    ENEMY_DEEP_DWELLER_MONSTER_ID,
     ENEMY_DEFENSE_PATH,
     ENEMY_HP_CURRENT_PATH,
     ENEMY_STATUSES_PATH,
     ENEMY_SWARM_COCOON_IDS,
-    ENEMY_SWARM_MASTER_ID,
 } from './constants';
 import { getDecimalRandomBetween, getRandomBetween, getRandomItemByWeight } from 'src/utils';
 import {
@@ -45,11 +42,13 @@ import { mutantSpider2Data } from './data/mutantSpider2.enemy';
 import { randomUUID } from 'crypto';
 import { EnemyBuilderService } from './enemy-builder.service';
 import { chargingBeam } from 'src/game/status/chargingBeam/constants';
-import { deepDwellerData } from './data/deepDweller.enemy';
+import { swarmMasterData } from './data/swarmMaster.enemy';
+import { boobyTrapData } from './data/boobyTrap.enemy';
+import { deepDwellerMonsterData } from './data/deepDwellerMonster.enemy';
+import { deepDwellerLureData } from './data/deepDwellerLure.enemy';
 
 @Injectable()
 export class EnemyService {
-   
 
     private readonly logger: Logger = new Logger(EnemyService.name);
 
@@ -60,6 +59,14 @@ export class EnemyService {
     // and that would imply that the while is executed endlessly
     private readonly MAX_INTENTS_ITERATIONS = 50;
     //------------------------------------------------------------------------------------------------------------------------------------
+
+    private readonly NOT_SCOREABLE_ENEMIES = [
+        swarmCocoon1Data.enemyId, 
+        swarmCocoon2Data.enemyId, 
+        mutantSpider1Data.enemyId, 
+        mutantSpider2Data.enemyId,
+        deepDwellerLureData.enemyId
+    ];
 
     constructor(
         @InjectModel(Enemy)
@@ -416,8 +423,7 @@ export class EnemyService {
         await this.setHp(ctx, id, enemy.hpCurrent);
         await this.setDefense(ctx, id, enemy.defense);
 
-        // console.log(enemy.enemyId)
-        if(enemy.enemyId === deepDwellerData.enemyId){
+        if(this.NOT_SCOREABLE_ENEMIES.includes(enemy.enemyId)){
             return enemy.hpCurrent;
         }
 
@@ -536,16 +542,16 @@ export class EnemyService {
             }
             else if(attackLevels){
 
-                if(enemy_DB.enemyId === ENEMY_SWARM_MASTER_ID){
+                if(enemy_DB.enemyId === swarmMasterData.enemyId){
                     nextScript = this.getNextSwarmMasterScript(ctx, currentScript, attackLevels[0].options, enemy.value.hpCurrent);
                     this.setCurrentScript(ctx, enemy.value.id, nextScript);
                 } else if(ENEMY_SWARM_COCOON_IDS.includes(enemy_DB.enemyId)){
                     nextScript = this.getNextSwarmCocoonScript(currentScript, attackLevels[0].options);
                     this.setCurrentScript(ctx, enemy.value.id, nextScript);
-                }else if(enemy_DB.enemyId === ENEMY_BOOBY_TRAP_ID && !currentScript){
+                }else if(enemy_DB.enemyId === boobyTrapData.enemyId && !currentScript){
                     nextScript = {id: 0, intentions: [EnemyBuilderService.boobyTrapSpecial()]};
                     this.setCurrentScript(ctx, enemy.value.id, nextScript);
-                }else if(enemy_DB.enemyId === ENEMY_DEEP_DWELLER_MONSTER_ID){
+                }else if(enemy_DB.enemyId === deepDwellerMonsterData.enemyId){
                     nextScript = this.getNextDeepDwellerMonsterScript(enemy, currentScript, attackLevels[0].options);
                     this.setCurrentScript(ctx, enemy.value.id, nextScript);
                 }
