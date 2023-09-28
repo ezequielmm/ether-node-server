@@ -25,6 +25,7 @@ import { deepDwellerLureData } from 'src/game/components/enemy/data/deepDwellerL
 import { resolveStatus } from 'src/game/status/resolve/constants';
 import { deepDwellerMonsterData } from 'src/game/components/enemy/data/deepDwellerMonster.enemy';
 import { StatusService } from 'src/game/status/status.service';
+import { AttachDTO, AttachedStatus } from 'src/game/status/interfaces';
 
 export interface DamageArgs {
     useDefense?: boolean;
@@ -206,7 +207,28 @@ export class DamageEffect implements EffectHandler {
                                 return buff;
                             })
                         }else{
-                            //- todo: Create status
+                            //- Create status
+                            const resolveToAttach: AttachDTO = {
+                                ctx,
+                                source,
+                                target,
+                                statusName: resolveStatus.name,
+                                statusArgs: {counter: 5},
+                            }
+                            
+                            await this.statusService.attach(resolveToAttach)
+
+                            const status: AttachedStatus = {
+                                name: resolveStatus.name,
+                                args: {counter: 5},
+                                sourceReference: {
+                                    type: source.type,
+                                    id: source.value['id'],
+                                },
+                                addedInRound: ctx.expedition.currentNode.data.round,
+                            };
+
+                            buff.push(status);
                         }
 
                         await this.statusService.updateEnemyStatuses(ctx.expedition, target, {buff, debuff});
