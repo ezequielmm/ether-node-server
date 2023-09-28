@@ -192,7 +192,7 @@ export class DamageEffect implements EffectHandler {
                         target.value.hpCurrent = 1;
                         target.value.backTolifeTimes = 0;
                         
-                        //todo: add 5 resolve
+                        //Add 5 resolve
                         const status = target.value.statuses.buff.filter(s => s.name === resolveStatus.name)[0];
                         const debuff = target.value.statuses.debuff;
                         let buff = target.value.statuses.buff;

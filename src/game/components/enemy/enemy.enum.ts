@@ -39,5 +39,6 @@ export enum EnemyIntentionType {
     Breach = 'breach',
     Counter = 'counter',
     Absorb = 'absorb',
+    Reinforcements = 'reinforcements',
     DoNothing = 'do_nothing',
 }
