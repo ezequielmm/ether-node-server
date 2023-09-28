@@ -24,6 +24,7 @@ import { swarmMasterData } from 'src/game/components/enemy/data/swarmMaster.enem
 import { deepDwellerLureData } from 'src/game/components/enemy/data/deepDwellerLure.enemy';
 import { resolveStatus } from 'src/game/status/resolve/constants';
 import { deepDwellerMonsterData } from 'src/game/components/enemy/data/deepDwellerMonster.enemy';
+import { StatusService } from 'src/game/status/status.service';
 
 export interface DamageArgs {
     useDefense?: boolean;
@@ -50,6 +51,7 @@ export class DamageEffect implements EffectHandler {
         private readonly combatQueueService: CombatQueueService,
         private readonly effectService: EffectService,
         private readonly getEnergyAction: GetEnergyAction,
+        private readonly statusService: StatusService,
     ) {}
 
     async handle(payload: EffectDTO<DamageArgs>): Promise<void> {
@@ -191,7 +193,25 @@ export class DamageEffect implements EffectHandler {
                         
                         //todo: add 5 resolve
                         const status = target.value.statuses.buff.filter(s => s.name === resolveStatus.name)[0];
+                        const debuff = target.value.statuses.debuff;
+                        let buff = target.value.statuses.buff;
 
+                        if(status){
+                            buff = target.value.statuses.buff.map(buff => {
+                                if(buff.name === resolveStatus.name){
+                                    const modifyStatus = {...buff};
+                                    modifyStatus.args.counter+=5
+                                    return modifyStatus;
+                                }
+                                return buff;
+                            })
+                        }else{
+                            //- todo: Create status
+                        }
+
+                        await this.statusService.updateEnemyStatuses(ctx.expedition, target, {buff, debuff});
+
+                        target.value.statuses = {buff, debuff};
                         aliveEnemies.unshift(...[target.value]);
                     }
                 }

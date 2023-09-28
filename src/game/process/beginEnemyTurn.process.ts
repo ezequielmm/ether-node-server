@@ -107,6 +107,22 @@ export class BeginEnemyTurnProcess {
             `Sent message PutData to client ${client.id}: ${SWARAction.UpdateEnemy}`,
         );
 
+        const pruebaEnemies = enemies
+        .filter(({ hpCurrent }) => hpCurrent > 0)
+        .map((enemy) => ({
+            id: enemy.id,
+            enemyId: enemy.enemyId,
+            defense: enemy.defense,
+            name: enemy.name,
+            type: enemy.type,
+            category: enemy.category,
+            size: enemy.size,
+            hpCurrent: enemy.hpCurrent,
+            hpMax: enemy.hpMax,
+        }));
+
+        console.log(pruebaEnemies)
+
         client.emit(
             'PutData',
             StandardResponse.respond({

@@ -10,6 +10,7 @@ import { EVENT_AFTER_STATUSES_UPDATE, EVENT_BEFORE_ENEMIES_TURN_START } from "sr
 import { EnemyService } from "src/game/components/enemy/enemy.service";
 import { deepDwellerMonsterData } from "src/game/components/enemy/data/deepDwellerMonster.enemy";
 import { PlayerService } from "src/game/components/player/player.service";
+import { StandardResponse, SWARMessageType, SWARAction } from "src/game/standardResponse/standardResponse";
 
 @StatusDecorator({
     status: chargingBeam,
@@ -56,11 +57,12 @@ export class ChargingBeamStatus implements StatusEffectHandler {
                     collection: {buff, debuff},
                 };
 
-                //- Emit event to front
+                //- Emit internal event
                 await this.eventEmitter.emitAsync(
                     EVENT_AFTER_STATUSES_UPDATE,
                     afterStatusesUpdateEvent
                 )
+
             }
         }
 
