@@ -5,6 +5,7 @@ import { EffectHandler, EffectDTO } from "../effects.interface";
 import { transformEffect } from "./constants";
 import { StandardResponse, SWARMessageType, SWARAction } from "src/game/standardResponse/standardResponse";
 import { IExpeditionCurrentNodeDataEnemy } from "src/game/components/expedition/expedition.interface";
+import { EnemyBuilderService } from "src/game/components/enemy/enemy-builder.service";
 
 @EffectDecorator({
     effect: transformEffect,
@@ -40,6 +41,12 @@ export class TransformEffect implements EffectHandler {
             ctx.expedition.currentNode.data.enemies = updatedEnemies;
             ctx.expedition.markModified('currentNode.data.enemies');
             await ctx.expedition.save();
+
+            await this.enemyService.setCurrentScript(
+                ctx,
+                newEnemy.id,
+                {id: 0, intentions: [EnemyBuilderService.createDoNothingIntent()]},
+            );
 
             ctx.client.emit(
                 'PutData',

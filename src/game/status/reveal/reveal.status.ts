@@ -79,7 +79,7 @@ export class RevealStatus implements StatusEventHandler {
 
                 await this.enemyService.setCurrentScript(
                     newCtx,
-                    enemyFromDB.enemyId,
+                    newEnemy.id,
                     {id: 0, intentions: [EnemyBuilderService.createDoNothingIntent()]},
                 );
             }

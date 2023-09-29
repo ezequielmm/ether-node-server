@@ -322,7 +322,7 @@ export class DamageEffect implements EffectHandler {
 
             await this.enemyService.setCurrentScript(
                 ctx,
-                enemyFromDB.enemyId,
+                newEnemy.id,
                 {id: 0, intentions: [EnemyBuilderService.createDoNothingIntent()]},
             );
 
