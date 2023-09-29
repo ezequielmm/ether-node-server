@@ -89,6 +89,7 @@ export enum SWARAction {
     ShowRewards = 'show_rewards',
     SpawnEnemies = 'spawn_enemies',
     TransformEnemy = 'transform_enemy',
+    Cannibalize = 'cannibalize',
     RemoveEnemies = 'remove_enemies',
     ShowScore = 'show_score',
     ShowNextStage = 'show_next_stage',

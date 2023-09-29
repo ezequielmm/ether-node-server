@@ -11,6 +11,7 @@ import { resolveStatus } from "src/game/status/resolve/constants";
 import { feebleStatus } from "src/game/status/feeble/constants";
 import { fatigue } from "src/game/status/fatigue/constants";
 import { PlayerService } from "src/game/components/player/player.service";
+import { StandardResponse, SWARMessageType, SWARAction } from "src/game/standardResponse/standardResponse";
 
 
 @EffectDecorator({
@@ -28,18 +29,15 @@ export class CannibalizeEffect implements EffectHandler {
         const enemies = dto.ctx.expedition.currentNode.data.enemies;
 
         if(EnemyService.isEnemy(source)){
-            console.log("Inside cannibalize effect------------------------")
             const hpToHeal = enemies.filter(enemy => enemy.enemyId === caveGoblinData.enemyId)
                                     .reduce((sum, enemy) => { return sum + enemy.hpCurrent}, 0);
 
-            console.log("Max HP to heal: " + hpToHeal)
             const newHp = source.value.hpCurrent + hpToHeal;
-            console.log("Hp healed: " + newHp)
 
             const newEnemies = enemies.filter(enemy => {
                 if(enemy.enemyId === caveGoblinData.enemyId){
                     this.enemyService.setHp(ctx, enemy.id, 0);
-                    return false; //- Remove from the list
+                    return false; //- Remove all the cave goblins
                 }else if(enemy.enemyId === deepGoblinData.enemyId){
                     this.enemyService.setHp(ctx, source.value.id, newHp);
                     const deepHP = Math.min(newHp, enemy.hpMax);
@@ -48,26 +46,28 @@ export class CannibalizeEffect implements EffectHandler {
                 return true;
             });
 
-            const amountCaveGoblins = enemies.filter(enemy => enemy.enemyId === caveGoblinData.enemyId).length;
-            
-            console.log("Updated Enemies amount: " + newEnemies.length)
+            const caveGoblins = enemies.filter(enemy => enemy.enemyId === caveGoblinData.enemyId);
+            const deepGoblin  = enemies.filter(enemy => enemy.enemyId === deepGoblin.enemyId);
 
             ctx.expedition.currentNode.data.enemies = newEnemies;
             ctx.expedition.markModified('currentNode.data.enemies');
             await ctx.expedition.save();
 
-
-            console.log("After enmies updated.")
-            
-            //- TODO:
-            //- todo: Ver como se le comunica a Unity.
+            ctx.client.emit(
+                'PutData',
+                StandardResponse.respond({
+                    message_type: SWARMessageType.CombatUpdate,
+                    action: SWARAction.Cannibalize,
+                    data: [deepGoblin, caveGoblins],
+                }),
+            );
 
             const resolveToAttach: AttachDTO = {
                     ctx: dto.ctx,
                     source,
                     target,
                     statusName: resolveStatus.name,
-                    statusArgs: {counter: (2 * amountCaveGoblins)},
+                    statusArgs: {counter: (2 * caveGoblins.length)},
             }
                 
             await this.statusService.attach(resolveToAttach)
@@ -77,7 +77,7 @@ export class CannibalizeEffect implements EffectHandler {
                 source,
                 target: this.playerService.get(ctx),
                 statusName: feebleStatus.name,
-                statusArgs: {counter: (3 * amountCaveGoblins)},
+                statusArgs: {counter: (3 * caveGoblins.length)},
             }
             
             await this.statusService.attach(feebleToAttach)
@@ -87,12 +87,10 @@ export class CannibalizeEffect implements EffectHandler {
                 source,
                 target: this.playerService.get(ctx),
                 statusName: fatigue.name,
-                statusArgs: {counter: (3 * amountCaveGoblins)},
+                statusArgs: {counter: (3 * caveGoblins.length)},
             }
         
             await this.statusService.attach(fatigueToAttach)
-
-            console.log("Cannibalize finish-------------------------------------------------------------------------------------")
         }
     }
 
