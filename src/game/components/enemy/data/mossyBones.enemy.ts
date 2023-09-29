@@ -28,9 +28,6 @@ const SignatureMove:  EnemyIntention = {
         {
             effect: transformEffect.name,
             target: CardTargetedEnum.Self,
-            args: {
-                enemyId: 0,
-            },
             action: {
                 name: 'signature_move',
                 hint: 'signature_move',
