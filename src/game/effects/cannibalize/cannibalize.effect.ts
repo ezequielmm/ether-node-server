@@ -36,22 +36,23 @@ export class CannibalizeEffect implements EffectHandler {
             const newHp = source.value.hpCurrent + hpToHeal;
             console.log("Hp healed: " + newHp)
 
-            enemies.forEach(async enemy => {
+            const newEnemies = enemies.filter(enemy => {
                 if(enemy.enemyId === caveGoblinData.enemyId){
-                    await this.enemyService.setHp(ctx, enemy.id, 0);
-                    return {...enemy, hpCurrent: 0}
+                    this.enemyService.setHp(ctx, enemy.id, 0);
+                    return false; //- Remove from the list
                 }else if(enemy.enemyId === deepGoblinData.enemyId){
-                    const deepHP = await this.enemyService.setHp(ctx, source.value.id, newHp);
-                    return {...enemy, hpCurrent: deepHP}
+                    this.enemyService.setHp(ctx, source.value.id, newHp);
+                    const deepHP = Math.min(newHp, enemy.hpMax);
+                    enemy.hpCurrent = deepHP;
                 }
+                return true;
             });
 
             const amountCaveGoblins = enemies.filter(enemy => enemy.enemyId === caveGoblinData.enemyId).length;
-            const updatedEnemies = enemies.filter(enemy => enemy.hpCurrent > 0);
+            
+            console.log("Updated Enemies amount: " + newEnemies.length)
 
-            console.log("Updated Enemies amount: " + updatedEnemies.length)
-
-            ctx.expedition.currentNode.data.enemies = updatedEnemies;
+            ctx.expedition.currentNode.data.enemies = newEnemies;
             ctx.expedition.markModified('currentNode.data.enemies');
             await ctx.expedition.save();
 
