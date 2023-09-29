@@ -12,6 +12,7 @@ import { AddCardPosition } from "src/game/effects/effects.enum";
 import { Card } from "../card/card.schema";
 import { revealStatus } from "src/game/status/reveal/constants";
 import { DecayCard } from "../card/data/decay.card";
+import { healEffect } from "src/game/effects/heal/constants";
 
 export class EnemyBuilderService {
     
@@ -286,8 +287,8 @@ export class EnemyBuilderService {
                         value: damage,
                     },
                     action: {
-                        name: 'attack1',
-                        hint: 'attack1',
+                        name: 'infect',
+                        hint: 'infect',
                     },
                 },
                 {
@@ -300,11 +301,35 @@ export class EnemyBuilderService {
                         position: AddCardPosition.Random,
                     },
                     action: {
-                        name: 'cast1',
-                        hint: 'cast1',
+                        name: 'infect',
+                        hint: 'infect',
                     },
                 },
             ],
+        }
+    }
+
+
+    public static createGrowIntent = (healAmount: number, negateDamage: number, growDamage:number) => {
+        return {
+            type: EnemyIntentionType.Grow,
+            target: CardTargetedEnum.Player,
+            negateDamage,
+            value: healAmount,
+            effects: [
+                {
+                    effect: healEffect.name,
+                    target: CardTargetedEnum.Self,
+                    args: {
+                        value: healAmount
+                    },
+                    action:{
+                        name: 'grow',
+                        hint: 'grow'
+                    }
+                }
+            ]
+
         }
     }
     

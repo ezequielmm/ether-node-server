@@ -5,6 +5,12 @@ import { fatigue } from 'src/game/status/fatigue/constants';
 import { feebleStatus } from 'src/game/status/feeble/constants';
 import { EnemyAction, EnemyIntention } from '../enemy.interface';
 import { EnemyBuilderService } from '../enemy-builder.service';
+import { CardDestinationEnum, CardTargetedEnum } from '../../card/card.enum';
+import { breachEffect } from 'src/game/effects/breach/constants';
+import { addCardEffect } from 'src/game/effects/addCard/contants';
+import { AddCardPosition } from 'src/game/effects/effects.enum';
+import { DecayCard } from '../../card/data/decay.card';
+import { PoisonedCard } from '../../card/data/poisoned.card';
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------------
 //- Intents:
@@ -17,17 +23,54 @@ const BuffResolve:       EnemyIntention = EnemyBuilderService.createBasicBuffInt
 const DebuffFatigue:     EnemyIntention = EnemyBuilderService.createBasicDebuffIntent(1, fatigue.name);
 const Breach:            EnemyIntention = EnemyBuilderService.createBreachAttack(16);
 const Infect:            EnemyIntention = EnemyBuilderService.createInfectIntent(11, 1);
-
-/*
-TODO: Intents  
-- Infect Actions( (10 - 12) Infect damage + Infect 1 )
-- Grow Actions( Gain 20 max hp + 3 grow damage bonus to attacks ) 
-- SignatureMove Action( Ill Blade )
-
-const Grow:
-const Infect: 
-const SignatureMove:
-*/
+const Grow:              EnemyIntention = EnemyBuilderService.createGrowIntent(20, 10, 3);
+const SignatureMove:     EnemyIntention = {
+    type: EnemyIntentionType.Signature,
+    target: CardTargetedEnum.Player,
+    value: 12,
+    negateDamage: 10,
+    effects: [
+        {
+            effect: breachEffect.name,
+            target: CardTargetedEnum.Player,
+            args: {
+                value: 12,
+            },
+            action: {
+                name: 'signature_move',
+                hint: 'signature_move',
+            },
+        },
+        {
+            effect: addCardEffect.name,
+            target: CardTargetedEnum.Player,
+            args: {
+                value: 2,
+                cardId: DecayCard.cardId,     
+                destination: CardDestinationEnum.Draw,
+                position: AddCardPosition.Random,
+            },
+            action: {
+                name: 'signature_move',
+                hint: 'signature_move',
+            },
+        },
+        {
+            effect: addCardEffect.name,
+            target: CardTargetedEnum.Player,
+            args: {
+                value: 2,
+                cardId: PoisonedCard.cardId,     
+                destination: CardDestinationEnum.Draw,
+                position: AddCardPosition.Random,
+            },
+            action: {
+                name: 'signature_move',
+                hint: 'signature_move',
+            },
+        }
+    ]
+}
 
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -48,12 +91,12 @@ const AdvancedIntents: EnemyAction = {
     options: [
         { id: 6,  probability: 0.1, cooldown: 0, intents: [BasicAttack_sword, BuffResolve] },
         { id: 7,  probability: 0.1, cooldown: 0, intents: [BasicAttack_arrow, DebuffFeeble] },
-        { id: 8, probability: 0.1, cooldown: 0, intents: [BasicDefense, BuffResolve] },
-        { id: 9, probability: 0.1, cooldown: 0, intents: [Breach] },
+        { id: 8,  probability: 0.1, cooldown: 0, intents: [BasicDefense, BuffResolve] },
+        { id: 9,  probability: 0.1, cooldown: 0, intents: [Breach] },
         { id: 10, probability: 0.2, cooldown: 0, intents: [BasicDefense, DebuffFeeble] },
-        //{ id: 11, probability: 0.2, cooldown: 0, intents: [Grow] },
-        //{ id: 12, probability: 0.1, cooldown: 0, intents: [Infect, BasicAttack_sword] },
-        //{ id: 13, probability: 0.1, cooldown: 0, intents: [SignatureMove] }
+        { id: 11, probability: 0.2, cooldown: 0, intents: [Grow] },
+        { id: 12, probability: 0.1, cooldown: 0, intents: [Infect, BasicAttack_sword] },
+        { id: 13, probability: 0.1, cooldown: 0, intents: [SignatureMove] }
     ]
 }
 

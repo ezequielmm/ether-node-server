@@ -38,11 +38,11 @@ export class RevealStatus implements StatusEventHandler {
         if(EnemyService.isEnemy(source)){
             this.enemyService.setHp(ctx, source.value.id, 0);
             let enemies = ctx.expedition.currentNode.data.enemies;
-                enemies = enemies.map(enemy => {
-                    if (enemy.id === source.value.id) {
-                        return { ...enemy, hpCurrent: 0 }; 
-                    }
-                    return enemy; 
+            enemies = enemies.map(enemy => {
+                if (enemy.id === source.value.id) {
+                    return { ...enemy, hpCurrent: 0 }; 
+                }
+                return enemy; 
             });
 
             let enemyFromDB;

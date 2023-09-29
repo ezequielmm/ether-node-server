@@ -26,6 +26,9 @@ import { resolveStatus } from 'src/game/status/resolve/constants';
 import { deepDwellerMonsterData } from 'src/game/components/enemy/data/deepDwellerMonster.enemy';
 import { StatusService } from 'src/game/status/status.service';
 import { AttachDTO, AttachedStatus } from 'src/game/status/interfaces';
+import { mossySkeletonData } from 'src/game/components/enemy/data/mossySkeleton.enemy';
+import { mossyBonesData } from 'src/game/components/enemy/data/mossyBones.enemy';
+import { mossyArcherData } from 'src/game/components/enemy/data/mossyArcher.enemy';
 
 export interface DamageArgs {
     useDefense?: boolean;
@@ -181,7 +184,10 @@ export class DamageEffect implements EffectHandler {
                 
                 //- Enemies with transformation after death:
                 if(target.value.enemyId === deepDwellerLureData.enemyId){
-                    aliveEnemies = await this.transformEnemies(ctx, aliveEnemies, target.value);
+                    aliveEnemies = await this.transformEnemies(ctx, aliveEnemies, target.value, deepDwellerMonsterData.enemyId);
+                }
+                if(target.value.enemyId === mossySkeletonData.enemyId || target.value.enemyId === mossyArcherData.enemyId){
+                    aliveEnemies = await this.transformEnemies(ctx, aliveEnemies, target.value, mossyBonesData.enemyId);
                 }
                 if(target.value.enemyId === swarmMasterData.enemyId){
                     //- should be just for testing:
@@ -296,19 +302,23 @@ export class DamageEffect implements EffectHandler {
         await this.getEnergyAction.handle(ctx.client.id);
     }
 
-    private async transformEnemies(ctx:GameContext, aliveEnemies:IExpeditionCurrentNodeDataEnemy[], originalEnemy:IExpeditionCurrentNodeDataEnemy): Promise<IExpeditionCurrentNodeDataEnemy[]> {
+    private async transformEnemies(ctx:GameContext, aliveEnemies:IExpeditionCurrentNodeDataEnemy[], originalEnemy:IExpeditionCurrentNodeDataEnemy, targetEnemyId: number): Promise<IExpeditionCurrentNodeDataEnemy[]> {
 
-        const enemyFromDB = await this.enemyService.findById(deepDwellerMonsterData.enemyId);
+        const enemyFromDB = await this.enemyService.findById(targetEnemyId);
+        
         if(enemyFromDB){
-            
-            const newEnemy = await this.enemyService.createNewStage2Enemy(enemyFromDB);
+            let newEnemy = await this.enemyService.createNewStage2Enemy(enemyFromDB);
+
+            //- Mossy enemies need to keep track of the original enemy:
+            if(targetEnemyId === mossyBonesData.enemyId){
+                newEnemy.mossyOriginalShape = originalEnemy.enemyId;
+            }
+
             aliveEnemies.unshift(...[newEnemy]);
 
             ctx.expedition.currentNode.data.enemies = aliveEnemies;
             ctx.expedition.markModified('currentNode.data.enemies');
             await ctx.expedition.save();
-            
-            //const newCtx = await this.expeditionService.getGameContext(ctx.client);
 
             await this.enemyService.setCurrentScript(
                 ctx,
