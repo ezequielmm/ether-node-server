@@ -93,8 +93,12 @@ export class SendEnemyIntentProcess {
                 return `This Enemy is scheming to reflect all the recieved Attack`;
             case EnemyIntentionType.Absorb:
                 return `This Enemy will transform any damage received into HP`;
+            case EnemyIntentionType.Infect:
+                return `This Enemy infects its opponent`;
             case EnemyIntentionType.Reinforcements:
                 return `This Enemy is plotting to summon another enemy to the battle the next turn`;
+            case EnemyIntentionType.DoNothing:
+                return "";
             default:
                 return `Unknown intentions`;
         }
