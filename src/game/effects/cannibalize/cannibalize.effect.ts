@@ -36,14 +36,16 @@ export class CannibalizeEffect implements EffectHandler {
             const newHp = source.value.hpCurrent + hpToHeal;
             console.log("Hp healed: " + newHp)
 
-            const newEnemies = enemies.map(enemy => {
+            const newEnemies = enemies.filter(enemy => {
                 if(enemy.enemyId === caveGoblinData.enemyId){
                     this.enemyService.setHp(ctx, enemy.id, 0);
+                    return false; //- Remove from the list
                 }else if(enemy.enemyId === deepGoblinData.enemyId){
                     this.enemyService.setHp(ctx, source.value.id, newHp);
                     const deepHP = Math.min(newHp, enemy.hpMax);
-                    return {...enemy, hpCurrent: deepHP}
+                    enemy.hpCurrent = deepHP;
                 }
+                return true;
             });
 
             const amountCaveGoblins = enemies.filter(enemy => enemy.enemyId === caveGoblinData.enemyId).length;
