@@ -51,6 +51,9 @@ import { CounterEffect } from './counter/counter.efect';
 import { AbsorbEffect } from './absorb/absorb.effect';
 import { CannibalizeEffect } from './cannibalize/cannibalize.effect';
 import { TransformEffect } from './transform/transform.effect';
+import { SporeDanceEffect } from './sporeDance/sporeDance.effect';
+import { ImmolateEffect } from './immolate/immolate.effect';
+import { MitosisEffect } from './mitosis/mitosis.effect';
 
 @Module({
     imports: [
@@ -106,7 +109,10 @@ import { TransformEffect } from './transform/transform.effect';
         CounterEffect,
         AbsorbEffect,
         CannibalizeEffect,
-        TransformEffect
+        TransformEffect,
+        SporeDanceEffect,
+        ImmolateEffect,
+        MitosisEffect
 
     ],
     exports: [EffectService],

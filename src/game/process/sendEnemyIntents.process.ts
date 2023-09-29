@@ -97,6 +97,8 @@ export class SendEnemyIntentProcess {
                 return `This Enemy will infect its opponent`;
             case EnemyIntentionType.Grow:
                 return "This Enemy is plotting to grow into a larger, stronger version";
+            case EnemyIntentionType.Mistify:
+                return "This Enemy is plotting to mistify it opponent";
             case EnemyIntentionType.Reinforcements:
                 return `This Enemy is plotting to summon another enemy to the battle the next turn`;
             case EnemyIntentionType.DoNothing:

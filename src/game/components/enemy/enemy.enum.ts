@@ -42,5 +42,6 @@ export enum EnemyIntentionType {
     Reinforcements = 'reinforcements',
     Infect = 'infect',
     Grow = 'grow',
+    Mistify = 'mistify',
     DoNothing = 'do_nothing',
 }
