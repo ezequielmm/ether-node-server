@@ -6,10 +6,6 @@ import { transformEffect } from "./constants";
 import { StandardResponse, SWARMessageType, SWARAction } from "src/game/standardResponse/standardResponse";
 import { IExpeditionCurrentNodeDataEnemy } from "src/game/components/expedition/expedition.interface";
 
-export interface TransformEnemyArgs {
-    enemyId: number;
-}
-
 @EffectDecorator({
     effect: transformEffect,
 })
@@ -19,12 +15,12 @@ export class TransformEffect implements EffectHandler {
     constructor(private readonly enemyService: EnemyService) {}
 
 
-    async handle(dto: EffectDTO<TransformEnemyArgs>): Promise<void> {
+    async handle(dto: EffectDTO): Promise<void> {
         const { source, ctx } = dto;
         const enemies = dto.ctx.expedition.currentNode.data.enemies;
 
         if(EnemyService.isEnemy(source)){
-            const enemyToTransformId = dto.args.enemyId;
+            const enemyToTransformId = source.value.mossyOriginalShape;
             const enemy = await this.enemyService.findById(enemyToTransformId);
 
             if(!enemy){
