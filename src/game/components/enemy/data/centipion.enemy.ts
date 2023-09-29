@@ -15,7 +15,7 @@ import { defenseEffect } from 'src/game/effects/defense/constants';
 import { damageEffect } from 'src/game/effects/damage/constants';
 import { addCardEffect } from 'src/game/effects/addCard/contants';
 import { AddCardPosition } from 'src/game/effects/effects.enum';
-import { StunnedCard } from '../../card/data/stunned.card';
+import { MoldCard } from '../../card/data/mold.card';
 
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -62,7 +62,7 @@ const SignatureAttack: EnemyIntention = {
             target: CardTargetedEnum.Player,
             args: {
                 value: 1,
-                cardId: StunnedCard.cardId,     //todo: change to Mold card when it exists
+                cardId: MoldCard.cardId,     
                 destination: 'draw',
                 position: AddCardPosition.Random,
             },

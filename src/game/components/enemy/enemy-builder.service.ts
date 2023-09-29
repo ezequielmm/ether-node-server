@@ -11,7 +11,7 @@ import { addCardEffect } from "src/game/effects/addCard/contants";
 import { AddCardPosition } from "src/game/effects/effects.enum";
 import { Card } from "../card/card.schema";
 import { revealStatus } from "src/game/status/reveal/constants";
-import { PoisonedCard } from "../card/data/poisoned.card";
+import { DecayCard } from "../card/data/decay.card";
 
 export class EnemyBuilderService {
     
@@ -275,7 +275,7 @@ export class EnemyBuilderService {
 
     public static createInfectIntent = (damage:number, decayAmount:number) => {
         return {
-            type: EnemyIntentionType.Attack,
+            type: EnemyIntentionType.Infect,
             target: CardTargetedEnum.Player,
             value: damage,
             effects: [
@@ -295,7 +295,7 @@ export class EnemyBuilderService {
                     target: CardTargetedEnum.Player,
                     args: {
                         value: decayAmount,
-                        cardId: PoisonedCard.cardId,     
+                        cardId: DecayCard.cardId,     
                         destination: CardDestinationEnum.Draw,
                         position: AddCardPosition.Random,
                     },
