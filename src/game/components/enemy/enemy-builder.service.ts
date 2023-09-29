@@ -13,6 +13,7 @@ import { Card } from "../card/card.schema";
 import { revealStatus } from "src/game/status/reveal/constants";
 import { DecayCard } from "../card/data/decay.card";
 import { healEffect } from "src/game/effects/heal/constants";
+import { MirageCard } from "../card/data/mirage.card";
 
 export class EnemyBuilderService {
     
@@ -226,6 +227,30 @@ export class EnemyBuilderService {
                     action: {
                         name: 'cast1',
                         hint: 'cast1',
+                    },
+                }
+            ]
+        }
+    }
+
+    public static createMistifyAction = (amount:number) => {
+        return {
+            type: EnemyIntentionType.Mistify,
+            target: CardTargetedEnum.Player,
+            value: amount,
+            effects:[
+                {
+                    effect: addCardEffect.name,
+                    target: CardTargetedEnum.Player,
+                    args: {
+                        value: amount,
+                        cardId: MirageCard.cardId,     
+                        destination: CardDestinationEnum.Draw,
+                        position: AddCardPosition.Random,
+                    },
+                    action: {
+                        name: 'mistify',
+                        hint: 'mistify',
                     },
                 }
             ]

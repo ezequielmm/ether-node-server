@@ -1,4 +1,3 @@
-import { damageEffect } from 'src/game/effects/damage/constants';
 import { CardRarityEnum, CardTypeEnum, CardTargetedEnum } from '../card.enum';
 import { Card } from '../card.schema';
 import { energyEffect } from 'src/game/effects/energy/constants';

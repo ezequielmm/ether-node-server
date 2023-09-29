@@ -56,13 +56,12 @@ export class RevealStatus implements StatusEventHandler {
                 const newEnemy = await this.enemyService.createNewStage2EnemyWithStatuses(enemyFromDB, buffs, source.value.statuses[StatusType.Debuff]);
                 aliveEnemies.unshift(...[newEnemy]);
 
-                //- todo: Este mensaje puede cambiar para que se ejecute otra animacion en unity
                 ctx.client.emit(
                     'PutData',
                     StandardResponse.respond({
                         message_type: SWARMessageType.CombatUpdate,
-                        action: SWARAction.SpawnEnemies,
-                        data: newEnemy,
+                        action: SWARAction.TransformEnemy,
+                        data: [source.value, newEnemy],
                     }),
                 );
 
