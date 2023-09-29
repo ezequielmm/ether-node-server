@@ -11,6 +11,7 @@ import { addCardEffect } from "src/game/effects/addCard/contants";
 import { AddCardPosition } from "src/game/effects/effects.enum";
 import { Card } from "../card/card.schema";
 import { revealStatus } from "src/game/status/reveal/constants";
+import { PoisonedCard } from "../card/data/poisoned.card";
 
 export class EnemyBuilderService {
     
@@ -272,8 +273,43 @@ export class EnemyBuilderService {
         }
     }
 
+    public static createInfectIntent = (damage:number, decayAmount:number) => {
+        return {
+            type: EnemyIntentionType.Attack,
+            target: CardTargetedEnum.Player,
+            value: damage,
+            effects: [
+                {
+                    effect: damageEffect.name,
+                    target: CardTargetedEnum.Player,
+                    args: {
+                        value: damage,
+                    },
+                    action: {
+                        name: 'attack1',
+                        hint: 'attack1',
+                    },
+                },
+                {
+                    effect: addCardEffect.name,
+                    target: CardTargetedEnum.Player,
+                    args: {
+                        value: decayAmount,
+                        cardId: PoisonedCard.cardId,     
+                        destination: CardDestinationEnum.Draw,
+                        position: AddCardPosition.Random,
+                    },
+                    action: {
+                        name: 'cast1',
+                        hint: 'cast1',
+                    },
+                },
+            ],
+        }
+    }
     
-    
+
+
     //------------------------------------------------------Enemy Specifics:
 
     public static boobyTrapSpecial = () => {

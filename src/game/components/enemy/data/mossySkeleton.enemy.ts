@@ -9,13 +9,14 @@ import { EnemyBuilderService } from '../enemy-builder.service';
 //-------------------------------------------------------------------------------------------------------------------------------------------------------
 //- Intents:
 //-------------------------------------------------------------------------------------------------------------------------------------------------------
-const BasicAttack_sword:     EnemyIntention = EnemyBuilderService.createBasicAttackIntent(14);
-const BasicAttack_arrow:    EnemyIntention = EnemyBuilderService.createBasicAttackIntent(9);
-const DebuffFeeble:   EnemyIntention = EnemyBuilderService.createBasicDebuffIntent(1, feebleStatus.name);
-const BasicDefense:    EnemyIntention = EnemyBuilderService.createDefenseIntent(14);
-const BuffResolve:     EnemyIntention = EnemyBuilderService.createBasicBuffIntent(2, resolveStatus.name);
-const DebuffFatigue:    EnemyIntention = EnemyBuilderService.createBasicDebuffIntent(1, fatigue.name);
-const Breach: EnemyIntention = EnemyBuilderService.createBreachAttack(16);
+const BasicAttack_sword: EnemyIntention = EnemyBuilderService.createBasicAttackIntent(14);
+const BasicAttack_arrow: EnemyIntention = EnemyBuilderService.createBasicAttackIntent(9);
+const DebuffFeeble:      EnemyIntention = EnemyBuilderService.createBasicDebuffIntent(1, feebleStatus.name);
+const BasicDefense:      EnemyIntention = EnemyBuilderService.createDefenseIntent(14);
+const BuffResolve:       EnemyIntention = EnemyBuilderService.createBasicBuffIntent(2, resolveStatus.name);
+const DebuffFatigue:     EnemyIntention = EnemyBuilderService.createBasicDebuffIntent(1, fatigue.name);
+const Breach:            EnemyIntention = EnemyBuilderService.createBreachAttack(16);
+const Infect:            EnemyIntention = EnemyBuilderService.createInfectIntent(11, 1);
 
 /*
 TODO: Intents  
@@ -34,12 +35,12 @@ const SignatureMove:
 //-------------------------------------------------------------------------------------------------------------------------------------------------------
 const BasicIntents: EnemyAction = {
     options:[
-        { id: 1, probability: 0.3, cooldown: 0, intents: [BasicAttack_sword] },
-        { id: 2, probability: 0.3, cooldown: 0, intents: [BasicAttack_arrow, DebuffFeeble] },
+        { id: 1, probability: 0.2, cooldown: 0, intents: [BasicAttack_sword] },
+        { id: 2, probability: 0.2, cooldown: 0, intents: [BasicAttack_arrow, DebuffFeeble] },
         { id: 3, probability: 0.1, cooldown: 0, intents: [BasicDefense] },
         { id: 4, probability: 0.2, cooldown: 0, intents: [BuffResolve] },
         { id: 5, probability: 0.1, cooldown: 0, intents: [DebuffFatigue] },
-        //{ id: 6, probability: 0.2, cooldown: 0, intents: [Infect] },
+        { id: 6, probability: 0.2, cooldown: 0, intents: [Infect] },
     ]
 }
 
