@@ -94,7 +94,9 @@ export class SendEnemyIntentProcess {
             case EnemyIntentionType.Absorb:
                 return `This Enemy will transform any damage received into HP`;
             case EnemyIntentionType.Infect:
-                return `This Enemy infects its opponent`;
+                return `This Enemy will infect its opponent`;
+            case EnemyIntentionType.Grow:
+                return "This Enemy is plotting to grow into a larger, stronger version";
             case EnemyIntentionType.Reinforcements:
                 return `This Enemy is plotting to summon another enemy to the battle the next turn`;
             case EnemyIntentionType.DoNothing:

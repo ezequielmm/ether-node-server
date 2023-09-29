@@ -18,13 +18,8 @@ export class AbsorbEffect implements EffectHandler {
     async handle(dto: EffectDTO<Record<string, any>>): Promise<void> {
         
         const { ctx, source, target } = dto;
-        console.log("----------------------------------------------------")
-        console.log("Inside AbsorbEffect");
         
         if(EnemyService.isEnemy(source)){
-            console.log("Source is an Enemy");
-            console.log("Args:");
-            console.log(dto.args)
             const healAmount = dto.args.currentValue;
             if(healAmount && healAmount > 0){
                 const hpCurrent = source.value.hpCurrent;
@@ -40,7 +35,6 @@ export class AbsorbEffect implements EffectHandler {
                 );
             }
         }
-        console.log("----------------------------------------------------")
     }
 
     private async sendToCombatQueue(

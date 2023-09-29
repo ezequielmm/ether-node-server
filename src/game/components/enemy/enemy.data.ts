@@ -33,6 +33,9 @@ import { boobyTrapData } from './data/boobyTrap.enemy';
 import { deepGoblinData } from './data/deepGoblin.enemy';
 import { deepDwellerMonsterData } from './data/deepDwellerMonster.enemy';
 import { deepDwellerLureData } from './data/deepDwellerLure.enemy';
+import { mossySkeletonData } from './data/mossySkeleton.enemy';
+import { mossyBonesData } from './data/mossyBones.enemy';
+import { mossyArcherData } from './data/mossyArcher.enemy';
 
 export const data: Enemy[] = [
     sporeMongerData,
@@ -70,6 +73,9 @@ export const data: Enemy[] = [
     deepDwellerMonsterData,
     boobyTrapData,
     mimicData,
-    deepGoblinData
+    deepGoblinData,
+    mossySkeletonData,
+    mossyBonesData,
+    mossyArcherData
 
 ];

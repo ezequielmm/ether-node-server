@@ -5,28 +5,39 @@ import { fatigue } from 'src/game/status/fatigue/constants';
 import { feebleStatus } from 'src/game/status/feeble/constants';
 import { EnemyAction, EnemyIntention } from '../enemy.interface';
 import { EnemyBuilderService } from '../enemy-builder.service';
+import { PoisonedCard } from '../../card/data/poisoned.card';
+import { CardDestinationEnum, CardTargetedEnum } from '../../card/card.enum';
+import { transformEffect } from 'src/game/effects/transform/constants';
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------------
 //- Intents:
 //-------------------------------------------------------------------------------------------------------------------------------------------------------
-const BasicAttack:     EnemyIntention = EnemyBuilderService.createBasicAttackIntent(10);
-const BasicDefense:    EnemyIntention = EnemyBuilderService.createDefenseIntent(12);
-const BuffResolve:     EnemyIntention = EnemyBuilderService.createBasicBuffIntent(1, resolveStatus.name);
-const DebuffFatigue:    EnemyIntention = EnemyBuilderService.createBasicDebuffIntent(1, fatigue.name);
+const BasicAttack:    EnemyIntention = EnemyBuilderService.createBasicAttackIntent(10);
+const BasicDefense:   EnemyIntention = EnemyBuilderService.createDefenseIntent(12);
+const BuffResolve:    EnemyIntention = EnemyBuilderService.createBasicBuffIntent(1, resolveStatus.name);
+const DebuffFatigue:  EnemyIntention = EnemyBuilderService.createBasicDebuffIntent(1, fatigue.name);
 const DebuffFeeble:   EnemyIntention = EnemyBuilderService.createBasicDebuffIntent(2, feebleStatus.name);
-
-
-/*
-TODO: Intents  
-- Infect1 Actions( (8 - 10 Infect Damage) + Infect 1  )
-- SignatureMove Action( develop )
-- DebuffPoisonedCards Action(add 2 posioned cards to target’s deck)
-
-const Infect: 
-const SignatureMove:
-const DebuffPoisonedCards:
-*/
-
+const DebuffPoisoned: EnemyIntention = EnemyBuilderService.createAddCardIntent(2, PoisonedCard, CardDestinationEnum.Draw);
+const Infect:         EnemyIntention = EnemyBuilderService.createInfectIntent(9, 1);
+const SignatureMove:  EnemyIntention = {
+    type: EnemyIntentionType.Signature,
+    target: CardTargetedEnum.Player,
+    value: 0,
+    negateDamage: 12,
+    effects: [
+        {
+            effect: transformEffect.name,
+            target: CardTargetedEnum.Self,
+            args: {
+                enemyId: 0,
+            },
+            action: {
+                name: 'signature_move',
+                hint: 'signature_move',
+            },
+        },
+    ]
+}
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------------
 //- Attack Tables:
@@ -45,10 +56,10 @@ const AdvancedIntents: EnemyAction = {
     options: [
         { id: 7,  probability: 0.1, cooldown: 0, intents: [BasicAttack, BuffResolve] },
         { id: 8,  probability: 0.1, cooldown: 0, intents: [BasicAttack, DebuffFeeble] },
-        { id: 9, probability: 0.1, cooldown: 0, intents: [BasicDefense, BuffResolve] },
-        //{ id: 10, probability: 0.2, cooldown: 0, intents: [BasicDefense, DebuffPoisoned] },
-        //{ id: 11, probability: 0.2, cooldown: 0, intents: [Infect1] },
-        //{ id: 12, probability: 0.3, cooldown: 0, intents: [SignatureMove] }
+        { id: 9,  probability: 0.1, cooldown: 0, intents: [BasicDefense, BuffResolve] },
+        { id: 10, probability: 0.2, cooldown: 0, intents: [BasicDefense, DebuffPoisoned] },
+        { id: 11, probability: 0.2, cooldown: 0, intents: [Infect] },
+        { id: 12, probability: 0.3, cooldown: 0, intents: [SignatureMove] }
     ]
 }
 
