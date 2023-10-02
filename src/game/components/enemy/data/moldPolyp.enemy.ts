@@ -115,7 +115,7 @@ const AdvancedIntents: EnemyAction = {
 //- Enemy:
 //-------------------------------------------------------------------------------------------------------------------------------------------------------
 export const moldPolypData: Enemy = {
-    enemyId: 33,
+    enemyId: 40,
     isActive: true,
     name: 'Mold Polyp',
     type: EnemyTypeEnum.Mold,

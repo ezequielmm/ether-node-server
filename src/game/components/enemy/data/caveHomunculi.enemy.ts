@@ -77,7 +77,7 @@ const AdvancedIntents: EnemyAction = {
 //- Enemy:
 //-------------------------------------------------------------------------------------------------------------------------------------------------------
 export const caveHomunculiData: Enemy = {
-    enemyId: 33,
+    enemyId: 41,
     isActive: true,
     name: 'Cave Homunculi',
     type: EnemyTypeEnum.Plant,
