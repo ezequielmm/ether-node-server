@@ -3,10 +3,10 @@ import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Controller, Get } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
-const configService = new ConfigService();
+// const configService = new ConfigService();
 
 
-const signingSecret =  configService.get<string>('BLIGHTFELL_SECRET');
+const signingSecret =  'Uj7nQptwRwTO6sEc4DTTQKBzGvyuxDwb';//configService.get<string>('BLIGHTFELL_SECRET');
 
 export type JwtType = 'session' | 'nonce';
 
