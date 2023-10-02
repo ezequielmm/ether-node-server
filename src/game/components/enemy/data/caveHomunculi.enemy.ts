@@ -34,6 +34,9 @@ const SignatureMove:   EnemyIntention = {
         {
             effect: sporeDanceEffect.name,
             target: CardTargetedEnum.Player,
+            args: {
+                value: 0,
+            },
             action: {
                 name: 'signature_move',
                 hint: 'signature_move',
