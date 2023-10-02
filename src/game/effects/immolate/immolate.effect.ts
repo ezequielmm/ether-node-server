@@ -19,6 +19,11 @@ export class ImmolateEffect implements EffectHandler {
 
         if(EnemyService.isEnemy(source)){
             const updatedEnemies = enemies.filter(enemy => enemy.id !== source.value.id);
+
+            console.log("Immolate Efefct --------------- ----------------------------------------------")
+            console.log(updatedEnemies)
+            console.log("------------------------------- ----------------------------------------------")
+
             ctx.expedition.currentNode.data.enemies = updatedEnemies;
             ctx.expedition.markModified('currentNode.data.enemies');
             await ctx.expedition.save();
