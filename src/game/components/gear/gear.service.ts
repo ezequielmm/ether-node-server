@@ -63,23 +63,22 @@ export class GearService {
     return rarity;
   }
 
-  async getLootbox(
-    size: number,
-    rarities?: ILootboxRarityOdds,
-  ): Promise<Gear[]> {
-    const gear_list: Gear[] = [];
+  // async getLootbox(
+  //   size: number,
+  //   rarities?: ILootboxRarityOdds,
+  // ): Promise<Gear[]> {
+  //   const gear_list: Gear[] = [];
 
-    for (let i = 0; i < size; i++) {
-      const one_gear = await this.getOneGear(
-        this.selectRandomRarity(rarities),
-      );
-      gear_list.push(one_gear);
-    }
+  //   for (let i = 0; i < size; i++) {
+  //     const one_gear = await this.getOneGear(
+  //       this.selectRandomRarity(rarities),
+  //     );
+  //     gear_list.push(one_gear);
+  //   }
 
-    return gear_list;
-  }
+  //   return gear_list;
+  // }
 
-  /*
   async getLootbox(
     size: number,
     rarities?: ILootboxRarityOdds,
@@ -121,7 +120,7 @@ export class GearService {
 
     return gear_list;
   }
-*/
+
   private downgradeRarity(
     currentRarity: GearRarityEnum,
   ): GearRarityEnum | null {
