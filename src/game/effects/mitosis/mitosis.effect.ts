@@ -24,15 +24,7 @@ export class MitosisEffect implements EffectHandler {
             const moldDB = await this.enemyService.findById(originalMold.enemyId);
             const newMold = await this.enemyService.createNewStage2EnemyWithStatuses(moldDB, originalMold.statuses.buff, originalMold.statuses.debuff);
 
-            console.log("Mitosis Efefct --------------- New MoldPolyp: ----------------------------------------------")
-            console.log({newMold})
-            console.log("------------------------------- ----------------------------------------------")
-
             const updatedEnemies = [...enemies, newMold]
-
-            console.log("Mitosis Efefct --------------- Updated Enemies: ----------------------------------------------")
-            console.log({updatedEnemies})
-            console.log("------------------------------- ----------------------------------------------")
 
             ctx.expedition.currentNode.data.enemies = updatedEnemies;
             ctx.expedition.markModified('currentNode.data.enemies');
