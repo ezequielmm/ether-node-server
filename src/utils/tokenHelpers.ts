@@ -1,6 +1,12 @@
 import { sign, JwtPayload, SignOptions, verify } from 'jsonwebtoken';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { Controller, Get } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 
-const signingSecret = 'TEMPORARY_SECRET';
+const configService = new ConfigService();
+
+
+const signingSecret =  configService.get<string>('BLIGHTFELL_SECRET');
 
 export type JwtType = 'session' | 'nonce';
 
