@@ -17,7 +17,6 @@ export class PlayerWinService {
   async create(contest_info: PlayerWin) {
     return await this.playerWin.create(contest_info);
   }
-  /*
   async getAllLootboxesByTokenId(tokenId: number): Promise<any[]> {
     // Query PlayerWin documents where the tokenId matches
     const winsWithMatchingToken = await this.playerWin
@@ -46,7 +45,6 @@ export class PlayerWinService {
 
     return allLootboxes;
   }
-  */
   async findAllWins(wallet_id: string, event_id: number) {
     const items = await this.playerWin.find({
       'playerToken.walletId': wallet_id,

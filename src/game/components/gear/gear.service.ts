@@ -13,8 +13,8 @@ export class GearService {
   constructor(
     @InjectModel(Gear)
     private readonly gearModel: ReturnModelType<typeof Gear>,
-  ) {}
-  
+  ) { }
+
 
   private gearData = GearData;
   private selectRandomRarity(rarities: ILootboxRarityOdds) {
@@ -66,6 +66,23 @@ export class GearService {
   async getLootbox(
     size: number,
     rarities?: ILootboxRarityOdds,
+  ): Promise<Gear[]> {
+    const gear_list: Gear[] = [];
+
+    for (let i = 0; i < size; i++) {
+      const one_gear = await this.getOneGear(
+        this.selectRandomRarity(rarities),
+      );
+      gear_list.push(one_gear);
+    }
+
+    return gear_list;
+  }
+
+  /*
+  async getLootbox(
+    size: number,
+    rarities?: ILootboxRarityOdds,
     userGear: Gear[] = [],
   ): Promise<Gear[]> {
     //console.log('Starting to generate lootbox...');
@@ -74,11 +91,8 @@ export class GearService {
 
     userGear.forEach((gear) => uniqueGearIds.add(gear.gearId.toString()));
 
-   /* console.log(
-      `Initial unique gear IDs: ${Array.from(uniqueGearIds).join(', ')}`,
-    );
-*/
-    let targetGearSet = 'Siege';
+
+    let targetGearSet = '';
     let allGear: Gear[] = await this.getAllGear();
     allGear = allGear.filter((gear) => gear.name === targetGearSet);
 
@@ -89,9 +103,7 @@ export class GearService {
       const newGear = this.getRandomGearByRarity(allGear, targetRarity);
 
       if (uniqueGearIds.has(newGear.gearId.toString())) {
-       /* console.log(
-          `Repeated: ${newGear.gearId.toString()} - ${newGear.rarity}`,
-        );*/
+
         targetRarity = this.downgradeRarity(targetRarity);
 
         if (targetRarity === null) {
@@ -109,7 +121,7 @@ export class GearService {
 
     return gear_list;
   }
-
+*/
   private downgradeRarity(
     currentRarity: GearRarityEnum,
   ): GearRarityEnum | null {

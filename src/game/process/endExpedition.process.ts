@@ -50,23 +50,22 @@ export class EndExpeditionProcess {
         this.calculateFinalScore(ctx);
     
         // Check if the player can win and if the contest is valid
-        //let canWin = await this.playerWinService.classCanWin(ctx.expedition.playerState.characterClass as CharacterClassEnum);
-        //let contestIsValid = await this.contestService.isValid(ctx.expedition.contest);
+        let canWin = await this.playerWinService.classCanWin(ctx.expedition.playerState.characterClass as CharacterClassEnum);
+        let contestIsValid = await this.contestService.isValid(ctx.expedition.contest);
     
     
         // Force true in canWin and contestIsValid for contest sake.
          //canWin = true;
-        //contestIsValid = true;
+        contestIsValid = true;
         
-        //if(ctx.expedition.playerState.characterClass === "non-token-villager")
-       // {
-        //    canWin = false;
-        //}
+        if(ctx.expedition.playerState.characterClass === "non-token-villager")
+        {
+            canWin = false;
+        }
     
         // Handle loot and rewards
-        //await this.handleActiveEventLoot(ctx, canWin);
-        await this.calculateRewards(ctx);
-
+        await this.handleActiveEventLoot(ctx, canWin);
+    
         // Save the updated expedition
         await ctx.expedition.save();
     
@@ -98,7 +97,7 @@ export class EndExpeditionProcess {
         ctx.expedition.finalScore.notifyNoLoot = false;
     
     }
-    /*
+    
     // Handle loot when the event is active
     private async handleActiveEventLoot(ctx: GameContext, canWin:boolean) {
     
@@ -106,8 +105,8 @@ export class EndExpeditionProcess {
         
         const lootbox = await this.gearService.getLootbox(
             ctx.expedition.playerState.lootboxSize,
-            ctx.expedition.playerState.lootboxRarity,
-            userGear
+            ctx.expedition.playerState.lootboxRarity
+            // userGear
         );
         const filteredLootbox = await this.filterNewLootItems(ctx, lootbox);
         
@@ -135,9 +134,8 @@ export class EndExpeditionProcess {
 
         }
     }
-    */
+    
     // Filter out loot items that the player already has
-    /*
     private async filterNewLootItems(ctx: GameContext, lootbox: Gear[]): Promise<Gear[]> {
     
         const allGear = (await this.playerWinService.getAllLootboxesByTokenId(ctx.expedition.playerState.playerToken.tokenId)).flat();
@@ -149,7 +147,7 @@ export class EndExpeditionProcess {
     
         return filteredLootbox;
     }
-    */
+    
     // Notify the client
     private notifyClient(ctx: GameContext) {
         ctx.client.emit(
@@ -219,38 +217,4 @@ export class EndExpeditionProcess {
                 break;
         }
     }
-
-    private async calculateRewards(ctx: GameContext): Promise<void> {
-        const canWin = await this.playerWinService.classCanWin(ctx.expedition.playerState.characterClass as CharacterClassEnum);
-        const contestIsValid = await this.contestService.isValid(ctx.expedition.contest);
-        if (canWin) {
-            ctx.expedition.finalScore.notifyNoLoot = true;
-            if (contestIsValid) {
-                //------------------------------------------------------------------------------------------
-                //- Lootbox when event not Active:
-                ctx.expedition.finalScore.rewards = await this.squiresService.getAccountRewards(ctx.expedition.userAddress, ctx.expedition.playerState.equippedGear);
-                //------------------------------------------------------------------------------------------
-                
-                //------------------------------------------------------------------------------------------
-                //- Lootbox when event Active. Following 2 blocks:
-                
-                // ctx.expedition.finalScore.lootbox = await this.gearService.getLootbox
-                //     (
-                //         ctx.expedition.playerState.lootboxSize,
-                //         ctx.expedition.playerState.lootboxRarity,
-                //     );
-                // await this.playerGearService.addGearToPlayer(
-                //     ctx.expedition.userAddress,
-                //     ctx.expedition.finalScore.lootbox,
-                // );
-                //------------------------------------------------------------------------------------------
-                    await this.playerWinService.create({
-                        event_id: ctx.expedition.contest.event_id,
-                        playerToken: ctx.expedition.playerState.playerToken
-                    });
-                ctx.expedition.finalScore.notifyNoLoot = false;
-            }
-        }
-    }
 }
-
