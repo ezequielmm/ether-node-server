@@ -6,6 +6,7 @@ import { sporeDanceEffect } from "./constants";
 import { moldPolypData } from "src/game/components/enemy/data/moldPolyp.enemy";
 import { StandardResponse, SWARMessageType, SWARAction } from "src/game/standardResponse/standardResponse";
 import { caveHomunculiData } from "src/game/components/enemy/data/caveHomunculi.enemy";
+import { EnemyBuilderService } from "src/game/components/enemy/enemy-builder.service";
 
 @EffectDecorator({
     effect: sporeDanceEffect,
@@ -38,6 +39,13 @@ export class SporeDanceEffect implements EffectHandler {
                 ctx.expedition.markModified('currentNode.data.enemies');
                 await ctx.expedition.save();
 
+                for(const homunculi of listHomunculis){
+                    await this.enemyService.setCurrentScript(
+                        ctx,
+                        homunculi.id,
+                        {id: 0, intentions: [EnemyBuilderService.createDoNothingIntent()]},
+                    );
+                }
 
                 ctx.client.emit(
                     'PutData',
