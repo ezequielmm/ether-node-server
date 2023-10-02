@@ -32,6 +32,9 @@ const Special:        EnemyIntention = {
         {
             effect: mitosisEffect.name,
             target: CardTargetedEnum.Player,
+            args: {
+                value: 0,
+            },
             action: {
                 name: 'special',
                 hint: 'special',
@@ -76,6 +79,9 @@ const SignatureMove:  EnemyIntention = {
         {
             effect: immolateEffect.name,
             target: CardTargetedEnum.Player,
+            args: {
+                value: 0,
+            },
             action: {
                 name: 'signature_move',
                 hint: 'signature_move',
