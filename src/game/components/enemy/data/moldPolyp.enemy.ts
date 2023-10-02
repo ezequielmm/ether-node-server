@@ -6,7 +6,6 @@ import { EnemyBuilderService } from '../enemy-builder.service'
 import { CardDestinationEnum, CardTargetedEnum } from '../../card/card.enum';
 import { PoisonedCard } from '../../card/data/poisoned.card';
 import { MoldCard } from '../../card/data/mold.card';
-import { transformEffect } from 'src/game/effects/transform/constants';
 import { damageEffect } from 'src/game/effects/damage/constants';
 import { addCardEffect } from 'src/game/effects/addCard/contants';
 import { AddCardPosition } from 'src/game/effects/effects.enum';

@@ -30,8 +30,8 @@ export class EnemyBuilderService {
                         value: attack,
                     },
                     action: {
-                        name: 'attack1',
-                        hint: 'attack1',
+                        name: 'attack',
+                        hint: 'attack',
                     },
                 },
             ],
@@ -51,8 +51,8 @@ export class EnemyBuilderService {
                         value: breach,
                     },
                     action: {
-                        name: 'attack1',
-                        hint: 'attack1',
+                        name: 'breach',
+                        hint: 'breach',
                     },
                 },
             ],
@@ -72,8 +72,8 @@ export class EnemyBuilderService {
                         value: 0,
                     },
                     action: {
-                        name: 'attack1',
-                        hint: 'attack1',
+                        name: 'counter',
+                        hint: 'counter',
                     },
                 },
             ],
@@ -93,8 +93,8 @@ export class EnemyBuilderService {
                         value: 0,
                     },
                     action: {
-                        name: 'attack1',
-                        hint: 'attack1',
+                        name: 'absorb',
+                        hint: 'absorb',
                     },
                 },
             ],
@@ -136,8 +136,8 @@ export class EnemyBuilderService {
                         value: defense,
                     },
                     action: {
-                        name: 'cast1',
-                        hint: 'cast1',
+                        name: 'defend',
+                        hint: 'defend',
                     },
                 },
             ],
@@ -177,8 +177,8 @@ export class EnemyBuilderService {
                         },
                     },
                     action: {
-                        name: 'cast1',
-                        hint: 'cast1',
+                        name: 'buff',
+                        hint: 'buff',
                     },
                 },
             ],
@@ -201,8 +201,8 @@ export class EnemyBuilderService {
                         },
                     },
                     action: {
-                        name: 'cast1',
-                        hint: 'cast1',
+                        name: 'debuff',
+                        hint: 'debuff',
                     },
                 },
             ],
@@ -225,8 +225,8 @@ export class EnemyBuilderService {
                         position: AddCardPosition.Random,
                     },
                     action: {
-                        name: 'cast1',
-                        hint: 'cast1',
+                        name: 'debuff',
+                        hint: 'debuff',
                     },
                 }
             ]
@@ -270,8 +270,8 @@ export class EnemyBuilderService {
                         enemiesToSpawn: enemies,
                     },
                     action: {
-                        name: 'cast1',
-                        hint: 'cast1',
+                        name: 'call_for_reinforcements',
+                        hint: 'call_for_reinforcements',
                     },
                 },
             ],
@@ -291,8 +291,8 @@ export class EnemyBuilderService {
                         enemiesToSpawn: enemies,
                     },
                     action: {
-                        name: 'cast1',
-                        hint: 'cast1',
+                        name: 'call_for_reinforcements',
+                        hint: 'call_for_reinforcements',
                     },
                 },
             ],
