@@ -12,6 +12,6 @@ export class PlayerWin {
     @Prop()
     playerToken: IPlayerToken;
 
-    /@Prop()
+    @Prop()
     lootbox: Gear[]
 }
