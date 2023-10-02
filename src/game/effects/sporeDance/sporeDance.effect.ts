@@ -20,14 +20,9 @@ export class SporeDanceEffect implements EffectHandler {
         let enemies = [...dto.ctx.expedition.currentNode.data.enemies];
 
         if(EnemyService.isEnemy(source)){
-
-
-
             const moldPolyps = enemies.filter(enemy => enemy.enemyId === moldPolypData.enemyId);
-            console.log("Spore Dance Efefct --------------------------------------------------")
-            console.log("Amount of mold polyps in combat: " + moldPolyps.length)
-
             if(moldPolyps.length > 0){
+                let listHomunculis = [];
                 const caveHomunculiDB = await this.enemyService.findById(caveHomunculiData.enemyId);
                 for(const polyp of moldPolyps){
                     const newHomunculi = await this.enemyService.createNewStage2Enemy(caveHomunculiDB);
@@ -37,18 +32,21 @@ export class SporeDanceEffect implements EffectHandler {
                         enemies[polypIndex] = newHomunculi;
                     }
 
-                    ctx.client.emit(
-                        'PutData',
-                        StandardResponse.respond({
-                            message_type: SWARMessageType.CombatUpdate,
-                            action: SWARAction.TransformEnemy,
-                            data: [polyp, newHomunculi],
-                        }),
-                    );
+                    listHomunculis.push(newHomunculi);
                 }
                 ctx.expedition.currentNode.data.enemies = enemies;
                 ctx.expedition.markModified('currentNode.data.enemies');
                 await ctx.expedition.save();
+
+
+                ctx.client.emit(
+                    'PutData',
+                    StandardResponse.respond({
+                        message_type: SWARMessageType.CombatUpdate,
+                        action: SWARAction.SporeDance,
+                        data: [moldPolyps, listHomunculis],
+                    }),
+                );
             }
 
         }

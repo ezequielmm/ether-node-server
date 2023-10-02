@@ -95,6 +95,7 @@ export enum SWARAction {
     ShowNextStage = 'show_next_stage',
     Mitosis = 'mitosis',
     Immolate = 'immolate',
+    SporeDance = 'spore_dance',
 }
 
 interface SWARPayload {
