@@ -106,7 +106,7 @@ export class EndExpeditionProcess {
         const lootbox = await this.gearService.getLootbox(
             ctx.expedition.playerState.lootboxSize,
             ctx.expedition.playerState.lootboxRarity,
-            userGear
+            // userGear
         );
         const filteredLootbox = await this.filterNewLootItems(ctx, lootbox);
         
