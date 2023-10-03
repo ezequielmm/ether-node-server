@@ -1,13 +1,14 @@
-import { CardRarityEnum, CardTypeEnum, CardTargetedEnum } from '../card.enum';
+import { CardRarityEnum, CardTypeEnum, CardTargetedEnum, CardKeywordEnum } from '../card.enum';
 import { Card } from '../card.schema';
 import { energyEffect } from 'src/game/effects/energy/constants';
 
 
 /*
 TODO:
+- validate if we can send -1 as value in energyEffect
 - percistance: yes (in keywords)
 - map effect
-- card effect logic
+
 
 Notes: Added to deck by Mold actions
 */
@@ -18,15 +19,15 @@ export const MoldCard: Card = {
     cardType: CardTypeEnum.Attack,//we shoud have kind of "map" cards?
     pool: 'knight',
     energy: 0,
-    description: `Reduce energy by 1 if this card is in hand by the start of the turn. Discard.`,
-    keywords: [],
+    description: `Reduce ${energyEffect.name} by 1 if this card is in hand by the start of the turn. Discard.`,
+    keywords: [CardKeywordEnum.Exhaust],
     properties: {
         effects: [
             {
-                effect: energyEffect.name, //what efect should be??
+                effect: energyEffect.name,
                 target: CardTargetedEnum.Self,
                 args: {
-                    value: 1,
+                    value: -1,
                 },
             },
         ],
@@ -34,5 +35,6 @@ export const MoldCard: Card = {
     },
     showPointer: false,
     isUpgraded: false,
+    triggerOnDrawn: true,
     isActive: true,
 };
