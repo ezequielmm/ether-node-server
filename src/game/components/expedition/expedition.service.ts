@@ -184,9 +184,9 @@ export class ExpeditionService {
         await this.expedition.updateOne({ clientId }, { isCurrentlyPlaying });
     }
 
-    async getExpeditionMap(ctx: GameContext): Promise<Node[]> {
-        return ctx.expedition.map;
-    }
+    // async getExpeditionMap(ctx: GameContext): Promise<Node[]> {
+    //     return ctx.expedition.map;
+    // }
 
     isPlayerInCombat(ctx: GameContext): boolean {
         const nodeType = ctx.expedition?.currentNode?.nodeType;
