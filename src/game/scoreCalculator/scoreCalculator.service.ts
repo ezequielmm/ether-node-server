@@ -11,6 +11,8 @@ import { NodeStatus } from '../components/expedition/node-status';
 import { Trinket } from '../components/trinket/trinket.schema';
 import { ExpeditionStatusEnum } from '../components/expedition/expedition.enum';
 import { Gear } from '../components/gear/gear.schema';
+import { InjectModel } from 'kindagoose';
+import { ReturnModelType } from '@typegoose/typegoose';
 
 export interface ScoreResponse {
     outcome: string;
@@ -27,6 +29,10 @@ export interface ScoreResponse {
 
 @Injectable()
 export class ScoreCalculatorService {
+
+    @InjectModel(Expedition)
+    private readonly expedition: ReturnModelType<typeof Expedition>
+
     calculate({ expedition }: { expedition: Expedition }): ScoreResponse {
         // All the points will be calculatred based on
         // this documentation:
@@ -60,7 +66,7 @@ export class ScoreCalculatorService {
             this.calculateBossEnemyPotions(bossEnemiesDefeated);
 
         // Now we query how many nodes we completed in the expedition
-        const nodesCompleted = this.calculateNodesCompleted(map);
+        const nodesCompleted = this.calculateNodesCompleted(this.expedition.findById(map._id).node);
 
         // How we query how much HP the player got
         const healthReamining = this.calculateHP(hpCurrent, hpMax);
