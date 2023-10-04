@@ -161,22 +161,22 @@ export class MapService {
         return node.isSelectable();
     }
 
-    public makeClientSafe(map: Node[]): Node[] {
-        const nextPortalIndex: number = findIndex(
-            map,
-            (node) =>
-                node.type === NodeType.Portal &&
-                node.status !== NodeStatus.Completed,
+    public makeClientSafe(mapData: any): Node[] {
+        const map = mapData.map; // Accede al campo 'map' del JSON
+
+        const nextPortalIndex: number = map.findIndex(
+            (node: any) =>
+            node.type === NodeType.Portal &&
+            node.status !== NodeStatus.Completed,
         );
 
-        // We only need to sanitize (and return) up to that portal, so let's ditch the rest
-        map = slice(
-            map,
+        // Solo necesitamos los nodos hasta el siguiente portal, así que deshazte del resto
+        const sanitizedMap = map.slice(
             0,
             nextPortalIndex !== -1 ? nextPortalIndex + 1 : map.length,
         );
 
-        // Now let's return the map after purging all state info from nodes that aren't completed or currently active
+        /// Now let's return the map after purging all state info from nodes that aren't completed or currently active
         return map.map((node) => {
             if (
                 node.status === NodeStatus.Completed ||
