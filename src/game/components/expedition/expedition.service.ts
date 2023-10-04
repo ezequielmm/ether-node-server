@@ -36,7 +36,7 @@ import { NodeType } from './node-type';
 @Injectable()
 export class ExpeditionService {
     constructor(
-        @Inject(Expedition)
+        @InjectModel(Expedition)
         private readonly expedition: ReturnModelType<typeof Expedition>,
         private readonly moduleRef: ModuleRef,
         private readonly mapService: MapService,
