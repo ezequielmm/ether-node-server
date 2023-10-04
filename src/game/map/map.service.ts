@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { find, findIndex, slice } from 'lodash';
 import { NodeStatus } from '../components/expedition/node-status';
 import { Node } from '../components/expedition/node';
@@ -14,14 +14,12 @@ import { Expedition } from 'src/game/components/expedition/expedition.schema';
 @Injectable()
 export class MapService {
 
-    @InjectModel(MapService)
+    @Inject(MapService)
     private readonly mapModel: ReturnModelType<typeof MapService>
+    @Inject(Expedition)
+    private readonly expedition: ReturnModelType<typeof Expedition>
 
     constructor(
-
-        @InjectModel(Expedition)
-        private readonly expedition: ReturnModelType<typeof Expedition>,
-
         private readonly moduleRef: ModuleRef,
 
     ) { }

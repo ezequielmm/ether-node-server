@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { InjectModel } from 'kindagoose';
 import { UpdateQuery, FilterQuery, ProjectionFields } from 'mongoose';
 import { Expedition, ExpeditionDocument } from './expedition.schema';
@@ -36,7 +36,7 @@ import { NodeType } from './node-type';
 @Injectable()
 export class ExpeditionService {
     constructor(
-        @InjectModel(Expedition)
+        @Inject(Expedition)
         private readonly expedition: ReturnModelType<typeof Expedition>,
         private readonly moduleRef: ModuleRef,
         private readonly mapService: MapService,
