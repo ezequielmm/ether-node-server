@@ -39,6 +39,10 @@ export class EnemyService {
 
     private readonly logger: Logger = new Logger(EnemyService.name);
 
+    private readonly mapModel: MapService
+    @InjectModel(MapService)
+    private readonly mapModel2: ReturnModelType<typeof MapService>
+
     constructor(
         @InjectModel(Enemy)
         private readonly enemy: ReturnModelType<typeof Enemy>,
@@ -51,9 +55,7 @@ export class EnemyService {
 
     ) { }
 
-    private readonly mapModel: MapService
-    @InjectModel(MapService)
-    private readonly mapModel2: ReturnModelType<typeof MapService>
+
 
     /**
      * Check if the entity is an enemy

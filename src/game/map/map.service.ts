@@ -13,16 +13,19 @@ import { MapType, Expedition } from '../components/expedition/expedition.schema'
 
 @Injectable()
 export class MapService {
-    constructor(
-        private readonly moduleRef: ModuleRef
-
-    ) { }
 
     @InjectModel(MapType)
     private readonly mapModel: ReturnModelType<typeof MapType>
     // private readonly mapModel: Model<MapType>,
     @InjectModel(Expedition)
     private readonly expedition: ReturnModelType<typeof Expedition>
+
+    constructor(
+        private readonly moduleRef: ModuleRef
+
+    ) { }
+
+
 
     public selectNode(ctx: GameContext, nodeId: number): void {
         const node = this.findNodeById(ctx, nodeId);
