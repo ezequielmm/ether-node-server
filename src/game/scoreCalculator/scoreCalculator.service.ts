@@ -27,11 +27,13 @@ export interface ScoreResponse {
     rewards?: {name:string, image:string}[];
 }
 
+
+
 @Injectable()
 export class ScoreCalculatorService {
 
-    @InjectModel(Expedition)
     private readonly expedition: ReturnModelType<typeof Expedition>
+
 
     calculate({ expedition }: { expedition: Expedition }): ScoreResponse {
         // All the points will be calculatred based on
