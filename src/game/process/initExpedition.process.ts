@@ -17,11 +17,17 @@ import { IPlayerToken } from '../components/expedition/expedition.schema';
 import { ContestMapService } from '../contestMap/contestMap.service';
 import { ContestService } from '../contest/contest.service';
 import { MapDeckService } from '../components/mapDeck/mapDeck.service';
+import { MapService } from '../map/map.service';
+import { InjectModel } from 'kindagoose';
+import { ReturnModelType } from '@typegoose/typegoose';
 
 @Injectable()
 export class InitExpeditionProcess {
     private readonly logger: Logger = new Logger(InitExpeditionProcess.name);
 
+    @InjectModel(MapService)
+    private readonly mapService: ReturnModelType<typeof MapService>
+    
     constructor(
         private readonly expeditionService: ExpeditionService,
         private readonly cardService: CardService,
@@ -49,84 +55,89 @@ export class InitExpeditionProcess {
         character_class: string;
         contest: Contest;
     }): Promise<void> {
-        let character_class_enum = CharacterClassEnum.Knight;
-
-        switch (character_class) {
-            case 'Knight':
-                character_class_enum = CharacterClassEnum.Knight;
-                break;
-            case 'Villager':
-                character_class_enum = CharacterClassEnum.Villager;
-                break;
-            case 'BlessedVillager':
-                character_class_enum = CharacterClassEnum.BlessedVillager;
-                break;
-            case 'NonTokenVillager':
-                character_class_enum = CharacterClassEnum.NonTokenVillager;
-                break;
-            default:
-                character_class_enum = CharacterClassEnum.Knight;
-                break;
-        }
-
-        const character = await this.characterService.findOne({
-            characterClass: character_class_enum,
-        });
-
-        // Get initial player stats
-        const { initialPotionChance } =
-            await this.settingsService.getSettings();
-
-        // const map = contest
-        //     ? await this.contestMapService.getMapForContest(contest)
-        //     : await this.mapBuilderService.createMap({ actConfig: ActOneConfig, makeAvailable: true});
-
-        const map = await this.contestMapService.getMapForContest(contest);
-
-        const cards = await this.generatePlayerDeck(character, userAddress, contest);
-
-        const expedition = await this.expeditionService.create({
-            userAddress,
-            map,
-            scores: {
-                basicEnemiesDefeated: 0,
-                eliteEnemiesDefeated: 0,
-                bossEnemiesDefeated: 0,
-                minionEnemiesDefeated: 0,
-            },
-            mapSeedId: getTimestampInSeconds(),
-            actConfig: {
-                potionChance: initialPotionChance,
-            },
-            playerState: {
+        try {
+            let character_class_enum = CharacterClassEnum.Knight;
+    
+            switch (character_class) {
+                case 'Knight':
+                    character_class_enum = CharacterClassEnum.Knight;
+                    break;
+                case 'Villager':
+                    character_class_enum = CharacterClassEnum.Villager;
+                    break;
+                case 'BlessedVillager':
+                    character_class_enum = CharacterClassEnum.BlessedVillager;
+                    break;
+                case 'NonTokenVillager':
+                    character_class_enum = CharacterClassEnum.NonTokenVillager;
+                    break;
+                default:
+                    character_class_enum = CharacterClassEnum.Knight;
+                    break;
+            }
+    
+            const character = await this.characterService.findOne({
+                characterClass: character_class_enum,
+            });
+    
+            const { initialPotionChance } = await this.settingsService.getSettings();
+    
+            const mapData = {
+                // Aquí se coloca el JSON del mapa según la nueva estructura
+            };
+    
+            const map = await this.mapService.create(mapData);
+    
+            const cards = await this.generatePlayerDeck(character, userAddress, contest);
+    
+            const expeditionData = {
                 userAddress,
-                playerToken,
-                playerName,
-                equippedGear,
-                characterClass: character.characterClass,
-                hpMax: character.initialHealth,
-                hpCurrent: character.initialHealth,
-                gold: character.initialGold,
-                cards,
-                potions: [],
-                cardUpgradeCount: 0,
-                cardDestroyCount: 0,
-                trinkets: [],
-                lootboxRarity: character.lootboxRarity,
-                lootboxSize: character.lootboxSize ?? 0,
-            },
-            contest,
-            status: ExpeditionStatusEnum.InProgress,
-            isCurrentlyPlaying: false,
-            createdAt: new Date(),
-        });
-
-        this.logger.log(
-            {
-                expId: expedition.id,
-            },
-            `Created expedition for player: ${userAddress}`,
-        );
+                map: map._id, // Guardamos la referencia del mapa en la expedición
+                scores: {
+                    basicEnemiesDefeated: 0,
+                    eliteEnemiesDefeated: 0,
+                    bossEnemiesDefeated: 0,
+                    minionEnemiesDefeated: 0,
+                },
+                mapSeedId: getTimestampInSeconds(),
+                actConfig: {
+                    potionChance: initialPotionChance,
+                },
+                playerState: {
+                    userAddress,
+                    playerToken,
+                    playerName,
+                    equippedGear,
+                    characterClass: character.characterClass,
+                    hpMax: character.initialHealth,
+                    hpCurrent: character.initialHealth,
+                    gold: character.initialGold,
+                    cards,
+                    potions: [],
+                    cardUpgradeCount: 0,
+                    cardDestroyCount: 0,
+                    trinkets: [],
+                    lootboxRarity: character.lootboxRarity,
+                    lootboxSize: character.lootboxSize ?? 0,
+                },
+                contest,
+                status: ExpeditionStatusEnum.InProgress,
+                isCurrentlyPlaying: false,
+                createdAt: new Date(),
+            };
+    
+            const expedition = await this.expeditionService.create(expeditionData);
+    
+            this.logger.log(
+                {
+                    expId: expedition.id,
+                },
+                `Created expedition for player: ${userAddress}`
+            );
+        } catch (error) {
+            this.logger.error('Error occurred while processing the request', error);
+            // Manejar el error, enviar mensajes de error, etc.
+        }
     }
 
     private async generatePlayerDeck(
