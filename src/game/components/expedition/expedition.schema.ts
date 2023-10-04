@@ -54,6 +54,7 @@ export const MapTypeModel = mongoose.model<MapType>('MapType', MapTypeSchema);
     schemaOptions: { collection: 'expeditions', versionKey: false },
     options: { allowMixed: Severity.ALLOW },
 })
+
 export class Expedition {
     @Prop()
     clientId?: string;

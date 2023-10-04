@@ -9,19 +9,20 @@ import { strategies } from './strategies/index';
 import { NodeType } from '../components/expedition/node-type';
 import { ReturnModelType } from '@typegoose/typegoose';
 import { InjectModel } from 'kindagoose';
-import { MapType, Expedition } from '../components/expedition/expedition.schema';
+import { Expedition } from 'src/game/components/expedition/expedition.schema';
 
 @Injectable()
 export class MapService {
 
     @InjectModel(MapService)
     private readonly mapModel: ReturnModelType<typeof MapService>
-    // private readonly mapModel: Model<MapType>,
-    @InjectModel(Expedition)
-    private readonly expedition: ReturnModelType<typeof Expedition>
 
     constructor(
-        private readonly moduleRef: ModuleRef
+
+        @InjectModel(Expedition)
+        private readonly expedition: ReturnModelType<typeof Expedition>,
+
+        private readonly moduleRef: ModuleRef,
 
     ) { }
 
