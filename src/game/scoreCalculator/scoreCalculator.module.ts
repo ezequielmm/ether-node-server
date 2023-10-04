@@ -8,7 +8,7 @@ import { ConfigService } from '@nestjs/config/dist/config.service';
 
 @Module({
     imports: [Expedition],
-    providers: [ScoreCalculatorService, ExpeditionService],
-    exports: [ScoreCalculatorService, ExpeditionService],
+    providers: [ScoreCalculatorService],
+    exports: [ScoreCalculatorService],
 })
 export class ScoreCalculatorModule {}
