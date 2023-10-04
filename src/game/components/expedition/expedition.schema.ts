@@ -1,5 +1,5 @@
-import { modelOptions, Prop, PropType, Severity } from '@typegoose/typegoose';
-import { HydratedDocument } from 'mongoose';
+import { modelOptions, Prop, PropType, Ref, Severity } from '@typegoose/typegoose';
+import mongoose, { HydratedDocument, ObjectId, Schema } from 'mongoose';
 import { MerchantItems } from 'src/game/merchant/merchant.interface';
 import { AttachedStatus, StatusType } from 'src/game/status/interfaces';
 import { TreasureInterface } from 'src/game/treasure/treasure.interfaces';
@@ -27,6 +27,30 @@ export interface IPlayerToken {
 }
 
 @modelOptions({
+    schemaOptions: { collection: 'maps', versionKey: false },
+    options: { allowMixed: Severity.ALLOW },
+})
+class MapType {
+    @Prop()
+    _id: ObjectId; // Asegúrate de que esta propiedad tiene el tipo ObjectId
+    // Otras propiedades de MapType
+
+    @Prop()
+    map: Node[]; // O el tipo correcto para los nodos de tu mapa, reemplaza Node[] con el tipo correcto
+
+}
+
+export { MapType };
+
+const MapTypeSchema: Schema = new Schema({
+    // Campos y tipos de datos de tu esquema MapType
+});
+
+
+export const MapTypeModel = mongoose.model<MapType>('MapType', MapTypeSchema);
+
+
+@modelOptions({
     schemaOptions: { collection: 'expeditions', versionKey: false },
     options: { allowMixed: Severity.ALLOW },
 })
@@ -46,8 +70,8 @@ export class Expedition {
     @Prop()
     mapSeedId?: number;
 
-    @Prop({ type: () => [Node] }, PropType.ARRAY)
-    map: Node[];
+    @Prop({ ref: MapType }) // Indica que este campo es una referencia a MapType
+    map: Ref<MapType>; // El tipo Ref<T> se utiliza para campos de referencia en typegoose
 
     @Prop()
     playerState: Player;
