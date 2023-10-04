@@ -14,8 +14,8 @@ import { MapType, Expedition } from '../components/expedition/expedition.schema'
 @Injectable()
 export class MapService {
 
-    @InjectModel(MapType)
-    private readonly mapModel: ReturnModelType<typeof MapType>
+    @InjectModel(MapService)
+    private readonly mapModel: ReturnModelType<typeof MapService>
     // private readonly mapModel: Model<MapType>,
     @InjectModel(Expedition)
     private readonly expedition: ReturnModelType<typeof Expedition>
