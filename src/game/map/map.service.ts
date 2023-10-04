@@ -7,10 +7,20 @@ import { ModuleRef } from '@nestjs/core';
 import { NodeStrategy } from './strategies/node-strategy';
 import { strategies } from './strategies/index';
 import { NodeType } from '../components/expedition/node-type';
+import { ReturnModelType } from '@typegoose/typegoose';
+import { InjectModel } from 'kindagoose';
+import { MapType, Expedition } from '../components/expedition/expedition.schema';
 
 @Injectable()
 export class MapService {
-    constructor(private readonly moduleRef: ModuleRef) {}
+    constructor(
+        private readonly moduleRef: ModuleRef,
+        @InjectModel(MapType)
+        private readonly mapModel: ReturnModelType<typeof MapType>,
+        // private readonly mapModel: Model<MapType>,
+        @InjectModel(Expedition)
+        private readonly expedition: ReturnModelType<typeof Expedition>
+        ) {}
 
     public selectNode(ctx: GameContext, nodeId: number): void {
         const node = this.findNodeById(ctx, nodeId);
@@ -43,7 +53,24 @@ export class MapService {
     }
 
     public disableAll(ctx: GameContext) {
-        for (const node of ctx.expedition.map) {
+        const expedition = this.expedition.findById(ctx.expedition._id).populate('maps').exec();
+
+        if (!expedition) {
+            throw new Error('Expedition not found');
+        }
+
+        const mapId = ctx.expedition.map._id; // Reemplaza esto con el ID del mapa que deseas obtener
+
+        const mapDocument = this.mapModel.findById(mapId);
+
+        if (!mapDocument) {
+            throw new Error("Map not found");
+        }
+
+        const mapsArray = mapDocument.map;
+
+
+        for (const node of mapsArray) {
             // Skip if node is already disabled
             if (!node.isAvailable()) continue;
 
@@ -87,9 +114,24 @@ export class MapService {
     }
 
     public findNodeById(ctx: GameContext, nodeId: number): Node {
-        return find(ctx.expedition.map, {
-            id: nodeId,
-        });
+        try {
+            const expeditionId = ctx.expedition._id; // Suponiendo que expedition tenga un _id válido
+            const expedition = this.expedition.findById(expeditionId);
+
+            if (!expedition) {
+                throw new Error('Expedition not found'); // O maneja el error de alguna otra manera
+            }
+
+            const node = expedition.map.find((n) => n.id === nodeId);
+
+            if (!node) {
+                throw new Error(`Node with ID ${nodeId} not found`); // O maneja el error de alguna otra manera
+            }
+
+            return node;
+        } catch (error) {
+            throw new Error(`Error finding node: ${error.message}`);
+        }
     }
 
     // public getActZero(): Node[] {
