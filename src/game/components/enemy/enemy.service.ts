@@ -47,11 +47,13 @@ export class EnemyService {
         @Inject(forwardRef(() => StatusService))
         private readonly statusService: StatusService,
         private readonly eventEmitter: EventEmitter2,
-        private readonly mapModel: MapService,
-        @InjectModel(MapService)
-        private readonly mapModel2: ReturnModelType<typeof MapService>,
+
 
     ) { }
+
+    private readonly mapModel: MapService
+    @InjectModel(MapService)
+    private readonly mapModel2: ReturnModelType<typeof MapService>
 
     /**
      * Check if the entity is an enemy
