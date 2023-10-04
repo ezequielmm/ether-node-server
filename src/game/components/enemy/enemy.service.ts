@@ -31,10 +31,11 @@ import {
 import { ReturnModelType } from '@typegoose/typegoose';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { ProjectionFields } from 'mongoose';
+import { MapService } from 'src/game/map/map.service';
 
 @Injectable()
 export class EnemyService {
-   
+
 
     private readonly logger: Logger = new Logger(EnemyService.name);
 
@@ -46,7 +47,11 @@ export class EnemyService {
         @Inject(forwardRef(() => StatusService))
         private readonly statusService: StatusService,
         private readonly eventEmitter: EventEmitter2,
-    ) {}
+        private readonly mapModel: MapService,
+        @InjectModel(MapService)
+        private readonly mapModel2: ReturnModelType<typeof MapService>,
+
+    ) { }
 
     /**
      * Check if the entity is an enemy
@@ -80,11 +85,11 @@ export class EnemyService {
         return this.getAll(ctx).every((enemy) => this.isDead(enemy));
     }
     public isBossDead(ctx: GameContext): boolean {
-        return this.getAll(ctx).some(enemy => 
+        return this.getAll(ctx).some(enemy =>
             enemy.value.category === EnemyCategoryEnum.Boss && this.isDead(enemy)
         );
     }
-    
+
     /**
      * Returns enemy by id or enemyId
      *
@@ -155,7 +160,7 @@ export class EnemyService {
                             e.target.type == CardTargetedEnum.Enemy &&
                             enemy.target.type == CardTargetedEnum.Enemy &&
                             e.target.value.enemyId ==
-                                enemy.target.value.enemyId,
+                            enemy.target.value.enemyId,
                     ).statuses,
                 )
             ) {
@@ -397,15 +402,15 @@ export class EnemyService {
     }
 
     /**
-     * Calculate new scripts for all enemies
-     *
-     * @param ctx Context
-     */
+ * Calculate new scripts for all enemies
+ *
+ * @param ctx Context
+ */
     async calculateNewIntentions(ctx: GameContext): Promise<void> {
         const enemies = this.getAll(ctx);
 
         const enemiesAlive = enemies.filter(
-            (enemy) => enemy.value.hpCurrent > 0,
+            (enemy) => enemy.value.hpCurrent > 0
         );
 
         for (const enemy of enemiesAlive) {
@@ -426,13 +431,22 @@ export class EnemyService {
             }
 
             // Increase damage for node from 14 to 20
-            const node = ctx.expedition.map.find(
-                (node) => node.id == ctx.expedition.currentNode.nodeId,
-            );
+            const mapDocument = await this.mapModel2.findOne({ _id: ctx.expedition.map }).exec();
+
+            if (!mapDocument) {
+                throw new Error('Map not found for the current expedition');
+            }
+
+            const currentNodeId = ctx.expedition.currentNode.nodeId;
+            const currentNode = this.mapModel2.findById(currentNodeId);
+
+            if (!currentNode) {
+                throw new Error('Current node not found in the map');
+            }
 
             if (
-                HARD_MODE_NODE_START <= node.step &&
-                node.step <= HARD_MODE_NODE_END
+                HARD_MODE_NODE_START <= currentNode.step &&
+                currentNode.step <= HARD_MODE_NODE_END
             ) {
                 this.increaseScriptDamage(nextScript);
             }
@@ -444,21 +458,23 @@ export class EnemyService {
                 },
                 {
                     [ENEMY_CURRENT_SCRIPT_PATH]: nextScript,
-                },
+                }
             );
 
             enemy.value.currentScript = nextScript;
 
             this.logger.log(
                 ctx.info,
-                `Calculated new script for enemy ${enemy.value.id}`,
+                `Calculated new script for enemy ${enemy.value.id}`
             );
             this.logger.log(
                 ctx.info,
-                `New script: ${JSON.stringify(nextScript)}`,
+                `New script: ${JSON.stringify(nextScript)}`
             );
         }
     }
+
+
 
     private getNextScript(
         scripts: EnemyScript[],
@@ -535,7 +551,7 @@ export class EnemyService {
             // If the status is already attached, we update it
             if (metadata.status.counterType != StatusCounterType.None) {
                 // If the status has a counter, we increment it
-                oldStatus.args.counter+= args.counter;
+                oldStatus.args.counter += args.counter;
                 this.logger.log(
                     ctx.info,
                     `Status ${name} counter incremented to ${oldStatus.args.counter}`,
