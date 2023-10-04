@@ -33,15 +33,19 @@ import { MapService } from 'src/game/map/map.service';
 import { ConfigService } from '@nestjs/config';
 import { NodeType } from './node-type';
 
+
+
 @Injectable()
 export class ExpeditionService {
     constructor(
         @InjectModel(Expedition)
         private readonly expedition: ReturnModelType<typeof Expedition>,
-        private readonly moduleRef: ModuleRef,
-        private readonly mapService: MapService,
-        private readonly configService: ConfigService,
+
     ) {}
+
+    private readonly moduleRef: ModuleRef
+    private readonly mapService: MapService
+    private readonly configService: ConfigService
 
     async getExpeditionIdFromClient(client: Socket): Promise<string> {
         const expedition = await this.findOneTimeDesc({userAddress: client.request.headers.useraddress});
