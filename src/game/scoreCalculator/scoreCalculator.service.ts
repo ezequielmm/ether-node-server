@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable, forwardRef } from '@nestjs/common';
 import { filter, reduce } from 'lodash';
 import { CardRarityEnum } from '../components/card/card.enum';
 import {
@@ -13,6 +13,7 @@ import { ExpeditionStatusEnum } from '../components/expedition/expedition.enum';
 import { Gear } from '../components/gear/gear.schema';
 import { InjectModel } from 'kindagoose';
 import { ReturnModelType } from '@typegoose/typegoose';
+import { ExpeditionModule } from '../components/expedition/expedition.module';
 
 export interface ScoreResponse {
     outcome: string;
@@ -30,8 +31,11 @@ export interface ScoreResponse {
 @Injectable()
 export class ScoreCalculatorService {
 
-    @InjectModel(Expedition)
+    @Inject(forwardRef(() => Expedition))
     private readonly expedition: ReturnModelType<typeof Expedition>
+
+    @Inject(forwardRef(() => ExpeditionModule))
+    private readonly expeditionModule: ReturnModelType<typeof ExpeditionModule>
 
     calculate({ expedition }: { expedition: Expedition }): ScoreResponse {
         // All the points will be calculatred based on
