@@ -20,7 +20,7 @@ export class MapService {
         // private readonly mapModel: Model<MapType>,
         @InjectModel(Expedition)
         private readonly expedition: ReturnModelType<typeof Expedition>
-        ) {}
+    ) { }
 
     public selectNode(ctx: GameContext, nodeId: number): void {
         const node = this.findNodeById(ctx, nodeId);
@@ -104,12 +104,41 @@ export class MapService {
         // Call node strategy
         this.getNodeStrategy(node)?.onCompleted?.(ctx, node);
     }
+    /*
+        private enableNextNodes(ctx: GameContext, nodeId: number) {
+            for (const node of ctx.expedition.map) {
+                if (node.enter.includes(nodeId)) {
+                    this.enableNode(ctx, node.id);
+                }
+            }
+        }
+    */
 
     private enableNextNodes(ctx: GameContext, nodeId: number) {
-        for (const node of ctx.expedition.map) {
-            if (node.enter.includes(nodeId)) {
-                this.enableNode(ctx, node.id);
+        try {
+            // Obtener el documento de la expedición
+            const expeditionDocument = this.expedition.findById(ctx.expedition._id);
+
+            if (expeditionDocument) {
+                // Obtener el mapa relacionado con la expedición
+                const mapDocument = this.mapModel.findById(expeditionDocument.map);
+
+                if (mapDocument) {
+                    // Iterar sobre los nodos del mapa
+                    for (const node of mapDocument.map) {
+                        if (node.enter.includes(nodeId)) {
+                            this.enableNode(ctx, node.id);
+                        }
+                    }
+                } else {
+                    console.error('Mapa no encontrado para la expedición.');
+                }
+            } else {
+                console.error('Expedición no encontrada.');
             }
+        } catch (error) {
+            // Manejar errores aquí
+            console.error(error);
         }
     }
 
@@ -166,8 +195,8 @@ export class MapService {
 
         const nextPortalIndex: number = map.findIndex(
             (node: any) =>
-            node.type === NodeType.Portal &&
-            node.status !== NodeStatus.Completed,
+                node.type === NodeType.Portal &&
+                node.status !== NodeStatus.Completed,
         );
 
         // Solo necesitamos los nodos hasta el siguiente portal, así que deshazte del resto
