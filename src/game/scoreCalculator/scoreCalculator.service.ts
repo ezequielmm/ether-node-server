@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { filter, reduce } from 'lodash';
 import { CardRarityEnum } from '../components/card/card.enum';
 import {
@@ -30,7 +30,7 @@ export interface ScoreResponse {
 @Injectable()
 export class ScoreCalculatorService {
 
-    @InjectModel(Expedition)
+    @Inject(Expedition)
     private readonly expedition: ReturnModelType<typeof Expedition>
 
     calculate({ expedition }: { expedition: Expedition }): ScoreResponse {
