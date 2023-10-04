@@ -7,8 +7,8 @@ import { ModuleRef } from '@nestjs/core';
 import { ConfigService } from '@nestjs/config/dist/config.service';
 
 @Module({
-    imports: [Expedition],
-    providers: [ScoreCalculatorService],
-    exports: [ScoreCalculatorService, Expedition],
+    imports: [],
+    providers: [ScoreCalculatorService, Expedition, ExpeditionService],
+    exports: [ScoreCalculatorService, Expedition, ExpeditionService],
 })
 export class ScoreCalculatorModule {}
