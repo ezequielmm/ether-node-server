@@ -11,6 +11,8 @@ import { ReturnModelType } from '@typegoose/typegoose';
 import { MapType } from '../components/expedition/expedition.schema';
 import { InjectModel } from 'kindagoose';
 import { ExpeditionService } from '../components/expedition/expedition.service';
+import { Node } from '../components/expedition/node';
+
 
 @Injectable()
 export class ContinueExpeditionProcess {
@@ -64,31 +66,37 @@ export class ContinueExpeditionProcess {
         });
     }
 
-    public async getMapByExpedition(expeditionId: string): Promise<any[] > {
+    public async getMapByExpedition(expeditionId: string): Promise<Node[]> {
         try {
             // Utiliza `findOne` para encontrar la expedición por su _id
             const expedition = await this.expeditionService.findOne({
                 _id: expeditionId,
             });
-
-            // Si no se encuentra la expedición, retorna null
+    
+            // Si no se encuentra la expedición, retorna un array vacío
             if (!expedition) {
-                return null;
+                return [];
             }
-
+    
             // Obtiene el ObjectID del campo map en la expedición
             const mapId = expedition.map;
-
-            // Utiliza el ObjectID para buscar todos los documentos en la colección "maps" que coinciden con el valor del campo map en la expedición
-            const maps = await this.mapModel.find({ _id: mapId });
-
-            // Retorna el array de mapas encontrados o un array vacío si no se encuentran
-            return maps;
+    
+            // Utiliza el ObjectID para buscar el documento en la colección "maps" que coincide con el valor del campo map en la expedición
+            const map = await this.mapModel.findById(mapId);
+    
+            // Si no se encuentra el mapa, retorna un array vacío
+            if (!map) {
+                return [];
+            }
+    
+            // Retorna el array de nodos almacenados en el campo map del mapa encontrado
+            return map.map;
         } catch (error) {
             // Manejar errores de consulta aquí
             throw new Error('Error retrieving maps: ' + error.message);
         }
     }
+    
 
     private setupDataFromCombat(ctx: GameContext): void {
         const { hpCurrent, hpMax } = ctx.expedition.currentNode.data.player;
