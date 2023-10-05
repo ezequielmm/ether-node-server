@@ -18,6 +18,7 @@ import { InitTreasureProcess } from './initTreasure.process';
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 import { ReturnModelType } from '@typegoose/typegoose';
 import { MapType } from '../components/expedition/expedition.schema';
+import { InjectModel } from 'kindagoose';
 
 @Injectable()
 export class NodeSelectedProcess {
@@ -30,9 +31,12 @@ export class NodeSelectedProcess {
         private readonly initTreasureProcess: InitTreasureProcess,
         private readonly initEncounterProcess: InitEncounterProcess,
         private readonly mapService: MapService,
+
+        @InjectModel(MapType)
+        private readonly mapModel: ReturnModelType<typeof MapType>
+
     ) {}
 
-    private readonly mapModel: ReturnModelType<typeof MapType>
 
 
     async handle(ctx: GameContext, node_id: number): Promise<string> {

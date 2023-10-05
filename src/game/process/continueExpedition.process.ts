@@ -9,12 +9,19 @@ import {
 } from '../standardResponse/standardResponse';
 import { ReturnModelType } from '@typegoose/typegoose';
 import { MapType } from '../components/expedition/expedition.schema';
+import { InjectModel } from 'kindagoose';
 
 @Injectable()
 export class ContinueExpeditionProcess {
-    constructor(private readonly mapService: MapService) {}
+    constructor(
+        private readonly mapService: MapService,
 
-    private readonly mapModel: ReturnModelType<typeof MapType>
+        @InjectModel(MapType)
+        private readonly mapModel: ReturnModelType<typeof MapType>
+
+
+        ) {}
+
 
 
     async handle(ctx: GameContext): Promise<string> {
