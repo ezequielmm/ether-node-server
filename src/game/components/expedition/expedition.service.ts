@@ -373,7 +373,7 @@ export class ExpeditionService {
     ): Promise<void> {
         const { ctx, nodeId } = payload;
 
-        const node = this.mapService.findNodeById(ctx, nodeId);
+        const node = await this.mapService.findNodeById(ctx, nodeId);
         this.mapService.enableNode(ctx, nodeId);
 
         ctx.expedition.currentNode = {

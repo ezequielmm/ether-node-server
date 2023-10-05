@@ -31,7 +31,7 @@ export class ContinueExpeditionProcess {
         const map = ctx.expedition.map;
 
         // Now we get the node information that is active at the moment
-        const node = this.mapService.findNodeById(
+        const node = await this.mapService.findNodeById(
             ctx,
             ctx.expedition.currentNode.nodeId,
         );

@@ -45,7 +45,7 @@ export class NodeSelectedProcess {
     async handle(ctx: GameContext, node_id: number): Promise<string> {
         const logger = this.logger.logger.child(ctx.info);
 
-        const node = this.mapService.findNodeById(ctx, node_id);
+        const node = await this.mapService.findNodeById(ctx, node_id);
 
         if (!node) {
             logger.error('Selected node is not available');

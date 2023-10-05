@@ -31,9 +31,9 @@ export class MapService {
     private readonly expeditionService: ExpeditionService
 
 
-    public selectNode(ctx: GameContext, nodeId: number): void {
+    public async selectNode(ctx: GameContext, nodeId: number): Promise<void> {
         try {
-            const node: Node | null = this.findNodeById(ctx, nodeId);
+            const node: Node | null = await this.findNodeById(ctx, nodeId);
 
             // Si no se encuentra el nodo, lanza un error o maneja el caso según tu lógica de negocio
             if (!node) {
@@ -103,23 +103,23 @@ export class MapService {
             const expedition = await this.expeditionService.findOne({
                 _id: expeditionId,
             });
-    
+
             // Si no se encuentra la expedición, retorna un array vacío
             if (!expedition) {
                 return [];
             }
-    
+
             // Obtiene el ObjectID del campo map en la expedición
             const mapId = expedition.map;
-    
+
             // Utiliza el ObjectID para buscar el documento en la colección "maps" que coincide con el valor del campo map en la expedición
             const map = await this.mapModel.findById(mapId);
-    
+
             // Si no se encuentra el mapa, retorna un array vacío
             if (!map) {
                 return [];
             }
-    
+
             // Retorna el array de nodos almacenados en el campo map del mapa encontrado
             return map.map;
         } catch (error) {
@@ -127,22 +127,22 @@ export class MapService {
             throw new Error('Error retrieving maps: ' + error.message);
         }
     }
-    
-    
 
-    public enableNode(ctx: GameContext, nodeId: number): void {
-        const node = this.findNodeById(ctx, nodeId);
+
+
+    public async enableNode(ctx: GameContext, nodeId: number): Promise<void> {
+        const node = await this.findNodeById(ctx, nodeId);
         node.status = NodeStatus.Available;
     }
 
-    public disableNode(ctx: GameContext, nodeId: number): void {
-        const node = this.findNodeById(ctx, nodeId);
+    public async disableNode(ctx: GameContext, nodeId: number): Promise<void> {
+        const node = await this.findNodeById(ctx, nodeId);
         node.status = NodeStatus.Disabled;
     }
 
-    public completeNode(ctx: GameContext, nodeId: number): void {
+    public async completeNode(ctx: GameContext, nodeId: number): Promise<void> {
         try {
-            const node: Node | null = this.findNodeById(ctx, nodeId);
+            const node: Node | null = await this.findNodeById(ctx, nodeId);
 
             // Si no se encuentra el nodo, lanza un error o maneja el caso según tu lógica de negocio
             if (!node) {
@@ -212,25 +212,10 @@ export class MapService {
         }
     }
 
-    public findNodeById(ctx: GameContext, nodeId: number): Node {
-        try {
-            const expeditionId = ctx.expedition.map._id; // Suponiendo que expedition.map tiene un _id válido
-            const map = this.mapModel.findOne({ _id: expeditionId });
-
-            if (!map) {
-                throw new Error('Map not found in expeditions'); // O maneja el error de alguna otra manera
-            }
-
-            const node = map.map.find((n) => n.id === nodeId);
-
-            if (!node) {
-                throw new Error(`Node with ID ${nodeId} not found in the map`); // O maneja el error de alguna otra manera
-            }
-
-            return node;
-        } catch (error) {
-            throw new Error(`Error finding node: ${error.message}`);
-        }
+    public async findNodeById(ctx: GameContext, nodeId: number): Promise<Node> {
+        return find(await this.getMapByExpedition(ctx.expedition.id), {
+            id: nodeId,
+        });
     }
 
     // public getActZero(): Node[] {
@@ -255,8 +240,8 @@ export class MapService {
     //     ctx.expedition.map.push(...buildActTwo(previousNodeId + 1));
     // }
 
-    public nodeIsSelectable(ctx: GameContext, nodeId: number): boolean {
-        const node = this.findNodeById(ctx, nodeId);
+    public async nodeIsSelectable(ctx: GameContext, nodeId: number): Promise<boolean> {
+        const node = await this.findNodeById(ctx, nodeId);
         return node.isSelectable();
     }
 
