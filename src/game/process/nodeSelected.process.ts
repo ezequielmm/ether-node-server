@@ -156,7 +156,7 @@ export class NodeSelectedProcess {
         }
     }
 
-    public async getMapByExpedition(expeditionId: string): Promise<any | null> {
+    public async getMapByExpedition(expeditionId: string): Promise<any[] | null> {
         try {
             // Utiliza `findOne` para encontrar la expedición por su _id
             const expedition = await this.expeditionService.findOne({
@@ -168,17 +168,17 @@ export class NodeSelectedProcess {
                 return null;
             }
 
-            // Utiliza `populate()` para rellenar el campo `map` con el objeto correspondiente de la colección "maps"
-            await expedition.populate('map');
+            // Obtiene el ObjectID del campo map en la expedición
+            const mapId = expedition.map;
 
-            // El campo `map` ahora contendrá el objeto de la colección "maps"
-            const map = expedition.map;
+            // Utiliza el ObjectID para buscar todos los documentos en la colección "maps" que coinciden con el valor del campo map en la expedición
+            const maps = await this.mapModel.find({ _id: mapId });
 
-            // Retorna el objeto del mapa encontrado o `null` si no se encuentra
-            return map;
+            // Retorna el array de mapas encontrados o un array vacío si no se encuentran
+            return maps;
         } catch (error) {
             // Manejar errores de consulta aquí
-            throw new Error('Error retrieving map: ' + error.message);
+            throw new Error('Error retrieving maps: ' + error.message);
         }
     }
 
