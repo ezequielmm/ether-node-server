@@ -91,7 +91,7 @@ export class FullSyncAction {
         );
     }
 
-    public async getMapByExpedition(expeditionId: string): Promise<any[] | null> {
+    public async getMapByExpedition(expeditionId: string): Promise<any[]> {
         try {
             // Utiliza `findOne` para encontrar la expedición por su _id
             const expedition = await this.expeditionService.findOne({

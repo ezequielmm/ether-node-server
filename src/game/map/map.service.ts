@@ -66,7 +66,7 @@ export class MapService {
     }
 
 
-    public getNodeStrategy(node: Node): NodeStrategy | undefined {
+    public getNodeStrategy(node: Node): NodeStrategy {
         const strategy = strategies.get(node.type);
 
         if (strategy) {
@@ -97,7 +97,7 @@ export class MapService {
         }
     }
 
-    public async getMapByExpedition(expeditionId: string): Promise<any[] | null> {
+    public async getMapByExpedition(expeditionId: string): Promise<any[]> {
         try {
             // Utiliza `findOne` para encontrar la expedición por su _id
             const expedition = await this.expeditionService.findOne({
@@ -285,22 +285,9 @@ export class MapService {
     }
 
     public async getClientSafeMap(ctx: GameContext): Promise<Node[]> {
-        try {
-            // Obtén el mapa desde la base de datos utilizando el modelo MapTypeModel
-            const mapType = await this.mapModel.findById(ctx.expedition.map);
-            if (!mapType) {
-                throw new Error('Map not found');
-            }
 
-            // El campo 'map' en 'mapType' contendrá los nodos sin procesar (raw nodes) desde tu modelo
-            const rawMap: Node[] = mapType.map;
+        const mapsArray = await this.getMapByExpedition(ctx.expedition.id)
 
-            // Transforma el formato bruto a un formato seguro para el cliente utilizando tu lógica específica
-            const clientSafeMap: Node[] = this.makeClientSafe(rawMap);
-
-            return clientSafeMap;
-        } catch (error) {
-            throw new Error('Error getting client-safe map: ' + error.message);
-        }
+        return this.makeClientSafe(mapsArray);
     }
 }
