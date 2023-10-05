@@ -9,6 +9,9 @@ import {
 import { MapService } from '../map.service';
 import { AutoCompleteNodeStrategy } from './auto-complete-node-strategy';
 import { NodeStrategy } from './node-strategy';
+import { ReturnModelType } from '@typegoose/typegoose';
+import { MapType } from 'src/game/components/expedition/expedition.schema';
+import { InjectModel } from 'kindagoose';
 
 @Injectable()
 export class PortalNodeStrategy
@@ -19,6 +22,10 @@ export class PortalNodeStrategy
 
     @Inject(forwardRef(() => MapService))
     protected readonly mapService: MapService;
+
+    @InjectModel(MapType)
+    private readonly mapModel: ReturnModelType<typeof MapType>
+
 
     onCompleted(ctx: GameContext): void {
         this.logger.log(ctx.info, `Map extended for client ${ctx.client.id}`);
@@ -35,7 +42,17 @@ export class PortalNodeStrategy
         //         break;
         // }
 
-        const safeMap = this.mapService.makeClientSafe(ctx.expedition.map);
+        const mapId = ctx.expedition.map._id; // Reemplaza esto con el ID del mapa que deseas obtener
+
+        const mapDocument = this.mapModel.findById(mapId);
+
+        if (!mapDocument) {
+            throw new Error("Map not found");
+        }
+
+        const mapsArray = mapDocument.map;
+
+        const safeMap = this.mapService.makeClientSafe(mapsArray);
 
         // TODO: This also appears to emit in the nodeSelected process. Is that a dupe, or is this?
         ctx.client.emit(

@@ -9,17 +9,20 @@ import { strategies } from './strategies/index';
 import { NodeType } from '../components/expedition/node-type';
 import { ReturnModelType } from '@typegoose/typegoose';
 import { InjectModel } from 'kindagoose';
-import { Expedition } from 'src/game/components/expedition/expedition.schema';
+import { Expedition, MapType } from 'src/game/components/expedition/expedition.schema';
 
 @Injectable()
 export class MapService {
 
-    private readonly mapModel: ReturnModelType<typeof MapService>
 
-    private readonly expedition: ReturnModelType<typeof Expedition>
 
     constructor(
         private readonly moduleRef: ModuleRef,
+
+        @InjectModel(MapType)
+        private readonly mapModel: ReturnModelType<typeof MapType>,
+        @InjectModel(Expedition)
+        private readonly expedition: ReturnModelType<typeof Expedition>
 
     ) { }
 
@@ -193,22 +196,22 @@ export class MapService {
         return node.isSelectable();
     }
 
-    public makeClientSafe(mapData: any): Node[] {
-        const map = mapData.map; // Accede al campo 'map' del JSON
-
-        const nextPortalIndex: number = map.findIndex(
-            (node: any) =>
+    public makeClientSafe(map: Node[]): Node[] {
+        const nextPortalIndex: number = findIndex(
+            map,
+            (node) =>
                 node.type === NodeType.Portal &&
                 node.status !== NodeStatus.Completed,
         );
 
-        // Solo necesitamos los nodos hasta el siguiente portal, así que deshazte del resto
-        const sanitizedMap = map.slice(
+        // We only need to sanitize (and return) up to that portal, so let's ditch the rest
+        map = slice(
+            map,
             0,
             nextPortalIndex !== -1 ? nextPortalIndex + 1 : map.length,
         );
 
-        /// Now let's return the map after purging all state info from nodes that aren't completed or currently active
+        // Now let's return the map after purging all state info from nodes that aren't completed or currently active
         return map.map((node) => {
             if (
                 node.status === NodeStatus.Completed ||
@@ -224,7 +227,23 @@ export class MapService {
         });
     }
 
-    public getClientSafeMap(ctx: GameContext): Node[] {
-        return this.makeClientSafe(ctx.expedition.map);
+    public async getClientSafeMap(ctx: GameContext): Promise<Node[]> {
+        try {
+            // Obtén el mapa desde la base de datos utilizando el modelo MapTypeModel
+            const mapType = await this.mapModel.findById(ctx.expedition.map);
+            if (!mapType) {
+                throw new Error('Map not found');
+            }
+
+            // El campo 'map' en 'mapType' contendrá los nodos sin procesar (raw nodes) desde tu modelo
+            const rawMap: Node[] = mapType.map;
+
+            // Transforma el formato bruto a un formato seguro para el cliente utilizando tu lógica específica
+            const clientSafeMap: Node[] = this.makeClientSafe(rawMap);
+
+            return clientSafeMap;
+        } catch (error) {
+            throw new Error('Error getting client-safe map: ' + error.message);
+        }
     }
 }

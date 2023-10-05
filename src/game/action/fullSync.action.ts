@@ -9,6 +9,10 @@ import {
     SWARAction,
 } from '../standardResponse/standardResponse';
 import { ExpeditionStatusEnum } from '../components/expedition/expedition.enum';
+import { id } from 'ethers6';
+import { ReturnModelType } from '@typegoose/typegoose';
+import { MapType } from '../components/expedition/expedition.schema';
+import { InjectModel } from 'kindagoose';
 
 @Injectable()
 export class FullSyncAction {
@@ -17,7 +21,11 @@ export class FullSyncAction {
     constructor(
         private readonly expeditionService: ExpeditionService,
         private readonly mapService: MapService,
+        @InjectModel(MapType)
+        private readonly mapModel: ReturnModelType<typeof MapType>
     ) {}
+
+
 
     async handle(client: Socket, sendShowMap = true): Promise<void> {
         const expedition = await this.expeditionService.findOneTimeDesc({
@@ -40,6 +48,14 @@ export class FullSyncAction {
 
         this.logger.log(`Sent message ExpeditionMap to client ${client.id}`);
 
+        const mapDocument = this.mapModel.findById(expedition.id);
+
+        if (!mapDocument) {
+            throw new Error("Map not found");
+        }
+
+        const mapsArray = mapDocument.map;
+
         if (sendShowMap) {
             client.emit(
                 'ExpeditionMap',
@@ -47,7 +63,7 @@ export class FullSyncAction {
                     message_type: SWARMessageType.MapUpdate,
                     seed: mapSeedId,
                     action: SWARAction.ShowMap,
-                    data: this.mapService.makeClientSafe(map),
+                    data: this.mapService.makeClientSafe(mapsArray),
                 }),
             );
         }

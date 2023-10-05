@@ -40,12 +40,12 @@ export class ExpeditionService {
     constructor(
         @InjectModel(Expedition)
         private readonly expedition: ReturnModelType<typeof Expedition>,
-
+        private readonly moduleRef: ModuleRef,
+        private readonly mapService: MapService,
+        private readonly configService: ConfigService,
     ) {}
 
-    private readonly moduleRef: ModuleRef
-    private readonly mapService: MapService
-    private readonly configService: ConfigService
+
 
     async getExpeditionIdFromClient(client: Socket): Promise<string> {
         const expedition = await this.findOneTimeDesc({userAddress: client.request.headers.useraddress});
@@ -53,35 +53,42 @@ export class ExpeditionService {
     }
 
     async getGameContext(client: Socket): Promise<GameContext> {
-        const expedition = await this.findOneTimeDesc(
-            { 
-                userAddress: client.request.headers.useraddress
-            });
-        const events = new EventEmitter2();
-
-        if (!expedition?.playerState) {
-            throw new Error('Player state not found');
-        }
-
-        const ctx: GameContext = {
+        try {
+          const expedition = await this.expedition.findOne({
+            userAddress: client.request.headers.useraddress,
+          });
+    
+          if (!expedition || !expedition.playerState) {
+            throw new Error('Expedition or player state not found');
+          }
+    
+          const events = new EventEmitter2();
+    
+          const ctx: GameContext = {
             expedition,
             client,
             events,
             moduleRef: this.moduleRef,
             info: {
-                env: this.configService.get<string>('PAPERTRAIL_ENV'),
-                account: expedition?.playerState.userAddress,
-                expeditionId: expedition !== null ? expedition.id : null,
-                service: this.configService.get<string>('PAPERTRAIL_SERVICE'),
+              env: this.configService.get<string>('PAPERTRAIL_ENV'),
+              account: expedition.playerState.userAddress,
+              expeditionId: expedition.id,
+              service: this.configService.get<string>('PAPERTRAIL_SERVICE'),
             },
-        };
-
-        for (const trinket of expedition.playerState?.trinkets) {
-            trinket.onAttach(ctx);
+          };
+    
+          // Iterar sobre los trinkets del jugador y llamar a la función onAttach si está definida
+          for (const trinket of expedition.playerState.trinkets) {
+            if (trinket.onAttach) {
+              trinket.onAttach(ctx);
+            }
+          }
+    
+          return ctx;
+        } catch (error) {
+          throw new Error('Error creating game context: ' + error.message);
         }
-
-        return ctx;
-    }
+      }
 
     async findOne(
         filter: FilterQuery<Expedition>,
@@ -188,9 +195,23 @@ export class ExpeditionService {
         await this.expedition.updateOne({ clientId }, { isCurrentlyPlaying });
     }
 
-    // async getExpeditionMap(ctx: GameContext): Promise<Node[]> {
-    //     return ctx.expedition.map;
-    // }
+    async getExpeditionMap(ctx: GameContext): Promise<Node[]> {
+        try {
+          const expedition = await this.expedition.findById(ctx.expedition.id).populate('map');
+          if (!expedition) {
+            throw new Error('Expedition not found');
+          }
+      
+          // La propiedad `map` en `expedition` ahora estará poblada con el documento de Mapa.
+          const map: any = expedition.map; // Tipo específico de tu esquema de Mapa
+      
+          // Aquí puedes manipular y retornar el mapa como desees.
+          return map;
+        } catch (error) {
+          throw new Error('Error fetching expedition map: ' + error.message);
+        }
+      }
+    
 
     isPlayerInCombat(ctx: GameContext): boolean {
         const nodeType = ctx.expedition?.currentNode?.nodeType;

@@ -7,10 +7,15 @@ import {
     SWARAction,
     SWARMessageType,
 } from '../standardResponse/standardResponse';
+import { ReturnModelType } from '@typegoose/typegoose';
+import { MapType } from '../components/expedition/expedition.schema';
 
 @Injectable()
 export class ContinueExpeditionProcess {
     constructor(private readonly mapService: MapService) {}
+
+    private readonly mapModel: ReturnModelType<typeof MapType>
+
 
     async handle(ctx: GameContext): Promise<string> {
         const map = ctx.expedition.map;
@@ -31,7 +36,18 @@ export class ContinueExpeditionProcess {
 
         await ctx.expedition.save();
 
-        const safeMap = this.mapService.makeClientSafe(map);
+        
+        const mapId = ctx.expedition.map._id; // Reemplaza esto con el ID del mapa que deseas obtener
+
+        const mapDocument = this.mapModel.findById(mapId);
+
+        if (!mapDocument) {
+            throw new Error("Map not found");
+        }
+
+        const mapsArray = mapDocument.map;
+
+        const safeMap = this.mapService.makeClientSafe(mapsArray);
 
         // Send the final message with the map updated
         return StandardResponse.respond({

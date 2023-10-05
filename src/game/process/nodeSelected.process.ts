@@ -16,6 +16,8 @@ import { InitEncounterProcess } from './initEncounter.process';
 import { InitNodeProcess } from './initNode.process';
 import { InitTreasureProcess } from './initTreasure.process';
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
+import { ReturnModelType } from '@typegoose/typegoose';
+import { MapType } from '../components/expedition/expedition.schema';
 
 @Injectable()
 export class NodeSelectedProcess {
@@ -29,6 +31,9 @@ export class NodeSelectedProcess {
         private readonly initEncounterProcess: InitEncounterProcess,
         private readonly mapService: MapService,
     ) {}
+
+    private readonly mapModel: ReturnModelType<typeof MapType>
+
 
     async handle(ctx: GameContext, node_id: number): Promise<string> {
         const logger = this.logger.logger.child(ctx.info);
@@ -70,8 +75,19 @@ export class NodeSelectedProcess {
 
         // moved to after selecting node, so that it would be active on return to client.
         // TODO: test if this breaks things.
-        const { mapSeedId, map } = ctx.expedition;
-        const safeMap = this.mapService.makeClientSafe(map);
+        const { mapSeedId } = ctx.expedition;
+
+        const mapId = ctx.expedition.map._id; // Reemplaza esto con el ID del mapa que deseas obtener
+
+        const mapDocument = this.mapModel.findById(mapId);
+
+        if (!mapDocument) {
+            throw new Error("Map not found");
+        }
+
+        const mapsArray = mapDocument.map;
+
+        const safeMap = this.mapService.makeClientSafe(mapsArray);
 
         switch (node.type) {
             case NodeType.Portal:
