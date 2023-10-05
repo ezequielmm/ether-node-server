@@ -9,11 +9,14 @@ import { EncounterModule } from 'src/game/components/encounter/encounter.module'
 import { MerchantModule } from 'src/game/merchant/merchant.module';
 import { Expedition, MapType } from '../components/expedition/expedition.schema';
 import { KindagooseModule } from 'kindagoose';
+import { ExpeditionService } from '../components/expedition/expedition.service';
 
 @Module({
     imports: [
         KindagooseModule.forFeature([MapType]),
         KindagooseModule.forFeature([Expedition]),
+        // KindagooseModule.forFeature([ExpeditionService]),
+
 
         forwardRef(() => CombatModule),
         forwardRef(() => TreasureModule),

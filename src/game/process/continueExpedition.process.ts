@@ -10,6 +10,7 @@ import {
 import { ReturnModelType } from '@typegoose/typegoose';
 import { MapType } from '../components/expedition/expedition.schema';
 import { InjectModel } from 'kindagoose';
+import { ExpeditionService } from '../components/expedition/expedition.service';
 
 @Injectable()
 export class ContinueExpeditionProcess {
@@ -17,9 +18,9 @@ export class ContinueExpeditionProcess {
         private readonly mapService: MapService,
 
         @InjectModel(MapType)
-        private readonly mapModel: ReturnModelType<typeof MapType>
+        private readonly mapModel: ReturnModelType<typeof MapType>,
 
-
+        private readonly expeditionService: ExpeditionService
         ) {}
 
 
@@ -44,15 +45,7 @@ export class ContinueExpeditionProcess {
         await ctx.expedition.save();
 
         
-        const mapId = ctx.expedition.map._id; // Reemplaza esto con el ID del mapa que deseas obtener
-
-        const mapDocument = this.mapModel.findById(mapId);
-
-        if (!mapDocument) {
-            throw new Error("Map not found");
-        }
-
-        const mapsArray = mapDocument.map;
+        const mapsArray = await this.getMapByExpedition(ctx.expedition.id);
 
         const safeMap = this.mapService.makeClientSafe(mapsArray);
 
@@ -66,6 +59,32 @@ export class ContinueExpeditionProcess {
             action: SWARAction.ShowMap,
             data: safeMap,
         });
+    }
+
+    public async getMapByExpedition(expeditionId: string): Promise<any | null> {
+        try {
+            // Utiliza `findOne` para encontrar la expedición por su _id
+            const expedition = await this.expeditionService.findOne({
+                _id: expeditionId,
+            });
+
+            // Si no se encuentra la expedición, retorna null
+            if (!expedition) {
+                return null;
+            }
+
+            // Utiliza `populate()` para rellenar el campo `map` con el objeto correspondiente de la colección "maps"
+            await expedition.populate('map');
+
+            // El campo `map` ahora contendrá el objeto de la colección "maps"
+            const map = expedition.map;
+
+            // Retorna el objeto del mapa encontrado o `null` si no se encuentra
+            return map;
+        } catch (error) {
+            // Manejar errores de consulta aquí
+            throw new Error('Error retrieving map: ' + error.message);
+        }
     }
 
     private setupDataFromCombat(ctx: GameContext): void {

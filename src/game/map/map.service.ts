@@ -10,6 +10,7 @@ import { NodeType } from '../components/expedition/node-type';
 import { ReturnModelType } from '@typegoose/typegoose';
 import { InjectModel } from 'kindagoose';
 import { Expedition, MapType } from 'src/game/components/expedition/expedition.schema';
+import { ExpeditionService } from '../components/expedition/expedition.service';
 
 @Injectable()
 export class MapService {
@@ -22,10 +23,12 @@ export class MapService {
         @InjectModel(MapType)
         private readonly mapModel: ReturnModelType<typeof MapType>,
         @InjectModel(Expedition)
-        private readonly expedition: ReturnModelType<typeof Expedition>
+        private readonly expedition: ReturnModelType<typeof Expedition>,
+
 
     ) { }
 
+    private readonly expeditionService: ExpeditionService
 
 
     public selectNode(ctx: GameContext, nodeId: number): void {
@@ -58,29 +61,50 @@ export class MapService {
         return undefined;
     }
 
-    public disableAll(ctx: GameContext) {
+    public async disableAll(ctx: GameContext) {
         const expedition = this.expedition.findById(ctx.expedition._id).populate('maps').exec();
 
         if (!expedition) {
             throw new Error('Expedition not found');
         }
 
-        const mapId = ctx.expedition.map._id; // Reemplaza esto con el ID del mapa que deseas obtener
+        // const mapId = ctx.expedition.map._id; // Reemplaza esto con el ID del mapa que deseas obtener
 
-        const mapDocument = this.mapModel.findById(mapId);
+        const mapsArray = await this.getMapByExpedition(ctx.expedition.id);
 
-        if (!mapDocument) {
-            throw new Error("Map not found");
-        }
-
-        const mapsArray = mapDocument.map;
-
+        console.warn("Este es el otro mapsArray: " + mapsArray);
 
         for (const node of mapsArray) {
             // Skip if node is already disabled
             if (!node.isAvailable()) continue;
 
             this.disableNode(ctx, node.id);
+        }
+    }
+
+    public async getMapByExpedition(expeditionId: string): Promise<any | null> {
+        try {
+            // Utiliza `findOne` para encontrar la expedición por su _id
+            const expedition = await this.expeditionService.findOne({
+                _id: expeditionId,
+            });
+
+            // Si no se encuentra la expedición, retorna null
+            if (!expedition) {
+                return null;
+            }
+
+            // Utiliza `populate()` para rellenar el campo `map` con el objeto correspondiente de la colección "maps"
+            await expedition.populate('map');
+
+            // El campo `map` ahora contendrá el objeto de la colección "maps"
+            const map = expedition.map;
+
+            // Retorna el objeto del mapa encontrado o `null` si no se encuentra
+            return map;
+        } catch (error) {
+            // Manejar errores de consulta aquí
+            throw new Error('Error retrieving map: ' + error.message);
         }
     }
 

@@ -23,7 +23,7 @@ export class FullSyncAction {
         private readonly mapService: MapService,
         @InjectModel(MapType)
         private readonly mapModel: ReturnModelType<typeof MapType>
-    ) {}
+    ) { }
 
 
 
@@ -48,13 +48,9 @@ export class FullSyncAction {
 
         this.logger.log(`Sent message ExpeditionMap to client ${client.id}`);
 
-        const mapDocument = this.mapModel.findById(expedition.id);
+        const mapsArray = await this.getMapByExpedition(expedition.id)
 
-        if (!mapDocument) {
-            throw new Error("Map not found");
-        }
-
-        const mapsArray = mapDocument.map;
+        console.warn("This is the map array: " + mapsArray + "Este es el expedition id :" + expedition.id);
 
         if (sendShowMap) {
             client.emit(
@@ -93,5 +89,31 @@ export class FullSyncAction {
                 },
             }),
         );
+    }
+
+    public async getMapByExpedition(expeditionId: string): Promise<any | null> {
+        try {
+            // Utiliza `findOne` para encontrar la expedición por su _id
+            const expedition = await this.expeditionService.findOne({
+                _id: expeditionId,
+            });
+
+            // Si no se encuentra la expedición, retorna null
+            if (!expedition) {
+                return null;
+            }
+
+            // Utiliza `populate()` para rellenar el campo `map` con el objeto correspondiente de la colección "maps"
+            await expedition.populate('map');
+
+            // El campo `map` ahora contendrá el objeto de la colección "maps"
+            const map = expedition.map;
+
+            // Retorna el objeto del mapa encontrado o `null` si no se encuentra
+            return map;
+        } catch (error) {
+            // Manejar errores de consulta aquí
+            throw new Error('Error retrieving map: ' + error.message);
+        }
     }
 }
