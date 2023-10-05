@@ -14,9 +14,8 @@ import { Expedition } from 'src/game/components/expedition/expedition.schema';
 @Injectable()
 export class MapService {
 
-    @InjectModel(MapService)
     private readonly mapModel: ReturnModelType<typeof MapService>
-    @Inject(Expedition)
+
     private readonly expedition: ReturnModelType<typeof Expedition>
 
     constructor(

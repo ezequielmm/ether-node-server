@@ -25,7 +25,6 @@ import { ReturnModelType } from '@typegoose/typegoose';
 export class InitExpeditionProcess {
     private readonly logger: Logger = new Logger(InitExpeditionProcess.name);
 
-    @InjectModel(MapService)
     private readonly mapService: ReturnModelType<typeof MapService>
     
     constructor(

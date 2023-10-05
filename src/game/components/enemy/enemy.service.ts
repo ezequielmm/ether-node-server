@@ -40,7 +40,7 @@ export class EnemyService {
     private readonly logger: Logger = new Logger(EnemyService.name);
 
     private readonly mapModel: MapService
-    @InjectModel(MapService)
+    
     private readonly mapModel2: ReturnModelType<typeof MapService>
 
     constructor(
