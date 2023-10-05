@@ -43,7 +43,7 @@ export class MapService {
             }
 
             // Comprueba si el nodo está disponible
-            if (!node.isAvailable()) {
+            if (node.status !== NodeStatus.Available) {
                 throw new Error('Node is not available');
             }
 
@@ -93,7 +93,7 @@ export class MapService {
 
         for (const node of mapsArray) {
             // Skip if node is already disabled
-            if (!node.isAvailable()) continue;
+            if (node.status !== NodeStatus.Available) continue;
 
             this.disableNode(ctx, node.id);
         }
@@ -152,7 +152,7 @@ export class MapService {
             }
 
             // Comprueba si el nodo está activo
-            if (!node.isActive()) {
+            if (node.status !== NodeStatus.Active) {
                 throw new Error('Node is not active');
             }
 
@@ -244,7 +244,7 @@ export class MapService {
 
     public async nodeIsSelectable(ctx: GameContext, nodeId: number): Promise<boolean> {
         const node = await this.findNodeById(ctx, nodeId);
-        return node.isSelectable();
+        return node.status === NodeStatus.Available || node.status === NodeStatus.Active;
     }
 
     public makeClientSafe(map: Node[]): Node[] {
