@@ -48,6 +48,9 @@ export class PortalNodeStrategy
 
         const mapsArray = await this.getMapByExpedition(ctx.expedition.id);
 
+        console.warn("Este es el otro mapsArray en part node strategy: " + mapsArray);
+
+
         const safeMap = this.mapService.makeClientSafe(mapsArray);
 
         // TODO: This also appears to emit in the nodeSelected process. Is that a dupe, or is this?
