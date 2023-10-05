@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { InjectModel } from 'kindagoose';
 import { UpdateQuery, FilterQuery, ProjectionFields } from 'mongoose';
-import { Expedition, ExpeditionDocument } from './expedition.schema';
+import { Expedition, ExpeditionDocument, MapType } from './expedition.schema';
 import {
     CardExistsOnPlayerHandDTO,
     CreateExpeditionDTO,
@@ -43,6 +43,14 @@ export class ExpeditionService {
         private readonly moduleRef: ModuleRef,
         private readonly mapService: MapService,
         private readonly configService: ConfigService,
+
+        @InjectModel(ExpeditionService)
+        private readonly expeditionService: ExpeditionService,
+
+
+        @InjectModel(MapType)
+        private readonly mapModel: ReturnModelType<typeof MapType>,
+
     ) {}
 
 
@@ -196,22 +204,34 @@ export class ExpeditionService {
     }
 
     async getExpeditionMap(ctx: GameContext): Promise<Node[]> {
-        try {
-          const expedition = await this.expedition.findById(ctx.expedition.id).populate('map');
-          if (!expedition) {
-            throw new Error('Expedition not found');
-          }
-      
-          // La propiedad `map` en `expedition` ahora estará poblada con el documento de Mapa.
-          const map: any = expedition.map; // Tipo específico de tu esquema de Mapa
-      
-          // Aquí puedes manipular y retornar el mapa como desees.
-          return map;
-        } catch (error) {
-          throw new Error('Error fetching expedition map: ' + error.message);
-        }
-      }
+        return await this.getMapByExpedition(ctx.expedition.id);
+    }
     
+    public async getMapByExpedition(expeditionId: string): Promise<any[]> {
+        try {
+            // Utiliza `findOne` para encontrar la expedición por su _id
+            const expedition = await this.expeditionService.findOne({
+                _id: expeditionId,
+            });
+
+            // Si no se encuentra la expedición, retorna null
+            if (!expedition) {
+                return null;
+            }
+
+            // Obtiene el ObjectID del campo map en la expedición
+            const mapId = expedition.map;
+
+            // Utiliza el ObjectID para buscar todos los documentos en la colección "maps" que coinciden con el valor del campo map en la expedición
+            const maps = await this.mapModel.find({ _id: mapId });
+
+            // Retorna el array de mapas encontrados o un array vacío si no se encuentran
+            return maps;
+        } catch (error) {
+            // Manejar errores de consulta aquí
+            throw new Error('Error retrieving maps: ' + error.message);
+        }
+    }
 
     isPlayerInCombat(ctx: GameContext): boolean {
         const nodeType = ctx.expedition?.currentNode?.nodeType;
