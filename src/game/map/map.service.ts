@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, forwardRef } from '@nestjs/common';
 import { find, findIndex, slice } from 'lodash';
 import { NodeStatus } from '../components/expedition/node-status';
 import { Node } from '../components/expedition/node';
@@ -25,10 +25,12 @@ export class MapService {
         @InjectModel(Expedition)
         private readonly expedition: ReturnModelType<typeof Expedition>,
 
+        @Inject(forwardRef(() => ExpeditionService))
+        private readonly expeditionService: ExpeditionService,
+
 
     ) { }
 
-    private readonly expeditionService: ExpeditionService
 
 
     public async selectNode(ctx: GameContext, nodeId: number): Promise<void> {

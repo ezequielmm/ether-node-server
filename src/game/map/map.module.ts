@@ -10,12 +10,14 @@ import { MerchantModule } from 'src/game/merchant/merchant.module';
 import { Expedition, MapType } from '../components/expedition/expedition.schema';
 import { KindagooseModule } from 'kindagoose';
 import { ExpeditionService } from '../components/expedition/expedition.service';
+import { ExpeditionModule } from '../components/expedition/expedition.module';
 
 @Module({
     imports: [
         KindagooseModule.forFeature([MapType]),
         KindagooseModule.forFeature([Expedition]),
         // KindagooseModule.forFeature([ExpeditionService]),
+        forwardRef(() => ExpeditionModule),
 
 
         forwardRef(() => CombatModule),
@@ -28,7 +30,9 @@ import { ExpeditionService } from '../components/expedition/expedition.service';
         PortalNodeStrategy,
         RoyalHouseNodeStrategy,
         CampNodeStrategy,
+        ExpeditionService,
     ],
-    exports: [MapService],
+    exports: [MapService,
+],
 })
 export class MapModule {}

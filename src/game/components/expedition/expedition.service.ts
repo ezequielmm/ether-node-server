@@ -44,12 +44,14 @@ export class ExpeditionService {
         private readonly mapService: MapService,
         private readonly configService: ConfigService,
 
-        @InjectModel(ExpeditionService)
-        private readonly expeditionService: ExpeditionService,
+
 
 
         @InjectModel(MapType)
         private readonly mapModel: ReturnModelType<typeof MapType>,
+
+        @InjectModel(ExpeditionService)
+        private readonly expeditionService: ExpeditionService,
 
     ) {}
 
