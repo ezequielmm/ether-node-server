@@ -444,6 +444,9 @@ export class EnemyService {
             
             const expeditionMap = await this.getMapByExpedition(ctx.expedition.id);
 
+            console.warn("ESTE ES EL EXPEDITION ID: " + ctx.expedition.id);
+            console.warn("ESTE ES EL ARRAY DE MAPAS: " + expeditionMap);
+
             const node = expeditionMap.find(
                 (node) => node.id == ctx.expedition.currentNode.nodeId,
             );

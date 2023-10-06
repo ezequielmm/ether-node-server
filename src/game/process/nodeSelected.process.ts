@@ -63,15 +63,13 @@ export class NodeSelectedProcess {
             return;
         }
 
-        console.warn("Node is selectable: " + node.id + " con status: " + node.status);
+        console.warn("Node is selectable: " + node.id + " con status: " + node.status + " Expedition number: " + ctx.expedition.id + " Mapa is number: " + ctx.map.id);
 
         switch (node.status) {
             case NodeStatus.Available:
                 return await this.nodeIsAvailable(ctx, node);
             case NodeStatus.Active:
                 return await this.nodeIsActive(ctx, node);
-            case NodeStatus.Disabled:
-                return await this.nodeIsAvailable(ctx, node);
         }
     }
 
@@ -83,6 +81,7 @@ export class NodeSelectedProcess {
 
         this.mapService.selectNode(ctx, node.id);
         await ctx.expedition.save();
+        await ctx.map.save();
 
         // moved to after selecting node, so that it would be active on return to client.
         // TODO: test if this breaks things.

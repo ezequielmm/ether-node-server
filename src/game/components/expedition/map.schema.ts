@@ -2,6 +2,8 @@ import { modelOptions, Prop, PropType, Ref, Severity } from '@typegoose/typegoos
 import mongoose, { HydratedDocument, ObjectId, Schema } from 'mongoose';
 import { Node } from './node';
 
+export type MapDocument = HydratedDocument<MapType>;
+
 
 @modelOptions({
     schemaOptions: { collection: 'maps', versionKey: false },

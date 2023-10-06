@@ -70,23 +70,28 @@ export class ExpeditionService {
             userAddress: client.request.headers.useraddress,
           });
     
+          const map = await this.mapModel.findOne({
+            id: client.request.headers._id,
+          });
+
           if (!expedition || !expedition.playerState) {
             throw new Error('Expedition or player state not found');
           }
-    
+          
           const events = new EventEmitter2();
     
           const ctx: GameContext = {
-            expedition,
-            client,
-            events,
-            moduleRef: this.moduleRef,
-            info: {
-              env: this.configService.get<string>('PAPERTRAIL_ENV'),
-              account: expedition.playerState.userAddress,
-              expeditionId: expedition.id,
-              service: this.configService.get<string>('PAPERTRAIL_SERVICE'),
-            },
+              expedition,
+              client,
+              events,
+              moduleRef: this.moduleRef,
+              info: {
+                  env: this.configService.get<string>('PAPERTRAIL_ENV'),
+                  account: expedition.playerState.userAddress,
+                  expeditionId: expedition.id,
+                  service: this.configService.get<string>('PAPERTRAIL_SERVICE'),
+              },
+              map
           };
     
           // Iterar sobre los trinkets del jugador y llamar a la función onAttach si está definida
