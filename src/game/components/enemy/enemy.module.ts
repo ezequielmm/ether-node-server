@@ -5,15 +5,21 @@ import { CombatQueueModule } from '../combatQueue/combatQueue.module';
 import { ExpeditionModule } from '../expedition/expedition.module';
 import { Enemy } from './enemy.schema';
 import { EnemyService } from './enemy.service';
+import { MapType } from '../expedition/expedition.schema';
 
 @Module({
     imports: [
         KindagooseModule.forFeature([Enemy]),
+        KindagooseModule.forFeature([MapType]),
+
         forwardRef(() => ExpeditionModule),
         forwardRef(() => StatusModule),
+        
+        MapType,
+
         CombatQueueModule,
     ],
-    providers: [EnemyService],
+    providers: [EnemyService, MapType],
     exports: [EnemyService, KindagooseModule],
 })
 export class EnemyModule {}

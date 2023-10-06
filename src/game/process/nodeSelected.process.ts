@@ -63,11 +63,15 @@ export class NodeSelectedProcess {
             return;
         }
 
+        console.warn("Node is selectable: " + node.id + " con status: " + node.status);
+
         switch (node.status) {
             case NodeStatus.Available:
                 return await this.nodeIsAvailable(ctx, node);
             case NodeStatus.Active:
                 return await this.nodeIsActive(ctx, node);
+            case NodeStatus.Disabled:
+                return await this.nodeIsAvailable(ctx, node);
         }
     }
 

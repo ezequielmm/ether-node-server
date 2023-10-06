@@ -32,6 +32,9 @@ import { ReturnModelType } from '@typegoose/typegoose';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { ProjectionFields } from 'mongoose';
 import { MapService } from 'src/game/map/map.service';
+import { MapType } from '../expedition/expedition.schema';
+import { Node } from 'src/game/components/expedition/node';
+
 
 @Injectable()
 export class EnemyService {
@@ -39,9 +42,9 @@ export class EnemyService {
 
     private readonly logger: Logger = new Logger(EnemyService.name);
 
-    private readonly mapModel: MapService
+    // private readonly mapModel: MapService
     
-    private readonly mapModel2: ReturnModelType<typeof MapService>
+    // private readonly mapModel2: ReturnModelType<typeof MapService>
 
     constructor(
         @InjectModel(Enemy)
@@ -51,6 +54,9 @@ export class EnemyService {
         @Inject(forwardRef(() => StatusService))
         private readonly statusService: StatusService,
         private readonly eventEmitter: EventEmitter2,
+       
+        @Inject(forwardRef(() => MapType))
+        private readonly mapModel: ReturnModelType<typeof MapType>,
 
 
     ) { }
@@ -406,15 +412,15 @@ export class EnemyService {
     }
 
     /**
- * Calculate new scripts for all enemies
- *
- * @param ctx Context
- */
+     * Calculate new scripts for all enemies
+     *
+     * @param ctx Context
+     */
     async calculateNewIntentions(ctx: GameContext): Promise<void> {
         const enemies = this.getAll(ctx);
 
         const enemiesAlive = enemies.filter(
-            (enemy) => enemy.value.hpCurrent > 0
+            (enemy) => enemy.value.hpCurrent > 0,
         );
 
         for (const enemy of enemiesAlive) {
@@ -435,22 +441,16 @@ export class EnemyService {
             }
 
             // Increase damage for node from 14 to 20
-            const mapDocument = await this.mapModel2.findOne({ _id: ctx.expedition.map }).exec();
+            
+            const expeditionMap = await this.getMapByExpedition(ctx.expedition.id);
 
-            if (!mapDocument) {
-                throw new Error('Map not found for the current expedition');
-            }
-
-            const currentNodeId = ctx.expedition.currentNode.nodeId;
-            const currentNode = this.mapModel2.findById(currentNodeId);
-
-            if (!currentNode) {
-                throw new Error('Current node not found in the map');
-            }
+            const node = expeditionMap.find(
+                (node) => node.id == ctx.expedition.currentNode.nodeId,
+            );
 
             if (
-                HARD_MODE_NODE_START <= currentNode.step &&
-                currentNode.step <= HARD_MODE_NODE_END
+                HARD_MODE_NODE_START <= node.step &&
+                node.step <= HARD_MODE_NODE_END
             ) {
                 this.increaseScriptDamage(nextScript);
             }
@@ -462,23 +462,52 @@ export class EnemyService {
                 },
                 {
                     [ENEMY_CURRENT_SCRIPT_PATH]: nextScript,
-                }
+                },
             );
 
             enemy.value.currentScript = nextScript;
 
             this.logger.log(
                 ctx.info,
-                `Calculated new script for enemy ${enemy.value.id}`
+                `Calculated new script for enemy ${enemy.value.id}`,
             );
             this.logger.log(
                 ctx.info,
-                `New script: ${JSON.stringify(nextScript)}`
+                `New script: ${JSON.stringify(nextScript)}`,
             );
         }
     }
 
-
+    public async getMapByExpedition(expeditionId: string): Promise<Node[]> {
+        try {
+            // Utiliza `findOne` para encontrar la expedición por su _id
+            const expedition = await this.expeditionService.findOne({
+                _id: expeditionId,
+            });
+    
+            // Si no se encuentra la expedición, retorna un array vacío
+            if (!expedition) {
+                return [];
+            }
+    
+            // Obtiene el ObjectID del campo map en la expedición
+            const mapId = expedition.map;
+    
+            // Utiliza el ObjectID para buscar el documento en la colección "maps" que coincide con el valor del campo map en la expedición
+            const map = await this.mapModel.findById(mapId);
+    
+            // Si no se encuentra el mapa, retorna un array vacío
+            if (!map) {
+                return [];
+            }
+    
+            // Retorna el array de nodos almacenados en el campo map del mapa encontrado
+            return map.map;
+        } catch (error) {
+            // Manejar errores de consulta aquí
+            throw new Error('Error retrieving maps: ' + error.message);
+        }
+    }
 
     private getNextScript(
         scripts: EnemyScript[],
