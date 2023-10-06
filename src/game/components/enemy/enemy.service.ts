@@ -55,7 +55,7 @@ export class EnemyService {
         private readonly statusService: StatusService,
         private readonly eventEmitter: EventEmitter2,
        
-        @Inject(forwardRef(() => MapType))
+        @InjectModel(MapType)
         private readonly mapModel: ReturnModelType<typeof MapType>,
 
 
