@@ -1,5 +1,5 @@
 import { modelOptions, Prop, PropType, Ref, Severity } from '@typegoose/typegoose';
-import mongoose, { HydratedDocument, ObjectId, Schema } from 'mongoose';
+import mongoose, { HydratedDocument, ObjectId, Schema, Types } from 'mongoose';
 import { Node } from './node';
 
 export type MapDocument = HydratedDocument<MapType>;
@@ -11,10 +11,10 @@ export type MapDocument = HydratedDocument<MapType>;
 })
 export class MapType {
     @Prop()
-    _id: ObjectId; // Asegúrate de que esta propiedad tiene el tipo ObjectId
+    _id: Types.ObjectId; // Asegúrate de que esta propiedad tiene el tipo ObjectId
     // Otras propiedades de MapType
 
-    @Prop()
+    @Prop({ type: () => [Node] }, PropType.ARRAY)
     map: Node[]; // O el tipo correcto para los nodos de tu mapa, reemplaza Node[] con el tipo correcto
 
 }

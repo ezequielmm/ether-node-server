@@ -2,11 +2,12 @@ import { Inject, Injectable } from '@nestjs/common';
 import { InjectModel } from 'kindagoose';
 import { UpdateQuery, FilterQuery, ProjectionFields } from 'mongoose';
 import { Expedition, ExpeditionDocument } from './expedition.schema';
-import { MapType } from './map.schema';
+import { MapDocument, MapType } from './map.schema';
 
 import {
     CardExistsOnPlayerHandDTO,
     CreateExpeditionDTO,
+    CreateMapDTO,
     GetCurrentNodeDTO,
     GetDeckCardsDTO,
     GetPlayerStateDTO,
@@ -71,7 +72,7 @@ export class ExpeditionService {
           });
     
           const map = await this.mapModel.findOne({
-            id: client.request.headers._id,
+            _id: client.request.headers._id,
           });
 
           if (!expedition || !expedition.playerState) {
@@ -128,6 +129,10 @@ export class ExpeditionService {
 
     async create(payload: CreateExpeditionDTO): Promise<ExpeditionDocument> {
         return await this.expedition.create(payload);
+    }
+
+    async createMapReferenced(payload: CreateMapDTO): Promise<MapDocument> {
+        return await this.mapModel.create(payload);
     }
 
     /**
