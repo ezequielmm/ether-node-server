@@ -32,7 +32,7 @@ import { ReturnModelType } from '@typegoose/typegoose';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { ProjectionFields } from 'mongoose';
 import { MapService } from 'src/game/map/map.service';
-import { MapType } from '../expedition/expedition.schema';
+import { MapType } from '../expedition/map.schema';
 import { Node } from 'src/game/components/expedition/node';
 
 
@@ -481,7 +481,7 @@ export class EnemyService {
     public async getMapByExpedition(expeditionId: string): Promise<Node[]> {
         try {
             // Utiliza `findOne` para encontrar la expedición por su _id
-            const expedition = await this.expeditionService.findOne({
+            const expedition = await this.mapModel.findOne({
                 _id: expeditionId,
             });
     

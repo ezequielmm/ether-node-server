@@ -17,6 +17,7 @@ import { EncounterInterface } from '../encounter/encounter.interfaces';
 import { Score } from './scores';
 import { ScoreResponse } from 'src/game/scoreCalculator/scoreCalculator.service';
 import { Contest } from 'src/game/contest/contest.schema';
+import { MapType } from './map.schema';
 
 export type ExpeditionDocument = HydratedDocument<Expedition>;
 
@@ -25,29 +26,6 @@ export interface IPlayerToken {
     contractId: string;
     tokenId: number;
 }
-
-@modelOptions({
-    schemaOptions: { collection: 'maps', versionKey: false },
-    options: { allowMixed: Severity.ALLOW },
-})
-class MapType {
-    @Prop()
-    _id: ObjectId; // Asegúrate de que esta propiedad tiene el tipo ObjectId
-    // Otras propiedades de MapType
-
-    @Prop()
-    map: Node[]; // O el tipo correcto para los nodos de tu mapa, reemplaza Node[] con el tipo correcto
-
-}
-
-export { MapType };
-
-const MapTypeSchema: Schema = new Schema({
-    // Campos y tipos de datos de tu esquema MapType
-});
-
-
-export const MapTypeModel = mongoose.model<MapType>('MapType', MapTypeSchema);
 
 
 @modelOptions({

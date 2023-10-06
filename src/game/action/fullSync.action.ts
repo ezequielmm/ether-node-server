@@ -11,7 +11,7 @@ import {
 import { ExpeditionStatusEnum } from '../components/expedition/expedition.enum';
 import { id } from 'ethers6';
 import { ReturnModelType } from '@typegoose/typegoose';
-import { MapType } from '../components/expedition/expedition.schema';
+import { MapType } from '../components/expedition/map.schema';
 import { InjectModel } from 'kindagoose';
 import { Node } from '../components/expedition/node';
 

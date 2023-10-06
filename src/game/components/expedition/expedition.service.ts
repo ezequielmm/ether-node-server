@@ -1,7 +1,9 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { InjectModel } from 'kindagoose';
 import { UpdateQuery, FilterQuery, ProjectionFields } from 'mongoose';
-import { Expedition, ExpeditionDocument, MapType } from './expedition.schema';
+import { Expedition, ExpeditionDocument } from './expedition.schema';
+import { MapType } from './map.schema';
+
 import {
     CardExistsOnPlayerHandDTO,
     CreateExpeditionDTO,

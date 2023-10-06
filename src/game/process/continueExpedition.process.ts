@@ -8,7 +8,7 @@ import {
     SWARMessageType,
 } from '../standardResponse/standardResponse';
 import { ReturnModelType } from '@typegoose/typegoose';
-import { MapType } from '../components/expedition/expedition.schema';
+import { MapType } from '../components/expedition/map.schema';
 import { InjectModel } from 'kindagoose';
 import { ExpeditionService } from '../components/expedition/expedition.service';
 import { Node } from '../components/expedition/node';

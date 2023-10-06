@@ -9,7 +9,8 @@ import { strategies } from './strategies/index';
 import { NodeType } from '../components/expedition/node-type';
 import { ReturnModelType } from '@typegoose/typegoose';
 import { InjectModel } from 'kindagoose';
-import { Expedition, MapType } from 'src/game/components/expedition/expedition.schema';
+import { MapType } from 'src/game/components/expedition/map.schema';
+import { Expedition } from 'src/game/components/expedition/expedition.schema';
 import { ExpeditionService } from '../components/expedition/expedition.service';
 
 @Injectable()

@@ -10,7 +10,7 @@ import { MapService } from '../map.service';
 import { AutoCompleteNodeStrategy } from './auto-complete-node-strategy';
 import { NodeStrategy } from './node-strategy';
 import { ReturnModelType } from '@typegoose/typegoose';
-import { MapType } from 'src/game/components/expedition/expedition.schema';
+import { MapType } from 'src/game/components/expedition/map.schema';
 import { InjectModel } from 'kindagoose';
 import { ExpeditionService } from 'src/game/components/expedition/expedition.service';
 import { Node } from 'src/game/components/expedition/node';

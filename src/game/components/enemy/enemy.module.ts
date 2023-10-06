@@ -5,7 +5,7 @@ import { CombatQueueModule } from '../combatQueue/combatQueue.module';
 import { ExpeditionModule } from '../expedition/expedition.module';
 import { Enemy } from './enemy.schema';
 import { EnemyService } from './enemy.service';
-import { MapType } from '../expedition/expedition.schema';
+import { MapType } from '../expedition/map.schema';
 
 @Module({
     imports: [

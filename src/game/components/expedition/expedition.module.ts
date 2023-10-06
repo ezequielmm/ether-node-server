@@ -1,5 +1,6 @@
 import { forwardRef, Module } from '@nestjs/common';
-import { Expedition, MapType } from './expedition.schema';
+import { Expedition } from './expedition.schema';
+import { MapType } from './map.schema';
 import { ExpeditionService } from './expedition.service';
 import { KindagooseModule } from 'kindagoose';
 import { MapModule } from 'src/game/map/map.module';

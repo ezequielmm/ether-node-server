@@ -35,7 +35,7 @@ import { GetEncounterDataAction } from './getEncounterDataAction';
 import { EncounterModule } from '../components/encounter/encounter.module';
 import { MapModule } from '../map/map.module';
 import { CombatModule } from '../combat/combat.module';
-import { MapType } from '../components/expedition/expedition.schema';
+import { MapType } from '../components/expedition/map.schema';
 import { KindagooseModule } from 'kindagoose';
 
 const actions = [

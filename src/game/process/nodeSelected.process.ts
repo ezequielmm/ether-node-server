@@ -17,7 +17,7 @@ import { InitNodeProcess } from './initNode.process';
 import { InitTreasureProcess } from './initTreasure.process';
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 import { ReturnModelType } from '@typegoose/typegoose';
-import { MapType } from '../components/expedition/expedition.schema';
+import { MapType } from '../components/expedition/map.schema';
 import { InjectModel } from 'kindagoose';
 import { ExpeditionService } from '../components/expedition/expedition.service';
 
