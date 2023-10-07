@@ -7,20 +7,17 @@ import { ModuleRef } from '@nestjs/core';
 import { NodeStrategy } from './strategies/node-strategy';
 import { strategies } from './strategies/index';
 import { NodeType } from '../components/expedition/node-type';
-import { ReturnModelType } from '@typegoose/typegoose';
 import { InjectModel } from 'kindagoose';
-import { MapType } from 'src/game/components/expedition/map.schema';
-import { Expedition } from 'src/game/components/expedition/expedition.schema';
+import { MapType } from '../components/expedition/map.schema';
+import { ReturnModelType } from '@typegoose/typegoose';
+import { Expedition } from '../components/expedition/expedition.schema';
 import { ExpeditionService } from '../components/expedition/expedition.service';
 
 @Injectable()
 export class MapService {
-
-
-
     constructor(
         private readonly moduleRef: ModuleRef,
-
+        
         @InjectModel(MapType)
         private readonly mapModel: ReturnModelType<typeof MapType>,
         @InjectModel(Expedition)
@@ -28,20 +25,14 @@ export class MapService {
 
         @Inject(forwardRef(() => ExpeditionService))
         private readonly expeditionService: ExpeditionService,
-
-
-    ) { }
-
-
+        
+        ) {}
 
     public async selectNode(ctx: GameContext, nodeId: number): Promise<void> {
-
-        const node = this.findNodeById(ctx, nodeId);
-
-        console.warn("EL NODO HA SIDO ELEGIDO EN SELECT NODE: " + node);
+        const node = await this.findNodeById(ctx, nodeId);
 
         // Check if node is available
-        if (!(await node).isAvailable()) {
+        if (!node.isAvailable()) {
             throw new Error('Node is not available');
         }
 
@@ -49,18 +40,15 @@ export class MapService {
         this.disableAll(ctx);
 
         // Set node as active
-        (await
-            // Set node as active
-            node).status = NodeStatus.Active;
+        node.status = NodeStatus.Active;
 
-        (await node).timesSelected = 1;
+        node.timesSelected = 1;
 
         // Call node strategy
-        this.getNodeStrategy(await node)?.onSelect?.(ctx, await node);
+        this.getNodeStrategy(node)?.onSelect?.(ctx, node);
     }
 
-
-    public getNodeStrategy(node: Node): NodeStrategy {
+    public getNodeStrategy(node: Node): NodeStrategy | undefined {
         const strategy = strategies.get(node.type);
 
         if (strategy) {
@@ -71,17 +59,9 @@ export class MapService {
     }
 
     public async disableAll(ctx: GameContext) {
-        // const expedition = this.expedition.findById(ctx.expedition._id).populate('maps').exec();
-
-        // if (!expedition) {
-        //     throw new Error('Expedition not found');
-        // }
-
-        // const mapId = ctx.expedition.map._id; // Reemplaza esto con el ID del mapa que deseas obtener
 
         const mapsArray = await this.getMapByExpedition(ctx.expedition.id);
 
-        // console.warn("Este es el otro mapsArray: " + mapsArray);
 
         for (const node of mapsArray) {
             // Skip if node is already disabled
@@ -90,39 +70,6 @@ export class MapService {
             this.disableNode(ctx, node.id);
         }
     }
-
-    public async getMapByExpedition(expeditionId: string): Promise<Node[]> {
-        try {
-            // Utiliza `findOne` para encontrar la expedición por su _id
-            const expedition = await this.expeditionService.findOne({
-                _id: expeditionId,
-            });
-
-            // Si no se encuentra la expedición, retorna un array vacío
-            if (!expedition) {
-                return [];
-            }
-
-            // Obtiene el ObjectID del campo map en la expedición
-            const mapId = expedition.map;
-
-            // Utiliza el ObjectID para buscar el documento en la colección "maps" que coincide con el valor del campo map en la expedición
-            const map = await this.mapModel.findById(mapId);
-
-            // Si no se encuentra el mapa, retorna un array vacío
-            if (!map) {
-                return [];
-            }
-
-            // Retorna el array de nodos almacenados en el campo map del mapa encontrado
-            return map.map;
-        } catch (error) {
-            // Manejar errores de consulta aquí
-            throw new Error('Error retrieving maps: ' + error.message);
-        }
-    }
-
-
 
     public async enableNode(ctx: GameContext, nodeId: number): Promise<void> {
         const node = await this.findNodeById(ctx, nodeId);
@@ -135,37 +82,28 @@ export class MapService {
     }
 
     public async completeNode(ctx: GameContext, nodeId: number): Promise<void> {
-        const node = this.findNodeById(ctx, nodeId);
+        const node = await this.findNodeById(ctx, nodeId);
 
         // Check if node is active
-        if (!(await node).isActive()) {
+        if (!node.isActive()) {
             throw new Error('Node is not active');
         }
 
-        (await node).status = NodeStatus.Completed;
+        node.status = NodeStatus.Completed;
 
         // Enable all nodes that are connected to this node
         this.enableNextNodes(ctx, nodeId);
 
         // Call node strategy
-        this.getNodeStrategy(await node)?.onCompleted?.(ctx, await node);
+        this.getNodeStrategy(node)?.onCompleted?.(ctx, node);
     }
-
-    /*
-        private enableNextNodes(ctx: GameContext, nodeId: number) {
-            for (const node of ctx.expedition.map) {
-                if (node.enter.includes(nodeId)) {
-                    this.enableNode(ctx, node.id);
-                }
-            }
-        }
-    */
 
     private async enableNextNodes(ctx: GameContext, nodeId: number) {
 
-        const arrayOfMaps = await this.getMapByExpedition(ctx.expedition.id)
+        const mapsArray = await this.getMapByExpedition(ctx.expedition.id);
 
-        for (const node of arrayOfMaps) {
+
+        for (const node of mapsArray) {
             if (node.enter.includes(nodeId)) {
                 this.enableNode(ctx, node.id);
             }
@@ -173,10 +111,10 @@ export class MapService {
     }
 
     public async findNodeById(ctx: GameContext, nodeId: number): Promise<Node> {
-
-        const expeditionAllMaps: Node[] = await this.getMapByExpedition(ctx.expedition.id);
-
-        return find(expeditionAllMaps, {
+        
+        const mapsArray = await this.getMapByExpedition(ctx.expedition.id);
+        
+        return find(mapsArray, {
             id: nodeId,
         });
     }
@@ -241,8 +179,39 @@ export class MapService {
 
     public async getClientSafeMap(ctx: GameContext): Promise<Node[]> {
 
-        const mapsArray = await this.getMapByExpedition(ctx.expedition.id)
+        const mapsArray = await this.getMapByExpedition(ctx.expedition.id);
 
         return this.makeClientSafe(mapsArray);
+    }
+
+    public async getMapByExpedition(expeditionId: string): Promise<Node[]> {
+        try {
+            // Utiliza `findOne` para encontrar la expedición por su _id
+            const expedition = await this.expeditionService.findOne({
+                _id: expeditionId,
+            });
+
+            // Si no se encuentra la expedición, retorna un array vacío
+            if (!expedition) {
+                return [];
+            }
+
+            // Obtiene el ObjectID del campo map en la expedición
+            const mapId = expedition.map;
+
+            // Utiliza el ObjectID para buscar el documento en la colección "maps" que coincide con el valor del campo map en la expedición
+            const map = await this.mapModel.findById(mapId);
+
+            // Si no se encuentra el mapa, retorna un array vacío
+            if (!map) {
+                return [];
+            }
+
+            // Retorna el array de nodos almacenados en el campo map del mapa encontrado
+            return map.map;
+        } catch (error) {
+            // Manejar errores de consulta aquí
+            throw new Error('Error retrieving maps: ' + error.message);
+        }
     }
 }
