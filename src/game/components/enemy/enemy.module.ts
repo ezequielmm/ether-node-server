@@ -6,11 +6,14 @@ import { ExpeditionModule } from '../expedition/expedition.module';
 import { Enemy } from './enemy.schema';
 import { EnemyService } from './enemy.service';
 import { MapType } from '../expedition/map.schema';
+import { ExpeditionService } from '../expedition/expedition.service';
+import { Expedition } from '../expedition/expedition.schema';
 
 @Module({
     imports: [
         KindagooseModule.forFeature([Enemy]),
         KindagooseModule.forFeature([MapType]),
+        // KindagooseModule.forFeature([Expedition]),
 
         forwardRef(() => ExpeditionModule),
         forwardRef(() => StatusModule),

@@ -34,6 +34,7 @@ import { ProjectionFields } from 'mongoose';
 import { MapService } from 'src/game/map/map.service';
 import { MapType } from '../expedition/map.schema';
 import { Node } from 'src/game/components/expedition/node';
+import { Expedition } from '../expedition/expedition.schema';
 
 
 @Injectable()
@@ -58,6 +59,8 @@ export class EnemyService {
         @InjectModel(MapType)
         private readonly mapModel: ReturnModelType<typeof MapType>,
 
+        // @InjectModel(Expedition)
+        // private readonly expedition: ReturnModelType<typeof Expedition>,
 
     ) { }
 
@@ -444,7 +447,7 @@ export class EnemyService {
             console.warn("ESTE ES EL NUEVO EXPEDITION ID : " + expeditionId);
 
             // Increase damage for node from 14 to 20
-            const arrayOfMaps = await this.getMapByExpedition(ctx.expedition.id);
+            const arrayOfMaps = await this.getMapByExpedition(expeditionId);
             
             console.warn("ESTE ES EL NUEVO ARRAY DE MAPAS : " + arrayOfMaps)
 
@@ -488,26 +491,26 @@ export class EnemyService {
     public async getMapByExpedition(expeditionId: string): Promise<Node[]> {
         try {
             // Utiliza `findOne` para encontrar la expedición por su _id
-            const expedition = await this.mapModel.findOne({
+            const expedition = await this.expeditionService.findOne({
                 _id: expeditionId,
             });
-
+    
             // Si no se encuentra la expedición, retorna un array vacío
             if (!expedition) {
                 return [];
             }
-
+    
             // Obtiene el ObjectID del campo map en la expedición
             const mapId = expedition.map;
-
+    
             // Utiliza el ObjectID para buscar el documento en la colección "maps" que coincide con el valor del campo map en la expedición
             const map = await this.mapModel.findById(mapId);
-
+    
             // Si no se encuentra el mapa, retorna un array vacío
             if (!map) {
                 return [];
             }
-
+    
             // Retorna el array de nodos almacenados en el campo map del mapa encontrado
             return map.map;
         } catch (error) {
@@ -515,6 +518,31 @@ export class EnemyService {
             throw new Error('Error retrieving maps: ' + error.message);
         }
     }
+
+    // async obtenerMapasPorExpeditionID(expeditionID: string): Promise<Node[]> {
+    //     try {
+    //         // Busca la expedición por el expeditionID
+    //         const expedition = await this.expedition.findOne({ _id: expeditionID });
+
+    //         if (!expedition) {
+    //             throw new Error('Expedición no encontrada.');
+    //         }
+
+    //         // Obtén el mapa correspondiente al expeditionID
+    //         const mapa: MapType = await this.mapModel.findOne({ expeditionID: expedition._id }, 'map');
+
+    //         if (!mapa) {
+    //             throw new Error('Mapa no encontrado para esta expedición.');
+    //         }
+
+    //         // Devuelve el array de nodos del mapa
+    //         return mapa.map;
+    //     } catch (error) {
+    //         // Manejo de errores
+    //         console.error('Error al obtener el mapa por expeditionID:', error);
+    //         throw error;
+    //     }
+    // }
 
     private getNextScript(
         scripts: EnemyScript[],
