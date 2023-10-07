@@ -35,7 +35,7 @@ export class MapService {
 
 
     public async selectNode(ctx: GameContext, nodeId: number): Promise<void> {
-        
+
         const node = this.findNodeById(ctx, nodeId);
 
         console.warn("EL NODO HA SIDO ELEGIDO EN SELECT NODE: " + node);
@@ -81,7 +81,7 @@ export class MapService {
 
         const mapsArray = await this.getMapByExpedition(ctx.expedition.id);
 
-        console.warn("Este es el otro mapsArray: " + mapsArray);
+        // console.warn("Este es el otro mapsArray: " + mapsArray);
 
         for (const node of mapsArray) {
             // Skip if node is already disabled
@@ -162,9 +162,9 @@ export class MapService {
     */
 
     private async enableNextNodes(ctx: GameContext, nodeId: number) {
-        
+
         const arrayOfMaps = await this.getMapByExpedition(ctx.expedition.id)
-        
+
         for (const node of arrayOfMaps) {
             if (node.enter.includes(nodeId)) {
                 this.enableNode(ctx, node.id);

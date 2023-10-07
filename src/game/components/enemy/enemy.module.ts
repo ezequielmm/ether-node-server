@@ -15,11 +15,9 @@ import { MapType } from '../expedition/map.schema';
         forwardRef(() => ExpeditionModule),
         forwardRef(() => StatusModule),
         
-        MapType,
-
         CombatQueueModule,
     ],
-    providers: [EnemyService, MapType],
+    providers: [EnemyService],
     exports: [EnemyService, KindagooseModule],
 })
 export class EnemyModule {}

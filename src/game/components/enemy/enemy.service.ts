@@ -439,6 +439,9 @@ export class EnemyService {
                     nextScript = this.getNextScript(scripts, nextScript);
                 }
             }
+            const expeditionId = ctx.expedition.id;
+            
+            console.warn("ESTE ES EL NUEVO EXPEDITION ID : " + expeditionId);
 
             // Increase damage for node from 14 to 20
             const arrayOfMaps = await this.getMapByExpedition(ctx.expedition.id);

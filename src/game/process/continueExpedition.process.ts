@@ -49,7 +49,7 @@ export class ContinueExpeditionProcess {
         
         const mapsArray = await this.getMapByExpedition(ctx.expedition.id);
 
-        console.warn("Este es el otro mapsArray en continue expedition: " + mapsArray);
+        // console.warn("Este es el otro mapsArray en continue expedition: " + mapsArray);
 
 
         const safeMap = this.mapService.makeClientSafe(mapsArray);

@@ -50,7 +50,7 @@ export class PortalNodeStrategy
 
         const mapsArray = await this.getMapByExpedition(ctx.expedition.id);
 
-        console.warn("Este es el otro mapsArray en part node strategy: " + mapsArray);
+        // console.warn("Este es el otro mapsArray en part node strategy: " + mapsArray);
 
 
         const safeMap = this.mapService.makeClientSafe(mapsArray);
