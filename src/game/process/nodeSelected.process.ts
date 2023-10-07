@@ -83,7 +83,7 @@ export class NodeSelectedProcess {
 
         await this.mapService.selectNode(ctx, node.id);
         await ctx.expedition.save();
-        await ctx.map.save();
+        // await ctx.map.save();
 
         console.warn("EL NODO ESTA DISPONIBLE PARA ELEGIR AFTER : " + node + " CON STATUS: " + node.status);
 
