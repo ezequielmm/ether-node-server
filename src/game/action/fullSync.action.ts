@@ -48,7 +48,7 @@ export class FullSyncAction {
 
         const mapsArray = await this.getMapByExpedition(expedition.id)
 
-        console.warn("This is the map array: " + mapsArray + "Este es el expedition id :" + expedition.id + " Este es el map pelado: " + map);
+        // console.warn("This is the map array: " + mapsArray + "Este es el expedition id :" + expedition.id + " Este es el map pelado: " + map);
 
         if (sendShowMap) {
             client.emit(
