@@ -79,7 +79,9 @@ export class NodeSelectedProcess {
     ): Promise<string> {
         const logger = this.logger.logger.child(ctx.info);
 
-        this.mapService.selectNode(ctx, node.id);
+        console.warn("EL NODO ESTA DISPONIBLE PARA ELEGIR: " + node);
+
+        await this.mapService.selectNode(ctx, node.id);
         await ctx.expedition.save();
         await ctx.map.save();
 

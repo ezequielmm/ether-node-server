@@ -35,37 +35,28 @@ export class MapService {
 
 
     public async selectNode(ctx: GameContext, nodeId: number): Promise<void> {
-        try {
-            const node: Node | null = await this.findNodeById(ctx, nodeId);
+        
+        const node = this.findNodeById(ctx, nodeId);
 
-            // Si no se encuentra el nodo, lanza un error o maneja el caso según tu lógica de negocio
-            if (!node) {
-                throw new Error(`Node with ID ${nodeId} not found`);
-            }
+        console.warn("EL NODO HA SIDO ELEGIDO EN SELECT NODE: " + node);
 
-            // Comprueba si el nodo está disponible
-            if (node.status !== NodeStatus.Available) {
-                throw new Error('Node is not available');
-            }
-
-            // Deshabilita todos los demás nodos
-            this.disableAll(ctx);
-
-            // Establece el nodo como activo
-            node.status = NodeStatus.Active;
-            node.timesSelected = 1;
-
-            // Llama a la estrategia del nodo si está definida
-            const nodeStrategy = this.getNodeStrategy(node);
-            if (nodeStrategy && nodeStrategy.onSelect) {
-                nodeStrategy.onSelect(ctx, node);
-            }
-        } catch (error) {
-            // Maneja el error según tu lógica de negocio (lanzar, loggear, etc.)
-            console.error(`Error selecting node: ${error.message}`);
-            // Puedes lanzar el error nuevamente si deseas que la excepción se propague
-            // throw error;
+        // Check if node is available
+        if (!(await node).isAvailable()) {
+            throw new Error('Node is not available');
         }
+
+        // Disable all other nodes
+        this.disableAll(ctx);
+
+        // Set node as active
+        (await
+            // Set node as active
+            node).status = NodeStatus.Active;
+
+        (await node).timesSelected = 1;
+
+        // Call node strategy
+        this.getNodeStrategy(await node)?.onSelect?.(ctx, await node);
     }
 
 
@@ -80,11 +71,11 @@ export class MapService {
     }
 
     public async disableAll(ctx: GameContext) {
-        const expedition = this.expedition.findById(ctx.expedition._id).populate('maps').exec();
+        // const expedition = this.expedition.findById(ctx.expedition._id).populate('maps').exec();
 
-        if (!expedition) {
-            throw new Error('Expedition not found');
-        }
+        // if (!expedition) {
+        //     throw new Error('Expedition not found');
+        // }
 
         // const mapId = ctx.expedition.map._id; // Reemplaza esto con el ID del mapa que deseas obtener
 
@@ -94,7 +85,7 @@ export class MapService {
 
         for (const node of mapsArray) {
             // Skip if node is already disabled
-            if (node.status !== NodeStatus.Available) continue;
+            if (!node.isAvailable()) continue;
 
             this.disableNode(ctx, node.id);
         }
@@ -144,36 +135,20 @@ export class MapService {
     }
 
     public async completeNode(ctx: GameContext, nodeId: number): Promise<void> {
-        try {
-            const node: Node | null = await this.findNodeById(ctx, nodeId);
+        const node = this.findNodeById(ctx, nodeId);
 
-            // Si no se encuentra el nodo, lanza un error o maneja el caso según tu lógica de negocio
-            if (!node) {
-                throw new Error(`Node with ID ${nodeId} not found`);
-            }
-
-            // Comprueba si el nodo está activo
-            if (node.status !== NodeStatus.Active) {
-                throw new Error('Node is not active');
-            }
-
-            // Establece el nodo como completado
-            node.status = NodeStatus.Completed;
-
-            // Habilita todos los nodos que están conectados a este nodo
-            this.enableNextNodes(ctx, nodeId);
-
-            // Llama a la estrategia del nodo si está definida
-            const nodeStrategy = this.getNodeStrategy(node);
-            if (nodeStrategy && nodeStrategy.onCompleted) {
-                nodeStrategy.onCompleted(ctx, node);
-            }
-        } catch (error) {
-            // Maneja el error según tu lógica de negocio (lanzar, loggear, etc.)
-            console.error(`Error completing node: ${error.message}`);
-            // Puedes lanzar el error nuevamente si deseas que la excepción se propague
-            // throw error;
+        // Check if node is active
+        if (!(await node).isActive()) {
+            throw new Error('Node is not active');
         }
+
+        (await node).status = NodeStatus.Completed;
+
+        // Enable all nodes that are connected to this node
+        this.enableNextNodes(ctx, nodeId);
+
+        // Call node strategy
+        this.getNodeStrategy(await node)?.onCompleted?.(ctx, await node);
     }
 
     /*
@@ -186,39 +161,21 @@ export class MapService {
         }
     */
 
-    private async enableNextNodes(ctx: GameContext, nodeId: number): Promise<void> {
-        try {
-            // Obtener el documento de la expedición
-            const expeditionDocument = await this.expedition.findById(ctx.expedition._id);
-
-            if (expeditionDocument) {
-                // Obtener el mapa relacionado con la expedición
-                const mapDocument = await this.mapModel.findById(expeditionDocument.map);
-
-                if (mapDocument) {
-                    // Iterar sobre los nodos del mapa
-                    for (const node of mapDocument.map) {
-                        if (node.enter.includes(nodeId)) {
-                            this.enableNode(ctx, node.id);
-                        }
-                    }
-                } else {
-                    console.error('Mapa no encontrado para la expedición.');
-                }
-            } else {
-                console.error('Expedición no encontrada.');
+    private async enableNextNodes(ctx: GameContext, nodeId: number) {
+        
+        const arrayOfMaps = await this.getMapByExpedition(ctx.expedition.id)
+        
+        for (const node of arrayOfMaps) {
+            if (node.enter.includes(nodeId)) {
+                this.enableNode(ctx, node.id);
             }
-        } catch (error) {
-            // Manejar errores aquí
-            console.error(error);
-            throw new Error('Error habilitando nodos siguientes: ' + error.message);
         }
     }
 
     public async findNodeById(ctx: GameContext, nodeId: number): Promise<Node> {
-        
+
         const expeditionAllMaps: Node[] = await this.getMapByExpedition(ctx.expedition.id);
-        
+
         return find(expeditionAllMaps, {
             id: nodeId,
         });
@@ -248,7 +205,7 @@ export class MapService {
 
     public async nodeIsSelectable(ctx: GameContext, nodeId: number): Promise<boolean> {
         const node = await this.findNodeById(ctx, nodeId);
-        return node.status === NodeStatus.Available || node.status === NodeStatus.Active;
+        return node.isSelectable();
     }
 
     public makeClientSafe(map: Node[]): Node[] {
