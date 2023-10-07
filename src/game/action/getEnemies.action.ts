@@ -25,6 +25,8 @@ export class GetEnemiesAction {
     ) {}
 
     async handle(clientId: string): Promise<IEnemiesResponse[]> {
+        console.warn("ESTE ES EL CLIENTID: " + clientId);
+        
         // First we get the enemies from the current node
         const {
             data: { enemies },
