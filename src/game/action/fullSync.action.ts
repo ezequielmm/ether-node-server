@@ -9,12 +9,10 @@ import {
     SWARAction,
 } from '../standardResponse/standardResponse';
 import { ExpeditionStatusEnum } from '../components/expedition/expedition.enum';
-import { id } from 'ethers6';
-import { ReturnModelType } from '@typegoose/typegoose';
 import { MapType } from '../components/expedition/map.schema';
 import { InjectModel } from 'kindagoose';
+import { ReturnModelType } from '@typegoose/typegoose';
 import { Node } from '../components/expedition/node';
-
 
 @Injectable()
 export class FullSyncAction {
@@ -25,9 +23,7 @@ export class FullSyncAction {
         private readonly mapService: MapService,
         @InjectModel(MapType)
         private readonly mapModel: ReturnModelType<typeof MapType>
-    ) { }
-
-
+    ) {}
 
     async handle(client: Socket, sendShowMap = true): Promise<void> {
         const expedition = await this.expeditionService.findOneTimeDesc({
@@ -52,7 +48,7 @@ export class FullSyncAction {
 
         const mapsArray = await this.getMapByExpedition(expedition.id)
 
-        // console.warn("This is the map array: " + mapsArray + "Este es el expedition id :" + expedition.id);
+        console.warn("This is the map array: " + mapsArray + "Este es el expedition id :" + expedition.id + " Este es el map pelado: " + map);
 
         if (sendShowMap) {
             client.emit(
@@ -123,6 +119,4 @@ export class FullSyncAction {
             throw new Error('Error retrieving maps: ' + error.message);
         }
     }
-    
-    
 }
