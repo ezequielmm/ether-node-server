@@ -79,11 +79,14 @@ export class NodeSelectedProcess {
     ): Promise<string> {
         const logger = this.logger.logger.child(ctx.info);
 
-        console.warn("EL NODO ESTA DISPONIBLE PARA ELEGIR: " + node);
+        console.warn("EL NODO ESTA DISPONIBLE PARA ELEGIR BEFORE: " + node + " CON STATUS: " + node.status);
 
         await this.mapService.selectNode(ctx, node.id);
         await ctx.expedition.save();
         await ctx.map.save();
+
+        console.warn("EL NODO ESTA DISPONIBLE PARA ELEGIR AFTER : " + node + " CON STATUS: " + node.status);
+
 
         // moved to after selecting node, so that it would be active on return to client.
         // TODO: test if this breaks things.
