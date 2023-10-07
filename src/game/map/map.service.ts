@@ -7,10 +7,10 @@ import { ModuleRef } from '@nestjs/core';
 import { NodeStrategy } from './strategies/node-strategy';
 import { strategies } from './strategies/index';
 import { NodeType } from '../components/expedition/node-type';
-import { InjectModel } from 'kindagoose';
 import { MapType } from '../components/expedition/map.schema';
-import { ReturnModelType } from '@typegoose/typegoose';
+import { InjectModel } from 'kindagoose';
 import { Expedition } from '../components/expedition/expedition.schema';
+import { ReturnModelType } from '@typegoose/typegoose';
 import { ExpeditionService } from '../components/expedition/expedition.service';
 
 @Injectable()
@@ -102,7 +102,6 @@ export class MapService {
 
         const mapsArray = await this.getMapByExpedition(ctx.expedition.id);
 
-
         for (const node of mapsArray) {
             if (node.enter.includes(nodeId)) {
                 this.enableNode(ctx, node.id);
@@ -111,9 +110,10 @@ export class MapService {
     }
 
     public async findNodeById(ctx: GameContext, nodeId: number): Promise<Node> {
-        
+
         const mapsArray = await this.getMapByExpedition(ctx.expedition.id);
-        
+
+
         return find(mapsArray, {
             id: nodeId,
         });
@@ -178,9 +178,9 @@ export class MapService {
     }
 
     public async getClientSafeMap(ctx: GameContext): Promise<Node[]> {
-
+        
         const mapsArray = await this.getMapByExpedition(ctx.expedition.id);
-
+        
         return this.makeClientSafe(mapsArray);
     }
 
@@ -190,23 +190,23 @@ export class MapService {
             const expedition = await this.expeditionService.findOne({
                 _id: expeditionId,
             });
-
+    
             // Si no se encuentra la expedición, retorna un array vacío
             if (!expedition) {
                 return [];
             }
-
+    
             // Obtiene el ObjectID del campo map en la expedición
             const mapId = expedition.map;
-
+    
             // Utiliza el ObjectID para buscar el documento en la colección "maps" que coincide con el valor del campo map en la expedición
             const map = await this.mapModel.findById(mapId);
-
+    
             // Si no se encuentra el mapa, retorna un array vacío
             if (!map) {
                 return [];
             }
-
+    
             // Retorna el array de nodos almacenados en el campo map del mapa encontrado
             return map.map;
         } catch (error) {
