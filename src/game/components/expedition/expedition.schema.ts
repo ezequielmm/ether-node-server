@@ -1,5 +1,5 @@
 import { modelOptions, Prop, PropType, Ref, Severity } from '@typegoose/typegoose';
-import mongoose, { HydratedDocument, ObjectId, Schema } from 'mongoose';
+import mongoose, { HydratedDocument, ObjectId, Schema, Types } from 'mongoose';
 import { MerchantItems } from 'src/game/merchant/merchant.interface';
 import { AttachedStatus, StatusType } from 'src/game/status/interfaces';
 import { TreasureInterface } from 'src/game/treasure/treasure.interfaces';
@@ -49,8 +49,8 @@ export class Expedition {
     @Prop()
     mapSeedId?: number;
 
-    @Prop({ ref: MapType }) // Indica que este campo es una referencia a MapType
-    map: Ref<MapType>; // El tipo Ref<T> se utiliza para campos de referencia en typegoose
+    @Prop() // Indica que este campo es una referencia a MapType
+    map: Types.ObjectId;; // El tipo Ref<T> se utiliza para campos de referencia en typegoose
 
     @Prop()
     playerState: Player;

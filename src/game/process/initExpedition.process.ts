@@ -96,11 +96,9 @@ export class InitExpeditionProcess {
         // Crea un nuevo ObjectId aleatorio
         const randomObjectId = new Types.ObjectId();
 
-        await this.expeditionService.createMapReferenced(
-            {
-                _id: randomObjectId,
-                map
-            })
+        console.error("RANDOM OBJECTID: " + randomObjectId);
+
+
 
         const expedition = await this.expeditionService.create({
             userAddress,
@@ -138,11 +136,18 @@ export class InitExpeditionProcess {
             createdAt: new Date(),
         });
 
+        const referencedMap = await this.expeditionService.createMapReferenced(
+            {
+                _id: randomObjectId,
+                map
+            });
+
         this.logger.log(
             {
                 expId: expedition.id,
             },
             `Created expedition for player: ${userAddress}`,
+            `Created referenced map: ' ${referencedMap}`,
         );
     }
 

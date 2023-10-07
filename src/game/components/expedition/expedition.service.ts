@@ -128,10 +128,16 @@ export class ExpeditionService {
     }
 
     async create(payload: CreateExpeditionDTO): Promise<ExpeditionDocument> {
+        
+        console.error("CREATE PAYLOAD MAP: " + payload.map)
+        
         return await this.expedition.create(payload);
     }
 
     async createMapReferenced(payload: CreateMapDTO): Promise<MapDocument> {
+        console.error("CREATE PAYLOAD MAP ARRAY: " + payload._id + " MAPARRAY: " + payload.map)
+
+        
         return await this.mapModel.create(payload);
     }
 
@@ -305,7 +311,12 @@ export class ExpeditionService {
         payload: GetCurrentNodeDTO,
     ): Promise<IExpeditionCurrentNode> {
         const expedition = await this.findOne(payload);
-        return expedition.currentNode;
+
+        const currentNode = expedition.currentNode;
+
+        console.warn("GET CURRENTNODE: " + currentNode);
+
+        return currentNode;
     }
 
     async cardExistsOnPlayerHand(
