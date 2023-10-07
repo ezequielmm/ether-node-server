@@ -388,6 +388,9 @@ export class ExpeditionService {
         const { ctx, nodeId } = payload;
 
         const node = await this.mapService.findNodeById(ctx, nodeId);
+        
+        console.warn("THIS IS THE NODE WITH AWAIT: " + node);
+        
         this.mapService.enableNode(ctx, nodeId);
 
         ctx.expedition.currentNode = {

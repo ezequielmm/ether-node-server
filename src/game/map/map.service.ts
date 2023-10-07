@@ -216,7 +216,10 @@ export class MapService {
     }
 
     public async findNodeById(ctx: GameContext, nodeId: number): Promise<Node> {
-        return find(await this.getMapByExpedition(ctx.expedition.id), {
+        
+        const expeditionAllMaps: Node[] = await this.getMapByExpedition(ctx.expedition.id);
+        
+        return find(expeditionAllMaps, {
             id: nodeId,
         });
     }
