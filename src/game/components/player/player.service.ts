@@ -114,6 +114,9 @@ export class PlayerService {
         set(ctx.expedition, PLAYER_ENERGY_PATH, energy);
         this.logger.log(ctx.info, `Player energy set to ${energy}`);
 
+        console.warn("ESTA ES LA ENERGIA OBTENIDA: " + energy)
+        
+
         return energy;
     }
 
