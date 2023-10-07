@@ -49,8 +49,8 @@ export class Expedition {
     @Prop()
     mapSeedId?: number;
 
-    @Prop() // Indica que este campo es una referencia a MapType
-    map: Types.ObjectId;; // El tipo Ref<T> se utiliza para campos de referencia en typegoose
+    @Prop({ ref: MapType }) // Indica que este campo es una referencia a MapType
+    map: Ref<MapType>; // El tipo Ref<T> se utiliza para campos de referencia en typegoose
 
     @Prop()
     playerState: Player;
