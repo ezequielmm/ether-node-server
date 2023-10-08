@@ -63,7 +63,7 @@ export class NodeSelectedProcess {
             return;
         }
 
-        console.warn("Node is selectable: " + node.id + " con status: " + node.status + " Expedition number: " + ctx.expedition.id);// + " Mapa is number: " + ctx.map.id);
+        console.warn("Node is selectable: " + node.id + " con status: " + node.status + " Expedition number: " + ctx.expedition.id + " Mapa is number: " + ctx.expedition.map);
 
         switch (node.status) {
             case NodeStatus.Available:
