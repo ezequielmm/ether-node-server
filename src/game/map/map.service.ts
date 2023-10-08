@@ -12,6 +12,7 @@ import { InjectModel } from 'kindagoose';
 import { Expedition } from '../components/expedition/expedition.schema';
 import { ReturnModelType } from '@typegoose/typegoose';
 import { ExpeditionService } from '../components/expedition/expedition.service';
+import { createVerify } from 'crypto';
 
 @Injectable()
 export class MapService {
@@ -26,7 +27,7 @@ export class MapService {
         @Inject(forwardRef(() => ExpeditionService))
         private readonly expeditionService: ExpeditionService,
 
-        ) {}
+    ) { }
 
     public async selectNode(ctx: GameContext, nodeId: number): Promise<void> {
         const node = await this.findNodeById(ctx, nodeId);
@@ -36,15 +37,16 @@ export class MapService {
             throw new Error('Node is not available');
         }
 
-        // Disable all other nodes
-        this.disableAll(ctx);
-
         // Set node as active
         node.status = NodeStatus.Active;
-        this.markNodeAsActive(ctx.expedition.id, nodeId, NodeStatus.Active)
+        await this.markNode(ctx.expedition.id, nodeId, NodeStatus.Active)
 
         node.timesSelected = 1;
-        this.timesSelected(ctx.expedition.id, nodeId, 1);
+        await this.timesSelected(ctx.expedition.id, nodeId, 1);
+
+        // Disable all other nodes
+        // await this.disableAll(ctx);
+        await this.disableAll(ctx, nodeId);
 
         // Call node strategy
         this.getNodeStrategy(node)?.onSelect?.(ctx, node);
@@ -59,7 +61,7 @@ export class MapService {
 
         return undefined;
     }
-
+/*
     public async disableAll(ctx: GameContext) {
 
         const mapsArray = await this.getMapByExpedition(ctx.expedition.id);
@@ -67,22 +69,41 @@ export class MapService {
 
         for (const node of mapsArray) {
             // Skip if node is already disabled
-            if (!node.isAvailable()) continue;
-            this.disableNode(ctx, node.id);
+            if (node.isAvailable() && !node.isActive) 
+            {
+                this.disableNode(ctx, node.id);
+            }
         }
     }
+*/
+
+public async disableAll(ctx: GameContext, nodeIdToExclude: number) {
+    try {
+        const mapsArray = await this.getMapByExpedition(ctx.expedition.id);
+
+        for (const node of mapsArray) {
+            // Skip if node is already disabled or is the node to exclude
+            if (node.id !== nodeIdToExclude) {
+                await this.markNode(ctx.expedition.id, node.id, NodeStatus.Disabled);
+            }
+        }
+    } catch (error) {
+        // Manejar errores aquí
+        throw new Error('Error disabling nodes: ' + error.message);
+    }
+}
 
     public async enableNode(ctx: GameContext, nodeId: number): Promise<void> {
         const node = await this.findNodeById(ctx, nodeId);
         node.status = NodeStatus.Available;
-        this.markNodeAsActive(ctx.expedition.id, nodeId, NodeStatus.Available)
+        await this.markNode(ctx.expedition.id, nodeId, NodeStatus.Available)
 
     }
 
     public async disableNode(ctx: GameContext, nodeId: number): Promise<void> {
         const node = await this.findNodeById(ctx, nodeId);
         node.status = NodeStatus.Disabled;
-        this.markNodeAsActive(ctx.expedition.id, nodeId, NodeStatus.Disabled)
+        await this.markNode(ctx.expedition.id, nodeId, NodeStatus.Disabled)
 
     }
 
@@ -95,7 +116,7 @@ export class MapService {
         }
 
         node.status = NodeStatus.Completed;
-        this.markNodeAsActive(ctx.expedition.id, nodeId, NodeStatus.Completed)
+        await this.markNode(ctx.expedition.id, nodeId, NodeStatus.Completed)
 
 
         // Enable all nodes that are connected to this node
@@ -222,7 +243,7 @@ export class MapService {
         }
     }
 
-    public async markNodeAsActive(expeditionId: string, nodeId: number, nodeStatus: NodeStatus): Promise<void> {
+    public async markNode(expeditionId: string, nodeId: number, nodeStatus: NodeStatus): Promise<void> {
         try {
             // Utiliza `findOne` para encontrar la expedición por su _id
             const expedition = await this.expeditionService.findOne({
@@ -239,7 +260,7 @@ export class MapService {
 
             // Utiliza el ObjectID para buscar el documento en la colección "maps" que coincide con el valor del campo map en la expedición
             const map = await this.mapModel.findOne({
-                'mapRef': mapId
+                '_id': mapId
             });
 
             // Si no se encuentra el mapa, lanza un error
@@ -283,7 +304,7 @@ export class MapService {
 
             // Utiliza el ObjectID para buscar el documento en la colección "maps" que coincide con el valor del campo map en la expedición
             const map = await this.mapModel.findOne({
-                'mapRef': mapId
+                '_id': mapId
             });
 
             // Si no se encuentra el mapa, lanza un error
