@@ -5,10 +5,11 @@ import { ExpeditionService } from '../components/expedition/expedition.service';
 import { MapService } from '../map/map.service';
 import { ModuleRef } from '@nestjs/core';
 import { ConfigService } from '@nestjs/config/dist/config.service';
+import { MapType } from '../components/expedition/map.schema';
 
 @Module({
     imports: [],
-    providers: [ScoreCalculatorService, Expedition],
+    providers: [ScoreCalculatorService, Expedition, MapType],
     exports: [ScoreCalculatorService, Expedition],
 })
 export class ScoreCalculatorModule {}

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { filter, reduce } from 'lodash';
 import { CardRarityEnum } from '../components/card/card.enum';
 import {
@@ -12,9 +12,8 @@ import { Trinket } from '../components/trinket/trinket.schema';
 import { ExpeditionStatusEnum } from '../components/expedition/expedition.enum';
 import { Gear } from '../components/gear/gear.schema';
 import { InjectModel } from 'kindagoose';
-import { ReturnModelType } from '@typegoose/typegoose';
 import { MapType } from '../components/expedition/map.schema';
-import { ContextIdFactory } from '@nestjs/core';
+import { ReturnModelType } from '@typegoose/typegoose';
 
 export interface ScoreResponse {
     outcome: string;
@@ -29,16 +28,11 @@ export interface ScoreResponse {
     rewards?: {name:string, image:string}[];
 }
 
-
-
 @Injectable()
 export class ScoreCalculatorService {
 
-    private readonly expedition: ReturnModelType<typeof Expedition>
-
-    @InjectModel(MapType)
-    private readonly mapModel: ReturnModelType<typeof MapType>
-
+    @Inject(MapType)
+    private readonly mapModel:  MapType
 
     calculate({ expedition }: { expedition: Expedition }): ScoreResponse {
         // All the points will be calculatred based on
@@ -73,7 +67,7 @@ export class ScoreCalculatorService {
             this.calculateBossEnemyPotions(bossEnemiesDefeated);
 
         // Now we query how many nodes we completed in the expedition
-        const nodesCompleted = this.calculateNodesCompleted(this.expedition.findById(this.getMapByExpedition(map._id)).node);
+        const nodesCompleted = this.calculateNodesCompleted(this.mapModel.map)//(map);
 
         // How we query how much HP the player got
         const healthReamining = this.calculateHP(hpCurrent, hpMax);
@@ -317,38 +311,5 @@ export class ScoreCalculatorService {
         );
         const points = Math.max(60 - duration, 0);
         return points;
-    }
-
-    public async getMapByExpedition(expeditionId: string): Promise<Node[]> {
-        try {
-            // Utiliza `findOne` para encontrar la expedición por su _id
-            const expedition = await this.expedition.findOne({
-                _id: expeditionId,
-            });
-    
-            // Si no se encuentra la expedición, retorna un array vacío
-            if (!expedition) {
-                return [];
-            }
-    
-            // Obtiene el ObjectID del campo map en la expedición
-            const mapId = expedition.map; // Accede al campo mapRef en el objeto map
-    
-            // Utiliza el ObjectID para buscar el documento en la colección "maps" que coincide con el valor del campo map en la expedición
-            const map = await this.mapModel.findOne({
-                '_id': mapId
-            });
-    
-            // Si no se encuentra el mapa, retorna un array vacío
-            if (!map) {
-                return [];
-            }
-    
-            // Retorna el array de nodos almacenados en el campo map del mapa encontrado
-            return map.map;
-        } catch (error) {
-            // Manejar errores de consulta aquí
-            throw new Error('Error retrieving maps: ' + error.message);
-        }
     }
 }
