@@ -449,7 +449,7 @@ export class EnemyService {
             // Increase damage for node from 14 to 20
             const arrayOfMaps = await this.getMapByExpedition(expeditionId);
             
-            console.warn("ESTE ES EL NUEVO ARRAY DE MAPAS : " + arrayOfMaps)
+            // console.warn("ESTE ES EL NUEVO ARRAY DE MAPAS : " + arrayOfMaps)
 
             // const node = ctx.expedition.map.find(
             const node = arrayOfMaps.find(
