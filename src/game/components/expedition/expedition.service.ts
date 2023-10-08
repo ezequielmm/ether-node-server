@@ -92,7 +92,6 @@ export class ExpeditionService {
                   expeditionId: expedition.id,
                   service: this.configService.get<string>('PAPERTRAIL_SERVICE'),
               },
-              map
           };
     
           // Iterar sobre los trinkets del jugador y llamar a la función onAttach si está definida

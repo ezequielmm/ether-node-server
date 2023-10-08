@@ -17,7 +17,7 @@ import { ExpeditionService } from '../components/expedition/expedition.service';
 export class MapService {
     constructor(
         private readonly moduleRef: ModuleRef,
-        
+
         @InjectModel(MapType)
         private readonly mapModel: ReturnModelType<typeof MapType>,
         @InjectModel(Expedition)
@@ -25,7 +25,7 @@ export class MapService {
 
         @Inject(forwardRef(() => ExpeditionService))
         private readonly expeditionService: ExpeditionService,
-        
+
         ) {}
 
     public async selectNode(ctx: GameContext, nodeId: number): Promise<void> {
@@ -41,9 +41,10 @@ export class MapService {
 
         // Set node as active
         node.status = NodeStatus.Active;
-        // this.markNodeAsActive(ctx.expedition.id, node.id, NodeStatus.Active)
+        this.markNodeAsActive(ctx.expedition.id, nodeId, NodeStatus.Active)
 
         node.timesSelected = 1;
+        this.timesSelected(ctx.expedition.id, nodeId, 1);
 
         // Call node strategy
         this.getNodeStrategy(node)?.onSelect?.(ctx, node);
@@ -67,7 +68,6 @@ export class MapService {
         for (const node of mapsArray) {
             // Skip if node is already disabled
             if (!node.isAvailable()) continue;
-
             this.disableNode(ctx, node.id);
         }
     }
@@ -75,14 +75,14 @@ export class MapService {
     public async enableNode(ctx: GameContext, nodeId: number): Promise<void> {
         const node = await this.findNodeById(ctx, nodeId);
         node.status = NodeStatus.Available;
-        // this.markNodeAsActive(ctx.expedition.id, node.id, NodeStatus.Available)
+        this.markNodeAsActive(ctx.expedition.id, nodeId, NodeStatus.Available)
 
     }
 
     public async disableNode(ctx: GameContext, nodeId: number): Promise<void> {
         const node = await this.findNodeById(ctx, nodeId);
         node.status = NodeStatus.Disabled;
-        this.markNodeAsActive(ctx.expedition.id, node.id, NodeStatus.Disabled)
+        this.markNodeAsActive(ctx.expedition.id, nodeId, NodeStatus.Disabled)
 
     }
 
@@ -95,7 +95,7 @@ export class MapService {
         }
 
         node.status = NodeStatus.Completed;
-        // this.markNodeAsActive(ctx.expedition.id, node.id, NodeStatus.Completed)
+        this.markNodeAsActive(ctx.expedition.id, nodeId, NodeStatus.Completed)
 
 
         // Enable all nodes that are connected to this node
@@ -185,9 +185,9 @@ export class MapService {
     }
 
     public async getClientSafeMap(ctx: GameContext): Promise<Node[]> {
-        
+
         const mapsArray = await this.getMapByExpedition(ctx.expedition.id);
-        
+
         return this.makeClientSafe(mapsArray);
     }
 
@@ -197,23 +197,23 @@ export class MapService {
             const expedition = await this.expeditionService.findOne({
                 _id: expeditionId,
             });
-    
+
             // Si no se encuentra la expedición, retorna un array vacío
             if (!expedition) {
                 return [];
             }
-    
+
             // Obtiene el ObjectID del campo map en la expedición
             const mapId = expedition.map;
-    
+
             // Utiliza el ObjectID para buscar el documento en la colección "maps" que coincide con el valor del campo map en la expedición
             const map = await this.mapModel.findById(mapId);
-    
+
             // Si no se encuentra el mapa, retorna un array vacío
             if (!map) {
                 return [];
             }
-    
+
             // Retorna el array de nodos almacenados en el campo map del mapa encontrado
             return map.map;
         } catch (error) {
@@ -228,36 +228,36 @@ export class MapService {
             const expedition = await this.expeditionService.findOne({
                 _id: expeditionId,
             });
-    
+
             // Si no se encuentra la expedición, lanza un error
             if (!expedition) {
                 throw new Error('Expedition not found');
             }
-    
+
             // Obtiene el ObjectID del campo map en la expedición
             const mapId = expedition.map;
-    
+
             // Utiliza el ObjectID para buscar el documento en la colección "maps" que coincide con el valor del campo map en la expedición
             const map = await this.mapModel.findOne({
                 'mapRef': mapId
             });
-    
+
             // Si no se encuentra el mapa, lanza un error
             if (!map) {
                 throw new Error('Map not found');
             }
-    
+
             // Encuentra el nodo en el array de nodos del mapa por su _id y actualiza su estado a 'Active'
             const nodeToUpdate = map.map.find(node => node.id === nodeId);
-            
+
             // Si no se encuentra el nodo, lanza un error
             if (!nodeToUpdate) {
                 throw new Error('Node not found');
             }
-    
+
             // Actualiza el estado del nodo a 'Active'
             nodeToUpdate.status = nodeStatus;
-    
+
             // Guarda el mapa actualizado en la base de datos
             await map.save();
         } catch (error) {
@@ -265,5 +265,49 @@ export class MapService {
             throw new Error('Error marking node as active: ' + error.message);
         }
     }
-    
+
+    public async timesSelected(expeditionId: string, nodeId: number, timesSelected: number): Promise<void> {
+        try {
+            // Utiliza `findOne` para encontrar la expedición por su _id
+            const expedition = await this.expeditionService.findOne({
+                _id: expeditionId,
+            });
+
+            // Si no se encuentra la expedición, lanza un error
+            if (!expedition) {
+                throw new Error('Expedition not found');
+            }
+
+            // Obtiene el ObjectID del campo map en la expedición
+            const mapId = expedition.map;
+
+            // Utiliza el ObjectID para buscar el documento en la colección "maps" que coincide con el valor del campo map en la expedición
+            const map = await this.mapModel.findOne({
+                'mapRef': mapId
+            });
+
+            // Si no se encuentra el mapa, lanza un error
+            if (!map) {
+                throw new Error('Map not found');
+            }
+
+            // Encuentra el nodo en el array de nodos del mapa por su _id y actualiza su estado a 'Active'
+            const nodeToUpdate = map.map.find(node => node.id === nodeId);
+
+            // Si no se encuentra el nodo, lanza un error
+            if (!nodeToUpdate) {
+                throw new Error('Node not found');
+            }
+
+            // Actualiza el estado del nodo a 'Active'
+            nodeToUpdate.timesSelected = timesSelected;
+
+            // Guarda el mapa actualizado en la base de datos
+            await map.save();
+        } catch (error) {
+            // Manejar errores aquí
+            throw new Error('Error marking node as active: ' + error.message);
+        }
+    }
+
 }
