@@ -70,10 +70,6 @@ export class ExpeditionService {
           const expedition = await this.expedition.findOne({
             userAddress: client.request.headers.useraddress,
           });
-    
-          const map = await this.mapModel.findOne({
-            _id: client.request.headers._id,
-          });
 
           if (!expedition || !expedition.playerState) {
             throw new Error('Expedition or player state not found');
