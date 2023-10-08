@@ -1,9 +1,7 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectModel } from 'kindagoose';
 import { UpdateQuery, FilterQuery, ProjectionFields } from 'mongoose';
 import { Expedition, ExpeditionDocument } from './expedition.schema';
-import { MapDocument, MapType } from './map.schema';
-
 import {
     CardExistsOnPlayerHandDTO,
     CreateExpeditionDTO,
@@ -35,8 +33,7 @@ import { ModuleRef } from '@nestjs/core';
 import { MapService } from 'src/game/map/map.service';
 import { ConfigService } from '@nestjs/config';
 import { NodeType } from './node-type';
-
-
+import { MapDocument, MapType } from './map.schema';
 
 @Injectable()
 export class ExpeditionService {
@@ -47,18 +44,9 @@ export class ExpeditionService {
         private readonly mapService: MapService,
         private readonly configService: ConfigService,
 
-
-
-
         @InjectModel(MapType)
         private readonly mapModel: ReturnModelType<typeof MapType>,
-
-        @InjectModel(ExpeditionService)
-        private readonly expeditionService: ExpeditionService,
-
     ) {}
-
-
 
     async getExpeditionIdFromClient(client: Socket): Promise<string> {
         const expedition = await this.findOneTimeDesc({userAddress: client.request.headers.useraddress});
@@ -66,42 +54,35 @@ export class ExpeditionService {
     }
 
     async getGameContext(client: Socket): Promise<GameContext> {
-        try {
-          const expedition = await this.expedition.findOne({
-            userAddress: client.request.headers.useraddress,
-          });
+        const expedition = await this.findOneTimeDesc(
+            { 
+                userAddress: client.request.headers.useraddress
+            });
+        const events = new EventEmitter2();
 
-          if (!expedition || !expedition.playerState) {
-            throw new Error('Expedition or player state not found');
-          }
-          
-          const events = new EventEmitter2();
-    
-          const ctx: GameContext = {
-              expedition,
-              client,
-              events,
-              moduleRef: this.moduleRef,
-              info: {
-                  env: this.configService.get<string>('PAPERTRAIL_ENV'),
-                  account: expedition.playerState.userAddress,
-                  expeditionId: expedition.id,
-                  service: this.configService.get<string>('PAPERTRAIL_SERVICE'),
-              },
-          };
-    
-          // Iterar sobre los trinkets del jugador y llamar a la función onAttach si está definida
-          for (const trinket of expedition.playerState.trinkets) {
-            if (trinket.onAttach) {
-              trinket.onAttach(ctx);
-            }
-          }
-    
-          return ctx;
-        } catch (error) {
-          throw new Error('Error creating game context: ' + error.message);
+        if (!expedition?.playerState) {
+            throw new Error('Player state not found');
         }
-      }
+
+        const ctx: GameContext = {
+            expedition,
+            client,
+            events,
+            moduleRef: this.moduleRef,
+            info: {
+                env: this.configService.get<string>('PAPERTRAIL_ENV'),
+                account: expedition?.playerState.userAddress,
+                expeditionId: expedition !== null ? expedition.id : null,
+                service: this.configService.get<string>('PAPERTRAIL_SERVICE'),
+            },
+        };
+
+        for (const trinket of expedition.playerState?.trinkets) {
+            trinket.onAttach(ctx);
+        }
+
+        return ctx;
+    }
 
     async findOne(
         filter: FilterQuery<Expedition>,
@@ -123,16 +104,10 @@ export class ExpeditionService {
     }
 
     async create(payload: CreateExpeditionDTO): Promise<ExpeditionDocument> {
-        
-        console.error("CREATE PAYLOAD MAP: " + payload.map)
-        
         return await this.expedition.create(payload);
     }
 
     async createMapReferenced(payload: CreateMapDTO): Promise<MapDocument> {
-        console.error("CREATE PAYLOAD MAP ARRAY: " + payload._id + " MAPARRAY: " + payload.map)
-
-        
         return await this.mapModel.create(payload);
     }
 
@@ -221,38 +196,6 @@ export class ExpeditionService {
     async getExpeditionMap(ctx: GameContext): Promise<Node[]> {
         return await this.getMapByExpedition(ctx.expedition.id);
     }
-    
-    public async getMapByExpedition(expeditionId: string): Promise<Node[]> {
-        try {
-            // Utiliza `findOne` para encontrar la expedición por su _id
-            const expedition = await this.expeditionService.findOne({
-                _id: expeditionId,
-            });
-    
-            // Si no se encuentra la expedición, retorna un array vacío
-            if (!expedition) {
-                return [];
-            }
-    
-            // Obtiene el ObjectID del campo map en la expedición
-            const mapId = expedition.map;
-    
-            // Utiliza el ObjectID para buscar el documento en la colección "maps" que coincide con el valor del campo map en la expedición
-            const map = await this.mapModel.findById(mapId);
-    
-            // Si no se encuentra el mapa, retorna un array vacío
-            if (!map) {
-                return [];
-            }
-    
-            // Retorna el array de nodos almacenados en el campo map del mapa encontrado
-            return map.map;
-        } catch (error) {
-            // Manejar errores de consulta aquí
-            throw new Error('Error retrieving maps: ' + error.message);
-        }
-    }
-    
 
     isPlayerInCombat(ctx: GameContext): boolean {
         const nodeType = ctx.expedition?.currentNode?.nodeType;
@@ -306,12 +249,7 @@ export class ExpeditionService {
         payload: GetCurrentNodeDTO,
     ): Promise<IExpeditionCurrentNode> {
         const expedition = await this.findOne(payload);
-
-        const currentNode = expedition.currentNode;
-
-        console.warn("GET CURRENTNODE: " + currentNode);
-
-        return currentNode;
+        return expedition.currentNode;
     }
 
     async cardExistsOnPlayerHand(
@@ -394,9 +332,6 @@ export class ExpeditionService {
         const { ctx, nodeId } = payload;
 
         const node = await this.mapService.findNodeById(ctx, nodeId);
-        
-        console.warn("THIS IS THE NODE WITH AWAIT: " + node);
-        
         this.mapService.enableNode(ctx, nodeId);
 
         ctx.expedition.currentNode = {
@@ -437,5 +372,38 @@ export class ExpeditionService {
         });
 
         return finalScores;
+    }
+
+    public async getMapByExpedition(expeditionId: string): Promise<Node[]> {
+        try {
+            // Utiliza `findOne` para encontrar la expedición por su _id
+            const expedition = await this.expedition.findOne({
+                _id: expeditionId,
+            });
+    
+            // Si no se encuentra la expedición, retorna un array vacío
+            if (!expedition) {
+                return [];
+            }
+    
+            // Obtiene el ObjectID del campo map en la expedición
+            const mapId = expedition.map; // Accede al campo mapRef en el objeto map
+    
+            // Utiliza el ObjectID para buscar el documento en la colección "maps" que coincide con el valor del campo map en la expedición
+            const map = await this.mapModel.findOne({
+                '_id': mapId
+            });
+    
+            // Si no se encuentra el mapa, retorna un array vacío
+            if (!map) {
+                return [];
+            }
+    
+            // Retorna el array de nodos almacenados en el campo map del mapa encontrado
+            return map.map;
+        } catch (error) {
+            // Manejar errores de consulta aquí
+            throw new Error('Error retrieving maps: ' + error.message);
+        }
     }
 }

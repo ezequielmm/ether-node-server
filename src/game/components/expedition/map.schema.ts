@@ -10,6 +10,10 @@ export type MapDocument = HydratedDocument<MapType>;
     options: { allowMixed: Severity.ALLOW },
 })
 export class MapType {
+
+    @Prop()
+    clientId?: string;
+    
     @Prop()
     _id: Types.ObjectId; // Asegúrate de que esta propiedad tiene el tipo ObjectId
     // Otras propiedades de MapType
