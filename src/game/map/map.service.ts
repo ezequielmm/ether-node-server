@@ -83,8 +83,8 @@ public async disableAll(ctx: GameContext, nodeIdToExclude: number) {
 
         for (const node of mapsArray) {
             // Skip if node is already disabled or is the node to exclude
-            if (node.id !== nodeIdToExclude) {
-                await this.markNode(ctx.expedition.id, node.id, NodeStatus.Disabled);
+            if (node.id !== nodeIdToExclude && node.status !== NodeStatus.Completed) {
+                this.disableNode(ctx, node.id);
             }
         }
     } catch (error) {
