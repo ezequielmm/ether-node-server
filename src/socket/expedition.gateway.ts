@@ -41,7 +41,7 @@ export class ExpeditionGateway {
     @SubscribeMessage('NodeSelected')
     async handleNodeSelected(client: Socket, node_id: number): Promise<string> {
 
-        console.warn("EL NODO HA SIDO ELEGIDO: " + node_id)
+        // console.warn("EL NODO HA SIDO ELEGIDO: " + node_id)
 
         return await this.actionQueueService.pushWithReturn(
             await this.expeditionService.getExpeditionIdFromClient(client),

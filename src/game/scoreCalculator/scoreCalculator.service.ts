@@ -78,7 +78,7 @@ export class ScoreCalculatorService {
 
         const nodesCompleted = await this.calculateNodesCompleted(mapsArray)//(map);
 
-        console.warn("::::::MAPS::::::::::  " +  mapsArray + ":::::::::CALCULATOR NODES COMPLETED:::::::::::::::: " + nodesCompleted);
+        // console.warn("::::::MAPS::::::::::  " +  mapsArray + ":::::::::CALCULATOR NODES COMPLETED:::::::::::::::: " + nodesCompleted);
 
         // How we query how much HP the player got
         const healthReamining = this.calculateHP(hpCurrent, hpMax);

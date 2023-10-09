@@ -63,7 +63,7 @@ export class NodeSelectedProcess {
             return;
         }
 
-        console.warn("Node is selectable: " + node.id + " con status: " + node.status + " Expedition number: " + ctx.expedition.id + " Mapa is number: " + ctx.expedition.map);
+        // console.warn("Node is selectable: " + node.id + " con status: " + node.status + " Expedition number: " + ctx.expedition.id + " Mapa is number: " + ctx.expedition.map);
 
         switch (node.status) {
             case NodeStatus.Available:
@@ -79,13 +79,13 @@ export class NodeSelectedProcess {
     ): Promise<string> {
         const logger = this.logger.logger.child(ctx.info);
 
-        console.warn("EL NODO ESTA DISPONIBLE PARA ELEGIR BEFORE: " + node + " CON STATUS: " + node.status);
+        // console.warn("EL NODO ESTA DISPONIBLE PARA ELEGIR BEFORE: " + node + " CON STATUS: " + node.status);
 
         await this.mapService.selectNode(ctx, node.id);
         await ctx.expedition.save();
         // await ctx.map.save();
 
-        console.warn("EL NODO ESTA DISPONIBLE PARA ELEGIR AFTER : " + node + " CON STATUS: " + node.status);
+        // console.warn("EL NODO ESTA DISPONIBLE PARA ELEGIR AFTER : " + node + " CON STATUS: " + node.status);
 
 
         // moved to after selecting node, so that it would be active on return to client.

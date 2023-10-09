@@ -13,7 +13,7 @@ export class AutoCompleteNodeStrategy implements NodeStrategy {
 
     public onSelect(ctx: GameContext, node: Node): void {
 
-        console.warn("EL NODO HA SIDO ELEGIDO POR ONSELECT: " + node + " CON STATUS: " + node.status);
+        // console.warn("EL NODO HA SIDO ELEGIDO POR ONSELECT: " + node + " CON STATUS: " + node.status);
 
         this.mapService.completeNode(ctx, node.id);
     }

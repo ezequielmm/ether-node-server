@@ -96,7 +96,7 @@ export class InitExpeditionProcess {
         // Crea un nuevo ObjectId aleatorio
         const randomObjectId = new Types.ObjectId();
 
-        console.error("RANDOM OBJECTID: " + randomObjectId);
+        // console.error("RANDOM OBJECTID: " + randomObjectId);
 
 
 

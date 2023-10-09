@@ -30,7 +30,7 @@ export class GetEnemiesAction {
             clientId,
         });
 
-        console.warn("ESTE ES EL CLIENTID: " + clientId + " Y ESTE ES EL CURRENTNODE: " + currentNode);
+        // console.warn("ESTE ES EL CLIENTID: " + clientId + " Y ESTE ES EL CURRENTNODE: " + currentNode);
 
 
         // First we get the enemies from the current node
@@ -40,7 +40,7 @@ export class GetEnemiesAction {
 
         const enemies = currentNode.data.enemies;
 
-        console.warn("Y ESTOS SON LOS ENEMIES: " + currentNode.data);
+        // console.warn("Y ESTOS SON LOS ENEMIES: " + currentNode.data);
 
         // Now we return the enemies that have their hpCurrent > 0
         return enemies

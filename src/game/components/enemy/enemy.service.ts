@@ -444,7 +444,7 @@ export class EnemyService {
             }
             const expeditionId = ctx.expedition.id;
             
-            console.warn("ESTE ES EL NUEVO EXPEDITION ID : " + expeditionId);
+            // console.warn("ESTE ES EL NUEVO EXPEDITION ID : " + expeditionId);
 
             // Increase damage for node from 14 to 20
             const arrayOfMaps = await this.getMapByExpedition(expeditionId);
@@ -456,7 +456,7 @@ export class EnemyService {
                 (node) => node.id == ctx.expedition.currentNode.nodeId,
             );
             
-            console.warn("NODO AVAILABLE ES : " + node + " CON STATUS: " + node.status);
+            // console.warn("NODO AVAILABLE ES : " + node + " CON STATUS: " + node.status);
 
             if (
                 HARD_MODE_NODE_START <= node.step &&

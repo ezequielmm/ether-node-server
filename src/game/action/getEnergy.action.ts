@@ -11,7 +11,7 @@ export class GetEnergyAction {
             clientId,
         });
 
-        console.warn("TRATANDO DE TOMAR EL CURRENT NODE: " + getCurrentNode);
+        // console.warn("TRATANDO DE TOMAR EL CURRENT NODE: " + getCurrentNode);
 
         if (getCurrentNode !== undefined) {
             const {
