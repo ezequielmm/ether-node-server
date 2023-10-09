@@ -120,11 +120,11 @@ export class DamageEffect implements EffectHandler {
                             if(damage >= intention.negateDamage){
                                 target.value.currentScript = {id: 0, intentions: [EnemyBuilderService.createDoNothingIntent()]};
                                 await this.enemyService.setCurrentScript(ctx, target.value.id, target.value.currentScript);
-                                console.log("SignatureMove reduced.")
+                                console.log("SignatureMove skipped.")
                             }else{
                                 intention.negateDamage -= damage;
                                 nextIntentValueChanged = true;
-                                console.log("SignatureMove skipped.")
+                                console.log("SignatureMove reduced.")
                             }
                         }
 
