@@ -13,7 +13,7 @@ import { ExpeditionStatusEnum } from '../components/expedition/expedition.enum';
 import { Gear } from '../components/gear/gear.schema';
 import { InjectModel } from 'kindagoose';
 import { MapType } from '../components/expedition/map.schema';
-import { ReturnModelType } from '@typegoose/typegoose';
+import { Ref, ReturnModelType } from '@typegoose/typegoose';
 
 export interface ScoreResponse {
     outcome: string;
@@ -31,10 +31,10 @@ export interface ScoreResponse {
 @Injectable()
 export class ScoreCalculatorService {
 
-    @Inject(MapType)
-    private readonly mapModel:  MapType
+    @InjectModel(MapType)
+    private readonly mapModel: ReturnModelType<typeof MapType>
 
-    calculate({ expedition }: { expedition: Expedition }): ScoreResponse {
+    async calculate({ expedition }: { expedition: Expedition }): Promise<ScoreResponse> {
         // All the points will be calculatred based on
         // this documentation:
         // https://robotseamonster.atlassian.net/wiki/spaces/KOTE/pages/272334852/Requirements+for+GameEnd+Score+from+Adam
@@ -67,7 +67,11 @@ export class ScoreCalculatorService {
             this.calculateBossEnemyPotions(bossEnemiesDefeated);
 
         // Now we query how many nodes we completed in the expedition
-        const nodesCompleted = this.calculateNodesCompleted(this.mapModel.map)//(map);
+        const mapsArray = await this.getNodesByExpeditionMap(map);
+
+        const nodesCompleted = await this.calculateNodesCompleted(mapsArray)//(map);
+
+        console.warn("::::::MAPS::::::::::  " +  mapsArray + ":::::::::CALCULATOR NODES COMPLETED:::::::::::::::: " + nodesCompleted);
 
         // How we query how much HP the player got
         const healthReamining = this.calculateHP(hpCurrent, hpMax);
@@ -208,7 +212,7 @@ export class ScoreCalculatorService {
         return enemiesToCalculate * 100;
     }
 
-    private calculateNodesCompleted(map: Node[]): number {
+    private async calculateNodesCompleted(map: Node[]): Promise<number> {
         // here we calculate how many completed nodes we got
         // in this expedition
         // 1 node completed = 5 points
@@ -311,5 +315,23 @@ export class ScoreCalculatorService {
         );
         const points = Math.max(60 - duration, 0);
         return points;
+    }
+
+    public async getNodesByExpeditionMap(mapRefId: Ref<MapType>): Promise<Node[]> {
+        try {
+            // Busca el documento en la colección "maps" utilizando el valor de mapRefId
+            const map = await this.mapModel.findOne({ mapRefId });
+    
+            // Si no se encuentra el mapa, retorna un array vacío
+            if (!map) {
+                return [];
+            }
+    
+            // Retorna el array de nodos almacenados en el campo map del mapa encontrado
+            return map.map;
+        } catch (error) {
+            // Manejar errores de consulta aquí
+            throw new Error('Error retrieving nodes: ' + error.message);
+        }
     }
 }

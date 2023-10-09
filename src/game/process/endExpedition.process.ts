@@ -86,9 +86,9 @@ export class EndExpeditionProcess {
     }
     
     // Calculate the final score
-    private calculateFinalScore(ctx: GameContext) {
+    private async calculateFinalScore(ctx: GameContext) {
     
-        const score = this.scoreCalculatorService.calculate({
+        const score = await this.scoreCalculatorService.calculate({
             expedition: ctx.expedition,
         });
         ctx.expedition.finalScore = score;
@@ -184,7 +184,7 @@ export class EndExpeditionProcess {
         ctx.expedition.defeatedAt = new Date();
         ctx.expedition.endedAt = new Date();
 
-        const score = this.scoreCalculatorService.calculate({
+        const score = await this.scoreCalculatorService.calculate({
             expedition: ctx.expedition,
         });
         ctx.expedition.finalScore = score;

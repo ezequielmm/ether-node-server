@@ -6,10 +6,13 @@ import { MapService } from '../map/map.service';
 import { ModuleRef } from '@nestjs/core';
 import { ConfigService } from '@nestjs/config/dist/config.service';
 import { MapType } from '../components/expedition/map.schema';
+import { KindagooseModule } from 'kindagoose';
 
 @Module({
-    imports: [],
-    providers: [ScoreCalculatorService, Expedition, MapType],
+    imports: [        
+        KindagooseModule.forFeature([MapType]),
+],
+    providers: [ScoreCalculatorService, Expedition ], //MapType
     exports: [ScoreCalculatorService, Expedition],
 })
 export class ScoreCalculatorModule {}
