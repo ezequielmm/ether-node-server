@@ -96,11 +96,6 @@ export class ChargingBeamStatus implements StatusEffectHandler {
                                 },
                             },
                         });
-                        // this.playerService.damage(ctx, 45);
-                        // await this.eventEmitter.emitAsync(EVENT_AFTER_DAMAGE_EFFECT, {
-                        //     ctx,
-                        //     damageDealt: 45,
-                        // });
                     }
                 }
             }
