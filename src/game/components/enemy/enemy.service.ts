@@ -1062,6 +1062,7 @@ export class EnemyService {
         const signatureMove = { id: intents[0].id, intentions: intents[0].intents }
         const attack        = { id: intents[1].id, intentions: intents[1].intents }
         const buff3Resolve  = { id: intents[2].id, intentions: intents[2].intents }
+        const laser         = { id: intents[3].id, intentions: intents[3].intents }
         
         //- First attack is Signature Move:
         if(!currentScript || currentScript.id == 0){
@@ -1074,6 +1075,10 @@ export class EnemyService {
             console.log("------------------------------------")
 
             if(statusBeam && statusBeam.args.counter > 0){
+                
+                if(statusBeam.args.counter === 1){
+                    return laser;
+                }
                 //- If Signature Move was performed. It will Buff or attack. 
                 return getRandomItemByWeight([attack, buff3Resolve], [50,50]);
             }
