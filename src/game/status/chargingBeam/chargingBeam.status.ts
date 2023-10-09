@@ -6,9 +6,11 @@ import { EffectDTO } from "src/game/effects/effects.interface";
 import { AfterStatusesUpdateEvent, StatusService } from "../status.service";
 import { EventEmitter2, OnEvent } from "@nestjs/event-emitter";
 import { GameContext } from "src/game/components/interfaces";
-import { EVENT_AFTER_DAMAGE_EFFECT, EVENT_AFTER_STATUSES_UPDATE, EVENT_BEFORE_ENEMIES_TURN_START } from "src/game/constants";
+import { EVENT_AFTER_STATUSES_UPDATE, EVENT_BEFORE_ENEMIES_TURN_START } from "src/game/constants";
 import { EnemyService } from "src/game/components/enemy/enemy.service";
 import { deepDwellerMonsterData } from "src/game/components/enemy/data/deepDwellerMonster.enemy";
+import { EffectService } from "src/game/effects/effects.service";
+import { damageEffect } from "src/game/effects/damage/constants";
 import { PlayerService } from "src/game/components/player/player.service";
 
 @StatusDecorator({
@@ -20,6 +22,7 @@ export class ChargingBeamStatus implements StatusEffectHandler {
     constructor(private readonly statusService:StatusService,
                 private readonly enemyService:EnemyService,
                 private readonly eventEmitter: EventEmitter2,
+                private readonly effectService:EffectService,
                 private readonly playerService:PlayerService){}
     
     preview(args: StatusEffectDTO<Record<string, any>>): Promise<EffectDTO<Record<string, any>>> {
@@ -82,11 +85,22 @@ export class ChargingBeamStatus implements StatusEffectHandler {
                 const status = enemy.value.statuses.buff.filter(s => s.name === chargingBeam.name)[0];
                 if(status){
                     if(status.args.counter === 1){
-                        this.playerService.damage(ctx, 45);
-                        await this.eventEmitter.emitAsync(EVENT_AFTER_DAMAGE_EFFECT, {
-                            ctx,
-                            damageDealt: 45,
+                        this.effectService.apply({
+                            ctx: ctx,
+                            source: enemy,
+                            target: this.playerService.get(ctx),
+                            effect: {
+                                effect: damageEffect.name,
+                                args: {
+                                    value: 45,
+                                },
+                            },
                         });
+                        // this.playerService.damage(ctx, 45);
+                        // await this.eventEmitter.emitAsync(EVENT_AFTER_DAMAGE_EFFECT, {
+                        //     ctx,
+                        //     damageDealt: 45,
+                        // });
                     }
                 }
             }
