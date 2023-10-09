@@ -12,7 +12,7 @@ import { KindagooseModule } from 'kindagoose';
     imports: [        
         KindagooseModule.forFeature([MapType]),
 ],
-    providers: [ScoreCalculatorService, Expedition ], //MapType
+    providers: [ScoreCalculatorService, Expedition], //MapType
     exports: [ScoreCalculatorService, Expedition],
 })
 export class ScoreCalculatorModule {}

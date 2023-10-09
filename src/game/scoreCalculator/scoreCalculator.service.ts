@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, forwardRef } from '@nestjs/common';
 import { filter, reduce } from 'lodash';
 import { CardRarityEnum } from '../components/card/card.enum';
 import {
@@ -14,6 +14,7 @@ import { Gear } from '../components/gear/gear.schema';
 import { InjectModel } from 'kindagoose';
 import { MapType } from '../components/expedition/map.schema';
 import { Ref, ReturnModelType } from '@typegoose/typegoose';
+import { ExpeditionService } from '../components/expedition/expedition.service';
 
 export interface ScoreResponse {
     outcome: string;
@@ -33,6 +34,9 @@ export class ScoreCalculatorService {
 
     @InjectModel(MapType)
     private readonly mapModel: ReturnModelType<typeof MapType>
+
+    @Inject(forwardRef(() => Expedition))
+    private readonly expedition: ReturnModelType<typeof Expedition>
 
     async calculate({ expedition }: { expedition: Expedition }): Promise<ScoreResponse> {
         // All the points will be calculatred based on
@@ -67,7 +71,10 @@ export class ScoreCalculatorService {
             this.calculateBossEnemyPotions(bossEnemiesDefeated);
 
         // Now we query how many nodes we completed in the expedition
-        const mapsArray = await this.getNodesByExpeditionMap(map);
+        const refVariable: Ref<MapType> = map; // Tu variable de tipo Ref<MapType>
+        const refString: string = refVariable.toString();
+
+        const mapsArray = await this.getNodesByExpeditionMap(refString);
 
         const nodesCompleted = await this.calculateNodesCompleted(mapsArray)//(map);
 
@@ -317,7 +324,8 @@ export class ScoreCalculatorService {
         return points;
     }
 
-    public async getNodesByExpeditionMap(mapRefId: Ref<MapType>): Promise<Node[]> {
+    /*
+    public async getNodesByExpeditionMap(mapRefId: string): Promise<Node[]> {
         try {
             // Busca el documento en la colección "maps" utilizando el valor de mapRefId
             const map = await this.mapModel.findOne({ mapRefId });
@@ -334,4 +342,63 @@ export class ScoreCalculatorService {
             throw new Error('Error retrieving nodes: ' + error.message);
         }
     }
+    */
+
+    /*
+    public async getNodesByExpeditionMap(expeditionMapId: string): Promise<Node[]> {
+        try {
+            // Busca la expedición por su _id utilizando el argumento expeditionMapId
+            const expedition = await this.expedition.findOne({
+                map: expeditionMapId,
+            });
+    
+            // Si no se encuentra la expedición o si el campo map no está definido, retorna un array vacío
+            if (!expedition || !expedition.map) {
+                return [];
+            }
+    
+            // Obtiene el valor del campo map en la expedición, que es un ObjectId
+            const mapRefId = expedition.map;
+    
+            // Busca todos los documentos en la colección "maps" que tienen el mismo valor en el campo "mapRefId"
+            const maps = await this.mapModel.find({ mapRefId });
+    
+            // Crea un array para almacenar todos los nodos de los mapas encontrados
+            let allNodes: Node[] = [];
+    
+            // Itera sobre los mapas encontrados y agrega los nodos al array allNodes
+            maps.forEach((map) => {
+                allNodes = allNodes.concat(map.map);
+            });
+    
+            // Retorna el array de todos los nodos de los mapas encontrados
+            return allNodes;
+        } catch (error) {
+            // Manejar errores de consulta aquí
+            throw new Error('Error retrieving nodes: ' + error.message);
+        }
+    }
+    */
+
+    public async getNodesByExpeditionMap(mapField: string): Promise<Node[]> {
+        try {
+            // Busca todos los documentos en la colección "maps" que tienen el mismo valor en el campo "mapRefId"
+            const maps = await this.mapModel.find({ _id: mapField });
+    
+            // Crea un array para almacenar todos los nodos de los mapas encontrados
+            let allNodes: Node[] = [];
+    
+            // Itera sobre los mapas encontrados y agrega los nodos al array allNodes
+            maps.forEach((map) => {
+                allNodes = allNodes.concat(map.map);
+            });
+    
+            // Retorna el array de todos los nodos de los mapas encontrados
+            return allNodes;
+        } catch (error) {
+            // Manejar errores de consulta aquí
+            throw new Error('Error retrieving nodes: ' + error.message);
+        }
+    }
+    
 }
