@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable, forwardRef } from '@nestjs/common';
 import { filter, reduce } from 'lodash';
 import { CardRarityEnum } from '../components/card/card.enum';
 import {
@@ -11,6 +11,10 @@ import { NodeStatus } from '../components/expedition/node-status';
 import { Trinket } from '../components/trinket/trinket.schema';
 import { ExpeditionStatusEnum } from '../components/expedition/expedition.enum';
 import { Gear } from '../components/gear/gear.schema';
+import { InjectModel } from 'kindagoose';
+import { MapType } from '../components/expedition/map.schema';
+import { Ref, ReturnModelType } from '@typegoose/typegoose';
+import { ExpeditionService } from '../components/expedition/expedition.service';
 
 export interface ScoreResponse {
     outcome: string;
@@ -27,7 +31,14 @@ export interface ScoreResponse {
 
 @Injectable()
 export class ScoreCalculatorService {
-    calculate({ expedition }: { expedition: Expedition }): ScoreResponse {
+
+    @InjectModel(MapType)
+    private readonly mapModel: ReturnModelType<typeof MapType>
+
+    @Inject(forwardRef(() => Expedition))
+    private readonly expedition: ReturnModelType<typeof Expedition>
+
+    async calculate({ expedition }: { expedition: Expedition }): Promise<ScoreResponse> {
         // All the points will be calculatred based on
         // this documentation:
         // https://robotseamonster.atlassian.net/wiki/spaces/KOTE/pages/272334852/Requirements+for+GameEnd+Score+from+Adam
@@ -60,7 +71,14 @@ export class ScoreCalculatorService {
             this.calculateBossEnemyPotions(bossEnemiesDefeated);
 
         // Now we query how many nodes we completed in the expedition
-        const nodesCompleted = this.calculateNodesCompleted(map);
+        const refVariable: Ref<MapType> = map; // Tu variable de tipo Ref<MapType>
+        const refString: string = refVariable.toString();
+
+        const mapsArray = await this.getNodesByExpeditionMap(refString);
+
+        const nodesCompleted = await this.calculateNodesCompleted(mapsArray)//(map);
+
+        // console.warn("::::::MAPS::::::::::  " +  mapsArray + ":::::::::CALCULATOR NODES COMPLETED:::::::::::::::: " + nodesCompleted);
 
         // How we query how much HP the player got
         const healthReamining = this.calculateHP(hpCurrent, hpMax);
@@ -201,7 +219,7 @@ export class ScoreCalculatorService {
         return enemiesToCalculate * 100;
     }
 
-    private calculateNodesCompleted(map: Node[]): number {
+    private async calculateNodesCompleted(map: Node[]): Promise<number> {
         // here we calculate how many completed nodes we got
         // in this expedition
         // 1 node completed = 5 points
@@ -305,4 +323,82 @@ export class ScoreCalculatorService {
         const points = Math.max(60 - duration, 0);
         return points;
     }
+
+    /*
+    public async getNodesByExpeditionMap(mapRefId: string): Promise<Node[]> {
+        try {
+            // Busca el documento en la colección "maps" utilizando el valor de mapRefId
+            const map = await this.mapModel.findOne({ mapRefId });
+    
+            // Si no se encuentra el mapa, retorna un array vacío
+            if (!map) {
+                return [];
+            }
+    
+            // Retorna el array de nodos almacenados en el campo map del mapa encontrado
+            return map.map;
+        } catch (error) {
+            // Manejar errores de consulta aquí
+            throw new Error('Error retrieving nodes: ' + error.message);
+        }
+    }
+    */
+
+    /*
+    public async getNodesByExpeditionMap(expeditionMapId: string): Promise<Node[]> {
+        try {
+            // Busca la expedición por su _id utilizando el argumento expeditionMapId
+            const expedition = await this.expedition.findOne({
+                map: expeditionMapId,
+            });
+    
+            // Si no se encuentra la expedición o si el campo map no está definido, retorna un array vacío
+            if (!expedition || !expedition.map) {
+                return [];
+            }
+    
+            // Obtiene el valor del campo map en la expedición, que es un ObjectId
+            const mapRefId = expedition.map;
+    
+            // Busca todos los documentos en la colección "maps" que tienen el mismo valor en el campo "mapRefId"
+            const maps = await this.mapModel.find({ mapRefId });
+    
+            // Crea un array para almacenar todos los nodos de los mapas encontrados
+            let allNodes: Node[] = [];
+    
+            // Itera sobre los mapas encontrados y agrega los nodos al array allNodes
+            maps.forEach((map) => {
+                allNodes = allNodes.concat(map.map);
+            });
+    
+            // Retorna el array de todos los nodos de los mapas encontrados
+            return allNodes;
+        } catch (error) {
+            // Manejar errores de consulta aquí
+            throw new Error('Error retrieving nodes: ' + error.message);
+        }
+    }
+    */
+
+    public async getNodesByExpeditionMap(mapField: string): Promise<Node[]> {
+        try {
+            // Busca todos los documentos en la colección "maps" que tienen el mismo valor en el campo "mapRefId"
+            const maps = await this.mapModel.find({ _id: mapField });
+    
+            // Crea un array para almacenar todos los nodos de los mapas encontrados
+            let allNodes: Node[] = [];
+    
+            // Itera sobre los mapas encontrados y agrega los nodos al array allNodes
+            maps.forEach((map) => {
+                allNodes = allNodes.concat(map.map);
+            });
+    
+            // Retorna el array de todos los nodos de los mapas encontrados
+            return allNodes;
+        } catch (error) {
+            // Manejar errores de consulta aquí
+            throw new Error('Error retrieving nodes: ' + error.message);
+        }
+    }
+    
 }

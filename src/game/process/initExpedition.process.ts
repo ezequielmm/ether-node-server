@@ -13,14 +13,21 @@ import { ExpeditionService } from '../components/expedition/expedition.service';
 import { SettingsService } from '../components/settings/settings.service';
 import { GearItem } from '../../playerGear/gearItem';
 import { Contest } from '../contest/contest.schema';
-import { IPlayerToken } from '../components/expedition/expedition.schema';
+import { Expedition, IPlayerToken } from '../components/expedition/expedition.schema';
 import { ContestMapService } from '../contestMap/contestMap.service';
 import { ContestService } from '../contest/contest.service';
 import { MapDeckService } from '../components/mapDeck/mapDeck.service';
+import { MapService } from '../map/map.service';
+import { InjectModel } from 'kindagoose';
+import { ReturnModelType } from '@typegoose/typegoose';
+import { MapType } from '../components/expedition/map.schema';
+import mongoose, { Types } from 'mongoose';
 
 @Injectable()
 export class InitExpeditionProcess {
     private readonly logger: Logger = new Logger(InitExpeditionProcess.name);
+
+    private readonly mapService: ReturnModelType<typeof MapService>
 
     constructor(
         private readonly expeditionService: ExpeditionService,
@@ -31,8 +38,9 @@ export class InitExpeditionProcess {
         // private readonly mapBuilderService: MapBuilderService,
         private readonly contestService: ContestService,
         private readonly contestMapService: ContestMapService,
-        private readonly mapDeckService:MapDeckService
-    ) {}
+        private readonly mapDeckService: MapDeckService,
+        private readonly expeditionModel: Expedition
+    ) { }
 
     async handle({
         userAddress,
@@ -85,9 +93,16 @@ export class InitExpeditionProcess {
 
         const cards = await this.generatePlayerDeck(character, userAddress, contest);
 
+        // Crea un nuevo ObjectId aleatorio
+        const randomObjectId = new Types.ObjectId();
+
+        // console.error("RANDOM OBJECTID: " + randomObjectId);
+
+
+
         const expedition = await this.expeditionService.create({
             userAddress,
-            map,
+            map: randomObjectId,
             scores: {
                 basicEnemiesDefeated: 0,
                 eliteEnemiesDefeated: 0,
@@ -121,18 +136,25 @@ export class InitExpeditionProcess {
             createdAt: new Date(),
         });
 
+        const referencedMap = await this.expeditionService.createMapReferenced(
+            {
+                _id: randomObjectId,
+                map
+            });
+
         this.logger.log(
             {
                 expId: expedition.id,
             },
             `Created expedition for player: ${userAddress}`,
+            `Created referenced map: ' ${referencedMap}`,
         );
     }
 
     private async generatePlayerDeck(
         character: Character,
         userAddress: string,
-        contest:Contest
+        contest: Contest
     ): Promise<IExpeditionPlayerStateDeckCard[]> {
         // We destructure the cards from the character
         const { cards: characterDeck } = character;
@@ -143,9 +165,9 @@ export class InitExpeditionProcess {
         //);
 
         const map = await this.contestMapService.getCompleteMapForContest(contest);
-        let mapDeck = undefined ;
+        let mapDeck = undefined;
 
-        if(map.deck_id){
+        if (map.deck_id) {
             mapDeck = await this.mapDeckService.findById(map.deck_id);
         }
 

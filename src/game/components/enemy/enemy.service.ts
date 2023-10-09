@@ -31,12 +31,21 @@ import {
 import { ReturnModelType } from '@typegoose/typegoose';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { ProjectionFields } from 'mongoose';
+import { MapService } from 'src/game/map/map.service';
+import { MapType } from '../expedition/map.schema';
+import { Node } from 'src/game/components/expedition/node';
+import { Expedition } from '../expedition/expedition.schema';
+
 
 @Injectable()
 export class EnemyService {
-   
+
 
     private readonly logger: Logger = new Logger(EnemyService.name);
+
+    // private readonly mapModel: MapService
+
+    // private readonly mapModel2: ReturnModelType<typeof MapService>
 
     constructor(
         @InjectModel(Enemy)
@@ -46,7 +55,16 @@ export class EnemyService {
         @Inject(forwardRef(() => StatusService))
         private readonly statusService: StatusService,
         private readonly eventEmitter: EventEmitter2,
-    ) {}
+
+        @InjectModel(MapType)
+        private readonly mapModel: ReturnModelType<typeof MapType>,
+
+        // @InjectModel(Expedition)
+        // private readonly expedition: ReturnModelType<typeof Expedition>,
+
+    ) { }
+
+
 
     /**
      * Check if the entity is an enemy
@@ -80,11 +98,11 @@ export class EnemyService {
         return this.getAll(ctx).every((enemy) => this.isDead(enemy));
     }
     public isBossDead(ctx: GameContext): boolean {
-        return this.getAll(ctx).some(enemy => 
+        return this.getAll(ctx).some(enemy =>
             enemy.value.category === EnemyCategoryEnum.Boss && this.isDead(enemy)
         );
     }
-    
+
     /**
      * Returns enemy by id or enemyId
      *
@@ -155,7 +173,7 @@ export class EnemyService {
                             e.target.type == CardTargetedEnum.Enemy &&
                             enemy.target.type == CardTargetedEnum.Enemy &&
                             e.target.value.enemyId ==
-                                enemy.target.value.enemyId,
+                            enemy.target.value.enemyId,
                     ).statuses,
                 )
             ) {
@@ -397,10 +415,10 @@ export class EnemyService {
     }
 
     /**
-     * Calculate new scripts for all enemies
-     *
-     * @param ctx Context
-     */
+ * Calculate new scripts for all enemies
+ *
+ * @param ctx Context
+ */
     async calculateNewIntentions(ctx: GameContext): Promise<void> {
         const enemies = this.getAll(ctx);
 
@@ -424,11 +442,21 @@ export class EnemyService {
                     nextScript = this.getNextScript(scripts, nextScript);
                 }
             }
+            const expeditionId = ctx.expedition.id;
+            
+            // console.warn("ESTE ES EL NUEVO EXPEDITION ID : " + expeditionId);
 
             // Increase damage for node from 14 to 20
-            const node = ctx.expedition.map.find(
+            const arrayOfMaps = await this.getMapByExpedition(expeditionId);
+            
+            // console.warn("ESTE ES EL NUEVO ARRAY DE MAPAS : " + arrayOfMaps)
+
+            // const node = ctx.expedition.map.find(
+            const node = arrayOfMaps.find(
                 (node) => node.id == ctx.expedition.currentNode.nodeId,
             );
+            
+            // console.warn("NODO AVAILABLE ES : " + node + " CON STATUS: " + node.status);
 
             if (
                 HARD_MODE_NODE_START <= node.step &&
@@ -459,6 +487,62 @@ export class EnemyService {
             );
         }
     }
+
+    public async getMapByExpedition(expeditionId: string): Promise<Node[]> {
+        try {
+            // Utiliza `findOne` para encontrar la expedición por su _id
+            const expedition = await this.expeditionService.findOne({
+                _id: expeditionId,
+            });
+    
+            // Si no se encuentra la expedición, retorna un array vacío
+            if (!expedition) {
+                return [];
+            }
+    
+            // Obtiene el ObjectID del campo map en la expedición
+            const mapId = expedition.map;
+    
+            // Utiliza el ObjectID para buscar el documento en la colección "maps" que coincide con el valor del campo map en la expedición
+            const map = await this.mapModel.findById(mapId);
+    
+            // Si no se encuentra el mapa, retorna un array vacío
+            if (!map) {
+                return [];
+            }
+    
+            // Retorna el array de nodos almacenados en el campo map del mapa encontrado
+            return map.map;
+        } catch (error) {
+            // Manejar errores de consulta aquí
+            throw new Error('Error retrieving maps: ' + error.message);
+        }
+    }
+
+    // async obtenerMapasPorExpeditionID(expeditionID: string): Promise<Node[]> {
+    //     try {
+    //         // Busca la expedición por el expeditionID
+    //         const expedition = await this.expedition.findOne({ _id: expeditionID });
+
+    //         if (!expedition) {
+    //             throw new Error('Expedición no encontrada.');
+    //         }
+
+    //         // Obtén el mapa correspondiente al expeditionID
+    //         const mapa: MapType = await this.mapModel.findOne({ expeditionID: expedition._id }, 'map');
+
+    //         if (!mapa) {
+    //             throw new Error('Mapa no encontrado para esta expedición.');
+    //         }
+
+    //         // Devuelve el array de nodos del mapa
+    //         return mapa.map;
+    //     } catch (error) {
+    //         // Manejo de errores
+    //         console.error('Error al obtener el mapa por expeditionID:', error);
+    //         throw error;
+    //     }
+    // }
 
     private getNextScript(
         scripts: EnemyScript[],
@@ -535,7 +619,7 @@ export class EnemyService {
             // If the status is already attached, we update it
             if (metadata.status.counterType != StatusCounterType.None) {
                 // If the status has a counter, we increment it
-                oldStatus.args.counter+= args.counter;
+                oldStatus.args.counter += args.counter;
                 this.logger.log(
                     ctx.info,
                     `Status ${name} counter incremented to ${oldStatus.args.counter}`,

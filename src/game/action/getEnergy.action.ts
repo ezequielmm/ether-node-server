@@ -6,14 +6,29 @@ export class GetEnergyAction {
     constructor(private readonly expeditionService: ExpeditionService) {}
 
     async handle(clientId: string): Promise<number[]> {
-        const {
-            data: {
-                player: { energy, energyMax },
-            },
-        } = await this.expeditionService.getCurrentNode({
+        
+        const getCurrentNode = await this.expeditionService.getCurrentNode({
             clientId,
         });
 
-        return [energy, energyMax];
+        // console.warn("TRATANDO DE TOMAR EL CURRENT NODE: " + getCurrentNode);
+
+        if (getCurrentNode !== undefined) {
+            const {
+                data: {
+                    player: { energy, energyMax },
+                },
+            } = getCurrentNode;
+        
+            // Ahora puedes usar energy y energyMax aquí
+            console.log('Energy:', energy);
+            console.log('EnergyMax:', energyMax);
+
+            return [energy, energyMax];
+        } else {
+            console.log('El objeto data es undefined.');
+        }
+
+        
     }
 }
