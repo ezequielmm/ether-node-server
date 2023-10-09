@@ -1070,10 +1070,6 @@ export class EnemyService {
         }else{
             const statusBeam = enemy.value.statuses.buff.find(s => s.name === chargingBeam.name)
 
-            console.log("StatusBeam counter:")
-            console.log(statusBeam.args.counter)
-            console.log("------------------------------------")
-
             if(statusBeam && statusBeam.args.counter > 0){
                 
                 if(statusBeam.args.counter === 1){

@@ -8,10 +8,6 @@ import { EventEmitter2, OnEvent } from "@nestjs/event-emitter";
 import { GameContext } from "src/game/components/interfaces";
 import { EVENT_AFTER_STATUSES_UPDATE, EVENT_BEFORE_ENEMIES_TURN_START } from "src/game/constants";
 import { EnemyService } from "src/game/components/enemy/enemy.service";
-import { deepDwellerMonsterData } from "src/game/components/enemy/data/deepDwellerMonster.enemy";
-import { EffectService } from "src/game/effects/effects.service";
-import { damageEffect } from "src/game/effects/damage/constants";
-import { PlayerService } from "src/game/components/player/player.service";
 
 @StatusDecorator({
     status: chargingBeam,
@@ -21,9 +17,7 @@ export class ChargingBeamStatus implements StatusEffectHandler {
 
     constructor(private readonly statusService:StatusService,
                 private readonly enemyService:EnemyService,
-                private readonly eventEmitter: EventEmitter2,
-                private readonly effectService:EffectService,
-                private readonly playerService:PlayerService){}
+                private readonly eventEmitter: EventEmitter2){}
     
     preview(args: StatusEffectDTO<Record<string, any>>): Promise<EffectDTO<Record<string, any>>> {
         return this.handle(args);
