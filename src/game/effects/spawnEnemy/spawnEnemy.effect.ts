@@ -45,6 +45,12 @@ export class SpawnEnemyEffect implements EffectHandler {
         const enemies        = dto.ctx.expedition.currentNode.data.enemies;
         let enemiesToSpawn = dto.args.enemiesToSpawn;
 
+        const enemiesCount = this.enemyService.getLiving(ctx).length;
+        if(enemiesCount >= 5){
+            console.log("Too many enemies in combat to spawn")
+            return;
+        }
+
         // First we check if the current combat has any sporelings alive,
         // only spawn in when there are no sporelings (this is temporary)
         // and the enemy is a fungalbrute

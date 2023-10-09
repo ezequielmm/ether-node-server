@@ -6,6 +6,9 @@ import { transformEffect } from "./constants";
 import { StandardResponse, SWARMessageType, SWARAction } from "src/game/standardResponse/standardResponse";
 import { IExpeditionCurrentNodeDataEnemy } from "src/game/components/expedition/expedition.interface";
 import { EnemyBuilderService } from "src/game/components/enemy/enemy-builder.service";
+import { mossyArcherData } from "src/game/components/enemy/data/mossyArcher.enemy";
+import { mossySkeletonData } from "src/game/components/enemy/data/mossySkeleton.enemy";
+import { getRandomItemByWeight } from "src/utils";
 
 @EffectDecorator({
     effect: transformEffect,
@@ -21,7 +24,12 @@ export class TransformEffect implements EffectHandler {
         const enemies = dto.ctx.expedition.currentNode.data.enemies;
 
         if(EnemyService.isEnemy(source)){
-            const enemyToTransformId = source.value.mossyOriginalShape;
+            let enemyToTransformId = source.value.mossyOriginalShape;
+
+            if(!enemyToTransformId){
+                enemyToTransformId = getRandomItemByWeight([mossyArcherData.enemyId, mossySkeletonData.enemyId], [50, 50]);
+            }
+
             const enemy = await this.enemyService.findById(enemyToTransformId);
 
             if(!enemy){
