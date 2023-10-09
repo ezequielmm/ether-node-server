@@ -401,4 +401,25 @@ export class EnemyBuilderService {
         }
     }
 
+    public static createDwellerMonsterBeam = (beamAttack:number): EnemyIntention => {
+        return {
+            type: EnemyIntentionType.Attack,
+            target: CardTargetedEnum.Player,
+            value: beamAttack,
+            effects: [
+                {
+                    effect: damageEffect.name,
+                    target: CardTargetedEnum.Player,
+                    args: {
+                        value: beamAttack,
+                    },
+                    action: {
+                        name: 'laser',
+                        hint: 'laser',
+                    },
+                },
+            ],
+        }
+    }
+
 }

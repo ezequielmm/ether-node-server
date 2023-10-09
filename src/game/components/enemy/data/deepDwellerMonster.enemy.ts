@@ -13,7 +13,7 @@ import { chargingBeam } from "src/game/status/chargingBeam/constants";
 const SignatureMove: EnemyIntention = {
     type: EnemyIntentionType.Signature,
     target: CardTargetedEnum.Player,
-    damageToIncrementCounter: 30,
+    damageToIncrementCounter: 20,
     value: 45,
     effects: [
         {
@@ -34,6 +34,7 @@ const SignatureMove: EnemyIntention = {
 }
 const BasicAttack:   EnemyIntention = EnemyBuilderService.createBasicAttackIntent(15);
 const Buff3Resolve:  EnemyIntention = EnemyBuilderService.createBasicBuffIntent(3, resolveStatus.name);
+const Beam:          EnemyIntention = EnemyBuilderService.createDwellerMonsterBeam(45);
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------------
 //- Attack Tables:
@@ -43,6 +44,7 @@ const BasicIntents: EnemyAction = {
         { id: 1, probability: 0.2, cooldown: 0, intents: [SignatureMove] },
         { id: 2, probability: 0.5, cooldown: 0, intents: [BasicAttack] },
         { id: 3, probability: 0.3, cooldown: 0, intents: [Buff3Resolve] },
+        { id: 4, probability: 0.3, cooldown: 0, intents: [Beam] },
     ]
 }
 

@@ -80,26 +80,26 @@ export class ChargingBeamStatus implements StatusEffectHandler {
         const { ctx } = args;
         const enemies = this.enemyService.getAll(ctx);
 
-        enemies.forEach(async enemy => {
-            if(enemy.value.enemyId === deepDwellerMonsterData.enemyId){
-                const status = enemy.value.statuses.buff.filter(s => s.name === chargingBeam.name)[0];
-                if(status){
-                    if(status.args.counter === 1){
-                        this.effectService.apply({
-                            ctx: ctx,
-                            source: enemy,
-                            target: this.playerService.get(ctx),
-                            effect: {
-                                effect: damageEffect.name,
-                                args: {
-                                    value: 45,
-                                },
-                            },
-                        });
-                    }
-                }
-            }
-        });
+        // enemies.forEach(async enemy => {
+        //     if(enemy.value.enemyId === deepDwellerMonsterData.enemyId){
+        //         const status = enemy.value.statuses.buff.filter(s => s.name === chargingBeam.name)[0];
+        //         if(status){
+        //             if(status.args.counter === 1){
+        //                 this.effectService.apply({
+        //                     ctx: ctx,
+        //                     source: enemy,
+        //                     target: this.playerService.get(ctx),
+        //                     effect: {
+        //                         effect: damageEffect.name,
+        //                         args: {
+        //                             value: 45,
+        //                         },
+        //                     },
+        //                 });
+        //             }
+        //         }
+        //     }
+        // });
 
         for (const enemy of enemies) {
             await this.statusService.decreaseCounterAndRemove(
