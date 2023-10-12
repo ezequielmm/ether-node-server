@@ -5,6 +5,7 @@ import { Expedition, ExpeditionDocument } from './expedition.schema';
 import {
     CardExistsOnPlayerHandDTO,
     CreateExpeditionDTO,
+    CreateMapDTO,
     GetCurrentNodeDTO,
     GetDeckCardsDTO,
     GetPlayerStateDTO,
@@ -32,6 +33,7 @@ import { ModuleRef } from '@nestjs/core';
 import { MapService } from 'src/game/map/map.service';
 import { ConfigService } from '@nestjs/config';
 import { NodeType } from './node-type';
+import { MapDocument, MapType } from './map.schema';
 
 @Injectable()
 export class ExpeditionService {
@@ -41,6 +43,9 @@ export class ExpeditionService {
         private readonly moduleRef: ModuleRef,
         private readonly mapService: MapService,
         private readonly configService: ConfigService,
+
+        @InjectModel(MapType)
+        private readonly mapModel: ReturnModelType<typeof MapType>,
     ) {}
 
     async getExpeditionIdFromClient(client: Socket): Promise<string> {
@@ -100,6 +105,10 @@ export class ExpeditionService {
 
     async create(payload: CreateExpeditionDTO): Promise<ExpeditionDocument> {
         return await this.expedition.create(payload);
+    }
+
+    async createMapReferenced(payload: CreateMapDTO): Promise<MapDocument> {
+        return await this.mapModel.create(payload);
     }
 
     /**
@@ -185,7 +194,7 @@ export class ExpeditionService {
     }
 
     async getExpeditionMap(ctx: GameContext): Promise<Node[]> {
-        return ctx.expedition.map;
+        return await this.getMapByExpedition(ctx.expedition.id);
     }
 
     isPlayerInCombat(ctx: GameContext): boolean {
@@ -322,7 +331,7 @@ export class ExpeditionService {
     ): Promise<void> {
         const { ctx, nodeId } = payload;
 
-        const node = this.mapService.findNodeById(ctx, nodeId);
+        const node = await this.mapService.findNodeById(ctx, nodeId);
         this.mapService.enableNode(ctx, nodeId);
 
         ctx.expedition.currentNode = {
@@ -363,5 +372,38 @@ export class ExpeditionService {
         });
 
         return finalScores;
+    }
+
+    public async getMapByExpedition(expeditionId: string): Promise<Node[]> {
+        try {
+            // Utiliza `findOne` para encontrar la expedición por su _id
+            const expedition = await this.expedition.findOne({
+                _id: expeditionId,
+            });
+    
+            // Si no se encuentra la expedición, retorna un array vacío
+            if (!expedition) {
+                return [];
+            }
+    
+            // Obtiene el ObjectID del campo map en la expedición
+            const mapId = expedition.map; // Accede al campo mapRef en el objeto map
+    
+            // Utiliza el ObjectID para buscar el documento en la colección "maps" que coincide con el valor del campo map en la expedición
+            const map = await this.mapModel.findOne({
+                '_id': mapId
+            });
+    
+            // Si no se encuentra el mapa, retorna un array vacío
+            if (!map) {
+                return [];
+            }
+    
+            // Retorna el array de nodos almacenados en el campo map del mapa encontrado
+            return map.map;
+        } catch (error) {
+            // Manejar errores de consulta aquí
+            throw new Error('Error retrieving maps: ' + error.message);
+        }
     }
 }

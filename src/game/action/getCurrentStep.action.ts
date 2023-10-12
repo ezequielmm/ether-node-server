@@ -12,7 +12,7 @@ export class GetCurrentStepAction {
     constructor(private readonly mapService: MapService) {}
 
     async handle(ctx: GameContext): Promise<CurrentStepResponse> {
-        const { act, step } = this.mapService.findNodeById(
+        const { act, step } = await this.mapService.findNodeById(
             ctx,
             ctx.expedition.currentNode.nodeId,
         );

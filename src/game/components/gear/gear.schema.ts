@@ -23,4 +23,7 @@ export class Gear {
 
     @Prop({ default: true })
     isActive?: boolean;
+
+    @Prop({ default : false })
+    onlyOneAllowed?: boolean;
 }

@@ -16,6 +16,10 @@ import { InitEncounterProcess } from './initEncounter.process';
 import { InitNodeProcess } from './initNode.process';
 import { InitTreasureProcess } from './initTreasure.process';
 import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
+import { ReturnModelType } from '@typegoose/typegoose';
+import { MapType } from '../components/expedition/map.schema';
+import { InjectModel } from 'kindagoose';
+import { ExpeditionService } from '../components/expedition/expedition.service';
 
 @Injectable()
 export class NodeSelectedProcess {
@@ -28,12 +32,20 @@ export class NodeSelectedProcess {
         private readonly initTreasureProcess: InitTreasureProcess,
         private readonly initEncounterProcess: InitEncounterProcess,
         private readonly mapService: MapService,
+
+        @InjectModel(MapType)
+        private readonly mapModel: ReturnModelType<typeof MapType>,
+
+        private readonly expeditionService: ExpeditionService,
+
     ) {}
+
+
 
     async handle(ctx: GameContext, node_id: number): Promise<string> {
         const logger = this.logger.logger.child(ctx.info);
 
-        const node = this.mapService.findNodeById(ctx, node_id);
+        const node = await this.mapService.findNodeById(ctx, node_id);
 
         if (!node) {
             logger.error('Selected node is not available');
@@ -51,6 +63,8 @@ export class NodeSelectedProcess {
             return;
         }
 
+        // console.warn("Node is selectable: " + node.id + " con status: " + node.status + " Expedition number: " + ctx.expedition.id + " Mapa is number: " + ctx.expedition.map);
+
         switch (node.status) {
             case NodeStatus.Available:
                 return await this.nodeIsAvailable(ctx, node);
@@ -65,13 +79,27 @@ export class NodeSelectedProcess {
     ): Promise<string> {
         const logger = this.logger.logger.child(ctx.info);
 
-        this.mapService.selectNode(ctx, node.id);
+        // console.warn("EL NODO ESTA DISPONIBLE PARA ELEGIR BEFORE: " + node + " CON STATUS: " + node.status);
+
+        await this.mapService.selectNode(ctx, node.id);
         await ctx.expedition.save();
+        // await ctx.map.save();
+
+        // console.warn("EL NODO ESTA DISPONIBLE PARA ELEGIR AFTER : " + node + " CON STATUS: " + node.status);
+
+
+        //console.warn("EL NODO ESTA DISPONIBLE PARA ELEGIR AFTER: " + node + " CON STATUS: " + node.status);
+
 
         // moved to after selecting node, so that it would be active on return to client.
         // TODO: test if this breaks things.
-        const { mapSeedId, map } = ctx.expedition;
-        const safeMap = this.mapService.makeClientSafe(map);
+        const { mapSeedId } = ctx.expedition;
+
+
+
+        const mapsArray = await this.getMapByExpedition(ctx.expedition.id);
+
+        const safeMap = this.mapService.makeClientSafe(mapsArray);
 
         switch (node.type) {
             case NodeType.Portal:
@@ -138,6 +166,38 @@ export class NodeSelectedProcess {
                 return await this.initMerchantProcess.process(ctx, node);
         }
     }
+
+    public async getMapByExpedition(expeditionId: string): Promise<Node[]> {
+        try {
+            // Utiliza `findOne` para encontrar la expedición por su _id
+            const expedition = await this.expeditionService.findOne({
+                _id: expeditionId,
+            });
+    
+            // Si no se encuentra la expedición, retorna un array vacío
+            if (!expedition) {
+                return [];
+            }
+    
+            // Obtiene el ObjectID del campo map en la expedición
+            const mapId = expedition.map;
+    
+            // Utiliza el ObjectID para buscar el documento en la colección "maps" que coincide con el valor del campo map en la expedición
+            const map = await this.mapModel.findById(mapId);
+    
+            // Si no se encuentra el mapa, retorna un array vacío
+            if (!map) {
+                return [];
+            }
+    
+            // Retorna el array de nodos almacenados en el campo map del mapa encontrado
+            return map.map;
+        } catch (error) {
+            // Manejar errores de consulta aquí
+            throw new Error('Error retrieving maps: ' + error.message);
+        }
+    }
+    
 
     private async nodeIsActive(ctx: GameContext, node: Node): Promise<string> {
         const logger = this.logger.logger.child(ctx.info);
