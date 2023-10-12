@@ -11,6 +11,7 @@ import { EnemyService } from "src/game/components/enemy/enemy.service";
 import { OnEvent } from "@nestjs/event-emitter";
 import { GameContext } from "src/game/components/interfaces";
 import { EVENT_BEFORE_ENEMIES_TURN_START } from "src/game/constants";
+import { PlayerService } from "src/game/components/player/player.service";
 
 @StatusDecorator({
     status: counterStatus,
@@ -20,7 +21,8 @@ export class CounterStatus implements StatusEffectHandler {
 
     constructor(private readonly effectService: EffectService,
                 private readonly enemyService:EnemyService,
-                private readonly statusService:StatusService) {}
+                private readonly statusService:StatusService,
+                private readonly playerService:PlayerService) {}
 
     async preview(args: StatusEffectDTO): Promise<EffectDTO> {
         return args.effectDTO;
@@ -28,32 +30,48 @@ export class CounterStatus implements StatusEffectHandler {
 
     async handle(dto: StatusEffectDTO<DamageArgs>): Promise<EffectDTO<DamageArgs>> {
         // Apply damage to the source
-        const { ctx, effectDTO, status } = dto;
+        const { ctx, effectDTO } = dto;
 
         if (typeof effectDTO.args.type === 'undefined' || effectDTO.args.type.length == 0) {
 
-            console.log("--------------------- Counter Status:")
-            console.log("Damage amount: " + effectDTO.args.currentValue);
-            
-            if(EnemyService.isEnemy(effectDTO.target)){
-                console.log("Enemy hp: " + effectDTO.target.value.hpCurrent);
-            }
-
-            //- Return the damage to the source with the value of the status
-            const applyDTO: ApplyDTO = {
-                ctx: ctx,
-                source: effectDTO.target,
-                target: effectDTO.source,
-                effect: {
-                    effect: damageEffect.name,
-                    args: {
-                        value: effectDTO.args.currentValue, 
-                        type: 'counter',
-                    },
+            const {
+                args: {
+                    currentValue,
+                    useDefense,
+                    multiplier,
+                    useEnergyAsMultiplier
                 },
-            };
+            } = effectDTO;
 
-            await this.effectService.apply(applyDTO);
+            const {
+                value: {
+                    combatState: { energy, defense },
+                },
+            } = this.playerService.get(ctx);
+
+            //- Get the final attack
+            const damage =
+                currentValue *
+                (useEnergyAsMultiplier ? energy : 1) *
+                (useDefense ? multiplier * defense : 1);
+
+            if(EnemyService.isEnemy(effectDTO.target) && effectDTO.target.value.hpCurrent > damage){
+                //- If the enemy is alive return the damage to the source with the value of the status
+                const applyDTO: ApplyDTO = {
+                    ctx: ctx,
+                    source: effectDTO.target,
+                    target: effectDTO.source,
+                    effect: {
+                        effect: damageEffect.name,
+                        args: {
+                            value: damage, 
+                            type: 'counter',
+                        },
+                    },
+                };
+    
+                await this.effectService.apply(applyDTO);
+            }    
         }
 
         return effectDTO;
