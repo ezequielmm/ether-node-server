@@ -1,6 +1,8 @@
-import { damageEffect } from 'src/game/effects/damage/constants';
+
+import { elementalStatus } from 'src/game/status/elemental/constants';
 import { CardRarityEnum, CardTypeEnum, CardTargetedEnum } from '../card.enum';
 import { Card } from '../card.schema';
+//import { attachStatusEffect } from 'src/game/effects/attachStatus/constants';
 
 /*
 TODO for both, upraded and normal Phase out:
@@ -19,18 +21,18 @@ export const PhaseOutCardUpgraded: Card = {
     description: `Ignore all physical damage for the next 2 turns.`,
     keywords: [],
     properties: {
-        effects: [
+        effects: [],
+        statuses: [
             {
-                effect: damageEffect.name,
-                target: CardTargetedEnum.Self,
+                name: elementalStatus.name,
+                attachTo: CardTargetedEnum.Self,
                 args: {
-                    value: 2,
+                    counter: 2,
                 },
             },
         ],
-        statuses: [],
     },
-    showPointer: true,
+    showPointer: false,
     isUpgraded: true,
     isActive: true,
 };
@@ -39,22 +41,22 @@ export const PhaseOutCard: Card = {
     cardId: 554,
     name: 'Phase Out',
     rarity: CardRarityEnum.Starter,
-    cardType: CardTypeEnum.Attack,
+    cardType: CardTypeEnum.Defend,
     pool: 'knight',
     energy: 2,
     description: `Ignore all physical damage next turn.`,
     keywords: [],
     properties: {
-        effects: [
-            {
-                effect: damageEffect.name,
-                target: CardTargetedEnum.Self,
-                args: {
-                    value: 1,
+        effects: [],
+        statuses: [
+                {
+                    name: elementalStatus.name,
+                    attachTo: CardTargetedEnum.Self,
+                    args: {
+                        counter: 1,
+                    },
                 },
-            },
-        ],
-        statuses: [],
+            ],
     },
     showPointer: false,
     isUpgraded: false,

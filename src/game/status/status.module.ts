@@ -60,6 +60,7 @@ import { ChargingBeamStatus } from './chargingBeam/chargingBeam.status';
 import { RevealStatus } from './reveal/reveal.status';
 import { GrowedStatus } from './growed/growed.status';
 import { CounterStatus } from './counter/counter.status';
+import { ElementalStatus } from './elemental/elemental.status';
 
 @Module({
     imports: [
@@ -127,7 +128,8 @@ import { CounterStatus } from './counter/counter.status';
         ChargingBeamStatus,
         RevealStatus,
         GrowedStatus,
-        CounterStatus
+        CounterStatus,
+        ElementalStatus
 
     ],
     exports: [StatusService],
