@@ -258,6 +258,9 @@ export class DamageEffect implements EffectHandler {
             oldHp = target.value.combatState.hpCurrent;
             oldDefense = target.value.combatState.defense;
 
+            //aca va el if de preguntar si el enemigo tiene el estado elemental
+            //target.value.combatState.statuses
+
             await this.playerService.damage(ctx, damage);
 
             newHp = target.value.combatState.hpCurrent;
