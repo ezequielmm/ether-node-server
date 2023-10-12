@@ -15,6 +15,7 @@ import { DecayCard } from "../card/data/decay.card";
 import { healEffect } from "src/game/effects/heal/constants";
 import { MirageCard } from "../card/data/mirage.card";
 import { growedStatus } from "src/game/status/growed/constants";
+import { counterStatus } from "src/game/status/counter/constants";
 
 export class EnemyBuilderService {
     
@@ -63,14 +64,17 @@ export class EnemyBuilderService {
     public static createCounterAttack = (): EnemyIntention => {
         return {
             type: EnemyIntentionType.Counter,
-            target: CardTargetedEnum.Player,
-            value: 0,
+            target: CardTargetedEnum.Self,
+            value: 1,
             effects: [
                 {
-                    effect: damageEffect.name,
-                    target: CardTargetedEnum.Player,
+                    effect: attachStatusEffect.name,
+                    target: CardTargetedEnum.Self,
                     args: {
-                        value: 0,
+                        statusName: counterStatus.name,
+                        statusArgs: {
+                            counter: 1,
+                        },
                     },
                     action: {
                         name: 'counter',
