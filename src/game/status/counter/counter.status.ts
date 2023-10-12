@@ -35,8 +35,8 @@ export class CounterStatus implements StatusEffectHandler {
             console.log("--------------------- Counter Status:")
             console.log("Damage amount: " + effectDTO.args.currentValue);
             
-            if(EnemyService.isEnemy(effectDTO.source)){
-                console.log("Enemy hp: " + effectDTO.source.value.hpCurrent);
+            if(EnemyService.isEnemy(effectDTO.target)){
+                console.log("Enemy hp: " + effectDTO.target.value.hpCurrent);
             }
 
             //- Return the damage to the source with the value of the status
