@@ -54,6 +54,7 @@ import { TransformEffect } from './transform/transform.effect';
 import { SporeDanceEffect } from './sporeDance/sporeDance.effect';
 import { ImmolateEffect } from './immolate/immolate.effect';
 import { MitosisEffect } from './mitosis/mitosis.effect';
+import { AddConditionalCardEffect } from './addConditionalCard/addConditionalCard.effect';
 
 @Module({
     imports: [
@@ -112,8 +113,8 @@ import { MitosisEffect } from './mitosis/mitosis.effect';
         TransformEffect,
         SporeDanceEffect,
         ImmolateEffect,
-        MitosisEffect
-
+        MitosisEffect,
+        AddConditionalCardEffect
     ],
     exports: [EffectService],
 })

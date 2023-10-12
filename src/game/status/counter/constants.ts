@@ -8,4 +8,5 @@ export const counterStatus: StatusEffect = {
     effects: [damageEffect],
     type: StatusType.Buff,
     counterType: StatusCounterType.Counter,
+    ghost: true
 };

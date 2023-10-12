@@ -16,6 +16,7 @@ import { healEffect } from "src/game/effects/heal/constants";
 import { MirageCard } from "../card/data/mirage.card";
 import { growedStatus } from "src/game/status/growed/constants";
 import { counterStatus } from "src/game/status/counter/constants";
+import { addConditionalCardEffect } from "src/game/effects/addConditionalCard/constants";
 
 export class EnemyBuilderService {
     
@@ -311,10 +312,14 @@ export class EnemyBuilderService {
             value: damage,
             effects: [
                 {
-                    effect: damageEffect.name,
+                    effect: addConditionalCardEffect.name,
                     target: CardTargetedEnum.Player,
                     args: {
-                        value: damage,
+                        value: decayAmount,
+                        cardId: DecayCard.cardId,     
+                        destination: CardDestinationEnum.Draw,
+                        position: AddCardPosition.Random,
+                        damage
                     },
                     action: {
                         name: 'infect',
@@ -322,13 +327,10 @@ export class EnemyBuilderService {
                     },
                 },
                 {
-                    effect: addCardEffect.name,
+                    effect: damageEffect.name,
                     target: CardTargetedEnum.Player,
                     args: {
-                        value: decayAmount,
-                        cardId: DecayCard.cardId,     
-                        destination: CardDestinationEnum.Draw,
-                        position: AddCardPosition.Random,
+                        value: damage,
                     },
                     action: {
                         name: 'infect',
