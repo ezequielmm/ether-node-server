@@ -161,12 +161,6 @@ export class DamageEffect implements EffectHandler {
                             }
                         }
                         break;
-                    case EnemyIntentionType.Counter:
-                        if(damage > oldDefense){
-                            intention.effects[0].args.value += (damage - oldDefense);
-                            nextIntentValueChanged = true;
-                        }
-                        break;
                     case EnemyIntentionType.Absorb:
                         if(damage > oldDefense){
                             intention.effects[0].args.value += (damage - oldDefense);
