@@ -28,8 +28,17 @@ export class AddConditionalCardEffect {
     ) {}
 
     async handle(payload: EffectDTO<AddCardArgs>): Promise<void> {
-        //- TODO:
+        const damage = payload.args.damage;
+        const { source, target } = payload;
 
+        console.log("Daño que llega: " + damage);
+
+        if(PlayerService.isPlayer(target)){
+            console.log("Player global current hp: " + target.value.globalState.hpCurrent);
+            console.log("Player combat current hp: " + target.value.combatState.hpCurrent);
+
+            console.log("Player combat current defense: " + target.value.combatState.defense);
+        }
     }
 
 }
