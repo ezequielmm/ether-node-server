@@ -64,9 +64,44 @@ export class RhunnsLastResortEffect implements EffectHandler {
 
 
             //- If the player survives the effect, it will swap his life with a random enemy life:
-
             if(playerNewHp > 0){
-                console.log("Intercambiar vida con el enemy")
+                const targetHp = target.value.hpCurrent;
+                const targetDefense = target.value.defense;
+
+                //- New HP to (random) Enemy
+                const enemyNewHp = await this.enemyService.setHp(ctx, target.value.id, playerNewHp);
+                await this.combatQueueService.push({
+                    ctx,
+                    source,
+                    target,
+                    args: {
+                        effectType: CombatQueueTargetEffectTypeEnum.Damage,
+                        healthDelta: targetHp - enemyNewHp,
+                        defenseDelta: 0,
+                        finalHealth: enemyNewHp,
+                        finalDefense: targetDefense,
+                        statuses: [],
+                    },
+                    action: action,
+                });
+
+
+                //- New HP to Player:
+                const playerUpdatedHp = await this.playerService.setHP({ctx, newHPCurrent: targetHp});
+                await this.combatQueueService.push({
+                    ctx,
+                    source,
+                    target: source,
+                    args: {
+                        effectType: CombatQueueTargetEffectTypeEnum.Damage,
+                        healthDelta: playerUpdatedHp - enemyNewHp,
+                        defenseDelta: 0,
+                        finalHealth: playerUpdatedHp,
+                        finalDefense: defense,
+                        statuses: [],
+                    },
+                    action: action,
+                });
             }
         }
 
