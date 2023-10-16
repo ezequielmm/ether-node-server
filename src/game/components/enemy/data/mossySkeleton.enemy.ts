@@ -89,14 +89,14 @@ const BasicIntents: EnemyAction = {
 
 const AdvancedIntents: EnemyAction = {
     options: [
-        { id: 6,  probability: 0.1, cooldown: 0, intents: [BasicAttack_sword, BuffResolve] },
-        { id: 7,  probability: 0.1, cooldown: 0, intents: [BasicAttack_arrow, DebuffFeeble] },
-        { id: 8,  probability: 0.1, cooldown: 0, intents: [BasicDefense, BuffResolve] },
-        { id: 9,  probability: 0.1, cooldown: 0, intents: [Breach] },
-        { id: 10, probability: 0.2, cooldown: 0, intents: [BasicDefense, DebuffFeeble] },
-        { id: 11, probability: 0.2, cooldown: 0, intents: [Grow] },
-        { id: 12, probability: 0.1, cooldown: 0, intents: [Infect, BasicAttack_sword] },
-        { id: 13, probability: 0.1, cooldown: 0, intents: [SignatureMove] }
+        { id: 7,  probability: 0.1, cooldown: 0, intents: [BasicAttack_sword, BuffResolve] },
+        { id: 8,  probability: 0.1, cooldown: 0, intents: [BasicAttack_arrow, DebuffFeeble] },
+        { id: 9,  probability: 0.1, cooldown: 0, intents: [BasicDefense, BuffResolve] },
+        { id: 10,  probability: 0.1, cooldown: 0, intents: [Breach] },
+        { id: 11, probability: 0.2, cooldown: 0, intents: [BasicDefense, DebuffFeeble] },
+        { id: 12, probability: 0.2, cooldown: 0, intents: [Grow] },
+        { id: 13, probability: 0.1, cooldown: 0, intents: [Infect, BasicAttack_sword] },
+        { id: 14, probability: 0.1, cooldown: 0, intents: [SignatureMove] }
     ]
 }
 

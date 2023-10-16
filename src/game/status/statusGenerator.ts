@@ -26,6 +26,11 @@ import { tasteOfBloodBuff, tasteOfBloodDebuff } from './tasteOfBlood/constants';
 import { trapped } from './trapped/constants';
 import { turtling } from './turtling/constants';
 import { resist } from './resist/constants';
+import { hiddenStatus } from './hidden/constants';
+import { hatchingStatus } from './hatching/constants';
+import { chargingBeam } from './chargingBeam/constants';
+import { revealStatus } from './reveal/constants';
+import { growedStatus } from './growed/constants';
 
 export interface IStatusesList {
     name: string;
@@ -126,6 +131,17 @@ export class StatusGenerator {
                 return `Deal double damage`;
             case tasteOfBloodDebuff.name:
                 return `Take double damage`;
+            case hiddenStatus.name:
+                return `This creature receives 25% less damage from attacks, and deals 25% more damage to defense`;
+            case hatchingStatus.name:
+                return `This creature is developing`;
+            case chargingBeam.name:
+                return `This creature is preparing for a powerful attack`;
+            case revealStatus.name:
+                return `This creature will soon reveal its true form`;
+            case growedStatus.name:
+                return `This creature's attacks deal ${counter} more damage due to its sheer size`
+            
             default:
                 return undefined;
         }
