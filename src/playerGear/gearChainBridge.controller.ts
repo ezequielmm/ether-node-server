@@ -98,8 +98,6 @@ export class GearChainBridgeController {
     @Post('/modify')
     async postModify(@Body() payload: AlterGearApiDTO): Promise<{ oldGear: GearItem[]; newGear: GearItem[]; ignoredGear: Gear[]; }> {
 
-        console.log('postModify: Entry. Payload:', payload);
-
         const { wallet, token } = payload;
 
         // confirm token (security layer) and get PlayerId
@@ -114,7 +112,6 @@ export class GearChainBridgeController {
                 wallet,
                 this.nonChainRarityFilter,
             );
-            console.log('postModify: Retrieved player gear for Wallet:', wallet, 'Gear:', playerGear);
         } catch (error) {
             console.error('postModify: Error fetching player gear for Wallet:', wallet, 'Error:', error.message);
             throw error;
@@ -123,7 +120,6 @@ export class GearChainBridgeController {
         let gears;
         try {
             gears = this.playerGearService.getGearByIds(payload.gear);
-            console.log('postModify: Gears retrieved by IDs:', gears);
         } catch (error) {
             console.error('postModify: Error fetching gears by IDs. Error:', error.message);
             throw error;
@@ -133,11 +129,9 @@ export class GearChainBridgeController {
             switch (payload.action) {
                 case GearActionApiEnum.AddGear:
                     await this.playerGearService.addGearToPlayer(wallet, gears);
-                    console.log('postModify: Gears added to player. Wallet:', wallet);
                     break;
                 case GearActionApiEnum.RemoveGear:
                     await this.playerGearService.removeGearFromPlayer(wallet, gears);
-                    console.log('postModify: Gears removed from player. Wallet:', wallet);
                     break;
             }
         } catch (error) {
@@ -157,7 +151,6 @@ export class GearChainBridgeController {
             throw error;
         }
 
-        console.log('postModify: Exit. Wallet:', wallet, 'Old Gear:', playerGear, 'New Gear:', newGear);
 
         return {
             oldGear: playerGear,
