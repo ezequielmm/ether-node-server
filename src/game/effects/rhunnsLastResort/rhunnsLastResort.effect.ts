@@ -45,7 +45,7 @@ export class RhunnsLastResortEffect implements EffectHandler {
             await this.combatQueueService.push({
                 ctx,
                 source,
-                target,
+                target: source,
                 args: {
                     effectType: CombatQueueTargetEffectTypeEnum.Damage,
                     healthDelta: playerNewHp - oldHp,
