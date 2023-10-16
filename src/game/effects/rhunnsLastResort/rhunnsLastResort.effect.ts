@@ -33,8 +33,6 @@ export class RhunnsLastResortEffect implements EffectHandler {
         if(EnemyService.isEnemy(target)){
             const damage = getRandomBetween(dto.args.minDamage, dto.args.maxDamage);
 
-            console.log("Random Damage: " + damage)
-
             const player = await this.playerService.get(ctx);
             const oldHp = player.value.combatState.hpCurrent;
             const defense = player.value.combatState.defense;
