@@ -17,6 +17,7 @@ import { philterOfRedemptionPotion } from './data/philterOfRedemption.potion';
 //import { pavaRootPotion } from './data/pavaRoot.potion';
 import { dewDropElixirPotion } from './data/dewDropElixir.potion';
 import { ReturnModelType } from '@typegoose/typegoose';
+import { rhunnsLastResort } from './data/rhunnsLastResort.potion';
 
 @Injectable()
 export class PotionSeeder implements Seeder {
@@ -41,6 +42,7 @@ export class PotionSeeder implements Seeder {
             dewDropElixirPotion,
             // pavaRootPotion,
             // phantomPhialPotion,
+            rhunnsLastResort
         ]);
     }
 

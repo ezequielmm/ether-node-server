@@ -92,8 +92,6 @@ export class PlayerGearService {
     async addGearToPlayer(userAddress: string, gear: Gear[]): Promise<PlayerGear> 
     {
 
-        console.log("addGearToPlayer", userAddress, gear);
-
         const gearItems = this.toGearItems(gear);
 
         try {
