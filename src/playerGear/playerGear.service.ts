@@ -91,6 +91,9 @@ export class PlayerGearService {
 
     async addGearToPlayer(userAddress: string, gear: Gear[]): Promise<PlayerGear> 
     {
+
+        console.log("addGearToPlayer", userAddress, gear);
+
         const gearItems = this.toGearItems(gear);
 
         try {
@@ -121,7 +124,9 @@ export class PlayerGearService {
             const index = playerGear.findIndex(
                 (i) => i.gearId === toRemove.gearId,
             );
-            playerGear.splice(index, 1);
+
+            if(index >= 0)
+                playerGear.splice(index, 1);
         });
 
         return await this.playerGear.findOneAndUpdate(

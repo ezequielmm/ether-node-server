@@ -12,9 +12,11 @@ import { ExpeditionService } from '../components/expedition/expedition.service';
 import { SettingsService } from '../components/settings/settings.service';
 import { GearItem } from '../../playerGear/gearItem';
 import { Contest } from '../contest/contest.schema';
-import { IPlayerToken } from '../components/expedition/expedition.schema';
+import { Expedition, IPlayerToken } from '../components/expedition/expedition.schema';
 import { ContestMapService } from '../contestMap/contestMap.service';
 import { MapDeckService } from '../components/mapDeck/mapDeck.service';
+import { MapService } from '../map/map.service';
+import mongoose, { Types } from 'mongoose';
 import { Score } from '../components/expedition/scores';
 import { GameContext } from '../components/interfaces';
 
@@ -28,8 +30,10 @@ export class InitExpeditionProcess {
         private readonly characterService: CharacterService,
         private readonly settingsService: SettingsService,
         private readonly contestMapService: ContestMapService,
-        private readonly mapDeckService:MapDeckService
-    ) {}
+        private readonly mapDeckService: MapDeckService,
+        private readonly expeditionModel: Expedition,
+        private readonly mapService:MapService
+    ) { }
 
     async handle({userAddress, playerName, playerToken, equippedGear, character_class, contest, stage}: 
             { userAddress: string; playerName: string; playerToken: IPlayerToken; equippedGear: GearItem[]; character_class: string; contest: Contest; stage: number; }): Promise<void> {
@@ -38,12 +42,19 @@ export class InitExpeditionProcess {
         const character = await this.characterService.findOne({characterClass: character_class_enum});
         const { initialPotionChance } = await this.settingsService.getSettings();
 
+
+
+
         const map = await this.contestMapService.getMapForContest(contest.stages[stage -1]);
         const cards = await this.generatePlayerDeck(character, userAddress, contest, stage);
+        
+        // Crea un nuevo ObjectId aleatorio
+        const randomObjectId = new Types.ObjectId();
+
 
         const expedition = await this.expeditionService.create({
             userAddress,
-            map,
+            map: randomObjectId,
             scores: new Score(),
             mapSeedId: getTimestampInSeconds(),
             actConfig: {
@@ -74,7 +85,19 @@ export class InitExpeditionProcess {
             createdAt: new Date(),
         });
 
-        this.logger.log({ expId: expedition.id}, `Created expedition for player: ${userAddress}`);
+        const referencedMap = await this.expeditionService.createMapReferenced(
+            {
+                _id: randomObjectId,
+                map
+            });
+
+        this.logger.log(
+            {
+                expId: expedition.id,
+            },
+            `Created expedition for player: ${userAddress}`,
+            `Created referenced map: ' ${referencedMap}`,
+        );
     }
 
     public async createNextStage(ctx: GameContext): Promise<void> {
@@ -84,17 +107,29 @@ export class InitExpeditionProcess {
         //- Por el momento se va a manejar el mismo mazo de cartas para el stage 2:
         //const cards = await this.generatePlayerDeck(character, userAddress, contest, stage);
 
-        ctx.expedition.map = map;
+        const randomObjectId = new Types.ObjectId();
+
+        ctx.expedition.map = randomObjectId;
         ctx.expedition.mapSeedId = getTimestampInSeconds();
         ctx.expedition.playerState.hpCurrent = ctx.expedition.playerState.hpMax;
         ctx.expedition.currentStage = stage;
         ctx.expedition.status = ExpeditionStatusEnum.InProgress;
 
         await ctx.expedition.save();
+
+        const referencedMap = await this.expeditionService.createMapReferenced(
+            {
+                _id: randomObjectId,
+                map
+            });
     }
 
-    private async generatePlayerDeck(character: Character, userAddress: string, contest:Contest, stage:number): Promise<IExpeditionPlayerStateDeckCard[]> {
-        
+    private async generatePlayerDeck(
+        character: Character,
+        userAddress: string,
+        contest:Contest,
+        stage:number
+    ): Promise<IExpeditionPlayerStateDeckCard[]> {
         // We destructure the cards from the character
         const { cards: characterDeck } = character;
 
@@ -106,7 +141,7 @@ export class InitExpeditionProcess {
         const map = await this.contestMapService.getCompleteMapForContest(contest.stages[stage-1]);
         let mapDeck = undefined ;
 
-        if(map.deck_id){
+        if (map.deck_id) {
             mapDeck = await this.mapDeckService.findById(map.deck_id);
         }
 

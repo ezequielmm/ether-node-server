@@ -55,11 +55,11 @@ export class GearChainBridgeController {
         private readonly expedition: ReturnModelType<typeof Expedition>,
         private playerGearService: PlayerGearService,
         private readonly configService: ConfigService,
-        private readonly nftService:NFTService,
-        private readonly bridgeService:BridgeService
-    ) {}
+        private readonly nftService: NFTService,
+        private readonly bridgeService: BridgeService
+    ) { }
 
-    private nonChainRarities = [GearRarityEnum.Common, GearRarityEnum.Uncommon];
+    private nonChainRarities = [];
 
     private nonChainRarityFilter = {
         rarity: {
@@ -76,7 +76,7 @@ export class GearChainBridgeController {
         const localHash = createHash('md5')
             .update(timestamp + check.wallet + sharedSalt)
             .digest('hex');
-        
+
         return localHash === check.token;
     }
 
@@ -84,7 +84,7 @@ export class GearChainBridgeController {
     @Get('/list') async getList(@Query('wallet') wallet: string, @Query('token') token: string): Promise<GearItem[]> {
         // confirm token (security layer)
         let validToken = await this.checkSecurityToken({ wallet, token });
-        if (!validToken){
+        if (!validToken) {
             throw new UnauthorizedException('Bad Token');
         }
 
@@ -96,51 +96,73 @@ export class GearChainBridgeController {
 
     @ApiOperation({ summary: 'Get player owned gear list for API' })
     @Post('/modify')
-    async postModify(@Body() payload: AlterGearApiDTO): Promise<{oldGear: GearItem[]; newGear: GearItem[]; ignoredGear: Gear[];}> {
-        
+    async postModify(@Body() payload: AlterGearApiDTO): Promise<{ oldGear: GearItem[]; newGear: GearItem[]; ignoredGear: Gear[]; }> {
+
+        console.log('postModify: Entry. Payload:', payload);
+
         const { wallet, token } = payload;
 
         // confirm token (security layer) and get PlayerId
-        if (!this.checkSecurityToken({ wallet, token })){
+        if (!this.checkSecurityToken({ wallet, token })) {
+            console.error('postModify: Bad Token for Wallet:', wallet);
             throw new UnauthorizedException('Bad Token');
         }
 
-        let playerGear = await this.playerGearService.getGear(
-            wallet,
-            this.nonChainRarityFilter,
-        );
-
-
-        let gears = await this.playerGearService.getGearByIds(payload.gear);
-
-        const removedGears = remove(gears, (g) =>
-            this.nonChainRarities.includes(g.rarity),
-        );
-
-        switch (payload.action) {
-            case GearActionApiEnum.AddGear:
-                gears = gears.filter((g) => {
-                    return !playerGear.some((pg) => pg.gearId === g.gearId)
-                });
-                await this.playerGearService.addGearToPlayer(wallet, gears);
-                break;
-            case GearActionApiEnum.RemoveGear:
-                gears = gears.filter((g) => {
-                    return playerGear.some((pg) => pg.gearId === g.gearId)
-                });
-                await this.playerGearService.removeGearFromPlayer(wallet,gears);
-                break;
+        let playerGear;
+        try {
+            playerGear = await this.playerGearService.getGear(
+                wallet,
+                this.nonChainRarityFilter,
+            );
+            console.log('postModify: Retrieved player gear for Wallet:', wallet, 'Gear:', playerGear);
+        } catch (error) {
+            console.error('postModify: Error fetching player gear for Wallet:', wallet, 'Error:', error.message);
+            throw error;
         }
 
-        const newGear = await this.playerGearService.getGear(
-            wallet,
-            this.nonChainRarityFilter,
-        );
+        let gears;
+        try {
+            gears = this.playerGearService.getGearByIds(payload.gear);
+            console.log('postModify: Gears retrieved by IDs:', gears);
+        } catch (error) {
+            console.error('postModify: Error fetching gears by IDs. Error:', error.message);
+            throw error;
+        }
+
+        try {
+            switch (payload.action) {
+                case GearActionApiEnum.AddGear:
+                    await this.playerGearService.addGearToPlayer(wallet, gears);
+                    console.log('postModify: Gears added to player. Wallet:', wallet);
+                    break;
+                case GearActionApiEnum.RemoveGear:
+                    await this.playerGearService.removeGearFromPlayer(wallet, gears);
+                    console.log('postModify: Gears removed from player. Wallet:', wallet);
+                    break;
+            }
+        } catch (error) {
+            console.error('postModify: Error processing gears for Wallet:', wallet, 'Action:', payload.action, 'Error:', error.message);
+            throw error;
+        }
+
+        let newGear;
+        try {
+            newGear = await this.playerGearService.getGear(
+                wallet,
+                this.nonChainRarityFilter,
+            );
+            console.log('postModify: Retrieved new gear for Wallet:', wallet, 'Gear:', newGear);
+        } catch (error) {
+            console.error('postModify: Error fetching new gear for Wallet:', wallet, 'Error:', error.message);
+            throw error;
+        }
+
+        console.log('postModify: Exit. Wallet:', wallet, 'Old Gear:', playerGear, 'New Gear:', newGear);
 
         return {
             oldGear: playerGear,
             newGear: newGear,
-            ignoredGear: removedGears,
+            ignoredGear: [],
         };
     }
 
@@ -150,7 +172,7 @@ export class GearChainBridgeController {
 
         //- Validate the tokenId is owned by the given wallet:
         const NFTFromWallet = await this.nftService.isTokenIdFromWallet(payload.contract, payload.tokenId, payload.wallet);
-        if (!NFTFromWallet){
+        if (!NFTFromWallet) {
             return {
                 success: false,
                 message: "NFT is not owned by the given wallet address."
@@ -160,18 +182,18 @@ export class GearChainBridgeController {
         //- Validate the wallet has the Gears:
         const ownedGears = await this.playerGearService.allAreOwnedById(payload.wallet, payload.gearIds);
 
-        if(!ownedGears){
+        if (!ownedGears) {
             return {
                 success: false,
                 message: "Not all gears are associated with the walletId."
             }
         }
 
-        try{
+        try {
             //- Validate the tokenId is not in inititation progress already:
 
             const NFTinProgerss = await this.bridgeService.isTokenIdInProgress(payload.tokenId, payload.contract);
-            if(NFTinProgerss){
+            if (NFTinProgerss) {
                 return {
                     success: false,
                     message: "NFT already in progress."
@@ -183,11 +205,11 @@ export class GearChainBridgeController {
 
             return response;
 
-        }catch{
+        } catch {
             return {
                 success: false,
                 message: "Error connecting to Bridge API"
             }
-        }   
+        }
     }
 }

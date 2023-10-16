@@ -55,6 +55,7 @@ import { SporeDanceEffect } from './sporeDance/sporeDance.effect';
 import { ImmolateEffect } from './immolate/immolate.effect';
 import { MitosisEffect } from './mitosis/mitosis.effect';
 import { AddConditionalCardEffect } from './addConditionalCard/addConditionalCard.effect';
+import { RhunnsLastResortEffect } from './rhunnsLastResort/rhunnsLastResort.effect';
 
 @Module({
     imports: [
@@ -114,7 +115,8 @@ import { AddConditionalCardEffect } from './addConditionalCard/addConditionalCar
         SporeDanceEffect,
         ImmolateEffect,
         MitosisEffect,
-        AddConditionalCardEffect
+        AddConditionalCardEffect,
+        RhunnsLastResortEffect
     ],
     exports: [EffectService],
 })
