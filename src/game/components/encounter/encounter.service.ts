@@ -212,7 +212,7 @@ export class EncounterService {
                 case 'hit_points_avoid_dead': //eg cave in
                     let damage = effect.amount;
                     if(ctx.expedition.playerState.hpCurrent <= Math.abs(parseInt(damage))){
-                        damage = ctx.expedition.playerState.hpCurrent - 1;
+                        damage = (-1 * (ctx.expedition.playerState.hpCurrent - 1));
                     }
                     await this.playerService.setHPDelta({
                         ctx,
