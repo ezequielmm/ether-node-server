@@ -575,7 +575,7 @@ export class EncounterService {
         };
 
         console.log("New player state:")
-        console.log(newPlayerState)
+        console.log(newPlayerState.potions)
 
         await this.expeditionService.updateByFilter(
             { clientId: client.id },
