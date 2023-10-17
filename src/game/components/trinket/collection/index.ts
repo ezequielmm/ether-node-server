@@ -24,3 +24,4 @@ export { PhoenixEggUpgradedTrinket } from './phoenix-egg-upgraded.trinket';
 export { TalismanOfQuakeTrinket } from './talismanOfQuake.trinket';
 //export { RunicTomeTrinket } from './runic-tome.trinket';
 //export { RunicTomeUpgradedTrinket } from './runic-tome-upgraded.trinket';
+export { MemoirOfDoomTrinket } from './memoir-of-doom.trinket';
