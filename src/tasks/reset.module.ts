@@ -5,9 +5,14 @@ import { MapBuilderModule } from 'src/game/map/builder/mapBuilder.module';
 import { SettingsModule } from 'src/game/components/settings/settings.module';
 import { Expedition } from 'src/game/components/expedition/expedition.schema';
 import { OldExpedition } from 'src/game/components/expedition/oldexpedition.schema';
+import { ResetService } from './reset.service';
+import { KindagooseModule } from 'kindagoose';
 
 @Module({
-    imports: [],
-    providers: [Expedition, OldExpedition],
+    imports: [KindagooseModule.forFeature([Expedition]),
+    KindagooseModule.forFeature([OldExpedition]),
+
+    ],
+    providers: [ResetService],
 })
-export class ResetModule {}
+export class ResetModule { }
