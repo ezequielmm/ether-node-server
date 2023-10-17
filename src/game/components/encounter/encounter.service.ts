@@ -212,7 +212,7 @@ export class EncounterService {
                 case 'hit_points_avoid_dead': //eg cave in
                     let damage = effect.amount;
                     if(ctx.expedition.playerState.hpCurrent <= Math.abs(parseInt(damage))){
-                        damage = ctx.expedition.playerState.hpCurrent - 1;
+                        damage = (-1 * (ctx.expedition.playerState.hpCurrent - 1));
                     }
                     await this.playerService.setHPDelta({
                         ctx,
@@ -220,10 +220,11 @@ export class EncounterService {
                     });
                     break;
                 case 'loose_random_potion': //eg cave in
-                await this.looseRandomPotion(
-                    ctx.client,
-                    ctx.expedition.playerState,
-                );
+                console.log("Entra en el case del switch")
+                    await this.looseRandomPotion(
+                        ctx.client,
+                        ctx.expedition.playerState,
+                    );
                     break;
                 case 'upgrade_random_card': //eg will o wisp
                     await this.upgradeRandomCard(
@@ -551,6 +552,9 @@ export class EncounterService {
             probabilityWeights,
         );
 
+        console.log("Potion to loose:")
+        console.log(looseMePotionId)
+
         await this.loosePotion(looseMePotionId, playerState, client);
     }
 
@@ -558,6 +562,9 @@ export class EncounterService {
         let hasLostOne = false;
 
         const newPotions = playerState.potions.filter((item) => {
+            console.log("item.potionId "+item.potionId)
+            console.log("potionId: " + potionId)
+            console.log("-------")
             if (item.potionId == potionId && !hasLostOne) {
                 hasLostOne = true;
                 return false;
