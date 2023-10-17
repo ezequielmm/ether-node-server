@@ -569,11 +569,6 @@ export class EncounterService {
             }
         });
 
-        // const newPlayerState = {
-        //     ...playerState, 
-        //     potions: newPotions,
-        // };
-
         await this.expeditionService.updateByFilter(
             { clientId: client.id }, 
             {
@@ -581,15 +576,6 @@ export class EncounterService {
                     'playerState.potions': newPotions,
                 }
         });
-
-        // await this.expeditionService.updateByFilter(
-        //     { clientId: client.id },
-        //     {
-        //         $set: {
-        //             playerState: newPlayerState,
-        //         },
-        //     },
-        // );
     }
 
     async getByEncounterId(encounterId: number): Promise<Encounter> {
