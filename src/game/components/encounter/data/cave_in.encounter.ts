@@ -36,7 +36,7 @@ export const CaveInEncounter: Encounter = {
                 },
                 {
                     //- aka option 4
-                    text: 'Lose 15 hp. If this would kill you, reduce your hp to 1 instead.',
+                    text: 'Lose 5 max hp and a random potion.',
                     nextStage: 4,
                     effects: [{ kind: 'hp_max', amount: '-5' }, { kind: 'loose_random_potion', amount: '1' },]
                     
