@@ -25,7 +25,7 @@ export class TalismanOfQuakeTrinket extends TrinketModifier {
     @Prop({ default: TrinketRarityEnum.Common })
     rarity: TrinketRarityEnum;
 
-    @Prop({ default: 20 })
+    @Prop({ default: 10 })
     minDamage: number;
 
     @Prop({ default: 5 })
@@ -43,6 +43,8 @@ export class TalismanOfQuakeTrinket extends TrinketModifier {
     mutate(dto: EffectDTO): EffectDTO {
         console.log("Talisman of Quake executed----------------------")
         if (dto.target.type == 'enemy') {
+            console.log("dto.args.currentValue: " + dto.args.currentValue)
+            console.log("this.minDamage: " + this.minDamage)
             if (dto.args.currentValue >= this.minDamage) {
 
                 console.log("Min attack reached")
