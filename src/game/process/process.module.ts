@@ -42,9 +42,16 @@ import { PlayerGearModule } from 'src/playerGear/playerGear.module';
 import { MapBuilderModule } from '../map/builder/mapBuilder.module';
 import { SquiresModule } from 'src/squires-api/squires.module';
 import { MapDeckModule } from '../components/mapDeck/mapDeck.module';
+import { KindagooseModule } from 'kindagoose';
+import { MapType } from '../components/expedition/map.schema';
+import { ExpeditionService } from '../components/expedition/expedition.service';
 
 @Module({
     imports: [
+        KindagooseModule.forFeature([MapType]),
+        KindagooseModule.forFeature([ExpeditionService]),
+
+
         forwardRef(() => ExpeditionModule),
         forwardRef(() => EnemyModule),
         forwardRef(() => MerchantModule),

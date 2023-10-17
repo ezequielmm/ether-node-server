@@ -1,5 +1,5 @@
-import { modelOptions, Prop, PropType, Severity } from '@typegoose/typegoose';
-import { HydratedDocument } from 'mongoose';
+import { modelOptions, Prop, PropType, Ref, Severity } from '@typegoose/typegoose';
+import mongoose, { HydratedDocument, ObjectId, Schema, Types } from 'mongoose';
 import { MerchantItems } from 'src/game/merchant/merchant.interface';
 import { AttachedStatus, StatusType } from 'src/game/status/interfaces';
 import { TreasureInterface } from 'src/game/treasure/treasure.interfaces';
@@ -10,13 +10,13 @@ import {
     IExpeditionPlayerStateDeckCard,
     Reward,
 } from './expedition.interface';
-import { Node } from './node';
 import { Player } from './player';
 import { ExpeditionActConfig } from './expeditionActConfig.schema';
 import { EncounterInterface } from '../encounter/encounter.interfaces';
 import { Score } from './scores';
 import { ScoreResponse } from 'src/game/scoreCalculator/scoreCalculator.service';
 import { Contest } from 'src/game/contest/contest.schema';
+import { MapType } from './map.schema';
 
 export type ExpeditionDocument = HydratedDocument<Expedition>;
 
@@ -26,10 +26,12 @@ export interface IPlayerToken {
     tokenId: number;
 }
 
+
 @modelOptions({
     schemaOptions: { collection: 'expeditions', versionKey: false },
     options: { allowMixed: Severity.ALLOW },
 })
+
 export class Expedition {
     @Prop()
     clientId?: string;
@@ -46,8 +48,8 @@ export class Expedition {
     @Prop()
     mapSeedId?: number;
 
-    @Prop({ type: () => [Node] }, PropType.ARRAY)
-    map: Node[];
+    @Prop({ ref: MapType }) // Indica que este campo es una referencia a MapType
+    map: Ref<MapType>; // El tipo Ref<T> se utiliza para campos de referencia en typegoose
 
     @Prop()
     playerState: Player;

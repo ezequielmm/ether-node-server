@@ -10,7 +10,6 @@ import { CardTargetedEnum } from "src/game/components/card/card.enum";
 import { OnEvent } from "@nestjs/event-emitter";
 import { GameContext } from "src/game/components/interfaces";
 import { EVENT_BEFORE_ENEMIES_TURN_START } from "src/game/constants";
-import { feebleStatus } from "../feeble/constants";
 
 @StatusDecorator({
     status: hiddenStatus,

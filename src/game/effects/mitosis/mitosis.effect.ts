@@ -18,8 +18,14 @@ export class MitosisEffect implements EffectHandler {
         const { source, ctx } = dto;
         const enemies = dto.ctx.expedition.currentNode.data.enemies;
 
-        if(EnemyService.isEnemy(source)){
+        if(EnemyService.isEnemy(source)){     
             
+            const enemiesCount = this.enemyService.getLiving(ctx).length;
+            if(enemiesCount >= 5){
+                console.log("Too many enemies in combat to spawn")
+                return;
+            }
+
             const originalMold = source.value;
             const moldDB = await this.enemyService.findById(originalMold.enemyId);
             const newMold = await this.enemyService.createNewStage2EnemyWithStatuses(moldDB, originalMold.statuses.buff, originalMold.statuses.debuff);

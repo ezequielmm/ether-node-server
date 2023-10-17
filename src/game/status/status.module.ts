@@ -58,6 +58,9 @@ import { HiddenStatus } from './hidden/hidden.status';
 import { HatchingStatus } from './hatching/hatching.status';
 import { ChargingBeamStatus } from './chargingBeam/chargingBeam.status';
 import { RevealStatus } from './reveal/reveal.status';
+import { GrowedStatus } from './growed/growed.status';
+import { CounterStatus } from './counter/counter.status';
+import { ElementalStatus } from './elemental/elemental.status';
 
 @Module({
     imports: [
@@ -123,7 +126,10 @@ import { RevealStatus } from './reveal/reveal.status';
         HiddenStatus,
         HatchingStatus,
         ChargingBeamStatus,
-        RevealStatus
+        RevealStatus,
+        GrowedStatus,
+        CounterStatus,
+        ElementalStatus
 
     ],
     exports: [StatusService],

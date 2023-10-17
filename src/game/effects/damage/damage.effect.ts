@@ -112,12 +112,19 @@ export class DamageEffect implements EffectHandler {
                 switch(intention.type){
                     case EnemyIntentionType.Signature:
                         if(intention.negateDamage && intention.negateDamage > 0){
+                            console.log("Signature Move was Hitted:")
+                            console.log("Damage required to negate SM: " + intention.negateDamage)
+                            console.log("Damage done: " + damage)
+                            console.log("------------------------------------------------------")
+
                             if(damage >= intention.negateDamage){
                                 target.value.currentScript = {id: 0, intentions: [EnemyBuilderService.createDoNothingIntent()]};
                                 await this.enemyService.setCurrentScript(ctx, target.value.id, target.value.currentScript);
+                                console.log("SignatureMove skipped.")
                             }else{
                                 intention.negateDamage -= damage;
                                 nextIntentValueChanged = true;
+                                console.log("SignatureMove reduced.")
                             }
                         }
 
@@ -152,12 +159,6 @@ export class DamageEffect implements EffectHandler {
                                         nextIntentValueChanged = true;
                                     }
                             }
-                        }
-                        break;
-                    case EnemyIntentionType.Counter:
-                        if(damage > oldDefense){
-                            intention.effects[0].args.value += (damage - oldDefense);
-                            nextIntentValueChanged = true;
                         }
                         break;
                     case EnemyIntentionType.Absorb:
@@ -256,6 +257,9 @@ export class DamageEffect implements EffectHandler {
 
             oldHp = target.value.combatState.hpCurrent;
             oldDefense = target.value.combatState.defense;
+
+            //aca va el if de preguntar si el enemigo tiene el estado elemental
+            //target.value.combatState.statuses
 
             await this.playerService.damage(ctx, damage);
 

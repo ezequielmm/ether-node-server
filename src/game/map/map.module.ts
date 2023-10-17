@@ -7,9 +7,20 @@ import { RoyalHouseNodeStrategy } from './strategies/royal-house-node-strategy';
 import { TreasureModule } from 'src/game/treasure/treasure.module';
 import { EncounterModule } from 'src/game/components/encounter/encounter.module';
 import { MerchantModule } from 'src/game/merchant/merchant.module';
+import { Expedition } from '../components/expedition/expedition.schema';
+import { MapType } from '../components/expedition/map.schema';
+import { KindagooseModule } from 'kindagoose';
+import { ExpeditionService } from '../components/expedition/expedition.service';
+import { ExpeditionModule } from '../components/expedition/expedition.module';
 
 @Module({
     imports: [
+        KindagooseModule.forFeature([MapType]),
+        KindagooseModule.forFeature([Expedition]),
+        // KindagooseModule.forFeature([ExpeditionService]),
+        forwardRef(() => ExpeditionModule),
+
+
         forwardRef(() => CombatModule),
         forwardRef(() => TreasureModule),
         forwardRef(() => EncounterModule),
@@ -20,7 +31,9 @@ import { MerchantModule } from 'src/game/merchant/merchant.module';
         PortalNodeStrategy,
         RoyalHouseNodeStrategy,
         CampNodeStrategy,
+        ExpeditionService,
     ],
-    exports: [MapService],
+    exports: [MapService,
+],
 })
 export class MapModule {}

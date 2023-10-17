@@ -15,6 +15,7 @@ import { RugburnEncounter } from './data/rugburn.encounter';
 import { TreeCarvingEncounter } from './data/tree_carving.encounter';
 import { RunicBeehiveEncounter } from './data/runic_beehive';
 import { OddbarksEncounter } from './data/oddbarks.encounter';
+import { CaveInEncounter } from './data/cave_in.encounter';
 
 @Injectable()
 export class EncounterSeeder implements Seeder {
@@ -37,6 +38,7 @@ export class EncounterSeeder implements Seeder {
             YoungWizardEncounter,
             OddbarksEncounter,
             RunicBeehiveEncounter,
+            CaveInEncounter
         ]);
     }
     async drop(): Promise<any> {

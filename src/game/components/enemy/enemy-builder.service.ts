@@ -14,6 +14,9 @@ import { revealStatus } from "src/game/status/reveal/constants";
 import { DecayCard } from "../card/data/decay.card";
 import { healEffect } from "src/game/effects/heal/constants";
 import { MirageCard } from "../card/data/mirage.card";
+import { growedStatus } from "src/game/status/growed/constants";
+import { counterStatus } from "src/game/status/counter/constants";
+import { addConditionalCardEffect } from "src/game/effects/addConditionalCard/constants";
 
 export class EnemyBuilderService {
     
@@ -62,14 +65,17 @@ export class EnemyBuilderService {
     public static createCounterAttack = (): EnemyIntention => {
         return {
             type: EnemyIntentionType.Counter,
-            target: CardTargetedEnum.Player,
-            value: 0,
+            target: CardTargetedEnum.Self,
+            value: 1,
             effects: [
                 {
-                    effect: damageEffect.name,
-                    target: CardTargetedEnum.Player,
+                    effect: attachStatusEffect.name,
+                    target: CardTargetedEnum.Self,
                     args: {
-                        value: 0,
+                        statusName: counterStatus.name,
+                        statusArgs: {
+                            counter: 1,
+                        },
                     },
                     action: {
                         name: 'counter',
@@ -306,10 +312,14 @@ export class EnemyBuilderService {
             value: damage,
             effects: [
                 {
-                    effect: damageEffect.name,
+                    effect: addConditionalCardEffect.name,
                     target: CardTargetedEnum.Player,
                     args: {
-                        value: damage,
+                        value: decayAmount,
+                        cardId: DecayCard.cardId,     
+                        destination: CardDestinationEnum.Draw,
+                        position: AddCardPosition.Random,
+                        damage
                     },
                     action: {
                         name: 'infect',
@@ -317,13 +327,10 @@ export class EnemyBuilderService {
                     },
                 },
                 {
-                    effect: addCardEffect.name,
+                    effect: damageEffect.name,
                     target: CardTargetedEnum.Player,
                     args: {
-                        value: decayAmount,
-                        cardId: DecayCard.cardId,     
-                        destination: CardDestinationEnum.Draw,
-                        position: AddCardPosition.Random,
+                        value: damage,
                     },
                     action: {
                         name: 'infect',
@@ -335,7 +342,7 @@ export class EnemyBuilderService {
     }
 
 
-    public static createGrowIntent = (healAmount: number, negateDamage: number, growDamage:number) => {
+    public static createGrowIntent = (healAmount: number, negateDamage: number, growAmount:number) => {
         return {
             type: EnemyIntentionType.Grow,
             target: CardTargetedEnum.Player,
@@ -347,6 +354,20 @@ export class EnemyBuilderService {
                     target: CardTargetedEnum.Self,
                     args: {
                         value: healAmount
+                    },
+                    action:{
+                        name: 'grow',
+                        hint: 'grow'
+                    }
+                },
+                {
+                    effect: attachStatusEffect.name,
+                    target: CardTargetedEnum.Self,
+                    args: {
+                        statusName: growedStatus.name,
+                        statusArgs: {
+                            counter: growAmount,
+                        },
                     },
                     action:{
                         name: 'grow',
@@ -383,6 +404,27 @@ export class EnemyBuilderService {
                     },
                 },
             ]
+        }
+    }
+
+    public static createDwellerMonsterBeam = (beamAttack:number): EnemyIntention => {
+        return {
+            type: EnemyIntentionType.Attack,
+            target: CardTargetedEnum.Player,
+            value: beamAttack,
+            effects: [
+                {
+                    effect: damageEffect.name,
+                    target: CardTargetedEnum.Player,
+                    args: {
+                        value: beamAttack,
+                    },
+                    action: {
+                        name: 'laser',
+                        hint: 'laser',
+                    },
+                },
+            ],
         }
     }
 

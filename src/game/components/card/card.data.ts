@@ -81,6 +81,7 @@ import {
     PerfectTimingCard,
     PerfectTimingCardUpgraded,
 } from './data/perfectTiming.card';
+import { PhaseOutCard, PhaseOutCardUpgraded } from './data/phaseOut.card';
 import { PlantFeetCard, PlantFeetCardUpgraded } from './data/plantFeet.card';
 import { PoisonedCard } from './data/poisoned.card';
 import { PrayCard, PrayCardUpgraded } from './data/pray.card';
@@ -280,4 +281,6 @@ export const data: Card[] = [
     ParryCardUpgraded,
     PoisonedCard,
     CharmedCard,
+    PhaseOutCard,
+    PhaseOutCardUpgraded
 ];

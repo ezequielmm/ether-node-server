@@ -25,12 +25,22 @@ export class GetEnemiesAction {
     ) {}
 
     async handle(clientId: string): Promise<IEnemiesResponse[]> {
-        // First we get the enemies from the current node
-        const {
-            data: { enemies },
-        } = await this.expeditionService.getCurrentNode({
+        
+        const currentNode = await this.expeditionService.getCurrentNode({
             clientId,
         });
+
+        // console.warn("ESTE ES EL CLIENTID: " + clientId + " Y ESTE ES EL CURRENTNODE: " + currentNode);
+
+
+        // First we get the enemies from the current node
+        // const {
+        //     data: { enemies },
+        // } = currentNode;
+
+        const enemies = currentNode.data.enemies;
+
+        // console.warn("Y ESTOS SON LOS ENEMIES: " + currentNode.data);
 
         // Now we return the enemies that have their hpCurrent > 0
         return enemies

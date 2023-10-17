@@ -34,6 +34,11 @@ import {
 import { ReturnModelType } from '@typegoose/typegoose';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { ProjectionFields } from 'mongoose';
+import { MapService } from 'src/game/map/map.service';
+import { MapType } from '../expedition/map.schema';
+import { Node } from 'src/game/components/expedition/node';
+import { Expedition } from '../expedition/expedition.schema';
+
 import { IExpeditionCurrentNodeDataEnemy, IntentCooldown } from '../expedition/expedition.interface';
 import { swarmCocoon1Data } from './data/swarmCocoon1.enemy';
 import { swarmCocoon2Data } from './data/swarmCocoon2.enemy';
@@ -49,6 +54,7 @@ import { deepDwellerLureData } from './data/deepDwellerLure.enemy';
 
 @Injectable()
 export class EnemyService {
+   
 
     private readonly logger: Logger = new Logger(EnemyService.name);
 
@@ -76,7 +82,16 @@ export class EnemyService {
         @Inject(forwardRef(() => StatusService))
         private readonly statusService: StatusService,
         private readonly eventEmitter: EventEmitter2,
-    ) {}
+
+        @InjectModel(MapType)
+        private readonly mapModel: ReturnModelType<typeof MapType>,
+
+        // @InjectModel(Expedition)
+        // private readonly expedition: ReturnModelType<typeof Expedition>,
+
+    ) { }
+
+
 
     /**
      * Check if the entity is an enemy
@@ -110,7 +125,7 @@ export class EnemyService {
         return this.getAll(ctx).every((enemy) => this.isDead(enemy));
     }
     public isBossDead(ctx: GameContext): boolean {
-        return this.getAll(ctx).some(enemy => 
+        return this.getAll(ctx).some(enemy =>
             enemy.value.category === EnemyCategoryEnum.Boss && this.isDead(enemy)
         );
     }
@@ -243,7 +258,7 @@ export class EnemyService {
                             e.target.type == CardTargetedEnum.Enemy &&
                             enemy.target.type == CardTargetedEnum.Enemy &&
                             e.target.value.enemyId ==
-                                enemy.target.value.enemyId,
+                            enemy.target.value.enemyId,
                     ).statuses,
                 )
             ) {
@@ -492,10 +507,10 @@ export class EnemyService {
 
 
     /**
-     * Calculate new scripts for all enemies
-     *
-     * @param ctx Context
-     */
+ * Calculate new scripts for all enemies
+ *
+ * @param ctx Context
+ */
     async calculateNewIntentions(ctx: GameContext): Promise<void> {
         const enemiesAlive = this.getLiving(ctx);
 
@@ -524,7 +539,19 @@ export class EnemyService {
                 }
                 
                 // Increase damage for node from 14 to 20
-                const node = ctx.expedition.map.find((node) => node.id == ctx.expedition.currentNode.nodeId);
+                const expeditionId = ctx.expedition.id;
+            
+                // console.warn("ESTE ES EL NUEVO EXPEDITION ID : " + expeditionId);
+
+                // Increase damage for node from 14 to 20
+                const arrayOfMaps = await this.getMapByExpedition(expeditionId);
+                
+                // console.warn("ESTE ES EL NUEVO ARRAY DE MAPAS : " + arrayOfMaps)
+
+                // const node = ctx.expedition.map.find(
+                const node = arrayOfMaps.find(
+                    (node) => node.id == ctx.expedition.currentNode.nodeId,
+                );
 
                 if (HARD_MODE_NODE_START <= node.step && node.step <= HARD_MODE_NODE_END) {
                     this.increaseScriptDamage(nextScript);
@@ -592,6 +619,41 @@ export class EnemyService {
             
         }
     }
+
+    
+
+    public async getMapByExpedition(expeditionId: string): Promise<Node[]> {
+        try {
+            // Utiliza `findOne` para encontrar la expedición por su _id
+            const expedition = await this.expeditionService.findOne({
+                _id: expeditionId,
+            });
+    
+            // Si no se encuentra la expedición, retorna un array vacío
+            if (!expedition) {
+                return [];
+            }
+    
+            // Obtiene el ObjectID del campo map en la expedición
+            const mapId = expedition.map;
+    
+            // Utiliza el ObjectID para buscar el documento en la colección "maps" que coincide con el valor del campo map en la expedición
+            const map = await this.mapModel.findById(mapId);
+    
+            // Si no se encuentra el mapa, retorna un array vacío
+            if (!map) {
+                return [];
+            }
+    
+            // Retorna el array de nodos almacenados en el campo map del mapa encontrado
+            return map.map;
+        } catch (error) {
+            // Manejar errores de consulta aquí
+            throw new Error('Error retrieving maps: ' + error.message);
+        }
+    }
+
+    
 
     //- Set the cooldown for the current attack. 
     private setCooldownCurrentAttack(cooldowns: IntentCooldown[], intentId: number, cooldown: number): IntentCooldown[] {
@@ -765,7 +827,7 @@ export class EnemyService {
             // If the status is already attached, we update it
             if (metadata.status.counterType != StatusCounterType.None) {
                 // If the status has a counter, we increment it
-                oldStatus.args.counter+= args.counter;
+                oldStatus.args.counter += args.counter;
                 this.logger.log(
                     ctx.info,
                     `Status ${name} counter incremented to ${oldStatus.args.counter}`,
@@ -1062,13 +1124,19 @@ export class EnemyService {
         const signatureMove = { id: intents[0].id, intentions: intents[0].intents }
         const attack        = { id: intents[1].id, intentions: intents[1].intents }
         const buff3Resolve  = { id: intents[2].id, intentions: intents[2].intents }
+        const laser         = { id: intents[3].id, intentions: intents[3].intents }
         
         //- First attack is Signature Move:
         if(!currentScript || currentScript.id == 0){
             return signatureMove;
         }else{
             const statusBeam = enemy.value.statuses.buff.find(s => s.name === chargingBeam.name)
+
             if(statusBeam && statusBeam.args.counter > 0){
+                
+                if(statusBeam.args.counter === 1){
+                    return laser;
+                }
                 //- If Signature Move was performed. It will Buff or attack. 
                 return getRandomItemByWeight([attack, buff3Resolve], [50,50]);
             }

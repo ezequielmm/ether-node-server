@@ -11,6 +11,7 @@ import { GearService } from '../components/gear/gear.service';
 import { PlayerGearService } from 'src/playerGear/playerGear.service';
 import { Score } from '../components/expedition/scores';
 import { InitExpeditionProcess } from './initExpedition.process';
+import { Gear } from 'src/game/components/gear/gear.schema';
 
 export interface IEndExpeditionProcessParameters {
     ctx: GameContext;
@@ -48,44 +49,71 @@ export class EndExpeditionProcess {
         }
     }
 
-    private async handleVictory(ctx: GameContext, emit: boolean): Promise<void> {
+    private async handleVictory(
+        ctx: GameContext,
+        emit: boolean,
+    ): Promise<void> {
 
         const currentStage = ctx.expedition.currentStage;
         const isLastStage = ctx.expedition.contest.stages.length == currentStage;
 
         if(isLastStage){
-            //- End of Expedition:
-            ctx.expedition.status = ExpeditionStatusEnum.Victory;
-            ctx.expedition.completedAt = new Date();
-            ctx.expedition.endedAt = new Date();
-
-            await this.calculateStageScore(ctx, currentStage);
-
-            //- todo: We'll be need to calculate de total final score adding all stages scores:
-            // ctx.expedition.finalScore = score;
-            // ctx.expedition.finalScore.lootbox = [];
-            // ctx.expedition.finalScore.notifyNoLoot = false;
-
-            await this.calculateRewards(ctx, isLastStage);
-            await ctx.expedition.save();
-
-            //- Message client to end combat and show score
-            if (emit){
-                ctx.client.emit(
-                    'PutData',
-                    StandardResponse.respond({
-                        message_type: SWARMessageType.EndCombat,
-                        action: SWARAction.ShowScore,
-                        data: null,
-                    }),
-                );
-            }
-
-        }else{
+            // Update the expedition status and time
+            this.updateExpeditionStatusAndTime(ctx);
+        
+            // Calculate the final score
+            this.calculateFinalScore(ctx);
+        
+            // Check if the player can win and if the contest is valid
+            let canWin = await this.playerWinService.classCanWin(ctx.expedition.playerState.characterClass as CharacterClassEnum);
+            let contestIsValid = await this.contestService.isValid(ctx.expedition.contest);
+        
+        
+            // Force true in canWin and contestIsValid for contest sake.
+             //canWin = true;
+            contestIsValid = true;
             
+            if(ctx.expedition.playerState.characterClass === "non-token-villager")
+            {
+                canWin = false;
+            }
+        
+            // Handle loot and rewards
+            await this.handleActiveEventLoot(ctx, canWin, isLastStage);
+        
+            // Save the updated expedition
+            await ctx.expedition.save();
+        
+    
+            // Notify the client, if necessary
+            if (emit) {
+                this.notifyClient(ctx);
+            }
+        }else{
             //- Continue Expedition with the next stage:
             await this.calculateStageScore(ctx, currentStage);
-            await this.calculateRewards(ctx, isLastStage);
+
+            // Dev:
+            //await this.calculateRewards(ctx, isLastStage);
+
+
+
+
+            // Check if the player can win and if the contest is valid
+            let canWin = await this.playerWinService.classCanWin(ctx.expedition.playerState.characterClass as CharacterClassEnum);
+            let contestIsValid = await this.contestService.isValid(ctx.expedition.contest);
+        
+        
+            // Force true in canWin and contestIsValid for contest sake.
+             //canWin = true;
+            contestIsValid = true;
+            
+            if(ctx.expedition.playerState.characterClass === "non-token-villager")
+            {
+                canWin = false;
+            }
+            // Handle loot and rewards
+            await this.handleActiveEventLoot(ctx, canWin, isLastStage);
             await ctx.expedition.save();
 
             await this.initExpeditionService.createNextStage(ctx);
@@ -102,10 +130,11 @@ export class EndExpeditionProcess {
                 );
             }
         }
+
     }
 
     private async calculateStageScore(ctx: GameContext, currentStage:number): Promise<void> {
-        const score = this.scoreCalculatorService.calculate({ expedition: ctx.expedition });
+        const score = await this.scoreCalculatorService.calculate({ expedition: ctx.expedition });
 
         ctx.expedition.stageScores[currentStage - 1] = score;
         ctx.expedition.stageScores[currentStage - 1].lootbox = [];
@@ -118,45 +147,91 @@ export class EndExpeditionProcess {
         //- Clean score so we can use it in next stage if so
         ctx.expedition.scores = new Score();
     }
+    
+    // Update the expedition status and time
+    private updateExpeditionStatusAndTime(ctx: GameContext) {
+    
+        ctx.expedition.status = ExpeditionStatusEnum.Victory;
+        ctx.expedition.completedAt = new Date();
+        ctx.expedition.endedAt = new Date();
+    
+    }
 
-    private async calculateRewards(ctx: GameContext, isLastStage:boolean): Promise<void> {
-        const canWin = await this.playerWinService.classCanWin(ctx.expedition.playerState.characterClass as CharacterClassEnum);
-        const contestIsValid = await this.contestService.isValid(ctx.expedition.contest);
 
-        if (canWin) {
-            ctx.expedition.finalScore.notifyNoLoot = true;
+    private async calculateFinalScore(ctx: GameContext) {
+    
+        const score = await this.scoreCalculatorService.calculate({
+            expedition: ctx.expedition,
+        });
+        ctx.expedition.finalScore = score;
+        ctx.expedition.finalScore.notifyNoLoot = false;
+    
+    }
 
-            if (contestIsValid) {
-                //------------------------------------------------------------------------------------------
-                //- Lootbox when event not Active:
-                ctx.expedition.finalScore.rewards = await this.squiresService.getAccountRewards(ctx.expedition.userAddress, ctx.expedition.playerState.equippedGear);
-                //------------------------------------------------------------------------------------------
-                
-                //------------------------------------------------------------------------------------------
-                //- Lootbox when event Active. Following 2 blocks:
-                
-                // ctx.expedition.finalScore.lootbox = await this.gearService.getLootbox
-                //     (
-                //         ctx.expedition.playerState.lootboxSize,
-                //         ctx.expedition.playerState.lootboxRarity,
-                //     );
 
-                // await this.playerGearService.addGearToPlayer(
-                //     ctx.expedition.userAddress,
-                //     ctx.expedition.finalScore.lootbox,
-                // );
-                //------------------------------------------------------------------------------------------
+    // Handle loot when the event is active
+    private async handleActiveEventLoot(ctx: GameContext, canWin:boolean, isLastStage:boolean) {
+    
+        const userGear = await this.playerGearService.getGear(ctx.expedition.userAddress);
+        
+        const lootbox = await this.gearService.getLootbox(
+            ctx.expedition.playerState.lootboxSize,
+            ctx.expedition.playerState.lootboxRarity,
+            // userGear
+        );
+        const filteredLootbox = await this.filterNewLootItems(ctx, lootbox);
+        
+    
+        await this.playerGearService.addGearToPlayer(
+            ctx.expedition.userAddress,
+            filteredLootbox,
+        );
 
-                if(isLastStage){
-                    await this.playerWinService.create({
-                        event_id: ctx.expedition.contest.event_id,
-                        playerToken: ctx.expedition.playerState.playerToken
-                    });
-                }
-
-                ctx.expedition.finalScore.notifyNoLoot = false;
-            }
+        if(isLastStage){
+            await this.playerWinService.create({
+                event_id: ctx.expedition.contest.event_id,
+                playerToken: ctx.expedition.playerState.playerToken,
+                lootbox: filteredLootbox,
+            });
         }
+        
+        if(canWin)
+        {
+
+            ctx.expedition.finalScore.lootbox = filteredLootbox;
+            ctx.expedition.finalScore.rewards = await this.squiresService.getAccountRewards(ctx.expedition.userAddress, ctx.expedition.playerState.equippedGear);
+
+        }
+        else {
+            ctx.expedition.finalScore.lootbox = [];
+            ctx.expedition.finalScore.rewards = [];
+
+        }
+    }
+    
+    // Filter out loot items that the player already has
+    private async filterNewLootItems(ctx: GameContext, lootbox: Gear[]): Promise<Gear[]> {
+    
+        const allGear = (await this.playerWinService.getAllLootboxesByTokenId(ctx.expedition.playerState.playerToken.tokenId)).flat();
+        const gearByWallet = (await this.playerWinService.getAllLootByWallet(ctx.expedition.playerState.userAddress)).flat();
+        allGear.push(...gearByWallet);
+    
+        const filteredLootbox = lootbox.filter(lootItem => !allGear.some(allGearItem => allGearItem.gearId === lootItem.gearId));
+    
+    
+        return filteredLootbox;
+    }
+    
+    // Notify the client
+    private notifyClient(ctx: GameContext) {
+        ctx.client.emit(
+            'PutData',
+            StandardResponse.respond({
+                message_type: SWARMessageType.EndCombat,
+                action: SWARAction.ShowScore,
+                data: null,
+            }),
+        );
     }
 
     private async handleDefeat(ctx: GameContext, emit: boolean): Promise<void> {
@@ -165,8 +240,9 @@ export class EndExpeditionProcess {
         ctx.expedition.defeatedAt = new Date();
         ctx.expedition.endedAt = new Date();
 
-        //- todo: Same as above. This scores shpould be calculated with all the scores from the different stages:
-        const score = this.scoreCalculatorService.calculate({ expedition: ctx.expedition });
+        const score = await this.scoreCalculatorService.calculate({
+            expedition: ctx.expedition,
+        });
 
         ctx.expedition.finalScore = score;
         await ctx.expedition.save();
@@ -182,4 +258,3 @@ export class EndExpeditionProcess {
             );
     }
 }
-
