@@ -569,22 +569,27 @@ export class EncounterService {
             }
         });
 
-        const newPlayerState = {
-            ...playerState, 
-            potions: newPotions,
-        };
-
-        console.log("New player state:")
-        console.log(newPlayerState.potions)
+        // const newPlayerState = {
+        //     ...playerState, 
+        //     potions: newPotions,
+        // };
 
         await this.expeditionService.updateByFilter(
-            { clientId: client.id },
+            { clientId: client.id }, 
             {
                 $set: {
-                    playerState: newPlayerState,
-                },
-            },
-        );
+                    'playerState.potions': newPotions,
+                }
+        });
+
+        // await this.expeditionService.updateByFilter(
+        //     { clientId: client.id },
+        //     {
+        //         $set: {
+        //             playerState: newPlayerState,
+        //         },
+        //     },
+        // );
     }
 
     async getByEncounterId(encounterId: number): Promise<Encounter> {
