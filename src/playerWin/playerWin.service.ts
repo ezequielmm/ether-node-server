@@ -59,8 +59,11 @@ export class PlayerWinService {
   }
 
   async canPlay(event_id: number, contract_address: string, token_id: number, wins?: number) : Promise<boolean> {
+    
+    //- If there is no event will not be able to play anyway:
     if (event_id === 0) return true;
 
+    //- Non token villager can play without limit:
     if (contract_address === 'NONE') return true;
 
     if (typeof wins === 'undefined') {
@@ -75,6 +78,7 @@ export class PlayerWinService {
                 },
             })) ?? 0;
     }
+    
     if (wins == 0) return true;
 
     const character = await this.characterService.getCharacterByContractId(
