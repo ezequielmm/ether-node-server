@@ -220,7 +220,6 @@ export class EncounterService {
                     });
                     break;
                 case 'loose_random_potion': //eg cave in
-                console.log("Entra en el case del switch")
                     await this.looseRandomPotion(
                         ctx.client,
                         ctx.expedition.playerState,
@@ -562,9 +561,6 @@ export class EncounterService {
         let hasLostOne = false;
 
         const newPotions = playerState.potions.filter((item) => {
-            console.log("item.potionId "+item.potionId)
-            console.log("potionId: " + potionId)
-            console.log("-------")
             if (item.potionId == potionId && !hasLostOne) {
                 hasLostOne = true;
                 return false;
@@ -577,6 +573,9 @@ export class EncounterService {
             ...playerState, 
             potions: newPotions,
         };
+
+        console.log("New player state:")
+        console.log(newPlayerState)
 
         await this.expeditionService.updateByFilter(
             { clientId: client.id },
