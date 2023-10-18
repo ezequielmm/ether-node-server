@@ -37,7 +37,7 @@ export class ResetService {
         private readonly oldExpedition: ReturnModelType<typeof OldExpedition>,    
         ) { }
 
-    @Cron(CronExpression.EVERY_WEEKDAY, {
+    @Cron(CronExpression.EVERY_WEEKEND, {
         name: 'Reset in progress expeditions',
         timeZone: 'UTC',
     })
