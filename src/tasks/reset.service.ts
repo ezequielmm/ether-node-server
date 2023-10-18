@@ -46,7 +46,7 @@ export class ResetService {
     }
 
     // Función para mover expediciones en progreso a oldexpeditions
-    public async moveExpeditions() {
+    private async moveExpeditions() {
         try {
             // Encuentra todas las expediciones en progreso
             const expeditionsInProgress = await this.expedition.find({ status: 'in_progress' });

@@ -47,7 +47,7 @@ export class CleanService {
     }
 
     // Función para mover expediciones en progreso a oldexpeditions
-    public async moveExpeditions() {
+    private async moveExpeditions() {
         try {
             // Encuentra todas las expediciones con estados de victoria, derrota o canceladas
             const expeditionsToMove = await this.expedition.find({ status: { $in: ['victory', 'defeated', 'canceled'] } });
