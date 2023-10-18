@@ -27,48 +27,44 @@ export class CleanService {
 
     constructor(
         @InjectModel(MapType)
-        private readonly mapModel: ReturnModelType<typeof MapType>,  
+        private readonly mapModel: ReturnModelType<typeof MapType>,
         @InjectModel(OldMapType)
         private readonly oldMapModel: ReturnModelType<typeof OldMapType>,
 
 
         @InjectModel(Expedition)
-        private readonly expedition: ReturnModelType<typeof Expedition>,  
+        private readonly expedition: ReturnModelType<typeof Expedition>,
         @InjectModel(OldExpedition)
-        private readonly oldExpedition: ReturnModelType<typeof OldExpedition>,    
-        ) { }
+        private readonly oldExpedition: ReturnModelType<typeof OldExpedition>,
+    ) { }
 
     @Cron(CronExpression.EVERY_10_MINUTES, {
         name: 'Clean expeditions',
         timeZone: 'UTC',
     })
     async handleMapReset(): Promise<void> {
-        await this.moveExpeditions();
-    }
-
-    // Función para mover expediciones en progreso a oldexpeditions
-    private async moveExpeditions() {
         try {
             // Encuentra todas las expediciones con estados de victoria, derrota o canceladas
             const expeditionsToMove = await this.expedition.find({ status: { $in: ['victory', 'defeated', 'canceled'] } });
-    
+
             // Mueve los registros de expediciones a la colección de expediciones antiguas
             await this.oldExpedition.create(expeditionsToMove);
-    
+
             // Obtiene los IDs de los mapas asociados a las expediciones a mover
             const mapIdsToMove = expeditionsToMove.map(expedition => expedition.map);
-    
+
             // Mueve los mapas asociados a las expediciones a la colección de mapas antiguos
             const mapsToMove = await this.mapModel.find({ _id: { $in: mapIdsToMove } });
             await this.oldMapModel.create(mapsToMove);
-    
+
             // Elimina los registros de expediciones y mapas con estados de victoria, derrota o canceladas
             await this.expedition.deleteMany({ status: { $in: ['victory', 'defeated', 'canceled'] } });
             await this.mapModel.deleteMany({ _id: { $in: mapIdsToMove } });
-    
+
             console.log('Registros de expediciones y mapas de victoria, derrota o canceladas movidos a oldexpeditions y oldmaps.');
         } catch (error) {
             console.error('Error al mover expediciones y mapas:', error);
         }
     }
+
 }

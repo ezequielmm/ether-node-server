@@ -27,44 +27,39 @@ export class ResetService {
 
     constructor(
         @InjectModel(MapType)
-        private readonly mapModel: ReturnModelType<typeof MapType>,  
+        private readonly mapModel: ReturnModelType<typeof MapType>,
         @InjectModel(OldMapType)
         private readonly oldMapModel: ReturnModelType<typeof OldMapType>,
 
         @InjectModel(Expedition)
-        private readonly expedition: ReturnModelType<typeof Expedition>,  
+        private readonly expedition: ReturnModelType<typeof Expedition>,
         @InjectModel(OldExpedition)
-        private readonly oldExpedition: ReturnModelType<typeof OldExpedition>,    
-        ) { }
+        private readonly oldExpedition: ReturnModelType<typeof OldExpedition>,
+    ) { }
 
     @Cron(CronExpression.EVERY_10_MINUTES, {
         name: 'Reset in progress expeditions',
         timeZone: 'UTC',
     })
     async handleMapReset(): Promise<void> {
-        await this.moveExpeditions();
-    }
-
-    // Función para mover expediciones en progreso a oldexpeditions
-    private async moveExpeditions() {
         try {
             // Encuentra todas las expediciones en progreso
             const expeditionsInProgress = await this.expedition.find({ status: 'in_progress' });
-    
+
             // Obtiene los IDs de los mapas asociados a las expediciones a mover
             const mapIdsToMove = expeditionsInProgress.map(expedition => expedition.map);
-    
+
             // Mueve los mapas asociados a las expediciones a la colección de mapas antiguos
             const mapsToMove = await this.mapModel.find({ _id: { $in: mapIdsToMove } });
             await this.oldMapModel.create(mapsToMove);
-    
+
             // Mueve los registros de expediciones a la colección de expediciones antiguas
             await this.oldExpedition.create(expeditionsInProgress);
-    
+
             // Elimina los registros de expediciones y mapas de la colección original
             await this.expedition.deleteMany({ status: 'in_progress' });
             await this.mapModel.deleteMany({ _id: { $in: mapIdsToMove } });
-    
+
             console.log('Registros de expediciones en progreso y mapas asociados movidos a oldexpeditions y oldmaps.');
         } catch (error) {
             console.error('Error al mover expediciones y mapas:', error);
