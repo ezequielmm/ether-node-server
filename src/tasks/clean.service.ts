@@ -17,6 +17,8 @@ import { Expedition } from 'src/game/components/expedition/expedition.schema';
 import { InjectModel } from 'kindagoose';
 import { ReturnModelType } from '@typegoose/typegoose';
 import { OldExpedition } from 'src/game/components/expedition/oldexpedition.schema';
+import { MapType } from 'src/game/components/expedition/map.schema';
+import { OldMapType } from 'src/game/components/expedition/oldmap.schema';
 
 
 @Injectable()
@@ -24,11 +26,16 @@ export class CleanService {
     private readonly logger: Logger = new Logger(CleanService.name);
 
     constructor(
+        @InjectModel(MapType)
+        private readonly mapModel: ReturnModelType<typeof MapType>,  
+        @InjectModel(OldMapType)
+        private readonly oldMapModel: ReturnModelType<typeof OldMapType>,
+
 
         @InjectModel(Expedition)
         private readonly expedition: ReturnModelType<typeof Expedition>,  
         @InjectModel(OldExpedition)
-        private readonly oldexpedition: ReturnModelType<typeof OldExpedition>,    
+        private readonly oldExpedition: ReturnModelType<typeof OldExpedition>,    
         ) { }
 
     @Cron(CronExpression.EVERY_1ST_DAY_OF_MONTH_AT_MIDNIGHT, {
@@ -45,15 +52,23 @@ export class CleanService {
             // Encuentra todas las expediciones con estados de victoria, derrota o canceladas
             const expeditionsToMove = await this.expedition.find({ status: { $in: ['victory', 'defeated', 'canceled'] } });
     
-            // Mueve los registros a la colección de expediciones antiguas
-            await this.oldexpedition.create(expeditionsToMove);
+            // Mueve los registros de expediciones a la colección de expediciones antiguas
+            await this.oldExpedition.create(expeditionsToMove);
     
-            // Elimina los registros de la colección de expediciones con estados de victoria, derrota o canceladas
+            // Obtiene los IDs de los mapas asociados a las expediciones a mover
+            const mapIdsToMove = expeditionsToMove.map(expedition => expedition.map);
+    
+            // Mueve los mapas asociados a las expediciones a la colección de mapas antiguos
+            const mapsToMove = await this.mapModel.find({ _id: { $in: mapIdsToMove } });
+            await this.oldMapModel.create(mapsToMove);
+    
+            // Elimina los registros de expediciones y mapas con estados de victoria, derrota o canceladas
             await this.expedition.deleteMany({ status: { $in: ['victory', 'defeated', 'canceled'] } });
+            await this.mapModel.deleteMany({ _id: { $in: mapIdsToMove } });
     
-            console.log('Registros de expediciones de victoria, derrota o canceladas movidos a oldexpeditions.');
+            console.log('Registros de expediciones y mapas de victoria, derrota o canceladas movidos a oldexpeditions y oldmaps.');
         } catch (error) {
-            console.error('Error al mover expediciones:', error);
+            console.error('Error al mover expediciones y mapas:', error);
         }
     }
 }

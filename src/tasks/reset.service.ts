@@ -17,6 +17,8 @@ import { Expedition } from 'src/game/components/expedition/expedition.schema';
 import { InjectModel } from 'kindagoose';
 import { ReturnModelType } from '@typegoose/typegoose';
 import { OldExpedition } from 'src/game/components/expedition/oldexpedition.schema';
+import { MapType } from 'src/game/components/expedition/map.schema';
+import { OldMapType } from 'src/game/components/expedition/oldmap.schema';
 
 
 @Injectable()
@@ -24,11 +26,15 @@ export class ResetService {
     private readonly logger: Logger = new Logger(ResetService.name);
 
     constructor(
+        @InjectModel(MapType)
+        private readonly mapModel: ReturnModelType<typeof MapType>,  
+        @InjectModel(OldMapType)
+        private readonly oldMapModel: ReturnModelType<typeof OldMapType>,
 
         @InjectModel(Expedition)
         private readonly expedition: ReturnModelType<typeof Expedition>,  
         @InjectModel(OldExpedition)
-        private readonly oldexpedition: ReturnModelType<typeof OldExpedition>,    
+        private readonly oldExpedition: ReturnModelType<typeof OldExpedition>,    
         ) { }
 
     @Cron(CronExpression.EVERY_DAY_AT_11PM, {
@@ -44,16 +50,24 @@ export class ResetService {
         try {
             // Encuentra todas las expediciones en progreso
             const expeditionsInProgress = await this.expedition.find({ status: 'in_progress' });
-
-            // Mueve los registros a la colección de expediciones antiguas
-            await this.oldexpedition.create(expeditionsInProgress);
-
-            // Elimina los registros de la colección de expediciones
+    
+            // Obtiene los IDs de los mapas asociados a las expediciones a mover
+            const mapIdsToMove = expeditionsInProgress.map(expedition => expedition.map);
+    
+            // Mueve los mapas asociados a las expediciones a la colección de mapas antiguos
+            const mapsToMove = await this.mapModel.find({ _id: { $in: mapIdsToMove } });
+            await this.oldMapModel.create(mapsToMove);
+    
+            // Mueve los registros de expediciones a la colección de expediciones antiguas
+            await this.oldExpedition.create(expeditionsInProgress);
+    
+            // Elimina los registros de expediciones y mapas de la colección original
             await this.expedition.deleteMany({ status: 'in_progress' });
-
-            console.log('Registros de expediciones en progreso movidos a oldexpeditions.');
+            await this.mapModel.deleteMany({ _id: { $in: mapIdsToMove } });
+    
+            console.log('Registros de expediciones en progreso y mapas asociados movidos a oldexpeditions y oldmaps.');
         } catch (error) {
-            console.error('Error al mover expediciones:', error);
+            console.error('Error al mover expediciones y mapas:', error);
         }
     }
 }

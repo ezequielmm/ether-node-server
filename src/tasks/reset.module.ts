@@ -7,10 +7,16 @@ import { Expedition } from 'src/game/components/expedition/expedition.schema';
 import { OldExpedition } from 'src/game/components/expedition/oldexpedition.schema';
 import { ResetService } from './reset.service';
 import { KindagooseModule } from 'kindagoose';
+import { MapType } from 'src/game/components/expedition/map.schema';
+import { OldMapType } from 'src/game/components/expedition/oldmap.schema';
 
 @Module({
-    imports: [KindagooseModule.forFeature([Expedition]),
-    KindagooseModule.forFeature([OldExpedition]),
+    imports: [
+        KindagooseModule.forFeature([MapType]),
+        KindagooseModule.forFeature([OldMapType]),
+
+        KindagooseModule.forFeature([Expedition]),
+        KindagooseModule.forFeature([OldExpedition]),
 
     ],
     providers: [ResetService],
