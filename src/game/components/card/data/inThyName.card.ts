@@ -15,28 +15,21 @@ export const InThyNameCardUpgraded: Card = {
     cardType: CardTypeEnum.Defend,
     pool: 'knight',
     energy: 1,
-    description: `Gain 8 ${defenseEffect.name} for each enemy with the Undead trait, and 5 ${defenseEffect.name} for each non-Undead enemy.`,
+    description: `Gain 10 ${defenseEffect.name} for each enemy with the Undead trait, and 5 ${defenseEffect.name} for each non-Undead enemy.`,
     keywords: [],
     properties: {
         effects: [
             {
                 effect: defenseEffect.name,
-                target: CardTargetedEnum.Enemy,
+                target: CardTargetedEnum.Self,
                 args: {
-                    value: 8,
+                    value: 10,
                 },
-            },
-            {
-                effect: defenseEffect.name,
-                target: CardTargetedEnum.Enemy,
-                args: {
-                    value: 8,
-                },
-            },    
+            },   
         ],
         statuses: [],
     },
-    showPointer: true,
+    showPointer: false,
     isUpgraded: true,
     isActive: true,
 };
@@ -59,17 +52,10 @@ export const InThyNameCard: Card = {
                     value: 8,
                 },
             },
-            {
-                effect: defenseEffect.name,
-                target: CardTargetedEnum.Self,
-                args: {
-                    value: 3,
-                },
-            },
         ],
         statuses: [],
     },
-    showPointer: true,
+    showPointer: false,
     isUpgraded: false,
     upgradedCardId: InThyNameCardUpgraded.cardId,
     isActive: true,
