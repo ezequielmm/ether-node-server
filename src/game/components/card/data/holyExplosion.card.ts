@@ -40,7 +40,7 @@ export const HolyExplosionCard: Card = {
     cardType: CardTypeEnum.Attack,
     pool: 'knight',
     energy: CardEnergyEnum.All,
-    description: `Deal X + 3 ${damageEffect.name} and inflict 3 ${burn.name} to all Undead enemies and deal X + 3 ${damageEffect.name} and inflict 3 ${burn.name} to all other enemies.`,
+    description: `Deal X + 3 ${damageEffect.name} and inflict 3 ${burn.name} to all Undead enemies and deal X + 2 ${damageEffect.name} and inflict 2 ${burn.name} to all other enemies.`,
     keywords: [],
     properties: {
         effects: [

@@ -1,3 +1,4 @@
+import { inThyNameEffect } from 'src/game/effects/inThyName/constants';
 import { CardRarityEnum, CardTypeEnum, CardTargetedEnum } from '../card.enum';
 import { Card } from '../card.schema';
 import { defenseEffect } from 'src/game/effects/defense/constants';
@@ -14,7 +15,7 @@ export const InThyNameCardUpgraded: Card = {
     properties: {
         effects: [
             {
-                effect: defenseEffect.name,
+                effect: inThyNameEffect.name,
                 target: CardTargetedEnum.Self,
                 args: {
                     undeadDefense: 10,
@@ -41,7 +42,7 @@ export const InThyNameCard: Card = {
     properties: {
         effects: [
             {
-                effect: defenseEffect.name,
+                effect: inThyNameEffect.name,
                 target: CardTargetedEnum.Self,
                 args: {
                     undeadDefense: 8,
