@@ -15,8 +15,8 @@ Notes: Added to deck by Infect actions
 export const DecayCard: Card = {
     cardId: 552,
     name: 'Decay',
-    rarity: CardRarityEnum.Starter,
-    cardType: CardTypeEnum.Curse,
+    rarity: CardRarityEnum.Special,
+    cardType: CardTypeEnum.Status,
     pool: 'knight',
     energy: 0,
     description: `Receive 2 ${damageEffect.name} if in hand by the end of the turn `,
