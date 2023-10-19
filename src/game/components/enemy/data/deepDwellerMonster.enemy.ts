@@ -11,9 +11,9 @@ import { chargingBeam } from "src/game/status/chargingBeam/constants";
 //- Intents:
 //-------------------------------------------------------------------------------------------------------------------------------------------------------
 const SignatureMove: EnemyIntention = {
+    name: "Charged Beam",
     type: EnemyIntentionType.Signature,
     target: CardTargetedEnum.Player,
-    damageToIncrementCounter: 20,
     value: 45,
     effects: [
         {
@@ -53,6 +53,8 @@ const BasicIntents: EnemyAction = {
 //-------------------------------------------------------------------------------------------------------------------------------------------------------
 export const deepDwellerMonsterData: Enemy = {
     enemyId: 66,
+    stage: 2,
+    selectable: true,
     isActive: true,
     name: 'Deep Deweller Monster',
     type: EnemyTypeEnum.Beast,

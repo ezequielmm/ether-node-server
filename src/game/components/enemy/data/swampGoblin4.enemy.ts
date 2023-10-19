@@ -13,6 +13,8 @@ import { Enemy } from '../enemy.schema';
 // Nerf version of swampGoblin2Data
 export const swampGoblin4Data: Enemy = {
     enemyId: 44,
+    stage: 1,
+    selectable: true,
     isActive: true,
     name: 'SwampGoblin4',
     type: EnemyTypeEnum.Fae,

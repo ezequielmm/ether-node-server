@@ -34,6 +34,8 @@ const BasicIntents: EnemyAction = {
 //-------------------------------------------------------------------------------------------------------------------------------------------------------
 export const mutantSpider2Data: Enemy = {
     enemyId: 63,
+    stage: 2,
+    selectable: false,
     isActive: true,
     name: 'Mutant Spider',
     type: EnemyTypeEnum.Beast,

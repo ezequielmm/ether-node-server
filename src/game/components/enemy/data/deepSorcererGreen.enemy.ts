@@ -34,6 +34,7 @@ const Debuff1MoldCard:   EnemyIntention = EnemyBuilderService.createAddCardInten
 const Debuff2PoisonCard: EnemyIntention = EnemyBuilderService.createAddCardIntent(2, PoisonedCard, CardDestinationEnum.Draw);
 const Mistify2:          EnemyIntention = EnemyBuilderService.createMistifyAction(2);
 const SignatureMove:     EnemyIntention = {
+    name: "Root of Evil",
     type: EnemyIntentionType.Signature,
     target: CardTargetedEnum.Player,
     value: 12,
@@ -113,6 +114,8 @@ const AdvancedIntents: EnemyAction = {
 //-------------------------------------------------------------------------------------------------------------------------------------------------------
 export const deepSorcererGreenData: Enemy = {
     enemyId: 56,
+    stage: 2,
+    selectable: true,
     isActive: true,
     name: 'Deep Sorcerer Green',
     type: EnemyTypeEnum.Human,

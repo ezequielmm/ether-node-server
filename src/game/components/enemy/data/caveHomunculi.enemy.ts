@@ -26,6 +26,7 @@ const DebuffMoldCard:  EnemyIntention = EnemyBuilderService.createAddCardIntent(
 const Debuff2MoldCard: EnemyIntention = EnemyBuilderService.createAddCardIntent(2, MoldCard, CardDestinationEnum.Draw);
 const Mistify:         EnemyIntention = EnemyBuilderService.createMistifyAction(1);
 const SignatureMove:   EnemyIntention = {
+    name: "Spore Dance",
     type: EnemyIntentionType.Signature,
     target: CardTargetedEnum.Player,
     value: 8,
@@ -81,6 +82,8 @@ const AdvancedIntents: EnemyAction = {
 //-------------------------------------------------------------------------------------------------------------------------------------------------------
 export const caveHomunculiData: Enemy = {
     enemyId: 41,
+    stage: 2,
+    selectable: true,
     isActive: true,
     name: 'Cave Homunculi',
     type: EnemyTypeEnum.Plant,

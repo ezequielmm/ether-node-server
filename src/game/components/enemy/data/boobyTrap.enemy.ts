@@ -33,6 +33,8 @@ const BasicIntents: EnemyAction = {
 //-------------------------------------------------------------------------------------------------------------------------------------------------------
 export const boobyTrapData: Enemy = {
     enemyId: 25,
+    stage: 2,
+    selectable: true,
     isActive: true,
     name: 'Booby Trap',
     type: EnemyTypeEnum.Fae,

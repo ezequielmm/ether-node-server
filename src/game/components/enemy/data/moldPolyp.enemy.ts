@@ -45,6 +45,7 @@ const Special:        EnemyIntention = {
 
 
 const SignatureMove:  EnemyIntention = {
+    name: "Toxic Sacrifice",
     type: EnemyIntentionType.Signature,
     target: CardTargetedEnum.Player,
     value: 5,
@@ -121,6 +122,8 @@ const AdvancedIntents: EnemyAction = {
 //-------------------------------------------------------------------------------------------------------------------------------------------------------
 export const moldPolypData: Enemy = {
     enemyId: 40,
+    stage: 2,
+    selectable: true,
     isActive: true,
     name: 'Mold Polyp',
     type: EnemyTypeEnum.Mold,

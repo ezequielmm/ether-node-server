@@ -17,6 +17,8 @@ import { AddCardPosition } from 'src/game/effects/effects.enum';
 
 export const treantData: Enemy = {
     enemyId: 13,
+    stage: 1,
+    selectable: true,
     isActive: true,
     name: 'Treant',
     type: EnemyTypeEnum.Plant,
@@ -37,7 +39,7 @@ export const treantData: Enemy = {
                 {
                     type: EnemyIntentionType.Buff,
                     target: CardTargetedEnum.Self,
-                    value: 5,
+                    value: 3,
                     effects: [
                         {
                             effect: attachStatusEffect.name,
@@ -45,7 +47,7 @@ export const treantData: Enemy = {
                             args: {
                                 statusName: resolveStatus.name,
                                 statusArgs: {
-                                    counter: 5,
+                                    counter: 3,
                                 },
                             },
                             action: {
@@ -91,7 +93,7 @@ export const treantData: Enemy = {
                 {
                     type: EnemyIntentionType.Buff,
                     target: CardTargetedEnum.Self,
-                    value: 5,
+                    value: 3,
                     effects: [
                         {
                             effect: attachStatusEffect.name,
@@ -99,7 +101,7 @@ export const treantData: Enemy = {
                             args: {
                                 statusName: resolveStatus.name,
                                 statusArgs: {
-                                    counter: 5,
+                                    counter: 3,
                                 },
                             },
                         },
