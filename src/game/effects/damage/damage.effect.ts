@@ -252,8 +252,9 @@ export class DamageEffect implements EffectHandler {
             // as currentValue, here we just need to add it, the value
             // on the effect is 0
             const damage = isNotUndefined(useEnergyAsValue)
-                ? energy
-                : currentValue;
+            ? energy
+            : currentValue;
+            console.log(damage);
 
             oldHp = target.value.combatState.hpCurrent;
             oldDefense = target.value.combatState.defense;

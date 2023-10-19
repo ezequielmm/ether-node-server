@@ -1,12 +1,11 @@
 import { damageEffect } from 'src/game/effects/damage/constants';
-import { CardRarityEnum, CardTypeEnum, CardTargetedEnum } from '../card.enum';
+import { CardRarityEnum, CardTypeEnum, CardTargetedEnum, CardKeywordEnum } from '../card.enum';
 import { Card } from '../card.schema';
 
 
 /*
 TODO: 
--validate if triggerAtEndOfTurn works for trigeer de card efect at the end of the turn
--
+
 - percistance: yes (in keywords)
 - map effect
 
@@ -21,7 +20,7 @@ export const DecayCard: Card = {
     pool: 'knight',
     energy: 0,
     description: `Receive 2 ${damageEffect.name} if in hand by the end of the turn `,
-    keywords: [],
+    keywords: [CardKeywordEnum.Unplayable],
     properties: {
         effects: [],
         statuses: [],
@@ -41,4 +40,5 @@ export const DecayCard: Card = {
         statuses: [],
     },
     isActive: true,
+    
 };
