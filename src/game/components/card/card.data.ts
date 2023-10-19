@@ -132,6 +132,8 @@ import {
 } from './data/ultraLethality.card';
 import { WoundedCard } from './data/wounded.card';
 import { WrathCard, WrathCardUpgraded } from './data/wrath.card';
+import { HolyExplosionCard, HolyExplosionCardUpgraded } from './data/holyExplosion.card';
+import { InThyNameCard, InThyNameCardUpgraded } from './data/inThyName.card';
 
 export const data: Card[] = [
     AttackCard,
@@ -282,5 +284,9 @@ export const data: Card[] = [
     PoisonedCard,
     CharmedCard,
     PhaseOutCard,
-    PhaseOutCardUpgraded
+    PhaseOutCardUpgraded,
+    HolyExplosionCard, 
+    HolyExplosionCardUpgraded,
+    InThyNameCard, 
+    InThyNameCardUpgraded 
 ];
