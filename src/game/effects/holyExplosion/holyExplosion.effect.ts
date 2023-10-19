@@ -8,7 +8,17 @@ import { EffectDTO, EffectHandler } from '../effects.interface';
 import { EffectService } from '../effects.service';
 import { holyExplosion } from './constants';
 import { EnemyTypeEnum } from 'src/game/components/enemy/enemy.enum';
+import { StatusService } from 'src/game/status/status.service';
+import { burn } from 'src/game/status/burn/constants';
+import { CombatQueueService } from 'src/game/components/combatQueue/combatQueue.service';
+import { CombatQueueTargetEffectTypeEnum } from 'src/game/components/combatQueue/combatQueue.enum';
 
+export interface HolyEffectsArgs {
+    undeadDamage: number,
+    notUndeadDamage: number,
+    undeadBurn: number,
+    notUndeadBurn: number
+}
 @EffectDecorator({
     effect: holyExplosion,
 })
@@ -17,18 +27,19 @@ export class holyExplosionEffect implements EffectHandler {
     constructor(
         private readonly effectService: EffectService,
         private readonly enemyService: EnemyService,
+        private readonly statusService: StatusService,
+        private readonly combatQueueService: CombatQueueService,
+
     ) {}
 
-    async handle(dto: EffectDTO): Promise<void> {
+    async handle(dto: EffectDTO<HolyEffectsArgs>): Promise<void> {
         const { ctx } = dto;
         const energy = get(ctx.expedition, PLAYER_ENERGY_PATH);
-        const unDeadvalue = dto.args.currentValue;
-        const notUnDeadValue = 2;
-        await this.holyExplosion(dto, energy, unDeadvalue, notUnDeadValue);
+        await this.holyExplosion(dto, energy);
     }
 
-    protected async holyExplosion(dto: EffectDTO, energy: number, unDeadvalue: number, notUnDeadValue: number) {
-        const { ctx, source, target } = dto;
+    protected async holyExplosion(dto: EffectDTO<HolyEffectsArgs>, energy: number) {
+        const { ctx, source, target, action } = dto;
 
         //we get the alive enemies in the currentNode
         const currentNodeEnemies = this.enemyService.getLiving(ctx);
@@ -53,9 +64,18 @@ export class holyExplosionEffect implements EffectHandler {
                     effect: {
                         effect: damageEffect.name,
                         args: {
-                            value: unDeadvalue + energy,
+                            value: dto.args.undeadDamage + energy,
                         },
                     },
+                });
+
+                await this.statusService.attach({
+                    ctx,
+                    source,
+                    target,
+                    statusName: burn.name,
+                    statusArgs: {counter: dto.args.undeadBurn},
+                    action: action,
                 });
             }
             else{  
@@ -67,11 +87,31 @@ export class holyExplosionEffect implements EffectHandler {
                     effect: {
                         effect: damageEffect.name,
                         args: {
-                            value: notUnDeadValue + energy,
+                            value: dto.args.notUndeadDamage + energy,
                         },
                     },
                 });
+
+                await this.statusService.attach({
+                    ctx,
+                    source,
+                    target,
+                    statusName: burn.name,
+                    statusArgs: {counter: dto.args.notUndeadBurn},
+                    action: action,
+                });
             }
+
+            await this.combatQueueService.push({
+                ctx,
+                source,
+                target,
+                args: {
+                    effectType: CombatQueueTargetEffectTypeEnum.Status,
+                    statuses: [],
+                },
+                action: action,
+            });
         }                
-    }
+    } 
 }

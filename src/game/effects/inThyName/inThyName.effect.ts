@@ -1,5 +1,4 @@
 import { Logger } from '@nestjs/common';
-import { forEach, get } from 'lodash';
 import { EnemyService } from 'src/game/components/enemy/enemy.service';
 import { EffectDecorator } from '../effects.decorator';
 import { EffectDTO, EffectHandler } from '../effects.interface';
@@ -7,7 +6,13 @@ import { EffectService } from '../effects.service';
 import { inThyName } from './constants';
 import { EnemyTypeEnum } from 'src/game/components/enemy/enemy.enum';
 import { defenseEffect } from '../defense/constants';
+import { CombatQueueService } from 'src/game/components/combatQueue/combatQueue.service';
+import { CombatQueueTargetEffectTypeEnum } from 'src/game/components/combatQueue/combatQueue.enum';
 
+export interface InThyNameArgs {
+    undeadDefense: number,
+    notUndeadDefense: number,
+}
 @EffectDecorator({
     effect: inThyName,
 })
@@ -16,17 +21,16 @@ export class inThyNameEffect implements EffectHandler {
     constructor(
         private readonly effectService: EffectService,
         private readonly enemyService: EnemyService,
+        private readonly combatQueueService: CombatQueueService
     ) {}
 
-    async handle(dto: EffectDTO): Promise<void> {
+    async handle(dto: EffectDTO<InThyNameArgs>): Promise<void> {
         const { ctx } = dto;
-        const unDeadvalue = dto.args.currentValue;
-        const notUnDeadValue = 3;
-        await this.inThyName(dto, unDeadvalue, notUnDeadValue);
+        await this.inThyName(dto);
     }
 
-    protected async inThyName(dto: EffectDTO, unDeadvalue: number, notUnDeadValue: number) {
-        const { ctx, source, target } = dto;
+    protected async inThyName(dto: EffectDTO<InThyNameArgs>) {
+        const { ctx, source, target, action } = dto;
 
         //we get the alive enemies in the currentNode
         const currentNodeEnemies = this.enemyService.getLiving(ctx);
@@ -51,7 +55,7 @@ export class inThyNameEffect implements EffectHandler {
                     effect: {
                         effect: defenseEffect.name,
                         args: {
-                            value: unDeadvalue,
+                            value: dto.args.undeadDefense,
                         },
                     },
                 });
@@ -65,11 +69,21 @@ export class inThyNameEffect implements EffectHandler {
                     effect: {
                         effect: defenseEffect.name,
                         args: {
-                            value: notUnDeadValue,
+                            value: dto.args.notUndeadDefense,
                         },
                     },
                 });
             }
+            await this.combatQueueService.push({
+                ctx,
+                source,
+                target,
+                args: {
+                    effectType: CombatQueueTargetEffectTypeEnum.Status,
+                    statuses: [],
+                },
+                action: action,
+            });
         }                
     }
 }
