@@ -14,6 +14,8 @@ import { attachStatusEffect } from 'src/game/effects/attachStatus/constants';
 
 export const trapelicanData: Enemy = {
     enemyId: 12,
+    stage: 1,
+    selectable: true,
     isActive: true,
     name: 'Trapelican',
     type: EnemyTypeEnum.Plant,

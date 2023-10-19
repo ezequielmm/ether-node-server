@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ExpeditionStatusEnum } from '../components/expedition/expedition.enum';
 import { GameContext } from '../components/interfaces';
-import { ScoreCalculatorService } from '../scoreCalculator/scoreCalculator.service';
+import { ScoreCalculatorService, ScoreResponse } from '../scoreCalculator/scoreCalculator.service';
 import { StandardResponse, SWARAction, SWARMessageType } from '../standardResponse/standardResponse';
 import { PlayerWinService } from '../../playerWin/playerWin.service';
 import { ContestService } from '../contest/contest.service';
@@ -62,24 +62,19 @@ export class EndExpeditionProcess {
             this.updateExpeditionStatusAndTime(ctx);
         
             // Calculate the final score
-            this.calculateFinalScore(ctx);
+            await this.calculateStageScore(ctx, currentStage);
         
             // Check if the player can win and if the contest is valid
             let canWin = await this.playerWinService.classCanWin(ctx.expedition.playerState.characterClass as CharacterClassEnum);
             let contestIsValid = await this.contestService.isValid(ctx.expedition.contest);
         
-        
-            // Force true in canWin and contestIsValid for contest sake.
-             //canWin = true;
-            contestIsValid = true;
-            
-            if(ctx.expedition.playerState.characterClass === "non-token-villager")
-            {
-                canWin = false;
-            }
-        
             // Handle loot and rewards
-            await this.handleActiveEventLoot(ctx, canWin, isLastStage);
+            if(canWin && contestIsValid){
+                await this.handleActiveEventLoot(ctx, isLastStage);
+            }else{
+                ctx.expedition.finalScore.lootbox = [];
+                ctx.expedition.finalScore.rewards = [];
+            }
         
             // Save the updated expedition
             await ctx.expedition.save();
@@ -96,26 +91,19 @@ export class EndExpeditionProcess {
             // Dev:
             //await this.calculateRewards(ctx, isLastStage);
 
-
-
-
             // Check if the player can win and if the contest is valid
             let canWin = await this.playerWinService.classCanWin(ctx.expedition.playerState.characterClass as CharacterClassEnum);
             let contestIsValid = await this.contestService.isValid(ctx.expedition.contest);
-        
-        
-            // Force true in canWin and contestIsValid for contest sake.
-             //canWin = true;
-            contestIsValid = true;
             
-            if(ctx.expedition.playerState.characterClass === "non-token-villager")
-            {
-                canWin = false;
-            }
             // Handle loot and rewards
-            await this.handleActiveEventLoot(ctx, canWin, isLastStage);
+            if(canWin && contestIsValid){
+                await this.handleActiveEventLoot(ctx, isLastStage);
+            }else{
+                ctx.expedition.finalScore.lootbox = [];
+                ctx.expedition.finalScore.rewards = [];
+            }
+            
             await ctx.expedition.save();
-
             await this.initExpeditionService.createNextStage(ctx);
 
             //- Message client to end combat and show score
@@ -140,14 +128,47 @@ export class EndExpeditionProcess {
         ctx.expedition.stageScores[currentStage - 1].lootbox = [];
         ctx.expedition.stageScores[currentStage - 1].notifyNoLoot = false;
 
-        ctx.expedition.finalScore = score;
-        ctx.expedition.finalScore.lootbox = [];
-        ctx.expedition.finalScore.notifyNoLoot = false;
-
         //- Clean score so we can use it in next stage if so
         ctx.expedition.scores = new Score();
+        await this.calculateFinalScore(ctx, score);
     }
-    
+
+    private async calculateFinalScore(ctx: GameContext, score:ScoreResponse) {
+
+        //- All score stages plus the new score stage:
+        const stageScores:ScoreResponse[] = ctx.expedition.stageScores;
+
+        //- Merge and sum all the achievements:
+        const achievementsMap = new Map<string, number>();
+
+        stageScores.forEach(stageScore => {
+            stageScore.achievements.forEach(achievement => {
+                const { name, score } = achievement;
+                if (achievementsMap.has(name)) {
+                    const currentScore = achievementsMap.get(name) as number;
+                    achievementsMap.set(name, currentScore + score);
+                } else {
+                    achievementsMap.set(name, score);
+                }
+            });
+        });
+
+        const newAchievements = Array.from(achievementsMap, ([name, score]) => ({ name, score }));
+        const totalScore = stageScores.reduce((count, score) => {return count + score.totalScore}, 0); 
+
+        const finalScore: ScoreResponse = {
+            outcome: score.outcome, 
+            expeditionType: score.expeditionType, 
+            totalScore,
+            achievements: newAchievements,
+            notifyNoLoot: score.notifyNoLoot, 
+            lootbox: score.lootbox,
+            rewards: score.rewards 
+        };
+
+        ctx.expedition.finalScore = finalScore;
+    }
+
     // Update the expedition status and time
     private updateExpeditionStatusAndTime(ctx: GameContext) {
     
@@ -157,70 +178,48 @@ export class EndExpeditionProcess {
     
     }
 
-
-    private async calculateFinalScore(ctx: GameContext) {
-    
-        const score = await this.scoreCalculatorService.calculate({
-            expedition: ctx.expedition,
-        });
-        ctx.expedition.finalScore = score;
-        ctx.expedition.finalScore.notifyNoLoot = false;
-    
-    }
-
-
     // Handle loot when the event is active
-    private async handleActiveEventLoot(ctx: GameContext, canWin:boolean, isLastStage:boolean) {
-    
-        const userGear = await this.playerGearService.getGear(ctx.expedition.userAddress);
+    private async handleActiveEventLoot(ctx: GameContext, isLastStage:boolean) {
         
         const lootbox = await this.gearService.getLootbox(
             ctx.expedition.playerState.lootboxSize,
             ctx.expedition.playerState.lootboxRarity,
-            // userGear
         );
-        const filteredLootbox = await this.filterNewLootItems(ctx, lootbox);
-        
+
+        //- Se comenta porque filtra los gears repetidos:
+        //- Ver si esta bien.
+        //const filteredLootbox = await this.filterNewLootItems(ctx, lootbox);
     
         await this.playerGearService.addGearToPlayer(
             ctx.expedition.userAddress,
-            filteredLootbox,
+            lootbox,
         );
 
         if(isLastStage){
             await this.playerWinService.create({
                 event_id: ctx.expedition.contest.event_id,
                 playerToken: ctx.expedition.playerState.playerToken,
-                lootbox: filteredLootbox,
+                lootbox: lootbox,
             });
         }
         
-        if(canWin)
-        {
+        ctx.expedition.finalScore.lootbox = lootbox;
+        ctx.expedition.finalScore.rewards = await this.squiresService.getAccountRewards(ctx.expedition.userAddress, ctx.expedition.playerState.equippedGear);
 
-            ctx.expedition.finalScore.lootbox = filteredLootbox;
-            ctx.expedition.finalScore.rewards = await this.squiresService.getAccountRewards(ctx.expedition.userAddress, ctx.expedition.playerState.equippedGear);
-
-        }
-        else {
-            ctx.expedition.finalScore.lootbox = [];
-            ctx.expedition.finalScore.rewards = [];
-
-        }
     }
     
     // Filter out loot items that the player already has
-    private async filterNewLootItems(ctx: GameContext, lootbox: Gear[]): Promise<Gear[]> {
+    // private async filterNewLootItems(ctx: GameContext, lootbox: Gear[]): Promise<Gear[]> {
     
-        const allGear = (await this.playerWinService.getAllLootboxesByTokenId(ctx.expedition.playerState.playerToken.tokenId)).flat();
-        const gearByWallet = (await this.playerWinService.getAllLootByWallet(ctx.expedition.playerState.userAddress)).flat();
-        allGear.push(...gearByWallet);
+    //     const allGear = (await this.playerWinService.getAllLootboxesByTokenId(ctx.expedition.playerState.playerToken.tokenId)).flat();
+    //     const gearByWallet = (await this.playerWinService.getAllLootByWallet(ctx.expedition.playerState.userAddress)).flat();
+    //     allGear.push(...gearByWallet);
     
-        const filteredLootbox = lootbox.filter(lootItem => !allGear.some(allGearItem => allGearItem.gearId === lootItem.gearId));
+    //     const filteredLootbox = lootbox.filter(lootItem => !allGear.some(allGearItem => allGearItem.gearId === lootItem.gearId));
     
     
-        return filteredLootbox;
-    }
+    //     return filteredLootbox;
+    // }
     
     // Notify the client
     private notifyClient(ctx: GameContext) {

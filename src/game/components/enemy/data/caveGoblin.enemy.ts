@@ -43,6 +43,7 @@ const SpecialAttack: EnemyIntention =
 
 const SignatureAttack: EnemyIntention =
 {
+    name: "Hit & Run",
     type: EnemyIntentionType.Signature,
     target: CardTargetedEnum.Player,
     value: 6,
@@ -107,6 +108,8 @@ const AdvancedIntents: EnemyAction = {
 //-------------------------------------------------------------------------------------------------------------------------------------------------------
 export const caveGoblinData: Enemy = {
     enemyId: 23,
+    stage: 2,
+    selectable: true,
     isActive: true,
     name: 'Cave Goblin',
     type: EnemyTypeEnum.Goblin,

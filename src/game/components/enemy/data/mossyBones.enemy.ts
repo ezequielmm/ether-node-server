@@ -20,6 +20,7 @@ const DebuffFeeble:   EnemyIntention = EnemyBuilderService.createBasicDebuffInte
 const DebuffPoisoned: EnemyIntention = EnemyBuilderService.createAddCardIntent(2, PoisonedCard, CardDestinationEnum.Draw);
 const Infect:         EnemyIntention = EnemyBuilderService.createInfectIntent(9, 1);
 const SignatureMove:  EnemyIntention = {
+    name: "Develop",
     type: EnemyIntentionType.Signature,
     target: CardTargetedEnum.Player,
     value: 0,
@@ -65,6 +66,8 @@ const AdvancedIntents: EnemyAction = {
 //-------------------------------------------------------------------------------------------------------------------------------------------------------
 export const mossyBonesData: Enemy = {
     enemyId: 31,
+    stage: 2,
+    selectable: true,
     isActive: true,
     name: 'Mossy Bones',
     type: EnemyTypeEnum.Undead,

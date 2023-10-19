@@ -13,6 +13,8 @@ import { gifted } from 'src/game/status/gifted/constants';
 
 export const rockElementalData: Enemy = {
     enemyId: 18,
+    stage: 2,
+    selectable: true,
     isActive: false,
     name: 'Rock Elemental',
     type: EnemyTypeEnum.Spirit,

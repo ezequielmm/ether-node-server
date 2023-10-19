@@ -21,9 +21,9 @@ const Debuff2Fatigue:  EnemyIntention = EnemyBuilderService.createBasicDebuffInt
 const Buff3Resolve:    EnemyIntention = EnemyBuilderService.createBasicBuffIntent(3, resolveStatus.name);
 const Buff2Resolve:    EnemyIntention = EnemyBuilderService.createBasicBuffIntent(2, resolveStatus.name);
 const Buff1Resolve:    EnemyIntention = EnemyBuilderService.createBasicBuffIntent(1, resolveStatus.name);
-
 const Counter:         EnemyIntention = EnemyBuilderService.createCounterAttack();
 const SignatureAttack: EnemyIntention = {
+    name: "Clobber",
     type: EnemyIntentionType.Signature,
     target: CardTargetedEnum.Player,
     value: 12,
@@ -85,6 +85,8 @@ const AdvancedIntents: EnemyAction = {
 
 export const trollData: Enemy = {
     enemyId: 50,
+    stage: 2,
+    selectable: true,
     isActive: true,
     name: 'Troll',
     type: EnemyTypeEnum.Beast,

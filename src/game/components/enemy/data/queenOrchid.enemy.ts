@@ -14,6 +14,8 @@ import { Enemy } from '../enemy.schema';
 
 export const queenOrchidData: Enemy = {
     enemyId: 9,
+    stage: 1,
+    selectable: true,
     isActive: true,
     name: 'QueenOrchid',
     type: EnemyTypeEnum.Plant,

@@ -27,6 +27,7 @@ const DebuffBurn:      EnemyIntention = EnemyBuilderService.createBasicDebuffInt
 const DebuffPoison:    EnemyIntention = EnemyBuilderService.createAddCardIntent(2, PoisonedCard, CardDestinationEnum.Draw);
 
 const SignatureAttack: EnemyIntention = {
+    name: "For our Master",
     type: EnemyIntentionType.Signature,
     target: CardTargetedEnum.Player,
     value: 1,
@@ -71,6 +72,8 @@ const BasicIntents: EnemyAction = {
 //-------------------------------------------------------------------------------------------------------------------------------------------------------
 export const swarmMasterData: Enemy = {
     enemyId: 60,
+    stage: 2,
+    selectable: true,
     isActive: true,
     name: 'Swarm Master',
     type: EnemyTypeEnum.Beast,
