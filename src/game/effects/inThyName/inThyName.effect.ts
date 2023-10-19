@@ -3,7 +3,7 @@ import { EnemyService } from 'src/game/components/enemy/enemy.service';
 import { EffectDecorator } from '../effects.decorator';
 import { EffectDTO, EffectHandler } from '../effects.interface';
 import { EffectService } from '../effects.service';
-import { inThyName } from './constants';
+import { inThyNameEffect } from './constants';
 import { EnemyTypeEnum } from 'src/game/components/enemy/enemy.enum';
 import { defenseEffect } from '../defense/constants';
 import { CombatQueueService } from 'src/game/components/combatQueue/combatQueue.service';
@@ -14,10 +14,10 @@ export interface InThyNameArgs {
     notUndeadDefense: number,
 }
 @EffectDecorator({
-    effect: inThyName,
+    effect: inThyNameEffect,
 })
-export class inThyNameEffect implements EffectHandler {
-    private readonly logger: Logger = new Logger(inThyName.name);
+export class InThyNameEffect implements EffectHandler {
+    private readonly logger: Logger = new Logger(inThyNameEffect.name);
     constructor(
         private readonly effectService: EffectService,
         private readonly enemyService: EnemyService,

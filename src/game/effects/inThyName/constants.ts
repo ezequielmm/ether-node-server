@@ -1,9 +1,5 @@
 import { Effect } from '../effects.interface';
 
-export const inThyName: Effect = {
+export const inThyNameEffect: Effect = {
     name: 'inThyName',
-};
-
-export const inThyNamePlus: Effect = {
-    name: 'inThyNamePlus',
 };
