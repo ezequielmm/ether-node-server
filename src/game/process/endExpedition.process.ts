@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ExpeditionStatusEnum } from '../components/expedition/expedition.enum';
 import { GameContext } from '../components/interfaces';
-import { ScoreCalculatorService } from '../scoreCalculator/scoreCalculator.service';
+import { ScoreCalculatorService, ScoreResponse } from '../scoreCalculator/scoreCalculator.service';
 import { StandardResponse, SWARAction, SWARMessageType } from '../standardResponse/standardResponse';
 import { PlayerWinService } from '../../playerWin/playerWin.service';
 import { ContestService } from '../contest/contest.service';
@@ -63,7 +63,6 @@ export class EndExpeditionProcess {
         
             // Calculate the final score
             await this.calculateStageScore(ctx, currentStage);
-            this.calculateFinalScore(ctx);
         
             // Check if the player can win and if the contest is valid
             let canWin = await this.playerWinService.classCanWin(ctx.expedition.playerState.characterClass as CharacterClassEnum);
@@ -138,16 +137,37 @@ export class EndExpeditionProcess {
         ctx.expedition.stageScores[currentStage - 1].lootbox = [];
         ctx.expedition.stageScores[currentStage - 1].notifyNoLoot = false;
 
-        ctx.expedition.finalScore = score;
-        ctx.expedition.finalScore.lootbox = [];
-        ctx.expedition.finalScore.notifyNoLoot = false;
-
         //- Clean score so we can use it in next stage if so
         ctx.expedition.scores = new Score();
+        await this.calculateFinalScore(ctx, score);
     }
 
-    private async calculateFinalScore(ctx: GameContext) {
-        
+    private async calculateFinalScore(ctx: GameContext, score:ScoreResponse) {
+
+        //- All score stages plus the new score stage:
+        const stageScores:ScoreResponse[] = ctx.expedition.stageScores;
+        stageScores.push(score);
+
+        //- Create finalScore based on last score and recalculate totalScore:
+        let finalScore:ScoreResponse = score; 
+        finalScore.totalScore = stageScores.reduce((count, score) => {return count + score.totalScore}, 0); // sumatoria de todos
+
+        //- Merge and sum all the achievements:
+        const achievementsMap = new Map<string, number>();
+
+        stageScores.forEach(stageScore => {
+            stageScore.achievements.forEach(achievement => {
+                const { name, score } = achievement;
+                if (achievementsMap.has(name)) {
+                    const currentScore = achievementsMap.get(name) as number;
+                    achievementsMap.set(name, currentScore + score);
+                } else {
+                    achievementsMap.set(name, score);
+                }
+            });
+        });
+
+        ctx.expedition.finalScore = finalScore;
     }
 
     // Update the expedition status and time
