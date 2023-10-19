@@ -8,7 +8,6 @@ import { EnemyTypeEnum } from 'src/game/components/enemy/enemy.enum';
 import { defenseEffect } from '../defense/constants';
 import { CombatQueueService } from 'src/game/components/combatQueue/combatQueue.service';
 import { CombatQueueTargetEffectTypeEnum } from 'src/game/components/combatQueue/combatQueue.enum';
-import { clearConfigCache } from 'prettier';
 
 export interface InThyNameArgs {
     undeadDefense: number,
