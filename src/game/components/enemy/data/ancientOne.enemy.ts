@@ -13,6 +13,8 @@ import { Enemy } from '../enemy.schema';
 
 export const ancientOneData: Enemy = {
     enemyId: 5,
+    stage: 1,
+    selectable: true,
     isActive: true,
     name: 'AncientOne',
     type: EnemyTypeEnum.Spirit,

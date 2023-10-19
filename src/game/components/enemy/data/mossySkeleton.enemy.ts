@@ -25,6 +25,7 @@ const Breach:            EnemyIntention = EnemyBuilderService.createBreachAttack
 const Infect:            EnemyIntention = EnemyBuilderService.createInfectIntent(11, 1);
 const Grow:              EnemyIntention = EnemyBuilderService.createGrowIntent(20, 10, 3);
 const SignatureMove:     EnemyIntention = {
+    name: "Ill Blade",
     type: EnemyIntentionType.Signature,
     target: CardTargetedEnum.Player,
     value: 12,
@@ -105,6 +106,8 @@ const AdvancedIntents: EnemyAction = {
 //-------------------------------------------------------------------------------------------------------------------------------------------------------
 export const mossySkeletonData: Enemy = {
     enemyId: 30,
+    stage: 2,
+    selectable: true,
     isActive: true,
     name: 'Mossy Skeleton',
     type: EnemyTypeEnum.Undead,

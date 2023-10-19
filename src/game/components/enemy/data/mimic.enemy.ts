@@ -85,6 +85,8 @@ const AdvancedIntents: EnemyAction = {
 //-------------------------------------------------------------------------------------------------------------------------------------------------------
 export const mimicData: Enemy = {
     enemyId: 27,
+    stage: 2,
+    selectable: false,
     isActive: true,
     name: 'Mimic',
     type: EnemyTypeEnum.Fae,

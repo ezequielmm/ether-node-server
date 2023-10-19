@@ -39,6 +39,12 @@ export class Enemy {
 
     @Prop()
     aggressiveness?: number;
+
+    @Prop()
+    stage: number;
+
+    @Prop()
+    selectable: boolean;
 }
 
 

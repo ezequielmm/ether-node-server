@@ -21,6 +21,7 @@ const Counter:       EnemyIntention = EnemyBuilderService.createCounterAttack();
 const Infect:        EnemyIntention = EnemyBuilderService.createInfectIntent(9, 1);
 const Grow:          EnemyIntention = EnemyBuilderService.createGrowIntent(20, 10, 3);
 const SignatureMove: EnemyIntention = {
+    name: "Ill Barrage",
     type: EnemyIntentionType.Signature,
     target: CardTargetedEnum.Player,
     value: 8,
@@ -75,6 +76,8 @@ const AdvancedIntents: EnemyAction = {
 //-------------------------------------------------------------------------------------------------------------------------------------------------------
 export const mossyArcherData: Enemy = {
     enemyId: 32,
+    stage: 2,
+    selectable: true,
     isActive: true,
     name: 'Mossy Archer',
     type: EnemyTypeEnum.Undead,

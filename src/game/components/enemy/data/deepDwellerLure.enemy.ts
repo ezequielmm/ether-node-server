@@ -22,6 +22,7 @@ const Debuff4Fatigue:  EnemyIntention = EnemyBuilderService.createBasicDebuffInt
 const Buff2Dodge:      EnemyIntention = EnemyBuilderService.createBasicBuffIntent(2, dodge.name);
 
 // const SignatureAttack: EnemyIntention = {
+//     name: "Lullaby", 
 //     type: EnemyIntentionType.Signature,
 //     target: CardTargetedEnum.Player,
 //     value: 1,
@@ -113,6 +114,8 @@ const AdvancedIntents: EnemyAction = {
 //-------------------------------------------------------------------------------------------------------------------------------------------------------
 export const deepDwellerLureData: Enemy = {
     enemyId: 65,
+    stage: 2,
+    selectable: true,
     isActive: true,
     name: 'Deep Deweller Lure',
     type: EnemyTypeEnum.Fae,

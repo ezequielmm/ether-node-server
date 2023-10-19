@@ -15,6 +15,8 @@ import { defenseEffect } from 'src/game/effects/defense/constants';
 
 export const deepSorcererData: Enemy = {
     enemyId: 22,
+    stage: 1,
+    selectable: true,
     isActive: false,
     name: 'Deep Sorcerer',
     type: EnemyTypeEnum.Human,

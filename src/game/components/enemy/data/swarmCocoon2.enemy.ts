@@ -25,6 +25,8 @@ const BasicIntents: EnemyAction = {
 //-------------------------------------------------------------------------------------------------------------------------------------------------------
 export const swarmCocoon2Data: Enemy = {
     enemyId: 64,
+    stage: 2,
+    selectable: false,
     isActive: true,
     name: 'Swarm Cocoon',
     type: EnemyTypeEnum.Beast,

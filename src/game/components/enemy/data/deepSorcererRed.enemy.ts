@@ -81,7 +81,9 @@ const AdvancedIntents: EnemyAction = {
 //-------------------------------------------------------------------------------------------------------------------------------------------------------
 export const deepSorcererRedData: Enemy = {
     enemyId: 2222,
-    isActive: true,
+    stage: 2,
+    selectable: true,
+    isActive: false,
     name: 'Deep Sorcerer Red',
     type: EnemyTypeEnum.Human,
     category: EnemyCategoryEnum.Elite,

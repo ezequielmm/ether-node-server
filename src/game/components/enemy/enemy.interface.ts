@@ -4,12 +4,12 @@ import { IExpeditionCurrentNodeDataEnemy } from '../expedition/expedition.interf
 import { EnemyIntentionType } from './enemy.enum';
 
 export interface EnemyIntention {
+    name?: string;
     type: EnemyIntentionType;
     target: CardTargetedEnum;
     value: any;
     effects?: JsonEffect[];
     negateDamage?: number;
-    damageToIncrementCounter?: number;
 }
 
 export interface EnemyNextScript {

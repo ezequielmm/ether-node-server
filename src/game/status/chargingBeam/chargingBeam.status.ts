@@ -29,15 +29,6 @@ export class ChargingBeamStatus implements StatusEffectHandler {
             const status = target.value.statuses.buff.filter(s => s.name === chargingBeam.name)[0];
 
             if(status.args.counter < 2 && dto.effectDTO.args.currentValue >= 20){
-                // const resolveToAttach: AttachDTO = {
-                //     ctx: dto.ctx,
-                //     source: target,
-                //     target,
-                //     statusName: chargingBeam.name,
-                //     statusArgs: {counter: 2},
-                // }
-                
-                // await this.statusService.attach(resolveToAttach)
                 const debuff = target.value.statuses.debuff;
                 const buff = target.value.statuses.buff.map(buff => {
                     if(buff.name === chargingBeam.name){
