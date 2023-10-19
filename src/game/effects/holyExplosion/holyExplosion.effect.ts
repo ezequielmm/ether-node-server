@@ -53,6 +53,7 @@ export class holyExplosionEffect implements EffectHandler {
         for(let currentEnemy of currentNodeEnemies){
 
             const enemyType = currentEnemy.value.type;
+            console.log(enemyType);
     
             //depending if is undead or not, we apply the damageEffect
             if(enemyType == EnemyTypeEnum.Undead){
