@@ -87,7 +87,7 @@ export class DamageEffect implements EffectHandler {
         let newHp = 0;
         let oldDefense = 0;
         let newDefense = 0;
-        console.log(EnemyService.isEnemy(target));
+
         // Check targeted type
         if (EnemyService.isEnemy(target)) {
             // First we check if we have to deal a multiplier
@@ -246,7 +246,7 @@ export class DamageEffect implements EffectHandler {
                 await ctx.expedition.save();
             }
         }
-
+        
         if (PlayerService.isPlayer(target)) {
             // Here we check if we have to use the enemy available
             // as currentValue, here we just need to add it, the value

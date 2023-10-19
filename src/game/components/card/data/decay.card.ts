@@ -20,7 +20,7 @@ export const DecayCard: Card = {
     pool: 'knight',
     energy: 0,
     description: `Receive 2 ${damageEffect.name} if in hand by the end of the turn `,
-    keywords: [CardKeywordEnum.Unplayable],
+    keywords: [],
     properties: {
         effects: [],
         statuses: [],
@@ -33,7 +33,7 @@ export const DecayCard: Card = {
                 effect: damageEffect.name,
                 target: CardTargetedEnum.Player,
                 args: {
-                    currentValue: 2,
+                    value: 2,
                 },
             },
         ],
