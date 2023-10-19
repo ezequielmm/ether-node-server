@@ -117,7 +117,7 @@ export class InitExpeditionProcess {
 
         await ctx.expedition.save();
 
-        const referencedMap = await this.expeditionService.createMapReferenced(
+        await this.expeditionService.createMapReferenced(
             {
                 _id: randomObjectId,
                 map
