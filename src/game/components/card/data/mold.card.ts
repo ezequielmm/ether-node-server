@@ -25,7 +25,7 @@ export const MoldCard: Card = {
         effects: [
             {
                 effect: energyEffect.name,
-                target: CardTargetedEnum.Self,
+                target: CardTargetedEnum.Player,
                 args: {
                     value: -1,
                 },
