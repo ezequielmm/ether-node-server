@@ -13,6 +13,8 @@ import { Enemy } from '../enemy.schema';
 
 export const stingFaeData: Enemy = {
     enemyId: 10,
+    stage: 1,
+    selectable: true,
     isActive: true,
     name: 'StingFae1',
     type: EnemyTypeEnum.Fae,

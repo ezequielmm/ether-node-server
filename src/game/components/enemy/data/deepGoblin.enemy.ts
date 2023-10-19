@@ -21,7 +21,8 @@ const DebufFeeble:        EnemyIntention = EnemyBuilderService.createBasicDebuff
 const DebuffFatigue:      EnemyIntention = EnemyBuilderService.createBasicDebuffIntent(2, fatigue.name);
 const CallReinforcements: EnemyIntention = EnemyBuilderService.callForReinforcements([caveGoblinData.enemyId]);
 
-const SignatureMove:     EnemyIntention = {
+const SignatureMove:      EnemyIntention = {
+    name: "Gross Out Lunch",
     type: EnemyIntentionType.Signature,
     target: CardTargetedEnum.Player,
     value: 0,
@@ -81,6 +82,8 @@ const AdvancedIntents: EnemyAction = {
 //-------------------------------------------------------------------------------------------------------------------------------------------------------
 export const deepGoblinData: Enemy = {
     enemyId: 28,
+    stage: 2,
+    selectable: true,
     isActive: true,
     name: 'Deep Goblin',
     type: EnemyTypeEnum.Goblin,

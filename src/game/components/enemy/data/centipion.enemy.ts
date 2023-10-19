@@ -29,6 +29,7 @@ const BuffResolve:     EnemyIntention = EnemyBuilderService.createBasicBuffInten
 const DebuffFeeble:    EnemyIntention = EnemyBuilderService.createBasicDebuffIntent(1, feebleStatus.name);
 
 const SignatureAttack: EnemyIntention = {
+    name: "Mold Shower",
     type: EnemyIntentionType.Signature,
     target: CardTargetedEnum.Player,
     value: 7,
@@ -104,6 +105,8 @@ const AdvancedIntents: EnemyAction = {
 //-------------------------------------------------------------------------------------------------------------------------------------------------------
 export const centipionData: Enemy = {
     enemyId: 19,
+    stage: 2,
+    selectable: true,
     isActive: true,
     name: 'Centipion',
     type: EnemyTypeEnum.Insectoid,
