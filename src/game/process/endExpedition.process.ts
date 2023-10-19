@@ -137,7 +137,6 @@ export class EndExpeditionProcess {
 
         //- All score stages plus the new score stage:
         const stageScores:ScoreResponse[] = ctx.expedition.stageScores;
-        stageScores.push(score);
 
         //- Merge and sum all the achievements:
         const achievementsMap = new Map<string, number>();
