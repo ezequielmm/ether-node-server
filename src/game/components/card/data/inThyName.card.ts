@@ -16,7 +16,7 @@ export const InThyNameCardUpgraded: Card = {
         effects: [
             {
                 effect: inThyNameEffect.name,
-                target: CardTargetedEnum.Self,
+                target: CardTargetedEnum.Player,
                 args: {
                     undeadDefense: 10,
                     notUndeadDefense: 5
@@ -43,7 +43,7 @@ export const InThyNameCard: Card = {
         effects: [
             {
                 effect: inThyNameEffect.name,
-                target: CardTargetedEnum.Self,
+                target: CardTargetedEnum.Player,
                 args: {
                     undeadDefense: 8,
                     notUndeadDefense: 3
