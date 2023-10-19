@@ -62,6 +62,7 @@ export class EndExpeditionProcess {
             this.updateExpeditionStatusAndTime(ctx);
         
             // Calculate the final score
+            await this.calculateStageScore(ctx, currentStage);
             this.calculateFinalScore(ctx);
         
             // Check if the player can win and if the contest is valid
@@ -95,9 +96,6 @@ export class EndExpeditionProcess {
 
             // Dev:
             //await this.calculateRewards(ctx, isLastStage);
-
-
-
 
             // Check if the player can win and if the contest is valid
             let canWin = await this.playerWinService.classCanWin(ctx.expedition.playerState.characterClass as CharacterClassEnum);
@@ -147,7 +145,11 @@ export class EndExpeditionProcess {
         //- Clean score so we can use it in next stage if so
         ctx.expedition.scores = new Score();
     }
-    
+
+    private async calculateFinalScore(ctx: GameContext) {
+        
+    }
+
     // Update the expedition status and time
     private updateExpeditionStatusAndTime(ctx: GameContext) {
     
@@ -156,18 +158,6 @@ export class EndExpeditionProcess {
         ctx.expedition.endedAt = new Date();
     
     }
-
-
-    private async calculateFinalScore(ctx: GameContext) {
-    
-        const score = await this.scoreCalculatorService.calculate({
-            expedition: ctx.expedition,
-        });
-        ctx.expedition.finalScore = score;
-        ctx.expedition.finalScore.notifyNoLoot = false;
-    
-    }
-
 
     // Handle loot when the event is active
     private async handleActiveEventLoot(ctx: GameContext, canWin:boolean, isLastStage:boolean) {
