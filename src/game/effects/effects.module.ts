@@ -56,7 +56,8 @@ import { ImmolateEffect } from './immolate/immolate.effect';
 import { MitosisEffect } from './mitosis/mitosis.effect';
 import { AddConditionalCardEffect } from './addConditionalCard/addConditionalCard.effect';
 import { RhunnsLastResortEffect } from './rhunnsLastResort/rhunnsLastResort.effect';
-
+import { holyExplosionEffect } from './holyExplosion/holyExplosion.effect';
+import { InThyNameEffect } from "./inThyName/inThyName.effect";
 @Module({
     imports: [
         forwardRef(() => ExpeditionModule),
@@ -116,7 +117,9 @@ import { RhunnsLastResortEffect } from './rhunnsLastResort/rhunnsLastResort.effe
         ImmolateEffect,
         MitosisEffect,
         AddConditionalCardEffect,
-        RhunnsLastResortEffect
+        RhunnsLastResortEffect,
+        holyExplosionEffect,
+        InThyNameEffect
     ],
     exports: [EffectService],
 })

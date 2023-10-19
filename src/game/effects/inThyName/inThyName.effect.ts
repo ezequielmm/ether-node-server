@@ -8,6 +8,7 @@ import { EnemyTypeEnum } from 'src/game/components/enemy/enemy.enum';
 import { defenseEffect } from '../defense/constants';
 import { CombatQueueService } from 'src/game/components/combatQueue/combatQueue.service';
 import { CombatQueueTargetEffectTypeEnum } from 'src/game/components/combatQueue/combatQueue.enum';
+import { clearConfigCache } from 'prettier';
 
 export interface InThyNameArgs {
     undeadDefense: number,
@@ -40,11 +41,14 @@ export class InThyNameEffect implements EffectHandler {
             return;
         }
 
+        console.log(target);
+        console.log(currentNodeEnemies);
+        
         //we iterate all enemies
         for(let currentEnemy of currentNodeEnemies){
 
             const enemyType = currentEnemy.value.type;
-    
+            console.log(enemyType);
             //depending if is undead or not, we apply the damageEffect
             if(enemyType == EnemyTypeEnum.Undead){
                 
