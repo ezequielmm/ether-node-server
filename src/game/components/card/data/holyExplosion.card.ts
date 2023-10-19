@@ -1,15 +1,8 @@
 import { damageEffect } from 'src/game/effects/damage/constants';
 import { burn } from 'src/game/status/burn/constants';
-import { CardRarityEnum, CardTypeEnum, CardTargetedEnum } from '../card.enum';
+import { CardRarityEnum, CardTypeEnum, CardTargetedEnum, CardEnergyEnum } from '../card.enum';
 import { Card } from '../card.schema';
-
-/*
-TODO:
--for both cards
-    -energy x (?)
-    -cards effects
-
-*/
+import { holyExplosion } from 'src/game/effects/holyExplosion/constants';
 
 export const HolyExplosionCardUpgraded: Card = {
     cardId: 560,
@@ -17,23 +10,25 @@ export const HolyExplosionCardUpgraded: Card = {
     rarity: CardRarityEnum.Starter,
     cardType: CardTypeEnum.Attack,
     pool: 'knight',
-    energy: 1,
-    description: `Deal X + 5 ${damageEffect.name} and inflict X + 3 ${burn.name} to all Undead enemies. Deal X + 3 ${damageEffect.name} and inflict 3 ${burn.name} to all other enemies. `,
+    energy: CardEnergyEnum.All,
+    description: `Deal X + 5 ${damageEffect.name} and inflict X + 3 ${burn.name} to all Undead enemies and deal X + 3 ${damageEffect.name} and inflict 3 ${burn.name} to all other enemies. `,
     keywords: [],
     properties: {
         effects: [
             {
-                effect: damageEffect.name,
-                target: CardTargetedEnum.Enemy,
+                effect: holyExplosion.name,
+                target: CardTargetedEnum.AllEnemies,
                 args: {
-                    value: 5,
+                    undeadDamage: 5,
+                    notUndeadDamage: 3,
+                    undeadBurn: 3,
+                    notUndeadBurn: 3
                 },
-            },
-            //more effects shoud go here
+            },           
         ],
         statuses: [],
     },
-    showPointer: true,
+    showPointer: false,
     isUpgraded: true,
     isActive: true,
 };
@@ -44,23 +39,26 @@ export const HolyExplosionCard: Card = {
     rarity: CardRarityEnum.Starter,
     cardType: CardTypeEnum.Attack,
     pool: 'knight',
-    energy: 1,
-    description: `Deal X + 3 damage and inflict 3 burn to all Undead enemies and Deal X + 3 damage and inflict 3 burn to all other enemies.`,
+    energy: CardEnergyEnum.All,
+    description: `Deal X + 3 ${damageEffect.name} and inflict 3 ${burn.name} to all Undead enemies and deal X + 3 ${damageEffect.name} and inflict 3 ${burn.name} to all other enemies.`,
     keywords: [],
     properties: {
         effects: [
             {
-                effect: damageEffect.name,
-                target: CardTargetedEnum.Self,
+                effect: holyExplosion.name,
+                target: CardTargetedEnum.AllEnemies,
                 args: {
-                    value: 5,
+                    unDeadDamage: 3,
+                    notUndeadDamage: 2,
+                    undeadBurn: 3,
+                    notUndeadBurn: 2
                 },
-            },
+            },        
         ],
         statuses: [],
     },
     showPointer: false,
-    isUpgraded: false,
+    isUpgraded: true,
     upgradedCardId: HolyExplosionCardUpgraded.cardId,
     isActive: true,
 };

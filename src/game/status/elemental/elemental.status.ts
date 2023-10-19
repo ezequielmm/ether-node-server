@@ -44,6 +44,6 @@ export class ElementalStatus implements StatusEffectHandler {
                 player,
                 elementalStatus, 
             );
-        }
     }
+}
 

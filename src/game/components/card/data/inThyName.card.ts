@@ -2,12 +2,6 @@ import { CardRarityEnum, CardTypeEnum, CardTargetedEnum } from '../card.enum';
 import { Card } from '../card.schema';
 import { defenseEffect } from 'src/game/effects/defense/constants';
 
-/*
-TODO:
--for both cards
-    -cards effects logic 
-*/
-
 export const InThyNameCardUpgraded: Card = {
     cardId: 562,
     name: 'In Thy Name+',
@@ -15,28 +9,22 @@ export const InThyNameCardUpgraded: Card = {
     cardType: CardTypeEnum.Defend,
     pool: 'knight',
     energy: 1,
-    description: `Gain 8 ${defenseEffect.name} for each enemy with the Undead trait, and 5 ${defenseEffect.name} for each non-Undead enemy.`,
+    description: `Gain 10 ${defenseEffect.name} for each enemy with the Undead trait, and 5 ${defenseEffect.name} for each non-Undead enemy.`,
     keywords: [],
     properties: {
         effects: [
             {
                 effect: defenseEffect.name,
-                target: CardTargetedEnum.Enemy,
+                target: CardTargetedEnum.Self,
                 args: {
-                    value: 8,
+                    undeadDefense: 10,
+                    notUndeadDefense: 5
                 },
-            },
-            {
-                effect: defenseEffect.name,
-                target: CardTargetedEnum.Enemy,
-                args: {
-                    value: 8,
-                },
-            },    
+            },   
         ],
         statuses: [],
     },
-    showPointer: true,
+    showPointer: false,
     isUpgraded: true,
     isActive: true,
 };
@@ -56,20 +44,14 @@ export const InThyNameCard: Card = {
                 effect: defenseEffect.name,
                 target: CardTargetedEnum.Self,
                 args: {
-                    value: 8,
-                },
-            },
-            {
-                effect: defenseEffect.name,
-                target: CardTargetedEnum.Self,
-                args: {
-                    value: 3,
+                    undeadDefense: 8,
+                    notUndeadDefense: 3
                 },
             },
         ],
         statuses: [],
     },
-    showPointer: true,
+    showPointer: false,
     isUpgraded: false,
     upgradedCardId: InThyNameCardUpgraded.cardId,
     isActive: true,
