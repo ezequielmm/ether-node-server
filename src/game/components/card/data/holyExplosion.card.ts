@@ -2,6 +2,7 @@ import { damageEffect } from 'src/game/effects/damage/constants';
 import { burn } from 'src/game/status/burn/constants';
 import { CardRarityEnum, CardTypeEnum, CardTargetedEnum, CardEnergyEnum } from '../card.enum';
 import { Card } from '../card.schema';
+import { holyExplosion } from 'src/game/effects/holyExplosion/constants';
 
 export const HolyExplosionCardUpgraded: Card = {
     cardId: 560,
@@ -15,22 +16,17 @@ export const HolyExplosionCardUpgraded: Card = {
     properties: {
         effects: [
             {
-                effect: damageEffect.name,
+                effect: holyExplosion.name,
                 target: CardTargetedEnum.AllEnemies,
                 args: {
-                    value: 5,
+                    undeadDamage: 5,
+                    notUndeadDamage: 3,
+                    undeadBurn: 3,
+                    notUndeadBurn: 3
                 },
-            },          
+            },           
         ],
-        statuses: [
-            {
-                name: burn.name,
-                attachTo: CardTargetedEnum.AllEnemies,
-                args: {
-                    counter: 3,
-                },
-            } 
-        ],
+        statuses: [],
     },
     showPointer: false,
     isUpgraded: true,
@@ -49,22 +45,17 @@ export const HolyExplosionCard: Card = {
     properties: {
         effects: [
             {
-                effect: damageEffect.name,
-                target: CardTargetedEnum.Self,
+                effect: holyExplosion.name,
+                target: CardTargetedEnum.AllEnemies,
                 args: {
-                    value: 3,
+                    unDeadDamage: 3,
+                    notUndeadDamage: 2,
+                    undeadBurn: 3,
+                    notUndeadBurn: 2
                 },
-            },
+            },        
         ],
-        statuses: [
-            {
-                name: burn.name,
-                attachTo: CardTargetedEnum.Enemy,
-                args: {
-                    counter: 3,
-                },
-            }
-        ],
+        statuses: [],
     },
     showPointer: false,
     isUpgraded: true,
