@@ -148,10 +148,6 @@ export class EndExpeditionProcess {
         const stageScores:ScoreResponse[] = ctx.expedition.stageScores;
         stageScores.push(score);
 
-        //- Create finalScore based on last score and recalculate totalScore:
-        let finalScore:ScoreResponse = score; 
-        finalScore.totalScore = stageScores.reduce((count, score) => {return count + score.totalScore}, 0); // sumatoria de todos
-
         //- Merge and sum all the achievements:
         const achievementsMap = new Map<string, number>();
 
@@ -166,6 +162,19 @@ export class EndExpeditionProcess {
                 }
             });
         });
+
+        const newAchievements = Array.from(achievementsMap, ([name, score]) => ({ name, score }));
+        const totalScore = stageScores.reduce((count, score) => {return count + score.totalScore}, 0); 
+
+        const finalScore: ScoreResponse = {
+            outcome: score.outcome, 
+            expeditionType: score.expeditionType, 
+            totalScore,
+            achievements: newAchievements,
+            notifyNoLoot: score.notifyNoLoot, 
+            lootbox: score.lootbox,
+            rewards: score.rewards 
+        };
 
         ctx.expedition.finalScore = finalScore;
     }
