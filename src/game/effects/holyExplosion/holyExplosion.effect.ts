@@ -48,76 +48,33 @@ export class holyExplosionEffect implements EffectHandler {
         if (!target) {
             this.logger.debug(ctx.info, 'No target found for holyExplosion');
             return;
-        }
+        }  
 
-        console.log('ENERGIA', energy);
+        for(let currentEnemy of currentNodeEnemies){
 
-        //we iterate all enemies
-        //currentNodeEnemies.forEach(async(currentEnemy) =>{
-            
-            if(EnemyService.isEnemy(target)){
+            const enemyType = currentEnemy.value.type;
 
-                const enemyType = target.value.type;
+            await this.statusService.attach({
+                ctx,
+                source,
+                target: currentEnemy,
+                statusName: burn.name,
+                statusArgs: {counter: enemyType === EnemyTypeEnum.Undead ? dto.args.undeadBurn : dto.args.notUndeadBurn},
+                action: action,
+            });
 
-                //depending if is undead or not, we apply the damageEffect
-                if(enemyType === EnemyTypeEnum.Undead){
-
-                    console.log(enemyType, 'ENTRE AL IF');
-
-                    // await this.effectService.apply({
-                    //     ctx,
-                    //     source,
-                    //     target,
-                    //     effect: {
-                    //         effect: damageEffect.name,
-                    //         args: {
-                    //             value: dto.args.undeadDamage + energy,
-                    //         },
-                    //     },
-                    // });
-
-                    console.log(dto.args.undeadDamage + energy);
-
-                    await this.statusService.attach({
-                        ctx,
-                        source,
-                        target,
-                        statusName: burn.name,
-                        statusArgs: {counter: dto.args.undeadBurn},
-                        action: action,
-                    });
-
-                    console.log(dto.args.undeadBurn);
-                }
-                else{  
-                    console.log(enemyType, 'ENTRE AL ELSE');
-
-                    // await this.effectService.apply({
-                    //     ctx,
-                    //     source,
-                    //     target,
-                    //     effect: {
-                    //         effect: damageEffect.name,
-                    //         args: {
-                    //             value: dto.args.notUndeadDamage + energy,
-                    //         },
-                    //     },
-                    // });
-
-                    console.log(dto.args.notUndeadDamage + energy);
-
-                    await this.statusService.attach({
-                        ctx,
-                        source,
-                        target,
-                        statusName: burn.name,
-                        statusArgs: {counter: dto.args.notUndeadBurn},
-                        action: action,
-                    });
-
-                    console.log(dto.args.notUndeadBurn);
-                }
-            }       
-        //});              
+            await this.effectService.apply({
+                ctx,
+                source,
+                target: currentEnemy,
+                effect: {
+                    effect: damageEffect.name,
+                    args: {
+                        value: enemyType === EnemyTypeEnum.Undead ? dto.args.undeadDamage + energy : dto.args.notUndeadDamage,
+                    },
+                },
+            });
+        
+        }                   
     } 
 }
