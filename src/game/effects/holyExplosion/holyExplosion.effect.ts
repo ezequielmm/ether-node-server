@@ -51,13 +51,12 @@ export class holyExplosionEffect implements EffectHandler {
 
         console.log('ENERGIA', energy);
         //we iterate all enemies
-        for(let currentEnemy of currentNodeEnemies){
-
-            const enemyType = currentEnemy.value.type;
+        currentNodeEnemies.forEach(async(currentEnemy) =>{
             
-    
+            const enemyType = currentEnemy.value.type;
+
             //depending if is undead or not, we apply the damageEffect
-            if(enemyType == EnemyTypeEnum.Undead){
+            if(enemyType === EnemyTypeEnum.Undead){
                 console.log(enemyType, 'ENTRE AL IF');
 
                 await this.effectService.apply({
@@ -116,6 +115,6 @@ export class holyExplosionEffect implements EffectHandler {
                 },
                 action: action,
             });
-        }                
+        });               
     } 
 }
