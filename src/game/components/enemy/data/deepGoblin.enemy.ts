@@ -4,7 +4,7 @@ import { resolveStatus } from 'src/game/status/resolve/constants';
 import { feebleStatus } from 'src/game/status/feeble/constants';
 import { fatigue } from 'src/game/status/fatigue/constants';
 import { EnemyAction, EnemyIntention } from '../enemy.interface';
-import { EnemyBuilderService } from '../enemy-builder.service';
+import { EnemyBuilderService as EB } from '../enemy-builder.service';
 import { caveGoblinData } from './caveGoblin.enemy';
 import { CardTargetedEnum } from '../../card/card.enum';
 import { spawnEnemyEffect } from 'src/game/effects/spawnEnemy/contants';
@@ -13,43 +13,45 @@ import { cannibalizeEffect } from 'src/game/effects/cannibalize/constants';
 //-------------------------------------------------------------------------------------------------------------------------------------------------------
 //- Intents:
 //-------------------------------------------------------------------------------------------------------------------------------------------------------
-const BasicAttack:        EnemyIntention = EnemyBuilderService.createBasicAttackIntent(11);
-const SecondAttack:       EnemyIntention = EnemyBuilderService.createMultiplierAttackIntent(11, 2);
-const BasicDefense:       EnemyIntention = EnemyBuilderService.createDefenseIntent(10);
-const BuffResolve:        EnemyIntention = EnemyBuilderService.createBasicBuffIntent(2, resolveStatus.name);
-const DebufFeeble:        EnemyIntention = EnemyBuilderService.createBasicDebuffIntent(2, feebleStatus.name);
-const DebuffFatigue:      EnemyIntention = EnemyBuilderService.createBasicDebuffIntent(2, fatigue.name);
-const CallReinforcements: EnemyIntention = EnemyBuilderService.callForReinforcements([caveGoblinData.enemyId]);
+const BasicAttack:        EnemyIntention = EB.createBasicAttackIntent(11, EB.ATTACK);
+const SecondAttack:       EnemyIntention = EB.createMultiplierAttackIntent(11, 2, EB.ATTACK2);
+const BasicDefense:       EnemyIntention = EB.createDefenseIntent(10, EB.DEFEND);
+const BuffResolve:        EnemyIntention = EB.createBasicBuffIntent(2, resolveStatus.name, EB.BUFF);
+const DebufFeeble:        EnemyIntention = EB.createBasicDebuffIntent(2, feebleStatus.name, EB.DEBUFF);
+const DebuffFatigue:      EnemyIntention = EB.createBasicDebuffIntent(2, fatigue.name, EB.DEBUFF2);
+const CallReinforcements: EnemyIntention = EB.callForReinforcements([caveGoblinData.enemyId], EB.CALL_FOR_REINFORCEMENTS);
 
-const SignatureMove:      EnemyIntention = {
-    name: "Gross Out Lunch",
-    type: EnemyIntentionType.Signature,
-    target: CardTargetedEnum.Player,
-    value: 0,
-    effects: [
-        {
-            effect: spawnEnemyEffect.name,
-            target: CardTargetedEnum.Self,
-            args: {
-                enemiesToSpawn: caveGoblinData.enemyId,
+const getSignatureMove = (animationId:string):EnemyIntention => {
+    return {
+        name: "Gross Out Lunch",
+        type: EnemyIntentionType.Signature,
+        target: CardTargetedEnum.Player,
+        value: 0,
+        effects: [
+            {
+                effect: spawnEnemyEffect.name,
+                target: CardTargetedEnum.Self,
+                args: {
+                    enemiesToSpawn: caveGoblinData.enemyId,
+                },
+                action: {
+                    name: animationId,
+                    hint: animationId,
+                },
             },
-            action: {
-                name: 'signature_move',
-                hint: 'signature_move',
+            {
+                effect: cannibalizeEffect.name,
+                target: CardTargetedEnum.Self,
+                args: {
+                    enemiesToCannibalize: caveGoblinData.enemyId,
+                },
+                action: {
+                    name: animationId,
+                    hint: animationId,
+                },
             },
-        },
-        {
-            effect: cannibalizeEffect.name,
-            target: CardTargetedEnum.Self,
-            args: {
-                enemiesToCannibalize: caveGoblinData.enemyId,
-            },
-            action: {
-                name: 'signature_move',
-                hint: 'signature_move',
-            },
-        },
-    ]
+        ]
+    }
 }
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -57,23 +59,32 @@ const SignatureMove:      EnemyIntention = {
 //-------------------------------------------------------------------------------------------------------------------------------------------------------
 const BasicIntents: EnemyAction = {
     options:[
-        { id: 1, probability: 0.1, cooldown: 0, intents: [BasicAttack] },
-        { id: 2, probability: 0.1, cooldown: 0, intents: [SecondAttack] },
-        { id: 3, probability: 0.2, cooldown: 0, intents: [BasicDefense] },
-        { id: 4, probability: 0.2, cooldown: 0, intents: [BuffResolve] },
-        { id: 5, probability: 0.2, cooldown: 0, intents: [DebufFeeble] },
-        { id: 6, probability: 0.2, cooldown: 0, intents: [DebuffFatigue] },
+        { id: 1, probability: 0.1, cooldown: 0, intents: [EB.createBasicAttackIntent(11, EB.ATTACK)] },
+        { id: 2, probability: 0.1, cooldown: 0, intents: [EB.createMultiplierAttackIntent(11, 2, EB.ATTACK2)] },
+        { id: 3, probability: 0.2, cooldown: 0, intents: [EB.createDefenseIntent(10, EB.DEFEND)] },
+        { id: 4, probability: 0.2, cooldown: 0, intents: [EB.createBasicBuffIntent(2, resolveStatus.name, EB.BUFF)] },
+        { id: 5, probability: 0.2, cooldown: 0, intents: [EB.createBasicDebuffIntent(2, feebleStatus.name, EB.DEBUFF)] },
+        { id: 6, probability: 0.2, cooldown: 0, intents: [EB.createBasicDebuffIntent(2, fatigue.name, EB.DEBUFF2)] },
 
     ]
 }
 
 const AdvancedIntents: EnemyAction = {
     options: [
-        { id: 7,  probability: 0.2, cooldown: 0, intents: [BasicAttack, BuffResolve] },
-        { id: 8,  probability: 0.2, cooldown: 0, intents: [BasicDefense, BuffResolve] },
-        { id: 9,  probability: 0.2, cooldown: 0, intents: [BasicDefense, DebufFeeble] },
-        { id: 10, probability: 0.2, cooldown: 0, intents: [CallReinforcements] },
-        { id: 11, probability: 0.2, cooldown: 0, intents: [SignatureMove] }
+        { id: 7,  probability: 0.2, cooldown: 0, intents: [
+            EB.createBasicAttackIntent(11, EB.ATTACK_BUFF), 
+            EB.createBasicBuffIntent(2, resolveStatus.name, EB.ATTACK_BUFF)
+        ] },
+        { id: 8,  probability: 0.2, cooldown: 0, intents: [
+            EB.createDefenseIntent(10, EB.DEFEND_BUFF), 
+            EB.createBasicBuffIntent(2, resolveStatus.name, EB.DEFEND_BUFF)
+        ] },
+        { id: 9,  probability: 0.2, cooldown: 0, intents: [
+            EB.createDefenseIntent(10, EB.DEFEND_DEBUFF), 
+            EB.createBasicDebuffIntent(2, feebleStatus.name, EB.DEFEND_DEBUFF)
+        ] },
+        { id: 10, probability: 0.2, cooldown: 0, intents: [EB.callForReinforcements([caveGoblinData.enemyId], EB.CALL_FOR_REINFORCEMENTS)] },
+        { id: 11, probability: 0.2, cooldown: 0, intents: [getSignatureMove(EB.SIGNATURE_MOVE)] }
     ]
 }
 

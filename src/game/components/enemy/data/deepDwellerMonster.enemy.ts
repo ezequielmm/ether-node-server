@@ -1,4 +1,4 @@
-import { EnemyBuilderService } from "../enemy-builder.service";
+import { EnemyBuilderService as EB } from "../enemy-builder.service";
 import { EnemyTypeEnum, EnemyCategoryEnum, EnemySizeEnum, EnemyIntentionType } from "../enemy.enum";
 import { EnemyAction, EnemyIntention } from "../enemy.interface";
 import { Enemy } from "../enemy.schema";
@@ -10,41 +10,40 @@ import { chargingBeam } from "src/game/status/chargingBeam/constants";
 //-------------------------------------------------------------------------------------------------------------------------------------------------------
 //- Intents:
 //-------------------------------------------------------------------------------------------------------------------------------------------------------
-const SignatureMove: EnemyIntention = {
-    name: "Charged Beam",
-    type: EnemyIntentionType.Signature,
-    target: CardTargetedEnum.Player,
-    value: 45,
-    effects: [
-        {
-            effect: attachStatusEffect.name,
-            target: CardTargetedEnum.Self,
-            args: {
-                statusName: chargingBeam.name,
-                statusArgs: {
-                    counter: 2,
+const getSignatureMove = (animationId:string):EnemyIntention => {
+    return {
+        name: "Charged Beam",
+        type: EnemyIntentionType.Signature,
+        target: CardTargetedEnum.Player,
+        value: 45,
+        effects: [
+            {
+                effect: attachStatusEffect.name,
+                target: CardTargetedEnum.Self,
+                args: {
+                    statusName: chargingBeam.name,
+                    statusArgs: {
+                        counter: 2,
+                    },
                 },
-            },
-            action: {
-                name: 'signature_move',
-                hint: 'signature_move',
-            },
-        }
-    ]
+                action: {
+                    name: animationId,
+                    hint: animationId,
+                },
+            }
+        ]
+    }
 }
-const BasicAttack:   EnemyIntention = EnemyBuilderService.createBasicAttackIntent(15);
-const Buff3Resolve:  EnemyIntention = EnemyBuilderService.createBasicBuffIntent(3, resolveStatus.name);
-const Beam:          EnemyIntention = EnemyBuilderService.createDwellerMonsterBeam(45);
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------------
 //- Attack Tables:
 //-------------------------------------------------------------------------------------------------------------------------------------------------------
 const BasicIntents: EnemyAction = {
     options: [
-        { id: 1, probability: 0.2, cooldown: 0, intents: [SignatureMove] },
-        { id: 2, probability: 0.5, cooldown: 0, intents: [BasicAttack] },
-        { id: 3, probability: 0.3, cooldown: 0, intents: [Buff3Resolve] },
-        { id: 4, probability: 0.3, cooldown: 0, intents: [Beam] },
+        { id: 1, probability: 0.2, cooldown: 0, intents: [getSignatureMove(EB.SIGNATURE_MOVE)] },
+        { id: 2, probability: 0.5, cooldown: 0, intents: [EB.createBasicAttackIntent(15, EB.ATTACK)] },
+        { id: 3, probability: 0.3, cooldown: 0, intents: [EB.createBasicBuffIntent(3, resolveStatus.name, EB.BUFF)] },
+        { id: 4, probability: 0.3, cooldown: 0, intents: [EB.createDwellerMonsterBeam(45)] },
     ]
 }
 

@@ -2,7 +2,7 @@ import { EnemyTypeEnum, EnemyCategoryEnum, EnemySizeEnum, EnemyIntentionType } f
 import { Enemy } from '../enemy.schema';
 import { resolveStatus } from 'src/game/status/resolve/constants';
 import { EnemyAction, EnemyIntention } from '../enemy.interface';
-import { EnemyBuilderService } from '../enemy-builder.service'
+import { EnemyBuilderService as EB } from '../enemy-builder.service'
 import { CardDestinationEnum, CardTargetedEnum } from '../../card/card.enum';
 import { PoisonedCard } from '../../card/data/poisoned.card';
 import { MoldCard } from '../../card/data/mold.card';
@@ -16,79 +16,74 @@ import { mitosisEffect } from 'src/game/effects/mitosis/constants';
 //-------------------------------------------------------------------------------------------------------------------------------------------------------
 //- Intents:
 //-------------------------------------------------------------------------------------------------------------------------------------------------------
-const BasicAttack:    EnemyIntention = EnemyBuilderService.createBasicAttackIntent(7);
-const Poison:         EnemyIntention = EnemyBuilderService.createAddCardIntent(1, PoisonedCard, CardDestinationEnum.Draw);
-const Poison2:        EnemyIntention = EnemyBuilderService.createAddCardIntent(2, PoisonedCard, CardDestinationEnum.Draw);
-const Poison3:        EnemyIntention = EnemyBuilderService.createAddCardIntent(3, PoisonedCard, CardDestinationEnum.Draw);
-const BuffResolve:    EnemyIntention = EnemyBuilderService.createBasicBuffIntent(2, resolveStatus.name);
-const DebuffMoldCard: EnemyIntention = EnemyBuilderService.createAddCardIntent(1, MoldCard, CardDestinationEnum.Draw);
-const BasicDefense:   EnemyIntention = EnemyBuilderService.createDefenseIntent(16);
-const SecondAttack:   EnemyIntention = EnemyBuilderService.createMultiplierAttackIntent(8, 2); 
-const Special:        EnemyIntention = {
-    type: EnemyIntentionType.Special,
-    target: CardTargetedEnum.Player,
-    value: 0,
-    effects: [
-        {
-            effect: mitosisEffect.name,
-            target: CardTargetedEnum.Player,
-            args: {
-                value: 0,
+const getSpecialAttack = (animationId:string):EnemyIntention => {
+    return {
+        type: EnemyIntentionType.Special,
+        target: CardTargetedEnum.Player,
+        value: 0,
+        effects: [
+            {
+                effect: mitosisEffect.name,
+                target: CardTargetedEnum.Player,
+                args: {
+                    value: 0,
+                },
+                action: {
+                    name: animationId,
+                    hint: animationId,
+                },
             },
-            action: {
-                name: 'special',
-                hint: 'special',
-            },
-        },
-    ]
+        ]
+    }
 }
 
-
-const SignatureMove:  EnemyIntention = {
-    name: "Toxic Sacrifice",
-    type: EnemyIntentionType.Signature,
-    target: CardTargetedEnum.Player,
-    value: 5,
-    negateDamage: 8,
-    effects: [
-        {
-            effect: damageEffect.name,
-            target: CardTargetedEnum.Player,
-            args:{
-                value: 5,
-                multiplier: 5,
+const getSignatureMove = (animationId:string):EnemyIntention => {
+    return {
+        name: "Toxic Sacrifice",
+        type: EnemyIntentionType.Signature,
+        target: CardTargetedEnum.Player,
+        value: 5,
+        negateDamage: 8,
+        effects: [
+            {
+                effect: damageEffect.name,
+                target: CardTargetedEnum.Player,
+                args:{
+                    value: 5,
+                    multiplier: 5,
+                },
+                action: {
+                    name: animationId,
+                    hint: animationId,
+                },
             },
-            action: {
-                name: 'signature_move',
-                hint: 'signature_move',
+            {
+                effect: addCardEffect.name,
+                target: CardTargetedEnum.Player,
+                args: {
+                    value: 3,
+                    cardId: PoisonedCard.cardId,     
+                    destination: CardDestinationEnum.Draw,
+                    position: AddCardPosition.Random,
+                },
+                action: {
+                    name: animationId,
+                    hint: animationId,
+                },
             },
-        },
-        {
-            effect: addCardEffect.name,
-            target: CardTargetedEnum.Player,
-            args: {
-                value: 3,
-                cardId: PoisonedCard.cardId,     
-                destination: CardDestinationEnum.Draw,
-                position: AddCardPosition.Random,
+            {
+                effect: immolateEffect.name,
+                target: CardTargetedEnum.Player,
+                args: {
+                    value: 0,
+                },
+                action: {
+                    name: animationId,
+                    hint: animationId,
+                },
             },
-            action: {
-                name: 'signature_move',
-                hint: 'signature_move',
-            },
-        },
-        {
-            effect: immolateEffect.name,
-            target: CardTargetedEnum.Player,
-            args: {
-                value: 0,
-            },
-            action: {
-                name: 'signature_move',
-                hint: 'signature_move',
-            },
-        },
-    ]
+        ]
+    }
 }
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -96,24 +91,39 @@ const SignatureMove:  EnemyIntention = {
 //-------------------------------------------------------------------------------------------------------------------------------------------------------
 const BasicIntents: EnemyAction = {
     options:[
-        { id: 1, probability: 0.2, cooldown: 0, intents: [BasicAttack, Poison] },  
-        { id: 2, probability: 0.1, cooldown: 0, intents: [BuffResolve] },  
-        { id: 3, probability: 0.1, cooldown: 0, intents: [DebuffMoldCard] },
-        { id: 4, probability: 0.2, cooldown: 0, intents: [Poison2] },
-        { id: 5, probability: 0.2, cooldown: 0, intents: [SecondAttack] },
-        { id: 6, probability: 0.2, cooldown: 0, intents: [BasicDefense] },
+        { id: 1, probability: 0.2, cooldown: 0, intents: [
+            EB.createBasicAttackIntent(7, EB.ATTACK_POISON), 
+            EB.createAddCardIntent(1, PoisonedCard, CardDestinationEnum.Draw, EB.ATTACK_POISON)
+        ] },  
+        { id: 2, probability: 0.1, cooldown: 0, intents: [EB.createBasicBuffIntent(2, resolveStatus.name, EB.BUFF)] },  
+        { id: 3, probability: 0.1, cooldown: 0, intents: [EB.createAddCardIntent(1, MoldCard, CardDestinationEnum.Draw, EB.DEBUFF)] },
+        { id: 4, probability: 0.2, cooldown: 0, intents: [EB.createAddCardIntent(2, PoisonedCard, CardDestinationEnum.Draw, EB.POISON)] },
+        { id: 5, probability: 0.2, cooldown: 0, intents: [EB.createMultiplierAttackIntent(8, 2, EB.ATTACK2)] },
+        { id: 6, probability: 0.2, cooldown: 0, intents: [EB.createDefenseIntent(16, EB.DEFEND)] },
     ]
 }
 
 const AdvancedIntents: EnemyAction = {
     options: [
-        { id: 8,  probability: 0.1, cooldown: 0, intents: [SecondAttack, Poison2] }, 
-        { id: 9,  probability: 0.1, cooldown: 0, intents: [SecondAttack, DebuffMoldCard] },
-        { id: 10, probability: 0.2, cooldown: 0, intents: [BasicDefense, BuffResolve] },
-        { id: 11, probability: 0.1, cooldown: 0, intents: [BasicDefense, DebuffMoldCard] },
-        { id: 12, probability: 0.1, cooldown: 0, intents: [Poison3] },
-        { id: 13, probability: 0.2, cooldown: 0, intents: [Special] },
-        { id: 14, probability: 0.2, cooldown: 0, intents: [SignatureMove] },
+        { id: 8,  probability: 0.1, cooldown: 0, intents: [
+            EB.createMultiplierAttackIntent(8, 2, EB.ATTACK_DEBUFF), 
+            EB.createAddCardIntent(2, PoisonedCard, CardDestinationEnum.Draw, EB.ATTACK_DEBUFF)
+        ] }, 
+        { id: 9,  probability: 0.1, cooldown: 0, intents: [
+            EB.createMultiplierAttackIntent(8, 2, EB.ATTACK_DEBUFF2), 
+            EB.createAddCardIntent(1, MoldCard, CardDestinationEnum.Draw, EB.ATTACK_DEBUFF2)
+        ] },
+        { id: 10, probability: 0.2, cooldown: 0, intents: [
+            EB.createDefenseIntent(16, EB.DEFEND_BUFF), 
+            EB.createBasicBuffIntent(2, resolveStatus.name, EB.DEFEND_BUFF)
+        ] },
+        { id: 11, probability: 0.1, cooldown: 0, intents: [
+            EB.createDefenseIntent(16, EB.DEFEND_DEBUFF), 
+            EB.createAddCardIntent(1, MoldCard, CardDestinationEnum.Draw, EB.DEFEND_DEBUFF)
+        ] },
+        { id: 12, probability: 0.1, cooldown: 0, intents: [EB.createAddCardIntent(3, PoisonedCard, CardDestinationEnum.Draw, EB.DEBUFF2)] },
+        { id: 13, probability: 0.2, cooldown: 0, intents: [getSpecialAttack(EB.SPECIAL)] },
+        { id: 14, probability: 0.2, cooldown: 0, intents: [getSignatureMove(EB.SIGNATURE_MOVE)] },
     ]
 }
 

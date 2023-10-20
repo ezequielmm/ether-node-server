@@ -1,22 +1,17 @@
 import { hatchingStatus } from "src/game/status/hatching/constants";
-import { EnemyBuilderService } from "../enemy-builder.service";
+import { EnemyBuilderService as EB } from "../enemy-builder.service";
 import { EnemyTypeEnum, EnemyCategoryEnum, EnemySizeEnum } from "../enemy.enum";
-import { EnemyAction, EnemyIntention } from "../enemy.interface";
+import { EnemyAction } from "../enemy.interface";
 import { Enemy } from "../enemy.schema";
-//-------------------------------------------------------------------------------------------------------------------------------------------------------
-//- Intents:
-//-------------------------------------------------------------------------------------------------------------------------------------------------------
-const BuffHatching: EnemyIntention = EnemyBuilderService.createBasicBuffIntent(2, hatchingStatus.name);
-const DoNothing:    EnemyIntention = EnemyBuilderService.createDoNothingIntent();
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------------
 //- Attack Tables:
 //-------------------------------------------------------------------------------------------------------------------------------------------------------
 const BasicIntents: EnemyAction = {
     options: [
-        { id: -1, probability: 1, cooldown: 0, intents:[DoNothing] },
-        { id: 1, probability: 1, cooldown: 0, intents:[BuffHatching] },
-        { id: 2, probability: 0, cooldown: 0, intents:[DoNothing] },
+        { id: -1, probability: 1, cooldown: 0, intents:[EB.createDoNothingIntent()] },
+        { id: 1,  probability: 1, cooldown: 0, intents:[EB.createBasicBuffIntent(2, hatchingStatus.name, EB.BUFF)] },
+        { id: 2,  probability: 0, cooldown: 0, intents:[EB.createDoNothingIntent()] },
     ]
 }
 

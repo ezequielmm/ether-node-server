@@ -2,7 +2,7 @@ import { EnemyTypeEnum, EnemyCategoryEnum, EnemySizeEnum, EnemyIntentionType } f
 import { Enemy } from '../enemy.schema';
 import { resolveStatus } from 'src/game/status/resolve/constants';
 import { EnemyAction, EnemyIntention } from '../enemy.interface';
-import { EnemyBuilderService } from '../enemy-builder.service'
+import { EnemyBuilderService as EB } from '../enemy-builder.service'
 import { feebleStatus } from 'src/game/status/feeble/constants';
 import { CardDestinationEnum, CardTargetedEnum } from '../../card/card.enum';
 import { moldPolypData } from './moldPolyp.enemy';
@@ -12,38 +12,28 @@ import { sporeDanceEffect } from 'src/game/effects/sporeDance/constants';
 //-------------------------------------------------------------------------------------------------------------------------------------------------------
 //- Intents:
 //-------------------------------------------------------------------------------------------------------------------------------------------------------
-const BasicAttack:     EnemyIntention = EnemyBuilderService.createBasicAttackIntent(17);
-const BasicDefense:    EnemyIntention = EnemyBuilderService.createDefenseIntent(15);
-const Buff2Resolve:    EnemyIntention = EnemyBuilderService.createBasicBuffIntent(2, resolveStatus.name);
-const Buff3Resolve:    EnemyIntention = EnemyBuilderService.createBasicBuffIntent(3, resolveStatus.name);
-const Absorb:          EnemyIntention = EnemyBuilderService.createAbsorbAttack();
-const DebuffFeeble:    EnemyIntention = EnemyBuilderService.createBasicDebuffIntent(2, feebleStatus.name); 
-const Breach:          EnemyIntention = EnemyBuilderService.createBreachAttack(12);
-const Counter:         EnemyIntention = EnemyBuilderService.createCounterAttack();
-const Reinforcements:  EnemyIntention = EnemyBuilderService.callForReinforcements([moldPolypData.enemyId]);
-const Infect:          EnemyIntention = EnemyBuilderService.createInfectIntent(11, 2);
-const DebuffMoldCard:  EnemyIntention = EnemyBuilderService.createAddCardIntent(1, MoldCard, CardDestinationEnum.Draw);
-const Debuff2MoldCard: EnemyIntention = EnemyBuilderService.createAddCardIntent(2, MoldCard, CardDestinationEnum.Draw);
-const Mistify:         EnemyIntention = EnemyBuilderService.createMistifyAction(1);
-const SignatureMove:   EnemyIntention = {
-    name: "Spore Dance",
-    type: EnemyIntentionType.Signature,
-    target: CardTargetedEnum.Player,
-    value: 8,
-    negateDamage: 15,
-    effects: [
-        {
-            effect: sporeDanceEffect.name,
-            target: CardTargetedEnum.Player,
-            args: {
-                value: 0,
-            },
-            action: {
-                name: 'signature_move',
-                hint: 'signature_move',
-            },
-        }
-    ]
+
+const getSignatureMove = (animationId:string):EnemyIntention => {
+    return {
+        name: "Spore Dance",
+        type: EnemyIntentionType.Signature,
+        target: CardTargetedEnum.Player,
+        value: 8,
+        negateDamage: 15,
+        effects: [
+            {
+                effect: sporeDanceEffect.name,
+                target: CardTargetedEnum.Player,
+                args: {
+                    value: 0,
+                },
+                action: {
+                    name: animationId,
+                    hint: animationId,
+                },
+            }
+        ]
+    }
 }
 
 
@@ -52,28 +42,40 @@ const SignatureMove:   EnemyIntention = {
 //-------------------------------------------------------------------------------------------------------------------------------------------------------
 const BasicIntents: EnemyAction = {
     options:[
-        { id: 1, probability: 0.3, cooldown: 0, intents: [BasicAttack] }, 
-        { id: 4, probability: 0.1, cooldown: 0, intents: [BasicDefense] },
-        { id: 3, probability: 0.1, cooldown: 0, intents: [Buff2Resolve] }, 
-        { id: 5, probability: 0.1, cooldown: 0, intents: [Absorb] },
-        { id: 3, probability: 0.1, cooldown: 0, intents: [DebuffFeeble] },
-        { id: 6, probability: 0.3, cooldown: 0, intents: [Reinforcements] },
+        { id: 1, probability: 0.3, cooldown: 0, intents: [EB.createBasicAttackIntent(17, EB.ATTACK)] }, 
+        { id: 4, probability: 0.1, cooldown: 0, intents: [EB.createDefenseIntent(15, EB.DEFEND)] },
+        { id: 3, probability: 0.1, cooldown: 0, intents: [EB.createBasicBuffIntent(2, resolveStatus.name, EB.BUFF)] }, 
+        { id: 5, probability: 0.1, cooldown: 0, intents: [EB.createAbsorbAttack(EB.ABSORB)] },
+        { id: 3, probability: 0.1, cooldown: 0, intents: [EB.createBasicDebuffIntent(2, feebleStatus.name, EB.DEBUFF)] },
+        { id: 6, probability: 0.3, cooldown: 0, intents: [EB.callForReinforcements([moldPolypData.enemyId], EB.CALL_FOR_REINFORCEMENTS)] },
     ]
 }
 
 const AdvancedIntents: EnemyAction = {
     options: [
-        { id: 8,  probability: 0.1,  cooldown: 0, intents: [Breach] },
-        { id: 9,  probability: 0.1,  cooldown: 0, intents: [BasicAttack, DebuffMoldCard] },
-        { id: 10, probability: 0.1,  cooldown: 0, intents: [Reinforcements] },
-        { id: 11, probability: 0.1,  cooldown: 0, intents: [BasicAttack, DebuffFeeble] },
-        { id: 12, probability: 0.1,  cooldown: 0, intents: [Absorb, BasicDefense] },
-        { id: 13, probability: 0.1,  cooldown: 0, intents: [Buff3Resolve] },
-        { id: 14, probability: 0.1,  cooldown: 0, intents: [Mistify] },
-        { id: 15, probability: 0.1,  cooldown: 0, intents: [Infect] },
-        { id: 16, probability: 0.1,  cooldown: 0, intents: [Counter, Buff2Resolve] },
-        { id: 17, probability: 0.05, cooldown: 0, intents: [Debuff2MoldCard] },
-        { id: 18, probability: 0.05, cooldown: 0, intents: [SignatureMove] }
+        { id: 8,  probability: 0.1,  cooldown: 0, intents: [EB.createBreachAttack(12, EB.BRECH)] },
+        { id: 9,  probability: 0.1,  cooldown: 0, intents: [
+            EB.createBasicAttackIntent(17, EB.ATTACK_DEBUFF), 
+            EB.createAddCardIntent(1, MoldCard, CardDestinationEnum.Draw, EB.ATTACK_DEBUFF)
+        ] },
+        { id: 10, probability: 0.1,  cooldown: 0, intents: [EB.callForReinforcements([moldPolypData.enemyId], EB.CALL_FOR_REINFORCEMENTS)] },
+        { id: 11, probability: 0.1,  cooldown: 0, intents: [
+            EB.createBasicAttackIntent(17, EB.ATTACK_DEBUFF2), 
+            EB.createBasicDebuffIntent(2, feebleStatus.name, EB.ATTACK_DEBUFF2)
+        ] },
+        { id: 12, probability: 0.1,  cooldown: 0, intents: [
+            EB.createAbsorbAttack(EB.ABSORB_DEFEND), 
+            EB.createDefenseIntent(15, EB.ABSORB_DEFEND)
+        ] },
+        { id: 13, probability: 0.1,  cooldown: 0, intents: [EB.createBasicBuffIntent(3, resolveStatus.name, EB.BUFF2)] },
+        { id: 14, probability: 0.1,  cooldown: 0, intents: [EB.createMistifyAction(1, EB.MISTIFY)] },
+        { id: 15, probability: 0.1,  cooldown: 0, intents: [EB.createInfectIntent(11, 2, EB.INFECT)] },
+        { id: 16, probability: 0.1,  cooldown: 0, intents: [
+            EB.createCounterAttack(EB.COUNTER_BUFF), 
+            EB.createBasicBuffIntent(2, resolveStatus.name, EB.COUNTER_BUFF)
+        ] },
+        { id: 17, probability: 0.05, cooldown: 0, intents: [EB.createAddCardIntent(2, MoldCard, CardDestinationEnum.Draw, EB.DEBUFF3)] },
+        { id: 18, probability: 0.05, cooldown: 0, intents: [getSignatureMove(EB.SIGNATURE_MOVE)] }
     ]
 }
 
