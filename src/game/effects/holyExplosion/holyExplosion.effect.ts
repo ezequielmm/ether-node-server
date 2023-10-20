@@ -44,19 +44,22 @@ export class holyExplosionEffect implements EffectHandler {
         //we get the alive enemies in the currentNode
         const currentNodeEnemies = this.enemyService.getLiving(ctx);
         console.log('ENEMIGOS VIVOS ME RETORNA -> [ ' , currentNodeEnemies, ' ]' );
+
         if (!target) {
             this.logger.debug(ctx.info, 'No target found for holyExplosion');
             return;
         }
 
         console.log('ENERGIA', energy);
-        
-        //we iterate all enemies
-        currentNodeEnemies.forEach(async(currentEnemy) =>{
-            
-            const enemyType = currentEnemy.value.type;
 
-            //depending if is undead or not, we apply the damageEffect
+        //we iterate all enemies
+        //currentNodeEnemies.forEach(async(currentEnemy) =>{
+            
+            if(EnemyService.isEnemy(target)){
+
+                const enemyType = target.value.type;
+
+                //depending if is undead or not, we apply the damageEffect
             if(enemyType === EnemyTypeEnum.Undead){
                 console.log(enemyType, 'ENTRE AL IF');
 
@@ -116,6 +119,7 @@ export class holyExplosionEffect implements EffectHandler {
                 },
                 action: action,
             });
-        });               
+            }       
+        //});               
     } 
 }
