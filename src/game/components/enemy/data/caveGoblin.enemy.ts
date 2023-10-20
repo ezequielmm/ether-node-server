@@ -7,99 +7,108 @@ import { resolveStatus } from 'src/game/status/resolve/constants';
 import { feebleStatus } from 'src/game/status/feeble/constants';
 import { hiddenStatus } from 'src/game/status/hidden/constants';
 import { EnemyAction, EnemyIntention } from '../enemy.interface';
-import { EnemyBuilderService } from '../enemy-builder.service';
+import { EnemyBuilderService as EB } from '../enemy-builder.service';
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------------
 //- Intents:
 //-------------------------------------------------------------------------------------------------------------------------------------------------------
-const BasicAttack:     EnemyIntention = EnemyBuilderService.createBasicAttackIntent(8);
-const SecondAttack:    EnemyIntention = EnemyBuilderService.createMultiplierAttackIntent(4, 3);
-const BasicDefense:    EnemyIntention = EnemyBuilderService.createDefenseIntent(6);
-const BuffResolve:     EnemyIntention = EnemyBuilderService.createBasicBuffIntent(2, resolveStatus.name);
-const DebuffFeeble:    EnemyIntention = EnemyBuilderService.createBasicDebuffIntent(1, feebleStatus.name);
-
-const SpecialAttack: EnemyIntention =
-{
-    type: EnemyIntentionType.Special,
-    target: CardTargetedEnum.Self,
-    value: 2,
-    effects: [
-        {
-            effect: attachStatusEffect.name,
-            target: CardTargetedEnum.Self,
-            args: {
-                statusName: hiddenStatus.name,
-                statusArgs: {
-                    counter: 2,
+const getSpecialAttack = (animationId:string):EnemyIntention => {
+    return {
+        type: EnemyIntentionType.Special,
+        target: CardTargetedEnum.Self,
+        value: 2,
+        effects: [
+            {
+                effect: attachStatusEffect.name,
+                target: CardTargetedEnum.Self,
+                args: {
+                    statusName: hiddenStatus.name,
+                    statusArgs: {
+                        counter: 2,
+                    },
+                },
+                action: {
+                    name: animationId,
+                    hint: animationId,
                 },
             },
-            action: {
-                name: 'special',
-                hint: 'special',
-            },
-        },
-    ],
+        ],
+    }
 }
 
-const SignatureAttack: EnemyIntention =
-{
-    name: "Hit & Run",
-    type: EnemyIntentionType.Signature,
-    target: CardTargetedEnum.Player,
-    value: 6,
-    negateDamage: 5,
-    effects: [
-        {
-            effect: damageEffect.name,
-            target: CardTargetedEnum.Player,
-            args: {
-                value: 6,
-                multiplier: 3,
-            },
-            action: {
-                name: 'signature_move',
-                hint: 'signature_move',
-            },
-        },
-        {
-            effect: attachStatusEffect.name,
-            target: CardTargetedEnum.Self,
-            args: {
-                statusName: hiddenStatus.name,
-                statusArgs: {
-                    counter: 3,
+const getSignatureMove = (animationId:string):EnemyIntention => {
+    return {
+        name: "Hit & Run",
+        type: EnemyIntentionType.Signature,
+        target: CardTargetedEnum.Player,
+        value: 6,
+        negateDamage: 5,
+        effects: [
+            {
+                effect: damageEffect.name,
+                target: CardTargetedEnum.Player,
+                args: {
+                    value: 6,
+                    multiplier: 3,
+                },
+                action: {
+                    name: animationId,
+                    hint: animationId,
                 },
             },
-            action: {
-                name: 'signature_move',
-                hint: 'signature_move',
+            {
+                effect: attachStatusEffect.name,
+                target: CardTargetedEnum.Self,
+                args: {
+                    statusName: hiddenStatus.name,
+                    statusArgs: {
+                        counter: 3,
+                    },
+                },
+                action: {
+                    name: animationId,
+                    hint: animationId,
+                },
             },
-        },
-    ],
+        ],
+    }
 }
+
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------------
 //- Attack Tables:
 //-------------------------------------------------------------------------------------------------------------------------------------------------------
 const BasicIntents: EnemyAction = {
     options:[
-        { id: 1, probability: 0.2, cooldown: 0, intents: [BasicAttack] },
-        { id: 2, probability: 0.1, cooldown: 0, intents: [SecondAttack] },
-        { id: 3, probability: 0.1, cooldown: 0, intents: [BasicDefense] },
-        { id: 4, probability: 0.2, cooldown: 0, intents: [BuffResolve] },
-        { id: 5, probability: 0.1, cooldown: 0, intents: [DebuffFeeble] },
-        { id: 6, probability: 0.2, cooldown: 0, intents: [SpecialAttack] },
-        { id: 7, probability: 0.1, cooldown: 0, intents: [SignatureAttack] },
+        { id: 1, probability: 0.2, cooldown: 0, intents: [EB.createBasicAttackIntent(8, EB.ATTACK)] },
+        { id: 2, probability: 0.1, cooldown: 0, intents: [EB.createMultiplierAttackIntent(4, 3, EB.ATTACK_HIDDEN)] },
+        { id: 3, probability: 0.1, cooldown: 0, intents: [EB.createDefenseIntent(6, EB.DEFEND)] },
+        { id: 4, probability: 0.2, cooldown: 0, intents: [EB.createBasicBuffIntent(2, resolveStatus.name, EB.BUFF)] },
+        { id: 5, probability: 0.1, cooldown: 0, intents: [EB.createBasicDebuffIntent(1, feebleStatus.name, EB.DEBUFF)] },
+        { id: 6, probability: 0.2, cooldown: 0, intents: [getSpecialAttack(EB.SPECIAL)] },
+        { id: 7, probability: 0.1, cooldown: 0, intents: [getSignatureMove(EB.SIGNATURE_MOVE)] },
     ]
 }
 
 const AdvancedIntents: EnemyAction = {
     options: [
-        { id: 8,  probability: 0.3, cooldown: 0, intents: [BasicAttack, BuffResolve] },
-        { id: 9,  probability: 0.2, cooldown: 0, intents: [BasicDefense, BuffResolve] },
-        { id: 10, probability: 0.2, cooldown: 0, intents: [BasicDefense, DebuffFeeble] },
-        { id: 11, probability: 0.2, cooldown: 0, intents: [SpecialAttack, BasicAttack] },
-        { id: 12, probability: 0.1, cooldown: 0, intents: [SignatureAttack] },
+        { id: 8,  probability: 0.3, cooldown: 0, intents: [
+            EB.createBasicAttackIntent(8, EB.ATTACK_BUFF), 
+            EB.createBasicBuffIntent(2, resolveStatus.name, EB.ATTACK_BUFF)
+        ] },
+        { id: 9,  probability: 0.2, cooldown: 0, intents: [
+            EB.createDefenseIntent(6, EB.DEFEND_BUFF), 
+            EB.createBasicBuffIntent(2, resolveStatus.name, EB.DEFEND_BUFF)
+        ] },
+        { id: 10, probability: 0.2, cooldown: 0, intents: [
+            EB.createDefenseIntent(6, EB.DEFEND_DEBUFF), 
+            EB.createBasicDebuffIntent(1, feebleStatus.name, EB.DEFEND_DEBUFF)
+        ] },
+        { id: 11, probability: 0.2, cooldown: 0, intents: [
+            getSpecialAttack(EB.SPECIAL_ATTACK), 
+            EB.createBasicAttackIntent(8, EB.SPECIAL_ATTACK)
+        ] },
+        { id: 12, probability: 0.1, cooldown: 0, intents: [getSignatureMove(EB.SIGNATURE_MOVE)] },
     ]
 }
 

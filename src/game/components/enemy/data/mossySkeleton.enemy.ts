@@ -4,7 +4,7 @@ import { resolveStatus } from 'src/game/status/resolve/constants';
 import { fatigue } from 'src/game/status/fatigue/constants';
 import { feebleStatus } from 'src/game/status/feeble/constants';
 import { EnemyAction, EnemyIntention } from '../enemy.interface';
-import { EnemyBuilderService } from '../enemy-builder.service';
+import { EnemyBuilderService as EB } from '../enemy-builder.service';
 import { CardDestinationEnum, CardTargetedEnum } from '../../card/card.enum';
 import { breachEffect } from 'src/game/effects/breach/constants';
 import { addCardEffect } from 'src/game/effects/addCard/contants';
@@ -15,62 +15,56 @@ import { PoisonedCard } from '../../card/data/poisoned.card';
 //-------------------------------------------------------------------------------------------------------------------------------------------------------
 //- Intents:
 //-------------------------------------------------------------------------------------------------------------------------------------------------------
-const BasicAttack_sword: EnemyIntention = EnemyBuilderService.createBasicAttackIntent(14);
-const BasicAttack_arrow: EnemyIntention = EnemyBuilderService.createBasicAttackIntent(9);
-const DebuffFeeble:      EnemyIntention = EnemyBuilderService.createBasicDebuffIntent(1, feebleStatus.name);
-const BasicDefense:      EnemyIntention = EnemyBuilderService.createDefenseIntent(14);
-const BuffResolve:       EnemyIntention = EnemyBuilderService.createBasicBuffIntent(2, resolveStatus.name);
-const DebuffFatigue:     EnemyIntention = EnemyBuilderService.createBasicDebuffIntent(1, fatigue.name);
-const Breach:            EnemyIntention = EnemyBuilderService.createBreachAttack(16);
-const Infect:            EnemyIntention = EnemyBuilderService.createInfectIntent(11, 1);
-const Grow:              EnemyIntention = EnemyBuilderService.createGrowIntent(20, 10, 3);
-const SignatureMove:     EnemyIntention = {
-    name: "Ill Blade",
-    type: EnemyIntentionType.Signature,
-    target: CardTargetedEnum.Player,
-    value: 12,
-    negateDamage: 10,
-    effects: [
-        {
-            effect: breachEffect.name,
-            target: CardTargetedEnum.Player,
-            args: {
-                value: 12,
+
+const getSignatureMove = (animationId:string):EnemyIntention => {
+    return {
+        name: "Ill Blade",
+        type: EnemyIntentionType.Signature,
+        target: CardTargetedEnum.Player,
+        value: 12,
+        negateDamage: 10,
+        effects: [
+            {
+                effect: breachEffect.name,
+                target: CardTargetedEnum.Player,
+                args: {
+                    value: 12,
+                },
+                action: {
+                    name: animationId,
+                    hint: animationId,
+                },
             },
-            action: {
-                name: 'signature_move',
-                hint: 'signature_move',
+            {
+                effect: addCardEffect.name,
+                target: CardTargetedEnum.Player,
+                args: {
+                    value: 2,
+                    cardId: DecayCard.cardId,     
+                    destination: CardDestinationEnum.Draw,
+                    position: AddCardPosition.Random,
+                },
+                action: {
+                    name: animationId,
+                    hint: animationId,
+                },
             },
-        },
-        {
-            effect: addCardEffect.name,
-            target: CardTargetedEnum.Player,
-            args: {
-                value: 2,
-                cardId: DecayCard.cardId,     
-                destination: CardDestinationEnum.Draw,
-                position: AddCardPosition.Random,
-            },
-            action: {
-                name: 'signature_move',
-                hint: 'signature_move',
-            },
-        },
-        {
-            effect: addCardEffect.name,
-            target: CardTargetedEnum.Player,
-            args: {
-                value: 2,
-                cardId: PoisonedCard.cardId,     
-                destination: CardDestinationEnum.Draw,
-                position: AddCardPosition.Random,
-            },
-            action: {
-                name: 'signature_move',
-                hint: 'signature_move',
-            },
-        }
-    ]
+            {
+                effect: addCardEffect.name,
+                target: CardTargetedEnum.Player,
+                args: {
+                    value: 2,
+                    cardId: PoisonedCard.cardId,     
+                    destination: CardDestinationEnum.Draw,
+                    position: AddCardPosition.Random,
+                },
+                action: {
+                    name: animationId,
+                    hint: animationId,
+                },
+            }
+        ]
+    }
 }
 
 
@@ -79,25 +73,43 @@ const SignatureMove:     EnemyIntention = {
 //-------------------------------------------------------------------------------------------------------------------------------------------------------
 const BasicIntents: EnemyAction = {
     options:[
-        { id: 1, probability: 0.2, cooldown: 0, intents: [BasicAttack_sword] },
-        { id: 2, probability: 0.2, cooldown: 0, intents: [BasicAttack_arrow, DebuffFeeble] },
-        { id: 3, probability: 0.1, cooldown: 0, intents: [BasicDefense] },
-        { id: 4, probability: 0.2, cooldown: 0, intents: [BuffResolve] },
-        { id: 5, probability: 0.1, cooldown: 0, intents: [DebuffFatigue] },
-        { id: 6, probability: 0.2, cooldown: 0, intents: [Infect] },
+        { id: 1, probability: 0.2, cooldown: 0, intents: [EB.createBasicAttackIntent(14, EB.ATTACK_SWORD)] },
+        { id: 2, probability: 0.2, cooldown: 0, intents: [
+            EB.createBasicAttackIntent(9, EB.ATTACK_ARROW_DEBUFF), 
+            EB.createBasicDebuffIntent(1, feebleStatus.name, EB.ATTACK_ARROW_DEBUFF)
+        ] },
+        { id: 3, probability: 0.1, cooldown: 0, intents: [EB.createDefenseIntent(14, EB.DEFEND)] },
+        { id: 4, probability: 0.2, cooldown: 0, intents: [EB.createBasicBuffIntent(2, resolveStatus.name, EB.BUFF)] },
+        { id: 5, probability: 0.1, cooldown: 0, intents: [EB.createBasicDebuffIntent(1, fatigue.name, EB.DEBUFF)] },
+        { id: 6, probability: 0.2, cooldown: 0, intents: [EB.createInfectIntent(11, 1, EB.INFECT)] },
     ]
 }
 
 const AdvancedIntents: EnemyAction = {
     options: [
-        { id: 7,  probability: 0.1, cooldown: 0, intents: [BasicAttack_sword, BuffResolve] },
-        { id: 8,  probability: 0.1, cooldown: 0, intents: [BasicAttack_arrow, DebuffFeeble] },
-        { id: 9,  probability: 0.1, cooldown: 0, intents: [BasicDefense, BuffResolve] },
-        { id: 10,  probability: 0.1, cooldown: 0, intents: [Breach] },
-        { id: 11, probability: 0.2, cooldown: 0, intents: [BasicDefense, DebuffFeeble] },
-        { id: 12, probability: 0.2, cooldown: 0, intents: [Grow] },
-        { id: 13, probability: 0.1, cooldown: 0, intents: [Infect, BasicAttack_sword] },
-        { id: 14, probability: 0.1, cooldown: 0, intents: [SignatureMove] }
+        { id: 7,  probability: 0.1, cooldown: 0, intents: [
+            EB.createBasicAttackIntent(14, EB.ATTACK_SWORD_BUFF), 
+            EB.createBasicBuffIntent(2, resolveStatus.name, EB.ATTACK_SWORD_BUFF)
+        ] },
+        { id: 8,  probability: 0.1, cooldown: 0, intents: [
+            EB.createBasicAttackIntent(9, EB.ATTACK_ARROW_DEBUFF2), 
+            EB.createBasicDebuffIntent(2, feebleStatus.name, EB.ATTACK_ARROW_DEBUFF2)
+        ] },
+        { id: 9,  probability: 0.1, cooldown: 0, intents: [
+            EB.createDefenseIntent(14, EB.DEFEND_BUFF), 
+            EB.createBasicBuffIntent(2, resolveStatus.name, EB.DEFEND_BUFF)
+        ] },
+        { id: 10,  probability: 0.1, cooldown: 0, intents: [EB.createBreachAttack(16, EB.BRECH)] },
+        { id: 11, probability: 0.2, cooldown: 0, intents: [
+            EB.createDefenseIntent(14, EB.DEFEND_DEBUFF), 
+            EB.createBasicDebuffIntent(1, feebleStatus.name, EB.DEFEND_DEBUFF)
+        ] },
+        { id: 12, probability: 0.2, cooldown: 0, intents: [EB.createGrowIntent(20, 10, 3, EB.GROW)] },
+        { id: 13, probability: 0.1, cooldown: 0, intents: [
+            EB.createInfectIntent(11, 1, EB.INFECT_ATTACK_SWORD), 
+            EB.createBasicAttackIntent(14, EB.INFECT_ATTACK_SWORD)
+        ] },
+        { id: 14, probability: 0.1, cooldown: 0, intents: [getSignatureMove(EB.SIGNATURE_MOVE)] }
     ]
 }
 

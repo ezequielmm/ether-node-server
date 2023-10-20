@@ -19,8 +19,56 @@ import { counterStatus } from "src/game/status/counter/constants";
 import { addConditionalCardEffect } from "src/game/effects/addConditionalCard/constants";
 
 export class EnemyBuilderService {
+
+    public static ATTACK                         = "attack";
+    public static ATTACK2                        = "attack_2";
+    public static ATTACK_SWORD                   = "attack_sword";
+    public static ATTACK_SWORD_BUFF              = "attack_sword_buff";
+    public static ATTACK_ARROW_DEBUFF            = "attack_arrow_debuff";
+    public static ATTACK_ARROW_DEBUFF2           = "attack_arrow_debuff_2";
+    public static ATTACK_HIDDEN                  = "attack_hidden_2";
+    public static ATTACK_POISON                  = "attack_poison";
+    public static POISON                         = "posion";
+    public static DEFEND                         = "defend";
+    public static BUFF                           = "buff";
+    public static BUFF2                          = "buff_2";
+    public static DEBUFF                         = "debuff";
+    public static DEBUFF2                        = "debuff2";
+    public static DEBUFF3                        = "debuff3";
+    public static SPECIAL                        = "special";
+    public static SIGNATURE_MOVE                 = "signature_move";
+    public static ATTACK_BUFF                    = "attack_buff";
+    public static ATTACK_DEBUFF                  = "attack_debuff";
+    public static ATTACK_DEBUFF2                 = "attack_debuff_2";
+    public static ATTACK_DEBUFF3                 = "attack_debuff_2";
+    public static DEFEND_BUFF                    = "defend_buff";
+    public static DEFEND_DEBUFF                  = "defend_debuff";
+    public static SPECIAL_ATTACK                 = "special_attack";
+    public static SIGNATURE_DEBUFF               = "signature_attack_debuff";
+    public static COUNTER                        = "counter";
+    public static COUNTER_DEFEND                 = "counter_defend";
+    public static INFECT                         = "infect";
+    public static INFECT_ATTACK_SWORD            = "infect_attack_sword";
+    public static INFECT_ATTACK                  = "infect_attack";
+    public static BRECH                          = "breach";
+    public static GROW                           = "grow";
+    public static DODGE                          = "dodge";
+    public static MISTIFY                        = "mistify";
+    public static MISTIFY2                       = "mistify2";
+    public static ABSORB                         = "absorb";
+    public static ABSORB_DEFEND                  = "absorb_defend";
+    public static COUNTER_BUFF                   = "counter_buff";
+    public static CALL_FOR_REINFORCEMENTS        = "call_for_reinforcements";
+    public static CALL_FOR_REINFORCEMENTS2       = "call_for_reinforcements2";
+    public static ABSORB_CALL_FOR_REINFORCEMENTS = "absorb_call_for_reinforcements";
+    public static SUMMON                         = "summon";
+    public static SUMMON2                        = "summon_2";
+    public static SUMMON3                        = "summon_3";
+    public static SUMMON4                        = "summon_4";
+    public static ATTACK_THUNDER_RED_DEBUF      = "attack_thunder_red_debuff";
+    public static ATTACK_THUNDER_GREEN_DEBUFF2   = "attack_thunder_green_debuff_2";
     
-    public static createBasicAttackIntent = (attack:number):EnemyIntention  => {
+    public static createBasicAttackIntent = (attack:number, animationId: string):EnemyIntention  => {
         return {
             type: EnemyIntentionType.Attack,
             target: CardTargetedEnum.Player,
@@ -33,15 +81,15 @@ export class EnemyBuilderService {
                         value: attack,
                     },
                     action: {
-                        name: 'attack',
-                        hint: 'attack',
+                        name: animationId,
+                        hint: animationId,
                     },
                 },
             ],
         }
     }
 
-    public static createBreachAttack = (breach:number): EnemyIntention => {
+    public static createBreachAttack = (breach:number, animationId: string): EnemyIntention => {
         return {
             type: EnemyIntentionType.Breach,
             target: CardTargetedEnum.Player,
@@ -54,15 +102,15 @@ export class EnemyBuilderService {
                         value: breach,
                     },
                     action: {
-                        name: 'breach',
-                        hint: 'breach',
+                        name: animationId,
+                        hint: animationId,
                     },
                 },
             ],
         }
     }
 
-    public static createCounterAttack = (): EnemyIntention => {
+    public static createCounterAttack = (animationId: string): EnemyIntention => {
         return {
             type: EnemyIntentionType.Counter,
             target: CardTargetedEnum.Self,
@@ -78,15 +126,15 @@ export class EnemyBuilderService {
                         },
                     },
                     action: {
-                        name: 'counter',
-                        hint: 'counter',
+                        name: animationId,
+                        hint: animationId,
                     },
                 },
             ],
         }
     }
 
-    public static createAbsorbAttack = (): EnemyIntention => {
+    public static createAbsorbAttack = (animationId: string): EnemyIntention => {
         return {
             type: EnemyIntentionType.Absorb,
             target: CardTargetedEnum.Player,
@@ -99,15 +147,15 @@ export class EnemyBuilderService {
                         value: 0,
                     },
                     action: {
-                        name: 'absorb',
-                        hint: 'absorb',
+                        name: animationId,
+                        hint: animationId,
                     },
                 },
             ],
         }
     }
 
-    public static createMultiplierAttackIntent = (attack:number, multiplier:number):EnemyIntention  => {
+    public static createMultiplierAttackIntent = (attack:number, multiplier:number, animationId: string):EnemyIntention  => {
         return {
             type: EnemyIntentionType.Attack,
             target: CardTargetedEnum.Player,
@@ -121,15 +169,15 @@ export class EnemyBuilderService {
                         multiplier: multiplier,
                     },
                     action: {
-                        name: 'attack2',
-                        hint: 'attack2',
+                        name: animationId,
+                        hint: animationId,
                     },
                 },
             ],
         }
     }
 
-    public static createDefenseIntent = (defense:number):EnemyIntention  => {
+    public static createDefenseIntent = (defense:number, animationId: string):EnemyIntention  => {
         return {
             type: EnemyIntentionType.Defend,
             target: CardTargetedEnum.Self,
@@ -142,8 +190,8 @@ export class EnemyBuilderService {
                         value: defense,
                     },
                     action: {
-                        name: 'defend',
-                        hint: 'defend',
+                        name: animationId,
+                        hint: animationId,
                     },
                 },
             ],
@@ -167,7 +215,7 @@ export class EnemyBuilderService {
         }
     }
 
-    public static createBasicBuffIntent = (value:number, name:string):EnemyIntention  => {
+    public static createBasicBuffIntent = (value:number, name:string, animationId:string):EnemyIntention  => {
         return {
             type: EnemyIntentionType.Buff,
             target: CardTargetedEnum.Self,
@@ -183,15 +231,15 @@ export class EnemyBuilderService {
                         },
                     },
                     action: {
-                        name: 'buff',
-                        hint: 'buff',
+                        name: animationId,
+                        hint: animationId,
                     },
                 },
             ],
         }
     }
 
-    public static createBasicDebuffIntent = (value:number, name:string):EnemyIntention  => {
+    public static createBasicDebuffIntent = (value:number, name:string, animationId:string):EnemyIntention  => {
         return {
             type: EnemyIntentionType.Debuff,
             target: CardTargetedEnum.Player,
@@ -207,15 +255,15 @@ export class EnemyBuilderService {
                         },
                     },
                     action: {
-                        name: 'debuff',
-                        hint: 'debuff',
+                        name: animationId,
+                        hint: animationId,
                     },
                 },
             ],
         }
     }
 
-    public static createAddCardIntent = (amount:number, card:Card, destination: CardDestinationEnum):EnemyIntention  => {
+    public static createAddCardIntent = (amount:number, card:Card, destination: CardDestinationEnum, animationId:string):EnemyIntention  => {
         return {
             type: EnemyIntentionType.Debuff,
             target: CardTargetedEnum.Player,
@@ -231,15 +279,15 @@ export class EnemyBuilderService {
                         position: AddCardPosition.Random,
                     },
                     action: {
-                        name: 'debuff',
-                        hint: 'debuff',
+                        name: animationId,
+                        hint: animationId,
                     },
                 }
             ]
         }
     }
 
-    public static createMistifyAction = (amount:number) => {
+    public static createMistifyAction = (amount:number, animationId:string) => {
         return {
             type: EnemyIntentionType.Mistify,
             target: CardTargetedEnum.Player,
@@ -255,15 +303,15 @@ export class EnemyBuilderService {
                         position: AddCardPosition.Random,
                     },
                     action: {
-                        name: 'mistify',
-                        hint: 'mistify',
+                        name: animationId,
+                        hint: animationId,
                     },
                 }
             ]
         }
     }
 
-    public static invokeMinionsIntent = (enemies: number[]): EnemyIntention  => {
+    public static invokeMinionsIntent = (enemies: number[], animationId:string): EnemyIntention  => {
         return {
             type: EnemyIntentionType.Special,
             target: CardTargetedEnum.Self,
@@ -276,15 +324,15 @@ export class EnemyBuilderService {
                         enemiesToSpawn: enemies,
                     },
                     action: {
-                        name: 'call_for_reinforcements',
-                        hint: 'call_for_reinforcements',
+                        name: animationId,
+                        hint: animationId,
                     },
                 },
             ],
         }
     }
 
-    public static callForReinforcements = (enemies: number[]): EnemyIntention  => {
+    public static callForReinforcements = (enemies: number[], animationId:string): EnemyIntention  => {
         return {
             type: EnemyIntentionType.Reinforcements,
             target: CardTargetedEnum.Self,
@@ -297,15 +345,15 @@ export class EnemyBuilderService {
                         enemiesToSpawn: enemies,
                     },
                     action: {
-                        name: 'call_for_reinforcements',
-                        hint: 'call_for_reinforcements',
+                        name: animationId,
+                        hint: animationId,
                     },
                 },
             ],
         }
     }
 
-    public static createInfectIntent = (damage:number, decayAmount:number) => {
+    public static createInfectIntent = (damage:number, decayAmount:number, animationId:string) => {
         return {
             type: EnemyIntentionType.Infect,
             target: CardTargetedEnum.Player,
@@ -322,8 +370,8 @@ export class EnemyBuilderService {
                         damage
                     },
                     action: {
-                        name: 'infect',
-                        hint: 'infect',
+                        name: animationId,
+                        hint: animationId,
                     },
                 },
                 {
@@ -333,8 +381,8 @@ export class EnemyBuilderService {
                         value: damage,
                     },
                     action: {
-                        name: 'infect',
-                        hint: 'infect',
+                        name: animationId,
+                        hint: animationId,
                     },
                 },
             ],
@@ -342,7 +390,7 @@ export class EnemyBuilderService {
     }
 
 
-    public static createGrowIntent = (healAmount: number, negateDamage: number, growAmount:number) => {
+    public static createGrowIntent = (healAmount: number, negateDamage: number, growAmount:number, animationId:string) => {
         return {
             type: EnemyIntentionType.Grow,
             target: CardTargetedEnum.Player,
@@ -356,8 +404,8 @@ export class EnemyBuilderService {
                         value: healAmount
                     },
                     action:{
-                        name: 'grow',
-                        hint: 'grow'
+                        name: animationId,
+                        hint: animationId
                     }
                 },
                 {
@@ -370,8 +418,8 @@ export class EnemyBuilderService {
                         },
                     },
                     action:{
-                        name: 'grow',
-                        hint: 'grow'
+                        name: animationId,
+                        hint: animationId
                     }
                 }
             ]

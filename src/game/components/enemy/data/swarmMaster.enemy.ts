@@ -1,4 +1,4 @@
-import { EnemyBuilderService } from "../enemy-builder.service";
+import { EnemyBuilderService as EB } from "../enemy-builder.service";
 import { EnemyTypeEnum, EnemyCategoryEnum, EnemySizeEnum, EnemyIntentionType } from "../enemy.enum";
 import { EnemyAction, EnemyIntention } from "../enemy.interface";
 import { Enemy } from "../enemy.schema";
@@ -14,38 +14,30 @@ import { PoisonedCard } from "../../card/data/poisoned.card";
 //-------------------------------------------------------------------------------------------------------------------------------------------------------
 //- Intents:
 //-------------------------------------------------------------------------------------------------------------------------------------------------------
-const Summon1Cocoon:   EnemyIntention = EnemyBuilderService.invokeMinionsIntent([swarmCocoon1Data.enemyId]);
-const Summon1Spider:   EnemyIntention = EnemyBuilderService.invokeMinionsIntent([mutantSpider1Data.enemyId]);
-const SummonSecondCocoon:   EnemyIntention = EnemyBuilderService.invokeMinionsIntent([swarmCocoon2Data.enemyId]);
-const SummonSecondSpider:   EnemyIntention = EnemyBuilderService.invokeMinionsIntent([mutantSpider2Data.enemyId]);
-const Summon2Cocoon:   EnemyIntention = EnemyBuilderService.invokeMinionsIntent([swarmCocoon1Data.enemyId, swarmCocoon2Data.enemyId]);
-const Summon2Spider:   EnemyIntention = EnemyBuilderService.invokeMinionsIntent([mutantSpider1Data.enemyId, mutantSpider2Data.enemyId]);
-const BasicDefense:    EnemyIntention = EnemyBuilderService.createDefenseIntent(15);
-const BasicAttack:     EnemyIntention = EnemyBuilderService.createBasicAttackIntent(8);
-const SecondAttack:    EnemyIntention = EnemyBuilderService.createBasicAttackIntent(10);
-const DebuffBurn:      EnemyIntention = EnemyBuilderService.createBasicDebuffIntent(2, burn.name);
-const DebuffPoison:    EnemyIntention = EnemyBuilderService.createAddCardIntent(2, PoisonedCard, CardDestinationEnum.Draw);
 
-const SignatureAttack: EnemyIntention = {
-    name: "For our Master",
-    type: EnemyIntentionType.Signature,
-    target: CardTargetedEnum.Player,
-    value: 1,
-    negateDamage: 18,
-    effects: [
-        {
-            effect: spawnEnemyEffect.name,
-            target: CardTargetedEnum.Self,
-            args: {
-                enemiesToSpawn: [swarmCocoon1Data.enemyId, swarmCocoon2Data.enemyId, mutantSpider1Data.enemyId, mutantSpider2Data.enemyId],
+const getSignatureMove = (animationId:string):EnemyIntention => {
+    return {
+        name: "For our Master",
+        type: EnemyIntentionType.Signature,
+        target: CardTargetedEnum.Player,
+        value: 1,
+        negateDamage: 18,
+        effects: [
+            {
+                effect: spawnEnemyEffect.name,
+                target: CardTargetedEnum.Self,
+                args: {
+                    enemiesToSpawn: [swarmCocoon1Data.enemyId, swarmCocoon2Data.enemyId, mutantSpider1Data.enemyId, mutantSpider2Data.enemyId],
+                },
+                action: {
+                    name: animationId,
+                    hint: animationId,
+                },
             },
-            action: {
-                name: 'signature_move',
-                hint: 'signature_move',
-            },
-        },
-    ]
-};
+        ]
+    };
+}
+
 
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -53,17 +45,23 @@ const SignatureAttack: EnemyIntention = {
 //-------------------------------------------------------------------------------------------------------------------------------------------------------
 const BasicIntents: EnemyAction = {
     options:[
-        { id: 1, probability: 0.05, cooldown: 0, intents: [Summon1Cocoon] },
-        { id: 2, probability: 0.05, cooldown: 0, intents: [Summon1Spider] },
-        { id: 3, probability: 0.1, cooldown: 0, intents: [Summon2Cocoon] },
-        { id: 4, probability: 0.1, cooldown: 0, intents: [Summon2Spider] },
-        { id: 5, probability: 0.1, cooldown: 0, intents: [BasicDefense] },
-        { id: 6, probability: 0.1, cooldown: 0, intents: [BasicAttack] },
-        { id: 7, probability: 0.1, cooldown: 0, intents: [SecondAttack, DebuffBurn] },
-        { id: 8, probability: 0.1, cooldown: 0, intents: [SecondAttack, DebuffPoison] },
-        { id: 9, probability: 0.1, cooldown: 0, intents: [SignatureAttack] },
-        { id: 10, probability: 0.1, cooldown: 0, intents: [SummonSecondCocoon] },
-        { id: 11, probability: 0.1, cooldown: 0, intents: [SummonSecondSpider] },
+        { id: 1, probability: 0.05, cooldown: 0, intents: [EB.invokeMinionsIntent([swarmCocoon1Data.enemyId], EB.SUMMON)] },
+        { id: 2, probability: 0.05, cooldown: 0, intents: [EB.invokeMinionsIntent([mutantSpider1Data.enemyId], EB.SUMMON2)] },
+        { id: 3,  probability: 0.1, cooldown: 0, intents: [EB.invokeMinionsIntent([swarmCocoon1Data.enemyId, swarmCocoon2Data.enemyId], EB.SUMMON3)] },
+        { id: 4,  probability: 0.1, cooldown: 0, intents: [EB.invokeMinionsIntent([mutantSpider1Data.enemyId, mutantSpider2Data.enemyId], EB.SUMMON4)] },
+        { id: 5,  probability: 0.1, cooldown: 0, intents: [EB.createDefenseIntent(15, EB.DEFEND)] },
+        { id: 6,  probability: 0.1, cooldown: 0, intents: [EB.createBasicAttackIntent(8, EB.ATTACK)] },
+        { id: 7,  probability: 0.1, cooldown: 0, intents: [
+            EB.createBasicAttackIntent(10, EB.ATTACK_THUNDER_RED_DEBUF), 
+            EB.createBasicDebuffIntent(2, burn.name, EB.ATTACK_THUNDER_RED_DEBUF)
+        ] },
+        { id: 8,  probability: 0.1, cooldown: 0, intents: [
+            EB.createBasicAttackIntent(10, EB.ATTACK_THUNDER_GREEN_DEBUFF2), 
+            EB.createAddCardIntent(2, PoisonedCard, CardDestinationEnum.Draw, EB.ATTACK_THUNDER_GREEN_DEBUFF2)
+        ] },
+        { id: 9,  probability: 0.1, cooldown: 0, intents: [getSignatureMove(EB.SIGNATURE_MOVE)] },
+        { id: 10, probability: 0.1, cooldown: 0, intents: [EB.invokeMinionsIntent([swarmCocoon2Data.enemyId], EB.SUMMON)] },
+        { id: 11, probability: 0.1, cooldown: 0, intents: [EB.invokeMinionsIntent([mutantSpider2Data.enemyId], EB.SUMMON2)] },
     ]
 }
 

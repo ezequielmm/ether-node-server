@@ -10,11 +10,11 @@ import { EnemyBuilderService } from '../enemy-builder.service';
 //- Intents:
 //-------------------------------------------------------------------------------------------------------------------------------------------------------
 
-const BasicAttack:     EnemyIntention = EnemyBuilderService.createBasicAttackIntent(8);
-const BasicDefense:    EnemyIntention = EnemyBuilderService.createDefenseIntent(11);
-const BuffResolve:     EnemyIntention = EnemyBuilderService.createBasicBuffIntent(2, resolveStatus.name);
-const DebufFeeble:    EnemyIntention = EnemyBuilderService.createBasicDebuffIntent(2, feebleStatus.name);
-const DebuffFatigue:    EnemyIntention = EnemyBuilderService.createBasicDebuffIntent(2, fatigue.name);
+// const BasicAttack:     EnemyIntention = EnemyBuilderService.createBasicAttackIntent(8);
+// const BasicDefense:    EnemyIntention = EnemyBuilderService.createDefenseIntent(11);
+// const BuffResolve:     EnemyIntention = EnemyBuilderService.createBasicBuffIntent(2, resolveStatus.name);
+// const DebufFeeble:    EnemyIntention = EnemyBuilderService.createBasicDebuffIntent(2, feebleStatus.name);
+// const DebuffFatigue:    EnemyIntention = EnemyBuilderService.createBasicDebuffIntent(2, fatigue.name);
 /*
 TODO: 
 - Burn intent with 'Deal 1 Burn'
@@ -26,11 +26,11 @@ TODO:
 //-------------------------------------------------------------------------------------------------------------------------------------------------------
 const BasicIntents: EnemyAction = {
     options:[
-        { id: 1, probability: 0.3, cooldown: 0, intents: [BasicAttack] },
+        // { id: 1, probability: 0.3, cooldown: 0, intents: [BasicAttack] },
         //{ id: 2, probability: 0.3, cooldown: 0, intents: [BasicAttack, Burn] },
-        { id: 3, probability: 0.1, cooldown: 0, intents: [BasicDefense] },
-        { id: 4, probability: 0.1, cooldown: 0, intents: [BuffResolve] },
-        { id: 5, probability: 0.1, cooldown: 0, intents: [DebufFeeble] },
+        // { id: 3, probability: 0.1, cooldown: 0, intents: [BasicDefense] },
+        // { id: 4, probability: 0.1, cooldown: 0, intents: [BuffResolve] },
+        // { id: 5, probability: 0.1, cooldown: 0, intents: [DebufFeeble] },
         //{ id: 6, probability: 0.1, cooldown: 0, intents: [SignatureMove] },
 
     ]
@@ -39,9 +39,9 @@ const BasicIntents: EnemyAction = {
 const AdvancedIntents: EnemyAction = {
     options: [
         //{ id: 7,  probability: 0.3, cooldown: 0, intents: [Breach, Burn] },
-        { id: 8,  probability: 0.2, cooldown: 0, intents: [BasicAttack, BuffResolve] },
-        { id: 9,  probability: 0.2, cooldown: 0, intents: [BasicDefense, BuffResolve] },
-        { id: 9, probability: 0.2, cooldown: 0, intents: [BasicDefense, DebuffFatigue] },
+        // { id: 8,  probability: 0.2, cooldown: 0, intents: [BasicAttack, BuffResolve] },
+        // { id: 9,  probability: 0.2, cooldown: 0, intents: [BasicDefense, BuffResolve] },
+        // { id: 9, probability: 0.2, cooldown: 0, intents: [BasicDefense, DebuffFatigue] },
         //{ id: 9, probability: 0.1, cooldown: 0, intents: [signatureMove, BasicAttack, Burn] },
     ]
 }
