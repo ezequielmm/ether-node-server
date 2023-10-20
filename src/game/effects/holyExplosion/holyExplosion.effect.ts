@@ -43,7 +43,7 @@ export class holyExplosionEffect implements EffectHandler {
 
         //we get the alive enemies in the currentNode
         const currentNodeEnemies = this.enemyService.getLiving(ctx);
-
+        console.log('ENEMIGOS VIVOS ME RETORNA -> [ ' , currentNodeEnemies, ' ]' );
         if (!target) {
             this.logger.debug(ctx.info, 'No target found for holyExplosion');
             return;
