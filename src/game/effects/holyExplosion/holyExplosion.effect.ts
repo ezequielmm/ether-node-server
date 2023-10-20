@@ -60,66 +60,74 @@ export class holyExplosionEffect implements EffectHandler {
                 const enemyType = target.value.type;
 
                 //depending if is undead or not, we apply the damageEffect
-            if(enemyType === EnemyTypeEnum.Undead){
-                console.log(enemyType, 'ENTRE AL IF');
+                if(enemyType === EnemyTypeEnum.Undead){
 
-                await this.effectService.apply({
-                    ctx,
-                    source,
-                    target,
-                    effect: {
-                        effect: damageEffect.name,
-                        args: {
-                            value: dto.args.undeadDamage + energy,
+                    console.log(enemyType, 'ENTRE AL IF');
+
+                    await this.effectService.apply({
+                        ctx,
+                        source,
+                        target,
+                        effect: {
+                            effect: damageEffect.name,
+                            args: {
+                                value: dto.args.undeadDamage + energy,
+                            },
                         },
-                    },
-                });
-                console.log(dto.args.undeadDamage + energy);
+                    });
 
-                await this.statusService.attach({
+                    console.log(dto.args.undeadDamage + energy);
+
+                    await this.statusService.attach({
+                        ctx,
+                        source,
+                        target,
+                        statusName: burn.name,
+                        statusArgs: {counter: dto.args.undeadBurn},
+                        action: action,
+                    });
+
+                    console.log(dto.args.undeadBurn + energy);
+                }
+                else{  
+                    console.log(enemyType, 'ENTRE AL ELSE');
+
+                    await this.effectService.apply({
+                        ctx,
+                        source,
+                        target,
+                        effect: {
+                            effect: damageEffect.name,
+                            args: {
+                                value: dto.args.notUndeadDamage + energy,
+                            },
+                        },
+                    });
+
+                    console.log(dto.args.notUndeadDamage + energy);
+
+                    await this.statusService.attach({
+                        ctx,
+                        source,
+                        target,
+                        statusName: burn.name,
+                        statusArgs: {counter: dto.args.notUndeadBurn},
+                        action: action,
+                    });
+                    console.log(dto.args.notUndeadBurn + energy);
+                }
+
+                await this.combatQueueService.push({
                     ctx,
                     source,
                     target,
-                    statusName: burn.name,
-                    statusArgs: {counter: dto.args.undeadBurn},
+                    args: {
+                        effectType: CombatQueueTargetEffectTypeEnum.Status,
+                        statuses: [],
+                    },
                     action: action,
                 });
-            }
-            else{  
-                console.log(enemyType, 'ENTRE AL ELSE');
-                await this.effectService.apply({
-                    ctx,
-                    source,
-                    target,
-                    effect: {
-                        effect: damageEffect.name,
-                        args: {
-                            value: dto.args.notUndeadDamage + energy,
-                        },
-                    },
-                });
-                console.log(dto.args.notUndeadDamage + energy);
-                await this.statusService.attach({
-                    ctx,
-                    source,
-                    target,
-                    statusName: burn.name,
-                    statusArgs: {counter: dto.args.notUndeadBurn},
-                    action: action,
-                });
-            }
-
-            await this.combatQueueService.push({
-                ctx,
-                source,
-                target,
-                args: {
-                    effectType: CombatQueueTargetEffectTypeEnum.Status,
-                    statuses: [],
-                },
-                action: action,
-            });
             }       
-        //});               
+        //});              
     } 
 }
