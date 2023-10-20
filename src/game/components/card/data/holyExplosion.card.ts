@@ -22,7 +22,7 @@ export const HolyExplosionCardUpgraded: Card = {
                     undeadDamage: 5,
                     notUndeadDamage: 3,
                     undeadBurn: 3,
-                    notUndeadBurn: 3
+                    notUndeadBurn: 3,
                 },
             },           
         ],
@@ -51,7 +51,8 @@ export const HolyExplosionCard: Card = {
                     unDeadDamage: 3,
                     notUndeadDamage: 2,
                     undeadBurn: 3,
-                    notUndeadBurn: 2
+                    notUndeadBurn: 2,
+                    energy: CardEnergyEnum.All
                 },
             },        
         ],
