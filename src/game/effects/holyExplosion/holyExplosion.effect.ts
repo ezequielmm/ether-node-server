@@ -35,10 +35,11 @@ export class holyExplosionEffect implements EffectHandler {
     async handle(dto: EffectDTO<HolyEffectsArgs>): Promise<void> {
         const { ctx } = dto;
         const energy = get(ctx.expedition, PLAYER_ENERGY_PATH);
-        await this.holyExplosion(dto, energy);
+        const oldEnergy = energy;
+        await this.holyExplosion(dto, energy, oldEnergy);
     }
 
-    protected async holyExplosion(dto: EffectDTO<HolyEffectsArgs>, energy: number) {
+    protected async holyExplosion(dto: EffectDTO<HolyEffectsArgs>, energy: number, oldEnergy: number) {
         const { ctx, source, target, action } = dto;
 
         //we get the alive enemies in the currentNode
@@ -71,7 +72,7 @@ export class holyExplosionEffect implements EffectHandler {
                         effect: {
                             effect: damageEffect.name,
                             args: {
-                                value: dto.args.undeadDamage + energy,
+                                value: dto.args.undeadDamage + oldEnergy,
                             },
                         },
                     });
@@ -114,7 +115,7 @@ export class holyExplosionEffect implements EffectHandler {
                         statusArgs: {counter: dto.args.notUndeadBurn},
                         action: action,
                     });
-                    console.log(dto.args.notUndeadBurn + energy);
+                    console.log(dto.args.notUndeadBurn);
                 }
 
                 await this.combatQueueService.push({
