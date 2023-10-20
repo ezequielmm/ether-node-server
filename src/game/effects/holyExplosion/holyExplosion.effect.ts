@@ -49,6 +49,7 @@ export class holyExplosionEffect implements EffectHandler {
             return;
         }
 
+        console.log('ENERGIA', energy);
         //we iterate all enemies
         for(let currentEnemy of currentNodeEnemies){
 
