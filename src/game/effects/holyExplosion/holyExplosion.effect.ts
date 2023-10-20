@@ -87,7 +87,7 @@ export class holyExplosionEffect implements EffectHandler {
                         action: action,
                     });
 
-                    console.log(dto.args.undeadBurn + energy);
+                    console.log(dto.args.undeadBurn);
                 }
                 else{  
                     console.log(enemyType, 'ENTRE AL ELSE');

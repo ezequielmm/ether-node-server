@@ -48,7 +48,7 @@ export const HolyExplosionCard: Card = {
                 effect: holyExplosion.name,
                 target: CardTargetedEnum.AllEnemies,
                 args: {
-                    unDeadDamage: 3,
+                    undeadDamage: 3,
                     notUndeadDamage: 2,
                     undeadBurn: 3,
                     notUndeadBurn: 2,
