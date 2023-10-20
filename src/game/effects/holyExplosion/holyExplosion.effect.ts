@@ -64,17 +64,17 @@ export class holyExplosionEffect implements EffectHandler {
 
                     console.log(enemyType, 'ENTRE AL IF');
 
-                    await this.effectService.apply({
-                        ctx,
-                        source,
-                        target,
-                        effect: {
-                            effect: damageEffect.name,
-                            args: {
-                                value: dto.args.undeadDamage + energy,
-                            },
-                        },
-                    });
+                    // await this.effectService.apply({
+                    //     ctx,
+                    //     source,
+                    //     target,
+                    //     effect: {
+                    //         effect: damageEffect.name,
+                    //         args: {
+                    //             value: dto.args.undeadDamage + energy,
+                    //         },
+                    //     },
+                    // });
 
                     console.log(dto.args.undeadDamage + energy);
 
@@ -92,17 +92,17 @@ export class holyExplosionEffect implements EffectHandler {
                 else{  
                     console.log(enemyType, 'ENTRE AL ELSE');
 
-                    await this.effectService.apply({
-                        ctx,
-                        source,
-                        target,
-                        effect: {
-                            effect: damageEffect.name,
-                            args: {
-                                value: dto.args.notUndeadDamage + energy,
-                            },
-                        },
-                    });
+                    // await this.effectService.apply({
+                    //     ctx,
+                    //     source,
+                    //     target,
+                    //     effect: {
+                    //         effect: damageEffect.name,
+                    //         args: {
+                    //             value: dto.args.notUndeadDamage + energy,
+                    //         },
+                    //     },
+                    // });
 
                     console.log(dto.args.notUndeadDamage + energy);
 
