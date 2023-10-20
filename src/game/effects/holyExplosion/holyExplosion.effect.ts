@@ -18,7 +18,6 @@ export interface HolyEffectsArgs {
     notUndeadDamage: number,
     undeadBurn: number,
     notUndeadBurn: number,
-    energy: number
 }
 @EffectDecorator({
     effect: holyExplosion,
@@ -34,9 +33,8 @@ export class holyExplosionEffect implements EffectHandler {
     ) {}
 
     async handle(dto: EffectDTO<HolyEffectsArgs>): Promise<void> {
-        //const { ctx } = dto;
-        //const energy = get(ctx.expedition, PLAYER_ENERGY_PATH);
-        const energy = dto.args.energy;
+        const { ctx } = dto;
+        const energy = ctx.expedition.currentNode.data.player.energy
         await this.holyExplosion(dto, energy);
     }
 
