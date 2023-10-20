@@ -87,6 +87,21 @@ export class holyExplosionEffect implements EffectHandler {
                         action: action,
                     });
 
+                    await this.combatQueueService.push({
+                        ctx,
+                        source,
+                        target,
+                        args: {
+                            effectType: CombatQueueTargetEffectTypeEnum.Status,
+                            statuses: [{
+                                name: burn.name,
+                                counter: dto.args.undeadBurn,
+                                description: ''
+                            }],
+                        },
+                        action: action,
+                    });
+
                     console.log(dto.args.undeadBurn);
                 }
                 else{  
@@ -114,19 +129,24 @@ export class holyExplosionEffect implements EffectHandler {
                         statusArgs: {counter: dto.args.notUndeadBurn},
                         action: action,
                     });
+
+                    await this.combatQueueService.push({
+                        ctx,
+                        source,
+                        target,
+                        args: {
+                            effectType: CombatQueueTargetEffectTypeEnum.Status,
+                            statuses: [{
+                                name: burn.name,
+                                counter: dto.args.notUndeadBurn,
+                                description: ''
+                            }],
+                        },
+                        action: action,
+                    });
+                    
                     console.log(dto.args.notUndeadBurn);
                 }
-
-                await this.combatQueueService.push({
-                    ctx,
-                    source,
-                    target,
-                    args: {
-                        effectType: CombatQueueTargetEffectTypeEnum.Status,
-                        statuses: [],
-                    },
-                    action: action,
-                });
             }       
         //});              
     } 
