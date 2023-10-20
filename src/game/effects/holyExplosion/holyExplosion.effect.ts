@@ -28,8 +28,6 @@ export class holyExplosionEffect implements EffectHandler {
         private readonly effectService: EffectService,
         private readonly enemyService: EnemyService,
         private readonly statusService: StatusService,
-        private readonly combatQueueService: CombatQueueService,
-
     ) {}
 
     async handle(dto: EffectDTO<HolyEffectsArgs>): Promise<void> {
@@ -43,21 +41,24 @@ export class holyExplosionEffect implements EffectHandler {
 
         //we get the alive enemies in the currentNode
         const currentNodeEnemies = this.enemyService.getLiving(ctx);
-        console.log('ENEMIGOS VIVOS ME RETORNA -> [ ' , currentNodeEnemies, ' ]' );
 
         if (!target) {
             this.logger.debug(ctx.info, 'No target found for holyExplosion');
             return;
         }  
 
-        for(let currentEnemy of currentNodeEnemies){
+       // for(let currentEnemy of currentNodeEnemies){
+        if(EnemyService.isEnemy(target)){
 
-            const enemyType = currentEnemy.value.type;
+            console.log(target.value.id);
+            console.log(target.value.hpCurrent);
+            
+            const enemyType = target.value.type;
 
             await this.statusService.attach({
                 ctx,
                 source,
-                target: currentEnemy,
+                target,
                 statusName: burn.name,
                 statusArgs: {counter: enemyType === EnemyTypeEnum.Undead ? dto.args.undeadBurn : dto.args.notUndeadBurn},
                 action: action,
@@ -66,7 +67,7 @@ export class holyExplosionEffect implements EffectHandler {
             await this.effectService.apply({
                 ctx,
                 source,
-                target: currentEnemy,
+                target,
                 effect: {
                     effect: damageEffect.name,
                     args: {
@@ -74,7 +75,8 @@ export class holyExplosionEffect implements EffectHandler {
                     },
                 },
             });
+        }
         
-        }                   
+        //}                   
     } 
 }
