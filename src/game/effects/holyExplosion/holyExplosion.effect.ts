@@ -31,6 +31,7 @@ export class holyExplosionEffect implements EffectHandler {
     ) {}
 
     async handle(dto: EffectDTO<HolyEffectsArgs>): Promise<void> {
+        console.log("Holy Explosion handle method executed--------")
         const { ctx } = dto;
         const energy = ctx.expedition.currentNode.data.player.energy
         await this.holyExplosion(dto, energy);
@@ -40,7 +41,13 @@ export class holyExplosionEffect implements EffectHandler {
         const { ctx, source, target, action } = dto;
 
         //we get the alive enemies in the currentNode
-        const currentNodeEnemies = this.enemyService.getLiving(ctx);
+        //const currentNodeEnemies = this.enemyService.getLiving(ctx);
+
+        console.log("Valores de args:")
+        console.log(dto.args);
+        console.log("Target value:")
+        console.log(target)
+        console.log("------------------------------------------------------")
 
         if (!target) {
             this.logger.debug(ctx.info, 'No target found for holyExplosion');
@@ -50,8 +57,8 @@ export class holyExplosionEffect implements EffectHandler {
        // for(let currentEnemy of currentNodeEnemies){
         if(EnemyService.isEnemy(target)){
 
+            console.log("Enemy Id:")
             console.log(target.value.id);
-            console.log(target.value.hpCurrent);
             
             const enemyType = target.value.type;
 
@@ -60,7 +67,7 @@ export class holyExplosionEffect implements EffectHandler {
                 source,
                 target,
                 statusName: burn.name,
-                statusArgs: {counter: enemyType === EnemyTypeEnum.Undead ? dto.args.undeadBurn : dto.args.notUndeadBurn},
+                statusArgs: {counter: (enemyType === EnemyTypeEnum.Undead ? dto.args.undeadBurn : dto.args.notUndeadBurn)},
                 action: action,
             });
 
@@ -71,12 +78,10 @@ export class holyExplosionEffect implements EffectHandler {
                 effect: {
                     effect: damageEffect.name,
                     args: {
-                        value: enemyType === EnemyTypeEnum.Undead ? dto.args.undeadDamage + energy : dto.args.notUndeadDamage,
+                        value: (enemyType === EnemyTypeEnum.Undead ? dto.args.undeadDamage + energy : dto.args.notUndeadDamage),
                     },
                 },
             });
-        }
-        
-        //}                   
+        }             
     } 
 }
