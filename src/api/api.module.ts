@@ -16,6 +16,7 @@ import { PlayerWinModule } from '../playerWin/playerWin.module';
 import { ShowContestController } from './showContest.controller';
 import { TroveModule } from 'src/trove/trove.module';
 import { CardModule } from 'src/game/components/card/card.module';
+import { IsFirstStageFinishedController } from './isfirstsage.controller';
 
 @Module({
     imports: [
@@ -32,6 +33,7 @@ import { CardModule } from 'src/game/components/card/card.module';
     controllers: [
         ProfileController,
         ExpeditionController,
+        IsFirstStageFinishedController,
         CardController,
         TokenController,
         ShowVersionController,
