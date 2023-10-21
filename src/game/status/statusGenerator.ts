@@ -31,6 +31,8 @@ import { hatchingStatus } from './hatching/constants';
 import { chargingBeam } from './chargingBeam/constants';
 import { revealStatus } from './reveal/constants';
 import { growedStatus } from './growed/constants';
+import { counterStatus } from './counter/constants';
+import { elementalStatus } from './elemental/constants';
 
 export interface IStatusesList {
     name: string;
@@ -134,13 +136,21 @@ export class StatusGenerator {
             case hiddenStatus.name:
                 return `This creature receives 25% less damage from attacks, and deals 25% more damage to defense`;
             case hatchingStatus.name:
-                return `This creature is developing`;
+                return `This creature is developing inside its cocoon.`;
             case chargingBeam.name:
-                return `This creature is preparing for a powerful attack`;
+                return `This creature is building up energy for a devastating attack. Deal more than 20 points of damage on a single blow to it to hold it back.`;
             case revealStatus.name:
-                return `This creature will soon reveal its true form`;
+                return `Something’s fishy about this…`;
             case growedStatus.name:
-                return `This creature's attacks deal ${counter} more damage due to its sheer size`
+                return `This creature has grown into a larger, more powerful version of itself.`
+            case elementalStatus.name:
+                return `This creature has stepped into the spiritual realm and cannot be touched by regular means.`
+            case counterStatus.name:
+                return `This creature is ready to hit back, and hit back hard.`
+            // case absorbStatus.name:
+            //     return `This creature will absorb incoming attacks and use them to heal itself.`
+            // case mistifyStatus.name:
+            //     return `Obscure and mystic powers are at work here…`
             
             default:
                 return undefined;

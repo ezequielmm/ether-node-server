@@ -8,7 +8,7 @@ export const EnnuiCard: Card = {
     cardType: CardTypeEnum.Curse,
     pool: 'Neutral',
     energy: 0,
-    description: `Unplayable. Fade`,
+    description: `Your heart feels empty and nothing makes sense anymore. You might as well stop fighting.`,
     keywords: [CardKeywordEnum.Unplayable, CardKeywordEnum.Fade],
     properties: {
         effects: [],
