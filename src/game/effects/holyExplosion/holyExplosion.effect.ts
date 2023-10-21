@@ -12,6 +12,7 @@ import { StatusService } from 'src/game/status/status.service';
 import { burn } from 'src/game/status/burn/constants';
 import { CombatQueueService } from 'src/game/components/combatQueue/combatQueue.service';
 import { CombatQueueTargetEffectTypeEnum } from 'src/game/components/combatQueue/combatQueue.enum';
+import { AttachedStatus } from 'src/game/status/interfaces';
 
 export interface HolyEffectsArgs {
     undeadDamage: number,
@@ -43,12 +44,6 @@ export class holyExplosionEffect implements EffectHandler {
         //we get the alive enemies in the currentNode
         //const currentNodeEnemies = this.enemyService.getLiving(ctx);
 
-        console.log("Valores de args:")
-        console.log(dto.args);
-        console.log("Target value:")
-        console.log(target)
-        console.log("------------------------------------------------------")
-
         if (!target) {
             this.logger.debug(ctx.info, 'No target found for holyExplosion');
             return;
@@ -57,19 +52,31 @@ export class holyExplosionEffect implements EffectHandler {
        // for(let currentEnemy of currentNodeEnemies){
         if(EnemyService.isEnemy(target)){
 
-            console.log("Enemy Id:")
-            console.log(target.value.id);
-            
             const enemyType = target.value.type;
 
-            await this.statusService.attach({
-                ctx,
-                source,
-                target,
-                statusName: burn.name,
-                statusArgs: {counter: (enemyType === EnemyTypeEnum.Undead ? dto.args.undeadBurn : dto.args.notUndeadBurn)},
-                action: action,
-            });
+            const existingBurnIndex = target.value.statuses.debuff.findIndex(debuff => debuff.name === burn.name);
+            
+            if (existingBurnIndex !== -1) {
+                target.value.statuses.debuff[existingBurnIndex].args.counter += enemyType === EnemyTypeEnum.Undead ? dto.args.undeadBurn : dto.args.notUndeadBurn;
+            } else {
+                const newBurn:AttachedStatus = { 
+                    name: burn.name, 
+                    addedInRound: ctx.expedition.currentNode.data.round, 
+                    sourceReference: this.statusService.getReferenceFromEntity(target),
+                    args: {counter: enemyType === EnemyTypeEnum.Undead ? dto.args.undeadBurn : dto.args.notUndeadBurn,} };
+                target.value.statuses.debuff.push(newBurn);
+            }
+
+            this.statusService.updateEnemyStatuses(ctx.expedition, target, target.value.statuses);
+
+            // await this.statusService.attach({
+            //     ctx,
+            //     source,
+            //     target,
+            //     statusName: burn.name,
+            //     statusArgs: {counter: (enemyType === EnemyTypeEnum.Undead ? dto.args.undeadBurn : dto.args.notUndeadBurn)},
+            //     action: action,
+            // });
 
             await this.effectService.apply({
                 ctx,
