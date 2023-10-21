@@ -67,7 +67,7 @@ export class holyExplosionEffect implements EffectHandler {
                 target.value.statuses.debuff.push(newBurn);
             }
 
-            this.statusService.updateEnemyStatuses(ctx.expedition, target, target.value.statuses);
+            await this.statusService.updateEnemyStatuses(ctx.expedition, target, target.value.statuses);
 
             // await this.statusService.attach({
             //     ctx,
