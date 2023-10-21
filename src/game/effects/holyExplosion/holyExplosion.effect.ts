@@ -55,31 +55,31 @@ export class holyExplosionEffect implements EffectHandler {
 
             const enemyType = target.value.type;
 
-            const existingBurnIndex = target.value.statuses.debuff.findIndex(debuff => debuff.name === burn.name);
+            // const existingBurnIndex = target.value.statuses.debuff.findIndex(debuff => debuff.name === burn.name);
             
-            if (existingBurnIndex !== -1) {
-                target.value.statuses.debuff[existingBurnIndex].args.counter += enemyType === EnemyTypeEnum.Undead ? dto.args.undeadBurn : dto.args.notUndeadBurn;
-            } else {
-                const newBurn:AttachedStatus = { 
-                    name: burn.name, 
-                    addedInRound: ctx.expedition.currentNode.data.round, 
-                    sourceReference: this.statusService.getReferenceFromEntity(target),
-                    args: {counter: enemyType === EnemyTypeEnum.Undead ? dto.args.undeadBurn : dto.args.notUndeadBurn,} };
-                target.value.statuses.debuff.push(newBurn);
-            }
+            // if (existingBurnIndex !== -1) {
+            //     target.value.statuses.debuff[existingBurnIndex].args.counter += enemyType === EnemyTypeEnum.Undead ? dto.args.undeadBurn : dto.args.notUndeadBurn;
+            // } else {
+            //     const newBurn:AttachedStatus = { 
+            //         name: burn.name, 
+            //         addedInRound: ctx.expedition.currentNode.data.round, 
+            //         sourceReference: this.statusService.getReferenceFromEntity(target),
+            //         args: {counter: enemyType === EnemyTypeEnum.Undead ? dto.args.undeadBurn : dto.args.notUndeadBurn,} };
+            //     target.value.statuses.debuff.push(newBurn);
+            // }
 
-            await this.statusService.updateEnemyStatuses(ctx.expedition, target, target.value.statuses);
+            // await this.statusService.updateEnemyStatuses(ctx.expedition, target, target.value.statuses);
 
-            await this.combatQueueService.push({
-                ctx,
-                source,
-                target,
-                args: {
-                    effectType: CombatQueueTargetEffectTypeEnum.Status,
-                    statuses: [{name: burn.name, counter: 3, description: ""}],
-                },
-                action: action,
-            });
+            // await this.combatQueueService.push({
+            //     ctx,
+            //     source,
+            //     target,
+            //     args: {
+            //         effectType: CombatQueueTargetEffectTypeEnum.Status,
+            //         statuses: [{name: burn.name, counter: 3, description: ""}],
+            //     },
+            //     action: action,
+            // });
 
             // await this.statusService.attach({
             //     ctx,
