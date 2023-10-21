@@ -62,7 +62,7 @@ export class holyExplosionEffect implements EffectHandler {
             
             const enemyType = target.value.type;
 
-            this.statusService.attach({
+            await this.statusService.attach({
                 ctx,
                 source,
                 target,
@@ -71,7 +71,7 @@ export class holyExplosionEffect implements EffectHandler {
                 action: action,
             });
 
-            this.effectService.apply({
+            await this.effectService.apply({
                 ctx,
                 source,
                 target,
