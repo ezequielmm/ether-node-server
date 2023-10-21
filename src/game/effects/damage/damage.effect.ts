@@ -260,10 +260,11 @@ export class DamageEffect implements EffectHandler {
             let damage = isNotUndefined(useEnergyAsValue)
             ? energy
             : currentValue;
-            console.log(damage);
 
-            if(useInitialValue) damage = initialValue;
-
+            if(useInitialValue) {
+                console.log('Me hice damage', initialValue);
+                damage = initialValue;
+            }
             oldHp = target.value.combatState.hpCurrent;
             oldDefense = target.value.combatState.defense;
 
