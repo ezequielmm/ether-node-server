@@ -8,7 +8,7 @@ export const WoundedCard: Card = {
     cardType: CardTypeEnum.Status,
     pool: 'knight',
     energy: 1,
-    description: '',
+    description: 'You feel restrained.',
     keywords: [CardKeywordEnum.Exhaust],
     properties: {
         effects: [],

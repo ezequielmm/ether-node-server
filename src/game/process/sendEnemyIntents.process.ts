@@ -86,21 +86,21 @@ export class SendEnemyIntentProcess {
             case EnemyIntentionType.Debuff:
                 return `This Enemy is scheming to apply a Debuff effect`;
             case EnemyIntentionType.Signature:
-                return `This Enemy is scheming to make his Signature Attack`;
+                return `This creature is plotting to use a unique and powerful skill. Hit it hard before it hits you!`;
             case EnemyIntentionType.Breach:
-                return `This Enemy is scheming breach yout Defense`;
+                return `This enemy is planning to breach through your defenses!`;
             case EnemyIntentionType.Counter:
-                return `This Enemy is scheming to reflect all the recieved Attack`;
+                return `This enemy will return the next attack and then some… if it survives…`;
             case EnemyIntentionType.Absorb:
-                return `This Enemy will transform any damage received into HP`;
+                return `This enemy will absorb the energy of incoming attacks and use it to heal itself.`;
             case EnemyIntentionType.Infect:
-                return `This Enemy will infect its opponent`;
+                return `This enemy is plotting to infect you with an incapacitating disease.`;
             case EnemyIntentionType.Grow:
-                return "This Enemy is plotting to grow into a larger, stronger version";
+                return "This enemy is plotting to grow into a larger, pumped up version of itself.";
             case EnemyIntentionType.Mistify:
-                return "This Enemy is plotting to mistify it opponent";
+                return "This creature is plotting to play wicked tricks with your mind.";
             case EnemyIntentionType.Reinforcements:
-                return `This Enemy is plotting to summon another enemy to the battle the next turn`;
+                return `This creature is plotting to summon additional help.`;
             case EnemyIntentionType.DoNothing:
                 return "";
             default:

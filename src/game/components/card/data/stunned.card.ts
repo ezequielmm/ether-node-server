@@ -8,7 +8,7 @@ export const StunnedCard: Card = {
     cardType: CardTypeEnum.Status,
     pool: 'knight',
     energy: 0,
-    description: '',
+    description: 'Your head feels numb and heavy, making it difficult to think.',
     keywords: [CardKeywordEnum.Fade, CardKeywordEnum.Unplayable],
     properties: {
         effects: [],
