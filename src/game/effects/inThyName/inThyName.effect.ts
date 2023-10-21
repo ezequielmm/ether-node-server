@@ -39,53 +39,33 @@ export class InThyNameEffect implements EffectHandler {
             this.logger.debug(ctx.info, 'No target found for inThyName');
             return;
         }
-
-        console.log(target);
-        console.log(currentNodeEnemies);
-        
+        const originalDefense = ctx.expedition.currentNode.data.player.defense;
+        let defense = ctx.expedition.currentNode.data.player.defense;
         //we iterate all enemies
         for(let currentEnemy of currentNodeEnemies){
 
             const enemyType = currentEnemy.value.type;
             console.log(enemyType);
             //depending if is undead or not, we apply the damageEffect
-            if(enemyType == EnemyTypeEnum.Undead){
-                
-                await this.effectService.apply({
-                    ctx,
-                    source,
-                    target,
-                    effect: {
-                        effect: defenseEffect.name,
-                        args: {
-                            value: dto.args.undeadDefense,
-                        },
-                    },
-                });
+            if(enemyType == EnemyTypeEnum.Undead){               
+                defense += dto.args.undeadDefense; 
             }
             else{  
-                
-                await this.effectService.apply({
-                    ctx,
-                    source,
-                    target,
-                    effect: {
-                        effect: defenseEffect.name,
-                        args: {
-                            value: dto.args.notUndeadDefense,
-                        },
-                    },
-                });
+                defense += dto.args.notUndeadDefense;
             }
             await this.combatQueueService.push({
                 ctx,
                 source,
                 target,
                 args: {
-                    effectType: CombatQueueTargetEffectTypeEnum.Status,
+                    effectType: CombatQueueTargetEffectTypeEnum.Defense,
+                    defenseDelta: defense - originalDefense,
+                    finalDefense: defense,
+                    healthDelta: 0,
+                    finalHealth: 0,
                     statuses: [],
                 },
-                action: action,
+                action,
             });
         }                
     }
