@@ -29,6 +29,7 @@ export class holyExplosionEffect implements EffectHandler {
         private readonly effectService: EffectService,
         private readonly enemyService: EnemyService,
         private readonly statusService: StatusService,
+        private readonly combatQueueService: CombatQueueService
     ) {}
 
     async handle(dto: EffectDTO<HolyEffectsArgs>): Promise<void> {
@@ -68,6 +69,17 @@ export class holyExplosionEffect implements EffectHandler {
             }
 
             await this.statusService.updateEnemyStatuses(ctx.expedition, target, target.value.statuses);
+
+            await this.combatQueueService.push({
+                ctx,
+                source,
+                target,
+                args: {
+                    effectType: CombatQueueTargetEffectTypeEnum.Status,
+                    statuses: [{name: burn.name, counter: 3, description: ""}],
+                },
+                action: action,
+            });
 
             // await this.statusService.attach({
             //     ctx,
