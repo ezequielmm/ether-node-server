@@ -240,7 +240,8 @@ export class CardService {
                 );
 
                 card.properties = card.triggerAtEndOfTurn;
-
+                card.keywords = [];
+                
                 await this.cardPlayedAction.handle({
                     ctx,
                     cardId: card.id,
