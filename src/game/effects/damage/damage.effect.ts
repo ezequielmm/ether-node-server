@@ -35,6 +35,7 @@ export interface DamageArgs {
     multiplier?: number;
     useEnergyAsValue?: boolean;
     useEnergyAsMultiplier?: boolean;
+    useInitialValue?: boolean;
     onARoll?: {
         energyToRestore: number;
     };
@@ -68,7 +69,9 @@ export class DamageEffect implements EffectHandler {
                 multiplier,
                 useEnergyAsMultiplier,
                 useEnergyAsValue,
+                useInitialValue,
                 onARoll,
+                initialValue,
             },
             action,
         } = payload;
@@ -248,15 +251,20 @@ export class DamageEffect implements EffectHandler {
         }
         
         if (PlayerService.isPlayer(target)) {
+            
+
+
             // Here we check if we have to use the enemy available
             // as currentValue, here we just need to add it, the value
             // on the effect is 0
-
-            const damage = isNotUndefined(useEnergyAsValue)
+            let damage = isNotUndefined(useEnergyAsValue)
             ? energy
             : currentValue;
-            console.log(damage);
 
+            if(useInitialValue) {
+                console.log('Me hice damage', initialValue);
+                damage = initialValue;
+            }
             oldHp = target.value.combatState.hpCurrent;
             oldDefense = target.value.combatState.defense;
 
