@@ -55,19 +55,27 @@ export const HolyExplosionCard: Card = {
                     notUndeadBurn: 2,
                 },
             },        
-            {
-                effect: attachStatusEffect.name,
-                target: CardTargetedEnum.AllEnemies,
-                args: {
-                    value: 3,
-                    statusName: burn.name,
-                    statusArgs: {
-                        counter: 3,
-                    },
-                }
-            }
+            // {
+            //     effect: attachStatusEffect.name,
+            //     target: CardTargetedEnum.AllEnemies,
+            //     args: {
+            //         value: 3,
+            //         statusName: burn.name,
+            //         statusArgs: {
+            //             counter: 3,
+            //         },
+            //     }
+            // }
         ],
-        statuses: [],
+        statuses: [
+            {
+                name: burn.name,
+                attachTo: CardTargetedEnum.AllEnemies,
+                args: {
+                    counter: 3,
+                },
+            },
+        ],
     },
     showPointer: false,
     isUpgraded: true,
