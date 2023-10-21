@@ -59,7 +59,11 @@ export const HolyExplosionCard: Card = {
                 effect: attachStatusEffect.name,
                 target: CardTargetedEnum.AllEnemies,
                 args: {
-                    value: 2
+                    value: 3,
+                    statusName: burn.name,
+                    statusArgs: {
+                        counter: 3,
+                    },
                 }
             }
         ],
