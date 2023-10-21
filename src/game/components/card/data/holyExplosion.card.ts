@@ -3,6 +3,7 @@ import { burn } from 'src/game/status/burn/constants';
 import { CardRarityEnum, CardTypeEnum, CardTargetedEnum, CardEnergyEnum } from '../card.enum';
 import { Card } from '../card.schema';
 import { holyExplosion } from 'src/game/effects/holyExplosion/constants';
+import { attachStatusEffect } from 'src/game/effects/attachStatus/constants';
 
 export const HolyExplosionCardUpgraded: Card = {
     cardId: 560,
@@ -54,6 +55,13 @@ export const HolyExplosionCard: Card = {
                     notUndeadBurn: 2,
                 },
             },        
+            {
+                effect: attachStatusEffect.name,
+                target: CardTargetedEnum.AllEnemies,
+                args: {
+                    value: 2
+                }
+            }
         ],
         statuses: [],
     },
