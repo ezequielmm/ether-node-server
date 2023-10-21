@@ -34,6 +34,7 @@ export const DecayCard: Card = {
                 target: CardTargetedEnum.Player,
                 args: {
                     value: 2,
+                    useInitialValue: true
                 },
             },
         ],
