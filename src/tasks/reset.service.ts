@@ -38,7 +38,7 @@ export class ResetService {
         private readonly oldExpedition: ReturnModelType<typeof OldExpedition>,
     ) { }
 
-    @Cron(CronExpression.EVERY_WEEKEND, {
+    @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT, {
         name: 'Reset in progress expeditions',
         timeZone: 'UTC',
     })
@@ -99,7 +99,7 @@ export class ResetService {
 
     // Función para verificar si ha pasado el tiempo límite desde la creación de la expedición
     private hasExceededTimeLimit(expedition, currentTime) {
-        const timeLimitInMilliseconds = 48 * 60 * 60 * 1000; // 48 horas en milisegundos
+        const timeLimitInMilliseconds = 168 * 60 * 60 * 1000; // 48 horas en milisegundos
         return currentTime - expedition.createdAt >= timeLimitInMilliseconds;
     }
 

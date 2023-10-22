@@ -39,21 +39,33 @@ export class CleanService {
         private readonly oldExpedition: ReturnModelType<typeof OldExpedition>,
     ) { }
 
-    @Cron(CronExpression.EVERY_1ST_DAY_OF_MONTH_AT_MIDNIGHT, {
+    @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT, {
         name: 'Clean expeditions',
         timeZone: 'UTC',
     })
     public async moveExpeditions() {
         try {
-            // Encuentra todas las expediciones con estado finalizado
-            const expeditionsInProgress = await this.expedition.find({ status: { $in: ['victory', 'defeated', 'canceled'] }});
-        
+            // Encuentra todas las expediciones en progreso
+            const expeditionsInProgress = await this.expedition.find({ status: { $in: ['victory', 'defeated', 'canceled'] } });
+
+            // Obtiene la hora actual
+            const currentTime = new Date();
+
+            // Filtra las expediciones que han superado el límite de tiempo
+            const expeditionsToMove = expeditionsInProgress.filter(expedition =>
+                this.hasExceededTimeLimit(expedition, currentTime)
+            );
+
+            if (expeditionsToMove.length === 0) {
+                return;
+            }
+            
             // Obtiene los IDs de los mapas asociados a las expediciones a mover
-            const mapIdsToMove = expeditionsInProgress.map(expedition => expedition.map);
-        
+            const mapIdsToMove = expeditionsToMove.map(expedition => expedition.map);
+
             // Genera nuevos ObjectIDs para oldmaps
             const oldMapsObjectIDs = Array.from({ length: mapIdsToMove.length }, () => new Types.ObjectId());
-        
+
             // Mueve los mapas asociados a las expediciones a la colección de mapas antiguos
             const mapsToMove = await this.mapModel.find({ _id: { $in: mapIdsToMove } });
             const mapsDataToMove = mapsToMove.map((map, index) => {
@@ -64,9 +76,9 @@ export class CleanService {
                 return newMap;
             });
             await this.oldMapModel.create(mapsDataToMove);
-        
+
             // Mueve los registros de expediciones a la colección de expediciones antiguas
-            const expeditionsDataToMove = expeditionsInProgress.map((expedition, index) => {
+            const expeditionsDataToMove = expeditionsToMove.map((expedition, index) => {
                 const newExpedition = {
                     ...expedition.toObject(),
                     _id: new Types.ObjectId(), // Genera un nuevo ObjectID para oldexpeditions
@@ -75,15 +87,21 @@ export class CleanService {
                 return newExpedition;
             });
             await this.oldExpedition.create(expeditionsDataToMove);
-        
+
             // Elimina los registros de expediciones y mapas de la colección original
-            await this.expedition.deleteMany({ status: { $in: ['victory', 'defeated', 'canceled'] }});
+            await this.expedition.deleteMany({ status: { $in: ['victory', 'defeated', 'canceled'] } });
             await this.mapModel.deleteMany({ _id: { $in: mapIdsToMove } });
-        
+
             console.log('Registros de expediciones en progreso y mapas asociados movidos a oldexpeditions y oldmaps.');
         } catch (error) {
             console.error('Error al mover expediciones y mapas:', error);
         }
+    }
+
+    // Función para verificar si ha pasado el tiempo límite desde la creación de la expedición
+    private hasExceededTimeLimit(expedition, currentTime) {
+        const timeLimitInMilliseconds = 168 * 60 * 60 * 1000; // 48 horas en milisegundos
+        return currentTime - expedition.createdAt >= timeLimitInMilliseconds;
     }
 
 }
