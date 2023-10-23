@@ -6,6 +6,7 @@ import { CharacterService } from 'src/game/components/character/character.servic
 import { CharacterClassEnum } from 'src/game/components/character/character.enum';
 import { Character } from 'src/game/components/character/character.schema'
 import { Gear } from 'src/game/components/gear/gear.schema';
+import { IPlayerToken } from 'src/game/components/expedition/expedition.schema';
 @Injectable()
 export class PlayerWinService {
   constructor(
@@ -31,6 +32,31 @@ export class PlayerWinService {
 
     return allLootboxes;
   }
+
+  async findLastStageWinAndUpdate(eventId: number, playerToken:IPlayerToken, currentStage:number){
+
+    const playerWinUpdated = await this.playerWin.findOneAndUpdate(
+      {
+        'playerToken': playerToken,
+        'stage': (currentStage - 1),
+        'event_id': eventId
+      },
+      {
+        $set: {
+          'stage': currentStage
+        }
+      },
+      { 
+        sort: { $natural: -1 }, // Ordenar en orden natural en sentido inverso
+        limit: 1,
+        new: true
+      }
+      );
+
+      console.log(playerWinUpdated)
+  }
+
+
   async getAllLootByWallet(walletId: string): Promise<any[]> {
     // Query PlayerWin documents where the tokenId matches
     const winsWithMatchingWallet = await this.playerWin
