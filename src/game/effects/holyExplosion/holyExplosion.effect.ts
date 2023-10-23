@@ -16,6 +16,7 @@ import { AttachedStatus } from 'src/game/status/interfaces';
 
 export interface HolyEffectsArgs {
     undeadDamage: number,
+    allEnemiesDamage: number,
     notUndeadDamage: number,
     undeadBurn: number,
     notUndeadBurn: number,
@@ -90,6 +91,9 @@ export class holyExplosionEffect implements EffectHandler {
             //     action: action,
             // });
 
+            let allEnemiesDmg =  dto.args.allEnemiesDamage + energy;
+            let unDeadDmg =  dto.args.undeadDamage + energy;
+
             await this.effectService.apply({
                 ctx,
                 source,
@@ -97,7 +101,7 @@ export class holyExplosionEffect implements EffectHandler {
                 effect: {
                     effect: damageEffect.name,
                     args: {
-                        value: (enemyType === EnemyTypeEnum.Undead ? dto.args.undeadDamage + energy : dto.args.notUndeadDamage),
+                        value: (enemyType === EnemyTypeEnum.Undead ? allEnemiesDmg + unDeadDmg : allEnemiesDmg),
                     },
                 },
             });
