@@ -39,13 +39,15 @@ export class InThyNameEffect implements EffectHandler {
             this.logger.debug(ctx.info, 'No target found for inThyName');
             return;
         }
+
         const originalDefense = ctx.expedition.currentNode.data.player.defense;
         let defense = ctx.expedition.currentNode.data.player.defense;
+        
         //we iterate all enemies
         for(let currentEnemy of currentNodeEnemies){
 
             const enemyType = currentEnemy.value.type;
-            console.log(enemyType);
+
             //depending if is undead or not, we apply the damageEffect
             if(enemyType == EnemyTypeEnum.Undead){               
                 defense += dto.args.undeadDefense; 
@@ -53,6 +55,19 @@ export class InThyNameEffect implements EffectHandler {
             else{  
                 defense += dto.args.notUndeadDefense;
             }
+
+            await this.effectService.apply({
+                ctx,
+                source,
+                target,
+                effect: {
+                    effect: defenseEffect.name,
+                    args: {
+                        value: defense,
+                    },
+                },
+            });
+
             await this.combatQueueService.push({
                 ctx,
                 source,
