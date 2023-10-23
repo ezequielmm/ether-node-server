@@ -33,6 +33,7 @@ import { revealStatus } from './reveal/constants';
 import { growedStatus } from './growed/constants';
 import { counterStatus } from './counter/constants';
 import { elementalStatus } from './elemental/constants';
+import { absorbingStatus } from './absorbing/constants';
 
 export interface IStatusesList {
     name: string;
@@ -147,8 +148,8 @@ export class StatusGenerator {
                 return `This creature has stepped into the spiritual realm and cannot be touched by regular means.`
             case counterStatus.name:
                 return `This creature is ready to hit back, and hit back hard.`
-            // case absorbStatus.name:
-            //     return `This creature will absorb incoming attacks and use them to heal itself.`
+            case absorbingStatus.name:
+                return `This creature will absorb incoming attacks and use them to heal itself.`
             // case mistifyStatus.name:
             //     return `Obscure and mystic powers are at work here…`
             
