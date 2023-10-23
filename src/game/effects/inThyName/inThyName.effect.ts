@@ -8,6 +8,7 @@ import { EnemyTypeEnum } from 'src/game/components/enemy/enemy.enum';
 import { defenseEffect } from '../defense/constants';
 import { CombatQueueService } from 'src/game/components/combatQueue/combatQueue.service';
 import { CombatQueueTargetEffectTypeEnum } from 'src/game/components/combatQueue/combatQueue.enum';
+import { PlayerService } from 'src/game/components/player/player.service';
 
 export interface InThyNameArgs {
     undeadDefense: number,
@@ -19,7 +20,7 @@ export interface InThyNameArgs {
 export class InThyNameEffect implements EffectHandler {
     private readonly logger: Logger = new Logger(inThyNameEffect.name);
     constructor(
-        private readonly effectService: EffectService,
+        private readonly playerService: PlayerService,
         private readonly enemyService: EnemyService,
         private readonly combatQueueService: CombatQueueService
     ) {}
@@ -42,7 +43,7 @@ export class InThyNameEffect implements EffectHandler {
 
         const originalDefense = ctx.expedition.currentNode.data.player.defense;
         let defense = ctx.expedition.currentNode.data.player.defense;
-        
+
         //we iterate all enemies
         for(let currentEnemy of currentNodeEnemies){
 
@@ -55,18 +56,6 @@ export class InThyNameEffect implements EffectHandler {
             else{  
                 defense += dto.args.notUndeadDefense;
             }
-
-            await this.effectService.apply({
-                ctx,
-                source,
-                target,
-                effect: {
-                    effect: defenseEffect.name,
-                    args: {
-                        value: defense,
-                    },
-                },
-            });
 
             await this.combatQueueService.push({
                 ctx,
@@ -82,6 +71,7 @@ export class InThyNameEffect implements EffectHandler {
                 },
                 action,
             });
-        }                
+        }     
+        this.playerService.setDefense(ctx, defense);           
     }
 }
