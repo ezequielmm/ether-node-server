@@ -45,7 +45,6 @@ export class PlayerWinService {
       { sort: { $natural: -1 } }
     );
 
-    console.log(lastDocument)
 
     if (lastDocument) {
       await this.playerWin.updateOne(
@@ -53,25 +52,6 @@ export class PlayerWinService {
         { $set: { 'stage': currentStage } }
       );
     }
-
-    // const playerWinUpdated = await this.playerWin.findOneAndUpdate(
-    //   {
-    //     'playerToken': playerToken,
-    //     'stage': (currentStage - 1),
-    //     'event_id': eventId
-    //   },
-    //   {
-    //     $set: {
-    //       'stage': currentStage
-    //     }
-    //   },
-    //   { 
-    //     sort: { $natural: -1 }, // Ordenar en orden natural en sentido inverso
-    //     limit: 1,
-    //     new: true
-    //   }
-    //   );
-
   }
 
 
