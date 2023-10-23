@@ -12,7 +12,7 @@ export const HolyExplosionCardUpgraded: Card = {
     cardType: CardTypeEnum.Attack,
     pool: 'knight',
     energy: CardEnergyEnum.All,
-    description: `Deal X + 5 ${damageEffect.name} and inflict X + 3 ${burn.name} to all Undead enemies and deal X + 3 ${damageEffect.name} and inflict 3 ${burn.name} to all other enemies. `,
+    description: `Inflict 7 ${burn.name} to target and deal X x 5 ${damageEffect.name} to all enemies. Inflict an additional X + 5 ${damageEffect.name} to all Undead enemies other enemies.`,
     keywords: [],
     properties: {
         effects: [
@@ -21,13 +21,19 @@ export const HolyExplosionCardUpgraded: Card = {
                 target: CardTargetedEnum.AllEnemies,
                 args: {
                     undeadDamage: 5,
-                    notUndeadDamage: 3,
-                    undeadBurn: 3,
-                    notUndeadBurn: 3,
+                    allEnemiesDamage: 5,
                 },
             },           
         ],
-        statuses: [],
+        statuses: [
+            {
+                name: burn.name,
+                attachTo: CardTargetedEnum.Enemy,
+                args: {
+                    counter: 7,
+                },
+            },
+        ],
     },
     showPointer: false,
     isUpgraded: true,
@@ -41,7 +47,7 @@ export const HolyExplosionCard: Card = {
     cardType: CardTypeEnum.Attack,
     pool: 'knight',
     energy: CardEnergyEnum.All,
-    description: `Deal X + 3 ${damageEffect.name} and inflict 3 ${burn.name} to all Undead enemies and deal X + 2 ${damageEffect.name} and inflict 2 ${burn.name} to all other enemies.`,
+    description: `Inflict 5 ${burn.name} to target and deal X x 3 ${damageEffect.name} to all enemies. Inflict an additional X + 3 ${damageEffect.name} to all Undead enemies.`,
     keywords: [],
     properties: {
         effects: [
@@ -51,9 +57,6 @@ export const HolyExplosionCard: Card = {
                 args: {
                     undeadDamage: 3,
                     allEnemiesDamage: 3,
-                    notUndeadDamage: 2,
-                    undeadBurn: 3,
-                    notUndeadBurn: 2,
                 },
             },        
             // {
