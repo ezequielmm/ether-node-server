@@ -408,20 +408,18 @@ export class ExpeditionService {
         }
     }
 
-    public async checkCurrentStage(wallet: string): Promise<boolean> {
+    public async checkCurrentStage(expeditionId: string, wallet: string): Promise<boolean> {
         try {
-            // Busca todas las expediciones asociadas a la billetera
-            const expeditions = await this.expedition.find({ userAddress: wallet });
+            // Busca la expedición por el campo "expeditionId" y "wallet"
+            const expedition = await this.expedition.findOne({ _id: expeditionId, userAddress: wallet });
     
-            // Itera sobre las expediciones y verifica si alguna tiene currentStage igual a 2
-            for (const expedition of expeditions) {
-                if (expedition.currentStage === 2) {
-                    return true; // Si encuentra al menos una expedición con currentStage 2, devuelve true
-                }
+            // Si no se encuentra la expedición, o si el campo "currentStage" no está definido o no es 2, devuelve false
+            if (!expedition || expedition.currentStage !== 2) {
+                return false;
             }
     
-            // Si no se encuentra ninguna expedición con currentStage 2, devuelve false
-            return false;
+            // Si el campo "currentStage" es 2, devuelve true
+            return true;
         } catch (error) {
             // Manejar errores de consulta aquí
             throw new Error('Error checking current stage: ' + error.message);
