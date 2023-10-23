@@ -50,6 +50,7 @@ export const HolyExplosionCard: Card = {
                 target: CardTargetedEnum.AllEnemies,
                 args: {
                     undeadDamage: 3,
+                    allEnemiesDamage: 3,
                     notUndeadDamage: 2,
                     undeadBurn: 3,
                     notUndeadBurn: 2,
@@ -70,14 +71,14 @@ export const HolyExplosionCard: Card = {
         statuses: [
             {
                 name: burn.name,
-                attachTo: CardTargetedEnum.AllEnemies,
+                attachTo: CardTargetedEnum.Enemy,
                 args: {
-                    counter: 3,
+                    counter: 5,
                 },
             },
         ],
     },
-    showPointer: false,
+    showPointer: true,
     isUpgraded: true,
     upgradedCardId: HolyExplosionCardUpgraded.cardId,
     isActive: true,
