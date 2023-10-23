@@ -8,6 +8,7 @@ import { EventEmitter2, OnEvent } from "@nestjs/event-emitter";
 import { GameContext } from "src/game/components/interfaces";
 import { EVENT_AFTER_STATUSES_UPDATE, EVENT_BEFORE_ENEMIES_TURN_START } from "src/game/constants";
 import { EnemyService } from "src/game/components/enemy/enemy.service";
+import { PlayerService } from "src/game/components/player/player.service";
 
 @StatusDecorator({
     status: chargingBeam,
@@ -17,7 +18,8 @@ export class ChargingBeamStatus implements StatusEffectHandler {
 
     constructor(private readonly statusService:StatusService,
                 private readonly enemyService:EnemyService,
-                private readonly eventEmitter: EventEmitter2){}
+                private readonly eventEmitter: EventEmitter2,
+                private readonly playerService:PlayerService){}
     
     preview(args: StatusEffectDTO<Record<string, any>>): Promise<EffectDTO<Record<string, any>>> {
         return this.handle(args);
@@ -28,7 +30,28 @@ export class ChargingBeamStatus implements StatusEffectHandler {
             const { target } = dto.effectDTO;
             const status = target.value.statuses.buff.filter(s => s.name === chargingBeam.name)[0];
 
-            if(status.args.counter < 2 && dto.effectDTO.args.currentValue >= 20){
+            const {
+                args: {
+                    currentValue,
+                    useDefense,
+                    multiplier,
+                    useEnergyAsMultiplier
+                },
+            } = dto.effectDTO;
+
+            const {
+                value: {
+                    combatState: { energy, defense },
+                },
+            } = this.playerService.get(dto.ctx);
+
+            //- Get the final attack
+            const damage =
+                currentValue *
+                (useEnergyAsMultiplier ? energy : 1) *
+                (useDefense ? multiplier * defense : 1);
+
+            if(status.args.counter < 2 && damage >= 20){
                 const debuff = target.value.statuses.debuff;
                 const buff = target.value.statuses.buff.map(buff => {
                     if(buff.name === chargingBeam.name){

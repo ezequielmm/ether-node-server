@@ -61,6 +61,7 @@ import { RevealStatus } from './reveal/reveal.status';
 import { GrowedStatus } from './growed/growed.status';
 import { CounterStatus } from './counter/counter.status';
 import { ElementalStatus } from './elemental/elemental.status';
+import { AbsorbingStatus } from './absorbing/absorbing.status';
 
 @Module({
     imports: [
@@ -129,7 +130,8 @@ import { ElementalStatus } from './elemental/elemental.status';
         RevealStatus,
         GrowedStatus,
         CounterStatus,
-        ElementalStatus
+        ElementalStatus,
+        AbsorbingStatus
 
     ],
     exports: [StatusService],

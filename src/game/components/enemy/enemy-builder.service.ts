@@ -17,6 +17,7 @@ import { MirageCard } from "../card/data/mirage.card";
 import { growedStatus } from "src/game/status/growed/constants";
 import { counterStatus } from "src/game/status/counter/constants";
 import { addConditionalCardEffect } from "src/game/effects/addConditionalCard/constants";
+import { absorbingStatus } from "src/game/status/absorbing/constants";
 
 export class EnemyBuilderService {
 
@@ -65,7 +66,7 @@ export class EnemyBuilderService {
     public static SUMMON2                        = "summon_2";
     public static SUMMON3                        = "summon_3";
     public static SUMMON4                        = "summon_4";
-    public static ATTACK_THUNDER_RED_DEBUF      = "attack_thunder_red_debuff";
+    public static ATTACK_THUNDER_RED_DEBUF       = "attack_thunder_red_debuff";
     public static ATTACK_THUNDER_GREEN_DEBUFF2   = "attack_thunder_green_debuff_2";
     
     public static createBasicAttackIntent = (attack:number, animationId: string):EnemyIntention  => {
@@ -137,14 +138,17 @@ export class EnemyBuilderService {
     public static createAbsorbAttack = (animationId: string): EnemyIntention => {
         return {
             type: EnemyIntentionType.Absorb,
-            target: CardTargetedEnum.Player,
-            value: 0,
+            target: CardTargetedEnum.Self,
+            value: 1,
             effects: [
                 {
-                    effect: damageEffect.name,
-                    target: CardTargetedEnum.Player,
+                    effect: attachStatusEffect.name,
+                    target: CardTargetedEnum.Self,
                     args: {
-                        value: 0,
+                        statusName: absorbingStatus.name,
+                        statusArgs: {
+                            counter: 1,
+                        },
                     },
                     action: {
                         name: animationId,
