@@ -35,25 +35,43 @@ export class PlayerWinService {
 
   async findLastStageWinAndUpdate(eventId: number, playerToken:IPlayerToken, currentStage:number){
 
-    const playerWinUpdated = await this.playerWin.findOneAndUpdate(
+    const lastDocument = await this.playerWin.findOne(
       {
         'playerToken': playerToken,
         'stage': (currentStage - 1),
         'event_id': eventId
       },
-      {
-        $set: {
-          'stage': currentStage
-        }
-      },
-      { 
-        sort: { $natural: -1 }, // Ordenar en orden natural en sentido inverso
-        limit: 1,
-        new: true
-      }
-      );
+      null,
+      { sort: { $natural: -1 } }
+    );
 
-      console.log(playerWinUpdated)
+    console.log(lastDocument)
+
+    if (lastDocument) {
+      await this.playerWin.updateOne(
+        { _id: lastDocument._id },
+        { $set: { 'stage': currentStage } }
+      );
+    }
+
+    // const playerWinUpdated = await this.playerWin.findOneAndUpdate(
+    //   {
+    //     'playerToken': playerToken,
+    //     'stage': (currentStage - 1),
+    //     'event_id': eventId
+    //   },
+    //   {
+    //     $set: {
+    //       'stage': currentStage
+    //     }
+    //   },
+    //   { 
+    //     sort: { $natural: -1 }, // Ordenar en orden natural en sentido inverso
+    //     limit: 1,
+    //     new: true
+    //   }
+    //   );
+
   }
 
 
