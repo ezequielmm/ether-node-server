@@ -70,7 +70,7 @@ export class EndExpeditionProcess {
         
             // Handle loot and rewards
             if(canWin && contestIsValid){
-                await this.handleActiveEventLoot(ctx, isLastStage);
+                await this.handleActiveEventLoot(ctx, currentStage);
             }else{
                 ctx.expedition.finalScore.lootbox = [];
                 ctx.expedition.finalScore.rewards = [];
@@ -97,7 +97,7 @@ export class EndExpeditionProcess {
             
             // Handle loot and rewards
             if(canWin && contestIsValid){
-                await this.handleActiveEventLoot(ctx, isLastStage);
+                await this.handleActiveEventLoot(ctx, currentStage);
             }else{
                 ctx.expedition.finalScore.lootbox = [];
                 ctx.expedition.finalScore.rewards = [];
@@ -179,33 +179,34 @@ export class EndExpeditionProcess {
     }
 
     // Handle loot when the event is active
-    private async handleActiveEventLoot(ctx: GameContext, isLastStage:boolean) {
-        
-        const lootbox = await this.gearService.getLootbox(
-            ctx.expedition.playerState.lootboxSize,
-            ctx.expedition.playerState.lootboxRarity,
-        );
+    private async handleActiveEventLoot(ctx: GameContext, currentStage:number) {
 
-        //- Se comenta porque filtra los gears repetidos:
-        //- Ver si esta bien.
-        //const filteredLootbox = await this.filterNewLootItems(ctx, lootbox);
+        const isLastStage = ctx.expedition.contest.stages.length == currentStage;
+        
+        // const lootbox = await this.gearService.getLootbox(
+        //     ctx.expedition.playerState.lootboxSize,
+        //     ctx.expedition.playerState.lootboxRarity,
+        // );
     
-        await this.playerGearService.addGearToPlayer(
-            ctx.expedition.userAddress,
-            lootbox,
-        );
+        // await this.playerGearService.addGearToPlayer(
+        //     ctx.expedition.userAddress,
+        //     lootbox,
+        // );
 
         if(isLastStage){
+            await this.playerWinService.findLastStageWinAndUpdate(ctx.expedition.contest.event_id, ctx.expedition.playerState.playerToken, currentStage);
+            
+        }else{
             await this.playerWinService.create({
                 event_id: ctx.expedition.contest.event_id,
                 playerToken: ctx.expedition.playerState.playerToken,
-                lootbox: lootbox,
+                stage: currentStage
+                //lootbox: lootbox,
             });
         }
         
-        ctx.expedition.finalScore.lootbox = lootbox;
+        //ctx.expedition.finalScore.lootbox = lootbox;
         ctx.expedition.finalScore.rewards = await this.squiresService.getAccountRewards(ctx.expedition.userAddress, ctx.expedition.playerState.equippedGear);
-
     }
     
     // Filter out loot items that the player already has
