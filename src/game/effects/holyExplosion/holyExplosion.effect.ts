@@ -17,9 +17,6 @@ import { AttachedStatus } from 'src/game/status/interfaces';
 export interface HolyEffectsArgs {
     undeadDamage: number,
     allEnemiesDamage: number,
-    notUndeadDamage: number,
-    undeadBurn: number,
-    notUndeadBurn: number,
 }
 @EffectDecorator({
     effect: holyExplosion,
@@ -53,8 +50,9 @@ export class holyExplosionEffect implements EffectHandler {
 
        // for(let currentEnemy of currentNodeEnemies){
         if(EnemyService.isEnemy(target)){
-
+            
             const enemyType = target.value.type;
+            console.log(enemyType);
 
             // const existingBurnIndex = target.value.statuses.debuff.findIndex(debuff => debuff.name === burn.name);
             
@@ -91,7 +89,7 @@ export class holyExplosionEffect implements EffectHandler {
             //     action: action,
             // });
 
-            let allEnemiesDmg =  dto.args.allEnemiesDamage + energy;
+            let allEnemiesDmg =  dto.args.allEnemiesDamage * energy;
             let unDeadDmg =  dto.args.undeadDamage + energy;
 
             await this.effectService.apply({
