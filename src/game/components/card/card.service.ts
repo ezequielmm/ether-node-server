@@ -199,7 +199,7 @@ export class CardService {
     @OnEvent(EVENT_AFTER_DRAW_CARDS)
     async onAfterDrawCards(payload: AfterDrawCardEvent) {
         const { ctx, newHand } = payload;
-
+        console.log('ENTRE EN EL EVENTO, EVENT_AFTER_DRAW_CARDS')
         const cards = filter(newHand, {
             triggerOnDrawn: true,
         });

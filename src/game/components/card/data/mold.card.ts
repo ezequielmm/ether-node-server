@@ -15,7 +15,7 @@ export const MoldCard: Card = {
     pool: 'knight',
     energy: 0,
     description: `Reduce ${energyEffect.name} by 1 if this card is in hand by the start of the turn. Discard.`,
-    keywords: [CardKeywordEnum.Exhaust],
+    keywords: [CardKeywordEnum.Exhaust, CardKeywordEnum.Unplayable],
     properties: {
         effects: [
             {
