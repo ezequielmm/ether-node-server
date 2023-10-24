@@ -95,6 +95,7 @@ import { IExpeditionPlayerStateDeckCard } from 'src/game/components/expedition/e
                     isUpgraded: card.isUpgraded,
                     upgradedCardId: card?.upgradedCardId,
                     triggerAtEndOfTurn: card.triggerAtEndOfTurn,
+                    triggerOnDrawn: card.triggerOnDrawn,
                     isActive: true,
                 };
             });
