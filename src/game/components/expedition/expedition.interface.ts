@@ -20,6 +20,7 @@ export class IExpeditionPlayerStateDeckCard extends Card {
     isTemporary: boolean;
     oldEnergy?: number;
     originalDescription?: string;
+    triggerOnDrawn?: boolean;
 }
 
 export interface IExpeditionCurrentNodeDataEnemy {
