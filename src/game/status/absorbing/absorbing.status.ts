@@ -11,7 +11,6 @@ import { absorbingStatus } from "./constants";
 import { OnEvent } from "@nestjs/event-emitter";
 import { GameContext } from "src/game/components/interfaces";
 import { EVENT_BEFORE_ENEMIES_TURN_START } from "src/game/constants";
-import { counterStatus } from "../counter/constants";
 import { healEffect } from "src/game/effects/heal/constants";
 
 @StatusDecorator({
@@ -72,6 +71,7 @@ export class AbsorbingStatus implements StatusEffectHandler {
                 }  
         }
 
+        effectDTO.args.currentValue = 0;
         return effectDTO;
     }
 
