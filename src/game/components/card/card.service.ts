@@ -203,8 +203,9 @@ export class CardService {
         console.log('new hand', newHand);
         console.log('ENTRE EN EL EVENTO, EVENT_AFTER_DRAW_CARDS');
 
-        for(const card of ctx.expedition.currentNode.data.player.cards.hand){          
+        for(const card of newHand){          
             if(typeof card.triggerOnDrawn !== 'undefined'){
+                console.log('le saque las keyWords a ', card);
                 card.keywords = [];  
             } 
         }
