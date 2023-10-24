@@ -233,9 +233,7 @@ export class DamageEffect implements EffectHandler {
             ? energy
             : currentValue;
 
-            console.log('useInitial value arg: ',useInitialValue);
             if(useInitialValue == true) {
-                console.log('me deberia hacer damage: ', initialValue);
                 damage = initialValue;
             }
             oldHp = target.value.combatState.hpCurrent;
