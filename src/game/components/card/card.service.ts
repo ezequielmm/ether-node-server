@@ -203,6 +203,12 @@ export class CardService {
         console.log('new hand', newHand);
         console.log('ENTRE EN EL EVENTO, EVENT_AFTER_DRAW_CARDS');
 
+        for(const card of ctx.expedition.currentNode.data.player.cards.hand){          
+            if(typeof card.triggerOnDrawn !== 'undefined'){
+                card.keywords = [];  
+            } 
+        }
+
         const cards = filter(newHand, {
             triggerOnDrawn: true,
         });
@@ -236,7 +242,7 @@ export class CardService {
                 // fade cards exhaust if unplayed during turn
                 forceExhaust = true;
             }
-            if (typeof card.triggerAtEndOfTurn !== 'undefined' || typeof card.triggerOnDrawn !== 'undefined') {
+            if (typeof card.triggerAtEndOfTurn !== 'undefined') {
                 // play card if triggered
                 this.logger.log(
                     ctx.info,
