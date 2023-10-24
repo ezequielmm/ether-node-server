@@ -11,7 +11,6 @@ import { absorbingStatus } from "./constants";
 import { OnEvent } from "@nestjs/event-emitter";
 import { GameContext } from "src/game/components/interfaces";
 import { EVENT_BEFORE_ENEMIES_TURN_START } from "src/game/constants";
-import { counterStatus } from "../counter/constants";
 import { healEffect } from "src/game/effects/heal/constants";
 
 @StatusDecorator({
@@ -56,19 +55,27 @@ export class AbsorbingStatus implements StatusEffectHandler {
                 (useDefense ? multiplier * defense : 1);
 
                 if(EnemyService.isEnemy(effectDTO.target)){
-                    const applyDTO: ApplyDTO = {
-                        ctx: ctx,
-                        source: effectDTO.source,
-                        target: effectDTO.target,
-                        effect: {
-                            effect: healEffect.name,
-                            args: {
-                                value: damage, 
+
+                    const targetDefense = effectDTO.target.value.defense;
+                    if(targetDefense >= damage){
+                        return effectDTO;
+                    }else{
+                        const damageRemaining = damage - targetDefense;
+                        const applyDTO: ApplyDTO = {
+                            ctx: ctx,
+                            source: effectDTO.source,
+                            target: effectDTO.target,
+                            effect: {
+                                effect: healEffect.name,
+                                args: {
+                                    value: damageRemaining, 
+                                },
                             },
-                        },
-                    };
-        
-                    await this.effectService.apply(applyDTO);
+                        };
+            
+                        await this.effectService.apply(applyDTO);
+                        effectDTO.args.currentValue = targetDefense;
+                    }
                 }  
         }
 
