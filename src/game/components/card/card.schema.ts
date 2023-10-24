@@ -58,7 +58,7 @@ export class Card {
         statuses: JsonStatus[];
     };
 
-    @Prop({default: false})
+    @Prop()
     triggerOnDrawn?: boolean;
 
     @Prop()
