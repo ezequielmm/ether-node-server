@@ -15,8 +15,6 @@ import { damageEffect } from './constants';
 import { EnemyIntentionType } from 'src/game/components/enemy/enemy.enum';
 import { EnemyBuilderService } from 'src/game/components/enemy/enemy-builder.service';
 import { StandardResponse, SWARMessageType, SWARAction } from 'src/game/standardResponse/standardResponse';
-import { absorbEffect } from '../absorb/constants';
-import { counterEffect } from '../counter/constants';
 import { IExpeditionCurrentNodeDataEnemy } from 'src/game/components/expedition/expedition.interface';
 import { ExpeditionEntity, GameContext } from 'src/game/components/interfaces';
 import { trollData } from 'src/game/components/enemy/data/troll.enemy';

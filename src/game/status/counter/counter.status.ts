@@ -4,7 +4,7 @@ import { ApplyDTO, EffectDTO } from "src/game/effects/effects.interface";
 import { EffectService } from "src/game/effects/effects.service";
 import { StatusEffectHandler, StatusEffectDTO } from "../interfaces";
 import { StatusDecorator } from "../status.decorator";
-import { counterStatus } from "./constants";
+import { counteringStatus } from "./constants";
 import { damageEffect } from "src/game/effects/damage/constants";
 import { StatusService } from "../status.service";
 import { EnemyService } from "src/game/components/enemy/enemy.service";
@@ -14,7 +14,7 @@ import { EVENT_BEFORE_ENEMIES_TURN_START } from "src/game/constants";
 import { PlayerService } from "src/game/components/player/player.service";
 
 @StatusDecorator({
-    status: counterStatus,
+    status: counteringStatus,
 })
 @Injectable()
 export class CounterStatus implements StatusEffectHandler {
@@ -65,7 +65,6 @@ export class CounterStatus implements StatusEffectHandler {
                         effect: damageEffect.name,
                         args: {
                             value: damage, 
-                            type: 'counter',
                         },
                     },
                 };
@@ -87,7 +86,7 @@ export class CounterStatus implements StatusEffectHandler {
                 ctx,
                 enemy.value.statuses,
                 enemy,
-                counterStatus,
+                counteringStatus,
             );
         }
     }
