@@ -11,6 +11,8 @@ interface EnemyIntentsResponse {
         value?: number;
         description?: string;
         type?: EnemyIntentionType;
+        negateDamage?:number;
+        name?: string;
     }[];
 }
 
@@ -63,6 +65,8 @@ export class SendEnemyIntentProcess {
                     ...(intent.type === EnemyIntentionType.Attack && { value }),
                     description: this.descriptionGenerator(intent.type, value),
                     type: intent.type,
+                    negateDamage: intent.negateDamage,
+                    name: intent.name
                 });
             }
 
