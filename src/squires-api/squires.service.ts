@@ -44,6 +44,10 @@ export class SquiresService {
                 return []
             }
     
+            console.log("------------------------------------------------")
+            console.log(res.data.rewards)
+            console.log("------------------------------------------------")
+            
             return res.data.rewards;
         }catch (error) {
             console.error("Error connecting to squires:", error.message);
