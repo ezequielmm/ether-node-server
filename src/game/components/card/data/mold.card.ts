@@ -5,12 +5,7 @@ import { energyEffect } from 'src/game/effects/energy/constants';
 
 /*
 TODO:
-- validate if we can send -1 as value in energyEffect
-- percistance: yes (in keywords)
 - map effect
-
-
-Notes: Added to deck by Mold actions
 */
 export const MoldCard: Card = {
     cardId: 553,
