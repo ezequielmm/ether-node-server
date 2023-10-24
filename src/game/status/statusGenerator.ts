@@ -31,7 +31,7 @@ import { hatchingStatus } from './hatching/constants';
 import { chargingBeam } from './chargingBeam/constants';
 import { revealStatus } from './reveal/constants';
 import { growedStatus } from './growed/constants';
-import { counterStatus } from './counter/constants';
+import { counteringStatus } from './counter/constants';
 import { elementalStatus } from './elemental/constants';
 import { absorbingStatus } from './absorbing/constants';
 
@@ -146,7 +146,7 @@ export class StatusGenerator {
                 return `This creature has grown into a larger, more powerful version of itself.`
             case elementalStatus.name:
                 return `This creature has stepped into the spiritual realm and cannot be touched by regular means.`
-            case counterStatus.name:
+            case counteringStatus.name:
                 return `This creature is ready to hit back, and hit back hard.`
             case absorbingStatus.name:
                 return `This creature will absorb incoming attacks and use them to heal itself.`
