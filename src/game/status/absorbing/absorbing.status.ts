@@ -55,23 +55,30 @@ export class AbsorbingStatus implements StatusEffectHandler {
                 (useDefense ? multiplier * defense : 1);
 
                 if(EnemyService.isEnemy(effectDTO.target)){
-                    const applyDTO: ApplyDTO = {
-                        ctx: ctx,
-                        source: effectDTO.source,
-                        target: effectDTO.target,
-                        effect: {
-                            effect: healEffect.name,
-                            args: {
-                                value: damage, 
+
+                    const targetDefense = effectDTO.target.value.defense;
+                    if(targetDefense >= damage){
+                        return effectDTO;
+                    }else{
+                        const damageRemaining = damage - targetDefense;
+                        const applyDTO: ApplyDTO = {
+                            ctx: ctx,
+                            source: effectDTO.source,
+                            target: effectDTO.target,
+                            effect: {
+                                effect: healEffect.name,
+                                args: {
+                                    value: damageRemaining, 
+                                },
                             },
-                        },
-                    };
-        
-                    await this.effectService.apply(applyDTO);
+                        };
+            
+                        await this.effectService.apply(applyDTO);
+                        effectDTO.args.currentValue = targetDefense;
+                    }
                 }  
         }
 
-        effectDTO.args.currentValue = 0;
         return effectDTO;
     }
 

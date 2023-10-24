@@ -7,6 +7,13 @@ export interface SquiresRewardsResponse {
 export interface SquiresRewardResponse {
     name: string;
     image: string;
+    type: RewardType;
+}
+
+export enum RewardType {
+    Potion = 'potion',
+    Trinket = 'trinket',
+    Fragment = 'fragment'
 }
 
 export enum MixedRewardType {
@@ -21,6 +28,6 @@ export interface MixedRewards {
     name: string;
     image?: string;
 
-    
+
 }
 
