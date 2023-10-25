@@ -14,6 +14,7 @@ import { Gear } from '../components/gear/gear.schema';
 import { InjectModel } from 'kindagoose';
 import { MapType } from '../components/expedition/map.schema';
 import { Ref, ReturnModelType } from '@typegoose/typegoose';
+import { VictoryItem } from 'src/squires-api/squires.types';
 
 export interface ScoreResponse {
     outcome: string;
@@ -26,7 +27,7 @@ export interface ScoreResponse {
     notifyNoLoot: boolean;
     lootbox?: Gear[];
     rewards?: {name:string, image:string}[];
-    
+    victoryItems: VictoryItem[];
 }
 
 @Injectable()
@@ -118,6 +119,7 @@ export class ScoreCalculatorService {
             totalScore: 0,
             achievements: [],
             notifyNoLoot: false,
+            victoryItems: []
         };
 
         if (totalBasicEnemies > 0) {}

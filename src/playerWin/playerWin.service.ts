@@ -33,7 +33,7 @@ export class PlayerWinService {
     return allLootboxes;
   }
 
-  async findLastStageWinAndUpdate(eventId: number, playerToken:IPlayerToken, currentStage:number){
+  async findLastStageWinAndUpdate(eventId: number, playerToken:IPlayerToken, currentStage:number, lootbox:Gear[]){
 
     const lastDocument = await this.playerWin.findOne(
       {
@@ -49,7 +49,10 @@ export class PlayerWinService {
     if (lastDocument) {
       await this.playerWin.updateOne(
         { _id: lastDocument._id },
-        { $set: { 'stage': currentStage } }
+        { 
+          $set: { 'stage': currentStage } ,
+          $push: { 'lootbox': { $each: lootbox }}
+        }
       );
     }
   }

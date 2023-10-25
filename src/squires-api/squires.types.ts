@@ -1,3 +1,5 @@
+import { GearCategoryEnum, GearRarityEnum, GearTraitEnum } from "src/game/components/gear/gear.enum";
+
 export interface SquiresRewardsResponse {
     success: boolean;
     message: string | null;
@@ -22,12 +24,17 @@ export enum MixedRewardType {
 }
 
 
-export interface MixedRewards {
+export interface VictoryItem {
     rewardType: MixedRewardType; 
     
     name: string;
     image?: string;
 
-
+    gearId?: number;
+    trait?: GearTraitEnum;
+    category?: GearCategoryEnum;
+    rarity?: GearRarityEnum;
+    isActive?: boolean;
+    onlyOneAllowed?: boolean;
 }
 

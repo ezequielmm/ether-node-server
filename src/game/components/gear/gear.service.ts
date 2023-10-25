@@ -7,6 +7,8 @@ import { getDecimalRandomBetween } from '../../../utils';
 import { ILootboxRarityOdds } from './gear.interface';
 import { data as GearData } from './gear.data';
 import { find, sample } from 'lodash';
+import { FilterQuery } from 'mongoose';
+import { PlayerGear } from 'src/playerGear/playerGear.schema';
 
 @Injectable()
 export class GearService {
@@ -15,8 +17,8 @@ export class GearService {
     private readonly gearModel: ReturnModelType<typeof Gear>,
   ) { }
 
-
   private gearData = GearData;
+
   private selectRandomRarity(rarities: ILootboxRarityOdds) {
     let rolls = new Map<string, number>();
     let dropRates = [
@@ -63,10 +65,7 @@ export class GearService {
     return rarity;
   }
 
-  async getLootbox(
-    size: number,
-    rarities?: ILootboxRarityOdds,
-  ): Promise<Gear[]> {
+  async getLootbox(size: number, rarities?: ILootboxRarityOdds): Promise<Gear[]> {
     const gear_list: Gear[] = [];
 
     for (let i = 0; i < size; i++) {
@@ -78,11 +77,12 @@ export class GearService {
 
     return gear_list;
   }
-/*
-  async getLootbox(
+
+  async getUniqueHalloweenLoot(
     size: number,
     rarities?: ILootboxRarityOdds,
     userGear: Gear[] = [],
+    filter: FilterQuery<PlayerGear> = {}
   ): Promise<Gear[]> {
     //console.log('Starting to generate lootbox...');
     const gear_list: Gear[] = [];
@@ -92,7 +92,7 @@ export class GearService {
 
 
     let targetGearSet = '';
-    let allGear: Gear[] = await this.getAllGear();
+    let allGear: Gear[] = await this.getAllGear(filter);
     allGear = allGear.filter((gear) => gear.name === targetGearSet);
 
     let itemAdded = false;
@@ -120,7 +120,7 @@ export class GearService {
 
     return gear_list;
   }
-*/
+
   private downgradeRarity(
     currentRarity: GearRarityEnum,
   ): GearRarityEnum | null {
@@ -171,9 +171,9 @@ export class GearService {
     }
   }
 
-  async getAllGear(): Promise<Gear[] | null> {
+  async getAllGear(filter: FilterQuery<PlayerGear> = {}): Promise<Gear[] | null> {
     try {
-      const allGear = await this.gearModel.find({});
+      const allGear = await this.gearModel.find(filter);
       return allGear;
     } catch (error) {
       console.error('An error occurred while fetching all gear:', error);
