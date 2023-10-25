@@ -70,6 +70,7 @@ export class CardPlayedAction {
                 },
             } = ctx;
 
+        console.log(hand);
         console.log(cardId);
         //- Getting the played Card
         const card = hand.find((card) => {
