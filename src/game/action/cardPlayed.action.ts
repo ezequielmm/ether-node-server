@@ -81,7 +81,7 @@ export class CardPlayedAction {
             const field = getCardIdField(cardId);
             return card[field] === cardId;
         });
-        console.log('CardPlayedService handle', card);
+
         //- I don't have the card in my hand:
         if (!card) {
             this.sendInvalidCardMessage(ctx.client, logger);
