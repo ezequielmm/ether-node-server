@@ -1,7 +1,7 @@
 import { feebleStatus } from "src/game/status/feeble/constants";
 import { EnemyBuilderService as EB } from "../enemy-builder.service";
 import { EnemyTypeEnum, EnemyCategoryEnum, EnemySizeEnum, EnemyIntentionType } from "../enemy.enum";
-import { EnemyAction } from "../enemy.interface";
+import { EnemyAction, EnemyIntention } from "../enemy.interface";
 import { Enemy } from "../enemy.schema";
 import { fatigue } from "src/game/status/fatigue/constants";
 import { dodge } from "src/game/status/dodge/constants";
@@ -9,75 +9,77 @@ import { CardDestinationEnum, CardTargetedEnum } from "../../card/card.enum";
 import { attachStatusEffect } from "src/game/effects/attachStatus/constants";
 import { addCardEffect } from "src/game/effects/addCard/contants";
 import { AddCardPosition } from "src/game/effects/effects.enum";
+import { damageEffect } from "src/game/effects/damage/constants";
+import { MirageCard } from "../../card/data/mirage.card";
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------------
 //- Intents:
 //-------------------------------------------------------------------------------------------------------------------------------------------------------
 
-// const getSignatureMove = (animationId:string):EnemyIntention => {
-//     return {
-//         name: "Lullaby", 
-//         type: EnemyIntentionType.Signature,
-//         target: CardTargetedEnum.Player,
-//         value: 1,
-//         negateDamage: 20,
-//         effects: [
-//             {
-//                 effect: sleep.name,
-//                 target: CardTargetedEnum.Player,
-//                 args: {
-//                     value: 2,
-//                 },
-//                 action: {
-//                     name: animationId,
-//                     hint: animationId,
-//                 },
-//             },
-//             {
-//                 effect: addCardEffect.name,
-//                 target: CardTargetedEnum.Player,
-//                 args: {
-//                     value: 2,
-//                     cardId: mistifyCard.cardId,     
-//                     destination: CardDestinationEnum.Draw,
-//                     position: AddCardPosition.Random,
-//                 },
-//                 action: {
-//                     name: animationId,
-//                     hint: animationId,
-//                 },
-//             },
-//             {
-//                 effect: attachStatusEffect.name,
-//                 target: CardTargetedEnum.Player,
-//                 args: {
-//                     statusName: feebleStatus.name,
-//                     statusArgs: {
-//                         counter: 1,
-//                     },
-//                 },
-//                 action: {
-//                     name: animationId,
-//                     hint: animationId,
-//                 },
-//             },
-//             {
-//                 effect: attachStatusEffect.name,
-//                 target: CardTargetedEnum.Player,
-//                 args: {
-//                     statusName: fatigue.name,
-//                     statusArgs: {
-//                         counter: 1,
-//                     },
-//                 },
-//                 action: {
-//                     name: animationId,
-//                     hint: animationId,
-//                 },
-//             },
-//         ]
-//     }
-// }
+const getSignatureMove = (animationId:string): EnemyIntention => {
+    return {
+        name: "Lullaby", 
+        type: EnemyIntentionType.Signature,
+        target: CardTargetedEnum.Player,
+        value: 1,
+        negateDamage: 20,
+        effects: [
+            {
+                effect: damageEffect.name,
+                target: CardTargetedEnum.Player,
+                args: {
+                    value: 12,
+                },
+                action: {
+                    name: animationId,
+                    hint: animationId,
+                },
+            },
+            {
+                effect: addCardEffect.name,
+                target: CardTargetedEnum.Player,
+                args: {
+                    value: 2,
+                    cardId: MirageCard.cardId,     
+                    destination: CardDestinationEnum.Draw,
+                    position: AddCardPosition.Random,
+                },
+                action: {
+                    name: animationId,
+                    hint: animationId,
+                },
+            },
+            {
+                effect: attachStatusEffect.name,
+                target: CardTargetedEnum.Player,
+                args: {
+                    statusName: feebleStatus.name,
+                    statusArgs: {
+                        counter: 1,
+                    },
+                },
+                action: {
+                    name: animationId,
+                    hint: animationId,
+                },
+            },
+            {
+                effect: attachStatusEffect.name,
+                target: CardTargetedEnum.Player,
+                args: {
+                    statusName: fatigue.name,
+                    statusArgs: {
+                        counter: 1,
+                    },
+                },
+                action: {
+                    name: animationId,
+                    hint: animationId,
+                },
+            },
+        ]
+    }
+}
 
 
 
@@ -102,11 +104,11 @@ const AdvancedIntents: EnemyAction = {
             EB.createDefenseIntent(12, EB.DEFEND_DEBUFF), 
             EB.createBasicDebuffIntent(2, fatigue.name, EB.DEFEND_DEBUFF)
         ] },
-        { id: 6,  probability: 0.2, cooldown: 0, intents: [EB.createBasicDebuffIntent(4, feebleStatus.name, EB.DEBUFF)] },
-        { id: 7,  probability: 0.2, cooldown: 0, intents: [EB.createBasicDebuffIntent(4, fatigue.name, EB.DEBUFF2)] },
-        //{ id: 8,  probability: 0.2, cooldown: 0, intents: [EB.createBasicDebuffIntent(1, sleep.name, EB.DEBUFF3)] },
-        { id: 9,  probability: 0.2, cooldown: 0, intents: [EB.createBasicBuffIntent(2, dodge.name, EB.DODGE)] },
-        //{ id: 10, probability: 0.1, cooldown: 0, intents: [getSignatureMove(EB.SIGNATURE_MOVE)] },
+        { id: 6,  probability: 0.1, cooldown: 0, intents: [EB.createBasicDebuffIntent(4, feebleStatus.name, EB.DEBUFF)] },
+        { id: 7,  probability: 0.1, cooldown: 0, intents: [EB.createBasicDebuffIntent(4, fatigue.name, EB.DEBUFF2)] },
+        { id: 8,  probability: 0.2, cooldown: 0, intents: [EB.createBasicAttackIntent(10, EB.ATTACK)] },
+        { id: 9,  probability: 0.1, cooldown: 0, intents: [EB.createBasicBuffIntent(2, dodge.name, EB.DODGE)] },
+        { id: 10, probability: 0.1, cooldown: 0, intents: [getSignatureMove(EB.SIGNATURE_MOVE)] },
     ]
 }
 

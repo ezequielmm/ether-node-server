@@ -43,10 +43,6 @@ export class SquiresService {
             if(!res.data.success){
                 return []
             }
-    
-            console.log("------------------------------------------------")
-            console.log(res.data.rewards)
-            console.log("------------------------------------------------")
             
             return res.data.rewards;
         }catch (error) {

@@ -58,8 +58,8 @@ import { HiddenStatus } from './hidden/hidden.status';
 import { HatchingStatus } from './hatching/hatching.status';
 import { ChargingBeamStatus } from './chargingBeam/chargingBeam.status';
 import { RevealStatus } from './reveal/reveal.status';
-import { GrowedStatus } from './growed/growed.status';
-import { CounterStatus } from './counter/counter.status';
+import { GrownStatus } from './grown/grown.status';
+import { CounterStatus } from './countering/countering.status';
 import { ElementalStatus } from './elemental/elemental.status';
 import { AbsorbingStatus } from './absorbing/absorbing.status';
 
@@ -128,7 +128,7 @@ import { AbsorbingStatus } from './absorbing/absorbing.status';
         HatchingStatus,
         ChargingBeamStatus,
         RevealStatus,
-        GrowedStatus,
+        GrownStatus,
         CounterStatus,
         ElementalStatus,
         AbsorbingStatus
