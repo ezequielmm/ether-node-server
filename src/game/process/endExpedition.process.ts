@@ -237,13 +237,17 @@ export class EndExpeditionProcess {
                 ? (isLastStage ? this.lootboxRarityVillagerStage2 : this.lootboxRarityVillagerStage1) 
                 : (isLastStage ? this.lootboxRarityStage2 : this.lootboxRarityStage1);
 
-        console.log("Lootbox Rarity apply for character type: " + lootboxRariry)
+        console.log("Lootbox Rarity apply for character type: ");
+        console.log(lootboxRariry)
         console.log("-----------------------------------------------------")
 
 
         //- START Just for Unique gears:
         //- Getting the Halloween Gear for the whole userAddress
         const userGear = await this.playerGearService.getGear(ctx.expedition.userAddress, this.halloweenGearsFilter);
+
+        console.log("All the Halloween Gears attached to the userAddress:")
+        console.log(userGear)
 
         const lootbox = await this.gearService.getUniqueHalloweenLoot(
             1,
