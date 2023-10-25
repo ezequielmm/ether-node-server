@@ -65,6 +65,14 @@ export class PlayerGearService {
         });
     }
 
+    async getGearFiltered(userAddress: string, filter: FilterQuery<PlayerGear> = {}): Promise<any> {
+        return await this.playerGear.findOne({
+            userAddress,
+            ...filter,
+        })
+        .lean();
+    }
+
     async getGear(userAddress: string, filter: FilterQuery<PlayerGear> = {}): Promise<any> 
     {
         let player: PlayerGear = await this.playerGear.findOne({
