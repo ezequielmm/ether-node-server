@@ -54,6 +54,14 @@ import { ProcessModule } from '../process/process.module';
 import { PeacockFeatherStatus } from './peacockFeather/peacockFeather.status';
 import { BlightedStatus } from './blighted/blighted.status';
 import { CombatModule } from '../combat/combat.module';
+import { HiddenStatus } from './hidden/hidden.status';
+import { HatchingStatus } from './hatching/hatching.status';
+import { ChargingBeamStatus } from './chargingBeam/chargingBeam.status';
+import { RevealStatus } from './reveal/reveal.status';
+import { GrowedStatus } from './growed/growed.status';
+import { CounterStatus } from './counter/counter.status';
+import { ElementalStatus } from './elemental/elemental.status';
+import { AbsorbingStatus } from './absorbing/absorbing.status';
 
 @Module({
     imports: [
@@ -116,6 +124,15 @@ import { CombatModule } from '../combat/combat.module';
         SummonedStatus,
         PeacockFeatherStatus,
         BlightedStatus,
+        HiddenStatus,
+        HatchingStatus,
+        ChargingBeamStatus,
+        RevealStatus,
+        GrowedStatus,
+        CounterStatus,
+        ElementalStatus,
+        AbsorbingStatus
+
     ],
     exports: [StatusService],
 })

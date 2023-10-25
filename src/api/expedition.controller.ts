@@ -71,9 +71,7 @@ export class ExpeditionController {
         summary: 'Check if the given user has an expedition in progress or not',
     })
     @Get('/status')
-    async handleGetExpeditionStatus(
-        @Req() { userAddress }: AuthorizedRequest,
-    ): Promise<{
+    async handleGetExpeditionStatus(@Req() { userAddress }: AuthorizedRequest): Promise<{
         hasExpedition: boolean;
         contractId: string;
         nftId: number;
@@ -81,6 +79,7 @@ export class ExpeditionController {
         equippedGear: GearItem[];
         contest: Contest;
         playerState: any;
+        currentStage:number;
     }> {
         this.logger.log(`Client called GET route "/expeditions/status"`);
 
@@ -92,20 +91,18 @@ export class ExpeditionController {
                     userAddress,
                     status: ExpeditionStatusEnum.InProgress
                 },
-                { playerState: 1, isCurrentlyPlaying: 1, currentNode: 1 },
+                { playerState: 1, isCurrentlyPlaying: 1, currentNode: 1, currentStage: 1 },
             );
 
-            const hasExpedition =
-                expedition !== null && !expedition.isCurrentlyPlaying;
-            const contractId =
-                expedition?.playerState?.playerToken?.contractId ?? '-1';
+            const hasExpedition = expedition !== null && !expedition.isCurrentlyPlaying;
+            const contractId = expedition?.playerState?.playerToken?.contractId ?? '-1';
             const nftId = expedition?.playerState?.playerToken?.tokenId ?? -1; // tokenId is not enough to avoid conflicts between collections. We have to check contract as well.
             const equippedGear = expedition?.playerState?.equippedGear ?? [];
-            const tokenType =
-                expedition?.playerState?.characterClass ?? 'missing';
+            const tokenType = expedition?.playerState?.characterClass ?? 'missing';
+            const currentStage = expedition?.currentStage ?? 1;
             //todo parse for front end
             const playerState = expedition?.playerState ?? null;
-           
+
             const contest =
                 expedition?.contest ??
                 (await this.contestService.findActiveContest());
@@ -117,7 +114,8 @@ export class ExpeditionController {
                 tokenType,
                 equippedGear,
                 contest,
-                playerState
+                playerState,
+                currentStage
             };
         } catch (e) {
             this.logger.error(e.stack);
@@ -135,13 +133,9 @@ export class ExpeditionController {
         summary: `Creates a new expedition for the player`,
     })
     @Post()
-    async handleCreateExpedition(
-        @Req() { userAddress }: AuthorizedRequest,
-        @Body() payload: CreateExpeditionApiDTO,
-    ): Promise<{
-        expeditionCreated: boolean;
-        reason?: string;
-    }> {
+    async handleCreateExpedition(@Req() { userAddress }: AuthorizedRequest, @Body() payload: CreateExpeditionApiDTO)
+        : Promise<{expeditionCreated: boolean; reason?: string;}> 
+    {
         this.logger.log(`Client called POST route "/expeditions"`);
 
         const { equippedGear, tokenType: character_class } = payload;
@@ -151,6 +145,7 @@ export class ExpeditionController {
             tokenId: payload.nftId,
         };
 
+        //- Does the following method make sense??
         if (equippedGear?.length === 0) {
             // validate equippedGear vs ownedGeared
             const all_are_owned = await this.playerGearService.allAreOwned(
@@ -162,50 +157,44 @@ export class ExpeditionController {
             }
         }
 
-        const hasExpedition =
-            await this.expeditionService.playerHasExpeditionInProgress({
-                clientId: userAddress,
-            });
-
-        if (!hasExpedition) {
-            const contest = await this.contestService.findActiveContest();
-            if (!contest) {
-                return {
-                    expeditionCreated: false,
-                    reason: 'no contest found',
-                };
-            }
-
-            const can_play = await this.playerWinService.canPlay(
-                contest.event_id,
-                playerToken.contractId,
-                playerToken.tokenId,
-            );
-
-            if (!can_play) {
-                return {
-                    expeditionCreated: false,
-                    reason: 'ineligible token',
-                };
-            }
-
-            const playerName = await this.troveService.getAccountDisplayName(
-                userAddress,
-            );
-
-            await this.initExpeditionProcess.handle({
-                userAddress,
-                playerName,
-                playerToken,
-                equippedGear,
-                character_class,
-                contest,
-            });
-
-            return { expeditionCreated: true };
-        } else {
+        //- Validate if has expedition.. I understand that a new one is being created, therefore another one should not be reused..
+        const hasExpedition = await this.expeditionService.playerHasExpeditionInProgress({clientId: userAddress});
+        if(hasExpedition){
             return { expeditionCreated: true };
         }
+
+        //- Validates if a Contest was created for today:
+        const contest = await this.contestService.findActiveContest();
+        if (!contest) {
+            return {
+                expeditionCreated: false,
+                reason: 'no contest found',
+            };
+        }
+
+        //- Validates that the selected nft has not exceeded the daily games
+        const can_play = await this.playerWinService.canPlay(contest.event_id, playerToken.contractId, playerToken.tokenId);
+        if (!can_play) {
+            return {
+                expeditionCreated: false,
+                reason: 'ineligible token',
+            };
+        }
+
+        const playerName = await this.troveService.getAccountDisplayName(userAddress);
+
+        await this.initExpeditionProcess.handle({
+            userAddress,
+            playerName,
+            playerToken,
+            equippedGear,
+            character_class,
+            contest,
+            stage: 1
+        });
+
+        return { expeditionCreated: true };
+        
     }
 
     @ApiOperation({
@@ -240,9 +229,7 @@ export class ExpeditionController {
         summary: 'Query the expedition score',
     })
     @Get('/score')
-    async handleGetScore(
-        @Req() { userAddress }: AuthorizedRequest,
-    ): Promise<ScoreResponse> {
+    async handleGetScore(@Req() { userAddress }: AuthorizedRequest): Promise<ScoreResponse> {
         this.logger.log(`Client called GET route "/expedition/score"`);
 
         const expedition = await this.expeditionService.findOneTimeDesc({
@@ -250,6 +237,7 @@ export class ExpeditionController {
             $or: [
                 { status: ExpeditionStatusEnum.Victory },
                 { status: ExpeditionStatusEnum.Defeated },
+                { status: ExpeditionStatusEnum.InProgress },
             ],
         });
 

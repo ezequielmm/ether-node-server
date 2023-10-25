@@ -10,7 +10,6 @@ import {
     IExpeditionPlayerStateDeckCard,
     Reward,
 } from './expedition.interface';
-import { Node } from './node';
 import { Player } from './player';
 import { ExpeditionActConfig } from './expeditionActConfig.schema';
 import { EncounterInterface } from '../encounter/encounter.interfaces';
@@ -106,6 +105,12 @@ export class Expedition {
 
     @Prop({ default: false })
     isCurrentlyPlaying: boolean;
+
+    @Prop()
+    currentStage: number;
+
+    @Prop()
+    stageScores: ScoreResponse[];
 
     @Prop()
     createdAt: Date;

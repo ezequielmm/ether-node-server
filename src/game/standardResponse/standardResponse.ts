@@ -88,8 +88,14 @@ export enum SWARAction {
     FlashTrinketIcon = 'flash_trinket_icon',
     ShowRewards = 'show_rewards',
     SpawnEnemies = 'spawn_enemies',
+    TransformEnemy = 'transform_enemy',
+    Cannibalize = 'cannibalize',
     RemoveEnemies = 'remove_enemies',
     ShowScore = 'show_score',
+    ShowNextStage = 'show_next_stage',
+    Mitosis = 'mitosis',
+    Immolate = 'immolate',
+    SporeDance = 'spore_dance',
 }
 
 interface SWARPayload {

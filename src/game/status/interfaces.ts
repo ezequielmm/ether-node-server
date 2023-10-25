@@ -12,6 +12,7 @@ export enum StatusType {
 export enum StatusDirection {
     Incoming = 'incoming',
     Outgoing = 'outgoing',
+    Both     = 'both',
 }
 
 export enum StatusCounterType {
@@ -80,6 +81,9 @@ export interface StatusBase {
 
 export interface StatusEffect extends StatusBase {
     trigger: StatusTrigger.Effect;
+
+    //- Set it to true if want the status not to be seen in the game. By default it is displayed.
+    ghost?: boolean;
 
     /**
      * Effect direction

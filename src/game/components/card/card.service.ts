@@ -200,9 +200,20 @@ export class CardService {
     async onAfterDrawCards(payload: AfterDrawCardEvent) {
         const { ctx, newHand } = payload;
 
+        console.log('new hand', newHand);
+        console.log('ENTRE EN EL EVENTO, EVENT_AFTER_DRAW_CARDS');
+
+        for(const card of newHand){          
+            if(typeof card.triggerOnDrawn !== 'undefined'){
+                console.log('le saque las keyWords a ', card);
+                card.keywords = [];  
+            } 
+        }
+
         const cards = filter(newHand, {
             triggerOnDrawn: true,
         });
+        console.log('cards with triggerOnDrawn',cards);
 
         if (cards.length > 0) {
             for (const card of cards) {
@@ -240,7 +251,8 @@ export class CardService {
                 );
 
                 card.properties = card.triggerAtEndOfTurn;
-
+                card.keywords = [];
+                
                 await this.cardPlayedAction.handle({
                     ctx,
                     cardId: card.id,

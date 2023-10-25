@@ -16,6 +16,8 @@ import { AddCardPosition } from 'src/game/effects/effects.enum';
 
 export const mimicFrog1Data: Enemy = {
     enemyId: 8,
+    stage: 1,
+    selectable: true,
     isActive: true,
     name: 'MimicFrog1',
     type: EnemyTypeEnum.Plant,

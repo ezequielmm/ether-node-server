@@ -1,6 +1,6 @@
 import { ModelOptions, Prop, Severity } from '@typegoose/typegoose';
 import { EnemyTypeEnum, EnemyCategoryEnum, EnemySizeEnum } from './enemy.enum';
-import { EnemyScript } from './enemy.interface';
+import { EnemyAction, EnemyScript } from './enemy.interface';
 
 @ModelOptions({
     schemaOptions: { collection: 'enemies', versionKey: false },
@@ -32,5 +32,19 @@ export class Enemy {
     description: string;
 
     @Prop({ type: Object })
-    scripts: EnemyScript[];
+    scripts?: EnemyScript[];
+
+    @Prop({ type: Object })
+    attackLevels?: EnemyAction[];
+
+    @Prop()
+    aggressiveness?: number;
+
+    @Prop()
+    stage: number;
+
+    @Prop()
+    selectable: boolean;
 }
+
+

@@ -81,6 +81,7 @@ import {
     PerfectTimingCard,
     PerfectTimingCardUpgraded,
 } from './data/perfectTiming.card';
+import { PhaseOutCard, PhaseOutCardUpgraded } from './data/phaseOut.card';
 import { PlantFeetCard, PlantFeetCardUpgraded } from './data/plantFeet.card';
 import { PoisonedCard } from './data/poisoned.card';
 import { PrayCard, PrayCardUpgraded } from './data/pray.card';
@@ -131,6 +132,10 @@ import {
 } from './data/ultraLethality.card';
 import { WoundedCard } from './data/wounded.card';
 import { WrathCard, WrathCardUpgraded } from './data/wrath.card';
+import { HolyExplosionCard, HolyExplosionCardUpgraded } from './data/holyExplosion.card';
+import { InThyNameCard, InThyNameCardUpgraded } from './data/inThyName.card';
+import { DecayCard } from './data/decay.card';
+import { MoldCard } from './data/mold.card';
 
 export const data: Card[] = [
     AttackCard,
@@ -280,4 +285,12 @@ export const data: Card[] = [
     ParryCardUpgraded,
     PoisonedCard,
     CharmedCard,
+    PhaseOutCard,
+    PhaseOutCardUpgraded,
+    HolyExplosionCard, 
+    HolyExplosionCardUpgraded,
+    InThyNameCard, 
+    InThyNameCardUpgraded,
+    DecayCard,
+    MoldCard 
 ];

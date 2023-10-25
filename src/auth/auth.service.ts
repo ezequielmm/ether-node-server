@@ -51,8 +51,6 @@ export class AuthService {
             );
         }
 
-        console.log(`Authenticated: ${fields.address}`);
-
         return this.generateToken(fields.address);
     }
 

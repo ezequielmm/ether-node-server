@@ -14,7 +14,6 @@ import { Gear } from '../components/gear/gear.schema';
 import { InjectModel } from 'kindagoose';
 import { MapType } from '../components/expedition/map.schema';
 import { Ref, ReturnModelType } from '@typegoose/typegoose';
-import { ExpeditionService } from '../components/expedition/expedition.service';
 
 export interface ScoreResponse {
     outcome: string;
@@ -27,6 +26,7 @@ export interface ScoreResponse {
     notifyNoLoot: boolean;
     lootbox?: Gear[];
     rewards?: {name:string, image:string}[];
+    
 }
 
 @Injectable()
@@ -37,6 +37,11 @@ export class ScoreCalculatorService {
 
     @Inject(forwardRef(() => Expedition))
     private readonly expedition: ReturnModelType<typeof Expedition>
+
+    private readonly stageMultiplier: Map<number, number> = new Map([
+        [1, 1],
+        [2, 1.5]
+    ]);
 
     async calculate({ expedition }: { expedition: Expedition }): Promise<ScoreResponse> {
         // All the points will be calculatred based on
@@ -61,6 +66,7 @@ export class ScoreCalculatorService {
             status,
             createdAt,
             endedAt,
+            currentStage
         } = expedition;
 
         const totalBasicEnemies =
@@ -192,9 +198,10 @@ export class ScoreCalculatorService {
                 score: 10,
             });
 
-        // Now we sum all the points to get the total
+        // Now we sum all the points to get the total and multiply with the stage modifier.
         data.totalScore = reduce(data.achievements, (totalScore, item) => totalScore += item.score, 0);
-        
+        data.totalScore *= this.stageMultiplier.get(currentStage);
+
         return data;
     }
 

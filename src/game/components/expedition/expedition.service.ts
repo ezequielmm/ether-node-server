@@ -34,6 +34,7 @@ import { MapService } from 'src/game/map/map.service';
 import { ConfigService } from '@nestjs/config';
 import { NodeType } from './node-type';
 import { MapDocument, MapType } from './map.schema';
+import { bool } from 'aws-sdk/clients/signer';
 
 @Injectable()
 export class ExpeditionService {
@@ -406,4 +407,26 @@ export class ExpeditionService {
             throw new Error('Error retrieving maps: ' + error.message);
         }
     }
+
+    // retorna true si alguna de las expediciones de esa wallet finalizo el stage 1
+    public async checkCurrentStage(wallet: string): Promise<boolean> {
+        try {
+            // Busca todas las expediciones asociadas a la billetera
+            const expeditions = await this.expedition.find({ userAddress: wallet });
+    
+            // Itera sobre las expediciones y verifica si alguna tiene currentStage igual a 2
+            for (const expedition of expeditions) {
+                if (expedition.currentStage === 2) {
+                    return true; // Si encuentra al menos una expedición con currentStage 2, devuelve true
+                }
+            }
+    
+            // Si no se encuentra ninguna expedición con currentStage 2, devuelve false
+            return false;
+        } catch (error) {
+            // Manejar errores de consulta aquí
+            throw new Error('Error checking current stage: ' + error.message);
+        }
+    }
+    
 }

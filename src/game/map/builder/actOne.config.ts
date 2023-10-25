@@ -417,6 +417,18 @@ const nodeOptions = {
     ],
 };
 
+const createStage1NewMap = (maxStepsVar: number, maxNodesVar: number): IActConfiguration => {
+    if(maxStepsVar >= 12){
+        return createMoreOrEquals12NodesMap(maxStepsVar, maxNodesVar);
+    } 
+    if(maxStepsVar < 12 && maxStepsVar >= 5){
+        return createLess12NodesMap(maxStepsVar, maxNodesVar)
+    }
+    else{
+        return createLess5NodesMap(maxStepsVar, maxNodesVar)
+    }
+}
+
 const createMoreOrEquals12NodesMap = (maxStepsVar: number, maxNodesVar: number): IActConfiguration => {
 
     let maxSteps = maxStepsVar <= 30 ? maxStepsVar : 30;
@@ -691,4 +703,4 @@ const createLess12NodesMap = (maxStepsVar: number, maxNodesVar:number): IActConf
 }
 
 
-export { createMoreOrEquals12NodesMap, createLess12NodesMap, createLess5NodesMap };
+export { createStage1NewMap };

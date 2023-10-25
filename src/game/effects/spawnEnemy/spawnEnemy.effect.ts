@@ -22,6 +22,8 @@ import { getRandomBetween } from 'src/utils';
 import { EffectDecorator } from '../effects.decorator';
 import { EffectDTO, EffectHandler } from '../effects.interface';
 import { spawnEnemyEffect } from './contants';
+import { Enemy } from 'src/game/components/enemy/enemy.schema';
+import { EnemyBuilderService } from 'src/game/components/enemy/enemy-builder.service';
 
 export interface SpawnEnemyArgs {
     enemiesToSpawn: number[];
@@ -32,23 +34,22 @@ export interface SpawnEnemyArgs {
 })
 @Injectable()
 export class SpawnEnemyEffect implements EffectHandler {
-    constructor(
-        private readonly enemyService: EnemyService,
-        private readonly expeditionService: ExpeditionService,
-    ) {}
+    
+    constructor(private readonly enemyService: EnemyService,
+                private readonly expeditionService: ExpeditionService) {}
+
 
     async handle(dto: EffectDTO<SpawnEnemyArgs>): Promise<void> {
-        const {
-            ctx,
-            ctx: {
-                expedition: {
-                    currentNode: {
-                        data: { enemies },
-                    },
-                },
-            },
-            args: { enemiesToSpawn },
-        } = dto;
+        
+        const ctx            = dto.ctx;
+        const enemies        = dto.ctx.expedition.currentNode.data.enemies;
+        let enemiesToSpawn = dto.args.enemiesToSpawn;
+
+        const enemiesCount = this.enemyService.getLiving(ctx).length;
+        if(enemiesCount >= 5){
+            console.log("Too many enemies in combat to spawn")
+            return;
+        }
 
         // First we check if the current combat has any sporelings alive,
         // only spawn in when there are no sporelings (this is temporary)
@@ -65,12 +66,12 @@ export class SpawnEnemyEffect implements EffectHandler {
             // Now if we have a fungal brute, we check if we have any sporelings alive
             const combatHasSporelings = combatHasFungalBrute
                 ? some(enemies, (enemy) => {
-                      const sporelingsIds = this.getSporelingsIds();
-                      return (
-                          enemy.hpCurrent > 0 &&
-                          includes(sporelingsIds, enemy.enemyId)
-                      );
-                  })
+                    const sporelingsIds = this.getSporelingsIds();
+                    return (
+                        enemy.hpCurrent > 0 &&
+                        includes(sporelingsIds, enemy.enemyId)
+                    );
+                })
                 : false;
 
             // We only need to add new sporelings if there are no more alive
@@ -81,92 +82,132 @@ export class SpawnEnemyEffect implements EffectHandler {
             // Now if we have a thornwolf, we check if we have any thornwolf pups alive
             const combatHasThornWolfPups = combatHasThornWolf
                 ? some(enemies, (enemy) => {
-                      const thornWolfPupsIds = this.getThrornWolfPupsIds();
-                      return (
-                          enemy.hpCurrent > 0 &&
-                          includes(thornWolfPupsIds, enemy.enemyId)
-                      );
-                  })
+                    const thornWolfPupsIds = this.getThrornWolfPupsIds();
+                    return (
+                        enemy.hpCurrent > 0 &&
+                        includes(thornWolfPupsIds, enemy.enemyId)
+                    );
+                })
                 : false;
 
             if (!combatHasThornWolfPups)
                 await this.spawnEnemies(enemiesToSpawn, enemies, ctx.client);
-        } else {
+        } 
+        else {
             await this.spawnEnemies(enemiesToSpawn, enemies, ctx.client);
         }
     }
 
-    private async spawnEnemies(
-        enemiesToSpawn: number[],
-        enemies: IExpeditionCurrentNodeDataEnemy[],
-        client: Socket,
-    ): Promise<void> {
+    private async spawnEnemies(enemiesToSpawn: number[], enemies: IExpeditionCurrentNodeDataEnemy[], client: Socket): Promise<void> {
         // Next we check the enemies that we are going to spawn in
         // during combat and get their information from the database
         const enemiesFromDB = await this.enemyService.findEnemiesById(
             enemiesToSpawn,
         );
 
+        if(enemiesFromDB.length <= 0){
+            return;
+        }
+
         // Now if we find enemies, we add them to the combat state and send a new message
         // To the frontend so they can show the proper animations
-        if (enemiesFromDB.length > 0) {
-            const enemiesToAdd: IExpeditionCurrentNodeDataEnemy[] = map(
-                enemiesFromDB,
-                (enemy) => {
-                    const newHealth = getRandomBetween(
-                        enemy.healthRange[0],
-                        enemy.healthRange[1],
-                    );
+        const enemiesToAdd: IExpeditionCurrentNodeDataEnemy[] = map(
+            enemiesFromDB,
+            (enemy) => {
+                const newHealth = getRandomBetween(
+                    enemy.healthRange[0],
+                    enemy.healthRange[1],
+                );
 
-                    return {
-                        id: randomUUID(),
-                        enemyId: enemy.enemyId,
-                        name: enemy.name,
-                        category: enemy.category,
-                        type: enemy.type,
-                        size: enemy.size,
-                        defense: 0,
-                        hpCurrent: newHealth,
-                        hpMax: newHealth,
-                        statuses: {
-                            [StatusType.Buff]: [],
-                            [StatusType.Debuff]: [],
-                        },
-                    };
-                },
-            );
+                return this.buildMinionEnemy(enemy, newHealth);
+            },
+        );
 
-            enemies.unshift(...enemiesToAdd); // push new enemies to front of array instead of end, for frontend purposes.
+        enemies.unshift(...enemiesToAdd); // push new enemies to front of array instead of end, for frontend purposes.
 
-            client.emit(
-                'PutData',
-                StandardResponse.respond({
-                    message_type: SWARMessageType.CombatUpdate,
-                    action: SWARAction.SpawnEnemies,
-                    data: enemiesToAdd,
-                }),
-            );
+        client.emit(
+            'PutData',
+            StandardResponse.respond({
+                message_type: SWARMessageType.CombatUpdate,
+                action: SWARAction.SpawnEnemies,
+                data: enemiesToAdd,
+            }),
+        );
 
-            await this.expeditionService.updateByFilter(
-                {
-                    clientId: client.id,
-                    status: ExpeditionStatusEnum.InProgress,
-                },
-                { $set: { 'currentNode.data.enemies': enemies } },
-            );
+        await this.expeditionService.updateByFilter(
+            {
+                clientId: client.id,
+                status: ExpeditionStatusEnum.InProgress,
+            },
+            { $set: { 'currentNode.data.enemies': enemies } },
+        );
 
-            // Now we generate a new ctx to generate the new enemy intentions
-            const newCtx = await this.expeditionService.getGameContext(client);
+        // Now we generate a new ctx to generate the new enemy intentions
+        const newCtx = await this.expeditionService.getGameContext(client);
 
-            // Now we generate the new intentions, always going to the initial 0 state
-            enemiesFromDB.forEach(async (enemy) => {
+        // Now we generate the new intentions, always going to the initial 0 state
+        enemiesFromDB.forEach(async (enemy) => {
+            if(enemy.scripts && enemy.scripts.length > 0){
                 await this.enemyService.setCurrentScript(
                     newCtx,
                     enemy.enemyId,
                     enemy.scripts[0],
                 );
-            });
+            }else if(enemy.attackLevels){
+                await this.enemyService.setCurrentScript(
+                    newCtx,
+                    enemy.enemyId,
+                    {id: 0, intentions: [EnemyBuilderService.createDoNothingIntent()]},
+                );
+            }
+        });
+
+    }
+
+    private buildMinionEnemy(enemy:Enemy, newHealth:number):IExpeditionCurrentNodeDataEnemy {
+        
+        let newMinionEnemy:IExpeditionCurrentNodeDataEnemy;
+
+        //- Old Enemies
+        if(enemy.scripts && enemy.scripts.length > 0){
+            newMinionEnemy = {
+                id: randomUUID(),
+                enemyId: enemy.enemyId,
+                name: enemy.name,
+                category: enemy.category,
+                type: enemy.type,
+                size: enemy.size,
+                defense: 0,
+                hpCurrent: newHealth,
+                hpMax: newHealth,
+                statuses: {
+                    [StatusType.Buff]: [],
+                    [StatusType.Debuff]: [],
+                },
+            }
         }
+        //- New Enemies:
+        else{
+            const formattedCooldowns = this.enemyService.enemyIntentsToExpeditionEnemyCooldowns(enemy);
+            newMinionEnemy = {
+                id: randomUUID(),
+                enemyId: enemy.enemyId,
+                name: enemy.name,
+                category: enemy.category,
+                type: enemy.type,
+                size: enemy.size,
+                defense: 0,
+                hpCurrent: newHealth,
+                hpMax: newHealth,
+                statuses: {
+                    [StatusType.Buff]: [],
+                    [StatusType.Debuff]: [],
+                },
+                aggressiveness: enemy.aggressiveness,
+                intentCooldowns: formattedCooldowns
+            }
+        }
+        return newMinionEnemy;
     }
 
     private getSporelingsIds = (): number[] => [

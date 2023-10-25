@@ -6,7 +6,6 @@ import { CardService } from '../components/card/card.service';
 import { CharacterClassEnum } from '../components/character/character.enum';
 import { Character } from '../components/character/character.schema';
 import { CharacterService } from '../components/character/character.service';
-import { CustomDeckService } from '../components/customDeck/customDeck.service';
 import { ExpeditionStatusEnum } from '../components/expedition/expedition.enum';
 import { IExpeditionPlayerStateDeckCard } from '../components/expedition/expedition.interface';
 import { ExpeditionService } from '../components/expedition/expedition.service';
@@ -15,100 +14,48 @@ import { GearItem } from '../../playerGear/gearItem';
 import { Contest } from '../contest/contest.schema';
 import { Expedition, IPlayerToken } from '../components/expedition/expedition.schema';
 import { ContestMapService } from '../contestMap/contestMap.service';
-import { ContestService } from '../contest/contest.service';
 import { MapDeckService } from '../components/mapDeck/mapDeck.service';
 import { MapService } from '../map/map.service';
-import { InjectModel } from 'kindagoose';
-import { ReturnModelType } from '@typegoose/typegoose';
-import { MapType } from '../components/expedition/map.schema';
 import mongoose, { Types } from 'mongoose';
+import { Score } from '../components/expedition/scores';
+import { GameContext } from '../components/interfaces';
 
 @Injectable()
 export class InitExpeditionProcess {
     private readonly logger: Logger = new Logger(InitExpeditionProcess.name);
 
-    private readonly mapService: ReturnModelType<typeof MapService>
-
     constructor(
         private readonly expeditionService: ExpeditionService,
         private readonly cardService: CardService,
         private readonly characterService: CharacterService,
-        private readonly customDeckService: CustomDeckService,
         private readonly settingsService: SettingsService,
-        // private readonly mapBuilderService: MapBuilderService,
-        private readonly contestService: ContestService,
         private readonly contestMapService: ContestMapService,
         private readonly mapDeckService: MapDeckService,
-        private readonly expeditionModel: Expedition
+        private readonly expeditionModel: Expedition,
+        private readonly mapService:MapService
     ) { }
 
-    async handle({
-        userAddress,
-        playerName,
-        playerToken,
-        equippedGear,
-        character_class,
-        contest,
-    }: {
-        userAddress: string;
-        playerName: string;
-        playerToken: IPlayerToken;
-        equippedGear: GearItem[];
-        character_class: string;
-        contest: Contest;
-    }): Promise<void> {
-        let character_class_enum = CharacterClassEnum.Knight;
+    async handle({userAddress, playerName, playerToken, equippedGear, character_class, contest, stage}: 
+            { userAddress: string; playerName: string; playerToken: IPlayerToken; equippedGear: GearItem[]; character_class: string; contest: Contest; stage: number; }): Promise<void> {
+        
+        const character_class_enum = this.getCharcterName(character_class);
+        const character = await this.characterService.findOne({characterClass: character_class_enum});
+        const { initialPotionChance } = await this.settingsService.getSettings();
 
-        switch (character_class) {
-            case 'Knight':
-                character_class_enum = CharacterClassEnum.Knight;
-                break;
-            case 'Villager':
-                character_class_enum = CharacterClassEnum.Villager;
-                break;
-            case 'BlessedVillager':
-                character_class_enum = CharacterClassEnum.BlessedVillager;
-                break;
-            case 'NonTokenVillager':
-                character_class_enum = CharacterClassEnum.NonTokenVillager;
-                break;
-            default:
-                character_class_enum = CharacterClassEnum.Knight;
-                break;
-        }
 
-        const character = await this.characterService.findOne({
-            characterClass: character_class_enum,
-        });
 
-        // Get initial player stats
-        const { initialPotionChance } =
-            await this.settingsService.getSettings();
 
-        // const map = contest
-        //     ? await this.contestMapService.getMapForContest(contest)
-        //     : await this.mapBuilderService.createMap({ actConfig: ActOneConfig, makeAvailable: true});
-
-        const map = await this.contestMapService.getMapForContest(contest);
-
-        const cards = await this.generatePlayerDeck(character, userAddress, contest);
-
+        const map = await this.contestMapService.getMapForContest(contest.stages[stage -1]);
+        const cards = await this.generatePlayerDeck(character, userAddress, contest, stage);
+        
         // Crea un nuevo ObjectId aleatorio
         const randomObjectId = new Types.ObjectId();
-
-        // console.error("RANDOM OBJECTID: " + randomObjectId);
-
 
 
         const expedition = await this.expeditionService.create({
             userAddress,
             map: randomObjectId,
-            scores: {
-                basicEnemiesDefeated: 0,
-                eliteEnemiesDefeated: 0,
-                bossEnemiesDefeated: 0,
-                minionEnemiesDefeated: 0,
-            },
+            scores: new Score(),
             mapSeedId: getTimestampInSeconds(),
             actConfig: {
                 potionChance: initialPotionChance,
@@ -130,7 +77,9 @@ export class InitExpeditionProcess {
                 lootboxRarity: character.lootboxRarity,
                 lootboxSize: character.lootboxSize ?? 0,
             },
+            currentStage: stage,
             contest,
+            stageScores: [],
             status: ExpeditionStatusEnum.InProgress,
             isCurrentlyPlaying: false,
             createdAt: new Date(),
@@ -151,10 +100,35 @@ export class InitExpeditionProcess {
         );
     }
 
+    public async createNextStage(ctx: GameContext): Promise<void> {
+        const stage = 1 + ctx.expedition.currentStage;
+        const map = await this.contestMapService.getMapForContest(ctx.expedition.contest.stages[stage -1]);
+        
+        //- Por el momento se va a manejar el mismo mazo de cartas para el stage 2:
+        //const cards = await this.generatePlayerDeck(character, userAddress, contest, stage);
+
+        const randomObjectId = new Types.ObjectId();
+
+        ctx.expedition.map = randomObjectId;
+        ctx.expedition.mapSeedId = getTimestampInSeconds();
+        ctx.expedition.playerState.hpCurrent = ctx.expedition.playerState.hpMax;
+        ctx.expedition.currentStage = stage;
+        ctx.expedition.status = ExpeditionStatusEnum.InProgress;
+
+        await ctx.expedition.save();
+
+        await this.expeditionService.createMapReferenced(
+            {
+                _id: randomObjectId,
+                map
+            });
+    }
+
     private async generatePlayerDeck(
         character: Character,
         userAddress: string,
-        contest: Contest
+        contest:Contest,
+        stage:number
     ): Promise<IExpeditionPlayerStateDeckCard[]> {
         // We destructure the cards from the character
         const { cards: characterDeck } = character;
@@ -164,8 +138,8 @@ export class InitExpeditionProcess {
         //    userAddress,
         //);
 
-        const map = await this.contestMapService.getCompleteMapForContest(contest);
-        let mapDeck = undefined;
+        const map = await this.contestMapService.getCompleteMapForContest(contest.stages[stage-1]);
+        let mapDeck = undefined ;
 
         if (map.deck_id) {
             mapDeck = await this.mapDeckService.findById(map.deck_id);
@@ -218,9 +192,25 @@ export class InitExpeditionProcess {
                     isUpgraded: card.isUpgraded,
                     upgradedCardId: card?.upgradedCardId,
                     triggerAtEndOfTurn: card.triggerAtEndOfTurn,
+                    triggerOnDrawn: card.triggerOnDrawn,
                     isActive: true,
                     isFirstPlay: false
                 };
             });
+    }
+
+    private getCharcterName(characterClass):CharacterClassEnum{
+        switch (characterClass) {
+            case 'Knight':
+                return CharacterClassEnum.Knight;
+            case 'Villager':
+                return CharacterClassEnum.Villager;
+            case 'BlessedVillager':
+                return CharacterClassEnum.BlessedVillager;
+            case 'NonTokenVillager':
+                return CharacterClassEnum.NonTokenVillager;
+            default:
+                return CharacterClassEnum.Knight;
+        }
     }
 }

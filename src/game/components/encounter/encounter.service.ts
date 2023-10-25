@@ -209,6 +209,22 @@ export class EncounterService {
                         hpDelta: parseInt(effect.amount),
                     });
                     break;
+                case 'hit_points_avoid_dead': //eg cave in
+                    let damage = effect.amount;
+                    if(ctx.expedition.playerState.hpCurrent <= Math.abs(parseInt(damage))){
+                        damage = (-1 * (ctx.expedition.playerState.hpCurrent - 1));
+                    }
+                    await this.playerService.setHPDelta({
+                        ctx,
+                        hpDelta: parseInt(damage),
+                    });
+                    break;
+                case 'loose_random_potion': //eg cave in
+                    await this.looseRandomPotion(
+                        ctx.client,
+                        ctx.expedition.playerState,
+                    );
+                    break;
                 case 'upgrade_random_card': //eg will o wisp
                     await this.upgradeRandomCard(
                         ctx.client,
@@ -517,6 +533,49 @@ export class EncounterService {
 
         await this.upgradeCard(upgradeMeCardId, playerState, client);
         //see MerchantService
+    }
+
+    private async looseRandomPotion(client: Socket, playerState: Player): Promise<void> {
+        const potionsIds:         number[] = [];
+        const probabilityWeights: number[] = [];
+
+        for (const potion of playerState.potions) {
+            potionsIds.push(potion.potionId);
+            probabilityWeights.push(1);
+        }
+
+        if (potionsIds.length == 0) return; // no potions
+
+        const looseMePotionId = getRandomItemByWeight(
+            potionsIds,
+            probabilityWeights,
+        );
+
+        console.log("Potion to loose:")
+        console.log(looseMePotionId)
+
+        await this.loosePotion(looseMePotionId, playerState, client);
+    }
+
+    async loosePotion(potionId: string | number, playerState: Player, client: Socket): Promise<void> {
+        let hasLostOne = false;
+
+        const newPotions = playerState.potions.filter((item) => {
+            if (item.potionId == potionId && !hasLostOne) {
+                hasLostOne = true;
+                return false;
+            } else {
+                return true;
+            }
+        });
+
+        await this.expeditionService.updateByFilter(
+            { clientId: client.id }, 
+            {
+                $set: {
+                    'playerState.potions': newPotions,
+                }
+        });
     }
 
     async getByEncounterId(encounterId: number): Promise<Encounter> {

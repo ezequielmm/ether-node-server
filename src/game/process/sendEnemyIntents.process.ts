@@ -11,6 +11,8 @@ interface EnemyIntentsResponse {
         value?: number;
         description?: string;
         type?: EnemyIntentionType;
+        negateDamage?:number;
+        name?: string;
     }[];
 }
 
@@ -63,6 +65,8 @@ export class SendEnemyIntentProcess {
                     ...(intent.type === EnemyIntentionType.Attack && { value }),
                     description: this.descriptionGenerator(intent.type, value),
                     type: intent.type,
+                    negateDamage: intent.negateDamage,
+                    name: intent.name
                 });
             }
 
@@ -85,6 +89,24 @@ export class SendEnemyIntentProcess {
                 return `This Enemy is plotting to gain a Buff effect`;
             case EnemyIntentionType.Debuff:
                 return `This Enemy is scheming to apply a Debuff effect`;
+            case EnemyIntentionType.Signature:
+                return `This creature is plotting to use a unique and powerful skill. Hit it hard before it hits you!`;
+            case EnemyIntentionType.Breach:
+                return `This enemy is planning to breach through your defenses!`;
+            case EnemyIntentionType.Counter:
+                return `This enemy will return the next attack and then some… if it survives…`;
+            case EnemyIntentionType.Absorb:
+                return `This enemy will absorb the energy of incoming attacks and use it to heal itself.`;
+            case EnemyIntentionType.Infect:
+                return `This enemy is plotting to infect you with an incapacitating disease.`;
+            case EnemyIntentionType.Grow:
+                return "This enemy is plotting to grow into a larger, pumped up version of itself.";
+            case EnemyIntentionType.Mistify:
+                return "This creature is plotting to play wicked tricks with your mind.";
+            case EnemyIntentionType.Reinforcements:
+                return `This creature is plotting to summon additional help.`;
+            case EnemyIntentionType.DoNothing:
+                return "";
             default:
                 return `Unknown intentions`;
         }

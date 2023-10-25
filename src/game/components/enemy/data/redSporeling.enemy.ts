@@ -13,6 +13,8 @@ import { summoned } from 'src/game/status/summoned/constants';
 
 export const redSporelingData: Enemy = {
     enemyId: 15,
+    stage: 1,
+    selectable: true,
     isActive: true,
     name: 'Red Sporeling',
     type: EnemyTypeEnum.Plant,

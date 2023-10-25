@@ -13,5 +13,8 @@ export class PlayerWin {
     playerToken: IPlayerToken;
 
     @Prop()
-    lootbox: Gear[]
+    lootbox?: Gear[]
+
+    @Prop()
+    stage: number;
 }

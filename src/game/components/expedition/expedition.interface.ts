@@ -37,6 +37,16 @@ export interface IExpeditionCurrentNodeDataEnemy {
         [StatusType.Debuff]: AttachedStatus[];
     };
     currentScript?: EnemyScript;
+    
+    aggressiveness?: number;
+    intentCooldowns?: IntentCooldown[];
+    backTolifeTimes?: number;
+    mossyOriginalShape?: number;
+}
+
+export interface IntentCooldown {
+    idIntent: number;
+    cooldown: number;
 }
 
 export interface BaseReward {

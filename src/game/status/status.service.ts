@@ -316,7 +316,15 @@ export class StatusService {
 
             if (!container) return false;
 
-            return container.metadata.status.direction === direction;
+            if(container.metadata.status.direction === direction)
+                return true;
+            else if(container.metadata.status.direction === StatusDirection.Both){
+                return true;
+            }
+            else{
+                return false;
+            }
+            //return container.metadata.status.direction === direction;
         };
 
         return {

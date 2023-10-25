@@ -45,7 +45,19 @@ import {
 } from './shieldBash/shieldBash.effect';
 import { SpawnEnemyEffect } from './spawnEnemy/spawnEnemy.effect';
 import { TwistTheBladeEffect } from './twistTheBlade/twistTheBlade.effect';
-
+import { NoEffectEffect } from './noEffects/noEffect.effect';
+import { BreachEffect } from './breach/breach.effect';
+import { CounterEffect } from './counter/counter.efect';
+import { AbsorbEffect } from './absorb/absorb.effect';
+import { CannibalizeEffect } from './cannibalize/cannibalize.effect';
+import { TransformEffect } from './transform/transform.effect';
+import { SporeDanceEffect } from './sporeDance/sporeDance.effect';
+import { ImmolateEffect } from './immolate/immolate.effect';
+import { MitosisEffect } from './mitosis/mitosis.effect';
+import { AddConditionalCardEffect } from './addConditionalCard/addConditionalCard.effect';
+import { RhunnsLastResortEffect } from './rhunnsLastResort/rhunnsLastResort.effect';
+import { holyExplosionEffect } from './holyExplosion/holyExplosion.effect';
+import { InThyNameEffect } from "./inThyName/inThyName.effect";
 @Module({
     imports: [
         forwardRef(() => ExpeditionModule),
@@ -95,6 +107,19 @@ import { TwistTheBladeEffect } from './twistTheBlade/twistTheBlade.effect';
         FleeEffect,
         ShieldBashEffect,
         ShieldBashEffectUpgraded,
+        NoEffectEffect,
+        BreachEffect,
+        CounterEffect,
+        AbsorbEffect,
+        CannibalizeEffect,
+        TransformEffect,
+        SporeDanceEffect,
+        ImmolateEffect,
+        MitosisEffect,
+        AddConditionalCardEffect,
+        RhunnsLastResortEffect,
+        holyExplosionEffect,
+        InThyNameEffect
     ],
     exports: [EffectService],
 })

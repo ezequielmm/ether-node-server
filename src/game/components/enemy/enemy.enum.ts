@@ -7,6 +7,9 @@ export enum EnemyTypeEnum {
     Clockwork = 'clockwork',
     Eldritch = 'eldritch',
     Human = 'human',
+    Goblin = "goblin",
+    Insectoid = "insectoid",
+    Mold = 'mold'
 }
 
 export enum EnemyCategoryEnum {
@@ -32,4 +35,13 @@ export enum EnemyIntentionType {
     Buff = 'buff',
     Debuff = 'debuff',
     Special = 'special',
+    Signature = 'signature',
+    Breach = 'breach',
+    Counter = 'counter',
+    Absorb = 'absorb',
+    Reinforcements = 'reinforcements',
+    Infect = 'infect',
+    Grow = 'grow',
+    Mistify = 'mistify',
+    DoNothing = 'do_nothing',
 }

@@ -15,11 +15,15 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { TaskModule } from './tasks/task.module';
 import { LeaderboardModule } from './leaderboard/leaderboard.module';
 import { AuthModule } from './auth/auth.module';
+import { ResetModule } from './tasks/reset.module';
+import { CleanModule } from './tasks/clean.module';
 
 @Module({
     imports: [
         ScheduleModule.forRoot(),
         TaskModule,
+        ResetModule,
+        CleanModule,
         // LoggerModule.forRootAsync({
         //     inject: [ConfigService],
         //     useFactory: (configService: ConfigService) => ({

@@ -35,12 +35,12 @@ export class ContestMapService {
         return await this.contestMap.find(filter, projection);
     }
 
-    async getMapForContest(contest: Contest) {
-        const map = await this.findById(contest.map_id);
+    async getMapForContest(mapId: string) {
+        const map = await this.findById(mapId);
         return map.nodes ?? [];
     }
 
-    async getCompleteMapForContest(contest: Contest) {
-        return await this.findById(contest.map_id);
+    async getCompleteMapForContest(mapId: string) {
+        return await this.findById(mapId);
     }
 }

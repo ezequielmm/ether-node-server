@@ -8,7 +8,7 @@ export const BulliedCard: Card = {
     cardType: CardTypeEnum.Status,
     pool: 'Status',
     energy: 0,
-    description: `Unplayable`,
+    description: `Your hands shake and doubt overcomes you, freezing you in place.`,
     keywords: [CardKeywordEnum.Unplayable],
     properties: {
         effects: [],

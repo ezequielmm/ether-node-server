@@ -21,6 +21,24 @@ import { deepDwellerData } from './data/deepDweller.enemy';
 import { rockElementalData } from './data/rockElemental.enemy';
 import { thornWolfPupData } from './data/thornWolfPup.enemy';
 import { deepSorcererData } from './data/deepSorcerer.enemy';
+import { caveGoblinData } from './data/caveGoblin.enemy';
+import { trollData } from './data/troll.enemy';
+import { mutantSpider1Data } from './data/mutantSpider1.enemy';
+import { swarmCocoon1Data } from './data/swarmCocoon1.enemy';
+import { mutantSpider2Data } from './data/mutantSpider2.enemy';
+import { swarmCocoon2Data } from './data/swarmCocoon2.enemy';
+import { swarmMasterData } from './data/swarmMaster.enemy';
+import { mimicData } from './data/mimic.enemy';
+import { boobyTrapData } from './data/boobyTrap.enemy';
+import { deepGoblinData } from './data/deepGoblin.enemy';
+import { deepDwellerMonsterData } from './data/deepDwellerMonster.enemy';
+import { deepDwellerLureData } from './data/deepDwellerLure.enemy';
+import { mossySkeletonData } from './data/mossySkeleton.enemy';
+import { mossyBonesData } from './data/mossyBones.enemy';
+import { mossyArcherData } from './data/mossyArcher.enemy';
+import { moldPolypData } from './data/moldPolyp.enemy';
+import { caveHomunculiData } from './data/caveHomunculi.enemy';
+import { deepSorcererGreenData } from './data/deepSorcererGreen.enemy';
 
 export const data: Enemy[] = [
     sporeMongerData,
@@ -39,10 +57,30 @@ export const data: Enemy[] = [
     blueSporelingData,
     redSporelingData,
     yellowSporelingData,
-    centipionData,
     stickMantisData,
     deepDwellerData,
     rockElementalData,
     thornWolfPupData,
     deepSorcererData,
+    
+    //- Stage 2:
+    caveGoblinData,
+    centipionData,
+    trollData,
+    mutantSpider1Data,
+    swarmCocoon1Data,
+    mutantSpider2Data,
+    swarmCocoon2Data,
+    swarmMasterData,
+    deepDwellerLureData,
+    deepDwellerMonsterData,
+    boobyTrapData,
+    mimicData,
+    deepGoblinData,
+    mossySkeletonData,
+    mossyBonesData,
+    mossyArcherData,
+    moldPolypData,
+    caveHomunculiData,
+    deepSorcererGreenData
 ];

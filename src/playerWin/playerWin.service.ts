@@ -6,6 +6,7 @@ import { CharacterService } from 'src/game/components/character/character.servic
 import { CharacterClassEnum } from 'src/game/components/character/character.enum';
 import { Character } from 'src/game/components/character/character.schema'
 import { Gear } from 'src/game/components/gear/gear.schema';
+import { IPlayerToken } from 'src/game/components/expedition/expedition.schema';
 @Injectable()
 export class PlayerWinService {
   constructor(
@@ -31,6 +32,29 @@ export class PlayerWinService {
 
     return allLootboxes;
   }
+
+  async findLastStageWinAndUpdate(eventId: number, playerToken:IPlayerToken, currentStage:number){
+
+    const lastDocument = await this.playerWin.findOne(
+      {
+        'playerToken': playerToken,
+        'stage': (currentStage - 1),
+        'event_id': eventId
+      },
+      null,
+      { sort: { $natural: -1 } }
+    );
+
+
+    if (lastDocument) {
+      await this.playerWin.updateOne(
+        { _id: lastDocument._id },
+        { $set: { 'stage': currentStage } }
+      );
+    }
+  }
+
+
   async getAllLootByWallet(walletId: string): Promise<any[]> {
     // Query PlayerWin documents where the tokenId matches
     const winsWithMatchingWallet = await this.playerWin
@@ -59,8 +83,11 @@ export class PlayerWinService {
   }
 
   async canPlay(event_id: number, contract_address: string, token_id: number, wins?: number) : Promise<boolean> {
+    
+    //- If there is no event will not be able to play anyway:
     if (event_id === 0) return true;
 
+    //- Non token villager can play without limit:
     if (contract_address === 'NONE') return true;
 
     if (typeof wins === 'undefined') {
@@ -75,6 +102,7 @@ export class PlayerWinService {
                 },
             })) ?? 0;
     }
+    
     if (wins == 0) return true;
 
     const character = await this.characterService.getCharacterByContractId(
