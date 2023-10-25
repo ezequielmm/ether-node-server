@@ -63,7 +63,7 @@ export class CardPlayedAction {
                         data: {
                             player: {
                                 energy: availableEnergy,
-                                cards: { hand },
+                                cards: { hand, discard},
                             },
                         },
                     },
@@ -71,7 +71,8 @@ export class CardPlayedAction {
             } = ctx;
 
         console.log('energy available', availableEnergy);
-        console.log('mano',ctx);
+        console.log('mano', hand);
+        console.log('discard ------', discard)
         console.log(cardId);
         //- Getting the played Card
         const card = await hand.find((card) => {
