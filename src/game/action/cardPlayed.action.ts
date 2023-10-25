@@ -80,8 +80,10 @@ export class CardPlayedAction {
         console.log('draw ------------------------------------>', draw);    
         console.log('mano ------------------------------------>', hand);
         console.log('discard ------------------------------------>', discard);
+
+        
         //- Getting the played Card
-        const card = await hand.find((card) => {
+        const card = await newHand.find((card) => {
             const field = getCardIdField(cardId);
             return card[field] === cardId;
         });
@@ -115,7 +117,7 @@ export class CardPlayedAction {
         }
 
         logger.info(`Player ${ctx.client.id} played card: ${card.name}`);
-        logger.info(`Started combat queue for client ${ctx.client.id}`);
+        logger.info(`Started combat queue for client ${ctx.client.id}`); 
         
         await this.combatQueueService.start(ctx);
 
