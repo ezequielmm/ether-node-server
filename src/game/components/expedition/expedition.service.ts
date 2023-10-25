@@ -411,22 +411,32 @@ export class ExpeditionService {
     // retorna true si alguna de las expediciones de esa wallet finalizo el stage 1
     public async checkCurrentStage(wallet: string): Promise<boolean> {
         try {
-            // Busca todas las expediciones asociadas a la billetera
-            const expeditions = await this.expedition.find({ userAddress: wallet });
+            // Obtiene la fecha actual
+            const currentDate = new Date();
+            // Define las fechas de inicio y fin del rango (30 de octubre a las 00:00 al 19 de noviembre a las 00:00)
+            const startDate = new Date('2023-10-30T00:00:00Z');
+            const endDate = new Date('2023-11-19T00:00:00Z');
     
-            // Itera sobre las expediciones y verifica si alguna tiene currentStage igual a 2
-            for (const expedition of expeditions) {
-                if (expedition.currentStage === 2) {
-                    return true; // Si encuentra al menos una expedición con currentStage 2, devuelve true
+            // Si la fecha actual está dentro del rango
+            if (currentDate >= startDate && currentDate <= endDate) {
+                // Busca todas las expediciones asociadas a la billetera
+                const expeditions = await this.expedition.find({ userAddress: wallet });
+    
+                // Itera sobre las expediciones y verifica si alguna tiene currentStage igual a 2
+                for (const expedition of expeditions) {
+                    if (expedition.currentStage === 2) {
+                        return true; // Si encuentra al menos una expedición con currentStage 2, devuelve true
+                    }
                 }
             }
     
-            // Si no se encuentra ninguna expedición con currentStage 2, devuelve false
+            // Si la fecha actual no está dentro del rango o no se encuentra ninguna expedición con currentStage 2, devuelve false
             return false;
         } catch (error) {
             // Manejar errores de consulta aquí
             throw new Error('Error checking current stage: ' + error.message);
         }
     }
+    
     
 }
