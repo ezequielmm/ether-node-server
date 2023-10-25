@@ -29,6 +29,7 @@ import { StatusService } from '../status/status.service';
 import { DiscardCardAction } from './discardCard.action';
 import { ExhaustCardAction } from './exhaustCard.action';
 import { CardService } from '../components/card/card.service';
+import { IExpeditionPlayerStateDeckCard } from '../components/expedition/expedition.interface';
 
 @Injectable()
 export class CardPlayedAction {
@@ -53,8 +54,8 @@ export class CardPlayedAction {
         private readonly eventEmitter: EventEmitter2,
     ) {}
 
-    async handle({cardId, selectedEnemyId, ctx, forceExhaust = false}: 
-        {readonly ctx: GameContext; readonly cardId: CardId; readonly selectedEnemyId: TargetId; readonly forceExhaust?: boolean;}): Promise<void> 
+    async handle({cardId, selectedEnemyId, ctx, forceExhaust = false, newHand = null}: 
+        {readonly ctx: GameContext; readonly cardId: CardId; readonly selectedEnemyId: TargetId; readonly forceExhaust?: boolean; readonly newHand?: IExpeditionPlayerStateDeckCard[]}): Promise<void> 
         {
             const logger = this.logger.logger.child(ctx.info);
             const {
@@ -74,8 +75,11 @@ export class CardPlayedAction {
                     },
                 },
             } = ctx;
-
-        console.log('mano', ctx.expedition.currentNode.data.player.cards.hand);    
+        
+        console.log('NEW HAND =======================>>>>', newHand);
+        console.log('draw ------------------------------------>', draw);    
+        console.log('mano ------------------------------------>', hand);
+        console.log('discard ------------------------------------>', discard);
         //- Getting the played Card
         const card = await hand.find((card) => {
             const field = getCardIdField(cardId);
