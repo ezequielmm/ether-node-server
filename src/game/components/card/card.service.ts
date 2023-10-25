@@ -201,6 +201,7 @@ export class CardService {
         const { ctx, newHand } = payload;
 
         console.log('new hand', newHand);
+
         console.log('ENTRE EN EL EVENTO, EVENT_AFTER_DRAW_CARDS');
 
         for(const card of newHand){          
@@ -215,6 +216,7 @@ export class CardService {
         });
         console.log('cards with triggerOnDrawn',cards);
 
+        console.log('largo del array que tienen ctriggerOnDrawn', cards.length);
         if (cards.length > 0) {
             for (const card of cards) {
                 this.logger.log(
