@@ -214,11 +214,9 @@ export class CardService {
         const cards = filter(newHand, {
             triggerOnDrawn: true,
         });
-        console.log('cards with triggerOnDrawn',cards);
 
         if (cards.length > 0) {
             for (const card of cards) {
-                console.log('Estoy en el for');
                 this.logger.log(
                     ctx.info,
                     `Auto playing card ${card.cardId}:${card.name}`,
@@ -228,7 +226,6 @@ export class CardService {
                     cardId: card.id,
                     selectedEnemyId: undefined,
                 });
-                console.log('pase el cardPlayed -------------------------------!!!!!!');
             }
         }
     }
