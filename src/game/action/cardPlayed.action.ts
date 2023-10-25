@@ -71,10 +71,10 @@ export class CardPlayedAction {
             } = ctx;
 
         console.log('energy available', availableEnergy);
-        console.log('mano',hand);
+        console.log('mano',ctx);
         console.log(cardId);
         //- Getting the played Card
-        const card = hand.find((card) => {
+        const card = await hand.find((card) => {
             const field = getCardIdField(cardId);
             return card[field] === cardId;
         });
