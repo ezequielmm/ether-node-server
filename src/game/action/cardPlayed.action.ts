@@ -63,17 +63,19 @@ export class CardPlayedAction {
                         data: {
                             player: {
                                 energy: availableEnergy,
-                                cards: { hand, discard},
+                                cards:  { 
+                                            draw,
+                                            hand, 
+                                            exhausted,
+                                            discard
+                                        },
                             },
                         },
                     },
                 },
             } = ctx;
 
-        console.log('energy available', availableEnergy);
-        console.log('mano', hand);
-        console.log('discard ------', discard)
-        console.log(cardId);
+        console.log('mano', ctx.expedition.currentNode.data.player.cards.hand);    
         //- Getting the played Card
         const card = await hand.find((card) => {
             const field = getCardIdField(cardId);
