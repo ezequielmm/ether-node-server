@@ -47,36 +47,36 @@ export class EndExpeditionProcess {
         },
     };
 
-    private lootboxRarityStage1: {
-        common: 50;
-        uncommon: 25;
-        rare: 15;
-        epic: 9;
-        legendary: 1;
+    private lootboxRarityStage1 = {
+        common: 50,
+        uncommon: 25,
+        rare: 15,
+        epic: 9,
+        legendary: 1,
     };
 
-    private lootboxRarityStage2: {
-        common: 40;
-        uncommon: 20;
-        rare: 25;
-        epic: 13;
-        legendary: 2;
+    private lootboxRarityStage2 = {
+        common: 40,
+        uncommon: 20,
+        rare: 25,
+        epic: 13,
+        legendary: 2,
     };
 
-    private lootboxRarityVillagerStage1: {
-        common: 80;
-        uncommon: 20;
-        rare: 0;
-        epic: 0;
-        legendary: 0;
+    private lootboxRarityVillagerStage1 = {
+        common: 80,
+        uncommon: 20,
+        rare: 0,
+        epic: 0,
+        legendary: 0,
     };
 
-    private lootboxRarityVillagerStage2: {
-        common: 60;
-        uncommon: 40;
-        rare: 0;
-        epic: 0;
-        legendary: 0;
+    private lootboxRarityVillagerStage2 = {
+        common: 60,
+        uncommon: 40,
+        rare: 0,
+        epic: 0,
+        legendary: 0,
     };
 
     public async handle({ ctx, win = ExpeditionEndingTypeEnum.DEFEAT, emit = true }: IEndExpeditionProcessParameters): Promise<void> {
