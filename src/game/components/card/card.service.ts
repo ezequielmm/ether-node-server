@@ -199,7 +199,7 @@ export class CardService {
     @OnEvent(EVENT_AFTER_DRAW_CARDS)
     async onAfterDrawCards(payload: AfterDrawCardEvent) {
         const { ctx, newHand } = payload;
-        
+
         for(const card of newHand){          
             if(typeof card.triggerOnDrawn !== 'undefined'){
                 console.log('le saque las keyWords a ', card);
@@ -221,6 +221,7 @@ export class CardService {
                     ctx,
                     cardId: card.id,
                     selectedEnemyId: undefined,
+                    newHand
                 });
             }
         }
