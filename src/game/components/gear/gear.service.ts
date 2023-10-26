@@ -19,6 +19,13 @@ export class GearService {
 
   private gearData = GearData;
 
+  private halloweenGearsFilter = {
+    gearId: {
+        $gte: 500,
+        $lte: 520
+    },
+  };
+
   private selectRandomRarity(rarities: ILootboxRarityOdds) {
     let rolls = new Map<string, number>();
     let dropRates = [
@@ -70,6 +77,19 @@ export class GearService {
 
     for (let i = 0; i < size; i++) {
       const one_gear = await this.getOneGear(
+        this.selectRandomRarity(rarities),
+      );
+      gear_list.push(one_gear);
+    }
+
+    return gear_list;
+  }
+
+  async getHalloweenLootbox(size: number, rarities?: ILootboxRarityOdds): Promise<Gear[]> {
+    const gear_list: Gear[] = [];
+
+    for (let i = 0; i < size; i++) {
+      const one_gear = await this.getOneHalloweenGear(
         this.selectRandomRarity(rarities),
       );
       gear_list.push(one_gear);
@@ -160,6 +180,18 @@ export class GearService {
     const availableGear = await this.gearModel.find({ rarity });
     return sample(availableGear);
   }
+
+  async getOneHalloweenGear(rarity: GearRarityEnum): Promise<Gear> {
+    const query = { rarity, ...this.halloweenGearsFilter };
+    const availableGear = await this.gearModel.find(query);
+
+    console.log("Available Halloween Gear: ")
+    console.log(availableGear)
+    console.log("---------------------------------------")
+
+    return sample(availableGear);
+  }
+
   async getGearByName(name: string, rarity: GearRarityEnum): Promise<Gear> {
     try {
       return await this.gearModel.findOne({ name, rarity });
