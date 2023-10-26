@@ -83,6 +83,8 @@ export class PlayerGearService {
             });
         }
 
+        console.log("PlayerGears:")
+        console.log(playerGears)
         const gears = playerGears.gear.filter(gear => gear.gearId >= 500 && gear.gearId <= 520)
         return gears;
     }
