@@ -145,19 +145,18 @@ export class CardPlayedAction {
         //- Enables an animation in unity:
         
         if (exhaust) {
-            console.log('ENTRE EN EL IF THE EXHAUST TRUE');
             this.exhaustCardAction.emit({
                 ctx,
                 cardId,
             });
         } else {
-            console.log('ENTRE EN EL ELSE');
             this.discardCardAction.emit({
                 ctx,
                 cardId,
             });
         }
 
+        console.log('Pase el error');
         //- Apply effects:
         await this.effectService.applyAll({
             ctx,
@@ -179,14 +178,6 @@ export class CardPlayedAction {
             targetId: selectedEnemyId,
             source,
         });
-
-
-
-
-
-
-
-
 
         const {
             data: {
@@ -233,6 +224,7 @@ export class CardPlayedAction {
 
         // now, with all else done, do the actual exhaust/discard routines, without emitting again
         if (exhaust || forceExhaust) {
+            console.log('ENtro donde debo');
             await this.exhaustCardAction.handle({
                 client: ctx.client,
                 cardId,
