@@ -110,24 +110,26 @@ export class GearService {
 
     userGear.forEach((gear) => uniqueGearIds.add(gear.gearId.toString()));
 
-    console.log("After foreach uniqueGearIds:")
-    console.log(uniqueGearIds)
-
     let targetGearSet = '';
     let allGear: Gear[] = await this.getAllGear(filter);
 
-    console.log("--------------------------------")
-    console.log("All Gear:")
-    console.log(allGear)
-    console.log("--------------------------------")
-
     allGear = allGear.filter((gear) => gear.name === targetGearSet);
 
+    console.log("AllGear after filter...?????")
+    console.log(allGear)
+
     let itemAdded = false;
+
+    //- Gets one random rarity:
     let targetRarity = this.selectRandomRarity(rarities);
 
     while (itemAdded === false) {
+
+      //- Gets one Halloween gear with the rarity:
       const newGear = this.getRandomGearByRarity(allGear, targetRarity);
+
+      console.log("New gear try:")
+      console.log(newGear)
 
       if (uniqueGearIds.has(newGear.gearId.toString())) {
 
@@ -137,7 +139,8 @@ export class GearService {
           //console.log('Target rarity null, break');
           break;
         }
-      } else {
+      } 
+      else {
         console.log(`Adding: ${newGear.gearId} - ${newGear.rarity}`);
         gear_list.push(newGear);
         uniqueGearIds.add(newGear.gearId.toString());
@@ -181,6 +184,10 @@ export class GearService {
     const filteredGear = allGear.filter((gear) => gear.rarity === targetRarity);
 
     // Use lodash's sample method to get a random gear item
+
+    console.log("GetRandomGearByRarity filteredGear:")
+    console.log(filteredGear)
+    console.log("-------------------------------------")
     return sample(filteredGear) || null;
   }
   async getOneGear(rarity: GearRarityEnum): Promise<Gear> {
