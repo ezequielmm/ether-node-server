@@ -74,9 +74,6 @@ export class CardPlayedAction {
         console.log('NEW HAND -------->', newHand);
         console.log('NORMAL HAND -------->', hand);
 
-        if(newHand){
-
-        }
         //- Getting the played Card
         let card;
         if(newHand){
