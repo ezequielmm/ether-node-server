@@ -65,12 +65,26 @@ export class PlayerGearService {
         });
     }
 
-    async getGearFiltered(userAddress: string, filter: FilterQuery<PlayerGear> = {}): Promise<Gear[]> {
-        return await this.playerGear.find({
+    async getHalloweenGear(userAddress: string, filter: FilterQuery<PlayerGear> = {}): Promise<Gear[]> {
+        let playerGears:PlayerGear = await this.playerGear.find({
             userAddress,
             ...filter,
         })
         .lean();
+
+        if (playerGears === null) {
+            this.logger.debug(`Player Gear Not Found for ${userAddress}. Creating...`);
+
+            const startingGear = this.toGearItems(this.getGearByIds(this.defaultGear));
+
+            playerGears = await this.playerGear.create({
+                userAddress,
+                gear: startingGear,
+            });
+        }
+
+        const gears = playerGears.gear.filter(gear => gear.gearId >= 500 && gear.gearId <= 520)
+        return gears;
     }
 
     async getGear(userAddress: string, filter: FilterQuery<PlayerGear> = {}): Promise<any> 
