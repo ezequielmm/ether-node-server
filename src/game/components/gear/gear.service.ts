@@ -110,41 +110,38 @@ export class GearService {
 
     userGear.forEach((gear) => uniqueGearIds.add(gear.gearId.toString()));
 
-    //let targetGearSet = '';
     let allGear: Gear[] = await this.getAllGear(filter);
-
-    //allGear = allGear.filter((gear) => gear.name === targetGearSet);
 
     let itemAdded = false;
 
     //- Gets one random rarity:
     let targetRarity = this.selectRandomRarity(rarities);
 
-    while (itemAdded === false) {
-
-      //- Gets one Halloween gear with the rarity:
-      const newGear = this.getRandomGearByRarity(allGear, targetRarity);
-
-      console.log("New gear try:")
-      console.log(newGear)
-
-      if (uniqueGearIds.has(newGear.gearId.toString())) {
-
-        targetRarity = this.downgradeRarity(targetRarity);
-
-        if (targetRarity === null) {
-          //console.log('Target rarity null, break');
-          break;
+    if(allGear && allGear.length > 0){
+      while (itemAdded === false) {
+  
+        //- Gets one Halloween gear with the rarity:
+        const newGear = this.getRandomGearByRarity(allGear, targetRarity);
+  
+        if (uniqueGearIds.has(newGear.gearId.toString())) {
+  
+          targetRarity = this.downgradeRarity(targetRarity);
+  
+          if (targetRarity === null) {
+            //console.log('Target rarity null, break');
+            break;
+          }
+        } 
+        else {
+          console.log(`Adding: ${newGear.gearId} - ${newGear.rarity}`);
+          gear_list.push(newGear);
+          uniqueGearIds.add(newGear.gearId.toString());
+          itemAdded = true;
         }
-      } 
-      else {
-        console.log(`Adding: ${newGear.gearId} - ${newGear.rarity}`);
-        gear_list.push(newGear);
-        uniqueGearIds.add(newGear.gearId.toString());
-        itemAdded = true;
+  
       }
-
     }
+
 
     return gear_list;
   }
