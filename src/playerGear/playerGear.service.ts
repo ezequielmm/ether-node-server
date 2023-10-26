@@ -82,12 +82,7 @@ export class PlayerGearService {
             });
         }
 
-        console.log("PlayerGears:")
-        console.log(playerGears)
-
         const gears:GearItem[] = playerGears.gear.filter(g => g.gearId >= 500 && g.gearId <= 520)
-        console.log("Halloween gears attach to useraddress:")
-        console.log(gears)
         return gears;
     }
 
