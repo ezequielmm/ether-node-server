@@ -85,6 +85,7 @@ export class CardPlayedAction {
             });
         }
 
+        
         //- I don't have the card in my hand:
         if (!card) {
             this.sendInvalidCardMessage(ctx.client, logger);
@@ -156,7 +157,6 @@ export class CardPlayedAction {
             });
         }
 
-        console.log('Pase el error');
         //- Apply effects:
         await this.effectService.applyAll({
             ctx,
@@ -224,7 +224,6 @@ export class CardPlayedAction {
 
         // now, with all else done, do the actual exhaust/discard routines, without emitting again
         if (exhaust || forceExhaust) {
-            console.log('ENtro donde debo');
             await this.exhaustCardAction.handle({
                 client: ctx.client,
                 cardId,
