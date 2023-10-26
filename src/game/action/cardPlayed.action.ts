@@ -64,17 +64,15 @@ export class CardPlayedAction {
                         data: {
                             player: {
                                 energy: availableEnergy,
-                                cards:  { 
-                                            draw,
-                                            hand, 
-                                            exhausted,
-                                            discard
-                                        },
+                                cards:  { hand },
                             },
                         },
                     },
                 },
             } = ctx;
+        
+        console.log('NEW HAND -------->', newHand);
+        console.log('NORMAL HAND -------->', hand);
         
         //- Getting the played Card
         const card = await hand.find((card) => {
