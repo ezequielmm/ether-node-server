@@ -14,7 +14,7 @@ export const MoldCard: Card = {
     cardType: CardTypeEnum.Attack,//we shoud have kind of "map" cards?
     pool: 'knight',
     energy: 0,
-    description: `Reduce ${energyEffect.name} by 1 if this card is in hand by the start of the turn. Exahust.`,
+    description: `Reduce ${energyEffect.name} by 1 if this card is in hand by the start of the turn. Exhaust.`,
     keywords: [CardKeywordEnum.Fade, CardKeywordEnum.Unplayable],
     properties: {
         effects: [
