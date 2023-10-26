@@ -40,8 +40,15 @@ export class EndExpeditionProcess {
         private readonly initExpeditionService:InitExpeditionProcess,
     ) {}
     
+    // private halloweenGearsFilter = {
+    //     'lootbox.gearId': {
+    //         $gte: 500,
+    //         $lte: 520
+    //     },
+    // };
+
     private halloweenGearsFilter = {
-        'lootbox.gearId': {
+        gearId: {
             $gte: 500,
             $lte: 520
         },
@@ -248,7 +255,7 @@ export class EndExpeditionProcess {
 
         console.log("All the Gears attached to the userAddress: " + userGear.length)
 
-        const lootbox = await this.gearService.getLootbox(
+        const lootbox = await this.gearService.getHalloweenLootbox(
             1,
             lootboxRariry,
             //userGear,
