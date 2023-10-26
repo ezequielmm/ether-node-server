@@ -65,10 +65,9 @@ export class PlayerGearService {
         });
     }
 
-    async getHalloweenGear(userAddress: string, filter: FilterQuery<PlayerGear> = {}): Promise<Gear[]> {
+    async getHalloweenGear(userAddress: string): Promise<Gear[]> {
         let playerGears:PlayerGear = await this.playerGear.find({
             userAddress,
-            ...filter,
         })
         .lean();
 
@@ -83,6 +82,8 @@ export class PlayerGearService {
             });
         }
 
+        console.log("PlayerGears:")
+        console.log(playerGears)
         console.log("PlayerGears first item:")
         console.log(playerGears.gear[0])
         const gears:GearItem[] = playerGears.gear.filter(g => g.gearId >= 500 && g.gearId <= 520)
