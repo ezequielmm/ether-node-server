@@ -61,7 +61,7 @@ export class holyExplosionEffect implements EffectHandler {
                 source,
                 target,
                 statusName: burn.name,
-                statusArgs: {counter: (enemyType === EnemyTypeEnum.Undead ? dto.args.undeadBurn : dto.args.notUndeadBurn)},
+                statusArgs: {counter: (enemyType === EnemyTypeEnum.Undead ? dto.args.undeadBurn + energy : dto.args.notUndeadBurn)},
                 action: action,
             });
 
