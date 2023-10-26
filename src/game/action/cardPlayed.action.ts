@@ -142,14 +142,16 @@ export class CardPlayedAction {
             cardSourceReference: sourceReference,
             cardTargetId: selectedEnemyId,
         });
-        console.log('LLEGO SIN ROMPERME 145');
         //- Enables an animation in unity:
+        
         if (exhaust) {
+            console.log('ENTRE EN EL IF THE EXHAUST TRUE');
             this.exhaustCardAction.emit({
                 ctx,
                 cardId,
             });
         } else {
+            console.log('ENTRE EN EL ELSE');
             this.discardCardAction.emit({
                 ctx,
                 cardId,
