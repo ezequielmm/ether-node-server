@@ -66,7 +66,7 @@ export class PlayerGearService {
     }
 
     async getHalloweenGear(userAddress: string): Promise<Gear[]> {
-        let playerGears:PlayerGear = await this.playerGear.find({
+        let playerGears:PlayerGear = await this.playerGear.findOne({
             userAddress,
         })
         .lean();
@@ -84,9 +84,10 @@ export class PlayerGearService {
 
         console.log("PlayerGears:")
         console.log(playerGears)
-        console.log("PlayerGears first item:")
-        console.log(playerGears.gear[0])
+
         const gears:GearItem[] = playerGears.gear.filter(g => g.gearId >= 500 && g.gearId <= 520)
+        console.log("Halloween gears attach to useraddress:")
+        console.log(gears)
         return gears;
     }
 
