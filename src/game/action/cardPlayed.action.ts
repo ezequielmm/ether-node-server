@@ -71,9 +71,6 @@ export class CardPlayedAction {
                 },
             } = ctx;
         
-        console.log('NEW HAND -------->', newHand);
-        console.log('NORMAL HAND -------->', hand);
-
         //- Getting the played Card
         let card;
         if(newHand){
@@ -145,7 +142,7 @@ export class CardPlayedAction {
             cardSourceReference: sourceReference,
             cardTargetId: selectedEnemyId,
         });
-
+        console.log('LLEGO SIN ROMPERME 145');
         //- Enables an animation in unity:
         if (exhaust) {
             this.exhaustCardAction.emit({
