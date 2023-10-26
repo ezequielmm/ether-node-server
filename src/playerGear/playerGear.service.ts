@@ -66,7 +66,7 @@ export class PlayerGearService {
     }
 
     async getGearFiltered(userAddress: string, filter: FilterQuery<PlayerGear> = {}): Promise<Gear[]> {
-        return await this.playerGear.findOne({
+        return await this.playerGear.find({
             userAddress,
             ...filter,
         })
