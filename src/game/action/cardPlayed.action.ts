@@ -73,12 +73,20 @@ export class CardPlayedAction {
         
         console.log('NEW HAND -------->', newHand);
         console.log('NORMAL HAND -------->', hand);
-        
+
         //- Getting the played Card
-        const card = await hand.find((card) => {
-            const field = getCardIdField(cardId);
-            return card[field] === cardId;
-        });
+        let card;
+        if(newHand){
+            card = await newHand.find((card) => {
+                const field = getCardIdField(cardId);
+                return card[field] === cardId;
+            });    
+        }else{
+            card = await hand.find((card) => {
+                const field = getCardIdField(cardId);
+                return card[field] === cardId;
+            });
+        }
 
         //- I don't have the card in my hand:
         if (!card) {
