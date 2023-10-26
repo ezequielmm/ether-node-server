@@ -110,13 +110,10 @@ export class GearService {
 
     userGear.forEach((gear) => uniqueGearIds.add(gear.gearId.toString()));
 
-    let targetGearSet = '';
+    //let targetGearSet = '';
     let allGear: Gear[] = await this.getAllGear(filter);
 
-    allGear = allGear.filter((gear) => gear.name === targetGearSet);
-
-    console.log("AllGear after filter...?????")
-    console.log(allGear)
+    //allGear = allGear.filter((gear) => gear.name === targetGearSet);
 
     let itemAdded = false;
 
