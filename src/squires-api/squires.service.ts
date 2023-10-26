@@ -4,6 +4,7 @@ import { createHash } from 'crypto';
 import axios from 'axios';
 import { SquiresRewardResponse, SquiresRewardsResponse } from "./squires.types";
 import { GearItem } from "src/playerGear/gearItem";
+import { CharacterClassEnum } from "src/game/components/character/character.enum";
 
 @Injectable()
 export class SquiresService {
@@ -12,7 +13,7 @@ export class SquiresService {
     ) {}
 
 
-    async getAccountRewards(userAddress: string, equippedGear: GearItem[]): Promise<SquiresRewardResponse[]> {
+    async getAccountRewards(userAddress: string, equippedGear: GearItem[], character: CharacterClassEnum, stage:number): Promise<SquiresRewardResponse[]> {
 
         const squiresApiURL = this.configService.get<string>("SQUIRES_API_URL");
         const sharedSalt = this.configService.get<string>("GEARAPI_SALT");
@@ -28,7 +29,9 @@ export class SquiresService {
                 {
                     wallet: userAddress,
                     token: token,
-                    gear: gearIds
+                    gear: gearIds,
+                    character,
+                    stage
                 },
                 {
                     headers: {

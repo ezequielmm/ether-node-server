@@ -285,7 +285,7 @@ export class EndExpeditionProcess {
             });
         }
         
-        const rewards = await this.squiresService.getAccountRewards(ctx.expedition.userAddress, ctx.expedition.playerState.equippedGear);
+        const rewards = await this.squiresService.getAccountRewards(ctx.expedition.userAddress, ctx.expedition.playerState.equippedGear, character, currentStage);
         
         const potionAndTrinketReward = rewards.filter(reward => reward.type === RewardType.Potion || reward.type === RewardType.Trinket);
         const treasureReward = rewards.filter(reward => reward.type === RewardType.Fragment);
