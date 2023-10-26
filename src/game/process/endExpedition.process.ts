@@ -295,7 +295,8 @@ export class EndExpeditionProcess {
         
         const rewards = await this.squiresService.getAccountRewards(ctx.expedition.userAddress, ctx.expedition.playerState.equippedGear);
 
-        console.log("Rewards recieved from squires: " + rewards)
+        console.log("Rewards recieved from squires: ")
+        console.log(rewards)
         console.log("-----------------------------------------------------")
         
         const potionAndTrinketReward = rewards.filter(reward => reward.type === RewardType.Potion || reward.type === RewardType.Trinket);
@@ -305,7 +306,8 @@ export class EndExpeditionProcess {
         if (treasureReward && treasureReward.length > 0)   ctx.expedition.finalScore.victoryItems.push(this.tranformRewardToVictoryItem(treasureReward))
         if (filteredLootbox && filteredLootbox.length > 0) ctx.expedition.finalScore.victoryItems.push(this.tranformGearToVictoryItem(filteredLootbox[0]))
 
-        console.log("Formatted new Victory items: " + ctx.expedition.finalScore.victoryItems)
+        console.log("Formatted new Victory items: ")
+        console.log(ctx.expedition.finalScore.victoryItems)
         console.log("-----------------------------------------------------")
 
         console.log("---------------------------------------------------------------------------------------------------------------------------------------")
