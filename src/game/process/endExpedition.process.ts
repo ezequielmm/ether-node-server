@@ -248,11 +248,11 @@ export class EndExpeditionProcess {
 
         console.log("All the Gears attached to the userAddress: " + userGear.length)
 
-        const lootbox = await this.gearService.getUniqueHalloweenLoot(
+        const lootbox = await this.gearService.getLootbox(
             1,
             lootboxRariry,
-            userGear,
-            this.halloweenGearsFilter
+            //userGear,
+            //this.halloweenGearsFilter
         );
 
         console.log("Lootbox before filter: " + lootbox);
