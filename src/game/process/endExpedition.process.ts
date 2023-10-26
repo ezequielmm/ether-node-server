@@ -231,28 +231,18 @@ export class EndExpeditionProcess {
 
     private async handleActiveEventLoot(ctx: GameContext, currentStage:number) 
     {
-        console.log("---------------------------------------------------------------------------------------------------------------------------------------")
-        console.log("Handle Active Event Loot for Stage " + currentStage);
-        
         const isLastStage = ctx.expedition.contest.stages.length == currentStage;
         const character = ctx.expedition.playerState.characterClass as CharacterClassEnum;
-
-        console.log("Character type: " + character);
 
         const lootboxRariry: ILootboxRarityOdds = 
             character === CharacterClassEnum.Villager 
                 ? (isLastStage ? this.lootboxRarityVillagerStage2 : this.lootboxRarityVillagerStage1) 
                 : (isLastStage ? this.lootboxRarityStage2 : this.lootboxRarityStage1);
 
-        console.log("Lootbox Rarity apply for character type: ");
-        console.log(lootboxRariry)
-
-        //- START Just for Unique gears:
         //- Getting the Halloween Gear for the whole userAddress
         const userHalloweenGear = await this.playerGearService.getHalloweenGear(ctx.expedition.userAddress);
-        console.log("All the Halloween Gears attached to the userAddress: " + userHalloweenGear.length)
-        console.log(userHalloweenGear)
 
+        //- Gets one random Halloween Gear with random rarities
         const lootbox = await this.gearService.getUniqueHalloweenLoot(
             1,
             lootboxRariry,
@@ -260,11 +250,8 @@ export class EndExpeditionProcess {
             this.halloweenGearsFilter
         );
 
-        console.log("Lootbox before filter: " + lootbox);
-        console.log("-----------------------------------------------------")
+        //- Remove repeated gears:
         const filteredLootbox = await this.filterNewLootItems(ctx, lootbox);
-        console.log("Lootbox after filter: " + filteredLootbox);
-        console.log("-----------------------------------------------------")
 
         if(filteredLootbox && filteredLootbox.length > 0){
             await this.playerGearService.addGearToPlayer(
@@ -299,10 +286,6 @@ export class EndExpeditionProcess {
         }
         
         const rewards = await this.squiresService.getAccountRewards(ctx.expedition.userAddress, ctx.expedition.playerState.equippedGear);
-
-        console.log("Rewards recieved from squires: ")
-        console.log(rewards)
-        console.log("-----------------------------------------------------")
         
         const potionAndTrinketReward = rewards.filter(reward => reward.type === RewardType.Potion || reward.type === RewardType.Trinket);
         const treasureReward = rewards.filter(reward => reward.type === RewardType.Fragment);
@@ -311,14 +294,12 @@ export class EndExpeditionProcess {
         if (treasureReward && treasureReward.length > 0)   ctx.expedition.finalScore.victoryItems.push(this.tranformRewardToVictoryItem(treasureReward))
         if (filteredLootbox && filteredLootbox.length > 0) ctx.expedition.finalScore.victoryItems.push(this.tranformGearToVictoryItem(filteredLootbox[0]))
 
-        console.log("Formatted new Victory items: ")
-        console.log(ctx.expedition.finalScore.victoryItems)
-        console.log("-----------------------------------------------------")
-
-        console.log("---------------------------------------------------------------------------------------------------------------------------------------")
-
         // Solo para no romper el flujo en unity:
         ctx.expedition.finalScore.rewards = rewards;
+
+        console.log("Victory Items: ")
+        console.log(ctx.expedition.finalScore.victoryItems)
+        console.log("--------------------------------------------------------------------------------")
     }
 
     private tranformRewardToVictoryItem = (rewards: SquiresRewardResponse[]): (VictoryItem | null) => {
@@ -338,6 +319,7 @@ export class EndExpeditionProcess {
     private tranformGearToVictoryItem = (gear: Gear): VictoryItem => {
         return {
             rewardType:     MixedRewardType.Lootbox,
+            gearId:         gear.gearId,
             name:           gear.name,
             trait:          gear.trait,
             rarity:         gear.rarity,
