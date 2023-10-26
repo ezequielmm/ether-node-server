@@ -93,7 +93,7 @@ export class GearService {
     console.log("After foreach")
 
     let targetGearSet = '';
-    let allGear: Gear[] = await this.getAllGear(filter);
+    let allGear: Gear[] = await this.getAllGear();
     allGear = allGear.filter((gear) => gear.name === targetGearSet);
 
     let itemAdded = false;
@@ -172,9 +172,9 @@ export class GearService {
     }
   }
 
-  async getAllGear(filter: FilterQuery<PlayerGear> = {}): Promise<Gear[] | null> {
+  async getAllGear(): Promise<Gear[] | null> {
     try {
-      const allGear = await this.gearModel.find(filter);
+      const allGear = await this.gearModel.find({});
       return allGear;
     } catch (error) {
       console.error('An error occurred while fetching all gear:', error);

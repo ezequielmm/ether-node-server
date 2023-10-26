@@ -244,10 +244,9 @@ export class EndExpeditionProcess {
 
         //- START Just for Unique gears:
         //- Getting the Halloween Gear for the whole userAddress
-        const userGear = await this.playerGearService.getGearFiltered(ctx.expedition.userAddress, this.halloweenGearsFilter);
+        const userGear = await this.playerGearService.getGear(ctx.expedition.userAddress);
 
-        console.log("All the Halloween Gears attached to the userAddress:")
-        console.log(userGear.length)
+        console.log("All the Gears attached to the userAddress: " + userGear.length)
 
         const lootbox = await this.gearService.getUniqueHalloweenLoot(
             1,
