@@ -10,7 +10,7 @@ export const SmudgeCardUpgraded: Card = {
     cardId: 570,
     name: 'Smudge+',
     rarity: CardRarityEnum.Starter,
-    cardType: CardTypeEnum.Attack,
+    cardType: CardTypeEnum.Defend,
     pool: 'knight',
     energy: 1,
     description: `Gain 15 ${defenseEffect.name}. Add 1 Mold Card to deck.`,
