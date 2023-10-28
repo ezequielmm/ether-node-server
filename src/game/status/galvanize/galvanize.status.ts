@@ -19,7 +19,7 @@ export class GalvanizeStatus implements StatusEventHandler {
 
         console.log(dto);
         
-        if(dto.target.type == CardTargetedEnum.Enemy ){
+        if(dto.target.type == 'enemy' ){
 
             await this.effectService.apply({
                 ctx: dto.ctx,
