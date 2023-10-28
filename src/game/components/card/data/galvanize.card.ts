@@ -1,13 +1,15 @@
 import { defenseEffect } from 'src/game/effects/defense/constants';
 import { CardRarityEnum, CardTypeEnum, CardTargetedEnum } from '../card.enum';
 import { Card } from '../card.schema';
+import { attachStatusEffect } from 'src/game/effects/attachStatus/constants';
+import { galvanize } from 'src/game/status/galvanize/constants';
 
 /*
 TODO:
 
 -for both cards
     -verify card type
-    -cards effects logic (All attack actions grant 4 defense this turn.)
+    -cards effects logic (All attack actions grant 3 defense this turn.)
 */
 
 export const GalvanizeCardUpgraded: Card = {
@@ -22,16 +24,20 @@ export const GalvanizeCardUpgraded: Card = {
     properties: {
         effects: [
             {
-                effect: defenseEffect.name,
+                effect: attachStatusEffect.name,
                 target: CardTargetedEnum.Self,
                 args: {
-                    value: 4,
+                    statusName: galvanize.name,
+                    statusArgs: {
+                        value: 4,
+                        counter: 1
+                    },
                 },
             }
         ],
         statuses: [],
     },
-    showPointer: true,
+    showPointer: false,
     isUpgraded: true,
     isActive: true,
 };
@@ -48,16 +54,20 @@ export const GalvanizeCard: Card = {
     properties: {
         effects: [
             {
-                effect: defenseEffect.name,
+                effect: attachStatusEffect.name,
                 target: CardTargetedEnum.Self,
                 args: {
-                    value: 3,
+                    statusName: galvanize.name,
+                    statusArgs: {
+                        value: 3,
+                        counter: 1
+                    },
                 },
             }
         ],
         statuses: [],
     },
-    showPointer: true,
+    showPointer: false,
     isUpgraded: false,
     upgradedCardId: GalvanizeCardUpgraded.cardId,
     isActive: true,
