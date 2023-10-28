@@ -20,7 +20,7 @@ export class GalvanizeStatus implements StatusEventHandler {
         console.log(dto);
         
         if(dto.target.type == 'enemy' ){
-
+            console.log('entre al if <--------------');
             await this.effectService.apply({
                 ctx: dto.ctx,
                 source: dto.source,
