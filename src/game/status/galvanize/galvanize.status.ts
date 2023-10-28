@@ -26,13 +26,12 @@ export class GalvanizeStatus implements StatusEventHandler {
                 effect: {
                     effect: defenseEffect.name,
                     args: {
-                        value: 3,
+                        value: dto.status.args.value,
                     },
                 },
             });
         }
         
-
         dto.status.args.counter++;
         dto.update(dto.status.args);
     }

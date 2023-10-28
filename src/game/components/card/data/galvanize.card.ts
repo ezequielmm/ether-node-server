@@ -19,7 +19,7 @@ export const GalvanizeCardUpgraded: Card = {
     cardType: CardTypeEnum.Defend,
     pool: 'knight',
     energy: 1,
-    description: `All attack actions grant 3 ${defenseEffect.name} this turn.`,
+    description: `All attack actions grant 4 ${defenseEffect.name} this turn.`,
     keywords: [],
     properties: {
         effects: [
@@ -28,13 +28,15 @@ export const GalvanizeCardUpgraded: Card = {
                 target: CardTargetedEnum.Self,
                 args: {
                     statusName: galvanize.name,
-                    statusArgs: {},
+                    statusArgs: {
+                        value: 4
+                    },
                 },
             }
         ],
         statuses: [],
     },
-    showPointer: true,
+    showPointer: false,
     isUpgraded: true,
     isActive: true,
 };
@@ -51,16 +53,19 @@ export const GalvanizeCard: Card = {
     properties: {
         effects: [
             {
-                effect: defenseEffect.name,
+                effect: attachStatusEffect.name,
                 target: CardTargetedEnum.Self,
                 args: {
-                    value: 3,
+                    statusName: galvanize.name,
+                    statusArgs: {
+                        value: 3
+                    },
                 },
             }
         ],
         statuses: [],
     },
-    showPointer: true,
+    showPointer: false,
     isUpgraded: false,
     upgradedCardId: GalvanizeCardUpgraded.cardId,
     isActive: true,
