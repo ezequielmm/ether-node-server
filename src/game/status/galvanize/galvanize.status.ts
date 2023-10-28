@@ -17,6 +17,8 @@ export class GalvanizeStatus implements StatusEventHandler {
 
     async handle(dto: StatusEventDTO): Promise<void> {
 
+        console.log(dto);
+        
         if(dto.target.type == CardTargetedEnum.Enemy ){
 
             await this.effectService.apply({
