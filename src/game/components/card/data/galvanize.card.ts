@@ -29,7 +29,8 @@ export const GalvanizeCardUpgraded: Card = {
                 args: {
                     statusName: galvanize.name,
                     statusArgs: {
-                        value: 4
+                        value: 4,
+                        counter: 1
                     },
                 },
             }
@@ -58,7 +59,8 @@ export const GalvanizeCard: Card = {
                 args: {
                     statusName: galvanize.name,
                     statusArgs: {
-                        value: 3
+                        value: 3,
+                        counter: 1
                     },
                 },
             }
