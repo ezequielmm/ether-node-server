@@ -3,7 +3,7 @@ import { Gear } from '../gear.schema';
 import { GearCategoryEnum, GearRarityEnum, GearTraitEnum } from '../gear.enum';
 
 export const Boots_Boots_Hallowed: Gear = {
-    gearId: 157,
+    gearId: 4007,
     name: 'Hallowed Boots',
     trait: GearTraitEnum.Boots,
     category: GearCategoryEnum.Boots,
