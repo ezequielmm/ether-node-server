@@ -8,4 +8,5 @@ export const Boots_Boots_Hallowed: Gear = {
     trait: GearTraitEnum.Boots,
     category: GearCategoryEnum.Boots,
     rarity: GearRarityEnum.Rare,
+    onlyOneAllowed: true
 };

@@ -7,4 +7,5 @@ export const Weapon_Weapon_Carving_Knife: Gear = {
     trait: GearTraitEnum.Weapon,
     category: GearCategoryEnum.Weapon,
     rarity: GearRarityEnum.Legendary,
+    onlyOneAllowed: true,
 };

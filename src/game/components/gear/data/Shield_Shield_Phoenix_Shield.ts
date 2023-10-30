@@ -7,4 +7,5 @@ export const Shield_Shield_Phoenix_Shield: Gear = {
     trait: GearTraitEnum.Shield,
     category: GearCategoryEnum.Shield,
     rarity: GearRarityEnum.Epic,
+    onlyOneAllowed: true,
 };

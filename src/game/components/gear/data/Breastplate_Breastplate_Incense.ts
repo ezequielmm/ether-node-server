@@ -7,4 +7,5 @@ export const Breastplate_Breastplate_Incense: Gear = {
     trait: GearTraitEnum.Breastplate,
     category: GearCategoryEnum.Breastplate,
     rarity: GearRarityEnum.Common,
+    onlyOneAllowed: true,
 };

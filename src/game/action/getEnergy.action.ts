@@ -21,12 +21,12 @@ export class GetEnergyAction {
             } = getCurrentNode;
         
             // Ahora puedes usar energy y energyMax aquí
-            console.log('Energy:', energy);
-            console.log('EnergyMax:', energyMax);
+            // console.log('Energy:', energy);
+            // console.log('EnergyMax:', energyMax);
 
             return [energy, energyMax];
         } else {
-            console.log('El objeto data es undefined.');
+            // console.log('El objeto data es undefined.');
         }
 
         

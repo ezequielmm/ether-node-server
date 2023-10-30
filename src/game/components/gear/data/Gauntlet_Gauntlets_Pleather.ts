@@ -7,4 +7,5 @@ export const Gauntlet_Gauntlets_Pleather: Gear = {
     trait: GearTraitEnum.Gauntlet,
     category: GearCategoryEnum.Gauntlets,
     rarity: GearRarityEnum.Uncommon,
+    onlyOneAllowed: true,
 };

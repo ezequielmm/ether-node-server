@@ -7,4 +7,5 @@ export const Vambrace_Vambraces_Hallowed: Gear = {
     trait: GearTraitEnum.Vambrace,
     category: GearCategoryEnum.Vambraces,
     rarity: GearRarityEnum.Common,
+    onlyOneAllowed: true,
 };

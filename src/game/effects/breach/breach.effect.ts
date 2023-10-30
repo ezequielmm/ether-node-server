@@ -19,8 +19,6 @@ export class BreachEffect implements EffectHandler {
                 private readonly eventEmitter: EventEmitter2){}
 
     async handle(dto: EffectDTO<Record<string, any>>): Promise<void> {
-        
-        console.log("Breach effect invoked---------------")
 
         const target = dto.target;
         const ctx    = dto.ctx;

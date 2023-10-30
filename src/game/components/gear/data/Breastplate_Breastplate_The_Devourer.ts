@@ -7,4 +7,5 @@ export const Breastplate_Breastplate_The_Devourer: Gear = {
     trait: GearTraitEnum.Breastplate,
     category: GearCategoryEnum.Breastplate,
     rarity: GearRarityEnum.Legendary,
+    onlyOneAllowed: true,
 };

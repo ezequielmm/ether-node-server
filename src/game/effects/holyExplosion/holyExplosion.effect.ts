@@ -33,7 +33,6 @@ export class holyExplosionEffect implements EffectHandler {
     ) {}
 
     async handle(dto: EffectDTO<HolyEffectsArgs>): Promise<void> {
-        console.log("Holy Explosion handle method executed--------")
         const { ctx } = dto;
         const energy = ctx.expedition.currentNode.data.player.energy
         await this.holyExplosion(dto, energy);
@@ -54,7 +53,6 @@ export class holyExplosionEffect implements EffectHandler {
         if(EnemyService.isEnemy(target)){
             
             const enemyType = target.value.type;
-            console.log(enemyType);
 
             await this.statusService.attach({
                 ctx,

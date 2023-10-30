@@ -32,8 +32,6 @@ export class MemoirOfDoomTrinket extends Trinket{
     async onAttach(ctx: GameContext): Promise<void> {
         ctx.events.addListener(EVENT_ENEMY_DEAD, async () => {
 
-            console.log("Memoir of Doom Executed")
-
             const statusService = ctx.moduleRef.get(StatusService, {
                 strict: false,
             });
