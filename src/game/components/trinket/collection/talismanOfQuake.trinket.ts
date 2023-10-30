@@ -41,11 +41,9 @@ export class TalismanOfQuakeTrinket extends TrinketModifier {
     effect: string;
 
     mutate(dto: EffectDTO): EffectDTO {
-        console.log("Talisman of Quake executed----------------------")
+        //console.log("Talisman of Quake executed----------------------")
         if (dto.target.type == 'enemy') {
             if (dto.args.currentValue >= this.minDamage) {
-
-                console.log("Min attack reached")
 
                 const effectService = dto.ctx.moduleRef.get(EffectService, {
                     strict: false,

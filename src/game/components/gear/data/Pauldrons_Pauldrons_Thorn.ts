@@ -7,4 +7,5 @@ export const Pauldrons_Pauldrons_Thorn: Gear = {
     trait: GearTraitEnum.Pauldrons,
     category: GearCategoryEnum.Pauldrons,
     rarity: GearRarityEnum.Uncommon,
+    onlyOneAllowed: true,
 };

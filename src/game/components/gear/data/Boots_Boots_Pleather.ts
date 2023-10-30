@@ -7,4 +7,5 @@ export const Boots_Boots_Pleather: Gear = {
     trait: GearTraitEnum.Boots,
     category: GearCategoryEnum.Boots,
     rarity: GearRarityEnum.Uncommon,
+    onlyOneAllowed: true,
 };

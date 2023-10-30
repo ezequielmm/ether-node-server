@@ -112,19 +112,12 @@ export class DamageEffect implements EffectHandler {
             for(const intention of enemyIntentions){
                 if(intention.type === EnemyIntentionType.Signature){
                     if(intention.negateDamage && intention.negateDamage > 0){
-                        console.log("Signature Move was Hitted:")
-                        console.log("Damage required to negate SM: " + intention.negateDamage)
-                        console.log("Damage done: " + damage)
-                        console.log("------------------------------------------------------")
-
                         if(damage >= intention.negateDamage){
                             target.value.currentScript = {id: 0, intentions: [EnemyBuilderService.createDoNothingIntent()]};
                             await this.enemyService.setCurrentScript(ctx, target.value.id, target.value.currentScript);
-                            console.log("SignatureMove skipped.")
                         }else{
                             intention.negateDamage -= damage;
                             nextIntentValueChanged = true;
-                            console.log("SignatureMove reduced.")
                         }
                     }
                 }

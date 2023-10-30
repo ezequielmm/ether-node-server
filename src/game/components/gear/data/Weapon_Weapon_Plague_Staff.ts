@@ -7,6 +7,7 @@ export const Weapon_Weapon_Plague_Staff: Gear = {
     trait: GearTraitEnum.Weapon,
     category: GearCategoryEnum.Weapon,
     rarity: GearRarityEnum.Rare,
+    onlyOneAllowed: true,
 };
 
 

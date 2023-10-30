@@ -7,4 +7,5 @@ export const Padding_Padding_Flannel: Gear = {
     trait: GearTraitEnum.Padding,
     category: GearCategoryEnum.Padding,
     rarity: GearRarityEnum.Epic,
+    onlyOneAllowed: true,
 };

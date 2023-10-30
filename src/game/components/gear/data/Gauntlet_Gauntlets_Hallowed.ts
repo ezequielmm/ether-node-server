@@ -7,4 +7,5 @@ export const Gauntlet_Gauntlets_Hallowed: Gear = {
     trait: GearTraitEnum.Gauntlet,
     category: GearCategoryEnum.Gauntlets,
     rarity: GearRarityEnum.Rare,
+    onlyOneAllowed: true,
 };

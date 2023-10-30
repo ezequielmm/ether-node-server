@@ -7,4 +7,5 @@ export const Pauldrons_Pauldrons_Immunity: Gear = {
     trait: GearTraitEnum.Pauldrons,
     category: GearCategoryEnum.Pauldrons,
     rarity: GearRarityEnum.Legendary,
+    onlyOneAllowed: true,
 };

@@ -7,4 +7,5 @@ export const Padding_Padding_Pleather: Gear = {
     trait: GearTraitEnum.Padding,
     category: GearCategoryEnum.Padding,
     rarity: GearRarityEnum.Rare,
+    onlyOneAllowed: true,
 };

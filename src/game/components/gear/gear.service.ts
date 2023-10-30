@@ -133,7 +133,7 @@ export class GearService {
           }
         } 
         else {
-          console.log(`Adding: ${newGear.gearId} - ${newGear.rarity}`);
+          //console.log(`Adding: ${newGear.gearId} - ${newGear.rarity}`);
           gear_list.push(newGear);
           uniqueGearIds.add(newGear.gearId.toString());
           itemAdded = true;

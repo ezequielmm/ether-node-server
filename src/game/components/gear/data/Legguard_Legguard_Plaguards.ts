@@ -7,4 +7,5 @@ export const Legguard_Legguard_Plaguards: Gear = {
     trait: GearTraitEnum.Legguard,
     category: GearCategoryEnum.Legguard,
     rarity: GearRarityEnum.Legendary,
+    onlyOneAllowed: true,
 };

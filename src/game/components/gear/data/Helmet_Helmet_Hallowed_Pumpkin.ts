@@ -7,4 +7,5 @@ export const Helmet_Helmet_Hallowed_Pumpkin: Gear = {
     trait: GearTraitEnum.Helmet,
     category: GearCategoryEnum.Helmet,
     rarity: GearRarityEnum.Epic,
+    onlyOneAllowed: true,
 };
