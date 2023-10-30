@@ -55,34 +55,41 @@ export class ExpeditionService {
     }
 
     async getGameContext(client: Socket): Promise<GameContext> {
-        const expedition = await this.findOneTimeDesc(
-            { 
-                userAddress: client.request.headers.useraddress
-            });
-        const events = new EventEmitter2();
-
-        if (!expedition?.playerState) {
-            throw new Error('Player state not found');
+        try{
+            const expedition = await this.findOneTimeDesc(
+                { 
+                    userAddress: client.request.headers.useraddress
+                });
+            const events = new EventEmitter2();
+    
+            if (!expedition?.playerState) {
+                throw new Error('Player state not found');
+            }
+    
+            const ctx: GameContext = {
+                expedition,
+                client,
+                events,
+                moduleRef: this.moduleRef,
+                info: {
+                    env: this.configService.get<string>('PAPERTRAIL_ENV'),
+                    account: expedition?.playerState.userAddress,
+                    expeditionId: expedition !== null ? expedition.id : null,
+                    service: this.configService.get<string>('PAPERTRAIL_SERVICE'),
+                },
+            };
+    
+            
+    
+            for (const trinket of expedition?.playerState?.trinkets) {
+                trinket.onAttach(ctx);
+            }
+    
+            return ctx;
+        }catch(error){
+            console.log("Error in getGameContext")
+            console.log(error);
         }
-
-        const ctx: GameContext = {
-            expedition,
-            client,
-            events,
-            moduleRef: this.moduleRef,
-            info: {
-                env: this.configService.get<string>('PAPERTRAIL_ENV'),
-                account: expedition?.playerState.userAddress,
-                expeditionId: expedition !== null ? expedition.id : null,
-                service: this.configService.get<string>('PAPERTRAIL_SERVICE'),
-            },
-        };
-
-        for (const trinket of expedition.playerState?.trinkets) {
-            trinket.onAttach(ctx);
-        }
-
-        return ctx;
     }
 
     async findOne(
