@@ -290,7 +290,7 @@ export class EndExpeditionProcess {
         const potionAndTrinketReward = rewards.filter(reward => reward.type === RewardType.Potion || reward.type === RewardType.Trinket);
         const treasureReward = rewards.filter(reward => reward.type === RewardType.Fragment);
 
-        if (potionAndTrinketReward) ctx.expedition.finalScore.victoryItems.push(this.tranformRewardToVictoryItem(potionAndTrinketReward))
+        if (potionAndTrinketReward && potionAndTrinketReward.length > 0) ctx.expedition.finalScore.victoryItems.push(this.tranformRewardToVictoryItem(potionAndTrinketReward))
         if (treasureReward && treasureReward.length > 0)   ctx.expedition.finalScore.victoryItems.push(this.tranformRewardToVictoryItem(treasureReward))
         if (filteredLootbox && filteredLootbox.length > 0) ctx.expedition.finalScore.victoryItems.push(this.tranformGearToVictoryItem(filteredLootbox[0]))
 
