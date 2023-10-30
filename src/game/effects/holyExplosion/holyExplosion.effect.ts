@@ -34,7 +34,7 @@ export class holyExplosionEffect implements EffectHandler {
 
     async handle(dto: EffectDTO<HolyEffectsArgs>): Promise<void> {
         const { ctx } = dto;
-        const energy = ctx.expedition.currentNode.data.player.energy
+        const energy = ctx.expedition.currentNode.data.player.energy;
         await this.holyExplosion(dto, energy);
     }
 
@@ -50,7 +50,7 @@ export class holyExplosionEffect implements EffectHandler {
         }  
 
        // for(let currentEnemy of currentNodeEnemies){
-        if(EnemyService.isEnemy(target)){
+        if(EnemyService.isEnemy(target) && energy > 0){
             
             const enemyType = target.value.type;
 
