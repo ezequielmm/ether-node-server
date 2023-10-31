@@ -76,6 +76,7 @@ export class ExpeditionGateway {
 
     @SubscribeMessage('ContinueExpedition')
     async handleContinueExpedition(client: Socket): Promise<string> {
+        console.log("Se ejecuta esto en algun caso????------------------------")
         return await this.actionQueueService.pushWithReturn(
             await this.expeditionService.getExpeditionIdFromClient(client),
             async () => {
