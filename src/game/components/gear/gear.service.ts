@@ -26,6 +26,52 @@ export class GearService {
     },
   };
 
+  private selectRandomHalloweenRarity(rarities: ILootboxRarityOdds) {
+    let rolls = new Map<string, number>();
+    let dropRates = [
+      {
+        type: GearRarityEnum.Common,
+        rate: rarities.common,
+      },
+      {
+        type: GearRarityEnum.Uncommon,
+        rate: rarities.uncommon,
+      },
+      {
+        type: GearRarityEnum.Rare,
+        rate: rarities.rare,
+      },
+      {
+        type: GearRarityEnum.Epic,
+        rate: rarities.epic,
+      },
+      {
+        type: GearRarityEnum.Legendary,
+        rate: rarities.legendary,
+      },
+    ];
+
+    let max = dropRates.reduce((acc, curr) => acc + curr.rate, 0);
+    let roll = Math.floor(Math.random() * max);
+
+    let current = 0;
+    let rarity = GearRarityEnum.Common;
+    for (const dropRate of dropRates) {
+      current += dropRate.rate;
+
+      if (roll < current) {
+        let currentRolls = rolls.get(dropRate.type);
+
+        if (!currentRolls) currentRolls = 0;
+
+        rolls.set(dropRate.type, currentRolls + 1);
+        rarity = dropRate.type;
+        break;
+      }
+    }
+    return rarity;
+  }
+
   private selectRandomRarity(rarities: ILootboxRarityOdds) {
     let rolls = new Map<string, number>();
     let dropRates = [
@@ -85,18 +131,6 @@ export class GearService {
     return gear_list;
   }
 
-  async getHalloweenLootbox(size: number, rarities?: ILootboxRarityOdds): Promise<Gear[]> {
-    const gear_list: Gear[] = [];
-
-    for (let i = 0; i < size; i++) {
-      const one_gear = await this.getOneHalloweenGear(
-        this.selectRandomRarity(rarities),
-      );
-      gear_list.push(one_gear);
-    }
-
-    return gear_list;
-  }
 
   async getUniqueHalloweenLoot(
     size: number,
@@ -115,7 +149,7 @@ export class GearService {
     let itemAdded = false;
 
     //- Gets one random rarity:
-    let targetRarity = this.selectRandomRarity(rarities);
+    let targetRarity = this.selectRandomHalloweenRarity(rarities);
 
     if(allGear && allGear.length > 0){
       while (itemAdded === false) {
@@ -179,9 +213,6 @@ export class GearService {
 
     // Use lodash's sample method to get a random gear item
 
-    console.log("GetRandomGearByRarity filteredGear:")
-    console.log(filteredGear)
-    console.log("-------------------------------------")
     return sample(filteredGear) || null;
   }
   async getOneGear(rarity: GearRarityEnum): Promise<Gear> {
