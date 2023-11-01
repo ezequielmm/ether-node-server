@@ -13,7 +13,7 @@ export const SmudgeCardUpgraded: Card = {
     cardType: CardTypeEnum.Defend,
     pool: 'knight',
     energy: 1,
-    description: `Gain 20 ${defenseEffect.name}. Add 1 Mold Card to deck.`,
+    description: `Gain 15 ${defenseEffect.name}. Add 1 Mold Card to deck.`,
     keywords: [],
     properties: {
         effects: [
