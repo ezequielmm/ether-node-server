@@ -4,7 +4,7 @@ import { Card } from '../card.schema';
 import { defenseEffect } from 'src/game/effects/defense/constants';
 
 export const InThyNameCardUpgraded: Card = {
-    cardId: 562,
+    cardId: 565,
     name: 'In Thy Name+',
     rarity: CardRarityEnum.Starter,
     cardType: CardTypeEnum.Defend,
@@ -31,7 +31,7 @@ export const InThyNameCardUpgraded: Card = {
 };
 
 export const InThyNameCard: Card = {
-    cardId: 561,
+    cardId: 564,
     name: 'In Thy Name',
     rarity: CardRarityEnum.Starter,
     cardType: CardTypeEnum.Defend,

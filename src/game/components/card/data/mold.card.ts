@@ -8,7 +8,7 @@ TODO:
 - map effect
 */
 export const MoldCard: Card = {
-    cardId: 553,
+    cardId: 554,
     name: 'Mold',
     rarity: CardRarityEnum.Starter,
     cardType: CardTypeEnum.Attack,//we shoud have kind of "map" cards?

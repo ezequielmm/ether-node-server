@@ -6,7 +6,7 @@ import { holyExplosion } from 'src/game/effects/holyExplosion/constants';
 //import { attachStatusEffect } from 'src/game/effects/attachStatus/constants';
 
 export const HolyExplosionCardUpgraded: Card = {
-    cardId: 560,
+    cardId: 563,
     name: 'Holy Explosion+',
     rarity: CardRarityEnum.Starter,
     cardType: CardTypeEnum.Attack,
@@ -35,7 +35,7 @@ export const HolyExplosionCardUpgraded: Card = {
 };
 
 export const HolyExplosionCard: Card = {
-    cardId: 559,
+    cardId: 562,
     name: 'Holy Explosion',
     rarity: CardRarityEnum.Starter,
     cardType: CardTypeEnum.Attack,
