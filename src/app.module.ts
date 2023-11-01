@@ -22,8 +22,8 @@ import { CleanModule } from './tasks/clean.module';
     imports: [
         ScheduleModule.forRoot(),
         TaskModule,
-        ResetModule,
-        CleanModule,
+        // ResetModule,
+        // CleanModule,
         // LoggerModule.forRootAsync({
         //     inject: [ConfigService],
         //     useFactory: (configService: ConfigService) => ({
