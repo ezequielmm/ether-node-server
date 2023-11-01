@@ -12,7 +12,7 @@ Rebuke+ notes: Debuffs attempted this turn by any enemy won’t work (already ex
 */
 
 export const RebukeCardUpgraded: Card = {
-    cardId: 557,
+    cardId: 559,
     name: 'Rebuke+',
     rarity: CardRarityEnum.Starter,
     cardType: CardTypeEnum.Defend,
@@ -38,7 +38,7 @@ export const RebukeCardUpgraded: Card = {
 };
 
 export const RebukeCard: Card = {
-    cardId: 556,
+    cardId: 558,
     name: 'Rebuke',
     rarity: CardRarityEnum.Starter,
     cardType: CardTypeEnum.Defend,

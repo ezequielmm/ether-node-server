@@ -7,7 +7,7 @@ import { MoldCard } from './mold.card';
 import { AddCardPosition } from 'src/game/effects/effects.enum';
 
 export const SmudgeCardUpgraded: Card = {
-    cardId: 570,
+    cardId: 575,
     name: 'Smudge+',
     rarity: CardRarityEnum.Starter,
     cardType: CardTypeEnum.Defend,
@@ -43,7 +43,7 @@ export const SmudgeCardUpgraded: Card = {
 };
 
 export const SmudgeCard: Card = {
-    cardId: 569,
+    cardId: 574,
     name: 'Smudge',
     rarity: CardRarityEnum.Starter,
     cardType: CardTypeEnum.Defend,

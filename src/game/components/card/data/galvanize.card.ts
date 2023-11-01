@@ -4,16 +4,8 @@ import { Card } from '../card.schema';
 import { attachStatusEffect } from 'src/game/effects/attachStatus/constants';
 import { galvanize } from 'src/game/status/galvanize/constants';
 
-/*
-TODO:
-
--for both cards
-    -verify card type
-    -cards effects logic (All attack actions grant 3 defense this turn.)
-*/
-
 export const GalvanizeCardUpgraded: Card = {
-    cardId: 568,
+    cardId: 571,
     name: 'Galvanize+',
     rarity: CardRarityEnum.Starter,
     cardType: CardTypeEnum.Defend,
@@ -43,7 +35,7 @@ export const GalvanizeCardUpgraded: Card = {
 };
 
 export const GalvanizeCard: Card = {
-    cardId: 567,
+    cardId: 570,
     name: 'Galvanize',
     rarity: CardRarityEnum.Starter,
     cardType: CardTypeEnum.Defend,
