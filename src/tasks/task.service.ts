@@ -26,7 +26,7 @@ export class TaskService {
         private readonly settingsService: SettingsService,
     ) {}
 
-    @Cron(CronExpression.EVERY_DAY_AT_3PM, { 
+    @Cron(CronExpression.EVERY_DAY_AT_4PM, { 
         name: 'Create Contest Map',
         timeZone: 'UTC',
     })
