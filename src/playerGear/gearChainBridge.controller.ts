@@ -128,10 +128,10 @@ export class GearChainBridgeController {
         try {
             switch (payload.action) {
                 case GearActionApiEnum.AddGear:
-                    console.log("Wallet: " + wallet);
-                    console.log("Gears:")
-                    console.log(gears)
-                    console.log("-------------------------------------------------------------------------------------")
+                    // console.log("Wallet: " + wallet);
+                    // console.log("Gears:")
+                    // console.log(gears)
+                    // console.log("-------------------------------------------------------------------------------------")
                     await this.playerGearService.addGearToPlayer(wallet, gears);
                     break;
                 case GearActionApiEnum.RemoveGear:

@@ -122,22 +122,6 @@ export class DamageEffect implements EffectHandler {
                     }
                 }
 
-                //- Signature moves could have more than 1 effect:
-                // for(const effect of intention.effects){
-                //     switch(effect.effect){
-                //         case absorbEffect.name:
-                //             if(damage > oldDefense){
-                //                 effect.args.value += (damage - oldDefense);
-                //                 nextIntentValueChanged = true;
-                //             }
-                //         case counterEffect.name:
-                //             if(damage > oldDefense){
-                //                 effect.args.value += (damage - oldDefense);
-                //                 nextIntentValueChanged = true;
-                //             }
-                //     }
-                // }
-
                 if(nextIntentValueChanged){
                     target.value.currentScript.intentions = enemyIntentions;
                     await this.enemyService.setCurrentScript(ctx, target.value.id, target.value.currentScript);
