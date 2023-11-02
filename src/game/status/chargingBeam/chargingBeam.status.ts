@@ -52,7 +52,7 @@ export class ChargingBeamStatus implements StatusEffectHandler {
                 (useEnergyAsMultiplier ? energy : 1) *
                 (useDefense ? multiplier * defense : 1);
 
-            if(status.args.counter < 2 && damage >= 20){
+            if(status.args.counter < 2 && damage >= 10){
                 const debuff = target.value.statuses.debuff;
                 const buff = target.value.statuses.buff.map(buff => {
                     if(buff.name === chargingBeam.name){
