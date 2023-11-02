@@ -4,7 +4,7 @@ import { Contest } from './contest.schema';
 import { ReturnModelType } from '@typegoose/typegoose';
 import { CreateContestDTO } from './contest.dto';
 import { FilterQuery, ProjectionFields } from 'mongoose';
-import { setHoursMinutesSecondsToUTCDate } from 'src/utils';
+import { addDaysToDate, setHoursMinutesSecondsToUTCDate } from 'src/utils';
 
 @Injectable()
 export class ContestService {
@@ -52,20 +52,20 @@ export class ContestService {
     }
 
     async findActiveContest(availableAt = new Date()): Promise<Contest> {
-        // First we set the time to 23:59:59:999
-        const endsAt = setHoursMinutesSecondsToUTCDate(
-            availableAt,
-            23,
+        const endsAtNewDate = addDaysToDate(availableAt, 1)
+        const endsAtComplete = setHoursMinutesSecondsToUTCDate(
+            endsAtNewDate,
+            15,
             59,
             59,
             999,
         );
-        // then we set the time to 00:00:00
-        availableAt.setUTCHours(0, 0, 0, 0);
+
+        availableAt.setUTCHours(16, 0, 0, 0);
 
         return await this.findOne({
             available_at: { $gte: availableAt },
-            ends_at: { $lte: endsAt },
+            ends_at: { $lte: endsAtComplete },
         });
     }
 }

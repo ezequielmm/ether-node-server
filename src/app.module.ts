@@ -21,7 +21,7 @@ import { CleanModule } from './tasks/clean.module';
 @Module({
     imports: [
         ScheduleModule.forRoot(),
-        TaskModule,
+        // TaskModule,
         // ResetModule,
         // CleanModule,
         // LoggerModule.forRootAsync({
