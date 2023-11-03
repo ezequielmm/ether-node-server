@@ -52,6 +52,15 @@ export class ContestService {
     }
 
     async findActiveContest(availableAt = new Date()): Promise<Contest> {
+
+        const currentUTCHours = new Date().getUTCHours();
+        const hasPassed4PMUTC = currentUTCHours >= 16;
+
+
+        if(!hasPassed4PMUTC){
+            availableAt = addDaysToDate(availableAt, -1)
+        }
+
         const endsAtComplete = setHoursMinutesSecondsToUTCDate(
             addDaysToDate(availableAt),
             15,
