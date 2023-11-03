@@ -56,7 +56,7 @@ export class ContestService {
         const currentUTCHours = new Date().getUTCHours();
         const hasPassed4PMUTC = currentUTCHours >= 16;
 
-
+        //- Si no pasaron las 4PM UTC el contests es el de ayer:
         if(!hasPassed4PMUTC){
             availableAt = addDaysToDate(availableAt, -1)
         }
