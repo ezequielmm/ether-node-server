@@ -52,9 +52,8 @@ export class ContestService {
     }
 
     async findActiveContest(availableAt = new Date()): Promise<Contest> {
-        const endsAtNewDate = addDaysToDate(availableAt, 1)
         const endsAtComplete = setHoursMinutesSecondsToUTCDate(
-            endsAtNewDate,
+            addDaysToDate(availableAt),
             15,
             59,
             59,
@@ -62,6 +61,10 @@ export class ContestService {
         );
 
         availableAt.setUTCHours(16, 0, 0, 0);
+
+        console.log("----------------------------------------------------------------")
+        console.log("Available At: " + availableAt)
+        console.log("Ends at: " + endsAtComplete)
 
         return await this.findOne({
             available_at: { $gte: availableAt },
