@@ -23,7 +23,7 @@ export class WalletService {
         return (ipfs) ? "https://ipfs.io/ipfs/" + ipfs.substring(7) : undefined;
     }
 
-    async getTokenIdList(walletAddress: string, amount:number): Promise<any[]> {
+    async getTokenIdList(walletAddress: string, amount:number): Promise<any> {
         
         const contest = await this.contestService.findActiveContest();
         const event_id = contest?.event_id ?? 0;
@@ -48,7 +48,7 @@ export class WalletService {
         return nfts;
     }
 
-    private async formatTokens(squiresResponse:GetNftsByWalletResponse, event_id:number, win_counts): Promise<ContractResponse[]> {
+    private async formatTokens(squiresResponse:GetNftsByWalletResponse, event_id:number, win_counts): Promise<NFTSFormattedResponse> {
         
         let formatedNFTList:NFTSFormattedResponse = {
             wallet: squiresResponse.wallet,
@@ -74,7 +74,7 @@ export class WalletService {
             formatedNFTList.tokens.push(contract);
         }
 
-        return formatedNFTList.tokens;
+        return formatedNFTList;
     }
 
     private parseSquiresTokenToBlightfellToken(squiresToken: TokenBridgeResponse, can_play:boolean, characterClass:string):TokenResponse {
