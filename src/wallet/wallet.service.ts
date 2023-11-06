@@ -42,8 +42,8 @@ export class WalletService {
         });
 
         console.log("START------------------------------------------------------------------------------------------------------------------------")
-        console.log(nfts)
-        console.log("END------------------------------------------------------------------------------------------------------------------------")
+        console.log(nfts.tokens[0])
+        console.log("END--------------------------------------------------------------------------------------------------------------------------")
 
         for await (const contract of nfts.tokens) {
             const character = await this.characterService.getCharacterByContractId(contract.contract_address);
