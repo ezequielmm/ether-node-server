@@ -57,8 +57,14 @@ export class ContestService {
         const hasPassed4PMUTC = currentUTCHours >= 16;
 
         //- Si no pasaron las 4PM UTC el contests es el de ayer:
+        console.log("---------------------------------------------------------------------------")
+        console.log("availableAT previous if")
+        console.log(availableAt)
         if(!hasPassed4PMUTC){
             availableAt = addDaysToDate(availableAt, -1)
+            console.log("avaliableAt after if:")
+            console.log(availableAt)
+            console.log("---------------------------------------------------------------------------")
         }
 
         const endsAtComplete = setHoursMinutesSecondsToUTCDate(
@@ -70,10 +76,6 @@ export class ContestService {
         );
 
         availableAt.setUTCHours(16, 0, 0, 0);
-
-        console.log("----------------------------------------------------------------")
-        console.log("Available At: " + availableAt)
-        console.log("Ends at: " + endsAtComplete)
 
         return await this.findOne({
             available_at: { $gte: availableAt },
