@@ -19,6 +19,7 @@ export interface ContractBridgeResponse {
     token_count: number,
     characterClass: string,
     tokens: TokenBridgeResponse[],
+    contract: string,
 }
 
 export interface TokenBridgeResponse {

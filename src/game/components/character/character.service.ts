@@ -62,6 +62,19 @@ export class CharacterService {
         }
     }
 
+    getContractIdByCharacter(character: Character){
+        const net = this.getNetType();
+
+        switch (net) {
+            case AlchemyService.MAINNET:
+                return character.contractId;
+            case AlchemyService.TESTNET:
+                return character.contractIdTest;
+            default:
+                return null;
+        }
+    }
+
     private getNetType(): string {
         return this.configService.get('NFT_SERVICE_NET');
     }
