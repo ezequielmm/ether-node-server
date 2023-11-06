@@ -23,7 +23,7 @@ export class WalletService {
         return (ipfs) ? "https://ipfs.io/ipfs/" + ipfs.substring(7) : undefined;
     }
 
-    async getTokenIdList(walletAddress: string, amount:number): Promise<ContractResponse[]> {
+    async getTokenIdList(walletAddress: string, amount:number): Promise<any[]> {
         
         const contest = await this.contestService.findActiveContest();
         const event_id = contest?.event_id ?? 0;
