@@ -3,4 +3,6 @@ export enum CharacterClassEnum {
     BlessedVillager = 'blessed-villager',
     Villager = 'villager',
     NonTokenVillager = 'non-token-villager',
+    KnightInitiated = 'knight-initiated',
+    BlessedVillagerInitiated = 'blessed-villager-initiated',
 }

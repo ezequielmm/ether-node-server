@@ -79,12 +79,12 @@ export class BridgeService {
         }
     }
 
-    async getNftsByWallet(walletAddress: string, amount: number): Promise<GetNftsByWalletResponse>{
+    async getNftsByWallet(walletAddress: string, amount: number = 10, skip:number = 0): Promise<GetNftsByWalletResponse>{
         const bridgeApiURL = this.configService.get<string>("BRIDGE_API_URL");
 
         try{
             const res = await axios.get<GetNftsByWalletResponse>(
-                `${bridgeApiURL}/walletnfts/${walletAddress}`,
+                `${bridgeApiURL}/walletnfts/${walletAddress}/${amount}/${skip}`,
                 {
                     headers: {
                         "Content-Type": "application/json",
