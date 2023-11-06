@@ -42,7 +42,7 @@ export class GalvanizeStatus implements StatusEventHandler {
 
             await this.combatQueueService.push({
                 ctx,
-                source,
+                source: this.playerService.get(ctx),
                 target,
                 args: {
                     effectType: CombatQueueTargetEffectTypeEnum.Defense,
