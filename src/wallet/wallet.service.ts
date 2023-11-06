@@ -42,10 +42,33 @@ export class WalletService {
         });
 
         console.log("START------------------------------------------------------------------------------------------------------------------------")
-        console.log(nfts.tokens[0])
+        console.log(nfts.tokens[0].tokens[0].metadata)
         console.log("END--------------------------------------------------------------------------------------------------------------------------")
 
         for await (const contract of nfts.tokens) {
+            const character = await this.characterService.getCharacterByContractId(contract.contract_address);
+            contract.characterClass = character?.characterClass ?? 'unknown';
+        
+            for await (const token of contract.tokens) {
+                token.characterClass = character?.characterClass ?? 'unknown';
+                token.adaptedImageURI = this.getHttpFromIpfsURI(token.metadata?.image);
+                token.can_play =
+                    await this.playerWinService.canPlay(
+                        event_id,
+                        contract.contract_address,
+                        token.token_id,
+                        win_counts[contract.contract_address + token.token_id] || 0,
+                    );
+            }
+            contract.tokens = sortBy(contract.tokens, [(token) => <number>token.token_id]);
+        }
+
+        return nfts;
+    }
+
+    private formatTokens = async (nfts, event_id, win_counts) => {
+        for await (const contract of nfts.contracts) {
+            
             const character = await this.characterService.getCharacterByContractId(contract.contract_address);
             contract.characterClass = character?.characterClass ?? 'unknown';
         
