@@ -88,7 +88,7 @@ export class WalletService {
         let nft:TokenResponse;
         nft.token_id            = ""+squiresToken.edition;
         nft.name                = squiresToken.name;
-        nft.adaptedImageURI     = squiresToken.image;
+        nft.adaptedImageURI     = this.getHttpFromIpfsURI(squiresToken.image);
         nft.metadata            = metadata;
 
         return nft;
