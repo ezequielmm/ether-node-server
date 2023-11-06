@@ -4,6 +4,7 @@ import { ContestService } from '../game/contest/contest.service';
 import { countBy, sortBy } from 'lodash';
 import { CharacterService } from 'src/game/components/character/character.service';
 import { NFTService } from 'src/nft-library/services/nft_service';
+import { BridgeService } from 'src/bridge-api/bridge.service';
 
 @Injectable()
 export class WalletService {
@@ -11,7 +12,8 @@ export class WalletService {
         private readonly playerWinService: PlayerWinService,
         private readonly contestService: ContestService,
         private readonly characterService: CharacterService,
-        private readonly nftService: NFTService
+        private readonly nftService: NFTService,
+        private readonly bridgeService: BridgeService
     ) {}
 
     private getHttpFromIpfsURI(ipfs: string): string {
@@ -35,11 +37,22 @@ export class WalletService {
         // The contracts to filter from all the user collections
         const tokenAddresses = await this.characterService.findAllContractIds();
 
+        // Alchemy:
         const nfts = await this.nftService.listByContracts({
             walletAddress,
             tokenAddresses,
             amount
         });
+
+        // Squires
+        const nftsPrueba = await this.bridgeService.getNftsByWallet(
+            walletAddress,
+            amount
+        );
+
+        console.log("START--------------------------------------------------------------------------------------------------------------------------------------")
+        console.log(nftsPrueba)
+        console.log("----------------------------------------------------------------------------------------------------------------------------------------END")
 
         for await (const contract of nfts.tokens) {
             const character = await this.characterService.getCharacterByContractId(contract.contract_address);
@@ -59,9 +72,6 @@ export class WalletService {
             contract.tokens = sortBy(contract.tokens, [(token) => <number>token.token_id]);
         }
 
-        console.log("START------------------------------------------------------------------------------------------------------------------------")
-        console.log(nfts)
-        console.log("END--------------------------------------------------------------------------------------------------------------------------")
         return nfts;
     }
 

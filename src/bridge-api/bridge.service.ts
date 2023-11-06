@@ -79,4 +79,29 @@ export class BridgeService {
         }
     }
 
+    async getNftsByWallet(walletAddress: string, amount: number){
+        const bridgeApiURL = this.configService.get<string>("BRIDGE_API_URL");
+
+        try{
+            const res = await axios.get<any>(
+                `${bridgeApiURL}/walletnfts/${walletAddress}`,
+                {
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                }
+            );
+
+            if(res.status != 200){
+                return {success: false, message: "Wrong Bridge API endpoint"};
+            }
+
+            return res.data;
+
+        }catch (error){
+            console.error("Error connecting to bridge api:", error.message);
+            return {success: false, message: "Error connecting to Bridge API"};
+        }
+    }
+
 }
