@@ -14,20 +14,17 @@ export const GalvanizeCardUpgraded: Card = {
     description: `All attack actions grant 4 ${defenseEffect.name} this turn.`,
     keywords: [],
     properties: {
-        effects: [
+        effects: [],
+        statuses: [
             {
-                effect: attachStatusEffect.name,
-                target: CardTargetedEnum.Self,
+                name: galvanize.name,
+                attachTo: CardTargetedEnum.Player,
                 args: {
-                    statusName: galvanize.name,
-                    statusArgs: {
-                        value: 4,
-                        counter: 1
-                    },
+                    value: 4,
+                    counter: 1
                 },
             }
         ],
-        statuses: [],
     },
     showPointer: false,
     isUpgraded: true,
