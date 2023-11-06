@@ -44,20 +44,17 @@ export const GalvanizeCard: Card = {
     description: `All attack actions grant 3 ${defenseEffect.name} this turn.`,
     keywords: [],
     properties: {
-        effects: [
+        effects: [],
+        statuses: [
             {
-                effect: attachStatusEffect.name,
-                target: CardTargetedEnum.Player,
+                name: galvanize.name,
+                attachTo: CardTargetedEnum.Player,
                 args: {
-                    statusName: galvanize.name,
-                    statusArgs: {
-                        value: 3,
-                        counter: 1
-                    },
+                    value: 3,
+                    counter: 1
                 },
             }
         ],
-        statuses: [],
     },
     showPointer: false,
     isUpgraded: false,
