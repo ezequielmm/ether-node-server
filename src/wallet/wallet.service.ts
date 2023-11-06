@@ -43,8 +43,6 @@ export class WalletService {
         );
 
         const nfts = await this.formatTokens(squiresResponse, event_id, win_counts);
-        console.log(nfts)
-        console.log(nfts[0].tokens[0])
         return nfts;
     }
 
