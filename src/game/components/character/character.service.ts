@@ -37,6 +37,11 @@ export class CharacterService {
         return this.character.findOne(filter).lean();
     }
 
+    async getCharacterByContractName(nameToFind: string): Promise<Character> {
+        let filter = { name: { $regex: nameToFind, $options: "i" } };
+        return this.character.findOne(filter).lean();
+    }
+
     async findAllContractIds(): Promise<Array<string>> {
         const net = this.getNetType();
 

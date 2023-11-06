@@ -5,6 +5,7 @@ import { countBy, sortBy } from 'lodash';
 import { CharacterService } from 'src/game/components/character/character.service';
 import { NFTService } from 'src/nft-library/services/nft_service';
 import { BridgeService } from 'src/bridge-api/bridge.service';
+import { GetNftsByWalletResponse } from 'src/bridge-api/bridge.types';
 
 @Injectable()
 export class WalletService {
@@ -15,6 +16,7 @@ export class WalletService {
         private readonly nftService: NFTService,
         private readonly bridgeService: BridgeService
     ) {}
+
 
     private getHttpFromIpfsURI(ipfs: string): string {
         return (ipfs) ? "https://ipfs.io/ipfs/" + ipfs.substring(7) : undefined;
@@ -45,14 +47,10 @@ export class WalletService {
         });
 
         // Squires
-        const nftsPrueba = await this.bridgeService.getNftsByWallet(
-            walletAddress,
-            amount
-        );
-
-        console.log("START--------------------------------------------------------------------------------------------------------------------------------------")
-        console.log(nftsPrueba)
-        console.log("----------------------------------------------------------------------------------------------------------------------------------------END")
+        // const squiresResponse = await this.bridgeService.getNftsByWallet(
+        //     walletAddress,
+        //     amount
+        // );
 
         for await (const contract of nfts.tokens) {
             const character = await this.characterService.getCharacterByContractId(contract.contract_address);
@@ -72,34 +70,44 @@ export class WalletService {
             contract.tokens = sortBy(contract.tokens, [(token) => <number>token.token_id]);
         }
 
+        console.log("START------------------------------------------------------------------------------------------------------------------------------")
+        console.log(nfts)
+        console.log("END--------------------------------------------------------------------------------------------------------------------------------")
+        console.log("START------------------------------------------------------------------------------------------------------------------------------")
+        console.log(nfts.tokens[0])
+        console.log("END--------------------------------------------------------------------------------------------------------------------------------")
+        console.log("START------------------------------------------------------------------------------------------------------------------------------")
+        console.log(nfts.tokens[0].tokens[0])
+        console.log("END--------------------------------------------------------------------------------------------------------------------------------")
+
         return nfts;
     }
 
-    private formatTokens = async (nfts, event_id, win_counts) => {
+    // private formatTokens = async (squiresResponse:GetNftsByWalletResponse, event_id:number, win_counts) => {
 
-        nfts
+    //     let formatedNFTList = [];
 
-        for await (const contract of nfts.contracts) {
+    //     for await (const contract of squiresResponse.contracts) {
+
             
-            const character = await this.characterService.getCharacterByContractId(contract.contract_address);
-            contract.characterClass = character?.characterClass ?? 'unknown';
 
-
+    //         const character = await this.characterService.getCharacterByContractName(contract.characterClass);
+    //         contract.characterClass = character?.characterClass ?? 'unknown';
         
-            for await (const token of contract.tokens) {
-                token.characterClass = character?.characterClass ?? 'unknown';
-                token.adaptedImageURI = this.getHttpFromIpfsURI(token.metadata?.image);
-                token.can_play =
-                    await this.playerWinService.canPlay(
-                        event_id,
-                        contract.contract_address,
-                        token.token_id,
-                        win_counts[contract.contract_address + token.token_id] || 0,
-                    );
-            }
-            contract.tokens = sortBy(contract.tokens, [(token) => <number>token.token_id]);
-        }
+    //         for await (const token of contract.tokens) {
+    //             token.characterClass = character?.characterClass ?? 'unknown';
+    //             token.adaptedImageURI = this.getHttpFromIpfsURI(token.metadata?.image);
+    //             token.can_play =
+    //                 await this.playerWinService.canPlay(
+    //                     event_id,
+    //                     contract.contract_address,
+    //                     token.token_id,
+    //                     win_counts[contract.contract_address + token.token_id] || 0,
+    //                 );
+    //         }
+    //         contract.tokens = sortBy(contract.tokens, [(token) => <number>token.token_id]);
+    //     }
 
-        return nfts;
-    }
+    //     return nfts;
+    // }
 }

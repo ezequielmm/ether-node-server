@@ -2,7 +2,7 @@ import { BadRequestException, Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { createHash } from 'crypto';
 import axios from 'axios';
-import { InProgressBridgeResponse, InitiationBridgeResponse, InitiationRequestDTO } from "./bridge.types";
+import { GetNftsByWalletResponse, InProgressBridgeResponse, InitiationBridgeResponse, InitiationRequestDTO } from "./bridge.types";
 
 @Injectable()
 export class BridgeService {
@@ -79,11 +79,11 @@ export class BridgeService {
         }
     }
 
-    async getNftsByWallet(walletAddress: string, amount: number){
+    async getNftsByWallet(walletAddress: string, amount: number): Promise<GetNftsByWalletResponse>{
         const bridgeApiURL = this.configService.get<string>("BRIDGE_API_URL");
 
         try{
-            const res = await axios.get<any>(
+            const res = await axios.get<GetNftsByWalletResponse>(
                 `${bridgeApiURL}/walletnfts/${walletAddress}`,
                 {
                     headers: {
@@ -93,14 +93,13 @@ export class BridgeService {
             );
 
             if(res.status != 200){
-                return {success: false, message: "Wrong Bridge API endpoint"};
+                console.log("Error connecting to Bridge API: " + res.status);
             }
 
             return res.data;
 
         }catch (error){
             console.error("Error connecting to bridge api:", error.message);
-            return {success: false, message: "Error connecting to Bridge API"};
         }
     }
 
