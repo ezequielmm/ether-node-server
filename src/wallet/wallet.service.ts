@@ -42,7 +42,9 @@ export class WalletService {
             amount
         );
 
-        return await this.formatTokens(squiresResponse, event_id, win_counts);
+        const nfts = await this.formatTokens(squiresResponse, event_id, win_counts);
+        console.log(nfts)
+        return nfts;
     }
 
     private async formatTokens(squiresResponse:GetNftsByWalletResponse, event_id:number, win_counts): Promise<ContractResponse[]> {
