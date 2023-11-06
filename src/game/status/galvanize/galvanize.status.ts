@@ -33,8 +33,12 @@ export class GalvanizeStatus implements StatusEventHandler {
 
             const originalDefense = dto.source.value.combatState.defense; 
             const defenseCalculated = originalDefense + dto.status.args.value;
+            console.log('value',dto.status.args.value);
+            console.log('defensa calc', defenseCalculated);
 
-            await this.playerService.setDefense(dto.ctx, defenseCalculated);
+            const finalDefense =  await this.playerService.setDefense(ctx, defenseCalculated);
+            console.log('final defense', finalDefense);
+            dto.ctx.expedition.currentNode.data.player.defense = finalDefense;
 
             await this.combatQueueService.push({
                 ctx,
