@@ -44,6 +44,7 @@ export class WalletService {
 
         const nfts = await this.formatTokens(squiresResponse, event_id, win_counts);
         console.log(nfts)
+        console.log(nfts[0].tokens[0])
         return nfts;
     }
 
@@ -55,10 +56,8 @@ export class WalletService {
         };
 
         for await (const squiresContract of squiresResponse.contracts) {
-            const character  = await this.characterService.getCharacterByContractName(squiresContract.characterClass);
-            
             let contract:ContractResponse = {
-                characterClass:   character?.characterClass ?? 'unknown',
+                characterClass:   squiresContract.characterClass,
                 contract_address: squiresContract.contract,
                 token_count:      squiresContract.token_count,
                 tokens:           []
