@@ -47,7 +47,7 @@ export const GalvanizeCard: Card = {
         effects: [
             {
                 effect: attachStatusEffect.name,
-                target: CardTargetedEnum.Self,
+                target: CardTargetedEnum.Player,
                 args: {
                     statusName: galvanize.name,
                     statusArgs: {
