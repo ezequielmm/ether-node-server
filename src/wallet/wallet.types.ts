@@ -12,7 +12,6 @@ export interface ContractResponse {
 
 export interface TokenResponse {
     token_id: string,
-    contract_type: string, 
     name: string,
     metadata: TokenMetadata,
     characterClass: string,

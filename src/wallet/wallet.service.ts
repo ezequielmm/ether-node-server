@@ -47,25 +47,24 @@ export class WalletService {
 
     private async formatTokens(squiresResponse:GetNftsByWalletResponse, event_id:number, win_counts): Promise<ContractResponse[]> {
         
-        let formatedNFTList:NFTSFormattedResponse;
-        formatedNFTList.wallet = squiresResponse.wallet;
+        let formatedNFTList:NFTSFormattedResponse = {
+            wallet: squiresResponse.wallet,
+            tokens: []
+        };
 
         for await (const squiresContract of squiresResponse.contracts) {
-            let contract:ContractResponse;
-
-            const character  = await this.characterService.getCharacterByContractName(contract.characterClass);
-            contract.characterClass   = character?.characterClass ?? 'unknown';
-            contract.contract_address = squiresContract.contract;
-            contract.token_count      = contract.token_count;
-            contract.tokens = [];
+            const character  = await this.characterService.getCharacterByContractName(squiresContract.characterClass);
+            
+            let contract:ContractResponse = {
+                characterClass:   character?.characterClass ?? 'unknown',
+                contract_address: squiresContract.contract,
+                token_count:      squiresContract.token_count,
+                tokens:           []
+            };
         
             for await (const squiresToken of squiresContract.tokens) {    
-                
                 const can_play = await this.playerWinService.canPlay(event_id, contract.contract_address, squiresToken.edition, win_counts[contract.contract_address + squiresToken.edition] || 0);
-
-                let nft:TokenResponse = this.parseSquiresTokenToBlightfellToken(squiresToken);
-                nft.characterClass    = contract.characterClass;
-                nft.can_play          = can_play;
+                const nft:TokenResponse = this.parseSquiresTokenToBlightfellToken(squiresToken, can_play, contract.characterClass);
                 contract.tokens.push(nft);
             }
 
@@ -77,19 +76,24 @@ export class WalletService {
         return formatedNFTList.tokens;
     }
 
-    private parseSquiresTokenToBlightfellToken(squiresToken: TokenBridgeResponse):TokenResponse {
+    private parseSquiresTokenToBlightfellToken(squiresToken: TokenBridgeResponse, can_play:boolean, characterClass:string):TokenResponse {
         
-        let metadata: TokenMetadata;
-        metadata.name       = squiresToken.name;
-        metadata.edition    = squiresToken.edition;
-        metadata.image      = squiresToken.image;
-        metadata.attributes = squiresToken.attributes;
+        let metadata: TokenMetadata = {
+            name: squiresToken.name,
+            edition: squiresToken.edition,
+            image: squiresToken.image,
+            attributes: squiresToken.attributes
+        }
 
-        let nft:TokenResponse;
-        nft.token_id            = ""+squiresToken.edition;
-        nft.name                = squiresToken.name;
-        nft.adaptedImageURI     = this.getHttpFromIpfsURI(squiresToken.image);
-        nft.metadata            = metadata;
+        let nft:TokenResponse = {
+            token_id: ""+squiresToken.edition,
+            name: squiresToken.name,
+            adaptedImageURI: this.getHttpFromIpfsURI(squiresToken.image),
+            metadata: metadata,
+            can_play: can_play,
+            characterClass: characterClass
+        }
+
 
         return nft;
     }
