@@ -41,10 +41,6 @@ export class WalletService {
             amount
         });
 
-        console.log("START------------------------------------------------------------------------------------------------------------------------")
-        console.log(nfts.tokens[0].tokens[0].metadata)
-        console.log("END--------------------------------------------------------------------------------------------------------------------------")
-
         for await (const contract of nfts.tokens) {
             const character = await this.characterService.getCharacterByContractId(contract.contract_address);
             contract.characterClass = character?.characterClass ?? 'unknown';
@@ -63,14 +59,22 @@ export class WalletService {
             contract.tokens = sortBy(contract.tokens, [(token) => <number>token.token_id]);
         }
 
+        console.log("START------------------------------------------------------------------------------------------------------------------------")
+        console.log(nfts)
+        console.log("END--------------------------------------------------------------------------------------------------------------------------")
         return nfts;
     }
 
     private formatTokens = async (nfts, event_id, win_counts) => {
+
+        nfts
+
         for await (const contract of nfts.contracts) {
             
             const character = await this.characterService.getCharacterByContractId(contract.contract_address);
             contract.characterClass = character?.characterClass ?? 'unknown';
+
+
         
             for await (const token of contract.tokens) {
                 token.characterClass = character?.characterClass ?? 'unknown';
