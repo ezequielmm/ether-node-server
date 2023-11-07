@@ -35,65 +35,98 @@ export class WalletService {
             (win) => win.playerToken.contractId + win.playerToken.tokenId,
         );
 
+        // todo: REMOVE (from here) Alchemy:
+
+        const tokenAddresses = await this.characterService.findAllContractIds();
+        const nfts = await this.nftService.listByContracts({
+            walletAddress,
+            tokenAddresses,
+            amount
+        });
+
+        for await (const contract of nfts.tokens) {
+            const character = await this.characterService.getCharacterByContractId(contract.contract_address);
+            contract.characterClass = character?.characterClass ?? 'unknown';
+        
+            for await (const token of contract.tokens) {
+                token.characterClass = character?.characterClass ?? 'unknown';
+                token.adaptedImageURI = this.getHttpFromIpfsURI(token.metadata?.image);
+                token.can_play =
+                    await this.playerWinService.canPlay(
+                        event_id,
+                        contract.contract_address,
+                        token.token_id,
+                        win_counts[contract.contract_address + token.token_id] || 0,
+                    );
+            }
+            contract.tokens = sortBy(contract.tokens, [(token) => <number>token.token_id]);
+        }
+
+        return nfts;
+
+        // todo: REMOVE Alchemy:
+
+
+        // todo: Uncomment next block
 
         // Squires
-        const squiresResponse = await this.bridgeService.getNftsByWallet(
-            walletAddress,
-            amount
-        );
+        // const squiresResponse = await this.bridgeService.getNftsByWallet(
+        //     walletAddress,
+        //     amount
+        // );
 
-        const nfts = await this.formatTokens(squiresResponse, event_id, win_counts);
-        return nfts;
+        // const nfts = await this.formatTokens(squiresResponse, event_id, win_counts);
+        // return nfts;
     }
 
-    private async formatTokens(squiresResponse:GetNftsByWalletResponse, event_id:number, win_counts): Promise<NFTSFormattedResponse> {
+    // private async formatTokens(squiresResponse:GetNftsByWalletResponse, event_id:number, win_counts): Promise<NFTSFormattedResponse> {
         
-        let formatedNFTList:NFTSFormattedResponse = {
-            wallet: squiresResponse.wallet,
-            tokens: []
-        };
+    //     let formatedNFTList:NFTSFormattedResponse = {
+    //         wallet: squiresResponse.wallet,
+    //         tokens: []
+    //     };
 
-        for await (const squiresContract of squiresResponse.contracts) {
-            let contract:ContractResponse = {
-                characterClass:   squiresContract.characterClass,
-                contract_address: squiresContract.contract,
-                token_count:      squiresContract.token_count,
-                tokens:           []
-            };
+    //     for await (const squiresContract of squiresResponse.contracts) {
+    //         let contract:ContractResponse = {
+    //             characterClass:   squiresContract.characterClass,
+    //             contract_address: squiresContract.contract,
+    //             token_count:      squiresContract.token_count,
+    //             tokens:           []
+    //         };
         
-            for await (const squiresToken of squiresContract.tokens) {    
-                const can_play = await this.playerWinService.canPlay(event_id, contract.contract_address, squiresToken.edition, win_counts[contract.contract_address + squiresToken.edition] || 0);
-                const nft:TokenResponse = this.parseSquiresTokenToBlightfellToken(squiresToken, can_play, contract.characterClass);
-                contract.tokens.push(nft);
-            }
+    //         for await (const squiresToken of squiresContract.tokens) {    
+    //             const can_play = await this.playerWinService.canPlay(event_id, contract.contract_address, squiresToken.edition, win_counts[contract.contract_address + squiresToken.edition] || 0);
+    //             const nft:TokenResponse = this.parseSquiresTokenToBlightfellToken(squiresToken, can_play, contract.characterClass);
+    //             contract.tokens.push(nft);
+    //         }
 
-            //- Checkear el metodo de ordenamiento:
-            contract.tokens = sortBy(contract.tokens, [(token) => token.token_id]);
-            formatedNFTList.tokens.push(contract);
-        }
+    //         //- Checkear el metodo de ordenamiento:
+    //         contract.tokens = sortBy(contract.tokens, [(token) => token.token_id]);
+    //         formatedNFTList.tokens.push(contract);
+    //     }
 
-        return formatedNFTList;
-    }
+    //     return formatedNFTList;
+    // }
 
-    private parseSquiresTokenToBlightfellToken(squiresToken: TokenBridgeResponse, can_play:boolean, characterClass:string):TokenResponse {
+    // private parseSquiresTokenToBlightfellToken(squiresToken: TokenBridgeResponse, can_play:boolean, characterClass:string): TokenResponse {
         
-        let metadata: TokenMetadata = {
-            name: squiresToken.name,
-            edition: squiresToken.edition,
-            image: squiresToken.image,
-            attributes: squiresToken.attributes
-        }
+    //     let metadata: TokenMetadata = {
+    //         name: squiresToken.name,
+    //         edition: squiresToken.edition,
+    //         image: squiresToken.image,
+    //         attributes: squiresToken.attributes
+    //     }
 
-        let nft:TokenResponse = {
-            token_id: ""+squiresToken.edition,
-            name: squiresToken.name,
-            adaptedImageURI: this.getHttpFromIpfsURI(squiresToken.image),
-            metadata: metadata,
-            can_play: can_play,
-            characterClass: characterClass
-        }
+    //     let nft:TokenResponse = {
+    //         token_id: ""+squiresToken.edition,
+    //         name: squiresToken.name,
+    //         adaptedImageURI: this.getHttpFromIpfsURI(squiresToken.image),
+    //         metadata: metadata,
+    //         can_play: can_play,
+    //         characterClass: characterClass
+    //     }
 
 
-        return nft;
-    }
+    //     return nft;
+    // }
 }
