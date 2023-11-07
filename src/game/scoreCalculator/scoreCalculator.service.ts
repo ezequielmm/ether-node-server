@@ -70,15 +70,22 @@ export class ScoreCalculatorService {
             currentStage
         } = expedition;
 
-        const totalBasicEnemies = this.calculateBasicEnemiesPoints(basicEnemiesDefeated);
-        const totalEliteEnemies = this.calculateEliteEnemiesPoints(eliteEnemiesDefeated);
-        const totalBossEnemies = this.calculateBossEnemyPotions(bossEnemiesDefeated);
+        const totalBasicEnemies =
+            this.calculateBasicEnemiesPoints(basicEnemiesDefeated);
+        const totalEliteEnemies =
+            this.calculateEliteEnemiesPoints(eliteEnemiesDefeated);
+        const totalBossEnemies =
+            this.calculateBossEnemyPotions(bossEnemiesDefeated);
 
         // Now we query how many nodes we completed in the expedition
-        const refVariable: Ref<MapType> = map; 
+        const refVariable: Ref<MapType> = map; // Tu variable de tipo Ref<MapType>
         const refString: string = refVariable.toString();
+
         const mapsArray = await this.getNodesByExpeditionMap(refString);
+
         const nodesCompleted = await this.calculateNodesCompleted(mapsArray)//(map);
+
+        // console.warn("::::::MAPS::::::::::  " +  mapsArray + ":::::::::CALCULATOR NODES COMPLETED:::::::::::::::: " + nodesCompleted);
 
         // How we query how much HP the player got
         const healthReamining = this.calculateHP(hpCurrent, hpMax);
@@ -106,8 +113,6 @@ export class ScoreCalculatorService {
                 ? this.calculateDuration(createdAt, endedAt)
                 : 0;
 
-        const stageMultiplier = this.stageMultiplier.get(currentStage)
-
         const data: ScoreResponse = {
             outcome: status,
             expeditionType: 'Casual',
@@ -120,83 +125,84 @@ export class ScoreCalculatorService {
         if (totalBasicEnemies > 0) {}
             data.achievements.push({
                 name: 'Monsters slain',
-                score: Math.floor(totalBasicEnemies * stageMultiplier),
+                score: totalBasicEnemies,
             });
 
         if (totalEliteEnemies > 0)
             data.achievements.push({
-                name: 'Elites defeated',
-                score: Math.floor(totalEliteEnemies * stageMultiplier),
+                name: 'Act I Elites defeated',
+                score: totalEliteEnemies,
             });
 
         if (totalBossEnemies > 0)
             data.achievements.push({
                 name: 'Bosses defeated',
-                score: Math.floor(totalBossEnemies * stageMultiplier),
+                score: totalBossEnemies,
             });
 
         if (nodesCompleted > 0)
             data.achievements.push({
                 name: 'Regions explored',
-                score: Math.floor(nodesCompleted * stageMultiplier),
+                score: nodesCompleted,
             });
 
         if (healthReamining > 0)
             data.achievements.push({
                 name: 'Healthy',
-                score: Math.floor(healthReamining * stageMultiplier),
+                score: healthReamining,
             });
 
         if (deckSizePoints > 0) 
             data.achievements.push({
                 name: deckSizeAchievement,
-                score: Math.floor(deckSizePoints * stageMultiplier),
+                score: deckSizePoints,
             });
         
         if (upgradedCards > 0)
             data.achievements.push({
                 name: 'Such Upgrade, Much Wow',
-                score: Math.floor(upgradedCards * stageMultiplier),
+                score: upgradedCards,
             });
 
         if (potionsRemaining > 0)
             data.achievements.push({
                 name: 'Save for Later',
-                score: Math.floor(potionsRemaining * stageMultiplier),
+                score: potionsRemaining,
             });
 
         if (trinketsRemaining > 0)
             data.achievements.push({
                 name: 'Trinket Hoarder',
-                score: Math.floor(trinketsRemaining * stageMultiplier),
+                score: trinketsRemaining,
             });
 
         if (speedRun > 0)
             data.achievements.push({
                 name: 'Speed Run',
-                score: Math.floor(speedRun * stageMultiplier),
+                score: speedRun,
             });
         
         if (totalCoins > 0)
             data.achievements.push({
                 name: 'Scrooge',
-                score: Math.floor(totalCoins * stageMultiplier),
+                score: totalCoins,
             });
 
         if (epicPlusCards == 25)
             data.achievements.push({
                 name: 'Pauper',
-                score: Math.floor(25 * stageMultiplier),
+                score: 25,
             });
 
         if (epicPlusCards == 10)
             data.achievements.push({
                 name: 'Prince',
-                score: Math.floor(10 * stageMultiplier),
+                score: 10,
             });
 
         // Now we sum all the points to get the total and multiply with the stage modifier.
         data.totalScore = reduce(data.achievements, (totalScore, item) => totalScore += item.score, 0);
+        data.totalScore *= this.stageMultiplier.get(currentStage);
 
         return data;
     }

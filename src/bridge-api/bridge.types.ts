@@ -10,30 +10,6 @@ export interface InProgressBridgeResponse {
     inProgress: string[] | null;
 }
 
-export interface GetNftsByWalletResponse {
-    wallet: string,
-    contracts: ContractBridgeResponse[]
-}
-
-export interface ContractBridgeResponse {
-    token_count: number,
-    characterClass: string,
-    tokens: TokenBridgeResponse[],
-    contract: string,
-}
-
-export interface TokenBridgeResponse {
-    name: string,
-    image: string,
-    edition:number,
-    attributes: NftAttributesResponse[],
-}
-
-export interface NftAttributesResponse {
-    trait_type: string,
-    value: string,
-}
-
 export class InitiationRequestDTO {
 
     @ApiProperty()

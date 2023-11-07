@@ -37,11 +37,6 @@ export class CharacterService {
         return this.character.findOne(filter).lean();
     }
 
-    async getCharacterByContractName(nameToFind: string): Promise<Character> {
-        let filter = { name: { $regex: nameToFind, $options: "i" } };
-        return this.character.findOne(filter).lean();
-    }
-
     async findAllContractIds(): Promise<Array<string>> {
         const net = this.getNetType();
 
@@ -59,19 +54,6 @@ export class CharacterService {
                 return compact(characters.map((c) => c.contractIdTest));
             default:
                 return [];
-        }
-    }
-
-    getContractIdByCharacter(character: Character){
-        const net = this.getNetType();
-
-        switch (net) {
-            case AlchemyService.MAINNET:
-                return character.contractId;
-            case AlchemyService.TESTNET:
-                return character.contractIdTest;
-            default:
-                return null;
         }
     }
 

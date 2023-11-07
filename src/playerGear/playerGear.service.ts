@@ -112,10 +112,8 @@ export class PlayerGearService {
 
     async addGearToPlayer(userAddress: string, gear: Gear[]): Promise<PlayerGear> 
     {
+
         const gearItems = this.toGearItems(gear);
-        console.log("GearItems after parse:")
-        console.log(gearItems)
-        console.log("---------------------------------------------------------------------------------------------------------------------------------------------------------------")
 
         try {
             return await this.playerGear.findOneAndUpdate(
@@ -124,8 +122,7 @@ export class PlayerGearService {
                 { new: true, upsert: true },
             );
         } catch (e) {
-            console.log("Error while updating playerGears.")
-            console.log(e)
+            this.logger.error(e.stack);
         }
     }
 
