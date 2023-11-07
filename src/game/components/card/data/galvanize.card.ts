@@ -1,17 +1,11 @@
 import { defenseEffect } from 'src/game/effects/defense/constants';
 import { CardRarityEnum, CardTypeEnum, CardTargetedEnum } from '../card.enum';
 import { Card } from '../card.schema';
-
-/*
-TODO:
-
--for both cards
-    -verify card type
-    -cards effects logic (All attack actions grant 4 defense this turn.)
-*/
+import { attachStatusEffect } from 'src/game/effects/attachStatus/constants';
+import { galvanize } from 'src/game/status/galvanize/constants';
 
 export const GalvanizeCardUpgraded: Card = {
-    cardId: 568,
+    cardId: 571,
     name: 'Galvanize+',
     rarity: CardRarityEnum.Starter,
     cardType: CardTypeEnum.Defend,
@@ -20,24 +14,25 @@ export const GalvanizeCardUpgraded: Card = {
     description: `All attack actions grant 4 ${defenseEffect.name} this turn.`,
     keywords: [],
     properties: {
-        effects: [
+        effects: [],
+        statuses: [
             {
-                effect: defenseEffect.name,
-                target: CardTargetedEnum.Self,
+                name: galvanize.name,
+                attachTo: CardTargetedEnum.Player,
                 args: {
                     value: 4,
+                    counter: 1
                 },
             }
         ],
-        statuses: [],
     },
-    showPointer: true,
+    showPointer: false,
     isUpgraded: true,
     isActive: true,
 };
 
 export const GalvanizeCard: Card = {
-    cardId: 567,
+    cardId: 570,
     name: 'Galvanize',
     rarity: CardRarityEnum.Starter,
     cardType: CardTypeEnum.Defend,
@@ -46,18 +41,19 @@ export const GalvanizeCard: Card = {
     description: `All attack actions grant 3 ${defenseEffect.name} this turn.`,
     keywords: [],
     properties: {
-        effects: [
+        effects: [],
+        statuses: [
             {
-                effect: defenseEffect.name,
-                target: CardTargetedEnum.Self,
+                name: galvanize.name,
+                attachTo: CardTargetedEnum.Player,
                 args: {
                     value: 3,
+                    counter: 1
                 },
             }
         ],
-        statuses: [],
     },
-    showPointer: true,
+    showPointer: false,
     isUpgraded: false,
     upgradedCardId: GalvanizeCardUpgraded.cardId,
     isActive: true,

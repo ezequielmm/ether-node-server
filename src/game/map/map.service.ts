@@ -111,19 +111,25 @@ public async disableAll(ctx: GameContext, nodeIdToExclude: number) {
         const node = await this.findNodeById(ctx, nodeId);
 
         // Check if node is active
-        if (!node.isActive()) {
-            throw new Error('Node is not active');
+        if (node.isActive()) {
+            //throw new Error('Node is not active');
+            node.status = NodeStatus.Completed;
+            await this.markNode(ctx.expedition.id, nodeId, NodeStatus.Completed)
+
+
+            // Enable all nodes that are connected to this node
+            this.enableNextNodes(ctx, nodeId);
+
+            // Call node strategy
+            this.getNodeStrategy(node)?.onCompleted?.(ctx, node);
+        }else{
+            // Enable all nodes that are connected to this node
+            this.enableNextNodes(ctx, nodeId);
+
+            // Call node strategy
+            this.getNodeStrategy(node)?.onCompleted?.(ctx, node);
         }
 
-        node.status = NodeStatus.Completed;
-        await this.markNode(ctx.expedition.id, nodeId, NodeStatus.Completed)
-
-
-        // Enable all nodes that are connected to this node
-        this.enableNextNodes(ctx, nodeId);
-
-        // Call node strategy
-        this.getNodeStrategy(node)?.onCompleted?.(ctx, node);
     }
 
     private async enableNextNodes(ctx: GameContext, nodeId: number) {

@@ -26,7 +26,7 @@ export class TaskService {
         private readonly settingsService: SettingsService,
     ) {}
 
-    @Cron(CronExpression.EVERY_DAY_AT_11PM, { 
+    @Cron(CronExpression.EVERY_DAY_AT_4PM, { 
         name: 'Create Contest Map',
         timeZone: 'UTC',
     })
@@ -38,7 +38,7 @@ export class TaskService {
         const now = new Date();
 
         const availableAt = addDaysToDate(now);
-        availableAt.setUTCHours(0, 0, 0, 0);
+        availableAt.setUTCHours(16, 0, 0, 0);
 
         const contestExists = await this.contestService.findActiveContest(
             availableAt,
@@ -51,9 +51,11 @@ export class TaskService {
         }
         
         // Now we calculate the valid_until from the ends_at date
+
+        const endsAtDate = addDaysToDate(availableAt);
         const endsAt = setHoursMinutesSecondsToUTCDate(
-            availableAt,
-            23,
+            endsAtDate,
+            15,
             59,
             59,
             999,

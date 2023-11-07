@@ -7,6 +7,7 @@ import { ContestModule } from '../game/contest/contest.module';
 import { CharacterModule } from 'src/game/components/character/character.module';
 import { NFTService } from 'src/nft-library/services/nft_service';
 import { AlchemyService } from 'src/nft-library/services/alchemy_service';
+import { BridgeModule } from 'src/bridge-api/bridge.module';
 
 @Module({
     controllers: [WalletController],
@@ -15,6 +16,7 @@ import { AlchemyService } from 'src/nft-library/services/alchemy_service';
         ContestMapModule,
         ContestModule,
         CharacterModule,
+        BridgeModule
     ],
     providers: [WalletService, NFTService, AlchemyService],
     exports: [NFTService]

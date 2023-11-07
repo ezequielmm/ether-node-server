@@ -11,7 +11,7 @@ TODO:
 */
 
 export const VengefulStrikeCardUpgraded: Card = {
-    cardId: 564,
+    cardId: 567,
     name: 'Vengeful Strike+',
     rarity: CardRarityEnum.Starter,
     cardType: CardTypeEnum.Defend,
@@ -44,7 +44,7 @@ export const VengefulStrikeCardUpgraded: Card = {
 };
 
 export const VengefulStrikeCard: Card = {
-    cardId: 563,
+    cardId: 566,
     name: 'Vengeful Strike',
     rarity: CardRarityEnum.Starter,
     cardType: CardTypeEnum.Defend,

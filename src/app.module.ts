@@ -17,13 +17,15 @@ import { LeaderboardModule } from './leaderboard/leaderboard.module';
 import { AuthModule } from './auth/auth.module';
 import { ResetModule } from './tasks/reset.module';
 import { CleanModule } from './tasks/clean.module';
+import { ResetWinModule } from './tasks/resetwins.module';
 
 @Module({
     imports: [
         ScheduleModule.forRoot(),
-        TaskModule,
-        ResetModule,
-        CleanModule,
+        ResetWinModule,
+        // TaskModule,
+        // ResetModule,
+        // CleanModule,
         // LoggerModule.forRootAsync({
         //     inject: [ConfigService],
         //     useFactory: (configService: ConfigService) => ({

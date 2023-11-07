@@ -217,8 +217,8 @@ export class LeaderboardService {
     }
 
     normalizeDates({ fStartDate, fEndDate }: { fStartDate: Date; fEndDate: Date; }): { start: Date; end: Date; } {
-        fStartDate.setUTCHours(0,0,0,0);
-        fEndDate.setUTCHours(23,59,59,999);
+        fStartDate.setUTCHours(16,0,0,0);
+        fEndDate.setUTCHours(15,59,59,999);
         return { start: fStartDate, end: fEndDate };
     }
 

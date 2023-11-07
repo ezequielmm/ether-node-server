@@ -35,9 +35,6 @@ export class EnergyEffect implements EffectHandler {
             },
         } = ctx;
 
-        console.log(energyToAdd, '<-------------------Energia a agregar');
-        console.log(payload.args.currentValue, '<-------------------Current value');
-        console.log(payload.args.initialValue, '<-------------------Initial value');
         // Sum the values to get the new energy
         const newEnergy = currentEnergy + energyToAdd;
 

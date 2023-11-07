@@ -11,7 +11,7 @@ Notes: Mystified characters will pick and use random cards from their hand (ener
 */
 
 export const MirageCard: Card = {
-    cardId: 558,
+    cardId: 560,
     name: 'Mirage',
     rarity: CardRarityEnum.Starter,
     cardType: CardTypeEnum.Defend,

@@ -16,7 +16,9 @@ import { AttachedStatus } from 'src/game/status/interfaces';
 
 export interface HolyEffectsArgs {
     undeadDamage: number,
-    allEnemiesDamage: number,
+    undeadBurn: number,
+    notUndeadDamage: number,
+    notUndeadBurn: number,
 }
 @EffectDecorator({
     effect: holyExplosion,
@@ -31,9 +33,8 @@ export class holyExplosionEffect implements EffectHandler {
     ) {}
 
     async handle(dto: EffectDTO<HolyEffectsArgs>): Promise<void> {
-        console.log("Holy Explosion handle method executed--------")
         const { ctx } = dto;
-        const energy = ctx.expedition.currentNode.data.player.energy
+        const energy = ctx.expedition.currentNode.data.player.energy;
         await this.holyExplosion(dto, energy);
     }
 
@@ -49,48 +50,18 @@ export class holyExplosionEffect implements EffectHandler {
         }  
 
        // for(let currentEnemy of currentNodeEnemies){
-        if(EnemyService.isEnemy(target)){
+        if(EnemyService.isEnemy(target) && energy > 0){
             
             const enemyType = target.value.type;
-            console.log(enemyType);
 
-            // const existingBurnIndex = target.value.statuses.debuff.findIndex(debuff => debuff.name === burn.name);
-            
-            // if (existingBurnIndex !== -1) {
-            //     target.value.statuses.debuff[existingBurnIndex].args.counter += enemyType === EnemyTypeEnum.Undead ? dto.args.undeadBurn : dto.args.notUndeadBurn;
-            // } else {
-            //     const newBurn:AttachedStatus = { 
-            //         name: burn.name, 
-            //         addedInRound: ctx.expedition.currentNode.data.round, 
-            //         sourceReference: this.statusService.getReferenceFromEntity(target),
-            //         args: {counter: enemyType === EnemyTypeEnum.Undead ? dto.args.undeadBurn : dto.args.notUndeadBurn,} };
-            //     target.value.statuses.debuff.push(newBurn);
-            // }
-
-            // await this.statusService.updateEnemyStatuses(ctx.expedition, target, target.value.statuses);
-
-            // await this.combatQueueService.push({
-            //     ctx,
-            //     source,
-            //     target,
-            //     args: {
-            //         effectType: CombatQueueTargetEffectTypeEnum.Status,
-            //         statuses: [{name: burn.name, counter: 3, description: ""}],
-            //     },
-            //     action: action,
-            // });
-
-            // await this.statusService.attach({
-            //     ctx,
-            //     source,
-            //     target,
-            //     statusName: burn.name,
-            //     statusArgs: {counter: (enemyType === EnemyTypeEnum.Undead ? dto.args.undeadBurn : dto.args.notUndeadBurn)},
-            //     action: action,
-            // });
-
-            let allEnemiesDmg =  dto.args.allEnemiesDamage * energy;
-            let unDeadDmg =  dto.args.undeadDamage + energy;
+            await this.statusService.attach({
+                ctx,
+                source,
+                target,
+                statusName: burn.name,
+                statusArgs: {counter: (enemyType === EnemyTypeEnum.Undead ? dto.args.undeadBurn + energy : dto.args.notUndeadBurn)},
+                action: action,
+            });
 
             await this.effectService.apply({
                 ctx,
@@ -99,7 +70,7 @@ export class holyExplosionEffect implements EffectHandler {
                 effect: {
                     effect: damageEffect.name,
                     args: {
-                        value: (enemyType === EnemyTypeEnum.Undead ? allEnemiesDmg + unDeadDmg : allEnemiesDmg),
+                        value: (enemyType === EnemyTypeEnum.Undead ? dto.args.undeadDamage + energy : dto.args.notUndeadDamage + energy),
                     },
                 },
             });

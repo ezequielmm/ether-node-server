@@ -29,6 +29,7 @@ import { StatusService } from '../status/status.service';
 import { DiscardCardAction } from './discardCard.action';
 import { ExhaustCardAction } from './exhaustCard.action';
 import { CardService } from '../components/card/card.service';
+import { IExpeditionPlayerStateDeckCard } from '../components/expedition/expedition.interface';
 
 @Injectable()
 export class CardPlayedAction {
@@ -53,8 +54,8 @@ export class CardPlayedAction {
         private readonly eventEmitter: EventEmitter2,
     ) {}
 
-    async handle({cardId, selectedEnemyId, ctx, forceExhaust = false}: 
-        {readonly ctx: GameContext; readonly cardId: CardId; readonly selectedEnemyId: TargetId; readonly forceExhaust?: boolean;}): Promise<void> 
+    async handle({cardId, selectedEnemyId, ctx, forceExhaust = false, newHand = null}: 
+        {readonly ctx: GameContext; readonly cardId: CardId; readonly selectedEnemyId: TargetId; readonly forceExhaust?: boolean; readonly newHand?: IExpeditionPlayerStateDeckCard[]}): Promise<void> 
         {
             const logger = this.logger.logger.child(ctx.info);
             const {
@@ -63,19 +64,28 @@ export class CardPlayedAction {
                         data: {
                             player: {
                                 energy: availableEnergy,
-                                cards: { hand },
+                                cards:  { hand },
                             },
                         },
                     },
                 },
             } = ctx;
-
+        
         //- Getting the played Card
-        const card = hand.find((card) => {
-            const field = getCardIdField(cardId);
-            return card[field] === cardId;
-        });
+        let card;
+        if(newHand){
+            card = await newHand.find((card) => {
+                const field = getCardIdField(cardId);
+                return card[field] === cardId;
+            });    
+        }else{
+            card = await hand.find((card) => {
+                const field = getCardIdField(cardId);
+                return card[field] === cardId;
+            });
+        }
 
+        
         //- I don't have the card in my hand:
         if (!card) {
             this.sendInvalidCardMessage(ctx.client, logger);
@@ -105,7 +115,7 @@ export class CardPlayedAction {
         }
 
         logger.info(`Player ${ctx.client.id} played card: ${card.name}`);
-        logger.info(`Started combat queue for client ${ctx.client.id}`);
+        logger.info(`Started combat queue for client ${ctx.client.id}`); 
         
         await this.combatQueueService.start(ctx);
 
@@ -133,8 +143,8 @@ export class CardPlayedAction {
             cardSourceReference: sourceReference,
             cardTargetId: selectedEnemyId,
         });
-
         //- Enables an animation in unity:
+        
         if (exhaust) {
             this.exhaustCardAction.emit({
                 ctx,
@@ -168,14 +178,6 @@ export class CardPlayedAction {
             targetId: selectedEnemyId,
             source,
         });
-
-
-
-
-
-
-
-
 
         const {
             data: {

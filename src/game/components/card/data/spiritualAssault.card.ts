@@ -11,7 +11,7 @@ TODO:
 */
 
 export const SpiritualAssaultCardUpgraded: Card = {
-    cardId: 566,
+    cardId: 569,
     name: 'Spiritual Assault+',
     rarity: CardRarityEnum.Starter,
     cardType: CardTypeEnum.Attack,
@@ -29,7 +29,7 @@ export const SpiritualAssaultCardUpgraded: Card = {
 };
 
 export const SpiritualAssaultCard: Card = {
-    cardId: 565,
+    cardId: 568,
     name: 'Spiritual Assault',
     rarity: CardRarityEnum.Starter,
     cardType: CardTypeEnum.Attack,

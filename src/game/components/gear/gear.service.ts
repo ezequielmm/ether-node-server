@@ -7,6 +7,8 @@ import { getDecimalRandomBetween } from '../../../utils';
 import { ILootboxRarityOdds } from './gear.interface';
 import { data as GearData } from './gear.data';
 import { find, sample } from 'lodash';
+import { FilterQuery } from 'mongoose';
+import { PlayerGear } from 'src/playerGear/playerGear.schema';
 
 @Injectable()
 export class GearService {
@@ -15,8 +17,61 @@ export class GearService {
     private readonly gearModel: ReturnModelType<typeof Gear>,
   ) { }
 
-
   private gearData = GearData;
+
+  private halloweenGearsFilter = {
+    gearId: {
+        $gte: 500,
+        $lte: 520
+    },
+  };
+
+  private selectRandomHalloweenRarity(rarities: ILootboxRarityOdds) {
+    let rolls = new Map<string, number>();
+    let dropRates = [
+      {
+        type: GearRarityEnum.Common,
+        rate: rarities.common,
+      },
+      {
+        type: GearRarityEnum.Uncommon,
+        rate: rarities.uncommon,
+      },
+      {
+        type: GearRarityEnum.Rare,
+        rate: rarities.rare,
+      },
+      {
+        type: GearRarityEnum.Epic,
+        rate: rarities.epic,
+      },
+      {
+        type: GearRarityEnum.Legendary,
+        rate: rarities.legendary,
+      },
+    ];
+
+    let max = dropRates.reduce((acc, curr) => acc + curr.rate, 0);
+    let roll = Math.floor(Math.random() * max);
+
+    let current = 0;
+    let rarity = GearRarityEnum.Common;
+    for (const dropRate of dropRates) {
+      current += dropRate.rate;
+
+      if (roll < current) {
+        let currentRolls = rolls.get(dropRate.type);
+
+        if (!currentRolls) currentRolls = 0;
+
+        rolls.set(dropRate.type, currentRolls + 1);
+        rarity = dropRate.type;
+        break;
+      }
+    }
+    return rarity;
+  }
+
   private selectRandomRarity(rarities: ILootboxRarityOdds) {
     let rolls = new Map<string, number>();
     let dropRates = [
@@ -63,10 +118,7 @@ export class GearService {
     return rarity;
   }
 
-  async getLootbox(
-    size: number,
-    rarities?: ILootboxRarityOdds,
-  ): Promise<Gear[]> {
+  async getLootbox(size: number, rarities?: ILootboxRarityOdds): Promise<Gear[]> {
     const gear_list: Gear[] = [];
 
     for (let i = 0; i < size; i++) {
@@ -78,11 +130,13 @@ export class GearService {
 
     return gear_list;
   }
-/*
-  async getLootbox(
+
+
+  async getUniqueHalloweenLoot(
     size: number,
     rarities?: ILootboxRarityOdds,
     userGear: Gear[] = [],
+    filter: FilterQuery<PlayerGear> = {}
   ): Promise<Gear[]> {
     //console.log('Starting to generate lootbox...');
     const gear_list: Gear[] = [];
@@ -90,37 +144,42 @@ export class GearService {
 
     userGear.forEach((gear) => uniqueGearIds.add(gear.gearId.toString()));
 
-
-    let targetGearSet = '';
-    let allGear: Gear[] = await this.getAllGear();
-    allGear = allGear.filter((gear) => gear.name === targetGearSet);
+    let allGear: Gear[] = await this.getAllGear(filter);
 
     let itemAdded = false;
-    let targetRarity = this.selectRandomRarity(rarities);
 
-    while (itemAdded === false) {
-      const newGear = this.getRandomGearByRarity(allGear, targetRarity);
+    //- Gets one random rarity:
+    let targetRarity = this.selectRandomHalloweenRarity(rarities);
 
-      if (uniqueGearIds.has(newGear.gearId.toString())) {
-
-        targetRarity = this.downgradeRarity(targetRarity);
-
-        if (targetRarity === null) {
-          //console.log('Target rarity null, break');
-          break;
+    if(allGear && allGear.length > 0){
+      while (itemAdded === false) {
+  
+        //- Gets one Halloween gear with the rarity:
+        const newGear = this.getRandomGearByRarity(allGear, targetRarity);
+  
+        if (uniqueGearIds.has(newGear.gearId.toString())) {
+  
+          targetRarity = this.downgradeRarity(targetRarity);
+  
+          if (targetRarity === null) {
+            //console.log('Target rarity null, break');
+            break;
+          }
+        } 
+        else {
+          //console.log(`Adding: ${newGear.gearId} - ${newGear.rarity}`);
+          gear_list.push(newGear);
+          uniqueGearIds.add(newGear.gearId.toString());
+          itemAdded = true;
         }
-      } else {
-        console.log(`Adding: ${newGear.gearId} - ${newGear.rarity}`);
-        gear_list.push(newGear);
-        uniqueGearIds.add(newGear.gearId.toString());
-        itemAdded = true;
+  
       }
-
     }
+
 
     return gear_list;
   }
-*/
+
   private downgradeRarity(
     currentRarity: GearRarityEnum,
   ): GearRarityEnum | null {
@@ -153,12 +212,21 @@ export class GearService {
     const filteredGear = allGear.filter((gear) => gear.rarity === targetRarity);
 
     // Use lodash's sample method to get a random gear item
+
     return sample(filteredGear) || null;
   }
   async getOneGear(rarity: GearRarityEnum): Promise<Gear> {
     const availableGear = await this.gearModel.find({ rarity });
     return sample(availableGear);
   }
+
+  async getOneHalloweenGear(rarity: GearRarityEnum): Promise<Gear> {
+    const query = { rarity, ...this.halloweenGearsFilter };
+    const availableGear = await this.gearModel.find(query);
+
+    return sample(availableGear);
+  }
+
   async getGearByName(name: string, rarity: GearRarityEnum): Promise<Gear> {
     try {
       return await this.gearModel.findOne({ name, rarity });
@@ -171,9 +239,9 @@ export class GearService {
     }
   }
 
-  async getAllGear(): Promise<Gear[] | null> {
+  async getAllGear(filter: FilterQuery<PlayerGear> = {}): Promise<Gear[] | null> {
     try {
-      const allGear = await this.gearModel.find({});
+      const allGear = await this.gearModel.find(filter);
       return allGear;
     } catch (error) {
       console.error('An error occurred while fetching all gear:', error);

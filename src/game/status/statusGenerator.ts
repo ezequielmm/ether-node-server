@@ -30,8 +30,8 @@ import { hiddenStatus } from './hidden/constants';
 import { hatchingStatus } from './hatching/constants';
 import { chargingBeam } from './chargingBeam/constants';
 import { revealStatus } from './reveal/constants';
-import { growedStatus } from './growed/constants';
-import { counteringStatus } from './counter/constants';
+import { grownStatus } from './grown/constants';
+import { counteringStatus } from './countering/constants';
 import { elementalStatus } from './elemental/constants';
 import { absorbingStatus } from './absorbing/constants';
 
@@ -142,7 +142,7 @@ export class StatusGenerator {
                 return `This creature is building up energy for a devastating attack. Deal more than 20 points of damage on a single blow to it to hold it back.`;
             case revealStatus.name:
                 return `Something’s fishy about this…`;
-            case growedStatus.name:
+            case grownStatus.name:
                 return `This creature has grown into a larger, more powerful version of itself.`
             case elementalStatus.name:
                 return `This creature has stepped into the spiritual realm and cannot be touched by regular means.`

@@ -38,7 +38,13 @@ export class ContinueExpeditionProcess {
 
         // Here we complete the node and set the next as available
         // and return the new map
-        this.mapService.completeNode(ctx, node.id);
+        try{
+            this.mapService.completeNode(ctx, node.id);
+        }catch(error){
+            console.log("Node was already completed.");
+            console.log("Expedition: " + ctx?.expedition?._id)
+            console.log(error)
+        }
         ctx.expedition.currentNode.completed = true;
 
         // Now we update the expedition based on the node type

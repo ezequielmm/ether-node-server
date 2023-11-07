@@ -14,8 +14,8 @@ import { revealStatus } from "src/game/status/reveal/constants";
 import { DecayCard } from "../card/data/decay.card";
 import { healEffect } from "src/game/effects/heal/constants";
 import { MirageCard } from "../card/data/mirage.card";
-import { growedStatus } from "src/game/status/growed/constants";
-import { counteringStatus } from "src/game/status/counter/constants";
+import { grownStatus } from "src/game/status/grown/constants";
+import { counteringStatus } from "src/game/status/countering/constants";
 import { addConditionalCardEffect } from "src/game/effects/addConditionalCard/constants";
 import { absorbingStatus } from "src/game/status/absorbing/constants";
 
@@ -416,7 +416,7 @@ export class EnemyBuilderService {
                     effect: attachStatusEffect.name,
                     target: CardTargetedEnum.Self,
                     args: {
-                        statusName: growedStatus.name,
+                        statusName: grownStatus.name,
                         statusArgs: {
                             counter: growAmount,
                         },

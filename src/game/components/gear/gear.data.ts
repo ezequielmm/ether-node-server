@@ -224,8 +224,46 @@ import { Helmet_Helmet_Silver_Prince} from './data/Helmet_Helmet_Silver_Prince.d
 import { Helmet_Helmet_Red_Hound} from './data/Helmet_Helmet_Red_Hound.data'
 import { Helmet_Helmet_Red_Hounskull} from './data/Helmet_Helmet_Red_Hounskull.data'
 import { Helmet_Helmet_Blue_Praying_Hands} from './data/Helmet_Helmet_Blue_Praying_Hands.data'
+import { Pauldrons_Pauldrons_Immunity } from './data/Pauldrons_Pauldrons_Immunity';
+import { Legguard_Legguard_Plaguards } from './data/Legguard_Legguard_Plaguards';
+import { Shield_Shield_Phoenix_Shield } from './data/Shield_Shield_Phoenix_Shield';
+import { Helmet_Helmet_Plague_Mask_Helmet } from './data/Helmet_Helmet_Plague_Mask_Helmet';
+import { Weapon_Weapon_Plague_Staff } from './data/Weapon_Weapon_Plague_Staff';
+import { Padding_Padding_Pleather } from './data/Padding_Padding_Pleather';
+import { Gauntlet_Gauntlets_Pleather } from './data/Gauntlet_Gauntlets_Pleather';
+import { Boots_Boots_Pleather } from './data/Boots_Boots_Pleather';
+import { Breastplate_Breastplate_Incense } from './data/Breastplate_Breastplate_Incense';
+import { Weapon_Weapon_Carving_Knife } from './data/Weapon_Weapon_Carving_Knife';
+import { Gauntlet_Gauntlets_Hallowed } from './data/Gauntlet_Gauntlets_Hallowed';
+import { Boots_Boots_Hallowed } from './data/Boots_Boots_Hallowed';
+import { Legguard_Legguard_Hallowed } from './data/Legguard_Legguard_Hallowed';
+import { Helmet_Helmet_Hallowed_Pumpkin } from './data/Helmet_Helmet_Hallowed_Pumpkin';
+import { Vambrace_Vambraces_Hallowed } from './data/Vambrace_Vambraces_Hallowed';
+import { Pauldrons_Pauldrons_Thorn } from './data/Pauldrons_Pauldrons_Thorn';
+import { Shield_Shield_Tombstone } from './data/Shield_Shield_Tombstone';
+import { Padding_Padding_Flannel } from './data/Padding_Padding_Flannel';
+import { Breastplate_Breastplate_The_Devourer } from './data/Breastplate_Breastplate_The_Devourer';
 
 export const data: Gear[] = [
+    Breastplate_Breastplate_The_Devourer,
+    Padding_Padding_Flannel,
+    Shield_Shield_Tombstone,
+    Pauldrons_Pauldrons_Thorn,
+    Vambrace_Vambraces_Hallowed,
+    Helmet_Helmet_Hallowed_Pumpkin,
+    Legguard_Legguard_Hallowed,
+    Boots_Boots_Hallowed,
+    Gauntlet_Gauntlets_Hallowed,
+    Weapon_Weapon_Carving_Knife,
+    Breastplate_Breastplate_Incense,
+    Boots_Boots_Pleather,
+    Gauntlet_Gauntlets_Pleather,
+    Padding_Padding_Pleather,
+    Weapon_Weapon_Plague_Staff,
+    Helmet_Helmet_Plague_Mask_Helmet,
+    Shield_Shield_Phoenix_Shield,
+    Legguard_Legguard_Plaguards,
+    Pauldrons_Pauldrons_Immunity,
     Helmet_Helmet_Gold_Prince,
     Helmet_Helmet_Silver_Prince,
     Helmet_Helmet_Red_Hound,

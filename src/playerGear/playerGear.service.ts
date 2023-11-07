@@ -65,6 +65,27 @@ export class PlayerGearService {
         });
     }
 
+    async getHalloweenGear(userAddress: string): Promise<Gear[]> {
+        let playerGears:PlayerGear = await this.playerGear.findOne({
+            userAddress,
+        })
+        .lean();
+
+        if (playerGears === null) {
+            this.logger.debug(`Player Gear Not Found for ${userAddress}. Creating...`);
+
+            const startingGear = this.toGearItems(this.getGearByIds(this.defaultGear));
+
+            playerGears = await this.playerGear.create({
+                userAddress,
+                gear: startingGear,
+            });
+        }
+
+        const gears:GearItem[] = playerGears.gear.filter(g => g.gearId >= 500 && g.gearId <= 520)
+        return gears;
+    }
+
     async getGear(userAddress: string, filter: FilterQuery<PlayerGear> = {}): Promise<any> 
     {
         let player: PlayerGear = await this.playerGear.findOne({
@@ -91,8 +112,10 @@ export class PlayerGearService {
 
     async addGearToPlayer(userAddress: string, gear: Gear[]): Promise<PlayerGear> 
     {
-
         const gearItems = this.toGearItems(gear);
+        console.log("GearItems after parse:")
+        console.log(gearItems)
+        console.log("---------------------------------------------------------------------------------------------------------------------------------------------------------------")
 
         try {
             return await this.playerGear.findOneAndUpdate(
@@ -101,7 +124,8 @@ export class PlayerGearService {
                 { new: true, upsert: true },
             );
         } catch (e) {
-            this.logger.error(e.stack);
+            console.log("Error while updating playerGears.")
+            console.log(e)
         }
     }
 

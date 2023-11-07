@@ -4,7 +4,7 @@ import { CardRarityEnum, CardTypeEnum, CardTargetedEnum } from '../card.enum';
 import { Card } from '../card.schema';
 
 export const PhaseOutCardUpgraded: Card = {
-    cardId: 555,
+    cardId: 557,
     name: 'Phase Out+',
     rarity: CardRarityEnum.Starter,
     cardType: CardTypeEnum.Defend,
@@ -30,7 +30,7 @@ export const PhaseOutCardUpgraded: Card = {
 };
 
 export const PhaseOutCard: Card = {
-    cardId: 554,
+    cardId: 556,
     name: 'Phase Out',
     rarity: CardRarityEnum.Starter,
     cardType: CardTypeEnum.Defend,

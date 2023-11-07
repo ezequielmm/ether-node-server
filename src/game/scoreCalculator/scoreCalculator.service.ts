@@ -14,6 +14,7 @@ import { Gear } from '../components/gear/gear.schema';
 import { InjectModel } from 'kindagoose';
 import { MapType } from '../components/expedition/map.schema';
 import { Ref, ReturnModelType } from '@typegoose/typegoose';
+import { VictoryItem } from 'src/squires-api/squires.types';
 
 export interface ScoreResponse {
     outcome: string;
@@ -26,7 +27,7 @@ export interface ScoreResponse {
     notifyNoLoot: boolean;
     lootbox?: Gear[];
     rewards?: {name:string, image:string}[];
-    
+    victoryItems: VictoryItem[];
 }
 
 @Injectable()
@@ -69,22 +70,15 @@ export class ScoreCalculatorService {
             currentStage
         } = expedition;
 
-        const totalBasicEnemies =
-            this.calculateBasicEnemiesPoints(basicEnemiesDefeated);
-        const totalEliteEnemies =
-            this.calculateEliteEnemiesPoints(eliteEnemiesDefeated);
-        const totalBossEnemies =
-            this.calculateBossEnemyPotions(bossEnemiesDefeated);
+        const totalBasicEnemies = this.calculateBasicEnemiesPoints(basicEnemiesDefeated);
+        const totalEliteEnemies = this.calculateEliteEnemiesPoints(eliteEnemiesDefeated);
+        const totalBossEnemies = this.calculateBossEnemyPotions(bossEnemiesDefeated);
 
         // Now we query how many nodes we completed in the expedition
-        const refVariable: Ref<MapType> = map; // Tu variable de tipo Ref<MapType>
+        const refVariable: Ref<MapType> = map; 
         const refString: string = refVariable.toString();
-
         const mapsArray = await this.getNodesByExpeditionMap(refString);
-
         const nodesCompleted = await this.calculateNodesCompleted(mapsArray)//(map);
-
-        // console.warn("::::::MAPS::::::::::  " +  mapsArray + ":::::::::CALCULATOR NODES COMPLETED:::::::::::::::: " + nodesCompleted);
 
         // How we query how much HP the player got
         const healthReamining = this.calculateHP(hpCurrent, hpMax);
@@ -112,95 +106,97 @@ export class ScoreCalculatorService {
                 ? this.calculateDuration(createdAt, endedAt)
                 : 0;
 
+        const stageMultiplier = this.stageMultiplier.get(currentStage)
+
         const data: ScoreResponse = {
             outcome: status,
             expeditionType: 'Casual',
             totalScore: 0,
             achievements: [],
             notifyNoLoot: false,
+            victoryItems: []
         };
 
         if (totalBasicEnemies > 0) {}
             data.achievements.push({
                 name: 'Monsters slain',
-                score: totalBasicEnemies,
+                score: Math.floor(totalBasicEnemies * stageMultiplier),
             });
 
         if (totalEliteEnemies > 0)
             data.achievements.push({
-                name: 'Act I Elites defeated',
-                score: totalEliteEnemies,
+                name: 'Elites defeated',
+                score: Math.floor(totalEliteEnemies * stageMultiplier),
             });
 
         if (totalBossEnemies > 0)
             data.achievements.push({
                 name: 'Bosses defeated',
-                score: totalBossEnemies,
+                score: Math.floor(totalBossEnemies * stageMultiplier),
             });
 
         if (nodesCompleted > 0)
             data.achievements.push({
                 name: 'Regions explored',
-                score: nodesCompleted,
+                score: Math.floor(nodesCompleted * stageMultiplier),
             });
 
         if (healthReamining > 0)
             data.achievements.push({
                 name: 'Healthy',
-                score: healthReamining,
+                score: Math.floor(healthReamining * stageMultiplier),
             });
 
         if (deckSizePoints > 0) 
             data.achievements.push({
                 name: deckSizeAchievement,
-                score: deckSizePoints,
+                score: Math.floor(deckSizePoints * stageMultiplier),
             });
         
         if (upgradedCards > 0)
             data.achievements.push({
                 name: 'Such Upgrade, Much Wow',
-                score: upgradedCards,
+                score: Math.floor(upgradedCards * stageMultiplier),
             });
 
         if (potionsRemaining > 0)
             data.achievements.push({
                 name: 'Save for Later',
-                score: potionsRemaining,
+                score: Math.floor(potionsRemaining * stageMultiplier),
             });
 
         if (trinketsRemaining > 0)
             data.achievements.push({
                 name: 'Trinket Hoarder',
-                score: trinketsRemaining,
+                score: Math.floor(trinketsRemaining * stageMultiplier),
             });
 
         if (speedRun > 0)
             data.achievements.push({
                 name: 'Speed Run',
-                score: speedRun,
+                score: Math.floor(speedRun * stageMultiplier),
             });
         
         if (totalCoins > 0)
             data.achievements.push({
                 name: 'Scrooge',
-                score: totalCoins,
+                score: Math.floor(totalCoins * stageMultiplier),
             });
 
         if (epicPlusCards == 25)
             data.achievements.push({
                 name: 'Pauper',
-                score: 25,
+                score: Math.floor(25 * stageMultiplier),
             });
 
         if (epicPlusCards == 10)
             data.achievements.push({
                 name: 'Prince',
-                score: 10,
+                score: Math.floor(10 * stageMultiplier),
             });
 
         // Now we sum all the points to get the total and multiply with the stage modifier.
         data.totalScore = reduce(data.achievements, (totalScore, item) => totalScore += item.score, 0);
-        data.totalScore *= this.stageMultiplier.get(currentStage);
 
         return data;
     }

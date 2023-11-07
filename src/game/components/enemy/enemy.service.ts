@@ -1127,13 +1127,16 @@ export class EnemyService {
         const laser         = { id: intents[3].id, intentions: intents[3].intents }
         
         //- First attack is Signature Move:
-        if(!currentScript || currentScript.id == 0){
+        const statusBeam = enemy.value.statuses.buff.find(s => s.name === chargingBeam.name);
+        const loadingBeam = (statusBeam && statusBeam.args.counter > 0);
+
+        const noScript = !currentScript || currentScript.id == 0;
+        
+        if(noScript && !loadingBeam){
             return signatureMove;
         }else{
-            const statusBeam = enemy.value.statuses.buff.find(s => s.name === chargingBeam.name)
-
-            if(statusBeam && statusBeam.args.counter > 0){
-                
+            if(loadingBeam){ 
+                //- If counter is 1 next attack will be Laser:
                 if(statusBeam.args.counter === 1){
                     return laser;
                 }

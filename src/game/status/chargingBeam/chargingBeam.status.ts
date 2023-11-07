@@ -9,6 +9,7 @@ import { GameContext } from "src/game/components/interfaces";
 import { EVENT_AFTER_STATUSES_UPDATE, EVENT_BEFORE_ENEMIES_TURN_START } from "src/game/constants";
 import { EnemyService } from "src/game/components/enemy/enemy.service";
 import { PlayerService } from "src/game/components/player/player.service";
+import { EnemyBuilderService } from "src/game/components/enemy/enemy-builder.service";
 
 @StatusDecorator({
     status: chargingBeam,
@@ -55,6 +56,11 @@ export class ChargingBeamStatus implements StatusEffectHandler {
                 const debuff = target.value.statuses.debuff;
                 const buff = target.value.statuses.buff.map(buff => {
                     if(buff.name === chargingBeam.name){
+                        //- Change next intent (cancel attack until next turn)
+                        target.value.currentScript = {id: 0, intentions: [EnemyBuilderService.createDoNothingIntent()]};
+                        this.enemyService.setCurrentScript(dto.ctx, target.value.id, target.value.currentScript);
+                        
+                        //- Delay counter by 1
                         const modifyStatus = {...buff};
                         modifyStatus.args.counter++;
                         return modifyStatus;

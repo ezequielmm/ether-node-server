@@ -12,6 +12,9 @@ import { PlayerGearService } from 'src/playerGear/playerGear.service';
 import { Score } from '../components/expedition/scores';
 import { InitExpeditionProcess } from './initExpedition.process';
 import { Gear } from 'src/game/components/gear/gear.schema';
+import { MixedRewardType, RewardType, SquiresRewardResponse, VictoryItem } from 'src/squires-api/squires.types';
+import { sample, some } from 'lodash';
+import { ILootboxRarityOdds } from '../components/gear/gear.interface';
 
 export interface IEndExpeditionProcessParameters {
     ctx: GameContext;
@@ -36,6 +39,52 @@ export class EndExpeditionProcess {
         private readonly playerGearService:PlayerGearService,
         private readonly initExpeditionService:InitExpeditionProcess,
     ) {}
+    
+    // private halloweenGearsFilter = {
+    //     'lootbox.gearId': {
+    //         $gte: 500,
+    //         $lte: 520
+    //     },
+    // };
+
+    private halloweenGearsFilter = {
+        gearId: {
+            $gte: 500,
+            $lte: 520
+        },
+    };
+
+    private lootboxRarityStage1 = {
+        common: 50,
+        uncommon: 25,
+        rare: 15,
+        epic: 9,
+        legendary: 1,
+    };
+
+    private lootboxRarityStage2 = {
+        common: 40,
+        uncommon: 20,
+        rare: 25,
+        epic: 13,
+        legendary: 2,
+    };
+
+    private lootboxRarityVillagerStage1 = {
+        common: 80,
+        uncommon: 20,
+        rare: 0,
+        epic: 0,
+        legendary: 0,
+    };
+
+    private lootboxRarityVillagerStage2 = {
+        common: 60,
+        uncommon: 40,
+        rare: 0,
+        epic: 0,
+        legendary: 0,
+    };
 
     public async handle({ ctx, win = ExpeditionEndingTypeEnum.DEFEAT, emit = true }: IEndExpeditionProcessParameters): Promise<void> {
         switch (win) {
@@ -48,6 +97,7 @@ export class EndExpeditionProcess {
                 break;
         }
     }
+
 
     private async handleVictory(
         ctx: GameContext,
@@ -74,6 +124,7 @@ export class EndExpeditionProcess {
             }else{
                 ctx.expedition.finalScore.lootbox = [];
                 ctx.expedition.finalScore.rewards = [];
+                ctx.expedition.finalScore.victoryItems = [];
             }
         
             // Save the updated expedition
@@ -88,8 +139,6 @@ export class EndExpeditionProcess {
             //- Continue Expedition with the next stage:
             await this.calculateStageScore(ctx, currentStage);
 
-            // Dev:
-            //await this.calculateRewards(ctx, isLastStage);
 
             // Check if the player can win and if the contest is valid
             let canWin = await this.playerWinService.classCanWin(ctx.expedition.playerState.characterClass as CharacterClassEnum);
@@ -101,6 +150,7 @@ export class EndExpeditionProcess {
             }else{
                 ctx.expedition.finalScore.lootbox = [];
                 ctx.expedition.finalScore.rewards = [];
+                ctx.expedition.finalScore.victoryItems = [];
             }
             
             await ctx.expedition.save();
@@ -163,7 +213,8 @@ export class EndExpeditionProcess {
             achievements: newAchievements,
             notifyNoLoot: score.notifyNoLoot, 
             lootbox: score.lootbox,
-            rewards: score.rewards 
+            rewards: score.rewards,
+            victoryItems: score.victoryItems
         };
 
         ctx.expedition.finalScore = finalScore;
@@ -178,11 +229,40 @@ export class EndExpeditionProcess {
     
     }
 
-    // Handle loot when the event is active
-    private async handleActiveEventLoot(ctx: GameContext, currentStage:number) {
-
+    private async handleActiveEventLoot(ctx: GameContext, currentStage:number) 
+    {
         const isLastStage = ctx.expedition.contest.stages.length == currentStage;
-        
+        const character = ctx.expedition.playerState.characterClass as CharacterClassEnum;
+
+        const lootboxRariry: ILootboxRarityOdds = 
+            character === CharacterClassEnum.Villager 
+                ? (isLastStage ? this.lootboxRarityVillagerStage2 : this.lootboxRarityVillagerStage1) 
+                : (isLastStage ? this.lootboxRarityStage2 : this.lootboxRarityStage1);
+
+        //- Getting the Halloween Gear for the whole userAddress
+        const userHalloweenGear = await this.playerGearService.getHalloweenGear(ctx.expedition.userAddress);
+
+        //- Gets one random Halloween Gear with random rarities
+        const lootbox = await this.gearService.getUniqueHalloweenLoot(
+            1,
+            lootboxRariry,
+            userHalloweenGear,
+            this.halloweenGearsFilter
+        );
+
+        //- Remove repeated gears:
+        const filteredLootbox = await this.filterNewLootItems(ctx, lootbox);
+
+        if(filteredLootbox && filteredLootbox.length > 0){
+            await this.playerGearService.addGearToPlayer(
+                ctx.expedition.userAddress,
+                filteredLootbox,
+            );
+        }
+
+        //- FINISH Just for Unique gears:
+
+        //- Normal Gears:
         // const lootbox = await this.gearService.getLootbox(
         //     ctx.expedition.playerState.lootboxSize,
         //     ctx.expedition.playerState.lootboxRarity,
@@ -194,33 +274,73 @@ export class EndExpeditionProcess {
         // );
 
         if(isLastStage){
-            await this.playerWinService.findLastStageWinAndUpdate(ctx.expedition.contest.event_id, ctx.expedition.playerState.playerToken, currentStage);
+            await this.playerWinService.findLastStageWinAndUpdate(ctx.expedition.contest.event_id, ctx.expedition.playerState.playerToken, currentStage, filteredLootbox);
             
         }else{
             await this.playerWinService.create({
                 event_id: ctx.expedition.contest.event_id,
                 playerToken: ctx.expedition.playerState.playerToken,
-                stage: currentStage
-                //lootbox: lootbox,
+                stage: currentStage,
+                lootbox: filteredLootbox,
             });
         }
         
-        //ctx.expedition.finalScore.lootbox = lootbox;
-        ctx.expedition.finalScore.rewards = await this.squiresService.getAccountRewards(ctx.expedition.userAddress, ctx.expedition.playerState.equippedGear);
+        const rewards = await this.squiresService.getAccountRewards(ctx.expedition.userAddress, ctx.expedition.playerState.equippedGear, character, currentStage);
+        
+        const potionAndTrinketReward = rewards.filter(reward => reward.type === RewardType.Potion || reward.type === RewardType.Trinket);
+        const treasureReward = rewards.filter(reward => reward.type === RewardType.Fragment);
+
+        if (potionAndTrinketReward && potionAndTrinketReward.length > 0) ctx.expedition.finalScore.victoryItems.push(this.tranformRewardToVictoryItem(potionAndTrinketReward))
+        if (treasureReward && treasureReward.length > 0)   ctx.expedition.finalScore.victoryItems.push(this.tranformRewardToVictoryItem(treasureReward))
+        if (filteredLootbox && filteredLootbox.length > 0) ctx.expedition.finalScore.victoryItems.push(this.tranformGearToVictoryItem(filteredLootbox[0]))
+
+        // Solo para no romper el flujo en unity:
+        // ctx.expedition.finalScore.rewards = rewards;
+
+        console.log("Victory Items: ")
+        console.log(ctx.expedition.finalScore.victoryItems)
+        console.log("--------------------------------------------------------------------------------")
+    }
+
+    private tranformRewardToVictoryItem = (rewards: SquiresRewardResponse[]): (VictoryItem | null) => {
+        const reward = sample(rewards) || null;
+
+        if(reward){
+            return {
+                rewardType: MixedRewardType.Reward,
+                name: reward.name,
+                image: reward.image
+            }
+        }
+
+        return null;
+    }
+
+    private tranformGearToVictoryItem = (gear: Gear): VictoryItem => {
+        return {
+            rewardType:     MixedRewardType.Lootbox,
+            gearId:         gear.gearId,
+            name:           gear.name,
+            trait:          gear.trait,
+            rarity:         gear.rarity,
+            category:       gear.category,
+            isActive:       gear.isActive,
+            onlyOneAllowed: gear.onlyOneAllowed
+        }
     }
     
     // Filter out loot items that the player already has
-    // private async filterNewLootItems(ctx: GameContext, lootbox: Gear[]): Promise<Gear[]> {
+    private async filterNewLootItems(ctx: GameContext, lootbox: Gear[]): Promise<Gear[]> {
     
-    //     const allGear = (await this.playerWinService.getAllLootboxesByTokenId(ctx.expedition.playerState.playerToken.tokenId)).flat();
-    //     const gearByWallet = (await this.playerWinService.getAllLootByWallet(ctx.expedition.playerState.userAddress)).flat();
-    //     allGear.push(...gearByWallet);
+        const allGear = (await this.playerWinService.getAllLootboxesByTokenId(ctx.expedition.playerState.playerToken.tokenId)).flat();
+        const gearByWallet = (await this.playerWinService.getAllLootByWallet(ctx.expedition.playerState.userAddress)).flat();
+        allGear.push(...gearByWallet);
     
-    //     const filteredLootbox = lootbox.filter(lootItem => !allGear.some(allGearItem => allGearItem.gearId === lootItem.gearId));
+        const filteredLootbox = lootbox.filter(lootItem => !allGear.some(allGearItem => allGearItem.gearId === lootItem.gearId));
     
     
-    //     return filteredLootbox;
-    // }
+        return filteredLootbox;
+    }
     
     // Notify the client
     private notifyClient(ctx: GameContext) {

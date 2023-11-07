@@ -8,14 +8,14 @@ TODO:
 - map effect
 */
 export const MoldCard: Card = {
-    cardId: 553,
+    cardId: 554,
     name: 'Mold',
     rarity: CardRarityEnum.Starter,
     cardType: CardTypeEnum.Attack,//we shoud have kind of "map" cards?
     pool: 'knight',
     energy: 0,
-    description: `Reduce ${energyEffect.name} by 1 if this card is in hand by the start of the turn. Discard.`,
-    keywords: [CardKeywordEnum.Exhaust, CardKeywordEnum.Unplayable],
+    description: `Reduce ${energyEffect.name} by 1 if this card is in hand by the start of the turn. Exhaust.`,
+    keywords: [CardKeywordEnum.Fade, CardKeywordEnum.Unplayable],
     properties: {
         effects: [
             {

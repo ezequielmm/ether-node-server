@@ -59,13 +59,14 @@ export class GearChainBridgeController {
         private readonly bridgeService: BridgeService
     ) { }
 
-    private nonChainRarities = [];
+    //todo: remove next block:
+    // private nonChainRarities = [];
 
-    private nonChainRarityFilter = {
-        rarity: {
-            $nin: this.nonChainRarities,
-        },
-    };
+    // private nonChainRarityFilter = {
+    //     rarity: {
+    //         $nin: this.nonChainRarities,
+    //     },
+    // };
 
     private async checkSecurityToken(check: ITokenCheck): Promise<boolean> {
         const sharedSalt = this.configService.get<string>(
@@ -90,7 +91,6 @@ export class GearChainBridgeController {
 
         return await this.playerGearService.getGear(
             wallet,
-            this.nonChainRarityFilter,
         );
     }
 
@@ -98,7 +98,15 @@ export class GearChainBridgeController {
     @Post('/modify')
     async postModify(@Body() payload: AlterGearApiDTO): Promise<{ oldGear: GearItem[]; newGear: GearItem[]; ignoredGear: Gear[]; }> {
 
-        const { wallet, token } = payload;
+        const { wallet, token, action, gear } = payload;
+
+        console.log("Payload:")
+        console.log("Wallet: " + wallet);
+        console.log("Gear:")
+        console.log(gear)
+        console.log("Action: " + action)
+        console.log("Token: " + token)
+        
 
         // confirm token (security layer) and get PlayerId
         if (!this.checkSecurityToken({ wallet, token })) {
@@ -107,50 +115,49 @@ export class GearChainBridgeController {
         }
 
         let playerGear;
+
         try {
-            playerGear = await this.playerGearService.getGear(
-                wallet,
-                this.nonChainRarityFilter,
-            );
+            playerGear = await this.playerGearService.getGear(wallet);
+            console.log("Player Gear amount: " + playerGear.length)
         } catch (error) {
             console.error('postModify: Error fetching player gear for Wallet:', wallet, 'Error:', error.message);
             throw error;
         }
 
         let gears;
+
         try {
-            gears = this.playerGearService.getGearByIds(payload.gear);
+            gears = this.playerGearService.getGearByIds(gear);
+            console.log("Gears from payload gearIds: ")
+            console.log(gears)
+            console.log("------------------------------------------------------------------------------------------------------------")
         } catch (error) {
             console.error('postModify: Error fetching gears by IDs. Error:', error.message);
             throw error;
         }
 
+        let newGear;
+
         try {
-            switch (payload.action) {
+            switch (action) {
                 case GearActionApiEnum.AddGear:
-                    await this.playerGearService.addGearToPlayer(wallet, gears);
+                    newGear = (await this.playerGearService.addGearToPlayer(wallet, gears)).gear;
                     break;
                 case GearActionApiEnum.RemoveGear:
-                    await this.playerGearService.removeGearFromPlayer(wallet, gears);
+                    newGear = (await this.playerGearService.removeGearFromPlayer(wallet, gears)).gear;
                     break;
             }
         } catch (error) {
-            console.error('postModify: Error processing gears for Wallet:', wallet, 'Action:', payload.action, 'Error:', error.message);
+            console.error('postModify: Error processing gears for Wallet:', wallet, 'Action:', action, 'Error:', error.message);
             throw error;
         }
 
-        let newGear;
-        try {
-            newGear = await this.playerGearService.getGear(
-                wallet,
-                this.nonChainRarityFilter,
-            );
-            console.log('postModify: Retrieved new gear for Wallet:', wallet, 'Gear:', newGear);
-        } catch (error) {
-            console.error('postModify: Error fetching new gear for Wallet:', wallet, 'Error:', error.message);
-            throw error;
-        }
-
+        console.log("New Gear:")
+        console.log(newGear)
+        console.log("------------------------------------------------------------------------------------------------------------")
+        console.log("Method finish")
+        console.log("------------------------------------------------------------------------------------------------------------")
+        console.log("------------------------------------------------------------------------------------------------------------")
 
         return {
             oldGear: playerGear,
