@@ -64,7 +64,7 @@ export class WalletService {
 
         return nfts;
 
-        // todo: REMOVE Alchemy:
+        // todo: REMOVE Alchemy
 
 
         // todo: Uncomment next block
