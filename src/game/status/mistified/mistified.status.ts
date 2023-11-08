@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { EffectService } from '../../effects/effects.service';
 import { StatusEventDTO, StatusEventHandler } from '../interfaces';
 import { StatusDecorator } from '../status.decorator';
-import { galvanize } from './constants';
+import { mistifiedStatus } from './constants';
 import { EVENT_BEFORE_PLAYER_TURN_END } from 'src/game/constants';
 import { OnEvent } from '@nestjs/event-emitter';
 import { GameContext } from 'src/game/components/interfaces';
@@ -10,52 +10,48 @@ import { PlayerService } from 'src/game/components/player/player.service';
 import { StatusService } from '../status.service';
 import { CombatQueueService } from 'src/game/components/combatQueue/combatQueue.service';
 import { CombatQueueTargetEffectTypeEnum } from 'src/game/components/combatQueue/combatQueue.enum';
+import { CardService } from 'src/game/components/card/card.service';
+import { CombatService } from 'src/game/combat/combat.service';
+import { CardPlayedAction } from 'src/game/action/cardPlayed.action';
 
 @StatusDecorator({
-    status: galvanize,
+    status: mistifiedStatus,
 })
 @Injectable()
-export class GalvanizeStatus implements StatusEventHandler {
+export class MistifiedStatus implements StatusEventHandler {
     constructor(
+        private readonly cardService: CardService,
         private readonly playerService: PlayerService,
         private readonly statusService: StatusService,
-        private readonly combatQueueService: CombatQueueService
+        private readonly combatQueueService: CombatQueueService,
+        private readonly cardPlayedAction: CardPlayedAction,
     ){}
 
     async handle(dto: StatusEventDTO): Promise<void> {
 
         const { ctx, source, target } = dto;
-        
-        if(dto.eventArgs.card.cardType == 'attack' && dto.source.type == 'player'){
+        const energy = ctx.expedition.currentNode.data.player.energy;
+        const hand = ctx.expedition.currentNode.data.player.cards.hand;
+        const newHand = this.cardService.shuffleArray(hand);
 
-            const originalDefense = dto.source.value.combatState.defense; 
-            const defenseCalculated = originalDefense + dto.status.args.value;
-            console.log('value',dto.status.args.value);
-            console.log('defensa calc', defenseCalculated);
+        for(const card of newHand){
 
-            const finalDefense =  await this.playerService.setDefense(ctx, defenseCalculated);
-            console.log('final defense', finalDefense);
-            dto.ctx.expedition.currentNode.data.player.defense = finalDefense;
-
-            await this.combatQueueService.push({
-                ctx,
-                source: this.playerService.get(ctx),
-                target,
-                args: {
-                    effectType: CombatQueueTargetEffectTypeEnum.Defense,
-                    defenseDelta: dto.status.args.value,
-                    finalDefense: defenseCalculated,
-                    healthDelta: 0,
-                    finalHealth: 0,
-                    statuses: [],
-                },
-                action:{
-                    name: 'defense',
-                    hint: 'defense'
-                },
-            });
+            while(energy > 0){
+                await this.cardPlayedAction.handle({
+                    ctx,
+                    cardId: card.id,
+                    selectedEnemyId: undefined,
+                    //forceExhaust,
+                    newHand,
+                });
+            }
         }
+        
+        
+
+        
     }
+
 
     @OnEvent(EVENT_BEFORE_PLAYER_TURN_END)
     async onPlayerTurnStart({ ctx }: { ctx: GameContext }): Promise<void> {
@@ -70,7 +66,7 @@ export class GalvanizeStatus implements StatusEventHandler {
             ctx,
             statuses,
             player,
-            galvanize,
+            mistifiedStatus,
         );
     }
 
