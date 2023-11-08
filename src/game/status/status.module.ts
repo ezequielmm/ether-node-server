@@ -63,6 +63,7 @@ import { CounterStatus } from './countering/countering.status';
 import { ElementalStatus } from './elemental/elemental.status';
 import { AbsorbingStatus } from './absorbing/absorbing.status';
 import { GalvanizeStatus } from './galvanize/galvanize.status';
+import { MistifiedStatus } from './mistified/mistified.status';
 
 @Module({
     imports: [
@@ -133,7 +134,8 @@ import { GalvanizeStatus } from './galvanize/galvanize.status';
         CounterStatus,
         ElementalStatus,
         AbsorbingStatus,
-        GalvanizeStatus
+        GalvanizeStatus,
+        MistifiedStatus
 
     ],
     exports: [StatusService],
