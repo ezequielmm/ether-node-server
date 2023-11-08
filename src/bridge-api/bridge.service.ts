@@ -83,7 +83,7 @@ export class BridgeService {
         const bridgeApiURL = this.configService.get<string>("BRIDGE_API_URL");
 
         try{
-            const res = await axios.get<GetNftsByWalletResponse>(
+            const res = await axios.get(
                 `${bridgeApiURL}/walletnfts/${walletAddress}/${amount}/${skip}`,
                 {
                     headers: {
@@ -95,6 +95,9 @@ export class BridgeService {
             if(res.status != 200){
                 console.log("Error connecting to Bridge API: " + res.status);
             }
+
+            console.log("Raw response from Squires:")
+            console.log(res.data);
 
             return res.data;
 
