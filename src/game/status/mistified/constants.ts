@@ -1,4 +1,4 @@
-import { EVENT_BEFORE_ENEMIES_TURN_END, EVENT_BEFORE_PLAYER_TURN_END } from 'src/game/constants';
+import { EVENT_AFTER_ENEMIES_TURN_END } from 'src/game/constants';
 import {
     StatusCounterType,
     StatusEvent,
@@ -11,5 +11,5 @@ export const mistifiedStatus: StatusEvent = {
     type: StatusType.Debuff,
     counterType: StatusCounterType.Counter,
     trigger: StatusTrigger.Event,
-    event: EVENT_BEFORE_ENEMIES_TURN_END
+    event: EVENT_AFTER_ENEMIES_TURN_END
 };
