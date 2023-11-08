@@ -138,6 +138,7 @@ import { DecayCard } from './data/decay.card';
 import { MoldCard } from './data/mold.card';
 import { SmudgeCard, SmudgeCardUpgraded } from './data/smudge.card';
 import { GalvanizeCard, GalvanizeCardUpgraded} from './data/galvanize.card';
+import { MirageCard } from './data/mirage.card';
 
 export const data: Card[] = [
     AttackCard,
@@ -298,5 +299,6 @@ export const data: Card[] = [
     SmudgeCard,
     SmudgeCardUpgraded,
     GalvanizeCard,
-    GalvanizeCardUpgraded 
+    GalvanizeCardUpgraded,
+    MirageCard
 ];
