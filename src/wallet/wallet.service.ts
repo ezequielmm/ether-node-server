@@ -7,6 +7,7 @@ import { NFTService } from 'src/nft-library/services/nft_service';
 import { BridgeService } from 'src/bridge-api/bridge.service';
 import { GetNftsByWalletResponse, TokenBridgeResponse } from 'src/bridge-api/bridge.types';
 import { ContractResponse, NFTSFormattedResponse, TokenMetadata, TokenResponse } from './wallet.types';
+import { CharacterClassEnum } from 'src/game/components/character/character.enum';
 
 @Injectable()
 export class WalletService {
@@ -116,10 +117,15 @@ export class WalletService {
             attributes: squiresToken.attributes
         }
 
+        let initialized = false;
+        if(characterClass === CharacterClassEnum.BlessedVillagerInitiated || characterClass === CharacterClassEnum.KnightInitiated){
+            initialized = true;
+        }
+
         let nft:TokenResponse = {
             token_id: ""+squiresToken.edition,
             name: squiresToken.name,
-            adaptedImageURI: this.getHttpFromIpfsURI(squiresToken.image),
+            adaptedImageURI: initialized ? squiresToken.image : this.getHttpFromIpfsURI(squiresToken.image),
             metadata: metadata,
             can_play: can_play,
             characterClass: characterClass
