@@ -24,7 +24,7 @@ export interface ContractBridgeResponse {
 
 export interface TokenBridgeResponse {
     name: string,
-    image: string,
+    image: string | null,
     edition:number,
     attributes: NftAttributesResponse[],
 }
