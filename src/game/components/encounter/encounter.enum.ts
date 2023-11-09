@@ -15,4 +15,9 @@ export enum EncounterIdEnum {
     Oddbarks = 13,
     RunicBehive = 14,
     CaveIn = 15,
+    // Act 2
+    StoneMason = 16,
+    RoyalEmissary = 17,
+    Stalactite = 18,
+    StoneCutter = 19,
 }

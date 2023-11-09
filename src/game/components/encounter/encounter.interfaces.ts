@@ -6,7 +6,7 @@ export interface EncounterInterface {
 }
 export class EncounterButton {
     text: string;
-    nextStage: number;
+    nextStage?: number;
     awaitModal?: boolean;
     effects: any[];
     randomStaging?: any[];

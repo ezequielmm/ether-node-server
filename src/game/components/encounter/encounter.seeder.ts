@@ -16,6 +16,10 @@ import { TreeCarvingEncounter } from './data/tree_carving.encounter';
 import { RunicBeehiveEncounter } from './data/runic_beehive';
 import { OddbarksEncounter } from './data/oddbarks.encounter';
 import { CaveInEncounter } from './data/cave_in.encounter';
+import { StoneMansonEncounter } from './data/stone_mason.encounter';
+import { RoyalEmissaryEncounter } from './data/royal_emissary.encounter';
+import { StalactiteEncounter } from './data/mesmerizing_stalactite.encounter';
+import { StoneCuttersEncounter } from './data/stone_cutters.encounter';
 
 @Injectable()
 export class EncounterSeeder implements Seeder {
@@ -38,7 +42,12 @@ export class EncounterSeeder implements Seeder {
             YoungWizardEncounter,
             OddbarksEncounter,
             RunicBeehiveEncounter,
-            CaveInEncounter
+            CaveInEncounter,
+            StoneMansonEncounter,
+            RoyalEmissaryEncounter,
+            StalactiteEncounter,
+            StoneCuttersEncounter,
+
         ]);
     }
     async drop(): Promise<any> {

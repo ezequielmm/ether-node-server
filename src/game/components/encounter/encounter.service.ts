@@ -21,7 +21,7 @@ import { IExpeditionPlayerStateDeckCard } from '../expedition/expedition.interfa
 import { randomUUID } from 'crypto';
 import { CardDescriptionFormatter } from '../../cardDescriptionFormatter/cardDescriptionFormatter';
 import { Player } from '../expedition/player';
-import { CardRarityEnum } from '../card/card.enum';
+import { CardRarityEnum, CardTypeEnum } from '../card/card.enum';
 import { Node } from '../expedition/node';
 import { filter, sample } from 'lodash';
 import { PlayerService } from '../player/player.service';
@@ -35,7 +35,7 @@ export class EncounterService {
         private readonly cardService: CardService,
         private readonly trinketService: TrinketService,
         private readonly playerService: PlayerService,
-    ) {}
+    ) { }
 
     async getRandomEncounter(
         excludeIfPossible?: number[],
@@ -182,7 +182,23 @@ export class EncounterService {
                 case 'coin': //eg nagpra
                     ctx.expedition.playerState.gold = Math.min(
                         ctx.expedition.playerState.gold +
-                            parseInt(effect.amount),
+                        parseInt(effect.amount),
+                        0,
+                    );
+                    ctx.expedition.markModified('playerState.gold');
+                    break;
+                case 'lost_all_gold': //eg nagpra
+                    ctx.expedition.playerState.gold = Math.min(
+                        ctx.expedition.playerState.gold -
+                        ctx.expedition.playerState.gold,
+                        0,
+                    );
+                    ctx.expedition.markModified('playerState.gold');
+                    break;
+                case 'lost_half_gold': //eg nagpra
+                    ctx.expedition.playerState.gold = Math.min(
+                        ctx.expedition.playerState.gold -
+                        (ctx.expedition.playerState.gold / 2),
                         0,
                     );
                     ctx.expedition.markModified('playerState.gold');
@@ -211,7 +227,7 @@ export class EncounterService {
                     break;
                 case 'hit_points_avoid_dead': //eg cave in
                     let damage = effect.amount;
-                    if(ctx.expedition.playerState.hpCurrent <= Math.abs(parseInt(damage))){
+                    if (ctx.expedition.playerState.hpCurrent <= Math.abs(parseInt(damage))) {
                         damage = (-1 * (ctx.expedition.playerState.hpCurrent - 1));
                     }
                     await this.playerService.setHPDelta({
@@ -225,8 +241,26 @@ export class EncounterService {
                         ctx.expedition.playerState,
                     );
                     break;
+                case 'lost_recent_trinket': //eg cave in
+                    await this.looseRecentTrinket(
+                        ctx.client,
+                        ctx.expedition.playerState,
+                    );
+                    break;
                 case 'upgrade_random_card': //eg will o wisp
                     await this.upgradeRandomCard(
+                        ctx.client,
+                        ctx.expedition.playerState,
+                    );
+                    break;
+                case 'upgrade_random_deffensivecard': //eg will o wisp
+                    await this.upgradeRandomDefensiveCard(
+                        ctx.client,
+                        ctx.expedition.playerState,
+                    );
+                    break;
+                case 'upgrade_random_offensivecard': //eg will o wisp
+                    await this.upgradeRandomAttackCard(
                         ctx.client,
                         ctx.expedition.playerState,
                     );
@@ -535,8 +569,60 @@ export class EncounterService {
         //see MerchantService
     }
 
+    private async upgradeRandomDefensiveCard(
+        client: Socket,
+        playerState: Player,
+    ): Promise<void> {
+        const cardIds: number[] = [];
+        const probabilityWeights: number[] = [];
+
+        for (const card of playerState.cards) {
+            if (card.cardType == CardTypeEnum.Defend)
+                if (!card.isUpgraded && card.upgradedCardId) {
+                    cardIds.push(card.cardId);
+                    probabilityWeights.push(1);
+                }
+        }
+
+        if (cardIds.length == 0) return; // no cards qualify for upgrade
+
+        const upgradeMeCardId = getRandomItemByWeight(
+            cardIds,
+            probabilityWeights,
+        );
+
+        await this.upgradeCard(upgradeMeCardId, playerState, client);
+        //see MerchantService
+    }
+
+    private async upgradeRandomAttackCard(
+        client: Socket,
+        playerState: Player,
+    ): Promise<void> {
+        const cardIds: number[] = [];
+        const probabilityWeights: number[] = [];
+
+        for (const card of playerState.cards) {
+            if (card.cardType == CardTypeEnum.Attack)
+                if (!card.isUpgraded && card.upgradedCardId) {
+                    cardIds.push(card.cardId);
+                    probabilityWeights.push(1);
+                }
+        }
+
+        if (cardIds.length == 0) return; // no cards qualify for upgrade
+
+        const upgradeMeCardId = getRandomItemByWeight(
+            cardIds,
+            probabilityWeights,
+        );
+
+        await this.upgradeCard(upgradeMeCardId, playerState, client);
+        //see MerchantService
+    }
+
     private async looseRandomPotion(client: Socket, playerState: Player): Promise<void> {
-        const potionsIds:         number[] = [];
+        const potionsIds: number[] = [];
         const probabilityWeights: number[] = [];
 
         for (const potion of playerState.potions) {
@@ -570,12 +656,52 @@ export class EncounterService {
         });
 
         await this.expeditionService.updateByFilter(
-            { clientId: client.id }, 
+            { clientId: client.id },
             {
                 $set: {
                     'playerState.potions': newPotions,
                 }
+            });
+    }
+
+    private async looseRecentTrinket(client: Socket, playerState: Player): Promise<void> {
+        const trinketsIds: number[] = [];
+        const probabilityWeights: number[] = [];
+
+        if (trinketsIds.length == 0) return; // no trinkets
+
+        const lastTrinketsId = playerState.trinkets[trinketsIds.length -1 ].trinketId;
+        
+        // const looseMeTrinketId = getRandomItemByWeight(
+        //     trinketsIds,
+        //     probabilityWeights,
+        // );
+
+        console.log("Trinket recent to loose:")
+        // console.log(looseMeTrinketId)
+
+        await this.looseTrinket(lastTrinketsId, playerState, client);
+    }
+
+    async looseTrinket(trinketId: string | number, playerState: Player, client: Socket): Promise<void> {
+        let hasLostOne = false;
+
+        const newTrinkets = playerState.trinkets.filter((item) => {
+            if (item.trinketId == trinketId && !hasLostOne) {
+                hasLostOne = true;
+                return false;
+            } else {
+                return true;
+            }
         });
+
+        await this.expeditionService.updateByFilter(
+            { clientId: client.id },
+            {
+                $set: {
+                    'playerState.trinkets': newTrinkets,
+                }
+            });
     }
 
     async getByEncounterId(encounterId: number): Promise<Encounter> {
