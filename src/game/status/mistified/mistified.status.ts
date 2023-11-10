@@ -37,6 +37,7 @@ export class MistifiedStatus implements StatusEventHandler {
         //const newHand = this.cardService.shuffleArray(hand);
 
         const probNum = (newHand.length / 100);
+        console.log(probNum);
         let probability : number[] = [];
 
         newHand.forEach(card =>{
