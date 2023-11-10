@@ -13,6 +13,8 @@ import { CombatQueueTargetEffectTypeEnum } from 'src/game/components/combatQueue
 import { CardService } from 'src/game/components/card/card.service';
 import { CombatService } from 'src/game/combat/combat.service';
 import { CardPlayedAction } from 'src/game/action/cardPlayed.action';
+import { getRandomItemByWeight } from 'src/utils';
+import { IExpeditionPlayerStateDeckCard } from 'src/game/components/expedition/expedition.interface';
 
 @StatusDecorator({
     status: mistifiedStatus,
@@ -29,31 +31,36 @@ export class MistifiedStatus implements StatusEventHandler {
 
     async handle(dto: StatusEventDTO): Promise<void> {
 
-        const { ctx, source, target } = dto;
+        const { ctx } = dto;
         const energy = ctx.expedition.currentNode.data.player.energy;
-        const hand = ctx.expedition.currentNode.data.player.cards.hand;
-        const newHand = this.cardService.shuffleArray(hand);
+        const newHand = ctx.expedition.currentNode.data.player.cards.hand;
+        //const newHand = this.cardService.shuffleArray(hand);
 
-        for(const card of newHand){
+        const probNum = (newHand.length / 100);
+        let probability : number[] = [];
 
-            while(energy > 0){
-                await this.cardPlayedAction.handle({
-                    ctx,
-                    cardId: card.id,
-                    selectedEnemyId: undefined,
-                    //forceExhaust,
-                    newHand,
-                });
-            }
+        newHand.forEach(card =>{
+            probability.push(probNum);
+        });
+
+        console.log('PROBABILITY ----------------------', probability);
+        
+        while(energy > 0){
+
+            const card = getRandomItemByWeight<IExpeditionPlayerStateDeckCard>(newHand, probability);
+    
+            console.log('CARTA A JUGAR ----------------------', card);
+    
+            await this.cardPlayedAction.handle({
+                ctx,
+                cardId: card.id,
+                selectedEnemyId: undefined,
+                newHand
+            });
+
         }
-        
-        
-
-        
     }
 
-
-    @OnEvent(EVENT_BEFORE_PLAYER_TURN_END)
     async onPlayerTurnStart({ ctx }: { ctx: GameContext }): Promise<void> {
         const player = this.playerService.get(ctx);
         const {
