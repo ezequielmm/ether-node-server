@@ -5,8 +5,9 @@ import { EffectHandler, EffectDTO } from "../effects.interface";
 import { sporeDanceEffect } from "./constants";
 import { moldPolypData } from "src/game/components/enemy/data/moldPolyp.enemy";
 import { StandardResponse, SWARMessageType, SWARAction } from "src/game/standardResponse/standardResponse";
-import { caveHomunculiData } from "src/game/components/enemy/data/caveHomunculi.enemy";
 import { EnemyBuilderService } from "src/game/components/enemy/enemy-builder.service";
+import { moldPolypMinionData } from "src/game/components/enemy/data/moldPolyp-minion.enemy";
+import { caveHomunculiMinionData } from "src/game/components/enemy/data/caveHomunculi-minion.enemy";
 
 @EffectDecorator({
     effect: sporeDanceEffect,
@@ -21,25 +22,25 @@ export class SporeDanceEffect implements EffectHandler {
         let enemies = [...dto.ctx.expedition.currentNode.data.enemies];
 
         if(EnemyService.isEnemy(source)){
-            const moldPolyps = enemies.filter(enemy => enemy.enemyId === moldPolypData.enemyId);
-            if(moldPolyps.length > 0){
-                let listHomunculis = [];
-                const caveHomunculiDB = await this.enemyService.findById(caveHomunculiData.enemyId);
-                for(const polyp of moldPolyps){
-                    const newHomunculi = await this.enemyService.createNewStage2Enemy(caveHomunculiDB);
+            const moldPolypsOriginalAndMinions = enemies.filter(enemy => enemy.enemyId === moldPolypData.enemyId || enemy.enemyId === moldPolypMinionData.enemyId);
+            if(moldPolypsOriginalAndMinions.length > 0){
+                let listHomunculisMinion = [];
+                const caveHomunculiMinionDB = await this.enemyService.findById(caveHomunculiMinionData.enemyId);
+                for(const polyp of moldPolypsOriginalAndMinions){
+                    const newHomunculiMinion = await this.enemyService.createNewStage2Enemy(caveHomunculiMinionDB);
                     const polypIndex = enemies.findIndex(enemy => enemy.id === polyp.id);
                     
                     if (polypIndex !== -1) {
-                        enemies[polypIndex] = newHomunculi;
+                        enemies[polypIndex] = newHomunculiMinion;
                     }
 
-                    listHomunculis.push(newHomunculi);
+                    listHomunculisMinion.push(newHomunculiMinion);
                 }
                 ctx.expedition.currentNode.data.enemies = enemies;
                 ctx.expedition.markModified('currentNode.data.enemies');
                 await ctx.expedition.save();
 
-                for(const homunculi of listHomunculis){
+                for(const homunculi of listHomunculisMinion){
                     await this.enemyService.setCurrentScript(
                         ctx,
                         homunculi.id,
@@ -52,7 +53,7 @@ export class SporeDanceEffect implements EffectHandler {
                     StandardResponse.respond({
                         message_type: SWARMessageType.CombatUpdate,
                         action: SWARAction.SporeDance,
-                        data: [moldPolyps, listHomunculis],
+                        data: [moldPolypsOriginalAndMinions, listHomunculisMinion],
                     }),
                 );
             }

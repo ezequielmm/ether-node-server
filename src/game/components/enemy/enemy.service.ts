@@ -51,10 +51,11 @@ import { swarmMasterData } from './data/swarmMaster.enemy';
 import { boobyTrapData } from './data/boobyTrap.enemy';
 import { deepDwellerMonsterData } from './data/deepDwellerMonster.enemy';
 import { deepDwellerLureData } from './data/deepDwellerLure.enemy';
+import { mossySkeletonData } from './data/mossySkeleton.enemy';
+import { mossyArcherData } from './data/mossyArcher.enemy';
 
 @Injectable()
 export class EnemyService {
-   
 
     private readonly logger: Logger = new Logger(EnemyService.name);
 
@@ -67,11 +68,9 @@ export class EnemyService {
     //------------------------------------------------------------------------------------------------------------------------------------
 
     private readonly NOT_SCOREABLE_ENEMIES = [
-        swarmCocoon1Data.enemyId, 
-        swarmCocoon2Data.enemyId, 
-        mutantSpider1Data.enemyId, 
-        mutantSpider2Data.enemyId,
-        deepDwellerLureData.enemyId
+        deepDwellerLureData.enemyId,
+        mossySkeletonData.enemyId,
+        mossyArcherData.enemyId
     ];
 
     constructor(
@@ -520,10 +519,6 @@ export class EnemyService {
             const { scripts, attackLevels } = enemy_DB;
             const currentScript = enemy.value.currentScript;
             let nextScript: EnemyScript;
-
-            // console.log("------------------------------------------------------------");
-            // console.log("------------------------------------------------------------")
-            // console.log("Ataque de enemigo: " + enemy_DB.name)
 
             if(scripts && scripts.length > 0){
                 if (currentScript) {
