@@ -5,6 +5,7 @@ import { EffectHandler, EffectDTO } from "../effects.interface";
 import { mitosisEffect } from "./constants";
 import { EnemyBuilderService } from "src/game/components/enemy/enemy-builder.service";
 import { StandardResponse, SWARMessageType, SWARAction } from "src/game/standardResponse/standardResponse";
+import { moldPolypMinionData } from "src/game/components/enemy/data/moldPolyp-minion.enemy";
 
 @EffectDecorator({
     effect: mitosisEffect,
@@ -27,8 +28,8 @@ export class MitosisEffect implements EffectHandler {
             }
 
             const originalMold = source.value;
-            const moldDB = await this.enemyService.findById(originalMold.enemyId);
-            const newMold = await this.enemyService.createNewStage2EnemyWithStatuses(moldDB, originalMold.statuses.buff, originalMold.statuses.debuff);
+            const moldMinionDB = await this.enemyService.findById(moldPolypMinionData.enemyId);
+            const newMold = await this.enemyService.createNewStage2EnemyWithStatuses(moldMinionDB, originalMold.statuses.buff, originalMold.statuses.debuff);
 
             const updatedEnemies = [...enemies, newMold]
 

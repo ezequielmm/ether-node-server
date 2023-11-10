@@ -82,14 +82,14 @@ const AdvancedIntents: EnemyAction = {
 //-------------------------------------------------------------------------------------------------------------------------------------------------------
 //- Enemy:
 //-------------------------------------------------------------------------------------------------------------------------------------------------------
-export const caveHomunculiData: Enemy = {
-    enemyId: 41,
+export const caveHomunculiMinionData: Enemy = {
+    enemyId: 42,
     stage: 2,
     selectable: true,
     isActive: true,
     name: 'Cave Homunculi',
     type: EnemyTypeEnum.Plant,
-    category: EnemyCategoryEnum.Basic,
+    category: EnemyCategoryEnum.Minion,
     size: EnemySizeEnum.Large,
     description: 'A large fungoid creature. It is capable of spreading spores that produce acute hallucinations. It reproduces by infesting the innards of its prey with corrosive fungi, usually while they are still alive.',
     healthRange: [40, 50],
