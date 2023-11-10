@@ -59,15 +59,6 @@ export class GearChainBridgeController {
         private readonly bridgeService: BridgeService
     ) { }
 
-    //todo: remove next block:
-    // private nonChainRarities = [];
-
-    // private nonChainRarityFilter = {
-    //     rarity: {
-    //         $nin: this.nonChainRarities,
-    //     },
-    // };
-
     private async checkSecurityToken(check: ITokenCheck): Promise<boolean> {
         const sharedSalt = this.configService.get<string>(
             'GEARAPI_SALT',
