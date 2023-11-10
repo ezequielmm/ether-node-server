@@ -25,6 +25,7 @@ import { CardRarityEnum, CardTypeEnum } from '../card/card.enum';
 import { Node } from '../expedition/node';
 import { filter, sample } from 'lodash';
 import { PlayerService } from '../player/player.service';
+import { MerchantService } from 'src/game/merchant/merchant.service';
 
 @Injectable()
 export class EncounterService {
@@ -35,6 +36,8 @@ export class EncounterService {
         private readonly cardService: CardService,
         private readonly trinketService: TrinketService,
         private readonly playerService: PlayerService,
+        private readonly merchantService: MerchantService,
+
     ) { }
 
     async getRandomEncounter(
@@ -590,8 +593,9 @@ export class EncounterService {
             probabilityWeights,
         );
 
-        await this.upgradeCard(upgradeMeCardId, playerState, client);
+        // await this.upgradeCard(upgradeMeCardId, playerState, client);
         //see MerchantService
+        await this.merchantService.cardFreeUpgrade(client, upgradeMeCardId);
     }
 
     private async upgradeRandomAttackCard(
@@ -615,8 +619,9 @@ export class EncounterService {
             probabilityWeights,
         );
 
-        await this.upgradeCard(upgradeMeCardId, playerState, client);
+        // await this.upgradeCard(upgradeMeCardId, playerState, client);
         //see MerchantService
+        await this.merchantService.cardFreeUpgrade(client, upgradeMeCardId);
     }
 
     private async looseRandomPotion(client: Socket, playerState: Player): Promise<void> {
