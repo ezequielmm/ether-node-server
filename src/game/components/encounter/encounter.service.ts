@@ -602,7 +602,7 @@ export class EncounterService {
         const probabilityWeights: number[] = [];
 
         for (const card of playerState.cards) {
-            if (!card.isUpgraded && card.upgradedCardId && card.cardType == CardTypeEnum.Attack) {
+            if (!card.isUpgraded && card.upgradedCardId) {
                 cardIds.push(card.cardId);
                 probabilityWeights.push(1);
             }
