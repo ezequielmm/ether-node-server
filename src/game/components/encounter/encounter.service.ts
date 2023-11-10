@@ -565,8 +565,30 @@ export class EncounterService {
             probabilityWeights,
         );
 
-        await this.upgradeCard(upgradeMeCardId, playerState, client);
+        // await this.upgradeCard(upgradeMeCardId, playerState, client);
         //see MerchantService
+        const card = await this.cardService.findById(upgradeMeCardId);
+
+        card.description = CardDescriptionFormatter.process(card);
+        this.cardService.addStatusDescriptions(card);
+
+        client.data.upgradedCards.push({
+            id: randomUUID(),
+            cardId: card.cardId,
+            name: card.name,
+            cardType: card.cardType,
+            energy: card.energy,
+            description: card.description,
+            isTemporary: false,
+            rarity: card.rarity,
+            properties: card.properties,
+            keywords: card.keywords,
+            showPointer: card.showPointer,
+            pool: card.pool,
+            isUpgraded: card.isUpgraded,
+            isActive: true,
+        });
+
     }
 
     private async upgradeRandomDefensiveCard(
