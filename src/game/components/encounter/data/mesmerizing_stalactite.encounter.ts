@@ -3,7 +3,7 @@ import { Encounter } from "../encounter.schema";
 
 export const StalactiteEncounter: Encounter = {
     encounterId: EncounterIdEnum.Stalactite,
-    encounterName: 'Mesmerizing-stalactive',
+    encounterName: 'Mesmerizing-stalactite',
     imageId: 'memStalactive',
     stages: [
         {
@@ -14,13 +14,13 @@ export const StalactiteEncounter: Encounter = {
                     //- aka option 1
                     text: '[Move Closer] Lose half of your gold. Upgrade 2 random defensive cards.',
                     nextStage: 1,
-                    effects: [{ kind: 'lost_half_gold' }, { kind: 'upgrade_random_card', amount: '2' }]
+                    effects: [{ kind: 'lost_half_gold' }, { kind: 'upgrade_random_deffensivecard', amount: '2' }]
                 },
                 {
                     //- aka option 1
                     text: '[Touch It] Lose half of your gold. Upgrade 2 random offensive cards.',
                     nextStage: 2,
-                    effects: [{ kind: 'lost_half_gold' },  { kind: 'upgrade_random_card', amount: '2' }]
+                    effects: [{ kind: 'lost_half_gold' },  { kind: 'upgrade_random_offensivecard', amount: '2' }]
                 },
             ]
         },
