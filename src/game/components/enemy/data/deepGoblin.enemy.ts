@@ -5,21 +5,14 @@ import { feebleStatus } from 'src/game/status/feeble/constants';
 import { fatigue } from 'src/game/status/fatigue/constants';
 import { EnemyAction, EnemyIntention } from '../enemy.interface';
 import { EnemyBuilderService as EB } from '../enemy-builder.service';
-import { caveGoblinData } from './caveGoblin.enemy';
 import { CardTargetedEnum } from '../../card/card.enum';
 import { spawnEnemyEffect } from 'src/game/effects/spawnEnemy/contants';
 import { cannibalizeEffect } from 'src/game/effects/cannibalize/constants';
+import { caveGoblinMinionData } from './caveGoblin-minion.enemy';
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------------
 //- Intents:
 //-------------------------------------------------------------------------------------------------------------------------------------------------------
-const BasicAttack:        EnemyIntention = EB.createBasicAttackIntent(11, EB.ATTACK);
-const SecondAttack:       EnemyIntention = EB.createMultiplierAttackIntent(11, 2, EB.ATTACK2);
-const BasicDefense:       EnemyIntention = EB.createDefenseIntent(10, EB.DEFEND);
-const BuffResolve:        EnemyIntention = EB.createBasicBuffIntent(2, resolveStatus.name, EB.BUFF);
-const DebufFeeble:        EnemyIntention = EB.createBasicDebuffIntent(2, feebleStatus.name, EB.DEBUFF);
-const DebuffFatigue:      EnemyIntention = EB.createBasicDebuffIntent(2, fatigue.name, EB.DEBUFF2);
-const CallReinforcements: EnemyIntention = EB.callForReinforcements([caveGoblinData.enemyId], EB.CALL_FOR_REINFORCEMENTS);
 
 const getSignatureMove = (animationId:string):EnemyIntention => {
     return {
@@ -32,7 +25,7 @@ const getSignatureMove = (animationId:string):EnemyIntention => {
                 effect: spawnEnemyEffect.name,
                 target: CardTargetedEnum.Self,
                 args: {
-                    enemiesToSpawn: caveGoblinData.enemyId,
+                    enemiesToSpawn: caveGoblinMinionData.enemyId,
                 },
                 action: {
                     name: animationId,
@@ -43,7 +36,7 @@ const getSignatureMove = (animationId:string):EnemyIntention => {
                 effect: cannibalizeEffect.name,
                 target: CardTargetedEnum.Self,
                 args: {
-                    enemiesToCannibalize: caveGoblinData.enemyId,
+                    enemiesToCannibalize: caveGoblinMinionData.enemyId,
                 },
                 action: {
                     name: animationId,
@@ -83,7 +76,7 @@ const AdvancedIntents: EnemyAction = {
             EB.createDefenseIntent(10, EB.DEFEND_DEBUFF), 
             EB.createBasicDebuffIntent(2, feebleStatus.name, EB.DEFEND_DEBUFF)
         ] },
-        { id: 10, probability: 0.2, cooldown: 0, intents: [EB.callForReinforcements([caveGoblinData.enemyId], EB.CALL_FOR_REINFORCEMENTS)] },
+        { id: 10, probability: 0.2, cooldown: 0, intents: [EB.callForReinforcements([caveGoblinMinionData.enemyId], EB.CALL_FOR_REINFORCEMENTS)] },
         { id: 11, probability: 0.2, cooldown: 0, intents: [getSignatureMove(EB.SIGNATURE_MOVE)] }
     ]
 }
