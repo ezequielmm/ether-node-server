@@ -577,11 +577,10 @@ export class EncounterService {
         const probabilityWeights: number[] = [];
 
         for (const card of playerState.cards) {
-            if (card.cardType == CardTypeEnum.Defend)
-                if (!card.isUpgraded && card.upgradedCardId) {
-                    cardIds.push(card.cardId);
-                    probabilityWeights.push(1);
-                }
+            if (!card.isUpgraded && card.upgradedCardId && card.cardType == CardTypeEnum.Defend) {
+                cardIds.push(card.cardId);
+                probabilityWeights.push(1);
+            }
         }
 
         if (cardIds.length == 0) return; // no cards qualify for upgrade
@@ -603,11 +602,10 @@ export class EncounterService {
         const probabilityWeights: number[] = [];
 
         for (const card of playerState.cards) {
-            if (card.cardType == CardTypeEnum.Attack)
-                if (!card.isUpgraded && card.upgradedCardId) {
-                    cardIds.push(card.cardId);
-                    probabilityWeights.push(1);
-                }
+            if (!card.isUpgraded && card.upgradedCardId && card.cardType == CardTypeEnum.Attack) {
+                cardIds.push(card.cardId);
+                probabilityWeights.push(1);
+            }
         }
 
         if (cardIds.length == 0) return; // no cards qualify for upgrade
@@ -670,8 +668,8 @@ export class EncounterService {
 
         if (trinketsIds.length == 0) return; // no trinkets
 
-        const lastTrinketsId = playerState.trinkets[trinketsIds.length -1 ].trinketId;
-        
+        const lastTrinketsId = playerState.trinkets[trinketsIds.length - 1].trinketId;
+
         // const looseMeTrinketId = getRandomItemByWeight(
         //     trinketsIds,
         //     probabilityWeights,
