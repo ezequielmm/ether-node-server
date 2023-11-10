@@ -25,7 +25,6 @@ import { CardRarityEnum, CardTypeEnum } from '../card/card.enum';
 import { Node } from '../expedition/node';
 import { filter, sample } from 'lodash';
 import { PlayerService } from '../player/player.service';
-import { MerchantService } from 'src/game/merchant/merchant.service';
 
 @Injectable()
 export class EncounterService {
@@ -36,8 +35,6 @@ export class EncounterService {
         private readonly cardService: CardService,
         private readonly trinketService: TrinketService,
         private readonly playerService: PlayerService,
-        private readonly merchantService: MerchantService,
-
     ) { }
 
     async getRandomEncounter(
@@ -593,9 +590,8 @@ export class EncounterService {
             probabilityWeights,
         );
 
-        // await this.upgradeCard(upgradeMeCardId, playerState, client);
+        await this.upgradeCard(upgradeMeCardId, playerState, client);
         //see MerchantService
-        await this.cardFreeUpgrade(client, upgradeMeCardId);
     }
 
     private async upgradeRandomAttackCard(
@@ -619,126 +615,8 @@ export class EncounterService {
             probabilityWeights,
         );
 
-        // await this.upgradeCard(upgradeMeCardId, playerState, client);
+        await this.upgradeCard(upgradeMeCardId, playerState, client);
         //see MerchantService
-        await this.cardFreeUpgrade(client, upgradeMeCardId);
-    }
-
-
-    public async cardFreeUpgrade(
-        client: Socket,
-        selectedItem: any,
-    ): Promise<void> {
-        // First we need to get the player state with the card data
-        const playerState = await this.expeditionService.getPlayerState({
-            clientId: client.id,
-        });
-
-        // Now we get the card id from the selected item
-        const cardId = selectedItem;
-
-        // Now we query the card information to check if we can upgrade it
-        const card = await this.cardService.findOne({
-            cardId: selectedItem,
-        });
-
-
-
-
-        // Now we query the upgraded information of the card
-        const upgradedCardData = await this.cardService.findOne({
-            cardId: card.upgradedCardId,
-        });
-
-
-
-        upgradedCardData.description =
-            CardDescriptionFormatter.process(upgradedCardData);
-        this.cardService.addStatusDescriptions(upgradedCardData);
-
-        // Here we create the card object to be added to the player state
-        const upgradedCard: IExpeditionPlayerStateDeckCard = {
-            id: randomUUID(),
-            cardId: upgradedCardData.cardId,
-            name: upgradedCardData.name,
-            cardType: upgradedCardData.cardType,
-            energy: upgradedCardData.energy,
-            description: upgradedCardData.description,
-            isTemporary: false,
-            rarity: upgradedCardData.rarity,
-            properties: upgradedCardData.properties,
-            keywords: upgradedCardData.keywords,
-            showPointer: upgradedCardData.showPointer,
-            pool: upgradedCardData.pool,
-            isUpgraded: upgradedCardData.isUpgraded,
-            isActive: true,
-        };
-
-        // Now we need to remove the old card from the player state
-        const newCardDeck = filter(
-            playerState.cards,
-            ({ id }) => id !== cardId.toString(),
-        );
-
-        // Now we add the new card to the player state
-        newCardDeck.push(upgradedCard);
-
-
-
-        // Now we increase the card upgrade count
-        const newCardUpgradeCount = playerState.cardUpgradeCount + 1;
-
-        // Now we update the player state
-        await this.expeditionService.updateByFilter(
-            { clientId: client.id },
-            {
-                $set: {
-                    'playerState.cards': newCardDeck,
-                    'playerState.cardUpgradeCount': newCardUpgradeCount,
-                },
-            },
-        );
-
-        await this.success(client);
-    }
-
-    private async success(client: Socket): Promise<void> {
-        const expedition = await this.expeditionService.findOneTimeDesc({
-            userAddress: client.request.headers.useraddress
-        });
-
-        const { playerState, userAddress } = expedition || {};
-
-        client.emit(
-            'PutData',
-            StandardResponse.respond({
-                message_type: SWARMessageType.MerchantUpdate,
-                action: SWARAction.PurchaseSuccess,
-                data: null,
-            }),
-        );
-
-        client.emit(
-            'PlayerState',
-            StandardResponse.respond({
-                message_type: SWARMessageType.PlayerStateUpdate,
-                action: SWARAction.UpdatePlayerState,
-                data: {
-                    playerState: {
-                        id: playerState.userAddress,
-                        userAddress,
-                        playerName: playerState.playerName,
-                        characterClass: playerState.characterClass,
-                        hpMax: playerState.hpMax,
-                        hpCurrent: playerState.hpCurrent,
-                        gold: playerState.gold,
-                        cards: playerState.cards,
-                        potions: playerState.potions,
-                        trinkets: playerState.trinkets,
-                    },
-                },
-            }),
-        );
     }
 
     private async looseRandomPotion(client: Socket, playerState: Player): Promise<void> {

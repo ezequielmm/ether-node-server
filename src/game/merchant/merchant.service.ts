@@ -40,7 +40,6 @@ import { filter, find } from 'lodash';
 import { Node } from '../components/expedition/node';
 import { Trinket } from '../components/trinket/trinket.schema';
 import { map } from 'lodash';
-import { Integer } from 'aws-sdk/clients/signer';
 
 @Injectable()
 export class MerchantService {
