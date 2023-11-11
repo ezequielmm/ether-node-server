@@ -628,7 +628,14 @@ export class EncounterService {
         //     playerState.cards,
         //     ({ id }) => id !== cardId
         // );
+
+        console.warn("::::::::::::ARRAY DE CARTAS: " + playerState.cards + "::::::::::::::::::::::::::::::::::CARTA A ELIMINAR " + cardId + ":::::::::::::::::::::::::::::::::::::::::::::::::")
+
         const newCardDeck = this.eliminarElemento(playerState.cards, cardId);
+
+
+        console.warn("::::::::::::NUEVO ARRAY DE CARTAS: " + newCardDeck + "::::::::::::::::::::::::::::::::::::::::::::::::")
+
 
         // Now we add the new card to the player state
         newCardDeck.push(upgradedCard);
