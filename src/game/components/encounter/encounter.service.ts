@@ -580,14 +580,14 @@ export class EncounterService {
         });
 
         // Now we get the card id from the selected item
-        const cardId = selectedItem.targetId as string;
+        const cardId = selectedItem;
 
       
         
 
         // Now we query the upgraded information of the card
         const upgradedCardData = await this.cardService.findOne({
-            cardId: selectedItem,
+            cardId: selectedItem.upgradedCardId,
         });
 
         
