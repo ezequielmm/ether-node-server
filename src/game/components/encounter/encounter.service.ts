@@ -621,10 +621,11 @@ export class EncounterService {
         };
 
         // Now we need to remove the old card from the player state
-        const newCardDeck = filter(
-            playerState.cards,
-            ({ id }) => id !== cardId
-        );
+        // const newCardDeck = filter
+        //     playerState.cards,
+        //     ({ id }) => id !== cardId
+        // );
+        const newCardDeck = this.eliminarElemento(playerState.cards, cardId);
 
         // Now we add the new card to the player state
         newCardDeck.push(upgradedCard);
@@ -646,6 +647,18 @@ export class EncounterService {
 
         await this.success(client);
     }
+
+    private eliminarElemento(arr: any[], elementoAEliminar: any): any[] {
+        const indice = arr.indexOf(elementoAEliminar);
+      
+        if (indice !== -1) {
+          // Utiliza splice para eliminar el elemento en el índice encontrado
+          arr.splice(indice, 1);
+        }
+      
+        // Devuelve el array modificado
+        return arr;
+      }
 
     private async success(client: Socket): Promise<void> {
         const expedition = await this.expeditionService.findOneTimeDesc({

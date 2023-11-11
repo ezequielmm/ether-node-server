@@ -12,13 +12,13 @@ export const StoneCuttersEncounter: Encounter = {
             buttons: [
                 {
                     //- aka option 1
-                    text: '[Trade] Trade your most recently acquired Trinket for Silver Ore.',
+                    text: " [Trade] Trade your most recently acquired Trinket for Silver Ore. ",
                     nextStage: 1,
                     effects: [{ kind: 'lost_recent_trinket' },  { kind: 'trinket', item: 'birdcage' }]
                 },
                 {
                     //- aka option 1
-                    text: '[Pass Through] Nothing happens.',
+                    text: " [Pass Through] Nothing happens. ",
                     nextStage: 2,
                     effects: []
                 },

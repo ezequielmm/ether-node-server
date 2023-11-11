@@ -12,15 +12,15 @@ export const StalactiteEncounter: Encounter = {
             buttons: [
                 {
                     //- aka option 1
-                    text: '[Move Closer] Lose half of your gold. Upgrade 2 random defensive cards.',
+                    text: " [Move Closer] Lose half of your gold. Upgrade 2 random defensive cards. ",
                     nextStage: 1,
-                    effects: [{ kind: 'lost_half_gold' }, { kind: 'upgrade_random_deffensivecard', amount: '2' }]
+                    effects: [{ kind: 'lost_half_gold' }, { kind: 'upgrade_random_deffensivecard', amount: '1' }, { kind: 'upgrade_random_deffensivecard', amount: '1' }]
                 },
                 {
                     //- aka option 1
-                    text: '[Touch It] Lose half of your gold. Upgrade 2 random offensive cards.',
+                    text: " [Touch It] Lose half of your gold. Upgrade 2 random offensive cards. ",
                     nextStage: 2,
-                    effects: [{ kind: 'lost_half_gold' },  { kind: 'upgrade_random_offensivecard', amount: '2' }]
+                    effects: [{ kind: 'lost_half_gold' },  { kind: 'upgrade_random_offensivecard', amount: '1' },  { kind: 'upgrade_random_offensivecard', amount: '1' }]
                 },
             ]
         },

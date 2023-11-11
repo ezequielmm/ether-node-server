@@ -13,13 +13,13 @@ export const RoyalEmissaryEncounter: Encounter = {
             buttons: [
                 {
                     //- aka option 1
-                    text: '[Fight] “Unsheath your sword and show them you don’t take kindly to extortion.”',
+                    text: " [Fight] “Unsheath your sword and show them you don’t take kindly to extortion." ,
                     nextStage: 1,
                     effects: [{ kind: 'hp_max', amount: '-5' }]
                 },
                 {
                     //- aka option 2
-                    text: '[Pay Up] “Check your coinpurse to see if you can bribe your way past.”',
+                    text: " [Pay Up] “Check your coinpurse to see if you can bribe your way past. ",
                     nextStage: 4,
                     effects: [],
                 },
@@ -31,13 +31,13 @@ export const RoyalEmissaryEncounter: Encounter = {
             buttons: [
                 {
                     //- aka option 3
-                    text: '[Rise and Fight] Lose 5 max hp. 50% chance to Receive Crimson Codex, 50% chance to Lose all gold.',
+                    text: " [Rise and Fight] Lose 5 max hp. 50% chance to Receive Crimson Codex, 50% chance to Lose all gold. " ,
                     nextStage: getRandomItemByWeight([2, 3], [50, 50]),
                     effects: []
                 },
                 {
                     //- aka option 4
-                    text: '[Stay Prone] Lose 100 gold.',
+                    text: " [Stay Prone] Lose 100 gold. ",
                     nextStage: 5,
                     effects: [{ kind: 'coin', amount: '-100' }]
 
@@ -51,6 +51,7 @@ export const RoyalEmissaryEncounter: Encounter = {
                 {
                     //- aka option 3
                     text: 'Proceed.',
+                    nextStage: 6,
                     effects: [{ kind: 'trinket', item: 'birdcage' }]
                 }
             ]
@@ -62,6 +63,7 @@ export const RoyalEmissaryEncounter: Encounter = {
                 {
                     //- aka option 3
                     text: 'Proceed.',
+                    nextStage: 6,
                     effects: [{ kind: 'lost_all_gold' }]
                 }
             ]
@@ -72,7 +74,8 @@ export const RoyalEmissaryEncounter: Encounter = {
             buttons: [
                 {
                     //- aka option 3
-                    text: '[Pay Up] Pay 50 gold.',
+                    text: " [Pay Up] Pay 50 gold. ",
+                    nextStage: 6,
                     effects: [{ kind: 'coin', amount: '-50' }]
                 }
             ]
@@ -80,6 +83,11 @@ export const RoyalEmissaryEncounter: Encounter = {
         {
             //- 5 - Prone
             displayText: 'Your better judgment takes hold of you and you feign unconsciousness as one of the figures rifles through your things, taking off with some of your gold. Sometimes it’s better to live to fight another day. There’s always more gold, right? … Right?.',
+            buttons: []
+        },
+        {
+            //- 5 - proceed
+            displayText: 'Proceed.',
             buttons: []
         }
     ]
