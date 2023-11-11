@@ -25,6 +25,7 @@ import { CardRarityEnum, CardTypeEnum } from '../card/card.enum';
 import { Node } from '../expedition/node';
 import { filter, sample } from 'lodash';
 import { PlayerService } from '../player/player.service';
+import { Card } from '../card/card.schema';
 
 @Injectable()
 export class EncounterService {
@@ -580,14 +581,19 @@ export class EncounterService {
         });
 
         // Now we get the card id from the selected item
-        const cardId = selectedItem;
+        const cardId = selectedItem as string;
+
+        // Now we query the card information to check if we can upgrade it
+        const card = await this.cardService.findOne({
+            cardId: cardId,
+        });
 
       
         
 
         // Now we query the upgraded information of the card
         const upgradedCardData = await this.cardService.findOne({
-            cardId: selectedItem.upgradedCardId,
+            cardId: card.upgradedCardId,
         });
 
         
