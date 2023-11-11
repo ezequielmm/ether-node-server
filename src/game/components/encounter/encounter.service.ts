@@ -623,13 +623,12 @@ export class EncounterService {
         // Now we need to remove the old card from the player state
         const newCardDeck = filter(
             playerState.cards,
-            ({ id }) => id !== cardId,
+            ({ id }) => id !== selectedItem,
         );
 
         // Now we add the new card to the player state
         newCardDeck.push(upgradedCard);
 
-        
 
         // Now we increase the card upgrade count
         const newCardUpgradeCount = playerState.cardUpgradeCount + 1;
