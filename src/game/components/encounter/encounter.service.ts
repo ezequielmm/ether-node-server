@@ -707,8 +707,10 @@ export class EncounterService {
             probabilityWeights,
         );
 
-        await this.upgradeCard(upgradeMeCardId, playerState, client);
+        // await this.upgradeCard(upgradeMeCardId, playerState, client);
         //see MerchantService
+        await this.cardUpgrade(client, upgradeMeCardId);
+
     }
 
     private async upgradeRandomAttackCard(
@@ -732,8 +734,10 @@ export class EncounterService {
             probabilityWeights,
         );
 
-        await this.upgradeCard(upgradeMeCardId, playerState, client);
+        // await this.upgradeCard(upgradeMeCardId, playerState, client);
         //see MerchantService
+        await this.cardUpgrade(client, upgradeMeCardId);
+
     }
 
     private async looseRandomPotion(client: Socket, playerState: Player): Promise<void> {
