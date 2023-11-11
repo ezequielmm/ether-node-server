@@ -26,6 +26,7 @@ import { Node } from '../expedition/node';
 import { filter, sample } from 'lodash';
 import { PlayerService } from '../player/player.service';
 import { Card } from '../card/card.schema';
+import { GetPlayerState } from '../expedition/expedition.dto';
 
 @Injectable()
 export class EncounterService {
@@ -568,17 +569,19 @@ export class EncounterService {
 
         // await this.upgradeCard(upgradeMeCardId, playerState, client);
         //see MerchantService
-        await this.cardUpgrade(client, upgradeMeCardId);
+        await this.cardUpgrade(client, upgradeMeCardId, playerState);
     }
 
     private async cardUpgrade(
         client: Socket,
         selectedItem: any,
+        playerStateArg: any,
     ): Promise<void> {
-        // First we need to get the player state with the card data
-        const playerState = await this.expeditionService.getPlayerState({
-            clientId: client.id,
-        });
+        // // First we need to get the player state with the card data
+        // const playerState = await this.expeditionService.getPlayerState({
+        //     clientId: client.id,
+        // });
+        const playerState = playerStateArg;
 
         // Now we get the card id from the selected item
         const cardId = selectedItem as string;
@@ -722,7 +725,7 @@ export class EncounterService {
 
         // await this.upgradeCard(upgradeMeCardId, playerState, client);
         //see MerchantService
-        await this.cardUpgrade(client, upgradeMeCardId);
+        await this.cardUpgrade(client, upgradeMeCardId, playerState);
 
     }
 
@@ -749,7 +752,7 @@ export class EncounterService {
 
         // await this.upgradeCard(upgradeMeCardId, playerState, client);
         //see MerchantService
-        await this.cardUpgrade(client, upgradeMeCardId);
+        await this.cardUpgrade(client, upgradeMeCardId, playerState);
 
     }
 
