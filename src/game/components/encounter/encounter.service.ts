@@ -661,9 +661,9 @@ export class EncounterService {
     private eliminarElemento(arr: any[], elementoAEliminar: any): any[] {
         const indice = arr.indexOf(elementoAEliminar);
       
-        if (indice !== -1) {
+        if (elementoAEliminar !== -1) {
           // Utiliza splice para eliminar el elemento en el índice encontrado
-          arr.splice(indice, 1);
+          arr.splice(elementoAEliminar, 1);
         }
       
         // Devuelve el array modificado
