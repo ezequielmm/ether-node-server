@@ -15,7 +15,8 @@ export interface SquiresRewardResponse {
 export enum RewardType {
     Potion = 'potion',
     Trinket = 'trinket',
-    Fragment = 'fragment'
+    Fragment = 'fragment',
+    Partner = 'partner'
 }
 
 export enum MixedRewardType {

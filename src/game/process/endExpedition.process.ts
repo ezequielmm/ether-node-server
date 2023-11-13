@@ -119,8 +119,8 @@ export class EndExpeditionProcess {
             let contestIsValid = await this.contestService.isValid(ctx.expedition.contest);
         
             // Handle loot and rewards
-            if(canWin && contestIsValid){
-                await this.handleActiveEventLoot(ctx, currentStage);
+            if(contestIsValid){
+                await this.handleActiveEventLoot(ctx, currentStage, canWin);
             }else{
                 ctx.expedition.finalScore.lootbox = [];
                 ctx.expedition.finalScore.rewards = [];
@@ -146,7 +146,7 @@ export class EndExpeditionProcess {
             
             // Handle loot and rewards
             if(canWin && contestIsValid){
-                await this.handleActiveEventLoot(ctx, currentStage);
+                await this.handleActiveEventLoot(ctx, currentStage, canWin);
             }else{
                 ctx.expedition.finalScore.lootbox = [];
                 ctx.expedition.finalScore.rewards = [];
@@ -229,11 +229,55 @@ export class EndExpeditionProcess {
     
     }
 
-    private async handleActiveEventLoot(ctx: GameContext, currentStage:number) 
+    private async handleActiveEventLoot(ctx: GameContext, currentStage:number, canWinGear:boolean) 
     {
-        const isLastStage = ctx.expedition.contest.stages.length == currentStage;
+        //- Lootbox - Gears:
         const character = ctx.expedition.playerState.characterClass as CharacterClassEnum;
+        let filteredLootbox = canWinGear ? await this.getHalloweenGearVictoryItems(ctx, currentStage, character) : [];
 
+        //- Rewards (from bridge API):
+        const rewards = await this.squiresService.getAccountRewards(ctx.expedition.userAddress, ctx.expedition.playerState.equippedGear, character, currentStage);
+        
+        const potionAndTrinketReward = rewards.filter(reward => reward.type === RewardType.Potion || reward.type === RewardType.Trinket);
+        const treasureReward = rewards.filter(reward => reward.type === RewardType.Fragment);
+        const partnerReward  = rewards.filter(reward => reward.type === RewardType.Partner);
+
+        if (potionAndTrinketReward && potionAndTrinketReward.length > 0) ctx.expedition.finalScore.victoryItems.push(this.transformRewardToVictoryItem(potionAndTrinketReward))
+        if (treasureReward && treasureReward.length > 0)   ctx.expedition.finalScore.victoryItems.push(this.transformRewardToVictoryItem(treasureReward))
+        if( partnerReward && partnerReward.length > 0 )    ctx.expedition.finalScore.victoryItems.push(this.transformRewardToVictoryItem(partnerReward));
+        if (filteredLootbox && filteredLootbox.length > 0) ctx.expedition.finalScore.victoryItems.push(this.tranformGearToVictoryItem(filteredLootbox[0]))
+    }
+
+    private transformRewardToVictoryItem = (rewards: SquiresRewardResponse[]): (VictoryItem | null) => {
+        const reward = sample(rewards) || null;
+
+        if(reward){
+            return {
+                rewardType: MixedRewardType.Reward,
+                name: reward.name,
+                image: reward.image
+            }
+        }
+
+        return null;
+    }
+
+    private tranformGearToVictoryItem = (gear: Gear): VictoryItem => {
+        return {
+            rewardType:     MixedRewardType.Lootbox,
+            gearId:         gear.gearId,
+            name:           gear.name,
+            trait:          gear.trait,
+            rarity:         gear.rarity,
+            category:       gear.category,
+            isActive:       gear.isActive,
+            onlyOneAllowed: gear.onlyOneAllowed
+        }
+    }
+
+    private async getHalloweenGearVictoryItems(ctx: GameContext, currentStage:number, character:CharacterClassEnum): Promise<Gear[]> {
+
+        const isLastStage = ctx.expedition.contest.stages.length == currentStage;
         const lootboxRariry: ILootboxRarityOdds = 
             character === CharacterClassEnum.Villager 
                 ? (isLastStage ? this.lootboxRarityVillagerStage2 : this.lootboxRarityVillagerStage1) 
@@ -260,19 +304,6 @@ export class EndExpeditionProcess {
             );
         }
 
-        //- FINISH Just for Unique gears:
-
-        //- Normal Gears:
-        // const lootbox = await this.gearService.getLootbox(
-        //     ctx.expedition.playerState.lootboxSize,
-        //     ctx.expedition.playerState.lootboxRarity,
-        // );
-    
-        // await this.playerGearService.addGearToPlayer(
-        //     ctx.expedition.userAddress,
-        //     lootbox,
-        // );
-
         if(isLastStage){
             await this.playerWinService.findLastStageWinAndUpdate(ctx.expedition.contest.event_id, ctx.expedition.playerState.playerToken, currentStage, filteredLootbox);
             
@@ -284,49 +315,8 @@ export class EndExpeditionProcess {
                 lootbox: filteredLootbox,
             });
         }
-        
-        const rewards = await this.squiresService.getAccountRewards(ctx.expedition.userAddress, ctx.expedition.playerState.equippedGear, character, currentStage);
-        
-        const potionAndTrinketReward = rewards.filter(reward => reward.type === RewardType.Potion || reward.type === RewardType.Trinket);
-        const treasureReward = rewards.filter(reward => reward.type === RewardType.Fragment);
 
-        if (potionAndTrinketReward && potionAndTrinketReward.length > 0) ctx.expedition.finalScore.victoryItems.push(this.tranformRewardToVictoryItem(potionAndTrinketReward))
-        if (treasureReward && treasureReward.length > 0)   ctx.expedition.finalScore.victoryItems.push(this.tranformRewardToVictoryItem(treasureReward))
-        if (filteredLootbox && filteredLootbox.length > 0) ctx.expedition.finalScore.victoryItems.push(this.tranformGearToVictoryItem(filteredLootbox[0]))
-
-        // Solo para no romper el flujo en unity:
-        // ctx.expedition.finalScore.rewards = rewards;
-
-        console.log("Victory Items: ")
-        console.log(ctx.expedition.finalScore.victoryItems)
-        console.log("--------------------------------------------------------------------------------")
-    }
-
-    private tranformRewardToVictoryItem = (rewards: SquiresRewardResponse[]): (VictoryItem | null) => {
-        const reward = sample(rewards) || null;
-
-        if(reward){
-            return {
-                rewardType: MixedRewardType.Reward,
-                name: reward.name,
-                image: reward.image
-            }
-        }
-
-        return null;
-    }
-
-    private tranformGearToVictoryItem = (gear: Gear): VictoryItem => {
-        return {
-            rewardType:     MixedRewardType.Lootbox,
-            gearId:         gear.gearId,
-            name:           gear.name,
-            trait:          gear.trait,
-            rarity:         gear.rarity,
-            category:       gear.category,
-            isActive:       gear.isActive,
-            onlyOneAllowed: gear.onlyOneAllowed
-        }
+        return filteredLootbox;
     }
     
     // Filter out loot items that the player already has
@@ -336,9 +326,7 @@ export class EndExpeditionProcess {
         const gearByWallet = (await this.playerWinService.getAllLootByWallet(ctx.expedition.playerState.userAddress)).flat();
         allGear.push(...gearByWallet);
     
-        const filteredLootbox = lootbox.filter(lootItem => !allGear.some(allGearItem => allGearItem.gearId === lootItem.gearId));
-    
-    
+        const filteredLootbox = lootbox.filter(lootItem => !allGear.some(allGearItem => allGearItem.gearId === lootItem.gearId));    
         return filteredLootbox;
     }
     
