@@ -85,7 +85,7 @@ const AdvancedIntents: EnemyAction = {
 export const caveHomunculiMinionData: Enemy = {
     enemyId: 42,
     stage: 2,
-    selectable: true,
+    selectable: false,
     isActive: true,
     name: 'Cave Homunculi',
     type: EnemyTypeEnum.Plant,

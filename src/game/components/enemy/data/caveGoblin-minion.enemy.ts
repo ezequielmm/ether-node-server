@@ -118,7 +118,7 @@ const AdvancedIntents: EnemyAction = {
 export const caveGoblinMinionData: Enemy = {
     enemyId: 24,
     stage: 2,
-    selectable: true,
+    selectable: false,
     isActive: true,
     name: 'Cave Goblin',
     type: EnemyTypeEnum.Goblin,

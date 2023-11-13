@@ -133,7 +133,7 @@ const AdvancedIntents: EnemyAction = {
 export const moldPolypMinionData: Enemy = {
     enemyId: 45,
     stage: 2,
-    selectable: true,
+    selectable: false,
     isActive: true,
     name: 'Mold Polyp',
     type: EnemyTypeEnum.Mold,
