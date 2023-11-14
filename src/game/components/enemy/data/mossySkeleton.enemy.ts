@@ -99,7 +99,7 @@ const AdvancedIntents: EnemyAction = {
             EB.createDefenseIntent(14, EB.DEFEND_BUFF), 
             EB.createBasicBuffIntent(2, resolveStatus.name, EB.DEFEND_BUFF)
         ] },
-        { id: 10,  probability: 0.1, cooldown: 0, intents: [EB.createBreachAttack(16, EB.BRECH)] },
+        { id: 10,  probability: 0.1, cooldown: 0, intents: [EB.createBreachAttack(16, EB.BREACH)] },
         { id: 11, probability: 0.2, cooldown: 0, intents: [
             EB.createDefenseIntent(14, EB.DEFEND_DEBUFF), 
             EB.createBasicDebuffIntent(1, feebleStatus.name, EB.DEFEND_DEBUFF)
