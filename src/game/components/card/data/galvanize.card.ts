@@ -17,7 +17,7 @@ export const GalvanizeCardUpgraded: Card = {
         effects: [],
         statuses: [
             {
-                name: defenseEffect.name,
+                name: galvanize.name,
                 attachTo: CardTargetedEnum.Player,
                 args: {
                     value: 4,
@@ -44,7 +44,7 @@ export const GalvanizeCard: Card = {
         effects: [],
         statuses: [
             {
-                name: defenseEffect.name,
+                name: galvanize.name,
                 attachTo: CardTargetedEnum.Player,
                 args: {
                     value: 3,
