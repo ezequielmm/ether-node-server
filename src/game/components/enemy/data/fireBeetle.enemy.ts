@@ -89,8 +89,8 @@ const AdvancedIntents: EnemyAction = {
 export const fireBeetleData: Enemy = {
     enemyId: 29,
     stage: 2,
-    selectable: true,
-    isActive: true,
+    selectable: false,
+    isActive: false,
     name: 'Fire Beetle',
     type: EnemyTypeEnum.Insectoid,
     category: EnemyCategoryEnum.Basic,

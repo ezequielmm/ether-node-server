@@ -34,6 +34,8 @@ import { grownStatus } from './grown/constants';
 import { counteringStatus } from './countering/constants';
 import { elementalStatus } from './elemental/constants';
 import { absorbingStatus } from './absorbing/constants';
+import { mistifiedStatus } from './mistified/constants';
+import { onFireStatus } from './onFire/constants';
 
 export interface IStatusesList {
     name: string;
@@ -150,8 +152,10 @@ export class StatusGenerator {
                 return `This creature is ready to hit back, and hit back hard.`
             case absorbingStatus.name:
                 return `This creature will absorb incoming attacks and use them to heal itself.`
-            // case mistifyStatus.name:
-            //     return `Obscure and mystic powers are at work here…`
+            case mistifiedStatus.name:
+                return `Obscure and mystic powers are at work here…`
+            case onFireStatus.name:
+                return `This creature has surrounded itself in fiery flames.` 
             
             default:
                 return undefined;
