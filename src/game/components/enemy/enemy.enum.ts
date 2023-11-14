@@ -20,10 +20,8 @@ export enum EnemyCategoryEnum {
 }
 
 export enum EnemySizeEnum {
-    Tiny = 'tiny',
     Small = 'small',
     Medium = 'medium',
-    MediumWide = 'medium-wide',
     Large = 'large',
     Giant = 'giant',
 }

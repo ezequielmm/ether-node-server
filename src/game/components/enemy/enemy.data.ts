@@ -61,7 +61,6 @@ export const data: Enemy[] = [
     blueSporelingData,
     redSporelingData,
     yellowSporelingData,
-    stickMantisData,
     deepDwellerData,
     rockElementalData,
     thornWolfPupData,
@@ -88,6 +87,7 @@ export const data: Enemy[] = [
     caveHomunculiData,
     deepSorcererGreenData,
     fireBeetleData,
+    stickMantisData,
 
     caveGoblinMinionData,
     moldPolypMinionData,
