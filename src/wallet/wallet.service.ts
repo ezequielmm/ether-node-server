@@ -36,46 +36,12 @@ export class WalletService {
             (win) => win.playerToken.contractId + win.playerToken.tokenId,
         );
 
-        //- BRIDGE:
-        // const squiresResponse = await this.bridgeService.getNftsByWallet(
-        //     walletAddress,
-        //     amount
-        // );
-
-        // const nfts = await this.formatTokens(squiresResponse, event_id, win_counts);
-
-        //return nfts;
-
-        //- BRIDGE
-
-
-        //- Alchemy:
-
-        const tokenAddresses = await this.characterService.findAllContractIds();
-        const nfts = await this.nftService.listByContracts({
+        const squiresResponse = await this.bridgeService.getNftsByWallet(
             walletAddress,
-            tokenAddresses,
             amount
-        });
+        );
 
-        for await (const contract of nfts.tokens) {
-            const character = await this.characterService.getCharacterByContractId(contract.contract_address);
-            contract.characterClass = character?.characterClass ?? 'unknown';
-        
-            for await (const token of contract.tokens) {
-                token.characterClass = character?.characterClass ?? 'unknown';
-                token.adaptedImageURI = this.getHttpFromIpfsURI(token.metadata?.image);
-                token.can_play =
-                    await this.playerWinService.canPlay(
-                        event_id,
-                        contract.contract_address,
-                        token.token_id,
-                        win_counts[contract.contract_address + token.token_id] || 0,
-                    );
-            }
-            contract.tokens = sortBy(contract.tokens, [(token) => <number>token.token_id]);
-        }
-
+        const nfts = await this.formatTokens(squiresResponse, event_id, win_counts);
         return nfts;
     }
 
