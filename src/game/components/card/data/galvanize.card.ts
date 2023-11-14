@@ -14,7 +14,11 @@ export const GalvanizeCardUpgraded: Card = {
     description: `All attack actions grant 4 ${defenseEffect.name} this turn.`,
     keywords: [],
     properties: {
-        effects: [],
+        effects: [
+            {
+                effect: defenseEffect.name,
+            },
+        ],
         statuses: [
             {
                 name: galvanize.name,
@@ -41,7 +45,11 @@ export const GalvanizeCard: Card = {
     description: `All attack actions grant 3 ${defenseEffect.name} this turn.`,
     keywords: [],
     properties: {
-        effects: [],
+        effects: [
+            {
+                effect: defenseEffect.name,
+            },
+        ],
         statuses: [
             {
                 name: galvanize.name,
