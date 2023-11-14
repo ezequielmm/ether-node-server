@@ -34,6 +34,7 @@ export class MistifiedStatus implements StatusEventHandler {
         const { ctx } = dto;
         const energy = ctx.expedition.currentNode.data.player.energy;
         const newHand = ctx.expedition.currentNode.data.player.cards.hand;
+        console.log(newHand);
         //const newHand = this.cardService.shuffleArray(hand);
 
         const probNum = (newHand.length / 100);
