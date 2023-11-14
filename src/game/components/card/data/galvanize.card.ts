@@ -14,17 +14,17 @@ export const GalvanizeCardUpgraded: Card = {
     description: `All attack actions grant 4 ${defenseEffect.name} this turn.`,
     keywords: [],
     properties: {
-        effects: [],
-        statuses: [
+        effects: [
             {
-                name: galvanize.name,
-                attachTo: CardTargetedEnum.Player,
+                effect: galvanize.name,
+                target: CardTargetedEnum.Player,
                 args: {
                     value: 4,
                     counter: 1
                 },
             }
         ],
+        statuses: []
     },
     showPointer: false,
     isUpgraded: true,
@@ -41,17 +41,16 @@ export const GalvanizeCard: Card = {
     description: `All attack actions grant 3 ${defenseEffect.name} this turn.`,
     keywords: [],
     properties: {
-        effects: [],
-        statuses: [
+        effects: [
             {
-                name: galvanize.name,
-                attachTo: CardTargetedEnum.Player,
-                args: {
-                    value: 3,
-                    counter: 1
-                },
-            }
-        ],
+            effect: galvanize.name,
+            target: CardTargetedEnum.Player,
+            args: {
+                value: 3,
+                counter: 1
+            },
+        }],
+        statuses: [],
     },
     showPointer: false,
     isUpgraded: false,
