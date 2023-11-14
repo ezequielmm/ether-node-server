@@ -8,7 +8,7 @@ import { FindWeaknessCard } from '../../card/data/findWeakness.card';
 
 export const BlessedVillagerCharacter: Character = {
     name: 'Blessed Villager',
-    contractId: '0x73DdCE2656c343dc6655e76202768c703D1f540B',
+    contractId: '0x39601F84eBD4bdca3973E9140c52803855785111',
     contractIdTest: '0x689F6d82e74f082B2FA2eCd197b551C06901cBa2',
     description: 'Blessed Villager Character',
     canCompete: true,

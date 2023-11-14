@@ -42,6 +42,7 @@ import { deepSorcererGreenData } from './data/deepSorcererGreen.enemy';
 import { caveGoblinMinionData } from './data/caveGoblin-minion.enemy';
 import { moldPolypMinionData } from './data/moldPolyp-minion.enemy';
 import { caveHomunculiMinionData } from './data/caveHomunculi-minion.enemy';
+import { fireBeetleData } from './data/fireBeetle.enemy';
 
 export const data: Enemy[] = [
     sporeMongerData,
@@ -86,6 +87,7 @@ export const data: Enemy[] = [
     moldPolypData,
     caveHomunculiData,
     deepSorcererGreenData,
+    fireBeetleData,
 
     caveGoblinMinionData,
     moldPolypMinionData,

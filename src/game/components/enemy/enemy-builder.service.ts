@@ -23,6 +23,7 @@ export class EnemyBuilderService {
 
     public static ATTACK                         = "attack";
     public static ATTACK2                        = "attack_2";
+    public static ATTACK_BURN                    = "attack_burn";
     public static ATTACK_SWORD                   = "attack_sword";
     public static ATTACK_SWORD_BUFF              = "attack_sword_buff";
     public static ATTACK_ARROW_DEBUFF            = "attack_arrow_debuff";
@@ -51,7 +52,8 @@ export class EnemyBuilderService {
     public static INFECT                         = "infect";
     public static INFECT_ATTACK_SWORD            = "infect_attack_sword";
     public static INFECT_ATTACK                  = "infect_attack";
-    public static BRECH                          = "breach";
+    public static BREACH                         = "breach";
+    public static BREACH_BURN                    = "breach_burn";
     public static GROW                           = "grow";
     public static DODGE                          = "dodge";
     public static MISTIFY                        = "mistify";
@@ -68,6 +70,7 @@ export class EnemyBuilderService {
     public static SUMMON4                        = "summon_4";
     public static ATTACK_THUNDER_RED_DEBUF       = "attack_thunder_red_debuff";
     public static ATTACK_THUNDER_GREEN_DEBUFF2   = "attack_thunder_green_debuff_2";
+    public static SIGNATURE_MOVE_ATTACK          = "signature_move_attack";
     
     public static createBasicAttackIntent = (attack:number, animationId: string):EnemyIntention  => {
         return {

@@ -53,7 +53,7 @@ const BasicIntents: EnemyAction = {
 
 const AdvancedIntents: EnemyAction = {
     options: [
-        { id: 8,  probability: 0.1,  cooldown: 0, intents: [EB.createBreachAttack(12, EB.BRECH)] },
+        { id: 8,  probability: 0.1,  cooldown: 0, intents: [EB.createBreachAttack(12, EB.BREACH)] },
         { id: 9,  probability: 0.1,  cooldown: 0, intents: [
             EB.createBasicAttackIntent(17, EB.ATTACK_DEBUFF), 
             EB.createAddCardIntent(1, MoldCard, CardDestinationEnum.Draw, EB.ATTACK_DEBUFF)
