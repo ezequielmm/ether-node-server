@@ -2,8 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { PlayerWinService } from '../playerWin/playerWin.service';
 import { ContestService } from '../game/contest/contest.service';
 import { countBy, sortBy } from 'lodash';
-import { CharacterService } from 'src/game/components/character/character.service';
-import { NFTService } from 'src/nft-library/services/nft_service';
 import { BridgeService } from 'src/bridge-api/bridge.service';
 import { GetNftsByWalletResponse, TokenBridgeResponse } from 'src/bridge-api/bridge.types';
 import { ContractResponse, NFTSFormattedResponse, TokenMetadata, TokenResponse } from './wallet.types';
@@ -14,8 +12,6 @@ export class WalletService {
     constructor(
         private readonly playerWinService: PlayerWinService,
         private readonly contestService: ContestService,
-        private readonly characterService: CharacterService,
-        private readonly nftService: NFTService,
         private readonly bridgeService: BridgeService
     ) {}
 
