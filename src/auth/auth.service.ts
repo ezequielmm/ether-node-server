@@ -4,11 +4,11 @@ import {
     UnprocessableEntityException,
 } from '@nestjs/common';
 import { generateNonce, SiweMessage } from 'siwe';
-import {
-    signNonceJwt,
-    signSessionJwt,
-    verifyNonceJwt,
-} from '../utils/tokenHelpers';
+import { ConfigService } from '@nestjs/config';
+import { sign, JwtPayload, SignOptions, verify } from 'jsonwebtoken';
+import { signNonceJwt, signSessionJwt, verifyNonceJwt } from 'src/utils/tokenHelpers';
+
+
 
 export interface AuthenticateSignatureParams {
     nonceToken: JsonWebToken;
@@ -22,15 +22,19 @@ export interface AuthenticateTreasureParams {
     accessToken: string;
 }
 
+export type JwtType = 'session' | 'nonce';
 export type JsonWebToken = string;
 
 @Injectable()
 export class AuthService {
-    async authenticateSignature({
-        nonceToken,
-        message,
-        signature,
-    }: AuthenticateSignatureParams): Promise<JsonWebToken> {
+    
+    private readonly signingSecret: string;
+
+    constructor(private readonly configService:ConfigService){
+        this.signingSecret = this.configService.get<string>("JWT_SIGNER");
+    }
+
+    async authenticateSignature({nonceToken, message, signature}: AuthenticateSignatureParams): Promise<JsonWebToken> {
         const nonce = this.nonceFromToken(nonceToken);
         const siweMessage = new SiweMessage(message);
         const fields = await siweMessage.validate(signature);
@@ -56,13 +60,13 @@ export class AuthService {
 
     generateNonce(): { nonce: string; nonceToken: JsonWebToken } {
         const nonce = generateNonce();
-        const nonceToken = signNonceJwt(nonce);
+        const nonceToken = signNonceJwt(nonce, this.signingSecret);
         return { nonce, nonceToken };
     }
 
     nonceFromToken(nonceToken: JsonWebToken): string {
         try {
-            return verifyNonceJwt(nonceToken);
+            return verifyNonceJwt(nonceToken, this.signingSecret);
         } catch (error) {
             console.error('Failed to decode nonce token');
             console.error(error);
@@ -71,6 +75,6 @@ export class AuthService {
     }
 
     private generateToken(address: string): string {
-        return signSessionJwt(address);
+        return signSessionJwt(address, this.signingSecret);
     }
 }
