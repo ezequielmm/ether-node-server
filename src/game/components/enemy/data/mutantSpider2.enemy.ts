@@ -18,7 +18,7 @@ const BasicIntents: EnemyAction = {
         ] },
         { id: 3, probability: 0.2, cooldown: 0, intents:[EB.createDefenseIntent(6, EB.DEFEND)] },
         { id: 4, probability: 0.2, cooldown: 0, intents:[EB.createBasicBuffIntent(2, resolveStatus.name, EB.BUFF)] },
-        { id: 5, probability: 0.2, cooldown: 0, intents:[EB.createBreachAttack(7, EB.BRECH)] },
+        { id: 5, probability: 0.2, cooldown: 0, intents:[EB.createBreachAttack(7, EB.BREACH)] },
     ]
 }
 

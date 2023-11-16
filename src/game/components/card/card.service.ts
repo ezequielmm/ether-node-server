@@ -637,6 +637,19 @@ export class CardService {
         //await this.syncAllCardsByStatusMutatedOld(ctx,status);
     }
 
+    /*
+    shuffleArray<IExpeditionPlayerStateDeckCard>(hand: IExpeditionPlayerStateDeckCard[]): IExpeditionPlayerStateDeckCard[] {
+        const shuffledHand = [...hand];
+    
+        for (let i = shuffledHand.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [shuffledHand[i], shuffledHand[j]] = [shuffledHand[j], shuffledHand[i]];
+        }
+    
+        return shuffledHand;
+    }
+    */
+
     // async syncAllCardsByStatusMutatedOld(
     //     ctx: GameContext,
     //     status: AttachedStatus = undefined,

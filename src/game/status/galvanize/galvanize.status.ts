@@ -3,8 +3,6 @@ import { EffectService } from '../../effects/effects.service';
 import { StatusEventDTO, StatusEventHandler } from '../interfaces';
 import { StatusDecorator } from '../status.decorator';
 import { galvanize } from './constants';
-import { CardTargetedEnum } from 'src/game/components/card/card.enum';
-import { defenseEffect } from 'src/game/effects/defense/constants';
 import { EVENT_BEFORE_PLAYER_TURN_END } from 'src/game/constants';
 import { OnEvent } from '@nestjs/event-emitter';
 import { GameContext } from 'src/game/components/interfaces';
@@ -19,7 +17,6 @@ import { CombatQueueTargetEffectTypeEnum } from 'src/game/components/combatQueue
 @Injectable()
 export class GalvanizeStatus implements StatusEventHandler {
     constructor(
-        private readonly effectService: EffectService,
         private readonly playerService: PlayerService,
         private readonly statusService: StatusService,
         private readonly combatQueueService: CombatQueueService

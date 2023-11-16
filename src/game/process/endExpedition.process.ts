@@ -13,7 +13,7 @@ import { Score } from '../components/expedition/scores';
 import { InitExpeditionProcess } from './initExpedition.process';
 import { Gear } from 'src/game/components/gear/gear.schema';
 import { MixedRewardType, RewardType, SquiresRewardResponse, VictoryItem } from 'src/squires-api/squires.types';
-import { sample, some } from 'lodash';
+import { sample } from 'lodash';
 import { ILootboxRarityOdds } from '../components/gear/gear.interface';
 
 export interface IEndExpeditionProcessParameters {
@@ -39,13 +39,6 @@ export class EndExpeditionProcess {
         private readonly playerGearService:PlayerGearService,
         private readonly initExpeditionService:InitExpeditionProcess,
     ) {}
-    
-    // private halloweenGearsFilter = {
-    //     'lootbox.gearId': {
-    //         $gte: 500,
-    //         $lte: 520
-    //     },
-    // };
 
     private halloweenGearsFilter = {
         gearId: {
@@ -99,76 +92,43 @@ export class EndExpeditionProcess {
     }
 
 
-    private async handleVictory(
-        ctx: GameContext,
-        emit: boolean,
-    ): Promise<void> {
-
+    private async handleVictory(ctx: GameContext, emit: boolean): Promise<void> {
         const currentStage = ctx.expedition.currentStage;
         const isLastStage = ctx.expedition.contest.stages.length == currentStage;
 
+        //- Update the expedition status and time if ended.
         if(isLastStage){
-            // Update the expedition status and time
             this.updateExpeditionStatusAndTime(ctx);
-        
-            // Calculate the final score
-            await this.calculateStageScore(ctx, currentStage);
-        
-            // Check if the player can win and if the contest is valid
-            let canWin = await this.playerWinService.classCanWin(ctx.expedition.playerState.characterClass as CharacterClassEnum);
-            let contestIsValid = await this.contestService.isValid(ctx.expedition.contest);
-        
-            // Handle loot and rewards
-            if(canWin && contestIsValid){
-                await this.handleActiveEventLoot(ctx, currentStage);
-            }else{
-                ctx.expedition.finalScore.lootbox = [];
-                ctx.expedition.finalScore.rewards = [];
-                ctx.expedition.finalScore.victoryItems = [];
-            }
-        
-            // Save the updated expedition
-            await ctx.expedition.save();
-        
-    
-            // Notify the client, if necessary
-            if (emit) {
-                this.notifyClient(ctx);
-            }
-        }else{
-            //- Continue Expedition with the next stage:
-            await this.calculateStageScore(ctx, currentStage);
-
-
-            // Check if the player can win and if the contest is valid
-            let canWin = await this.playerWinService.classCanWin(ctx.expedition.playerState.characterClass as CharacterClassEnum);
-            let contestIsValid = await this.contestService.isValid(ctx.expedition.contest);
-            
-            // Handle loot and rewards
-            if(canWin && contestIsValid){
-                await this.handleActiveEventLoot(ctx, currentStage);
-            }else{
-                ctx.expedition.finalScore.lootbox = [];
-                ctx.expedition.finalScore.rewards = [];
-                ctx.expedition.finalScore.victoryItems = [];
-            }
-            
-            await ctx.expedition.save();
-            await this.initExpeditionService.createNextStage(ctx);
-
-            //- Message client to end combat and show score
-            if (emit){
-                ctx.client.emit(
-                    'PutData',
-                    StandardResponse.respond({
-                        message_type: SWARMessageType.EndCombat,
-                        action: SWARAction.ShowNextStage,
-                        data: null,
-                    }),
-                );
-            }
         }
+    
+        //- Calculate the final score
+        await this.calculateStageScore(ctx, currentStage);
+    
+        //- Check if the player can win and if the contest is valid
+        let canWin = await this.playerWinService.classCanWin(ctx.expedition.playerState.characterClass as CharacterClassEnum);
+        let contestIsValid = await this.contestService.isValid(ctx.expedition.contest);
+    
+        //- Handle loot and rewards
+        if(contestIsValid){
+            await this.handleActiveEventLoot(ctx, currentStage, canWin);
+        }else{
+            ctx.expedition.finalScore.lootbox = [];
+            ctx.expedition.finalScore.rewards = [];
+            ctx.expedition.finalScore.victoryItems = [];
+        }
+    
+        // Save the updated expedition
+        await ctx.expedition.save();
 
+        //- Start next Stage:
+        if(!isLastStage){
+            await this.initExpeditionService.createNextStage(ctx);
+        }
+    
+        // Notify the client, if necessary
+        if (emit) {
+            isLastStage ? this.notifyClient(ctx, SWARAction.ShowScore) : this.notifyClient(ctx, SWARAction.ShowNextStage);
+        }
     }
 
     private async calculateStageScore(ctx: GameContext, currentStage:number): Promise<void> {
@@ -229,11 +189,55 @@ export class EndExpeditionProcess {
     
     }
 
-    private async handleActiveEventLoot(ctx: GameContext, currentStage:number) 
+    private async handleActiveEventLoot(ctx: GameContext, currentStage:number, canWinGear:boolean) 
     {
-        const isLastStage = ctx.expedition.contest.stages.length == currentStage;
+        //- Lootbox - Gears:
         const character = ctx.expedition.playerState.characterClass as CharacterClassEnum;
+        let filteredLootbox = canWinGear ? await this.getHalloweenGearVictoryItems(ctx, currentStage, character) : [];
 
+        //- Rewards (from bridge API):
+        const rewards = await this.squiresService.getAccountRewards(ctx.expedition.userAddress, ctx.expedition.playerState.equippedGear, character, currentStage);
+        
+        const potionAndTrinketReward = rewards.filter(reward => reward.type === RewardType.Potion || reward.type === RewardType.Trinket);
+        const treasureReward = rewards.filter(reward => reward.type === RewardType.Fragment);
+        const partnerReward  = rewards.filter(reward => reward.type === RewardType.Partner);
+
+        if (potionAndTrinketReward && potionAndTrinketReward.length > 0) ctx.expedition.finalScore.victoryItems.push(this.transformRewardToVictoryItem(potionAndTrinketReward))
+        if (treasureReward && treasureReward.length > 0)   ctx.expedition.finalScore.victoryItems.push(this.transformRewardToVictoryItem(treasureReward))
+        if( partnerReward && partnerReward.length > 0 )    ctx.expedition.finalScore.victoryItems.push(this.transformRewardToVictoryItem(partnerReward));
+        if (filteredLootbox && filteredLootbox.length > 0) ctx.expedition.finalScore.victoryItems.push(this.tranformGearToVictoryItem(filteredLootbox[0]))
+    }
+
+    private transformRewardToVictoryItem = (rewards: SquiresRewardResponse[]): (VictoryItem | null) => {
+        const reward = sample(rewards) || null;
+
+        if(reward){
+            return {
+                rewardType: MixedRewardType.Reward,
+                name: reward.name,
+                image: reward.image
+            }
+        }
+
+        return null;
+    }
+
+    private tranformGearToVictoryItem = (gear: Gear): VictoryItem => {
+        return {
+            rewardType:     MixedRewardType.Lootbox,
+            gearId:         gear.gearId,
+            name:           gear.name,
+            trait:          gear.trait,
+            rarity:         gear.rarity,
+            category:       gear.category,
+            isActive:       gear.isActive,
+            onlyOneAllowed: gear.onlyOneAllowed
+        }
+    }
+
+    private async getHalloweenGearVictoryItems(ctx: GameContext, currentStage:number, character:CharacterClassEnum): Promise<Gear[]> {
+
+        const isLastStage = ctx.expedition.contest.stages.length == currentStage;
         const lootboxRariry: ILootboxRarityOdds = 
             character === CharacterClassEnum.Villager 
                 ? (isLastStage ? this.lootboxRarityVillagerStage2 : this.lootboxRarityVillagerStage1) 
@@ -260,19 +264,6 @@ export class EndExpeditionProcess {
             );
         }
 
-        //- FINISH Just for Unique gears:
-
-        //- Normal Gears:
-        // const lootbox = await this.gearService.getLootbox(
-        //     ctx.expedition.playerState.lootboxSize,
-        //     ctx.expedition.playerState.lootboxRarity,
-        // );
-    
-        // await this.playerGearService.addGearToPlayer(
-        //     ctx.expedition.userAddress,
-        //     lootbox,
-        // );
-
         if(isLastStage){
             await this.playerWinService.findLastStageWinAndUpdate(ctx.expedition.contest.event_id, ctx.expedition.playerState.playerToken, currentStage, filteredLootbox);
             
@@ -284,49 +275,8 @@ export class EndExpeditionProcess {
                 lootbox: filteredLootbox,
             });
         }
-        
-        const rewards = await this.squiresService.getAccountRewards(ctx.expedition.userAddress, ctx.expedition.playerState.equippedGear, character, currentStage);
-        
-        const potionAndTrinketReward = rewards.filter(reward => reward.type === RewardType.Potion || reward.type === RewardType.Trinket);
-        const treasureReward = rewards.filter(reward => reward.type === RewardType.Fragment);
 
-        if (potionAndTrinketReward && potionAndTrinketReward.length > 0) ctx.expedition.finalScore.victoryItems.push(this.tranformRewardToVictoryItem(potionAndTrinketReward))
-        if (treasureReward && treasureReward.length > 0)   ctx.expedition.finalScore.victoryItems.push(this.tranformRewardToVictoryItem(treasureReward))
-        if (filteredLootbox && filteredLootbox.length > 0) ctx.expedition.finalScore.victoryItems.push(this.tranformGearToVictoryItem(filteredLootbox[0]))
-
-        // Solo para no romper el flujo en unity:
-        // ctx.expedition.finalScore.rewards = rewards;
-
-        console.log("Victory Items: ")
-        console.log(ctx.expedition.finalScore.victoryItems)
-        console.log("--------------------------------------------------------------------------------")
-    }
-
-    private tranformRewardToVictoryItem = (rewards: SquiresRewardResponse[]): (VictoryItem | null) => {
-        const reward = sample(rewards) || null;
-
-        if(reward){
-            return {
-                rewardType: MixedRewardType.Reward,
-                name: reward.name,
-                image: reward.image
-            }
-        }
-
-        return null;
-    }
-
-    private tranformGearToVictoryItem = (gear: Gear): VictoryItem => {
-        return {
-            rewardType:     MixedRewardType.Lootbox,
-            gearId:         gear.gearId,
-            name:           gear.name,
-            trait:          gear.trait,
-            rarity:         gear.rarity,
-            category:       gear.category,
-            isActive:       gear.isActive,
-            onlyOneAllowed: gear.onlyOneAllowed
-        }
+        return filteredLootbox;
     }
     
     // Filter out loot items that the player already has
@@ -336,19 +286,17 @@ export class EndExpeditionProcess {
         const gearByWallet = (await this.playerWinService.getAllLootByWallet(ctx.expedition.playerState.userAddress)).flat();
         allGear.push(...gearByWallet);
     
-        const filteredLootbox = lootbox.filter(lootItem => !allGear.some(allGearItem => allGearItem.gearId === lootItem.gearId));
-    
-    
+        const filteredLootbox = lootbox.filter(lootItem => !allGear.some(allGearItem => allGearItem.gearId === lootItem.gearId));    
         return filteredLootbox;
     }
     
     // Notify the client
-    private notifyClient(ctx: GameContext) {
+    private notifyClient(ctx: GameContext, action: SWARAction) {
         ctx.client.emit(
             'PutData',
             StandardResponse.respond({
                 message_type: SWARMessageType.EndCombat,
-                action: SWARAction.ShowScore,
+                action: action,
                 data: null,
             }),
         );

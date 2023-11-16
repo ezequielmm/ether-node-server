@@ -1,16 +1,14 @@
+import { OwnedNft } from 'alchemy-sdk';
 import { forEach } from 'lodash';
 import { AlchemyService } from './alchemy_service';
 import { Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import { OwnedNft } from 'alchemy-sdk';
 
 @Injectable()
 export class NFTService {
 
-    constructor(private readonly alchemyService: AlchemyService, 
-                private readonly configService: ConfigService){}
+    constructor(private readonly alchemyService: AlchemyService){}
 
-    async isTokenIdFromWallet(contract:string, tokenId: number, walletAddress: string): Promise<boolean>{
+    public async isTokenIdFromWallet(contract:string, tokenId: number, walletAddress: string): Promise<boolean>{
         let NFTOwnedByWallet = false;
         const owners = await this.getOwnersForTokenAndContract(contract, tokenId);
 
@@ -24,7 +22,7 @@ export class NFTService {
         return NFTOwnedByWallet;
     }
 
-    async getOwnersForTokenAndContract(contract: string, tokenId: number): Promise<string[]> {
+    private async getOwnersForTokenAndContract(contract: string, tokenId: number): Promise<string[]> {
         try{
             return (await this.alchemyService.getInstance().nft.getOwnersForNft(contract, tokenId)).owners;
         }catch(error) {
@@ -74,7 +72,6 @@ export class NFTService {
         };
         
     }
-
 
     private loadNftsByCharacterType(tokenCollections, address:string, ownedNFTS:OwnedNft[],  amount: number){
         for(let nft of ownedNFTS){

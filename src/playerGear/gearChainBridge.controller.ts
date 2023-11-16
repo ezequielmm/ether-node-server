@@ -59,15 +59,6 @@ export class GearChainBridgeController {
         private readonly bridgeService: BridgeService
     ) { }
 
-    //todo: remove next block:
-    // private nonChainRarities = [];
-
-    // private nonChainRarityFilter = {
-    //     rarity: {
-    //         $nin: this.nonChainRarities,
-    //     },
-    // };
-
     private async checkSecurityToken(check: ITokenCheck): Promise<boolean> {
         const sharedSalt = this.configService.get<string>(
             'GEARAPI_SALT',
@@ -100,14 +91,6 @@ export class GearChainBridgeController {
 
         const { wallet, token, action, gear } = payload;
 
-        console.log("Payload:")
-        console.log("Wallet: " + wallet);
-        console.log("Gear:")
-        console.log(gear)
-        console.log("Action: " + action)
-        console.log("Token: " + token)
-        
-
         // confirm token (security layer) and get PlayerId
         if (!this.checkSecurityToken({ wallet, token })) {
             console.error('postModify: Bad Token for Wallet:', wallet);
@@ -128,9 +111,6 @@ export class GearChainBridgeController {
 
         try {
             gears = this.playerGearService.getGearByIds(gear);
-            console.log("Gears from payload gearIds: ")
-            console.log(gears)
-            console.log("------------------------------------------------------------------------------------------------------------")
         } catch (error) {
             console.error('postModify: Error fetching gears by IDs. Error:', error.message);
             throw error;
@@ -151,13 +131,6 @@ export class GearChainBridgeController {
             console.error('postModify: Error processing gears for Wallet:', wallet, 'Action:', action, 'Error:', error.message);
             throw error;
         }
-
-        console.log("New Gear:")
-        console.log(newGear)
-        console.log("------------------------------------------------------------------------------------------------------------")
-        console.log("Method finish")
-        console.log("------------------------------------------------------------------------------------------------------------")
-        console.log("------------------------------------------------------------------------------------------------------------")
 
         return {
             oldGear: playerGear,

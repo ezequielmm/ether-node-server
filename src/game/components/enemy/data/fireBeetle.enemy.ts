@@ -4,55 +4,92 @@ import { resolveStatus } from 'src/game/status/resolve/constants';
 import { feebleStatus } from 'src/game/status/feeble/constants';
 import { fatigue } from 'src/game/status/fatigue/constants';
 import { EnemyAction, EnemyIntention } from '../enemy.interface';
-import { EnemyBuilderService } from '../enemy-builder.service';
+import { EnemyBuilderService as EB } from '../enemy-builder.service';
+import { burn } from 'src/game/status/burn/constants';
+import { onFireStatus } from 'src/game/status/onFire/constants';
+import { attachStatusEffect } from 'src/game/effects/attachStatus/constants';
+import { CardTargetedEnum } from '../../card/card.enum';
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------------
 //- Intents:
 //-------------------------------------------------------------------------------------------------------------------------------------------------------
 
-// const BasicAttack:     EnemyIntention = EnemyBuilderService.createBasicAttackIntent(8);
-// const BasicDefense:    EnemyIntention = EnemyBuilderService.createDefenseIntent(11);
-// const BuffResolve:     EnemyIntention = EnemyBuilderService.createBasicBuffIntent(2, resolveStatus.name);
-// const DebufFeeble:    EnemyIntention = EnemyBuilderService.createBasicDebuffIntent(2, feebleStatus.name);
-// const DebuffFatigue:    EnemyIntention = EnemyBuilderService.createBasicDebuffIntent(2, fatigue.name);
-/*
-TODO: 
-- Burn intent with 'Deal 1 Burn'
-- signature move intent whit '3 self-Immolation' action  
-*/
+const getSignatureMove = (onFireCounter:number, animationId:string):EnemyIntention => {
+    return {
+        name: "Self-Immolation",
+        type: EnemyIntentionType.Signature,
+        target: CardTargetedEnum.Player,
+        value: onFireCounter,
+        negateDamage: 8,
+        effects: [
+            {
+                effect: attachStatusEffect.name,
+                target: CardTargetedEnum.Player,
+                args: {
+                    statusName: onFireStatus.name,
+                    statusArgs: {
+                        counter: onFireCounter,
+                    },
+                },
+                action: {
+                    name: animationId,
+                    hint: animationId,
+                },
+            },
+        ],
+    }
+}
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------------
 //- Attack Tables:
 //-------------------------------------------------------------------------------------------------------------------------------------------------------
 const BasicIntents: EnemyAction = {
     options:[
-        // { id: 1, probability: 0.3, cooldown: 0, intents: [BasicAttack] },
-        //{ id: 2, probability: 0.3, cooldown: 0, intents: [BasicAttack, Burn] },
-        // { id: 3, probability: 0.1, cooldown: 0, intents: [BasicDefense] },
-        // { id: 4, probability: 0.1, cooldown: 0, intents: [BuffResolve] },
-        // { id: 5, probability: 0.1, cooldown: 0, intents: [DebufFeeble] },
-        //{ id: 6, probability: 0.1, cooldown: 0, intents: [SignatureMove] },
-
+        { id: 1, probability: 0.3, cooldown: 0, intents: [EB.createBasicAttackIntent(8, EB.ATTACK)] },
+        { id: 2, probability: 0.3, cooldown: 0, intents: [
+            EB.createBasicAttackIntent(8, EB.ATTACK_BURN), 
+            EB.createBasicDebuffIntent(1, burn.name, EB.ATTACK_BURN)
+        ]},
+        { id: 3, probability: 0.1, cooldown: 0, intents: [EB.createDefenseIntent(11, EB.DEFEND)] },
+        { id: 4, probability: 0.1, cooldown: 0, intents: [EB.createBasicBuffIntent(2, resolveStatus.name, EB.BUFF)] },
+        { id: 5, probability: 0.1, cooldown: 0, intents: [EB.createBasicDebuffIntent(2, feebleStatus.name, EB.DEBUFF)] },
+        { id: 6, probability: 0.1, cooldown: 0, intents: [getSignatureMove(3, EB.SIGNATURE_MOVE)] },
     ]
 }
 
 const AdvancedIntents: EnemyAction = {
     options: [
-        //{ id: 7,  probability: 0.3, cooldown: 0, intents: [Breach, Burn] },
-        // { id: 8,  probability: 0.2, cooldown: 0, intents: [BasicAttack, BuffResolve] },
-        // { id: 9,  probability: 0.2, cooldown: 0, intents: [BasicDefense, BuffResolve] },
-        // { id: 9, probability: 0.2, cooldown: 0, intents: [BasicDefense, DebuffFatigue] },
-        //{ id: 9, probability: 0.1, cooldown: 0, intents: [signatureMove, BasicAttack, Burn] },
+        { id: 7,  probability: 0.3, cooldown: 0, intents: [
+            EB.createBreachAttack(8, EB.BREACH_BURN), 
+            EB.createBasicDebuffIntent(1, burn.name, EB.ATTACK_BURN)
+        ]},
+        { id: 8,  probability: 0.2, cooldown: 0, intents: [
+            EB.createBasicAttackIntent(11, EB.ATTACK_BUFF), 
+            EB.createBasicBuffIntent(2, resolveStatus.name, EB.ATTACK_BUFF)
+        ]},
+        { id: 9,  probability: 0.2, cooldown: 0, intents: [
+            EB.createDefenseIntent(14, EB.DEFEND_BUFF), 
+            EB.createBasicBuffIntent(2, resolveStatus.name, EB.DEFEND_BUFF)
+        ]},
+        { id: 10, probability: 0.2, cooldown: 0, intents: [
+            EB.createDefenseIntent(14, EB.DEFEND_DEBUFF), 
+            EB.createBasicDebuffIntent(2, fatigue.name, EB.DEFEND_DEBUFF)
+        ]},
+        { id: 11, probability: 0.1, cooldown: 0, intents: [
+            getSignatureMove(5, EB.SIGNATURE_MOVE_ATTACK),
+            EB.createBasicAttackIntent(8, EB.SIGNATURE_MOVE_ATTACK), , 
+            EB.createBasicDebuffIntent(3, burn.name, EB.SIGNATURE_MOVE_ATTACK)
+        ]},
     ]
 }
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------------
 //- Enemy:
 //-------------------------------------------------------------------------------------------------------------------------------------------------------
-export const fireBeetle: Enemy = {
+export const fireBeetleData: Enemy = {
     enemyId: 29,
     stage: 2,
-    selectable: true,
+    selectable: false,
     isActive: false,
     name: 'Fire Beetle',
     type: EnemyTypeEnum.Insectoid,

@@ -21,10 +21,12 @@ import { IExpeditionPlayerStateDeckCard } from '../expedition/expedition.interfa
 import { randomUUID } from 'crypto';
 import { CardDescriptionFormatter } from '../../cardDescriptionFormatter/cardDescriptionFormatter';
 import { Player } from '../expedition/player';
-import { CardRarityEnum } from '../card/card.enum';
+import { CardRarityEnum, CardTypeEnum } from '../card/card.enum';
 import { Node } from '../expedition/node';
 import { filter, sample } from 'lodash';
 import { PlayerService } from '../player/player.service';
+import { Card } from '../card/card.schema';
+import { GetPlayerState } from '../expedition/expedition.dto';
 
 @Injectable()
 export class EncounterService {
@@ -35,7 +37,7 @@ export class EncounterService {
         private readonly cardService: CardService,
         private readonly trinketService: TrinketService,
         private readonly playerService: PlayerService,
-    ) {}
+    ) { }
 
     async getRandomEncounter(
         excludeIfPossible?: number[],
@@ -182,7 +184,23 @@ export class EncounterService {
                 case 'coin': //eg nagpra
                     ctx.expedition.playerState.gold = Math.min(
                         ctx.expedition.playerState.gold +
-                            parseInt(effect.amount),
+                        parseInt(effect.amount),
+                        0,
+                    );
+                    ctx.expedition.markModified('playerState.gold');
+                    break;
+                case 'lost_all_gold': //eg nagpra
+                    ctx.expedition.playerState.gold = Math.min(
+                        ctx.expedition.playerState.gold -
+                        ctx.expedition.playerState.gold,
+                        0,
+                    );
+                    ctx.expedition.markModified('playerState.gold');
+                    break;
+                case 'lost_half_gold': //eg nagpra
+                    ctx.expedition.playerState.gold = Math.min(
+                        ctx.expedition.playerState.gold -
+                        (ctx.expedition.playerState.gold / 2),
                         0,
                     );
                     ctx.expedition.markModified('playerState.gold');
@@ -211,7 +229,7 @@ export class EncounterService {
                     break;
                 case 'hit_points_avoid_dead': //eg cave in
                     let damage = effect.amount;
-                    if(ctx.expedition.playerState.hpCurrent <= Math.abs(parseInt(damage))){
+                    if (ctx.expedition.playerState.hpCurrent <= Math.abs(parseInt(damage))) {
                         damage = (-1 * (ctx.expedition.playerState.hpCurrent - 1));
                     }
                     await this.playerService.setHPDelta({
@@ -225,8 +243,26 @@ export class EncounterService {
                         ctx.expedition.playerState,
                     );
                     break;
+                case 'lost_recent_trinket': //eg cave in
+                    await this.looseRecentTrinket(
+                        ctx.client,
+                        ctx.expedition.playerState,
+                    );
+                    break;
                 case 'upgrade_random_card': //eg will o wisp
                     await this.upgradeRandomCard(
+                        ctx.client,
+                        ctx.expedition.playerState,
+                    );
+                    break;
+                case 'upgrade_random_deffensivecard': //eg will o wisp
+                    await this.upgradeRandomDefensiveCard(
+                        ctx.client,
+                        ctx.expedition.playerState,
+                    );
+                    break;
+                case 'upgrade_random_offensivecard': //eg will o wisp
+                    await this.upgradeRandomAttackCard(
                         ctx.client,
                         ctx.expedition.playerState,
                     );
@@ -531,12 +567,204 @@ export class EncounterService {
             probabilityWeights,
         );
 
-        await this.upgradeCard(upgradeMeCardId, playerState, client);
+        // await this.upgradeCard(upgradeMeCardId, playerState, client);
         //see MerchantService
+        await this.cardUpgrade(client, upgradeMeCardId, playerState);
+    }
+
+    private async cardUpgrade(
+        client: Socket,
+        selectedItem: any,
+        playerStateArg: any,
+    ): Promise<void> {
+        // // First we need to get the player state with the card data
+        // const playerState = await this.expeditionService.getPlayerState({
+        //     clientId: client.id,
+        // });
+        const playerState = playerStateArg;
+
+        // Now we get the card id from the selected item
+        const cardId = selectedItem as string;
+
+        // Now we query the card information to check if we can upgrade it
+        const card = await this.cardService.findOne({
+            cardId: cardId,
+        });
+
+      
+        
+
+        // Now we query the upgraded information of the card
+        const upgradedCardData = await this.cardService.findOne({
+            cardId: card.upgradedCardId,
+        });
+
+        
+
+        upgradedCardData.description =
+            CardDescriptionFormatter.process(upgradedCardData);
+        this.cardService.addStatusDescriptions(upgradedCardData);
+
+        // Here we create the card object to be added to the player state
+        const upgradedCard: IExpeditionPlayerStateDeckCard = {
+            id: randomUUID(),
+            cardId: upgradedCardData.cardId,
+            name: upgradedCardData.name,
+            cardType: upgradedCardData.cardType,
+            energy: upgradedCardData.energy,
+            description: upgradedCardData.description,
+            isTemporary: false,
+            rarity: upgradedCardData.rarity,
+            properties: upgradedCardData.properties,
+            keywords: upgradedCardData.keywords,
+            showPointer: upgradedCardData.showPointer,
+            pool: upgradedCardData.pool,
+            isUpgraded: upgradedCardData.isUpgraded,
+            isActive: true,
+        };
+
+        // Now we need to remove the old card from the player state
+        // const newCardDeck = filter
+        //     playerState.cards,
+        //     ({ id }) => id !== cardId
+        // );
+
+        console.warn("::::::::::::ARRAY DE CARTAS: " + playerState.cards + "::::::::::::::::::::::::::::::::::CARTA A ELIMINAR " + cardId + ":::::::::::::::::::::::::::::::::::::::::::::::::")
+
+        const newCardDeck = this.eliminarElemento(playerState.cards, cardId);
+
+
+        console.warn("::::::::::::NUEVO ARRAY DE CARTAS: " + newCardDeck + "::::::::::::::::::::::::::::::::::::::::::::::::")
+
+
+        // Now we add the new card to the player state
+        newCardDeck.push(upgradedCard);
+
+
+        // Now we increase the card upgrade count
+        const newCardUpgradeCount = playerState.cardUpgradeCount + 1;
+
+        // Now we update the player state
+        await this.expeditionService.updateByFilter(
+            { clientId: client.id },
+            {
+                $set: {
+                    'playerState.cards': newCardDeck,
+                    'playerState.cardUpgradeCount': newCardUpgradeCount,
+                },
+            },
+        );
+
+        await this.success(client);
+    }
+
+    private eliminarElemento(arr: any[], elementoAEliminar: any): any[] {
+        const indice = (elementoAEliminar + 1);
+      
+        if (indice !== -1) {
+          // Utiliza splice para eliminar el elemento en el índice encontrado
+          arr.splice(indice, 1);
+        }
+      
+        // Devuelve el array modificado
+        return arr;
+      }
+
+    private async success(client: Socket): Promise<void> {
+        const expedition = await this.expeditionService.findOneTimeDesc({
+            userAddress: client.request.headers.useraddress
+        });
+
+        const { playerState, userAddress } = expedition || {};
+
+        client.emit(
+            'PutData',
+            StandardResponse.respond({
+                message_type: SWARMessageType.MerchantUpdate,
+                action: SWARAction.PurchaseSuccess,
+                data: null,
+            }),
+        );
+
+        client.emit(
+            'PlayerState',
+            StandardResponse.respond({
+                message_type: SWARMessageType.PlayerStateUpdate,
+                action: SWARAction.UpdatePlayerState,
+                data: {
+                    playerState: {
+                        id: playerState.userAddress,
+                        userAddress,
+                        playerName: playerState.playerName,
+                        characterClass: playerState.characterClass,
+                        hpMax: playerState.hpMax,
+                        hpCurrent: playerState.hpCurrent,
+                        gold: playerState.gold,
+                        cards: playerState.cards,
+                        potions: playerState.potions,
+                        trinkets: playerState.trinkets,
+                    },
+                },
+            }),
+        );
+    }
+
+    private async upgradeRandomDefensiveCard(
+        client: Socket,
+        playerState: Player,
+    ): Promise<void> {
+        const cardIds: number[] = [];
+        const probabilityWeights: number[] = [];
+
+        for (const card of playerState.cards) {
+            if (!card.isUpgraded && card.upgradedCardId && card.cardType == CardTypeEnum.Defend) {
+                cardIds.push(card.cardId);
+                probabilityWeights.push(1);
+            }
+        }
+
+        if (cardIds.length == 0) return; // no cards qualify for upgrade
+
+        const upgradeMeCardId = getRandomItemByWeight(
+            cardIds,
+            probabilityWeights,
+        );
+
+        // await this.upgradeCard(upgradeMeCardId, playerState, client);
+        //see MerchantService
+        await this.cardUpgrade(client, upgradeMeCardId, playerState);
+
+    }
+
+    private async upgradeRandomAttackCard(
+        client: Socket,
+        playerState: Player,
+    ): Promise<void> {
+        const cardIds: number[] = [];
+        const probabilityWeights: number[] = [];
+
+        for (const card of playerState.cards) {
+            if (!card.isUpgraded && card.upgradedCardId && card.cardType == CardTypeEnum.Attack) {
+                cardIds.push(card.cardId);
+                probabilityWeights.push(1);
+            }
+        }
+
+        if (cardIds.length == 0) return; // no cards qualify for upgrade
+
+        const upgradeMeCardId = getRandomItemByWeight(
+            cardIds,
+            probabilityWeights,
+        );
+
+        // await this.upgradeCard(upgradeMeCardId, playerState, client);
+        //see MerchantService
+        await this.cardUpgrade(client, upgradeMeCardId, playerState);
+
     }
 
     private async looseRandomPotion(client: Socket, playerState: Player): Promise<void> {
-        const potionsIds:         number[] = [];
+        const potionsIds: number[] = [];
         const probabilityWeights: number[] = [];
 
         for (const potion of playerState.potions) {
@@ -570,12 +798,52 @@ export class EncounterService {
         });
 
         await this.expeditionService.updateByFilter(
-            { clientId: client.id }, 
+            { clientId: client.id },
             {
                 $set: {
                     'playerState.potions': newPotions,
                 }
+            });
+    }
+
+    private async looseRecentTrinket(client: Socket, playerState: Player): Promise<void> {
+        const trinketsIds: number[] = [];
+        const probabilityWeights: number[] = [];
+
+        if (trinketsIds.length == 0) return; // no trinkets
+
+        const lastTrinketsId = playerState.trinkets[trinketsIds.length - 1].trinketId;
+
+        // const looseMeTrinketId = getRandomItemByWeight(
+        //     trinketsIds,
+        //     probabilityWeights,
+        // );
+
+        console.log("Trinket recent to loose:")
+        // console.log(looseMeTrinketId)
+
+        await this.looseTrinket(lastTrinketsId, playerState, client);
+    }
+
+    async looseTrinket(trinketId: string | number, playerState: Player, client: Socket): Promise<void> {
+        let hasLostOne = false;
+
+        const newTrinkets = playerState.trinkets.filter((item) => {
+            if (item.trinketId == trinketId && !hasLostOne) {
+                hasLostOne = true;
+                return false;
+            } else {
+                return true;
+            }
         });
+
+        await this.expeditionService.updateByFilter(
+            { clientId: client.id },
+            {
+                $set: {
+                    'playerState.trinkets': newTrinkets,
+                }
+            });
     }
 
     async getByEncounterId(encounterId: number): Promise<Encounter> {

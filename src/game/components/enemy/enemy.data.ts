@@ -39,6 +39,10 @@ import { mossyArcherData } from './data/mossyArcher.enemy';
 import { moldPolypData } from './data/moldPolyp.enemy';
 import { caveHomunculiData } from './data/caveHomunculi.enemy';
 import { deepSorcererGreenData } from './data/deepSorcererGreen.enemy';
+import { caveGoblinMinionData } from './data/caveGoblin-minion.enemy';
+import { moldPolypMinionData } from './data/moldPolyp-minion.enemy';
+import { caveHomunculiMinionData } from './data/caveHomunculi-minion.enemy';
+import { fireBeetleData } from './data/fireBeetle.enemy';
 
 export const data: Enemy[] = [
     sporeMongerData,
@@ -57,7 +61,6 @@ export const data: Enemy[] = [
     blueSporelingData,
     redSporelingData,
     yellowSporelingData,
-    stickMantisData,
     deepDwellerData,
     rockElementalData,
     thornWolfPupData,
@@ -82,5 +85,11 @@ export const data: Enemy[] = [
     mossyArcherData,
     moldPolypData,
     caveHomunculiData,
-    deepSorcererGreenData
+    deepSorcererGreenData,
+    fireBeetleData,
+    stickMantisData,
+
+    caveGoblinMinionData,
+    moldPolypMinionData,
+    caveHomunculiMinionData
 ];
