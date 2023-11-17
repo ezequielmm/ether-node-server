@@ -32,6 +32,7 @@ export interface IExpeditionCurrentNodeDataEnemy {
     size: EnemySizeEnum;
     hpCurrent: number;
     hpMax: number;
+    line: LinePosition,
     statuses: {
         [StatusType.Buff]: AttachedStatus[];
         [StatusType.Debuff]: AttachedStatus[];
@@ -47,6 +48,11 @@ export interface IExpeditionCurrentNodeDataEnemy {
 export interface IntentCooldown {
     idIntent: number;
     cooldown: number;
+}
+
+export enum LinePosition {
+    Back  = 0,
+    Front = 1
 }
 
 export interface BaseReward {

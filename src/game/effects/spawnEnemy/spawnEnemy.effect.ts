@@ -24,6 +24,8 @@ import { EffectDTO, EffectHandler } from '../effects.interface';
 import { spawnEnemyEffect } from './contants';
 import { Enemy } from 'src/game/components/enemy/enemy.schema';
 import { EnemyBuilderService } from 'src/game/components/enemy/enemy-builder.service';
+import { CombatService } from 'src/game/combat/combat.service';
+import { GameContext } from 'src/game/components/interfaces';
 
 export interface SpawnEnemyArgs {
     enemiesToSpawn: number[];
@@ -36,7 +38,8 @@ export interface SpawnEnemyArgs {
 export class SpawnEnemyEffect implements EffectHandler {
     
     constructor(private readonly enemyService: EnemyService,
-                private readonly expeditionService: ExpeditionService) {}
+                private readonly expeditionService: ExpeditionService,
+                private readonly combatService:CombatService) {}
 
 
     async handle(dto: EffectDTO<SpawnEnemyArgs>): Promise<void> {
@@ -44,12 +47,6 @@ export class SpawnEnemyEffect implements EffectHandler {
         const ctx            = dto.ctx;
         const enemies        = dto.ctx.expedition.currentNode.data.enemies;
         let enemiesToSpawn = dto.args.enemiesToSpawn;
-
-        const enemiesCount = this.enemyService.getLiving(ctx).length;
-        if(enemiesCount >= 5){
-            console.log("Too many enemies in combat to spawn")
-            return;
-        }
 
         // First we check if the current combat has any sporelings alive,
         // only spawn in when there are no sporelings (this is temporary)
@@ -77,7 +74,7 @@ export class SpawnEnemyEffect implements EffectHandler {
             // We only need to add new sporelings if there are no more alive
 
             if (!combatHasSporelings)
-                await this.spawnEnemies(enemiesToSpawn, enemies, ctx.client);
+                await this.spawnEnemies(enemiesToSpawn, ctx);
         } else if (combatHasThornWolf) {
             // Now if we have a thornwolf, we check if we have any thornwolf pups alive
             const combatHasThornWolfPups = combatHasThornWolf
@@ -91,14 +88,14 @@ export class SpawnEnemyEffect implements EffectHandler {
                 : false;
 
             if (!combatHasThornWolfPups)
-                await this.spawnEnemies(enemiesToSpawn, enemies, ctx.client);
+                await this.spawnEnemies(enemiesToSpawn, ctx);
         } 
         else {
-            await this.spawnEnemies(enemiesToSpawn, enemies, ctx.client);
+            await this.spawnEnemies(enemiesToSpawn, ctx);
         }
     }
 
-    private async spawnEnemies(enemiesToSpawn: number[], enemies: IExpeditionCurrentNodeDataEnemy[], client: Socket): Promise<void> {
+    private async spawnEnemies(enemiesToSpawn: number[], ctx:GameContext): Promise<void> {
         // Next we check the enemies that we are going to spawn in
         // during combat and get their information from the database
         const enemiesFromDB = await this.enemyService.findEnemiesById(
@@ -123,44 +120,51 @@ export class SpawnEnemyEffect implements EffectHandler {
             },
         );
 
-        enemies.unshift(...enemiesToAdd); // push new enemies to front of array instead of end, for frontend purposes.
+        const enemiesAlive = this.enemyService.getLiving(ctx);
+        const currentNodeEnemies = enemiesAlive.map(enemy => enemy.value)
+        const canSpawnEnemy = this.combatService.hasSpaceToSpawnEnemy(currentNodeEnemies, enemiesToAdd);
 
-        client.emit(
-            'PutData',
-            StandardResponse.respond({
-                message_type: SWARMessageType.CombatUpdate,
-                action: SWARAction.SpawnEnemies,
-                data: enemiesToAdd,
-            }),
-        );
-
-        await this.expeditionService.updateByFilter(
-            {
-                clientId: client.id,
-                status: ExpeditionStatusEnum.InProgress,
-            },
-            { $set: { 'currentNode.data.enemies': enemies } },
-        );
-
-        // Now we generate a new ctx to generate the new enemy intentions
-        const newCtx = await this.expeditionService.getGameContext(client);
-
-        // Now we generate the new intentions, always going to the initial 0 state
-        enemiesFromDB.forEach(async (enemy) => {
-            if(enemy.scripts && enemy.scripts.length > 0){
-                await this.enemyService.setCurrentScript(
-                    newCtx,
-                    enemy.enemyId,
-                    enemy.scripts[0],
-                );
-            }else if(enemy.attackLevels){
-                await this.enemyService.setCurrentScript(
-                    newCtx,
-                    enemy.enemyId,
-                    {id: 0, intentions: [EnemyBuilderService.createDoNothingIntent()]},
-                );
-            }
-        });
+        if(canSpawnEnemy){
+            const newEnemiesList = currentNodeEnemies.concat(enemiesToAdd);
+            const sortedEnemiesByLine = this.combatService.sortEnemiesByLine(newEnemiesList);
+    
+            ctx.client.emit(
+                'PutData',
+                StandardResponse.respond({
+                    message_type: SWARMessageType.CombatUpdate,
+                    action: SWARAction.SpawnEnemies,
+                    data: enemiesToAdd,
+                }),
+            );
+    
+            await this.expeditionService.updateByFilter(
+                {
+                    clientId: ctx.client.id,
+                    status: ExpeditionStatusEnum.InProgress,
+                },
+                { $set: { 'currentNode.data.enemies': sortedEnemiesByLine } },
+            );
+    
+            // Now we generate a new ctx to generate the new enemy intentions
+            const newCtx = await this.expeditionService.getGameContext(ctx.client);
+    
+            // Now we generate the new intentions, always going to the initial 0 state
+            enemiesFromDB.forEach(async (enemy) => {
+                if(enemy.scripts && enemy.scripts.length > 0){
+                    await this.enemyService.setCurrentScript(
+                        newCtx,
+                        enemy.enemyId,
+                        enemy.scripts[0],
+                    );
+                }else if(enemy.attackLevels){
+                    await this.enemyService.setCurrentScript(
+                        newCtx,
+                        enemy.enemyId,
+                        {id: 0, intentions: [EnemyBuilderService.createDoNothingIntent()]},
+                    );
+                }
+            });
+        }
 
     }
 
@@ -180,6 +184,7 @@ export class SpawnEnemyEffect implements EffectHandler {
                 defense: 0,
                 hpCurrent: newHealth,
                 hpMax: newHealth,
+                line: 0,
                 statuses: {
                     [StatusType.Buff]: [],
                     [StatusType.Debuff]: [],
@@ -199,6 +204,7 @@ export class SpawnEnemyEffect implements EffectHandler {
                 defense: 0,
                 hpCurrent: newHealth,
                 hpMax: newHealth,
+                line: 0,
                 statuses: {
                     [StatusType.Buff]: [],
                     [StatusType.Debuff]: [],
