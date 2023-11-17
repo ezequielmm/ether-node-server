@@ -147,6 +147,7 @@ export class EnemyService {
             defense: 0,
             hpCurrent: newHealth,
             hpMax: newHealth,
+            line: 0,
             statuses: {
                 [StatusType.Buff]: [],
                 [StatusType.Debuff]: [],
@@ -176,6 +177,7 @@ export class EnemyService {
             defense: 0,
             hpCurrent: newHealth,
             hpMax: newHealth,
+            line: 0,
             statuses: {
                 [StatusType.Buff]: buffs,
                 [StatusType.Debuff]: debuffs,
