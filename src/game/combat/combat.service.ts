@@ -112,7 +112,7 @@ export class CombatService {
 
         const shuffledCards = shuffle(cards);
         const handCards = takeRight(shuffledCards, initialHandPileSize);
-
+        console.log('PASE POR ACA');
         const drawCards = removeCardsFromPile({
             originalPile: shuffledCards,
             cardsToRemove: handCards,
