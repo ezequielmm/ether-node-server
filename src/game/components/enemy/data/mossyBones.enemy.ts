@@ -39,33 +39,33 @@ const getSignatureMove = (animationId:string):EnemyIntention => {
 const BasicIntents: EnemyAction = {
     options:[
         { id: 1, probability: 0.3, cooldown: 0, intents: [EB.createBasicAttackIntent(10, EB.ATTACK)] },
-        { id: 3, probability: 0.1, cooldown: 0, intents: [EB.createDefenseIntent(12, EB.DEFEND)] },
-        { id: 4, probability: 0.2, cooldown: 0, intents: [EB.createBasicBuffIntent(1, resolveStatus.name, EB.BUFF)] },
-        { id: 5, probability: 0.1, cooldown: 0, intents: [EB.createBasicDebuffIntent(1, fatigue.name, EB.DEBUFF)] },
-        { id: 6, probability: 0.3, cooldown: 0, intents: [EB.createBasicDebuffIntent(2, feebleStatus.name, EB.DEBUFF2)] }
+        { id: 2, probability: 0.1, cooldown: 0, intents: [EB.createDefenseIntent(12, EB.DEFEND)] },
+        { id: 3, probability: 0.2, cooldown: 0, intents: [EB.createBasicBuffIntent(1, resolveStatus.name, EB.BUFF)] },
+        { id: 4, probability: 0.1, cooldown: 0, intents: [EB.createBasicDebuffIntent(1, fatigue.name, EB.DEBUFF)] },
+        { id: 5, probability: 0.3, cooldown: 0, intents: [EB.createBasicDebuffIntent(2, feebleStatus.name, EB.DEBUFF2)] }
     ]
 }
 
 const AdvancedIntents: EnemyAction = {
     options: [
-        { id: 7,  probability: 0.1, cooldown: 0, intents: [
+        { id: 6,  probability: 0.1, cooldown: 0, intents: [
             EB.createBasicAttackIntent(10, EB.ATTACK_BUFF), 
             EB.createBasicBuffIntent(1, resolveStatus.name, EB.ATTACK_BUFF)
         ] },
-        { id: 8,  probability: 0.1, cooldown: 0, intents: [
+        { id: 7,  probability: 0.1, cooldown: 0, intents: [
             EB.createBasicAttackIntent(10, EB.ATTACK_DEBUFF), 
             EB.createBasicDebuffIntent(2, feebleStatus.name, EB.ATTACK_DEBUFF)
         ] },
-        { id: 9,  probability: 0.1, cooldown: 0, intents: [
+        { id: 8,  probability: 0.1, cooldown: 0, intents: [
             EB.createDefenseIntent(12, EB.DEFEND_BUFF), 
             EB.createBasicBuffIntent(1, resolveStatus.name, EB.DEFEND_BUFF)
         ] },
-        { id: 10, probability: 0.2, cooldown: 0, intents: [
+        { id: 9, probability: 0.2, cooldown: 0, intents: [
             EB.createDefenseIntent(12, EB.DEFEND_DEBUFF), 
             EB.createAddCardIntent(2, PoisonedCard, CardDestinationEnum.Draw, EB.DEFEND_DEBUFF)
         ] },
-        { id: 11, probability: 0.2, cooldown: 0, intents: [EB.createInfectIntent(9, 1, EB.INFECT)] },
-        { id: 12, probability: 0.3, cooldown: 0, intents: [getSignatureMove(EB.SIGNATURE_MOVE)] }
+        { id: 10, probability: 0.2, cooldown: 0, intents: [EB.createInfectIntent(9, 1, EB.INFECT)] },
+        { id: 11, probability: 0.3, cooldown: 0, intents: [getSignatureMove(EB.SIGNATURE_MOVE)] }
     ]
 }
 
