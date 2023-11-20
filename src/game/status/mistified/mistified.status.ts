@@ -41,6 +41,7 @@ export class MistifiedStatus implements StatusEventHandler {
         console.log(probNum);
         let probability : number[] = [];
 
+        
         newHand.forEach(card =>{
             probability.push(probNum);
         });
