@@ -12,11 +12,10 @@ import { ExpeditionService } from '../components/expedition/expedition.service';
 import { SettingsService } from '../components/settings/settings.service';
 import { GearItem } from '../../playerGear/gearItem';
 import { Contest } from '../contest/contest.schema';
-import { Expedition, IPlayerToken } from '../components/expedition/expedition.schema';
+import { IPlayerToken } from '../components/expedition/expedition.schema';
 import { ContestMapService } from '../contestMap/contestMap.service';
 import { MapDeckService } from '../components/mapDeck/mapDeck.service';
-import { MapService } from '../map/map.service';
-import mongoose, { Types } from 'mongoose';
+import { Types } from 'mongoose';
 import { Score } from '../components/expedition/scores';
 import { GameContext } from '../components/interfaces';
 
@@ -31,8 +30,6 @@ export class InitExpeditionProcess {
         private readonly settingsService: SettingsService,
         private readonly contestMapService: ContestMapService,
         private readonly mapDeckService: MapDeckService,
-        private readonly expeditionModel: Expedition,
-        private readonly mapService:MapService
     ) { }
 
     async handle({userAddress, playerName, playerToken, equippedGear, character_class, contest, stage}: 
@@ -41,9 +38,6 @@ export class InitExpeditionProcess {
         const character_class_enum = this.getCharcterName(character_class);
         const character = await this.characterService.findOne({characterClass: character_class_enum});
         const { initialPotionChance } = await this.settingsService.getSettings();
-
-
-
 
         const map = await this.contestMapService.getMapForContest(contest.stages[stage -1]);
         const cards = await this.generatePlayerDeck(character, userAddress, contest, stage);

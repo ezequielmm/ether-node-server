@@ -36,10 +36,7 @@ export class CurrentNodeGeneratorProcess {
         }
     }
 
-    private async getCombatCurrentNode(
-        ctx: GameContext,
-        node: Node,
-    ): Promise<IExpeditionCurrentNode> {
+    private async getCombatCurrentNode(ctx: GameContext, node: Node): Promise<IExpeditionCurrentNode> {
         return await this.combatService.generate(ctx, node);
     }
 
