@@ -36,6 +36,7 @@ import { ExpeditionEntity } from '../components/interfaces';
 import { CardTargetedEnum } from '../components/card/card.enum';
 import { IActNodeOption } from '../map/builder/mapBuilder.interface';
 import { EnemySizeEnum } from '../components/enemy/enemy.enum';
+import { MoldCard } from '../components/card/data/mold.card';
 
 @Injectable()
 export class CombatService {
@@ -113,6 +114,8 @@ export class CombatService {
         const shuffledCards = shuffle(cards);
         const handCards = takeRight(shuffledCards, initialHandPileSize);
 
+        const moldcardCount = handCards.filter(x => x.cardId == MoldCard.cardId).length;
+
         const drawCards = removeCardsFromPile({
             originalPile: shuffledCards,
             cardsToRemove: handCards,
@@ -136,7 +139,7 @@ export class CombatService {
                 round: 0,
                 playing: CombatTurnEnum.Player,
                 player: {
-                    energy: initialEnergy,
+                    energy: Math.max(initialEnergy - moldcardCount, 0),
                     energyMax: maxEnergy,
                     handSize: initialHandPileSize,
                     hpCurrent,
