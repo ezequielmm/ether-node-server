@@ -33,7 +33,7 @@ export class PlayerWinService {
     return allLootboxes;
   }
 
-  async findLastStageWinAndUpdate(eventId: number, playerToken: IPlayerToken, currentStage: number, lootbox: Gear[]) {
+  async findLastStageWinAndUpdate(eventId: number, playerToken:IPlayerToken, currentStage:number, lootbox:Gear[]){
 
     const lastDocument = await this.playerWin.findOne(
       {
@@ -49,9 +49,9 @@ export class PlayerWinService {
     if (lastDocument) {
       await this.playerWin.updateOne(
         { _id: lastDocument._id },
-        {
-          $set: { 'stage': currentStage },
-          $push: { 'lootbox': { $each: lootbox } }
+        { 
+          $set: { 'stage': currentStage } ,
+          $push: { 'lootbox': { $each: lootbox }}
         }
       );
     }
@@ -85,8 +85,8 @@ export class PlayerWinService {
     return character?.canCompete;
   }
 
-  async canPlay(event_id: number, contract_address: string, token_id: number, wins?: number): Promise<boolean> {
-
+  async canPlay(event_id: number, contract_address: string, token_id: number, wins?: number) : Promise<boolean> {
+    
     //- If there is no event will not be able to play anyway:
     if (event_id === 0) return true;
 
@@ -94,74 +94,55 @@ export class PlayerWinService {
     if (contract_address === 'NONE') return true;
 
     if (typeof wins === 'undefined') {
-      wins =
-        (await this.playerWin.countDocuments({
-          event_id: event_id,
-          playerToken: {
-            $elemMatch: {
-              contractId: contract_address,
-              tokenId: token_id,
-            },
-          },
-        })) ?? 0;
+        wins =
+            (await this.playerWin.countDocuments({
+                event_id: event_id,
+                playerToken: {
+                    $elemMatch: {
+                        contractId: contract_address,
+                        tokenId: token_id,
+                    },
+                },
+            })) ?? 0;
     }
-
+    
     if (wins == 0) return true;
 
     const character = await this.characterService.getCharacterByContractId(
-      contract_address,
+        contract_address,
     );
-    /*
-        if(!character)
-          return wins < 1;
-    
-        if(character.name == 'Blessed Villager'){
-          return wins < 1;
-        }
-    
-        if(character.name == 'Blessed Villager Initiated'){
-          return wins < 1;
-        }
-    
-        if(character.name == 'Villager'){
-          return wins < 1;
-        }
-    
-        if (token_id <= 500) {
-          return wins < 3; // genesis knight
-      }
-    
-      return wins < 2; // knight or Knight Initialized
-    */
 
-    if (!character)
+    if(!character)
       return wins < 1;
 
-    // at this point, it's a knight or Knight Initialized
+    if(character.name == 'Blessed Villager'){
+      return wins < 1;
+    }
+
+    if(character.name == 'Blessed Villager Initiated'){
+      return wins < 1;
+    }
+
+    if(character.name == 'Villager'){
+      return wins < 1;
+    }
+
     if (token_id <= 500) {
       return wins < 3; // genesis knight
-    }
-
-    if (character.name == 'Blessed Villager') {
-      return wins < 1;
-    }
-
-    if (character.name == 'Blessed Villager Initiated') {
-      return wins < 1;
-    }
-
-    if (character.name == 'Villager') {
-      return wins < 1;
-    }
-
-    if (character.name == 'Knight') {
-      return wins < 2;
-    }
-
-    if (character.name == 'Knight Initiated') {
-      return wins < 2;
-    }
   }
+
+  return wins < 2; // knight or Knight Initialized
+
+
+    // if (!character || (character.name != 'Knight' && character.name != 'Knight Initiated')) return wins < 1;
+
+    // // at this point, it's a knight or Knight Initialized
+    // if (token_id <= 500) {
+    //     return wins < 3; // genesis knight
+    // }
+
+    // return wins < 2; // knight or Knight Initialized
+}
 
   async getWins(wins: number | undefined, event_id: number, contract_address: string, token_id: number): Promise<number> {
 
