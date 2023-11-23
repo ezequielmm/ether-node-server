@@ -32,20 +32,19 @@ export class MistifiedStatus implements StatusEventHandler {
     async handle(dto: StatusEventDTO): Promise<void> {
 
         const { ctx, status: { args },
-            eventArgs,
+            eventArgs: {
+                newHand
+            },
         } = dto;
-        console.log(eventArgs);
         //const { ctx } = dto;
         const energy = ctx.expedition.currentNode.data.player.energy;
-        const newHand = ctx.expedition.currentNode.data.player.cards.hand;
-        console.log(newHand);
+        //const newHand = ctx.expedition.currentNode.data.player.cards.hand;
         //const newHand = this.cardService.shuffleArray(hand);
 
         const probNum = (newHand.length / 100);
         console.log(probNum);
         let probability : number[] = [];
-
-        
+      
         newHand.forEach(card =>{
             probability.push(probNum);
         });
