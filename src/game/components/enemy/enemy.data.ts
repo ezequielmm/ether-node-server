@@ -17,7 +17,6 @@ import { redSporelingData } from './data/redSporeling.enemy';
 import { yellowSporelingData } from './data/yellowSporeling.enemy';
 import { centipionData } from './data/centipion.enemy';
 import { stickMantisData } from './data/stickMantis.enemy';
-import { deepDwellerData } from './data/deepDweller.enemy';
 import { rockElementalData } from './data/rockElemental.enemy';
 import { thornWolfPupData } from './data/thornWolfPup.enemy';
 import { deepSorcererData } from './data/deepSorcerer.enemy';
@@ -43,6 +42,7 @@ import { caveGoblinMinionData } from './data/caveGoblin-minion.enemy';
 import { moldPolypMinionData } from './data/moldPolyp-minion.enemy';
 import { caveHomunculiMinionData } from './data/caveHomunculi-minion.enemy';
 import { fireBeetleData } from './data/fireBeetle.enemy';
+import { glowBugData } from './data/glowBug.enemy';
 
 export const data: Enemy[] = [
     sporeMongerData,
@@ -61,7 +61,6 @@ export const data: Enemy[] = [
     blueSporelingData,
     redSporelingData,
     yellowSporelingData,
-    deepDwellerData,
     rockElementalData,
     thornWolfPupData,
     deepSorcererData,
@@ -88,6 +87,7 @@ export const data: Enemy[] = [
     deepSorcererGreenData,
     fireBeetleData,
     stickMantisData,
+    glowBugData,
 
     caveGoblinMinionData,
     moldPolypMinionData,

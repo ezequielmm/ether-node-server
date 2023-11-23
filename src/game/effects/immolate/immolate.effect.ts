@@ -6,6 +6,7 @@ import { immolateEffect } from "./constants";
 import { StandardResponse, SWARMessageType, SWARAction } from "src/game/standardResponse/standardResponse";
 import { EventEmitter2 } from "@nestjs/event-emitter";
 import { EVENT_AFTER_DAMAGE_EFFECT } from "src/game/constants";
+import { CombatService } from "src/game/combat/combat.service";
 
 @EffectDecorator({
     effect: immolateEffect,
@@ -13,7 +14,8 @@ import { EVENT_AFTER_DAMAGE_EFFECT } from "src/game/constants";
 @Injectable()
 export class ImmolateEffect implements EffectHandler {
     
-    constructor(private readonly eventEmitter: EventEmitter2) {}
+    constructor(private readonly eventEmitter: EventEmitter2, 
+                private readonly combatService:CombatService) {}
 
     async handle(dto: EffectDTO): Promise<void> {
         const { source, ctx } = dto;
@@ -22,7 +24,9 @@ export class ImmolateEffect implements EffectHandler {
         if(EnemyService.isEnemy(source)){
             const updatedEnemies = enemies.filter(enemy => enemy.id !== source.value.id);
 
-            ctx.expedition.currentNode.data.enemies = updatedEnemies;
+            const sortedEnemiesByLine = this.combatService.sortEnemiesByLine(updatedEnemies);
+
+            ctx.expedition.currentNode.data.enemies = sortedEnemiesByLine;
             ctx.expedition.markModified('currentNode.data.enemies');
             await ctx.expedition.save();
 

@@ -7,7 +7,7 @@ import {
 } from '../interfaces';
 
 export const galvanize: StatusEvent = {
-    name: 'galvanize',
+    name: 'galvanized',
     type: StatusType.Buff,
     counterType: StatusCounterType.Counter,
     trigger: StatusTrigger.Event,

@@ -12,6 +12,7 @@ import { feebleStatus } from "src/game/status/feeble/constants";
 import { fatigue } from "src/game/status/fatigue/constants";
 import { PlayerService } from "src/game/components/player/player.service";
 import { StandardResponse, SWARMessageType, SWARAction } from "src/game/standardResponse/standardResponse";
+import { CombatService } from "src/game/combat/combat.service";
 
 
 @EffectDecorator({
@@ -22,7 +23,8 @@ export class CannibalizeEffect implements EffectHandler {
 
     constructor(private readonly enemyService:EnemyService,
                 private readonly statusService:StatusService,
-                private readonly playerService:PlayerService){}
+                private readonly playerService:PlayerService,
+                private readonly combatService:CombatService){}
 
     async handle(dto: EffectDTO<Record<string, any>>): Promise<void> {
         const { source, target, ctx } = dto;
@@ -49,7 +51,8 @@ export class CannibalizeEffect implements EffectHandler {
             const caveGoblins = enemies.filter(enemy => enemy.enemyId === caveGoblinData.enemyId);
             const deepGoblin  = enemies.filter(enemy => enemy.enemyId === deepGoblin.enemyId);
 
-            ctx.expedition.currentNode.data.enemies = newEnemies;
+            const sortedByLineEnemies = this.combatService.sortEnemiesByLine(newEnemies);
+            ctx.expedition.currentNode.data.enemies = sortedByLineEnemies;
             ctx.expedition.markModified('currentNode.data.enemies');
             await ctx.expedition.save();
 

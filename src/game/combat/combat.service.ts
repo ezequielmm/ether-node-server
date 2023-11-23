@@ -35,6 +35,8 @@ import { PlayerService } from '../components/player/player.service';
 import { ExpeditionEntity } from '../components/interfaces';
 import { CardTargetedEnum } from '../components/card/card.enum';
 import { IActNodeOption } from '../map/builder/mapBuilder.interface';
+import { EnemySizeEnum } from '../components/enemy/enemy.enum';
+import { MoldCard } from '../components/card/data/mold.card';
 
 @Injectable()
 export class CombatService {
@@ -87,21 +89,19 @@ export class CombatService {
             enemies.push(enemy);
         }
 
+        const sortedByLineEnemies = this.sortEnemiesByLine(enemies);
         const rewards = await this.generateRewards(nodeOption, act);
 
         return {
-            enemies,
+            sortedByLineEnemies,
             rewards,
         };
     }
 
-    async generate(
-        ctx: GameContext,
-        node: Node,
-    ): Promise<IExpeditionCurrentNode> {
+    async generate(ctx: GameContext, node: Node): Promise<IExpeditionCurrentNode> {
+        
         // Get initial player stats
-        const { initialEnergy, maxEnergy, initialHandPileSize } =
-            await this.settingsService.getSettings();
+        const { initialEnergy, maxEnergy, initialHandPileSize } = await this.settingsService.getSettings();
 
         // Get current health
         const { hpCurrent, hpMax, cards } = ctx.expedition.playerState;
@@ -112,27 +112,22 @@ export class CombatService {
         });
 
         const shuffledCards = shuffle(cards);
-
         const handCards = takeRight(shuffledCards, initialHandPileSize);
+
+        const moldcardCount = handCards.filter(x => x.cardId == MoldCard.cardId).length;
 
         const drawCards = removeCardsFromPile({
             originalPile: shuffledCards,
             cardsToRemove: handCards,
         });
 
-        const { enemies } = node.private_data;
+        const enemies: IExpeditionCurrentNodeDataEnemy[] = node.private_data.enemies;
+        const sortedEnemies = this.sortEnemiesByLine(enemies);
+
         const rewards = await this.rewardService.liveUpdateRewards(
             ctx,
             node.private_data.rewards,
         );
-
-        // const rewards = (typeof node?.private_data?.rewards === 'undefined')
-        //     ? await this.generateRewards(node, node.act, ctx)
-        //     : await this.rewardService.liveUpdateRewards(ctx, node.private_data.rewards);
-
-        // const enemies = (typeof node?.private_data?.enemies === 'undefined')
-        //     ? await this.getEnemiesForNode(node)
-        //     : node.private_data.enemies;
 
         return {
             nodeId: node.id,
@@ -144,7 +139,7 @@ export class CombatService {
                 round: 0,
                 playing: CombatTurnEnum.Player,
                 player: {
-                    energy: initialEnergy,
+                    energy: Math.max(initialEnergy - moldcardCount, 0),
                     energyMax: maxEnergy,
                     handSize: initialHandPileSize,
                     hpCurrent,
@@ -161,10 +156,83 @@ export class CombatService {
                         [StatusType.Debuff]: [],
                     },
                 },
-                enemies,
+                enemies: sortedEnemies,
                 rewards,
             },
         };
+    }
+
+    private getNumericEnemySize(enemy:IExpeditionCurrentNodeDataEnemy):number{
+        switch(enemy.size){
+            case EnemySizeEnum.Small:
+                return 1;
+            case EnemySizeEnum.Medium:
+                return 2;
+            case EnemySizeEnum.Large:
+                return 3;
+            case EnemySizeEnum.Giant:
+                return 4;
+        }
+    }
+
+    private sortEnemiesBySize(enemies:IExpeditionCurrentNodeDataEnemy[]):IExpeditionCurrentNodeDataEnemy[]{
+        const sizeOrder: { [size: string]: number } = {
+            'giant': 0,
+            'large': 1,
+            'medium': 2,
+            'small': 3,
+        };
+
+        return enemies.sort((a, b) => sizeOrder[a.size] - sizeOrder[b.size]);
+    }
+
+    public sortEnemiesByLine(enemies:IExpeditionCurrentNodeDataEnemy[]):IExpeditionCurrentNodeDataEnemy[] {
+
+        const orderedEnemies = this.sortEnemiesBySize(enemies);
+        let lines : { places: number; enemies: IExpeditionCurrentNodeDataEnemy[] } [] = [
+            { places: 4, enemies: [] },
+            { places: 4, enemies: [] },
+        ];
+
+        orderedEnemies.forEach(enemy => {
+            const enemySize = this.getNumericEnemySize(enemy);
+            const suitableLine = lines.find((line) => enemySize <= line.places);
+
+            if (suitableLine) {
+                suitableLine.enemies.push({ ...enemy, line: lines.indexOf(suitableLine) });
+                suitableLine.places -= enemySize;
+            }else{
+                console.log("The node was created incorrectly.")
+                console.log("The enemy " + enemy.enemyId +" does not enter any line.");
+            }
+        })
+
+        return lines.flatMap((line) => line.enemies);
+    }
+
+    public hasSpaceToSpawnEnemy(enemies: IExpeditionCurrentNodeDataEnemy[], newEnemies:IExpeditionCurrentNodeDataEnemy[]): boolean{
+        const combinedEnemies = enemies.concat(newEnemies);
+
+        const orderedEnemies = this.sortEnemiesBySize(combinedEnemies);
+        let lines : { places: number; enemies: IExpeditionCurrentNodeDataEnemy[] } [] = [
+            { places: 4, enemies: [] },
+            { places: 4, enemies: [] },
+        ];
+
+        let hasSpace = true;
+        orderedEnemies.forEach(enemy => {
+            const enemySize = this.getNumericEnemySize(enemy);
+            const suitableLine = lines.find((line) => enemySize <= line.places);
+
+            if (suitableLine) {
+                suitableLine.enemies.push({ ...enemy, line: lines.indexOf(suitableLine) });
+                suitableLine.places -= enemySize;
+            }else{
+                return false;
+            }
+        });
+
+        return hasSpace;
     }
 
     async handleMoveCard(ctx: GameContext, payload: string): Promise<void> {
@@ -253,6 +321,7 @@ export class CombatService {
             size: enemy.size,
             hpCurrent: newHealth,
             hpMax: newHealth,
+            line: 0,
             statuses: {
                 [StatusType.Buff]: [],
                 [StatusType.Debuff]: [],
@@ -265,43 +334,6 @@ export class CombatService {
         }
 
         return newEnemy;
-    }
-
-    async getEnemiesByProbability(
-        enemies: EnemyId[][],
-        probability: number[],
-        healthMultiplier = 1,
-    ) {
-        const enemyGroup = getRandomItemByWeight<EnemyId[]>(
-            enemies,
-            probability,
-        );
-
-        return await Promise.all(
-            enemyGroup.map(async (enemyId: EnemyId) => {
-                return this.getNewEnemyById(enemyId, healthMultiplier);
-            }),
-        );
-    }
-
-    async getEnemiesForNode(
-        node: Node,
-    ): Promise<IExpeditionCurrentNodeDataEnemy[]> {
-        const enemies = node.private_data.enemies.map(({ enemies }) => enemies);
-        const probability = node.private_data.enemies.map(
-            ({ probability }) => probability,
-        );
-
-        const healthMultiplier =
-            HARD_MODE_NODE_START <= node.step && node.step <= HARD_MODE_NODE_END
-                ? 1.5
-                : 1;
-
-        return await this.getEnemiesByProbability(
-            enemies,
-            probability,
-            healthMultiplier,
-        );
     }
 
     private generateCoins(nodeType: NodeType): number {

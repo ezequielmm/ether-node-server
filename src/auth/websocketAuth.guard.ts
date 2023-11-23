@@ -5,10 +5,18 @@ import {
     UnauthorizedException,
 } from '@nestjs/common';
 import { AuthorizedSocket } from './auth.types';
-import { verifySessionJwt } from '../utils/tokenHelpers';
+import { ConfigService } from '@nestjs/config';
+import { verifySessionJwt } from 'src/utils/tokenHelpers';
 
 @Injectable()
 export class WebsocketAuthGuard implements CanActivate {
+
+    private readonly signingSecret: string;
+
+    constructor(private readonly configService:ConfigService){
+        this.signingSecret = this.configService.get<string>("JWT_SIGNER");
+    }
+
     canActivate(context: ExecutionContext): boolean {
         const client: AuthorizedSocket = context.switchToWs().getClient();
         const authHeader = client.handshake.headers.authorization;
@@ -27,7 +35,7 @@ export class WebsocketAuthGuard implements CanActivate {
 
         try {
             const token = authHeader.replace(/^Bearer /, '');
-            client.userAddress = verifySessionJwt(token);
+            client.userAddress = verifySessionJwt(token, this.signingSecret);
             return true;
         } catch (error) {
             client.disconnect(true);

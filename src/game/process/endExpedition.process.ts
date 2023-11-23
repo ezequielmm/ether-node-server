@@ -13,7 +13,7 @@ import { Score } from '../components/expedition/scores';
 import { InitExpeditionProcess } from './initExpedition.process';
 import { Gear } from 'src/game/components/gear/gear.schema';
 import { MixedRewardType, RewardType, SquiresRewardResponse, VictoryItem } from 'src/squires-api/squires.types';
-import { sample, some } from 'lodash';
+import { sample } from 'lodash';
 import { ILootboxRarityOdds } from '../components/gear/gear.interface';
 
 export interface IEndExpeditionProcessParameters {
@@ -39,13 +39,6 @@ export class EndExpeditionProcess {
         private readonly playerGearService:PlayerGearService,
         private readonly initExpeditionService:InitExpeditionProcess,
     ) {}
-    
-    // private halloweenGearsFilter = {
-    //     'lootbox.gearId': {
-    //         $gte: 500,
-    //         $lte: 520
-    //     },
-    // };
 
     private halloweenGearsFilter = {
         gearId: {
@@ -99,76 +92,43 @@ export class EndExpeditionProcess {
     }
 
 
-    private async handleVictory(
-        ctx: GameContext,
-        emit: boolean,
-    ): Promise<void> {
-
+    private async handleVictory(ctx: GameContext, emit: boolean): Promise<void> {
         const currentStage = ctx.expedition.currentStage;
         const isLastStage = ctx.expedition.contest.stages.length == currentStage;
 
+        //- Update the expedition status and time if ended.
         if(isLastStage){
-            // Update the expedition status and time
             this.updateExpeditionStatusAndTime(ctx);
-        
-            // Calculate the final score
-            await this.calculateStageScore(ctx, currentStage);
-        
-            // Check if the player can win and if the contest is valid
-            let canWin = await this.playerWinService.classCanWin(ctx.expedition.playerState.characterClass as CharacterClassEnum);
-            let contestIsValid = await this.contestService.isValid(ctx.expedition.contest);
-        
-            // Handle loot and rewards
-            if(contestIsValid){
-                await this.handleActiveEventLoot(ctx, currentStage, canWin);
-            }else{
-                ctx.expedition.finalScore.lootbox = [];
-                ctx.expedition.finalScore.rewards = [];
-                ctx.expedition.finalScore.victoryItems = [];
-            }
-        
-            // Save the updated expedition
-            await ctx.expedition.save();
-        
-    
-            // Notify the client, if necessary
-            if (emit) {
-                this.notifyClient(ctx);
-            }
-        }else{
-            //- Continue Expedition with the next stage:
-            await this.calculateStageScore(ctx, currentStage);
-
-
-            // Check if the player can win and if the contest is valid
-            let canWin = await this.playerWinService.classCanWin(ctx.expedition.playerState.characterClass as CharacterClassEnum);
-            let contestIsValid = await this.contestService.isValid(ctx.expedition.contest);
-            
-            // Handle loot and rewards
-            if(canWin && contestIsValid){
-                await this.handleActiveEventLoot(ctx, currentStage, canWin);
-            }else{
-                ctx.expedition.finalScore.lootbox = [];
-                ctx.expedition.finalScore.rewards = [];
-                ctx.expedition.finalScore.victoryItems = [];
-            }
-            
-            await ctx.expedition.save();
-            await this.initExpeditionService.createNextStage(ctx);
-
-            //- Message client to end combat and show score
-            if (emit){
-                ctx.client.emit(
-                    'PutData',
-                    StandardResponse.respond({
-                        message_type: SWARMessageType.EndCombat,
-                        action: SWARAction.ShowNextStage,
-                        data: null,
-                    }),
-                );
-            }
         }
+    
+        //- Calculate the final score
+        await this.calculateStageScore(ctx, currentStage);
+    
+        //- Check if the player can win and if the contest is valid
+        let canWin = await this.playerWinService.classCanWin(ctx.expedition.playerState.characterClass as CharacterClassEnum);
+        let contestIsValid = await this.contestService.isValid(ctx.expedition.contest);
+    
+        //- Handle loot and rewards
+        if(contestIsValid){
+            await this.handleActiveEventLoot(ctx, currentStage, canWin);
+        }else{
+            ctx.expedition.finalScore.lootbox = [];
+            ctx.expedition.finalScore.rewards = [];
+            ctx.expedition.finalScore.victoryItems = [];
+        }
+    
+        // Save the updated expedition
+        await ctx.expedition.save();
 
+        //- Start next Stage:
+        if(!isLastStage){
+            await this.initExpeditionService.createNextStage(ctx);
+        }
+    
+        // Notify the client, if necessary
+        if (emit) {
+            isLastStage ? this.notifyClient(ctx, SWARAction.ShowScore) : this.notifyClient(ctx, SWARAction.ShowNextStage);
+        }
     }
 
     private async calculateStageScore(ctx: GameContext, currentStage:number): Promise<void> {
@@ -331,12 +291,12 @@ export class EndExpeditionProcess {
     }
     
     // Notify the client
-    private notifyClient(ctx: GameContext) {
+    private notifyClient(ctx: GameContext, action: SWARAction) {
         ctx.client.emit(
             'PutData',
             StandardResponse.respond({
                 message_type: SWARMessageType.EndCombat,
-                action: SWARAction.ShowScore,
+                action: action,
                 data: null,
             }),
         );

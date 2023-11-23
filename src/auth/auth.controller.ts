@@ -9,8 +9,7 @@ import {
 } from '@nestjs/common';
 import { Request } from 'express';
 import { ErrorTypes } from 'siwe';
-import { AuthService } from './auth.service';
-import { JsonWebToken } from '../utils/tokenHelpers';
+import { AuthService, JsonWebToken } from './auth.service';
 
 @Controller('auth')
 export class AuthController {

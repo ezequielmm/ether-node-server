@@ -16,6 +16,7 @@ interface IEnemiesResponse {
     size: EnemySizeEnum;
     hpCurrent: number;
     hpMax: number;
+    line: number;
 }
 
 @Injectable()
@@ -57,6 +58,7 @@ export class GetEnemiesAction {
                 size: enemy.size,
                 hpCurrent: enemy.hpCurrent,
                 hpMax: enemy.hpMax,
+                line: enemy.line
             }));
     }
 }
