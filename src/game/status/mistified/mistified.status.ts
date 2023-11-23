@@ -31,7 +31,11 @@ export class MistifiedStatus implements StatusEventHandler {
 
     async handle(dto: StatusEventDTO): Promise<void> {
 
-        const { ctx } = dto;
+        const { ctx, status: { args },
+            eventArgs,
+        } = dto;
+        console.log(eventArgs);
+        //const { ctx } = dto;
         const energy = ctx.expedition.currentNode.data.player.energy;
         const newHand = ctx.expedition.currentNode.data.player.cards.hand;
         console.log(newHand);
