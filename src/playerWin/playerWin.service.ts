@@ -112,14 +112,36 @@ export class PlayerWinService {
         contract_address,
     );
 
-    if (!character || character.name != 'Knight') return wins < 1;
+    if(!character)
+      return wins < 1;
 
-    // at this point, it's a knight
-    if (token_id <= 500) {
-        return wins < 3; // genesis knight
+    if(character.name == 'Blessed Villager'){
+      return wins < 1;
     }
 
-    return wins < 2; // knight
+    if(character.name == 'Blessed Villager Initiated'){
+      return wins < 1;
+    }
+
+    if(character.name == 'Villager'){
+      return wins < 1;
+    }
+
+    if (token_id <= 500) {
+      return wins < 3; // genesis knight
+  }
+
+  return wins < 2; // knight or Knight Initialized
+
+
+    // if (!character || (character.name != 'Knight' && character.name != 'Knight Initiated')) return wins < 1;
+
+    // // at this point, it's a knight or Knight Initialized
+    // if (token_id <= 500) {
+    //     return wins < 3; // genesis knight
+    // }
+
+    // return wins < 2; // knight or Knight Initialized
 }
 
   async getWins(wins: number | undefined, event_id: number, contract_address: string, token_id: number): Promise<number> {

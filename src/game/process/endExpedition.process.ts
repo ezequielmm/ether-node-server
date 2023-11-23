@@ -196,7 +196,7 @@ export class EndExpeditionProcess {
         //- Lootbox - Gears:
         const gearLootboxActivated = this.configService.get<boolean>('LOOTBOX_ACTIVATED', false);
         const character = ctx.expedition.playerState.characterClass as CharacterClassEnum;
-        let filteredLootbox = (canWinGear && gearLootboxActivated) ? await this.getHalloweenGearVictoryItems(ctx, currentStage, character) : [];
+        //let filteredLootbox = (canWinGear && gearLootboxActivated) ? await this.getHalloweenGearVictoryItems(ctx, currentStage, character) : [];
 
         //- Rewards (from bridge API):
         const rewards = await this.squiresService.getAccountRewards(ctx.expedition.userAddress, ctx.expedition.playerState.equippedGear, character, currentStage);
@@ -208,7 +208,7 @@ export class EndExpeditionProcess {
         if (potionAndTrinketReward && potionAndTrinketReward.length > 0) ctx.expedition.finalScore.victoryItems.push(this.transformRewardToVictoryItem(potionAndTrinketReward))
         if (treasureReward && treasureReward.length > 0)   ctx.expedition.finalScore.victoryItems.push(this.transformRewardToVictoryItem(treasureReward))
         if( partnerReward && partnerReward.length > 0 )    ctx.expedition.finalScore.victoryItems.push(this.transformRewardToVictoryItem(partnerReward));
-        if (filteredLootbox && filteredLootbox.length > 0) ctx.expedition.finalScore.victoryItems.push(this.tranformGearToVictoryItem(filteredLootbox[0]))
+        //if (filteredLootbox && filteredLootbox.length > 0) ctx.expedition.finalScore.victoryItems.push(this.tranformGearToVictoryItem(filteredLootbox[0]))
     }
 
     private transformRewardToVictoryItem = (rewards: SquiresRewardResponse[]): (VictoryItem | null) => {
