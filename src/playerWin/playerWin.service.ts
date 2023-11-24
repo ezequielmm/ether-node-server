@@ -94,7 +94,16 @@ export class PlayerWinService {
     if (contract_address === 'NONE') return true;
 
     if (typeof wins === 'undefined') {
-        wins = await this.playerWin.countDocuments({});
+        wins =
+            (await this.playerWin.countDocuments({
+                event_id: event_id,
+                playerToken: {
+                    $elemMatch: {
+                        contractId: contract_address,
+                        tokenId: token_id,
+                    },
+                },
+            }));
     }
     
     if (wins == 0) return true;
