@@ -85,6 +85,7 @@ export class DiscardCardAction {
 
             if (card[field] === cardId) cardToDiscard = card;
 
+            
             return card[field] !== cardId;
         });
 
@@ -94,6 +95,9 @@ export class DiscardCardAction {
 
         if (emit) this.emit({ctx, cardId});
 
+
+        console.log(cardToDiscard, '--------------------------------CARD TO DISCARD');
+        console.log(cardId, '----------------CARD ID');
         // Next we check if the card has the key oldEnergy greater
         // than 0, if it is true them we set the card energy to the
         // oldEnergy value
