@@ -82,7 +82,7 @@ export class DiscardCardAction {
 
         hand = hand.filter((card) => {
             const field = getCardIdField(cardId);
-
+            console.log('cardId: ', cardId, 'card[field]: ', card[field]);
             if (card[field] === cardId) cardToDiscard = card;
 
             
