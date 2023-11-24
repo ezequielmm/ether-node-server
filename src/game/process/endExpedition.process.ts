@@ -196,7 +196,20 @@ export class EndExpeditionProcess {
         //- Lootbox - Gears:
         const gearLootboxActivated = this.configService.get<boolean>('LOOTBOX_ACTIVATED', false);
         const character = ctx.expedition.playerState.characterClass as CharacterClassEnum;
+        const isLastStage = ctx.expedition.contest.stages.length == currentStage;
         //let filteredLootbox = (canWinGear && gearLootboxActivated) ? await this.getHalloweenGearVictoryItems(ctx, currentStage, character) : [];
+
+        if(isLastStage){
+            await this.playerWinService.findLastStageWinAndUpdate(ctx.expedition.contest.event_id, ctx.expedition.playerState.playerToken, currentStage, []);
+            
+        }else{
+            await this.playerWinService.create({
+                event_id: ctx.expedition.contest.event_id,
+                playerToken: ctx.expedition.playerState.playerToken,
+                stage: currentStage,
+                lootbox: [],
+            });
+        }
         
         //- Rewards (from bridge API):
         const rewards = await this.squiresService.getAccountRewards(ctx.expedition.userAddress, ctx.expedition.playerState.equippedGear, character, currentStage);
@@ -265,18 +278,6 @@ export class EndExpeditionProcess {
                 ctx.expedition.userAddress,
                 filteredLootbox,
             );
-        }
-
-        if(isLastStage){
-            await this.playerWinService.findLastStageWinAndUpdate(ctx.expedition.contest.event_id, ctx.expedition.playerState.playerToken, currentStage, filteredLootbox);
-            
-        }else{
-            await this.playerWinService.create({
-                event_id: ctx.expedition.contest.event_id,
-                playerToken: ctx.expedition.playerState.playerToken,
-                stage: currentStage,
-                lootbox: filteredLootbox,
-            });
         }
 
         return filteredLootbox;
