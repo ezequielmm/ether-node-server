@@ -15,6 +15,7 @@ import { Gear } from 'src/game/components/gear/gear.schema';
 import { MixedRewardType, RewardType, SquiresRewardResponse, VictoryItem } from 'src/squires-api/squires.types';
 import { sample } from 'lodash';
 import { ILootboxRarityOdds } from '../components/gear/gear.interface';
+import { ConfigService } from '@nestjs/config';
 
 export interface IEndExpeditionProcessParameters {
     ctx: GameContext;
@@ -38,6 +39,7 @@ export class EndExpeditionProcess {
         private readonly gearService:GearService,
         private readonly playerGearService:PlayerGearService,
         private readonly initExpeditionService:InitExpeditionProcess,
+        private readonly configService:ConfigService
     ) {}
 
     private halloweenGearsFilter = {
@@ -192,9 +194,10 @@ export class EndExpeditionProcess {
     private async handleActiveEventLoot(ctx: GameContext, currentStage:number, canWinGear:boolean) 
     {
         //- Lootbox - Gears:
+        const gearLootboxActivated = this.configService.get<boolean>('LOOTBOX_ACTIVATED', false);
         const character = ctx.expedition.playerState.characterClass as CharacterClassEnum;
-        let filteredLootbox = canWinGear ? await this.getHalloweenGearVictoryItems(ctx, currentStage, character) : [];
-
+        let filteredLootbox = (canWinGear && gearLootboxActivated) ? await this.getHalloweenGearVictoryItems(ctx, currentStage, character) : [];
+        
         //- Rewards (from bridge API):
         const rewards = await this.squiresService.getAccountRewards(ctx.expedition.userAddress, ctx.expedition.playerState.equippedGear, character, currentStage);
         
