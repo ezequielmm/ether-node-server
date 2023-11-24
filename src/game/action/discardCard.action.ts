@@ -94,7 +94,8 @@ export class DiscardCardAction {
         );
 
         if (emit) this.emit({ctx, cardId});
-        
+        console.log('dentro de discard', cardId);
+
         // Next we check if the card has the key oldEnergy greater
         // than 0, if it is true them we set the card energy to the
         // oldEnergy value
