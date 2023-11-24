@@ -120,6 +120,7 @@ export class CardPlayedAction {
         await this.combatQueueService.start(ctx);
 
         //- Source is just a parse to ExpeditionPlayer
+        console.log(ctx);
         const source = this.playerService.get(ctx);
 
         //- sourceReference is just: type: CardTargetedEnum.Player
