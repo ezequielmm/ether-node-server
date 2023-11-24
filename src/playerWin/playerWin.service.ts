@@ -104,7 +104,7 @@ export class PlayerWinService {
         contract_address,
     );
 
-    if (!character || character.name != 'Villager') return wins < 1;
+    if (!character || character.name != 'Knight') return wins < 1;
 
     // at this point, it's a knight
     if (token_id <= 500) {
