@@ -94,47 +94,32 @@ export class PlayerWinService {
     if (contract_address === 'NONE') return true;
 
     if (typeof wins === 'undefined') {
-        // wins =
-        //     (await this.playerWin.countDocuments({
-        //         event_id: event_id,
-        //         playerToken: {
-        //             $elemMatch: {
-        //                 contractId: contract_address,
-        //                 tokenId: token_id,
-        //             },
-        //         },
-        //     })) ?? 0;
-        wins = await this.playerWin.countDocuments({});
-
+        wins =
+            (await this.playerWin.countDocuments({
+                event_id: event_id,
+                playerToken: {
+                    $elemMatch: {
+                        contractId: contract_address,
+                        tokenId: token_id,
+                    },
+                },
+            }));
     }
-    // bloquea los demas if
-    // if (wins == 0) return true;
+    
+    if (wins == 0) return true;
 
     const character = await this.characterService.getCharacterByContractId(
         contract_address,
     );
 
-    if(!character ||  character.name == 'Blessed Villager' || character.name == 'Blessed Villager Initiated' || character.name == 'Blessed Villager Initiated' || character.name == 'Villager')
-      return wins < 1;
+    if (!character || character.name != 'Knight') return wins < 1;
 
-    if(character.name == 'Knight' || character.name == 'Knight Initiated')
-      return wins < 2;
-
+    // at this point, it's a knight
     if (token_id <= 500) {
-      return wins < 3; // genesis knight
-  }
+        return wins < 3; // genesis knight
+    }
 
-  return wins < 2; // knight or Knight Initialized
-
-
-    // if (!character || (character.name != 'Knight' && character.name != 'Knight Initiated')) return wins < 1;
-
-    // // at this point, it's a knight or Knight Initialized
-    // if (token_id <= 500) {
-    //     return wins < 3; // genesis knight
-    // }
-
-    // return wins < 2; // knight or Knight Initialized
+    return wins < 2; // knight
 }
 
   async getWins(wins: number | undefined, event_id: number, contract_address: string, token_id: number): Promise<number> {
