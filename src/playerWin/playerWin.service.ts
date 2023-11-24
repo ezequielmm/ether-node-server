@@ -86,16 +86,6 @@ export class PlayerWinService {
   }
 
   async canPlay(event_id: number, contract_address: string, token_id: number, wins?: number) : Promise<boolean> {
-    
-    if(token_id == 134){
-      console.log("Este es el knight:")
-      console.log("Cantidad de wins: "  + wins)
-      console.log("--------------------------------")
-      console.log("Contract Address: " + contract_address)
-      console.log("event_id: " + event_id)
-    }
-
-
     //- If there is no event will not be able to play anyway:
     if (event_id === 0) return true;
 
