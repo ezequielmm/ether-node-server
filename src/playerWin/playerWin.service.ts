@@ -103,7 +103,7 @@ export class PlayerWinService {
                         tokenId: token_id,
                     },
                 },
-            }));
+            })) ?? 0;
     }
     
     if (wins == 0) return true;

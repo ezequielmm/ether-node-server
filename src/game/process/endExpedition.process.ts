@@ -15,7 +15,6 @@ import { Gear } from 'src/game/components/gear/gear.schema';
 import { MixedRewardType, RewardType, SquiresRewardResponse, VictoryItem } from 'src/squires-api/squires.types';
 import { sample } from 'lodash';
 import { ILootboxRarityOdds } from '../components/gear/gear.interface';
-import { ConfigService } from '@nestjs/config';
 
 export interface IEndExpeditionProcessParameters {
     ctx: GameContext;
@@ -39,7 +38,6 @@ export class EndExpeditionProcess {
         private readonly gearService:GearService,
         private readonly playerGearService:PlayerGearService,
         private readonly initExpeditionService:InitExpeditionProcess,
-        private readonly configService:ConfigService
     ) {}
 
     private halloweenGearsFilter = {
@@ -194,9 +192,8 @@ export class EndExpeditionProcess {
     private async handleActiveEventLoot(ctx: GameContext, currentStage:number, canWinGear:boolean) 
     {
         //- Lootbox - Gears:
-        const gearLootboxActivated = this.configService.get<boolean>('LOOTBOX_ACTIVATED', false);
         const character = ctx.expedition.playerState.characterClass as CharacterClassEnum;
-        //let filteredLootbox = (canWinGear && gearLootboxActivated) ? await this.getHalloweenGearVictoryItems(ctx, currentStage, character) : [];
+        let filteredLootbox = canWinGear ? await this.getHalloweenGearVictoryItems(ctx, currentStage, character) : [];
 
         //- Rewards (from bridge API):
         const rewards = await this.squiresService.getAccountRewards(ctx.expedition.userAddress, ctx.expedition.playerState.equippedGear, character, currentStage);
@@ -208,7 +205,7 @@ export class EndExpeditionProcess {
         if (potionAndTrinketReward && potionAndTrinketReward.length > 0) ctx.expedition.finalScore.victoryItems.push(this.transformRewardToVictoryItem(potionAndTrinketReward))
         if (treasureReward && treasureReward.length > 0)   ctx.expedition.finalScore.victoryItems.push(this.transformRewardToVictoryItem(treasureReward))
         if( partnerReward && partnerReward.length > 0 )    ctx.expedition.finalScore.victoryItems.push(this.transformRewardToVictoryItem(partnerReward));
-        //if (filteredLootbox && filteredLootbox.length > 0) ctx.expedition.finalScore.victoryItems.push(this.tranformGearToVictoryItem(filteredLootbox[0]))
+        if (filteredLootbox && filteredLootbox.length > 0) ctx.expedition.finalScore.victoryItems.push(this.tranformGearToVictoryItem(filteredLootbox[0]))
     }
 
     private transformRewardToVictoryItem = (rewards: SquiresRewardResponse[]): (VictoryItem | null) => {
