@@ -62,7 +62,7 @@ export class PlayerService {
      */
     public get(ctx: GameContext): ExpeditionPlayer {
         const { expedition } = ctx;
-
+        console.log(expedition);
         const player: ExpeditionPlayer = {
             type: CardTargetedEnum.Player,
             value: {
