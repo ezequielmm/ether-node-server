@@ -15,6 +15,7 @@ import { CombatService } from 'src/game/combat/combat.service';
 import { CardPlayedAction } from 'src/game/action/cardPlayed.action';
 import { getRandomItemByWeight } from 'src/utils';
 import { IExpeditionPlayerStateDeckCard } from 'src/game/components/expedition/expedition.interface';
+import { CardKeywordPipeline } from 'src/game/cardKeywordPipeline/cardKeywordPipeline';
 
 @StatusDecorator({
     status: mistifiedStatus,
@@ -36,15 +37,12 @@ export class MistifiedStatus implements StatusEventHandler {
                 newHand
             },
         } = dto;
-        //const { ctx } = dto;
         const energy = ctx.expedition.currentNode.data.player.energy;
-        //const newHand = ctx.expedition.currentNode.data.player.cards.hand;
-        //const newHand = this.cardService.shuffleArray(hand);
 
         const probNum = (newHand.length / 100);
         console.log(probNum);
         let probability : number[] = [];
-      
+    
         newHand.forEach(card =>{
             probability.push(probNum);
         });
@@ -54,16 +52,22 @@ export class MistifiedStatus implements StatusEventHandler {
         while(energy > 0){
 
             const card = getRandomItemByWeight<IExpeditionPlayerStateDeckCard>(newHand, probability);
-    
-            console.log('CARTA A JUGAR ----------------------', card);
-    
-            await this.cardPlayedAction.handle({
-                ctx,
-                cardId: card.id,
-                selectedEnemyId: undefined,
-                newHand
-            });
+            const { keywords } = card;
+            const { unplayable } = CardKeywordPipeline.process(keywords);
 
+            if(!unplayable){
+
+                //if(energy == 1){
+                
+                //}
+                console.log('CARTA A JUGAR ----------------------', card);
+                await this.cardPlayedAction.handle({
+                    ctx,
+                    cardId: card.id,
+                    selectedEnemyId: undefined,
+                    newHand
+                });
+            }
         }
     }
 
