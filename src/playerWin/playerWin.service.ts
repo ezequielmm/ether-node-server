@@ -91,6 +91,8 @@ export class PlayerWinService {
       console.log("Este es el knight:")
       console.log("Cantidad de wins: "  + wins)
       console.log("--------------------------------")
+      console.log("Contract Address: " + contract_address)
+      console.log("event_id: " + event_id)
     }
 
 
