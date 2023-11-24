@@ -94,25 +94,17 @@ export class PlayerWinService {
     if (contract_address === 'NONE') return true;
 
     if (typeof wins === 'undefined') {
-        wins =
-            (await this.playerWin.countDocuments({
-                event_id: event_id,
-                playerToken: {
-                    $elemMatch: {
-                        contractId: contract_address,
-                        tokenId: token_id,
-                    },
-                },
-            })) ?? 0;
+        wins = await this.playerWin.countDocuments({});
+
     }
     
-    if (wins == 0) return true;
+    // if (wins == 0) return true;
 
     const character = await this.characterService.getCharacterByContractId(
         contract_address,
     );
 
-    if (!character || character.name != 'Knight') return wins < 1;
+    if (!character || character.name != 'Villager') return wins < 1;
 
     // at this point, it's a knight
     if (token_id <= 500) {
