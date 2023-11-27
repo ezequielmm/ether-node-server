@@ -4,6 +4,7 @@ import { EncounterIdEnum } from '../encounter.enum';
 export const RugburnEncounter: Encounter = {
     encounterId: EncounterIdEnum.Rugburn,
     encounterName: 'Rugburn',
+    stageNumber: 1,
     imageId: 'rugburn',
     stages: [
         {

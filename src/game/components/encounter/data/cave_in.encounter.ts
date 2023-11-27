@@ -3,6 +3,7 @@ import { Encounter } from "../encounter.schema";
 
 export const CaveInEncounter: Encounter = {
     encounterId: EncounterIdEnum.CaveIn,
+    stageNumber: 2,
     encounterName: 'Cave-in',
     imageId: 'caveIn',
     stages: [

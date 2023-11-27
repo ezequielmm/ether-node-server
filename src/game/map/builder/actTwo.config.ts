@@ -2,18 +2,25 @@ import { IActConfiguration } from './mapBuilder.interface';
 import { NodeType } from '../../components/expedition/node-type';
 
 // import relevant enemy data
-import { barkChargerData } from 'src/game/components/enemy/data/barkCharger.enemy';
-import { mimicFrog1Data } from 'src/game/components/enemy/data/mimicFrog1.enemy';
-import { sporeMongerData } from 'src/game/components/enemy/data/sporeMonger.enemy';
-import { stingFaeData } from '../../components/enemy/data/stingFae.enemy';
-import { groundMothData } from 'src/game/components/enemy/data/groundmoth.enemy';
-import { swampGoblin1Data } from 'src/game/components/enemy/data/swampGoblin1.enemy';
-import { swampGoblin2Data } from 'src/game/components/enemy/data/swampGoblin2.enemy';
-import { fungalBruteData } from 'src/game/components/enemy/data/fungalBrute.enemy';
-import { treantData } from 'src/game/components/enemy/data/treant.enemy';
-import { ancientOneData } from 'src/game/components/enemy/data/ancientOne.enemy';
-import { queenOrchidData } from 'src/game/components/enemy/data/queenOrchid.enemy';
-import { thornWolfData } from 'src/game/components/enemy/data/thornWolf.enemy';
+//- Basic:
+import { caveGoblinData } from 'src/game/components/enemy/data/caveGoblin.enemy';
+import { centipionData } from 'src/game/components/enemy/data/centipion.enemy';
+import { deepGoblinData } from 'src/game/components/enemy/data/deepGoblin.enemy';
+import { mossySkeletonData } from 'src/game/components/enemy/data/mossySkeleton.enemy';
+import { mossyArcherData } from 'src/game/components/enemy/data/mossyArcher.enemy';
+import { mossyBonesData } from 'src/game/components/enemy/data/mossyBones.enemy';
+import { moldPolypData } from 'src/game/components/enemy/data/moldPolyp.enemy';
+import { caveHomunculiData } from 'src/game/components/enemy/data/caveHomunculi.enemy';
+import { mimicData } from 'src/game/components/enemy/data/mimic.enemy';
+
+//- Elite:
+import { trollData } from 'src/game/components/enemy/data/troll.enemy';
+import { deepSorcererGreenData } from 'src/game/components/enemy/data/deepSorcererGreen.enemy';
+
+//- Bosses:
+import { swarmMasterData } from 'src/game/components/enemy/data/swarmMaster.enemy';
+import { deepDwellerLureData } from 'src/game/components/enemy/data/deepDwellerLure.enemy';
+
 
 const ActTwoNodeProbabilities = [
         {
@@ -107,7 +114,7 @@ const nodeOptions = {
             subType: NodeType.CombatStandard,
             title: "Combat",
             nodeConfig: {
-                enemies: [stingFaeData.enemyId, stingFaeData.enemyId],
+                enemies: [caveGoblinData.enemyId, caveGoblinData.enemyId],
             },
             probability: 25,
         },
@@ -116,7 +123,7 @@ const nodeOptions = {
             subType: NodeType.CombatStandard,
             title: "Combat",
             nodeConfig: {
-                enemies: [barkChargerData.enemyId, barkChargerData.enemyId],
+                enemies: [centipionData.enemyId, centipionData.enemyId],
             },
             probability: 25,
         },
@@ -125,7 +132,7 @@ const nodeOptions = {
             subType: NodeType.CombatStandard,
             title: "Combat",
             nodeConfig: {
-                enemies: [sporeMongerData.enemyId],
+                enemies: [mimicData.enemyId],
             },
             probability: 25,
         },
@@ -134,7 +141,7 @@ const nodeOptions = {
             subType: NodeType.CombatStandard,
             title: "Combat",
             nodeConfig: {
-                enemies: [mimicFrog1Data.enemyId],
+                enemies: [caveGoblinData.enemyId],
             },
             probability: 25,
         }
@@ -145,7 +152,7 @@ const nodeOptions = {
             subType: NodeType.CombatStandard,
             title: "Combat",
             nodeConfig: {
-                enemies: [mimicFrog1Data.enemyId, mimicFrog1Data.enemyId]
+                enemies: [caveHomunculiData.enemyId]
             },
             probability: 12
         },
@@ -154,7 +161,7 @@ const nodeOptions = {
             subType: NodeType.CombatStandard,
             title: "Combat",
             nodeConfig: {
-                enemies: [groundMothData.enemyId]
+                enemies: [caveGoblinData.enemyId, mossyArcherData.enemyId]
             },
             probability: 11,
         },
@@ -164,9 +171,9 @@ const nodeOptions = {
             title: "Combat",
             nodeConfig: {
                 enemies: [
-                    stingFaeData.enemyId,
-                    stingFaeData.enemyId,
-                    swampGoblin1Data.enemyId,
+                    caveGoblinData.enemyId,
+                    centipionData.enemyId,
+                    caveGoblinData.enemyId,
                 ],
             },
             probability: 11,
@@ -177,9 +184,8 @@ const nodeOptions = {
             title: "Combat",
             nodeConfig: {
                 enemies: [
-                    barkChargerData.enemyId,
-                    barkChargerData.enemyId,
-                    barkChargerData.enemyId,
+                    deepGoblinData.enemyId,
+                    centipionData.enemyId
                 ],
             },
             probability: 10,
@@ -190,9 +196,8 @@ const nodeOptions = {
             title: "Combat",
             nodeConfig: {
                 enemies: [
-                    swampGoblin2Data.enemyId,
-                    swampGoblin2Data.enemyId,
-                    swampGoblin1Data.enemyId,
+                    caveHomunculiData.enemyId,
+                    caveGoblinData.enemyId
                 ],
             },
             probability: 10,
@@ -202,7 +207,7 @@ const nodeOptions = {
             subType: NodeType.CombatStandard,
             title: "Combat",
             nodeConfig: {
-                enemies: [barkChargerData.enemyId, swampGoblin2Data.enemyId],
+                enemies: [mossySkeletonData.enemyId, mossyArcherData.enemyId],
             },
             probability: 9,
         },
@@ -212,10 +217,9 @@ const nodeOptions = {
             title: "Combat",
             nodeConfig: {
                 enemies: [
-                    stingFaeData.enemyId,
-                    stingFaeData.enemyId,
-                    stingFaeData.enemyId,
-                    stingFaeData.enemyId,
+                    moldPolypData.enemyId,
+                    moldPolypData.enemyId,
+                    moldPolypData.enemyId
                 ],
             },
             probability: 9,
@@ -226,9 +230,9 @@ const nodeOptions = {
             title: "Combat",
             nodeConfig: {
                 enemies: [
-                    stingFaeData.enemyId,
-                    groundMothData.enemyId,
-                    stingFaeData.enemyId,
+                    moldPolypData.enemyId,
+                    mossySkeletonData.enemyId,
+                    centipionData.enemyId,
                 ],
             },
             probability: 8,
@@ -241,9 +245,8 @@ const nodeOptions = {
             title: "Combat",
             nodeConfig: {
                 enemies: [
-                    mimicFrog1Data.enemyId,
-                    mimicFrog1Data.enemyId,
-                    sporeMongerData.enemyId,
+                    caveHomunculiData.enemyId,
+                    caveGoblinData.enemyId,
                 ],
             },
             probability: 12,
@@ -254,8 +257,23 @@ const nodeOptions = {
             title: "Combat",
             nodeConfig: {
                 enemies: [
-                    groundMothData.enemyId, 
-                    sporeMongerData.enemyId
+                    caveGoblinData.enemyId, 
+                    mossyArcherData.enemyId,
+                    moldPolypData.enemyId
+                ]
+            },
+            probability: 11,
+        },
+        {
+            type: NodeType.Combat,
+            subType: NodeType.CombatStandard,
+            title: "Combat",
+            nodeConfig: {
+                enemies: [
+                    caveGoblinData.enemyId,
+                    centipionData.enemyId,
+                    caveGoblinData.enemyId,
+                    mossyArcherData.enemyId
                 ],
             },
             probability: 11,
@@ -266,24 +284,9 @@ const nodeOptions = {
             title: "Combat",
             nodeConfig: {
                 enemies: [
-                    barkChargerData.enemyId,
-                    barkChargerData.enemyId,
-                    stingFaeData.enemyId,
-                    stingFaeData.enemyId,
-                ],
-            },
-            probability: 11,
-        },
-        {
-            type: NodeType.Combat,
-            subType: NodeType.CombatStandard,
-            title: "Combat",
-            nodeConfig: {
-                enemies: [
-                    stingFaeData.enemyId,
-                    stingFaeData.enemyId,
-                    swampGoblin1Data.enemyId,
-                    swampGoblin2Data.enemyId,
+                    deepGoblinData.enemyId,
+                    centipionData.enemyId,
+                    moldPolypData.enemyId
                 ],
             },
             probability: 10,
@@ -294,10 +297,10 @@ const nodeOptions = {
             title: "Combat",
             nodeConfig: {
                 enemies: [
-                    swampGoblin1Data.enemyId,
-                    swampGoblin2Data.enemyId,
-                    swampGoblin1Data.enemyId,
-                    swampGoblin2Data.enemyId,
+                    caveHomunculiData.enemyId,
+                    caveGoblinData.enemyId,
+                    centipionData.enemyId,
+                    centipionData.enemyId
                 ],
             },
             probability: 10,
@@ -308,9 +311,9 @@ const nodeOptions = {
             title: "Combat",
             nodeConfig: {
                 enemies: [
-                    sporeMongerData.enemyId,
-                    sporeMongerData.enemyId,
-                    stingFaeData.enemyId,
+                    mossySkeletonData.enemyId, 
+                    mossyArcherData.enemyId, 
+                    mossyBonesData.enemyId
                 ],
             },
             probability: 10,
@@ -321,9 +324,11 @@ const nodeOptions = {
             title: "Combat",
             nodeConfig: {
                 enemies: [
-                    swampGoblin1Data.enemyId,
-                    swampGoblin2Data.enemyId,
-                    mimicFrog1Data.enemyId,
+                    moldPolypData.enemyId,
+                    moldPolypData.enemyId,
+                    moldPolypData.enemyId,
+                    deepGoblinData.enemyId
+
                 ],
             },
             probability: 10,
@@ -334,9 +339,9 @@ const nodeOptions = {
             title: "Combat",
             nodeConfig: {
                 enemies: [
-                    barkChargerData.enemyId,
-                    barkChargerData.enemyId,
-                    swampGoblin2Data.enemyId,
+                    moldPolypData.enemyId,
+                    mossySkeletonData.enemyId,
+                    centipionData.enemyId,
                 ],
             },
             probability: 9,
@@ -347,11 +352,8 @@ const nodeOptions = {
             title: "Combat",
             nodeConfig: {
                 enemies: [
-                    stingFaeData.enemyId,
-                    stingFaeData.enemyId,
-                    stingFaeData.enemyId,
-                    stingFaeData.enemyId,
-                    stingFaeData.enemyId,
+                    deepGoblinData.enemyId,
+                    deepGoblinData.enemyId
                 ],
             },
             probability: 9,
@@ -361,7 +363,10 @@ const nodeOptions = {
             subType: NodeType.CombatStandard,
             title: "Combat",
             nodeConfig: {
-                enemies: [groundMothData.enemyId, groundMothData.enemyId],
+                enemies: [
+                    caveHomunculiData.enemyId, 
+                    caveHomunculiData.enemyId
+                ],
             },
             probability: 8,
         },
@@ -372,45 +377,36 @@ const nodeOptions = {
             subType: NodeType.CombatElite,
             title: "Elite Combat",
             nodeConfig: {
-                enemies: [thornWolfData.enemyId],
+                enemies: [trollData.enemyId],
             },
-            probability: 33.3,
+            probability: 50,
         },
         {
             type: NodeType.Combat,
             subType: NodeType.CombatElite,
             title: "Elite Combat",
             nodeConfig: {
-                enemies: [queenOrchidData.enemyId],
+                enemies: [deepSorcererGreenData.enemyId],
             },
-            probability: 33.3,
-        },
-        {
-            type: NodeType.Combat,
-            subType: NodeType.CombatElite,
-            title: "Elite Combat",
-            nodeConfig: {
-                enemies: [ancientOneData.enemyId],
-            },
-            probability: 33.3,
+            probability: 50,
         },
     ],
     'BossCombat': [
         { 
             type: NodeType.Combat,
             subType: NodeType.CombatBoss,
-            title: 'Boss: Treant',
+            title: 'Boss: Swarm Master',
             nodeConfig: {
-                enemies: [treantData.enemyId],
+                enemies: [swarmMasterData.enemyId],
             },
             probability: 0.5,
         },
         { 
             type: NodeType.Combat,
             subType: NodeType.CombatBoss,
-            title: 'Boss: Fungal Brute',
+            title: 'Boss: Deep Dweller Lure',
             nodeConfig: {
-                enemies: [fungalBruteData.enemyId],
+                enemies: [deepDwellerLureData.enemyId],
             },
             probability: 0.5,
         },
@@ -442,7 +438,7 @@ const createMoreOrEquals12NodesMap = (maxStepsVar: number, maxNodesVar: number):
 
     return {
         
-        actNumber: 1,
+        actNumber: 2,
         stepCount: maxSteps,
         maxNodesPerStep: maxNodes,
         nodeOptions: nodeOptions,
@@ -546,7 +542,7 @@ const createLess5NodesMap = (maxStepsVar: number, maxNodesVar:number): IActConfi
 
     if(maxSteps == 1){
         return{
-            actNumber: 1,
+            actNumber: 2,
             stepCount: 1,
             maxNodesPerStep: 1, // will be 1 anyway
             nodeOptions: nodeOptions,
@@ -567,7 +563,7 @@ const createLess5NodesMap = (maxStepsVar: number, maxNodesVar:number): IActConfi
     }else if(maxSteps == 2){
         maxNodes = maxNodes <= 3 ? maxNodes : 3;
         return {
-            actNumber: 1,
+            actNumber: 2,
             stepCount: maxSteps,
             maxNodesPerStep: maxNodes,
             nodeOptions: nodeOptions,
@@ -600,7 +596,7 @@ const createLess5NodesMap = (maxStepsVar: number, maxNodesVar:number): IActConfi
         //- More than 2 step, less than 5:
         const beforeBoss  = maxSteps - 2;
         return {
-            actNumber: 1,
+            actNumber: 2,
             stepCount: maxSteps,
             maxNodesPerStep: maxNodes,
             nodeOptions: nodeOptions,
@@ -650,7 +646,7 @@ const createLess12NodesMap = (maxStepsVar: number, maxNodesVar:number): IActConf
 
     return {
         
-        actNumber: 1,
+        actNumber: 2,
         stepCount: maxSteps,
         maxNodesPerStep: maxNodes,
         nodeOptions: nodeOptions,
