@@ -242,8 +242,8 @@ export class DrawCardAction {
             discard: newDiscard,
         });
 
-        const newCardsObject = expUpdated.currentNode.data.player.cards;
-        ctx.expedition.currentNode.data.player.cards = newCardsObject;
+        //const newCardsObject = expUpdated.currentNode.data.player.cards;
+        //ctx.expedition.currentNode.data.player.cards = newCardsObject;
 
         await this.eventEmitter2.emitAsync(EVENT_AFTER_DRAW_CARDS, {
             ctx,
