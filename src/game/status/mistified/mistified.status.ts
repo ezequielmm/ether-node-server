@@ -16,6 +16,8 @@ import { CardPlayedAction } from 'src/game/action/cardPlayed.action';
 import { getRandomItemByWeight } from 'src/utils';
 import { IExpeditionPlayerStateDeckCard } from 'src/game/components/expedition/expedition.interface';
 import { CardKeywordPipeline } from 'src/game/cardKeywordPipeline/cardKeywordPipeline';
+import { CardTargetedEnum } from 'src/game/components/card/card.enum';
+import { EnemyService } from 'src/game/components/enemy/enemy.service';
 
 @StatusDecorator({
     status: mistifiedStatus,
@@ -28,6 +30,8 @@ export class MistifiedStatus implements StatusEventHandler {
         private readonly statusService: StatusService,
         private readonly combatQueueService: CombatQueueService,
         private readonly cardPlayedAction: CardPlayedAction,
+        private readonly enemyService: EnemyService,
+
     ){}
 
     async handle(dto: StatusEventDTO): Promise<void> {
@@ -56,15 +60,17 @@ export class MistifiedStatus implements StatusEventHandler {
             const { unplayable } = CardKeywordPipeline.process(keywords);
 
             if(!unplayable){
+                const hasEnemyTarget = card.properties.effects.filter(e => e.target == CardTargetedEnum.Enemy).length > 0;
+                let enemyId = undefined;
 
-                //if(energy == 1){
-                
-                //}
-                console.log('CARTA A JUGAR ----------------------', card);
+                if(hasEnemyTarget){
+                    enemyId = this.enemyService.getRandom(ctx).value.id;
+                }
+
                 await this.cardPlayedAction.handle({
                     ctx,
                     cardId: card.id,
-                    selectedEnemyId: undefined,
+                    selectedEnemyId: enemyId,
                     newHand
                 });
             }
