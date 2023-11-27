@@ -93,7 +93,7 @@ export class CombatService {
         const rewards = await this.generateRewards(nodeOption, act);
 
         return {
-            sortedByLineEnemies,
+            enemies: sortedByLineEnemies,
             rewards,
         };
     }

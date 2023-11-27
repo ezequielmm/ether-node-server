@@ -204,7 +204,7 @@ export class MapBuilderService {
             
                 } else {
             
-                    populatedData = await this.encounterService.getRandomEncounter(mapValues?.encountersUsed ?? []);
+                    populatedData = await this.encounterService.getRandomEncounter(mapValues?.act ?? 1, mapValues?.encountersUsed ?? []);
                     
                     if (!mapValues.encountersUsed) mapValues.encountersUsed = [];
                     if (mapValues.encountersUsed.includes(populatedData.encounterId)) mapValues.encountersUsed = [];

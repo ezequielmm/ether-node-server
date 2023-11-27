@@ -40,10 +40,7 @@ export class CurrentNodeGeneratorProcess {
         return await this.combatService.generate(ctx, node);
     }
 
-    private async getEncounterCurrentNode(
-        ctx: GameContext,
-        node: Node,
-    ): Promise<IExpeditionCurrentNode> {
+    private async getEncounterCurrentNode(ctx: GameContext, node: Node ): Promise<IExpeditionCurrentNode> {
         const encounterData = await this.encounterService.generateEncounter(
             ctx,
             node,

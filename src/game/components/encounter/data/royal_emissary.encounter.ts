@@ -5,6 +5,7 @@ import { Encounter } from "../encounter.schema";
 export const RoyalEmissaryEncounter: Encounter = {
     encounterId: EncounterIdEnum.RoyalEmissary,
     encounterName: 'Royal-emissary',
+    stageNumber: 2,
     imageId: 'royalEmissary',
     stages: [
         {
