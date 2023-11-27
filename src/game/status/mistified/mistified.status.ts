@@ -42,10 +42,9 @@ export class MistifiedStatus implements StatusEventHandler {
                 newHand
             },
         } = dto;
-        console.log('context --------------------------');
-        console.log(ctx);
         const energy = ctx.expedition.currentNode.data.player.energy;
-
+        console.log('CONTEXT -----------------------------------');
+        console.log(ctx.exception.currentNode.data.player.cards.newHand);
         const probNum = (newHand.length / 100);
         console.log(probNum);
         let probability : number[] = [];
