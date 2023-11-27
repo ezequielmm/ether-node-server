@@ -79,12 +79,11 @@ export class DiscardCardAction {
         // Then we take the desired card from the hand pile
         // Also remove it from the hand pile
         let cardToDiscard: IExpeditionPlayerStateDeckCard = null;
-
+        console.log('original --------');
+        console.log(hand);
         hand = hand.filter((card) => {
             const field = getCardIdField(cardId);
-            console.log('cardId: ', cardId, 'card[field]: ', card[field]);
-            if (card[field] === cardId) cardToDiscard = card;
-
+            if (card[field] == cardId) cardToDiscard = card;
             
             return card[field] !== cardId;
         });
