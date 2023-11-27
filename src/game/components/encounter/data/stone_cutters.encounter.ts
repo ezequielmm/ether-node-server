@@ -15,7 +15,7 @@ export const StoneCuttersEncounter: Encounter = {
                     //- aka option 1
                     text: " [Trade] Trade your most recently acquired Trinket for Silver Ore. ",
                     nextStage: 1,
-                    effects: [{ kind: 'lost_recent_trinket' },  { kind: 'trinket', item: 'birdcage' }]
+                    effects: [{ kind: 'lost_recent_trinket' }]
                 },
                 {
                     //- aka option 1

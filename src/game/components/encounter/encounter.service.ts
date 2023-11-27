@@ -251,6 +251,7 @@ export class EncounterService {
                     break;
                 case 'lost_recent_trinket': //eg cave in
                     await this.looseRecentTrinket(
+                        ctx,
                         ctx.client,
                         ctx.expedition.playerState,
                     );
@@ -812,13 +813,18 @@ export class EncounterService {
             });
     }
 
-    private async looseRecentTrinket(client: Socket, playerState: Player): Promise<void> {
+    private async looseRecentTrinket(ctx: GameContext, client: Socket, playerState: Player): Promise<void> {
         const trinketsIds: number[] = [];
         const probabilityWeights: number[] = [];
 
         if (trinketsIds.length == 0) return; // no trinkets
 
         const lastTrinketsId = playerState.trinkets[trinketsIds.length - 1].trinketId;
+
+        await this.trinketService.add({
+            ctx,
+            trinketId: 3,
+        });
 
         // const looseMeTrinketId = getRandomItemByWeight(
         //     trinketsIds,
