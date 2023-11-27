@@ -195,6 +195,12 @@ export class EndExpeditionProcess {
     {
         //- Lootbox - Gears:
         const gearLootboxActivated = this.configService.get<boolean>('LOOTBOX_ACTIVATED', false);
+        const prueba = canWinGear && gearLootboxActivated;
+        console.log("gearLootboxActivated: ")
+        console.log(gearLootboxActivated)
+        console.log("Can win loot?: ")
+        console.log(prueba)
+        console.log("--------------------------------------------------------------------")
         const character = ctx.expedition.playerState.characterClass as CharacterClassEnum;
         const isLastStage = ctx.expedition.contest.stages.length == currentStage;
         //let filteredLootbox = (canWinGear && gearLootboxActivated) ? await this.getHalloweenGearVictoryItems(ctx, currentStage, character) : [];
