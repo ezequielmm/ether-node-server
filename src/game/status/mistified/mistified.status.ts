@@ -18,6 +18,7 @@ import { IExpeditionPlayerStateDeckCard } from 'src/game/components/expedition/e
 import { CardKeywordPipeline } from 'src/game/cardKeywordPipeline/cardKeywordPipeline';
 import { CardTargetedEnum } from 'src/game/components/card/card.enum';
 import { EnemyService } from 'src/game/components/enemy/enemy.service';
+import { ExpeditionService } from 'src/game/components/expedition/expedition.service';
 
 @StatusDecorator({
     status: mistifiedStatus,
@@ -31,6 +32,7 @@ export class MistifiedStatus implements StatusEventHandler {
         private readonly combatQueueService: CombatQueueService,
         private readonly cardPlayedAction: CardPlayedAction,
         private readonly enemyService: EnemyService,
+        private readonly expeditionService: ExpeditionService,
 
     ){}
 
@@ -38,12 +40,13 @@ export class MistifiedStatus implements StatusEventHandler {
 
         const { status: { args },
             eventArgs: {
-                ctx,
                 newHand
             },
         } = dto;
+
+        const ctx = await this.expeditionService.getGameContext(dto.ctx.client);
         console.log('CONTEXT -----------------------------------');
-        console.log(ctx.expedition.currentNode.data.player.cards.newHand);
+        console.log(ctx.expedition.currentNode.data.player.cards.hand);
         const energy = ctx.expedition.currentNode.data.player.energy;
         
         const probNum = (newHand.length / 100);
