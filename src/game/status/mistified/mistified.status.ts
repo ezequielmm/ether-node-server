@@ -36,8 +36,9 @@ export class MistifiedStatus implements StatusEventHandler {
 
     async handle(dto: StatusEventDTO): Promise<void> {
 
-        const { ctx, status: { args },
+        const { status: { args },
             eventArgs: {
+                ctx,
                 newHand
             },
         } = dto;
