@@ -2,8 +2,7 @@ import { damageEffect } from 'src/game/effects/damage/constants';
 import { burn } from 'src/game/status/burn/constants';
 import { CardRarityEnum, CardTypeEnum, CardTargetedEnum, CardEnergyEnum } from '../card.enum';
 import { Card } from '../card.schema';
-import { holyExplosion } from 'src/game/effects/holyExplosion/constants';
-import { sacretwords } from 'src/game/status/sacredwords/constants';
+import { sacredwords } from 'src/game/effects/sacredwords/constants';
 //import { attachStatusEffect } from 'src/game/effects/attachStatus/constants';
 
 export const SacretWordsCardUpgraded: Card = {
@@ -18,7 +17,7 @@ export const SacretWordsCardUpgraded: Card = {
     properties: {
         effects: [
             {
-                effect: sacretwords.name,
+                effect: sacredwords.name,
                 target: CardTargetedEnum.AllEnemies,
                 args: {
                     shuffleTurns: 2,
@@ -44,7 +43,7 @@ export const SacretWordsCard: Card = {
     properties: {
         effects: [
             {
-                effect: sacretwords.name,
+                effect: sacredwords.name,
                 target: CardTargetedEnum.AllEnemies,
                 args: {
                     shuffleTurns : 1,
