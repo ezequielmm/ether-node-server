@@ -512,7 +512,7 @@ export class EnemyService {
  *
  * @param ctx Context
  */
-    async calculateNewIntentions(ctx: GameContext): Promise<void> {
+    public async calculateNewIntentions(ctx: GameContext): Promise<void> {
         const enemiesAlive = this.getLiving(ctx);
 
         for (const enemy of enemiesAlive) {
