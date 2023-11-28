@@ -83,7 +83,7 @@ export class MistifiedStatus implements StatusEventHandler {
                 });
             }
         }
-        await this.endPlayerTurnProcess.handle({ ctx });
+        //await this.endPlayerTurnProcess.handle({ ctx });
     }
 
     async onPlayerTurnStart({ ctx }: { ctx: GameContext }): Promise<void> {
