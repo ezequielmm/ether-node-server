@@ -34,19 +34,9 @@ export class InitExpeditionProcess {
 
     async handle({userAddress, playerName, playerToken, equippedGear, character_class, contest, stage}: 
             { userAddress: string; playerName: string; playerToken: IPlayerToken; equippedGear: GearItem[]; character_class: string; contest: Contest; stage: number; }): Promise<void> {
-        
-        console.log("InitExpedition character class: ")
-        console.log(character_class)
 
         const character_class_enum = this.getCharcterName(character_class);
-
-        console.log("character_class_enum")
-        console.log(character_class_enum)
-
         const character = await this.characterService.findOne({characterClass: character_class_enum});
-
-        console.log("character")
-        console.log(character)
 
         const { initialPotionChance } = await this.settingsService.getSettings();
 
