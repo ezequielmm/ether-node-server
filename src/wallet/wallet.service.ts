@@ -55,8 +55,6 @@ export class WalletService {
                 token_count:      squiresContract.token_count,
                 tokens:           []
             };
-            console.log("contract.characterClass:")
-            console.log(contract.characterClass)
         
             for await (const squiresToken of squiresContract.tokens) {    
                 const can_play = await this.playerWinService.canPlay(event_id, contract.contract_address, squiresToken.edition, win_counts[contract.contract_address + squiresToken.edition] || 0);
