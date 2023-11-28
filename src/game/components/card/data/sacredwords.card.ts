@@ -21,10 +21,7 @@ export const SacretWordsCardUpgraded: Card = {
                 effect: sacretwords.name,
                 target: CardTargetedEnum.AllEnemies,
                 args: {
-                    undeadDamage: 5,
-                    undeadBurn: 3,
-                    notUndeadDamage: 3,
-                    notUndeadBurn: 3,
+                    shuffleTurns: 2,
                 },
             },           
         ],
@@ -35,7 +32,7 @@ export const SacretWordsCardUpgraded: Card = {
     isActive: true,
 };
 
-export const HolyExplosionCard: Card = {
+export const SacretWordsCard: Card = {
     cardId: 580,
     name: 'Sacred Words',
     rarity: CardRarityEnum.Starter,
@@ -50,10 +47,7 @@ export const HolyExplosionCard: Card = {
                 effect: sacretwords.name,
                 target: CardTargetedEnum.AllEnemies,
                 args: {
-                    undeadDamage: 3,
-                    undeadBurn: 3,
-                    notUndeadDamage: 2,
-                    notUndeadBurn: 2,
+                    shuffleTurns : 1,
                 },
             },        
         ],

@@ -14,11 +14,8 @@ import { CombatQueueService } from 'src/game/components/combatQueue/combatQueue.
 import { CombatQueueTargetEffectTypeEnum } from 'src/game/components/combatQueue/combatQueue.enum';
 import { AttachedStatus } from 'src/game/status/interfaces';
 
-export interface HolyEffectsArgs {
-    undeadDamage: number,
-    undeadBurn: number,
-    notUndeadDamage: number,
-    notUndeadBurn: number,
+export interface SacreWordsEffectsArgs {
+    shuffleTurns : number,
 }
 @EffectDecorator({
     effect: sacredwords,
@@ -32,13 +29,13 @@ export class sacredWordsEffect implements EffectHandler {
         private readonly combatQueueService: CombatQueueService
     ) {}
 
-    async handle(dto: EffectDTO<HolyEffectsArgs>): Promise<void> {
+    async handle(dto: EffectDTO<SacreWordsEffectsArgs>): Promise<void> {
         const { ctx } = dto;
         const energy = ctx.expedition.currentNode.data.player.energy;
         await this.sacredWords(dto, energy);
     }
 
-    protected async sacredWords(dto: EffectDTO<HolyEffectsArgs>, energy: number) {
+    protected async sacredWords(dto: EffectDTO<SacreWordsEffectsArgs>, energy: number) {
         const { ctx, source, target, action } = dto;
 
         //we get the alive enemies in the currentNode
