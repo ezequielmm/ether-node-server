@@ -19,6 +19,7 @@ import { CardKeywordPipeline } from 'src/game/cardKeywordPipeline/cardKeywordPip
 import { CardTargetedEnum } from 'src/game/components/card/card.enum';
 import { EnemyService } from 'src/game/components/enemy/enemy.service';
 import { ExpeditionService } from 'src/game/components/expedition/expedition.service';
+import { EndPlayerTurnProcess } from 'src/game/process/endPlayerTurn.process';
 
 @StatusDecorator({
     status: mistifiedStatus,
@@ -33,6 +34,7 @@ export class MistifiedStatus implements StatusEventHandler {
         private readonly cardPlayedAction: CardPlayedAction,
         private readonly enemyService: EnemyService,
         private readonly expeditionService: ExpeditionService,
+        private readonly endPlayerTurnProcess: EndPlayerTurnProcess,
 
     ){}
 
@@ -81,6 +83,7 @@ export class MistifiedStatus implements StatusEventHandler {
                 });
             }
         }
+        await this.endPlayerTurnProcess.handle({ ctx });
     }
 
     async onPlayerTurnStart({ ctx }: { ctx: GameContext }): Promise<void> {
