@@ -6,7 +6,7 @@ import { holyExplosion } from 'src/game/effects/holyExplosion/constants';
 import { sacretwords } from 'src/game/status/sacredwords/constants';
 //import { attachStatusEffect } from 'src/game/effects/attachStatus/constants';
 
-export const HolyExplosionCardUpgraded: Card = {
+export const SacretWordsCardUpgraded: Card = {
     cardId: 581,
     name: 'Sacred Words+',
     rarity: CardRarityEnum.Starter,
@@ -47,7 +47,7 @@ export const HolyExplosionCard: Card = {
     properties: {
         effects: [
             {
-                effect: holyExplosion.name,
+                effect: sacretwords.name,
                 target: CardTargetedEnum.AllEnemies,
                 args: {
                     undeadDamage: 3,
@@ -61,6 +61,6 @@ export const HolyExplosionCard: Card = {
     },
     showPointer: false,
     isUpgraded: false,
-    upgradedCardId: HolyExplosionCardUpgraded.cardId,
+    upgradedCardId: SacretWordsCardUpgraded.cardId,
     isActive: true,
 };
