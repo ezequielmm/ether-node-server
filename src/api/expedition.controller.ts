@@ -32,10 +32,11 @@ import { IPlayerToken } from 'src/game/components/expedition/expedition.schema';
 import { PlayerWinService } from 'src/playerWin/playerWin.service';
 import { AuthorizedRequest } from 'src/auth/auth.types';
 import { TroveService } from 'src/trove/trove.service';
+import { CharacterClassEnum } from 'src/game/components/character/character.enum';
 
 class CreateExpeditionApiDTO {
     @ApiProperty({ default: 'Knight' })
-    readonly tokenType: string;
+    readonly tokenType: CharacterClassEnum;
 
     @ApiProperty()
     readonly walletId: string;
@@ -100,7 +101,6 @@ export class ExpeditionController {
             const equippedGear = expedition?.playerState?.equippedGear ?? [];
             const tokenType = expedition?.playerState?.characterClass ?? 'missing';
             const currentStage = expedition?.currentStage ?? 1;
-            //todo parse for front end
             const playerState = expedition?.playerState ?? null;
 
             const contest =
