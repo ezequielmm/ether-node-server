@@ -10,7 +10,7 @@ export const SecretWordsCardUpgraded: Card = {
     rarity: CardRarityEnum.Common,
     cardType: CardTypeEnum.Attack,
     pool: 'knight',
-    energy: 3,
+    energy: 1,
     description: `Deal {${damageEffect.name}} damage. This card shuffles back into your draw pile.`,
     keywords: [],
     properties: {
@@ -43,7 +43,7 @@ export const AutonomousWeaponCard: Card = {
     rarity: CardRarityEnum.Common,
     cardType: CardTypeEnum.Attack,
     pool: 'knight',
-    energy: 3,
+    energy: 1,
     description: `Deal {${damageEffect.name}} damage. This card shuffles back into your draw pile.`,
     keywords: [],
     properties: {
