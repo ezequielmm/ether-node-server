@@ -11,7 +11,7 @@ export const SecretWordsCardUpgraded: Card = {
     cardType: CardTypeEnum.Attack,
     pool: 'knight',
     energy: 1,
-    description: `Deal {${damageEffect.name}} damage. This card shuffles back into your draw pile.`,
+    description: `Shuffle the enemy intents.`,
     keywords: [],
     properties: {
         effects: [
@@ -37,14 +37,14 @@ export const SecretWordsCardUpgraded: Card = {
     isActive: true,
 };
 
-export const AutonomousWeaponCard: Card = {
+export const SecretWordsCard: Card = {
     cardId: 580,
     name: 'Sacred Words',
     rarity: CardRarityEnum.Common,
     cardType: CardTypeEnum.Attack,
     pool: 'knight',
     energy: 1,
-    description: `Deal {${damageEffect.name}} damage. This card shuffles back into your draw pile.`,
+    description: `Shuffle the enemy intents.`,
     keywords: [],
     properties: {
         effects: [
