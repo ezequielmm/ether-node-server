@@ -2,7 +2,7 @@ import { chooseCardEffect } from 'src/game/effects/chooseCard/constants';
 import { damageEffect } from 'src/game/effects/damage/constants';
 import { CardRarityEnum, CardTargetedEnum, CardTypeEnum } from '../card.enum';
 import { Card } from '../card.schema';
-import { sacredWordEffect } from 'src/game/effects/sacredWords/constants';
+import { sacredWordEffect } from 'src/game/effects/sacredWordsEffect/constants';
 
 export const SecretWordsCardUpgraded: Card = {
     cardId: 581,
