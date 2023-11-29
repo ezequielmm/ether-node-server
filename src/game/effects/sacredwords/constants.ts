@@ -1,5 +1,5 @@
 import { Effect } from '../effects.interface';
 
-export const sacredwords: Effect = {
-    name: 'sacredWords',
+export const sacredWordEffect: Effect = {
+    name: 'SacredWordEffect',
 };

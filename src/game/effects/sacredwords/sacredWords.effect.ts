@@ -1,59 +1,54 @@
-import { Logger } from '@nestjs/common';
-import { forEach, get } from 'lodash';
-import { EnemyService } from 'src/game/components/enemy/enemy.service';
-import { PLAYER_ENERGY_PATH } from 'src/game/components/player/contants';
-import { damageEffect } from '../damage/constants';
+import { Injectable } from '@nestjs/common';
+import { ExpeditionService } from 'src/game/components/expedition/expedition.service';
+import { HistoryService } from 'src/game/history/history.service';
+import { CardRegistry } from 'src/game/history/interfaces';
+import { removeCardsFromPile } from 'src/utils';
 import { EffectDecorator } from '../effects.decorator';
 import { EffectDTO, EffectHandler } from '../effects.interface';
-import { EffectService } from '../effects.service';
-import { sacredwords } from './constants';
-import { EnemyTypeEnum } from 'src/game/components/enemy/enemy.enum';
-import { StatusService } from 'src/game/status/status.service';
-import { burn } from 'src/game/status/burn/constants';
-import { CombatQueueService } from 'src/game/components/combatQueue/combatQueue.service';
-import { CombatQueueTargetEffectTypeEnum } from 'src/game/components/combatQueue/combatQueue.enum';
-import { AttachedStatus } from 'src/game/status/interfaces';
+import { sacredWordEffect } from './constants';
+import { EnemyService } from 'src/game/components/enemy/enemy.service';
 
-export interface SacreWordsEffectsArgs {
-    shuffleTurns : number,
-}
 @EffectDecorator({
-    effect: sacredwords,
+    effect: sacredWordEffect,
 })
-export class sacredWordsEffect implements EffectHandler {
-    private readonly logger: Logger = new Logger(sacredwords.name);
+@Injectable()
+export class SacredWordEffect implements EffectHandler {
     constructor(
-        private readonly effectService: EffectService,
+        private readonly expeditionService: ExpeditionService,
+        private readonly historyService: HistoryService,
         private readonly enemyService: EnemyService,
-        private readonly statusService: StatusService,
-        private readonly combatQueueService: CombatQueueService
     ) {}
 
-    async handle(dto: EffectDTO<SacreWordsEffectsArgs>): Promise<void> {
+    async handle(dto: EffectDTO): Promise<void> {
         const { ctx } = dto;
-        const energy = ctx.expedition.currentNode.data.player.energy;
-        await this.sacredWords(dto, energy);
+        
+        this.enemyService.calculateNewIntentions(ctx);
+        // // // // // // Get the card that was played by history service and move it
+        // // // // // // to the draw pile
+        // // // // // const card = this.historyService.findLast<CardRegistry>(ctx.client.id, {
+        // // // // //     type: 'card',
+        // // // // //     card: {},
+        // // // // // });
+
+        // // // // // if (!card)
+        // // // // //     throw new Error('Card Autonomous Weapon not found in history');
+
+        // // // // // const { discard, draw } = ctx.expedition.currentNode.data.player.cards;
+
+        // // // // // // Add the card to the draw pile
+        // // // // // draw.push(card.card);
+        // // // // // // Remove the card from the discard pile
+        // // // // // ctx.expedition.currentNode.data.player.cards.discard =
+        // // // // //     removeCardsFromPile({
+        // // // // //         originalPile: discard,
+        // // // // //         cardsToRemove: [card.card],
+        // // // // //     });
+
+        // // // // // // Update the expedition
+        // // // // // await this.expeditionService.updateHandPiles({
+        // // // // //     clientId: ctx.client.id,
+        // // // // //     draw,
+        // // // // //     discard,
+        // // // // // });
     }
-
-    protected async sacredWords(dto: EffectDTO<SacreWordsEffectsArgs>, energy: number) {
-        const { ctx, source, target, action } = dto;
-
-        //we get the alive enemies in the currentNode
-        //const currentNodeEnemies = this.enemyService.getLiving(ctx);
-
-        if (!target) {
-            this.logger.debug(ctx.info, 'No target found for sacred words');
-            return;
-        }  
-
-       // for(let currentEnemy of currentNodeEnemies){
-        if(EnemyService.isEnemy(target) && energy > 0){
-            
-            // const enemyType = target.value.type;
-
-            this.enemyService.calculateNewIntentions(ctx);
-
-            
-        }             
-    } 
 }

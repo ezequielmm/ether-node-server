@@ -1,59 +1,72 @@
+import { chooseCardEffect } from 'src/game/effects/chooseCard/constants';
 import { damageEffect } from 'src/game/effects/damage/constants';
-import { burn } from 'src/game/status/burn/constants';
-import { CardRarityEnum, CardTypeEnum, CardTargetedEnum, CardEnergyEnum } from '../card.enum';
+import { CardRarityEnum, CardTargetedEnum, CardTypeEnum } from '../card.enum';
 import { Card } from '../card.schema';
-import { sacredwords } from 'src/game/effects/sacredwords/constants';
-//import { attachStatusEffect } from 'src/game/effects/attachStatus/constants';
+import { sacredWordEffect } from 'src/game/effects/sacredWords/constants';
 
-export const SacretWordsCardUpgraded: Card = {
+export const SecretWordsCardUpgraded: Card = {
     cardId: 581,
-    name: 'Sacred Words+',
-    rarity: CardRarityEnum.Starter,
-    cardType: CardTypeEnum.Skill,
+    name: 'Secret Words+',
+    rarity: CardRarityEnum.Common,
+    cardType: CardTypeEnum.Attack,
     pool: 'knight',
-    energy: 2,
-    description: `Shuffle enemy intents. `,
+    energy: 3,
+    description: `Deal {${damageEffect.name}} damage. This card shuffles back into your draw pile.`,
     keywords: [],
     properties: {
         effects: [
             {
-                effect: sacredwords.name,
+                effect: sacredWordEffect.name,
                 target: CardTargetedEnum.AllEnemies,
                 args: {
-                    shuffleTurns: 2,
+                    value: null,
                 },
-            },           
+            },
+            {
+                effect: damageEffect.name,
+                target: CardTargetedEnum.AllEnemies,
+                args: {
+                    value: 40,
+                },
+            },
         ],
         statuses: [],
     },
-    showPointer: false,
+    showPointer: true,
     isUpgraded: true,
     isActive: true,
 };
 
-export const SacretWordsCard: Card = {
+export const AutonomousWeaponCard: Card = {
     cardId: 580,
-    name: 'Sacred Words',
-    rarity: CardRarityEnum.Starter,
-    cardType: CardTypeEnum.Skill,
+    name: 'Secret Words',
+    rarity: CardRarityEnum.Common,
+    cardType: CardTypeEnum.Attack,
     pool: 'knight',
-    energy: 1,
-    description: `Shuffle enemy intents. `,
+    energy: 3,
+    description: `Deal {${damageEffect.name}} damage. This card shuffles back into your draw pile.`,
     keywords: [],
     properties: {
         effects: [
             {
-                effect: sacredwords.name,
+                effect: sacredWordEffect.name,
                 target: CardTargetedEnum.AllEnemies,
                 args: {
-                    shuffleTurns : 1,
+                    value: null,
                 },
-            },        
+            },
+            {
+                effect: damageEffect.name,
+                target: CardTargetedEnum.AllEnemies,
+                args: {
+                    value: 30,
+                },
+            },
         ],
         statuses: [],
     },
-    showPointer: false,
+    showPointer: true,
     isUpgraded: false,
-    upgradedCardId: SacretWordsCardUpgraded.cardId,
+    upgradedCardId: SecretWordsCardUpgraded.cardId,
     isActive: true,
 };
