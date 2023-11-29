@@ -6,7 +6,7 @@ import { sacredWordEffect } from 'src/game/effects/sacredWordsEffect/constants';
 
 export const SecretWordsCardUpgraded: Card = {
     cardId: 581,
-    name: 'Secret Words+',
+    name: 'Sacred Words+',
     rarity: CardRarityEnum.Common,
     cardType: CardTypeEnum.Attack,
     pool: 'knight',
@@ -26,7 +26,7 @@ export const SecretWordsCardUpgraded: Card = {
                 effect: damageEffect.name,
                 target: CardTargetedEnum.AllEnemies,
                 args: {
-                    value: 40,
+                    value: 10,
                 },
             },
         ],
@@ -39,7 +39,7 @@ export const SecretWordsCardUpgraded: Card = {
 
 export const AutonomousWeaponCard: Card = {
     cardId: 580,
-    name: 'Secret Words',
+    name: 'Sacred Words',
     rarity: CardRarityEnum.Common,
     cardType: CardTypeEnum.Attack,
     pool: 'knight',
@@ -59,7 +59,7 @@ export const AutonomousWeaponCard: Card = {
                 effect: damageEffect.name,
                 target: CardTargetedEnum.AllEnemies,
                 args: {
-                    value: 30,
+                    value: 10,
                 },
             },
         ],
