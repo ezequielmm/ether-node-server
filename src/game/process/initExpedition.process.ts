@@ -33,13 +33,9 @@ export class InitExpeditionProcess {
     ) { }
 
     async handle({userAddress, playerName, playerToken, equippedGear, character_class, contest, stage}: 
-            { userAddress: string; playerName: string; playerToken: IPlayerToken; equippedGear: GearItem[]; character_class: string; contest: Contest; stage: number; }): Promise<void> {
-
-        console.log("character_class:-------------------------------");
-        console.log(character_class);
-        const character_class_enum = this.getCharcterName(character_class);
-        const character = await this.characterService.findOne({characterClass: character_class_enum});
-
+            { userAddress: string; playerName: string; playerToken: IPlayerToken; equippedGear: GearItem[]; character_class: CharacterClassEnum; contest: Contest; stage: number; }): Promise<void> {
+        
+        const character = await this.characterService.findOne({characterClass: character_class});
         const { initialPotionChance } = await this.settingsService.getSettings();
 
         const map = await this.contestMapService.getMapForContest(contest.stages[stage -1]);
@@ -194,24 +190,5 @@ export class InitExpeditionProcess {
                     isFirstPlay: false
                 };
             });
-    }
-
-    private getCharcterName(characterClass):CharacterClassEnum{
-        switch (characterClass) {
-            case 'Knight':
-                return CharacterClassEnum.Knight;
-            case 'Villager':
-                return CharacterClassEnum.Villager;
-            case 'BlessedVillager':
-                return CharacterClassEnum.BlessedVillager;
-            case 'NonTokenVillager':
-                return CharacterClassEnum.NonTokenVillager;
-            case 'KnightInitiated':
-                return CharacterClassEnum.KnightInitiated;
-            case 'BlessedVillagerInitiated':
-                return CharacterClassEnum.BlessedVillagerInitiated;
-            default:
-                return CharacterClassEnum.Knight;
-        }
     }
 }
