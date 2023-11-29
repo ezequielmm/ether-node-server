@@ -26,7 +26,7 @@ export class TaskService {
         private readonly settingsService: SettingsService,
     ) {}
 
-    @Cron(CronExpression.EVERY_DAY_AT_1PM, { 
+    @Cron(CronExpression.EVERY_DAY_AT_2PM, { 
         name: 'Create Contest Map',
         timeZone: 'UTC',
     })
@@ -42,6 +42,7 @@ export class TaskService {
 
         const contestExists = await this.contestService.findActiveContest(
             availableAt,
+            true
         );
 
         // If we have a contest, we don't need to create a new map
