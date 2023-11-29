@@ -42,6 +42,7 @@ export class TaskService {
 
         const contestExists = await this.contestService.findActiveContest(
             availableAt,
+            true
         );
 
         // If we have a contest, we don't need to create a new map
