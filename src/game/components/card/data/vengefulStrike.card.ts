@@ -1,14 +1,7 @@
+import { comebackStatus } from 'src/game/status/comeback/constants';
 import { CardRarityEnum, CardTypeEnum, CardTargetedEnum } from '../card.enum';
 import { Card } from '../card.schema';
 import { defenseEffect } from 'src/game/effects/defense/constants';
-
-/*
-TODO:
-
--for both cards
-    -notes:Comeback attacks a random monster for 2x the amount of defense remaining at the end of the monsters turn (if any).
-    -cards effects logic 
-*/
 
 export const VengefulStrikeCardUpgraded: Card = {
     cardId: 567,
@@ -17,28 +10,28 @@ export const VengefulStrikeCardUpgraded: Card = {
     cardType: CardTypeEnum.Defend,
     pool: 'knight',
     energy: 1,
-    description: `Gain 1 comeback. Gain 5 ${defenseEffect.name}.`,
+    description: `Gain 1 comeback. Gain 8 ${defenseEffect.name}.`,
     keywords: [],
     properties: {
         effects: [
             {
                 effect: defenseEffect.name,
-                target: CardTargetedEnum.Enemy,
+                target: CardTargetedEnum.Player,
                 args: {
                     value: 8,
                 },
             },
-            {
-                effect: defenseEffect.name,
-                target: CardTargetedEnum.Enemy,
-                args: {
-                    value: 8,
-                },
-            },    
         ],
-        statuses: [],
+        statuses: [{
+            name: comebackStatus.name,
+            attachTo: CardTargetedEnum.Player,
+            args: {
+                counter: 1,
+
+            },
+        },],
     },
-    showPointer: true,
+    showPointer: false,
     isUpgraded: true,
     isActive: true,
 };
@@ -50,28 +43,21 @@ export const VengefulStrikeCard: Card = {
     cardType: CardTypeEnum.Defend,
     pool: 'knight',
     energy: 1,
-    description: `Gain 8 ${defenseEffect.name} for each enemy with the Undead trait, and 3 ${defenseEffect.name} for each non-Undead enemy.`,
+    description: `Gain 1 comeback. Gain 5 ${defenseEffect.name}`,
     keywords: [],
     properties: {
-        effects: [
+        effects: [],
+        statuses: [
             {
-                effect: defenseEffect.name,
-                target: CardTargetedEnum.Self,
+                name: comebackStatus.name,
+                attachTo: CardTargetedEnum.Player,
                 args: {
-                    value: 8,
-                },
-            },
-            {
-                effect: defenseEffect.name,
-                target: CardTargetedEnum.Self,
-                args: {
-                    value: 3,
+                    counter: 1,
                 },
             },
         ],
-        statuses: [],
     },
-    showPointer: true,
+    showPointer: false,
     isUpgraded: false,
     upgradedCardId: VengefulStrikeCardUpgraded.cardId,
     isActive: true,
