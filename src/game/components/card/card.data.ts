@@ -140,7 +140,6 @@ import { SmudgeCard, SmudgeCardUpgraded } from './data/smudge.card';
 import { GalvanizeCard, GalvanizeCardUpgraded} from './data/galvanize.card';
 import { MirageCard } from './data/mirage.card';
 import { SecretWordsCard, SecretWordsCardUpgraded } from './data/sacredwords.card';
-import { VengefulStrikeCard, VengefulStrikeCardUpgraded} from './data/vengefulStrike.card'
 
 export const data: Card[] = [
     AttackCard,
@@ -304,7 +303,5 @@ export const data: Card[] = [
     GalvanizeCardUpgraded,
     MirageCard,
     SecretWordsCard,
-    SecretWordsCardUpgraded,
-    VengefulStrikeCard, 
-    VengefulStrikeCardUpgraded
+    SecretWordsCardUpgraded
 ];

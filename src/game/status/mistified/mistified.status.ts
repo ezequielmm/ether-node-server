@@ -47,19 +47,19 @@ export class MistifiedStatus implements StatusEventHandler {
         } = dto;
 
         const ctx = await this.expeditionService.getGameContext(dto.ctx.client);
-        //console.log('CONTEXT -----------------------------------');
-        //console.log(ctx.expedition.currentNode.data.player.cards.hand);
+        console.log('CONTEXT -----------------------------------');
+        console.log(ctx.expedition.currentNode.data.player.cards.hand);
         const energy = ctx.expedition.currentNode.data.player.energy;
         
         const probNum = (newHand.length / 100);
-        //console.log(probNum);
+        console.log(probNum);
         let probability : number[] = [];
     
         newHand.forEach(card =>{
             probability.push(probNum);
         });
 
-        //console.log('PROBABILITY ----------------------', probability);
+        console.log('PROBABILITY ----------------------', probability);
         
         while(energy > 0){
 
