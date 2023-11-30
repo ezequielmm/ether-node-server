@@ -3,6 +3,7 @@ import { chooseCardEffect } from 'src/game/effects/chooseCard/constants';
 import { damageEffect } from 'src/game/effects/damage/constants';
 import { CardRarityEnum, CardTargetedEnum, CardTypeEnum } from '../card.enum';
 import { Card } from '../card.schema';
+import { sacredWordEffect } from 'src/game/effects/sacredWordsEffect/constants';
 
 export const AutonomousWeaponCardUpgraded: Card = {
     cardId: 146,
@@ -60,6 +61,13 @@ export const AutonomousWeaponCard: Card = {
                 target: CardTargetedEnum.Enemy,
                 args: {
                     value: 30,
+                },
+            },
+            {
+                effect: sacredWordEffect.name,
+                target: CardTargetedEnum.AllEnemies,
+                args: {
+                    value: null,
                 },
             },
         ],
