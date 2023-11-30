@@ -27,52 +27,53 @@ export class SacredWordEffect implements EffectHandler {
         private readonly expeditionService: ExpeditionService,
         private readonly historyService: HistoryService,
         private readonly enemyService: EnemyService,
-        private readonly eventEmitter: EventEmitter2,
-        @Inject(forwardRef(() => CombatService))
-        private readonly combatService: CombatService,
-        @Inject(forwardRef(() => EffectService))
-        private readonly effectService: EffectService,
+        // private readonly eventEmitter: EventEmitter2,
+        // @Inject(forwardRef(() => CombatService))
+        // private readonly combatService: CombatService,
+        // @Inject(forwardRef(() => EffectService))
+        // private readonly effectService: EffectService,
 
     ) { }
 
     async handle(dto: EffectDTO): Promise<void> {
         const { ctx } = dto;
 
-        const livingEnemies = await this.enemyService.getLiving(ctx);
+        this.enemyService.calculateNewIntentions(ctx);
+        // const livingEnemies = await this.enemyService.getLiving(ctx);
 
 
-        // Then we loop over them and get their intentions and effects:
-        for (const enemy of livingEnemies) {
+        // // Then we loop over them and get their intentions and effects:
+        // for (const enemy of livingEnemies) {
 
-            const intentions = enemy.value.currentScript?.intentions;
-            const source: ExpeditionEnemy = { type: CardTargetedEnum.Enemy, value: enemy.value };
+        //     const intentions = enemy.value.currentScript?.intentions;
+        //     const source: ExpeditionEnemy = { type: CardTargetedEnum.Enemy, value: enemy.value };
 
-            await this.eventEmitter.emitAsync(EVENT_BEFORE_ENEMY_INTENTIONS, { ctx, enemy });
+        //     await this.eventEmitter.emitAsync(EVENT_BEFORE_ENEMY_INTENTIONS, { ctx, enemy });
 
-            // Calcular un índice aleatorio dentro del rango del array de intentions
-            const randomIndex = Math.floor(Math.random() * intentions.length);
+        //     // Calcular un índice aleatorio dentro del rango del array de intentions
+        //     const randomIndex = Math.floor(Math.random() * intentions.length);
 
-            // Obtener el elemento aleatorio usando el índice generado
-            const randomIntention = intentions[randomIndex];
+        //     // Obtener el elemento aleatorio usando el índice generado
+        //     const randomIntention = intentions[randomIndex];
 
-            for (const intention of intentions) {
-                const { effects } = intention;
+        //     for (const intention of intentions) {
+        //         const { effects } = intention;
 
-                if (!isEmpty(effects)) {
-                    await this.effectService.applyAll({
-                        ctx,
-                        source,
-                        effects,
-                        selectedEnemy: enemy.value.id,
-                    });
+        //         if (!isEmpty(effects)) {
+        //             await this.effectService.applyAll({
+        //                 ctx,
+        //                 source,
+        //                 effects,
+        //                 selectedEnemy: enemy.value.id,
+        //             });
 
-                    if (this.combatService.isCurrentCombatEnded(ctx)) {
-                        logger.info('Combat ended, skipping rest of enemies, intentions and effects');
-                        return;
-                    }
-                }
-            }
-        }
+        //             if (this.combatService.isCurrentCombatEnded(ctx)) {
+        //                 logger.info('Combat ended, skipping rest of enemies, intentions and effects');
+        //                 return;
+        //             }
+        //         }
+        //     }
+        // }
 
 
         // for (const item of livingEnemies) {
