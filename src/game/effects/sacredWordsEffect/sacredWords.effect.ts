@@ -27,21 +27,28 @@ export class SacredWordEffect implements EffectHandler {
 
         for (const item of livingEnemies) {
             const intentions = item.value.currentScript.intentions;
-
+        
             // Verificar si el array de intentions no está vacío
             if (intentions.length > 0) {
                 // Calcular un índice aleatorio dentro del rango del array de intentions
                 const randomIndex = Math.floor(Math.random() * intentions.length);
-
+        
                 // Obtener el elemento aleatorio usando el índice generado
                 const randomIntention = intentions[randomIndex];
-
-                // Usar el valor aleatorio obtenido (randomIntention) como desees
-                console.log('Intención aleatoria:', randomIntention);
+        
+                // Asignar el valor aleatorio al campo de la intención actual
+                for(let newIntention of item.value.currentScript.intentions)
+                {
+                    newIntention = randomIntention;
+                } 
+        
+                // Usar el valor aleatorio asignado como desees
+                console.log('Intención actualizada:', item.value.currentScript.intentions);
             } else {
                 console.log('El array de intentions está vacío.');
             }
         }
+        
 
 
         console.log("::::::::::::::::::::FUNCIONA EFECTO SACRED WORDS::::::::::::::::::");
