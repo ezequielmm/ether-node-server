@@ -58,6 +58,7 @@ import { AddConditionalCardEffect } from './addConditionalCard/addConditionalCar
 import { RhunnsLastResortEffect } from './rhunnsLastResort/rhunnsLastResort.effect';
 import { holyExplosionEffect } from './holyExplosion/holyExplosion.effect';
 import { InThyNameEffect } from "./inThyName/inThyName.effect";
+import { SacredWordEffect } from './sacredWordsEffect/sacredWords.effect';
 @Module({
     imports: [
         forwardRef(() => ExpeditionModule),
@@ -119,7 +120,8 @@ import { InThyNameEffect } from "./inThyName/inThyName.effect";
         AddConditionalCardEffect,
         RhunnsLastResortEffect,
         holyExplosionEffect,
-        InThyNameEffect
+        InThyNameEffect,
+        SacredWordEffect
     ],
     exports: [EffectService],
 })
