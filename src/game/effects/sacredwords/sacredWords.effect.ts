@@ -23,6 +23,8 @@ export class SacredWordEffect implements EffectHandler {
         const { ctx } = dto;
         
         await this.enemyService.calculateNewIntentions(ctx);
+
+        console.log("::::::::::::::::::::FUNCIONA EFECTO SACRED WORDS::::::::::::::::::");
         // // // // // // Get the card that was played by history service and move it
         // // // // // // to the draw pile
         // // // // // const card = this.historyService.findLast<CardRegistry>(ctx.client.id, {
