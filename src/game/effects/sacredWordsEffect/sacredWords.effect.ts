@@ -7,6 +7,7 @@ import { EffectDecorator } from '../effects.decorator';
 import { EffectDTO, EffectHandler } from '../effects.interface';
 import { sacredWordEffect } from './constants';
 import { EnemyService } from 'src/game/components/enemy/enemy.service';
+import { forEach } from 'lodash';
 
 @EffectDecorator({
     effect: sacredWordEffect,
@@ -17,12 +18,31 @@ export class SacredWordEffect implements EffectHandler {
         private readonly expeditionService: ExpeditionService,
         private readonly historyService: HistoryService,
         private readonly enemyService: EnemyService,
-    ) {}
+    ) { }
 
     async handle(dto: EffectDTO): Promise<void> {
         const { ctx } = dto;
-        
-        await this.enemyService.calculateNewIntentions(ctx);
+
+        const livingEnemies = await this.enemyService.getLiving(ctx);
+
+        for (const item of livingEnemies) {
+            const intentions = item.value.currentScript.intentions;
+
+            // Verificar si el array de intentions no está vacío
+            if (intentions.length > 0) {
+                // Calcular un índice aleatorio dentro del rango del array de intentions
+                const randomIndex = Math.floor(Math.random() * intentions.length);
+
+                // Obtener el elemento aleatorio usando el índice generado
+                const randomIntention = intentions[randomIndex];
+
+                // Usar el valor aleatorio obtenido (randomIntention) como desees
+                console.log('Intención aleatoria:', randomIntention);
+            } else {
+                console.log('El array de intentions está vacío.');
+            }
+        }
+
 
         console.log("::::::::::::::::::::FUNCIONA EFECTO SACRED WORDS::::::::::::::::::");
 
