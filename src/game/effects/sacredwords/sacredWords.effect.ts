@@ -22,7 +22,7 @@ export class SacredWordEffect implements EffectHandler {
     async handle(dto: EffectDTO): Promise<void> {
         const { ctx } = dto;
         
-        this.enemyService.calculateNewIntentions(ctx);
+        await this.enemyService.calculateNewIntentions(ctx);
         // // // // // // Get the card that was played by history service and move it
         // // // // // // to the draw pile
         // // // // // const card = this.historyService.findLast<CardRegistry>(ctx.client.id, {

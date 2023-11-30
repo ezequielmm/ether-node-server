@@ -17,7 +17,7 @@ export const SecretWordsCardUpgraded: Card = {
         effects: [
             {
                 effect: sacredWordEffect.name,
-                target: CardTargetedEnum.AllEnemies,
+                target: CardTargetedEnum.Enemy,
                 args: {
                     value: null,
                 },
@@ -50,7 +50,7 @@ export const SecretWordsCard: Card = {
         effects: [
             {
                 effect: sacredWordEffect.name,
-                target: CardTargetedEnum.AllEnemies,
+                target: CardTargetedEnum.Enemy,
                 args: {
                     value: null,
                 },
