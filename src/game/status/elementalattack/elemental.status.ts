@@ -25,7 +25,7 @@ export class SpiritAssaultStatus implements StatusEffectHandler {
         const { effectDTO } = dto;
         
         if (typeof effectDTO.args.type === 'undefined' || effectDTO.args.type.length == 0) {
-            effectDTO.args.currentValue = 0;
+            effectDTO.args.currentValue = effectDTO.args.initialValue;
         }
 
         return effectDTO;
