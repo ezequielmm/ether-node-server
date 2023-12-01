@@ -141,6 +141,7 @@ import { GalvanizeCard, GalvanizeCardUpgraded} from './data/galvanize.card';
 import { MirageCard } from './data/mirage.card';
 import { SecretWordsCard, SecretWordsCardUpgraded } from './data/sacredwords.card';
 import { VengefulStrikeCard, VengefulStrikeCardUpgraded} from './data/vengefulStrike.card'
+import { SpiritualAssaultCard, SpiritualAssaultCardUpgraded } from './data/spiritualAssault.card';
 
 export const data: Card[] = [
     AttackCard,
@@ -306,5 +307,7 @@ export const data: Card[] = [
     SecretWordsCard,
     SecretWordsCardUpgraded,
     VengefulStrikeCard, 
-    VengefulStrikeCardUpgraded
+    VengefulStrikeCardUpgraded,
+    SpiritualAssaultCard,
+    SpiritualAssaultCardUpgraded
 ];
