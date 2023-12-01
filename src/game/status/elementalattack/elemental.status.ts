@@ -26,6 +26,9 @@ export class SpiritAssaultStatus implements StatusEffectHandler {
         
         if (typeof effectDTO.args.type === 'undefined' || effectDTO.args.type.length == 0) {
             effectDTO.args.currentValue = effectDTO.args.initialValue;
+        } else 
+        {
+            effectDTO.args.currentValue = effectDTO.args.initialValue;
         }
 
         return effectDTO;
