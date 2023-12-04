@@ -4,6 +4,7 @@ import { EffectService } from '../../effects/effects.service';
 import { StatusEventDTO, StatusEventHandler } from '../interfaces';
 import { StatusDecorator } from '../status.decorator';
 import { burn } from './constants';
+import { EnemyService } from 'src/game/components/enemy/enemy.service';
 
 @StatusDecorator({
     status: burn,
@@ -14,6 +15,12 @@ export class BurnStatus implements StatusEventHandler {
 
     //- It is only executed when the attack of the enemies ends, to add one of burn to those who are burned
     async handle(dto: StatusEventDTO): Promise<void> {
+
+        // If the enemy has the Firemonger unique:
+        if(EnemyService.isEnemy(dto.target)){
+            
+        }
+
         await this.effectService.apply({
             ctx: dto.ctx,
             source: dto.source,

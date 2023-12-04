@@ -4,6 +4,7 @@ import {
     EnemyCategoryEnum,
     EnemySizeEnum,
     EnemyIntentionType,
+    EnemyUnique,
 } from '../enemy.enum';
 import { Enemy } from '../enemy.schema';
 import { attachStatusEffect } from 'src/game/effects/attachStatus/constants';
@@ -120,5 +121,6 @@ export const stickMantisData: Enemy = {
     description: 'This creature usually dwells underground, and is said to nest in rivers of molten lava. It bursts out of the ground to wrap around its prey, which it usually scorches before eating.',
     healthRange: [35, 30],
     aggressiveness: 0.4,
-    attackLevels: [BasicIntents, AdvancedIntents]
+    attackLevels: [BasicIntents, AdvancedIntents],
+    unique: EnemyUnique.Firemonger
 };
