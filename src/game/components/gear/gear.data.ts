@@ -243,8 +243,24 @@ import { Pauldrons_Pauldrons_Thorn } from './data/Pauldrons_Pauldrons_Thorn';
 import { Shield_Shield_Tombstone } from './data/Shield_Shield_Tombstone';
 import { Padding_Padding_Flannel } from './data/Padding_Padding_Flannel';
 import { Breastplate_Breastplate_The_Devourer } from './data/Breastplate_Breastplate_The_Devourer';
+import { Shield_Shield_Chicken } from './data/Shield_Shield_Chicken.data';
+import { Boots_Boots_Deathwalker } from './data/Boots_Boots_Deathwalker.data';
+import { Helmet_Helmet_Frankensmol } from './data/Helmet_Helmet_Frankensmol';
+import { Weapon_Weapon_Immortal_Scythe } from './data/Weapon_Weapon_Immortal_Scythe.data';
+import { Shield_Shield_Outer_Shield } from './data/Shield_Shield_Outer_Shield.data';
+import { Helmet_Helmet_Smol_Hallowed_Helmet } from './data/Helmet_Helmet_Smol_Hallowed_Helmet.data';
+import { Weapon_Weapon_Staff_of_the_Warden } from './data/Weapon_Weapon_Staff_of_the_Warden.data';
+import { Weapon_Weapon_Chaos_Staff } from './data/Weapon_Weapon_Chaos Staff.data';
 
 export const data: Gear[] = [
+    Shield_Shield_Chicken,
+    Boots_Boots_Deathwalker,
+    Helmet_Helmet_Frankensmol,
+    Weapon_Weapon_Immortal_Scythe,
+    Shield_Shield_Outer_Shield,
+    Helmet_Helmet_Smol_Hallowed_Helmet,
+    Weapon_Weapon_Staff_of_the_Warden,
+    Weapon_Weapon_Chaos_Staff,
     Breastplate_Breastplate_The_Devourer,
     Padding_Padding_Flannel,
     Shield_Shield_Tombstone,
