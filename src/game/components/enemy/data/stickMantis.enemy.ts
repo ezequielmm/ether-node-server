@@ -112,8 +112,8 @@ const AdvancedIntents: EnemyAction = {
 export const stickMantisData: Enemy = {
     enemyId: 20,
     stage: 2,
-    selectable: false,
-    isActive: false,
+    selectable: true,
+    isActive: true,
     name: 'Stick Mantis',
     type: EnemyTypeEnum.Beast,
     category: EnemyCategoryEnum.Basic,
