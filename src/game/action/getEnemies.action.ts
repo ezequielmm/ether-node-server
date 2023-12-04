@@ -58,7 +58,8 @@ export class GetEnemiesAction {
                 size: enemy.size,
                 hpCurrent: enemy.hpCurrent,
                 hpMax: enemy.hpMax,
-                line: enemy.line
+                line: enemy.line,
+                unique: enemy.unique,
             }));
     }
 }
