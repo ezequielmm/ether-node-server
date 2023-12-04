@@ -251,6 +251,7 @@ import { Shield_Shield_Outer_Shield } from './data/Shield_Shield_Outer_Shield.da
 import { Helmet_Helmet_Smol_Hallowed_Helmet } from './data/Helmet_Helmet_Smol_Hallowed_Helmet.data';
 import { Weapon_Weapon_Staff_of_the_Warden } from './data/Weapon_Weapon_Staff_of_the_Warden.data';
 import { Weapon_Weapon_Chaos_Staff } from './data/Weapon_Weapon_Chaos Staff.data';
+import { Weapon_Weapon_DubbersIron } from './data/Weapon_Weapon_DubbersIron.data';
 
 export const data: Gear[] = [
     Shield_Shield_Chicken,
@@ -261,6 +262,7 @@ export const data: Gear[] = [
     Helmet_Helmet_Smol_Hallowed_Helmet,
     Weapon_Weapon_Staff_of_the_Warden,
     Weapon_Weapon_Chaos_Staff,
+    Weapon_Weapon_DubbersIron,
     Breastplate_Breastplate_The_Devourer,
     Padding_Padding_Flannel,
     Shield_Shield_Tombstone,
