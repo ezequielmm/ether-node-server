@@ -43,3 +43,7 @@ export enum EnemyIntentionType {
     Mistify = 'mistify',
     DoNothing = 'do_nothing',
 }
+
+export enum EnemyUnique {
+    Firemonger = "Firemonger"
+}

@@ -144,7 +144,6 @@ export class CardPlayedAction {
             cardTargetId: selectedEnemyId,
         });
         //- Enables an animation in unity:
-        
         if (exhaust) {
             this.exhaustCardAction.emit({
                 ctx,

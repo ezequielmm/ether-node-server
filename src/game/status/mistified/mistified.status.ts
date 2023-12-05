@@ -15,6 +15,11 @@ import { CombatService } from 'src/game/combat/combat.service';
 import { CardPlayedAction } from 'src/game/action/cardPlayed.action';
 import { getRandomItemByWeight } from 'src/utils';
 import { IExpeditionPlayerStateDeckCard } from 'src/game/components/expedition/expedition.interface';
+import { CardKeywordPipeline } from 'src/game/cardKeywordPipeline/cardKeywordPipeline';
+import { CardTargetedEnum } from 'src/game/components/card/card.enum';
+import { EnemyService } from 'src/game/components/enemy/enemy.service';
+import { ExpeditionService } from 'src/game/components/expedition/expedition.service';
+import { EndPlayerTurnProcess } from 'src/game/process/endPlayerTurn.process';
 
 @StatusDecorator({
     status: mistifiedStatus,
@@ -27,40 +32,58 @@ export class MistifiedStatus implements StatusEventHandler {
         private readonly statusService: StatusService,
         private readonly combatQueueService: CombatQueueService,
         private readonly cardPlayedAction: CardPlayedAction,
+        private readonly enemyService: EnemyService,
+        private readonly expeditionService: ExpeditionService,
+        private readonly endPlayerTurnProcess: EndPlayerTurnProcess,
+
     ){}
 
     async handle(dto: StatusEventDTO): Promise<void> {
 
-        const { ctx } = dto;
+        const { status: { args },
+            eventArgs: {
+                newHand
+            },
+        } = dto;
+
+        const ctx = await this.expeditionService.getGameContext(dto.ctx.client);
+        //console.log('CONTEXT -----------------------------------');
+        //console.log(ctx.expedition.currentNode.data.player.cards.hand);
         const energy = ctx.expedition.currentNode.data.player.energy;
-        const newHand = ctx.expedition.currentNode.data.player.cards.hand;
-        console.log(newHand);
-        //const newHand = this.cardService.shuffleArray(hand);
-
+        
         const probNum = (newHand.length / 100);
-        console.log(probNum);
+        //console.log(probNum);
         let probability : number[] = [];
-
+    
         newHand.forEach(card =>{
             probability.push(probNum);
         });
 
-        console.log('PROBABILITY ----------------------', probability);
+        //console.log('PROBABILITY ----------------------', probability);
         
         while(energy > 0){
 
             const card = getRandomItemByWeight<IExpeditionPlayerStateDeckCard>(newHand, probability);
-    
-            console.log('CARTA A JUGAR ----------------------', card);
-    
-            await this.cardPlayedAction.handle({
-                ctx,
-                cardId: card.id,
-                selectedEnemyId: undefined,
-                newHand
-            });
+            const { keywords } = card;
+            const { unplayable } = CardKeywordPipeline.process(keywords);
 
+            if(!unplayable){
+                const hasEnemyTarget = card.properties.effects.filter(e => e.target == CardTargetedEnum.Enemy).length > 0;
+                let enemyId = undefined;
+
+                if(hasEnemyTarget){
+                    enemyId = this.enemyService.getRandom(ctx).value.id;
+                }
+
+                await this.cardPlayedAction.handle({
+                    ctx,
+                    cardId: card.id,
+                    selectedEnemyId: enemyId,
+                    newHand
+                });
+            }
         }
+        //await this.endPlayerTurnProcess.handle({ ctx });
     }
 
     async onPlayerTurnStart({ ctx }: { ctx: GameContext }): Promise<void> {

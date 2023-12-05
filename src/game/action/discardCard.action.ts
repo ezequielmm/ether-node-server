@@ -79,12 +79,10 @@ export class DiscardCardAction {
         // Then we take the desired card from the hand pile
         // Also remove it from the hand pile
         let cardToDiscard: IExpeditionPlayerStateDeckCard = null;
-
         hand = hand.filter((card) => {
             const field = getCardIdField(cardId);
-
-            if (card[field] === cardId) cardToDiscard = card;
-
+            if (card[field] == cardId) cardToDiscard = card;
+            
             return card[field] !== cardId;
         });
 
@@ -93,7 +91,6 @@ export class DiscardCardAction {
         );
 
         if (emit) this.emit({ctx, cardId});
-
         // Next we check if the card has the key oldEnergy greater
         // than 0, if it is true them we set the card energy to the
         // oldEnergy value

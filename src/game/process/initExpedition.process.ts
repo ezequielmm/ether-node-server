@@ -12,11 +12,10 @@ import { ExpeditionService } from '../components/expedition/expedition.service';
 import { SettingsService } from '../components/settings/settings.service';
 import { GearItem } from '../../playerGear/gearItem';
 import { Contest } from '../contest/contest.schema';
-import { Expedition, IPlayerToken } from '../components/expedition/expedition.schema';
+import { IPlayerToken } from '../components/expedition/expedition.schema';
 import { ContestMapService } from '../contestMap/contestMap.service';
 import { MapDeckService } from '../components/mapDeck/mapDeck.service';
-import { MapService } from '../map/map.service';
-import mongoose, { Types } from 'mongoose';
+import { Types } from 'mongoose';
 import { Score } from '../components/expedition/scores';
 import { GameContext } from '../components/interfaces';
 
@@ -31,8 +30,6 @@ export class InitExpeditionProcess {
         private readonly settingsService: SettingsService,
         private readonly contestMapService: ContestMapService,
         private readonly mapDeckService: MapDeckService,
-        private readonly expeditionModel: Expedition,
-        private readonly mapService:MapService
     ) { }
 
     async handle({userAddress, playerName, playerToken, equippedGear, character_class, contest, stage}: 

@@ -235,12 +235,15 @@ export class DrawCardAction {
         */
 
         // Update piles
-        await this.expeditionService.updateHandPiles({
+        const expUpdated = await this.expeditionService.updateHandPiles({
             clientId: client.id,
             hand: newHand,
             draw: newDraw,
             discard: newDiscard,
         });
+
+        //const newCardsObject = expUpdated.currentNode.data.player.cards;
+        //ctx.expedition.currentNode.data.player.cards = newCardsObject;
 
         await this.eventEmitter2.emitAsync(EVENT_AFTER_DRAW_CARDS, {
             ctx,

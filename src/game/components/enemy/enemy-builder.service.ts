@@ -49,6 +49,7 @@ export class EnemyBuilderService {
     public static SIGNATURE_DEBUFF               = "signature_attack_debuff";
     public static COUNTER                        = "counter";
     public static COUNTER_DEFEND                 = "counter_defend";
+    public static COUNTER_DEBUFF                 = "counter_debuff";
     public static INFECT                         = "infect";
     public static INFECT_ATTACK_SWORD            = "infect_attack_sword";
     public static INFECT_ATTACK                  = "infect_attack";

@@ -4,6 +4,7 @@ import { Encounter } from "../encounter.schema";
 export const StalactiteEncounter: Encounter = {
     encounterId: EncounterIdEnum.Stalactite,
     encounterName: 'Mesmerizing-stalactite',
+    stageNumber: 2,
     imageId: 'memStalactive',
     stages: [
         {

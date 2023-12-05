@@ -153,6 +153,9 @@ import { ShoutCard, ShoutCardUpgraded } from './data/shout.card';
 import { SiphonCard, SiphonCardUpgraded } from './data/siphon.card';
 import { SpikeArmorCard, SpikeArmorCardUpgraded } from './data/spikeArmor.card';
 import { TightenStrapsCard, TightenStrapsCardUpgraded } from './data/tightenStraps.card';
+import { SecretWordsCard, SecretWordsCardUpgraded } from './data/sacredwords.card';
+import { VengefulStrikeCard, VengefulStrikeCardUpgraded} from './data/vengefulStrike.card'
+import { SpiritualAssaultCard, SpiritualAssaultCardUpgraded } from './data/spiritualAssault.card';
 
 export const data: Card[] = [
     AttackCard,
@@ -314,5 +317,11 @@ export const data: Card[] = [
     SmudgeCardUpgraded,
     GalvanizeCard,
     GalvanizeCardUpgraded,
-    MirageCard
+    MirageCard,
+    SecretWordsCard,
+    SecretWordsCardUpgraded,
+    VengefulStrikeCard, 
+    VengefulStrikeCardUpgraded,
+    SpiritualAssaultCard,
+    SpiritualAssaultCardUpgraded
 ];

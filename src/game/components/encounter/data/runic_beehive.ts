@@ -4,6 +4,7 @@ import { EncounterIdEnum } from '../encounter.enum';
 export const RunicBeehiveEncounter: Encounter = {
     encounterId: EncounterIdEnum.RunicBehive,
     encounterName: 'Runic Beehive',
+    stageNumber: 1,
     imageId: 'runicbeehive',
     stages: [
         {

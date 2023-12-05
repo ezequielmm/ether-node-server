@@ -11,6 +11,9 @@ export class Encounter {
     encounterId: number;
 
     @Prop()
+    stageNumber: number;
+
+    @Prop()
     encounterName: string;
 
     @Prop()

@@ -18,7 +18,6 @@ export class TransformEffect implements EffectHandler {
     
     constructor(private readonly enemyService: EnemyService) {}
 
-
     async handle(dto: EffectDTO): Promise<void> {
         const { source, ctx } = dto;
         const enemies = dto.ctx.expedition.currentNode.data.enemies;
@@ -44,6 +43,8 @@ export class TransformEffect implements EffectHandler {
             }
             
             let updatedEnemies:IExpeditionCurrentNodeDataEnemy[] = enemies.filter(enemy => enemy.id !== source.value.id);
+            //- Set de same line as the original enemy:
+            newEnemy.line = source.value.line;
             updatedEnemies.push(newEnemy);
 
             ctx.expedition.currentNode.data.enemies = updatedEnemies;

@@ -1,4 +1,4 @@
-import { EVENT_AFTER_DRAW_CARDS, EVENT_AFTER_ENEMIES_TURN_END } from 'src/game/constants';
+import { EVENT_AFTER_ENEMIES_TURN_END } from 'src/game/constants';
 import {
     StatusCounterType,
     StatusEvent,
@@ -6,10 +6,10 @@ import {
     StatusType,
 } from '../interfaces';
 
-export const mistifiedStatus: StatusEvent = {
-    name: 'mistified',
+export const comebackStatus: StatusEvent = {
+    name: 'comeback',
     type: StatusType.Debuff,
     counterType: StatusCounterType.Counter,
     trigger: StatusTrigger.Event,
-    event: EVENT_AFTER_ENEMIES_TURN_END
+    event: EVENT_AFTER_ENEMIES_TURN_END,
 };

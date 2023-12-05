@@ -4,6 +4,7 @@ import { EncounterIdEnum } from '../encounter.enum';
 export const TreeCarvingEncounter: Encounter = {
     encounterId: EncounterIdEnum.TreeCarving,
     encounterName: 'Tree Carving',
+    stageNumber: 1,
     imageId: 'stumpcreatures',
     stages: [
         {

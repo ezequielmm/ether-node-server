@@ -4,6 +4,7 @@ import { EncounterIdEnum } from '../encounter.enum';
 export const NagpraEncounter: Encounter = {
     encounterId: EncounterIdEnum.Nagpra,
     encounterName: 'Nagpra',
+    stageNumber: 1,
     imageId: 'nagpra',
     stages: [
         {

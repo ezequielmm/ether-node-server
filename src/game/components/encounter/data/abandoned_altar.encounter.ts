@@ -4,6 +4,7 @@ import { EncounterIdEnum } from '../encounter.enum';
 export const AbandonedAltarEncounter: Encounter = {
     encounterId: EncounterIdEnum.AbandonedAltar,
     encounterName: 'Abandoned Altar',
+    stageNumber: 1,
     imageId: 'runicbeehive',
     overrideDisplayText: {
         starter:

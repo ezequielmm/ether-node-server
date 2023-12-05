@@ -4,6 +4,7 @@ import { Encounter } from "../encounter.schema";
 export const StoneMansonEncounter: Encounter = {
     encounterId: EncounterIdEnum.StoneMason,
     encounterName: 'Stone-mason',
+    stageNumber: 2,
     imageId: 'stoneMason',
     stages: [
         {

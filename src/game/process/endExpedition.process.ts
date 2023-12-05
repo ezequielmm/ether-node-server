@@ -194,7 +194,7 @@ export class EndExpeditionProcess {
     private async handleActiveEventLoot(ctx: GameContext, currentStage:number, canWinGear:boolean) 
     {
         //- Lootbox - Gears:
-        const gearLootboxActivated = this.configService.get<boolean>('LOOTBOX_ACTIVATED', false);
+        //const gearLootboxActivated = this.configService.get<boolean>('LOOTBOX_ACTIVATED', false);
         const character = ctx.expedition.playerState.characterClass as CharacterClassEnum;
         const isLastStage = ctx.expedition.contest.stages.length == currentStage;
         //let filteredLootbox = (canWinGear && gearLootboxActivated) ? await this.getHalloweenGearVictoryItems(ctx, currentStage, character) : [];

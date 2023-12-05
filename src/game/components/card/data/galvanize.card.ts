@@ -37,7 +37,7 @@ export const GalvanizeCard: Card = {
     rarity: CardRarityEnum.Starter,
     cardType: CardTypeEnum.Defend,
     pool: 'knight',
-    energy: 2,
+    energy: 1,
     description: `All attack actions grant 3 ${defenseEffect.name} this turn.`,
     keywords: [],
     properties: {

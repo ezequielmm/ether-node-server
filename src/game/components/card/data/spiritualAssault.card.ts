@@ -1,14 +1,8 @@
+
+import { elementalStatus } from 'src/game/status/elemental/constants';
 import { CardRarityEnum, CardTypeEnum, CardTargetedEnum } from '../card.enum';
 import { Card } from '../card.schema';
-
-/*
-TODO:
-
--for both cards
-    -verify card type
-    -notes:Ethereal damage can hurt normal and ethereal monsters.
-    -cards effects  
-*/
+import { elementalAttackStatus } from 'src/game/status/elementalattack/constants';
 
 export const SpiritualAssaultCardUpgraded: Card = {
     cardId: 569,
@@ -16,14 +10,22 @@ export const SpiritualAssaultCardUpgraded: Card = {
     rarity: CardRarityEnum.Starter,
     cardType: CardTypeEnum.Attack,
     pool: 'knight',
-    energy: 1,
+    energy: 2,
     description: `All physical attacks deal ethereal damage this turn.`,
     keywords: [],
     properties: {
         effects: [],
-        statuses: [],
+        statuses: [
+            {
+                name: elementalAttackStatus.name,
+                attachTo: CardTargetedEnum.Self,
+                args: {
+                    counter: 2,
+                },
+            },
+        ],
     },
-    showPointer: true,
+    showPointer: false,
     isUpgraded: true,
     isActive: true,
 };
@@ -39,9 +41,17 @@ export const SpiritualAssaultCard: Card = {
     keywords: [],
     properties: {
         effects: [],
-        statuses: [],
+        statuses: [
+                {
+                    name: elementalAttackStatus.name,
+                    attachTo: CardTargetedEnum.Self,
+                    args: {
+                        counter: 1,
+                    },
+                },
+            ],
     },
-    showPointer: true,
+    showPointer: false,
     isUpgraded: false,
     upgradedCardId: SpiritualAssaultCardUpgraded.cardId,
     isActive: true,

@@ -22,7 +22,7 @@ import { ResetWinModule } from './tasks/resetwins.module';
 @Module({
     imports: [
         ScheduleModule.forRoot(),
-        //TaskModule,
+        TaskModule,
         ResetWinModule,
         LoggerModule.forRoot({
             pinoHttp: {

@@ -4,6 +4,7 @@ import { EncounterIdEnum } from '../encounter.enum';
 export const MossyTrollEncounter: Encounter = {
     encounterId: EncounterIdEnum.MossyTroll,
     encounterName: 'Mossy Troll',
+    stageNumber: 1,
     imageId: 'troll',
     stages: [
         {

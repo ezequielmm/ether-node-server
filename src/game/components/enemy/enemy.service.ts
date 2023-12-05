@@ -24,7 +24,7 @@ import {
     StatusType,
 } from 'src/game/status/interfaces';
 import { StatusService } from 'src/game/status/status.service';
-import { EnemyCategoryEnum, EnemyIntentionType } from './enemy.enum';
+import { EnemyCategoryEnum, EnemyIntentionType, EnemyUnique } from './enemy.enum';
 import { damageEffect } from 'src/game/effects/damage/constants';
 import {
     EVENT_ENEMY_DEAD,
@@ -104,6 +104,25 @@ export class EnemyService {
     public static getEnemy(target: ExpeditionEntity) {
         return (target as ExpeditionEnemy);
     }
+
+    public static isEnemyUniqueType(entity: ExpeditionEntity, unique:EnemyUnique): entity is ExpeditionEnemy {
+        if(!this.isEnemy(entity)){
+            return false;
+        }
+
+        const enemy = this.getEnemy(entity)
+        
+        if(!enemy.value.unique){
+            return false;
+        }
+
+        if(enemy.value.unique != unique){
+            return false;
+        }
+
+        return true;
+    }
+
     /**
      * Check if the enemy is dead
      *
@@ -147,6 +166,7 @@ export class EnemyService {
             defense: 0,
             hpCurrent: newHealth,
             hpMax: newHealth,
+            line: 0,
             statuses: {
                 [StatusType.Buff]: [],
                 [StatusType.Debuff]: [],
@@ -176,6 +196,7 @@ export class EnemyService {
             defense: 0,
             hpCurrent: newHealth,
             hpMax: newHealth,
+            line: 0,
             statuses: {
                 [StatusType.Buff]: buffs,
                 [StatusType.Debuff]: debuffs,
@@ -510,7 +531,7 @@ export class EnemyService {
  *
  * @param ctx Context
  */
-    async calculateNewIntentions(ctx: GameContext): Promise<void> {
+    public async calculateNewIntentions(ctx: GameContext): Promise<void> {
         const enemiesAlive = this.getLiving(ctx);
 
         for (const enemy of enemiesAlive) {

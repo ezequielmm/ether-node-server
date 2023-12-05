@@ -86,7 +86,6 @@ export class PlayerWinService {
   }
 
   async canPlay(event_id: number, contract_address: string, token_id: number, wins?: number) : Promise<boolean> {
-    
     //- If there is no event will not be able to play anyway:
     if (event_id === 0) return true;
 
@@ -103,7 +102,7 @@ export class PlayerWinService {
                         tokenId: token_id,
                     },
                 },
-            })) ?? 0;
+            }));
     }
     
     if (wins == 0) return true;

@@ -6,9 +6,9 @@ import { fatigue } from 'src/game/status/fatigue/constants';
 import { EnemyAction, EnemyIntention } from '../enemy.interface';
 import { EnemyBuilderService as EB } from '../enemy-builder.service';
 import { burn } from 'src/game/status/burn/constants';
-import { onFireStatus } from 'src/game/status/onFire/constants';
 import { attachStatusEffect } from 'src/game/effects/attachStatus/constants';
 import { CardTargetedEnum } from '../../card/card.enum';
+import { onFireStatus } from 'src/game/status/onFire/constants';
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------------
 //- Intents:
@@ -18,13 +18,27 @@ const getSignatureMove = (onFireCounter:number, animationId:string):EnemyIntenti
     return {
         name: "Self-Immolation",
         type: EnemyIntentionType.Signature,
-        target: CardTargetedEnum.Player,
-        value: onFireCounter,
+        target: CardTargetedEnum.Self,
+        value: 2,
         negateDamage: 8,
         effects: [
             {
                 effect: attachStatusEffect.name,
-                target: CardTargetedEnum.Player,
+                target: CardTargetedEnum.Self,
+                args: {
+                    statusName: burn.name,
+                    statusArgs: {
+                        counter: 2,
+                    },
+                },
+                action: {
+                    name: animationId,
+                    hint: animationId,
+                },
+            },
+            {
+                effect: attachStatusEffect.name,
+                target: CardTargetedEnum.Self,
                 args: {
                     statusName: onFireStatus.name,
                     statusArgs: {
@@ -45,15 +59,15 @@ const getSignatureMove = (onFireCounter:number, animationId:string):EnemyIntenti
 //-------------------------------------------------------------------------------------------------------------------------------------------------------
 const BasicIntents: EnemyAction = {
     options:[
-        { id: 1, probability: 0.3, cooldown: 0, intents: [EB.createBasicAttackIntent(8, EB.ATTACK)] },
-        { id: 2, probability: 0.3, cooldown: 0, intents: [
+        { id: 1, probability: 0.2, cooldown: 0, intents: [EB.createBasicAttackIntent(8, EB.ATTACK)] },
+        { id: 2, probability: 0.2, cooldown: 0, intents: [
             EB.createBasicAttackIntent(8, EB.ATTACK_BURN), 
             EB.createBasicDebuffIntent(1, burn.name, EB.ATTACK_BURN)
         ]},
-        { id: 3, probability: 0.1, cooldown: 0, intents: [EB.createDefenseIntent(11, EB.DEFEND)] },
+        { id: 3, probability: 0.2, cooldown: 0, intents: [EB.createDefenseIntent(11, EB.DEFEND)] },
         { id: 4, probability: 0.1, cooldown: 0, intents: [EB.createBasicBuffIntent(2, resolveStatus.name, EB.BUFF)] },
         { id: 5, probability: 0.1, cooldown: 0, intents: [EB.createBasicDebuffIntent(2, feebleStatus.name, EB.DEBUFF)] },
-        { id: 6, probability: 0.1, cooldown: 0, intents: [getSignatureMove(3, EB.SIGNATURE_MOVE)] },
+        { id: 6, probability: 0.2, cooldown: 0, intents: [getSignatureMove(3, EB.SIGNATURE_MOVE)] },
     ]
 }
 
@@ -77,7 +91,7 @@ const AdvancedIntents: EnemyAction = {
         ]},
         { id: 11, probability: 0.1, cooldown: 0, intents: [
             getSignatureMove(5, EB.SIGNATURE_MOVE_ATTACK),
-            EB.createBasicAttackIntent(8, EB.SIGNATURE_MOVE_ATTACK), , 
+            EB.createBasicAttackIntent(8, EB.SIGNATURE_MOVE_ATTACK),
             EB.createBasicDebuffIntent(3, burn.name, EB.SIGNATURE_MOVE_ATTACK)
         ]},
     ]
@@ -89,8 +103,8 @@ const AdvancedIntents: EnemyAction = {
 export const fireBeetleData: Enemy = {
     enemyId: 29,
     stage: 2,
-    selectable: false,
-    isActive: false,
+    selectable: true,
+    isActive: true,
     name: 'Fire Beetle',
     type: EnemyTypeEnum.Insectoid,
     category: EnemyCategoryEnum.Basic,

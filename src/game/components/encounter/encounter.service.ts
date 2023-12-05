@@ -25,8 +25,6 @@ import { CardRarityEnum, CardTypeEnum } from '../card/card.enum';
 import { Node } from '../expedition/node';
 import { filter, sample } from 'lodash';
 import { PlayerService } from '../player/player.service';
-import { Card } from '../card/card.schema';
-import { GetPlayerState } from '../expedition/expedition.dto';
 
 @Injectable()
 export class EncounterService {
@@ -39,23 +37,34 @@ export class EncounterService {
         private readonly playerService: PlayerService,
     ) { }
 
-    async getRandomEncounter(
-        excludeIfPossible?: number[],
-    ): Promise<EncounterInterface> {
-        const encounters = [
-            EncounterIdEnum.Nagpra,
-            EncounterIdEnum.WillOWisp,
-            EncounterIdEnum.DancingSatyr,
-            EncounterIdEnum.EnchantedForest,
-            // EncounterIdEnum.TreeCarving,
-            // EncounterIdEnum.Naiad,
-            // EncounterIdEnum.AbandonedAltar, // [3 jan 2023] customer is not going to provide art
-            // EncounterIdEnum.Rugburn, // [3 jan 2023] wont do
-            // EncounterIdEnum.MossyTroll,
-            // EncounterIdEnum.YoungWizard,
-            // EncounterIdEnum.Oddbarks, // 11
-            // EncounterIdEnum.RunicBehive,
-        ];
+    async getRandomEncounter(stage: number, excludeIfPossible: number[]): Promise<EncounterInterface> {
+        let encounters = [];
+
+        if(stage == 1){
+            encounters = [
+                EncounterIdEnum.Nagpra,
+                EncounterIdEnum.WillOWisp,
+                EncounterIdEnum.DancingSatyr,
+                EncounterIdEnum.EnchantedForest,
+                // EncounterIdEnum.TreeCarving,
+                // EncounterIdEnum.Naiad,
+                // EncounterIdEnum.AbandonedAltar, // [3 jan 2023] customer is not going to provide art
+                // EncounterIdEnum.Rugburn, // [3 jan 2023] wont do
+                // EncounterIdEnum.MossyTroll,
+                // EncounterIdEnum.YoungWizard,
+                // EncounterIdEnum.Oddbarks, // 11
+                // EncounterIdEnum.RunicBehive,
+            ]
+        }else if (stage == 2){
+            encounters = [
+                EncounterIdEnum.StoneMason,
+                EncounterIdEnum.RoyalEmissary,
+                EncounterIdEnum.CaveIn,
+                EncounterIdEnum.Stalactite,
+                EncounterIdEnum.StoneCutter,
+            ]
+        }
+
 
         const safeEncounters =
             excludeIfPossible.length >= encounters.length
@@ -68,15 +77,12 @@ export class EncounterService {
         };
     }
 
-    async generateEncounter(
-        ctx: GameContext,
-        node?: Node,
-    ): Promise<EncounterInterface> {
-        //generate encounter
+    async generateEncounter(ctx: GameContext,node?: Node): Promise<EncounterInterface> {
+
         const encounter: EncounterInterface =
             node && node.private_data
                 ? node.private_data
-                : await this.getRandomEncounter();
+                : await this.getRandomEncounter(ctx.expedition.currentStage, []);
 
         //fetch existing encounter if there is one
         const encounterData = await this.getEncounterData(ctx.client);
@@ -245,6 +251,7 @@ export class EncounterService {
                     break;
                 case 'lost_recent_trinket': //eg cave in
                     await this.looseRecentTrinket(
+                        ctx,
                         ctx.client,
                         ctx.expedition.playerState,
                     );
@@ -806,13 +813,18 @@ export class EncounterService {
             });
     }
 
-    private async looseRecentTrinket(client: Socket, playerState: Player): Promise<void> {
+    private async looseRecentTrinket(ctx: GameContext, client: Socket, playerState: Player): Promise<void> {
         const trinketsIds: number[] = [];
         const probabilityWeights: number[] = [];
 
         if (trinketsIds.length == 0) return; // no trinkets
 
         const lastTrinketsId = playerState.trinkets[trinketsIds.length - 1].trinketId;
+
+        await this.trinketService.add({
+            ctx,
+            trinketId: 3,
+        });
 
         // const looseMeTrinketId = getRandomItemByWeight(
         //     trinketsIds,
