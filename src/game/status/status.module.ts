@@ -65,6 +65,7 @@ import { AbsorbingStatus } from './absorbing/absorbing.status';
 import { GalvanizeStatus } from './galvanize/galvanize.status';
 import { MistifiedStatus } from './mistified/mistified.status';
 import { SpiritAssaultStatus } from './elementalattack/elemental.status';
+import { OnFireStatus } from './onFire/onFire.status';
 
 @Module({
     imports: [
@@ -137,8 +138,8 @@ import { SpiritAssaultStatus } from './elementalattack/elemental.status';
         AbsorbingStatus,
         GalvanizeStatus,
         MistifiedStatus,
-        SpiritAssaultStatus
-
+        SpiritAssaultStatus,
+        OnFireStatus
     ],
     exports: [StatusService],
 })

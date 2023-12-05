@@ -18,7 +18,7 @@ const getSignatureMove = (onFireCounter:number, animationId:string):EnemyIntenti
     return {
         name: "Self-Immolation",
         type: EnemyIntentionType.Signature,
-        target: CardTargetedEnum.Player,
+        target: CardTargetedEnum.Self,
         value: 2,
         negateDamage: 8,
         effects: [
@@ -59,15 +59,15 @@ const getSignatureMove = (onFireCounter:number, animationId:string):EnemyIntenti
 //-------------------------------------------------------------------------------------------------------------------------------------------------------
 const BasicIntents: EnemyAction = {
     options:[
-        { id: 1, probability: 0.3, cooldown: 0, intents: [EB.createBasicAttackIntent(8, EB.ATTACK)] },
-        { id: 2, probability: 0.3, cooldown: 0, intents: [
+        { id: 1, probability: 0.2, cooldown: 0, intents: [EB.createBasicAttackIntent(8, EB.ATTACK)] },
+        { id: 2, probability: 0.2, cooldown: 0, intents: [
             EB.createBasicAttackIntent(8, EB.ATTACK_BURN), 
             EB.createBasicDebuffIntent(1, burn.name, EB.ATTACK_BURN)
         ]},
-        { id: 3, probability: 0.1, cooldown: 0, intents: [EB.createDefenseIntent(11, EB.DEFEND)] },
+        { id: 3, probability: 0.2, cooldown: 0, intents: [EB.createDefenseIntent(11, EB.DEFEND)] },
         { id: 4, probability: 0.1, cooldown: 0, intents: [EB.createBasicBuffIntent(2, resolveStatus.name, EB.BUFF)] },
         { id: 5, probability: 0.1, cooldown: 0, intents: [EB.createBasicDebuffIntent(2, feebleStatus.name, EB.DEBUFF)] },
-        { id: 6, probability: 0.1, cooldown: 0, intents: [getSignatureMove(3, EB.SIGNATURE_MOVE)] },
+        { id: 6, probability: 0.2, cooldown: 0, intents: [getSignatureMove(3, EB.SIGNATURE_MOVE)] },
     ]
 }
 
@@ -91,7 +91,7 @@ const AdvancedIntents: EnemyAction = {
         ]},
         { id: 11, probability: 0.1, cooldown: 0, intents: [
             getSignatureMove(5, EB.SIGNATURE_MOVE_ATTACK),
-            EB.createBasicAttackIntent(8, EB.SIGNATURE_MOVE_ATTACK), , 
+            EB.createBasicAttackIntent(8, EB.SIGNATURE_MOVE_ATTACK),
             EB.createBasicDebuffIntent(3, burn.name, EB.SIGNATURE_MOVE_ATTACK)
         ]},
     ]
