@@ -38,7 +38,7 @@ export class ComebackStatus implements StatusEventHandler {
 
         const oldHp = target.value.hpCurrent;
         const oldDefense = target.value.defense;
-
+        console.log('defense after the player hit me', playerDefense);
         if(playerDefense > 0){
             await this.effectService.apply({
                 ctx: ctx,
@@ -54,12 +54,6 @@ export class ComebackStatus implements StatusEventHandler {
         }
         const    newHp = target.value.hpCurrent;
         const    newDefense = target.value.defense;
-
-        console.log('TARGET', target);
-        console.log('oldHP', oldHp, '     oldDefense', oldDefense);
-        console.log('------------------------------------------');
-        console.log('newHp', newHp, '     newDefense', newDefense);
-        console.log('playerDefense', playerDefense, '     damageToDeal', damageToDeal);
 
         await this.combatQueueService.push({
             ctx,
