@@ -46,7 +46,15 @@ export const VengefulStrikeCard: Card = {
     description: `Gain 1 comeback. Gain 5 ${defenseEffect.name}`,
     keywords: [],
     properties: {
-        effects: [],
+        effects: [
+            {
+                effect: defenseEffect.name,
+                target: CardTargetedEnum.Player,
+                args: {
+                    value: 5,
+                },
+            },
+        ],
         statuses: [
             {
                 name: comebackStatus.name,
