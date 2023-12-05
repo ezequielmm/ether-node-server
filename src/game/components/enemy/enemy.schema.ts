@@ -1,5 +1,5 @@
 import { ModelOptions, Prop, Severity } from '@typegoose/typegoose';
-import { EnemyTypeEnum, EnemyCategoryEnum, EnemySizeEnum } from './enemy.enum';
+import { EnemyTypeEnum, EnemyCategoryEnum, EnemySizeEnum, EnemyUnique } from './enemy.enum';
 import { EnemyAction, EnemyScript } from './enemy.interface';
 
 @ModelOptions({
@@ -45,6 +45,9 @@ export class Enemy {
 
     @Prop()
     selectable: boolean;
+
+    @Prop({ type: String, enum: EnemyUnique })
+    unique?: EnemyUnique;
 }
 
 

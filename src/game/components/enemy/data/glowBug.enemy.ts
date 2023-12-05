@@ -116,8 +116,8 @@ const AdvancedIntents: EnemyAction = {
 export const glowBugData: Enemy = {
     enemyId: 70,
     stage: 2,
-    selectable: false,
-    isActive: false,
+    selectable: true,
+    isActive: true,
     name: 'Glow Bug',
     type: EnemyTypeEnum.Insectoid,
     category: EnemyCategoryEnum.Basic,

@@ -5,7 +5,7 @@ import { Card } from '../card.schema';
 import { sacredWordEffect } from 'src/game/effects/sacredWordsEffect/constants';
 
 export const SecretWordsCardUpgraded: Card = {
-    cardId: 581,
+    cardId: 573,
     name: 'Sacred Words+',
     rarity: CardRarityEnum.Common,
     cardType: CardTypeEnum.Attack,
@@ -17,7 +17,7 @@ export const SecretWordsCardUpgraded: Card = {
         effects: [
             {
                 effect: sacredWordEffect.name,
-                target: CardTargetedEnum.AllEnemies,
+                target: CardTargetedEnum.Enemy,
                 args: {
                     value: null,
                 },
@@ -38,7 +38,7 @@ export const SecretWordsCardUpgraded: Card = {
 };
 
 export const SecretWordsCard: Card = {
-    cardId: 580,
+    cardId: 572,
     name: 'Sacred Words',
     rarity: CardRarityEnum.Common,
     cardType: CardTypeEnum.Attack,
@@ -50,7 +50,7 @@ export const SecretWordsCard: Card = {
         effects: [
             {
                 effect: sacredWordEffect.name,
-                target: CardTargetedEnum.AllEnemies,
+                target: CardTargetedEnum.Enemy,
                 args: {
                     value: null,
                 },

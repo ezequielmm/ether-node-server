@@ -4,6 +4,9 @@ import { EffectService } from '../../effects/effects.service';
 import { StatusEventDTO, StatusEventHandler } from '../interfaces';
 import { StatusDecorator } from '../status.decorator';
 import { burn } from './constants';
+import { EnemyService } from 'src/game/components/enemy/enemy.service';
+import { EnemyUnique } from 'src/game/components/enemy/enemy.enum';
+import { healEffect } from 'src/game/effects/heal/constants';
 
 @StatusDecorator({
     status: burn,
@@ -14,20 +17,38 @@ export class BurnStatus implements StatusEventHandler {
 
     //- It is only executed when the attack of the enemies ends, to add one of burn to those who are burned
     async handle(dto: StatusEventDTO): Promise<void> {
-        await this.effectService.apply({
-            ctx: dto.ctx,
-            source: dto.source,
-            target: dto.target,
-            effect: {
-                effect: damageEffect.name,
-                args: {
-                    value: dto.status.args.counter,
-                    type: 'burn',
-                },
-            },
-        });
 
-        dto.status.args.counter++;
-        dto.update(dto.status.args);
+        // If the enemy has the Firemonger unique:
+        if(EnemyService.isEnemyUniqueType(dto.target, EnemyUnique.Firemonger)){
+            await this.effectService.apply({
+                ctx: dto.ctx,
+                source: dto.source,
+                target: dto.target,
+                effect: {
+                    effect: healEffect.name,
+                    args: {
+                        value: dto.status.args.counter,
+                        type: 'burn',
+                    },
+                },
+            });
+        }else{
+            await this.effectService.apply({
+                ctx: dto.ctx,
+                source: dto.source,
+                target: dto.target,
+                effect: {
+                    effect: damageEffect.name,
+                    args: {
+                        value: dto.status.args.counter,
+                        type: 'burn',
+                    },
+                },
+            });
+    
+            dto.status.args.counter++;
+            dto.update(dto.status.args);
+        }
+
     }
 }

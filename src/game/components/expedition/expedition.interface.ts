@@ -5,6 +5,7 @@ import {
     EnemyTypeEnum,
     EnemyCategoryEnum,
     EnemySizeEnum,
+    EnemyUnique,
 } from '../enemy/enemy.enum';
 import { EnemyScript } from '../enemy/enemy.interface';
 import { Potion } from '../potion/potion.schema';
@@ -30,6 +31,7 @@ export interface IExpeditionCurrentNodeDataEnemy {
     type: EnemyTypeEnum;
     category: EnemyCategoryEnum;
     size: EnemySizeEnum;
+    unique?: EnemyUnique;
     hpCurrent: number;
     hpMax: number;
     line: LinePosition,

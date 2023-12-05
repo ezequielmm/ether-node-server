@@ -24,7 +24,7 @@ import {
     StatusType,
 } from 'src/game/status/interfaces';
 import { StatusService } from 'src/game/status/status.service';
-import { EnemyCategoryEnum, EnemyIntentionType } from './enemy.enum';
+import { EnemyCategoryEnum, EnemyIntentionType, EnemyUnique } from './enemy.enum';
 import { damageEffect } from 'src/game/effects/damage/constants';
 import {
     EVENT_ENEMY_DEAD,
@@ -104,6 +104,25 @@ export class EnemyService {
     public static getEnemy(target: ExpeditionEntity) {
         return (target as ExpeditionEnemy);
     }
+
+    public static isEnemyUniqueType(entity: ExpeditionEntity, unique:EnemyUnique): entity is ExpeditionEnemy {
+        if(!this.isEnemy(entity)){
+            return false;
+        }
+
+        const enemy = this.getEnemy(entity)
+        
+        if(!enemy.value.unique){
+            return false;
+        }
+
+        if(enemy.value.unique != unique){
+            return false;
+        }
+
+        return true;
+    }
+
     /**
      * Check if the enemy is dead
      *

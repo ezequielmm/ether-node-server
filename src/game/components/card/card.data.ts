@@ -139,16 +139,31 @@ import { MoldCard } from './data/mold.card';
 import { SmudgeCard, SmudgeCardUpgraded } from './data/smudge.card';
 import { GalvanizeCard, GalvanizeCardUpgraded} from './data/galvanize.card';
 import { MirageCard } from './data/mirage.card';
+import { LungeCard, LungeCardUpgraded } from './data/lunge.card';
+import { ShakeItOffCard, ShakeItOffCardUpgraded } from './data/shakeItOff.card';
+import { AdeptCard, AdeptCardUpgraded } from './data/adept.card';
+import { BackflipCard, BackflipCardUpgraded } from './data/backflip.card';
+import { FrontflipCard, FrontflipCardUpgraded } from './data/frontflip.card';
+import { GNCard, GNCardUpgraded } from './data/gn.card';
+import { HeadButtCard, HeadButtCardUpgraded } from './data/headButt.card';
+import { IntimidateCard, IntimidateCardUpgraded } from './data/intimidate.card';
+import { RecoverCard, RecoverCardUpgraded } from './data/recover.data';
+import { SharpenBladeCard, SharpenBladeCardUpgraded } from './data/sharpenBlade.card';
+import { ShoutCard, ShoutCardUpgraded } from './data/shout.card';
+import { SiphonCard, SiphonCardUpgraded } from './data/siphon.card';
+import { SpikeArmorCard, SpikeArmorCardUpgraded } from './data/spikeArmor.card';
+import { TightenStrapsCard, TightenStrapsCardUpgraded } from './data/tightenStraps.card';
 import { SecretWordsCard, SecretWordsCardUpgraded } from './data/sacredwords.card';
 import { VengefulStrikeCard, VengefulStrikeCardUpgraded} from './data/vengefulStrike.card'
+import { SpiritualAssaultCard, SpiritualAssaultCardUpgraded } from './data/spiritualAssault.card';
 
 export const data: Card[] = [
     AttackCard,
     AttackCardUpgraded,
     DefenseCard,
     DefenseCardUpgraded,
-    // LungeCard,
-    // LungeCardUpgraded,
+    LungeCard,
+    LungeCardUpgraded,
     CounterCard,
     CounterCardUpgraded,
     FindWeaknessCard,
@@ -179,34 +194,34 @@ export const data: Card[] = [
     QuickToAdaptCardUpgraded,
     KindleCard,
     KindleCardUpgraded,
-    // ShakeItOffCard,
-    // ShakeItOffCardUpgraded,
+    ShakeItOffCard,
+    ShakeItOffCardUpgraded,
     FadeCard,
     FadeCardUpgraded,
     GiveNoGroundCard,
     GiveNoGroundCardUpgraded,
     PerfectTimingCard,
     PerfectTimingCardUpgraded,
-    // SiphonCard,
-    // SiphonCardUpgraded,
+    SiphonCard,
+    SiphonCardUpgraded,
     InvokeBlessingCard,
     InvokeBlessingCardUpgraded,
-    // GNCard,
-    // GNCardUpgraded,
-    // HeadButtCard,
-    // HeadButtCardUpgraded,
+    GNCard,
+    GNCardUpgraded,
+    HeadButtCard,
+    HeadButtCardUpgraded,
     PlantFeetCard,
     PlantFeetCardUpgraded,
     DoubleDownCard,
     DoubleDownCardUpgraded,
-    // IntimidateCard,
-    // IntimidateCardUpgraded,
-    //SpikeArmorCard,
-    //SpikeArmorCardUpgraded,
+    IntimidateCard,
+    IntimidateCardUpgraded,
+    SpikeArmorCard,
+    SpikeArmorCardUpgraded,
     RepositionCard,
     RepositionCardUpgraded,
-    // RecoverCard,
-    // RecoverCardUpgraded,
+    RecoverCard,
+    RecoverCardUpgraded,
     TightenGripCard,
     TightenGripCardUpgraded,
     KegChugCard,
@@ -229,8 +244,8 @@ export const data: Card[] = [
     ForceFieldCardUpgraded,
     BolsterCard,
     BolsterCardUpgraded,
-    // AdeptCard,
-    // AdeptCardUpgraded,
+    AdeptCard,
+    AdeptCardUpgraded,
     DivineGiftCard,
     DivineGiftCardUpgraded,
     ExecutionersBlowCard,
@@ -243,22 +258,22 @@ export const data: Card[] = [
     SparkCardUpgraded,
     TorchCard,
     TorchCardUpgraded,
-    // SharpenBladeCard,
-    // SharpenBladeCardUpgraded,
+    SharpenBladeCard,
+    SharpenBladeCardUpgraded,
     OnARollCard,
     OnARollCardUpgraded,
-    // ShoutCard,
-    // ShoutCardUpgraded,
+    ShoutCard,
+    ShoutCardUpgraded,
     AnticipateCard,
     AnticipateCardUpgraded,
     TwistTheBladeCard,
     TwistTheBladeCardUpgraded,
     KnockDownCard,
     KnockDownCardUpgraded,
-    // BackflipCard,
-    // BackflipCardUpgraded,
-    // FrontflipCard,
-    // FrontflipCardUpgraded,
+    BackflipCard,
+    BackflipCardUpgraded,
+    FrontflipCard,
+    FrontflipCardUpgraded,
     BurnedCard,
     RoundHouseCard,
     RoundHouseCardUpgraded,
@@ -268,8 +283,8 @@ export const data: Card[] = [
     BulkUpCardUpgraded,
     ArmorUpCard,
     ArmorUpCardUpgraded,
-    // TightenStrapsCard,
-    // TightenStrapsCardUpgraded,
+    TightenStrapsCard,
+    TightenStrapsCardUpgraded,
     WrathCard,
     WrathCardUpgraded,
     LevitateCard,
@@ -306,5 +321,7 @@ export const data: Card[] = [
     SecretWordsCard,
     SecretWordsCardUpgraded,
     VengefulStrikeCard, 
-    VengefulStrikeCardUpgraded
+    VengefulStrikeCardUpgraded,
+    SpiritualAssaultCard,
+    SpiritualAssaultCardUpgraded
 ];
