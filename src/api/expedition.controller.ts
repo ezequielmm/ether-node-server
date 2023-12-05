@@ -136,15 +136,6 @@ export class ExpeditionController {
     async handleCreateExpedition(@Req() { userAddress }: AuthorizedRequest, @Body() payload: CreateExpeditionApiDTO)
         : Promise<{expeditionCreated: boolean; reason?: string;}> 
     {
-        this.logger.log(`Client called POST route "/expeditions"`);
-
-        console.log("Init expedition tokenType:")
-        console.log(payload.tokenType)
-
-        console.log("Object:")
-        console.log(payload)
-        console.log("------------------------------------------------")
-
         const { equippedGear, tokenType: character_class } = payload;
         const playerToken: IPlayerToken = {
             walletId: payload.walletId,

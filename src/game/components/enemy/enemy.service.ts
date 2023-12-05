@@ -111,9 +111,6 @@ export class EnemyService {
         }
 
         const enemy = this.getEnemy(entity)
-
-        console.log("Enemy recovered in isEnemyUniQueType:")
-        console.log(enemy)
         
         if(!enemy.value.unique){
             return false;
