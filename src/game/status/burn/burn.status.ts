@@ -20,7 +20,6 @@ export class BurnStatus implements StatusEventHandler {
 
         // If the enemy has the Firemonger unique:
         if(EnemyService.isEnemyUniqueType(dto.target, EnemyUnique.Firemonger)){
-            console.log("A FireMonger enemy with burn status")
             await this.effectService.apply({
                 ctx: dto.ctx,
                 source: dto.source,
@@ -34,7 +33,6 @@ export class BurnStatus implements StatusEventHandler {
                 },
             });
         }else{
-            console.log("None FireMonger enemy with burn status")
             await this.effectService.apply({
                 ctx: dto.ctx,
                 source: dto.source,

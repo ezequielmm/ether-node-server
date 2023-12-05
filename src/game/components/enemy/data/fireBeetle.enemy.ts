@@ -6,9 +6,9 @@ import { fatigue } from 'src/game/status/fatigue/constants';
 import { EnemyAction, EnemyIntention } from '../enemy.interface';
 import { EnemyBuilderService as EB } from '../enemy-builder.service';
 import { burn } from 'src/game/status/burn/constants';
-import { onFireStatus } from 'src/game/status/onFire/constants';
 import { attachStatusEffect } from 'src/game/effects/attachStatus/constants';
 import { CardTargetedEnum } from '../../card/card.enum';
+import { onFireStatus } from 'src/game/status/onFire/constants';
 
 //-------------------------------------------------------------------------------------------------------------------------------------------------------
 //- Intents:
@@ -19,12 +19,26 @@ const getSignatureMove = (onFireCounter:number, animationId:string):EnemyIntenti
         name: "Self-Immolation",
         type: EnemyIntentionType.Signature,
         target: CardTargetedEnum.Player,
-        value: onFireCounter,
+        value: 2,
         negateDamage: 8,
         effects: [
             {
                 effect: attachStatusEffect.name,
-                target: CardTargetedEnum.Player,
+                target: CardTargetedEnum.Self,
+                args: {
+                    statusName: burn.name,
+                    statusArgs: {
+                        counter: 2,
+                    },
+                },
+                action: {
+                    name: animationId,
+                    hint: animationId,
+                },
+            },
+            {
+                effect: attachStatusEffect.name,
+                target: CardTargetedEnum.Self,
                 args: {
                     statusName: onFireStatus.name,
                     statusArgs: {
@@ -89,8 +103,8 @@ const AdvancedIntents: EnemyAction = {
 export const fireBeetleData: Enemy = {
     enemyId: 29,
     stage: 2,
-    selectable: false,
-    isActive: false,
+    selectable: true,
+    isActive: true,
     name: 'Fire Beetle',
     type: EnemyTypeEnum.Insectoid,
     category: EnemyCategoryEnum.Basic,
