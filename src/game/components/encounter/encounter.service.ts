@@ -57,11 +57,11 @@ export class EncounterService {
             ]
         }else if (stage == 2){
             encounters = [
-                EncounterIdEnum.StoneMason,
-                EncounterIdEnum.RoyalEmissary,
-                EncounterIdEnum.CaveIn,
                 EncounterIdEnum.Stalactite,
+                EncounterIdEnum.StoneMason,
+                EncounterIdEnum.CaveIn,
                 EncounterIdEnum.StoneCutter,
+                //EncounterIdEnum.RoyalEmissary, Need test
             ]
         }
 
