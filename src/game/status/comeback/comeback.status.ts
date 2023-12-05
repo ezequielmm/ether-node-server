@@ -77,13 +77,10 @@ export class ComebackStatus implements StatusEventHandler {
     }
 
     @OnEvent(EVENT_BEFORE_PLAYER_TURN_START)
-    async onPlayerTurnStart({ ctx }: { ctx: GameContext }): Promise<void> {
+    async onPlayerTurnStart(args: { ctx: GameContext }): Promise<void> {
+        const { ctx } = args;
         const player = this.playerService.get(ctx);
-        const {
-            value: {
-                combatState: { statuses },
-            },
-        } = player;
+        const statuses = player.value.combatState.statuses;
 
         await this.statusService.decreaseCounterAndRemove(
             ctx,
