@@ -11,6 +11,8 @@ import { damageEffect } from 'src/game/effects/damage/constants';
 import { CardTargetedEnum } from 'src/game/components/card/card.enum';
 import { EnemyService } from 'src/game/components/enemy/enemy.service';
 import { CombatQueueTargetEffectTypeEnum } from 'src/game/components/combatQueue/combatQueue.enum';
+import { EVENT_BEFORE_PLAYER_TURN_START } from 'src/game/constants';
+import { OnEvent } from '@nestjs/event-emitter';
 
 
 @StatusDecorator({
@@ -74,6 +76,7 @@ export class ComebackStatus implements StatusEventHandler {
         });
     }
 
+    @OnEvent(EVENT_BEFORE_PLAYER_TURN_START)
     async onPlayerTurnStart({ ctx }: { ctx: GameContext }): Promise<void> {
         const player = this.playerService.get(ctx);
         console.log('STATUS COUNTER ------------------------------------');
