@@ -76,6 +76,8 @@ export class ComebackStatus implements StatusEventHandler {
 
     async onPlayerTurnStart({ ctx }: { ctx: GameContext }): Promise<void> {
         const player = this.playerService.get(ctx);
+        console.log('STATUS COUNTER ------------------------------------');
+        console.log(player.value.combatState.statuses);
         const {
             value: {
                 combatState: { statuses },
