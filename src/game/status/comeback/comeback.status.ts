@@ -40,7 +40,7 @@ export class ComebackStatus implements StatusEventHandler {
 
         const oldHp = target.value.hpCurrent;
         const oldDefense = target.value.defense;
-        console.log('defense after the player hit me', playerDefense);
+
         if(playerDefense > 0){
             await this.effectService.apply({
                 ctx: ctx,
