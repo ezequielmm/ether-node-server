@@ -64,6 +64,7 @@ import { ElementalStatus } from './elemental/elemental.status';
 import { AbsorbingStatus } from './absorbing/absorbing.status';
 import { GalvanizeStatus } from './galvanize/galvanize.status';
 import { MistifiedStatus } from './mistified/mistified.status';
+import { ComebackStatus } from './comeback/comeback.status';
 import { SpiritAssaultStatus } from './elementalattack/elemental.status';
 import { OnFireStatus } from './onFire/onFire.status';
 
@@ -138,6 +139,7 @@ import { OnFireStatus } from './onFire/onFire.status';
         AbsorbingStatus,
         GalvanizeStatus,
         MistifiedStatus,
+        ComebackStatus,
         SpiritAssaultStatus,
         OnFireStatus
     ],
