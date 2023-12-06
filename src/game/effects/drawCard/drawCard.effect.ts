@@ -102,7 +102,7 @@ export class DrawCardEffect implements EffectHandler {
             ctx,
             amountToTake: 1,
             filterType: undefined,
-            SWARMessageTypeToSend: SWARMessageType.PlayerStateUpdate,
+            SWARMessageTypeToSend: SWARMessageType.PlayerAffected,
         });
     }
 }

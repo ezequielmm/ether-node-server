@@ -49,7 +49,7 @@ export class DrawCardAction {
         readonly filterType?: CardTypeEnum;
         readonly useEnemiesConfusedAsValue?: boolean;
     }): Promise<void> {
-        if (amountToTake < 1) return;
+        // if (amountToTake < 1) return;
 
         const { client } = ctx;
         const logger = this.logger.logger.child(ctx.info);
