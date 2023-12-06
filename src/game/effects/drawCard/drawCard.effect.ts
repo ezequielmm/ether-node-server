@@ -96,13 +96,21 @@ export class DrawCardEffect implements EffectHandler {
             });
         }
 
-        // Now, we take the amount of cards we had on the hand pile
-        // from the draw pile
         await this.drawCardAction.handle({
             ctx,
-            amountToTake: 1,
-            filterType: undefined,
+            amountToTake,
+            ...((useAttackingEnemiesAsValue || enemyIsAttacking) && {
+                filterType: CardTypeEnum.Defend,
+            }),
             SWARMessageTypeToSend: SWARMessageType.PlayerAffected,
+            useEnemiesConfusedAsValue,
         });
+
+        // await this.drawCardAction.handle({
+        //     ctx,
+        //     amountToTake: 1,
+        //     filterType: undefined,
+        //     SWARMessageTypeToSend: SWARMessageType.PlayerAffected,
+        // });
     }
 }
