@@ -89,9 +89,6 @@ export class DefenseEffect implements EffectHandler {
                 } = expedition;
 
                 const discardAmount = discard.length;
-                console.log("Discard Pile ------------------------------: ", discardAmount);
-                newDefense = newDefense * discardAmount * multiplier;
-                console.log("nueva defensa que deberia aplicar ------------------------------: ", newDefense);
             }
 
             // Check if the card uses the enemies that are attacking next turn as
