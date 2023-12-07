@@ -10,6 +10,7 @@ import {
 } from 'src/game/components/card/card.enum';
 import { SWARMessageType } from 'src/game/standardResponse/standardResponse';
 import { isNotUndefined } from 'src/utils';
+import { DiscardAllCardsAction } from 'src/game/action/discardAllCards.action';
 
 export interface DrawCardArgs {
     useAttackingEnemies: boolean;
@@ -22,7 +23,9 @@ export interface DrawCardArgs {
 })
 @Injectable()
 export class DrawCardEffect implements EffectHandler {
-    constructor(private readonly drawCardAction: DrawCardAction) {}
+    constructor(private readonly drawCardAction: DrawCardAction,
+        private readonly discardAllCardsAction: DiscardAllCardsAction,
+        ) {}
 
     async handle(payload: EffectDTO<DrawCardArgs>): Promise<void> {
         const {
@@ -95,6 +98,9 @@ export class DrawCardEffect implements EffectHandler {
                 if (type === EnemyIntentionType.Attack) enemyIsAttacking = true;
             });
         }
+
+        // Now we move all those cards to the discard pile
+        await this.discardAllCardsAction.handle(ctx, SWARMessageType.PlayerAffected);
 
         await this.drawCardAction.handle({
             ctx,
