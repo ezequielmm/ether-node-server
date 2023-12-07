@@ -24,13 +24,11 @@ export const LungeCardUpgraded: Card = {
             },
             {
                 effect: drawCardEffect.name,
-                target: CardTargetedEnum.Enemy,
+                target: CardTargetedEnum.Player,
                 args: {
                     value: 2,
-                    checkIfEnemyIsAttacking: true,
                 },
             },
-
         ],
         statuses: [],
     },
@@ -60,13 +58,11 @@ export const LungeCard: Card = {
             },
             {
                 effect: drawCardEffect.name,
-                target: CardTargetedEnum.Enemy,
+                target: CardTargetedEnum.Player,
                 args: {
-                    value: 2,
-                    checkIfEnemyIsAttacking: true,
+                    value: 1,
                 },
             },
-
         ],
         statuses: [],
     },
