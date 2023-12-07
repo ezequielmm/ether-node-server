@@ -49,6 +49,13 @@ export const LungeCard: Card = {
     properties: {
         effects: [
             {
+                effect: drawCardEffect.name,
+                target: CardTargetedEnum.Player,
+                args: {
+                    value: 1,
+                },
+            },
+            {
                 effect: damageEffect.name,
                 target: CardTargetedEnum.Enemy,
                 times: 2,
@@ -56,13 +63,7 @@ export const LungeCard: Card = {
                     value: 4,
                 },
             },
-            {
-                effect: drawCardEffect.name,
-                target: CardTargetedEnum.Player,
-                args: {
-                    value: 1,
-                },
-            },
+            
         ],
         statuses: [],
     },

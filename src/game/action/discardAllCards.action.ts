@@ -97,8 +97,8 @@ export class DiscardAllCardsAction {
         cards.exhausted.push(...cardsToExhaust);
 
         // Save expedition
-        ctx.expedition.markModified('currentNode.data.player.cards');
-        await ctx.expedition.save();
+        // ctx.expedition.markModified('currentNode.data.player.cards');
+        // await ctx.expedition.save();
 
         // Create data to send to client for each card moved
         const data = [];
@@ -111,14 +111,14 @@ export class DiscardAllCardsAction {
             });
         }
 
-        // client.emit(
-        //     'PutData',
-        //     StandardResponse.respond({
-        //         message_type: messageType,
-        //         action: SWARAction.MoveCard,
-        //         data: data,
-        //     }),
-        // );
+        client.emit(
+            'PutData',
+            StandardResponse.respond({
+                message_type: messageType,
+                action: SWARAction.MoveCard,
+                data: data,
+            }),
+        );
 
         logger.info(`Discarded and exhausted all cards`);
     }
