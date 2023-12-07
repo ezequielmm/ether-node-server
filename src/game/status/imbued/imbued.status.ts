@@ -37,20 +37,29 @@ export class ImbuedStatus implements StatusEventHandler {
 
         console.log("------------------------------------------------------------------------------------------------------------------------------------------------------")
 
-        await this.effectService.applyAll({
+        if(effects?.length){
+            await this.effectService.applyAll({
+                ctx,
+                source,
+                effects,
+                selectedEnemy: targetId,
+            });
+        }
+
+        if(statuses?.length){
+            await this.statusService.attachAll({
+                ctx: ctx,
+                statuses,
+                source,
+                targetId,
+            });
+        }
+
+        await this.statusService.decreaseCounterAndRemove(
             ctx,
-            source,
-            effects,
-            selectedEnemy: targetId,
-        });
-
-        await this.statusService.attachAll({
-            ctx: ctx,
             statuses,
-            source,
-            targetId,
-        });
-
-        dto.remove();
+            dto.source,
+            imbued,
+        );
     }
 }
