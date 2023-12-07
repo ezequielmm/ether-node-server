@@ -28,22 +28,21 @@ export class SiphoningStatus implements StatusEffectHandler {
         private readonly statusService: StatusService,
     ) {}
 
-    async preview(
-        args: StatusEffectDTO<DamageArgs>,
-    ): Promise<EffectDTO<DamageArgs>> {
+    async preview(args: StatusEffectDTO<DamageArgs>): Promise<EffectDTO<DamageArgs>> {
+        console.log("Inside siphning status preview............................................")
         return args.effectDTO;
     }
 
-    async handle(
-        dto: StatusEffectDTO<DamageArgs>,
-    ): Promise<EffectDTO<DamageArgs>> {
-        const {
-            ctx,
-            effectDTO: { args, source },
-        } = dto;
+    async handle(dto: StatusEffectDTO<DamageArgs>): Promise<EffectDTO<DamageArgs>> {
+        
+        console.log("Inside siphning status handle............................................")
+
+        const {ctx, effectDTO: { args, source } } = dto;
 
         // set the amount of defense we are going to get
         const newDefense = args.currentValue;
+
+        console.log("Defense to aum: " + newDefense)
 
         // Trigger the effectService and send a defense effect
         await this.effectService.apply({
