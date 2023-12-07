@@ -26,10 +26,7 @@ export class BolsteredStatus implements StatusEventHandler {
     ) {}
 
     async handle(args: StatusEventDTO): Promise<void> {
-        const {
-            source,
-            target,
-            ctx,
+        const { source, target, ctx,
             status: {
                 args: { counter: value },
             },
@@ -37,10 +34,15 @@ export class BolsteredStatus implements StatusEventHandler {
 
         let finalDefense: number;
 
+        console.log("Bolster status:")
+        console.log("Target type:")
+        console.log(target.type)
+
         if (PlayerService.isPlayer(target)) {
             finalDefense = target.value.combatState.defense + value;
             await this.playerService.setDefense(ctx, finalDefense);
-        } else if (EnemyService.isEnemy(target)) {
+        } 
+        else if (EnemyService.isEnemy(target)) {
             finalDefense = target.value.defense + value;
             await this.enemyService.setDefense(
                 ctx,
@@ -48,6 +50,8 @@ export class BolsteredStatus implements StatusEventHandler {
                 finalDefense,
             );
         }
+
+        console.log("final Defense: " + finalDefense)
 
         await this.combatQueueService.push({
             ctx,
@@ -66,6 +70,7 @@ export class BolsteredStatus implements StatusEventHandler {
 
     @OnEvent(EVENT_BEFORE_PLAYER_TURN_END)
     async remove(args: { ctx: GameContext }): Promise<void> {
+        console.log("Before Player Turn End executed................")
         const { ctx } = args;
         const statuses = this.statusService.getAllByName(ctx, bolstered.name);
 
