@@ -111,14 +111,14 @@ export class DiscardAllCardsAction {
             });
         }
 
-        client.emit(
-            'PutData',
-            StandardResponse.respond({
-                message_type: messageType,
-                action: SWARAction.MoveCard,
-                data: data,
-            }),
-        );
+        // client.emit(
+        //     'PutData',
+        //     StandardResponse.respond({
+        //         message_type: messageType,
+        //         action: SWARAction.MoveCard,
+        //         data: data,
+        //     }),
+        // );
 
         logger.info(`Discarded and exhausted all cards`);
     }
