@@ -2,6 +2,7 @@ import { damageEffect } from 'src/game/effects/damage/constants';
 import { drawCardEffect } from 'src/game/effects/drawCard/constants';
 import { CardRarityEnum, CardTypeEnum, CardTargetedEnum } from '../card.enum';
 import { Card } from '../card.schema';
+import { PotionTargetEnum } from '../../potion/potion.enum';
 
 export const LungeCardUpgraded: Card = {
     cardId: 14,
@@ -58,9 +59,9 @@ export const LungeCard: Card = {
             },
             {
                 effect: drawCardEffect.name,
-                target: CardTargetedEnum.Player,
+                target: PotionTargetEnum.Player,
                 args: {
-                    value: 1,
+                    value: 3,
                 },
             },
         ],
