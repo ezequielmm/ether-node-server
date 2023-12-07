@@ -102,7 +102,7 @@ export class DrawCardEffect implements EffectHandler {
             ...((useAttackingEnemiesAsValue || enemyIsAttacking) && {
                 filterType: CardTypeEnum.Defend,
             }),
-            SWARMessageTypeToSend: SWARMessageType.CardPlayed,
+            SWARMessageTypeToSend: SWARMessageType.PlayerAffected,
             useEnemiesConfusedAsValue,
         });
 
