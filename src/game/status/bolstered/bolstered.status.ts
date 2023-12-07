@@ -11,6 +11,8 @@ import { StatusService } from 'src/game/status/status.service';
 import { StatusEventDTO, StatusEventHandler } from '../interfaces';
 import { StatusDecorator } from '../status.decorator';
 import { bolstered } from './constants';
+import { EffectService } from 'src/game/effects/effects.service';
+import { defenseEffect } from 'src/game/effects/defense/constants';
 
 @StatusDecorator({
     status: bolstered,
@@ -23,6 +25,7 @@ export class BolsteredStatus implements StatusEventHandler {
         private readonly enemyService: EnemyService,
         private readonly statusService: StatusService,
         private readonly combatQueueService: CombatQueueService,
+        private readonly effectService: EffectService
     ) {}
 
     async handle(args: StatusEventDTO): Promise<void> {
@@ -37,8 +40,19 @@ export class BolsteredStatus implements StatusEventHandler {
         console.log("Bolster status:")
 
         if (PlayerService.isPlayer(target)) {
-            finalDefense = target.value.combatState.defense + value;
-            await this.playerService.setDefense(ctx, finalDefense);
+            // finalDefense = target.value.combatState.defense + value;
+            // await this.playerService.setDefense(ctx, finalDefense);
+            await this.effectService.apply({
+                ctx,
+                source,
+                target,
+                effect: {
+                    effect: defenseEffect.name,
+                    args: {
+                        value,
+                    },
+                },
+            });
         } 
         else if (EnemyService.isEnemy(target)) {
             finalDefense = target.value.defense + value;
