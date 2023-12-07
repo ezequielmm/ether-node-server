@@ -35,8 +35,6 @@ export class BolsteredStatus implements StatusEventHandler {
         let finalDefense: number;
 
         console.log("Bolster status:")
-        console.log("Target type:")
-        console.log(target.type)
 
         if (PlayerService.isPlayer(target)) {
             finalDefense = target.value.combatState.defense + value;
@@ -53,19 +51,19 @@ export class BolsteredStatus implements StatusEventHandler {
 
         console.log("final Defense: " + finalDefense)
 
-        await this.combatQueueService.push({
-            ctx,
-            source,
-            target,
-            args: {
-                effectType: CombatQueueTargetEffectTypeEnum.Defense,
-                defenseDelta: value,
-                finalDefense: finalDefense,
-                healthDelta: undefined,
-                finalHealth: undefined,
-                statuses: [],
-            },
-        });
+        // await this.combatQueueService.push({
+        //     ctx,
+        //     source,
+        //     target,
+        //     args: {
+        //         effectType: CombatQueueTargetEffectTypeEnum.Defense,
+        //         defenseDelta: value,
+        //         finalDefense: finalDefense,
+        //         healthDelta: undefined,
+        //         finalHealth: undefined,
+        //         statuses: [],
+        //     },
+        // });
     }
 
     @OnEvent(EVENT_BEFORE_PLAYER_TURN_END)
