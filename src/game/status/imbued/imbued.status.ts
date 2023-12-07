@@ -3,6 +3,7 @@ import { StatusEventDTO, StatusEventHandler } from '../interfaces';
 import { StatusDecorator } from '../status.decorator';
 import { StatusService } from '../status.service';
 import { imbued } from './constants';
+import { PlayerService } from 'src/game/components/player/player.service';
 
 @StatusDecorator({
     status: imbued,
@@ -11,6 +12,7 @@ export class ImbuedStatus implements StatusEventHandler {
     constructor(
         private readonly statusService: StatusService,
         private readonly effectService: EffectService,
+        private readonly playerService: PlayerService
     ) {}
 
     async handle(dto: StatusEventDTO): Promise<void> {
@@ -55,10 +57,17 @@ export class ImbuedStatus implements StatusEventHandler {
             });
         }
 
+        const player = this.playerService.get(ctx);
+        const {
+            value: {
+                combatState: { statuses: combatStatuses },
+            },
+        } = player;
+
         await this.statusService.decreaseCounterAndRemove(
             ctx,
-            statuses,
-            dto.source,
+            combatStatuses,
+            player,
             imbued,
         );
     }
