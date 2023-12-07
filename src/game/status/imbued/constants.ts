@@ -11,5 +11,5 @@ export const imbued: StatusEvent = {
     trigger: StatusTrigger.Event,
     event: EVENT_BEFORE_CARD_PLAY,
     type: StatusType.Buff,
-    counterType: StatusCounterType.None,
+    counterType: StatusCounterType.Counter,
 };

@@ -14,14 +14,28 @@ export class ImbuedStatus implements StatusEventHandler {
     ) {}
 
     async handle(dto: StatusEventDTO): Promise<void> {
-        const {
-            ctx,
-            eventArgs: { card, cardSource: source, cardTargetId: targetId },
-        } = dto;
+        const { ctx, eventArgs: { card, cardSource: source, cardTargetId: targetId } } = dto;
 
-        const {
-            properties: { effects, statuses },
-        } = card;
+        const { properties: { effects, statuses } } = card;
+
+        console.log("------------------------------------------------------------------------------------------------------------------------------------------------------")
+        console.log("Card to be played twice: ")
+        console.log(card)
+        console.log("----------------------------------------------")
+
+        console.log("TargetId:")
+        console.log(targetId)
+        console.log("----------------------------------------------")
+
+        console.log("Effects:")
+        console.log(effects)
+        console.log("----------------------------------------------")
+
+        console.log("Statuses:")
+        console.log(statuses)
+        console.log("----------------------------------------------")
+
+        console.log("------------------------------------------------------------------------------------------------------------------------------------------------------")
 
         await this.effectService.applyAll({
             ctx,
@@ -31,7 +45,7 @@ export class ImbuedStatus implements StatusEventHandler {
         });
 
         await this.statusService.attachAll({
-            ctx: dto.ctx,
+            ctx: ctx,
             statuses,
             source,
             targetId,
