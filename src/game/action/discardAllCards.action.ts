@@ -103,13 +103,13 @@ export class DiscardAllCardsAction {
         // Create data to send to client for each card moved
         const data = [];
 
-        for (const card of [...cardsToExhaust, ...cardsToDiscard]) {
-            data.push({
-                source: 'hand',
-                destination: isFade(card) ? 'exhausted' : 'discard',
-                id: card.id,
-            });
-        }
+        // for (const card of [...cardsToExhaust, ...cardsToDiscard]) {
+        //     data.push({
+        //         source: 'hand',
+        //         destination: isFade(card) ? 'exhausted' : 'discard',
+        //         id: card.id,
+        //     });
+        // }
 
         client.emit(
             'PutData',
