@@ -2,6 +2,7 @@ import { damageEffect } from 'src/game/effects/damage/constants';
 import { drawCardEffect } from 'src/game/effects/drawCard/constants';
 import { CardRarityEnum, CardTypeEnum, CardTargetedEnum } from '../card.enum';
 import { Card } from '../card.schema';
+import { repositionEffect } from 'src/game/effects/reposition/contants';
 
 export const LungeCardUpgraded: Card = {
     cardId: 14,
@@ -23,7 +24,7 @@ export const LungeCardUpgraded: Card = {
                 },
             },
             {
-                effect: drawCardEffect.name,
+                effect: repositionEffect.name,
                 target: CardTargetedEnum.Player,
                 args: {
                     value: 2,
@@ -34,7 +35,7 @@ export const LungeCardUpgraded: Card = {
     },
     showPointer: true,
     isUpgraded: true,
-    isActive: false,
+    isActive: true,
 };
 
 export const LungeCard: Card = {
@@ -57,7 +58,7 @@ export const LungeCard: Card = {
                 },
             },
             {
-                effect: drawCardEffect.name,
+                effect: repositionEffect.name,
                 target: CardTargetedEnum.Player,
                 args: {
                     value: 1,
@@ -69,5 +70,5 @@ export const LungeCard: Card = {
     showPointer: true,
     isUpgraded: false,
     upgradedCardId: LungeCardUpgraded.cardId,
-    isActive: false,
+    isActive: true,
 };
