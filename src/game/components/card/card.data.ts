@@ -104,7 +104,6 @@ import {
     ShieldPlantCardUpgraded,
 } from './data/shieldPlant.card';
 // import { ShoutCard, ShoutCardUpgraded } from './data/shout.card';
-// import { SiphonCard, SiphonCardUpgraded } from './data/siphon.card';
 import { SparkCard, SparkCardUpgraded } from './data/Spark.card';
 //import { SpikeArmorCard, SpikeArmorCardUpgraded } from './data/spikeArmor.card';
 import { StunnedCard } from './data/stunned.card';
