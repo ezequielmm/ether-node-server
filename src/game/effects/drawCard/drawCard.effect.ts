@@ -121,9 +121,6 @@ export class DrawCardEffect implements EffectHandler {
             useEnemiesConfusedAsValue,
         });
 
-        ctx.expedition.markModified('currentNode.data.player.cards');
-        await ctx.expedition.save();
-
         // await this.drawCardAction.handle({
         //     ctx,
         //     amountToTake: 1,
