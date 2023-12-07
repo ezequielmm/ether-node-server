@@ -104,8 +104,10 @@ export class CombatGateway {
                     if (ctx.expedition.currentNode.data.playing !== CombatTurnEnum.Player){
                         return;
                     }
-                    console.log("GET CONTEXT HAND:" + ctx.expedition.currentNode.data.player.cards.hand);
-                    console.log("GET CONTEXT MAZO:" + ctx.expedition.currentNode.data.player.cards.draw);
+                    console.log("GET CONTEXT HAND:");
+                    console.log( ctx.expedition.currentNode.data.player.cards.hand);
+                    console.log("GET CONTEXT MAZO:");
+                    console.log( ctx.expedition.currentNode.data.player.cards.draw);
 
                     const enemyComparisonStatuses = this.enemyService.getEnemyStatuses(ctx);
                     
