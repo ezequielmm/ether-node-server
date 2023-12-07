@@ -11,6 +11,7 @@ import {
 import { SWARMessageType } from 'src/game/standardResponse/standardResponse';
 import { isNotUndefined } from 'src/utils';
 import { DiscardAllCardsAction } from 'src/game/action/discardAllCards.action';
+import { DiscardCardAction } from 'src/game/action/discardCard.action';
 
 export interface DrawCardArgs {
     useAttackingEnemies: boolean;
@@ -25,6 +26,7 @@ export interface DrawCardArgs {
 export class DrawCardEffect implements EffectHandler {
     constructor(private readonly drawCardAction: DrawCardAction,
         private readonly discardAllCardsAction: DiscardAllCardsAction,
+        private readonly discardCardAction: DiscardCardAction,
         ) {}
 
     async handle(payload: EffectDTO<DrawCardArgs>): Promise<void> {
@@ -100,7 +102,13 @@ export class DrawCardEffect implements EffectHandler {
         }
 
         // Now we move all those cards to the discard pile
-        await this.discardAllCardsAction.handle(ctx, SWARMessageType.PlayerAffected);
+        await this.discardAllCardsAction.handle2(ctx, SWARMessageType.PlayerAffected);
+        // await this.discardCardAction.handle({
+        //     client: ctx.client,
+        //     cardId,
+        //     ctx,
+        //     emit: true,
+        // });
 
         await this.drawCardAction.handle({
             ctx,
