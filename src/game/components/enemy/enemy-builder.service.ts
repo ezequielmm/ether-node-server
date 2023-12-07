@@ -37,6 +37,7 @@ export class EnemyBuilderService {
     public static DEBUFF                         = "debuff";
     public static DEBUFF2                        = "debuff2";
     public static DEBUFF3                        = "debuff3";
+    public static DEBUFF4                        = "debuff4";
     public static SPECIAL                        = "special";
     public static SIGNATURE_MOVE                 = "signature_move";
     public static ATTACK_BUFF                    = "attack_buff";
