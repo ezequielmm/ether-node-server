@@ -101,6 +101,9 @@ export class DrawCardEffect implements EffectHandler {
             });
         }
 
+        // Now we move all those cards to the discard pile
+        await this.discardAllCardsAction.handle2(ctx, SWARMessageType.PlayerAffected);
+        
         // await this.discardCardAction.handle({
         //     client: ctx.client,
         //     cardId,
@@ -117,10 +120,6 @@ export class DrawCardEffect implements EffectHandler {
             SWARMessageTypeToSend: SWARMessageType.PlayerAffected,
             useEnemiesConfusedAsValue,
         });
-
-        // Now we move all those cards to the discard pile
-        await this.discardAllCardsAction.handle2(ctx, SWARMessageType.PlayerAffected);
-        
 
         // await this.drawCardAction.handle({
         //     ctx,
