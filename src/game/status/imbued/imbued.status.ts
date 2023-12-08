@@ -16,6 +16,9 @@ export class ImbuedStatus implements StatusEventHandler {
     ) {}
 
     async handle(dto: StatusEventDTO): Promise<void> {
+
+        console.log("IMBUED STATUS EXECUTED-----------------------------------------------")
+
         const { ctx, eventArgs: { card, cardSource: source, cardTargetId: targetId } } = dto;
 
         const { properties: { effects, statuses } } = card;
