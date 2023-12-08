@@ -77,7 +77,5 @@ export class ChooseCardEffect implements EffectHandler {
             originPile,
             amountToTake: cardsToTake,
         });
-
-        await this.cardSelectionScreenService.deleteByClientId(client.id);
     }
 }
