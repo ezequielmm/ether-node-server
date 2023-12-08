@@ -27,7 +27,7 @@ export const FrontflipCardUpgraded: Card = {
     },
     showPointer: false,
     isUpgraded: true,
-    isActive: false,
+    isActive: true,
 };
 
 export const FrontflipCard: Card = {
@@ -45,7 +45,7 @@ export const FrontflipCard: Card = {
                 effect: chooseCardEffect.name,
                 target: CardTargetedEnum.Player,
                 args: {
-                    value: 1,
+                    value: 7,
                     originPile: CardSelectionScreenOriginPileEnum.Draw,
                 },
             },
@@ -55,5 +55,5 @@ export const FrontflipCard: Card = {
     showPointer: false,
     isUpgraded: false,
     upgradedCardId: FrontflipCardUpgraded.cardId,
-    isActive: false,
+    isActive: true,
 };

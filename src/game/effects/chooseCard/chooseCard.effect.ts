@@ -33,6 +33,7 @@ export class ChooseCardEffect implements EffectHandler {
         console.log("PAYLOAD chooseCard effect ----------------------------------");
         console.log(payload);
         console.log("FIN ------------ PAYLOAD chooseCard effect ----------------------------------");
+        console.log('carde to take', cardsToTake);
         // Here we query the desired deck based on the card played
         const {
             currentNode: {
