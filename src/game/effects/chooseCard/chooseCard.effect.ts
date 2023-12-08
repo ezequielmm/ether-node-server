@@ -68,7 +68,6 @@ export class ChooseCardEffect implements EffectHandler {
                 },
             }),
         );
-        await this.cardSelectionScreenService.deleteByClientId(client.id);
 
         // Here we create the list of cards on the card selection screen collection
         // to make sure that we only receive the desired data
@@ -78,5 +77,7 @@ export class ChooseCardEffect implements EffectHandler {
             originPile,
             amountToTake: cardsToTake,
         });
+
+        await this.cardSelectionScreenService.deleteByClientId(client.id);
     }
 }
