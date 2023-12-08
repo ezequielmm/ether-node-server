@@ -4,6 +4,9 @@ import { StatusDecorator } from '../status.decorator';
 import { StatusService } from '../status.service';
 import { imbued } from './constants';
 import { PlayerService } from 'src/game/components/player/player.service';
+import { OnEvent } from '@nestjs/event-emitter';
+import { GameContext } from 'src/game/components/interfaces';
+import { EVENT_AFTER_CARD_PLAY } from 'src/game/constants';
 
 @StatusDecorator({
     status: imbued,
@@ -19,25 +22,6 @@ export class ImbuedStatus implements StatusEventHandler {
         const { ctx, eventArgs: { card, cardSource: source, cardTargetId: targetId } } = dto;
 
         const { properties: { effects, statuses } } = card;
-
-        console.log("------------------------------------------------------------------------------------------------------------------------------------------------------")
-        console.log("Card to be played twice: ")
-        console.log(card)
-        console.log("----------------------------------------------")
-
-        console.log("TargetId:")
-        console.log(targetId)
-        console.log("----------------------------------------------")
-
-        console.log("Effects:")
-        console.log(effects)
-        console.log("----------------------------------------------")
-
-        console.log("Statuses:")
-        console.log(statuses)
-        console.log("----------------------------------------------")
-
-        console.log("------------------------------------------------------------------------------------------------------------------------------------------------------")
 
         if(effects?.length){
             await this.effectService.applyAll({
@@ -56,19 +40,28 @@ export class ImbuedStatus implements StatusEventHandler {
                 targetId,
             });
         }
+    }
+
+    @OnEvent(EVENT_AFTER_CARD_PLAY)
+    async onPlayerTurnStart({ ctx }: { ctx: GameContext }): Promise<void> {
+
+        console.log("IMBUED - EVENT_AFTER_CARD_PLAYED------------------------------------------------------------------------")
 
         const player = this.playerService.get(ctx);
         const {
             value: {
-                combatState: { statuses: combatStatuses },
+                combatState: { statuses },
             },
         } = player;
 
         await this.statusService.decreaseCounterAndRemove(
             ctx,
-            combatStatuses,
+            statuses,
             player,
             imbued,
         );
     }
 }
+
+
+
