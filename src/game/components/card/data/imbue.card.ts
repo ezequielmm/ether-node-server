@@ -18,14 +18,14 @@ export const ImbueCardUpgraded: Card = {
                 name: imbued.name,
                 attachTo: CardTargetedEnum.Player,
                 args: {
-                    counter: null,
+                    counter: 1,
                 },
             },
         ],
     },
     showPointer: false,
     isUpgraded: true,
-    isActive: false,
+    isActive: true,
 };
 
 export const ImbueCard: Card = {
@@ -44,7 +44,7 @@ export const ImbueCard: Card = {
                 name: imbued.name,
                 attachTo: CardTargetedEnum.Player,
                 args: {
-                    counter: null,
+                    counter: 1,
                 },
             },
         ],
@@ -52,5 +52,5 @@ export const ImbueCard: Card = {
     showPointer: false,
     isUpgraded: false,
     upgradedCardId: ImbueCardUpgraded.cardId,
-    isActive: false,
+    isActive: true,
 };
