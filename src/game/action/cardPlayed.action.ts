@@ -229,7 +229,7 @@ export class CardPlayedAction {
                 emit: false,
             });
         // Dont discard autonomous weapons
-        } else if (cardId == 145 || cardId == 145) {
+        } if (cardId == 145 || cardId == 145) {
             return;
         }
         else {
