@@ -222,7 +222,6 @@ export class CardPlayedAction {
             await this.cardService.updateCardDescription({ ctx, card });
 
         // now, with all else done, do the actual exhaust/discard routines, without emitting again
-        console.log(":DISCARD CARDID: " + card.cardId)
         if (exhaust || forceExhaust) {
             await this.exhaustCardAction.handle({
                 client: ctx.client,
@@ -232,7 +231,6 @@ export class CardPlayedAction {
             });
         // Dont discard autonomous weapons
         } if (card.cardId == 145 || card.cardId == 146) {
-            console.log("Entra en el autonomous weapon dont discard");
             await this.discardCardAction.handleDontDiscard({
                 client: ctx.client,
                 cardId,

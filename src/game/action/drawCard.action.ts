@@ -108,7 +108,6 @@ export class DrawCardAction {
         let newDiscard = [...discard];
 
         if (cardsTaken.length < amountToTake && discardFiltered.length > 0) {
-            console.log("ENTRA AL IF LOCO");
             const drawDepletedStrategy =
                 typeof filterType === 'undefined'
                     ? CardDrawDepletedStrategyEnum.ShuffleDiscard
@@ -225,8 +224,7 @@ export class DrawCardAction {
 
         // Move the cards taken to the hand pile
         const newHand = [...hand, ...cardsTaken];
-        console.log("NEW HAND: ");
-        console.log(newHand);
+    
 
         // FIX ME: This shouldn't be here. It cancels out the discounts on draw, and cards should be resetting as they are discarded, if they are meant to
         /*
@@ -244,9 +242,7 @@ export class DrawCardAction {
             draw: newDraw,
             discard: newDiscard,
         });
-        console.log("EXP UPDATED: ");
-        console.log(expUpdated.currentNode.data.player.cards.hand);
-
+        
         const newCardsObject = expUpdated.currentNode.data.player.cards;
         ctx.expedition.currentNode.data.player.cards = newCardsObject;
 

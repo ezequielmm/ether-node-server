@@ -86,12 +86,6 @@ export class DiscardCardAction {
             return card[field] !== cardId;
         });
         
-        console.log("HAND DE DISCARD ACTION: ");
-        console.log(hand);
-
-        console.log("CARD TO DISCARD: ");
-        console.log(cardToDiscard);
-
         logger.info(
             `Sent message PutData to client ${client.id}: ${SWARAction.MoveCard}`,
         );
@@ -157,12 +151,6 @@ export class DiscardCardAction {
             
             return card[field] !== cardId;
         });
-        
-        console.log("HAND DE DISCARD ACTION: ");
-        console.log(hand);
-
-        console.log("CARD TO DISCARD: ");
-        console.log(cardToDiscard);
 
         logger.info(
             `Sent message PutData to client ${client.id}: ${SWARAction.MoveCard}`,
