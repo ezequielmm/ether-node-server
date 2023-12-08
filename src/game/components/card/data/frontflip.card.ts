@@ -45,7 +45,7 @@ export const FrontflipCard: Card = {
                 effect: chooseCardEffect.name,
                 target: CardTargetedEnum.Player,
                 args: {
-                    value: 7,
+                    value: 1,
                     originPile: CardSelectionScreenOriginPileEnum.Draw,
                 },
             },
