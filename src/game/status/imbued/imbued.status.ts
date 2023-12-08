@@ -48,12 +48,12 @@ export class ImbuedStatus implements StatusEventHandler {
             },
         } = player;
 
-        await this.statusService.decreaseCounterAndRemove(
+
+        await this.statusService.removeStatus({
             ctx,
-            combatStatuses,
-            player,
-            imbued,
-        );
+            entity: player,
+            status: imbued,
+        });
     }
 }
 
