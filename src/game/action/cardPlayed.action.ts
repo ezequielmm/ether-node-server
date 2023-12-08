@@ -30,6 +30,7 @@ import { DiscardCardAction } from './discardCard.action';
 import { ExhaustCardAction } from './exhaustCard.action';
 import { CardService } from '../components/card/card.service';
 import { IExpeditionPlayerStateDeckCard } from '../components/expedition/expedition.interface';
+import { Card } from '../components/card/card.schema';
 
 @Injectable()
 export class CardPlayedAction {
@@ -221,7 +222,7 @@ export class CardPlayedAction {
             await this.cardService.updateCardDescription({ ctx, card });
 
         // now, with all else done, do the actual exhaust/discard routines, without emitting again
-        console.log(":DISCARD CARDID: " + cardId)
+        console.log(":DISCARD CARDID: " + card.cardId)
         if (exhaust || forceExhaust) {
             await this.exhaustCardAction.handle({
                 client: ctx.client,
@@ -230,7 +231,7 @@ export class CardPlayedAction {
                 emit: false,
             });
         // Dont discard autonomous weapons
-        } if (cardId == 145 || cardId == 146) {
+        } if (card.cardId == 145 || card.cardId == 146) {
             console.log("Entra en el autonomous weapon dont discard");
             return;
         }
