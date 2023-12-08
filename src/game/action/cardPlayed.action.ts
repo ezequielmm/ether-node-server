@@ -149,7 +149,12 @@ export class CardPlayedAction {
                 ctx,
                 cardId,
             });
-        } else {
+        // Dont discard autonomous weapons
+        } else if (cardId == 145 || cardId == 145) 
+        {
+            return;
+        } 
+        else {
             this.discardCardAction.emit({
                 ctx,
                 cardId,
