@@ -47,7 +47,7 @@ export class ImbuedStatus implements StatusEventHandler {
         });
 
         console.log("Card after imbued effect:")
-        console.log(card)
+        console.log(card.properties.statuses)
         console.log("---------------------------------------------")
     }
 }
