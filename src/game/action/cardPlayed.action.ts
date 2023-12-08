@@ -233,7 +233,12 @@ export class CardPlayedAction {
         // Dont discard autonomous weapons
         } if (card.cardId == 145 || card.cardId == 146) {
             console.log("Entra en el autonomous weapon dont discard");
-            return;
+            await this.discardCardAction.handleDontDiscard({
+                client: ctx.client,
+                cardId,
+                ctx,
+                emit: false,
+            });;
         }
         else {
             await this.discardCardAction.handle({

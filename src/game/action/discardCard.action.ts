@@ -114,4 +114,76 @@ export class DiscardCardAction {
         });
 
     }
+
+
+    async handleDontDiscard({
+        client,
+        cardId,
+        ctx,
+        emit = true,
+    }: {
+        readonly client: Socket;
+        readonly cardId: CardId;
+        ctx?: GameContext;
+        emit?: boolean;
+    }): Promise<void> {
+        // First we get the game context
+        if (!ctx) {
+            ctx = await this.expeditionService.getGameContext(client);
+        }
+
+        // Now we set the logger context
+        const logger = this.logger.logger.child(ctx.info);
+
+        // now we get the hand and discard piles from the current game context
+        let {
+            expedition: {
+                currentNode: {
+                    data: {
+                        player: {
+                            cards: { hand, discard },
+                        },
+                    },
+                },
+            },
+        } = ctx;
+
+        // Then we take the desired card from the hand pile
+        // Also remove it from the hand pile
+        let cardToDiscard: IExpeditionPlayerStateDeckCard = null;
+        hand = hand.filter((card) => {
+            const field = getCardIdField(cardId);
+            if (card[field] == cardId) cardToDiscard = card;
+            
+            return card[field] !== cardId;
+        });
+        
+        console.log("HAND DE DISCARD ACTION: ");
+        console.log(hand);
+
+        console.log("CARD TO DISCARD: ");
+        console.log(cardToDiscard);
+
+        logger.info(
+            `Sent message PutData to client ${client.id}: ${SWARAction.MoveCard}`,
+        );
+
+        if (emit) this.emit({ctx, cardId});
+        // Next we check if the card has the key oldEnergy greater
+        // than 0, if it is true them we set the card energy to the
+        // oldEnergy value
+        cardToDiscard.energy =
+            cardToDiscard.oldEnergy > 0
+                ? cardToDiscard.oldEnergy
+                : cardToDiscard.energy;
+        // dont discard anything
+        discard.push();
+        
+        await this.expeditionService.updateHandPiles({
+            clientId: client.id,
+            hand,
+            discard,
+        });
+
+    }
 }
