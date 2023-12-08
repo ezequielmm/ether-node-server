@@ -52,46 +52,45 @@ export class CardPlayedAction {
         private readonly exhaustCardAction: ExhaustCardAction,
         private readonly endPlayerTurnProcess: EndPlayerTurnProcess,
         private readonly eventEmitter: EventEmitter2,
-    ) {}
+    ) { }
 
-    async handle({cardId, selectedEnemyId, ctx, forceExhaust = false, newHand = null}: 
-        {readonly ctx: GameContext; readonly cardId: CardId; readonly selectedEnemyId: TargetId; readonly forceExhaust?: boolean; readonly newHand?: IExpeditionPlayerStateDeckCard[]}): Promise<void> 
-        {
-            const logger = this.logger.logger.child(ctx.info);
-            const {
-                expedition: {
-                    currentNode: {
-                        data: {
-                            player: {
-                                energy: availableEnergy,
-                                cards:  { hand },
-                            },
+    async handle({ cardId, selectedEnemyId, ctx, forceExhaust = false, newHand = null }:
+        { readonly ctx: GameContext; readonly cardId: CardId; readonly selectedEnemyId: TargetId; readonly forceExhaust?: boolean; readonly newHand?: IExpeditionPlayerStateDeckCard[] }): Promise<void> {
+        const logger = this.logger.logger.child(ctx.info);
+        const {
+            expedition: {
+                currentNode: {
+                    data: {
+                        player: {
+                            energy: availableEnergy,
+                            cards: { hand },
                         },
                     },
                 },
-            } = ctx;
-        
+            },
+        } = ctx;
+
         //- Getting the played Card
         let card;
-        if(newHand){
+        if (newHand) {
             card = await newHand.find((card) => {
                 const field = getCardIdField(cardId);
                 return card[field] === cardId;
-            });    
-        }else{
+            });
+        } else {
             card = await hand.find((card) => {
                 const field = getCardIdField(cardId);
                 return card[field] === cardId;
             });
         }
 
-        
+
         //- I don't have the card in my hand:
         if (!card) {
             this.sendInvalidCardMessage(ctx.client, logger);
             return;
         }
-        
+
         const { properties: { effects, statuses }, keywords } = card;
         const { exhaust, endTurn, unplayable } = CardKeywordPipeline.process(keywords);
 
@@ -115,8 +114,8 @@ export class CardPlayedAction {
         }
 
         logger.info(`Player ${ctx.client.id} played card: ${card.name}`);
-        logger.info(`Started combat queue for client ${ctx.client.id}`); 
-        
+        logger.info(`Started combat queue for client ${ctx.client.id}`);
+
         await this.combatQueueService.start(ctx);
 
         //- Source is just a parse to ExpeditionPlayer
@@ -149,12 +148,7 @@ export class CardPlayedAction {
                 ctx,
                 cardId,
             });
-        // Dont discard autonomous weapons
-        } else if (cardId == 145 || cardId == 145) 
-        {
-            return;
-        } 
-        else {
+        } else {
             this.discardCardAction.emit({
                 ctx,
                 cardId,
@@ -234,7 +228,11 @@ export class CardPlayedAction {
                 ctx,
                 emit: false,
             });
-        } else {
+        // Dont discard autonomous weapons
+        } else if (cardId == 145 || cardId == 145) {
+            return;
+        }
+        else {
             await this.discardCardAction.handle({
                 client: ctx.client,
                 cardId,
