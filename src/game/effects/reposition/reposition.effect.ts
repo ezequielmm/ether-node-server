@@ -32,6 +32,7 @@ export class RepositionEffect implements EffectHandler {
                 },
             },
         } = payload;
+        
         const ctx = payload.ctx;
 
         // This is just to send the correct message type across the effect
