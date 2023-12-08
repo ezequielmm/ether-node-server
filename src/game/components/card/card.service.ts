@@ -305,9 +305,9 @@ export class CardService {
     async afterStatusAttachEvent(args: AfterStatusAttachEvent) {
         const { ctx, target, status } = args;
 
-        if (PlayerService.isPlayer(target)) {
-            await this.syncAllCardsByStatusMutated(ctx, status);
-        }
+        // if (PlayerService.isPlayer(target)) {
+        //     await this.syncAllCardsByStatusMutated(ctx, status);
+        // }
     }
 
     @OnEvent(EVENT_AFTER_STATUSES_UPDATE)
