@@ -17,10 +17,7 @@ export class ImbuedStatus implements StatusEventHandler {
 
     async handle(dto: StatusEventDTO): Promise<void> {
 
-        console.log("IMBUED STATUS EXECUTED-----------------------------------------------")
-
         const { ctx, eventArgs: { card, cardSource: source, cardTargetId: targetId } } = dto;
-
         const { properties: { effects, statuses } } = card;
 
         if(effects?.length){
@@ -34,7 +31,7 @@ export class ImbuedStatus implements StatusEventHandler {
 
         if(statuses?.length){
             await this.statusService.attachAll({
-                ctx: ctx,
+                ctx,
                 statuses,
                 source,
                 targetId,
@@ -42,18 +39,16 @@ export class ImbuedStatus implements StatusEventHandler {
         }
 
         const player = this.playerService.get(ctx);
-        const {
-            value: {
-                combatState: { statuses: combatStatuses },
-            },
-        } = player;
-
 
         await this.statusService.removeStatus({
             ctx,
             entity: player,
             status: imbued,
         });
+
+        console.log("Card after imbued effect:")
+        console.log(card)
+        console.log("---------------------------------------------")
     }
 }
 
