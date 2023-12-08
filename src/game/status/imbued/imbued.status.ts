@@ -4,9 +4,6 @@ import { StatusDecorator } from '../status.decorator';
 import { StatusService } from '../status.service';
 import { imbued } from './constants';
 import { PlayerService } from 'src/game/components/player/player.service';
-import { OnEvent } from '@nestjs/event-emitter';
-import { GameContext } from 'src/game/components/interfaces';
-import { EVENT_AFTER_CARD_PLAY } from 'src/game/constants';
 
 @StatusDecorator({
     status: imbued,
@@ -40,28 +37,21 @@ export class ImbuedStatus implements StatusEventHandler {
                 targetId,
             });
         }
-    }
-
-    @OnEvent(EVENT_AFTER_CARD_PLAY)
-    async onPlayerTurnStart({ ctx }: { ctx: GameContext }): Promise<void> {
-
-        console.log("IMBUED - EVENT_AFTER_CARD_PLAYED------------------------------------------------------------------------")
 
         const player = this.playerService.get(ctx);
         const {
             value: {
-                combatState: { statuses },
+                combatState: { statuses: combatStatuses },
             },
         } = player;
 
         await this.statusService.decreaseCounterAndRemove(
             ctx,
-            statuses,
+            combatStatuses,
             player,
             imbued,
         );
     }
 }
-
 
 
