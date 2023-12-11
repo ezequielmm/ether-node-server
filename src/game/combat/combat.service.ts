@@ -187,10 +187,9 @@ export class CombatService {
     }
 
     public sortEnemiesByLine(enemies:IExpeditionCurrentNodeDataEnemy[]):IExpeditionCurrentNodeDataEnemy[] {
-
         const orderedEnemies = this.sortEnemiesBySize(enemies);
         let lines : { places: number; enemies: IExpeditionCurrentNodeDataEnemy[] } [] = [
-            { places: 10, enemies: [] },
+            { places: 4, enemies: [] },
             { places: 4, enemies: [] },
         ];
 
@@ -213,7 +212,12 @@ export class CombatService {
     public hasSpaceToSpawnEnemy(enemies: IExpeditionCurrentNodeDataEnemy[], newEnemies:IExpeditionCurrentNodeDataEnemy[]): boolean{
         const combinedEnemies = enemies.concat(newEnemies);
 
+        console.log("hasSpaceToSpawnEnemy:")
+        console.log("combinedEnemies:")
+        console.log(combinedEnemies)
+
         const orderedEnemies = this.sortEnemiesBySize(combinedEnemies);
+
         let lines : { places: number; enemies: IExpeditionCurrentNodeDataEnemy[] } [] = [
             { places: 4, enemies: [] },
             { places: 4, enemies: [] },
@@ -228,10 +232,12 @@ export class CombatService {
                 suitableLine.enemies.push({ ...enemy, line: lines.indexOf(suitableLine) });
                 suitableLine.places -= enemySize;
             }else{
+                console.log("Entra en el else, no hay espacio para el nuevo enemigo.")
                 return false;
             }
         });
 
+        console.log("Hay espacio para el nuevo enemigo?: " + hasSpace)
         return hasSpace;
     }
 
