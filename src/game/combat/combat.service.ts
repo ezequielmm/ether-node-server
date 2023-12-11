@@ -190,8 +190,8 @@ export class CombatService {
 
         const orderedEnemies = this.sortEnemiesBySize(enemies);
         let lines : { places: number; enemies: IExpeditionCurrentNodeDataEnemy[] } [] = [
-            { places: 4, enemies: [] },
-            { places: 4, enemies: [] },
+            { places: 5, enemies: [] },
+            { places: 5, enemies: [] },
         ];
 
         orderedEnemies.forEach(enemy => {
@@ -212,11 +212,11 @@ export class CombatService {
 
     public hasSpaceToSpawnEnemy(enemies: IExpeditionCurrentNodeDataEnemy[], newEnemies:IExpeditionCurrentNodeDataEnemy[]): boolean{
         const combinedEnemies = enemies.concat(newEnemies);
-
         const orderedEnemies = this.sortEnemiesBySize(combinedEnemies);
+
         let lines : { places: number; enemies: IExpeditionCurrentNodeDataEnemy[] } [] = [
-            { places: 4, enemies: [] },
-            { places: 4, enemies: [] },
+            { places: 5, enemies: [] },
+            { places: 5, enemies: [] },
         ];
 
         let hasSpace = true;
@@ -228,7 +228,7 @@ export class CombatService {
                 suitableLine.enemies.push({ ...enemy, line: lines.indexOf(suitableLine) });
                 suitableLine.places -= enemySize;
             }else{
-                return false;
+                hasSpace = false;
             }
         });
 
