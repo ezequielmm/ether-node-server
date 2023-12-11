@@ -190,7 +190,7 @@ export class CombatService {
 
         const orderedEnemies = this.sortEnemiesBySize(enemies);
         let lines : { places: number; enemies: IExpeditionCurrentNodeDataEnemy[] } [] = [
-            { places: 4, enemies: [] },
+            { places: 10, enemies: [] },
             { places: 4, enemies: [] },
         ];
 
