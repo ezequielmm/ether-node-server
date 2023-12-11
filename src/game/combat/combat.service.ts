@@ -189,8 +189,8 @@ export class CombatService {
     public sortEnemiesByLine(enemies:IExpeditionCurrentNodeDataEnemy[]):IExpeditionCurrentNodeDataEnemy[] {
         const orderedEnemies = this.sortEnemiesBySize(enemies);
         let lines : { places: number; enemies: IExpeditionCurrentNodeDataEnemy[] } [] = [
-            { places: 4, enemies: [] },
-            { places: 4, enemies: [] },
+            { places: 5, enemies: [] },
+            { places: 5, enemies: [] },
         ];
 
         orderedEnemies.forEach(enemy => {
@@ -219,8 +219,8 @@ export class CombatService {
         const orderedEnemies = this.sortEnemiesBySize(combinedEnemies);
 
         let lines : { places: number; enemies: IExpeditionCurrentNodeDataEnemy[] } [] = [
-            { places: 4, enemies: [] },
-            { places: 4, enemies: [] },
+            { places: 5, enemies: [] },
+            { places: 5, enemies: [] },
         ];
 
         let hasSpace = true;
