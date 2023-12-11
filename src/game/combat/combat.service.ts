@@ -233,7 +233,7 @@ export class CombatService {
                 suitableLine.places -= enemySize;
             }else{
                 console.log("Entra en el else, no hay espacio para el nuevo enemigo.")
-                return false;
+                hasSpace = false;
             }
         });
 
