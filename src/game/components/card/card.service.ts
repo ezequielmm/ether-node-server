@@ -253,7 +253,7 @@ export class CardService {
             console.log(`Card --------------------`)
             console.log(card)
 
-            if (typeof card.triggerAtEndOfTurn) {
+            if (typeof card.triggerAtEndOfTurn !== 'undefined') {
 
                 console.log("TriggerAtEndOfTurn: true")
 
