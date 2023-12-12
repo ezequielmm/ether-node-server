@@ -227,7 +227,7 @@ export class CardPlayedAction {
                 client: ctx.client,
                 cardId,
                 ctx,
-                emit: false,
+                emit: card.triggerOnDrawn,
             });
         // Dont discard autonomous weapons
         } if (card.cardId == 145 || card.cardId == 146) {
