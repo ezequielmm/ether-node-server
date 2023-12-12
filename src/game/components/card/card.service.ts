@@ -253,7 +253,7 @@ export class CardService {
             console.log("Card name: " + card.name)
             console.log("Force exhaust: " + forceExhaust)
 
-            if (typeof card.triggerAtEndOfTurn !== 'undefined') {
+            if (card.triggerAtEndOfTurn){
 
                 console.log("TriggerAtEndOfTurn: true")
 
@@ -267,7 +267,7 @@ export class CardService {
                     forceExhaust,
                 });
             } 
-            
+
             if (forceExhaust) {
                 // fade card wasn't exhausted due to trigger, so add to bulk list
                 exhaustCardIds.push(card.id);
@@ -308,9 +308,9 @@ export class CardService {
     async afterStatusAttachEvent(args: AfterStatusAttachEvent) {
         const { ctx, target, status } = args;
 
-        // if (PlayerService.isPlayer(target)) {
-        //     await this.syncAllCardsByStatusMutated(ctx, status);
-        // }
+        if (PlayerService.isPlayer(target)) {
+            await this.syncAllCardsByStatusMutated(ctx, status);
+        }
     }
 
     @OnEvent(EVENT_AFTER_STATUSES_UPDATE)
