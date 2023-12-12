@@ -251,6 +251,7 @@ export class CardService {
             }
 
             console.log("Card name: " + card.name)
+            console.log("Card ID: " + card.cardId)
             console.log("Force exhaust: " + forceExhaust)
 
             console.log(card.triggerAtEndOfTurn)
