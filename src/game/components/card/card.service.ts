@@ -253,7 +253,9 @@ export class CardService {
             console.log("Card name: " + card.name)
             console.log("Force exhaust: " + forceExhaust)
 
-            if (card.triggerAtEndOfTurn){
+            console.log(card.triggerAtEndOfTurn)
+
+            if (card.triggerAtEndOfTurn && ((card.triggerAtEndOfTurn.effects && card.triggerAtEndOfTurn.effects.length > 0) || (card.triggerAtEndOfTurn.statuses && card.triggerAtEndOfTurn.statuses.length > 0))){
 
                 console.log("TriggerAtEndOfTurn: true")
 
