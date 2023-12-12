@@ -245,17 +245,10 @@ export class CardService {
 
         for (const card of ctx.expedition.currentNode.data.player.cards.hand) {
             forceExhaust = false;
-            if (card.keywords.includes(CardKeywordEnum.Fade)) {
-                // fade cards exhaust if unplayed during turn
+            if (card.keywords.includes(CardKeywordEnum.Fade) || card.keywords.includes(CardKeywordEnum.Exhaust)) {
                 forceExhaust = true;
             }
             if (typeof card.triggerAtEndOfTurn !== 'undefined') {
-                // play card if triggered
-                this.logger.log(
-                    ctx.info,
-                    `Auto playing card ${card.cardId}:${card.name}`,
-                );
-
                 card.properties = card.triggerAtEndOfTurn;
                 card.keywords = [];
                 
@@ -265,7 +258,8 @@ export class CardService {
                     selectedEnemyId: undefined,
                     forceExhaust,
                 });
-            } else if (forceExhaust) {
+            } 
+            else if (forceExhaust) {
                 // fade card wasn't exhausted due to trigger, so add to bulk list
                 exhaustCardIds.push(card.id);
             }
