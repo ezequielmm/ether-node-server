@@ -243,12 +243,20 @@ export class CardService {
         let forceExhaust = false;
         const exhaustCardIds = [];
 
+        console.log("onBeforePlayerTurnEnd-----------------------------------------------------------------------------------------------")
         for (const card of ctx.expedition.currentNode.data.player.cards.hand) {
             forceExhaust = false;
             if (card.keywords.includes(CardKeywordEnum.Fade) || card.keywords.includes(CardKeywordEnum.Exhaust)) {
                 forceExhaust = true;
             }
+
+            console.log("Card name: " + card.name)
+            console.log("Force exhaust: " + forceExhaust)
+
             if (typeof card.triggerAtEndOfTurn !== 'undefined') {
+
+                console.log("TriggerAtEndOfTurn: true")
+
                 card.properties = card.triggerAtEndOfTurn;
                 card.keywords = [];
                 
@@ -259,7 +267,8 @@ export class CardService {
                     forceExhaust,
                 });
             } 
-            else if (forceExhaust) {
+            
+            if (forceExhaust) {
                 // fade card wasn't exhausted due to trigger, so add to bulk list
                 exhaustCardIds.push(card.id);
             }
