@@ -249,6 +249,8 @@ export class CardService {
             if (card.cardId == 507) {
 
                 console.log('ENTRE!!')
+                console.log(card.properties)
+                card.properties = card.properties;
                 card.keywords = [];
                 
                 await this.cardPlayedAction.handle({
