@@ -201,9 +201,9 @@ export class CardService {
         const { ctx, newHand } = payload;
         let forceExhaust = false;
         for(const card of newHand){
-            forceExhaust = false;       
+            forceExhaust = false; 
+
             if(typeof card.triggerOnDrawn !== 'undefined'){
-                
                 forceExhaust = true;
                 card.keywords = [];
             } 
@@ -238,7 +238,7 @@ export class CardService {
         const exhaustCardIds = [];
         const player = this.playerService.get(ctx);
         console.log("onBeforePlayerTurnEnd-----------------------------------------------------------------------------------------------")
-        for (const card of player.value.combatState.cards.hand) {
+        for (const card of ctx.expedition.currentNode.data.player.cards.hand) {
             forceExhaust = false;
             if (card.keywords.includes(CardKeywordEnum.Fade) || card.keywords.includes(CardKeywordEnum.Exhaust)) {
                 forceExhaust = true;
