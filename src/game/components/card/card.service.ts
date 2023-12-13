@@ -199,19 +199,13 @@ export class CardService {
     @OnEvent(EVENT_AFTER_DRAW_CARDS)
     async onAfterDrawCards(payload: AfterDrawCardEvent) {
         const { ctx, newHand } = payload;
-        //let forceExhaust = false;
+        let forceExhaust = false;
         for(const card of newHand){
-            
-            /*if (card.keywords.includes(CardKeywordEnum.Fade)) {
-                // fade cards exhaust if unplayed during turn
-                forceExhaust = true;
-            } */         
+                    
             if(typeof card.triggerOnDrawn !== 'undefined'){
                 
+                forceExhaust = true;
                 card.keywords = [];
-                /*for(const index of card.keywords){
-                    if(index == CardKeywordEnum.Unplayable)
-                } */ 
             } 
         }
 
@@ -229,7 +223,7 @@ export class CardService {
                     ctx,
                     cardId: card.id,
                     selectedEnemyId: undefined,
-                    //forceExhaust,
+                    forceExhaust,
                     newHand,
                 });
             }
