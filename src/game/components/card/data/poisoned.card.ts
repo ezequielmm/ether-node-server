@@ -34,5 +34,17 @@ export const PoisonedCard: Card = {
         ],
         statuses: [],
     },
+    triggerAtEndOfTurn2:{
+        effects: [
+            {
+                effect: damageEffect.name,
+                target: CardTargetedEnum.Player,
+                args: {
+                    value: 4,
+                },
+            },
+        ],
+        statuses: [],
+    },
     isActive: true,
 };
