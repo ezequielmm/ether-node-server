@@ -243,7 +243,7 @@ export class CardPlayedAction {
                 client: ctx.client,
                 cardId,
                 ctx,
-                emit: false,
+                emit: true,
             });
         }
         else {
