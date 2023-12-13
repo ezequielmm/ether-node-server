@@ -53,7 +53,7 @@ export class Card {
     upgradedCardId?: number;
 
     @Prop({ type: Object })
-    triggerAtEndOfTurn: {
+    triggerAtEndOfTurn?: {
         effects: JsonEffect[];
         statuses: JsonStatus[];
     };
