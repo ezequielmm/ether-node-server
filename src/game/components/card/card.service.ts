@@ -236,15 +236,17 @@ export class CardService {
         const { ctx } = payload;
         let forceExhaust = false;
         const exhaustCardIds = [];
-        const player = this.playerService.get(ctx);
-        console.log("onBeforePlayerTurnEnd-----------------------------------------------------------------------------------------------")
-        for (const card of ctx.expedition.currentNode.data.player.cards.hand) {
+        const hand = ctx.expedition.currentNode.data.player.cards.hand;
+        console.log(hand);
+        console.log("onBeforePlayerTurnEnd-----------------------------------------------------------------------------------------------");
+        for (const card of hand) {
             forceExhaust = false;
+
             if (card.keywords.includes(CardKeywordEnum.Fade) || card.keywords.includes(CardKeywordEnum.Exhaust)) {
                 forceExhaust = true;
             }
 
-            console.log(`Card --------------------`)
+            console.log('CARTAAAAA ----------------------------------------')
             console.log(card)
 
             if (typeof card.triggerAtEndOfTurn !== 'undefined') {
