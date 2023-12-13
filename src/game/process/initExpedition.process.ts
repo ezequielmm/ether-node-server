@@ -186,7 +186,6 @@ export class InitExpeditionProcess {
                     upgradedCardId: card?.upgradedCardId,
                     triggerAtEndOfTurn: card.triggerAtEndOfTurn,
                     triggerOnDrawn: card.triggerOnDrawn,
-                    triggerAtEndOfTurn2: card.triggerAtEndOfTurn2,
                     isActive: true,
                     isFirstPlay: false
                 };

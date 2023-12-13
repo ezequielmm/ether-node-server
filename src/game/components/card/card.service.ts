@@ -233,12 +233,11 @@ export class CardService {
     // called explicitly instead of via event now
     // @OnEvent(EVENT_BEFORE_PLAYER_TURN_END)
     async onBeforePlayerTurnEnd(payload: { ctx: GameContext }) {
-        //const { ctx } = payload;
+        const { ctx } = payload;
         let forceExhaust = false;
         const exhaustCardIds = [];
-        const ctx = await this.expeditionService.getGameContext(payload.ctx.client);
         const hand = ctx.expedition.currentNode.data.player.cards.hand;
-        console.log(hand);
+
         console.log("onBeforePlayerTurnEnd-----------------------------------------------------------------------------------------------");
         for (const card of hand) {
             forceExhaust = false;
@@ -247,16 +246,9 @@ export class CardService {
                 forceExhaust = true;
             }
 
-            console.log(`Tarjeta --------------------`)
-            const cardIdValue = card.cardId;
-            const tarjeta = await this.card.findOne({ cardIdValue }).exec();
-            console.log(tarjeta.triggerAtEndOfTurn);
+            if (card.cardId == 507) {
 
-            if (typeof card.triggerAtEndOfTurn !== 'undefined') {
-
-                console.log("TriggerAtEndOfTurn: true")
-
-                card.properties = card.triggerAtEndOfTurn;
+                console.log('ENTRE!!')
                 card.keywords = [];
                 
                 await this.cardPlayedAction.handle({
