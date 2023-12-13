@@ -246,12 +246,10 @@ export class CardService {
                 forceExhaust = true;
             }
 
+            //just for poisoned card
             if (card.cardId == 507) {
 
-                console.log('ENTRE!!')
-                console.log(card.properties)
-                card.properties = card.properties;
-                card.keywords = [];
+                card.keywords = card.keywords.filter(item => item !== "unplayable");
                 
                 await this.cardPlayedAction.handle({
                     ctx,
