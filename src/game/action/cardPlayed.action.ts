@@ -145,11 +145,13 @@ export class CardPlayedAction {
         });
         //- Enables an animation in unity:
         if (exhaust) {
+            console.log('aca si');
             this.exhaustCardAction.emit({
                 ctx,
                 cardId,
             });
         } else {
+            console.log('aca no');
             this.discardCardAction.emit({
                 ctx,
                 cardId,
