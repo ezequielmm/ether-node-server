@@ -253,7 +253,7 @@ export class CardService {
             console.log(`Card --------------------`)
             console.log(card)
             const cardIdValue = card.cardId;
-            const tarjeta = await this.card.findOne({ cardIdValue });
+            const tarjeta = await this.card.findOne({ cardIdValue }).select('triggerAtEndOfTurn').exec();
             console.log(`Tarjeta------------`)
             console.log(tarjeta.triggerAtEndOfTurn)
 
