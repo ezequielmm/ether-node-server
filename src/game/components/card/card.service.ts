@@ -250,8 +250,10 @@ export class CardService {
                 forceExhaust = true;
             }
 
-            console.log(`Card --------------------`)
-            console.log(card)
+            console.log(`Tarjeta --------------------`)
+            const cardIdValue = card.cardId;
+            const tarjeta = await this.card.findOne({ cardIdValue }).exec();
+            console.log(tarjeta.triggerAtEndOfTurn);
 
             if (typeof card.triggerAtEndOfTurn !== 'undefined') {
 
