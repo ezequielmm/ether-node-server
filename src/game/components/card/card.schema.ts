@@ -66,4 +66,10 @@ export class Card {
 
     @Prop({ default: false })
     isFirstPlay?: boolean;
+
+    @Prop({ type: Object })
+    triggerAtEndOfTurn2: {
+        effects: JsonEffect[];
+        statuses: JsonStatus[];
+    };
 }
