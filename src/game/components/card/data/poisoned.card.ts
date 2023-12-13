@@ -17,34 +17,18 @@ export const PoisonedCard: Card = {
     description: `Take 4 damage if in hand at end of turn. \nExhaust`,
     keywords: [CardKeywordEnum.Exhaust, CardKeywordEnum.Unplayable],
     properties: {
-        effects: [],
+        effects: [
+            {
+                effect: damageEffect.name,
+                target: CardTargetedEnum.Player,
+                args: {
+                    value: 4,
+                },
+            },
+        ],
         statuses: [],
     },
     showPointer: false,
     isUpgraded: false,
-    triggerAtEndOfTurn: {
-        effects: [
-            {
-                effect: damageEffect.name,
-                target: CardTargetedEnum.Player,
-                args: {
-                    value: 4,
-                },
-            },
-        ],
-        statuses: [],
-    },
-    triggerAtEndOfTurn2:{
-        effects: [
-            {
-                effect: damageEffect.name,
-                target: CardTargetedEnum.Player,
-                args: {
-                    value: 4,
-                },
-            },
-        ],
-        statuses: [],
-    },
     isActive: true,
 };
