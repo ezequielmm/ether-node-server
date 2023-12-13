@@ -233,9 +233,10 @@ export class CardService {
     // called explicitly instead of via event now
     // @OnEvent(EVENT_BEFORE_PLAYER_TURN_END)
     async onBeforePlayerTurnEnd(payload: { ctx: GameContext }) {
-        const { ctx } = payload;
+        //const { ctx } = payload;
         let forceExhaust = false;
         const exhaustCardIds = [];
+        const ctx = await this.expeditionService.getGameContext(payload.ctx.client);
         const hand = ctx.expedition.currentNode.data.player.cards.hand;
         console.log(hand);
         console.log("onBeforePlayerTurnEnd-----------------------------------------------------------------------------------------------");
