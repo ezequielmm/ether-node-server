@@ -208,8 +208,12 @@ export class CardService {
             }
 
             if(card.cardId == 554){
+                console.log('entre, soy mold');
+                console.log(card);
+                card.keywords = [];
 
-                card.keywords = card.keywords.filter(item => item !== "unplayable");
+                console.log('mold sin keyWords');
+                console.log(card);
                 
                 await this.cardPlayedAction.handle({
                     ctx,
@@ -218,6 +222,7 @@ export class CardService {
                     forceExhaust,
                 });
             }
+
             if(typeof card.triggerOnDrawn !== 'undefined'){
                 forceExhaust = true;
                 card.keywords = [];
