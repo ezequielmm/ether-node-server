@@ -209,12 +209,13 @@ export class CardService {
 
             if(card.cardId == 554){
                 card.keywords = [];
-                
+
                 await this.cardPlayedAction.handle({
                     ctx,
                     cardId: card.id,
                     selectedEnemyId: undefined,
                     forceExhaust,
+                    newHand
                 });
             }
 
