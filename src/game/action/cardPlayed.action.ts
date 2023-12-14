@@ -86,7 +86,7 @@ export class CardPlayedAction {
         }
 
         console.log('MOLD EN CARD PLAYED');
-        
+
         //- I don't have the card in my hand:
         if (!card) {
             this.sendInvalidCardMessage(ctx.client, logger);
@@ -106,6 +106,7 @@ export class CardPlayedAction {
             return;
         }
 
+        console.log('Energia de la carta: ' + card.energy, '   energia disponible: ' + availableEnergy );
         // Make sure that the card can be played and the user has enough energy
         const { canPlayCard, message } = canPlayerPlayCard(card.energy, availableEnergy);
 
