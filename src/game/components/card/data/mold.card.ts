@@ -5,8 +5,8 @@ import { energyEffect } from 'src/game/effects/energy/constants';
 export const MoldCard: Card = {
     cardId: 554,
     name: 'Mold',
-    rarity: CardRarityEnum.Starter,
-    cardType: CardTypeEnum.Attack,//we shoud have kind of "map" cards?
+    rarity: CardRarityEnum.Special,
+    cardType: CardTypeEnum.Status,//we shoud have kind of "map" cards?
     pool: 'knight',
     energy: 0,
     description: `Reduce ${energyEffect.name} by 1 if this card is in hand by the start of the turn. Exhaust.`,
