@@ -208,12 +208,7 @@ export class CardService {
             }
 
             if(card.cardId == 554){
-                console.log('entre, soy mold');
-                console.log(card);
                 card.keywords = [];
-
-                console.log('mold sin keyWords');
-                console.log(card);
                 
                 await this.cardPlayedAction.handle({
                     ctx,
