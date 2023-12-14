@@ -2,11 +2,6 @@ import { CardRarityEnum, CardTypeEnum, CardTargetedEnum, CardKeywordEnum } from 
 import { Card } from '../card.schema';
 import { energyEffect } from 'src/game/effects/energy/constants';
 
-
-/*
-TODO:
-- map effect
-*/
 export const MoldCard: Card = {
     cardId: 554,
     name: 'Mold',

@@ -203,9 +203,21 @@ export class CardService {
         for(const card of newHand){
             forceExhaust = false; 
 
-            console.log('Viene MOLD aca??????????');
-            console.log(card);
-            
+            if (card.keywords.includes(CardKeywordEnum.Fade) || card.keywords.includes(CardKeywordEnum.Exhaust)) {
+                forceExhaust = true;
+            }
+
+            if(card.cardId == 554){
+
+                card.keywords = card.keywords.filter(item => item !== "unplayable");
+                
+                await this.cardPlayedAction.handle({
+                    ctx,
+                    cardId: card.id,
+                    selectedEnemyId: undefined,
+                    forceExhaust,
+                });
+            }
             if(typeof card.triggerOnDrawn !== 'undefined'){
                 forceExhaust = true;
                 card.keywords = [];
