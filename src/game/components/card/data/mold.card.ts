@@ -6,11 +6,11 @@ export const MoldCard: Card = {
     cardId: 554,
     name: 'Mold',
     rarity: CardRarityEnum.Starter,
-    cardType: CardTypeEnum.Attack,//we shoud have kind of "map" cards?
+    cardType: CardTypeEnum.Status,//we shoud have kind of "map" cards?
     pool: 'knight',
     energy: 0,
     description: `Reduce ${energyEffect.name} by 1 if this card is in hand by the start of the turn. Exhaust.`,
-    keywords: [CardKeywordEnum.Fade, CardKeywordEnum.Unplayable],
+    keywords: [CardKeywordEnum.Exhaust, CardKeywordEnum.Fade, CardKeywordEnum.Unplayable],
     properties: {
         effects: [
             {
