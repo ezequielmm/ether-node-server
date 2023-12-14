@@ -91,15 +91,15 @@ const getSignatureMove = (animationId:string):EnemyIntention => {
 //-------------------------------------------------------------------------------------------------------------------------------------------------------
 const BasicIntents: EnemyAction = {
     options:[
-        { id: 1, probability: 0, cooldown: 0, intents: [
+        { id: 1, probability: 0.2, cooldown: 0, intents: [
             EB.createBasicAttackIntent(7, EB.ATTACK_POISON), 
             EB.createAddCardIntent(1, PoisonedCard, CardDestinationEnum.Draw, EB.ATTACK_POISON)
         ] },  
-        { id: 2, probability: 0, cooldown: 0, intents: [EB.createBasicBuffIntent(2, resolveStatus.name, EB.BUFF)] },  
-        { id: 3, probability: 1, cooldown: 0, intents: [EB.createAddCardIntent(1, MoldCard, CardDestinationEnum.Hand, EB.DEBUFF)] },
-        { id: 4, probability: 0, cooldown: 0, intents: [EB.createAddCardIntent(2, PoisonedCard, CardDestinationEnum.Draw, EB.POISON)] },
-        { id: 5, probability: 0, cooldown: 0, intents: [EB.createMultiplierAttackIntent(8, 2, EB.ATTACK2)] },
-        { id: 6, probability: 0, cooldown: 0, intents: [EB.createDefenseIntent(16, EB.DEFEND)] },
+        { id: 2, probability: 0.1, cooldown: 0, intents: [EB.createBasicBuffIntent(2, resolveStatus.name, EB.BUFF)] },  
+        { id: 3, probability: 0.1, cooldown: 0, intents: [EB.createAddCardIntent(1, MoldCard, CardDestinationEnum.Draw, EB.DEBUFF)] },
+        { id: 4, probability: 0.2, cooldown: 0, intents: [EB.createAddCardIntent(2, PoisonedCard, CardDestinationEnum.Draw, EB.POISON)] },
+        { id: 5, probability: 0.2, cooldown: 0, intents: [EB.createMultiplierAttackIntent(8, 2, EB.ATTACK2)] },
+        { id: 6, probability: 0.2, cooldown: 0, intents: [EB.createDefenseIntent(16, EB.DEFEND)] },
     ]
 }
 
