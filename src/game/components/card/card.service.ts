@@ -203,6 +203,9 @@ export class CardService {
         for(const card of newHand){
             forceExhaust = false; 
 
+            console.log('Viene MOLD aca??????????');
+            console.log(card);
+            
             if(typeof card.triggerOnDrawn !== 'undefined'){
                 forceExhaust = true;
                 card.keywords = [];
