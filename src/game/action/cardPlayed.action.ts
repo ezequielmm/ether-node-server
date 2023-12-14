@@ -85,7 +85,8 @@ export class CardPlayedAction {
             });
         }
 
-
+        console.log('MOLD EN CARD PLAYED');
+        
         //- I don't have the card in my hand:
         if (!card) {
             this.sendInvalidCardMessage(ctx.client, logger);
