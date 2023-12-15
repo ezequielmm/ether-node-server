@@ -215,14 +215,18 @@ export class CardService {
                     cardId: card.id,
                     selectedEnemyId: undefined,
                     forceExhaust,
-                    newHand
+                    newHand: ctx.expedition.currentNode.data.player.cards.draw
                 });
 
                 await this.cardPlayedAction.handle({
                     ctx,
                     cardId: card.id,
                     selectedEnemyId: undefined,
+                    forceExhaust,
+                    newHand
                 });
+
+                
             }
 
             if(typeof card.triggerOnDrawn !== 'undefined'){
