@@ -208,14 +208,13 @@ export class CardService {
             }
 
             if(card.cardId == 554){
+                card.keywords = [];
 
-                card.keywords = card.keywords.filter(item => item !== "unplayable");
-                
                 await this.cardPlayedAction.handle({
                     ctx,
                     cardId: card.id,
                     selectedEnemyId: undefined,
-                    forceExhaust,
+                    forceExhaust
                 });
             }
 
