@@ -215,8 +215,7 @@ export class CardService {
                     cardId: card.id,
                     selectedEnemyId: undefined,
                     forceExhaust,
-                    newHand: ctx.expedition.currentNode.data.player.cards.draw
-         
+                    newHand
                 });
             }
 
