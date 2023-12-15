@@ -200,9 +200,7 @@ export class CardService {
     async onAfterDrawCards(payload: AfterDrawCardEvent) {
         const { ctx, newHand } = payload;
         let forceExhaust = false;
-        const hand = ctx.expedition.currentNode.data.player.cards.hand;
-
-        for(const card of hand){
+        for(const card of newHand){
             forceExhaust = false; 
 
             if (card.keywords.includes(CardKeywordEnum.Fade) || card.keywords.includes(CardKeywordEnum.Exhaust)) {
@@ -217,7 +215,7 @@ export class CardService {
                     cardId: card.id,
                     selectedEnemyId: undefined,
                     forceExhaust,
-                    newHand: hand
+                    newHand
                 });
             }
 
