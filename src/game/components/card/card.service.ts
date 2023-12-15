@@ -208,6 +208,15 @@ export class CardService {
             }
 
             if(card.cardId == 554){
+
+                card.keywords = [];
+
+                this.cardPlayedAction.handle({
+                    ctx,
+                    cardId: card.id,
+                    selectedEnemyId: undefined
+                });
+
                 card.keywords = [];
 
                 await this.cardPlayedAction.handle({
@@ -217,17 +226,9 @@ export class CardService {
                     forceExhaust,
                     newHand
                 });
-            } else if(card.cardId == 554)
-            {
-                card.keywords = [];
 
-                await this.cardPlayedAction.handle({
-                    ctx,
-                    cardId: card.id,
-                    selectedEnemyId: undefined,
-                    forceExhaust
-                });
-            }
+                
+            } 
 
             if(typeof card.triggerOnDrawn !== 'undefined'){
                 forceExhaust = true;
