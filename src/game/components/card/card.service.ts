@@ -60,7 +60,7 @@ export class CardService {
         private readonly statusService: StatusService,
         private readonly playerService: PlayerService,
         private readonly moveCardAction: MoveCardAction,
-    ) { }
+    ) {}
 
     getDescriptionFromCard(card: IExpeditionPlayerStateDeckCard): string {
         return CardDescriptionFormatter.process(card);
@@ -199,42 +199,50 @@ export class CardService {
     @OnEvent(EVENT_AFTER_DRAW_CARDS)
     async onAfterDrawCards(payload: AfterDrawCardEvent) {
         const { ctx, newHand } = payload;
-        const exhaustCardIds = [];
         let forceExhaust = false;
+        for(const card of newHand){
+            forceExhaust = false; 
 
-        for (const card of newHand) {
-            forceExhaust = false;
             if (card.keywords.includes(CardKeywordEnum.Fade) || card.keywords.includes(CardKeywordEnum.Exhaust)) {
                 forceExhaust = true;
             }
 
-            //just for poisoned card
-            if (card.cardId == 554) {
-
-                card.keywords = card.keywords.filter(item => item !== "unplayable");
+            if(card.cardId == 554){
+                card.keywords = [];
 
                 await this.cardPlayedAction.handle({
                     ctx,
                     cardId: card.id,
                     selectedEnemyId: undefined,
                     forceExhaust,
+                    newHand
                 });
             }
 
-            if (forceExhaust) {
-                // fade card wasn't exhausted due to trigger, so add to bulk list
-                exhaustCardIds.push(card.id);
-            }
+            if(typeof card.triggerOnDrawn !== 'undefined'){
+                forceExhaust = true;
+                card.keywords = [];
+            } 
         }
 
-        // if we have a bulk exhaust list, use it now
-        if (exhaustCardIds.length > 0) {
-            await this.moveCardAction.handle({
-                client: ctx.client,
-                cardIds: exhaustCardIds,
-                originPile: 'hand',
-                targetPile: 'exhausted',
-            });
+        const cards = filter(newHand, {
+            triggerOnDrawn: true,
+        });
+
+        if (cards.length > 0) {
+            for (const card of cards) {
+                this.logger.log(
+                    ctx.info,
+                    `Auto playing card ${card.cardId}:${card.name}`,
+                );
+                await this.cardPlayedAction.handle({
+                    ctx,
+                    cardId: card.id,
+                    selectedEnemyId: undefined,
+                    forceExhaust,
+                    newHand,
+                });
+            }
         }
     }
 
@@ -258,14 +266,14 @@ export class CardService {
             if (card.cardId == 507) {
 
                 card.keywords = card.keywords.filter(item => item !== "unplayable");
-
+                
                 await this.cardPlayedAction.handle({
                     ctx,
                     cardId: card.id,
                     selectedEnemyId: undefined,
                     forceExhaust,
                 });
-            }
+            } 
 
             if (forceExhaust) {
                 // fade card wasn't exhausted due to trigger, so add to bulk list
@@ -494,7 +502,7 @@ export class CardService {
 
                             if (
                                 metadata.status.trigger !==
-                                StatusTrigger.Effect ||
+                                    StatusTrigger.Effect ||
                                 metadata.status.direction != direction
                             )
                                 continue;
@@ -532,9 +540,9 @@ export class CardService {
                         //continue;
                         ctx.client.emit(
                             'CARD FORMAT: skip on impacted effect via array : ' +
-                            effect.effect +
-                            ' vs ' +
-                            impactedEffects,
+                                effect.effect +
+                                ' vs ' +
+                                impactedEffects,
                         );
                         // continue;
                     }
