@@ -214,7 +214,8 @@ export class CardService {
                     ctx,
                     cardId: card.id,
                     selectedEnemyId: undefined,
-                    forceExhaust
+                    forceExhaust,
+                    newHand
                 });
             }
 
