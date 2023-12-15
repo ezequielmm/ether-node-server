@@ -219,13 +219,13 @@ export class CardService {
 
                 card.keywords = [];
 
-                await this.cardPlayedAction.handle({
-                    ctx,
-                    cardId: card.id,
-                    selectedEnemyId: undefined,
-                    forceExhaust,
-                    newHand
-                });
+                // await this.cardPlayedAction.handle({
+                //     ctx,
+                //     cardId: card.id,
+                //     selectedEnemyId: undefined,
+                //     forceExhaust,
+                //     newHand
+                // });
 
                 
             } 
