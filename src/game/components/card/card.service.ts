@@ -214,7 +214,8 @@ export class CardService {
                 this.cardPlayedAction.handle({
                     ctx,
                     cardId: card.id,
-                    selectedEnemyId: undefined
+                    selectedEnemyId: undefined,
+                    forceExhaust
                 });
 
                 card.keywords = [];
