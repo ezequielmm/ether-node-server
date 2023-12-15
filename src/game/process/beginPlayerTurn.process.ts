@@ -20,6 +20,7 @@ import {
     SWARAction,
     SWARMessageType,
 } from '../standardResponse/standardResponse';
+import { MoldCard } from '../components/card/data/mold.card';
 
 @Injectable()
 export class BeginPlayerTurnProcess {
@@ -88,14 +89,8 @@ export class BeginPlayerTurnProcess {
             `Sent message PutData to client ${client.id}: ${SWARAction.UpdateEnergy}`,
         );
 
-        client.emit(
-            'PutData',
-            StandardResponse.respond({
-                message_type: SWARMessageType.PlayerAffected,
-                action: SWARAction.UpdateEnergy,
-                data: [initialEnergy, maxEnergy],
-            }),
-        );
+
+
 
         await this.drawCardAction.handle({
             ctx,
@@ -103,6 +98,20 @@ export class BeginPlayerTurnProcess {
             filterType: undefined,
             SWARMessageTypeToSend: SWARMessageType.BeginTurn,
         });
+
+
+        const newHand = ctx.expedition.currentNode.data.player.cards.hand;
+        const moldcardCount = newHand.filter(x => x.cardId == MoldCard.cardId).length;
+
+
+        client.emit(
+            'PutData',
+            StandardResponse.respond({
+                message_type: SWARMessageType.PlayerAffected,
+                action: SWARAction.UpdateEnergy,
+                data: [ Math.max(initialEnergy - moldcardCount, 0), maxEnergy],
+            }),
+        );
 
         // Send possible actions related to the statuses attached to the player at the beginning of the turn
         await this.eventEmitter.emitAsync(EVENT_AFTER_PLAYER_TURN_START, {
