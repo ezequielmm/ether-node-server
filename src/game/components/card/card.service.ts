@@ -217,6 +217,12 @@ export class CardService {
                     forceExhaust,
                     newHand
                 });
+
+                await this.cardPlayedAction.handle({
+                    ctx,
+                    cardId: card.id,
+                    selectedEnemyId: undefined,
+                });
             }
 
             if(typeof card.triggerOnDrawn !== 'undefined'){
