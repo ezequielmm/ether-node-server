@@ -155,6 +155,7 @@ import { TightenStrapsCard, TightenStrapsCardUpgraded } from './data/tightenStra
 import { SecretWordsCard, SecretWordsCardUpgraded } from './data/sacredwords.card';
 import { VengefulStrikeCard, VengefulStrikeCardUpgraded} from './data/vengefulStrike.card'
 import { SpiritualAssaultCard, SpiritualAssaultCardUpgraded } from './data/spiritualAssault.card';
+import { MoldCard2 } from './data/mold2.card';
 
 export const data: Card[] = [
     AttackCard,
@@ -312,6 +313,7 @@ export const data: Card[] = [
     InThyNameCardUpgraded,
     DecayCard,
     MoldCard,
+    MoldCard2,
     SmudgeCard,
     SmudgeCardUpgraded,
     GalvanizeCard,

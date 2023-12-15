@@ -207,7 +207,7 @@ export class CardService {
                 forceExhaust = true;
             }
 
-            if(card.cardId == 554){
+            if(card.cardId == 555){
                 card.keywords = [];
 
                 await this.cardPlayedAction.handle({
@@ -215,6 +215,13 @@ export class CardService {
                     cardId: card.id,
                     selectedEnemyId: undefined,
                 });
+
+
+                
+            }
+
+            if(card.cardId == 554){
+                card.keywords = [];
 
                 await this.cardPlayedAction.handle({
                     ctx,
@@ -226,6 +233,7 @@ export class CardService {
 
                 
             }
+
 
             if(typeof card.triggerOnDrawn !== 'undefined'){
                 forceExhaust = true;
