@@ -214,8 +214,6 @@ export class CardService {
                     ctx,
                     cardId: card.id,
                     selectedEnemyId: undefined,
-                    forceExhaust,
-                    newHand: ctx.expedition.currentNode.data.player.cards.draw
                 });
 
                 await this.cardPlayedAction.handle({
