@@ -81,8 +81,7 @@ export class BeginPlayerTurnProcess {
         // Reset defense for the player
         if (defense > 0) await this.playerService.setDefense(ctx, 0);
 
-        // Set player energy to default values
-        await this.playerService.setEnergy(ctx, initialEnergy);
+
 
         // Send new energy amount
         logger.info(
@@ -103,6 +102,8 @@ export class BeginPlayerTurnProcess {
         const newHand = ctx.expedition.currentNode.data.player.cards.hand;
         const moldcardCount = newHand.filter(x => x.cardId == MoldCard.cardId).length;
 
+        // Set player energy to default values
+        await this.playerService.setEnergy(ctx, Math.max(initialEnergy - moldcardCount, 0));
 
         client.emit(
             'PutData',
