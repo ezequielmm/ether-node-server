@@ -113,6 +113,9 @@ export class BeginPlayerTurnProcess {
             }),
         );
 
+        // Set player energy to default values
+        await this.playerService.setEnergy(ctx, Math.max(initialEnergy - moldcardCount, 0));
+
         // Send possible actions related to the statuses attached to the player at the beginning of the turn
         await this.eventEmitter.emitAsync(EVENT_AFTER_PLAYER_TURN_START, {
             ctx,
