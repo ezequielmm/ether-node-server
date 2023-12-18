@@ -109,7 +109,7 @@ export class BeginPlayerTurnProcess {
             StandardResponse.respond({
                 message_type: SWARMessageType.PlayerAffected,
                 action: SWARAction.UpdateEnergy,
-                data: [ Math.max(initialEnergy - moldcardCount, 0), maxEnergy],
+                data: [ Math.max(initialEnergy - moldcardCount, 0), Math.max(maxEnergy - moldcardCount, 0)],
             }),
         );
 
