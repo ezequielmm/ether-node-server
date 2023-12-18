@@ -211,7 +211,7 @@ export class CardService {
 
                 card.keywords = [];
 
-                this.cardPlayedAction.handle({
+                await this.cardPlayedAction.handle({
                     ctx,
                     cardId: card.id,
                     selectedEnemyId: undefined,
