@@ -11,7 +11,7 @@ export const PoisonedCard: Card = {
     cardId: 507,
     name: 'Poisoned',
     rarity: CardRarityEnum.Special,
-    cardType: CardTypeEnum.Status,
+    cardType: CardTypeEnum.Attack,
     pool: 'knight',
     energy: 0,
     description: `Take 4 damage if in hand at end of turn. \nExhaust`,
