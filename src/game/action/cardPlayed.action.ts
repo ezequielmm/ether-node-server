@@ -84,8 +84,6 @@ export class CardPlayedAction {
                 return card[field] === cardId;
             });
         }
-
-        console.log('MOLD EN CARD PLAYED');
         console.log(card);
         
         //- I don't have the card in my hand:
@@ -147,13 +145,13 @@ export class CardPlayedAction {
         });
         //- Enables an animation in unity:
         if (exhaust) {
-            console.log('aca si');
+            console.log('IF EXHAUST ------ aca si');
             this.exhaustCardAction.emit({
                 ctx,
                 cardId,
             });
         } else {
-            console.log('aca no');
+            console.log('ELSE (discard) aca no');
             this.discardCardAction.emit({
                 ctx,
                 cardId,
