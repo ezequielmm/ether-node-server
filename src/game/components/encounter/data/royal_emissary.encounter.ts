@@ -53,7 +53,7 @@ export const RoyalEmissaryEncounter: Encounter = {
                     //- aka option 3
                     text: 'Proceed.',
                     nextStage: 6,
-                    effects: [{ kind: 'trinket', item: 'birdcage' }]
+                    effects: [{ kind: 'trinket', item: 'runic_tome' }]
                 }
             ]
         },

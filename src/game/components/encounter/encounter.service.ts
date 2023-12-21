@@ -329,6 +329,12 @@ export class EncounterService {
                                 trinketId: 23,
                             });
                             break;
+                        case 'broken_stalactite': //young wizard
+                            await this.trinketService.add({
+                                ctx,
+                                trinketId: 16,
+                            });
+                            break;
                         case 'pan_flute': //satyr
                             await this.trinketService.add({
                                 ctx,

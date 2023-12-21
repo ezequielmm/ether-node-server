@@ -25,9 +25,9 @@ export const StoneMansonEncounter: Encounter = {
             buttons: [
                 {
                     //- aka option 3
-                    text: " [Challenge the Man] Lose 10 hp. Receive Ether Crystal ",
+                    text: " [Challenge the Man] Lose 10 hp. Receive Broken Stalactite",
                     nextStage: 2,
-                    effects: [{ kind: 'hit_points_avoid_dead', amount: '-10' }, { kind: 'trinket', item: 'birdcage' }]
+                    effects: [{ kind: 'hit_points_avoid_dead', amount: '-10' }, { kind: 'trinket', item: 'broken_stalactite' }]
                 },
                 {
                     //- aka option 4
