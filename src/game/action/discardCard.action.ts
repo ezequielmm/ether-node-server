@@ -85,9 +85,6 @@ export class DiscardCardAction {
             
             return card[field] !== cardId;
         });
-        
-        console.log('POISONED ENTRA ACA????????? DISCARD');
-        console.log(cardToDiscard);
         logger.info(
             `Sent message PutData to client ${client.id}: ${SWARAction.MoveCard}`,
         );
@@ -153,9 +150,6 @@ export class DiscardCardAction {
             
             return card[field] !== cardId;
         });
-
-        console.log('POISONED ENTRA ACA?? NOT DISCARD ------');
-        console.log(cardToDiscard);
 
         logger.info(
             `Sent message PutData to client ${client.id}: ${SWARAction.MoveCard}`,

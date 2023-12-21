@@ -266,7 +266,6 @@ export class CardService {
         const exhaustCardIds = [];
         const hand = ctx.expedition.currentNode.data.player.cards.hand;
 
-        console.log("onBeforePlayerTurnEnd-----------------------------------------------------------------------------------------------");
         for (const card of hand) {
             forceExhaust = false;
 
