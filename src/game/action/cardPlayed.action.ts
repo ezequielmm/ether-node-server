@@ -223,7 +223,6 @@ export class CardPlayedAction {
 
         // now, with all else done, do the actual exhaust/discard routines, without emitting again
         if (exhaust || forceExhaust) {
-            console.log('poisoned entra aca');
             await this.exhaustCardAction.handle({
                 client: ctx.client,
                 cardId,
@@ -240,7 +239,6 @@ export class CardPlayedAction {
             });;
         }
         if (card.cardId == 507 || card.cardId == 554) {
-            console.log('poisoned entra aca IF');
             await this.discardCardAction.handleDontDiscard({
                 client: ctx.client,
                 cardId,
@@ -249,7 +247,6 @@ export class CardPlayedAction {
             });
         }
         else {
-            console.log('SI poisoned entra aca esta todo mal');
             await this.discardCardAction.handle({
                 client: ctx.client,
                 cardId,
