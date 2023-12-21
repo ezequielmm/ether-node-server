@@ -84,7 +84,6 @@ export class CardPlayedAction {
                 return card[field] === cardId;
             });
         }
-        console.log(card);
         
         //- I don't have the card in my hand:
         if (!card) {

@@ -15,7 +15,7 @@ export const PoisonedCard: Card = {
     pool: 'knight',
     energy: 0,
     description: `Take 4 damage if in hand at end of turn. \nExhaust`,
-    keywords: [CardKeywordEnum.Exhaust, CardKeywordEnum.Unplayable],
+    keywords: [CardKeywordEnum.Exhaust, CardKeywordEnum.Fade, CardKeywordEnum.Unplayable],
     properties: {
         effects: [
             {
