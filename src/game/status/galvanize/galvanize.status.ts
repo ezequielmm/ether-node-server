@@ -42,7 +42,7 @@ export class GalvanizeStatus implements StatusEventHandler {
                 args: {
                     effectType: CombatQueueTargetEffectTypeEnum.Defense,
                     defenseDelta: dto.status.args.value,
-                    finalDefense: defenseCalculated,
+                    finalDefense,
                     healthDelta: 0,
                     finalHealth: 0,
                     statuses: [],
