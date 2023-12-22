@@ -32,7 +32,6 @@ export class GalvanizeStatus implements StatusEventHandler {
             const originalDefense = source.value.combatState.defense; 
             const defenseCalculated = originalDefense + dto.status.args.value;
 
-            const finalDefense =  await this.playerService.setDefense(ctx, defenseCalculated);
             //dto.ctx.expedition.currentNode.data.player.defense = finalDefense;
 
             await this.combatQueueService.push({
@@ -42,7 +41,7 @@ export class GalvanizeStatus implements StatusEventHandler {
                 args: {
                     effectType: CombatQueueTargetEffectTypeEnum.Defense,
                     defenseDelta: dto.status.args.value,
-                    finalDefense,
+                    finalDefense: defenseCalculated,
                     healthDelta: 0,
                     finalHealth: 0,
                     statuses: [],
@@ -52,6 +51,7 @@ export class GalvanizeStatus implements StatusEventHandler {
                     hint: 'defense'
                 },
             });
+            await this.playerService.setDefense(ctx, defenseCalculated);
         }
     }
 
