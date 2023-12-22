@@ -10,6 +10,7 @@ import { PlayerService } from 'src/game/components/player/player.service';
 import { StatusService } from '../status.service';
 import { CombatQueueService } from 'src/game/components/combatQueue/combatQueue.service';
 import { CombatQueueTargetEffectTypeEnum } from 'src/game/components/combatQueue/combatQueue.enum';
+import { CardTargetedEnum, CardTypeEnum } from 'src/game/components/card/card.enum';
 
 @StatusDecorator({
     status: galvanize,
@@ -24,11 +25,11 @@ export class GalvanizeStatus implements StatusEventHandler {
 
     async handle(dto: StatusEventDTO): Promise<void> {
 
-        const { ctx, source, target } = dto;
+        const { ctx, source, target, eventArgs } = dto;
         
-        if(dto.eventArgs.card.cardType == 'attack' && dto.source.type == 'player'){
+        if(eventArgs.card.cardType == CardTypeEnum.Attack && source.type == CardTargetedEnum.Player){
 
-            const originalDefense = dto.source.value.combatState.defense; 
+            const originalDefense = source.value.combatState.defense; 
             const defenseCalculated = originalDefense + dto.status.args.value;
             console.log('value',dto.status.args.value);
             console.log('defensa calc', defenseCalculated);
