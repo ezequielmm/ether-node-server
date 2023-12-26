@@ -92,7 +92,8 @@ export class CombatQueueService {
                 return { originType, originId, targets, action };
             },
         );
-
+        
+        console.log(data);
         // Avoid sending empty combat queue to client
         if (isEmpty(data)) return;
 
