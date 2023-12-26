@@ -1,6 +1,7 @@
 import { damageEffect } from 'src/game/effects/damage/constants';
 import { CardRarityEnum, CardTypeEnum, CardTargetedEnum } from '../card.enum';
 import { Card } from '../card.schema';
+import { resolveStatus } from 'src/game/status/resolve/constants';
 
 export const AttackCardUpgraded: Card = {
     cardId: 2,
@@ -9,7 +10,7 @@ export const AttackCardUpgraded: Card = {
     cardType: CardTypeEnum.Attack,
     pool: 'knight',
     energy: 1,
-    description: `Deal {${damageEffect.name}} Damage`,
+    description: `Deal {${damageEffect.name}} + {${resolveStatus.name}} Damage`,
     keywords: [],
     properties: {
         effects: [
@@ -35,7 +36,7 @@ export const AttackCard: Card = {
     cardType: CardTypeEnum.Attack,
     pool: 'knight',
     energy: 1,
-    description: `Deal {${damageEffect.name}} Damage`,
+    description: `Deal {${damageEffect.name}} + {${resolveStatus.name}} Damage`,
     keywords: [],
     properties: {
         effects: [
