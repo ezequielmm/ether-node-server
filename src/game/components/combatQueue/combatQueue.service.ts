@@ -54,7 +54,8 @@ export class CombatQueueService {
 
     async push(dto: PushActionDTO): Promise<void> {
         const { ctx, source, target, args, action } = dto;
-
+        console.log(source)
+        console.log(target)
         await this.combatQueue.findOneAndUpdate(
             {
                 clientId: ctx.client.id,
@@ -89,12 +90,10 @@ export class CombatQueueService {
 
         const data = combatQueues.queue.map(
             ({ originType, originId, targets, action }) => {
-                console.log('tergets --------------- ', targets);
                 return { originType, originId, targets, action };        
             },
         );
         
-        console.log(data);
         // Avoid sending empty combat queue to client
         if (isEmpty(data)) return;
 
