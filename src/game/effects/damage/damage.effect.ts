@@ -23,10 +23,13 @@ import { deepDwellerLureData } from 'src/game/components/enemy/data/deepDwellerL
 import { resolveStatus } from 'src/game/status/resolve/constants';
 import { deepDwellerMonsterData } from 'src/game/components/enemy/data/deepDwellerMonster.enemy';
 import { StatusService } from 'src/game/status/status.service';
-import { AttachDTO, AttachedStatus } from 'src/game/status/interfaces';
+import { AttachDTO, AttachedStatus, StatusType } from 'src/game/status/interfaces';
 import { mossySkeletonData } from 'src/game/components/enemy/data/mossySkeleton.enemy';
 import { mossyBonesData } from 'src/game/components/enemy/data/mossyBones.enemy';
 import { mossyArcherData } from 'src/game/components/enemy/data/mossyArcher.enemy';
+import { Expedition } from 'src/game/components/expedition/expedition.schema';
+import { ReturnModelType } from '@typegoose/typegoose';
+import { InjectModel } from 'kindagoose';
 
 export interface DamageArgs {
     useDefense?: boolean;
@@ -55,6 +58,8 @@ export class DamageEffect implements EffectHandler {
         private readonly effectService: EffectService,
         private readonly getEnergyAction: GetEnergyAction,
         private readonly statusService: StatusService,
+        @InjectModel(Expedition)
+        private readonly expedition: ReturnModelType<typeof Expedition>,
     ) {}
 
     async handle(payload: EffectDTO<DamageArgs>): Promise<void> {
@@ -94,7 +99,9 @@ export class DamageEffect implements EffectHandler {
             // First we check if we have to deal a multiplier
             // using the remaining energy of the player or
             // the current amount of defense that the player has
-            const damage =
+            const resolveValue = this.expedition.arguments.data.currentNode.client.player.statuses.filter(x => x.name == resolveStatus.name).counter;//this.statusService.getAllByName(ctx, resolveStatus.name).filter(s => s.statuses);
+            
+            const damage = resolveValue +
                 currentValue *
                 (useEnergyAsMultiplier ? energy : 1) *
                 (useDefense ? multiplier * defense : 1);
@@ -206,9 +213,11 @@ export class DamageEffect implements EffectHandler {
             // Here we check if we have to use the enemy available
             // as currentValue, here we just need to add it, the value
             // on the effect is 0
+            const resolveValue = this.expedition.arguments.data.currentNode.client.player.statuses.filter(x => x.name == resolveStatus.name).counter;//this.statusService.getAllByName(ctx, resolveStatus.name).filter(s => s.statuses);
+
             let damage = isNotUndefined(useEnergyAsValue)
             ? energy
-            : currentValue;
+            : currentValue + resolveValue;
 
             if(useInitialValue == true) {
                 damage = initialValue;
