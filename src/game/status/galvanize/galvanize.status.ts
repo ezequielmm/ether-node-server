@@ -11,7 +11,6 @@ import { StatusService } from '../status.service';
 import { CombatQueueService } from 'src/game/components/combatQueue/combatQueue.service';
 import { CombatQueueTargetEffectTypeEnum } from 'src/game/components/combatQueue/combatQueue.enum';
 import { CardTargetedEnum, CardTypeEnum } from 'src/game/components/card/card.enum';
-
 @StatusDecorator({
     status: galvanize,
 })
@@ -25,7 +24,7 @@ export class GalvanizeStatus implements StatusEventHandler {
 
     async handle(dto: StatusEventDTO): Promise<void> {
 
-        const { ctx, source, target, eventArgs } = dto;
+        const { ctx, source, eventArgs } = dto;
         
         if(eventArgs.card.cardType == CardTypeEnum.Attack && source.type == CardTargetedEnum.Player){
 
@@ -35,7 +34,7 @@ export class GalvanizeStatus implements StatusEventHandler {
             await this.combatQueueService.push({
                 ctx,
                 source: this.playerService.get(ctx),
-                target,
+                target: this.playerService.get(ctx),
                 args: {
                     effectType: CombatQueueTargetEffectTypeEnum.Defense,
                     defenseDelta: dto.status.args.value,
