@@ -11,6 +11,7 @@ import { StatusService } from '../status.service';
 import { CombatQueueService } from 'src/game/components/combatQueue/combatQueue.service';
 import { CombatQueueTargetEffectTypeEnum } from 'src/game/components/combatQueue/combatQueue.enum';
 import { CardTargetedEnum, CardTypeEnum } from 'src/game/components/card/card.enum';
+import { defenseEffect } from 'src/game/effects/defense/constants';
 @StatusDecorator({
     status: galvanize,
 })
@@ -19,22 +20,37 @@ export class GalvanizeStatus implements StatusEventHandler {
     constructor(
         private readonly playerService: PlayerService,
         private readonly statusService: StatusService,
-        private readonly combatQueueService: CombatQueueService
+        private readonly combatQueueService: CombatQueueService,
+        private readonly effectService: EffectService
     ){}
 
     async handle(dto: StatusEventDTO): Promise<void> {
 
-        const { ctx, source, eventArgs } = dto;
+        const { ctx, source, eventArgs, status } = dto;
         
         if(eventArgs.card.cardType == CardTypeEnum.Attack && source.type == CardTargetedEnum.Player){
 
             const originalDefense = source.value.combatState.defense; 
             const defenseCalculated = originalDefense + dto.status.args.value;
+            const player = this.playerService.get(ctx);
+            const value = status.args.value;
+            console.log('VALUE ------------------------> ', value);
+            await this.effectService.apply({
+                ctx,
+                source,
+                target: player,
+                effect: {
+                    effect: defenseEffect.name,
+                    args: {
+                        value,
+                    },
+                },
+            });
 
             await this.combatQueueService.push({
                 ctx,
-                source: this.playerService.get(ctx),
-                target: this.playerService.get(ctx),
+                source: player,
+                target: player,
                 args: {
                     effectType: CombatQueueTargetEffectTypeEnum.Defense,
                     defenseDelta: dto.status.args.value,
@@ -48,7 +64,6 @@ export class GalvanizeStatus implements StatusEventHandler {
                     hint: 'defend'
                 },
             });
-            await this.playerService.setDefense(ctx, defenseCalculated);
         }
     }
 
