@@ -89,7 +89,8 @@ export class CombatQueueService {
 
         const data = combatQueues.queue.map(
             ({ originType, originId, targets, action }) => {
-                return { originType, originId, targets, action };
+                console.log('tergets --------------- ', targets);
+                return { originType, originId, targets, action };        
             },
         );
         
