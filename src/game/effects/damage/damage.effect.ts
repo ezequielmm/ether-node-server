@@ -58,8 +58,8 @@ export class DamageEffect implements EffectHandler {
         private readonly effectService: EffectService,
         private readonly getEnergyAction: GetEnergyAction,
         private readonly statusService: StatusService,
-        @InjectModel(Expedition)
-        private readonly expedition: ReturnModelType<typeof Expedition>,
+        // @InjectModel(Expedition)
+        // private readonly expedition: ReturnModelType<typeof Expedition>,
     ) {}
 
     async handle(payload: EffectDTO<DamageArgs>): Promise<void> {
@@ -99,9 +99,9 @@ export class DamageEffect implements EffectHandler {
             // First we check if we have to deal a multiplier
             // using the remaining energy of the player or
             // the current amount of defense that the player has
-            const resolveValue = this.expedition.arguments.data.currentNode.client.player.statuses.filter(x => x.name == resolveStatus.name).counter;//this.statusService.getAllByName(ctx, resolveStatus.name).filter(s => s.statuses);
+            //const resolveValue = this.expedition.arguments.data.currentNode.client.player.statuses.filter(x => x.name == resolveStatus.name).counter;//this.statusService.getAllByName(ctx, resolveStatus.name).filter(s => s.statuses);
             
-            const damage = resolveValue +
+            const damage = 
                 currentValue *
                 (useEnergyAsMultiplier ? energy : 1) *
                 (useDefense ? multiplier * defense : 1);
@@ -213,11 +213,11 @@ export class DamageEffect implements EffectHandler {
             // Here we check if we have to use the enemy available
             // as currentValue, here we just need to add it, the value
             // on the effect is 0
-            const resolveValue = this.expedition.arguments.data.currentNode.client.player.statuses.filter(x => x.name == resolveStatus.name).counter;//this.statusService.getAllByName(ctx, resolveStatus.name).filter(s => s.statuses);
+            // const resolveValue = this.expedition.arguments.data.currentNode.client.player.statuses.filter(x => x.name == resolveStatus.name).counter;//this.statusService.getAllByName(ctx, resolveStatus.name).filter(s => s.statuses);
 
             let damage = isNotUndefined(useEnergyAsValue)
             ? energy
-            : currentValue + resolveValue;
+            : currentValue;
 
             if(useInitialValue == true) {
                 damage = initialValue;
