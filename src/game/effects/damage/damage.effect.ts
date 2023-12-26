@@ -30,7 +30,6 @@ import { mossyArcherData } from 'src/game/components/enemy/data/mossyArcher.enem
 import { Expedition } from 'src/game/components/expedition/expedition.schema';
 import { ReturnModelType } from '@typegoose/typegoose';
 import { InjectModel } from 'kindagoose';
-import { ExpeditionService } from 'src/game/components/expedition/expedition.service';
 
 export interface DamageArgs {
     useDefense?: boolean;
@@ -59,7 +58,6 @@ export class DamageEffect implements EffectHandler {
         private readonly effectService: EffectService,
         private readonly getEnergyAction: GetEnergyAction,
         private readonly statusService: StatusService,
-        // private readonly expeditionService: ExpeditionService,
         // @InjectModel(Expedition)
         // private readonly expedition: ReturnModelType<typeof Expedition>,
     ) {}
@@ -111,14 +109,10 @@ export class DamageEffect implements EffectHandler {
             oldHp = target.value.hpCurrent;
             oldDefense = target.value.defense;
 
-            const resolveValue = payload.ctx.expedition.currentNode.data.player.statuses.buff.filter(x => x.name == resolveStatus.name)[0].args.counter;
+            await this.enemyService.damage(ctx, target.value.id, damage);
 
-            if(resolveValue != null)
-                await this.enemyService.damage(ctx, target.value.id, damage + resolveValue);
-            else
-                await this.enemyService.damage(ctx, target.value.id, damage);
-            
-                //- Counter & Absorb, negate signature and increment signature counter:
+
+            //- Counter & Absorb, negate signature and increment signature counter:
             const enemyIntentions = target.value.currentScript.intentions;
             let nextIntentValueChanged = false;
 
@@ -221,18 +215,9 @@ export class DamageEffect implements EffectHandler {
             // on the effect is 0
             // const resolveValue = this.expedition.arguments.data.currentNode.client.player.statuses.filter(x => x.name == resolveStatus.name).counter;//this.statusService.getAllByName(ctx, resolveStatus.name).filter(s => s.statuses);
 
-            const resolveValue = payload.ctx.expedition.currentNode.data.player.statuses.buff.filter(x => x.name == resolveStatus.name)[0].args.counter;
-
-            let combinedValue;
-            if(resolveValue != null)
-            {
-                combinedValue = currentValue + resolveValue;
-            } else 
-            {
-                combinedValue = currentValue;
-            }
-
-            let damage = isNotUndefined(useEnergyAsValue) ? energy : combinedValue;
+            let damage = isNotUndefined(useEnergyAsValue)
+            ? energy
+            : currentValue;
 
             if(useInitialValue == true) {
                 damage = initialValue;
