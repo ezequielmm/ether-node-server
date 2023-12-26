@@ -45,7 +45,7 @@ export class GalvanizeStatus implements StatusEventHandler {
                     },
                 },
             });*/
-            this.playerService.setDefense(ctx, defenseCalculated);
+            await this.playerService.setDefense(ctx, defenseCalculated);
 
             await this.combatQueueService.push({
                 ctx,
