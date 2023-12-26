@@ -34,7 +34,7 @@ export class GalvanizeStatus implements StatusEventHandler {
             const defenseCalculated = originalDefense + dto.status.args.value;
             const player = this.playerService.get(ctx);
             const value = status.args.value;
-            console.log('VALUE ------------------------> ', value);
+            
             await this.effectService.apply({
                 ctx,
                 source,
@@ -47,7 +47,7 @@ export class GalvanizeStatus implements StatusEventHandler {
                 },
             });
 
-            await this.combatQueueService.push({
+            /*await this.combatQueueService.push({
                 ctx,
                 source: player,
                 target: player,
@@ -63,7 +63,7 @@ export class GalvanizeStatus implements StatusEventHandler {
                     name: 'defend',
                     hint: 'defend'
                 },
-            });
+            });*/
         }
     }
 
