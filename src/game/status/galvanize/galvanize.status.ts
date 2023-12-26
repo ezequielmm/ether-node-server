@@ -31,11 +31,10 @@ export class GalvanizeStatus implements StatusEventHandler {
         if(eventArgs.card.cardType == CardTypeEnum.Attack && source.type == CardTargetedEnum.Player){
 
             const originalDefense = source.value.combatState.defense; 
-            const defenseCalculated = originalDefense + dto.status.args.value;
+            const defenseCalculated = originalDefense + status.args.value;
             const player = this.playerService.get(ctx);
-            const value = status.args.value;
             
-            await this.effectService.apply({
+            /*await this.effectService.apply({
                 ctx,
                 source,
                 target: player,
@@ -45,15 +44,16 @@ export class GalvanizeStatus implements StatusEventHandler {
                         value,
                     },
                 },
-            });
+            });*/
+            await this.playerService.setDefense(ctx, defenseCalculated);
 
-            /*await this.combatQueueService.push({
+            await this.combatQueueService.push({
                 ctx,
                 source: player,
                 target: player,
                 args: {
                     effectType: CombatQueueTargetEffectTypeEnum.Defense,
-                    defenseDelta: dto.status.args.value,
+                    defenseDelta: status.args.value,
                     finalDefense: defenseCalculated,
                     healthDelta: 0,
                     finalHealth: 0,
@@ -63,7 +63,7 @@ export class GalvanizeStatus implements StatusEventHandler {
                     name: 'defend',
                     hint: 'defend'
                 },
-            });*/
+            });
         }
     }
 
