@@ -87,6 +87,8 @@ export class CombatQueueService {
             clientId: client.id,
         });
 
+        console.log('entre a end ------------------------')
+        console.log('combat queues', combatQueues)
         if (!combatQueues) return;
 
         const data = combatQueues.queue.map(
