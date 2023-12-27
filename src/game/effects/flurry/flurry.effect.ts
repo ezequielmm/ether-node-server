@@ -7,7 +7,6 @@ import { EffectDecorator } from '../effects.decorator';
 import { EffectDTO, EffectHandler } from '../effects.interface';
 import { EffectService } from '../effects.service';
 import { flurry } from './constants';
-import { resolveStatus } from 'src/game/status/resolve/constants';
 
 @EffectDecorator({
     effect: flurry,
@@ -58,7 +57,5 @@ export class FlurryEffect implements EffectHandler {
         const { ctx } = dto;
         const energy = get(ctx.expedition, PLAYER_ENERGY_PATH);
         await this.flurry(dto, energy);
-        console.log("::::::::::PRINT RESOLVE FLURRY::::::::::::")
-        console.log(resolveStatus.name);
     }
 }

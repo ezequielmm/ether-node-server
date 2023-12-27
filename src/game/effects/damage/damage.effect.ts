@@ -79,8 +79,6 @@ export class DamageEffect implements EffectHandler {
             action,
         } = payload;
         
-        console.log("::::::::::PRINT RESOLVE ATTACK::::::::::::")
-        console.log(resolveStatus.name);
         let ctx = payload.ctx;
 
         const {
