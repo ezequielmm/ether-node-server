@@ -26,34 +26,20 @@ export class GalvanizeStatus implements StatusEventHandler {
 
     async handle(dto: StatusEventDTO): Promise<void> {
 
-        const { ctx, source, eventArgs, status } = dto;
+        const { ctx, source, eventArgs, status, target } = dto;
         
         if(eventArgs.card.cardType == CardTypeEnum.Attack && source.type == CardTargetedEnum.Player){
 
             const originalDefense = source.value.combatState.defense; 
-            const defenseCalculated = originalDefense + status.args.value;
-            const player = this.playerService.get(ctx);
             const value = status.args.value;
+            const defenseCalculated = originalDefense + value;
 
-            /*await this.effectService.apply({
-                ctx,
-                source,
-                target: player,
-                effect: {
-                    effect: defenseEffect.name,
-                    args: {
-                        value,
-                    },
-                },
-            });*/
-
-            
             await this.playerService.setDefense(ctx, defenseCalculated);
-            
+
             await this.combatQueueService.push({
                 ctx,
-                source: player,
-                target: player,
+                source,
+                target,
                 args: {
                     effectType: CombatQueueTargetEffectTypeEnum.Defense,
                     defenseDelta: value,
@@ -64,8 +50,6 @@ export class GalvanizeStatus implements StatusEventHandler {
                 },
                 action: null,
             });
-            
-            await this.combatQueueService.end(ctx);
         }
     }
 
