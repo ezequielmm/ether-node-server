@@ -3,6 +3,7 @@ import { chooseCardEffect } from 'src/game/effects/chooseCard/constants';
 import { damageEffect } from 'src/game/effects/damage/constants';
 import { CardRarityEnum, CardTargetedEnum, CardTypeEnum } from '../card.enum';
 import { Card } from '../card.schema';
+import { resolveStatus } from 'src/game/status/resolve/constants';
 
 export const AutonomousWeaponCardUpgraded: Card = {
     cardId: 146,
@@ -11,7 +12,7 @@ export const AutonomousWeaponCardUpgraded: Card = {
     cardType: CardTypeEnum.Attack,
     pool: 'knight',
     energy: 3,
-    description: `Deal {${damageEffect.name}} damage. This card shuffles back into your draw pile.`,
+    description: `Deal {${damageEffect.name}} + {${resolveStatus.name}} damage. This card shuffles back into your draw pile.`,
     keywords: [],
     properties: {
         effects: [
@@ -44,7 +45,7 @@ export const AutonomousWeaponCard: Card = {
     cardType: CardTypeEnum.Attack,
     pool: 'knight',
     energy: 3,
-    description: `Deal {${damageEffect.name}} damage. This card shuffles back into your draw pile.`,
+    description: `Deal {${damageEffect.name}} + {${resolveStatus.name}} damage. This card shuffles back into your draw pile.`,
     keywords: [],
     properties: {
         effects: [

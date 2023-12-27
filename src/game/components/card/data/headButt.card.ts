@@ -2,6 +2,7 @@ import { damageEffect } from 'src/game/effects/damage/constants';
 import { headButt } from 'src/game/effects/headButt/constants';
 import { CardRarityEnum, CardTypeEnum, CardTargetedEnum } from '../card.enum';
 import { Card } from '../card.schema';
+import { resolveStatus } from 'src/game/status/resolve/constants';
 
 export const HeadButtCardUpgraded: Card = {
     cardId: 34,
@@ -10,7 +11,7 @@ export const HeadButtCardUpgraded: Card = {
     cardType: CardTypeEnum.Attack,
     pool: 'knight',
     energy: 2,
-    description: `Deal {${damageEffect.name}} damage. If enemy is undefended, Inflict Confusion.`,
+    description: `Deal {${damageEffect.name}} + {${resolveStatus.name}} damage. If enemy is undefended, Inflict Confusion.`,
     keywords: [],
     properties: {
         effects: [
@@ -43,7 +44,7 @@ export const HeadButtCard: Card = {
     cardType: CardTypeEnum.Attack,
     pool: 'knight',
     energy: 2,
-    description: `Deal {${damageEffect.name}} damage. If enemy is undefended, Inflict Confusion.`,
+    description: `Deal {${damageEffect.name}} + {${resolveStatus.name}} damage. If enemy is undefended, Inflict Confusion.`,
     keywords: [],
     properties: {
         effects: [

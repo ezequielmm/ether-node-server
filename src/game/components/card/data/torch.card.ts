@@ -2,6 +2,7 @@ import { damageEffect } from 'src/game/effects/damage/constants';
 import { burn } from 'src/game/status/burn/constants';
 import { CardRarityEnum, CardTypeEnum, CardTargetedEnum } from '../card.enum';
 import { Card } from '../card.schema';
+import { resolveStatus } from 'src/game/status/resolve/constants';
 
 export const TorchCardUpgraded: Card = {
     cardId: 90,
@@ -10,7 +11,7 @@ export const TorchCardUpgraded: Card = {
     cardType: CardTypeEnum.Attack,
     pool: 'knight',
     energy: 1,
-    description: `Deal {${damageEffect.name}} Damage. \nApply {${burn.name}} Burn`,
+    description: `Deal {${damageEffect.name}} + {${resolveStatus.name}} Damage. \nApply {${burn.name}} Burn`,
     keywords: [],
     properties: {
         effects: [
@@ -44,7 +45,7 @@ export const TorchCard: Card = {
     cardType: CardTypeEnum.Attack,
     pool: 'knight',
     energy: 1,
-    description: `Deal {${damageEffect.name}} Damage. \nApply {${burn.name}} Burn`,
+    description: `Deal {${damageEffect.name}} + {${resolveStatus.name}} Damage. \nApply {${burn.name}} Burn`,
     keywords: [],
     properties: {
         effects: [

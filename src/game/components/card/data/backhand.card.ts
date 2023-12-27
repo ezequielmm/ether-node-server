@@ -2,6 +2,7 @@ import { damageEffect } from 'src/game/effects/damage/constants';
 import { distraught } from 'src/game/status/distraught/constants';
 import { CardRarityEnum, CardTypeEnum, CardTargetedEnum } from '../card.enum';
 import { Card } from '../card.schema';
+import { resolveStatus } from 'src/game/status/resolve/constants';
 
 export const BackHandCardUpgraded: Card = {
     cardId: 68,
@@ -10,7 +11,7 @@ export const BackHandCardUpgraded: Card = {
     cardType: CardTypeEnum.Attack,
     pool: 'knight',
     energy: 2,
-    description: `Deal {${damageEffect.name}} damage. 
+    description: `Deal {${damageEffect.name}} + {${resolveStatus.name}} damage. 
     Inflict {${distraught.name}} Distraught.`,
     keywords: [],
     properties: {
@@ -45,7 +46,7 @@ export const BackHandCard: Card = {
     cardType: CardTypeEnum.Attack,
     pool: 'knight',
     energy: 2,
-    description: `Deal {${damageEffect.name}} damage. 
+    description: `Deal {${damageEffect.name}} + {${resolveStatus.name}} damage. 
     Inflict {${distraught.name}} Distraught.`,
     keywords: [],
     properties: {

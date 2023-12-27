@@ -1,6 +1,7 @@
 import { damageEffect } from 'src/game/effects/damage/constants';
 import { CardRarityEnum, CardTypeEnum, CardTargetedEnum } from '../card.enum';
 import { Card } from '../card.schema';
+import { resolveStatus } from 'src/game/status/resolve/constants';
 
 export const FindWeaknessCardUpgraded: Card = {
     cardId: 12,
@@ -9,7 +10,7 @@ export const FindWeaknessCardUpgraded: Card = {
     cardType: CardTypeEnum.Attack,
     pool: 'knight',
     energy: 1,
-    description: `Deal {${damageEffect.name}} damage {${damageEffect.name}|times} {p:${damageEffect.name}|times:time:times}. Double these values this combat.`,
+    description: `Deal {${damageEffect.name}} + {${resolveStatus.name}} damage {${damageEffect.name}|times} {p:${damageEffect.name}|times:time:times}. Double these values this combat.`,
     keywords: [],
     properties: {
         effects: [
@@ -37,7 +38,7 @@ export const FindWeaknessCard: Card = {
     cardType: CardTypeEnum.Attack,
     pool: 'knight',
     energy: 2,
-    description: `Deal {${damageEffect.name}} damage {${damageEffect.name}|times} {p:${damageEffect.name}|times:time:times}. Double these values this combat.`,
+    description: `Deal {${damageEffect.name}} + {${resolveStatus.name}} damage {${damageEffect.name}|times} {p:${damageEffect.name}|times:time:times}. Double these values this combat.`,
     keywords: [],
     properties: {
         effects: [

@@ -6,6 +6,7 @@ import {
     CardTargetedEnum,
 } from '../card.enum';
 import { Card } from '../card.schema';
+import { resolveStatus } from 'src/game/status/resolve/constants';
 
 export const LastResortCardUpgraded: Card = {
     cardId: 142,
@@ -14,7 +15,7 @@ export const LastResortCardUpgraded: Card = {
     cardType: CardTypeEnum.Attack,
     pool: 'knight',
     energy: CardEnergyEnum.All,
-    description: `Deal X damage to yourself and X times {${damageEffect.name}} damage to all enemies`,
+    description: `Deal X damage to yourself and X times {${damageEffect.name}} + {${resolveStatus.name}} damage to all enemies`,
     keywords: [],
     properties: {
         effects: [
@@ -49,7 +50,7 @@ export const LastResortCard: Card = {
     cardType: CardTypeEnum.Attack,
     pool: 'knight',
     energy: CardEnergyEnum.All,
-    description: `Deal X damage to yourself and X times {${damageEffect.name}} damage to an enemy`,
+    description: `Deal X damage to yourself and X times {${damageEffect.name}} + {${resolveStatus.name}} damage to an enemy`,
     keywords: [],
     properties: {
         effects: [

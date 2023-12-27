@@ -2,6 +2,7 @@ import { damageEffect } from 'src/game/effects/damage/constants';
 import { executionersBlowEffect } from 'src/game/effects/executionersBlow/contants';
 import { CardRarityEnum, CardTargetedEnum, CardTypeEnum } from '../card.enum';
 import { Card } from '../card.schema';
+import { resolveStatus } from 'src/game/status/resolve/constants';
 
 export const ExecutionersBlowCardUpgraded: Card = {
     cardId: 156,
@@ -10,7 +11,7 @@ export const ExecutionersBlowCardUpgraded: Card = {
     cardType: CardTypeEnum.Attack,
     pool: 'knight',
     energy: 2,
-    description: `Deal {${damageEffect.name}} damage. If this kills an enemy, return it to your hand and it costs 0 this turn.`,
+    description: `Deal {${damageEffect.name}} + {${resolveStatus.name}} damage. If this kills an enemy, return it to your hand and it costs 0 this turn.`,
     keywords: [],
     properties: {
         effects: [
@@ -43,7 +44,7 @@ export const ExecutionersBlowCard: Card = {
     cardType: CardTypeEnum.Attack,
     pool: 'knight',
     energy: 2,
-    description: `Deal {${damageEffect.name}} damage. If this kills an enemy, return it to your hand and it costs 0 this turn.`,
+    description: `Deal {${damageEffect.name}} + {${resolveStatus.name}} damage. If this kills an enemy, return it to your hand and it costs 0 this turn.`,
     keywords: [],
     properties: {
         effects: [

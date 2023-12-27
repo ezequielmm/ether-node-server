@@ -1,6 +1,7 @@
 import { damageEffect } from 'src/game/effects/damage/constants';
 import { CardRarityEnum, CardTypeEnum, CardTargetedEnum } from '../card.enum';
 import { Card } from '../card.schema';
+import { resolveStatus } from 'src/game/status/resolve/constants';
 
 export const HiltPunchCardUpgraded: Card = {
     cardId: 32,
@@ -9,7 +10,7 @@ export const HiltPunchCardUpgraded: Card = {
     cardType: CardTypeEnum.Attack,
     pool: 'knight',
     energy: 0,
-    description: `Deal {${damageEffect.name}} damage. Lower this card’s damage by 1 each use during this combat.`,
+    description: `Deal {${damageEffect.name}} + {${resolveStatus.name}} damage. Lower this card’s damage by 1 each use during this combat.`,
     keywords: [],
     properties: {
         effects: [
@@ -37,7 +38,7 @@ export const HiltPunchCard: Card = {
     cardType: CardTypeEnum.Attack,
     pool: 'knight',
     energy: 0,
-    description: `Deal {${damageEffect.name}} damage. Lower this card’s damage by 1 each use during this combat.`,
+    description: `Deal {${damageEffect.name}} + {${resolveStatus.name}} damage. Lower this card’s damage by 1 each use during this combat.`,
     keywords: [],
     properties: {
         effects: [

@@ -1,6 +1,7 @@
 import { damageEffect } from 'src/game/effects/damage/constants';
 import { CardRarityEnum, CardTypeEnum, CardTargetedEnum } from '../card.enum';
 import { Card } from '../card.schema';
+import { resolveStatus } from 'src/game/status/resolve/constants';
 
 export const OnARollCardUpgraded: Card = {
     cardId: 54,
@@ -9,7 +10,7 @@ export const OnARollCardUpgraded: Card = {
     cardType: CardTypeEnum.Attack,
     pool: 'knight',
     energy: 2,
-    description: `Deal {${damageEffect.name}} damage. If this kills target, Gain 2 energy.`,
+    description: `Deal {${damageEffect.name}} + {${resolveStatus.name}} damage. If this kills target, Gain 2 energy.`,
     keywords: [],
     properties: {
         effects: [
@@ -38,7 +39,7 @@ export const OnARollCard: Card = {
     cardType: CardTypeEnum.Attack,
     pool: 'knight',
     energy: 2,
-    description: `Deal {${damageEffect.name}} damage. If this kills target, Gain 2 energy.`,
+    description: `Deal {${damageEffect.name}} + {${resolveStatus.name}} damage. If this kills target, Gain 2 energy.`,
     keywords: [],
     properties: {
         effects: [

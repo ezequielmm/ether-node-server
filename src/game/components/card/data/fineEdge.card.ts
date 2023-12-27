@@ -6,6 +6,7 @@ import {
     CardTargetedEnum,
 } from '../card.enum';
 import { Card } from '../card.schema';
+import { resolveStatus } from 'src/game/status/resolve/constants';
 
 export const FineEdgeCardUpgraded: Card = {
     cardId: 172,
@@ -14,7 +15,7 @@ export const FineEdgeCardUpgraded: Card = {
     cardType: CardTypeEnum.Attack,
     pool: 'knight',
     energy: 0,
-    description: `Deal {${damageEffect.name}} damage. Exhaust`,
+    description: `Deal {${damageEffect.name}} + {${resolveStatus.name}} damage. Exhaust`,
     keywords: [CardKeywordEnum.Exhaust],
     properties: {
         effects: [
@@ -40,7 +41,7 @@ export const FineEdgeCard: Card = {
     cardType: CardTypeEnum.Attack,
     pool: 'knight',
     energy: 0,
-    description: `Deal {${damageEffect.name}} damage. Exhaust`,
+    description: `Deal {${damageEffect.name}} + {${resolveStatus.name}} damage. Exhaust`,
     keywords: [CardKeywordEnum.Exhaust],
     properties: {
         effects: [

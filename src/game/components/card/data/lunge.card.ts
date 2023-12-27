@@ -2,6 +2,7 @@ import { damageEffect } from 'src/game/effects/damage/constants';
 import { drawCardEffect } from 'src/game/effects/drawCard/constants';
 import { CardRarityEnum, CardTypeEnum, CardTargetedEnum } from '../card.enum';
 import { Card } from '../card.schema';
+import { resolveStatus } from 'src/game/status/resolve/constants';
 
 export const LungeCardUpgraded: Card = {
     cardId: 14,
@@ -10,7 +11,7 @@ export const LungeCardUpgraded: Card = {
     cardType: CardTypeEnum.Attack,
     pool: 'knight',
     energy: 1,
-    description: `Deal {${damageEffect.name}} damage twice.\nDraw {${drawCardEffect.name}} cards`,
+    description: `Deal {${damageEffect.name}} + {${resolveStatus.name}} damage twice.\nDraw {${drawCardEffect.name}} cards`,
     keywords: [],
     properties: {
         effects: [
@@ -44,7 +45,7 @@ export const LungeCard: Card = {
     cardType: CardTypeEnum.Attack,
     pool: 'knight',
     energy: 1,
-    description: `Deal {${damageEffect.name}} damage twice.\nDraw {${drawCardEffect.name}} card`,
+    description: `Deal {${damageEffect.name}} + {${resolveStatus.name}} damage twice.\nDraw {${drawCardEffect.name}} card`,
     keywords: [],
     properties: {
         effects: [

@@ -2,6 +2,7 @@ import { damageEffect } from 'src/game/effects/damage/constants';
 import { knockDown } from 'src/game/effects/knockDown/constants';
 import { CardRarityEnum, CardTypeEnum, CardTargetedEnum } from '../card.enum';
 import { Card } from '../card.schema';
+import { resolveStatus } from 'src/game/status/resolve/constants';
 
 export const KnockDownCardUpgraded: Card = {
     cardId: 108,
@@ -10,7 +11,7 @@ export const KnockDownCardUpgraded: Card = {
     cardType: CardTypeEnum.Attack,
     pool: 'knight',
     energy: 2,
-    description: `Deal {${damageEffect.name}} damage. If your last played card was an attack, Stun the enemy`,
+    description: `Deal {${damageEffect.name}} + {${resolveStatus.name}} damage. If your last played card was an attack, Stun the enemy`,
     keywords: [],
     properties: {
         effects: [
@@ -43,7 +44,7 @@ export const KnockDownCard: Card = {
     cardType: CardTypeEnum.Attack,
     pool: 'knight',
     energy: 2,
-    description: `Deal {${damageEffect.name}} damage. If your last played card was an attack, Stun the enemy`,
+    description: `Deal {${damageEffect.name}} + {${resolveStatus.name}} damage. If your last played card was an attack, Stun the enemy`,
     keywords: [],
     properties: {
         effects: [

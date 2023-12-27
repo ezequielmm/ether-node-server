@@ -2,6 +2,7 @@ import { damageEffect } from 'src/game/effects/damage/constants';
 import { doubleResolve } from 'src/game/effects/doubleResolve/constants';
 import { CardRarityEnum, CardTypeEnum, CardTargetedEnum } from '../card.enum';
 import { Card } from '../card.schema';
+import { resolveStatus } from 'src/game/status/resolve/constants';
 
 export const UltraLethalityCardUpgraded: Card = {
     cardId: 148,
@@ -10,7 +11,7 @@ export const UltraLethalityCardUpgraded: Card = {
     cardType: CardTypeEnum.Attack,
     pool: 'knight',
     energy: 2,
-    description: `Deal {${damageEffect.name}} damage twice, with double the effect of Resolve`,
+    description: `Deal {${damageEffect.name}} + {${resolveStatus.name}} damage twice, with double the effect of Resolve`,
     keywords: [],
     properties: {
         effects: [
@@ -50,7 +51,7 @@ export const UltraLethalityCard: Card = {
     cardType: CardTypeEnum.Attack,
     pool: 'knight',
     energy: 2,
-    description: `Deal {${damageEffect.name}} damage twice, with double the effect of Resolve`,
+    description: `Deal {${damageEffect.name}} + {${resolveStatus.name}} damage twice, with double the effect of Resolve`,
     keywords: [],
     properties: {
         effects: [

@@ -3,6 +3,7 @@ import { defenseEffect } from 'src/game/effects/defense/constants';
 import { lastReminderEffect } from 'src/game/effects/lastReminder/constants';
 import { CardRarityEnum, CardTargetedEnum, CardTypeEnum } from '../card.enum';
 import { Card } from '../card.schema';
+import { resolveStatus } from 'src/game/status/resolve/constants';
 
 export const LastReminderCardUpgraded: Card = {
     cardId: 154,
@@ -11,7 +12,7 @@ export const LastReminderCardUpgraded: Card = {
     cardType: CardTypeEnum.Attack,
     pool: 'knight',
     energy: 1,
-    description: `Deal {${damageEffect.name}} damage, Gain {${defenseEffect.name}} defense, If the enemy has Burn, gain {${lastReminderEffect.name}} Regeneration`,
+    description: `Deal {${damageEffect.name}} + {${resolveStatus.name}} damage, Gain {${defenseEffect.name}} defense, If the enemy has Burn, gain {${lastReminderEffect.name}} Regeneration`,
     keywords: [],
     properties: {
         effects: [
@@ -49,7 +50,7 @@ export const LastReminderCard: Card = {
     cardType: CardTypeEnum.Attack,
     pool: 'knight',
     energy: 1,
-    description: `Deal {${damageEffect.name}} damage, Gain {${defenseEffect.name}} defense, If the enemy has Burn, gain {${lastReminderEffect.name}} Regeneration`,
+    description: `Deal {${damageEffect.name}} + {${resolveStatus.name}} damage, Gain {${defenseEffect.name}} defense, If the enemy has Burn, gain {${lastReminderEffect.name}} Regeneration`,
     keywords: [],
     properties: {
         effects: [

@@ -1,6 +1,7 @@
 import { damageEffect } from 'src/game/effects/damage/constants';
 import { CardRarityEnum, CardTypeEnum, CardTargetedEnum } from '../card.enum';
 import { Card } from '../card.schema';
+import { resolveStatus } from 'src/game/status/resolve/constants';
 
 export const RoundHouseCardUpgraded: Card = {
     cardId: 128,
@@ -9,7 +10,7 @@ export const RoundHouseCardUpgraded: Card = {
     cardType: CardTypeEnum.Attack,
     pool: 'knight',
     energy: 2,
-    description: `Deal {${damageEffect.name}} damage twice.`,
+    description: `Deal {${damageEffect.name}} + {${resolveStatus.name}} damage twice.`,
     keywords: [],
     properties: {
         effects: [
@@ -36,7 +37,7 @@ export const RoundHouseCard: Card = {
     cardType: CardTypeEnum.Attack,
     pool: 'knight',
     energy: 2,
-    description: `Deal {${damageEffect.name}} damage twice.`,
+    description: `Deal {${damageEffect.name}} + {${resolveStatus.name}} damage twice.`,
     keywords: [],
     properties: {
         effects: [

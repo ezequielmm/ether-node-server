@@ -2,6 +2,7 @@ import { damageEffect } from 'src/game/effects/damage/constants';
 import { defenseEffect } from 'src/game/effects/defense/constants';
 import { CardRarityEnum, CardTypeEnum, CardTargetedEnum } from '../card.enum';
 import { Card } from '../card.schema';
+import { resolveStatus } from 'src/game/status/resolve/constants';
 
 export const CounterCardUpgraded: Card = {
     cardId: 8,
@@ -10,7 +11,7 @@ export const CounterCardUpgraded: Card = {
     cardType: CardTypeEnum.Attack,
     pool: 'knight',
     energy: 1,
-    description: `Deal {${damageEffect.name}} Damage, Gain {${defenseEffect.name}} Defense`,
+    description: `Deal {${damageEffect.name}} + {${resolveStatus.name}} Damage, Gain {${defenseEffect.name}} Defense`,
     keywords: [],
     properties: {
         effects: [
@@ -43,7 +44,7 @@ export const CounterCard: Card = {
     cardType: CardTypeEnum.Attack,
     pool: 'knight',
     energy: 1,
-    description: `Deal {${damageEffect.name}} Damage, Gain {${defenseEffect.name}} Defense`,
+    description: `Deal {${damageEffect.name}} + {${resolveStatus.name}} Damage, Gain {${defenseEffect.name}} Defense`,
     keywords: [],
     properties: {
         effects: [
