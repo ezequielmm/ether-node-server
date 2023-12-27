@@ -52,6 +52,9 @@ export const FlurryCard: Card = {
                     value: 6,
                 },
             },
+            {
+                effect: resolveStatus.name,
+            },
         ],
         statuses: [],
     },
