@@ -82,7 +82,7 @@ export class CombatQueueService {
 
     async end(ctx: GameContext): Promise<void> {
         const { client } = ctx;
-        console.log('CLIENT ------------> ', client)
+        console.log('CLIENT ------------> ', client.id)
         const combatQueues = await this.combatQueue.findOne({
             clientId: client.id,
         });
