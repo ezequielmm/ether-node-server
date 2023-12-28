@@ -28,7 +28,7 @@ export class GalvanizeStatus implements StatusEventHandler {
 
         const { ctx, source, eventArgs, status, target } = dto;
         
-        if(eventArgs.card.cardType == CardTypeEnum.Attack && source.type == CardTargetedEnum.Player){
+        if(source.type == CardTargetedEnum.Player){
 
             const originalDefense = source.value.combatState.defense; 
             const value = status.args.value;
