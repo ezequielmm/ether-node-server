@@ -11,7 +11,7 @@ export const CounterCardUpgraded: Card = {
     cardType: CardTypeEnum.Attack,
     pool: 'knight',
     energy: 1,
-    description: `Deal {${7}} + {${resolveStatus.name}} Damage, Gain {${defenseEffect.name}} Defense`,
+    description: `Deal {${damageEffect.name}} + {${resolveStatus.name}} Damage, Gain {${defenseEffect.name}} Defense`,
     keywords: [],
     properties: {
         effects: [
@@ -44,7 +44,7 @@ export const CounterCard: Card = {
     cardType: CardTypeEnum.Attack,
     pool: 'knight',
     energy: 1,
-    description: `Deal {${4}} + {${resolveStatus.name}} Damage, Gain {${defenseEffect.name}} Defense`,
+    description: `Deal {${damageEffect.name}} + {${resolveStatus.name}} Damage, Gain {${defenseEffect.name}} Defense`,
     keywords: [],
     properties: {
         effects: [

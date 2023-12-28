@@ -11,7 +11,7 @@ export const TorchCardUpgraded: Card = {
     cardType: CardTypeEnum.Attack,
     pool: 'knight',
     energy: 1,
-    description: `Deal {${7}} + {${resolveStatus.name}} Damage. \nApply {${burn.name}} Burn`,
+    description: `Deal {${damageEffect.name}} + {${resolveStatus.name}} Damage. \nApply {${burn.name}} Burn`,
     keywords: [],
     properties: {
         effects: [
@@ -45,7 +45,7 @@ export const TorchCard: Card = {
     cardType: CardTypeEnum.Attack,
     pool: 'knight',
     energy: 1,
-    description: `Deal {${5}} + {${resolveStatus.name}} Damage. \nApply {${burn.name}} Burn`,
+    description: `Deal {${damageEffect.name}} + {${resolveStatus.name}} Damage. \nApply {${burn.name}} Burn`,
     keywords: [],
     properties: {
         effects: [

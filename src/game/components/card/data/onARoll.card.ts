@@ -10,7 +10,7 @@ export const OnARollCardUpgraded: Card = {
     cardType: CardTypeEnum.Attack,
     pool: 'knight',
     energy: 2,
-    description: `Deal {${16}} + {${resolveStatus.name}} damage. If this kills target, Gain 2 energy.`,
+    description: `Deal {${damageEffect.name}} + {${resolveStatus.name}} damage. If this kills target, Gain 2 energy.`,
     keywords: [],
     properties: {
         effects: [
@@ -39,7 +39,7 @@ export const OnARollCard: Card = {
     cardType: CardTypeEnum.Attack,
     pool: 'knight',
     energy: 2,
-    description: `Deal {${10}} + {${resolveStatus.name}} damage. If this kills target, Gain 2 energy.`,
+    description: `Deal {${damageEffect.name}} + {${resolveStatus.name}} damage. If this kills target, Gain 2 energy.`,
     keywords: [],
     properties: {
         effects: [
