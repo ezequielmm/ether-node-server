@@ -15,7 +15,7 @@ export const FineEdgeCardUpgraded: Card = {
     cardType: CardTypeEnum.Attack,
     pool: 'knight',
     energy: 0,
-    description: `Deal {${damageEffect.name}} + {${resolveStatus.name}} damage. Exhaust`,
+    description: `Deal {${7}} + {${resolveStatus.name}} damage. Exhaust`,
     keywords: [CardKeywordEnum.Exhaust],
     properties: {
         effects: [
@@ -41,7 +41,7 @@ export const FineEdgeCard: Card = {
     cardType: CardTypeEnum.Attack,
     pool: 'knight',
     energy: 0,
-    description: `Deal {${damageEffect.name}} + {${resolveStatus.name}} damage. Exhaust`,
+    description: `Deal {${5}} + {${resolveStatus.name}} damage. Exhaust`,
     keywords: [CardKeywordEnum.Exhaust],
     properties: {
         effects: [

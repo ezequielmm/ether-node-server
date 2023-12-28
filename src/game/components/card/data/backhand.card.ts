@@ -11,7 +11,7 @@ export const BackHandCardUpgraded: Card = {
     cardType: CardTypeEnum.Attack,
     pool: 'knight',
     energy: 2,
-    description: `Deal {${damageEffect.name}} + {${resolveStatus.name}} damage. 
+    description: `Deal {${14}} + {${resolveStatus.name}} damage. 
     Inflict {${distraught.name}} Distraught.`,
     keywords: [],
     properties: {
@@ -46,7 +46,7 @@ export const BackHandCard: Card = {
     cardType: CardTypeEnum.Attack,
     pool: 'knight',
     energy: 2,
-    description: `Deal {${damageEffect.name}} + {${resolveStatus.name}} damage. 
+    description: `Deal {${10}} + {${resolveStatus.name}} damage. 
     Inflict {${distraught.name}} Distraught.`,
     keywords: [],
     properties: {

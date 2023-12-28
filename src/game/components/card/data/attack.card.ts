@@ -10,7 +10,7 @@ export const AttackCardUpgraded: Card = {
     cardType: CardTypeEnum.Attack,
     pool: 'knight',
     energy: 1,
-    description: `Deal {${damageEffect.name}} + {${resolveStatus.name}} Damage`,
+    description: `Deal {${8}} + {${resolveStatus.name}} Damage`,
     keywords: [],
     properties: {
         effects: [

@@ -11,7 +11,7 @@ export const UltraLethalityCardUpgraded: Card = {
     cardType: CardTypeEnum.Attack,
     pool: 'knight',
     energy: 2,
-    description: `Deal {${damageEffect.name}} + {${resolveStatus.name}} damage twice, with double the effect of Resolve`,
+    description: `Deal {${15}} + {${resolveStatus.name}} damage twice, with double the effect of Resolve`,
     keywords: [],
     properties: {
         effects: [
@@ -51,7 +51,7 @@ export const UltraLethalityCard: Card = {
     cardType: CardTypeEnum.Attack,
     pool: 'knight',
     energy: 2,
-    description: `Deal {${damageEffect.name}} + {${resolveStatus.name}} damage twice, with double the effect of Resolve`,
+    description: `Deal {${10}} + {${resolveStatus.name}} damage twice, with double the effect of Resolve`,
     keywords: [],
     properties: {
         effects: [

@@ -11,7 +11,7 @@ export const ExecutionersBlowCardUpgraded: Card = {
     cardType: CardTypeEnum.Attack,
     pool: 'knight',
     energy: 2,
-    description: `Deal {${damageEffect.name}} + {${resolveStatus.name}} damage. If this kills an enemy, return it to your hand and it costs 0 this turn.`,
+    description: `Deal {${15}} + {${resolveStatus.name}} damage. If this kills an enemy, return it to your hand and it costs 0 this turn.`,
     keywords: [],
     properties: {
         effects: [
@@ -44,7 +44,7 @@ export const ExecutionersBlowCard: Card = {
     cardType: CardTypeEnum.Attack,
     pool: 'knight',
     energy: 2,
-    description: `Deal {${damageEffect.name}} + {${resolveStatus.name}} damage. If this kills an enemy, return it to your hand and it costs 0 this turn.`,
+    description: `Deal {${11}} + {${resolveStatus.name}} damage. If this kills an enemy, return it to your hand and it costs 0 this turn.`,
     keywords: [],
     properties: {
         effects: [

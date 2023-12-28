@@ -11,7 +11,7 @@ export const LungeCardUpgraded: Card = {
     cardType: CardTypeEnum.Attack,
     pool: 'knight',
     energy: 1,
-    description: `Deal {${damageEffect.name}} + {${resolveStatus.name}} damage twice.\nDraw {${drawCardEffect.name}} cards`,
+    description: `Deal {${4}} + {${resolveStatus.name}} damage twice.\nDraw {${drawCardEffect.name}} cards`,
     keywords: [],
     properties: {
         effects: [
@@ -45,7 +45,7 @@ export const LungeCard: Card = {
     cardType: CardTypeEnum.Attack,
     pool: 'knight',
     energy: 1,
-    description: `Deal {${damageEffect.name}} + {${resolveStatus.name}} damage twice.\nDraw {${drawCardEffect.name}} card`,
+    description: `Deal {${4}} + {${resolveStatus.name}} damage twice.\nDraw {${drawCardEffect.name}} card`,
     keywords: [],
     properties: {
         effects: [

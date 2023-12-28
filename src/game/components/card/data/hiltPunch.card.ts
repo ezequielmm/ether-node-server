@@ -10,7 +10,7 @@ export const HiltPunchCardUpgraded: Card = {
     cardType: CardTypeEnum.Attack,
     pool: 'knight',
     energy: 0,
-    description: `Deal {${damageEffect.name}} + {${resolveStatus.name}} damage. Lower this card’s damage by 1 each use during this combat.`,
+    description: `Deal {${9}} + {${resolveStatus.name}} damage. Lower this card’s damage by 1 each use during this combat.`,
     keywords: [],
     properties: {
         effects: [
@@ -38,7 +38,7 @@ export const HiltPunchCard: Card = {
     cardType: CardTypeEnum.Attack,
     pool: 'knight',
     energy: 0,
-    description: `Deal {${damageEffect.name}} + {${resolveStatus.name}} damage. Lower this card’s damage by 1 each use during this combat.`,
+    description: `Deal {${6}} + {${resolveStatus.name}} damage. Lower this card’s damage by 1 each use during this combat.`,
     keywords: [],
     properties: {
         effects: [

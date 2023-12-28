@@ -11,7 +11,7 @@ export const HeadButtCardUpgraded: Card = {
     cardType: CardTypeEnum.Attack,
     pool: 'knight',
     energy: 2,
-    description: `Deal {${damageEffect.name}} + {${resolveStatus.name}} damage. If enemy is undefended, Inflict Confusion.`,
+    description: `Deal {${11}} + {${resolveStatus.name}} damage. If enemy is undefended, Inflict Confusion.`,
     keywords: [],
     properties: {
         effects: [
@@ -44,7 +44,7 @@ export const HeadButtCard: Card = {
     cardType: CardTypeEnum.Attack,
     pool: 'knight',
     energy: 2,
-    description: `Deal {${damageEffect.name}} + {${resolveStatus.name}} damage. If enemy is undefended, Inflict Confusion.`,
+    description: `Deal {${8}} + {${resolveStatus.name}} damage. If enemy is undefended, Inflict Confusion.`,
     keywords: [],
     properties: {
         effects: [

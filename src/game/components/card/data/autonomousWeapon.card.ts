@@ -12,7 +12,7 @@ export const AutonomousWeaponCardUpgraded: Card = {
     cardType: CardTypeEnum.Attack,
     pool: 'knight',
     energy: 3,
-    description: `Deal {${damageEffect.name}} + {${resolveStatus.name}} damage. This card shuffles back into your draw pile.`,
+    description: `Deal {${40}} + {${resolveStatus.name}} damage. This card shuffles back into your draw pile.`,
     keywords: [],
     properties: {
         effects: [
@@ -45,7 +45,7 @@ export const AutonomousWeaponCard: Card = {
     cardType: CardTypeEnum.Attack,
     pool: 'knight',
     energy: 3,
-    description: `Deal {${damageEffect.name}} + {${resolveStatus.name}} damage. This card shuffles back into your draw pile.`,
+    description: `Deal {${30}} + {${resolveStatus.name}} damage. This card shuffles back into your draw pile.`,
     keywords: [],
     properties: {
         effects: [

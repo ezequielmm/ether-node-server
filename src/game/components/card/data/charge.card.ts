@@ -10,7 +10,7 @@ export const ChargeCardUpgraded: Card = {
     cardType: CardTypeEnum.Attack,
     pool: 'knight',
     energy: 1,
-    description: `Deal {${damageEffect.name}} + {${resolveStatus.name}} damage to all enemies.`,
+    description: `Deal {${9}} + {${resolveStatus.name}} damage to all enemies.`,
     keywords: [],
     properties: {
         effects: [
@@ -36,7 +36,7 @@ export const ChargeCard: Card = {
     cardType: CardTypeEnum.Attack,
     pool: 'knight',
     energy: 1,
-    description: `Deal {${damageEffect.name}} + {${resolveStatus.name}} damage to all enemies.`,
+    description: `Deal {${6}} + {${resolveStatus.name}} damage to all enemies.`,
     keywords: [],
     properties: {
         effects: [

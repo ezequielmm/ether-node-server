@@ -10,7 +10,7 @@ export const RoundHouseCardUpgraded: Card = {
     cardType: CardTypeEnum.Attack,
     pool: 'knight',
     energy: 2,
-    description: `Deal {${damageEffect.name}} + {${resolveStatus.name}} damage twice.`,
+    description: `Deal {${10}} + {${resolveStatus.name}} damage twice.`,
     keywords: [],
     properties: {
         effects: [
@@ -37,7 +37,7 @@ export const RoundHouseCard: Card = {
     cardType: CardTypeEnum.Attack,
     pool: 'knight',
     energy: 2,
-    description: `Deal {${damageEffect.name}} + {${resolveStatus.name}} damage twice.`,
+    description: `Deal {${7}} + {${resolveStatus.name}} damage twice.`,
     keywords: [],
     properties: {
         effects: [

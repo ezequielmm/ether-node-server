@@ -15,7 +15,7 @@ export const LastResortCardUpgraded: Card = {
     cardType: CardTypeEnum.Attack,
     pool: 'knight',
     energy: CardEnergyEnum.All,
-    description: `Deal X damage to yourself and X times {${damageEffect.name}} + {${resolveStatus.name}} damage to all enemies`,
+    description: `Deal X damage to yourself and X times {${12}} + {${resolveStatus.name}} damage to all enemies`,
     keywords: [],
     properties: {
         effects: [
@@ -50,7 +50,7 @@ export const LastResortCard: Card = {
     cardType: CardTypeEnum.Attack,
     pool: 'knight',
     energy: CardEnergyEnum.All,
-    description: `Deal X damage to yourself and X times {${damageEffect.name}} + {${resolveStatus.name}} damage to an enemy`,
+    description: `Deal X damage to yourself and X times {${12}} + {${resolveStatus.name}} damage to an enemy`,
     keywords: [],
     properties: {
         effects: [
