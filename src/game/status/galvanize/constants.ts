@@ -1,4 +1,4 @@
-import { EVENT_AFTER_CARD_PLAY } from 'src/game/constants';
+import { EVENT_AFTER_CARD_PLAY, EVENT_AFTER_DAMAGE_EFFECT } from 'src/game/constants';
 import {
     StatusCounterType,
     StatusEvent,
@@ -11,5 +11,5 @@ export const galvanize: StatusEvent = {
     type: StatusType.Buff,
     counterType: StatusCounterType.Counter,
     trigger: StatusTrigger.Event,
-    event: EVENT_AFTER_CARD_PLAY,
+    event: EVENT_AFTER_DAMAGE_EFFECT,
 };
