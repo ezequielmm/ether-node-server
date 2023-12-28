@@ -36,7 +36,7 @@ export const AttackCard: Card = {
     cardType: CardTypeEnum.Attack,
     pool: 'knight',
     energy: 1,
-    description: `Deal {${5}} + {${resolveStatus.name}} Damage`,
+    description: `Deal {${6}} + {${resolveStatus.name}} Damage`,
     keywords: [],
     properties: {
         effects: [
