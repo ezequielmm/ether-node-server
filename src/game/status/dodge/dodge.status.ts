@@ -5,6 +5,7 @@ import { StatusEffectDTO, StatusEffectHandler } from '../interfaces';
 import { StatusDecorator } from '../status.decorator';
 import { dodge } from './constants';
 import { CardTargetedEnum } from 'src/game/components/card/card.enum';
+import { DamageEnemyArgs } from 'src/game/effects/damage/damageenemy.effect';
 
 @StatusDecorator({
     status: dodge,
@@ -38,7 +39,7 @@ export class DodgeStatus implements StatusEffectHandler {
         return dto.effectDTO;
     }
 
-    private cancelDamage(dto: EffectDTO<DamageArgs>): EffectDTO<DamageArgs> {
+    private cancelDamage(dto: EffectDTO<DamageEnemyArgs>): EffectDTO<DamageEnemyArgs> {
         dto.args.currentValue = 0;
         return dto;
     }
