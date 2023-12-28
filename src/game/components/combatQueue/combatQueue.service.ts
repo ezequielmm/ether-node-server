@@ -54,9 +54,7 @@ export class CombatQueueService {
 
     async push(dto: PushActionDTO): Promise<void> {
         const { ctx, source, target, args, action } = dto;
-        console.log('---------TARGET-----------')
-        console.log(target)
-        console.log('---------END TARGET-----------')
+        
         await this.combatQueue.findOneAndUpdate(
             {
                 clientId: ctx.client.id,
@@ -82,13 +80,10 @@ export class CombatQueueService {
 
     async end(ctx: GameContext): Promise<void> {
         const { client } = ctx;
-        console.log('CLIENT ------------> ', client.id)
         const combatQueues = await this.combatQueue.findOne({
             clientId: client.id,
         });
 
-        console.log('entre a end ------------------------')
-        console.log('combat queues', combatQueues)
         if (!combatQueues) return;
 
         const data = combatQueues.queue.map(
@@ -96,9 +91,6 @@ export class CombatQueueService {
                 return { originType, originId, targets, action };        
             },
         );
-        console.log('---------DATA-----------')
-        console.log(data);
-        console.log('---------END DATA-----------')
         // Avoid sending empty combat queue to client
         if (isEmpty(data)) return;
 

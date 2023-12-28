@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { EffectService } from '../../effects/effects.service';
 import { StatusEventDTO, StatusEventHandler } from '../interfaces';
 import { StatusDecorator } from '../status.decorator';
 import { galvanize } from './constants';
@@ -10,8 +9,8 @@ import { PlayerService } from 'src/game/components/player/player.service';
 import { StatusService } from '../status.service';
 import { CombatQueueService } from 'src/game/components/combatQueue/combatQueue.service';
 import { CombatQueueTargetEffectTypeEnum } from 'src/game/components/combatQueue/combatQueue.enum';
-import { CardTargetedEnum, CardTypeEnum } from 'src/game/components/card/card.enum';
-import { defenseEffect } from 'src/game/effects/defense/constants';
+import { CardTargetedEnum } from 'src/game/components/card/card.enum';
+
 @StatusDecorator({
     status: galvanize,
 })
@@ -21,7 +20,6 @@ export class GalvanizeStatus implements StatusEventHandler {
         private readonly playerService: PlayerService,
         private readonly statusService: StatusService,
         private readonly combatQueueService: CombatQueueService,
-        private readonly effectService: EffectService
     ){}
 
     async handle(dto: StatusEventDTO): Promise<void> {
