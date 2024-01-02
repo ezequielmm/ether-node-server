@@ -21,7 +21,7 @@ export class DodgeStatus implements StatusEffectHandler {
     async handle(dto: StatusEffectDTO<DamageArgs>): Promise<EffectDTO<DamageArgs>> {
         const args = dto.status.args;
 
-
+        console.log('entrando al dodge');
         if(dto.effectDTO.source.type == CardTargetedEnum.Enemy){
             args.counter--;
         }else if(dto.effectDTO.source.type == CardTargetedEnum.Player){
