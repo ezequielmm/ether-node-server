@@ -22,12 +22,13 @@ export class DodgeStatus implements StatusEffectHandler {
         const args = dto.status.args;
 
         console.log('entrando al dodge');
+        console.log('damage ', args.currentValue, 'counter ', args.counter);
         if(dto.effectDTO.source.type == CardTargetedEnum.Enemy){
             args.counter--;
         }else if(dto.effectDTO.source.type == CardTargetedEnum.Player){
             args.counter--;
         }
-        
+        console.log('counter post if', args.counter);
         this.cancelDamage(dto.effectDTO);
 
         if (args.counter <= 0) {
@@ -40,6 +41,7 @@ export class DodgeStatus implements StatusEffectHandler {
     }
 
     private cancelDamage(dto: EffectDTO<DamageEnemyArgs>): EffectDTO<DamageEnemyArgs> {
+        console.log('damage que va a valer 0',dto.args.currentValue);
         dto.args.currentValue = 0;
         return dto;
     }
