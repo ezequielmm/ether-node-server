@@ -30,7 +30,10 @@ export class ChooseCardEffect implements EffectHandler {
             ctx: { client, expedition },
             args: { originPile, currentValue: cardsToTake },
         } = payload;
-
+        console.log("PAYLOAD chooseCard effect ----------------------------------");
+        console.log(payload);
+        console.log("FIN ------------ PAYLOAD chooseCard effect ----------------------------------");
+        console.log('carde to take', cardsToTake);
         // Here we query the desired deck based on the card played
         const {
             currentNode: {
