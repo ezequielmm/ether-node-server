@@ -18,7 +18,7 @@ export class DodgeStatus implements StatusEffectHandler {
         return this.cancelDamage(args.effectDTO);
     }
 
-    async handle(dto: StatusEffectDTO<DamageArgs>): Promise<EffectDTO<DamageArgs>> {
+    async handle(dto: StatusEffectDTO<DamageEnemyArgs>): Promise<EffectDTO<DamageArgs>> {
         const args = dto.status.args;
 
         if(dto.effectDTO.source.type == CardTargetedEnum.Enemy){
@@ -44,7 +44,7 @@ export class DodgeStatus implements StatusEffectHandler {
         return dto;
     }
 
-    private cancelDamagePalyerCaused(dto: EffectDTO<DamageArgs>): EffectDTO<DamageArgs> {
+    private cancelDamagePalyerCaused(dto: EffectDTO<DamageEnemyArgs>): EffectDTO<DamageArgs> {
         dto.args.currentValue = 0;
         return dto;
     }
