@@ -13,12 +13,12 @@ import { DamageEnemyArgs } from 'src/game/effects/damage/damageenemy.effect';
 @Injectable()
 export class DodgeStatus implements StatusEffectHandler {
     async preview(
-        args: StatusEffectDTO<DamageEnemyArgs>,
-    ): Promise<EffectDTO<DamageEnemyArgs>> {
+        args: StatusEffectDTO<DamageArgs>,
+    ): Promise<EffectDTO<DamageArgs>> {
         return this.cancelDamage(args.effectDTO);
     }
 
-    async handle(dto: StatusEffectDTO<DamageEnemyArgs>): Promise<EffectDTO<DamageEnemyArgs>> {
+    async handle(dto: StatusEffectDTO<DamageArgs>): Promise<EffectDTO<DamageArgs>> {
         const args = dto.status.args;
 
         if(dto.effectDTO.source.type == CardTargetedEnum.Enemy){
@@ -44,7 +44,7 @@ export class DodgeStatus implements StatusEffectHandler {
         return dto;
     }
 
-    private cancelDamagePalyerCaused(dto: EffectDTO<DamageEnemyArgs>): EffectDTO<DamageEnemyArgs> {
+    private cancelDamagePalyerCaused(dto: EffectDTO<DamageArgs>): EffectDTO<DamageArgs> {
         dto.args.currentValue = 0;
         return dto;
     }
