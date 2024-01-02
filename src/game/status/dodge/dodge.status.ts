@@ -21,15 +21,14 @@ export class DodgeStatus implements StatusEffectHandler {
     async handle(dto: StatusEffectDTO<DamageArgs>): Promise<EffectDTO<DamageArgs>> {
         const args = dto.status.args;
 
-        console.log('entrando al dodge');
-        console.log('damage ', args.currentValue, 'counter ', args.counter);
         if(dto.effectDTO.source.type == CardTargetedEnum.Enemy){
             args.counter--;
+            this.cancelDamage(dto.effectDTO);
+
         }else if(dto.effectDTO.source.type == CardTargetedEnum.Player){
             args.counter--;
+            this.cancelDamagePalyerCaused(dto.effectDTO);
         }
-        console.log('counter post if', args.counter);
-        this.cancelDamage(dto.effectDTO);
 
         if (args.counter <= 0) {
             dto.remove();
@@ -39,9 +38,13 @@ export class DodgeStatus implements StatusEffectHandler {
 
         return dto.effectDTO;
     }
-
+    
     private cancelDamage(dto: EffectDTO<DamageEnemyArgs>): EffectDTO<DamageEnemyArgs> {
-        console.log('damage que va a valer 0',dto.args.currentValue);
+        dto.args.currentValue = 0;
+        return dto;
+    }
+
+    private cancelDamagePalyerCaused(dto: EffectDTO<DamageArgs>): EffectDTO<DamageArgs> {
         dto.args.currentValue = 0;
         return dto;
     }
