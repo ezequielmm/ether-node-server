@@ -30,7 +30,7 @@ export class DodgeStatus implements StatusEffectHandler {
         
         this.cancelDamage(dto.effectDTO);
 
-        if (args.counter == 0) {
+        if (args.counter <= 0) {
             dto.remove();
         } else {
             dto.update(args);
