@@ -21,6 +21,7 @@ export class DodgeStatus {
             args.counter--;
         }else if(dto.effectDTO.source.type == CardTargetedEnum.Player){
             args.counter--;
+            console.log('ENTRA')
         }
         
         this.cancelDamage(dto.effectDTO);
