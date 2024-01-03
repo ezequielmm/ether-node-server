@@ -13,7 +13,7 @@ import { DamageEnemyArgs } from 'src/game/effects/damage/damageenemy.effect';
 @Injectable()
 export class DodgeStatus {
 
-    async handle(dto: StatusEffectDTO<DamageArgs>): Promise<EffectDTO<DamageArgs>> {
+    async handle(dto: StatusEffectDTO<DamageEnemyArgs>): Promise<EffectDTO<DamageEnemyArgs>> {
         const args = dto.status.args;
 
 
@@ -34,7 +34,7 @@ export class DodgeStatus {
         return dto.effectDTO;
     }
 
-    private cancelDamage(dto: EffectDTO<DamageArgs>): EffectDTO<DamageArgs> {
+    private cancelDamage(dto: EffectDTO<DamageEnemyArgs>): EffectDTO<DamageEnemyArgs> {
 
         if(dto.args.useEnergyAsValue){
             dto.ctx.expedition.currentNode.data.player.energy = 0;
