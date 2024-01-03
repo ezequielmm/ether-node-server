@@ -19,8 +19,10 @@ export class ResolveStatus implements StatusEffectHandler {
         
         const effectDTO = dto.effectDTO;
 
-        effectDTO.args.currentValue =
-            effectDTO.args.currentValue + dto.status.args.counter;
+        effectDTO.args.currentValue = Math.max(
+            effectDTO.args.currentValue + dto.status.args.counter,
+            0,
+        );
 
         return effectDTO;
     }
