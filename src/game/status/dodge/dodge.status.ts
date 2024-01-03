@@ -27,10 +27,9 @@ export class DodgeStatus {
 
         if (args.counter <= 0) {
             dto.remove();
+        } else {
+            dto.update(args);
         }
-        // } else {
-        //     dto.update(args);
-        // }
 
         return dto.effectDTO;
     }
