@@ -39,7 +39,7 @@ export class DodgeStatus implements StatusEffectHandler {
         return dto.effectDTO;
     }
 
-    private cancelDamage(dto: EffectDTO<DamageEnemyArgs>): EffectDTO<DamageEnemyArgs> {
+    private cancelDamage(dto: EffectDTO<DamageArgs>): EffectDTO<DamageArgs> {
         dto.args.currentValue = 0;
         return dto;
     }
