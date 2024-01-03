@@ -13,9 +13,9 @@ export const PoisonedCard: Card = {
     rarity: CardRarityEnum.Special,
     cardType: CardTypeEnum.Status,
     pool: 'knight',
-    energy: 0,
+    energy: 1,
     description: `Take 4 damage if in hand at end of turn. \nExhaust`,
-    keywords: [CardKeywordEnum.Exhaust, CardKeywordEnum.Fade, CardKeywordEnum.Unplayable],
+    keywords: [CardKeywordEnum.Exhaust],
     properties: {
         effects: [
             {
