@@ -21,7 +21,6 @@ export class DodgeStatus {
             args.counter--;
         }else if(dto.effectDTO.source.type == CardTargetedEnum.Player){
             args.counter--;
-            console.log('ENTRA')
         }
         
         this.cancelDamage(dto.effectDTO);
@@ -36,6 +35,8 @@ export class DodgeStatus {
     }
 
     private cancelDamage(dto: EffectDTO<DamageArgs>): EffectDTO<DamageArgs> {
+        console.log('DTO.ARGS', dto.args);
+        console.log( 'SUPUESTO DAMAGE', dto.args.currentValue );
         dto.args.currentValue = 0;
         return dto;
     }
