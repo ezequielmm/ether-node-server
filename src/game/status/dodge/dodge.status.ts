@@ -35,8 +35,6 @@ export class DodgeStatus {
     }
 
     private cancelDamage(dto: EffectDTO<DamageArgs>): EffectDTO<DamageArgs> {
-        console.log('DTO.ARGS', dto.args);
-        console.log( 'SUPUESTO DAMAGE', dto.args.currentValue );
 
         if(dto.args.useEnergyAsValue){
             dto.ctx.expedition.currentNode.data.player.energy = 0;

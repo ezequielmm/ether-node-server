@@ -237,7 +237,7 @@ export class CardPlayedAction {
                 emit: false,
             });;
         }
-        if (card.cardId == 507 || card.cardId == 554) {
+        if (card.cardId == 554) {
             await this.discardCardAction.handleDontDiscard({
                 client: ctx.client,
                 cardId,

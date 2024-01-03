@@ -269,21 +269,26 @@ export class CardService {
         for (const card of hand) {
             forceExhaust = false;
 
-            if (card.keywords.includes(CardKeywordEnum.Fade) || card.keywords.includes(CardKeywordEnum.Exhaust)) {
+            /*if (card.keywords.includes(CardKeywordEnum.Fade) || card.keywords.includes(CardKeywordEnum.Exhaust)) {
                 forceExhaust = true;
-            }
+            }*/
 
             //just for poisoned card
             if (card.cardId == 507) {
 
-                card.keywords = card.keywords.filter(item => item !== "unplayable");
-                
+                const effects = card.properties.effects;
+                for(const effect of effects){
+                    await this.playerService.damage(ctx, effect.args.value);
+                }
+
+                /*
+                card.keywords = card.keywords.filter(item => item !== "unplayable");               
                 await this.cardPlayedAction.handle({
                     ctx,
                     cardId: card.id,
                     selectedEnemyId: undefined,
                     forceExhaust,
-                });
+                });*/
             } 
 
             if (forceExhaust) {
