@@ -13,6 +13,10 @@ import { DamageEnemyArgs } from 'src/game/effects/damage/damageenemy.effect';
 @Injectable()
 export class DodgeStatus {
 
+    preview(args: StatusEffectDTO): Promise<EffectDTO> {
+        return this.handle(args);
+    }
+
     async handle(dto: StatusEffectDTO<DamageEnemyArgs>): Promise<EffectDTO<DamageEnemyArgs>> {
         const args = dto.status.args;
 
