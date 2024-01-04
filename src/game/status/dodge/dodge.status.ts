@@ -38,7 +38,7 @@ export class DodgeStatus implements StatusEffectHandler {
 
         this.cancelDamage(dto.effectDTO);
 
-        await this.esperarDosSegundos();
+        await this.esperarSegundos();
 
         dto.effectDTO.args.currentValue = tempValue;
 
@@ -90,11 +90,11 @@ export class DodgeStatus implements StatusEffectHandler {
         return dto;
     }
 
-    async esperarDosSegundos(): Promise<void> {
+    async esperarSegundos(): Promise<void> {
         return new Promise<void>((resolve) => {
           setTimeout(() => {
             resolve();
-          }, 2000); // 2000 milisegundos = 2 segundos
+          }, 5000); // 2000 milisegundos = 2 segundos
         });
       }
 }
