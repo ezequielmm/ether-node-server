@@ -11,7 +11,7 @@ import { DamageEnemyArgs } from 'src/game/effects/damage/damageenemy.effect';
     status: dodge,
 })
 @Injectable()
-export class DodgeStatus {
+export class DodgeStatus implements StatusEffectHandler {
 
     preview(args: StatusEffectDTO): Promise<EffectDTO> {
         return this.handle(args);
