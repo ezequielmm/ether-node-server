@@ -39,13 +39,26 @@ export class DodgeStatus implements StatusEffectHandler {
         return dto.effectDTO;
     }
 
-    private cancelDamage(dto: EffectDTO<DamageArgs>): EffectDTO<DamageArgs> {
+    private async cancelDamage(dto: EffectDTO<DamageArgs>): Promise<EffectDTO<DamageArgs>> {
 
         if(dto.args.useEnergyAsValue){
             dto.ctx.expedition.currentNode.data.player.energy = 0;
         }else{
+            const tempValue = dto.args.currentValue;
             dto.args.currentValue = 0;
+
+            await this.esperarSegundos();
+
+            dto.args.currentValue = tempValue;
         }
         return dto;
     }
+
+    async esperarSegundos(): Promise<void> {
+        return new Promise<void>((resolve) => {
+          setTimeout(() => {
+            resolve();
+          }, 5000); 
+        });
+      }
 }
