@@ -51,8 +51,17 @@ export class DodgeStatus implements StatusEffectHandler {
             // const originalHP = dto.ctx.expedition.currentNode.data.player.hpCurrent;
             // console.log("::::::::::::CURRENT HP:::::::::::::::")
             // console.log(originalHP);
-            if(dto.ctx.expedition.currentNode.data.enemies.every(x => x.currentScript.intentions.find(a => a.type == "attack")))
-                dto.ctx.expedition.currentNode.data.enemies.every(x => x.currentScript.intentions.every(a => a.value == 0));
+            if(dto.ctx.expedition.currentNode.data.enemies.every(x => x.currentScript.intentions.find(a => a.type == "attack"))){
+            dto.ctx.expedition.currentNode.data.enemies.forEach(enemy => {
+                enemy.currentScript.intentions.forEach(intent => {
+                  if (intent.value != 0) {
+                    // Aquí puedes establecer el valor deseado para las intenciones con valor 0
+                    // Por ejemplo, estableciendo intent.value en otro valor
+                    intent.value = 0; // Cambiando el valor a 10
+                  }
+                });
+              });
+            }
             // dto.args.currentValue = dto.ctx.expedition.currentNode.data.player.hpCurrent + originalAttack;
 
         }
