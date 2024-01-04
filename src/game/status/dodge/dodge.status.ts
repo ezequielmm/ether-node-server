@@ -12,9 +12,10 @@ import { DamageEnemyArgs } from 'src/game/effects/damage/damageenemy.effect';
 })
 @Injectable()
 export class DodgeStatus implements StatusEffectHandler {
-
-    preview(args: StatusEffectDTO): Promise<EffectDTO> {
-        return this.handle(args);
+    async preview(
+        args: StatusEffectDTO<DamageArgs>,
+    ): Promise<EffectDTO<DamageArgs>> {
+        return this.cancelDamage(args.effectDTO);
     }
 
     async handle(dto: StatusEffectDTO<DamageArgs>): Promise<EffectDTO<DamageArgs>> {
@@ -43,10 +44,9 @@ export class DodgeStatus implements StatusEffectHandler {
         if(dto.args.useEnergyAsValue){
             dto.ctx.expedition.currentNode.data.player.energy = 0;
         }else{
+            const normalValue = dto.args.initialValue;
             dto.args.currentValue = 0;
-            // if (typeof dto.args.type === DodgeStatus.name || dto.args.type.length == 0) {
-            //     dto.args.currentValue = 0;
-            // }
+            dto.args.currentValue = normalValue;
         }
         return dto;
     }
