@@ -34,18 +34,18 @@ export class AutonomousWeaponEffect implements EffectHandler {
 
         // Add the card to the draw pile
         draw.push(card.card);
-        // Remove the card from the discard pile
-        ctx.expedition.currentNode.data.player.cards.discard =
-            removeCardsFromPile({
-                originalPile: discard,
-                cardsToRemove: [card.card],
-            });
+        // // Remove the card from the discard pile
+        // ctx.expedition.currentNode.data.player.cards.discard =
+        //     removeCardsFromPile({
+        //         originalPile: discard,
+        //         cardsToRemove: [card.card],
+        //     });
 
-        // Update the expedition
-        await this.expeditionService.updateHandPiles({
-            clientId: ctx.client.id,
-            draw,
-            discard,
-        });
+        // // Update the expedition
+        // await this.expeditionService.updateHandPiles({
+        //     clientId: ctx.client.id,
+        //     draw,
+        //     discard,
+        // });
     }
 }
