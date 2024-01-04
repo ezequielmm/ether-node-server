@@ -150,7 +150,6 @@ export class DiscardCardAction {
             
             return card[field] !== cardId;
         });
-
         logger.info(
             `Sent message PutData to client ${client.id}: ${SWARAction.MoveCard}`,
         );
@@ -163,7 +162,7 @@ export class DiscardCardAction {
             cardToDiscard.oldEnergy > 0
                 ? cardToDiscard.oldEnergy
                 : cardToDiscard.energy;
-        // dont discard anything
+        
         discard.push();
         
         await this.expeditionService.updateHandPiles({
