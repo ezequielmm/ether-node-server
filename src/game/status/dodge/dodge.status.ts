@@ -60,6 +60,8 @@ export class DodgeStatus implements StatusEffectHandler {
                     console.log("::::::::::INTENT ATTACK VALUE::::::::::");
                     console.log(intent.value);
                     intent.value = 0; // Cambiando el valor a 10
+                    console.log("::::::::::INTENT ATTACK VALUE 2::::::::::");
+                    console.log(intent.value);
                   }
                 });
               });
