@@ -44,14 +44,16 @@ export class DodgeStatus implements StatusEffectHandler {
         if(dto.args.useEnergyAsValue){
             dto.ctx.expedition.currentNode.data.player.energy = 0;
         }else{
-            const tempValue = dto.args.currentValue;
+            if(dto.source.type == CardTargetedEnum.Player){
+            // const tempValue = dto.args.currentValue;
             dto.args.currentValue = 0;
 
-            await this.esperarSegundos();
+            // await this.esperarSegundos();
 
-            dto.args.currentValue = tempValue;
-            console.log("::CURRENT VALUE ACTUAL:::")
-            console.log(dto.args.currentValue);
+            // dto.args.currentValue = tempValue;
+            // console.log("::CURRENT VALUE ACTUAL:::")
+            // console.log(dto.args.currentValue);
+            }
         }
         return dto;
     }
