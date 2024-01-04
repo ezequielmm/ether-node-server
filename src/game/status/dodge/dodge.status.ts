@@ -6,12 +6,15 @@ import { StatusDecorator } from '../status.decorator';
 import { dodge } from './constants';
 import { CardTargetedEnum } from 'src/game/components/card/card.enum';
 import { DamageEnemyArgs } from 'src/game/effects/damage/damageenemy.effect';
+import { PlayerService } from 'src/game/components/player/player.service';
 
 @StatusDecorator({
     status: dodge,
 })
 @Injectable()
 export class DodgeStatus implements StatusEffectHandler {
+    private readonly playerService: PlayerService
+
     async preview(
         args: StatusEffectDTO<DamageArgs>,
     ): Promise<EffectDTO<DamageArgs>> {
@@ -44,7 +47,11 @@ export class DodgeStatus implements StatusEffectHandler {
         if(dto.args.useEnergyAsValue){
             dto.ctx.expedition.currentNode.data.player.energy = 0;
         }else{
-            dto.args.currentValue = 0;
+            // dto.args.currentValue = 0;
+            const originalAttack  = dto.args.currentValue;
+
+            dto.args.currentValue = dto.ctx.expedition.currentNode.data.player.hpCurrent + originalAttack;
+
         }
         return dto;
     }
