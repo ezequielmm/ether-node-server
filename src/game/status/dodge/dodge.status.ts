@@ -44,9 +44,7 @@ export class DodgeStatus implements StatusEffectHandler {
         if(dto.args.useEnergyAsValue){
             dto.ctx.expedition.currentNode.data.player.energy = 0;
         }else{
-            const normalValue = dto.args.initialValue;
             dto.args.currentValue = 0;
-            dto.args.currentValue = normalValue;
         }
         return dto;
     }
