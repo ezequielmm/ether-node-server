@@ -41,11 +41,11 @@ export class AutonomousWeaponEffect implements EffectHandler {
         //         cardsToRemove: [card.card],
         //     });
 
-        // // Update the expedition
-        // await this.expeditionService.updateHandPiles({
-        //     clientId: ctx.client.id,
-        //     draw,
-        //     discard,
-        // });
+        // Update the expedition
+        await this.expeditionService.updateHandPiles({
+            clientId: ctx.client.id,
+            draw,
+            discard,
+        });
     }
 }
