@@ -15,7 +15,7 @@ export class DodgeStatus implements StatusEffectHandler {
     async preview(
         args: StatusEffectDTO<DamageArgs>,
     ): Promise<EffectDTO<DamageArgs>> {
-        return this.cancelDamage(args.effectDTO);
+        return this.handle(args);
     }
 
     async handle(dto: StatusEffectDTO<DamageArgs>): Promise<EffectDTO<DamageArgs>> {
