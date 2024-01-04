@@ -268,12 +268,13 @@ export class CardService {
         let forceExhaust = false;
         const exhaustCardIds = [];
         const hand = ctx.expedition.currentNode.data.player.cards.hand;
-        const player = this.playerService.get(ctx);
+        //const player = this.playerService.get(ctx);
         for (const card of hand) {
             //just for poisoned card
             if (card.cardId == 507) {
                 await this.playerService.damage(ctx, 4);
 
+                /*
                 await this.combatQueueService.push({
                     ctx,
                     source: player,
@@ -283,7 +284,7 @@ export class CardService {
                         statuses: [],
                     },
                     action: null,
-                });
+                });*/
             } 
         }
 
