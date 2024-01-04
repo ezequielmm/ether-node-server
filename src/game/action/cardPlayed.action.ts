@@ -229,6 +229,13 @@ export class CardPlayedAction {
                 emit: false,
             });
             // Dont discard autonomous weapons
+        } if (card.cardId == 145 || card.cardId == 146) {
+            await this.discardCardAction.handleDontDiscard({
+                client: ctx.client,
+                cardId,
+                ctx,
+                emit: false,
+            });;
         }
         if (card.cardId == 554) {
             await this.discardCardAction.handleDontDiscard({
