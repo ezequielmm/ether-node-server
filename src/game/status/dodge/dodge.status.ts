@@ -60,7 +60,7 @@ export class DodgeStatus implements StatusEffectHandler {
         return new Promise<void>((resolve) => {
           setTimeout(() => {
             resolve();
-          }, 7500); 
+          }, 7000); 
         });
       }
 }
