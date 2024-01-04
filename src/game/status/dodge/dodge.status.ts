@@ -48,11 +48,11 @@ export class DodgeStatus implements StatusEffectHandler {
             dto.ctx.expedition.currentNode.data.player.energy = 0;
         }else{
             // dto.args.currentValue = 0;
-            const originalHP = dto.ctx.expedition.currentNode.data.player.hpCurrent;
-            console.log("::::::::::::CURRENT HP:::::::::::::::")
-            console.log(originalHP);
-            
-            dto.ctx.expedition.currentNode.data.player.hpCurrent = originalHP;
+            // const originalHP = dto.ctx.expedition.currentNode.data.player.hpCurrent;
+            // console.log("::::::::::::CURRENT HP:::::::::::::::")
+            // console.log(originalHP);
+
+            dto.ctx.expedition.currentNode.data.enemies.every(x => x.currentScript.intentions.every(a => a.value == 0));
             // dto.args.currentValue = dto.ctx.expedition.currentNode.data.player.hpCurrent + originalAttack;
 
         }
