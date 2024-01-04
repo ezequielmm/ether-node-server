@@ -276,10 +276,10 @@ export class CardService {
             //just for poisoned card
             if (card.cardId == 507) {
 
-                const effects = card.properties.effects;
-                for(const effect of effects){
-                    await this.playerService.damage(ctx, effect.args.value);
-                }
+                //const effects = card.properties.effects;
+                //for(const effect of effects){
+                    await this.playerService.damage(ctx, 4);
+                //}
 
                 /*
                 card.keywords = card.keywords.filter(item => item !== "unplayable");               
