@@ -50,6 +50,8 @@ export class DodgeStatus implements StatusEffectHandler {
             await this.esperarSegundos();
 
             dto.args.currentValue = tempValue;
+            console.log("::CURRENT VALUE ACTUAL:::")
+            console.log(dto.args.currentValue);
         }
         return dto;
     }
