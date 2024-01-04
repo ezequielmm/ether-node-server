@@ -57,6 +57,8 @@ export class DodgeStatus implements StatusEffectHandler {
                   if (intent.value != 0) {
                     // Aquí puedes establecer el valor deseado para las intenciones con valor 0
                     // Por ejemplo, estableciendo intent.value en otro valor
+                    console.log("::::::::::INTENT ATTACK VALUE::::::::::");
+                    console.log(intent.value);
                     intent.value = 0; // Cambiando el valor a 10
                   }
                 });
