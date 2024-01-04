@@ -14,7 +14,7 @@ import { DamageEnemyArgs } from 'src/game/effects/damage/damageenemy.effect';
 export class DodgeStatus implements StatusEffectHandler {
 
     preview(args: StatusEffectDTO): Promise<EffectDTO> {
-        return null;
+        return this.handle(args);
     }
 
     async handle(dto: StatusEffectDTO<DamageEnemyArgs>): Promise<EffectDTO<DamageEnemyArgs>> {
