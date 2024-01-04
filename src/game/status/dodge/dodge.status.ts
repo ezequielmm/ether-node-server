@@ -14,7 +14,7 @@ import { damageEffect } from 'src/game/effects/damage/constants';
 })
 @Injectable()
 export class DodgeStatus implements StatusEffectHandler {
-    private readonly playerService: PlayerService
+    // private readonly playerService: PlayerService
 
     async preview(
         args: StatusEffectDTO<DamageArgs>,
@@ -38,7 +38,7 @@ export class DodgeStatus implements StatusEffectHandler {
 
         this.cancelDamage(dto.effectDTO);
 
-        await this.esperarSegundos();
+        // await this.esperarSegundos();
 
         dto.effectDTO.args.currentValue = tempValue;
 
