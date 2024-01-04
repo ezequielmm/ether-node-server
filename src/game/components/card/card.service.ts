@@ -43,6 +43,8 @@ import { MoveCardAction } from 'src/game/action/moveCard.action';
 import { ReturnModelType } from '@typegoose/typegoose';
 import { StatusGenerator } from 'src/game/status/statusGenerator';
 import { EffectGenerator } from 'src/game/effects/EffectGenerator';
+import { CombatQueueTargetEffectTypeEnum } from '../combatQueue/combatQueue.enum';
+import { CombatQueueService } from '../combatQueue/combatQueue.service';
 
 interface IOriginalDescription {
     cardId: number;
@@ -60,6 +62,7 @@ export class CardService {
         private readonly statusService: StatusService,
         private readonly playerService: PlayerService,
         private readonly moveCardAction: MoveCardAction,
+        private readonly combatQueueService: CombatQueueService
     ) {}
 
     getDescriptionFromCard(card: IExpeditionPlayerStateDeckCard): string {
@@ -265,36 +268,23 @@ export class CardService {
         let forceExhaust = false;
         const exhaustCardIds = [];
         const hand = ctx.expedition.currentNode.data.player.cards.hand;
-
+        const player = this.playerService.get(ctx);
         for (const card of hand) {
-            forceExhaust = false;
-
-            /*if (card.keywords.includes(CardKeywordEnum.Fade) || card.keywords.includes(CardKeywordEnum.Exhaust)) {
-                forceExhaust = true;
-            }*/
-
             //just for poisoned card
             if (card.cardId == 507) {
+                await this.playerService.damage(ctx, 4);
 
-                //const effects = card.properties.effects;
-                //for(const effect of effects){
-                    await this.playerService.damage(ctx, 4);
-                //}
-
-                /*
-                card.keywords = card.keywords.filter(item => item !== "unplayable");               
-                await this.cardPlayedAction.handle({
+                await this.combatQueueService.push({
                     ctx,
-                    cardId: card.id,
-                    selectedEnemyId: undefined,
-                    forceExhaust,
-                });*/
+                    source: player,
+                    target: player,
+                    args: {
+                        effectType: CombatQueueTargetEffectTypeEnum.Status,
+                        statuses: [],
+                    },
+                    action: null,
+                });
             } 
-
-            if (forceExhaust) {
-                // fade card wasn't exhausted due to trigger, so add to bulk list
-                exhaustCardIds.push(card.id);
-            }
         }
 
         // if we have a bulk exhaust list, use it now
