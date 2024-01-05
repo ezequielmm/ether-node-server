@@ -6,7 +6,6 @@ import { sacredWordEffect } from 'src/game/effects/sacredWordsEffect/constants';
 import { DodgeStatus } from 'src/game/status/dodge/dodge.status';
 import { resolveStatus } from 'src/game/status/resolve/constants';
 import { dodge } from 'src/game/status/dodge/constants';
-import { fortitude } from 'src/game/status/fortitude/constants';
 
 export const SecretWordsCardUpgraded: Card = {
     cardId: 573,
@@ -15,7 +14,7 @@ export const SecretWordsCardUpgraded: Card = {
     cardType: CardTypeEnum.Skill,
     pool: 'knight',
     energy: 1,
-    description: `Gain {${fortitude.name}} Resolve\nGain {${dodge.name}} dodge\nDraw 2 cards. `,
+    description: `Gain {${resolveStatus.name}} Resolve\nGain {${dodge.name}} dodge\nDraw 2 cards. `,
     keywords: [],
     properties: {
         effects: [
@@ -29,7 +28,7 @@ export const SecretWordsCardUpgraded: Card = {
         ],
         statuses: [
             {
-                name: fortitude.name,
+                name: resolveStatus.name,
                 attachTo: CardTargetedEnum.Player,
                 args: {
                     counter: 2,
@@ -56,7 +55,7 @@ export const SecretWordsCard: Card = {
     cardType: CardTypeEnum.Attack,
     pool: 'knight',
     energy: 1,
-    description: `Gain {${fortitude.name}} Resolve\nGain {${dodge.name}} dodge\nDraw 2 cards. `,
+    description: `Gain {${resolveStatus.name}} Resolve\nGain {${dodge.name}} dodge\nDraw 2 cards. `,
     keywords: [],
     properties: {
         effects: [
@@ -70,7 +69,7 @@ export const SecretWordsCard: Card = {
         ],
         statuses: [
             {
-                name: fortitude.name,
+                name: resolveStatus.name,
                 attachTo: CardTargetedEnum.Player,
                 args: {
                     counter: 1,
