@@ -231,19 +231,19 @@ export class CardPlayedAction {
             // Dont discard autonomous weapons
         }
         if (card.cardId == 145) {
-            await this.discardCardAction.handleDontDiscard({
+            await this.exhaustCardAction.handle({
                 client: ctx.client,
                 cardId,
                 ctx,
-                emit: true,
+                emit: false,
             });
         }
         if (card.cardId == 146) {
-            await this.discardCardAction.handleDontDiscard({
+            await this.exhaustCardAction.handle({
                 client: ctx.client,
                 cardId,
                 ctx,
-                emit: true,
+                emit: false,
             });
         }
         if (card.cardId == 554) {
