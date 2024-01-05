@@ -26,10 +26,8 @@ import { DrawCardAction } from 'src/game/action/drawCard.action';
 @Injectable()
 export class SacredWordEffect implements EffectHandler {
     constructor(
-        private readonly expeditionService: ExpeditionService,
-        private readonly historyService: HistoryService,
-        private readonly enemyService: EnemyService,
         private readonly drawCardAction: DrawCardAction,
+    ) {}
 
         // private readonly eventEmitter: EventEmitter2,
         // @Inject(forwardRef(() => CombatService))
@@ -37,7 +35,6 @@ export class SacredWordEffect implements EffectHandler {
         // @Inject(forwardRef(() => EffectService))
         // private readonly effectService: EffectService,
 
-    ) { }
 
     async handle(payload: EffectDTO): Promise<void> {
         // Here we get the client Socket and the cards from the
