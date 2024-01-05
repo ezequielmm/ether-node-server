@@ -84,7 +84,7 @@ export class CardPlayedAction {
                 return card[field] === cardId;
             });
         }
-        
+
         //- I don't have the card in my hand:
         if (!card) {
             this.sendInvalidCardMessage(ctx.client, logger);
@@ -229,13 +229,22 @@ export class CardPlayedAction {
                 emit: false,
             });
             // Dont discard autonomous weapons
-        } if (card.cardId == 145 || card.cardId == 146) {
+        }
+        if (card.cardId == 145) {
             await this.discardCardAction.handleDontDiscard({
                 client: ctx.client,
                 cardId,
                 ctx,
-                emit: false,
-            });;
+                emit: true,
+            });
+        }
+        if (card.cardId == 146) {
+            await this.discardCardAction.handleDontDiscard({
+                client: ctx.client,
+                cardId,
+                ctx,
+                emit: true,
+            });
         }
         if (card.cardId == 554) {
             await this.discardCardAction.handleDontDiscard({
