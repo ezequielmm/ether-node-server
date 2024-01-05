@@ -28,20 +28,19 @@ export const SecretWordsCardUpgraded: Card = {
         ],
         statuses: [
             {
-                name: dodge.name,
-                attachTo: CardTargetedEnum.Player,
-                args: {
-                    counter: 2,
-                },
-            },
-            {
                 name: resolveStatus.name,
                 attachTo: CardTargetedEnum.Player,
                 args: {
                     counter: 2,
                 },
             },
-
+            {
+                name: dodge.name,
+                attachTo: CardTargetedEnum.Player,
+                args: {
+                    counter: 1,
+                },
+            },
         ],
     },
     showPointer: false,
@@ -70,20 +69,19 @@ export const SecretWordsCard: Card = {
         ],
         statuses: [
             {
-                name: dodge.name,
-                attachTo: CardTargetedEnum.Player,
-                args: {
-                    counter: 1,
-                },
-            },
-            {
                 name: resolveStatus.name,
                 attachTo: CardTargetedEnum.Player,
                 args: {
                     counter: 1,
                 },
             },
-
+            {
+                name: dodge.name,
+                attachTo: CardTargetedEnum.Player,
+                args: {
+                    counter: 1,
+                },
+            },
         ],
     },
     showPointer: false,
