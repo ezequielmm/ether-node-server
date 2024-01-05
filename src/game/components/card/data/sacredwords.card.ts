@@ -13,8 +13,8 @@ export const SecretWordsCardUpgraded: Card = {
     rarity: CardRarityEnum.Common,
     cardType: CardTypeEnum.Skill,
     pool: 'knight',
-    energy: 2,
-    description: `Gain {${resolveStatus.name}} Resolve\nGain {${DodgeStatus.name}} dodge\nDraw 2 cards. `,
+    energy: 1,
+    description: `Gain {${resolveStatus.name}} Resolve\nGain {${dodge.name}} dodge\nDraw 2 cards. `,
     keywords: [],
     properties: {
         effects: [
@@ -38,7 +38,7 @@ export const SecretWordsCardUpgraded: Card = {
                 name: dodge.name,
                 attachTo: CardTargetedEnum.Player,
                 args: {
-                    counter: 2,
+                    counter: 1,
                 },
             },
         ],
@@ -54,8 +54,8 @@ export const SecretWordsCard: Card = {
     rarity: CardRarityEnum.Common,
     cardType: CardTypeEnum.Attack,
     pool: 'knight',
-    energy: 2,
-    description: `Gain {${resolveStatus.name}} Resolve\nGain {${DodgeStatus.name}} dodge\nDraw 2 cards. `,
+    energy: 1,
+    description: `Gain {${resolveStatus.name}} Resolve\nGain {${dodge.name}} dodge\nDraw 2 cards. `,
     keywords: [],
     properties: {
         effects: [
