@@ -21,9 +21,13 @@ export class DodgeStatus implements StatusEffectHandler {
         const args = dto.status.args;
 
 
-
+        if(dto.effectDTO.source.type == CardTargetedEnum.Enemy){
+            args.counter--;
+        }else if(dto.effectDTO.source.type == CardTargetedEnum.Player){
+            args.counter--;
+        }
         
-        this.cancelDamage(dto);
+        this.cancelDamage(dto.effectDTO);
 
         if (args.counter <= 0) {
             dto.remove();
@@ -34,21 +38,14 @@ export class DodgeStatus implements StatusEffectHandler {
         return dto.effectDTO;
     }
 
-    private async cancelDamage(dto: StatusEffectDTO<DamageArgs>): Promise<EffectDTO<DamageArgs>> {
-        const args = dto.status.args;
+    private async cancelDamage(dto: EffectDTO<DamageArgs>): Promise<EffectDTO<DamageArgs>> {
 
-        if(dto.status.args.useEnergyAsValue){
+        if(dto.args.useEnergyAsValue){
             dto.ctx.expedition.currentNode.data.player.energy = 0;
         }else{
-            if(dto.effectDTO.source.type == CardTargetedEnum.Enemy || dto.effectDTO.source.type == CardTargetedEnum.Player){
+            if(dto.source.type == CardTargetedEnum.Enemy || dto.source.type == CardTargetedEnum.Player){
             // const tempValue = dto.args.currentValue;
-            dto.status.args.currentValue = 0;
-
-            if(dto.effectDTO.source.type == CardTargetedEnum.Enemy){
-                args.counter--;
-            }else if(dto.effectDTO.source.type == CardTargetedEnum.Player){
-                args.counter--;
-            }
+            dto.args.currentValue = 0;
 
             // await this.esperarSegundos();
 
@@ -57,7 +54,7 @@ export class DodgeStatus implements StatusEffectHandler {
             // console.log(dto.args.currentValue);
             }
         }
-        return dto.effectDTO;
+        return dto;
     }
 
     async esperarSegundos(): Promise<void> {
