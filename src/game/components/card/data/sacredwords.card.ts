@@ -15,7 +15,7 @@ export const SecretWordsCardUpgraded: Card = {
     cardType: CardTypeEnum.Skill,
     pool: 'knight',
     energy: 1,
-    description: `Gain {${fortitude.name}} Resolve\nGain {${dodge.name}} dodge\nDraw 2 cards. `,
+    description: `Gain {${fortitude.name}} Fortitude\nGain {${dodge.name}} dodge\nDraw 2 cards. `,
     keywords: [],
     properties: {
         effects: [
@@ -56,7 +56,7 @@ export const SecretWordsCard: Card = {
     cardType: CardTypeEnum.Attack,
     pool: 'knight',
     energy: 1,
-    description: `Gain {${fortitude.name}} Resolve\nGain {${dodge.name}} dodge\nDraw 2 cards. `,
+    description: `Gain {${fortitude.name}} Fortitude\nGain {${dodge.name}} dodge\nDraw 2 cards. `,
     keywords: [],
     properties: {
         effects: [
