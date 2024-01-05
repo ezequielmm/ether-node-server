@@ -228,25 +228,25 @@ export class CardPlayedAction {
                 ctx,
                 emit: false,
             });
-            // Dont discard autonomous weapons
         }
-        if (card.cardId == 145) {
-            await this.exhaustCardAction.handle({
+        // Dont discard autonomous weapons
+        else if (card.cardId == 145) {
+            await this.discardCardAction.handleDontDiscard({
                 client: ctx.client,
                 cardId,
                 ctx,
-                emit: false,
+                emit: true,
             });
         }
-        if (card.cardId == 146) {
-            await this.exhaustCardAction.handle({
+        else if (card.cardId == 146) {
+            await this.discardCardAction.handleDontDiscard({
                 client: ctx.client,
                 cardId,
                 ctx,
-                emit: false,
+                emit: true,
             });
         }
-        if (card.cardId == 554) {
+        else if (card.cardId == 554) {
             await this.discardCardAction.handleDontDiscard({
                 client: ctx.client,
                 cardId,
