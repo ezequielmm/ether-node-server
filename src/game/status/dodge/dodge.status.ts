@@ -44,7 +44,7 @@ export class DodgeStatus implements StatusEffectHandler {
             dto.ctx.expedition.currentNode.data.player.energy = 0;
         } else {
             if (dto.source.type == CardTargetedEnum.Enemy || dto.source.type == CardTargetedEnum.Player) {
-                dto.args.currentValue = 0;
+                dto.args.currentValue = null;
             }
         }
        
