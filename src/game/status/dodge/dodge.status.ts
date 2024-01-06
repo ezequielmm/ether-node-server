@@ -40,27 +40,14 @@ export class DodgeStatus implements StatusEffectHandler {
 
     private async cancelDamage(dto: EffectDTO<DamageArgs>): Promise<EffectDTO<DamageArgs>> {
 
-        const defaultvalue = dto.args.currentValue;
-
         if (dto.args.useEnergyAsValue) {
             dto.ctx.expedition.currentNode.data.player.energy = 0;
         } else {
             if (dto.source.type == CardTargetedEnum.Enemy || dto.source.type == CardTargetedEnum.Player) {
-                // const tempValue = dto.args.currentValue;
                 dto.args.currentValue = 0;
-
-                // await this.esperarSegundos();
-
-                // dto.args.currentValue = tempValue;
-                // console.log("::CURRENT VALUE ACTUAL:::")
-                // console.log(dto.args.currentValue);
             }
         }
-
-        await this.esperarSegundos();
-
-        dto.args.currentValue = defaultvalue;        
-
+       
         return dto;
     }
 
