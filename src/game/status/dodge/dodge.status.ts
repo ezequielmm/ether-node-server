@@ -57,6 +57,8 @@ export class DodgeStatus implements StatusEffectHandler {
             }
         }
 
+        await this.esperarSegundos();
+
         if(dto.args.currentValue == 0)
         {
             dto.args.currentValue = defaultvalue;
