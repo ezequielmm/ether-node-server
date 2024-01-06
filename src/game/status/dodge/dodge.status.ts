@@ -59,10 +59,7 @@ export class DodgeStatus implements StatusEffectHandler {
 
         await this.esperarSegundos();
 
-        if(dto.args.currentValue == 0)
-        {
-            dto.args.currentValue = defaultvalue;
-        }
+        dto.args.currentValue = defaultvalue;        
 
         return dto;
     }
@@ -71,7 +68,7 @@ export class DodgeStatus implements StatusEffectHandler {
         return new Promise<void>((resolve) => {
             setTimeout(() => {
                 resolve();
-            }, 3000);
+            }, 1000);
         });
     }
 }
