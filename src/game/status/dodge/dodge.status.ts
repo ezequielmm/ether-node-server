@@ -21,12 +21,12 @@ export class DodgeStatus implements StatusEffectHandler {
         const args = dto.status.args;
 
 
-        if(dto.effectDTO.source.type == CardTargetedEnum.Enemy){
+        if (dto.effectDTO.source.type == CardTargetedEnum.Enemy) {
             args.counter--;
-        }else if(dto.effectDTO.source.type == CardTargetedEnum.Player){
+        } else if (dto.effectDTO.source.type == CardTargetedEnum.Player) {
             args.counter--;
         }
-        
+
         this.cancelDamage(dto.effectDTO);
 
         if (args.counter <= 0) {
@@ -39,29 +39,35 @@ export class DodgeStatus implements StatusEffectHandler {
     }
 
     private async cancelDamage(dto: EffectDTO<DamageArgs>): Promise<EffectDTO<DamageArgs>> {
-
-        if(dto.args.useEnergyAsValue){
+        const defaultValue = dto.args.currentValue;
+        let tempCheck = false;
+        
+        if (dto.args.useEnergyAsValue) {
             dto.ctx.expedition.currentNode.data.player.energy = 0;
-        }else{
-            if(dto.source.type == CardTargetedEnum.Enemy || dto.source.type == CardTargetedEnum.Player){
-            // const tempValue = dto.args.currentValue;
-            dto.args.currentValue = 0;
+        } else {
+            if ((dto.source.type == CardTargetedEnum.Enemy || dto.source.type == CardTargetedEnum.Player) || tempCheck == false) {
+                // const tempValue = dto.args.currentValue;
+                dto.args.currentValue = Math.abs(0);
+                tempCheck = true;
+                // await this.esperarSegundos();
 
-            // await this.esperarSegundos();
-
-            // dto.args.currentValue = tempValue;
-            // console.log("::CURRENT VALUE ACTUAL:::")
-            // console.log(dto.args.currentValue);
+                // dto.args.currentValue = tempValue;
+                // console.log("::CURRENT VALUE ACTUAL:::")
+                // console.log(dto.args.currentValue);
             }
         }
+
+        if(tempCheck == true)
+            dto.args.currentValue = defaultValue;
+        
         return dto;
     }
 
     async esperarSegundos(): Promise<void> {
         return new Promise<void>((resolve) => {
-          setTimeout(() => {
-            resolve();
-          }, 3000); 
+            setTimeout(() => {
+                resolve();
+            }, 3000);
         });
-      }
+    }
 }
