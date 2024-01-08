@@ -27,21 +27,33 @@ export class DodgeStatus implements StatusEffectHandler {
         if (dto.effectDTO.source.type == CardTargetedEnum.Enemy )
         {
             args.counter--;
+
+            this.cancelDamage(dto.effectDTO);
+
+            if (args.counter <= 0) {
+                dto.remove();
+            } else {
+                dto.update(args);
+            }
+    
+            return dto.effectDTO;
         } else if (dto.effectDTO.source.type == CardTargetedEnum.Player && dto.effectDTO.ctx.expedition.currentNode.data.player.statuses.buff.find(x => x.name == forceField.name)) {
             return;
         } else if (dto.effectDTO.source.type == CardTargetedEnum.Player) {
             args.counter--;
+
+            this.cancelDamage(dto.effectDTO);
+
+            if (args.counter <= 0) {
+                dto.remove();
+            } else {
+                dto.update(args);
+            }
+    
+            return dto.effectDTO;
         }
 
-        this.cancelDamage(dto.effectDTO);
 
-        if (args.counter <= 0) {
-            dto.remove();
-        } else {
-            dto.update(args);
-        }
-
-        return dto.effectDTO;
     }
 
     private async cancelDamage(dto: EffectDTO<DamageArgs>): Promise<EffectDTO<DamageArgs>> {
