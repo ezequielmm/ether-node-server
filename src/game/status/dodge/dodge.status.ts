@@ -21,6 +21,8 @@ export class DodgeStatus implements StatusEffectHandler {
     async handle(dto: StatusEffectDTO<DamageArgs>): Promise<EffectDTO<DamageArgs>> {
         const args = dto.status.args;
 
+        console.log(":::::BUFF::::")
+        console.log(dto.ctx.client.data.currentNode.data.player.statuses.buff)
         
         if (dto.effectDTO.source.type == CardTargetedEnum.Enemy )
         {
