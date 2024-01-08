@@ -22,7 +22,7 @@ export class DodgeStatus implements StatusEffectHandler {
         const args = dto.status.args;
 
         console.log(":::::BUFF::::")
-        console.log(dto.effectDTO.ctx.client.data.expedition.currentNode.statuses.buff)
+        console.log(dto.effectDTO.ctx.expedition.currentNode.data.player.statuses.buff)
         
         if (dto.effectDTO.source.type == CardTargetedEnum.Enemy )
         {
