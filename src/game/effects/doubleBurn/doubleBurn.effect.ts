@@ -31,6 +31,7 @@ export class DoubleBurnEffect implements EffectHandler {
             statuses = target.value.combatState.statuses;
         } else if (EnemyService.isEnemy(target)) {
             statuses = target.value.statuses;
+            console.log('STATUSES ->  ', statuses );
         }
 
         const burnStatuses = filter(statuses.debuff, { name: burn.name });
