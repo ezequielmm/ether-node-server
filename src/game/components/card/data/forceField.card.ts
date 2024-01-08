@@ -13,7 +13,7 @@ export const ForceFieldCardUpgraded: Card = {
     rarity: CardRarityEnum.Legendary,
     cardType: CardTypeEnum.Skill,
     pool: 'knight',
-    energy: 3,
+    energy: 2,
     description: `Take no damage next round`,
     keywords: [],
     properties: {
@@ -37,7 +37,7 @@ export const ForceFieldCard: Card = {
     rarity: CardRarityEnum.Legendary,
     cardType: CardTypeEnum.Skill,
     pool: 'knight',
-    energy: 3,
+    energy: 2,
     description: `Take no damage next round`,
     keywords: [CardKeywordEnum.Exhaust],
     properties: {
