@@ -38,7 +38,10 @@ export class DodgeStatus implements StatusEffectHandler {
     
             return dto.effectDTO;
         } else if (dto.effectDTO.source.type == CardTargetedEnum.Player && dto.effectDTO.ctx.expedition.currentNode.data.player.statuses.buff.find(x => x.name == forceField.name)) {
+            console.log(":::::::::::ENTRA IF BUFF::::::::::::::::::");
+            
             return dto.effectDTO;
+            
         } else if (dto.effectDTO.source.type == CardTargetedEnum.Player) {
             args.counter--;
 
