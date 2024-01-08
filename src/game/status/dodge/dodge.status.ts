@@ -23,57 +23,47 @@ export class DodgeStatus implements StatusEffectHandler {
 
         // console.log(":::::BUFF::::")
         // console.log(dto.effectDTO.ctx.expedition.currentNode.data.player.statuses.buff)
-        
-        if (dto.effectDTO.source.type == CardTargetedEnum.Enemy )
-        {
+
+        if (dto.effectDTO.source.type == CardTargetedEnum.Enemy) {
             args.counter--;
-
-            this.cancelDamage(dto.effectDTO);
-
-            if (args.counter <= 0) {
-                dto.remove();
-            } else {
-                dto.update(args);
-            }
-    
-            return dto.effectDTO;
         } else if (dto.effectDTO.source.type == CardTargetedEnum.Player && dto.effectDTO.ctx.expedition.currentNode.data.player.statuses.buff.find(x => x.name == forceField.name)) {
             console.log(":::::::::::ENTRA IF BUFF::::::::::::::::::");
-            
-            return dto.effectDTO;
-            
+
+            return;
+
         } else if (dto.effectDTO.source.type == CardTargetedEnum.Player) {
             args.counter--;
 
-            this.cancelDamage(dto.effectDTO);
-
-            if (args.counter <= 0) {
-                dto.remove();
-            } else {
-                dto.update(args);
-            }
-    
-            return dto.effectDTO;
         }
 
+        this.cancelDamage(dto.effectDTO);
+
+        if (args.counter <= 0) {
+            dto.remove();
+        } else {
+            dto.update(args);
+        }
+
+        return dto.effectDTO;
 
     }
 
     private async cancelDamage(dto: EffectDTO<DamageArgs>): Promise<EffectDTO<DamageArgs>> {
-        const tempValue = dto.args.currentValue;
+        const tempValue = dto.ctx.expedition.currentNode.data.player.hpCurrent;
         const tempValueCard = dto.ctx.expedition.currentNode.data.player.cards.discard;
         if (dto.args.useEnergyAsValue) {
             dto.ctx.expedition.currentNode.data.player.energy = 0;
         } else {
             if (dto.source.type == CardTargetedEnum.Enemy || dto.source.type == CardTargetedEnum.Player) {
                 // const tempValue = dto.args.currentValue;
-                dto.args.currentValue = 0;
+                // dto.args.currentValue = 0;
+                dto.ctx.expedition.currentNode.data.player.hpCurrent = tempValue;
 
-                await this.esperarSegundos();
+                // await this.esperarSegundos();
 
-                dto.args.currentValue = tempValue;
+                // dto.args.currentValue = tempValue;
 
-                dto.ctx.expedition.currentNode.data.player.cards.discard = tempValueCard;
+                // dto.ctx.expedition.currentNode.data.player.cards.discard = tempValueCard;
                 // console.log("::CURRENT VALUE ACTUAL:::")
                 // console.log(dto.args.currentValue);
             }
