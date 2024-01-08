@@ -159,7 +159,7 @@ export class StatusGenerator {
             case onFireStatus.name:
                 return `This creature has surrounded itself in fiery flames.` 
             case forceField.name:
-                return `This force field prevent damage to be done the by the next attack.` 
+                return `This force field prevent damage to be done by the next attack.` 
             
             default:
                 return undefined;
