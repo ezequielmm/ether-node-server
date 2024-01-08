@@ -36,6 +36,8 @@ import { elementalStatus } from './elemental/constants';
 import { absorbingStatus } from './absorbing/constants';
 import { mistifiedStatus } from './mistified/constants';
 import { onFireStatus } from './onFire/constants';
+import { ForceFieldStatus } from './forceField/forceField.status';
+import { forceField } from './forceField/contants';
 
 export interface IStatusesList {
     name: string;
@@ -156,6 +158,8 @@ export class StatusGenerator {
                 return `Obscure and mystic powers are at work here…`
             case onFireStatus.name:
                 return `This creature has surrounded itself in fiery flames.` 
+            case forceField.name:
+                return `This force field prevent damage to be done the by the next attack.` 
             
             default:
                 return undefined;
