@@ -22,6 +22,7 @@ export const KindleCardUpgraded: Card = {
                     value: null,
                     statusName: burn.name,
                     statusArgs: {
+                        value: 2,
                         counter: 2,
                     },
                 },
