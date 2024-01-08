@@ -33,7 +33,6 @@ export class BurnStatus implements StatusEventHandler {
                 },
             });
         }else{
-            console.log('BURN STATUS - args.counter ---->   ', dto.status.args.counter);
             await this.effectService.apply({
                 ctx: dto.ctx,
                 source: dto.source,
@@ -41,7 +40,7 @@ export class BurnStatus implements StatusEventHandler {
                 effect: {
                     effect: damageEffect.name,
                     args: {
-                        value: dto.status.args.value,
+                        value: dto.status.args.counter,
                         type: 'burn',
                     },
                 },
