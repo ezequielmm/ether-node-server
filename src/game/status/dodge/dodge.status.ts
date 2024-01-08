@@ -6,6 +6,7 @@ import { StatusDecorator } from '../status.decorator';
 import { dodge } from './constants';
 import { CardTargetedEnum } from 'src/game/components/card/card.enum';
 import { DamageEnemyArgs } from 'src/game/effects/damage/damageenemy.effect';
+import { forceField } from '../forceField/contants';
 
 @StatusDecorator({
     status: dodge,
@@ -24,7 +25,7 @@ export class DodgeStatus implements StatusEffectHandler {
         if (dto.effectDTO.source.type == CardTargetedEnum.Enemy )
         {
             args.counter--;
-        } else if (dto.effectDTO.source.type == CardTargetedEnum.Player || dto.ctx.client.data.expedition.currentNode.player.ForceFieldStatus == false) {
+        } else if (dto.effectDTO.source.type == CardTargetedEnum.Player && dto.ctx.client.data.currentNode.data.player.statuses.buff.find(x => x.name == forceField.name))
             args.counter--;
         }
 
