@@ -20,10 +20,11 @@ export class DodgeStatus implements StatusEffectHandler {
     async handle(dto: StatusEffectDTO<DamageArgs>): Promise<EffectDTO<DamageArgs>> {
         const args = dto.status.args;
 
-
-        if (dto.effectDTO.source.type == CardTargetedEnum.Enemy) {
+        
+        if (dto.effectDTO.source.type == CardTargetedEnum.Enemy )
+        {
             args.counter--;
-        } else if (dto.effectDTO.source.type == CardTargetedEnum.Player) {
+        } else if (dto.effectDTO.source.type == CardTargetedEnum.Player || dto.ctx.client.data.expedition.currentNode.player.ForceFieldStatus == false) {
             args.counter--;
         }
 
