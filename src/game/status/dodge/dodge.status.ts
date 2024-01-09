@@ -28,23 +28,44 @@ export class DodgeStatus implements StatusEffectHandler {
 
         if (dto.effectDTO.source.type == CardTargetedEnum.Player && forcefieldFind) {
             console.log(":::::::::::ENTRA IF BUFF::::::::::::::::::");
-            return;
+            this.cancelDamage(dto.effectDTO);
+
+            if (args.counter <= 0) {
+                dto.remove();
+            } else {
+                dto.update(args);
+            }
+
+            return dto.effectDTO;
+            
         } else if (dto.effectDTO.source.type == CardTargetedEnum.Enemy) {
             args.counter--;
+
+            this.cancelDamage(dto.effectDTO);
+
+            if (args.counter <= 0) {
+                dto.remove();
+            } else {
+                dto.update(args);
+            }
+
+            return dto.effectDTO;
         } else if (dto.effectDTO.source.type == CardTargetedEnum.Player && !forcefieldFind) {
             args.counter--;
 
+            this.cancelDamage(dto.effectDTO);
+
+            if (args.counter <= 0) {
+                dto.remove();
+            } else {
+                dto.update(args);
+            }
+
+            return dto.effectDTO;
+
         }
 
-        this.cancelDamage(dto.effectDTO);
 
-        if (args.counter <= 0) {
-            dto.remove();
-        } else {
-            dto.update(args);
-        }
-
-        return dto.effectDTO;
 
     }
 
