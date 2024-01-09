@@ -21,7 +21,7 @@ export class ForceFieldStatus implements StatusEffectHandler {
         dto: StatusEffectDTO<DamageArgs>,
     ): Promise<EffectDTO<DamageArgs>> {
         const effectDTO = dto.effectDTO;
-        if(dto.effectDTO.ctx.expedition.currentNode.data.player.statuses.buff.find(x => x.name != dodge.name))
+        // if(dto.effectDTO.ctx.expedition.currentNode.data.player.statuses.buff.find(x => x.name != dodge.name))
             effectDTO.args.currentValue = 0;
 
         return effectDTO;

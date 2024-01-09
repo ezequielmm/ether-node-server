@@ -24,12 +24,14 @@ export class DodgeStatus implements StatusEffectHandler {
         console.log(":::::BUFF::::")
         console.log(dto.effectDTO.ctx.expedition.currentNode.data.player.statuses.buff)
 
-        if (dto.effectDTO.source.type == CardTargetedEnum.Player && dto.effectDTO.ctx.expedition.currentNode.data.player.statuses.buff.find(x => x.name === "forceField")) {
+        const forcefieldFind = dto.effectDTO.ctx.expedition.currentNode.data.player.statuses.buff.find(x => x.name === "forceField");
+
+        if (dto.effectDTO.source.type == CardTargetedEnum.Player && forcefieldFind) {
             console.log(":::::::::::ENTRA IF BUFF::::::::::::::::::");
             return;
         } else if (dto.effectDTO.source.type == CardTargetedEnum.Enemy) {
             args.counter--;
-        } else if (dto.effectDTO.source.type == CardTargetedEnum.Player) {
+        } else if (dto.effectDTO.source.type == CardTargetedEnum.Player && !forcefieldFind) {
             args.counter--;
 
         }
@@ -54,8 +56,8 @@ export class DodgeStatus implements StatusEffectHandler {
         } else {
             if (dto.source.type == CardTargetedEnum.Enemy || dto.source.type == CardTargetedEnum.Player) {
                 // const tempValue = dto.args.currentValue;
-                // dto.args.currentValue = 0;
-                dto.ctx.expedition.currentNode.data.player.hpCurrent = tempValue;
+                dto.args.currentValue = 0;
+                // dto.ctx.expedition.currentNode.data.player.hpCurrent = tempValue;
 
                 // await this.esperarSegundos();
 
