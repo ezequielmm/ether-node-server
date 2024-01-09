@@ -21,12 +21,12 @@ export class DodgeStatus implements StatusEffectHandler {
     async handle(dto: StatusEffectDTO<DamageArgs>): Promise<EffectDTO<DamageArgs>> {
         const args = dto.status.args;
 
-        // console.log(":::::BUFF::::")
-        // console.log(dto.effectDTO.ctx.expedition.currentNode.data.player.statuses.buff)
+        console.log(":::::BUFF::::")
+        console.log(dto.effectDTO.ctx.expedition.currentNode.data.player.statuses.buff)
 
         if (dto.effectDTO.source.type == CardTargetedEnum.Enemy) {
             args.counter--;
-        } else if (dto.effectDTO.source.type == CardTargetedEnum.Player && dto.effectDTO.ctx.expedition.currentNode.data.player.statuses.buff.find(x => x.name == forceField.name)) {
+        } else if (dto.effectDTO.source.type == CardTargetedEnum.Player && dto.effectDTO.ctx.expedition.currentNode.data.player.statuses.buff.find(x => x.name === forceField.name)) {
             console.log(":::::::::::ENTRA IF BUFF::::::::::::::::::");
 
             return;
