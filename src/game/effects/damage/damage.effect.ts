@@ -23,13 +23,10 @@ import { deepDwellerLureData } from 'src/game/components/enemy/data/deepDwellerL
 import { resolveStatus } from 'src/game/status/resolve/constants';
 import { deepDwellerMonsterData } from 'src/game/components/enemy/data/deepDwellerMonster.enemy';
 import { StatusService } from 'src/game/status/status.service';
-import { AttachDTO, AttachedStatus, StatusType } from 'src/game/status/interfaces';
+import { AttachedStatus } from 'src/game/status/interfaces';
 import { mossySkeletonData } from 'src/game/components/enemy/data/mossySkeleton.enemy';
 import { mossyBonesData } from 'src/game/components/enemy/data/mossyBones.enemy';
 import { mossyArcherData } from 'src/game/components/enemy/data/mossyArcher.enemy';
-import { Expedition } from 'src/game/components/expedition/expedition.schema';
-import { ReturnModelType } from '@typegoose/typegoose';
-import { InjectModel } from 'kindagoose';
 
 export interface DamageArgs {
     useDefense?: boolean;
@@ -58,8 +55,6 @@ export class DamageEffect implements EffectHandler {
         private readonly effectService: EffectService,
         private readonly getEnergyAction: GetEnergyAction,
         private readonly statusService: StatusService,
-        // @InjectModel(Expedition)
-        // private readonly expedition: ReturnModelType<typeof Expedition>,
     ) {}
 
     async handle(payload: EffectDTO<DamageArgs>): Promise<void> {
