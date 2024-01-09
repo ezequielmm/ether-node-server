@@ -20,42 +20,43 @@ export class DoubleBurnEffect implements EffectHandler {
     constructor(
         private readonly statusService: StatusService,
         private readonly combatQueueService: CombatQueueService,
+        private readonly enemyService: EnemyService
     ) {}
 
     async handle(dto: EffectDTO): Promise<void> {
-        // const { target, ctx } = dto;
+        const { target, ctx } = dto;
 
-        // let statuses: StatusCollection;
+        let statuses: StatusCollection;
 
-        // if (PlayerService.isPlayer(target)) {
-        //     statuses = target.value.combatState.statuses;
-        // } else if (EnemyService.isEnemy(target)) {
-        //     statuses = target.value.statuses;
-        // }
+        if (PlayerService.isPlayer(target)) {
+            statuses = target.value.combatState.statuses;
+        } else if (EnemyService.isEnemy(target)) {
+            statuses = target.value.statuses;
+        }
 
-        // const burnStatuses = filter(statuses.debuff, { name: burn.name });
+        const burnStatuses = filter(statuses.debuff, { name: burn.name });
 
-        // forEach(burnStatuses, (status) => (status.args.counter *= 2));
+        forEach(burnStatuses, (status) => (status.args.counter *= 2));
 
-        // if (burnStatuses.length) {
-        //     await this.statusService.updateStatuses(ctx, target, statuses);
+        if (burnStatuses.length) {
+            await this.statusService.updateStatuses(ctx, target, statuses);
 
-        //     await this.combatQueueService.push({
-        //         ctx: dto.ctx,
-        //         source: dto.source,
-        //         target,
-        //         args: {
-        //             effectType: CombatQueueTargetEffectTypeEnum.Status,
-        //             statuses: burnStatuses.map((status) => ({
-        //                 name: status.name,
-        //                 description: StatusGenerator.generateDescription(
-        //                     status.name,
-        //                     status.args.counter,
-        //                 ),
-        //                 counter: status.args.counter,
-        //             })),
-        //         },
-        //     });
-        // }
+            // await this.combatQueueService.push({
+            //     ctx: dto.ctx,
+            //     source: dto.source,
+            //     target,
+            //     args: {
+            //         effectType: CombatQueueTargetEffectTypeEnum.Status,
+            //         statuses: burnStatuses.map((status) => ({
+            //             name: status.name,
+            //             description: StatusGenerator.generateDescription(
+            //                 status.name,
+            //                 status.args.counter,
+            //             ),
+            //             counter: status.args.counter,
+            //         })),
+            //     },
+            // });
+        }
     }
 }
