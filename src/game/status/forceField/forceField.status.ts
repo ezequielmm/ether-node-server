@@ -21,9 +21,23 @@ export class ForceFieldStatus implements StatusEffectHandler {
         dto: StatusEffectDTO<DamageArgs>,
     ): Promise<EffectDTO<DamageArgs>> {
         const effectDTO = dto.effectDTO;
-        // if(dto.effectDTO.ctx.expedition.currentNode.data.player.statuses.buff.find(x => x.name != dodge.name))
-            effectDTO.args.currentValue = 0;
+
+        const tempValue = effectDTO.args.currentValue;
+
+        effectDTO.args.currentValue = 0;
+
+        await this.esperarSegundos();
+
+        effectDTO.args.currentValue = tempValue;
 
         return effectDTO;
+    }
+
+    async esperarSegundos(): Promise<void> {
+        return new Promise<void>((resolve) => {
+            setTimeout(() => {
+                resolve();
+            }, 150);
+        });
     }
 }
