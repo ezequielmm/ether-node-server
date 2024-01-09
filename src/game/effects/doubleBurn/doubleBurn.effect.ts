@@ -31,14 +31,40 @@ export class DoubleBurnEffect implements EffectHandler {
             statuses = target.value.combatState.statuses;
         } else if (EnemyService.isEnemy(target)) {
             statuses = target.value.statuses;
-            console.log('STATUSES ->  ', statuses );
         }
+
+        console.log("--------------------------------------------------- Debugging Double Burn:")
+        console.log("statuses from enemies/player:")
+        console.log(statuses)
+        console.log("---------------------")
+        console.log("---------------------")
+
 
         const burnStatuses = filter(statuses.debuff, { name: burn.name });
 
+        console.log("After filtering statuses:")
+        console.log(burnStatuses)
+        console.log("---------------------")
+        console.log("---------------------")
+        
+
         forEach(burnStatuses, (status) => (status.args.counter *= 2));
 
+        console.log("Status after value duplication:")
+        console.log(burnStatuses)
+        console.log("---------------------")
+        console.log("---------------------")
+
+
         if (burnStatuses.length) {
+
+            console.log("Finally it sends to persist this statuses:")
+            console.log(statuses)
+
+
+            console.log("---------------------")
+            console.log("-------------------------------------------------------End Debugging DDouble Burn")
+
             await this.statusService.updateStatuses(ctx, target, statuses);
 
             await this.combatQueueService.push({
