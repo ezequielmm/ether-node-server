@@ -27,22 +27,23 @@ export class DodgeStatus implements StatusEffectHandler {
         const forcefieldFind = dto.effectDTO.ctx.expedition.currentNode.data.player.statuses.buff.find(x => x.name === forceField.name);
 
         if (dto.effectDTO.source.type == CardTargetedEnum.Enemy && forcefieldFind) {
-            console.log(":::::::::::ENTRA IF BUFF::::::::::::::::::");
+
+            args.counter--;
+
+            this.cancelDamage(dto.effectDTO);
+
+            if (args.counter <= 0) {
+                dto.remove();
+            } else {
+                dto.update(args);
+            }
 
             return dto.effectDTO;
 
-        // } else if (dto.effectDTO.source.type == CardTargetedEnum.Player) {
-        //     args.counter--;
+        } else if (dto.effectDTO.source.type == CardTargetedEnum.Player && forcefieldFind) {
+            console.log(":::::::::::ENTRA IF BUFF::::::::::::::::::");
 
-        //     this.cancelDamage(dto.effectDTO);
 
-        //     if (args.counter <= 0) {
-        //         dto.remove();
-        //     } else {
-        //         dto.update(args);
-        //     }
-
-        //     return dto.effectDTO;
         } else if (dto.effectDTO.source.type == CardTargetedEnum.Enemy && !forcefieldFind) {
             args.counter--;
 
