@@ -31,16 +31,16 @@ export class DodgeStatus implements StatusEffectHandler {
 
             return dto.effectDTO;
 
-        // } else if (dto.effectDTO.source.type == CardTargetedEnum.Player) {
-        //     args.counter--;
+        } else if (dto.effectDTO.source.type == CardTargetedEnum.Player && !forceField) {
+            args.counter--;
 
-        //     this.cancelDamage(dto.effectDTO);
+            this.cancelDamage(dto.effectDTO);
 
-        //     if (args.counter <= 0) {
-        //         dto.remove();
-        //     } else {
-        //         dto.update(args);
-        //     }
+            if (args.counter <= 0) {
+                dto.remove();
+            } else {
+                dto.update(args);
+            }
 
         //     return dto.effectDTO;
         } else if (dto.effectDTO.source.type == CardTargetedEnum.Enemy && !forcefieldFind) {
