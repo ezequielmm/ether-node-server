@@ -111,18 +111,17 @@ export class DrawCardEffect implements EffectHandler {
         //     emit: true,
         // });
 
-        await this.drawCardAction.handle({
-            ctx,
-            amountToTake,
-            ...((useAttackingEnemiesAsValue || enemyIsAttacking) && {
-                filterType: CardTypeEnum.Defend,
-            }),
-            SWARMessageTypeToSend: SWARMessageType.PlayerAffected,
-            useEnemiesConfusedAsValue,
-        });
-
-        
-        
+        if(enemyIsAttacking){
+            await this.drawCardAction.handle({
+                ctx,
+                amountToTake,
+                ...((useAttackingEnemiesAsValue || enemyIsAttacking) && {
+                    filterType: CardTypeEnum.Defend,
+                }),
+                SWARMessageTypeToSend: SWARMessageType.PlayerAffected,
+                useEnemiesConfusedAsValue,
+            });
+        }
 
         // await this.drawCardAction.handle({
         //     ctx,
