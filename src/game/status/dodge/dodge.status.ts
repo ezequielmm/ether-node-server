@@ -24,9 +24,9 @@ export class DodgeStatus implements StatusEffectHandler {
         console.log(":::::BUFF::::")
         console.log(dto.effectDTO.ctx.expedition.currentNode.data.player.statuses.buff)
 
-        const forcefieldFind = dto.effectDTO.ctx.expedition.currentNode.data.player.statuses.buff.find(x => x.name === "forceField");
+        const forcefieldFind = dto.effectDTO.ctx.expedition.currentNode.data.player.statuses.buff.find(x => x.name === forceField.name);
 
-        if (dto.effectDTO.source.type == CardTargetedEnum.Player && forcefieldFind) {
+        if (dto.effectDTO.source.type == CardTargetedEnum.Enemy && forcefieldFind) {
             console.log(":::::::::::ENTRA IF BUFF::::::::::::::::::");
             this.cancelDamage(dto.effectDTO);
 
@@ -37,8 +37,8 @@ export class DodgeStatus implements StatusEffectHandler {
             }
 
             return dto.effectDTO;
-            
-        } else if (dto.effectDTO.source.type == CardTargetedEnum.Enemy) {
+
+        } else if (dto.effectDTO.source.type == CardTargetedEnum.Player) {
             args.counter--;
 
             this.cancelDamage(dto.effectDTO);
@@ -50,7 +50,7 @@ export class DodgeStatus implements StatusEffectHandler {
             }
 
             return dto.effectDTO;
-        } else if (dto.effectDTO.source.type == CardTargetedEnum.Player && !forcefieldFind) {
+        } else if (dto.effectDTO.source.type == CardTargetedEnum.Enemy && !forcefieldFind) {
             args.counter--;
 
             this.cancelDamage(dto.effectDTO);
