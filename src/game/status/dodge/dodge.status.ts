@@ -49,7 +49,7 @@ export class DodgeStatus implements StatusEffectHandler {
     }
 
     private async cancelDamage(dto: EffectDTO<DamageArgs>): Promise<EffectDTO<DamageArgs>> {
-        const tempValue = dto.ctx.expedition.currentNode.data.player.hpCurrent;
+        const tempValue = dto.args.currentValue;
         const tempValueCard = dto.ctx.expedition.currentNode.data.player.cards.discard;
         if (dto.args.useEnergyAsValue) {
             dto.ctx.expedition.currentNode.data.player.energy = 0;
@@ -59,9 +59,9 @@ export class DodgeStatus implements StatusEffectHandler {
                 dto.args.currentValue = 0;
                 // dto.ctx.expedition.currentNode.data.player.hpCurrent = tempValue;
 
-                // await this.esperarSegundos();
+                await this.esperarSegundos();
 
-                // dto.args.currentValue = tempValue;
+                dto.args.currentValue = tempValue;
 
                 // dto.ctx.expedition.currentNode.data.player.cards.discard = tempValueCard;
                 // console.log("::CURRENT VALUE ACTUAL:::")
@@ -75,7 +75,7 @@ export class DodgeStatus implements StatusEffectHandler {
         return new Promise<void>((resolve) => {
             setTimeout(() => {
                 resolve();
-            }, 500);
+            }, 100);
         });
     }
 }
