@@ -24,13 +24,11 @@ export class DodgeStatus implements StatusEffectHandler {
         console.log(":::::BUFF::::")
         console.log(dto.effectDTO.ctx.expedition.currentNode.data.player.statuses.buff)
 
-        if (dto.effectDTO.source.type == CardTargetedEnum.Enemy) {
-            args.counter--;
-        } else if (dto.effectDTO.source.type == CardTargetedEnum.Player && dto.effectDTO.ctx.expedition.currentNode.data.player.statuses.buff.find(x => x.name === "forceField")) {
+        if (dto.effectDTO.source.type == CardTargetedEnum.Player && dto.effectDTO.ctx.expedition.currentNode.data.player.statuses.buff.find(x => x.name === "forceField")) {
             console.log(":::::::::::ENTRA IF BUFF::::::::::::::::::");
-
             return;
-
+        } else if (dto.effectDTO.source.type == CardTargetedEnum.Enemy) {
+            args.counter--;
         } else if (dto.effectDTO.source.type == CardTargetedEnum.Player) {
             args.counter--;
 
