@@ -4,6 +4,7 @@ import { EffectDTO } from 'src/game/effects/effects.interface';
 import { StatusEffectDTO, StatusEffectHandler } from '../interfaces';
 import { StatusDecorator } from '../status.decorator';
 import { forceField } from './contants';
+import { dodge } from '../dodge/constants';
 
 @StatusDecorator({
     status: forceField,
@@ -20,8 +21,8 @@ export class ForceFieldStatus implements StatusEffectHandler {
         dto: StatusEffectDTO<DamageArgs>,
     ): Promise<EffectDTO<DamageArgs>> {
         const effectDTO = dto.effectDTO;
-
-        effectDTO.args.currentValue = 0;
+        if(dto.effectDTO.ctx.expedition.currentNode.data.player.statuses.buff.find(x => x.name != dodge.name))
+            effectDTO.args.currentValue = 0;
 
         return effectDTO;
     }
