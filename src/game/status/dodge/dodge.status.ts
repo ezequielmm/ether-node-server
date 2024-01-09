@@ -28,13 +28,6 @@ export class DodgeStatus implements StatusEffectHandler {
 
         if (dto.effectDTO.source.type == CardTargetedEnum.Enemy && forcefieldFind) {
             console.log(":::::::::::ENTRA IF BUFF::::::::::::::::::");
-            this.cancelDamage(dto.effectDTO);
-
-            if (args.counter <= 0) {
-                dto.remove();
-            } else {
-                dto.update(args);
-            }
 
             return dto.effectDTO;
 
@@ -96,7 +89,7 @@ export class DodgeStatus implements StatusEffectHandler {
         return new Promise<void>((resolve) => {
             setTimeout(() => {
                 resolve();
-            }, 200);
+            }, 150);
         });
     }
 }
