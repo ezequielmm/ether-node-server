@@ -12,7 +12,7 @@ export const resolveStatus: StatusEffect = {
     name: 'resolve',
     type: StatusType.Buff,
     counterType: StatusCounterType.None,
-    direction: StatusDirection.Incoming,
+    direction: StatusDirection.Outgoing,
     trigger: StatusTrigger.Effect,
     effects: [damageEffect],
 };
