@@ -38,8 +38,8 @@ export class SiphoningStatus implements StatusEffectHandler {
         const currentValue = args.currentValue;
         const playerEnergy = dto.ctx.expedition.currentNode.data.player.energy;
 
-        const newDefense = args.useEnergyAsMultiplier ? currentValue * playerEnergy : currentValue;
         // set the amount of defense we are going to get
+        const newDefense = args.useEnergyAsMultiplier ? currentValue * playerEnergy : currentValue;
 
         // Trigger the effectService and send a defense effect
         await this.effectService.apply({
