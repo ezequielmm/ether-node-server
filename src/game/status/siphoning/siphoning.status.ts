@@ -38,6 +38,7 @@ export class SiphoningStatus implements StatusEffectHandler {
 
         // set the amount of defense we are going to get
         const newDefense = args.currentValue;
+        console.log('NUEVA DEFENSA  --> ', newDefense );
 
         // Trigger the effectService and send a defense effect
         await this.effectService.apply({
