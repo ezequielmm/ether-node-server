@@ -9,7 +9,7 @@ import { resolveStatus } from './constants';
     status: resolveStatus,
 })
 @Injectable()
-export class DodgeStatus implements StatusEffectHandler {
+export class ResolveStatus implements StatusEffectHandler {
     async preview(args: StatusEffectDTO): Promise<EffectDTO> {
         return this.handle(args);
     }
