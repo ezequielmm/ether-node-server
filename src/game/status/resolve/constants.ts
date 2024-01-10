@@ -2,12 +2,12 @@ import { damageEffect } from 'src/game/effects/damage/constants';
 import {
     StatusCounterType,
     StatusDirection,
-    StatusEffect,
+    Status,
     StatusTrigger,
     StatusType,
 } from '../interfaces';
 
-export const resolveStatus: StatusEffect = {
+export const resolveStatus: Status = {
     name: 'resolve',
     type: StatusType.Buff,
     counterType: StatusCounterType.Intensity,
