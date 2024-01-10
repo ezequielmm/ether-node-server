@@ -16,7 +16,7 @@ export const FlurryCardUpgraded: Card = {
     cardType: CardTypeEnum.Attack,
     pool: 'knight',
     energy: CardEnergyEnum.All,
-    description: `Deal {${damageEffect.name}} + {${resolveStatus.name}} damage X + 1 times to random enemies`,
+    description: `Deal {${damageEffect.name}} damage X + 1 times to random enemies`,
     keywords: [],
     properties: {
         effects: [
@@ -26,14 +26,7 @@ export const FlurryCardUpgraded: Card = {
                 args: {
                     value: 7,
                 },
-            },
-            {
-                effect: damageEffect.name,
-                target: CardTargetedEnum.None,
-                args: {
-                    value: 7,
-                },
-            },
+            }
         ],
         statuses: [],
     },
@@ -49,7 +42,7 @@ export const FlurryCard: Card = {
     cardType: CardTypeEnum.Attack,
     pool: 'knight',
     energy: CardEnergyEnum.All,
-    description: `Deal {${damageEffect.name}} + {${resolveStatus.name}} damage X times to random enemies`,
+    description: `Deal {${damageEffect.name}} damage X times to random enemies`,
     keywords: [],
     properties: {
         effects: [
@@ -59,14 +52,7 @@ export const FlurryCard: Card = {
                 args: {
                     value: 6,
                 },
-            },
-            {
-                effect: damageEffect.name,
-                target: CardTargetedEnum.None,
-                args: {
-                    value: 6,
-                },
-            },
+            }
         ],
         statuses: [],
     },

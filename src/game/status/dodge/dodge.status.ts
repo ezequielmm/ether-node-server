@@ -73,9 +73,9 @@ export class DodgeStatus implements StatusEffectHandler {
                 dto.args.currentValue = 0;
                 // dto.ctx.expedition.currentNode.data.player.hpCurrent = tempValue;
 
-                await this.esperarSegundos();
+                // await this.esperarSegundos();
 
-                dto.args.currentValue = tempValue + 2;
+                // dto.args.currentValue = tempValue + 2;
 
                 // dto.ctx.expedition.currentNode.data.player.cards.discard = tempValueCard;
                 // console.log("::CURRENT VALUE ACTUAL:::")
