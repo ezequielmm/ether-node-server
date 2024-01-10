@@ -230,7 +230,6 @@ export class PlayerService {
      */
     public async damage(ctx: GameContext, damage: number): Promise<number> {
         // First we get the attackQueue if we have one
-        console.log('entre por MOLD y me pego: ', damage);
         const player = this.get(ctx);
 
         const currentDefense = player.value.combatState.defense;
