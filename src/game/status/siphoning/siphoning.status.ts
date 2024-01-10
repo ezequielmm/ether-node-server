@@ -35,7 +35,7 @@ export class SiphoningStatus implements StatusEffectHandler {
     async handle(dto: StatusEffectDTO<DamageArgs>): Promise<EffectDTO<DamageArgs>> {
         
         const {ctx, effectDTO: { args, source } } = dto;
-
+        console.log('ARGS  ->', args)
         // set the amount of defense we are going to get
         const newDefense = args.currentValue;
         console.log('NUEVA DEFENSA  --> ', newDefense );
