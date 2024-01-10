@@ -7,10 +7,11 @@ import {
     StatusType,
 } from '../interfaces';
 
+
 export const resolveStatus: StatusEffect = {
     name: 'resolve',
     type: StatusType.Buff,
-    counterType: StatusCounterType.Intensity,
+    counterType: StatusCounterType.Counter,
     direction: StatusDirection.Outgoing,
     trigger: StatusTrigger.Effect,
     effects: [damageEffect],
