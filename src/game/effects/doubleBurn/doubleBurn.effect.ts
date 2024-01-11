@@ -50,7 +50,7 @@ export class DoubleBurnEffect implements EffectHandler {
             await this.combatQueueService.push({
                 ctx,
                 source,
-                target,
+                target: enemy,
                 args: {
                     effectType: CombatQueueTargetEffectTypeEnum.Status,
                     statuses: [
