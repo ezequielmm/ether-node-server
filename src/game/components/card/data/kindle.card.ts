@@ -16,21 +16,10 @@ export const KindleCardUpgraded: Card = {
     properties: {
         effects: [
             {
-                effect: attachStatusEffect.name,
+                effect: doubleBurn.name,
                 target: CardTargetedEnum.Enemy,
                 args: {
-                    value: null,
-                    statusName: burn.name,
-                    statusArgs: {
-                        counter: 2,
-                    },
-                },
-            },
-            {
-                effect: doubleBurn.name,
-                target: CardTargetedEnum.AllEnemies,
-                args: {
-                    value: 1,
+                    value: 2,
                 },
             },
         ],
@@ -53,19 +42,8 @@ export const KindleCard: Card = {
     properties: {
         effects: [
             {
-                effect: attachStatusEffect.name,
-                target: CardTargetedEnum.Enemy,
-                args: {
-                    value: null,
-                    statusName: burn.name,
-                    statusArgs: {
-                        counter: 1,
-                    },
-                },
-            },
-            {
                 effect: doubleBurn.name,
-                target: CardTargetedEnum.AllEnemies,
+                target: CardTargetedEnum.Enemy,
                 args: {
                     value: 1,
                 },
