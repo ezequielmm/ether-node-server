@@ -58,7 +58,7 @@ export class DoubleBurnEffect implements EffectHandler {
                 console.log("Inside if, value after duplicating:")
                 console.log(doubledburn)
 
-                this.enemyService.attach(ctx, enemy.value.id, source, burn.name, {counter: doubledburn})
+                this.enemyService.attach(ctx, enemy.value.id, source, burn.name, {counter: debuffBurn.args.counter})
             }
         })
 
