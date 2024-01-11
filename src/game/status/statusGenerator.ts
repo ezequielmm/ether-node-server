@@ -139,7 +139,7 @@ export class StatusGenerator {
             case tasteOfBloodDebuff.name:
                 return `Take double damage`;
             case hiddenStatus.name:
-                return `This creature receives 25% less damage from attacks, and deals 25% more damage to defense`;
+                return `This creature receives 25% less damage and deals 25% more damage`;
             case hatchingStatus.name:
                 return `This creature is developing inside its cocoon.`;
             case chargingBeam.name:
