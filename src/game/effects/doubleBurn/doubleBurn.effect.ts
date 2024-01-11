@@ -45,10 +45,19 @@ export class DoubleBurnEffect implements EffectHandler {
         //- Double all burn status:
         const enemies = this.enemyService.getLiving(ctx);
         enemies.forEach(enemy => {
+
+            console.log("Enemy id: " + enemy.value.enemyId)
+
             const debuffBurn = enemy.value.statuses[StatusType.Debuff].find(status => status.name === burn.name);
+
+            console.log("debuffBurn value:")
+            console.log(debuffBurn)
 
             if(debuffBurn){
                 const doubledburn = debuffBurn.args.counter *= 2;
+                console.log("Inside if, value after duplicating:")
+                console.log(doubleBurn)
+
                 this.enemyService.attach(ctx, enemy.value.id, source, burn.name, {counter: doubledburn})
             }
         })
