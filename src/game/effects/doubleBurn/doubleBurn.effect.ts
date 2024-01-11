@@ -7,6 +7,7 @@ import { doubleBurn } from './constants';
 import { burn } from 'src/game/status/burn/constants';
 import { EnemyService } from 'src/game/components/enemy/enemy.service';
 import { StatusType } from 'src/game/status/interfaces';
+import { CombatQueueTargetEffectTypeEnum } from 'src/game/components/combatQueue/combatQueue.enum';
 
 @EffectDecorator({
     effect: doubleBurn,
@@ -23,14 +24,6 @@ export class DoubleBurnEffect implements EffectHandler {
         const { source, target, ctx } = dto;
         const burnValue = dto.args.currentValue;
 
-        console.log("------------------------------------------Debbuging double Burn")
-        
-        console.log("Burn value:")
-        console.log(burnValue)
-
-        console.log("Target:")
-        console.log(target)
-
         //- Apply burn of the card:
         await this.statusService.attach({
             ctx,
@@ -45,27 +38,25 @@ export class DoubleBurnEffect implements EffectHandler {
         //- Double all burn status:
         const enemies = this.enemyService.getLiving(ctx);
         enemies.forEach(async enemy => {
-
-            console.log("Enemy id: " + enemy.value.enemyId)
-
             const debuffBurn = enemy.value.statuses[StatusType.Debuff].find(status => status.name === burn.name);
-
-            console.log("debuffBurn value:")
-            console.log(debuffBurn)
 
             if(!debuffBurn){
                 return
             }
+
+            const attachedStatus = await this.enemyService.attach(ctx, enemy.value.id, source, burn.name, {counter: debuffBurn.args.counter});
+
+            await this.combatQueueService.push({
+                ctx,
+                source,
+                target,
+                args: {
+                    effectType: CombatQueueTargetEffectTypeEnum.Status,
+                    statuses: []
+                },
+            });
             
-            // const doubledburn = debuffBurn.args.counter *= 2;
-            // console.log("Inside if, value after duplicating: " + doubledburn)
-
-            const attachedStatus = await this.enemyService.attach(ctx, enemy.value.id, source, burn.name, {counter: debuffBurn.args.counter})
-            console.log("Attached status:")
-            console.log(attachedStatus.args)  
-        })
-
-
+        });
 
     }
 }
