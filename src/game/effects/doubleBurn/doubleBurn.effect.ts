@@ -5,7 +5,7 @@ import { CombatQueueService } from 'src/game/components/combatQueue/combatQueue.
 import { EnemyService } from 'src/game/components/enemy/enemy.service';
 import { PlayerService } from 'src/game/components/player/player.service';
 import { burn } from 'src/game/status/burn/constants';
-import { StatusCollection, StatusesGlobalCollection } from 'src/game/status/interfaces';
+import { StatusCollection } from 'src/game/status/interfaces';
 import { StatusService } from 'src/game/status/status.service';
 import { StatusGenerator } from 'src/game/status/statusGenerator';
 import { EffectDecorator } from '../effects.decorator';
@@ -19,27 +19,21 @@ import { doubleBurn } from './constants';
 export class DoubleBurnEffect implements EffectHandler {
     constructor(
         private readonly statusService: StatusService,
-        private readonly combatQueueService: CombatQueueService,
-        private readonly enemyService: EnemyService
+        private readonly combatQueueService: CombatQueueService
     ) {}
 
     async handle(dto: EffectDTO): Promise<void> {
         const { target, ctx } = dto;
 
-        //let statuses: StatusCollection;
+        let statuses: StatusCollection;
 
-        // if (PlayerService.isPlayer(target)) {
-        //     statuses = target.value.combatState.statuses;
-        // } else if (EnemyService.isEnemy(target)) {
-        //     statuses = target.value.statuses;
-        // }
-
-        let statuses: StatusCollection = this.enemyService.getEnemyStatuses(dto.ctx)[0].statuses;
+        if (PlayerService.isPlayer(target)) {
+            statuses = target.value.combatState.statuses;
+        } else if (EnemyService.isEnemy(target)) {
+            statuses = target.value.statuses;
+        }
 
         const burnStatuses = filter(statuses.debuff, { name: burn.name });
-
-        console.log("------------------------------------------ Debugging")
-        console.log(statuses)
 
         forEach(burnStatuses, (status) => (status.args.counter *= 2));
 
