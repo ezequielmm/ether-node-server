@@ -8,6 +8,7 @@ import { burn } from 'src/game/status/burn/constants';
 import { EnemyService } from 'src/game/components/enemy/enemy.service';
 import { StatusType } from 'src/game/status/interfaces';
 import { CombatQueueTargetEffectTypeEnum } from 'src/game/components/combatQueue/combatQueue.enum';
+import { StatusGenerator } from 'src/game/status/statusGenerator';
 
 @EffectDecorator({
     effect: doubleBurn,
@@ -52,7 +53,16 @@ export class DoubleBurnEffect implements EffectHandler {
                 target,
                 args: {
                     effectType: CombatQueueTargetEffectTypeEnum.Status,
-                    statuses: []
+                    statuses: [
+                        {
+                            name: attachedStatus.name,
+                            description: StatusGenerator.generateDescription(
+                                attachedStatus.name,
+                                attachedStatus.args.counter,
+                            ),
+                            counter: attachedStatus.args.counter,
+                        }
+                    ]
                 },
             });
             
