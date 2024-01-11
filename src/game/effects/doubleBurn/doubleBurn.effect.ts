@@ -1,16 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import { filter, forEach } from 'lodash';
-import { CombatQueueTargetEffectTypeEnum } from 'src/game/components/combatQueue/combatQueue.enum';
 import { CombatQueueService } from 'src/game/components/combatQueue/combatQueue.service';
-import { EnemyService } from 'src/game/components/enemy/enemy.service';
-import { PlayerService } from 'src/game/components/player/player.service';
-import { burn } from 'src/game/status/burn/constants';
-import { StatusCollection, StatusesGlobalCollection } from 'src/game/status/interfaces';
 import { StatusService } from 'src/game/status/status.service';
-import { StatusGenerator } from 'src/game/status/statusGenerator';
 import { EffectDecorator } from '../effects.decorator';
 import { EffectDTO, EffectHandler } from '../effects.interface';
 import { doubleBurn } from './constants';
+import { burn } from 'src/game/status/burn/constants';
+import { EnemyService } from 'src/game/components/enemy/enemy.service';
+import { StatusType } from 'src/game/status/interfaces';
 
 @EffectDecorator({
     effect: doubleBurn,
@@ -20,49 +16,44 @@ export class DoubleBurnEffect implements EffectHandler {
     constructor(
         private readonly statusService: StatusService,
         private readonly combatQueueService: CombatQueueService,
-        private readonly enemyService: EnemyService
+        private readonly enemyService:EnemyService
     ) {}
 
     async handle(dto: EffectDTO): Promise<void> {
-        const { target, ctx } = dto;
+        const { source, target, ctx } = dto;
+        const burnValue = dto.args.currentValue;
 
-        //let statuses: StatusCollection;
+        console.log("------------------------------------------Debbuging double Burn")
+        
+        console.log("Burn value:")
+        console.log(burnValue)
 
-        // if (PlayerService.isPlayer(target)) {
-        //     statuses = target.value.combatState.statuses;
-        // } else if (EnemyService.isEnemy(target)) {
-        //     statuses = target.value.statuses;
-        // }
+        console.log("Target:")
+        console.log(target)
 
-        let statuses: StatusCollection = this.enemyService.getEnemyStatuses(dto.ctx)[0].statuses;
+        //- Apply burn of the card:
+        await this.statusService.attach({
+            ctx,
+            source,
+            target,
+            statusName: burn.name,
+            statusArgs: {
+                counter: burnValue
+            },
+        });
 
-        const burnStatuses = filter(statuses.debuff, { name: burn.name });
+        //- Double all burn status:
+        const enemies = this.enemyService.getLiving(ctx);
+        enemies.forEach(enemy => {
+            const debuffBurn = enemy.value.statuses[StatusType.Debuff].find(status => status.name === burn.name);
 
-        console.log("------------------------------------------ Debugging")
-        console.log(statuses)
+            if(debuffBurn){
+                const doubledburn = debuffBurn.args.counter *= 2;
+                this.enemyService.attach(ctx, enemy.value.id, source, burn.name, {counter: doubledburn})
+            }
+        })
 
-        forEach(burnStatuses, (status) => (status.args.counter *= 2));
 
-        if (burnStatuses.length) {
 
-            await this.statusService.updateStatuses(ctx, target, statuses);
-
-            await this.combatQueueService.push({
-                ctx: dto.ctx,
-                source: dto.source,
-                target,
-                args: {
-                    effectType: CombatQueueTargetEffectTypeEnum.Status,
-                    statuses: burnStatuses.map((status) => ({
-                        name: status.name,
-                        description: StatusGenerator.generateDescription(
-                            status.name,
-                            status.args.counter,
-                        ),
-                        counter: status.args.counter,
-                    })),
-                },
-            });
-        }
     }
 }
