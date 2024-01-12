@@ -234,7 +234,8 @@ export class NodeSelectedProcess {
                 logger.info(
                     `Sent message BeginEncounter to client ${ctx.client.id}`,
                 );
-
+                debugger;
+                console.log('NODE EN nodeSelected ---------->', node);
                 await this.initNodeProcess.process(ctx, node);
 
                 return StandardResponse.respond({
