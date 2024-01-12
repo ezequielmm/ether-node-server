@@ -154,7 +154,7 @@ export class NodeSelectedProcess {
                 });
             case NodeType.Encounter:
                 logger.info(`Started Encounter for client ${ctx.client.id}`);
-
+                console.log('Node en nodeSelected ----->', node);
                 return await this.initEncounterProcess.process(ctx, node);
             case NodeType.Treasure:
                 logger.info(`Started Treasure for client ${ctx.client.id}`);
@@ -234,8 +234,6 @@ export class NodeSelectedProcess {
                 logger.info(
                     `Sent message BeginEncounter to client ${ctx.client.id}`,
                 );
-                debugger;
-                console.log('NODE EN nodeSelected ---------->', node);
                 await this.initNodeProcess.process(ctx, node);
 
                 return StandardResponse.respond({
