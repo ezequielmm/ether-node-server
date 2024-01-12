@@ -41,7 +41,6 @@ export class InitEncounterProcess {
                 ctx,
                 this.node,
             );
-        debugger;
         console.log('node data', currentNode);
         ctx.expedition.currentNode = currentNode;
         await ctx.expedition.save();
