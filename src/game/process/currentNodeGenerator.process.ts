@@ -51,7 +51,7 @@ export class CurrentNodeGeneratorProcess {
             completed: false,
             nodeType: node.type,
             showRewards: false,
-            encounterData,
+            encounterData : node.private_data,
         };
     }
 
