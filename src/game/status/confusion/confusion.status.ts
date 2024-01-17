@@ -60,12 +60,12 @@ export class ConfusionStatus implements StatusEffectHandler {
 
         // Confuse statuses
         // NOTE: This is a in memory change, it is not necessary to save the expedition
-        this.confuseStatuses(source);
+        //this.confuseStatuses(source);
 
         return dto.effectDTO;
     }
 
-    private confuseStatuses(source: ExpeditionEntity) {
+    /*private confuseStatuses(source: ExpeditionEntity) {
         let statuses: JsonStatus[] = [];
         if (EnemyService.isEnemy(source)) {
             // statuses = source.value.currentScript.intentions.flatMap(
@@ -97,7 +97,7 @@ export class ConfusionStatus implements StatusEffectHandler {
             }
         });
     }
-    
+    */
     @OnEvent(EVENT_BEFORE_ENEMIES_TURN_END)
     async onEnemiesTurnStart(args: { ctx: GameContext }): Promise<void> {
         const { ctx } = args;
