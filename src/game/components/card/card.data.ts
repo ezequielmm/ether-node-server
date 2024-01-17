@@ -323,5 +323,4 @@ export const data: Card[] = [
     VengefulStrikeCardUpgraded,
     SpiritualAssaultCard,
     SpiritualAssaultCardUpgraded
-    
 ];
