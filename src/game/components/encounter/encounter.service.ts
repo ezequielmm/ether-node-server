@@ -84,10 +84,9 @@ export class EncounterService {
                 ? node.private_data
                 : await this.getRandomEncounter(ctx.expedition.currentStage, []);
 
-        console.log('Encounter en generateEncounter ===>', encounter);
         //fetch existing encounter if there is one
-        //const encounterData = await this.getEncounterData(ctx.client);
-        //if (encounterData) encounter.encounterId = encounterData.encounterId;
+        const encounterData = await this.getEncounterData(ctx.client);
+        if (encounterData) encounter.encounterId = encounterData.encounterId;
 
         return encounter;
     }
