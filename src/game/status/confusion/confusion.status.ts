@@ -76,7 +76,7 @@ export class ConfusionStatus implements StatusEffectHandler {
                 (card) => card.properties.statuses,
             );
         }
-
+        
         statuses.forEach((status) => {
             switch (status.args.attachTo) {
                 case (CardTargetedEnum.Enemy,
@@ -97,7 +97,7 @@ export class ConfusionStatus implements StatusEffectHandler {
             }
         });
     }
-
+    
     @OnEvent(EVENT_BEFORE_ENEMIES_TURN_END)
     async onEnemiesTurnStart(args: { ctx: GameContext }): Promise<void> {
         const { ctx } = args;
